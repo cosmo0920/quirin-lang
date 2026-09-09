@@ -5,17 +5,19 @@ error Failure { Failed; }
 extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
 extern fn qcore_extern_attach(owner: ptr<mut, u8>, child: ptr<mut, u8>) -> unit;
 extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+extern fn qcore_extern_release_owner(owner: ptr<mut, u8>) -> unit;
 
 // A store needs two simultaneously live checked identities: the child and the
-// declared owner contract spec §C04.2 requires. `source.extern-call.v1` admits
-// at most one, because its adapter's error arm may abandon nothing. This module
-// is therefore refused at its *second acquisition*, not at the store — the
-// measured reachability boundary recorded in
-// `docs/reports/extern-call-f1/README.md`.
+// distinct declared owner contract spec §C04.2 requires. Card `EXTERN-ERR-REL`
+// makes that reachable by admitting an error arm that disposes of the other
+// live identities instead of abandoning them — the second acquisition's arm
+// releases `owner`, which is exactly what this acquisition's cleanup edge
+// performs in `qcore_core::cleanup_lowering`.
 fn main() -> unit effects { io, alloc, mut } {
     let owner = qcore_extern_alloc(16) succeeds true else raise Failure;
-    let child = qcore_extern_alloc(8) succeeds true else raise Failure;
+    let child = qcore_extern_alloc(8) succeeds true
+        else qcore_extern_release(move owner) raise Failure;
     qcore_extern_attach(owner, move child);
-    qcore_extern_release(move owner);
+    qcore_extern_release_owner(move owner);
     return;
 }

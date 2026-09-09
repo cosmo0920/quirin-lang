@@ -13,9 +13,11 @@
 //! entry     ::= "fn" NAME "(" ")" "->" "unit" ["effects" "{" EFFECT {"," EFFECT} "}"]
 //!               "{" stmt* "}"
 //! stmt      ::= "let" NAME "=" CALLEE "(" [arg {"," arg}] ")"
-//!                   "succeeds" ("true"|"false") "else" "raise" ERROR ";"
+//!                   "succeeds" ("true"|"false") "else" {disposition}
+//!                   "raise" ERROR ";"
 //!             | CALLEE "(" [arg {"," arg}] ")" ";"
 //!             | "return" ";"
+//! disposition ::= CALLEE "(" [arg {"," arg}] ")"   -- one release, error arm
 //! arg       ::= ["-"] INTEGER            -- scalar data
 //!             | NAME                     -- a lent model Buffer, or a live
 //!                                        --   identity in declared owner
@@ -37,6 +39,15 @@
 //! removes the binding from this body exactly as a consumption does — every
 //! later use is refused — and the identity's residual accounting beneath the
 //! declared owner becomes a named premise on the certificate.
+//!
+//! Card `EXTERN-ERR-REL` adds the dispositions between `else` and `raise`. They
+//! are the calls this acquisition's established cleanup edge performs —
+//! `qcore_core::cleanup_lowering` releases every identity live before a failing
+//! acquisition, in reverse acquisition order — written out, because an
+//! extern-acquired identity is released only by calling a declared
+//! `resource_consumed` callee and this profile cannot invent one. Their
+//! arguments are resolved against the bindings live at the attempt and never
+//! remove one: the arm is a path, not a place.
 //!
 //! The `succeeds BOOL` control is the fixture's literal outcome, exactly the
 //! `qcore_acquire`/`qcore_check` philosophy: these are controlled model
@@ -125,22 +136,35 @@ pub fn called_extern_names(program: &SourceProgram) -> BTreeMap<String, Span> {
                 .iter()
                 .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
                 .collect::<Vec<_>>();
-            let head = match statement.value {
-                StatementKind::Expression => Some(0),
+            let mut heads = match statement.value {
+                StatementKind::Expression => vec![0],
                 StatementKind::Let { .. } => window
                     .iter()
                     .position(|token| token.kind == TokenKind::Symbol(Symbol::Equal))
-                    .map(|index| index + 1),
-                _ => None,
+                    .map(|index| vec![index + 1])
+                    .unwrap_or_default(),
+                _ => Vec::new(),
             };
-            if let Some(head) = head
-                && let Some(TokenKind::Word(word)) = window.get(head).map(|token| &token.kind)
-                && externs.contains(word)
-                && window
-                    .get(head + 1)
-                    .is_some_and(|token| token.kind == TokenKind::Symbol(Symbol::LeftParen))
+            // Card `EXTERN-ERR-REL`: an adapter's error arm carries call heads
+            // too. They are found by position, after the `else` word, so a
+            // callee a module uses only to release custody on a failure path
+            // still has its contract required rather than reported missing.
+            if matches!(statement.value, StatementKind::Let { .. })
+                && let Some(index) = window.iter().position(
+                    |token| matches!(&token.kind, TokenKind::Word(word) if word == "else"),
+                )
             {
-                called.entry(word.clone()).or_insert(span);
+                heads.extend(index + 1..window.len());
+            }
+            for head in heads {
+                if let Some(TokenKind::Word(word)) = window.get(head).map(|token| &token.kind)
+                    && externs.contains(word)
+                    && window
+                        .get(head + 1)
+                        .is_some_and(|token| token.kind == TokenKind::Symbol(Symbol::LeftParen))
+                {
+                    called.entry(word.clone()).or_insert(span);
+                }
             }
             for nested in statement.value.nested_blocks() {
                 scan(nested, externs, tokens, called);
@@ -340,11 +364,19 @@ struct Lowering<'a> {
 }
 
 impl Lowering<'_> {
+    /// Resolve one call's arguments against the live bindings.
+    ///
+    /// `consume` is false on an adapter's error arm: that arm is a *path*, so
+    /// its calls read the bindings this body has at the failing call and never
+    /// remove them from the success path. The custody the arm discharges is
+    /// accounted by `check_error_arm` over the checked event list, not by
+    /// deleting a binding the success path still owns.
     fn arguments(
         &mut self,
         tokens: &[Token],
         span: Span,
         callee: &ExternCallee,
+        consume: bool,
     ) -> Option<(Vec<ExternArgument>, Vec<ResourceId>, Vec<String>)> {
         // Split on commas; nothing in this grammar nests, so a nested opener is
         // a refusal rather than something to descend into.
@@ -454,7 +486,11 @@ impl Lowering<'_> {
                         ));
                         return None;
                     };
-                    let Some(resource) = self.bindings.remove(name) else {
+                    let Some(resource) = (if consume {
+                        self.bindings.remove(name)
+                    } else {
+                        self.bindings.get(name).copied()
+                    }) else {
                         self.diagnostics.push(bridging(
                             span,
                             format!("`{name}` is not a live resource binding in this body"),
@@ -640,8 +676,68 @@ pub fn lower_source_extern(
                     ));
                     continue;
                 }
+                // The error arm is resolved *before* the call's own arguments,
+                // against the bindings this body holds when the call is
+                // attempted: the arm is the path taken because the call failed,
+                // so it sees exactly what was live at the attempt.
+                let mut releases = Vec::new();
+                let mut arm_refused = false;
+                for (name, release_tokens) in &parsed_call.releases {
+                    let Some(released) = lowering.callees.get(name).cloned() else {
+                        lowering.diagnostics.push(diagnostic(
+                            "Q023",
+                            SemanticPass::ExternCall,
+                            span,
+                            format!(
+                                "the error-arm disposition calls `{name}`, which has no admitted declared contract in the selected extern contract environment"
+                            ),
+                        ));
+                        arm_refused = true;
+                        continue;
+                    };
+                    if lowering.globals.get(&released.name).is_none() {
+                        lowering.diagnostics.push(diagnostic(
+                            "Q027",
+                            SemanticPass::ExternCall,
+                            span,
+                            format!(
+                                "`{}` has a selected contract but no `extern fn` declaration in this module",
+                                released.name
+                            ),
+                        ));
+                        arm_refused = true;
+                        continue;
+                    }
+                    // The arm's calls are calls this module makes, so the
+                    // entry's declared row must admit them; an error path is
+                    // not an exemption from the effect discipline.
+                    if !derived_effects(&released).is_subset_of(&declared_effects) {
+                        lowering.diagnostics.push(adapter(
+                            span,
+                            format!(
+                                "the error-arm disposition calls `{}`, whose derived effect row the entry's declared row does not admit",
+                                released.name
+                            ),
+                        ));
+                        arm_refused = true;
+                        continue;
+                    }
+                    let Some((release_arguments, _, _)) =
+                        lowering.arguments(release_tokens, span, &released, false)
+                    else {
+                        arm_refused = true;
+                        continue;
+                    };
+                    releases.push(qcore_core::extern_call::ExternRelease {
+                        callee: released.name.clone(),
+                        arguments: release_arguments,
+                    });
+                }
+                if arm_refused {
+                    continue;
+                }
                 let Some((arguments, argument_resources, consumed_names)) =
-                    lowering.arguments(&parsed_call.arguments, span, &callee)
+                    lowering.arguments(&parsed_call.arguments, span, &callee, true)
                 else {
                     continue;
                 };
@@ -698,6 +794,7 @@ pub fn lower_source_extern(
                     adapter: Some(ExternAdapter {
                         resource,
                         succeeds: parsed_call.succeeds,
+                        releases,
                         error: parsed_call.error,
                     }),
                 }));
@@ -734,7 +831,7 @@ pub fn lower_source_extern(
                     continue;
                 }
                 let Some((arguments, argument_resources, consumed_names)) =
-                    lowering.arguments(&parsed_call.arguments, span, &callee)
+                    lowering.arguments(&parsed_call.arguments, span, &callee, true)
                 else {
                     continue;
                 };
@@ -942,6 +1039,8 @@ struct ParsedCall {
     callee: String,
     arguments: Vec<Token>,
     succeeds: bool,
+    /// The error arm's dispositions, in written order: `(callee, arguments)`.
+    releases: Vec<(String, Vec<Token>)>,
     error: String,
 }
 
@@ -972,17 +1071,27 @@ fn parse_adapter_statement(tokens: &[Token]) -> Option<ParsedCall> {
         Some("false") => false,
         _ => return None,
     };
-    if word(tokens.get(next + 2)) != Some("else") || word(tokens.get(next + 3)) != Some("raise") {
+    if word(tokens.get(next + 2)) != Some("else") {
         return None;
     }
-    let error = word(tokens.get(next + 4))?.to_owned();
-    if !symbol(tokens.get(next + 5), Symbol::Semicolon) || tokens.len() != next + 6 {
+    // Card `EXTERN-ERR-REL`: between `else` and `raise` the handler names the
+    // dispositions of every other live identity. Zero of them is the v1 shape.
+    let mut cursor = next + 3;
+    let mut releases = Vec::new();
+    while word(tokens.get(cursor)) != Some("raise") {
+        let (name, release_arguments, after) = call_head(tokens, cursor)?;
+        releases.push((name, release_arguments));
+        cursor = after;
+    }
+    let error = word(tokens.get(cursor + 1))?.to_owned();
+    if !symbol(tokens.get(cursor + 2), Symbol::Semicolon) || tokens.len() != cursor + 3 {
         return None;
     }
     Some(ParsedCall {
         callee,
         arguments,
         succeeds,
+        releases,
         error,
     })
 }
@@ -996,6 +1105,7 @@ fn parse_plain_call(tokens: &[Token]) -> Option<ParsedCall> {
         callee,
         arguments,
         succeeds: true,
+        releases: Vec::new(),
         error: String::new(),
     })
 }

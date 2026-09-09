@@ -704,7 +704,9 @@ entry         = "fn", NAME, "(", ")", "->", "unit",
                 "{", { extern_stmt }, "}" ;
 extern_stmt   = acquisition | plain_call | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
-                "succeeds", BOOL, "else", "raise", ERROR_NAME, ";" ;
+                "succeeds", BOOL, "else", { disposition },
+                "raise", ERROR_NAME, ";" ;
+disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
@@ -748,12 +750,27 @@ when a production allocator fails. Both arms are exercisable, and the emitted C
 compares the real result's nullness against the declared control and exits with
 status 70 if they disagree — for an out slot the emitted local starts `NULL`, so
 a callee that never wrote it is observed as the failure arm rather than
-believed. The `else raise ERROR;` arm is mandatory for each acquisition source,
-an owned nullable return and an out slot alike (`Q025`); the bounded v1 adapter
-admits it only where no acquired identity is live, because releasing custody on
-an extern error arm is not in this profile. That restriction is why a store is
-not reachable from a single source module: it needs two simultaneously live
-identities, the child and its declared owner.
+believed. The `else … raise ERROR;` arm is mandatory for each acquisition
+source, an owned nullable return and an out slot alike (`Q025`).
+
+Card `EXTERN-ERR-REL` gives that arm its dispositions. Between `else` and
+`raise` the handler names one call per still-live identity, and the arm is
+admitted only when it *is* this acquisition's established cleanup edge: the
+sequential lowering `qcore_core::cleanup_lowering` releases every identity live
+before a failing acquisition in reverse acquisition order, and the arm must
+release the same identities, each exactly once, in that order. This is a
+rendering, not a second rule — an extern-acquired identity is released only by
+calling a declared `resource_consumed` callee, and the profile cannot invent
+one. A disposition that acquires, that stores, that discharges other than
+exactly one identity, that names an identity not live on the arm, that runs in
+another order, or whose derived effect row the entry's declared row does not
+admit is refused (`Q025`), as is an identity that reaches the raise still live
+— the v1 abandonment refusal, narrowed to the undispositioned case and not
+weakened. An acquiring call that also moves custody out is refused there too,
+because a declaration constrains only its normal exit. The arm is a path: a
+disposition never removes a binding from the success path. That is what makes a
+store reachable — it needs two simultaneously live identities, the child and its
+declared owner, which the second acquisition's arm now accounts for.
 
 The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
 fresh custody through either acquisition source and `mut` exactly when some
@@ -765,7 +782,8 @@ established sequential passes over the same lowering, not by a second extern
 code. Emission declares each callee from the ABI table and calls it directly;
 which object file supplies the symbol is the builder's premise. See
 [the extern-call record](reports/extern-call-v1/README.md) and
-[the out/stored extension](reports/extern-call-f1/README.md).
+[the out/stored extension](reports/extern-call-f1/README.md) and
+[the error-arm release record](reports/remaining-extern-err-rel/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

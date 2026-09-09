@@ -189,6 +189,20 @@ blocked on extern calls — CT45's unknown-destructor/access-contract scenario
 is adjacent and may become mappable once extern declarations are callable, but
 any mapping proposal is its own stage-derived record, not this card's).
 
+**Landed since (2026-09-09).** Two of the items above are no longer out of
+scope, at their own bounded records. `resource_out` and `resource_stored` are
+callable (card `EXTERN-F1`,
+[`docs/reports/extern-call-f1/README.md`](../reports/extern-call-f1/README.md)),
+and the error arm may release other live custody (card `EXTERN-ERR-REL`,
+[`docs/reports/remaining-extern-err-rel/README.md`](../reports/remaining-extern-err-rel/README.md)),
+which is what made the store reachable from a single source module. The arm's
+rule is the sequential cleanup edge of §3.3's acquisition, rendered as the
+declared consuming calls that edge would perform, and nothing wider: an
+error-region payload carrier is still absent, because the sequential lowering's
+error exit (`qcore_core::cleanup_lowering`, `ExecutionOutcome::Error`) carries
+no payload and extern calls in error-region contexts remain out of scope.
+Everything else in this section stays out of scope.
+
 ## 8. Acceptance gate
 
 The standing per-change gate, plus: all four pinned 185-unit artifacts

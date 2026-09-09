@@ -81,6 +81,7 @@ fn acquire(succeeds: bool) -> ExternEvent {
         adapter: Some(ExternAdapter {
             resource: 1,
             succeeds,
+            releases: Vec::new(),
             error: "Failure".into(),
         }),
     })
@@ -394,6 +395,7 @@ fn an_adapter_on_a_data_result_refuses() {
             adapter: Some(ExternAdapter {
                 resource: 1,
                 succeeds: true,
+                releases: Vec::new(),
                 error: "Failure".into(),
             }),
         }),
@@ -426,6 +428,7 @@ fn an_adapter_that_would_abandon_live_custody_refuses() {
         adapter: Some(ExternAdapter {
             resource: 2,
             succeeds: true,
+            releases: Vec::new(),
             error: "Failure".into(),
         }),
     });
@@ -447,6 +450,7 @@ fn a_second_acquisition_after_the_first_is_consumed_is_admitted() {
         adapter: Some(ExternAdapter {
             resource: 2,
             succeeds: true,
+            releases: Vec::new(),
             error: "Failure".into(),
         }),
     });
@@ -493,6 +497,7 @@ fn a_wrong_argument_arity_refuses() {
             adapter: Some(ExternAdapter {
                 resource: 1,
                 succeeds: true,
+                releases: Vec::new(),
                 error: "Failure".into(),
             }),
         }),
@@ -682,6 +687,7 @@ fn open(resource: ResourceId, succeeds: bool) -> ExternEvent {
         adapter: Some(ExternAdapter {
             resource,
             succeeds,
+            releases: Vec::new(),
             error: "Failure".into(),
         }),
     })
@@ -1067,6 +1073,7 @@ fn a_borrow_where_the_contract_declares_an_out_slot_refuses() {
             adapter: Some(ExternAdapter {
                 resource: 2,
                 succeeds: true,
+                releases: Vec::new(),
                 error: "Failure".into(),
             }),
         }),
@@ -1130,6 +1137,7 @@ fn a_stored_identity_does_not_survive_in_the_callers_ledger() {
         adapter: Some(ExternAdapter {
             resource: 3,
             succeeds: true,
+            releases: Vec::new(),
             error: "Failure".into(),
         }),
     });
@@ -1316,5 +1324,459 @@ fn emission_refuses_an_argument_naming_an_unbound_identity() {
                 resource: 1
             }
         )
+    );
+}
+
+// ================================================================== //
+// Card EXTERN-ERR-REL: the adapter's error-arm disposition discipline //
+// ================================================================== //
+
+/// One acquisition whose error arm names the given dispositions.
+fn acquire_with_arm(
+    resource: ResourceId,
+    succeeds: bool,
+    releases: Vec<ExternRelease>,
+) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_alloc".into(),
+        arguments: vec![ExternArgument::Data(16)],
+        adapter: Some(ExternAdapter {
+            resource,
+            succeeds,
+            releases,
+            error: "Failure".into(),
+        }),
+    })
+}
+
+fn dispose(resource: ResourceId) -> ExternRelease {
+    ExternRelease {
+        callee: "qcore_extern_release".into(),
+        arguments: vec![ExternArgument::Consume(resource)],
+    }
+}
+
+fn consume(resource: ResourceId) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_release".into(),
+        arguments: vec![ExternArgument::Consume(resource)],
+        adapter: None,
+    })
+}
+
+/// Two live identities are admitted exactly when the second acquisition's arm
+/// disposes of the first — the property that makes `resource_stored` reachable
+/// at all, since a store needs a child and a distinct live owner.
+#[test]
+fn a_second_acquisition_whose_arm_releases_the_first_is_admitted() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(certificate.acquisitions, vec![1, 2]);
+    assert_eq!(
+        certificate.error_dispositions,
+        vec![(1, Vec::new()), (2, vec![1])]
+    );
+}
+
+/// Conservation, stated as the checker decides it: every identity live at the
+/// acquisition is either released by the arm or reported abandoned. There is no
+/// third outcome and no silent one.
+#[test]
+fn every_live_identity_is_either_released_or_reported_abandoned() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        acquire_with_arm(3, true, vec![dispose(2)]),
+        consume(3),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    // Identity 1 is still live at the third acquisition and is not disposed of,
+    // so it is refused by name while identity 2, which is, is not.
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::AdapterAbandonsCustody {
+            event: 2,
+            resource: 1
+        }]
+    );
+}
+
+/// The v1 refusal, unweakened: an arm that disposes of nothing while something
+/// is live still refuses, with the same code and the same named identity.
+#[test]
+fn an_empty_arm_with_live_custody_still_abandons() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, Vec::new()),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::AdapterAbandonsCustody {
+            event: 1,
+            resource: 1
+        }]
+    );
+}
+
+#[test]
+fn releasing_the_same_identity_twice_on_one_arm_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1), dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ReleaseNotLive {
+            event: 1,
+            resource: 1
+        }]
+    );
+}
+
+/// An identity a previous call already consumed is gone from the ledger, so an
+/// arm cannot dispose of it: that would release custody the declaration handed
+/// away.
+#[test]
+fn releasing_an_already_departed_identity_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        consume(1),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        consume(2),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ReleaseNotLive {
+            event: 2,
+            resource: 1
+        }]
+    );
+}
+
+#[test]
+fn an_arm_that_acquires_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_alloc".into(),
+                arguments: vec![ExternArgument::Data(4)],
+            }],
+        ),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert!(
+        errors.contains(&ExternDiagnostic::ReleaseAcquires {
+            event: 1,
+            name: "qcore_extern_alloc".into()
+        }),
+        "{errors:?}"
+    );
+}
+
+#[test]
+fn an_arm_call_that_discharges_nothing_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(
+            2,
+            true,
+            vec![
+                ExternRelease {
+                    callee: "qcore_extern_peek".into(),
+                    arguments: vec![ExternArgument::Borrow(1), ExternArgument::Data(4)],
+                },
+                dispose(1),
+            ],
+        ),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ReleaseNotSingular {
+            event: 1,
+            name: "qcore_extern_peek".into(),
+            discharged: 0
+        }]
+    );
+}
+
+#[test]
+fn an_arm_naming_an_unadmitted_callee_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_absent".into(),
+                arguments: Vec::new(),
+            }],
+        ),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert!(
+        errors.contains(&ExternDiagnostic::ReleaseUnknownCallee {
+            event: 1,
+            name: "qcore_extern_absent".into()
+        }),
+        "{errors:?}"
+    );
+    assert_eq!(
+        errors
+            .iter()
+            .map(ExternDiagnostic::code)
+            .collect::<Vec<_>>()
+            .first(),
+        Some(&"Q023")
+    );
+}
+
+#[test]
+fn an_arm_call_of_the_wrong_arity_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_release".into(),
+                arguments: Vec::new(),
+            }],
+        ),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert!(
+        errors.contains(&ExternDiagnostic::ReleaseArity {
+            event: 1,
+            expected: 1,
+            actual: 0
+        }),
+        "{errors:?}"
+    );
+}
+
+#[test]
+fn an_arm_argument_of_the_wrong_form_refuses() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_release".into(),
+                arguments: vec![ExternArgument::Borrow(1)],
+            }],
+        ),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert!(
+        errors.contains(&ExternDiagnostic::ReleaseArgumentForm {
+            event: 1,
+            parameter: 0,
+            expected: CallParameter::Consumed
+        }),
+        "{errors:?}"
+    );
+}
+
+/// `qcore_core::cleanup_lowering` releases the live set in reverse acquisition
+/// order on a failing acquisition's cleanup edge. The arm is required to be
+/// that edge, so acquisition order is refused and reverse order is admitted.
+#[test]
+fn an_arm_in_acquisition_order_refuses_and_reverse_order_is_admitted() {
+    let forward = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        acquire_with_arm(3, true, vec![dispose(1), dispose(2)]),
+        consume(3),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&forward).unwrap_err(),
+        vec![ExternDiagnostic::ReleaseOrder {
+            event: 2,
+            expected: vec![2, 1],
+            actual: vec![1, 2]
+        }]
+    );
+    let reverse = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        acquire_with_arm(3, true, vec![dispose(2), dispose(1)]),
+        consume(3),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&reverse).unwrap();
+    assert_eq!(certificate.error_dispositions[2].1, vec![2, 1]);
+}
+
+/// A disposition is a release on the *error* path. It never removes the
+/// identity from the success path, which is why the identities an arm names
+/// still have to be consumed by the normal trace.
+#[test]
+fn a_disposition_is_not_a_consumption_on_the_success_path() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    // One consumption per identity, from the two ordinary calls, and neither
+    // is contributed by the arm.
+    assert_eq!(certificate.consumptions, vec![2, 1]);
+}
+
+/// An acquiring call that also carries departing custody leaves that custody's
+/// status undecided on the failure arm, because a declaration speaks only about
+/// its normal exit. Refused by name rather than resolved by assumption.
+#[test]
+fn an_acquiring_call_that_also_consumes_refuses() {
+    let reallocating = bridge_contract(
+        "qcore_extern_regrow",
+        &contract(
+            vec![(
+                AbiType::PtrMutU8,
+                ContractParameterMode::Consumed { nullable: false },
+            )],
+            AbiType::PtrMutU8,
+            ContractReturnMode::Owned { nullable: true },
+        ),
+    )
+    .expect("consuming a pointer and returning a nullable owned one is admitted");
+    let mut module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_regrow".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: true,
+                releases: Vec::new(),
+                error: "Failure".into(),
+            }),
+        }),
+        consume(2),
+        ExternEvent::Return,
+    ]);
+    module
+        .callees
+        .insert(reallocating.name.clone(), reallocating);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::AdapterDepartingArgument {
+            event: 1,
+            resource: 1
+        }]
+    );
+}
+
+/// The arm's calls are calls the module makes, so their derived effects join
+/// the certificate's row rather than escaping it.
+#[test]
+fn the_arms_calls_contribute_their_derived_effects() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert!(certificate.effects.contains(&Effect::Io));
+    assert!(certificate.effects.contains(&Effect::Alloc));
+    assert!(certificate.effects.contains(&Effect::Mut));
+}
+
+/// The reference execution renders the arm as the calls it is, in the order the
+/// checked handler names them, before the raise ends the trace.
+#[test]
+fn the_reference_execution_performs_the_arms_releases_before_raising() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, false, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        vec![
+            "acquire qcore_extern_alloc r1 ok".to_owned(),
+            "acquire qcore_extern_alloc r2 null".to_owned(),
+            "call qcore_extern_release c:r1".to_owned(),
+            "raise Failure".to_owned(),
+        ]
+    );
+}
+
+/// The emitted failure branch performs the same releases, so a leak checker
+/// observes them instead of taking the checker's requirement on trust.
+#[test]
+fn emission_puts_the_arms_releases_inside_the_failure_branch() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, false, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    assert!(
+        emitted
+            .source
+            .contains("    if (r2 == NULL) {\n        qcore_extern_release(r1);\n"),
+        "{}",
+        emitted.source
+    );
+}
+
+/// A certificate that understates its own error arms does not survive an
+/// independent rederivation.
+#[test]
+fn a_certificate_that_hides_a_disposition_fails_its_recheck() {
+    let module = program(vec![
+        acquire_with_arm(1, true, Vec::new()),
+        acquire_with_arm(2, true, vec![dispose(1)]),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    recheck_extern_certificate(&module, &certificate).unwrap();
+    let mut tampered = certificate;
+    tampered.error_dispositions[1].1.clear();
+    assert_eq!(
+        recheck_extern_certificate(&module, &tampered),
+        Err(ExternRecheckFailure::Mismatch)
     );
 }

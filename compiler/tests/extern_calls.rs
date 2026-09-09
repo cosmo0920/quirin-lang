@@ -174,6 +174,12 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
                 "extern fn qcore_extern_alloc_failing(size: usize) -> ptr<mut, u8>;",
             )
         }),
+        // Card `EXTERN-ERR-REL`. The store's success path allocates an owner
+        // and a child and releases both through the owner; the failure path
+        // takes the disposition the checker required, so LSan accounts for
+        // both allocations on either path.
+        ("store", STORED.to_owned()),
+        ("store-failure", STORED_FAILURE.to_owned()),
     ] {
         let module = compile_with(&source, selection()).unwrap();
         let reference = module.extern_observation.clone().unwrap();
@@ -592,6 +598,7 @@ fn an_unreleased_owned_return_refuses_under_the_established_custody_pass() {
 
 const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qcore");
 const STORED: &str = include_str!("fixtures/extern_calls/stored.qcore");
+const STORED_FAILURE: &str = include_str!("fixtures/extern_calls/stored_failure.qcore");
 
 /// The out fixture with its acquiring callee swapped for the always-refusing
 /// implementation and the declared control flipped, so the null arm is a real
@@ -768,48 +775,292 @@ fn a_mutated_out_contract_refuses_a_previously_admitted_module() {
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }
 
-// --- resource_stored: admitted shape, measured reachability boundary. ---
+// --- resource_stored, end to end (card `EXTERN-ERR-REL`). ---
 
-/// The store's *bridging* is admitted — the refusal is `Q025` at the second
-/// acquisition, not `Q024` at the contract. A store needs two simultaneously
-/// live checked identities (the child and the distinct `resource_owned` owner
-/// contract spec §C04.2 requires); `source.extern-call.v1` admits at most one,
-/// because its adapter's error arm may abandon nothing. Recorded, not repaired:
-/// lifting that restriction is the already-named EXTERN-CALL-F follow-on.
+/// The two statements a store needs, as written in the fixture. The store
+/// tests below substitute *into* this block, so a change to the fixture's
+/// spelling fails them loudly instead of silently matching nothing.
+const STORE_BLOCK: &str = "    let child = qcore_extern_alloc(8) succeeds true\n        \
+     else qcore_extern_release(move owner) raise Failure;\n    \
+     qcore_extern_attach(owner, move child);";
+
+/// EXTERN-F1 measured the store to be admitted by the bridging table but
+/// unreachable from a single source module: a store needs two simultaneously
+/// live checked identities, and that card's adapter error arm could abandon
+/// nothing. With the arm's disposition discipline the second acquisition is
+/// admitted, so the store is now reached, checked and executed.
 #[test]
-fn a_store_is_admitted_but_needs_a_second_live_identity_the_profile_refuses() {
-    let codes = codes(STORED, selection());
+fn a_store_is_reachable_once_the_error_arm_disposes_of_the_other_identity() {
+    assert!(
+        STORED.contains(STORE_BLOCK),
+        "the store fixture no longer contains the block the store tests substitute into"
+    );
+    let module = compile_with(STORED, selection()).unwrap();
     assert_eq!(
-        codes,
-        ["Q025"],
-        "the blocker is the adapter rule, not the store"
+        module.execution_profile,
+        SourceExecutionProfile::ExternCallsV1
+    );
+    let checked = module.checked.as_extern_calls().unwrap();
+    // Two acquisitions, the child stored beneath the owner, and the owner
+    // consumed at the end: the shape §C04.2 requires, actually checked.
+    assert_eq!(checked.certificate.acquisitions, vec![1, 2]);
+    assert_eq!(checked.certificate.stored, vec![(2, 1)]);
+    assert_eq!(checked.certificate.consumptions, vec![1]);
+    // The first acquisition abandons nothing because nothing else is live; the
+    // second disposes of exactly the owner. The certificate keeps both, so a
+    // reader can tell an empty arm from an absent one.
+    assert_eq!(
+        checked.certificate.error_dispositions,
+        vec![(1, Vec::new()), (2, vec![1])]
+    );
+    assert!(checked.certificate.assumptions.contains(
+        &extern_call::ExternAssumption::StoredCustodyUnderDeclaredOwner(
+            "qcore_extern_attach".to_owned()
+        )
+    ));
+    extern_call::recheck_extern_certificate(&checked.lowered.program, &checked.certificate)
+        .expect("the driver publishes only evidence it rederived");
+}
+
+#[test]
+fn a_store_emits_its_owner_and_child_and_the_reference_run_agrees() {
+    let module = compile_with(STORED, selection()).unwrap();
+    let c = module.c_source.as_deref().expect("this route emits C11");
+    for expected in [
+        "void qcore_extern_attach(uint8_t *p0, uint8_t *p1);",
+        "uint8_t *r1 = qcore_extern_alloc(16);",
+        "uint8_t *r2 = qcore_extern_alloc(8);",
+        "qcore_extern_attach(r1, r2);",
+        "qcore_extern_release_owner(r1);",
+        // The second acquisition's failure branch renders its cleanup edge.
+        "        qcore_extern_release(r1);",
+    ] {
+        assert!(c.contains(expected), "emitted C is missing `{expected}`");
+    }
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "acquire qcore_extern_alloc r2 ok",
+            "call qcore_extern_attach w:r1 s:r2",
+            "call qcore_extern_release_owner c:r1",
+            "return",
+        ]
     );
 }
 
-/// The store's argument bridging *is* reachable from source with one live
-/// identity, because a self-store needs only one — and is refused by name.
+/// The store-then-callee-fails path: after the store only the owner is live, so
+/// the failing acquisition's arm disposes of exactly the owner and the trace
+/// ends at the raise. Nothing after the raise is observed.
+#[test]
+fn the_store_failure_path_releases_the_owner_before_raising() {
+    let module = compile_with(STORED_FAILURE, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(
+        checked.certificate.error_dispositions,
+        vec![(1, Vec::new()), (2, vec![1]), (3, vec![1])]
+    );
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "acquire qcore_extern_alloc r2 ok",
+            "call qcore_extern_attach w:r1 s:r2",
+            "acquire qcore_extern_alloc_failing r3 null",
+            "call qcore_extern_release_owner c:r1",
+            "raise Failure",
+        ]
+    );
+}
+
+/// The disposition belongs to the error arm and to no other path: the success
+/// path keeps every identity the arm would have released, which is exactly why
+/// the store two statements later can still name its owner.
+#[test]
+fn a_disposition_does_not_consume_the_identity_on_the_success_arm() {
+    let module = compile_with(STORED, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    // `owner` is released once, at the end, on the success path. The arm's
+    // release of the same identity is not a second consumption.
+    assert_eq!(checked.certificate.consumptions, vec![1]);
+    assert_eq!(checked.certificate.error_dispositions[1].1, vec![1]);
+}
+
+// --- Adversarial: the abandonment refusal is narrowed, not weakened. ---
+
+/// The v1 refusal with its meaning intact. An acquisition whose arm names no
+/// disposition still abandons the live owner and is still refused.
+#[test]
+fn an_acquisition_whose_arm_disposes_of_nothing_still_refuses() {
+    let source = STORED.replace(
+        "succeeds true\n        else qcore_extern_release(move owner) raise Failure;",
+        "succeeds true else raise Failure;",
+    );
+    assert_ne!(source, STORED, "the arm must have been emptied");
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+#[test]
+fn releasing_the_same_identity_twice_on_one_arm_refuses() {
+    let source = STORED.replace(
+        "else qcore_extern_release(move owner) raise Failure;",
+        "else qcore_extern_release(move owner) qcore_extern_release(move owner) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// The stored child left this body's ledger permanently, so a later arm cannot
+/// dispose of it — that would release custody the declaration already handed
+/// to the owner.
+#[test]
+fn releasing_a_stored_identity_on_a_later_arm_refuses() {
+    let source = STORED_FAILURE.replace(
+        "else qcore_extern_release_owner(move owner) raise Failure;",
+        "else qcore_extern_release(move child) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+/// An arm that acquires opens an obligation on a path taken because something
+/// already failed, and has no adapter of its own; refused by name.
+#[test]
+fn an_arm_that_acquires_refuses() {
+    let source = STORED.replace(
+        "else qcore_extern_release(move owner) raise Failure;",
+        "else qcore_extern_alloc(4) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// An arm that stores converts an obligation into a declared premise on a
+/// failure path instead of discharging it.
+#[test]
+fn an_arm_that_stores_refuses() {
+    let source = STORED_FAILURE.replace(
+        "else qcore_extern_release_owner(move owner) raise Failure;",
+        "else qcore_extern_attach(owner, move owner) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(
+        codes.contains(&"Q025".to_owned()) || codes.contains(&"Q024".to_owned()),
+        "{codes:?}"
+    );
+}
+
+/// A disposition releases exactly one identity. A borrowing call discharges
+/// nothing and is not a disposition, however harmless it looks.
+#[test]
+fn an_arm_call_that_releases_nothing_refuses() {
+    let source = STORED.replace(
+        "extern fn qcore_extern_release(buffer",
+        "extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;\n\
+         extern fn qcore_extern_release(buffer",
+    );
+    let source = source.replace(
+        "else qcore_extern_release(move owner) raise Failure;",
+        "else qcore_extern_fill(owner, 7) qcore_extern_release(move owner) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// The established cleanup edge releases in reverse acquisition order, so an
+/// arm that states another order describes a different program than the
+/// sequential lowering of the same module.
+/// The store-free variant of the failure fixture: without the store, both the
+/// owner and the child are live at the failing acquisition, so the arm must
+/// dispose of two identities and the order is observable.
+fn two_live_identities_at_the_failing_acquisition(arm: &str) -> String {
+    let source = STORED_FAILURE.replace("    qcore_extern_attach(owner, move child);\n", "");
+    let source = source.replace(
+        "    qcore_extern_release(move extra);\n",
+        "    qcore_extern_release(move extra);\n    qcore_extern_release(move child);\n",
+    );
+    source.replace(
+        "else qcore_extern_release_owner(move owner) raise Failure;",
+        arm,
+    )
+}
+
+#[test]
+fn an_arm_whose_order_disagrees_with_the_cleanup_edge_refuses() {
+    let source = two_live_identities_at_the_failing_acquisition(
+        "else qcore_extern_release(move owner) qcore_extern_release(move child) raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// The reverse-acquisition order the cleanup edge performs is admitted, so the
+/// refusal above is about the order and not about two dispositions.
+#[test]
+fn an_arm_in_reverse_acquisition_order_is_admitted() {
+    let source = two_live_identities_at_the_failing_acquisition(
+        "else qcore_extern_release(move child) qcore_extern_release(move owner) raise Failure;",
+    );
+    let module = compile_with(&source, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(checked.certificate.error_dispositions[2].1, vec![2, 1]);
+}
+
+/// A published certificate is rederived, never believed: substituting the
+/// recorded dispositions is refused by the independent recheck.
+#[test]
+fn substituting_the_recorded_dispositions_fails_the_recheck() {
+    let module = compile_with(STORED, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    let mut tampered = checked.certificate.clone();
+    tampered.error_dispositions[1].1.clear();
+    assert!(
+        extern_call::recheck_extern_certificate(&checked.lowered.program, &tampered).is_err(),
+        "a certificate claiming an empty arm must not survive its rederivation"
+    );
+}
+
+/// An arm naming a callee this module never declared is refused before any
+/// custody question is asked. Name resolution runs first and owns this
+/// condition, exactly as it does for an adapter that raises an unknown name;
+/// the extern pass does not duplicate it under a second code.
+#[test]
+fn an_arm_calling_an_undeclared_symbol_refuses_at_name_resolution() {
+    let source = STORED.replace(
+        "extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n",
+        "",
+    );
+    assert_ne!(source, STORED, "the declaration must have been removed");
+    assert_eq!(codes(&source, selection()), ["Q013"]);
+}
+
+/// The arm's calls are calls this module makes, so the entry's declared effect
+/// row must admit them; a failure path is not an exemption.
+#[test]
+fn an_arm_call_outside_the_declared_effect_row_refuses() {
+    let source = STORED.replace("effects { io, alloc, mut }", "effects { io, alloc }");
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// The store's argument bridging is reachable with one live identity too,
+/// because a self-store needs only one — and is refused by name.
 #[test]
 fn storing_an_identity_beneath_itself_refuses() {
-    let baseline = STORED.replace("\r\n", "\n");
-    let source = baseline.replace(
-        "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
-         qcore_extern_attach(owner, move child);",
-        "    qcore_extern_attach(owner, move owner);",
-    );
-    assert_ne!(source, baseline, "the self-store substitution applied");
+    let source = STORED.replace(STORE_BLOCK, "    qcore_extern_attach(owner, move owner);");
+    assert_ne!(source, STORED, "the store block must have been substituted");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }
 
 #[test]
 fn moving_where_the_contract_declares_the_store_owner_refuses() {
-    let baseline = STORED.replace("\r\n", "\n");
-    let source = baseline.replace(
-        "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
-         qcore_extern_attach(owner, move child);",
+    let source = STORED.replace(
+        STORE_BLOCK,
         "    qcore_extern_attach(move owner, move owner);",
     );
-    assert_ne!(source, baseline, "the owner-move substitution applied");
+    assert_ne!(source, STORED, "the store block must have been substituted");
     let codes = codes(&source, selection());
     assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
 }

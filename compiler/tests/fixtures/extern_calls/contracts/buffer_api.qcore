@@ -76,3 +76,18 @@ contract {
     ensures normal resource_stored(child, owner, nonnull);
     ensures normal resource_return_none();
 };
+
+// --- Card `EXTERN-ERR-REL`: releasing a declared store owner. ---
+
+// A second consuming callee. Its declaration says exactly what every other
+// `resource_consumed` clause says — the caller's obligation moves to the
+// callee — and nothing more. That this particular C implementation also
+// releases whatever was stored beneath the owner is the fixture satisfying
+// `StoredCustodyUnderDeclaredOwner` for its own runs; no clause here, and no
+// run, establishes that premise in general.
+extern fn qcore_extern_release_owner(owner: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(owner, nonnull);
+    ensures normal resource_return_none();
+};
