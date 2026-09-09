@@ -629,16 +629,23 @@ fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
 /// `INDIRECT` refusals of card O04-READ-BOUND's success-exit residual are
 /// gone**, and the success exit C6 is **still `Unknown`**.
 ///
-/// **DELIBERATE PIN UPDATE, card LOADER-ABI**: one `INDIRECT` refusal remains,
-/// and it is not one of this card's eight. This fixture's `flb_error`
-/// declaration named three parameters beside a C prelude declaring the real
-/// `void flb_error(const char *format, ...)`; the declared/C ABI comparison
-/// refuses that arity, and under the faithful one-parameter-plus-tail
-/// declaration the chained tail actual `storage->stream->name` is refused —
-/// the same single refusal card NEIGHBOURS pins under the *production*
-/// declarations (`NEIGHBOURS-CHAINED-TAIL`). The card's own eight are asserted
-/// gone below by naming the surviving one, so the count cannot hide a
-/// regression in either direction.
+/// **Composed-tree reconciliation (LOADER-ABI × NEIGHBOURS-CHAINED-TAIL): back
+/// to zero.** Card LOADER-ABI's measurement alone left one `INDIRECT` here that
+/// was **not** one of this card's eight — the chained tail actual
+/// `storage->stream->name` of the `flb_error` arm, exposed when that
+/// declaration was corrected from three named parameters to the faithful
+/// `(const char *, ...)` reading. Clause **T5** of card
+/// NEIGHBOURS-CHAINED-TAIL admits exactly that actual at the declared data tail
+/// the corrected declaration gives it, so the count returns to zero and this
+/// card's headline reads as it was measured.
+///
+/// **Retired by name:** the probe LOADER-ABI added here
+/// (`storage->stream->name, name);` → `name, name);`, asserting the survivor
+/// was that actual and nothing else) is removed. With the count back at zero
+/// its baseline and its probe agree, so it could no longer discriminate; it
+/// would have passed vacuously. The claim it made is now carried where it is
+/// still live, by `o04_arms.rs::the_declaration_decides_the_same_chain_in_a_
+/// variadic_tail`.
 #[test]
 fn the_success_exit_residual_narrows_to_one_statement() {
     if !clang_available() {
@@ -651,21 +658,9 @@ fn the_success_exit_residual_narrows_to_one_statement() {
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        1,
-        "only the chained variadic tail actual stays refused: {:?}",
-        caller.diagnostics
-    );
-    // And it is that statement: withdrawing the chained actual alone removes
-    // it, exactly as card NEIGHBOURS measures on the production declarations.
-    let probed =
-        analyze_real(&real_unit().replace("storage->stream->name, name);", "name, name);"));
-    assert_eq!(
-        unsupported(function(program(&probed), "flb_input_chunk_create"))
-            .iter()
-            .filter(|description| **description == INDIRECT)
-            .count(),
         0,
-        "the surviving refusal is the chained tail actual and nothing else"
+        "no indirect-access refusal remains: {:?}",
+        caller.diagnostics
     );
     // Exactly one statement is still refused, and it is the uncontracted
     // variadic logging call whose second argument is a nested call.
@@ -676,30 +671,25 @@ fn the_success_exit_residual_narrows_to_one_statement() {
     assert_eq!(
         unsupported(caller),
         vec![
-            // Card LOADER-ABI, recorded above: the chained tail actual of the
-            // faithful `flb_error` declaration. Not one of this card's eight.
-            INDIRECT,
             "call to uncontracted function `flb_trace`",
             "nullable resource `ic` used by a non-null contract",
         ],
         "the residual is one statement plus its consequence: {:?}",
         caller.diagnostics
     );
-    // C6 stays Unknown, and four other exits stay settled.
+    // C6 stays Unknown, and the other five exits stay settled.
     //
-    // DELIBERATE PIN UPDATE, card LOADER-ABI: five → four, for the reason
-    // recorded on this test. The logging arm C1 leaves the settled set with the
-    // faithful `flb_error` declaration; it crosses no acquisition, so it is
-    // unresolved carrying **no** site, which is how it is told apart from the
-    // success exit below.
+    // Composed-tree reconciliation: back to five, for the reason recorded on
+    // this test. The site-free-`Unknown` discrimination card LOADER-ABI added
+    // below is kept, now asserting that no such exit exists.
     assert_eq!(
         caller
             .exits
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Discharged)
             .count(),
-        4,
-        "four exits stay settled: {:?}",
+        5,
+        "five exits stay settled: {:?}",
         exit_shape(caller)
     );
     assert_eq!(
@@ -708,8 +698,8 @@ fn the_success_exit_residual_narrows_to_one_statement() {
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
             .count(),
-        1,
-        "the logging arm is unresolved and crosses no acquisition: {:?}",
+        0,
+        "no exit is unresolved while crossing nothing: {:?}",
         exit_shape(caller)
     );
     let success = caller
@@ -752,20 +742,15 @@ fn the_logging_control_settles_every_exit() {
     let unit = real_unit();
     let trace = "        flb_trace(\"[input chunk] no matching route for input chunk '%s' with tag '%s'\",\n                  flb_input_chunk_get_name(ic), tag);";
     assert!(unit.contains(trace), "the control anchor is present");
-    // DELIBERATE PIN UPDATE, card LOADER-ABI: a **second** clearly labelled
-    // substitution is now needed, for the reason recorded on
-    // `the_success_exit_residual_narrows_to_one_statement`. The faithful
-    // `flb_error` declaration leaves the chained tail actual
-    // `storage->stream->name` refused, so it is withdrawn here the same way
-    // card NEIGHBOURS withdraws it — replaced by the plain local the same
-    // statement already passes. Neither substitution is a claim about upstream.
-    assert!(
-        unit.contains("storage->stream->name, name);"),
-        "the chained tail anchor is present"
-    );
-    let controlled = unit
-        .replace(trace, "        flb_errno();")
-        .replace("storage->stream->name, name);", "name, name);");
+    // Composed-tree reconciliation: back to ONE substitution. Card LOADER-ABI
+    // added a second — withdrawing the chained tail actual — because under its
+    // measurement alone that actual was refused. Clause T5 of card
+    // NEIGHBOURS-CHAINED-TAIL admits it at the corrected declaration's data
+    // tail, so the second substitution is unnecessary, and keeping it would
+    // weaken this control: it would substitute away a statement the analyzer
+    // now decides on the byte-verbatim source. The control is again what the
+    // card's own doc-comment above claims it is.
+    let controlled = unit.replace(trace, "        flb_errno();");
     // The *program* stays `Unknown`, because `cio_chunk_open` in the same unit
     // keeps its own refusals. The claim under test is per function.
     let result = analyze_real(&controlled);

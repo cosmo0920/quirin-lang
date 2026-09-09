@@ -1,3 +1,5 @@
+import QCore.ChainedTailActual
+
 /-!
 # Declared-contract / C-declaration ABI agreement
 
@@ -375,6 +377,67 @@ theorem the_refusal_vocabulary_has_no_duplicates : allRefusals.Nodup := by decid
 
 theorem every_refusal_is_in_the_vocabulary (r : Refusal) : r ∈ allRefusals := by
   cases r <;> simp [allRefusals]
+
+/-! ### Composition with card NEIGHBOURS-CHAINED-TAIL's clause T5
+
+The composed tree runs this comparison *and* T5, and they meet on one question:
+T5 admits a bounded typed access chain at a position **the callee's declaration
+covers with `resource_variadic_data_tail()`**, and this card decides whether
+that declaration is applied here at all. The two are not independent, and the
+sentence that ties them has to be stated, because the implementation withdraws
+a declaration by rewriting its call sites rather than by clearing the tail set
+rederived from the retained texts: the retained text of a withdrawn declaration
+still *mentions* its tail. What makes that safe is that no tail T5 may act on
+survives the withdrawal, which is exactly the theorem below.
+
+The direction that matters is one-way. An agreeing declaration supplies its own
+tail unchanged — this card adds nothing to what T5 may admit — while a withdrawn
+one supplies none, so T5's admission is refused for it by T5's *own* premise
+(`ChainedTailActual.the_declaration_is_read_from_the_callee_never_from_the_actual`),
+not by a rule invented here. -/
+
+/-- The declared tail a consumer may act on: the one carried by a declaration
+that is actually applied in this unit. -/
+def appliedTail (e : Environment) (n : Name) : Bool :=
+  match applied e n, e.signatures n with
+  | some _, some s => s.tail
+  | _, _ => false
+
+theorem a_withdrawn_declaration_supplies_no_tail {e : Environment} {n : Name} {r : Refusal}
+    (h : withdrawal e n = some r) : appliedTail e n = false := by
+  unfold appliedTail
+  rw [a_disagreement_withdraws h]
+
+theorem an_agreeing_declaration_supplies_its_own_tail {e : Environment} {n : Name}
+    {s : Signature} {k : Contract} (hw : withdrawal e n = none)
+    (hs : e.signatures n = some s) (hc : e.contracts n = some k) :
+    appliedTail e n = s.tail := by
+  unfold appliedTail
+  rw [agreement_applies_the_declared_contract hw, hc, hs]
+
+/-- The composed sentence: a declaration this unit's own C declaration
+contradicts admits **no** tail actual, chain or not. -/
+theorem a_withdrawn_declaration_admits_no_tail_actual {e : Environment} {n : Name}
+    {r : Refusal} (h : withdrawal e n = some r) (read : Bool)
+    (excess : List QCore.ChainedTailActual.TailArgument) :
+    QCore.ChainedTailActual.admits
+        { declarationsRead := read, declaredTail := appliedTail e n, excess := excess }
+      = false := by
+  rw [a_withdrawn_declaration_supplies_no_tail h]
+  exact QCore.ChainedTailActual.the_declaration_is_read_from_the_callee_never_from_the_actual
+    read excess
+
+/-- And the other direction is not lost: where the comparison agrees, T5 decides
+exactly as it does without this card. -/
+theorem an_agreeing_declaration_leaves_t5_alone {e : Environment} {n : Name}
+    {s : Signature} {k : Contract} (hw : withdrawal e n = none)
+    (hs : e.signatures n = some s) (hc : e.contracts n = some k) (read : Bool)
+    (excess : List QCore.ChainedTailActual.TailArgument) :
+    QCore.ChainedTailActual.admits
+        { declarationsRead := read, declaredTail := appliedTail e n, excess := excess }
+      = QCore.ChainedTailActual.admits
+        { declarationsRead := read, declaredTail := s.tail, excess := excess } := by
+  rw [an_agreeing_declaration_supplies_its_own_tail hw hs hc]
 
 /-! ### Composing two declarations of one name -/
 

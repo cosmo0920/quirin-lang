@@ -882,18 +882,21 @@ fn the_named_read_blocker_is_gone_and_the_success_exit_is_still_unknown() {
 
     // And nothing else moved: exactly the exits O04-B08 settled.
     //
-    // DELIBERATE PIN UPDATE, card LOADER-ABI: five → four. The logging arm C1
-    // left the settled set when this fixture's `flb_error` declaration was
-    // corrected against C's `(const char *, ...)`; it crosses no acquisition,
-    // so it is unresolved carrying no site. See
-    // `o04_arms.rs::the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration`.
+    // Composed-tree reconciliation (LOADER-ABI × NEIGHBOURS-CHAINED-TAIL): back
+    // to the five O04-B08 settled. Card LOADER-ABI's measurement alone dropped
+    // the logging arm C1 from this set when the fixture's `flb_error` was
+    // corrected against C's `(const char *, ...)`; clause T5 admits the chained
+    // tail actual at the declared data tail that correction creates, so C1
+    // settles again. See
+    // `o04_arms.rs::the_declaration_decides_the_same_chain_in_a_variadic_tail`
+    // for the composed grounds and both cards' retained negative halves.
     assert_eq!(
         caller
             .exits
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Discharged)
             .count(),
-        4,
+        5,
         "the settled arms are unchanged; exits were {shape:?}"
     );
     assert_eq!(caller.status, AnalysisStatus::Unknown, "no promotion");
@@ -904,9 +907,12 @@ fn the_named_read_blocker_is_gone_and_the_success_exit_is_still_unknown() {
         .collect::<Vec<_>>();
     assert_eq!(
         unresolved.len(),
-        2,
-        "the success exit C6 and the logging arm are unresolved: {shape:?}"
+        1,
+        "the success exit C6 is still unresolved: {shape:?}"
     );
+    // Kept from LOADER-ABI's reconciliation of this pin: the unresolved exit is
+    // told apart by what it *carries*, not by its position, so a site-free
+    // unresolved exit could not rejoin this set unnoticed.
     let carrying = unresolved
         .iter()
         .filter(|exit| !exit.sites.is_empty())
@@ -959,17 +965,18 @@ fn the_success_exit_keeps_its_named_residual() {
     // still refused: eight `INDIRECT` refusals remain on C6's path, one fewer
     // than before this card (the routes-mask read).
     //
-    // DELIBERATE PIN UPDATE, card LOADER-ABI: nine, not eight. The ninth is not
-    // on C6's path and is not this card's: it is the `flb_error` chained tail
-    // actual on the `!chunk` arm, refused once that declaration is faithful to
-    // `(const char *, ...)` — the same single refusal card NEIGHBOURS pins
-    // under the production declarations (`NEIGHBOURS-CHAINED-TAIL`).
+    // Composed-tree reconciliation: back to eight. The ninth card LOADER-ABI
+    // recorded here was never on C6's path and was never this card's — it was
+    // the `flb_error` chained tail actual on the `!chunk` arm, refused while
+    // that corrected declaration had no rule to admit it. Clause T5 of card
+    // NEIGHBOURS-CHAINED-TAIL admits it at the declared data tail, so this
+    // count is again exactly B09/B10's territory.
     assert_eq!(
         remaining
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        9,
+        8,
         "B09/B10 territory is untouched: {:?}",
         caller.diagnostics
     );

@@ -93,6 +93,18 @@ type C really declares, and C's own object model, are premises from outside. -/
 #print axioms QCore.DeclaredAbiAgreement.the_refusal_vocabulary_has_no_duplicates
 #print axioms QCore.DeclaredAbiAgreement.every_refusal_is_in_the_vocabulary
 
+-- Composed-tree reconciliation with card NEIGHBOURS-CHAINED-TAIL's clause T5.
+-- The implementation withdraws a declaration by rewriting its call sites, not by
+-- clearing the tail set rederived from the retained texts, so the sentence that
+-- makes the composition safe is stated rather than assumed: no tail T5 may act
+-- on survives a withdrawal, and where the comparison agrees T5 decides exactly
+-- as it does without this card. The refusal half is discharged by T5's *own*
+-- premise, not by a rule invented here.
+#print axioms QCore.DeclaredAbiAgreement.a_withdrawn_declaration_supplies_no_tail
+#print axioms QCore.DeclaredAbiAgreement.an_agreeing_declaration_supplies_its_own_tail
+#print axioms QCore.DeclaredAbiAgreement.a_withdrawn_declaration_admits_no_tail_actual
+#print axioms QCore.DeclaredAbiAgreement.an_agreeing_declaration_leaves_t5_alone
+
 -- Composing two declarations of one name: C11 6.2.7p3, and no third reading.
 #print axioms QCore.DeclaredAbiAgreement.a_prototype_and_its_definition_compose
 #print axioms QCore.DeclaredAbiAgreement.two_agreeing_declarations_are_one

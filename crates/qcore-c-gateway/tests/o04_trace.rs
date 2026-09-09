@@ -225,85 +225,59 @@ fn real_caller(source: &str) -> LegacyFunctionSummary {
     function(program(&result), "flb_input_chunk_create").clone()
 }
 
-/// **The headline, and card LOADER-ABI's DELIBERATE WITHDRAWAL of half of it.**
+/// **The headline.** On the byte-verbatim upstream body, with the two declared
+/// callee premises added and every earlier card's premise set unchanged, the
+/// success exit **C6** discharges and `flb_input_chunk_create` reaches
+/// function-level `Safe`.
 ///
-/// O04-TRACE measured all six exits `Discharged` and `flb_input_chunk_create`
-/// reaching function-level `Safe` on the byte-verbatim upstream body. That
-/// result rested on the fixture's `flb_error` declaration naming **three**
-/// parameters beside a C prelude declaring the real
-/// `void flb_error(const char *format, ...)`: the chained tail actual
-/// `storage->stream->name` therefore sat at a *declared* `Borrowed` position,
-/// where O04-ARMS' chain admission decided it. Card LOADER-ABI's declared/C ABI
-/// comparison refuses that arity; under the faithful
-/// one-parameter-plus-`resource_variadic_data_tail` declaration the actual is a
-/// tail actual, and a chained read there is refused
-/// (`NEIGHBOURS-CHAINED-TAIL`).
+/// **Composed-tree reconciliation (LOADER-ABI × NEIGHBOURS-CHAINED-TAIL).** This
+/// headline was withdrawn by card LOADER-ABI measured alone, and is restored
+/// here on a *better* premise than the one it originally rested on. The fixture
+/// used to declare `flb_error` with three named parameters beside a C prelude
+/// declaring the real `void flb_error(const char *format, ...)`, so the chained
+/// tail actual `storage->stream->name` sat at a declared `Borrowed` position;
+/// LOADER-ABI refused that arity — a declaration may not name modes for
+/// parameters C never typed — and corrected it to one parameter plus
+/// `resource_variadic_data_tail()`. That correction is exactly what puts the
+/// actual at a **declared data tail**, which is the position clause **T5** of
+/// card NEIGHBOURS-CHAINED-TAIL admits a bounded typed access chain at. The two
+/// grounds compose rather than collide: T5's premise is satisfied *because* the
+/// declaration is faithful.
 ///
-/// **The withdrawal is a correction, not a regression.** Card NEIGHBOURS had
-/// already measured, on the *production* declarations where the real callee
-/// `flb_log_print` carries a declared tail, that this exact statement refuses
-/// and `flb_input_chunk_create` stays `Unknown`; O04-TRACE itself recorded that
-/// its discharge does not reach production (`O04-TRACE-REACH`). The fixture had
-/// been overstating the production result, and now agrees with it.
+/// The result is therefore the same six-exit ledger O04-TRACE measured, now
+/// resting on a premise C's own `...` supports instead of on two parameters
+/// that do not exist. What is **not** restored is any claim about production:
+/// `O04-TRACE-REACH` stands, and card NEIGHBOURS-CHAINED-TAIL's own corpus
+/// measurement is where the production effect is recorded.
 ///
-/// What survives is asserted below and is still this card's subject: **C6, the
-/// success exit, discharges**, escaping all three identities — that is the
-/// exit O04-TRACE existed to settle, and the nine-premise nested composition
-/// that settles it is untouched. Five of the six exits settle; the logging arm
-/// stays unresolved crossing no acquisition; exactly one refusal remains, on
-/// the chained tail actual; and no leak is alleged anywhere.
+/// **Retired by name:** the probe card LOADER-ABI added here (substituting the
+/// chained actual and asserting the whole-function result returned) is removed
+/// — with the baseline itself `Safe` it can no longer discriminate and would
+/// pass vacuously. Its claim lives where it is still live, in
+/// `o04_arms.rs::the_declaration_decides_the_same_chain_in_a_variadic_tail`.
 ///
 /// This is a claim about *this projection under the premises §4 of the report
 /// names*, most of them trusted declarations. It is not a proof that the C is
 /// correct, and it promotes no raw Cycle 19 unit.
 #[test]
-fn the_success_exit_discharges_and_only_the_chained_tail_actual_remains() {
+fn the_success_exit_discharges_and_the_caller_reaches_safe() {
     if !clang_available() {
         return;
     }
     let caller = real_caller(&real_unit());
-    assert_eq!(
-        caller
-            .diagnostics
-            .iter()
-            .map(|diagnostic| match &diagnostic.kind {
-                LegacyDiagnosticKind::Unsupported { description } => description.clone(),
-                other => format!("{other:?}"),
-            })
-            .collect::<Vec<_>>(),
-        vec!["indirect memory access is outside the resource projection".to_owned()],
-        "only the chained tail actual remains: {:?}",
+    assert!(
+        caller.diagnostics.is_empty(),
+        "no refusal remains: {:?}",
         caller.diagnostics
     );
-    // And it is that statement: withdrawing the chained actual alone restores
-    // the whole-function result, exactly as card NEIGHBOURS measures it.
-    let probed = real_caller(&real_unit().replace("storage->stream->name, name);", "name, name);"));
-    assert!(
-        probed.diagnostics.is_empty(),
-        "the surviving refusal is the chained tail actual and nothing else: {:?}",
-        probed.diagnostics
-    );
-    assert_eq!(probed.status, AnalysisStatus::Safe);
-    assert_eq!(caller.status, AnalysisStatus::Unknown);
+    assert_eq!(caller.status, AnalysisStatus::Safe);
     assert_eq!(caller.exits.len(), 6);
-    assert_eq!(
+    assert!(
         caller
             .exits
             .iter()
-            .filter(|exit| exit.custody == ExitCustody::Discharged)
-            .count(),
-        5,
-        "five exits settle: {:?}",
-        exit_shape(&caller)
-    );
-    assert_eq!(
-        caller
-            .exits
-            .iter()
-            .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
-            .count(),
-        1,
-        "the logging arm is unresolved and crosses no acquisition: {:?}",
+            .all(|exit| exit.custody == ExitCustody::Discharged),
+        "every exit settles: {:?}",
         exit_shape(&caller)
     );
     // C6, the success exit, escapes all three identities: the chunk and the
@@ -374,12 +348,13 @@ fn the_whole_per_exit_ledger_is_pinned() {
             (231, Discharged, vec![(206, Released)]),
             (225, Discharged, vec![(206, Released)]),
             (218, Discharged, vec![(206, Released)]),
-            // DELIBERATE PIN UPDATE, card LOADER-ABI: the logging arm at line
-            // 211 no longer discharges once `flb_error` is declared faithfully
-            // against `(const char *, ...)`. It crosses no acquisition, so it
-            // carries no site in either state; see
-            // `the_success_exit_discharges_and_only_the_chained_tail_actual_remains`.
-            (211, ExitCustody::Unknown, vec![]),
+            // Composed-tree reconciliation: the logging arm at line 211
+            // discharges again. Card LOADER-ABI's correction of `flb_error`
+            // to `(const char *, ...)` put its chained actual at a declared
+            // data tail, and clause T5 of card NEIGHBOURS-CHAINED-TAIL admits
+            // it there; see
+            // `the_success_exit_discharges_and_the_caller_reaches_safe`.
+            (211, Discharged, vec![]),
         ],
         "the whole per-exit ledger: {:?}",
         exit_shape(&caller)

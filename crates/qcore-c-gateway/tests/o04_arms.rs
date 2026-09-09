@@ -545,59 +545,141 @@ fn the_upstream_link_declarations_admit_both_chains() {
     );
 }
 
-/// The other half, pinned by card LOADER-ABI: the *same* chain read as a
-/// variadic **tail** actual is refused. The declaration cannot buy it — that
-/// is `NEIGHBOURS-CHAINED-TAIL`, and it is why this fixture's logging arm stops
-/// discharging once `flb_error` is declared faithfully.
+/// **The composed statement of cards LOADER-ABI and NEIGHBOURS-CHAINED-TAIL.**
+///
+/// This is the one statement where the two cards meet, so it carries both of
+/// their grounds rather than an average of them.
+///
+/// LOADER-ABI corrected this fixture's `flb_error` from three named parameters
+/// — modes for two parameters C never typed — to the faithful
+/// `(const char *, ...)` reading: one declared parameter plus
+/// `resource_variadic_data_tail()`. Measured alone, that moved
+/// `storage->stream->name` out of a declared `Borrowed` position and into a
+/// tail, where nothing then admitted it. CHAINED-TAIL's clause **T5** admits a
+/// tail actual that is exactly one admitted bounded typed access chain **at a
+/// position the callee's declaration covers with a declared data tail** — and
+/// the corrected declaration covers it with precisely that vocabulary.
+///
+/// Both grounds therefore hold at once, and they agree: T5's premise is
+/// satisfied *because* the declaration is now faithful, and LOADER-ABI's
+/// premise — that a declaration may only claim what C declares — is what makes
+/// the tail a tail. The admission is strictly better founded than the one it
+/// replaces: it rests on `resource_variadic_data_tail()`, which C's own
+/// `...` supports, instead of on a `resource_borrowed` mode asserted for a
+/// parameter that does not exist.
+///
+/// All three directions are pinned here, so neither card's fail-closed half can
+/// be lost to the other's admission:
+///
+/// 1. under the faithful declaration the chain in the tail is **admitted**;
+/// 2. drop the declared tail and the identical actual is **refused** — the
+///    position is decided by the declaration, not by the actual;
+/// 3. restore the *unfaithful* three-parameter declaration and it is refused
+///    again, this time by LOADER-ABI's ABI comparison, with its own key: a
+///    declaration C contradicts buys nothing, T5 or no T5.
 #[test]
-fn the_same_chain_in_a_variadic_tail_is_refused() {
-    let probe = chain_probe().replace(
-        "cio_log_error(storage->cio, storage->stream->name);",
-        "flb_error(0, storage->stream->name, 0);",
-    );
-    let summary = analyze_legacy_c_translation_unit(
-        &probe,
-        "probe",
-        &load("o04_arms_path.qcore", &arms_contracts()),
-    )
-    .expect("the upstream declarations tokenize");
-    let probe = function(&summary, "probe");
+fn the_declaration_decides_the_same_chain_in_a_variadic_tail() {
+    // The callee's own C declaration is present, so direction (3) can measure
+    // the ABI comparison rather than fall into `LOADER-ABI-UNDECLARED`: a name
+    // the unit never declares is not compared, and its contract applies
+    // whatever it says.
+    let probe = chain_probe()
+        .replace(
+            "cio_log_error(storage->cio, storage->stream->name);",
+            "flb_error(0, storage->stream->name, 0);",
+        )
+        .replace(
+            "struct cio_chunk *probe(struct flb_input_instance *in, int flags)",
+            "void flb_error(const char *format, ...);\n\
+             struct cio_chunk *probe(struct flb_input_instance *in, int flags)",
+        );
+    let measure = |contracts: &str| {
+        let summary = analyze_legacy_c_translation_unit(
+            &probe,
+            "probe",
+            &load("o04_arms_path.qcore", contracts),
+        )
+        .expect("the upstream declarations tokenize");
+        function(&summary, "probe").clone()
+    };
+
+    // (1) The faithful declaration: one parameter plus a declared data tail.
+    let admitted = measure(&arms_contracts());
     assert!(
-        unsupported(probe).contains(&INDIRECT),
-        "a chained read in a variadic tail must stay refused; diagnostics were {:?}",
-        unsupported(probe)
+        unsupported(&admitted).is_empty(),
+        "T5 admits the chain at a declared tail: {:?}",
+        unsupported(&admitted)
     );
-    assert_eq!(probe.status, AnalysisStatus::Unknown);
+    assert_eq!(admitted.status, AnalysisStatus::Safe);
+
+    // (2) The same declaration without the tail clause. The actual has not
+    // moved; only what the callee declares about its position has.
+    let untailed =
+        arms_contracts().replace("    ensures normal resource_variadic_data_tail();\n", "");
+    assert_ne!(untailed, arms_contracts(), "the tail clause was present");
+    let refused = measure(&untailed);
+    assert!(
+        !unsupported(&refused).is_empty(),
+        "without a declared tail the identical actual is refused: {:?}",
+        unsupported(&refused)
+    );
+    assert_eq!(refused.status, AnalysisStatus::Unknown);
+
+    // (3) LOADER-ABI's own half, on this very statement: the unfaithful
+    // three-parameter declaration this card corrected is withdrawn against the
+    // C declaration, and T5 does not rescue it.
+    let unfaithful = arms_contracts().replace(
+        "extern fn flb_error(format: ptr<const, u8>) -> unit\n\
+         contract {\n    requires resource_contract_v1;\n    \
+         ensures normal resource_borrowed(format);\n    \
+         ensures normal resource_variadic_data_tail();\n    \
+         ensures normal resource_return_none();\n};",
+        "extern fn flb_error(format: ptr<const, u8>, detail: ptr<const, u8>, name: ptr<const, u8>) -> unit\n\
+         contract {\n    requires resource_contract_v1;\n    \
+         ensures normal resource_borrowed(format);\n    \
+         ensures normal resource_borrowed(detail);\n    \
+         ensures normal resource_borrowed(name);\n    \
+         ensures normal resource_return_none();\n};",
+    );
+    assert_ne!(unfaithful, arms_contracts(), "the substitution applied");
+    let withdrawn = measure(&unfaithful);
+    assert!(
+        unsupported(&withdrawn).iter().any(|description| description
+            .contains("whose declared contract was withdrawn against its C declaration")),
+        "the unfaithful arity is still withdrawn: {:?}",
+        unsupported(&withdrawn)
+    );
+    assert_eq!(withdrawn.status, AnalysisStatus::Unknown);
 }
 
-/// **DELIBERATE PIN UPDATE, card LOADER-ABI — this card's headline is
-/// withdrawn on the fixture, and the withdrawal is the finding.**
+/// The card's headline, on real source: the logging arm C1 settles. Four of the
+/// caller's six exits are `Discharged`, the three cleanup arms still release the
+/// same acquisition site exactly once, and the logging arm crosses no
+/// acquisition at all.
 ///
-/// O04-ARMS measured the logging arm C1 settling: four `Discharged` exits, the
-/// three cleanup arms plus the logging arm. That discharge rested on this
-/// fixture's `flb_error` declaration naming **three** parameters, the arity of
-/// the call site, beside a C prelude declaring the real
-/// `void flb_error(const char *format, ...)`. The declaration therefore named
-/// custody modes for two parameters the C declaration never typed, which put
-/// the chained tail actual `storage->stream->name` at a *declared* `Borrowed`
-/// position where the chain admission decided it. Card LOADER-ABI's
-/// declared/C ABI comparison refuses that arity, the declaration is now the
-/// faithful one-parameter-plus-`resource_variadic_data_tail` form, and the arm
-/// no longer discharges.
+/// **Composed-tree reconciliation (LOADER-ABI × NEIGHBOURS-CHAINED-TAIL).** The
+/// number is O04-ARMS' original one; what carries it is not. This fixture's
+/// `flb_error` used to be declared with three named parameters — the arity of
+/// the call site — beside a C prelude declaring the real
+/// `void flb_error(const char *format, ...)`, so the chained tail actual
+/// `storage->stream->name` sat at a *declared `Borrowed`* position and the chain
+/// admission decided it there. Card LOADER-ABI refused that arity and corrected
+/// the declaration to the faithful one-parameter-plus-
+/// `resource_variadic_data_tail` form; measured alone, that moved the actual
+/// into a tail nothing then admitted, and the arm stopped discharging. Card
+/// NEIGHBOURS-CHAINED-TAIL's clause **T5** admits exactly that shape — one
+/// bounded typed access chain at a position the callee's declaration covers
+/// with a declared data tail — so on the composed tree the arm settles again,
+/// now on a premise C's own `...` supports rather than on modes asserted for
+/// parameters that do not exist.
 ///
-/// This is not a regression this card introduced in the analyzer: card
-/// NEIGHBOURS had already measured that the same arm does **not** discharge in
-/// *production*, where the real callee `flb_log_print` carries a declared tail
-/// and the same actual sits in it (`NEIGHBOURS-CHAINED-TAIL`,
-/// `neighbours.rs::the_constructor_keeps_exactly_one_refusal_under_production_declarations`).
-/// The fixture had been overstating the production result, and now agrees with
-/// it.
-///
-/// Both load-bearing halves are kept and asserted: the three cleanup arms still
-/// discharge the same acquisition site exactly once, and the logging arm still
-/// crosses **no** acquisition — it is `Unknown` with no site, never a residual.
+/// Neither card's fail-closed half is lost, and both are asserted rather than
+/// assumed: `the_declaration_decides_the_same_chain_in_a_variadic_tail` pins
+/// that dropping the tail clause refuses the identical actual and that the
+/// unfaithful three-parameter declaration is still withdrawn; the halves below
+/// are O04-ARMS' own.
 #[test]
-fn the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration() {
+fn the_logging_arm_discharges_under_the_declared_callee_premises() {
     if !clang_available() {
         return;
     }
@@ -610,8 +692,8 @@ fn the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration() {
         .collect::<Vec<_>>();
     assert_eq!(
         discharged.len(),
-        3,
-        "expected the three cleanup arms alone; exits were {:?}",
+        4,
+        "expected the three cleanup arms plus the logging arm; exits were {:?}",
         exit_shape(caller)
     );
     let cleanup = discharged
@@ -632,20 +714,18 @@ fn the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration() {
             .iter()
             .filter(|exit| exit.sites.is_empty())
             .count(),
-        0,
-        "the logging arm no longer discharges: {:?}",
+        1,
+        "the logging arm crosses no acquisition: {:?}",
         exit_shape(caller)
     );
-    // The half that survives: it crosses no acquisition, so it is unresolved
-    // rather than a residual, and nothing is alleged in the defect direction.
-    assert_eq!(
+    // It settles rather than merely avoiding an allegation: no exit on this
+    // path is left unresolved while crossing nothing.
+    assert!(
         caller
             .exits
             .iter()
-            .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
-            .count(),
-        1,
-        "the logging arm crosses no acquisition: {:?}",
+            .all(|exit| exit.custody != ExitCustody::Unknown || !exit.sites.is_empty()),
+        "no exit is unresolved while crossing nothing: {:?}",
         exit_shape(caller)
     );
     // No promotion: the function itself stays Unknown.
@@ -668,17 +748,17 @@ fn the_routes_mask_arm_records_its_named_residual() {
         .iter()
         .filter(|exit| exit.custody == ExitCustody::Unknown)
         .collect::<Vec<_>>();
-    // DELIBERATE PIN UPDATE, card LOADER-ABI: three, not two. The logging arm
-    // joins them once `flb_error` is declared faithfully against
-    // `(const char *, ...)`; see
-    // `the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration`.
-    // It carries **no** site, which is what separates it from the two arms this
-    // test is about, so the shape below is asserted per arm rather than over
-    // the whole set.
+    // Composed-tree reconciliation: back to two. Card LOADER-ABI's measurement
+    // alone put the logging arm here as a third, site-free entry; clause T5 of
+    // card NEIGHBOURS-CHAINED-TAIL settles it again at the corrected
+    // declaration, so this set is O04-ARMS' original pair. The per-arm shape
+    // below is kept rather than reverted to a whole-set assertion, because it
+    // is strictly sharper: it would fail if a site-free arm ever rejoined this
+    // set unnoticed.
     assert_eq!(
         unknown.len(),
-        3,
-        "expected the routes-mask arm, the success exit and the logging arm; exits were {:?}",
+        2,
+        "expected the routes-mask arm and the success exit; exits were {:?}",
         exit_shape(caller)
     );
     let carrying = unknown

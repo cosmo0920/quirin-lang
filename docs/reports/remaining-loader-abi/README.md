@@ -33,7 +33,7 @@ here rather than preserved.
 | What a disagreement does | withdraws the declaration for that unit: every call site is rewritten to a marked uncontracted callee refusing with a named key, and the name leaves the environment the derivation seeds. §2.2. |
 | Production findings | **one**: `flb_sds_create_len`'s `len` was declared `usize`; C declares `int len`. Corrected against the read upstream body. §4.1. |
 | Fixture findings | **seven**, in three families: five `const char *` parameters declared `ptr<mut, u8>`, one `double` result declared `u64` (NEIGHBOURS' own recorded instance), and one variadic callee declared at a call site's arity. §4.2. |
-| Cards corrected | **O04-ARMS**, **O04-B08**/**O04-B09B10**/**O04-READ-BOUND** and **O04-TRACE** each published a fixture result that rested on the three-parameter `flb_error` declaration. Every one of those results is re-measured and re-pinned here, with the load-bearing halves kept. §5. |
+| Cards corrected | **O04-ARMS**, **O04-B08**/**O04-B09B10**/**O04-READ-BOUND** and **O04-TRACE** each published a fixture result that rested on the three-parameter `flb_error` declaration. Every one of those results is re-measured and re-pinned here, with the load-bearing halves kept. §5. **On the composed tree they are restored** — card NEIGHBOURS-CHAINED-TAIL admits the same statement honestly at the corrected declaration; §10 reconciles all eleven pins. |
 | Corpus | 185 units re-measured through the canonical pinned route. See §6. |
 | Evidence | 13 new tests in a held-out `k_*` family (33 declared/C rows decided one by one) plus one new gateway control, 38 audited Lean theorems in a new `QCore.DeclaredAbiAgreement` namespace, no new axiom. |
 
@@ -505,7 +505,7 @@ Recorded as part of `LOADER-ABI-LP64` below.
 | **`LOADER-ABI-LP64`** | the scalar projection assumes the **LP64** data model of the audited targets: `long` and a pointer are eight bytes, so `unsigned long` admits `u64` and `usize`. The reader has no target, and nothing here consults one. On an LLP64 target (Windows) `unsigned long` is four bytes and the admission would be too wide; on ILP32 the pointer-width spellings would be too wide as well. The direction matters and is bounded: a projection that admits too much degrades to the *pre-card* behaviour for that position — the declaration applies, exactly as it did before this card — while one that admits too little withdraws, which is the refusing direction. Making the projection target-aware needs the compile target at the reader, which the certificate does not carry today. |
 | **`LOADER-ABI-SILENT-DEFINITION`** | when the withdrawn name is a function **defined** in the unit, the definition is then analysed contract-free and produces no diagnostic of its own; only its *callers* report the withdrawal. Fail-closed (no entry custody is assumed), but silent if nothing in the unit calls it. Pinned by `a_defined_function_is_withdrawn_from_its_own_callers`. |
 | **`LOADER-ABI-MODES`** | this card compares **types**. It does not compare a declared *mode* against anything the source says — nothing does, and nothing can without body-level evidence. A faithful signature with an unfaithful mode is exactly as trusted as before. |
-| **`NEIGHBOURS-CHAINED-TAIL`** (existing) | admitting a chained read whose final field is pointer-typed at a *variadic tail* actual would restore the O04 fixture results §5 corrects. It is checker work with a real soundness obligation, and this is a contract-comparison card. |
+| **`NEIGHBOURS-CHAINED-TAIL`** (existing) | admitting a chained read whose final field is pointer-typed at a *variadic tail* actual would restore the O04 fixture results §5 corrects. It is checker work with a real soundness obligation, and this is a contract-comparison card. **Closed by that card in the same wave; §10 reconciles the two on the composed tree.** |
 
 ---
 
@@ -547,3 +547,150 @@ Recorded as part of `LOADER-ABI-LP64` below.
 > promoted. Follow-ons: `LOADER-ABI-UNDECLARED`, `LOADER-ABI-LP64`,
 > `LOADER-ABI-WITHDRAWAL-UNSAFE`, `LOADER-ABI-SILENT-DEFINITION`,
 > `LOADER-ABI-MODES`. Evidence: `docs/reports/remaining-loader-abi/README.md`.
+
+---
+
+## 10. Composed-tree reconciliation with NEIGHBOURS-CHAINED-TAIL
+
+**Branch:** `reconcile-loader-abi-chained-tail`, from the integrator's merge
+commit `1e7d92e` (this card merged onto main *after* card
+[`NEIGHBOURS-CHAINED-TAIL`](../remaining-neighbours-chained-tail/README.md)).
+The failure-gated chain caught the predicted **semantic** conflict: 11 gateway
+tests failed on the composed tree, all of them pins §5 moved. Nothing else
+failed.
+
+### 10.1 The composed decision, from both cards' arguments
+
+The two cards meet on exactly one statement — the `flb_error` arm of the
+`!chunk` exit, tail actual `storage->stream->name` — and the question is whether
+T5's admission legitimately applies to it **under this card's corrected
+declaration**. It does, and the arguments compose rather than average:
+
+* **T5's premise is a declared data tail**, read from the callee: *a tail actual
+  at a position the callee's declaration covers with
+  `resource_variadic_data_tail()`, that is exactly one admitted bounded typed
+  access chain, is data.*
+* **This card's correction is what creates that position.** The old declaration
+  named three parameters — the call site's arity — so the actual sat at a
+  declared `Borrowed` position and O04-ARMS' chain rule decided it there. The
+  faithful declaration is `(format) + resource_variadic_data_tail()`, which is
+  what C's own `...` supports, so the actual is now a *tail* actual at a
+  *declared* tail.
+* **Neither ground is weakened by the other.** This card's ground is that a
+  declaration may claim only what C declares; it is *satisfied*, not overridden.
+  T5's ground is that the position is decided by the declaration, never by the
+  actual; it is satisfied by a declaration that is now faithful.
+
+So the composed answer is **admit**, and the admission is better founded than
+the one it replaces: it rests on the data-tail vocabulary C's `...` supports
+instead of on `resource_borrowed` modes asserted for two parameters that do not
+exist. The default-to-refusal rule was not needed — both arguments cover the
+composed case and agree.
+
+**Where the two could still have collided, they do not, and it is pinned.** The
+implementation withdraws a declaration by rewriting its call sites, *not* by
+clearing the tail set rederived from the retained texts — so a withdrawn
+declaration's text still mentions its tail. What makes that safe is that the
+rewritten call is uncontracted, so T5 is never consulted for it. That is
+asserted end-to-end in Rust (direction 3 below) and proved in Lean (§10.4).
+
+### 10.2 The eleven decisions, plus one the chain did not catch
+
+Every one is measured on the composed tree; **all eleven revert to the value the
+pre-LOADER-ABI card measured**, now carried by the faithful declaration.
+
+Row 6 was **not** in the failing set and is reconciled anyway: it still passed,
+because a second substitution card LOADER-ABI added to it merely became
+unnecessary. Leaving it would have silently weakened the control — it would go
+on substituting away a statement the analyzer now decides on byte-verbatim
+source — so it is reverted deliberately and recorded here rather than left to
+pass for the wrong reason.
+
+| # | test | LOADER-ABI claimed | CHAINED-TAIL claimed | composed measurement | decision | retained negative halves |
+|---|---|---|---|---|---|---|
+| 1 | `o04_arms::the_same_chain_in_a_variadic_tail_is_refused` | the chain in a tail is refused | T5 admits it at a declared tail | **admitted**, zero diagnostics | **renamed** `the_declaration_decides_the_same_chain_in_a_variadic_tail` and widened to decide all three directions in one test | (a) drop the tail clause → the identical actual refuses (both cards' "the declaration decides"); (b) restore the unfaithful three-parameter declaration → **withdrawn**, with this card's own key, and T5 does not rescue it |
+| 2 | `o04_arms::the_logging_arm_stops_discharging_…` | 3 `Discharged` | 4 (its baseline) | **4 `Discharged`** | **renamed back** to `the_logging_arm_discharges_under_the_declared_callee_premises` | the three cleanup arms still release one identical site; **added**: no exit is unresolved while crossing nothing |
+| 3 | `o04_arms::the_routes_mask_arm_records_its_named_residual` | 3 `Unknown` | 2 | **2 `Unknown`** | pin reverted | the per-arm shape LOADER-ABI introduced is **kept** — sharper than the original whole-set assertion, and it would catch a site-free arm rejoining the set |
+| 4 | `o04_b08::the_routes_mask_arm_discharges_under_the_declared_premises` | 5 → 4 `Discharged` | 5 | **5**, site vector `[0,1,1,1,2]` | pin reverted | C5 still identified **by shape** (two released sites), not by position; **added**: zero site-free `Unknown` exits |
+| 5 | `o04_b09b10::the_success_exit_residual_narrows_to_one_statement` | 1 `INDIRECT`, 4 `Discharged` | 0, 5 | **0 `INDIRECT`, 5 `Discharged`** | pin reverted | the whole ordered vector is still asserted; **retired by name**: LOADER-ABI's substitution probe (baseline and probe now agree, so it would pass vacuously) |
+| 6 | `o04_b09b10::the_logging_control_settles_every_exit` | needed a **second** substitution | one | **one suffices** | second substitution removed | the control is again one clearly labelled substitution; keeping the second would have substituted away a statement the analyzer now decides on verbatim source |
+| 7 | `o04_read_bound::the_named_read_blocker_is_gone_…` | 4 `Discharged`, 2 `Unknown` | 5, 1 | **5, 1** | pin reverted | the unresolved exit is still identified by what it **carries**, not by position |
+| 8 | `o04_read_bound::the_success_exit_keeps_its_named_residual` | 9 `INDIRECT` | 8 | **8** | pin reverted | the enumerated allow-list of remaining descriptions is unchanged |
+| 9 | `o04_trace::the_success_exit_discharges_and_only_the_chained_tail_actual_remains` | `Safe` **withdrawn**, 5 exits settle | all six settle, function `Safe` | **all six settle, `Safe`** | **renamed back** to `…_and_the_caller_reaches_safe`; the headline is restored on a *faithful* declaration | `O04-TRACE-REACH` still stands (no production claim); **retired by name**: LOADER-ABI's substitution probe, now vacuous |
+| 10 | `o04_trace::the_whole_per_exit_ledger_is_pinned` | `(211, Unknown, [])` | `(211, Discharged, [])` | **`(211, Discharged, [])`** | pin reverted | the whole ledger — every line, custody and site — is still pinned exactly |
+| 11 | `hash_contracts::the_clause_reproduces_…` / `…the_four_publications_decide_…` | vector gains an `INDIRECT`; count 0 → 1 | HASH-CLAUSE's two-entry vector; 0 | **two-entry vector; 0** | pins reverted | the four publications still decide and none is refused outside its premise; the **whole-vector** assertion LOADER-ABI added is kept over the count alone |
+
+No pin was weakened in either direction: every reverted count is accompanied by
+the sharper structural assertion this card introduced, and the two probes that
+composition made undiscriminating are retired **by name** rather than left to
+pass vacuously.
+
+### 10.3 Expected production delta for the integrator's consolidation
+
+**None beyond card NEIGHBOURS-CHAINED-TAIL's own**, and this is measured rather
+than argued: the declared/C ABI census was re-run on the composed tree over the
+same 183 preprocessed pinned units and is **byte-identical** to this card's own
+run — 1,168 `agreed`, **0 withdrawn**, 12 `undeclared`
+([`artifacts/abi-census-composed.txt.gz`](artifacts/abi-census-composed.txt.gz),
+byte-identical to [`artifacts/abi-census.txt.gz`](artifacts/abi-census.txt.gz)).
+In particular
+`flb_input_chunk.c`'s production tail callee `flb_log_print` **agrees**, so its
+declaration applies and T5 decides the L19581 leaf exactly as CHAINED-TAIL
+measured it alone.
+
+The composed 185-unit expectation is therefore the union of two disjoint,
+already-measured effects:
+
+| source | expected |
+|---|---|
+| NEIGHBOURS-CHAINED-TAIL | `flb_input_chunk.c` L19581 removed — `unsupported` 49896 → 49895, leak 271 unchanged, **zero** unit or function status moves |
+| LOADER-ABI (§6.1) | `contracts.json`: one module's retained text; `source-effects.json`: the three `checked_function_contract` identity digests that bind the contract environment; no diagnostic leaf |
+
+The full pinned corpus was **not** re-run here: the fixture evidence plus the
+composed census decides every pin, and §6.1 and CHAINED-TAIL's §4 already carry
+the two production measurements this composition adds nothing to.
+
+### 10.4 Lean
+
+Neither namespace stated a premise the composition falsifies —
+`QCore.ChainedTailActual` takes `declaredTail` as given and never asks where it
+came from, and `QCore.DeclaredAbiAgreement` models the comparison, which T5 does
+not affect. What was **missing** is the sentence tying them, so it is added
+rather than assumed (`QCore.DeclaredAbiAgreement`, four new theorems, no new
+axiom, audits 68 → 71 across the composed tree):
+
+* `a_withdrawn_declaration_supplies_no_tail` — the tail a consumer may act on is
+  the one carried by a declaration that is *applied*;
+* `a_withdrawn_declaration_admits_no_tail_actual` — therefore T5 admits **no**
+  tail actual for a withdrawn declaration, discharged by T5's *own*
+  `the_declaration_is_read_from_the_callee_never_from_the_actual`, not by a rule
+  invented for the composition;
+* `an_agreeing_declaration_supplies_its_own_tail` and
+  `an_agreeing_declaration_leaves_t5_alone` — the other direction, so the
+  addition is not a one-way weakening: where the comparison agrees, T5 decides
+  exactly as it does without this card.
+
+### 10.5 Gate on the reconciliation branch
+
+`cargo test --workspace --no-fail-fast`, `cargo fmt --all -- --check`,
+`cargo clippy --all-targets -- -D warnings`, both reevaluation probes and
+`python3 scripts/check_lean_audits.py` — **71 audits** on the composed tree,
+with `AuditDeclaredAbiAgreement.lean` at **42** audited theorems (38 + the four
+of §10.4) and no new axiom. `cargo test --workspace --no-fail-fast` on the composed tree:
+**2,696 passed, 0 failed, 8 ignored** — zero failures, so neither of the two
+recorded load-flakes (`vp04_vp07_vp08`, the confined-fixture test) was hit at
+all.
+
+**No production source file is touched by this reconciliation.** The whole diff
+is six test files, this report and the two Lean files: both cards' analyzer
+changes stand exactly as they merged, which is what makes this a reconciliation
+of *pins and arguments* rather than a third semantic change.
+
+### 10.6 What §5 now means
+
+§5 records what this card measured **alone**, and it stays as written: it is the
+true statement that the O04 fixture results rested on an unfaithful declaration.
+What it could not know is that the same wave supplied the rule that admits the
+statement honestly. Read §5 as the *cause* and §10 as the *composed outcome*;
+neither supersedes the other, and the fixture declarations stay corrected either
+way.
