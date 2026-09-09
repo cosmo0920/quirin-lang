@@ -5125,6 +5125,24 @@ fn require_live_borrowed_actuals(
         else {
             continue;
         };
+        // Card BORROW-RESIDUALS (`BORROW-LIVENESS-PRESTATE`): what this call's
+        // own declared effects destroy, resolved once against the same settled
+        // pre-state. Only `Released` destroys, exactly as only the `RELEASED`
+        // bit does in `borrow_liveness::custody_definitely_ended`; `Consumed`,
+        // `Stored` and `Removed` move or detach custody, and `Out` writes a
+        // slot.
+        let destroying = contract
+            .parameters
+            .iter()
+            .enumerate()
+            .map(|(index, mode)| {
+                matches!(mode, ResourceParameterMode::Released { .. })
+                    .then(|| arguments.get(index).and_then(Option::as_deref))
+                    .flatten()
+                    .and_then(|place| state.pointers.get(place))
+                    .map(denote_pointer)
+            })
+            .collect::<Vec<_>>();
         for (index, mode) in contract.parameters.iter().enumerate() {
             if !matches!(mode, ResourceParameterMode::Borrowed) {
                 continue;
@@ -5132,22 +5150,28 @@ fn require_live_borrowed_actuals(
             let Some(source) = arguments.get(index).and_then(Option::as_deref) else {
                 continue;
             };
-            if crate::may_alias::place_root(source) != Some(source) {
-                continue;
-            }
-            let pointer = state.pointers.get(source);
-            let decision = crate::borrow_liveness::borrowed_actual_liveness(
-                crate::borrow_liveness::BorrowSite {
-                    denotation: pointer.map(|pointer| crate::may_alias::Denotation {
-                        targets: &pointer.targets,
-                        unknown: pointer.unknown,
-                        may_be_null: pointer.may_be_null,
-                    }),
-                    resources: &state.resources,
-                    unresolved: &state.unresolved_effect_sites,
+            let denotation = state.pointers.get(source).map(denote_pointer);
+            // The path rule, on plain names only: a composite place carries
+            // O04-READ-BOUND's and O04-B09B10's strictly stronger `LIVE`
+            // requirement in this same pre-state (`BORROW-LIVENESS-PLACES`).
+            let path_refuses = crate::may_alias::place_root(source) == Some(source)
+                && crate::borrow_liveness::borrowed_actual_liveness(
+                    crate::borrow_liveness::BorrowSite {
+                        denotation,
+                        resources: &state.resources,
+                        unresolved: &state.unresolved_effect_sites,
+                    },
+                ) == crate::borrow_liveness::BorrowLiveness::DefinitelyNotLive;
+            // The same-call rule, on every place the projection settled: no
+            // other channel asks this call's own effects about its own reads,
+            // so there is nothing here to duplicate.
+            let call_refuses = crate::borrow_liveness::borrow_destroyed_by_this_call(
+                crate::borrow_liveness::SameCallSite {
+                    borrowed: denotation,
+                    destroying: &destroying,
                 },
-            );
-            if decision == crate::borrow_liveness::BorrowLiveness::DefinitelyNotLive {
+            ) == crate::borrow_liveness::SameCallBorrow::DestroyedByThisCall;
+            if path_refuses || call_refuses {
                 diagnostics.insert(LegacyDiagnostic {
                     function: cfg.function.clone(),
                     line: node.line,
@@ -5157,6 +5181,18 @@ fn require_live_borrowed_actuals(
                 });
             }
         }
+    }
+}
+
+/// One tracked pointer's binding, as [`crate::may_alias::Denotation`] reads it.
+///
+/// Borrowed rather than copied, so that neither of the two read-only decisions
+/// above can reach a mutable projection state.
+fn denote_pointer(pointer: &AbstractPointer) -> crate::may_alias::Denotation<'_> {
+    crate::may_alias::Denotation {
+        targets: &pointer.targets,
+        unknown: pointer.unknown,
+        may_be_null: pointer.may_be_null,
     }
 }
 

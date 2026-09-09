@@ -69,6 +69,54 @@
 //! `require_live_resource`, and that helper reports `UnknownAlias` for exactly
 //! this state. Matching it is consistency, not compromise.
 //!
+//! # The second decision: destroyed by the call that reads it
+//!
+//! Card BORROW-RESIDUALS takes the `BORROW-LIVENESS-PRESTATE` residual. The
+//! rule above reads the state *entering* the call, which is the standard
+//! reading of a precondition and stays that way. What it therefore never asked
+//! is the question that lives entirely **inside one call**: this call's own
+//! declared effects destroy the identity one of its own `Borrowed` positions
+//! reads.
+//!
+//! ```c
+//! y_retire(one, one);   /* declared: resource_released(dead), resource_borrowed(seen) */
+//! ```
+//!
+//! measured `Safe` with no diagnostics at this card's base, in both parameter
+//! orders, through two distinct names the projection settled to one identity,
+//! and through an aggregate member read.
+//!
+//! [`borrow_destroyed_by_this_call`] refuses it. The fact is a **must** fact of
+//! exactly the kind above — the projection settled *both* actuals to the same
+//! identity — and the reason it is refused rather than admitted is that the
+//! contract vocabulary carries **no ordering** between a callee's own declared
+//! effects. `resource_released(dead)` says the callee destroys that object;
+//! `resource_borrowed(seen)` says it reads this one; nothing anywhere says
+//! which happens first. An unproven call effect is `Unknown` (AGENTS.md hard
+//! invariant 1), so the projection declines to certify.
+//!
+//! Two bounds carried over deliberately, each mirroring the path rule:
+//!
+//! * **only `Released` destroys.** `Consumed`, `Stored` and `Removed` move or
+//!   detach custody without destroying — §C04.2 says `resource_consumed` "is
+//!   not a proof of destruction" — so a consumed-and-borrowed pair keeps its
+//!   existing answer, exactly as `ESCAPED` alone does on the path rule
+//!   ([`custody_definitely_ended`]). `Out` writes a slot and destroys nothing.
+//! * **settled denotations only.** Both sides must settle, so every scalar
+//!   actual is untouched. That matters concretely: the one declaration in the
+//!   pinned corpus carrying a released and a borrowed parameter at once is
+//!   `cio_chunk_close(chunk, delete)`, whose borrowed parameter is a scalar
+//!   flag — §C04.2 admits scalars in exactly that position and this rule must
+//!   never fire on it.
+//!
+//! Unlike the path rule this one is **not** restricted to plain names: a
+//! composite place is admitted on either side whenever the projection settled
+//! it. That is not a widening of `BORROW-LIVENESS-PLACES` — the path rule keeps
+//! its plain-name bound, because O04-READ-BOUND and O04-B09B10 already impose a
+//! strictly stronger `LIVE` requirement on those places *in the pre-state*.
+//! What they do not do, and what no other channel does, is ask this call's own
+//! effects about them.
+//!
 //! # What the refusal does not touch
 //!
 //! Nothing here writes to `AbstractState`, so `C02-P-ALIAS-LEAK-ORDER` is
@@ -186,6 +234,58 @@ pub(crate) fn borrowed_actual_liveness(site: BorrowSite<'_>) -> BorrowLiveness {
     match site.resources.get(&identity) {
         Some(status) if custody_definitely_ended(*status) => BorrowLiveness::DefinitelyNotLive,
         _ => BorrowLiveness::NotDecided,
+    }
+}
+
+/// What **one call's own declared effects** say about one of its `Borrowed`
+/// positions (card BORROW-RESIDUALS, `BORROW-LIVENESS-PRESTATE`).
+///
+/// Deliberately a separate type from [`BorrowLiveness`]. That decision is a
+/// fact about the *path* reaching the call; this one is a fact about the
+/// *call*, and the two are never conflated — this module's standing rule that
+/// separate relations stay separate code.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SameCallBorrow {
+    /// The projection settled this `Borrowed` actual and one of the same
+    /// call's `Released` actuals to **one** identity. The call destroys what it
+    /// reads, and no declaration orders the two.
+    DestroyedByThisCall,
+    /// Anything else. No claim is made in either direction and the existing
+    /// answer is preserved exactly.
+    NotDecided,
+}
+
+/// The facts of one call that one of its `Borrowed` actuals is decided against.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct SameCallSite<'a> {
+    /// What the `Borrowed` actual under decision denotes here, or `None` when
+    /// the projection binds it at all — every scalar actual is one.
+    pub(crate) borrowed: Option<Denotation<'a>>,
+    /// What the same call's **destroying** positions denote, in argument order.
+    /// A position whose declared mode does not destroy contributes `None`, and
+    /// so does one whose actual this projection does not bind.
+    pub(crate) destroying: &'a [Option<Denotation<'a>>],
+}
+
+/// Decide whether one call destroys the identity one of its own `Borrowed`
+/// positions reads.
+///
+/// Fails closed to [`SameCallBorrow::NotDecided`] on every shape either side
+/// has not settled; see the module header for the complete argument and for
+/// what each refusal preserves.
+pub(crate) fn borrow_destroyed_by_this_call(site: SameCallSite<'_>) -> SameCallBorrow {
+    let Some(identity) = site.borrowed.and_then(|borrowed| borrowed.settled()) else {
+        return SameCallBorrow::NotDecided;
+    };
+    if site
+        .destroying
+        .iter()
+        .flatten()
+        .any(|destroying| destroying.settled() == Some(identity))
+    {
+        SameCallBorrow::DestroyedByThisCall
+    } else {
+        SameCallBorrow::NotDecided
     }
 }
 
@@ -410,5 +510,179 @@ mod tests {
         assert_eq!(fixture.decide(), BorrowLiveness::DefinitelyNotLive);
         fixture.unresolved.insert(1);
         assert_eq!(fixture.decide(), BorrowLiveness::NotDecided);
+    }
+
+    // ----------------------------------------------------------------------
+    // Card BORROW-RESIDUALS, `BORROW-LIVENESS-PRESTATE`: destroyed by the call
+    // that reads it.
+    // ----------------------------------------------------------------------
+
+    /// One binding, as [`Denotation`] reads it.
+    struct Binding {
+        targets: BTreeSet<usize>,
+        unknown: bool,
+        may_be_null: bool,
+    }
+
+    impl Binding {
+        fn settled_at(site: usize) -> Self {
+            Self {
+                targets: BTreeSet::from([site]),
+                unknown: false,
+                may_be_null: false,
+            }
+        }
+
+        fn denote(&self) -> Denotation<'_> {
+            Denotation {
+                targets: &self.targets,
+                unknown: self.unknown,
+                may_be_null: self.may_be_null,
+            }
+        }
+    }
+
+    /// Decide one `Borrowed` actual against one call's destroying positions.
+    fn same_call(borrowed: Option<&Binding>, destroying: &[Option<&Binding>]) -> SameCallBorrow {
+        let destroying = destroying
+            .iter()
+            .map(|binding| binding.map(Binding::denote))
+            .collect::<Vec<_>>();
+        borrow_destroyed_by_this_call(SameCallSite {
+            borrowed: borrowed.map(Binding::denote),
+            destroying: &destroying,
+        })
+    }
+
+    /// The headline of this residual: one call that releases and borrows the
+    /// same settled identity. Measured `Safe` with no diagnostics at the base.
+    #[test]
+    fn a_call_that_destroys_the_identity_it_reads_is_refused() {
+        let one = Binding::settled_at(1);
+        assert_eq!(
+            same_call(Some(&one), &[Some(&one)]),
+            SameCallBorrow::DestroyedByThisCall
+        );
+    }
+
+    /// Two *distinct* names the projection settled to one identity — the
+    /// definite-alias shape — answer the same way, because the decision is over
+    /// identities and not over names.
+    #[test]
+    fn two_names_settled_to_one_identity_are_refused() {
+        let (one, two) = (Binding::settled_at(1), Binding::settled_at(1));
+        assert_eq!(
+            same_call(Some(&one), &[Some(&two)]),
+            SameCallBorrow::DestroyedByThisCall
+        );
+    }
+
+    /// Position order is not consulted: a released position after the borrowed
+    /// one refuses exactly as one before it does, so the answer cannot be an
+    /// artefact of the parameter loop's direction.
+    #[test]
+    fn the_decision_does_not_depend_on_position_order() {
+        let (one, other) = (Binding::settled_at(1), Binding::settled_at(2));
+        assert_eq!(
+            same_call(Some(&one), &[Some(&other), Some(&one)]),
+            SameCallBorrow::DestroyedByThisCall
+        );
+        assert_eq!(
+            same_call(Some(&one), &[Some(&one), Some(&other)]),
+            SameCallBorrow::DestroyedByThisCall
+        );
+    }
+
+    /// A different identity at the destroying position is exactly the ordinary
+    /// well-formed call, and it must keep its existing answer.
+    #[test]
+    fn a_distinct_identity_is_not_decided() {
+        let (one, other) = (Binding::settled_at(1), Binding::settled_at(2));
+        assert_eq!(
+            same_call(Some(&one), &[Some(&other)]),
+            SameCallBorrow::NotDecided
+        );
+    }
+
+    /// A call with no destroying position at all — the overwhelming majority —
+    /// is untouched.
+    #[test]
+    fn a_call_that_destroys_nothing_is_not_decided() {
+        let one = Binding::settled_at(1);
+        assert_eq!(
+            same_call(Some(&one), &[None, None]),
+            SameCallBorrow::NotDecided
+        );
+        assert_eq!(same_call(Some(&one), &[]), SameCallBorrow::NotDecided);
+    }
+
+    /// **The production shape.** `cio_chunk_close(chunk, delete)` is the one
+    /// declaration in the pinned corpus carrying a released and a borrowed
+    /// parameter at once, and its borrowed parameter is a scalar flag. §C04.2
+    /// admits scalars in exactly that position, and an unbound actual is how
+    /// every scalar reaches this decision.
+    #[test]
+    fn a_scalar_borrowed_actual_is_not_decided() {
+        let one = Binding::settled_at(1);
+        assert_eq!(same_call(None, &[Some(&one)]), SameCallBorrow::NotDecided);
+    }
+
+    /// Every way either side fails to settle fails closed, whatever the other
+    /// side is.
+    #[test]
+    fn an_unsettled_binding_on_either_side_is_not_decided() {
+        let settled = Binding::settled_at(1);
+        let unsettled = [
+            Binding {
+                targets: BTreeSet::from([1]),
+                unknown: true,
+                may_be_null: false,
+            },
+            Binding {
+                targets: BTreeSet::from([1]),
+                unknown: false,
+                may_be_null: true,
+            },
+            Binding {
+                targets: BTreeSet::from([1, 2]),
+                unknown: false,
+                may_be_null: false,
+            },
+            Binding {
+                targets: BTreeSet::new(),
+                unknown: false,
+                may_be_null: false,
+            },
+        ];
+        for binding in &unsettled {
+            assert_eq!(
+                same_call(Some(binding), &[Some(&settled)]),
+                SameCallBorrow::NotDecided,
+                "an unsettled borrowed actual must never be decided"
+            );
+            assert_eq!(
+                same_call(Some(&settled), &[Some(binding)]),
+                SameCallBorrow::NotDecided,
+                "an unsettled destroying actual must never decide anything"
+            );
+        }
+    }
+
+    /// The two decisions are independent: neither reads the other's inputs.
+    /// The same-call rule consults no status bitmap at all, so an identity the
+    /// path rule admits is still refused when this call destroys it.
+    #[test]
+    fn the_same_call_rule_reads_no_status() {
+        let one = Binding::settled_at(1);
+        assert_eq!(
+            Fixture::settled(LIVE).decide(),
+            BorrowLiveness::NotDecided,
+            "the path rule admits a live identity"
+        );
+        assert_eq!(
+            same_call(Some(&one), &[Some(&one)]),
+            SameCallBorrow::DestroyedByThisCall,
+            "…and the same-call rule still refuses it"
+        );
     }
 }

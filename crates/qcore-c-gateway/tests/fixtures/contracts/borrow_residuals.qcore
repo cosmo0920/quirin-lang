@@ -1,0 +1,116 @@
+module contract;
+
+// BORROW-RESIDUALS — held-out generic API for the four BORROW-LIVENESS
+// residuals (-PRESTATE, -PLACES, -OUT, -ASSUMPTION).
+//
+// Deliberately unrelated to ChunkIO, Fluent Bit, C02-P's `b_*`, O04's `g_*`,
+// O04-ARMS's `h_*`, O04-B08's `k_*` and O04-READ-BOUND's `r_*` families: every
+// rule under test is stated over declared C types and contract modes, so no
+// name here can matter. These are synthetic trusted test assumptions, not facts
+// about any library.
+
+// The child resource and the aggregate that can hold it.
+extern fn y_take(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn y_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn y_release(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn y_drop(b: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(b, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn y_probe(h: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+extern fn y_count(n: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};
+
+// BORROW-LIVENESS-PRESTATE, the exact shape the residual names: one call that
+// releases one argument and borrows another. Both positions are declared, so
+// the caller-side obligation is read in the call's pre-state.
+extern fn y_retire(dead: ptr<mut, u8>, seen: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(dead, nonnull);
+    ensures normal resource_borrowed(seen);
+    ensures normal resource_return_none();
+};
+
+// The mirror order, so the answer cannot be an artefact of the parameter loop
+// visiting the released position first.
+extern fn y_retire_late(seen: ptr<mut, u8>, dead: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(seen);
+    ensures normal resource_released(dead, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The production shape of the same pair, mirroring `cio_chunk_close(chunk,
+// delete)`: the only declaration in the pinned corpus that carries a released
+// and a borrowed parameter at once, and its borrowed parameter is a scalar
+// flag. §C04.2 admits scalars in exactly that position, so no rule here may
+// fire on it.
+extern fn y_close(dead: ptr<mut, u8>, delete: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(dead, nonnull);
+    ensures normal resource_borrowed(delete);
+    ensures normal resource_return_none();
+};
+
+// A consuming counterpart. `resource_consumed` "is not a proof of destruction"
+// (§C04.2), so a consumed-and-borrowed pair keeps its existing answer exactly
+// as `ESCAPED` alone does on the path rule.
+extern fn y_hand_over(gone: ptr<mut, u8>, seen: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(gone, nonnull);
+    ensures normal resource_borrowed(seen);
+    ensures normal resource_return_none();
+};
+
+// BORROW-LIVENESS-OUT: a slot-writing callee.
+extern fn y_fill(destination: ptr<mut, ptr<mut, u8>>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_out(destination, nonnull);
+    ensures normal resource_return_none();
+};
+
+// An Out position beside a Borrowed one, so the two preconditions can be
+// measured against each other inside a single call.
+extern fn y_fill_from(destination: ptr<mut, ptr<mut, u8>>, seen: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_out(destination, nonnull);
+    ensures normal resource_borrowed(seen);
+    ensures normal resource_return_none();
+};

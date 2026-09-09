@@ -400,6 +400,17 @@ fn the_accessor_result_mode_is_load_bearing() {
 /// parameter makes the projection discharge the obligation instead — which is
 /// exactly why the declared mode had to be read off the body, and why the
 /// faithful one is `borrowed`.
+///
+/// **Pin updated deliberately, card BORROW-RESIDUALS.** This body passes `h`
+/// twice, so the *substituted* declaration additionally describes a call that
+/// releases and borrows one identity, with nothing ordering the two — the shape
+/// `BORROW-LIVENESS-PRESTATE` names. The mutated run is therefore now `Unknown`
+/// rather than `Safe`. The load-bearing halves are unchanged and both are still
+/// asserted: the faithful mode leaks and the substituted one **discharges** the
+/// obligation. What moved is the published class of the deliberately unfaithful
+/// declaration, and it moved in the refusing direction. The faithful
+/// declaration has no released position at all, so no rule of that card can
+/// reach it — asserted below.
 #[test]
 fn the_routes_mask_mode_is_load_bearing_in_both_directions() {
     if !clang_available() {
@@ -414,6 +425,14 @@ fn the_routes_mask_mode_is_load_bearing_in_both_directions() {
         "borrowed moves nothing, so the caller still leaks: {:?}",
         borrowed.diagnostics
     );
+    assert!(
+        !borrowed
+            .diagnostics
+            .iter()
+            .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::UnknownAlias { .. })),
+        "the faithful declaration releases nothing, so BORROW-RESIDUALS cannot reach it: {:?}",
+        borrowed.diagnostics
+    );
 
     let releasing = GENERIC.replace(
         "    ensures normal resource_borrowed(mask);",
@@ -421,9 +440,29 @@ fn the_routes_mask_mode_is_load_bearing_in_both_directions() {
     );
     assert_ne!(releasing, GENERIC, "the substitution must actually happen");
     let result = analyze_with(&releasing, body, "w_g8");
+    let mutated = match &result {
+        UnrestrictedLegacyResult::Unknown {
+            partial: Some(summary),
+            ..
+        } => summary
+            .functions
+            .get("w_g8")
+            .expect("missing `w_g8`")
+            .clone(),
+        other => panic!("expected a projection for the substituted declaration: {other:?}"),
+    };
     assert!(
-        matches!(result, UnrestrictedLegacyResult::Safe(_)),
-        "a releasing mask parameter would discharge the obligation: {result:?}"
+        leaks(&mutated).is_empty(),
+        "a releasing mask parameter still discharges the obligation: {:?}",
+        mutated.diagnostics
+    );
+    assert!(
+        mutated.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "h"
+        )),
+        "…and the substituted declaration now releases and borrows one identity: {:?}",
+        mutated.diagnostics
     );
 }
 
@@ -695,9 +734,14 @@ fn the_remaining_production_blocker_is_one_uncontracted_neighbour() {
     let result = analyze_real(&source, &without);
     let summary = function(program(&result), "flb_input_chunk_create").clone();
     let refusals = unsupported(&summary);
+    // Card BORROW-RESIDUALS: `clippy::manual_contains` on this byte-identical
+    // expression was cache-masked in earlier gates and surfaced when this
+    // card's gateway edit invalidated this target's cached check. Rewritten to
+    // clippy's own suggestion; the assertion and its message are unchanged.
     assert!(
-        refusals.iter().any(|text| *text
-            == "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"),
+        refusals.contains(
+            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
+        ),
         "the production refusal is reproduced by withdrawing one neighbour: {refusals:?}"
     );
     // The gate is still decided — the neighbour affects the tail actual, not
