@@ -170,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "10.0.0",
+  "qcore_schemas_rust_api": "11.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Existing wire bytes are unchanged and pinned by crates/qcore-schemas/tests/counter_request_wire.rs.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -5671,10 +5671,10 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2471,
+  "workspace_tests": 2508,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 63,
+  "lean_audits": 64,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5709,6 +5709,7 @@
    "AuditEpochSourceLowering.lean",
    "AuditErrorPayload.lean",
    "AuditExternCall.lean",
+   "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
@@ -5746,7 +5747,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14c.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14g.json)"
  },
  "named_followups": [
   {
