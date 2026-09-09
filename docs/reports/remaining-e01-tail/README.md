@@ -16,7 +16,7 @@ CT coverage stays 32/50 mapped and full language conformance stays false.
 |---|---|---|
 | **E01-F1-STDIN** | **Repaired.** Attribution moves from the marker's file *name* to the include *depth* those markers describe, so a `#line` can move no definition into or out of the audited scope and the rule is identical for a `<stdin>` unit and a declared-file unit. No transport, identity or published byte changed. | none (§4) |
 | **E01-F1-DENOM** | **Repaired, deliberately strict.** A whole-unit `Safe` now requires every selected definition to carry an analysed row. Two pinned expectations updated, each keeping its load-bearing half. | none — measured reach **0** (§3.1) |
-| **E01-F1-COST** | **Measured, not built.** The extra `clang -E` costs a median 53.4 ms against the published `-E -P`'s 53.2 ms, but the audit route already computes it exactly **once per unit**, so a sound input-keyed skip would eliminate **zero** preprocessings. Two *larger* pre-existing redundancies were found and are named, not repaired. | none |
+| **E01-F1-COST** | **Measured; the hypothesised cache declined on measured grounds.** The extra `clang -E` costs a median 53.4 ms against the published `-E -P`'s 53.2 ms. A sound input-keyed skip does exist and its argument is recorded — but on the plain route the enumeration already runs **exactly once per unit**, so it would save nothing, and on the source-contract route the *right* repair is inventory sharing, not caching. Three redundancies found and named, two of them larger than the cost the residual names. | none |
 
 ---
 
@@ -342,71 +342,99 @@ asked for.
 
 ### 5.2 …and how much of a run that is
 
-`strace -f -e trace=execve` over the whole `chunkio-core` configured audit
-(13 units, `qcore-audit`, exit 0, reproducing its recorded
-0 Safe / 2 provisional Unsafe / 11 Unknown):
+`strace -f -e trace=execve` over two whole configured audits, each reproducing
+its recorded result exactly (§7.4):
 
-| Clang invocations | count | per unit |
-|---|---|---|
-| `-E` (enumeration) | **13** | **1.0** |
-| `-E -P` (published) | 26 | 2.0 |
-| `-fsyntax-only` | 26 | 2.0 |
-| `--version` (discovery probe) | 94 | 7.2 |
-| `-dumpmachine` (identity capture) | 1 | — |
-| total Clang processes | 160 | 12.3 |
+| Clang invocations | `chunkio-core` (13 units) | per unit | `cmetrics-counter` (1 unit, source contracts) | per unit |
+|---|---|---|---|---|
+| `-E` (enumeration) | **13** | **1.0** | **2** | **2.0** |
+| `-E -P` (published) | 26 | 2.0 | 3 | 3.0 |
+| `-fsyntax-only` | 26 | 2.0 | 12 | 12.0 |
+| `--version` (discovery probe) | 94 | 7.2 | 28 | 28.0 |
+| `-dumpmachine` | 1 | — | 3 | — |
+| total Clang processes | 160 | 12.3 | 48 | 48.0 |
 
-Wall clock for the same audit without `strace`: **20.79 s** (user 15.57 s) under
+Wall clock for `chunkio-core` without `strace`: **20.79 s** (user 15.57 s) under
 concurrent load. Thirteen enumeration preprocessings at the measured median are
-≈ 0.69 s, so the enumeration is **20 % of the Clang invocations that do real
-work** and **≈ 3 % of wall clock**.
+≈ 0.69 s, so on that route the enumeration is **20 % of the Clang invocations
+that do real work** and **≈ 3 % of wall clock**.
 
-### 5.3 Is a sound skip available? Yes. Is it worth building? No.
+### 5.3 A sound skip does exist — and it is the wrong tool
 
 **The key would be sound.** The enumeration's output is a function of exactly
 one subprocess invocation: the Clang program path, the complete argument vector,
 the working directory and the piped source bytes. Equal key ⇒ identical process
 ⇒ identical output, under the premise that the filesystem is unchanged for the
 duration of one audit run — which the `-E -P` run already assumes. Every
-component of that key is bound by `CompileTaskIdentity` already (clang
+component of that key is bound by `CompileTaskIdentity` already (Clang
 program/version/target, the complete ordered argument vector, the dialect, the
 ordered transported options, the compile working directory, the raw source
 bytes, `source_input`), so this is a cache keyed on inputs the identity binds,
-not a content-weaker one.
+not a content-weaker one. That argument is recorded here so a future card need
+not re-derive it.
 
-**It would save nothing.** The measurement above is decisive: `-E` runs
-**exactly once per unit**, 13 for 13. E01-F1's `analyze_unrestricted_c11_with_
-inventory` entry point — added for precisely this reason — already shares the
-one enumeration between the driver, the projection and the source-contract
-route, and the pinned Cycle 19 adapter enumerates once at
-`compiler/examples/support/cycle19_compatibility.rs:608` and hands the inventory
-down. There is no redundant call for a cache to eliminate on the production
-route.
+**But the measurement says a cache is not what is missing.** Two routes, two
+different answers:
 
-**Decision: record the measurement and leave it.** Adding a process-global memo
-that eliminates zero invocations would introduce shared mutable state — with its
-own staleness question across a long-running process — for no measured benefit.
-The soundness argument above is recorded so that a future card which *does*
-create redundancy can adopt it without re-deriving it.
+* on `chunkio-core` the enumeration runs **exactly once per unit** — 13 for 13.
+  E01-F1's `analyze_unrestricted_c11_with_inventory` entry point, added for
+  precisely this reason, already shares the one enumeration, and the pinned
+  Cycle 19 adapter enumerates once at
+  `compiler/examples/support/cycle19_compatibility.rs:608` and hands the
+  inventory down. A cache would eliminate nothing;
+* on `cmetrics-counter` it runs **twice for one unit**, and the second call is
+  not a repeat of the first from a different caller — it is
+  `qcore_c_gateway::boolean_source` at line 747, which calls
+  `enumerate_source_definitions(unit)` for itself to build the typed Boolean
+  importer's own denominator.
 
-### 5.4 Two larger redundancies found while measuring
+That second call is a redundancy, and a cache *would* remove it. It should not
+be removed that way. E01-F1's own stated reason for the `_with_inventory` entry
+point was that sharing
 
-Both are pre-existing, both are bigger than the cost E01-F1-COST names, and
-neither is this card's to repair. Named for the follow-on ledger:
+> guarantees the analyzer's selection is *the same inventory the report
+> publishes*, rather than a second, possibly divergent, computation of it
 
+and `boolean_source` is exactly such a second computation. Passing it the
+inventory the driver already holds is strictly better than caching the
+subprocess behind it: no process-global state, no staleness question, no
+key-equality argument to get right — and it closes a *correctness* seam (two
+denominators that could in principle disagree) rather than only a cost one.
+
+**Decision: record the measurement, and build neither here.** The cache is
+declined on measured grounds: on the route where it would save nothing it is
+pure risk, and on the route where it would save something the right repair is
+sharing, which lives in the source-contract plumbing rather than in the
+enumeration. It is named below with its measurement so the follow-on has the
+evidence it needs.
+
+### 5.4 Three redundancies found while measuring
+
+All pre-existing, all sized here, none repaired by this card. Named for the
+follow-on ledger:
+
+* **E01-TAIL-COST-SHARE** — `qcore_c_gateway::boolean_source` (line 747)
+  computes its own enumeration instead of taking the driver's, so a unit on a
+  configured source-contract route enumerates **twice** (measured 2 for 1 unit
+  on `cmetrics-counter`). The repair is to thread the inventory through, in the
+  shape E01-F1 already established, **not** to cache; that also removes a second
+  computation of the denominator that could diverge from the published one.
 * **E01-TAIL-COST-DOUBLE-PP** — the *published* `-E -P` runs **twice per unit**
-  (26 for 13). `qcore_audit::lib.rs:398` computes the effective preprocessing
-  input for the compile-task identity, and
+  on the plain route (26 for 13). `qcore_audit::lib.rs:398` computes the
+  effective preprocessing input for the compile-task identity, and
   `analyze_unrestricted_c11_with_inventory` computes the same text again for the
   analysis. This is twice the cost the enumeration adds.
 * **E01-TAIL-COST-DISCOVERY** — `qcore_c_gateway::clang::command()` re-probes
   the executable with `clang --version` on every call, so nearly every real
   Clang invocation is preceded by a second Clang process: 94 probes for 65
-  working invocations, at a measured median 28.1 ms each (≈ 2.6 s of the 20.8 s
-  run). `QCORE_CLANG` being set does not skip the probe.
+  working invocations on `chunkio-core`, 28 for 17 on `cmetrics-counter`, at a
+  measured median 28.1 ms each (≈ 2.6 s of the 20.8 s `chunkio-core` run).
+  Setting `QCORE_CLANG` does not skip the probe.
 
-Sizing these two against §5.1: per unit, the enumeration adds ~53 ms; the
-duplicate published preprocessing adds ~53 ms; the discovery probes add
-~7 × 28 ms ≈ 200 ms.
+Sizing against §5.1, per unit on the plain route: the enumeration adds ~53 ms;
+the duplicate published preprocessing adds ~53 ms; the discovery probes add
+~7 × 28 ms ≈ 200 ms. **The cost E01-F1-COST named is the smallest of the
+three.**
 
 ---
 
@@ -497,6 +525,7 @@ not about this repository.
 | pinned 185-unit audit, `--pinned-evidence` route | <!-- CORPUS --> |
 | `chunkio-core` configured audit | exit 0; 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown — its recorded result, unchanged |
 | `libevent-core` configured audit | exit 0; 21 units, 0 Safe / 4 provisional Unsafe / 17 Unknown — G03-F's recorded result, unchanged (§7.4) |
+| `cmetrics-counter` configured audit (with source contracts) | exit 0; 1 unit, 0 Safe / 1 provisional Unsafe / 0 Unknown; 1 checked function contract / 6 Unknown — its recorded result, unchanged |
 
 New tests: 9 integration (`e01_stdin_attribution.rs` 5,
 `e01_denominator_coverage.rs` 4) plus 3 reader-level unit tests.
@@ -528,10 +557,15 @@ corpus audits were running concurrently on this host, and **passed on the
 immediately following run**, which is the 2,548-passed figure above. Its
 assertion is untouched.
 
-### 7.4 Two second-source-set audits as independent controls
+### 7.4 Three configured audits as independent controls
 
-Both configured routes were run at this branch and reproduce their recorded
+All three configured routes were run at this branch and reproduce their recorded
 results exactly, so this card's two repairs are visible to be inert there:
+
+* **`cmetrics-counter`** (with `QCORE_SOURCE_CONTRACTS`, the only route that
+  exercises the typed Boolean importer) — 1 unit, 0 Safe / 1 provisional Unsafe
+  / 0 Unknown, 1 checked function contract / 6 Unknown, no whole-unit
+  promotion.
 
 * **`chunkio-core`** — 13 units, 0 Safe / 2 provisional Unsafe / 11 Unknown;
   0 enumeration refusals, 0 unanalyzable, 0 `Safe` units with unprojected
@@ -575,8 +609,11 @@ not interact.
   along with a definition nothing read, deliberately (§3.2). A decided
   "absent from this translation unit" excuse is the shape of the follow-on if
   the strictness ever costs a real unit.
-* **E01-TAIL-COST-DOUBLE-PP**, **E01-TAIL-COST-DISCOVERY** — the two measured
-  redundancies, each larger than the enumeration's cost (§5.4).
+* **E01-TAIL-COST-SHARE**, **E01-TAIL-COST-DOUBLE-PP**,
+  **E01-TAIL-COST-DISCOVERY** — the three measured redundancies. The first is
+  also a correctness seam (a second, independent computation of the
+  denominator); the other two are each larger than the cost E01-F1-COST names
+  (§5.4).
 * **E01-TAIL-REASON-ROWS** — the two free-text reasons this card introduces do
   not classify through `qcore_schemas::reason::REASON_RULES`, so a row carrying
   one would publish `reason_code: null`. That is the documented fail-closed
