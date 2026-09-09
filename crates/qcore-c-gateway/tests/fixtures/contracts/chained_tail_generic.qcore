@@ -1,0 +1,73 @@
+module contract;
+
+// NEIGHBOURS-CHAINED-TAIL — the held-out generic `y_*` API.
+//
+// Deliberately unrelated to ChunkIO, to Fluent Bit and to the `g_*` (O04),
+// `h_*` (O04-ARMS), `k_*` (O04-B08), `r_*` (O04-READ-BOUND), `m_*`
+// (O04-B09B10), `v_*` (O04-TRACE), `p_*` (HASH-CONTRACTS), `w_*`
+// (PROD-CONTRACTS) and `n_*` (NEIGHBOURS) families. Every premise this card
+// implements is stated over declared C types and contract modes, so no name
+// here can matter; the family exists so the admission and every one of its
+// refusals can be exercised without the real subject's premises in scope.
+//
+// Nothing here is a production declaration and nothing here is derived from any
+// C body: these are synthetic premises about a synthetic API.
+
+// --- acquisition and release ----------------------------------------------
+extern fn y_open(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn y_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- the variadic data tail this card widens -------------------------------
+// One named parameter, then a declared data tail: the callee takes no custody
+// of, and retains no pointer to, any argument beyond `fmt`. A TRUSTED
+// ASSUMPTION about a synthetic callee, admitting nothing on its own.
+extern fn y_log(fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_return_none();
+    ensures normal resource_variadic_data_tail();
+};
+
+// --- the SAME shape with NO declared tail, for the negative control --------
+extern fn y_plain(fmt: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_return_none();
+};
+
+// --- a custody-taking position, so the chain can be aimed at one -----------
+extern fn y_eat(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- a neutral accessor, so premise N9 can be exercised unchanged ----------
+extern fn y_id(h: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+// --- a borrowing position, the route this card's admission mirrors ---------
+extern fn y_borrow(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};

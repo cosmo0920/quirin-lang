@@ -511,6 +511,25 @@ pub(crate) fn borrowed_actual_spans(
     spans
 }
 
+/// Whether `slice` is **exactly** one admitted bounded typed access chain —
+/// nothing before it, nothing after it.
+///
+/// This is the primitive both consumers of the whitelist share. Card
+/// NEIGHBOURS-CHAINED-TAIL added the second one: an actual at a **declared
+/// variadic data tail** position of a contracted call
+/// ([`crate::variadic_nested`]). Both consumers read the *same* premises (1)-(4)
+/// from the module header over the *same* declaration facts; they differ only in
+/// what the callee's declaration says about the position, which is premise (5)
+/// and is decided by the declaration alone, never by the actual.
+pub(crate) fn is_admitted_access_chain(
+    slice: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &UntrackedBases,
+) -> bool {
+    bases.readable && admitted_access(slice, 0, model, types, &bases.risky) == Some(slice.len())
+}
+
 /// Whether `right` is exactly one admitted direct member access, so that an
 /// assignment from it binds a value carrying no tracked identity.
 pub(crate) fn is_opaque_field_read(
@@ -519,7 +538,7 @@ pub(crate) fn is_opaque_field_read(
     types: &FunctionTypes,
     bases: &UntrackedBases,
 ) -> bool {
-    bases.readable && admitted_access(right, 0, model, types, &bases.risky) == Some(right.len())
+    is_admitted_access_chain(right, model, types, bases)
 }
 
 #[cfg(test)]

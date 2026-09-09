@@ -107,5 +107,6 @@ import QCore.ReachGatePosition
 import QCore.Transferability
 import QCore.LiteralArgumentPremise
 import QCore.ProtectionGrowthEmission
+import QCore.ChainedTailActual
 
 /-! The executable formal core of QCore-C revision 0.1. -/

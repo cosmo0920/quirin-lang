@@ -540,43 +540,43 @@ fn analyze_real(source: &str, contracts: &str) -> UnrestrictedLegacyResult {
     .unwrap_or_else(|error| panic!("real-source fixture rejected by Clang: {error:?}"))
 }
 
-/// **THE HEADLINE, and it is not the one the card hoped for.**
+/// **THE HEADLINE — DELIBERATELY RE-PINNED by card NEIGHBOURS-CHAINED-TAIL.**
 ///
-/// On the byte-verbatim upstream `flb_input_chunk_create`, with all six
-/// neighbours' declarations coming from `contract/qcore`, the constructor does
-/// **NOT** reach function-level `Safe`. It carries EXACTLY ONE refusal, and
-/// this test pins the whole diagnostic vector so neither direction can move
-/// silently:
+/// When this test was written it pinned **exactly one** surviving refusal on the
+/// byte-verbatim upstream `flb_input_chunk_create`: an `indirect memory access`
+/// on the `flb_error` arm of the `!chunk` exit, whose whole cause was the tail
+/// actual `storage->stream->name`. Card NEIGHBOURS-CHAINED-TAIL admits that
+/// shape — a tail actual at a **declared variadic data tail** position that is
+/// exactly one admitted bounded typed access chain — so the fixture leg now
+/// reaches **ZERO** diagnostics. The pin moves in the admitting direction and is
+/// therefore stated loudly, with all three of its load-bearing negative halves
+/// kept and one added:
 ///
-///   * **31 diagnostics without the six, 1 with them.** Six of the thirty-one
-///     name a callee and one is the C6 tail refusal; the other twenty-four are
-///     the aliasing and indirect-access cascade those seven leave behind, and
-///     they settle when the calls become modelled.
-///   * **The C6 statement itself is decided.** The `flb_trace` expansion card
-///     O04-TRACE and card PROD-CONTRACTS both tracked — the one whose declared
-///     tail refused because `tag` was seeded risky by the uncontracted
-///     `input_chunk_write_header` — carries no refusal any more.
-///   * **What remains is not a contract question.** The surviving refusal is on
-///     the `flb_error` arm of the `!chunk` failure exit, and it is an
-///     `indirect memory access` refusal of a TAIL ACTUAL, not of a callee:
-///     `storage->stream->name`, a two-level chained pointer-field read whose
-///     final field is itself pointer-typed. No declaration of any function can
-///     decide it. `withdrawing_the_chained_tail_actual_decides_the_constructor`
-///     below isolates that by substitution, and the card report records it as
-///     the named follow-on `NEIGHBOURS-CHAINED-TAIL`.
+///   * **31 diagnostics without the six declarations, 0 with them.** Six of the
+///     thirty-one name a callee and one is the C6 tail refusal; the other
+///     twenty-four are the aliasing and indirect-access cascade those seven
+///     leave behind. All three of those facts are still asserted below,
+///     unchanged.
+///   * **The C6 statement itself is decided**, as before.
+///   * **The admission is what decides the residual, and it is narrow.** The
+///     added half re-measures the same statement with the same actual made
+///     non-conforming — `storage->stream->name[0]`, a subscript the chain rule
+///     refuses — and requires the *old* measurement back, verbatim: exactly one
+///     `indirect memory access`. So the zero is the admission's, not a widened
+///     gate's.
+///   * **No leak, in every state.**
 ///
-/// Nothing here is promoted. Even the residual-free state that probe reaches is
-/// a FUNCTION-LEVEL projection resting on twelve named declared contracts, each
-/// a trusted assumption about a body read by hand, and never a proof of the C.
+/// Nothing here is promoted, and the reading of a zero has not changed. It is a
+/// FUNCTION-LEVEL projection resting on twelve named declared contracts, each a
+/// trusted assumption about a body read by hand, and never a proof of the C;
+/// `the_real_program_is_not_promoted_by_this_card` keeps the program `Unknown`.
 ///
-/// **And this fixture's residual UNDERSTATES production, measured.** The caller
-/// excerpt is byte-verbatim but its prelude is reduced, so the real headers'
-/// richer types are absent here. On the pinned 185-unit corpus the same
-/// function moves 36 diagnostics to 21 and stays `Unknown`: every one of the
-/// six callee refusals and the C6 tail refusal are gone, and what remains is
-/// fifteen `unresolved resource identity` and six `indirect memory access`
-/// leaves this reduced prelude does not reproduce. The card report's §4 carries
-/// that measurement; this test carries the fixture's.
+/// **And this fixture UNDERSTATES production, measured.** The caller excerpt is
+/// byte-verbatim but its prelude is reduced, so the real headers' richer types
+/// are absent here. On the pinned 185-unit corpus the same function stays
+/// `Unknown` with twenty residual leaves this reduced prelude does not
+/// reproduce; the card reports' §4 carries that measurement and this test
+/// carries the fixture's.
 #[test]
 fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     if !clang_available() {
@@ -587,7 +587,7 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     let summary = function(program(&result), "flb_input_chunk_create").clone();
     assert_eq!(
         unsupported(&summary),
-        vec!["indirect memory access is outside the resource projection"],
+        Vec::<&str>::new(),
         "the constructor's refusal vector moved"
     );
     assert!(
@@ -597,10 +597,33 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     );
     assert_eq!(
         summary.diagnostics.len(),
-        1,
-        "exactly one diagnostic remains: {:?}",
+        0,
+        "no diagnostic remains: {:?}",
         summary.diagnostics
     );
+
+    // **The added load-bearing half.** The same actual, made non-conforming by a
+    // subscript the chain rule refuses, restores the exact measurement this test
+    // used to pin. The admission is narrow and it is what decides the residual.
+    let subscripted = source.replace(
+        "storage->stream->name, name);",
+        "storage->stream->name[0], name);",
+    );
+    assert_ne!(
+        subscripted, source,
+        "the subscript substitution did not apply"
+    );
+    let refused = function(
+        program(&analyze_real(&subscripted, &real_contracts())),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    assert_eq!(
+        unsupported(&refused),
+        vec!["indirect memory access is outside the resource projection"],
+        "a subscripted tail actual must keep the original refusal"
+    );
+    assert!(leaks(&refused).is_empty());
 
     // And the before-state, measured in the same run so the movement is not
     // asserted from memory.
@@ -656,6 +679,21 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
 /// checker question with a real soundness obligation (the read yields a pointer
 /// the projection does not track), and this contract-text card deliberately
 /// does not take it.
+///
+/// **SUPERSEDED, and retained as a control.** Card NEIGHBOURS-CHAINED-TAIL took
+/// that checker question. The un-probed source now reaches zero too — see
+/// `the_constructor_keeps_exactly_one_refusal_under_production_declarations`,
+/// which was re-pinned in the admitting direction and carries the narrowness
+/// half. The assertion below is byte-unchanged: the probe still applies and
+/// still decides. It measured a real isolation and it still holds; what it no
+/// longer isolates is a *difference*.
+///
+/// One correction the implementation measured, recorded rather than smoothed
+/// over: the cause was NOT that the final field is pointer-typed.
+/// `borrowable_field` has always admitted a pointer member, and the depth-one
+/// SCALAR access `storage->flag` refused in a tail position identically. The
+/// cause was premise **T2** of the variadic-tail walker, which refused every
+/// member access outright, ahead of the chain rule ever being consulted.
 #[test]
 fn withdrawing_the_chained_tail_actual_decides_the_constructor() {
     if !clang_available() {
