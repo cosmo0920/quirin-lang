@@ -29,6 +29,14 @@
 //! resource identity refuses under the declaration exactly as it does without
 //! one — the declaration covers what it covers.
 //!
+//! Card **NEIGHBOURS-CHAINED-TAIL** adds one clause, **T5**: a tail actual that
+//! is exactly one *admitted bounded typed access chain* is data. The chain half
+//! is [`crate::borrowed_actual::is_admitted_access_chain`] — byte-for-byte the
+//! predicate that already decides a declared `Borrowed` actual — so the only
+//! thing the tail position contributes is the declaration, and the declaration
+//! is read from the callee, never from the actual. See
+//! [`is_admitted_tail_access`] for the argument and for what stays refused.
+//!
 //! Without a declared tail, an actual beyond the declared parameter vector is
 //! now **refused**. That is a fail-closed repair: the modeling zips the
 //! contract's parameter vector against the actuals, so before this card an
@@ -65,8 +73,9 @@
 //! argument, a nested call inside the nested call's own arguments, an inner
 //! actual this projection can neither denote nor call data (premise **N9**, the
 //! fail-open this card found and closed — see `admitted_nested_call`), a tail
-//! actual mentioning a name that may hold a tracked identity, and every tail
-//! actual carrying `&`, `*`, a subscript or a member access.
+//! actual mentioning a name that may hold a tracked identity, every tail actual
+//! carrying `&`, `*` or a subscript, and every tail actual carrying a member
+//! access that is not *exactly* one admitted chain (T5).
 //!
 //! # Inherited premises, not proved here
 //!
@@ -242,7 +251,92 @@ pub(crate) fn tail_arguments_are_data(
                 return true;
             }
             is_data_only_actual(argument, model, types, bases)
+                || is_admitted_tail_access(argument, model, types, bases)
         })
+}
+
+/// **T5, card NEIGHBOURS-CHAINED-TAIL.** A tail actual that is *exactly* one
+/// admitted bounded typed access chain — `base -> f1`, `base . f1`,
+/// `base -> f1 -> f2`, up to `borrowed_actual::ACCESS_CHAIN_LIMIT` selections —
+/// is data.
+///
+/// **This is the same predicate, over the same declaration facts, that decides a
+/// declared `Borrowed` actual.** [`crate::borrowed_actual::is_admitted_access_chain`]
+/// is C02-P premises (1)-(4) as card O04-ARMS widened them: a typed base the
+/// closure says this body can **never** bind to a tracked resource identity,
+/// every intermediate link declared exactly `struct POINTEE *` over a complete,
+/// unambiguous, non-`union` record the reader fully typed, a final member that is
+/// a scalar or a pointer with no array modifier and no `volatile`/`_Atomic`, and
+/// no continuation into `->`, `.`, `[` or `(`.
+///
+/// What the tail position adds is premise (5) in its data-tail form, and only
+/// that: `resource_variadic_data_tail()` declares the callee takes no custody of,
+/// and retains no pointer to, any argument beyond the ones the declaration names.
+/// For custody purposes that is at least as strong as the declared `Borrowed`
+/// mode the same read is already admitted at, so the read is custody-neutral by
+/// exactly the argument card C02-P made and card O04-ARMS widened — no new
+/// assumption is introduced here.
+///
+/// The value is not bound: a tail actual is an argument, never a destination, so
+/// no name of this function derives from it. The complementary shape
+/// `x = base -> f1 -> f2;` keeps its own existing route
+/// ([`crate::borrowed_actual::is_opaque_field_read`], which produces
+/// `LegacyInstruction::OpaqueValue`), and releasing an opaque-bound name still
+/// reports `UnknownAlias` — that containment is unchanged and is pinned.
+///
+/// # What stays refused
+///
+/// Everything T2 refused except a whole admitted chain: `&`, `*`, a subscript, a
+/// chain that is only part of the actual, a chain mixed with arithmetic, a
+/// continued chain, a chain through a record this reader did not fully type, a
+/// chain past the depth bound, and — the load-bearing one — a chain whose base
+/// this body may bind to a tracked resource identity, which covers a released
+/// base, an acquired aggregate and every protected formal.
+///
+/// The nested-call premise **N9** is deliberately **not** widened: an inner
+/// actual of an admitted nested call keeps card O04-B09B10's exact refusal.
+fn is_admitted_tail_access(
+    argument: &[&str],
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &UntrackedBases,
+) -> bool {
+    crate::borrowed_actual::is_admitted_access_chain(argument, model, types, bases)
+}
+
+/// The absolute token spans of the tail actuals of one call that T5 admits.
+///
+/// The lexical indirect-access gate in [`crate::legacy_c`] runs over the tokens
+/// no whitelist claimed, so an admitted tail chain must leave that gate the same
+/// way a declared `Borrowed` actual does — otherwise the statement reports
+/// `indirect memory access` before the tail rule is ever consulted, which is
+/// exactly the state card NEIGHBOURS measured.
+///
+/// Returning an empty vector leaves the gate governing unchanged. The spans are
+/// whole arguments by construction, so exempting them exempts exactly the
+/// arguments the premises were checked against and nothing else.
+pub(crate) fn tail_access_spans(
+    texts: &[&str],
+    argument_spans: &[(usize, usize)],
+    named: usize,
+    variadic_tail: bool,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &UntrackedBases,
+) -> Vec<(usize, usize)> {
+    if !variadic_tail || !types.is_readable() {
+        return Vec::new();
+    }
+    argument_spans
+        .iter()
+        .copied()
+        .skip(named)
+        .filter(|&(start, end)| {
+            texts
+                .get(start..end)
+                .is_some_and(|argument| is_admitted_tail_access(argument, model, types, bases))
+        })
+        .collect()
 }
 
 /// One tail actual, checked conjunctively.
@@ -414,6 +508,14 @@ mod tests {
         assert!(!tail_ok(BODY, "log ( __qcore_literal__ , b )", 1));
     }
 
+    /// Card NEIGHBOURS-CHAINED-TAIL narrowed this row's reading, and every entry
+    /// still refuses — each for a reason the card measured and states:
+    /// `& count`, `* label` and `label [ 0 ]` are refused by T2 unchanged;
+    /// `b - > flag` and `b . flag` are refused by T5's premise (4), because `b`
+    /// is bound by an opaque call in `BODY` and so can never be an access base;
+    /// and `b . flag` additionally mismatches its base's declared type.
+    /// `a_typed_chain_on_an_unbound_base_is_tail_data` below is the positive
+    /// half, on the same records with a base this body never binds.
     #[test]
     fn an_address_a_dereference_a_subscript_or_a_member_is_never_data() {
         for actual in [
@@ -428,6 +530,67 @@ mod tests {
                 "`{actual}` must never be admitted as tail data"
             );
         }
+    }
+
+    /// A body whose `struct box *` is never bound to anything, so C02-P's
+    /// closure keeps it admissible as an access base.
+    const UNBOUND: &str = "int count ; struct box * p ; char * label ;";
+
+    /// **T5, card NEIGHBOURS-CHAINED-TAIL.** On an unbound typed base, a whole
+    /// admitted chain is tail data at every depth the inherited bound allows,
+    /// with either a scalar or a pointer final member.
+    #[test]
+    fn a_typed_chain_on_an_unbound_base_is_tail_data() {
+        for actual in ["p - > flag", "p - > kid", "p - > kid - > n"] {
+            assert!(
+                tail_ok(UNBOUND, &format!("log ( __qcore_literal__ , {actual} )"), 1),
+                "`{actual}` must be admitted as tail data"
+            );
+        }
+    }
+
+    /// And nothing else about T2 moved: on that same unbound base, an address,
+    /// a dereference, a subscript, a partial chain and a chain mixed with
+    /// arithmetic all keep their refusals.
+    #[test]
+    fn only_a_whole_admitted_chain_is_tail_data() {
+        for actual in [
+            "& p - > flag",
+            "* p - > kid",
+            "p - > kid [ 0 ]",
+            "p - > flag + 1",
+            "p . flag",
+        ] {
+            assert!(
+                !tail_ok(UNBOUND, &format!("log ( __qcore_literal__ , {actual} )"), 1),
+                "`{actual}` must never be admitted as tail data"
+            );
+        }
+    }
+
+    /// The spans the lexical gate is asked to exempt are exactly the admitted
+    /// tail arguments, and only under a declared tail: without the declaration
+    /// the walker claims nothing, so the gate governs unchanged.
+    #[test]
+    fn tail_spans_are_claimed_only_under_a_declared_tail() {
+        let contracts = ResourceContracts::default();
+        let f = facts(UNBOUND, &contracts);
+        let tokens = texts("log ( __qcore_literal__ , p - > kid - > n , count )");
+        let spans = crate::legacy_c::call_argument_spans(&tokens, 0).expect("balanced");
+        let claimed = tail_access_spans(&tokens, &spans, 1, true, &f.model, &f.types, &f.bases);
+        assert_eq!(
+            claimed,
+            vec![spans[1]],
+            "only the chain argument is claimed, and whole"
+        );
+        assert!(
+            tail_access_spans(&tokens, &spans, 1, false, &f.model, &f.types, &f.bases).is_empty(),
+            "with no declared tail nothing is claimed"
+        );
+        assert!(
+            tail_access_spans(&tokens, &spans, 3, true, &f.model, &f.types, &f.bases).is_empty(),
+            "a named position is never claimed by the tail rule"
+        );
     }
 
     #[test]

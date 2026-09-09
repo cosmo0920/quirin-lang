@@ -3149,6 +3149,38 @@ impl Parser<'_> {
                 .iter()
                 .map(|address| (address.start, address.end)),
         );
+        // Card NEIGHBOURS-CHAINED-TAIL: an actual beyond the declared parameter
+        // vector of a callee whose declaration carries
+        // `resource_variadic_data_tail()`, when that actual is exactly one
+        // admitted bounded typed access chain. Its span leaves the lexical gate
+        // exactly as a C02-P borrowed actual does, and for the same reason: the
+        // premises are the same predicate over the same declaration facts, and
+        // the position is decided by the callee's declaration alone. Without
+        // this the gate reports `indirect memory access` before
+        // `tail_arguments_are_data` is ever consulted, which is the state card
+        // NEIGHBOURS measured at `flb_input_chunk.c` L19581.
+        //
+        // Exempting the span is never on its own an admission: the tail rule
+        // below still requires EVERY tail actual of this call to be data, so a
+        // sibling actual carrying a tracked identity still refuses the whole
+        // statement.
+        let tail_accesses = find_call(&texts).map_or_else(Vec::new, |(call_index, function)| {
+            let Some(contract) = self.contracts.contract(function) else {
+                return Vec::new();
+            };
+            call_argument_spans(&texts, call_index).map_or_else(Vec::new, |spans| {
+                crate::variadic_nested::tail_access_spans(
+                    &texts,
+                    &spans,
+                    contract.parameters.len(),
+                    self.variadic_tails.contains(function),
+                    &self.typed_model,
+                    &self.typed_types,
+                    &self.typed_bases,
+                )
+            })
+        });
+        borrowed_actuals.extend(tail_accesses);
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
