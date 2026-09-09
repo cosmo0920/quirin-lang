@@ -34,6 +34,10 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
 /// **The three production contract modules this card lands.**
 const HELPERS: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_helpers.qcore");
 const TIME: &str = include_str!("../../../contract/qcore/fluent_bit/time.qcore");
@@ -128,7 +132,7 @@ fn leaks(summary: &LegacyFunctionSummary) -> Vec<usize> {
 /// themselves are byte-unchanged; only the concatenation drops the repeated
 /// header, and the assertion below fails if a module ever stops carrying one.
 fn declarations_of(module: &str) -> String {
-    let module = module.replace("\r\n", "\n");
+    let module = normalize_newlines(module);
     let header = "module contract;\n";
     assert!(
         module.starts_with(header),
@@ -169,7 +173,7 @@ fn summary_with(contracts: &str, body: &str, entry: &str) -> LegacyFunctionSumma
 }
 
 fn summary_of(body: &str, entry: &str) -> LegacyFunctionSummary {
-    summary_with(GENERIC, body, entry)
+    summary_with(&normalize_newlines(GENERIC), body, entry)
 }
 
 /// The generic mirror of `flb_input_chunk_create`'s residency shape: acquire,
@@ -219,7 +223,7 @@ fn the_residency_shape_is_admitted_end_to_end() {
         "unexpected leaks: {:?}",
         leaks(&summary)
     );
-    let result = analyze_with(GENERIC, RESIDENCY_BODY, "n_create");
+    let result = analyze_with(&normalize_newlines(GENERIC), RESIDENCY_BODY, "n_create");
     let certificate = match result {
         UnrestrictedLegacyResult::Safe(certificate) => certificate,
         other => panic!("expected Safe for the admitted residency shape: {other:?}"),
@@ -282,11 +286,12 @@ void n_probe(void) { \
         "the faithful borrowed declaration keeps the leak visible: {:?}",
         unsupported(&faithful)
     );
-    let released = GENERIC.replace(
+    let generic = normalize_newlines(GENERIC);
+    let released = generic.replace(
         "extern fn n_down(handle: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(handle);",
         "extern fn n_down(handle: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_released(handle, nonnull);",
     );
-    assert_ne!(released, GENERIC, "the substitution did not apply");
+    assert_ne!(released, generic, "the substitution did not apply");
     let substituted = summary_with(&released, body, "n_probe");
     assert!(
         leaks(&substituted).is_empty(),
@@ -303,6 +308,7 @@ fn withdrawing_each_generic_declaration_restores_its_refusal() {
     if !clang_available() {
         return;
     }
+    let generic = normalize_newlines(GENERIC);
     for (name, declaration) in [
         (
             "n_name",
@@ -317,14 +323,14 @@ fn withdrawing_each_generic_declaration_restores_its_refusal() {
         ),
         ("n_clock", "extern fn n_clock() -> f64"),
     ] {
-        let start = GENERIC
+        let start = generic
             .find(declaration)
             .unwrap_or_else(|| panic!("the generic fixture no longer declares {name}"));
-        let end = GENERIC[start..]
+        let end = generic[start..]
             .find("};\n")
             .map(|offset| start + offset + 3)
             .expect("a declaration ends with `};`");
-        let without = format!("{}{}", &GENERIC[..start], &GENERIC[end..]);
+        let without = format!("{}{}", &generic[..start], &generic[end..]);
         let summary = summary_with(&without, RESIDENCY_BODY, "n_create");
         let refusals = unsupported(&summary);
         let expected = format!("call to uncontracted function `{name}`");
@@ -376,7 +382,8 @@ fn a_certificate_resting_on_the_new_modules_is_rederived_from_its_own_sources() 
     if !clang_available() {
         return;
     }
-    let result = analyze_with(GENERIC, RESIDENCY_BODY, "n_create");
+    let generic = normalize_newlines(GENERIC);
+    let result = analyze_with(&generic, RESIDENCY_BODY, "n_create");
     let certificate = match result {
         UnrestrictedLegacyResult::Safe(certificate) => certificate,
         other => panic!("expected Safe: {other:?}"),
@@ -389,22 +396,22 @@ fn a_certificate_resting_on_the_new_modules_is_rederived_from_its_own_sources() 
         ("n_header", "handle"),
         ("n_name", "out_buf"),
     ] {
-        let start = GENERIC
+        let start = generic
             .find(&format!("extern fn {callee}("))
             .unwrap_or_else(|| panic!("the fixture no longer declares {callee}"));
-        let end = GENERIC[start..]
+        let end = generic[start..]
             .find("};\n")
             .map(|offset| start + offset + 3)
             .expect("a declaration ends with `};`");
         let faithful = format!("ensures normal resource_borrowed({parameter});");
         let unfaithful = format!("ensures normal resource_released({parameter}, nonnull);");
-        let declaration = GENERIC[start..end].replace(&faithful, &unfaithful);
+        let declaration = generic[start..end].replace(&faithful, &unfaithful);
         assert_ne!(
             declaration,
-            GENERIC[start..end],
+            generic[start..end],
             "the {callee} substitution did not apply"
         );
-        let substituted = format!("{}{declaration}{}", &GENERIC[..start], &GENERIC[end..]);
+        let substituted = format!("{}{declaration}{}", &generic[..start], &generic[end..]);
         let mut mutated = certificate.clone();
         mutated.contracts = load("neighbours_generic.qcore", &substituted);
         assert!(
@@ -438,7 +445,7 @@ fn expanded_prelude() -> String {
 void flb_error(const char *format, ...);\n\
 void flb_trace(const char *format, ...);\n\
 void flb_errno(void);\n";
-    let prelude = PRELUDE.replace("\r\n", "\n");
+    let prelude = normalize_newlines(PRELUDE);
     assert!(
         prelude.contains(original),
         "the o04 prelude no longer carries the logging prototypes this card replaces"
@@ -486,7 +493,7 @@ const REPLACED: [&str; 6] = [
 /// PRODUCTION modules, plus card PROD-CONTRACTS' four and the fixture premises
 /// for everything else.
 fn real_contracts() -> String {
-    let mut path = PATH_CONTRACTS.replace("\r\n", "\n");
+    let mut path = normalize_newlines(PATH_CONTRACTS);
     // PROD-CONTRACTS already takes these two from production modules.
     for signature in [
         "extern fn flb_routes_mask_set_by_tag(",
@@ -498,8 +505,9 @@ fn real_contracts() -> String {
     for signature in &REPLACED[..5] {
         path = without_declaration(&path, signature);
     }
-    let b08 = without_declaration(&B08_CALLEES.replace("\r\n", "\n"), REPLACED[5]);
-    format!(
+    let b08 = without_declaration(&normalize_newlines(B08_CALLEES), REPLACED[5]);
+    normalize_newlines(
+        &(format!(
         "{path}\n{b08}\n{OTHER_CALLEES}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
         declarations_of(LOGGING),
         declarations_of(CHUNK_NAME),
@@ -511,7 +519,8 @@ fn real_contracts() -> String {
     )
     // The ChunkIO constructor/destructor pair also comes from production.
     + "\n"
-        + &declarations_of(OPEN_CLOSE)
+        + &declarations_of(OPEN_CLOSE)),
+    )
 }
 
 fn analyze_real(source: &str, contracts: &str) -> UnrestrictedLegacyResult {
