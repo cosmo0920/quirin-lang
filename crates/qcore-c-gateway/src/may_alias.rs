@@ -27,16 +27,32 @@
 //! 2. both are declared **exactly `struct TAG *`** for the same `TAG`, read
 //!    from the same preprocessed token stream every other typed rule reads
 //!    (`FunctionTypes::record_pointer_names`);
-//! 3. **at least one of them is a formal parameter** — the v1 blast-radius
-//!    bound (`C02-P-ALIAS-LOCALS`, §"Open" of the card report). A pair of two
-//!    locals keeps the pre-existing answer;
-//! 4. the release of `X` **took effect on this path** and `X` has not been
+//! 3. the release of `X` **took effect on this path** and `X` has not been
 //!    rebound since;
-//! 5. neither **discharge** applies (below).
+//! 4. neither **discharge** applies (below).
+//!
+//! Card ALIAS-LOCALS lifted v1's third premise, "at least one of the two is a
+//! formal parameter". Two same-tagged **locals** are now related exactly like
+//! any other pair. That bound was a blast-radius choice, never a soundness
+//! argument, and it was launderable: `one = p; two = q; b_release(one);
+//! b_probe(two);` is the card's own measured shape written through locals, and
+//! v1 answered `Safe` for it.
 //!
 //! The rule only ever *adds* an `UnknownAlias` diagnostic. It never removes
 //! one, never suppresses a leak and never converts an `Unsafe` into anything
 //! else, so the movement it can cause is exactly `Safe` → `Unknown`.
+//!
+//! ## The three relation kinds
+//!
+//! **Peer** (above) is a *may*-alias relation read from declared types alone.
+//! Two further kinds are decided against the projection's own bindings at the
+//! use, in [`crate::legacy_c`]:
+//!
+//! * **provenance-distinct** — `Y` is bound to exactly one live identity *this
+//!   body acquired*, so no peer's release can have reached it. A discharge;
+//! * **definite alias** — [`definitely_aliased`]: the projection has bound `X`
+//!   and `Y` to the *same* single non-null identity, so they are not merely
+//!   *able* to denote one object, they *do*. Not a discharge: a strengthening.
 //!
 //! ## The two discharges
 //!
@@ -45,25 +61,45 @@
 //!   acquisition returns an object distinct from every object live when it ran,
 //!   and the projection's own identity for `Y` is then what answers the
 //!   question. Decided in [`crate::legacy_c`] against the abstract state, not
-//!   here.
+//!   here. This is also the discharge that covers ALIAS-LOCALS' first
+//!   local-specific case, a local bound from a body acquisition.
 //! * **Pointer inequality.** A branch on `X != Y` (or `X == Y`) reaching the
 //!   use on the distinct edge. Decided flow-sensitively in [`crate::legacy_c`]
 //!   through `LegacyInstruction::BranchOnDistinct`; a rebinding of either name
-//!   drops the fact.
+//!   drops the fact. **A definite alias defeats it**: a source-level branch may
+//!   not overrule the projection's own identity model, and refusing there is
+//!   strictly the more refusing answer.
 //!
 //! Which releases have run and which guards hold are computed by
 //! `legacy_c::alias_facts`, a **separate** forward fixed point over the CFG that
 //! never touches the custody state. That separation is measured rather than
 //! stylistic — see `C02-P-ALIAS-LEAK-ORDER` in the card report.
 //!
-//! ## What is deliberately outside v1
+//! ## The verdict for a definite alias, decided rather than assumed
 //!
-//! * a pair of two **locals** (`C02-P-ALIAS-LOCALS`);
+//! When `X` and `Y` are a definite alias and `X`'s release reached the identity
+//! `Y` denotes, the read is not "may read a destroyed object" but "does read
+//! one". The published claim is nevertheless the same existing `UnknownAlias`,
+//! and that is a deliberate decision recorded in
+//! `docs/reports/remaining-alias-locals/README.md` §3: every stronger kind this
+//! checker owns (`DoubleRelease`, `ReleaseAfterEscape`, `CustodyConflict`,
+//! `Leak`) names a different event *and* belongs to the class
+//! `classify_diagnostics` publishes as `Unsafe`, i.e. as a validated reachable
+//! violation. This rule establishes neither that the callee dereferences its
+//! `Borrowed` actual nor that the path is feasible, so naming it a violation
+//! would manufacture an upstream defect allegation. Giving `Borrowed` positions
+//! an implemented liveness precondition is a separate, larger change and is
+//! recorded as the named follow-on `ALIAS-LOCALS-BORROW-LIVENESS`.
+//!
+//! ## What is deliberately outside this rule
+//!
 //! * a function whose declarations the reader **refused**: no type sharing is
 //!   established there, so the precondition of the rule never holds and the
 //!   pre-existing answer stands (`C02-P-ALIAS-UNTYPED`);
 //! * names whose declared type is not exactly `struct TAG *` — `void *`,
-//!   multi-star, an unresolved typedef (`C02-P-ALIAS-UNTYPED`);
+//!   multi-star, an unresolved typedef (`C02-P-ALIAS-UNTYPED`). A definite
+//!   alias between two such names is *not* related either: the definite-alias
+//!   kind refines the peer relation, it never widens it;
 //! * **consuming** an argument, as opposed to releasing it
 //!   (`C02-P-ALIAS-CONSUME`);
 //! * uses that are not modeled reads of the pointer — a scalar-field no-op, a
@@ -80,26 +116,25 @@ use crate::typed_field_access::FunctionTypes;
 pub(crate) struct MayAliasClasses {
     /// Name -> declared record tag, for names declared exactly `struct TAG *`.
     tags: BTreeMap<String, String>,
-    /// Which of those names are formal parameters of this function.
-    formals: BTreeSet<String>,
 }
 
 impl MayAliasClasses {
     /// Read the classes from the same declaration facts every other typed rule
     /// reads. A function whose declarations were refused yields no class at
     /// all, so it relates no pair of names.
-    pub(crate) fn read(types: &FunctionTypes, formal_parameters: &BTreeSet<String>) -> Self {
+    ///
+    /// Whether a name is a formal parameter is deliberately **not** read here.
+    /// v1 required at least one formal in every related pair; card ALIAS-LOCALS
+    /// lifted that bound, and the caller-held half of the question is answered
+    /// where it belongs — by the provenance discharge, against the entry sites
+    /// the projection itself records.
+    pub(crate) fn read(types: &FunctionTypes) -> Self {
         let tags = types
             .record_pointer_names()
             .into_iter()
             .map(|(name, tag)| (name.to_owned(), tag.to_owned()))
             .collect::<BTreeMap<_, _>>();
-        let formals = tags
-            .keys()
-            .filter(|name| formal_parameters.contains(*name))
-            .cloned()
-            .collect();
-        Self { tags, formals }
+        Self { tags }
     }
 
     /// The names whose release leaves a use of `used` unresolved, in a stable
@@ -109,16 +144,51 @@ impl MayAliasClasses {
         let Some(tag) = self.tags.get(used) else {
             return Vec::new();
         };
-        let used_is_formal = self.formals.contains(used);
         self.tags
             .iter()
-            .filter(|(name, other)| {
-                name.as_str() != used
-                    && *other == tag
-                    && (used_is_formal || self.formals.contains(*name))
-            })
+            .filter(|(name, other)| name.as_str() != used && *other == tag)
             .map(|(name, _)| name.clone())
             .collect()
+    }
+}
+
+/// What the resource projection has bound to one name at one program point.
+///
+/// Exactly the three fields of `legacy_c::AbstractPointer`, borrowed so that
+/// the decision below costs nothing per read. Kept here, away from the custody
+/// state, so that the *decision* stays testable in isolation and so that
+/// nothing in this module can write to a projection state.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Denotation<'a> {
+    pub(crate) targets: &'a BTreeSet<usize>,
+    pub(crate) unknown: bool,
+    pub(crate) may_be_null: bool,
+}
+
+impl Denotation<'_> {
+    /// The single non-null identity this name denotes, when the projection
+    /// committed to exactly one. `None` for an unknown, ambiguous, unbound or
+    /// possibly-null binding — every case in which two such names might still
+    /// denote different objects.
+    fn settled(&self) -> Option<usize> {
+        (!self.unknown && !self.may_be_null && self.targets.len() == 1)
+            .then(|| self.targets.iter().copied().next())
+            .flatten()
+    }
+}
+
+/// ALIAS-LOCALS: whether the projection's own bindings show that two names
+/// denote **one** object here — the third relation kind.
+///
+/// This is not a discharge and it never relates a pair the declared types do
+/// not already relate. Its one effect is that a pointer-inequality guard cannot
+/// discharge such a pair: the branch asserts the two names are distinct while
+/// the projection's identity model says they are the same object, and refusing
+/// on that contradiction is strictly the more refusing answer.
+pub(crate) fn definitely_aliased(one: Denotation<'_>, other: Denotation<'_>) -> bool {
+    match (one.settled(), other.settled()) {
+        (Some(left), Some(right)) => left == right,
+        _ => false,
     }
 }
 
@@ -183,15 +253,20 @@ mod tests {
             Box::leak(texts(Box::leak(body.to_owned().into_boxed_str())).into_boxed_slice());
         let protected = BTreeSet::new();
         let types = FunctionTypes::read(&model, parameter_texts, body_texts, &protected);
-        let formals = parameter_texts
-            .iter()
-            .filter(|text| {
-                crate::typed_field_access::is_name(text)
-                    && !matches!(**text, "struct" | "int" | "char" | "rec" | "other" | "void")
-            })
-            .map(|text| (*text).to_owned())
-            .collect::<BTreeSet<_>>();
-        MayAliasClasses::read(&types, &formals)
+        MayAliasClasses::read(&types)
+    }
+
+    /// A binding of exactly one known, non-null identity.
+    fn settled(site: usize) -> (BTreeSet<usize>, bool, bool) {
+        (BTreeSet::from([site]), false, false)
+    }
+
+    fn denote(binding: &(BTreeSet<usize>, bool, bool)) -> Denotation<'_> {
+        Denotation {
+            targets: &binding.0,
+            unknown: binding.1,
+            may_be_null: binding.2,
+        }
     }
 
     #[test]
@@ -215,17 +290,31 @@ mod tests {
         assert_eq!(classes.peers("held"), vec!["a".to_owned()]);
     }
 
-    /// The v1 blast-radius bound: two locals are related by nothing here.
+    /// ALIAS-LOCALS moves v1's blast-radius bound: two locals of one declared
+    /// class are peers, in both directions, with no formal in the function at
+    /// all. This assertion is the exact inverse of v1's
+    /// `two_locals_are_not_peers_in_v1`, which is why the pin moves rather than
+    /// being deleted.
     #[test]
-    fn two_locals_are_not_peers_in_v1() {
+    fn two_locals_of_one_class_are_peers() {
         let classes = classes("int n", "struct rec * one ; struct rec * two ;");
+        assert_eq!(classes.peers("one"), vec!["two".to_owned()]);
+        assert_eq!(classes.peers("two"), vec!["one".to_owned()]);
+    }
+
+    /// The load-bearing negative half survives the lift unchanged: two locals
+    /// of *different* declared classes stay unrelated, so the relation is still
+    /// the declared type and not "any two pointers".
+    #[test]
+    fn two_locals_of_different_classes_are_still_unrelated() {
+        let classes = classes("int n", "struct rec * one ; struct other * two ;");
         assert!(classes.peers("one").is_empty());
         assert!(classes.peers("two").is_empty());
     }
 
-    /// A three-name class relates every ordered pair through the formal.
+    /// A three-name class relates every ordered pair, formal or not.
     #[test]
-    fn a_three_name_class_relates_every_pair_through_its_formal() {
+    fn a_three_name_class_relates_every_pair() {
         let classes = classes("struct rec * a , struct rec * b", "struct rec * held ;");
         assert_eq!(classes.peers("a"), vec!["b".to_owned(), "held".to_owned()]);
         assert_eq!(classes.peers("held"), vec!["a".to_owned(), "b".to_owned()]);
@@ -272,5 +361,56 @@ mod tests {
     fn a_root_stops_at_whichever_selector_comes_first() {
         assert_eq!(place_root("a.b->c"), Some("a"));
         assert_eq!(place_root("a->b.c"), Some("a"));
+    }
+
+    // ----------------------------------------------------------------------
+    // ALIAS-LOCALS: the definite-alias relation kind
+    // ----------------------------------------------------------------------
+
+    /// The positive direction: one identity, committed to on both sides.
+    #[test]
+    fn two_names_bound_to_one_identity_are_a_definite_alias() {
+        let (one, two) = (settled(7), settled(7));
+        assert!(definitely_aliased(denote(&one), denote(&two)));
+    }
+
+    /// Distinct identities are not, which is what keeps the kind from being
+    /// vacuously true of every pair.
+    #[test]
+    fn two_names_bound_to_different_identities_are_not() {
+        let (one, two) = (settled(7), settled(8));
+        assert!(!definitely_aliased(denote(&one), denote(&two)));
+    }
+
+    /// The relation is symmetric and reflexive on a settled binding, matching
+    /// the guard question it answers.
+    #[test]
+    fn the_definite_relation_is_symmetric_and_holds_of_a_name_and_itself() {
+        let (one, two) = (settled(3), settled(3));
+        assert_eq!(
+            definitely_aliased(denote(&one), denote(&two)),
+            definitely_aliased(denote(&two), denote(&one))
+        );
+        assert!(definitely_aliased(denote(&one), denote(&one)));
+    }
+
+    /// Every way the projection can decline to commit fails closed: an unknown
+    /// pointer, an ambiguous target set, an unbound name and a possibly-null
+    /// binding are each *not* a definite alias, so the guard keeps discharging
+    /// exactly the pairs it discharged before.
+    #[test]
+    fn an_uncommitted_binding_is_never_a_definite_alias() {
+        let settled_site = settled(7);
+        let unknown = (BTreeSet::from([7]), true, false);
+        let ambiguous = (BTreeSet::from([7, 8]), false, false);
+        let unbound = (BTreeSet::new(), false, false);
+        let nullable = (BTreeSet::from([7]), false, true);
+        for other in [&unknown, &ambiguous, &unbound, &nullable] {
+            assert!(
+                !definitely_aliased(denote(&settled_site), denote(other)),
+                "an uncommitted binding must never be definite: {other:?}"
+            );
+            assert!(!definitely_aliased(denote(other), denote(&settled_site)));
+        }
     }
 }

@@ -20,13 +20,20 @@ This module models the decision that increment makes,
 `BranchOnDistinct` edge refinement:
 
 * **the class relation** — two names are peers when they carry the same declared
-  `struct TAG *` type, are distinct, and at least one of them is a formal
-  parameter (the v1 blast-radius bound `C02-P-ALIAS-LOCALS`);
+  `struct TAG *` type and are distinct. Card ALIAS-LOCALS lifted v1's further
+  requirement that at least one of them be a formal parameter, so two **locals**
+  are related exactly like any other pair; that bound was a blast-radius choice,
+  never a soundness argument, and it was launderable by two assignments;
 * **the refusal** — a modeled read of `y` is refused when some peer `x` was
   released on the path and neither discharge applies;
 * **the two discharges** — provenance (`y` is bound to one live identity this
   body acquired) and a pointer-inequality guard (a branch proved `x ≠ y` on this
   edge, dropped when either name is rebound);
+* **the definite-alias relation kind** (ALIAS-LOCALS) — the projection has bound
+  `x` and `y` to the *same* single non-null identity. Not a discharge: a
+  strengthening. It defeats the guard, because a source-level comparison may not
+  overrule the projection's own identity model, and refusing on that
+  contradiction is strictly the more refusing of the two answers;
 * **the join** — releases are unioned and guards intersected, which is the
   direction each fact must move to stay sound and is also why the work list
   terminates.
@@ -77,10 +84,15 @@ private theorem beq_symm (a b : Nat) : (a == b) = (b == a) := by
     `tag n = none` covers every name this reader will not commit to: a
     non-pointer, a `void *`, a multi-star, an unresolved typedef, and *every*
     name at all when the declaration reader refused the function
-    (`C02-P-ALIAS-UNTYPED`). -/
+    (`C02-P-ALIAS-UNTYPED`).
+
+    Whether a name is a formal parameter is deliberately **not** recorded.
+    v1 carried a `formal : Name → Bool` field and required at least one formal
+    in every related pair; card ALIAS-LOCALS lifted that bound, and the
+    caller-held half of the question is answered where it belongs — by the
+    provenance discharge's `bodyMade`. -/
 structure Classes where
   tag : Name → Option Tag
-  formal : Name → Bool
 
 /-- Whether two names carry the same declared `struct TAG *` type. -/
 def sameTag (c : Classes) (x y : Name) : Bool :=
@@ -90,13 +102,15 @@ def sameTag (c : Classes) (x y : Name) : Bool :=
 
 /-- Whether releasing `other` can compromise a read of `used`. -/
 def peer (c : Classes) (used other : Name) : Bool :=
-  !(other == used) && sameTag c used other && (c.formal used || c.formal other)
+  !(other == used) && sameTag c used other
 
 /-- What the projection knows about the identity a name denotes at one program
     point. -/
 structure Binding where
-  /-- Exactly one resolved identity, or `none` for an unbound or ambiguous
-      name. -/
+  /-- The single **non-null** identity the projection committed to, or `none`.
+      `none` covers every way it can decline to commit: an unbound name, an
+      unknown pointer, an ambiguous target set and a possibly-null binding —
+      exactly `may_alias::Denotation::settled` in the Rust. -/
   site : Option Site
   /-- The identity was acquired by **this** body, not handed in by the caller.
       A caller-held entry site is deliberately not provenance: two formals
@@ -129,16 +143,45 @@ def dischargedByProvenance (s : State) (y : Name) : Bool :=
   | some b => b.site.isSome && b.bodyMade && b.live
   | none => false
 
-/-- A pointer-inequality guard proved this pair distinct on this path. -/
+/-- A pointer-inequality guard proved this pair distinct on this path.
+
+    This is the raw `BranchOnDistinct` fact `alias_facts` carries. Whether it
+    *discharges* is [`guardDischarges`] below, which subtracts the definite
+    aliases. -/
 def dischargedByGuard (s : State) (y x : Name) : Bool :=
   decide (normalize y x ∈ s.distinct)
+
+/-! ## The third relation kind (ALIAS-LOCALS) -/
+
+/-- The single non-null identity the projection has bound to `n` here. -/
+def denotes (s : State) (n : Name) : Option Site :=
+  (s.bound n).bind (fun b => b.site)
+
+/-- ALIAS-LOCALS: the projection's own bindings show `x` and `y` denote **one**
+    object here — they do not merely *may* alias, they *do*.
+
+    This is not a discharge, and it never relates a pair the declared types do
+    not already relate: it refines the peer relation, it never widens it. -/
+def definitelyAliased (s : State) (y x : Name) : Bool :=
+  match denotes s y, denotes s x with
+  | some a, some b => a == b
+  | _, _ => false
+
+/-- ALIAS-LOCALS: the guard discharge, with the definite-alias exception.
+
+    A branch asserting `y ≠ x` cannot discharge a pair the projection has bound
+    to one identity. Refusing on that contradiction is strictly the more
+    refusing answer, and it is the only one that does not let a source-level
+    comparison overrule the projection's own bindings. -/
+def guardDischarges (s : State) (y x : Name) : Bool :=
+  dischargedByGuard s y x && !definitelyAliased s y x
 
 /-! ## The refusal -/
 
 /-- Whether a modeled read of `y` is refused here. -/
 def refuses (c : Classes) (s : State) (y : Name) : Bool :=
   !dischargedByProvenance s y
-    && s.released.any (fun x => peer c y x && !dischargedByGuard s y x)
+    && s.released.any (fun x => peer c y x && !guardDischarges s y x)
 
 /-! ## The state operations -/
 
@@ -186,7 +229,7 @@ theorem sameTag_is_symmetric (c : Classes) (x y : Name) : sameTag c x y = sameTa
 
 theorem peer_is_symmetric (c : Classes) (x y : Name) : peer c x y = peer c y x := by
   unfold peer
-  rw [sameTag_is_symmetric, beq_symm, Bool.or_comm]
+  rw [sameTag_is_symmetric, beq_symm]
 
 /-- A name is never its own peer, so a release through it is judged by the
     existing double-release model rather than by this rule. -/
@@ -206,25 +249,28 @@ theorem an_untyped_name_is_never_a_peer {c : Classes} {x y : Name}
     (hx : c.tag x = none) : peer c x y = false := by
   simp [peer, sameTag, hx]
 
-/-- `C02-P-ALIAS-LOCALS`, the v1 blast-radius bound: two locals are related by
-    nothing here. -/
-theorem two_locals_are_never_peers {c : Classes} {x y : Name}
-    (hx : c.formal x = false) (hy : c.formal y = false) : peer c x y = false := by
-  simp [peer, hx, hy]
+/-- The relation is non-vacuous, and after ALIAS-LOCALS this one statement is
+    the whole positive direction: two distinct same-tagged names are peers,
+    whatever their storage.
 
-/-- And the relation is non-vacuous: two same-tagged formals are peers. -/
-theorem two_same_tagged_formals_are_peers {c : Classes} {x y : Name} {t : Tag}
-    (hne : x ≠ y) (hx : c.tag x = some t) (hy : c.tag y = some t)
-    (hfx : c.formal x = true) : peer c x y = true := by
+    It replaces v1's `two_same_tagged_formals_are_peers` and
+    `a_formal_and_a_local_are_peers`, which are its instances, and it is the
+    exact inverse of v1's `two_locals_are_never_peers`. All three are retired by
+    name in `docs/reports/remaining-alias-locals/README.md` §5. -/
+theorem two_same_tagged_names_are_peers {c : Classes} {x y : Name} {t : Tag}
+    (hne : x ≠ y) (hx : c.tag x = some t) (hy : c.tag y = some t) : peer c x y = true := by
   have h : ¬ (y = x) := fun h => hne h.symm
-  simp [peer, sameTag, hx, hy, hfx, h]
+  simp [peer, sameTag, hx, hy, h]
 
-/-- A formal and a local of the same class are peers too, in both directions. -/
-theorem a_formal_and_a_local_are_peers {c : Classes} {x y : Name} {t : Tag}
-    (hne : x ≠ y) (hx : c.tag x = some t) (hy : c.tag y = some t)
-    (hfy : c.formal y = true) : peer c x y = true := by
-  have h : ¬ (y = x) := fun h => hne h.symm
-  simp [peer, sameTag, hx, hy, hfy, h]
+/-- `C02-P-ALIAS-LOCALS` lifted: a pair of locals is not special. The model
+    carries no notion of "formal" at all any more, so this is the statement that
+    the *declared class* is the whole premise — two distinct names of one tag are
+    peers, and the previous bound cannot be recovered from anything here. -/
+theorem two_locals_of_one_class_are_peers {c : Classes} {one two : Name} {t : Tag}
+    (hne : one ≠ two) (h1 : c.tag one = some t) (h2 : c.tag two = some t) :
+    peer c one two = true ∧ peer c two one = true :=
+  ⟨two_same_tagged_names_are_peers hne h1 h2,
+   two_same_tagged_names_are_peers (fun h => hne h.symm) h2 h1⟩
 
 /-! ## The refusal fires exactly on a released, undischarged peer -/
 
@@ -233,7 +279,7 @@ theorem a_formal_and_a_local_are_peers {c : Classes} {x y : Name} {t : Tag}
 theorem a_released_peer_refuses_the_read {c : Classes} {s : State} {x y : Name}
     (hx : x ∈ s.released)
     (hpeer : peer c y x = true)
-    (hguard : dischargedByGuard s y x = false)
+    (hguard : guardDischarges s y x = false)
     (hprov : dischargedByProvenance s y = false) :
     refuses c s y = true := by
   simp only [refuses, hprov, Bool.not_false, Bool.true_and, List.any_eq_true]
@@ -244,7 +290,7 @@ theorem a_released_peer_refuses_the_read {c : Classes} {s : State} {x y : Name}
 theorem a_refusal_names_a_released_undischarged_peer {c : Classes} {s : State} {y : Name}
     (h : refuses c s y = true) :
     dischargedByProvenance s y = false
-      ∧ ∃ x, x ∈ s.released ∧ peer c y x = true ∧ dischargedByGuard s y x = false := by
+      ∧ ∃ x, x ∈ s.released ∧ peer c y x = true ∧ guardDischarges s y x = false := by
   have hprov : dischargedByProvenance s y = false := by
     cases hp : dischargedByProvenance s y with
     | false => rfl
@@ -373,6 +419,16 @@ theorem rebinding_only_drops_guards {s : State} {n y z : Name}
   simp only [dischargedByGuard, rebind, decide_eq_false_iff_not, List.mem_filter] at h ⊢
   exact fun hm => h hm.1
 
+/-- And so the *discharge* only ever shrinks under a rebinding: `rebind` leaves
+    the bindings alone, so a definite alias stays definite while the raw guard
+    fact can only be dropped. -/
+theorem rebinding_only_drops_the_guard_discharge {s : State} {n y z : Name}
+    (h : guardDischarges s y z = false) : guardDischarges (rebind s n) y z = false := by
+  simp only [guardDischarges, Bool.and_eq_false_iff, Bool.not_eq_false'] at h ⊢
+  cases h with
+  | inl h => exact Or.inl (rebinding_only_drops_guards h)
+  | inr h => exact Or.inr (by simpa [definitelyAliased, denotes, rebind] using h)
+
 /-- Releases only accumulate: `rebind` leaves the release list exactly as it
     was. -/
 theorem rebinding_preserves_every_release (s : State) (n : Name) :
@@ -388,7 +444,7 @@ theorem rebinding_the_releasing_name_keeps_the_refusal {c : Classes} {s : State}
     refuses c (rebind s n) y = true := by
   obtain ⟨_, x, hx, hpeer, hguard⟩ := a_refusal_names_a_released_undischarged_peer h
   exact a_released_peer_refuses_the_read (x := x)
-    (by simpa [rebind] using hx) hpeer (rebinding_only_drops_guards hguard) hb
+    (by simpa [rebind] using hx) hpeer (rebinding_only_drops_the_guard_discharge hguard) hb
 
 /-! ## Monotonicity, and what the join must do -/
 
@@ -422,8 +478,15 @@ theorem the_join_preserves_a_refusal {c : Classes} {s t : State} {y : Name}
   obtain ⟨_, x, hx, hpeer, hguard⟩ := a_refusal_names_a_released_undischarged_peer h
   refine a_released_peer_refuses_the_read (x := x)
     (the_join_unions_the_releases s t x (Or.inl hx)) hpeer ?_ hprov
-  simp only [dischargedByGuard, decide_eq_false_iff_not] at hguard ⊢
-  exact fun hm => hguard (the_join_only_keeps_shared_guards hm).1
+  -- The join keeps `s`'s bindings, so a definite alias survives it; and the
+  -- guard list can only shrink.
+  simp only [guardDischarges, Bool.and_eq_false_iff, Bool.not_eq_false'] at hguard ⊢
+  cases hguard with
+  | inl hguard =>
+    refine Or.inl ?_
+    simp only [dischargedByGuard, decide_eq_false_iff_not] at hguard ⊢
+    exact fun hm => hguard (the_join_only_keeps_shared_guards hm).1
+  | inr hguard => exact Or.inr (by simpa [definitelyAliased, denotes, join] using hguard)
 
 /-- And a guard only one path proved does not survive: that is the direction a
     *must* fact has to move. -/
@@ -473,19 +536,19 @@ theorem the_rule_never_promotes {r : Bool} {before : Answer}
 theorem the_rule_is_not_vacuous :
     ∃ (c : Classes) (s : State) (y : Name),
       refuses c s y = true ∧ ∃ z, refuses c s z = false := by
-  refine ⟨{ tag := fun _ => some 0, formal := fun _ => true },
+  refine ⟨{ tag := fun _ => some 0 },
           { released := [0], distinct := [], bound := fun _ => none }, 1, ?_, 0, ?_⟩ <;>
-    simp [refuses, dischargedByProvenance, peer, sameTag, dischargedByGuard]
+    simp [refuses, dischargedByProvenance, peer, sameTag, guardDischarges, dischargedByGuard]
 
 /-- And each discharge is load-bearing: on its own it turns the measured
     refusal back into silence. -/
 theorem the_guard_discharge_is_load_bearing :
     ∃ (c : Classes) (s : State) (y x : Name),
       refuses c s y = true ∧ refuses c (assumeDistinct s y x) y = false := by
-  refine ⟨{ tag := fun _ => some 0, formal := fun _ => true },
+  refine ⟨{ tag := fun _ => some 0 },
           { released := [0], distinct := [], bound := fun _ => none }, 1, 0, ?_, ?_⟩ <;>
-    simp [refuses, dischargedByProvenance, peer, sameTag, dischargedByGuard, assumeDistinct,
-      normalize]
+    simp [refuses, dischargedByProvenance, peer, sameTag, guardDischarges, dischargedByGuard,
+      definitelyAliased, denotes, assumeDistinct, normalize]
 
 theorem the_provenance_discharge_is_load_bearing :
     ∃ (c : Classes) (s : State) (y : Name),
@@ -493,8 +556,99 @@ theorem the_provenance_discharge_is_load_bearing :
         ∧ refuses c { s with
               bound := fun _ => some { site := some 0, bodyMade := true, live := true } } y
             = false := by
-  refine ⟨{ tag := fun _ => some 0, formal := fun _ => true },
+  refine ⟨{ tag := fun _ => some 0 },
           { released := [0], distinct := [], bound := fun _ => none }, 1, ?_, ?_⟩ <;>
-    simp [refuses, dischargedByProvenance, peer, sameTag, dischargedByGuard]
+    simp [refuses, dischargedByProvenance, peer, sameTag, guardDischarges, dischargedByGuard]
+
+/-! ## The definite-alias relation kind (ALIAS-LOCALS) -/
+
+/-- The positive direction: two names the projection bound to one identity are
+    a definite alias. -/
+theorem two_names_bound_to_one_identity_are_definitely_aliased {s : State} {y x : Name}
+    {b b' : Binding} {i : Site}
+    (hy : s.bound y = some b) (hx : s.bound x = some b')
+    (hby : b.site = some i) (hbx : b'.site = some i) :
+    definitelyAliased s y x = true := by
+  simp [definitelyAliased, denotes, hy, hx, hby, hbx]
+
+/-- Distinct identities are not, which is what keeps the kind from holding of
+    every pair. -/
+theorem two_names_bound_to_different_identities_are_not {s : State} {y x : Name}
+    {b b' : Binding} {i j : Site}
+    (hy : s.bound y = some b) (hx : s.bound x = some b')
+    (hby : b.site = some i) (hbx : b'.site = some j) (hne : i ≠ j) :
+    definitelyAliased s y x = false := by
+  simp [definitelyAliased, denotes, hy, hx, hby, hbx, hne]
+
+/-- The relation is symmetric, as the guard question it answers requires. -/
+theorem the_definite_relation_is_symmetric (s : State) (y x : Name) :
+    definitelyAliased s y x = definitelyAliased s x y := by
+  unfold definitelyAliased
+  cases hy : denotes s y <;> cases hx : denotes s x <;> simp [beq_symm]
+
+/-- Every way the projection declines to commit fails **closed**: an
+    uncommitted binding is never a definite alias, so the guard keeps
+    discharging exactly the pairs it discharged before this card. `site = none`
+    is the model of `Denotation::settled` returning `None`, which covers an
+    unbound name, an unknown pointer, an ambiguous target set and a
+    possibly-null binding alike. -/
+theorem an_uncommitted_binding_is_never_a_definite_alias {s : State} {y x : Name}
+    (h : denotes s y = none) : definitelyAliased s y x = false := by
+  simp [definitelyAliased, h]
+
+/-- An unbound name denotes nothing, so it is never a definite alias either. -/
+theorem an_unbound_name_is_never_a_definite_alias {s : State} {y x : Name}
+    (h : s.bound y = none) : definitelyAliased s y x = false := by
+  simp [definitelyAliased, denotes, h]
+
+/-- **The exception, stated.** A definite alias defeats the guard: the branch
+    asserts the two names are distinct while the projection has bound them to
+    one identity, and the rule refuses on that contradiction. -/
+theorem a_definite_alias_defeats_the_guard {s : State} {y x : Name}
+    (h : definitelyAliased s y x = true) : guardDischarges s y x = false := by
+  simp [guardDischarges, h]
+
+/-- And where there is no definite alias the guard discharges exactly as it
+    did, so this card weakened no discharge it did not mean to. -/
+theorem the_guard_still_discharges_a_non_definite_pair {s : State} {y x : Name}
+    (hguard : dischargedByGuard s y x = true) (h : definitelyAliased s y x = false) :
+    guardDischarges s y x = true := by
+  simp [guardDischarges, hguard, h]
+
+/-- The composite direction: a released definite alias with no provenance is
+    refused **even under a guard**. This is the shape card ALIAS-LOCALS
+    measured, `one = b_open(...); two = one; if (one != two) { b_release(one);
+    b_probe(two); }`. -/
+theorem a_released_definite_alias_refuses_under_a_guard {c : Classes} {s : State} {x y : Name}
+    (hx : x ∈ s.released)
+    (hpeer : peer c y x = true)
+    (halias : definitelyAliased s y x = true)
+    (hprov : dischargedByProvenance s y = false) :
+    refuses c s y = true :=
+  a_released_peer_refuses_the_read hx hpeer (a_definite_alias_defeats_the_guard halias) hprov
+
+/-- The exception is load-bearing and is not vacuous: one state, one pair, and
+    the guard discharges it only when the bindings do not make it definite.
+    Without this, `a_definite_alias_defeats_the_guard` would hold of a rule that
+    never found a definite alias at all. -/
+theorem the_definite_alias_exception_is_load_bearing :
+    ∃ (c : Classes) (s : State) (y x : Name),
+      dischargedByGuard s y x = true
+        ∧ refuses c s y = true
+        ∧ refuses c { s with bound := fun _ => none } y = false := by
+  refine ⟨{ tag := fun _ => some 0 },
+          { released := [0], distinct := [(0, 1)],
+            bound := fun _ => some { site := some 5, bodyMade := false, live := false } },
+          1, 0, ?_, ?_, ?_⟩ <;>
+    simp [refuses, dischargedByProvenance, peer, sameTag, guardDischarges, dischargedByGuard,
+      definitelyAliased, denotes, normalize]
+
+/-- The definite-alias kind **refines** the peer relation and never widens it:
+    a pair the declared types do not relate stays unrelated however definite the
+    projection's bindings are (`C02-P-ALIAS-UNTYPED`, retained). -/
+theorem a_definite_alias_of_untyped_names_still_refuses_nothing {c : Classes} {s : State}
+    {y : Name} (hy : c.tag y = none) : refuses c s y = false := by
+  simp only [refuses, Bool.and_eq_false_iff, List.any_eq_false]
+  exact Or.inr (fun z _ => by simp [an_untyped_name_is_never_a_peer hy])
 
 end QCore.MayAlias
