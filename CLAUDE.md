@@ -1,12 +1,9 @@
 # Claude Code project notes
 
-> **Delegation status, 2026-09-08:** The 2026-09-07 subagent halt is lifted by
-> user instruction; delegated waves may run again. The 49-card remaining-work
-> plan of 2026-09-07 is fully dispositioned; current waves execute the named
-> follow-ons recorded in `docs/reviews/r0_3/acceptance_matrix.json`
-> (`named_followups`) and per-report follow-on lists. The historical halt
-> handoff remains archived at [docs/HANDOFF_2026-09-07.md](docs/HANDOFF_2026-09-07.md).
-> None of this claims the overall generalization goal is complete.
+> **Current work status:** The 49-card remaining-work plan of 2026-09-07 is
+> fully dispositioned. Current work follows the named follow-ons recorded in
+> `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`) and per-report
+> follow-on lists. The overall generalization goal is not yet complete.
 
 @AGENTS.md
 
@@ -902,8 +899,7 @@ Remaining-work wave accounting (2026-09-07): the wave's twenty-five
 marked evidence classes, plus stage-derived CT rows) with a readable companion
 at `docs/reports/remaining-d02/README.md`. AGENTS.md carries the single
 consolidated status paragraph; read it there rather than duplicating it. The
-implementation checkpoint is now `67b1a9a`; the halt handoff's standing
-instruction not to restart subagents is unchanged. Nothing is promoted: raw
+implementation checkpoint for that wave is `67b1a9a`. Nothing is promoted: raw
 Cycle 19 units stay 2 Safe / 42 provisional Unsafe / 137 Unknown plus four
 data-only units, CT coverage stays 11/50 mapped, the contract corpus stays 59
 modules and full language conformance stays false. `qcore-schemas` is 3.0.0;

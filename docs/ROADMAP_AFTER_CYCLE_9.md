@@ -1,7 +1,5 @@
 # Roadmap after Cycle 9
 
-Current halt checkpoint and outstanding requirements: [2026-09-07 handoff](HANDOFF_2026-09-07.md). Subagents are stopped by user request; this plan is not a completion claim.
-
 Cycle 9 completes the original numbered prototype roadmap, but not the full
 language described by the normative specification. Each future cycle requires
 executable Rust tests, matching Lean definitions and safety theorems, strict

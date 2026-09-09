@@ -1,7 +1,5 @@
 # Checker generalization plan
 
-Current halt checkpoint and outstanding requirements: [2026-09-07 handoff](HANDOFF_2026-09-07.md). Subagents are stopped by user request; this plan is not a completion claim.
-
 Date: 2026-09-06. Status: proposed execution plan. Audience: implementation
 agents (Opus/Sonnet-class) and reviewers. This plan reviews the current checker
 architecture, names where it is over-fitted to the pinned source sets, sets a

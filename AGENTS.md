@@ -1,12 +1,9 @@
 # QCore-C agent briefing
 
-> **Delegation status, 2026-09-08:** The 2026-09-07 subagent halt is lifted by
-> user instruction; delegated waves may run again. The 49-card remaining-work
-> plan of 2026-09-07 is fully dispositioned; current waves execute the named
-> follow-ons recorded in `docs/reviews/r0_3/acceptance_matrix.json`
-> (`named_followups`) and per-report follow-on lists. The historical halt
-> handoff remains archived at [docs/HANDOFF_2026-09-07.md](docs/HANDOFF_2026-09-07.md).
-> None of this claims the overall generalization goal is complete.
+> **Current work status:** The 49-card remaining-work plan of 2026-09-07 is
+> fully dispositioned. Current work follows the named follow-ons recorded in
+> `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`) and per-report
+> follow-on lists. The overall generalization goal is not yet complete.
 
 Consolidated, compressed project state for LLM agents. Humans should read
 [README.md](README.md) for the summary and [DEVELOPMENT.md](DEVELOPMENT.md)
@@ -1146,10 +1143,8 @@ provider tests, 43 Python tests, 20 Lean audits and all standing gates pass.
 CT coverage remains 11/50 mapped and the contract corpus 59 modules. Evidence:
 `docs/reports/remaining-c02/README.md`.
 
-Remaining-work wave accounting (2026-09-07, implementation checkpoint `67b1a9a`,
-which supersedes the halt handoff's `e3e7c2c` for implementation only — that
-handoff's standing instruction not to restart subagents is unchanged): the
-twenty-five cards recorded
+Remaining-work wave accounting (2026-09-07, implementation checkpoint `67b1a9a`):
+the twenty-five cards recorded
 under `docs/reports/remaining-*/` are reconciled into one traceable matrix,
 `docs/reviews/r0_3/acceptance_matrix.json`, with a readable companion at
 `docs/reports/remaining-d02/README.md`. This paragraph supersedes nothing above:

@@ -17,7 +17,8 @@ semantic rules change, and the standing gates have passed. Profile-qualified
 results do not imply complete language conformance. The CT manifest remains
 11 mapped and 39 unmapped, with separate executed stages and target-qualified
 native evidence. The exact current inventory is in `../../reevaluation/ct_manifest.json`.
-The [halt handoff](../../HANDOFF_2026-09-07.md) records the remaining work.
+The [acceptance matrix](acceptance_matrix.json) records the remaining work and
+named follow-ons.
 
 | Finding | Current acceptance | Evidence / remaining boundary |
 |---|---|---|
@@ -96,11 +97,12 @@ byte-identical. General lifecycle import, specialized provider extraction,
 required native evidence and full registry composition remain open. Evidence:
 [configured process audit report](../../reports/w5-configured-process-audit/README.md).
 
-## Handoff reconciliation (2026-09-07)
+## Acceptance reconciliation (2026-09-07)
 
 The acceptance JSON now follows the 11/39 CT manifest and the 819/45/43/20
 validated checkpoint. Subsequent worker allocation, handler rethrow,
 completed-child and address-reuse evidence supersedes those items in the older
 open-boundary paragraphs above. General loans/shares, owned errors/graphs,
 mutex invariants and native refinement remain open. No review status has been
-promoted to full conformance. See the [remaining work and specifications](../../HANDOFF_2026-09-07.md).
+promoted to full conformance. See the [acceptance matrix](acceptance_matrix.json)
+for current remaining work and named follow-ons.
