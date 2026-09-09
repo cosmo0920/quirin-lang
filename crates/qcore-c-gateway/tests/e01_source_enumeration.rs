@@ -297,10 +297,22 @@ fn a_header_macro_invoked_in_the_main_source_is_counted() {
 
 /// The measured third cause, reduced from `librdkafka/src/rdkafka.c`
 /// (`docs/reports/remaining-e01-f1/README.md` §2.2): a `#` stringification
-/// operator on a macro's *continuation* line makes the raw tokenizer discard
-/// the rest of that line, closing brace included. The raw scan's file-scope
-/// brace depth then never returns to zero and every later definition in the
-/// file is invisible to it. Reading the expansion recovers them.
+/// operator on a macro's *continuation* line made the raw tokenizer discard the
+/// rest of that line, closing brace included, so the scan's file-scope brace
+/// depth never returned to zero and every later definition in the file was
+/// invisible to it.
+///
+/// **Deliberate pin update, unit E01-F1-RAW**
+/// (`docs/reports/remaining-e01-f1-raw/README.md`). This test asserted that the
+/// raw scan *loses* both definitions and that reading the expansion recovers
+/// them. The tokenizer defect is now repaired at its source, so the raw scan
+/// finds them itself and `absent_from_raw_scan` is empty here.
+///
+/// The load-bearing half is kept and strengthened: the enumerated denominator
+/// is still exactly the two definitions after the table, and the two mechanisms
+/// — raw scan and expansion reader — now **agree** on this shape instead of
+/// disagreeing by two rows. `crates/qcore-c-gateway/tests/e01_f1_raw_tokenizer.rs`
+/// holds the lexical matrix that keeps the raw half honest.
 #[test]
 fn a_raw_scan_brace_desynchronisation_no_longer_hides_definitions() {
     if !clang_available() {
@@ -313,18 +325,17 @@ struct entry { int code; const char *name; };\n\
 static const struct entry table[] = { ENTRY(1, \"one\"), ENTRY(2, \"two\") };\n\
 int after_the_table(void) { return table[0].code; }\n\
 int also_after(void) { return 0; }\n";
-    // The historical scan loses both definitions after the table: its brace
-    // depth never returns to zero.
-    assert!(
-        legacy_c_source_functions(source).is_empty(),
-        "the raw scan is expected to lose these: {:?}",
-        legacy_c_source_functions(source)
+    assert_eq!(
+        legacy_c_source_functions(source),
+        ["after_the_table", "also_after"],
+        "E01-F1-RAW repaired the scan that used to lose these"
     );
     let inventory = enumerate_source_definitions(&unit(source));
     assert_eq!(inventory.definitions(), ["after_the_table", "also_after"]);
-    assert_eq!(
-        inventory.absent_from_raw_scan(),
-        ["after_the_table", "also_after"]
+    assert!(
+        inventory.absent_from_raw_scan().is_empty(),
+        "the two mechanisms now agree on this shape: {:?}",
+        inventory.absent_from_raw_scan()
     );
     assert!(inventory.is_complete(), "{:?}", inventory.refusals());
 }

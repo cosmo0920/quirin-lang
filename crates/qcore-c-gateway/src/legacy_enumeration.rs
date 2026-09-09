@@ -10,14 +10,18 @@
 //! * a K&R definition, whose parameters are an identifier list followed by
 //!   separate declarations before the body.
 //!
-//! A third cause was *found* by implementing this module and is repaired with
-//! them: the raw tokenizer treats every `#` as a directive to end of line, so a
-//! `#` stringification operator on a macro's **continuation** line swallows the
-//! rest of that line — closing brace included. The raw scan's file-scope brace
-//! depth then never returns to zero and every later definition in the file is
-//! invisible to it. On the pinned corpus that hid 146 definitions of
-//! `librdkafka`'s `src/rdkafka.c`, which reported 19 of its 165 definitions
-//! (`docs/reports/remaining-e01-f1/README.md` §2.2).
+//! A third cause was *found* by implementing this module: the raw tokenizer
+//! treated every `#` as a directive to end of line, so a `#` stringification
+//! operator on a macro's **continuation** line swallowed the rest of that
+//! line — closing brace included. The raw scan's file-scope brace depth then
+//! never returned to zero and every later definition in the file was invisible
+//! to it. On the pinned corpus that hid 146 definitions of `librdkafka`'s
+//! `src/rdkafka.c`, which reported 19 of its 165 definitions
+//! (`docs/reports/remaining-e01-f1/README.md` §2.2). E01-F1 covered it here;
+//! unit **E01-F1-RAW** then repaired the tokenizer itself
+//! (`docs/reports/remaining-e01-f1-raw/README.md`), so that cause no longer
+//! reaches [`SourceDefinitionInventory::absent_from_raw_scan`] and this module
+//! covers the macro-expansion and K&R causes it was written for.
 //!
 //! This module enumerates all of these and says, per definition, whether any
 //! implemented analysis reads it. It **completes the denominator; it does not
@@ -228,20 +232,21 @@ impl SourceDefinitionInventory {
     /// Prototype-shaped definitions the historical raw token scan did not see;
     /// a subset of [`definitions`](Self::definitions), disjoint from that scan.
     ///
-    /// The name is deliberately literal rather than "macro-expanded". Reading
-    /// the expansion recovers a definition for **two** distinct reasons, and
-    /// this list does not distinguish them:
+    /// The name is deliberately literal rather than "macro-expanded", because
+    /// this list does not distinguish *why* the raw scan missed a definition.
+    /// E01-F1 measured two reasons:
     ///
     /// * the definition genuinely exists only after macro expansion — the
-    ///   E01-B1 case;
+    ///   E01-B1 case, which is why this module exists;
     /// * the definition is written literally in the main source but the raw
-    ///   scan lost it. That is not hypothetical: the raw tokenizer treats every
-    ///   `#` as a directive to end of line, so a `#` stringification operator
-    ///   on a macro's *continuation* line swallows the rest of that line —
-    ///   including a closing brace — and the scan's file-scope brace depth
-    ///   never returns to zero, hiding every later definition in the file.
-    ///   `librdkafka`'s `src/rdkafka.c` is a measured instance
-    ///   (`docs/reports/remaining-e01-f1/README.md` §2.2).
+    ///   scan lost it to a lexical defect. Unit **E01-F1-RAW** repaired the
+    ///   measured instance of that second reason — a `#` on a macro
+    ///   *continuation* line read as a directive, swallowing a closing brace
+    ///   and desynchronising file-scope brace depth for the rest of the file
+    ///   (`docs/reports/remaining-e01-f1-raw/README.md`) — so the second reason
+    ///   no longer contributes on the pinned corpus. It is not asserted to be
+    ///   impossible: the name stays literal precisely so a future lexical gap
+    ///   lands here rather than being mislabeled.
     ///
     /// Either way these are main-source definitions that carried no row before,
     /// and they are ordinary definitions in the preprocessed unit, so the
@@ -377,14 +382,18 @@ struct MarkedStream {
 
 /// Lex line-marked preprocessed output.
 ///
-/// The lexical rules are the gateway tokenizer's: `//` and `/* */` comments are
+/// The lexical rules are the gateway tokenizer's, including its C11 5.1.1.2
+/// phase-2 line splicing and its 6.10 rule that only a *line-initial* `#`
+/// introduces a directive (unit **E01-F1-RAW**): `//` and `/* */` comments are
 /// dropped, string and character literals collapse to `__qcore_literal__`,
-/// identifiers and numbers are single tokens and every other byte is its own
-/// token. The one difference is the `#` branch, which *reads* a
-/// `# <line> "<file>"` marker instead of discarding the directive line; a
-/// `#` line that is not a marker (`#pragma`) is discarded exactly as before.
-/// A gateway test pins that both tokenizers produce identical token text on
-/// marker-free input, so the copy cannot drift unnoticed.
+/// identifiers and numbers are single tokens and every other byte — a
+/// non-line-initial `#` included — is its own token. The one difference is the
+/// directive branch, which *reads* a `# <line> "<file>"` marker instead of
+/// discarding the line; a directive that is not a marker (`#pragma`) is
+/// discarded exactly as before.
+/// `the_two_tokenizers_agree_on_marker_free_input` pins that both tokenizers
+/// produce identical token text on marker-free input, so the copy cannot drift
+/// unnoticed.
 fn tokenize_marked(source: &str) -> MarkedStream {
     let bytes = source.as_bytes();
     let mut tokens = Vec::new();
@@ -398,7 +407,10 @@ fn tokenize_marked(source: &str) -> MarkedStream {
     let mut at_line_start = true;
     while cursor < bytes.len() {
         let byte = bytes[cursor];
-        if byte == b'\n' {
+        if let Some(width) = super::line_splice_width(bytes, cursor) {
+            line += 1;
+            cursor += width;
+        } else if byte == b'\n' {
             line += 1;
             cursor += 1;
             at_line_start = true;
@@ -407,19 +419,45 @@ fn tokenize_marked(source: &str) -> MarkedStream {
         } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'/') {
             cursor += 2;
             while cursor < bytes.len() && bytes[cursor] != b'\n' {
-                cursor += 1;
+                if let Some(width) = super::line_splice_width(bytes, cursor) {
+                    line += 1;
+                    cursor += width;
+                } else {
+                    cursor += 1;
+                }
             }
         } else if byte == b'/' && bytes.get(cursor + 1) == Some(&b'*') {
-            at_line_start = false;
             cursor += 2;
             while cursor + 1 < bytes.len() && !(bytes[cursor] == b'*' && bytes[cursor + 1] == b'/')
             {
                 if bytes[cursor] == b'\n' {
                     line += 1;
+                    at_line_start = true;
                 }
                 cursor += 1;
             }
             cursor = (cursor + 2).min(bytes.len());
+        } else if byte == b'#' && at_line_start {
+            let start = cursor;
+            while cursor < bytes.len() && bytes[cursor] != b'\n' {
+                if let Some(width) = super::line_splice_width(bytes, cursor) {
+                    line += 1;
+                    cursor += width;
+                } else {
+                    cursor += 1;
+                }
+            }
+            if let Some(name) = line_marker_file(&source[start..cursor]) {
+                let next = index.len();
+                let slot = *index.entry(name.clone()).or_insert_with(|| {
+                    names.push(name.clone());
+                    next
+                });
+                current = slot;
+                if primary.is_none() && tokens.is_empty() {
+                    primary = Some(name);
+                }
+            }
         } else if byte == b'"' || byte == b'\'' {
             at_line_start = false;
             let quote = byte;
@@ -469,23 +507,6 @@ fn tokenize_marked(source: &str) -> MarkedStream {
                 line,
             });
             files.push(current);
-        } else if byte == b'#' {
-            let start = cursor;
-            while cursor < bytes.len() && bytes[cursor] != b'\n' {
-                cursor += 1;
-            }
-            if at_line_start && let Some(name) = line_marker_file(&source[start..cursor]) {
-                let next = index.len();
-                let slot = *index.entry(name.clone()).or_insert_with(|| {
-                    names.push(name.clone());
-                    next
-                });
-                current = slot;
-                if primary.is_none() && tokens.is_empty() {
-                    primary = Some(name);
-                }
-            }
-            at_line_start = false;
         } else {
             at_line_start = false;
             tokens.push(Token {
@@ -769,3 +790,7 @@ fn is_identifier_list(parameters: &[Token]) -> bool {
 /// Keywords that make a parameter list a prototype rather than a K&R
 /// identifier list. This is the gateway's existing specifier table.
 const DECLARATION_SPECIFIERS: &[&str] = super::DECLARATION_SPECIFIERS;
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_enumeration.rs"]
+mod tests;
