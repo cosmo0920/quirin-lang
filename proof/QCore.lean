@@ -92,5 +92,6 @@ import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.BoundFieldRead
 import QCore.MayAlias
+import QCore.Transferability
 
 /-! The executable formal core of QCore-C revision 0.1. -/
