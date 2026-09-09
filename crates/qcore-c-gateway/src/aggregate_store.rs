@@ -90,6 +90,18 @@
 //! escaped, null, unknown or caller-owned aggregate refuses. That is the C00
 //! premise in its store direction and it is not weakened here.
 //!
+//! ## What an admitted bound *read* means (card O04-READ-BOUND)
+//!
+//! [`bound_read_actuals`] is the read half of the same premise set. Card C02-P
+//! admits a member read only through a base the projection **never** binds; a
+//! read through a base this body *did* bind stayed refused, which was the named
+//! blocker `O04-B08-READ-BOUND-BASE`. It is now admitted for exactly one shape —
+//! a whole `Borrowed` actual written `BASE - > FIELD` on a [`store_bases`] base
+//! whose member is a single-star pointer — and only when [`crate::legacy_c`]'s
+//! transfer function additionally finds, *here*, that the aggregate resolves to
+//! one live identity this body acquired and that the member carries the exact
+//! field link an admitted store recorded. Everything else keeps its refusal.
+//!
 //! Both premises card C02 records — declaration completeness and C effective
 //! types — are inherited unchanged and are not proved here.
 
@@ -393,6 +405,98 @@ pub(crate) fn admitted_field(
             .record_pointer_field(tag, field)
             .map(ToOwned::to_owned),
     })
+}
+
+/// One admitted **bound read** of an aggregate member (card O04-READ-BOUND).
+///
+/// The token span is the whole call argument the read occupies, and `place` is
+/// the canonical place `BASE->FIELD` an admitted store bound.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct BoundFieldRead {
+    /// Inclusive start index of the argument in the statement's tokens.
+    pub(crate) start: usize,
+    /// Exclusive end index.
+    pub(crate) end: usize,
+    /// The canonical place, `BASE->FIELD`.
+    pub(crate) place: String,
+}
+
+/// The admitted bound reads of the call whose callee name is at `call_index`.
+///
+/// The index is supplied by [`crate::legacy_c`] from its **own** call scan, so
+/// the arguments this function reads are exactly the arguments the statement's
+/// modeled `ContractCall` will read. Deriving it independently here would risk
+/// excluding a span belonging to a different call from the lexical gate.
+///
+/// Card C02-P admits a member read only through a base the projection **never**
+/// binds (its premise 4). This function is the complementary half: a member read
+/// through a base this body *did* bind, through [`store_bases`]'s premises 1-5,
+/// so the read denotes the identity an admitted store linked into that member.
+///
+/// Deliberately restricted to **`Borrowed`** argument positions and to
+/// **single-star pointer** members:
+///
+/// * a borrowed actual discharges nothing, so admitting one can only withdraw a
+///   coverage refusal — it can never manufacture a release. Every
+///   custody-bearing position (`Owned`, `Consumed`, `Released`, `Stored`,
+///   `Removed`) stays refused, because a contracted callee that merely
+///   *borrows* the aggregate could rewrite the member invisibly and this
+///   projection maintains no frame condition for that. Recorded as the named
+///   boundary `O04-READ-BOUND-CUSTODY`;
+/// * a scalar member can never hold an identity, so reading one at a borrowed
+///   position denotes nothing this projection tracks and keeps its refusal.
+///
+/// The flow-sensitive half — the aggregate resolving *here* to exactly one live
+/// identity this body acquired, and the member actually carrying the field link
+/// an admitted store recorded — is required by [`crate::legacy_c`]'s transfer
+/// function, exactly as the store direction requires it.
+pub(crate) fn bound_read_actuals(
+    texts: &[&str],
+    call_index: usize,
+    contracts: &ResourceContracts,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &AggregateStoreBases,
+) -> Vec<BoundFieldRead> {
+    if !types.is_readable() {
+        return Vec::new();
+    }
+    let Some(callee) = texts.get(call_index).copied().filter(|text| is_name(text)) else {
+        return Vec::new();
+    };
+    if texts.get(call_index + 1) != Some(&"(") {
+        return Vec::new();
+    }
+    let Some(contract) = contracts.contract(callee) else {
+        return Vec::new();
+    };
+    let Some(arguments) = argument_spans(texts, call_index + 1) else {
+        return Vec::new();
+    };
+    let mut reads = Vec::new();
+    for (position, (start, end)) in arguments.iter().copied().enumerate() {
+        if !matches!(
+            contract.parameters.get(position),
+            Some(ResourceParameterMode::Borrowed)
+        ) {
+            continue;
+        }
+        let [base, "-", ">", field] = &texts[start..end] else {
+            continue;
+        };
+        let Some(store) = admitted_field(base, field, bases, model, types) else {
+            continue;
+        };
+        if !store.pointer_field {
+            continue;
+        }
+        reads.push(BoundFieldRead {
+            start,
+            end,
+            place: store.place,
+        });
+    }
+    reads
 }
 
 /// Classify the right-hand side of an admitted, call-free store.
@@ -732,6 +836,177 @@ mod tests {
             ),
             None
         );
+    }
+
+    fn borrowing_contract(arity: usize) -> ResourceContracts {
+        use qcore_schemas::contract::{ResourceFunctionContract, ResourceReturnMode};
+        let mut contracts = ResourceContracts::default();
+        contracts.insert_contract(
+            "sink".to_owned(),
+            ResourceFunctionContract {
+                parameters: vec![ResourceParameterMode::Borrowed; arity],
+                result: ResourceReturnMode::None,
+            },
+        );
+        contracts.insert_contract(
+            "eat".to_owned(),
+            ResourceFunctionContract {
+                parameters: vec![ResourceParameterMode::Released { nullable: false }],
+                result: ResourceReturnMode::None,
+            },
+        );
+        contracts
+    }
+
+    fn reads(body_source: &str, statement: &str) -> Vec<String> {
+        let facts = facts("", body_source, &[]);
+        let contracts = borrowing_contract(2);
+        let tokens = texts(statement);
+        bound_read_actuals(
+            &tokens,
+            0,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        )
+        .into_iter()
+        .map(|read| read.place)
+        .collect()
+    }
+
+    const BOUND: &str = "struct box * b ; b = make ( ) ; b -> kid = 0 ;";
+
+    #[test]
+    fn a_whole_borrowed_pointer_member_actual_is_an_admitted_bound_read() {
+        assert_eq!(
+            reads(BOUND, "sink ( b -> kid , b -> other )"),
+            ["b->kid", "b->other"]
+        );
+    }
+
+    #[test]
+    fn a_scalar_member_is_never_an_admitted_bound_read() {
+        assert!(reads(BOUND, "sink ( b -> flag , b -> flag )").is_empty());
+    }
+
+    #[test]
+    fn a_custody_bearing_position_is_never_an_admitted_bound_read() {
+        let facts = facts("", BOUND, &[]);
+        let contracts = borrowing_contract(2);
+        let tokens = texts("eat ( b -> kid )");
+        assert!(
+            bound_read_actuals(
+                &tokens,
+                0,
+                &contracts,
+                &facts.model,
+                &facts.types,
+                &facts.bases
+            )
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn an_uncontracted_callee_admits_no_bound_read() {
+        let facts = facts("", BOUND, &[]);
+        let tokens = texts("other ( b -> kid )");
+        assert!(
+            bound_read_actuals(
+                &tokens,
+                0,
+                &ResourceContracts::default(),
+                &facts.model,
+                &facts.types,
+                &facts.bases
+            )
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn a_refused_base_admits_no_bound_read() {
+        // Bound twice, so premise 3 refuses the base outright.
+        let twice = "struct box * b ; b = make ( ) ; b = make ( ) ;";
+        assert!(reads(twice, "sink ( b -> kid , b -> other )").is_empty());
+    }
+
+    #[test]
+    fn a_refused_member_admits_no_bound_read() {
+        for member in ["any", "deep", "missing"] {
+            let statement = format!("sink ( b -> {member} , b -> {member} )");
+            assert!(
+                reads(BOUND, &statement).is_empty(),
+                "`{member}` must admit no bound read"
+            );
+        }
+    }
+
+    #[test]
+    fn a_partial_or_chained_actual_admits_no_bound_read() {
+        for statement in [
+            "sink ( b -> kid -> n , b -> other )",
+            "sink ( & b -> kid , b -> other )",
+            "sink ( b -> kid + 1 , b -> other )",
+            "sink ( ( b -> kid ) , b -> other )",
+        ] {
+            assert_eq!(
+                reads(BOUND, statement),
+                ["b->other"],
+                "only the whole-argument form is admitted in `{statement}`"
+            );
+        }
+    }
+
+    #[test]
+    fn an_unreadable_function_admits_no_bound_read() {
+        let facts = facts("", BOUND, &[]);
+        let contracts = borrowing_contract(2);
+        let tokens = texts("sink ( b -> kid , b -> other )");
+        let unreadable = FunctionTypes::default();
+        assert!(
+            bound_read_actuals(
+                &tokens,
+                0,
+                &contracts,
+                &facts.model,
+                &unreadable,
+                &facts.bases
+            )
+            .is_empty()
+        );
+    }
+
+    /// The caller supplies the call index, so a *second* call in the same
+    /// statement admits nothing through this route: the reads always belong to
+    /// the call the statement's modeled `ContractCall` describes.
+    #[test]
+    fn only_the_supplied_call_admits_bound_reads() {
+        let facts = facts("", BOUND, &[]);
+        let contracts = borrowing_contract(2);
+        let tokens = texts("eat ( sink ( b -> kid , b -> other ) )");
+        let outer = bound_read_actuals(
+            &tokens,
+            0,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        );
+        assert!(outer.is_empty(), "the outer releasing call admits nothing");
+        let inner = bound_read_actuals(
+            &tokens,
+            2,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        )
+        .into_iter()
+        .map(|read| read.place)
+        .collect::<Vec<_>>();
+        assert_eq!(inner, ["b->kid", "b->other"]);
     }
 
     #[test]

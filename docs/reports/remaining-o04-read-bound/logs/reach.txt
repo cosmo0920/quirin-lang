@@ -1,0 +1,42 @@
+contracted functions in force: 19
+with at least one Borrowed pointer parameter: 4
+  cio_chunk_open: parameter index/indices [0, 2, 4, 8]
+  flb_sds_create_len: parameter index/indices [0]
+  rd_strdup: parameter index/indices [0]
+  rd_strndup: parameter index/indices [0]
+audited unit file names: 185
+  CANDIDATE lib/chunkio/src/cio_scan.c: cio_chunk_open argument 2 = 'ent->d_name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka.c: rd_strdup argument 0 = 'rk->rk_clusterid' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka.c: rd_strdup argument 0 = 'rkb->rkb_origname' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_admin.c: rd_strdup argument 0 = 'grp->group' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_admin.c: rd_strdup argument 0 = 'alteration->user' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_admin.c: rd_strdup argument 0 = 'rkb->rkb_origname' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_admin.c: rd_strdup argument 0 = 'rkb->rkb_origname' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_admin.c: rd_strdup argument 0 = 'mdi->cluster_id' [base bound by a call in this file: False]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_aux.c: rd_strdup argument 0 = 'broker->host' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_aux.c: rd_strdup argument 0 = 'broker_internal->rack_id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_broker.c: rd_strdup argument 0 = 'rkb->rkb_name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: rd_strdup argument 0 = 'rktpar->topic' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: rd_strdup argument 0 = 'cgmetadata->group_id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: rd_strdup argument 0 = 'cgmetadata->member_id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_cgrp.c: rd_strdup argument 0 = 'cgmetadata->group_instance_id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_conf.c: rd_strdup argument 0 = 'prop->sdef' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_conf.c: rd_strdup argument 0 = 'prop->name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_mock.c: rd_strndup argument 0 = 'TransactionalId->str' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c: rd_strdup argument 0 = 'member->id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_mock_cgrp.c: rd_strdup argument 0 = 'mtopic->name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_mock_sharegrp.c: rd_strdup argument 0 = 'member->id' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_msg.c: rd_strdup argument 0 = 'result->errstr' [base bound by a call in this file: False]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_op.c: rd_strdup argument 0 = 'rkb->rkb_nodename' [base bound by a call in this file: False]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_partition.c: rd_strdup argument 0 = 'rktpar->topic' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_partition.c: rd_strdup argument 0 = 'rktpar->topic' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: rd_strdup argument 0 = 'strtup->name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: rd_strdup argument 0 = 'strtup->value' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: rd_strdup argument 0 = 'handle->token_value' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: rd_strdup argument 0 = 'handle->md_principal_name' [base bound by a call in this file: True]
+  CANDIDATE lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer.c: rd_strndup argument 0 = 'in->ptr' [base bound by a call in this file: False]
+  CANDIDATE src/flb_input_chunk.c: cio_chunk_open argument 0 = 'storage->cio' [base bound by a call in this file: False]
+C files scanned: 151
+over-counted candidate bound reads in the pinned clone: 31
+  of which the base is never bound by a call in its file (card C02-P's route): 5
+  of which the base may be call-bound (this card's route): 26

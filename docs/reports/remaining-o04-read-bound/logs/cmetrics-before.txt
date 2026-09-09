@@ -1,0 +1,8 @@
+  cmetrics/lib/cmetrics/src/cmt_counter.c: Unsafe (7/7)
+    resource diagnostics: leak=2, unknown_alias=4, unsupported=32
+    cmt_counter_add: preprocessed line 5522: unsupported: indirect memory access is outside the resource projection
+    cmt_counter_add: preprocessed line 5526: unsupported: indirect memory access is outside the resource projection
+    cmt_counter_add: preprocessed line 5529: unsupported: call to uncontracted function `cmt_metric_add`
+    35 more diagnostic(s); full inventory in optional resource report
+source contracts: 1 checked function contract(s) / 6 Unknown; no whole-unit promotion
+1 units: 0 Safe / 1 provisional Unsafe / 0 Unknown / 0 data-only / 0 gateway failures
