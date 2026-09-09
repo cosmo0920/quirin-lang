@@ -1,5 +1,5 @@
 //! Declared literal-argument premises (cards **HASH-CONTRACTS**,
-//! **HASH-CLAUSE**).
+//! **HASH-CLAUSE**, **HASH-REFINE**).
 //!
 //! # Why this exists
 //!
@@ -13,11 +13,14 @@
 //! declaration read off one arm must not be believed on the other.
 //!
 //! A *declared literal-argument premise* restricts a declaration to call sites
-//! whose argument at a named parameter is exactly a named integer literal.
+//! whose argument at a named parameter is exactly a named integer constant.
 //! Everywhere else, the contract is **not applied**: the call is treated exactly
 //! as a call to an uncontracted function, which is what this analyzer already
 //! does when it has no model. The premise can therefore only ever refuse call
 //! sites the declaration would otherwise have covered; it can never admit one.
+//! Which call-site *spellings* count as that constant — and which are refused
+//! for want of the evaluation this premise deliberately lacks — is decided by
+//! [`satisfies`], per §C04.5.1.
 //!
 //! # Where a premise is declared
 //!
@@ -161,9 +164,129 @@ impl LiteralPremises {
         self.declared(function).iter().find(|premise| {
             arguments
                 .and_then(|arguments| arguments.get(premise.index))
-                .is_none_or(|actual| *actual != premise.literal)
+                .is_none_or(|actual| !satisfies(actual, &premise.literal))
         })
     }
+}
+
+/// The closed table of C integer-constant suffixes (C11 6.4.4.1): an optional
+/// unsigned suffix and an optional long/long-long suffix, in either order, with
+/// each half's case free but `ll`/`LL` never mixed. The empty suffix is present
+/// so that an unsuffixed literal takes the same path.
+///
+/// A suffix fixes the constant's *type*; it does not change its value, which is
+/// what the premise names. Anything outside this table — `0x0`, `0b1`, `1e5`,
+/// `0i32` — is refused rather than interpreted.
+const INTEGER_SUFFIXES: &[&str] = &[
+    "", "u", "U", "l", "L", "ll", "LL", "ul", "uL", "Ul", "UL", "lu", "lU", "Lu", "LU", "ull",
+    "uLL", "Ull", "ULL", "llu", "llU", "LLu", "LLU",
+];
+
+/// Whether a call site's actual satisfies a declared literal (card
+/// **HASH-REFINE**).
+///
+/// The declared literal is canonical by construction — the loader admits one
+/// spelling per value — but a call site may spell the same integer constant
+/// several ways. Two spellings are admitted beyond exact token equality,
+/// each **decided** from the token stream with no evaluation whatever:
+///
+/// * **matched enclosing parentheses.** `(0)` and `((0))` are the same primary
+///   expression as `0`; parenthesisation is grammar, not arithmetic.
+/// * **an integer suffix.** `0L`, `0u`, `0ULL` are the same value as `0` with a
+///   different declared *type*; the digit run is untouched.
+///
+/// Everything else keeps its refusal, because deciding it would need something
+/// this premise deliberately does not have:
+///
+/// * `0 + 0`, `1 - 1`, `-(0)` — **arithmetic**. The premise names a literal, not
+///   an expression that evaluates to one.
+/// * `-0` against a declared `0` — the same, one operator smaller: equating them
+///   is evaluating unary minus.
+/// * `0x0`, `0b0`, `00` — **a base**. Reading them needs digit interpretation,
+///   and `010` is 8, so stripping a leading zero would be wrong, not merely
+///   incomplete.
+/// * `(void *) 0`, `(long) 0` — a **cast**, whose operand this relation does not
+///   reach into.
+/// * an `enum` constant, or any other identifier — **symbol resolution**. Note
+///   that an object-like *macro* is not in this list: the analyzer reads
+///   preprocessed text, so a macro spelling the literal has already become the
+///   literal before this relation sees it.
+///
+/// The relation is a strict widening of exact equality — every vector that
+/// matched before still matches — so it can only ever *apply* a declaration
+/// where the declared premise says it should have applied all along. That is a
+/// deliberate movement in the applying direction, recorded in
+/// `docs/reports/remaining-hash-refine/README.md`.
+fn satisfies(actual: &[String], literal: &[String]) -> bool {
+    actual == literal || canonical_integer(actual).as_deref() == Some(literal)
+}
+
+/// The declared spelling an actual stands for, or `None` if this relation does
+/// not decide it. The result is the loader's own canonical form: `["0"]`, or
+/// `["-", "1"]`.
+fn canonical_integer(actual: &[String]) -> Option<Vec<String>> {
+    let unwrapped = strip_matched_parentheses(actual);
+    let (sign, rest) = match unwrapped.split_first() {
+        Some((first, rest)) if first == "-" => (Some("-".to_owned()), rest),
+        _ => (None, unwrapped),
+    };
+    let [token] = rest else {
+        return None;
+    };
+    let digits = decimal_digits(token)?;
+    // `-0` is not a second spelling of `0`: the loader refuses it as a declared
+    // literal, and equating it here would be evaluating the sign.
+    if sign.is_some() && digits == "0" {
+        return None;
+    }
+    Some(sign.into_iter().chain([digits.to_owned()]).collect())
+}
+
+/// Remove enclosing parentheses, and only ones that actually match each other:
+/// `(0)` unwraps, `(0) + (0)` does not, and neither does the cast `(long) 0`.
+fn strip_matched_parentheses(mut tokens: &[String]) -> &[String] {
+    while tokens.len() > 2 && outer_parentheses_match(tokens) {
+        tokens = &tokens[1..tokens.len() - 1];
+    }
+    tokens
+}
+
+/// Whether the first token is a `(` whose matching `)` is the last token.
+fn outer_parentheses_match(tokens: &[String]) -> bool {
+    if tokens.first().map(String::as_str) != Some("(") {
+        return false;
+    }
+    let mut depth = 0usize;
+    for (index, token) in tokens.iter().enumerate() {
+        match token.as_str() {
+            "(" => depth += 1,
+            ")" => match depth.checked_sub(1) {
+                Some(0) => return index + 1 == tokens.len(),
+                Some(remaining) => depth = remaining,
+                None => return false,
+            },
+            _ => {}
+        }
+    }
+    false
+}
+
+/// The decimal digit run of one integer-constant token, if the whole token is a
+/// decimal constant with an admitted suffix and no leading zero.
+///
+/// The gateway's C tokenizer takes a digit and every alphanumeric byte after it
+/// as one token, so `0L` arrives as the single token `0L` and `0x0` as `0x0`;
+/// the split is done here rather than assumed.
+fn decimal_digits(token: &str) -> Option<&str> {
+    let end = token
+        .find(|character: char| !character.is_ascii_digit())
+        .unwrap_or(token.len());
+    let (digits, suffix) = token.split_at(end);
+    // A leading zero is an octal constant, and this relation decides no base.
+    if digits.is_empty() || (digits.len() > 1 && digits.starts_with('0')) {
+        return None;
+    }
+    INTEGER_SUFFIXES.contains(&suffix).then_some(digits)
 }
 
 fn is_c_identifier(text: &str) -> bool {
@@ -441,6 +564,144 @@ contract {
     fn an_environment_without_sources_declares_no_premise() {
         let premises = LiteralPremises::read(&ResourceContracts::default());
         assert!(premises.is_empty());
+    }
+
+    // ----------------------------------------------------------------------
+    // Card HASH-REFINE: which call-site spellings the premise decides.
+    // ----------------------------------------------------------------------
+
+    /// Tokenize a call-site actual exactly as the gateway's C tokenizer does,
+    /// so these rows are over real token vectors rather than hand-built ones.
+    fn actual(spelling: &str) -> Vec<String> {
+        crate::legacy_c::tokenize(spelling)
+            .into_iter()
+            .map(|token| token.text)
+            .collect()
+    }
+
+    /// **The spelling-equivalence table.** Every row is a call-site spelling
+    /// against the declared literal `0`, with the ground on which it is decided
+    /// or refused. Admission is structural: parentheses and an integer suffix
+    /// are erased, and nothing else is.
+    #[test]
+    fn the_admitted_spellings_of_the_declared_literal() {
+        let zero = [String::from("0")];
+        for spelling in [
+            "0",     // the declared spelling itself
+            "(0)",   // matched parentheses
+            "((0))", // repeated, still matched
+            "( 0 )", // whitespace is not a token
+            "0L",    // suffix: long
+            "0l", "0U", "0u", "0LL", "0ll", "0UL", "0ul", "0lu", "0LU", "0ULL", "0uLL", "0llu",
+            "0LLU", // every admitted suffix spelling
+            "(0L)", // both at once
+            "((0ULL))",
+        ] {
+            assert!(
+                satisfies(&actual(spelling), &zero),
+                "`{spelling}` must satisfy the declared literal `0`"
+            );
+        }
+    }
+
+    /// The refused spellings, each with the capability it would need. None of
+    /// these is admitted, and every one keeps the refusal it had before this
+    /// card.
+    #[test]
+    fn the_refused_spellings_and_their_grounds() {
+        let zero = [String::from("0")];
+        for (spelling, ground) in [
+            ("0 + 0", "arithmetic"),
+            ("1 - 1", "arithmetic"),
+            ("-0", "arithmetic: unary minus"),
+            ("-(0)", "arithmetic: unary minus"),
+            ("+0", "arithmetic: unary plus"),
+            ("0x0", "a base"),
+            ("0X0", "a base"),
+            ("0b0", "a base"),
+            ("00", "a base: a leading zero is octal"),
+            ("(void *) 0", "a cast"),
+            ("(long) 0", "a cast"),
+            ("(0) + (0)", "arithmetic, and the parentheses do not match"),
+            ("ZERO_CONSTANT", "symbol resolution"),
+            ("'\\0'", "a character constant"),
+            ("0.0", "a floating constant"),
+            ("0i32", "an unrecognised suffix"),
+            ("n", "symbol resolution"),
+            ("sizeof(struct p_value)", "evaluation"),
+        ] {
+            assert!(
+                !satisfies(&actual(spelling), &zero),
+                "`{spelling}` must stay refused; deciding it would need {ground}"
+            );
+        }
+    }
+
+    /// **The widening is strict.** Anything that satisfied the old exact-token
+    /// test still satisfies this one, so no call site the premise used to admit
+    /// can have been withdrawn by this card.
+    #[test]
+    fn exact_token_equality_still_satisfies() {
+        for (declared, spelling) in [
+            (vec!["0".to_owned()], "0"),
+            (vec!["-".to_owned(), "1".to_owned()], "-1"),
+            (vec!["8".to_owned()], "8"),
+            (vec!["4294967296".to_owned()], "4294967296"),
+        ] {
+            assert!(satisfies(&actual(spelling), &declared));
+        }
+    }
+
+    /// A negative declared literal admits the same two erasures, and nothing
+    /// crosses between the signs.
+    #[test]
+    fn a_negative_literal_admits_the_same_spellings() {
+        let minus_one = [String::from("-"), String::from("1")];
+        for spelling in ["-1", "(-1)", "-1L", "(-1LL)"] {
+            assert!(satisfies(&actual(spelling), &minus_one), "{spelling}");
+        }
+        for spelling in ["1", "(1)", "1L", "- 1 - 0", "-2", "-1.0", "-01"] {
+            assert!(
+                !satisfies(&actual(spelling), &minus_one),
+                "`{spelling}` must not satisfy the declared literal `-1`"
+            );
+        }
+        // Nor does the negative spelling satisfy the positive declaration.
+        assert!(!satisfies(&actual("-1"), &[String::from("1")]));
+    }
+
+    /// A leading zero is refused in **both** directions rather than normalised:
+    /// `010` is 8, so stripping it would be a wrong answer, not a missing one.
+    #[test]
+    fn an_octal_spelling_is_refused_rather_than_normalised() {
+        assert!(!satisfies(&actual("010"), &[String::from("10")]));
+        assert!(!satisfies(&actual("010"), &[String::from("8")]));
+        assert!(!satisfies(&actual("00"), &[String::from("0")]));
+        // And the loader refuses to declare one, so there is no declared side
+        // for it to match exactly either.
+        for spelling in ["010", "-0", "00"] {
+            let text = MODULE.replace("(size, 0)", &format!("(size, {spelling})"));
+            let mut sources = BTreeMap::new();
+            sources.insert("premise.qcore".to_owned(), text);
+            assert!(
+                load_resource_contract_sources(&sources).is_err(),
+                "the loader admitted the declared literal `{spelling}`"
+            );
+        }
+    }
+
+    /// An object-like macro is **not** a refused spelling: the analyzer reads
+    /// preprocessed text, so a macro naming the literal has already become the
+    /// literal. This corrects HASH-CLAUSE's recorded boundary, which listed
+    /// macro spellings among the refusals.
+    #[test]
+    fn a_macro_spelling_arrives_already_expanded() {
+        // What the preprocessor hands the tokenizer for `#define ZERO 0`.
+        assert!(satisfies(&actual("0"), &[String::from("0")]));
+        // What it hands over for `#define ZERO (0)`, likewise decided now.
+        assert!(satisfies(&actual("(0)"), &[String::from("0")]));
+        // `NULL` expands to a cast on this platform, which stays refused.
+        assert!(!satisfies(&actual("((void *)0)"), &[String::from("0")]));
     }
 
     #[test]

@@ -96,8 +96,37 @@
 //! It is a `requires` clause because it is a precondition on *applicability*,
 //! and it names its parameter by name because every other predicate in this
 //! vocabulary does. `LITERAL` is a decimal integer with an optional leading
-//! minus and no suffix or alternate base; a spelling this loader cannot compare
-//! exactly against a C token vector is rejected rather than approximated.
+//! minus and no suffix, alternate base, leading zero or second spelling of zero;
+//! a spelling this loader cannot compare exactly against a C token vector is
+//! rejected rather than approximated. The declared spelling is therefore
+//! **canonical**: one spelling per value. The *call site* may spell the same
+//! value several ways, and which of those a consumer admits is decided by the
+//! consumer against this canonical form — see
+//! `qcore_c_gateway::legacy_literal_premise` and §C04.5.
+//!
+//! ## Any parameter, deliberately (card HASH-REFINE)
+//!
+//! `p` may name a parameter of **any** declared type in this vocabulary. The
+//! decision is closed rather than open-ended, because the vocabulary is: a
+//! parameter is either a [`SCALAR_ABI_TYPES`] projection or a
+//! [`POINTER_ABI_TYPES`] one, so restricting the clause could only mean
+//! "scalars only". Three measured reasons against that restriction:
+//!
+//! 1. A literal premise on a pointer parameter is **meaningful**: an integer
+//!    constant expression with value `0` is C's null pointer constant
+//!    (C11 6.3.2.3p3), so `requires resource_literal_argument(p, 0);` declares
+//!    a contract read off the arm where `p` is null. That is a legitimate C04
+//!    use, exercised end to end by the gateway's null-sentinel fixture.
+//! 2. A premise on any parameter can only ever **withdraw** call sites, so a
+//!    premise that no call site can satisfy — a nonzero literal at a pointer
+//!    parameter, which is not even valid C without a cast — is vacuous in the
+//!    *refusing* direction. Restricting buys no soundness.
+//! 3. The retired comment directive imposed no such restriction either, so
+//!    adding one would move the migration baseline in the refusing direction
+//!    with no measured need.
+//!
+//! What the loader does still refuse is unchanged: the name must be a parameter
+//! of this declaration, and at most one premise may name each parameter.
 //!
 //! Total-or-reject applies in full: an unknown parameter name, a malformed
 //! literal, a second premise on the same parameter, and any other `requires`
@@ -648,6 +677,20 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
 /// leading minus: the returned vector is the C token texts, which is what a
 /// consumer compares an actual against. Alternate bases and suffixes lex as an
 /// extra token and so fail this match rather than being approximated.
+///
+/// Card **HASH-REFINE** narrows the *declared* spelling to one canonical form
+/// per value, so that the consumer-side spelling equivalence it admits (§C04.5)
+/// has a unique target. Two spellings are refused here that the digits-only test
+/// used to admit:
+///
+/// * a **leading zero** (`010`) — that is an octal constant in C, and this
+///   clause decides no base; and
+/// * a **negative zero** (`-0`) — one value with two declared spellings, which
+///   would make the declared literal ambiguous where the call-site relation is
+///   not.
+///
+/// Neither occurs in the corpus, and both refusals are strictly refusing: a
+/// module using either no longer loads at all.
 fn literal_argument_clause(source: &str) -> Result<(String, Vec<String>), String> {
     let unsupported = || format!("unsupported or duplicate requirement `{source}`");
     let tokens = token_kinds(source)?;
@@ -677,6 +720,11 @@ fn literal_argument_clause(source: &str) -> Result<(String, Vec<String>), String
         _ => return Err(unsupported()),
     };
     if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(unsupported());
+    }
+    // One canonical spelling per declared value (card HASH-REFINE): no octal
+    // leading zero, and no second spelling of zero.
+    if (digits.len() > 1 && digits.starts_with('0')) || (sign.is_some() && digits == "0") {
         return Err(unsupported());
     }
     Ok((
