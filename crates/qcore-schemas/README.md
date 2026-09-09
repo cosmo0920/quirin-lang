@@ -1,4 +1,4 @@
-# qcore-schemas 7.0.0
+# qcore-schemas 8.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -298,3 +298,60 @@ inventory selects which nullable states must be enumerated; the trusted core
 re-reads that inventory from the contract itself and refuses a task whose
 projection names any other set. No derived reading — no case list, no write
 list, no release order — ever travels in a request.
+
+## Call-result def/use projections (8.0.0)
+
+Version 8.0.0 adds `call_use_summary`: the **third** transported source
+vocabulary, for the bounded ChunkIO filesystem cleanup-attempt family, plus the
+proposed def/use reading a producer returns for it and the identity a
+*dependent* capability may carry for its prerequisite.
+
+**Why it is its own vocabulary.** This capability's evidence is which call
+results a body ignores and which it guards, in operation order — a def/use
+reading, not a path replay. The Boolean and counter projections carry a path so
+the receiver can evaluate it to a field state, which discards the ordering a
+def/use reading needs. The teardown projection has no `ReturnValue` and no
+`LocalStart`, and its call table is closed to one co-transported helper or
+exactly `free`; widening those enums would weaken a family whose closed table is
+the whole point. So this module shares no type with either.
+
+**Why the bump is forced.** Three of the four additions are source-incompatible
+for exhaustive matches and struct literals, exactly as in 4.0.0, 5.0.0 and
+7.0.0:
+
+| Addition | Kind |
+|---|---|
+| `SemanticWitness::CallResultUse` | new variant on an exhaustively matched enum |
+| `ObligationProperty::CallResultUseContract` | new variant on an exhaustively matched enum |
+| `VerificationRequestV2::call_use_source` | new required struct field (skipped when absent) |
+| `call_use_summary` module | purely additive |
+
+**Existing wire bytes are unchanged.** `call_use_source` is an `Option` that
+defaults to absent and is skipped on serialization, exactly like the four
+projections before it; `crates/qcore-schemas/tests/call_use_request_wire.rs`
+pins that a request carrying none of the five projections serializes with none
+of the five keys and round-trips.
+
+| Boundary | Before | After | Why |
+|---|---|---|---|
+| Rust schema crate | 7.0.0 | **8.0.0** | Exhaustive-variant precedent from 2.0.0, 4.0.0, 5.0.0 and 7.0.0 |
+| Plugin protocol | 1 | 1 | Unchanged |
+| Evidence version | 1, 2 | 1, 2 | Unchanged |
+| Call-use source input | — | 1 | New |
+| Call-use semantic profile | — | `qcore.c_call_result_use.v1` | New |
+| Call-use input digest key | — | `qcore:call-use-source-input:v1` | New |
+| Prerequisite identity digest key | — | `qcore:prerequisite-identity:v1` | New |
+| ChunkIO package | 0.6.0 | **0.7.0** | Adds the call-result def/use route |
+
+The projection carries the *question* only, and this one carries less than the
+teardown projections did: the contract's policy selection — which callee is
+counted, which second callee, which signature — never leaves the trusted core,
+because the reading reports every call of every path. No derived reading — no
+call inventory, no use lists, no fact vector, no verdict — ever travels in a
+request.
+
+`PrerequisiteIdentity` is the only thing a dependent capability may carry for a
+prerequisite it consumes: a semantic profile, a task digest and an obligation
+identifier, all of which the trusted core recomputes from its own import before
+re-running the prerequisite's own evaluation. It carries no verdict, no
+certificate and no reading, and a `deny_unknown_fields` test pins that.
