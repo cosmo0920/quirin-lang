@@ -3,10 +3,11 @@
 
 `docs/reevaluation/ct_manifest.json` schema 2 carries, for every CT case and
 every pipeline stage, a status plus the evidence behind it: the executor that
-ran the stage, the artifact it ran on, how many times it ran, and the exact
-`target_os` gate of that runner. `compiler/tests/ct_corpus.rs` rederives all of
-that from its own dispatch and refuses drift, so the manifest is a checked
-record rather than a self-certifying one.
+ran the stage, the artifact it ran on, how many times it ran, the exact
+`target_os` gate of that runner and — since card CT-CTWIN's `legacy_c` route —
+the external tools it cannot start without. `compiler/tests/ct_corpus.rs`
+rederives all of that from its own dispatch and refuses drift, so the manifest
+is a checked record rather than a self-certifying one.
 
 This module turns that record into the consumable numbers:
 
@@ -67,6 +68,7 @@ GENERATED_FIELDS = [
     "stage_histogram",
     "observation_counts",
     "host_scope",
+    "tool_scope",
     "depth_profile",
     "case_depth",
 ]
@@ -79,6 +81,7 @@ EVIDENCE_FILES = [
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
     "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
     "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+    "docs/reports/wave9-ctwin/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
@@ -114,6 +117,7 @@ def summarize(root: pathlib.Path):
     histogram = {stage: {} for stage in stages}
     observations: dict[str, int] = {}
     host_scope: dict[str, set] = {}
+    tool_scope: dict[str, set] = {}
     depth_profile: dict[str, int] = {}
     case_depth: dict[str, str] = {}
     mapped = unmapped = 0
@@ -135,6 +139,11 @@ def summarize(root: pathlib.Path):
             # exactly the targets its runner covers, so a report produced on
             # another host cannot inherit `executed`.
             host_scope.setdefault(stage, set()).update(record.get("host_gate") or ["any"])
+            # The tool axis is separate from the host axis: the legacy_c route's
+            # stages run on any target and only where Clang exists, so reading
+            # "any" on the host axis alone would say the opposite (card
+            # CT-CTWIN).
+            tool_scope.setdefault(stage, set()).update(record.get("tool_gate") or ["none"])
             if deepest is None or STAGE_DEPTH[stage] > STAGE_DEPTH[deepest]:
                 deepest = stage
         if deepest is None:
@@ -148,6 +157,7 @@ def summarize(root: pathlib.Path):
         "stage_histogram": {stage: _sorted(histogram[stage]) for stage in stages},
         "observation_counts": _sorted(observations),
         "host_scope": {stage: sorted(host_scope[stage]) for stage in sorted(host_scope)},
+        "tool_scope": {stage: sorted(tool_scope[stage]) for stage in sorted(tool_scope)},
         "depth_profile": _sorted(depth_profile),
         "case_depth": _sorted(case_depth),
     }

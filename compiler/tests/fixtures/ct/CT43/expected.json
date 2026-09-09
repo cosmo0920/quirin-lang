@@ -1,0 +1,52 @@
+{
+  "id": "CT43",
+  "verdict": "legacy_c_twin",
+  "entry": "subject",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "legacy_c_twin"],
+  "notes": "CT43's construct is a C construct: a registration API that stores a completion callback and returns. No QCore syntax expresses it, so the case's artifact is the C twin in case.c, analyzed through the real unrestricted-C gateway. The scenario expects `Unknown; no whole-program proof`, and that is what the gateway reports: the registration is a call whose effect on `arg` no contract declares, so the projection is withdrawn rather than completed. Nothing here decides when the callback runs; the measurement is that no proof is issued in its absence.",
+  "legacy_c_twin": {
+    "contracts": ["contracts.qcore"],
+    "attributed_to": "the uncontracted registration call q_register, which defers on_complete past subject's return",
+    "verdict": "unknown",
+    "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+    "function_status": {
+      "on_complete": "safe",
+      "subject": "unknown"
+    },
+    "diagnostics": [
+      "subject:6:unsupported:call to uncontracted function `q_register`"
+    ],
+    "controls": [
+      {
+        "source": "direct_call.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "safe",
+        "reason": null,
+        "function_status": {
+          "on_complete": "safe",
+          "subject": "safe"
+        },
+        "diagnostics": [],
+        "note": "The same callback body, the same borrowed parameter and the same declarations, called here and now instead of registered. It checks, so the case's Unknown is attributable to the deferral and not to the callback, the parameter or the surrounding declarations."
+      },
+      {
+        "source": "owned_local.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "unsafe",
+        "reason": null,
+        "function_status": {
+          "on_complete": "safe",
+          "subject": "unsafe"
+        },
+        "diagnostics": [
+          "subject:0:leak:7",
+          "subject:8:unsupported:call to uncontracted function `q_register`"
+        ],
+        "note": "Registering an owned local is not read as a hand-off: the acquisition is reported as a leak beside the unsupported call. That is a provisional Unsafe resting on an unresolved effect — if q_register takes custody there is no leak — and it is pinned here so the reading is visible. Card CT-CTWIN records it as CT-CTWIN-UNRESOLVED-LEAK; nothing was changed to produce it."
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+module contract;
+
+// The declared custody API this C twin is analyzed against. These are trusted
+// test assumptions about a synthetic `q_*` allocator, not verified facts, and
+// the deliberate point of the case is what is *absent* from them: no contract
+// declares `q_register`'s effect on the argument it stores.
+
+extern fn q_alloc() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn q_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};

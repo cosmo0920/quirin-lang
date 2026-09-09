@@ -1520,26 +1520,35 @@
    {
     "id": "CT40",
     "batch2_bucket": "unimplemented-syntax",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
-    "evidence": "compiler/tests/ct_corpus.rs:37-44 STAGE_NAMES has no C stage; changing it touches all 50 rows.",
-    "bucket_changed_since_batch2": false
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): a store of an owned pointer into a file-scope object is invisible to the resource projection, so the publishing function is Safe with no diagnostic and the verdict is identical with and without `_Atomic`; a unit that also reads the published object is Unknown, but on the reader's unknown-alias diagnostics, not on the publication. The verdict is invariant under the construct the scenario names, so no control can attribute it. Follow-on CT-CTWIN-PUBLISH.",
+    "evidence": "docs/reports/wave9-ctwin/README.md",
+    "bucket_changed_since_batch2": true,
+    "superseded_blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
+    "superseded_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "superseded_by": "CT-CTWIN"
    },
    {
     "id": "CT41",
     "batch2_bucket": "unimplemented-syntax",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
-    "evidence": "docs/reports/w6-ct-batch-2/README.md",
-    "bucket_changed_since_batch2": false
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): adding or removing the volatile completion flag changes neither the verdict nor a single diagnostic, in both shapes measured; the gateway models no synchronization, so no verdict it produces is evidence about one and the mapping would be vacuous. Follow-on CT-CTWIN-SYNC.",
+    "evidence": "docs/reports/wave9-ctwin/README.md",
+    "bucket_changed_since_batch2": true,
+    "superseded_blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
+    "superseded_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "superseded_by": "CT-CTWIN"
    },
    {
     "id": "CT42",
     "batch2_bucket": "unimplemented-syntax",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "evidence": "docs/reports/w6-ct-batch-2/README.md",
-    "bucket_changed_since_batch2": false
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): an int-typed resource identity is refused by the contract loader (`owned result requires a pointer return type`), so the descriptor twin is Unknown on three uncontracted calls \u2014 the profile cannot express it at all \u2014 and the case asks for a preserved identity, which no measured verdict establishes. Follow-on CT-CTWIN-DESCRIPTOR.",
+    "evidence": "docs/reports/wave9-ctwin/README.md",
+    "bucket_changed_since_batch2": true,
+    "superseded_blocker": "as CT40",
+    "superseded_bucket": "blocked-on-harness-schema (C-twin stage)",
+    "superseded_by": "CT-CTWIN"
    },
    {
     "id": "CT43",

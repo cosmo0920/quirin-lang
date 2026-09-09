@@ -1,0 +1,46 @@
+{
+  "id": "CT45",
+  "verdict": "legacy_c_twin",
+  "entry": "subject",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "legacy_c_twin"],
+  "notes": "CT45's construct is a C construct: a destructor whose body is outside the translation unit and which is documented to reach file-scope state. No QCore syntax expresses it, so the case's artifact is the C twin in case.c, analyzed through the real unrestricted-C gateway. The scenario expects `Require access contract or report unknown`, and both halves are measured: without a declared contract for q_destroy the unit is Unknown, and with one — over the very same case.c bytes — it checks. The declared contract is a trusted premise about an absent body, not a fact established about it.",
+  "legacy_c_twin": {
+    "contracts": ["contracts.qcore"],
+    "attributed_to": "the uncontracted destructor q_destroy, whose effect on p and on the file-scope registry is undeclared",
+    "verdict": "unknown",
+    "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+    "function_status": {
+      "subject": "unknown"
+    },
+    "diagnostics": [
+      "subject:5:unsupported:call to uncontracted function `q_destroy`"
+    ],
+    "controls": [
+      {
+        "source": null,
+        "contracts": ["contracts.qcore", "destructor_contract.qcore"],
+        "expectation": "safe",
+        "reason": null,
+        "function_status": {
+          "subject": "safe"
+        },
+        "diagnostics": [],
+        "note": "The contract-varying control: the case's own bytes, analyzed with an access contract declared for q_destroy. It checks, which is the `require access contract` half of the case's expectation and shows the Unknown is bought by the missing declaration rather than by the shape of the call."
+      },
+      {
+        "source": "known_destructor.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "safe",
+        "reason": null,
+        "function_status": {
+          "subject": "safe"
+        },
+        "diagnostics": [],
+        "note": "The source-varying control: the same registry, the same borrowed parameter and the same declarations, calling the destructor the contract set describes. It checks, so the Unknown is not attributable to the parameter, the registry or the file-scope state."
+      }
+    ]
+  }
+}

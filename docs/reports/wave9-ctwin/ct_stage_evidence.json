@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "card": "CT-CTWIN",
+  "generated": "2026-09-09",
+  "report": "docs/reports/wave9-ctwin/README.md",
+  "purpose": "Per-stage executed evidence for the two cases card CT-CTWIN mapped on the new legacy_c route, written in the same shape as docs/reports/wave8-epoch-ct/ct_stage_evidence.json so scripts/ct_stage_summary.py merges it with the earlier per-card records.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control's execution is recorded under aux:, never as the case's own stage — with one deliberate exception, stated in `contract_varying_controls_are_case_observations` below.",
+  "route": "legacy_c (qcore_c_gateway::legacy_c::validate_unrestricted_c11 then analyze_unrestricted_c11, reached through the public qcore_compiler reexports). The gateway is unedited by this card: `git diff` over crates/ and compiler/src/ is empty.",
+  "why_this_route_has_no_elaborate_stage": "CT43 and CT45 name C constructs — a registration API that defers a callback, and a destructor whose body is outside the translation unit. No QCore syntax expresses either, which is why both sat in the batch-2 `unimplemented-syntax` bucket. Their artifact is therefore a C twin, not a QCore fixture, and the route's vocabulary — declared with no member by card T00-CT-SCHEMA and first used here — is exactly [parse, legacy_c_twin, proof]. On this route `parse` is the gateway's own C admission (Clang preprocessing plus syntax acceptance of the case's own .c bytes) and `legacy_c_twin` is the resource projection and its unit verdict. There is no emission, native or sanitizer stage because the gateway analyzes C rather than producing any, so native_sanitized is structurally absent under the same route rule the epoch route uses.",
+  "verdict_mode_added": "legacy_c_twin. The evidence is the whole verdict, rebuilt from the analysis and compared wholesale: the unit result, its verbatim withdrawal reason, the complete per-function status map and the complete ordered diagnostic inventory. A fixture cannot pin a convenient subset — any function or diagnostic it omits is a mismatch. Each case also names the construct its scenario is about and carries controls that remove exactly that construct; at least one control must be checked by the gateway, so a recorded Unknown is never merely `the projection cannot express this at all`.",
+  "tool_gate_added": "Both stages of this route are gated on Clang and on no particular target_os. Recording only `host_gate: null` would read as `this ran wherever the tests ran`, which is T00 finding O3 in the tool direction, so schema 2's stage record gains an optional `tool_gate` and the derived summary gains a `tool_scope` axis beside `host_scope`. The harness derives the gate from its own dispatch and refuses drift in both directions; on a host with no usable Clang the runner prints why the stages did not run rather than passing quietly, and an explicit invalid QCORE_CLANG is an error, never a silent fallback.",
+  "contract_varying_controls_are_case_observations": "CT45's first control changes the declared contracts over the case's own bytes rather than changing the source. That is the form CT45's `expected` text asks about — `require access contract or report unknown` — and because it analyzes the case's own artifact it is counted as a second observation of that case's legacy_c_twin stage, not as an aux row. CT43 has no such control, so its count is 1.",
+  "lean_is_not_applicable": "Judged not applicable and recorded, on the same terms as cards T00-CT-SCHEMA and T08-SRC-CT: this card adds no checker rule, no diagnostic code, no lowering and no model. It adds a harness route and two fixtures over an unedited gateway. `proof` stays unassessed for both cases; no theorem is bound to any CT fixture (T00.7 remains open). The Lean gate was run and passes.",
+  "no_native_or_sanitized_evidence_added": "Sanitized-native stays 3 of 30 (CT03, CT17, CT26) and proof 0 of 30. The denominator grew by mapping, not by conformance, and the two new cases contribute neither.",
+  "inventory": {
+    "added_mapped_ids": ["CT43", "CT45"],
+    "mapped_before": 28,
+    "mapped_after": 30,
+    "unmapped_after": 20,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "gateway_admissions": 2,
+    "gateway_analyses_of_case_artifacts": 3,
+    "gateway_analyses_of_control_artifacts": 3,
+    "accepted_controls": 3,
+    "provisional_unsafe_controls": 1,
+    "reference_executions": 0,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT43": {
+      "harness_verdict_mode": "legacy_c_twin",
+      "manifest_evidence_target": null,
+      "legacy_c_controls_executed": 2,
+      "measured_verdict": {
+        "unit": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+        "function_status": {
+          "on_complete": "safe",
+          "subject": "unknown"
+        },
+        "diagnostics": [
+          "subject:6:unsupported:call to uncontracted function `q_register`"
+        ]
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT43/case.c",
+          "observations": 1,
+          "note": "validate_unrestricted_c11 admits the twin as C11 in its own right, and the preprocessed unit is asserted to define the analyzed entry. A twin that only failed to analyze because Clang refused it would measure nothing."
+        },
+        "elaborate": {
+          "status": "not_applicable"
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT43/case.c",
+          "observations": 1,
+          "note": "Unknown, attributable to the deferral: the registration is a call whose effect on `arg` no contract declares, so the projection is withdrawn. The scenario's expectation is `Unknown; no whole-program proof`."
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT43/direct_call.c",
+          "observations": 1,
+          "note": "The same callback body, the same borrowed parameter and the same declarations, called here and now instead of registered: Safe, both functions safe, no diagnostic. This is what makes the case's Unknown attributable to the deferral rather than to the callback, the parameter or the declarations."
+        },
+        "aux:provisional_unsafe_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT43/owned_local.c",
+          "observations": 1,
+          "note": "Registering an owned local is not read as a hand-off: [subject:0:leak:7, subject:8:unsupported:call to uncontracted function `q_register`], unit Unsafe. A provisional Unsafe resting on an unresolved effect; pinned so the reading is visible. Follow-on CT-CTWIN-UNRESOLVED-LEAK."
+        }
+      }
+    },
+    "CT45": {
+      "harness_verdict_mode": "legacy_c_twin",
+      "manifest_evidence_target": null,
+      "legacy_c_controls_executed": 2,
+      "measured_verdict": {
+        "unit": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+        "function_status": {
+          "subject": "unknown"
+        },
+        "diagnostics": [
+          "subject:5:unsupported:call to uncontracted function `q_destroy`"
+        ]
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT45/case.c",
+          "observations": 1,
+          "note": "As CT43: the twin is admitted as C11 in its own right before anything is projected."
+        },
+        "elaborate": {
+          "status": "not_applicable"
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT45/case.c",
+          "observations": 2,
+          "note": "Two analyses of the case's own bytes: without a declared contract for the destructor the unit is Unknown; with one — the contract-varying control — it checks. Both halves of the scenario's `Require access contract or report unknown` are measured, and the declared contract is a trusted premise about an absent body, not a fact about it."
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_source_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT45/known_destructor.c",
+          "observations": 1,
+          "note": "The same registry, the same borrowed parameter and the same declarations, calling the destructor the contract set describes: Safe, no diagnostic. The Unknown is not attributable to the parameter, the registry or the file-scope state."
+        }
+      }
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT40": {
+      "scenario": "Atomic pointer points to prematurely freed memory",
+      "expected": "Not certified; unsupported lifetime/publication protocol",
+      "measured": "A store of an owned pointer into a file-scope object is invisible to the resource projection. Publish-without-release is a Leak, so the store does not discharge custody; publish-then-release is Safe with no diagnostic, and the verdict is byte-identical with `_Atomic` and without it. A translation unit that also *reads* the published object is Unknown, but on the reader's unknown-alias diagnostics, not on the publication.",
+      "why_unmapped": "The verdict is invariant under removing the construct the scenario names, so no control can attribute it to the publication protocol; mapping it would record either a Safe against a case that demands non-certification, or an Unknown attributable to something else.",
+      "follow_on": "CT-CTWIN-PUBLISH"
+    },
+    "CT41": {
+      "scenario": "`volatile` used as a completion flag",
+      "expected": "No synchronization proof",
+      "measured": "Adding or removing the volatile completion flag does not change the verdict or a single diagnostic, in either shape measured: spin-then-release of a file-scope pointer is Unknown [subject:3:unknown-alias:q_shared] with and without the flag, and spin-then-release of a local acquisition is Safe with and without it.",
+      "why_unmapped": "The gateway has no synchronization model at all, so no verdict it produces is evidence about one; the mapping would be vacuous by the same rule that requires a non-vacuous control.",
+      "follow_on": "CT-CTWIN-SYNC"
+    },
+    "CT42": {
+      "scenario": "Two descriptors share an underlying logical state",
+      "expected": "Preserve shared protocol-cell identity",
+      "measured": "An int-typed resource identity is not expressible: the contract loader refuses `extern fn q_open_fd() -> i32` with `owned result requires a pointer return type`. The descriptor twin is Unknown on three uncontracted calls — the profile cannot express it at all. The pointer-alias analogue (`void *b = a;` then two releases) is Unsafe [subject:2:double-release:2], so identity does survive a syntactic alias, but that is a different question from a cell shared behind an OS call.",
+      "why_unmapped": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors.",
+      "follow_on": "CT-CTWIN-DESCRIPTOR"
+    }
+  }
+}

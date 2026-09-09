@@ -19,14 +19,21 @@
 //! Namespace discipline (§W6 task 3): CT is the language corpus only. WM/VP/LC
 //! probe regressions and per-library provider cases must not be added here.
 //!
-//! Three source routes are represented. The task route (`ScopedCopyTasksV1`,
+//! Four routes are represented. The task route (`ScopedCopyTasksV1`,
 //! `ScopedOwnedTasksV1`, and its `ScopedReadSharesV1` / `ScopedErrorPayloadV1`
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
 //! `CheckedMutexInvariantV1` checker, cards T03 and T03-F) is
 //! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT48. The epoch route
 //! (`source.epoch.bound.v1` lowering onto the unedited `FlatEpochBoundV1`
-//! checker, cards T08-EPOCH-SRC and T08-SRC-CT) is CT35/CT36/CT38/CT39.
+//! checker, cards T08-EPOCH-SRC and T08-SRC-CT) is CT35/CT36/CT38/CT39. The
+//! `legacy_c` route (card CT-CTWIN) is CT43/CT45: those two cases have no QCore
+//! source form at all — the constructs they name are C constructs — so their
+//! artifact is a C twin analyzed through the real unrestricted-C gateway
+//! (`validate_unrestricted_c11` then `analyze_unrestricted_c11`), which is why
+//! the route's vocabulary carries `parse` and `legacy_c_twin` and no
+//! `elaborate`. That route's evidence is gated on Clang rather than on a
+//! `target_os`, which the stage entry records as a `tool_gate`.
 //! Rejection cases on any route pin the whole ordered diagnostic cascade rather
 //! than its head, because a refusal that silently dropped a custody obligation
 //! would still satisfy a head-only assertion, and each carries at least one
@@ -64,7 +71,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_compiler::{
-    CompileOptions, ExecutionOutcome, SourceFile, TraceEvent, compile_files, format_diagnostic,
+    AnalysisStatus, C11TranslationUnit, CompileOptions, ExecutionOutcome, LegacyDiagnosticKind,
+    LegacyProgramSummary, ResourceContracts, SourceFile, TraceEvent, UnrestrictedLegacyResult,
+    analyze_unrestricted_c11, compile_files, format_diagnostic, validate_unrestricted_c11,
 };
 use serde::Deserialize;
 
@@ -73,8 +82,17 @@ use serde::Deserialize;
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
     "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT35", "CT36", "CT37",
-    "CT38", "CT39", "CT48", "CT50",
+    "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
 ];
+/// The `legacy_c` route (card CT-CTWIN). These two cases name C constructs that
+/// no QCore syntax expresses, so their artifact is a `.c` twin analyzed through
+/// the real unrestricted-C gateway. Each pins the whole verdict — the unit
+/// result, the complete per-function status map and the complete ordered
+/// diagnostic inventory — and carries at least one control that removes exactly
+/// the construct the scenario names, so the recorded `Unknown` is attributable
+/// to that construct rather than to "the projection cannot express this at
+/// all".
+const LEGACY_C_TWIN_CASES: &[&str] = &["CT43", "CT45"];
 /// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
 /// composition, `wait` announcement and guard-scoped facts). Each pins its exact
@@ -220,7 +238,14 @@ const RUNNER_REGISTRY: &[&str] = &[
     "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
     "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
     "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
+    "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
 ];
+/// The only external tools a stage entry may be gated on. A `tool_gate` is not
+/// a `host_gate`: the C-twin stages run on every target this workspace builds
+/// for and are gated on Clang being present, so recording them as
+/// host-unconditional with no further qualification would read as "this ran
+/// wherever the tests ran" (T00 finding O3, in the tool direction).
+const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
@@ -288,6 +313,11 @@ struct StageRecord {
     observations: Option<usize>,
     #[serde(default)]
     host_gate: Option<Vec<String>>,
+    /// External tools the runner needs before it can execute this stage at all
+    /// (card CT-CTWIN). The C-twin stages are gated on Clang; every other stage
+    /// in this corpus needs no tool and leaves this absent.
+    #[serde(default)]
+    tool_gate: Option<Vec<String>>,
     #[serde(default)]
     record: Option<String>,
 }
@@ -348,6 +378,58 @@ struct ExpectedCase {
     epoch_bound_figures: Option<EpochBoundFigures>,
     #[serde(default)]
     epoch_reject: Option<EpochReject>,
+    #[serde(default)]
+    legacy_c_twin: Option<LegacyCTwin>,
+}
+
+/// A C twin analyzed through the real unrestricted-C gateway (card CT-CTWIN).
+///
+/// The evidence is the whole verdict, not a convenient part of it: the unit
+/// result, its verbatim reason, the complete per-function status map and the
+/// complete ordered diagnostic inventory, each rebuilt from the analysis and
+/// compared wholesale so a fixture cannot pin only what suits it. `attributed_to`
+/// names the construct the CT scenario is about, and the controls are what make
+/// that attribution falsifiable: removing exactly that construct must move the
+/// verdict.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LegacyCTwin {
+    /// Declared resource contracts in force for the case, fixture-relative.
+    /// These are trusted premises about a synthetic API, not verified facts.
+    contracts: Vec<String>,
+    /// The C construct this case's scenario names. Recorded so the control
+    /// requirement below has something to be a control *of*.
+    attributed_to: String,
+    /// `unknown`, `unsafe` or `safe`; any other spelling fails the harness.
+    verdict: String,
+    /// The unit-level reason, verbatim, for an `unknown` verdict.
+    #[serde(default)]
+    reason: Option<String>,
+    /// Every analyzed function and its exact status.
+    function_status: BTreeMap<String, String>,
+    /// The whole ordered diagnostic inventory as `function:line:kind`.
+    diagnostics: Vec<String>,
+    controls: Vec<LegacyControl>,
+}
+
+/// One C-twin control. A control either changes the source (`source`) or
+/// changes the declared contracts over the case's own bytes (`source` absent),
+/// which is the form CT45's `expected` text — "require access contract or
+/// report unknown" — actually asks about.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LegacyControl {
+    #[serde(default)]
+    source: Option<String>,
+    contracts: Vec<String>,
+    /// `safe`, `unknown` or `unsafe`; any other spelling fails the harness.
+    expectation: String,
+    #[serde(default)]
+    reason: Option<String>,
+    function_status: BTreeMap<String, String>,
+    diagnostics: Vec<String>,
+    #[allow(dead_code)]
+    note: String,
 }
 
 /// Accepted `source.epoch.bound.v1` evidence (cards T08, T08-EPOCH-SRC,
@@ -635,6 +717,7 @@ struct StagePlan {
     executor: Option<&'static str>,
     observations: Option<usize>,
     host_gate: Option<Vec<&'static str>>,
+    tool_gate: Option<Vec<&'static str>>,
 }
 
 impl StagePlan {
@@ -644,6 +727,7 @@ impl StagePlan {
             executor: None,
             observations: None,
             host_gate: None,
+            tool_gate: None,
         }
     }
 
@@ -657,7 +741,14 @@ impl StagePlan {
             executor: Some(executor),
             observations: Some(observations),
             host_gate,
+            tool_gate: None,
         }
+    }
+
+    /// An executed stage whose runner cannot start without an external tool.
+    fn needing(mut self, tool: &'static str) -> Self {
+        self.tool_gate = Some(vec![tool]);
+        self
     }
 }
 
@@ -677,6 +768,7 @@ fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
     match verdict {
         "checked_mutex_sanitized" => "mutex_guard",
         "epoch_bound_figures" => "epoch",
+        "legacy_c_twin" => "legacy_c",
         "native_join_failure"
         | "native_create_recovery"
         | "native_owned_transfer"
@@ -877,6 +969,52 @@ fn derive_stage_plan(
     plan
 }
 
+/// The `legacy_c` route's stage plan (card CT-CTWIN). The route has two
+/// executable stages and no others: `parse` is the gateway's C admission —
+/// Clang preprocessing plus syntax acceptance of the case's own `.c` bytes,
+/// executed as `validate_unrestricted_c11` — and `legacy_c_twin` is the
+/// resource projection and its unit verdict. There is no `elaborate` because
+/// nothing here is QCore source, and no emission, native or sanitizer stage
+/// because the gateway analyzes C rather than producing any, so
+/// `native_sanitized` is structurally absent under the same route rule the
+/// epoch route uses. Both stages need Clang and no particular `target_os`,
+/// which is what `tool_gate` records.
+fn derive_legacy_stage_plan(
+    case_id: &str,
+    twin: &LegacyCTwin,
+) -> BTreeMap<&'static str, StagePlan> {
+    let runner = "compiler/tests/ct_corpus.rs::run_legacy_c_twin";
+    // One admission of the case's own bytes, then one analysis per contract
+    // configuration those bytes are analyzed under: the case's own, plus every
+    // control that varies the contracts rather than the source. Controls with
+    // their own source are executed on *their* artifact, so they are not this
+    // case's observations.
+    let contract_controls = twin
+        .controls
+        .iter()
+        .filter(|control| control.source.is_none())
+        .count();
+    let mut plan: BTreeMap<&'static str, StagePlan> = STAGE_NAMES
+        .iter()
+        .map(|stage| (*stage, StagePlan::absent("not_applicable")))
+        .collect();
+    assert!(
+        route_stages("legacy_c").contains(&"parse")
+            && route_stages("legacy_c").contains(&"legacy_c_twin"),
+        "{case_id}: the legacy_c route vocabulary must carry the stages this plan executes"
+    );
+    plan.insert(
+        "parse",
+        StagePlan::executed(runner, 1, None).needing("clang"),
+    );
+    plan.insert(
+        "legacy_c_twin",
+        StagePlan::executed(runner, 1 + contract_controls, None).needing("clang"),
+    );
+    plan.insert("proof", StagePlan::absent("unassessed"));
+    plan
+}
+
 fn run_mapped_case(case: &ManifestCase) {
     let directory = fixture_root().join(&case.id);
     assert!(
@@ -963,6 +1101,17 @@ fn run_mapped_case(case: &ManifestCase) {
         "{}: accepted epoch-certificate evidence is pinned to its own case set",
         case.id
     );
+    assert_eq!(
+        expected.legacy_c_twin.is_some(),
+        expected.verdict == "legacy_c_twin"
+    );
+    assert_eq!(
+        expected.legacy_c_twin.is_some(),
+        LEGACY_C_TWIN_CASES.contains(&case.id.as_str()),
+        "{}: C-twin gateway evidence is pinned to its own case set",
+        case.id
+    );
+    let legacy = expected.legacy_c_twin.is_some();
     // Target-scoped evidence: the native fault modes, the sanitized mutex run,
     // and any mutex rejection whose control compiles through the Linux-only
     // emission path. Recording the last of these repairs T00's finding O6 for
@@ -996,7 +1145,10 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id == "CT19",
         "CT19 must retain its explicitly named joined-sibling positive control"
     );
-    let mut required_files = BTreeSet::from(["case.qcore".to_owned(), "expected.json".to_owned()]);
+    // The route decides what the case's own artifact is: a QCore source on the
+    // three source routes, a C twin on `legacy_c`.
+    let case_file = if legacy { "case.c" } else { "case.qcore" };
+    let mut required_files = BTreeSet::from([case_file.to_owned(), "expected.json".to_owned()]);
     if let Some(native) = &expected.native_task_scenarios {
         assert!(!native.scenarios.is_empty());
         assert!(required_files.insert(native.header.clone()));
@@ -1222,6 +1374,9 @@ fn run_mapped_case(case: &ManifestCase) {
         );
         check_epoch_controls_shape(&case.id, &reject.controls, &mut required_files);
     }
+    if let Some(twin) = &expected.legacy_c_twin {
+        check_legacy_twin_shape(&case.id, twin, &mut required_files);
+    }
     if let Some(control) = &expected.positive_control {
         assert_eq!(control.source, "joined_sibling.qcore");
         assert_eq!(control.evidence_target, "linux");
@@ -1245,7 +1400,7 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
 
-    let source_path = directory.join("case.qcore");
+    let source_path = directory.join(case_file);
     assert!(
         source_path.is_file(),
         "{}: fixture source {} is missing",
@@ -1276,30 +1431,45 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
 
-    let source = fs::read_to_string(&source_path)
-        .unwrap_or_else(|error| panic!("cannot read {}: {error}", source_path.display()));
-    let files = [SourceFile::new(recorded.to_string(), source)];
-    let result = compile_files(
-        &files,
-        &CompileOptions {
-            entry: expected.entry.clone(),
-            ..CompileOptions::default()
-        },
-    );
+    // The three source routes run the fixture through `compile_files`; the
+    // `legacy_c` route runs its C twin through the gateway instead, inside its
+    // own runner, so there is no compiled module here at all.
+    let result = if legacy {
+        None
+    } else {
+        let source = fs::read_to_string(&source_path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", source_path.display()));
+        let files = [SourceFile::new(recorded.to_string(), source)];
+        Some(compile_files(
+            &files,
+            &CompileOptions {
+                entry: expected.entry.clone(),
+                ..CompileOptions::default()
+            },
+        ))
+    };
 
     // Per-stage manifest evidence is derived here, from this harness's own
     // dispatch plus what the compiler actually reported on this fixture, and the
     // manifest must record exactly that. This is the T00.1/T00.4 repair: the
     // manifest no longer carries hand-written status strings whose reading
     // depended on the route.
-    let observed_codes: Vec<&str> = match &result {
-        Ok(_) => Vec::new(),
-        Err(diagnostics) => diagnostics
-            .iter()
-            .map(|diagnostic| diagnostic.code.as_str())
-            .collect(),
+    let plan = match &result {
+        Some(result) => {
+            let observed_codes: Vec<&str> = match result {
+                Ok(_) => Vec::new(),
+                Err(diagnostics) => diagnostics
+                    .iter()
+                    .map(|diagnostic| diagnostic.code.as_str())
+                    .collect(),
+            };
+            derive_stage_plan(&case.id, &expected, &observed_codes)
+        }
+        None => derive_legacy_stage_plan(
+            &case.id,
+            expected.legacy_c_twin.as_ref().expect("mode metadata"),
+        ),
     };
-    let plan = derive_stage_plan(&case.id, &expected, &observed_codes);
     let route = case
         .route
         .as_deref()
@@ -1393,6 +1563,25 @@ fn run_mapped_case(case: &ManifestCase) {
                      status cannot be read as host-unconditional",
                     case.id
                 );
+                for tool in record.tool_gate.iter().flatten() {
+                    assert!(
+                        TOOL_REGISTRY.contains(&tool.as_str()),
+                        "{}: `{stage}` names tool `{tool}`, which is not a gate this harness \
+                         knows how to require",
+                        case.id
+                    );
+                }
+                assert_eq!(
+                    record
+                        .tool_gate
+                        .as_ref()
+                        .map(|gate| gate.iter().map(String::as_str).collect::<Vec<_>>()),
+                    planned.tool_gate.clone(),
+                    "{}: `{stage}` must record the exact external tools its runner needs, so \
+                     an `executed` claim cannot be read as unconditional on a host that has \
+                     none of them",
+                    case.id
+                );
                 assert!(record.record.is_none());
             }
             "recorded_not_gated" => {
@@ -1416,7 +1605,8 @@ fn run_mapped_case(case: &ManifestCase) {
                     record.executor.is_none()
                         && record.artifact.is_none()
                         && record.observations.is_none()
-                        && record.host_gate.is_none(),
+                        && record.host_gate.is_none()
+                        && record.tool_gate.is_none(),
                     "{}: a recorded transcript has no executor, artifact, count or host \
                      gate — that is what distinguishes it from executed evidence",
                     case.id
@@ -1427,6 +1617,7 @@ fn run_mapped_case(case: &ManifestCase) {
                     && record.artifact.is_none()
                     && record.observations.is_none()
                     && record.host_gate.is_none()
+                    && record.tool_gate.is_none()
                     && record.record.is_none(),
                 "{}: `{stage}` is `{}` and may carry no evidence fields",
                 case.id,
@@ -1474,8 +1665,15 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert!(
-        executed.contains("parse") && executed.contains("elaborate"),
-        "{}: a mapped case must at least parse and elaborate its own fixture",
+        executed.contains("parse"),
+        "{}: a mapped case must at least admit its own fixture",
+        case.id
+    );
+    assert_eq!(
+        executed.contains("elaborate"),
+        !legacy,
+        "{}: elaboration is a QCore-source stage — the `legacy_c` route has no QCore \
+         source to elaborate, and every other route must reach it",
         case.id
     );
 
@@ -1491,6 +1689,19 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(reject) = &expected.epoch_reject {
         run_epoch_controls(&directory, &case.id, &reject.controls);
     }
+    if let Some(twin) = &expected.legacy_c_twin {
+        assert!(
+            expected.diagnostics.is_empty()
+                && expected.outcome.is_none()
+                && expected.trace.is_none(),
+            "{}: a C twin has no QCore diagnostics and no execution post-state; its \
+             evidence is the gateway's verdict",
+            case.id
+        );
+        run_legacy_c_twin(&directory, &case.id, &expected, twin);
+        return;
+    }
+    let result = result.expect("a source-route case compiles its own fixture");
     match expected.verdict.as_str() {
         "epoch_bound_figures" => {
             assert!(
@@ -1820,6 +2031,7 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
                             artifact: None,
                             observations: None,
                             host_gate: None,
+                            tool_gate: None,
                             record: None,
                         }),
                     "{}: an unmapped case must keep all stages `unassessed` with no evidence",
@@ -1851,8 +2063,12 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 28 of 50 CT cases are mapped
-/// as executed source-level tests; 22 remain unmapped. CT13/CT15/CT26 and the
+/// The moving count is the W6 genericity metric: 30 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 20 remain unmapped. Twenty-eight of
+/// the thirty are source-level; CT43 and CT45 are C twins executed through the
+/// unrestricted-C gateway, which is a different artifact and a different
+/// property, so they are counted here and separated in the report.
+/// CT13/CT15/CT26 and the
 /// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
 /// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT48 execute on Linux and macOS.
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
@@ -1905,6 +2121,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
         .collect();
     let mut observations: BTreeMap<&str, usize> = BTreeMap::new();
     let mut host_scope: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
+    let mut tool_scope: BTreeMap<&str, BTreeSet<String>> = BTreeMap::new();
     let mut depth_profile: BTreeMap<&str, usize> = BTreeMap::new();
     let mut case_depth: BTreeMap<&str, &str> = BTreeMap::new();
     let mut mapped = 0usize;
@@ -1936,6 +2153,16 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
                     hosts.insert("any".to_owned());
                 }
             }
+            // The tool axis is separate from the host axis on purpose: a C-twin
+            // stage runs on any target and only where Clang exists, and reading
+            // "any" on the host axis alone would say the opposite.
+            let tools = tool_scope.entry(stage).or_default();
+            match &record.tool_gate {
+                Some(gate) => tools.extend(gate.iter().cloned()),
+                None => {
+                    tools.insert("none".to_owned());
+                }
+            }
             if deepest.is_none_or(|current| stage_depth(stage) > stage_depth(current)) {
                 deepest = Some(stage);
             }
@@ -1962,6 +2189,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
         "stage_histogram": Value::Object(histogram_json),
         "observation_counts": observations,
         "host_scope": host_scope,
+        "tool_scope": tool_scope,
         "depth_profile": depth_profile,
         "case_depth": case_depth,
     })
@@ -2000,6 +2228,7 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
             "stage_histogram",
             "observation_counts",
             "host_scope",
+            "tool_scope",
             "depth_profile",
             "case_depth",
         ],
@@ -2020,6 +2249,7 @@ fn ct_acceptance_summary_is_derived_from_the_manifest() {
         "stage_histogram",
         "observation_counts",
         "host_scope",
+        "tool_scope",
         "depth_profile",
         "case_depth",
     ] {
@@ -2337,6 +2567,363 @@ fn run_epoch_controls(directory: &Path, case_id: &str, controls: &[EpochControl]
             }
             other => panic!("{case_id}: unknown control expectation `{other}`"),
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// The `legacy_c` route (card CT-CTWIN)
+// ---------------------------------------------------------------------------
+
+/// Shape rules for a C twin. The case and every control state a complete
+/// outcome — verdict, reason, per-function statuses and the whole diagnostic
+/// inventory — in the same vocabulary, and at least one control must *check*,
+/// so a recorded `Unknown` is never merely "the projection cannot express this
+/// at all".
+fn check_legacy_twin_shape(
+    case_id: &str,
+    twin: &LegacyCTwin,
+    required_files: &mut BTreeSet<String>,
+) {
+    assert!(
+        !twin.attributed_to.trim().is_empty(),
+        "{case_id}: a C twin names the construct its scenario is about, so the controls \
+         have something to attribute the verdict to"
+    );
+    check_legacy_contracts(case_id, &twin.contracts, required_files);
+    check_legacy_outcome_shape(
+        case_id,
+        "case",
+        &twin.verdict,
+        twin.reason.as_deref(),
+        &twin.diagnostics,
+        &twin.function_status,
+    );
+    assert!(
+        twin.controls
+            .iter()
+            .any(|control| control.expectation == "safe"),
+        "{case_id}: a C twin needs a control the gateway checks, or its verdict says only \
+         that the projection cannot express this at all"
+    );
+    for control in &twin.controls {
+        check_legacy_contracts(case_id, &control.contracts, required_files);
+        check_legacy_outcome_shape(
+            case_id,
+            control.source.as_deref().unwrap_or("<case bytes>"),
+            &control.expectation,
+            control.reason.as_deref(),
+            &control.diagnostics,
+            &control.function_status,
+        );
+        if let Some(source) = &control.source {
+            assert!(
+                source.ends_with(".c"),
+                "{case_id}: a C-twin source control is C"
+            );
+            assert!(
+                required_files.insert(source.clone()),
+                "{case_id}: control source `{source}` is named twice"
+            );
+        }
+    }
+}
+
+fn check_legacy_contracts(
+    case_id: &str,
+    contracts: &[String],
+    required_files: &mut BTreeSet<String>,
+) {
+    assert!(
+        !contracts.is_empty(),
+        "{case_id}: a C twin is analyzed against declared contracts, and names them"
+    );
+    for contract in contracts {
+        assert!(
+            contract.ends_with(".qcore"),
+            "{case_id}: `{contract}` is not a contract source"
+        );
+        // Contract sources are deliberately *not* asserted unique: the whole
+        // point of a contract-varying control is that it reuses the case's own
+        // set and adds to it.
+        required_files.insert(contract.clone());
+    }
+}
+
+/// A stated outcome must be internally coherent before it is compared with a
+/// measurement, so a fixture cannot record, say, a `safe` verdict beside a
+/// function the analysis could not decide.
+fn check_legacy_outcome_shape(
+    case_id: &str,
+    label: &str,
+    verdict: &str,
+    reason: Option<&str>,
+    diagnostics: &[String],
+    function_status: &BTreeMap<String, String>,
+) {
+    assert!(
+        !function_status.is_empty(),
+        "{case_id} ({label}): the per-function status map is the measurement, not a sample"
+    );
+    for status in function_status.values() {
+        assert!(
+            ["safe", "unsafe", "unknown"].contains(&status.as_str()),
+            "{case_id} ({label}): unknown function status `{status}`"
+        );
+    }
+    match verdict {
+        "safe" => {
+            assert!(
+                reason.is_none() && diagnostics.is_empty(),
+                "{case_id} ({label}): a completed analysis carries no reason and no diagnostic"
+            );
+            assert!(
+                function_status.values().all(|status| status == "safe"),
+                "{case_id} ({label}): a `safe` unit has no undecided function"
+            );
+        }
+        "unknown" => {
+            assert!(
+                reason.is_some_and(|reason| !reason.trim().is_empty()),
+                "{case_id} ({label}): an `unknown` unit states the reason it was withdrawn"
+            );
+            assert!(
+                !diagnostics.is_empty(),
+                "{case_id} ({label}): an `unknown` unit states what it could not project"
+            );
+            assert!(
+                function_status.values().any(|status| status == "unknown"),
+                "{case_id} ({label}): an `unknown` unit has an undecided function"
+            );
+        }
+        "unsafe" => {
+            assert!(
+                reason.is_none() && !diagnostics.is_empty(),
+                "{case_id} ({label}): a provisional `unsafe` states its diagnostics and \
+                 carries no withdrawal reason"
+            );
+            assert!(
+                function_status.values().any(|status| status == "unsafe"),
+                "{case_id} ({label}): a provisional `unsafe` names the function it accuses"
+            );
+        }
+        other => panic!("{case_id} ({label}): unknown C-twin verdict `{other}`"),
+    }
+}
+
+/// CT43 and CT45: the C twin runs through the real unrestricted-C gateway.
+///
+/// `parse` is `validate_unrestricted_c11` — Clang preprocessing plus syntax
+/// acceptance of the case's own `.c` bytes — and `legacy_c_twin` is
+/// `analyze_unrestricted_c11`'s projection and unit verdict. Both are gated on
+/// Clang; with no usable Clang the stages do not run at all, and the harness
+/// says so rather than passing quietly on an unmeasured claim (`QCORE_CLANG`,
+/// when set, is an explicit configuration whose failure is an error).
+fn run_legacy_c_twin(directory: &Path, case_id: &str, expected: &ExpectedCase, twin: &LegacyCTwin) {
+    let entry = expected.entry.as_deref().unwrap_or_else(|| {
+        panic!("{case_id}: a C twin names the function the gateway analyzes as its entry")
+    });
+    if !legacy_clang_available(case_id) {
+        return;
+    }
+    let case_path = directory.join("case.c");
+    let case_source = fs::read_to_string(&case_path)
+        .unwrap_or_else(|error| panic!("cannot read {}: {error}", case_path.display()));
+    // `parse`: the twin must be admissible C11 in its own right. A twin that
+    // only "fails to analyze" because Clang refused it would measure nothing.
+    let preprocessed = validate_unrestricted_c11(&C11TranslationUnit {
+        source: &case_source,
+        ..Default::default()
+    })
+    .unwrap_or_else(|error| panic!("{case_id}: the C twin must be admissible C11: {error:?}"));
+    assert!(
+        preprocessed.contains(entry),
+        "{case_id}: the admitted translation unit must define the analyzed entry `{entry}`"
+    );
+    // `legacy_c_twin`: the case itself, then each control.
+    check_legacy_analysis(
+        case_id,
+        "case",
+        &case_source,
+        entry,
+        &load_legacy_contracts(directory, case_id, &twin.contracts),
+        &twin.verdict,
+        twin.reason.as_deref(),
+        &twin.function_status,
+        &twin.diagnostics,
+    );
+    for control in &twin.controls {
+        let source = match &control.source {
+            Some(name) => {
+                let path = directory.join(name);
+                fs::read_to_string(&path)
+                    .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()))
+            }
+            // A contract-varying control re-analyzes the case's own bytes, which
+            // is the only way to show that the *declaration* is what moved the
+            // verdict.
+            None => case_source.clone(),
+        };
+        check_legacy_analysis(
+            case_id,
+            control.source.as_deref().unwrap_or("<case bytes>"),
+            &source,
+            entry,
+            &load_legacy_contracts(directory, case_id, &control.contracts),
+            &control.expectation,
+            control.reason.as_deref(),
+            &control.function_status,
+            &control.diagnostics,
+        );
+    }
+}
+
+fn legacy_clang_available(case_id: &str) -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "{case_id}: explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!(
+                "warning: {case_id}: the C-twin stages did not run — no usable Clang: {reason}"
+            );
+            false
+        }
+    }
+}
+
+fn load_legacy_contracts(directory: &Path, case_id: &str, names: &[String]) -> ResourceContracts {
+    let mut sources = BTreeMap::new();
+    for name in names {
+        let path = directory.join(name);
+        let text = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        sources.insert(name.clone(), text);
+    }
+    qcore_compiler::contract_loader::load_resource_contract_sources(&sources).unwrap_or_else(
+        |error| panic!("{case_id}: the fixture's declared contracts must load: {error:?}"),
+    )
+}
+
+/// One gateway analysis, compared wholesale against what the fixture recorded.
+#[allow(clippy::too_many_arguments)]
+fn check_legacy_analysis(
+    case_id: &str,
+    label: &str,
+    source: &str,
+    entry: &str,
+    contracts: &ResourceContracts,
+    verdict: &str,
+    reason: Option<&str>,
+    function_status: &BTreeMap<String, String>,
+    diagnostics: &[String],
+) {
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        entry,
+        contracts,
+    )
+    .unwrap_or_else(|error| {
+        panic!("{case_id} ({label}): the gateway refused the input: {error:?}")
+    });
+    let (observed_verdict, observed_reason, summary) = legacy_outcome(&result);
+    assert_eq!(
+        observed_verdict, verdict,
+        "{case_id} ({label}): gateway verdict"
+    );
+    assert_eq!(
+        observed_reason.as_deref(),
+        reason,
+        "{case_id} ({label}): the withdrawal reason is part of the measurement"
+    );
+    let summary = summary.unwrap_or_else(|| {
+        panic!("{case_id} ({label}): the analysis published no per-function summary")
+    });
+    // The published summary must be the one this entry was asked for. This is a
+    // weak check by construction and is recorded as such: mutation M20 (analyze
+    // `on_complete` instead of `subject`) is *admitted*, because the projection
+    // covers every main-source definition, so both entries yield the same unit
+    // verdict, the same statuses and the same diagnostics. The declared entry
+    // therefore selects the summary's label, not what these two cases measure —
+    // recorded as CT-CTWIN-ENTRY rather than papered over.
+    assert_eq!(
+        summary.entry, entry,
+        "{case_id} ({label}): the analysis must be the one this case's declared entry asked for"
+    );
+    // Both maps are rebuilt whole from the summary rather than looked up by the
+    // keys the fixture happens to name, so a fixture cannot pin a convenient
+    // subset of the functions or of their diagnostics.
+    assert_eq!(
+        summary
+            .functions
+            .iter()
+            .map(|(name, function)| (
+                name.clone(),
+                legacy_status_label(&function.status).to_owned()
+            ))
+            .collect::<BTreeMap<String, String>>(),
+        *function_status,
+        "{case_id} ({label}): per-function statuses"
+    );
+    assert_eq!(
+        summary
+            .functions
+            .values()
+            .flat_map(|function| &function.diagnostics)
+            .map(|diagnostic| format!(
+                "{}:{}:{}",
+                diagnostic.function,
+                diagnostic.line,
+                legacy_diagnostic_label(&diagnostic.kind)
+            ))
+            .collect::<Vec<_>>(),
+        diagnostics,
+        "{case_id} ({label}): the whole ordered diagnostic inventory"
+    );
+}
+
+fn legacy_outcome(
+    result: &UnrestrictedLegacyResult,
+) -> (&'static str, Option<String>, Option<&LegacyProgramSummary>) {
+    match result {
+        UnrestrictedLegacyResult::Safe(certificate) => ("safe", None, Some(&certificate.summary)),
+        UnrestrictedLegacyResult::Unsafe(summary) => ("unsafe", None, Some(summary)),
+        UnrestrictedLegacyResult::Unknown {
+            reason, partial, ..
+        } => ("unknown", Some(reason.clone()), partial.as_ref()),
+    }
+}
+
+fn legacy_status_label(status: &AnalysisStatus) -> &'static str {
+    match status {
+        AnalysisStatus::Safe => "safe",
+        AnalysisStatus::Unsafe => "unsafe",
+        AnalysisStatus::Unknown => "unknown",
+    }
+}
+
+/// A diagnostic rendered by an explicit match rather than by `Debug`, so the
+/// pinned vocabulary is this harness's and cannot drift with a formatting
+/// change in the gateway.
+fn legacy_diagnostic_label(kind: &LegacyDiagnosticKind) -> String {
+    match kind {
+        LegacyDiagnosticKind::Leak { acquisition_line } => format!("leak:{acquisition_line}"),
+        LegacyDiagnosticKind::DoubleRelease { acquisition_line } => {
+            format!("double-release:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::ReleaseAfterEscape { acquisition_line } => {
+            format!("release-after-escape:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::CustodyConflict { acquisition_line } => {
+            format!("custody-conflict:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown-alias:{variable}"),
+        LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
+        LegacyDiagnosticKind::SummaryConflict { .. } => "summary-conflict".to_owned(),
     }
 }
 
