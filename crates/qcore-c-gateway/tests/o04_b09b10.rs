@@ -786,12 +786,18 @@ fn substituting_the_addressed_member_declarations_restores_the_refusal() {
 /// refusals — `free(ch->name)` among them — still in place.
 ///
 /// Premise F is what refuses it, and the reason is now *checked* rather than a
-/// blanket position rule: `ch` is handed whole to `cio_file_open` and
-/// `cio_memfs_open`, so this projection can offer no frame condition for
-/// `ch->name` between the store and the read. Its
-/// `mk_list_add(&ch->_head, &st->chunks)` statements also keep their refusal,
-/// because `st` is passed at every position of those same uncontracted calls
-/// and is therefore not a C02-P untracked base.
+/// blanket position rule: under this fixture's premise set `cio_error_reset(ch)`
+/// and `cio_chunk_is_up(ch)` hand the chunk whole to a **contracted** callee at
+/// a `Borrowed` position, so this projection can offer no frame condition for
+/// `ch->name` between the store and the read. (In the pinned 185-unit corpus
+/// neither of those callees is contracted, so F does not refuse `ch` there and
+/// the *flow-sensitive* gate refuses the same statement instead — both
+/// refusals, recorded in the card report §5.)
+///
+/// The `mk_list_add(&ch->_head, &st->chunks)` statements also keep their
+/// refusal, because `mk_list_add` is uncontracted here and `st` is passed at
+/// every position of the uncontracted `cio_file_open`/`cio_memfs_open` calls,
+/// so it is not a C02-P untracked base either.
 #[test]
 fn the_constructor_boundary_is_unchanged() {
     if !clang_available() {

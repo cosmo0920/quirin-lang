@@ -1,0 +1,31 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4387 -> 4399 (+12)
+  unsupported: 49936 -> 49925 (-11)
+units with diagnostic-count changes: 6
+  chunkio/cio_chunk.c: {'unknown_alias': 1, 'unsupported': -1}
+  chunkio/cio_memfs.c: {'unknown_alias': 1, 'unsupported': -1}
+  ctraces/ctr_encode_opentelemetry.c: {'unknown_alias': 1, 'unsupported': -1}
+  fluent-bit-chunk/flb_input_chunk.c: {'unknown_alias': 8, 'unsupported': -8}
+  librdkafka/rdkafka_request.c: {'unsupported': 1}
+  monkey-libevent/mk_server/mk_fifo.c: {'unknown_alias': 1, 'unsupported': -1}
+description inventory deltas:
+  unknown_alias / 'unresolved resource identity `ch`': 11 -> 12 (+1)
+  unknown_alias / 'unresolved resource identity `fw`': 8 -> 9 (+1)
+  unknown_alias / 'unresolved resource identity `ic`': 30 -> 38 (+8)
+  unknown_alias / 'unresolved resource identity `kv`': 2 -> 3 (+1)
+  unknown_alias / 'unresolved resource identity `mf`': 7 -> 8 (+1)
+  unsupported / 'arguments do not match resource contract for `mk_mem_free`': 8 -> 0 (-8)
+  unsupported / 'indirect memory access is outside the resource projection': 18887 -> 18875 (-12)
+  unsupported / 'nested call `pthread_getspecific` inside a modeled call is outside the resource projection': 0 -> 8 (+8)
+  unsupported / 'nested call `rd_list_cnt` inside a modeled call is outside the resource projection': 0 -> 1 (+1)
