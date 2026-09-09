@@ -569,7 +569,7 @@ fn real_source() -> String {
 /// from the production modules and the loader rejects a duplicate.
 fn real_contracts() -> String {
     let path = PATH_CONTRACTS.replace("\r\n", "\n");
-    let routes = "extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<mut, u8>, tag_len: i32, in: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(routes_mask);\n    ensures normal resource_borrowed(tag);\n    ensures normal resource_borrowed(tag_len);\n    ensures normal resource_borrowed(in);\n    ensures normal resource_return_none();\n};\n";
+    let routes = "extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<const, u8>, tag_len: i32, in: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(routes_mask);\n    ensures normal resource_borrowed(tag);\n    ensures normal resource_borrowed(tag_len);\n    ensures normal resource_borrowed(in);\n    ensures normal resource_return_none();\n};\n";
     assert!(
         path.contains(routes),
         "the o04 path module no longer carries the routes-mask declaration"

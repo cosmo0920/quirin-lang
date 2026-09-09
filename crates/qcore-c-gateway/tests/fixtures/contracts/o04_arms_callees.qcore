@@ -21,19 +21,19 @@
 // Premise: the error-logging entry point borrows every argument and returns no
 // custody.
 //
-// LIMITATION, recorded rather than hidden: `flb_error` is declared
-// `void flb_error(const char *format, ...)` in C, and the resource contract
-// vocabulary has no variadic-tail form. This declaration therefore covers
-// exactly the three-argument shape this call site uses; a call at any other
-// arity is refused, not silently covered, because an actual beyond the declared
-// parameter vector is never admitted. Generalising to a declared variadic tail
-// is the named follow-on O04-ARMS-VARIADIC.
-extern fn flb_error(format: ptr<mut, u8>, detail: ptr<mut, u8>, name: ptr<mut, u8>) -> unit
+// This declaration used to name three parameters — the arity of this call site
+// — because the vocabulary then had no variadic-tail form, and it was recorded
+// as the named follow-on O04-ARMS-VARIADIC. Card O04-TRACE added the tail
+// clause, and card **LOADER-ABI** measured that the three-parameter form
+// disagrees with C's `void flb_error(const char *format, ...)`: the declaration
+// named modes for two parameters the C declaration never typed. It is now the
+// faithful one-parameter-plus-tail form, which is what `flb_trace` already
+// uses; the arity disagreement is refused rather than believed.
+extern fn flb_error(format: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(format);
-    ensures normal resource_borrowed(detail);
-    ensures normal resource_borrowed(name);
+    ensures normal resource_variadic_data_tail();
     ensures normal resource_return_none();
 };
 

@@ -80,7 +80,7 @@ The marker is an interpreter/version selector, not a Boolean fact supplied by a 
 The scalar parameter vocabulary is exactly:
 
 ```text
-bool i8 i16 i32 i64 isize u8 u16 u32 u64 usize
+bool i8 i16 i32 i64 isize u8 u16 u32 u64 usize f32 f64
 ```
 
 The pointer vocabulary is exactly:
@@ -91,7 +91,9 @@ ptr<const, u8>
 ptr<mut, ptr<mut, u8>>
 ```
 
-The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a parameter type. Float types, arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader.
+The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a parameter type. Arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader. The two real-valued scalars are admitted for readings a resource API in scope passes by value; they carry no custody, exactly as every other scalar does.
+
+**Agreement with the analysed source (card LOADER-ABI).** A consumer analysing a translation unit MUST compare a declaration's projections against that unit's own C declaration of the same function wherever it can read one, and MUST withdraw the declaration for that unit — at every call site, and as the interface any body defined there is checked against — when the two disagree in the result type, a parameter type, the parameter count, or a claimed variadic tail. Withdrawal makes the callee uncontracted, which is the refusing direction; a consumer may never repair a disagreement by preferring either side. The projections are not decoration: the mode admissibility rules of this section are keyed on them, so an unfaithful projection is what would buy a mode the C type could not carry.
 
 These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar may carry a descriptor number as data, but it cannot carry descriptor custody in v1. Only `resource_borrowed` may apply to a scalar. Every other parameter mode requires an admitted pointer type; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned or reallocated result requires an admitted pointer result.
 

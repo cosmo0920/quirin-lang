@@ -42,7 +42,7 @@ contract {
 
 // The borrowing sink this card's admission is *about*: it discharges nothing,
 // which is why a bound read may occupy its parameter.
-extern fn r_probe(i: ptr<mut, u8>) -> i32
+extern fn r_probe(i: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(i);

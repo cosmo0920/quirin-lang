@@ -483,14 +483,25 @@ fn the_intermediate_link_declarations_are_the_upstream_bytes() {
     assert!(ARMS_PROVENANCE.contains("90a010910e5b3328f496cc20fadc937547133439"));
 }
 
-/// The premise the reduced prelude rests on for the *chains*, checked against
-/// the FULL upstream declarations of every link rather than the reduced ones.
+/// The probe both chain tests read: the FULL upstream declarations of every
+/// link, and one chained actual at each of the two positions that matter.
+///
 /// Uses the pure-token entry point, so the 306-line `struct flb_config` and the
 /// 239-member `struct flb_input_instance` need none of the types they
 /// reference to be defined.
-#[test]
-fn the_upstream_link_declarations_admit_both_chains() {
-    let probe = format!(
+///
+/// **Card LOADER-ABI changed one statement of this probe, deliberately.** It
+/// used to pass `storage->stream->name` as the second actual of
+/// `flb_error(0, …, 0)`. Under this fixture's *old* three-parameter `flb_error`
+/// declaration that was a declared `Borrowed` position, so the chain admission
+/// decided it — but C declares `void flb_error(const char *format, ...)`, so
+/// the declaration named modes for two parameters C never typed, and the
+/// faithful declaration puts that actual in the variadic tail, where a chained
+/// read is refused (`NEIGHBOURS-CHAINED-TAIL`). The chain is therefore read at
+/// `cio_log_error`'s declared `Borrowed` second parameter instead, which is
+/// what the test was always about: the *chain* admission, not the tail.
+fn chain_probe() -> String {
+    format!(
         "{INSTANCE}\n{STORAGE_INPUT}\n{CIO_STREAM}\n{FLB_CONFIG}\n\
          struct cio_chunk *probe(struct flb_input_instance *in, int flags)\n\
          {{\n\
@@ -499,16 +510,22 @@ fn the_upstream_link_declarations_admit_both_chains() {
          \x20   storage = in->storage;\n\
          \x20   chunk = cio_chunk_open(storage->cio, storage->stream, 0, flags, 0, 0);\n\
          \x20   if (!chunk) {{\n\
-         \x20       flb_error(0, storage->stream->name, 0);\n\
+         \x20       cio_log_error(storage->cio, storage->stream->name);\n\
          \x20       return 0;\n\
          \x20   }}\n\
          \x20   flb_routes_mask_get_size(in->config->router);\n\
          \x20   cio_chunk_close(chunk, 1);\n\
          \x20   return 0;\n\
          }}\n"
-    );
+    )
+}
+
+/// The premise the reduced prelude rests on for the *chains*, checked against
+/// the FULL upstream declarations of every link rather than the reduced ones.
+#[test]
+fn the_upstream_link_declarations_admit_both_chains() {
     let summary = analyze_legacy_c_translation_unit(
-        &probe,
+        &chain_probe(),
         "probe",
         &load("o04_arms_path.qcore", &arms_contracts()),
     )
@@ -528,12 +545,59 @@ fn the_upstream_link_declarations_admit_both_chains() {
     );
 }
 
-/// The card's headline, on real source: the logging arm C1 now settles. Four of
-/// the caller's six exits are `Discharged`, the three cleanup arms still
-/// release the same acquisition site exactly once, and the logging arm crosses
-/// no acquisition at all.
+/// The other half, pinned by card LOADER-ABI: the *same* chain read as a
+/// variadic **tail** actual is refused. The declaration cannot buy it — that
+/// is `NEIGHBOURS-CHAINED-TAIL`, and it is why this fixture's logging arm stops
+/// discharging once `flb_error` is declared faithfully.
 #[test]
-fn the_logging_arm_discharges_under_the_declared_callee_premises() {
+fn the_same_chain_in_a_variadic_tail_is_refused() {
+    let probe = chain_probe().replace(
+        "cio_log_error(storage->cio, storage->stream->name);",
+        "flb_error(0, storage->stream->name, 0);",
+    );
+    let summary = analyze_legacy_c_translation_unit(
+        &probe,
+        "probe",
+        &load("o04_arms_path.qcore", &arms_contracts()),
+    )
+    .expect("the upstream declarations tokenize");
+    let probe = function(&summary, "probe");
+    assert!(
+        unsupported(probe).contains(&INDIRECT),
+        "a chained read in a variadic tail must stay refused; diagnostics were {:?}",
+        unsupported(probe)
+    );
+    assert_eq!(probe.status, AnalysisStatus::Unknown);
+}
+
+/// **DELIBERATE PIN UPDATE, card LOADER-ABI — this card's headline is
+/// withdrawn on the fixture, and the withdrawal is the finding.**
+///
+/// O04-ARMS measured the logging arm C1 settling: four `Discharged` exits, the
+/// three cleanup arms plus the logging arm. That discharge rested on this
+/// fixture's `flb_error` declaration naming **three** parameters, the arity of
+/// the call site, beside a C prelude declaring the real
+/// `void flb_error(const char *format, ...)`. The declaration therefore named
+/// custody modes for two parameters the C declaration never typed, which put
+/// the chained tail actual `storage->stream->name` at a *declared* `Borrowed`
+/// position where the chain admission decided it. Card LOADER-ABI's
+/// declared/C ABI comparison refuses that arity, the declaration is now the
+/// faithful one-parameter-plus-`resource_variadic_data_tail` form, and the arm
+/// no longer discharges.
+///
+/// This is not a regression this card introduced in the analyzer: card
+/// NEIGHBOURS had already measured that the same arm does **not** discharge in
+/// *production*, where the real callee `flb_log_print` carries a declared tail
+/// and the same actual sits in it (`NEIGHBOURS-CHAINED-TAIL`,
+/// `neighbours.rs::the_constructor_keeps_exactly_one_refusal_under_production_declarations`).
+/// The fixture had been overstating the production result, and now agrees with
+/// it.
+///
+/// Both load-bearing halves are kept and asserted: the three cleanup arms still
+/// discharge the same acquisition site exactly once, and the logging arm still
+/// crosses **no** acquisition — it is `Unknown` with no site, never a residual.
+#[test]
+fn the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration() {
     if !clang_available() {
         return;
     }
@@ -546,8 +610,8 @@ fn the_logging_arm_discharges_under_the_declared_callee_premises() {
         .collect::<Vec<_>>();
     assert_eq!(
         discharged.len(),
-        4,
-        "expected the three cleanup arms plus the logging arm; exits were {:?}",
+        3,
+        "expected the three cleanup arms alone; exits were {:?}",
         exit_shape(caller)
     );
     let cleanup = discharged
@@ -567,6 +631,18 @@ fn the_logging_arm_discharges_under_the_declared_callee_premises() {
         discharged
             .iter()
             .filter(|exit| exit.sites.is_empty())
+            .count(),
+        0,
+        "the logging arm no longer discharges: {:?}",
+        exit_shape(caller)
+    );
+    // The half that survives: it crosses no acquisition, so it is unresolved
+    // rather than a residual, and nothing is alleged in the defect direction.
+    assert_eq!(
+        caller
+            .exits
+            .iter()
+            .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
             .count(),
         1,
         "the logging arm crosses no acquisition: {:?}",
@@ -592,14 +668,31 @@ fn the_routes_mask_arm_records_its_named_residual() {
         .iter()
         .filter(|exit| exit.custody == ExitCustody::Unknown)
         .collect::<Vec<_>>();
+    // DELIBERATE PIN UPDATE, card LOADER-ABI: three, not two. The logging arm
+    // joins them once `flb_error` is declared faithfully against
+    // `(const char *, ...)`; see
+    // `the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration`.
+    // It carries **no** site, which is what separates it from the two arms this
+    // test is about, so the shape below is asserted per arm rather than over
+    // the whole set.
     assert_eq!(
         unknown.len(),
+        3,
+        "expected the routes-mask arm, the success exit and the logging arm; exits were {:?}",
+        exit_shape(caller)
+    );
+    let carrying = unknown
+        .iter()
+        .filter(|exit| !exit.sites.is_empty())
+        .collect::<Vec<_>>();
+    assert_eq!(
+        carrying.len(),
         2,
         "expected the routes-mask arm and the success exit; exits were {:?}",
         exit_shape(caller)
     );
     assert!(
-        unknown.iter().all(|exit| exit.sites.len() == 2
+        carrying.iter().all(|exit| exit.sites.len() == 2
             && exit
                 .sites
                 .iter()
@@ -665,20 +758,39 @@ fn the_routes_mask_arm_records_its_named_residual() {
     );
 }
 
-/// The logging arm's discharge rests on the chain, and the chain rests on
-/// declarations the analysis re-derives. Substituting any link withdraws it.
+/// The chain admission rests on declarations the analysis re-derives:
+/// substituting any link withdraws it.
+///
+/// **DELIBERATE PIN UPDATE, card LOADER-ABI.** This test used to measure the
+/// *logging arm's discharge* on the real unit. That discharge is gone — the
+/// fixture's `flb_error` declaration was unfaithful to `(const char *, ...)`
+/// and the actual now sits in the variadic tail — so measuring it here would
+/// have made every substitution below **vacuously** pass against a baseline
+/// that already fails. The controls are therefore repointed at the same four
+/// link substitutions over [`chain_probe`], where the chain is read at
+/// `cio_log_error`'s declared `Borrowed` parameter and the baseline is
+/// asserted `Safe` first, so nothing here can pass by vacuity.
 #[test]
-fn substituting_a_chain_link_withdraws_the_logging_arm() {
-    if !clang_available() {
-        return;
-    }
-    let baseline = real_unit();
-    // Each substitution must leave a translation unit Clang still accepts, so
-    // that the withdrawal is caused by the declaration and not by a parse
-    // failure. Retagging `struct cio_stream` as a `union` is therefore not
-    // expressible here — five other declarations in the same unit name the
-    // tag — and stays covered by the unit tests of `crate::borrowed_actual`
-    // and by the generic certificate substitutions above.
+fn substituting_a_chain_link_withdraws_the_chain_admission() {
+    let baseline = chain_probe();
+    let contracts = load("o04_arms_path.qcore", &arms_contracts());
+    // Non-vacuity: the unmutated probe is admitted, so each substitution below
+    // measures a withdrawal rather than an already-refused shape.
+    assert_eq!(
+        function(
+            &analyze_legacy_c_translation_unit(&baseline, "probe", &contracts)
+                .expect("the probe tokenizes"),
+            "probe"
+        )
+        .status,
+        AnalysisStatus::Safe,
+        "the baseline probe must be admitted"
+    );
+    // The four link substitutions, over the *upstream* declarations this probe
+    // includes. Retagging `struct cio_stream` as a `union` is not expressible
+    // here — other declarations in the same text name the tag — and stays
+    // covered by the unit tests of `crate::borrowed_actual` and by the generic
+    // certificate substitutions above.
     let cases: [(&str, &str, &str); 4] = [
         (
             "the intermediate link's record gains an unreadable member",
@@ -692,13 +804,13 @@ fn substituting_a_chain_link_withdraws_the_logging_arm() {
         ),
         (
             "the chain's final member becomes volatile",
-            "struct cio_stream {\n    int type;\n    char *name;",
-            "struct cio_stream {\n    int type;\n    volatile char *name;",
+            "    char *name;",
+            "    volatile char *name;",
         ),
         (
             "the chain's final member becomes an array",
-            "struct cio_stream {\n    int type;\n    char *name;",
-            "struct cio_stream {\n    int type;\n    char *name[2];",
+            "    char *name;",
+            "    char *name[2];",
         ),
     ];
     for (label, from, to) in cases {
@@ -707,54 +819,68 @@ fn substituting_a_chain_link_withdraws_the_logging_arm() {
             "{label}: anchor `{from}` not found"
         );
         let mutated = baseline.replacen(from, to, 1);
-        let result = analyze_real(&mutated);
-        let caller = function(program(&result), "flb_input_chunk_create");
-        let discharged = caller
-            .exits
-            .iter()
-            .filter(|exit| exit.custody == ExitCustody::Discharged && exit.sites.is_empty())
-            .count();
-        assert_eq!(
-            discharged,
-            0,
-            "{label}: the logging arm's discharge must be withdrawn, exits were {:?}",
-            exit_shape(caller)
+        let summary = analyze_legacy_c_translation_unit(&mutated, "probe", &contracts)
+            .expect("the mutated probe tokenizes");
+        let probe = function(&summary, "probe");
+        assert!(
+            unsupported(probe).contains(&INDIRECT),
+            "{label}: the chain admission must be withdrawn, diagnostics were {:?}",
+            unsupported(probe)
         );
-        assert_eq!(caller.status, AnalysisStatus::Unknown, "{label}");
+        assert_eq!(probe.status, AnalysisStatus::Unknown, "{label}");
     }
 }
 
-/// Weakening the declared logging premise withdraws the arm too: the discharge
-/// is a consequence of a *declared* contract, not of the statement's shape.
+/// Weakening the declared premise at the chain's own position withdraws the
+/// admission: it is a consequence of a *declared* contract, not of the
+/// statement's shape.
+///
+/// **DELIBERATE PIN UPDATE, card LOADER-ABI.** This test used to weaken
+/// `resource_borrowed(detail)` — the second of `flb_error`'s three declared
+/// parameters — and measure the logging arm losing its discharge. That
+/// declaration was unfaithful to C's `void flb_error(const char *format, ...)`
+/// and no longer exists, so the anchor is gone and the arm no longer
+/// discharges at all. The same claim is measured where it is still live: the
+/// chained actual at `cio_log_error`'s declared `Borrowed` `message`
+/// parameter, over [`chain_probe`], with the unweakened baseline asserted
+/// `Safe` so the withdrawal cannot pass by vacuity.
 #[test]
-fn weakening_the_logging_premise_withdraws_the_arm() {
-    if !clang_available() {
-        return;
-    }
-    let weakened = arms_contracts().replace(
-        "    ensures normal resource_borrowed(detail);",
-        "    ensures normal resource_consumed(detail, nonnull);",
+fn weakening_the_premise_at_the_chain_position_withdraws_the_admission() {
+    let probe = chain_probe();
+    let baseline = arms_contracts();
+    let weakened = baseline.replace(
+        "extern fn cio_log_error(ctx: ptr<mut, u8>, message: ptr<const, u8>) -> unit\n\
+         contract {\n    requires resource_contract_v1;\n    \
+         ensures normal resource_borrowed(ctx);\n    \
+         ensures normal resource_borrowed(message);",
+        "extern fn cio_log_error(ctx: ptr<mut, u8>, message: ptr<const, u8>) -> unit\n\
+         contract {\n    requires resource_contract_v1;\n    \
+         ensures normal resource_borrowed(ctx);\n    \
+         ensures normal resource_consumed(message, nonnull);",
     );
-    assert_ne!(weakened, arms_contracts(), "the logging clause moved");
-    let result = analyze_unrestricted_c11(
-        &C11TranslationUnit {
-            source: &real_unit(),
-            ..Default::default()
-        },
-        "flb_input_chunk_create",
-        &load("o04_arms_path.qcore", &weakened),
-    )
-    .expect("fixture accepted by Clang");
-    let caller = function(program(&result), "flb_input_chunk_create");
+    assert_ne!(weakened, baseline, "the logging clause moved");
     assert_eq!(
-        caller
-            .exits
-            .iter()
-            .filter(|exit| exit.custody == ExitCustody::Discharged && exit.sites.is_empty())
-            .count(),
-        0,
-        "the logging arm must lose its discharge: {:?}",
-        exit_shape(caller)
+        function(
+            &analyze_legacy_c_translation_unit(
+                &probe,
+                "probe",
+                &load("o04_arms_path.qcore", &baseline)
+            )
+            .expect("the probe tokenizes"),
+            "probe"
+        )
+        .status,
+        AnalysisStatus::Safe,
+        "the unweakened baseline must be admitted"
+    );
+    let summary =
+        analyze_legacy_c_translation_unit(&probe, "probe", &load("o04_arms_path.qcore", &weakened))
+            .expect("the probe tokenizes");
+    let probe = function(&summary, "probe");
+    assert!(
+        unsupported(probe).contains(&INDIRECT),
+        "the chain admission must be withdrawn: {:?}",
+        unsupported(probe)
     );
 }
 

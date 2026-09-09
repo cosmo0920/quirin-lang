@@ -66,7 +66,7 @@ contract {
 };
 
 // --- B10: the four event-type hash-table publications ----------------------
-extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<mut, u8>, key_len: i32, val: ptr<mut, u8>, val_size: i64) -> i32
+extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<const, u8>, key_len: i32, val: ptr<mut, u8>, val_size: i64) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ht);

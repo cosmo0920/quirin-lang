@@ -421,7 +421,26 @@ const REFINED_SPELLINGS: &[(&str, bool, &str)] = &[
 /// under the clause. The four publications decide — none of them appears here —
 /// and the two residues are rows 0 and 9 of O04-B09B10's census, owned by that
 /// card's named follow-ons.
+///
+/// **Deliberate pin update, card LOADER-ABI.** This vector gains a leading
+/// `indirect memory access` leaf, and the reason is a corrected premise rather
+/// than a regression in this card's subject. The fixture's `flb_error`
+/// declaration named three parameters, the arity of this call site, beside a C
+/// prelude declaring `void flb_error(const char *format, ...)`. Under that
+/// unfaithful declaration the tail actual `storage->stream->name` sat at a
+/// *declared* `Borrowed` position, so O04's chained-access admission decided
+/// it. The declaration is now the faithful one-parameter-plus-`resource_
+/// variadic_data_tail` form, which puts that actual in the tail, where the
+/// two-level chain whose final field is itself pointer-typed is refused. That
+/// is exactly the single refusal card NEIGHBOURS pins on the same statement
+/// under the *production* declarations
+/// (`neighbours.rs::the_constructor_keeps_exactly_one_refusal_under_production_declarations`,
+/// follow-on `NEIGHBOURS-CHAINED-TAIL`), so this fixture now agrees with the
+/// production measurement instead of understating it. Both load-bearing halves
+/// are unchanged: the four publications still decide, and no publication is
+/// refused as outside its premise.
 const PINNED_REAL_DIAGNOSTICS: &[&str] = &[
+    "indirect memory access is outside the resource projection",
     "call to uncontracted function `flb_trace`",
     "nullable resource `ic` used by a non-null contract",
 ];
@@ -852,8 +871,17 @@ fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
 }
 
 /// The four publications decide exactly as O04-B09B10 measured them, now under
-/// the production declaration and its premise: no `INDIRECT` refusal remains,
-/// and no publication is refused as outside its premise.
+/// the production declaration and its premise: no publication is refused as
+/// outside its premise, and the only `INDIRECT` refusal left is the one card
+/// NEIGHBOURS pins on the `flb_error` tail actual `storage->stream->name`.
+///
+/// **Deliberate pin update, card LOADER-ABI**, for the reason recorded on
+/// [`PINNED_REAL_DIAGNOSTICS`]: the count moves 0 → 1 because the fixture's
+/// `flb_error` declaration is now faithful to `(const char *, ...)`, which
+/// moves that actual out of the declared parameter vector and into the tail.
+/// The load-bearing half — *no publication* is refused, and no member access of
+/// a publication is refused — is asserted below by name rather than by the
+/// count alone.
 #[test]
 fn the_four_publications_decide_under_the_production_declaration() {
     if !clang_available() {
@@ -867,9 +895,17 @@ fn the_four_publications_decide_under_the_production_declaration() {
             .iter()
             .filter(|text| **text == INDIRECT)
             .count(),
-        0,
-        "no member access remains refused: {:?}",
+        1,
+        "only the chained tail actual remains refused: {:?}",
         unsupported(caller)
+    );
+    // The load-bearing half of O04-B09B10's claim, asserted directly: the
+    // remaining refusal is the *whole* diagnostic vector's known leaf, so no
+    // second member access crept back in behind the count.
+    assert_eq!(
+        unsupported(caller),
+        PINNED_REAL_DIAGNOSTICS,
+        "a member access other than the pinned chained tail actual is refused"
     );
     assert!(
         !unsupported(caller).contains(&OUTSIDE_HASH),
