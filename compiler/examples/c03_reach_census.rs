@@ -70,7 +70,8 @@ fn run(root: &Path, monkey_database: Option<&Path>, output: Option<&Path>) -> Re
     )?;
 
     let mut units = Vec::new();
-    for selected_library in qcore_audit::load_library_selections(&profile.directory().join("audit.json"))?
+    for selected_library in
+        qcore_audit::load_library_selections(&profile.directory().join("audit.json"))?
     {
         let declared = profile
             .library(&selected_library.library)

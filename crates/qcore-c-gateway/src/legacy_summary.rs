@@ -293,9 +293,8 @@ pub(crate) fn derive_custody_summaries(
                     derivation.contextual.insert(name.clone(), cfg);
                     ranked.push(name);
                 }
-                outcome = Some(NeutralComponentOutcome::PublishedByRankedRecursion {
-                    members: ranked,
-                });
+                outcome =
+                    Some(NeutralComponentOutcome::PublishedByRankedRecursion { members: ranked });
             } else if pending.len() == component.len() {
                 // (V2) Ordinary inference and both ranked recursive routes run
                 // first. Neutral-frame recursion is consulted only for a
