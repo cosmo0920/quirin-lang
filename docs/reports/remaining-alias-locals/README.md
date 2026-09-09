@@ -505,10 +505,33 @@ acceptance matrix's derived `validation.lean_audits` row stays at
 `['8.0.0', 53]` and needs no regeneration on this card's account. The
 integrator-owned files listed in §7 are untouched.
 
-The load-flaky targets recorded in
-[`docs/reports/remaining-p03/README.md`](../remaining-p03/README.md) §9.1 (P02
-`RLIMIT_NPROC`, P03 confined-write, `vp04`) all passed in the runs above; no
-re-run in isolation was needed.
+One of the load-flaky targets recorded in
+[`docs/reports/remaining-p03/README.md`](../remaining-p03/README.md) §9.1 did
+fire, and was measured rather than waved away.
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets` asserts a 500 ms
+wall-clock budget (`cycle20_verifier_plugins.rs:794`) and failed in one
+full-workspace run while this host's 1-minute load average was above 20 — the
+delegated fleet was building in parallel. Re-run eight times on the committed
+tree with the load falling from 23.2 to 8.5, it passed **7 of 8**, failing only
+the attempt at load 19.4:
+
+| attempt | load | result |
+|---|---|---|
+| 1 | 23.20 | ok |
+| 2 | 19.40 | **FAILED** |
+| 3–8 | 17.17 → 8.51 | ok |
+
+It is a wall-clock budget in `qcore-compiler`'s verifier-plugin process
+lifecycle, which this card's diff cannot reach: nothing here is in that crate
+and nothing here runs in a spawned provider. It also fires intermittently under
+the workspace run's *own* test parallelism, independently of external load.
+**The assertion was deliberately not weakened**, per the standing rule and P03
+§9.1. The gate row above is a single authoritative
+`cargo test --workspace --no-fail-fast` recording exit 0, **2,134 passed,
+0 failed, 4 ignored, 0 failing test binaries**; the runs in which it fired
+recorded 2,133 with that one failure.
+
+P02 `RLIMIT_NPROC` and the P03 confined-write target passed in every run.
 
 ### 9.1 Parallel cards in the same crate
 
