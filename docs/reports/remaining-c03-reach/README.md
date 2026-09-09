@@ -267,7 +267,7 @@ Libevent submodule at `d82464a`.
 | `python3 scripts/check_lean_audits.py` | **51 audits pass** (unchanged; §8) |
 | `cd providers && cargo test` | 76 passed, 0 failed |
 | `python3 -m unittest discover -s scripts/tests` | 125 passed |
-| `providers/package.py build` | five packages built and verified |
+| `python3 -B providers/package.py build` | five packages built, for §6's runs |
 | 185-unit corpus, BEFORE vs AFTER | 5/5 byte-identical (§6) |
 
 The workspace count is 2041 against wave 10's 2034: exactly the seven new
