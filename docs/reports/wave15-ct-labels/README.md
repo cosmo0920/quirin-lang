@@ -225,14 +225,22 @@ is pinned element-for-element in both derivations and did catch its own change.
 
 ---
 
-## 7. Refusal matrix — 11 scratch mutations, all refused
+## 7. Refusal matrix — 13 scratch mutations: 11 refused, 2 admitted by design
 
-Six hermetic mutations run inside `scripts/tests/test_ct_stage_summary.py`
-against a scratch copy of the file set, and five applied to the real tree, run
-against `cargo test -p qcore-compiler --test ct_corpus` and/or
-`scripts/ct_stage_summary.py --check`, then reverted with `git checkout -- <path>`.
-**None was committed**; the tree was verified clean afterwards
-(`git status --short` empty).
+Eleven rows below. Each runs hermetically inside
+`scripts/tests/test_ct_stage_summary.py`, against a scratch copy of the file set
+that is deleted afterwards; row R5 is three mutations (each required field
+blanked in turn), which is where 13 comes from. Six of them — R1, R2a, R2b, R3,
+R4, R5 — were additionally applied to the **real tree** and run against
+`cargo test -p qcore-compiler --test ct_corpus` and/or
+`python3 scripts/ct_stage_summary.py . --check`, so the Rust derivation's
+refusals are measured and not merely mirrored in Python; each was then reverted
+with `git checkout -- <path>`. **None was committed**; the tree was verified
+clean afterwards (`git status --short` empty), and the CT corpus test re-run
+green.
+
+The two admitted rows are marked as such: a refusal matrix in which everything
+refuses would not show that the mechanism still lets an honest lane through.
 
 | # | Refusal | Mutation | Refused by (measured message) |
 |---|---|---|---|
@@ -241,8 +249,8 @@ against `cargo test -p qcore-compiler --test ct_corpus` and/or
 | R2a | two records, **different** buckets, no supersession | give the newest record a conflicting CT46 bucket | `CT46: two evidence records label this case differently (…wave13… says "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", …ct34-sanitized… says "a different label") and neither declares a supersession` |
 | R2b | a **stale** supersession | the same row declaring it supersedes wave 9 | `CT46: …ct34-sanitized… declares its bucket supersedes …wave9-ctwin…, but the record holding the label is …wave13-ct34…` |
 | R2c | a **vacuous** supersession | a CT44 row declaring it supersedes T00's archive | `CT44: … declares its bucket supersedes …, but no earlier record labels this case` |
-| R2-ok | the **admitted** direction | the same row declaring `supersedes: wave13` | accepted; the label and `label_source` become the newer record's |
-| R2-agree | re-verification reaching the **same** label | newest record repeats wave 13's bucket, no `supersedes` | accepted — agreement is not a second claim, and refusing it would make honest re-verification harder than silence |
+| R2-ok | **admitted by design**: a declared supersession | the same row declaring `supersedes: wave13` | accepted; the label and `label_source` become the newer record's |
+| R2-agree | **admitted by design**: re-verification reaching the **same** label | newest record repeats wave 13's bucket, no `supersedes` | accepted — agreement is not a second claim, and refusing it would make honest re-verification harder than silence |
 | R3 | a `label_source` the file set cannot support | point CT44 at a non-evidence file, CT47 at a record with no row for it | `acceptance.json labels CT44 from …README.md, which is not a CT stage-evidence record` / `… labels CT47 from …wave9-ctwin…, which records no bucket for that case` |
 | R4 | the two derivations reading different files | drop the last entry of `derived_from` | Rust: `acceptance.json 'derived_from' must be the manifest plus this derivation's evidence-file list…`; Python: the matching DRIFT line |
 | R5 | a row missing a required field | blank each of `bucket` / `reason` / `measured_by` in turn | `CT41: docs/reports/wave9-ctwin/ct_stage_evidence.json carries no measured_by for this case` |
@@ -295,17 +303,35 @@ audits** and the acceptance matrix's derived `validation.lean_audits` row does
 
 | Gate | Command | Result | Exit |
 |---|---|---|---|
-| Workspace tests | `cargo test --workspace --no-fail-fast` | see below | — |
+| Workspace tests | `cargo test --workspace --no-fail-fast` | run twice. First run: **exit 0**. Second run: **2,528 passed / 1 failed / 8 ignored**, the one failure a load-flaky wall-clock assertion (below), green on isolated re-run | 0 / 101 |
 | Format | `cargo fmt --all -- --check` | clean | 0 |
-| Clippy | `cargo clippy --all-targets -- -D warnings` | **1 pre-existing warning, outside this card's ownership** (§11) | 101 |
+| Clippy | `cargo clippy --all-targets -- -D warnings` | **1 pre-existing warning, outside this card's ownership** (below, §11) | 101 |
 | Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 | 0 |
 | Follow-up | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 | 0 |
-| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | see below | — |
+| Provider tests | `cargo test --locked --offline --manifest-path providers/Cargo.toml --workspace` | **70 passed / 0 failed** | 0 |
 | Lean audits | `python3 scripts/check_lean_audits.py` | **64 audits passed**, no new axiom | 0 |
-| Python tests | `python3 -m unittest discover -s scripts/tests` | **146 passed** (135 + 11 new) | 0 |
+| Python tests | `python3 -m unittest discover -s scripts/tests` | **146 passed** (135 at base + 11 new) | 0 |
 | CT summary | `python3 scripts/ct_stage_summary.py . --check` | no DRIFT; 32 mapped / 18 unmapped | 0 |
 | CT corpus | `cargo test -p qcore-compiler --test ct_corpus` | 5 passed | 0 |
-| Matrix regeneration | `build_matrix.py … --out <scratch>` | CT section reproduces the manifest case for case; the committed matrix was **not** written | 0 |
+| Matrix regeneration | `build_matrix.py . 0 --out <scratch>` | CT section reproduces the manifest case for case; the committed matrix was **not** written | 0 |
+| Acceptance writer | `ct_stage_summary.py . --write` twice | byte-identical the second time (fixed point) | 0 |
+
+### The one workspace failure, and why it is not this card's
+
+```
+crates/qcore-verifier-host/tests/standalone_host.rs:175:5
+closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request
+assertion failed: start.elapsed() < Duration::from_secs(1)
+```
+
+A wall-clock bound, in the same family as the load-flaky targets the project
+already records (`vp04`, P02's `RLIMIT_NPROC`, P03's confined write). It passed
+in the first full-workspace run of this card and **passes on an isolated
+re-run** (`cargo test -p qcore-verifier-host --test standalone_host`: 3 passed);
+it failed in the second run, which overlapped other cargo work on this host.
+This card touches no host, transport or timing code — its whole Rust diff is one
+test file — so the assertion is reported as measured and **deliberately not
+weakened**. Worth adding to the recorded load-flaky list.
 
 ### The clippy warning is pre-existing and not this card's
 
@@ -355,7 +381,18 @@ edited; the fix is one mechanical line, semantics-preserving, named in §11.
    two records disagree silently. Nothing checks that the README line it names
    says what the row says; that remains an author's claim, as the surrounding
    `derivation_rule` and `purpose` fields already are.
-6. **The rule orders by landing position, not by date.** `EVIDENCE_FILES` is a
+6. **`CT-LABELS-FLAKE`** (new) — `standalone_host.rs`'s
+   `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+   carries a one-second wall-clock bound and is load-flaky on this host in the
+   same way `vp04`, P02's `RLIMIT_NPROC` and P03's confined write already are.
+   Untouched by this card and not weakened; worth adding to the recorded
+   load-flaky list so a future wave does not read it as a regression.
+7. **Provider-test count.** This run measures 70 passing provider tests where
+   wave 14 recorded 102. Nothing under `providers/` or `crates/qcore-schemas/`
+   is in this card's diff and the packages were not rebuilt here (no schema or
+   package version moves), so the difference is environmental rather than
+   attributable; the integrator's own rebuild-and-verify is the number to trust.
+8. **The rule orders by landing position, not by date.** `EVIDENCE_FILES` is a
    hand-kept list in both derivations, pinned to each other through
    `derived_from`. A lane that adds its record in the wrong position would order
    labels wrongly without tripping any refusal — the same property the stage
