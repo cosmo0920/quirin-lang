@@ -75,6 +75,7 @@ fn open_write_close() -> MutexInvariantProgram {
                 resource: 1,
             },
         ],
+        ..Default::default()
     }
 }
 
@@ -146,6 +147,7 @@ fn two_sections_with_borrow() -> MutexInvariantProgram {
                 resource: 2,
             },
         ],
+        ..Default::default()
     }
 }
 
@@ -382,6 +384,7 @@ fn checked_witness_with_a_fact() -> MutexInvariantProgram {
                 resource: 1,
             },
         ],
+        ..Default::default()
     }
 }
 
