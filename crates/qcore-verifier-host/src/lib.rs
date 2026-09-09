@@ -2157,6 +2157,14 @@ impl VerifierRegistry {
                 "call-use source projection is not bound to the core task",
             );
         }
+        if let Some(input) = &request.cleanup_replay_source
+            && task.contract_sources.get(input.digest_key()) != Some(&input.digest())
+        {
+            return VerificationOutcome::unknown(
+                "QP001",
+                "cleanup replay projection is not bound to the core task",
+            );
+        }
         // A capability whose derivation could not classify every construct can
         // never reach `Safe`, whatever a provider returns (design §1.4).
         if task.is_incomplete_for(request.capability) {

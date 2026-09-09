@@ -13,6 +13,7 @@ pub mod reactor_callback;
 pub mod reactor_source;
 
 pub mod call_use_source;
+pub mod cleanup_replay_source;
 pub mod counter_source;
 pub mod source_effect;
 pub mod teardown_source;

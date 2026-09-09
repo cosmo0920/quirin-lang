@@ -54,6 +54,7 @@ pub use witness::{
 
 pub mod call_use_summary;
 pub mod chunk_summary;
+pub mod cleanup_replay_summary;
 pub mod counter_summary;
 pub mod reactor_program;
 pub mod teardown_summary;

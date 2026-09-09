@@ -120,6 +120,7 @@ fn request(
         reactor_program: None,
         teardown_source: teardown,
         call_use_source: None,
+        cleanup_replay_source: None,
     }
 }
 

@@ -84,6 +84,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
             reactor_program: None,
             teardown_source: None,
             call_use_source: None,
+            cleanup_replay_source: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),
@@ -331,8 +332,9 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             // already `*`, so the certificate checker, Lean family and every
             // existing target/profile entry are unchanged. 0.7.0 adds the
             // call-result def/use route on the same `chunkio` target, under
-            // the same already-`*` profile list.
-            expected.package_version = "0.7.0".into();
+            // the same already-`*` profile list, and 0.8.0 adds the symbolic
+            // cleanup-replay route on that same target and profile list.
+            expected.package_version = "0.8.0".into();
             expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]

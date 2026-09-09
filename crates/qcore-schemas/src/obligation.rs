@@ -100,6 +100,12 @@ pub enum ObligationProperty {
     /// def/use shape its pinned policy requires. Successful OS cleanup,
     /// descriptor and mapping custody remain outside this property entirely.
     CallResultUseContract,
+    /// One source-derived native cleanup or guarded-delete body performs the
+    /// return value, call count and record field transition its pinned contract
+    /// requires, in every sampled prestate of its family, under the symbolic
+    /// value lattice. Successful OS cleanup, descriptor, mapping and file
+    /// custody remain outside this property entirely.
+    CleanupReplayContract,
     // chunk_lifecycle
     ContextDischarged,
     StreamDischarged,
@@ -131,6 +137,7 @@ impl ObligationProperty {
             Self::ListUnlinkContract => "list_unlink_contract",
             Self::FieldDestructorContract => "field_destructor_contract",
             Self::CallResultUseContract => "call_result_use_contract",
+            Self::CleanupReplayContract => "cleanup_replay_contract",
             Self::ContextDischarged => "context_discharged",
             Self::StreamDischarged => "stream_discharged",
             Self::ChunkDischarged => "chunk_discharged",

@@ -1,4 +1,4 @@
-# qcore-schemas 8.0.0
+# qcore-schemas 9.0.0
 
 The published, versioned schema surface of the QCore verifier ecosystem
 (layer L0 of `docs/GENERALIZATION_PLAN.md` §3.1). This crate holds the data
@@ -355,3 +355,72 @@ prerequisite it consumes: a semantic profile, a task digest and an obligation
 identifier, all of which the trusted core recomputes from its own import before
 re-running the prerequisite's own evaluation. It carries no verdict, no
 certificate and no reading, and a `deny_unknown_fields` test pins that.
+
+## Symbolic cleanup-replay projections (9.0.0)
+
+Version 9.0.0 adds `cleanup_replay_summary`: the **fourth** transported source
+vocabulary, for the two bounded ChunkIO cleanup-outcome families — the native
+cleanup outcome (`close`/`munmap`) and the guarded delete (`unlink`) — plus the
+proposed symbolic replay a producer returns for them.
+
+**Why it is its own vocabulary.** This capability's evidence is neither a path
+evaluation nor a def/use fold. The reading a producer must compute — which
+single path each sampled prestate selects, the return value, the call counts and
+the record's field transition (`field_writes`, `fields_preserved`,
+`fields_reset`) — is a function of a symbolic *field state* evolved by a
+nine-constructor value lattice over four (respectively five) sampled prestates,
+with the syscall's argument identity checked against the initial field values.
+That is a symbolic replay evaluator. By P04-NEXT's own rule, a producer
+reimplementing an algorithm over a new transported vocabulary is a separate
+capability definition, not a widening of an existing one, so this module shares
+no type with the other three — its step vocabulary differs too (no bare
+`Return`: a cleanup path without a terminal `ReturnValue` is not a complete
+path in either family).
+
+**Closed by construction.** `CleanupLatticeValue` has exactly the nine
+constructors the trusted checker's own value domain has, with no catch-all;
+`CleanupReplayOperationRecord` has exactly the eight step forms the replay
+executes; and `CleanupPrestateRecord`'s two variants fix each family's complete
+sampled domain, so a producer cannot answer over a smaller or differently
+sampled one.
+
+**Why the bump is forced.** Three of the four additions are source-incompatible
+for exhaustive matches and struct literals, exactly as in 4.0.0, 5.0.0, 7.0.0
+and 8.0.0:
+
+| Addition | Kind |
+|---|---|
+| `SemanticWitness::CleanupReplay` | new variant on an exhaustively matched enum |
+| `ObligationProperty::CleanupReplayContract` | new variant on an exhaustively matched enum |
+| `VerificationRequestV2::cleanup_replay_source` | new required struct field (skipped when absent) |
+| `cleanup_replay_summary` module | purely additive |
+
+**Existing wire bytes are unchanged.** `cleanup_replay_source` is an `Option`
+that defaults to absent and is skipped on serialization, exactly like the five
+projections before it; `crates/qcore-schemas/tests/cleanup_replay_request_wire.rs`
+and the extended `call_use_request_wire.rs` pin that a request carrying none of
+the six projections serializes with none of the six keys and round-trips.
+
+| Boundary | Before | After | Why |
+|---|---|---|---|
+| Rust schema crate | 8.0.0 | **9.0.0** | Exhaustive-variant precedent from 2.0.0, 4.0.0, 5.0.0, 7.0.0 and 8.0.0 |
+| Plugin protocol | 1 | 1 | Unchanged |
+| Evidence version | 1, 2 | 1, 2 | Unchanged |
+| Cleanup-replay source input | — | 1 | New |
+| Cleanup-replay semantic profile | — | `qcore.c_cleanup_replay.v1` | New |
+| Cleanup-replay input digest key | — | `qcore:cleanup-replay-source-input:v1` | New |
+| ChunkIO package | 0.7.0 | **0.8.0** | Adds the symbolic cleanup-replay route |
+
+The projection carries the *question* only: the complete typed path set, the
+record profile the replay is defined over, and the prerequisite's identity
+triple. No derived reading — no case vector, no field state, no return value,
+no call count, no verdict — ever travels in a request, and neither does the
+contract text or the policy name that selects it.
+
+The transported `CleanupProfileRecord` is an **input** to the replay and
+simultaneously a **claim**: the trusted core builds its own profile from the
+pinned contract's `cleanup_vocabulary_v1` declaration (card P04-B1) and refuses
+unless the transported record is exactly that. A producer therefore cannot
+choose the record shape it answers over. The policy name is deliberately not a
+member of the record, because which declaration the core reads is the core's own
+selection.
