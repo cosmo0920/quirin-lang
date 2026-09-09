@@ -227,11 +227,13 @@ establishes they are environmental rather than this card's:
 * `contracts.json`'s `sources` map is keyed by **absolute contract paths**, so
   it carries this worktree's directory: ten leaves, five paths, each present
   under both spellings with the same contract text;
-* `source-effects.json` moves 56 digest/identity leaves — `build_digest`,
-  `configuration_digest`, `obligation_id`, `task_digest`, `package_digest` —
-  because those bind the contract source paths above and the provider package
-  was rebuilt into a scratch directory. **No `status`, verdict, reason or count
-  field differs.**
+* `source-effects.json` moves 56 leaves, every one of them a digest or an
+  identity that binds one: `build_digest`, `configuration_digest`,
+  `obligation_id`, `task_digest`, `package_digest`, the digest-suffixed
+  `bounds.resource_contracts:…` and `task.contract_sources.…` map keys, and
+  the `evidence.coverage` obligation identifiers. They move because they bind
+  the contract source paths above and the provider package was rebuilt into a
+  scratch directory. **No `status`, verdict, reason or count field differs.**
 
 Headline verified independently from the run log: 31 + 17 + 94 + 13 + 1 + 29 =
 185 units; 2 Safe / 42 Unsafe / 137 Unknown / 4 data-only.
