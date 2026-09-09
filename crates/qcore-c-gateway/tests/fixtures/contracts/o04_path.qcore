@@ -18,7 +18,7 @@ module contract;
 // --- the constructor -------------------------------------------------------
 // Premise R01 (O00 §6): the constructor hands the caller owned custody of a
 // nullable chunk, and borrows everything else. Not derived from its body.
-extern fn cio_chunk_open(ctx: ptr<mut, u8>, st: ptr<mut, u8>, name: ptr<mut, u8>, flags: i32, size: u64, err: ptr<mut, u8>) -> ptr<mut, u8>
+extern fn cio_chunk_open(ctx: ptr<mut, u8>, st: ptr<mut, u8>, name: ptr<const, u8>, flags: i32, size: u64, err: ptr<mut, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ctx);
@@ -84,7 +84,7 @@ contract {
     ensures normal resource_return_none();
 };
 
-extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<mut, u8>, tag_len: i32, in: ptr<mut, u8>) -> i32
+extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<const, u8>, tag_len: i32, in: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(routes_mask);
@@ -134,21 +134,21 @@ contract {
     ensures normal resource_return_none();
 };
 
-extern fn strdup(s: ptr<mut, u8>) -> ptr<mut, u8>
+extern fn strdup(s: ptr<const, u8>) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(s);
     ensures normal resource_return_owned(nullable);
 };
 
-extern fn strlen(s: ptr<mut, u8>) -> u64
+extern fn strlen(s: ptr<const, u8>) -> u64
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(s);
     ensures normal resource_return_none();
 };
 
-extern fn cio_log_error(ctx: ptr<mut, u8>, message: ptr<mut, u8>) -> unit
+extern fn cio_log_error(ctx: ptr<mut, u8>, message: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(ctx);

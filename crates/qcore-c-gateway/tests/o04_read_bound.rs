@@ -801,14 +801,14 @@ fn a_certificate_resting_on_a_bound_read_rests_on_the_declared_mode() {
     if !clang_available() {
         return;
     }
-    let borrowed = "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);";
+    let borrowed = "extern fn r_probe(i: ptr<const, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(i);";
     {
         let mode = "resource_owned(i, nonnull)";
         let contracts = GENERIC_CONTRACTS.replace("\r\n", "\n");
         let weakened = contracts.replace(
             borrowed,
             &format!(
-                "extern fn r_probe(i: ptr<mut, u8>) -> i32\ncontract {{\n    requires resource_contract_v1;\n    ensures normal {mode};"
+                "extern fn r_probe(i: ptr<const, u8>) -> i32\ncontract {{\n    requires resource_contract_v1;\n    ensures normal {mode};"
             ),
         );
         assert_ne!(weakened, contracts, "the substitution applied");
@@ -880,14 +880,20 @@ fn the_named_read_blocker_is_gone_and_the_success_exit_is_still_unknown() {
         caller.diagnostics
     );
 
-    // And nothing else moved: exactly the five exits O04-B08 settled.
+    // And nothing else moved: exactly the exits O04-B08 settled.
+    //
+    // DELIBERATE PIN UPDATE, card LOADER-ABI: five → four. The logging arm C1
+    // left the settled set when this fixture's `flb_error` declaration was
+    // corrected against C's `(const char *, ...)`; it crosses no acquisition,
+    // so it is unresolved carrying no site. See
+    // `o04_arms.rs::the_logging_arm_stops_discharging_under_the_faithful_variadic_declaration`.
     assert_eq!(
         caller
             .exits
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Discharged)
             .count(),
-        5,
+        4,
         "the settled arms are unchanged; exits were {shape:?}"
     );
     assert_eq!(caller.status, AnalysisStatus::Unknown, "no promotion");
@@ -898,11 +904,16 @@ fn the_named_read_blocker_is_gone_and_the_success_exit_is_still_unknown() {
         .collect::<Vec<_>>();
     assert_eq!(
         unresolved.len(),
-        1,
-        "the success exit C6 is still unresolved: {shape:?}"
+        2,
+        "the success exit C6 and the logging arm are unresolved: {shape:?}"
     );
+    let carrying = unresolved
+        .iter()
+        .filter(|exit| !exit.sites.is_empty())
+        .collect::<Vec<_>>();
+    assert_eq!(carrying.len(), 1, "only C6 carries identities: {shape:?}");
     assert!(
-        unresolved[0]
+        carrying[0]
             .sites
             .iter()
             .all(|site| site.disposition == SiteDisposition::Mixed),
@@ -945,14 +956,20 @@ fn the_success_exit_keeps_its_named_residual() {
         );
     }
     // The address-of-a-member, list, hash-table and mutex statements are all
-    // still refused: nine `INDIRECT` refusals remain on C6's path, one fewer
+    // still refused: eight `INDIRECT` refusals remain on C6's path, one fewer
     // than before this card (the routes-mask read).
+    //
+    // DELIBERATE PIN UPDATE, card LOADER-ABI: nine, not eight. The ninth is not
+    // on C6's path and is not this card's: it is the `flb_error` chained tail
+    // actual on the `!chunk` arm, refused once that declaration is faithful to
+    // `(const char *, ...)` — the same single refusal card NEIGHBOURS pins
+    // under the production declarations (`NEIGHBOURS-CHAINED-TAIL`).
     assert_eq!(
         remaining
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        8,
+        9,
         "B09/B10 territory is untouched: {:?}",
         caller.diagnostics
     );

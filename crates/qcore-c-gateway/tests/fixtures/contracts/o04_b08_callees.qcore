@@ -22,7 +22,7 @@
 // in place there.
 
 // Premise: reading the clock takes no argument and returns no custody.
-extern fn flb_time_now() -> u64
+extern fn flb_time_now() -> f64
 contract {
     requires resource_contract_v1;
     ensures normal resource_return_none();

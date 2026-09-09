@@ -24,6 +24,11 @@ pub(crate) mod recursion;
 #[path = "legacy_literal_premise.rs"]
 pub(crate) mod literal_premise;
 
+#[path = "legacy_declared_abi.rs"]
+pub mod declared_abi;
+
+pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_census};
+
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
@@ -903,6 +908,20 @@ fn analyze_legacy_c_tokens(
     function: &str,
     contracts: &ResourceContracts,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
+    // Card LOADER-ABI. This single-function entry point does not pass through
+    // the translation-unit pass, so it applies the withdrawal itself: a
+    // declaration this unit's own C declaration contradicts is not applied
+    // here either. The whole-unit routes gate before the derivation is seeded
+    // (`analyze_legacy_c_translation_unit_selected_partial`), and every
+    // `build_function_cfg` caller below that point is handed the tokens and
+    // the environment that pass already withdrew from — which is also why the
+    // gate is not repeated per function, where re-reading every declared
+    // module would cost one parse per body.
+    let agreement = declared_abi::AbiAgreement::read(tokens, contracts);
+    let withdrawn_environment = agreement.withdraw_environment(contracts);
+    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let withdrawn_tokens = agreement.withdraw_call_sites(tokens);
+    let tokens = withdrawn_tokens.as_deref().unwrap_or(tokens);
     Ok(analyze_cfg(build_function_cfg(
         tokens, function, contracts,
     )?))
@@ -1296,6 +1315,11 @@ pub(crate) fn recursive_component_census(
     selected_functions: Option<&[String]>,
 ) -> Vec<crate::legacy_census::NeutralComponentCensus> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
+    let withdrawn_environment = agreement.withdraw_environment(contracts);
+    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
+    let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
     if let Some(selected) = selected_functions {
         let selected = selected.iter().collect::<BTreeSet<_>>();
@@ -1318,6 +1342,19 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     selected_functions: Option<&[String]>,
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let (tokens, conditionals) = tokenize_with_conditionals(source);
+    // Card LOADER-ABI. A declared contract whose parameter/result ABI
+    // projections this unit's own C declaration contradicts is withdrawn here,
+    // before anything reads either: the call sites are rewritten to a marked
+    // uncontracted callee, and the name leaves the environment the derivation
+    // seeds, so no defined body is checked against — and no caller trusts — an
+    // interface the source contradicts. Both halves are decided from this
+    // token stream and the environment's own retained texts, so W4 derivation,
+    // W4 validation and `check_legacy_safety_certificate` reproduce them.
+    let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
+    let withdrawn_environment = agreement.withdraw_environment(contracts);
+    let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
+    let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
+    let tokens = withdrawn_tokens.unwrap_or(tokens);
     let mut names = function_names(&tokens, &conditionals).definitions;
     let requested_was_selected =
         selected_functions.is_some_and(|selected| selected.iter().any(|name| name == entry));
@@ -3255,6 +3292,20 @@ impl Parser<'_> {
                 ),
             };
         }
+        // Card LOADER-ABI, for the same reason: a withdrawn declaration is the
+        // informative attribution, and the access the withdrawn declaration
+        // would have admitted is not.
+        if let Some((refusal, callee)) =
+            find_call(&texts).and_then(|(_, function)| declared_abi::withdrawn_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: format!(
+                    "call to `{callee}` whose declared contract was withdrawn against its C \
+                     declaration in this translation unit ({})",
+                    refusal.as_str()
+                ),
+            };
+        }
         if unsupported_access {
             return LegacyInstruction::Unknown {
                 description: "indirect memory access is outside the resource projection".into(),
@@ -3532,6 +3583,20 @@ impl Parser<'_> {
                 return LegacyInstruction::Unknown {
                     description: format!(
                         "call to `{callee}` outside its declared literal-argument premise"
+                    ),
+                };
+            }
+            // Card LOADER-ABI: a callee whose declared contract this
+            // translation unit's own C declaration contradicts arrives here
+            // rewritten, exactly as uncontracted as a callee with no
+            // declaration at all. The wording carries the refusal key, so a
+            // report can tell a withdrawn declaration from an absent one.
+            if let Some((refusal, callee)) = declared_abi::withdrawn_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: format!(
+                        "call to `{callee}` whose declared contract was withdrawn against its C \
+                         declaration in this translation unit ({})",
+                        refusal.as_str()
                     ),
                 };
             }

@@ -628,6 +628,17 @@ fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
 /// The card's headline on real source, in both directions at once: **all eight
 /// `INDIRECT` refusals of card O04-READ-BOUND's success-exit residual are
 /// gone**, and the success exit C6 is **still `Unknown`**.
+///
+/// **DELIBERATE PIN UPDATE, card LOADER-ABI**: one `INDIRECT` refusal remains,
+/// and it is not one of this card's eight. This fixture's `flb_error`
+/// declaration named three parameters beside a C prelude declaring the real
+/// `void flb_error(const char *format, ...)`; the declared/C ABI comparison
+/// refuses that arity, and under the faithful one-parameter-plus-tail
+/// declaration the chained tail actual `storage->stream->name` is refused —
+/// the same single refusal card NEIGHBOURS pins under the *production*
+/// declarations (`NEIGHBOURS-CHAINED-TAIL`). The card's own eight are asserted
+/// gone below by naming the surviving one, so the count cannot hide a
+/// regression in either direction.
 #[test]
 fn the_success_exit_residual_narrows_to_one_statement() {
     if !clang_available() {
@@ -640,9 +651,21 @@ fn the_success_exit_residual_narrows_to_one_statement() {
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        0,
-        "no indirect-access refusal remains: {:?}",
+        1,
+        "only the chained variadic tail actual stays refused: {:?}",
         caller.diagnostics
+    );
+    // And it is that statement: withdrawing the chained actual alone removes
+    // it, exactly as card NEIGHBOURS measures on the production declarations.
+    let probed =
+        analyze_real(&real_unit().replace("storage->stream->name, name);", "name, name);"));
+    assert_eq!(
+        unsupported(function(program(&probed), "flb_input_chunk_create"))
+            .iter()
+            .filter(|description| **description == INDIRECT)
+            .count(),
+        0,
+        "the surviving refusal is the chained tail actual and nothing else"
     );
     // Exactly one statement is still refused, and it is the uncontracted
     // variadic logging call whose second argument is a nested call.
@@ -653,27 +676,46 @@ fn the_success_exit_residual_narrows_to_one_statement() {
     assert_eq!(
         unsupported(caller),
         vec![
+            // Card LOADER-ABI, recorded above: the chained tail actual of the
+            // faithful `flb_error` declaration. Not one of this card's eight.
+            INDIRECT,
             "call to uncontracted function `flb_trace`",
             "nullable resource `ic` used by a non-null contract",
         ],
         "the residual is one statement plus its consequence: {:?}",
         caller.diagnostics
     );
-    // C6 stays Unknown, and the other five exits stay settled.
+    // C6 stays Unknown, and four other exits stay settled.
+    //
+    // DELIBERATE PIN UPDATE, card LOADER-ABI: five → four, for the reason
+    // recorded on this test. The logging arm C1 leaves the settled set with the
+    // faithful `flb_error` declaration; it crosses no acquisition, so it is
+    // unresolved carrying **no** site, which is how it is told apart from the
+    // success exit below.
     assert_eq!(
         caller
             .exits
             .iter()
             .filter(|exit| exit.custody == ExitCustody::Discharged)
             .count(),
-        5,
-        "five exits stay settled: {:?}",
+        4,
+        "four exits stay settled: {:?}",
+        exit_shape(caller)
+    );
+    assert_eq!(
+        caller
+            .exits
+            .iter()
+            .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
+            .count(),
+        1,
+        "the logging arm is unresolved and crosses no acquisition: {:?}",
         exit_shape(caller)
     );
     let success = caller
         .exits
         .iter()
-        .find(|exit| exit.custody != ExitCustody::Discharged)
+        .find(|exit| exit.custody != ExitCustody::Discharged && !exit.sites.is_empty())
         .expect("the success exit");
     assert_eq!(success.custody, ExitCustody::Unknown);
     assert_eq!(success.sites.len(), 3);
@@ -710,7 +752,20 @@ fn the_logging_control_settles_every_exit() {
     let unit = real_unit();
     let trace = "        flb_trace(\"[input chunk] no matching route for input chunk '%s' with tag '%s'\",\n                  flb_input_chunk_get_name(ic), tag);";
     assert!(unit.contains(trace), "the control anchor is present");
-    let controlled = unit.replace(trace, "        flb_errno();");
+    // DELIBERATE PIN UPDATE, card LOADER-ABI: a **second** clearly labelled
+    // substitution is now needed, for the reason recorded on
+    // `the_success_exit_residual_narrows_to_one_statement`. The faithful
+    // `flb_error` declaration leaves the chained tail actual
+    // `storage->stream->name` refused, so it is withdrawn here the same way
+    // card NEIGHBOURS withdraws it — replaced by the plain local the same
+    // statement already passes. Neither substitution is a claim about upstream.
+    assert!(
+        unit.contains("storage->stream->name, name);"),
+        "the chained tail anchor is present"
+    );
+    let controlled = unit
+        .replace(trace, "        flb_errno();")
+        .replace("storage->stream->name, name);", "name, name);");
     // The *program* stays `Unknown`, because `cio_chunk_open` in the same unit
     // keeps its own refusals. The claim under test is per function.
     let result = analyze_real(&controlled);

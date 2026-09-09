@@ -247,11 +247,38 @@ pub struct DeclaredLiteralArgument {
     pub literal: Vec<String>,
 }
 
+/// The declared C ABI projection of one admitted declaration (card
+/// **LOADER-ABI**).
+///
+/// The custody modes on [`ResourceFunctionContract`] are what the analyzer
+/// applies; these are the *types* the declaration claims those modes sit on.
+/// They are discarded by [`ResourceFunctionContract`] on purpose — nothing in
+/// the model reads a type — which is exactly why nothing used to compare them
+/// against the analyzed translation unit's own C declaration. A consumer that
+/// wants that comparison rederives this from the retained trusted texts, the
+/// same way [`variadic_data_tails`] and [`literal_argument_premises`] are
+/// rederived, so W4 derivation, W4 validation and certificate rechecking all
+/// reproduce it from the bytes they already hold.
+///
+/// Every spelling here is an entry of [`SCALAR_ABI_TYPES`],
+/// [`POINTER_ABI_TYPES`] or, for `result` only, `unit`: the loader admits no
+/// other spelling, so a consumer compares against a closed table.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredAbiSignature {
+    /// The declared parameter type spellings, in declaration order.
+    pub parameters: Vec<String>,
+    /// The declared result type spelling, `unit` included.
+    pub result: String,
+    /// Whether the declaration carries `resource_variadic_data_tail()`.
+    pub variadic_data_tail: bool,
+}
+
 /// Everything one admitted declaration carries beyond its custody modes.
 struct LoadedDeclaration {
     contract: ResourceFunctionContract,
     variadic_data_tail: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
+    abi: DeclaredAbiSignature,
 }
 
 /// The result vocabulary: `unit` plus every parameter type.
@@ -362,6 +389,53 @@ pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSe
     Ok(tails)
 }
 
+/// The declared C ABI projections in `sources`, keyed by function name (card
+/// **LOADER-ABI**).
+///
+/// Derived from the same trusted texts [`load_resource_contract_sources`]
+/// reads, and total-or-reject in the same way: a source set this loader would
+/// reject yields an error here too, never a partial map. A consumer must
+/// therefore treat an error as a refusal of every comparison, never as an
+/// empty map — an empty map compares nothing, which is the fail-open
+/// direction.
+pub fn declared_abi_signatures(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, DeclaredAbiSignature>, String> {
+    let mut signatures = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if signatures.insert(decl.name.clone(), loaded.abi).is_some() {
+                return Err(format!("{context}: duplicate function contract"));
+            }
+        }
+    }
+    Ok(signatures)
+}
+
+/// The declared C ABI projections of an environment, rederived from its
+/// **retained trusted sources**.
+///
+/// An environment with no declared sources — an inferred W4 summary, a
+/// provider proposal, a directly constructed table — declares no signatures,
+/// so nothing is compared. That is the honest reading: this loader claims no
+/// declared type it cannot read, and an inferred summary never had one.
+pub fn declared_abi_signatures_of(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, DeclaredAbiSignature>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    declared_abi_signatures(contracts.source_assumptions())
+}
+
 /// The literal-argument premises `sources` declares, keyed by function name
 /// (card HASH-CLAUSE).
 ///
@@ -468,16 +542,20 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // the exact parsed contract block. No ignored signature/tail syntax.
     // `unit` is a result type only, and usage annotations belong to the
     // language-level lifecycle vocabulary, not to this projection.
+    let mut parameter_types = Vec::with_capacity(decl.parameters.len());
     for parameter in &decl.parameters {
         let tokens = token_kinds(&parameter.type_source)?;
-        if parameter.usage.is_some()
-            || !SCALAR_ABI_TYPES
-                .iter()
-                .chain(POINTER_ABI_TYPES.iter())
-                .any(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens))
-        {
+        let matched = SCALAR_ABI_TYPES
+            .iter()
+            .chain(POINTER_ABI_TYPES.iter())
+            .find(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens));
+        let Some(matched) = matched.filter(|_| parameter.usage.is_none()) else {
             return Err("unsupported parameter type or usage annotation".into());
-        }
+        };
+        // Card LOADER-ABI: the canonical table spelling, not the module's own
+        // text, so a consumer comparing against a C declaration compares one
+        // closed vocabulary rather than incidental whitespace.
+        parameter_types.push((*matched).to_owned());
     }
     let parameter_text = decl
         .parameters
@@ -677,6 +755,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         contract: ResourceFunctionContract::new(parameters, result),
         variadic_data_tail,
         literal_arguments,
+        abi: DeclaredAbiSignature {
+            parameters: parameter_types,
+            result: return_type.to_owned(),
+            variadic_data_tail,
+        },
     })
 }
 

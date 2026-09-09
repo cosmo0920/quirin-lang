@@ -695,11 +695,21 @@ fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
     .unwrap_or_else(|error| panic!("O04-B08 fixture rejected by Clang: {error:?}"))
 }
 
-/// The card's headline, on real source: the routes-mask arm C5 settles. Five of
-/// the caller's six exits are `Discharged`; the three cleanup arms and C5 all
-/// release the same constructor acquisition site, and C5 additionally releases
-/// the `ic` allocation it made. Only the out-of-scope success exit stays
-/// `Unknown`.
+/// The card's headline, on real source: the routes-mask arm C5 settles. The
+/// three cleanup arms and C5 all release the same constructor acquisition site,
+/// and C5 additionally releases the `ic` allocation it made.
+///
+/// **DELIBERATE PIN UPDATE, card LOADER-ABI.** The count of `Discharged` exits
+/// moves 5 → 4, and the exits that stay `Unknown` move 1 → 2. What left the
+/// settled set is the *logging* arm C1, not C5: this fixture's `flb_error`
+/// declaration named three parameters beside a C prelude declaring the real
+/// `void flb_error(const char *format, ...)`, and card LOADER-ABI's declared/C
+/// ABI comparison refuses that arity. Under the faithful
+/// one-parameter-plus-tail declaration the chained tail actual
+/// `storage->stream->name` is refused (`NEIGHBOURS-CHAINED-TAIL`), exactly as
+/// card NEIGHBOURS measured in production. This card's own subject — the
+/// aggregate store, and C5 settling because of it — is unchanged and is still
+/// asserted below by shape: C5 is the exit carrying **two** released sites.
 #[test]
 fn the_routes_mask_arm_discharges_under_the_declared_premises() {
     if !clang_available() {
@@ -715,17 +725,18 @@ fn the_routes_mask_arm_discharges_under_the_declared_premises() {
         .collect::<Vec<_>>();
     assert_eq!(
         discharged.len(),
-        5,
-        "C1 through C5 all settle; exits were {shape:?}"
+        4,
+        "C2 through C5 all settle; exits were {shape:?}"
     );
-    // C1 crosses no acquisition; C2/C3/C4 release the constructor's chunk;
-    // C5 releases that chunk *and* the aggregate it allocated.
+    // C2/C3/C4 release the constructor's chunk; C5 releases that chunk *and*
+    // the aggregate it allocated. C1 no longer settles — see the note above —
+    // and is asserted separately as an unresolved exit crossing no acquisition.
     let mut released = discharged
         .iter()
         .map(|exit| exit.sites.len())
         .collect::<Vec<_>>();
     released.sort_unstable();
-    assert_eq!(released, vec![0, 1, 1, 1, 2], "exits were {shape:?}");
+    assert_eq!(released, vec![1, 1, 1, 2], "exits were {shape:?}");
     for exit in &discharged {
         assert!(
             exit.sites
@@ -751,10 +762,21 @@ fn the_routes_mask_arm_discharges_under_the_declared_premises() {
         caller
             .exits
             .iter()
-            .filter(|exit| exit.custody == ExitCustody::Unknown)
+            .filter(|exit| exit.custody == ExitCustody::Unknown && !exit.sites.is_empty())
             .count(),
         1,
-        "only the out-of-scope success exit stays unresolved: {shape:?}"
+        "only the out-of-scope success exit stays unresolved carrying sites: {shape:?}"
+    );
+    // The logging arm C1: unresolved, but crossing no acquisition at all, so
+    // nothing is alleged in the defect direction there either.
+    assert_eq!(
+        caller
+            .exits
+            .iter()
+            .filter(|exit| exit.custody == ExitCustody::Unknown && exit.sites.is_empty())
+            .count(),
+        1,
+        "the logging arm crosses no acquisition: {shape:?}"
     );
     assert!(
         caller

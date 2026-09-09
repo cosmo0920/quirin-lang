@@ -27,7 +27,13 @@ contract {
     ensures normal resource_return_none();
 };
 
-extern fn flb_sds_create_len(str: ptr<const, u8>, len: usize) -> ptr<mut, u8>
+// Card LOADER-ABI: `len` is `int`, not a size. Upstream declares
+// `flb_sds_t flb_sds_create_len(const char *str, int len);`
+// (`include/fluent-bit/flb_sds.h:99` at the pinned revision) and defines it with
+// the same signature; the earlier `usize` here was an unfaithful projection,
+// found by the declared/C ABI comparison and corrected against the read body.
+// The mode is unchanged: a scalar carries no custody either way.
+extern fn flb_sds_create_len(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(str);

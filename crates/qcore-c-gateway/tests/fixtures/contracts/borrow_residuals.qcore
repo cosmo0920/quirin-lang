@@ -38,7 +38,7 @@ contract {
     ensures normal resource_return_none();
 };
 
-extern fn y_probe(h: ptr<mut, u8>) -> i32
+extern fn y_probe(h: ptr<const, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(h);
@@ -55,7 +55,7 @@ contract {
 // BORROW-LIVENESS-PRESTATE, the exact shape the residual names: one call that
 // releases one argument and borrows another. Both positions are declared, so
 // the caller-side obligation is read in the call's pre-state.
-extern fn y_retire(dead: ptr<mut, u8>, seen: ptr<mut, u8>) -> unit
+extern fn y_retire(dead: ptr<mut, u8>, seen: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_released(dead, nonnull);
@@ -65,7 +65,7 @@ contract {
 
 // The mirror order, so the answer cannot be an artefact of the parameter loop
 // visiting the released position first.
-extern fn y_retire_late(seen: ptr<mut, u8>, dead: ptr<mut, u8>) -> unit
+extern fn y_retire_late(seen: ptr<const, u8>, dead: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(seen);
@@ -89,7 +89,7 @@ contract {
 // A consuming counterpart. `resource_consumed` "is not a proof of destruction"
 // (§C04.2), so a consumed-and-borrowed pair keeps its existing answer exactly
 // as `ESCAPED` alone does on the path rule.
-extern fn y_hand_over(gone: ptr<mut, u8>, seen: ptr<mut, u8>) -> unit
+extern fn y_hand_over(gone: ptr<mut, u8>, seen: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_consumed(gone, nonnull);
@@ -107,7 +107,7 @@ contract {
 
 // An Out position beside a Borrowed one, so the two preconditions can be
 // measured against each other inside a single call.
-extern fn y_fill_from(destination: ptr<mut, ptr<mut, u8>>, seen: ptr<mut, u8>) -> unit
+extern fn y_fill_from(destination: ptr<mut, ptr<mut, u8>>, seen: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_out(destination, nonnull);
