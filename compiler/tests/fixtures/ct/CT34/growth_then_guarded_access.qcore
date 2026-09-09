@@ -1,0 +1,16 @@
+import std.concurrency;
+fn main() -> unit {
+    thread scope s {
+        let x = protected 4;
+        let y = protected 4;
+        let m = mutex guards x;
+        with lock m as g {
+            open g;
+            write x with g;
+            grow g guards y;
+            write y with g;
+            close g;
+        }
+        with lock m as h { read x with h; read y with h; }
+    }
+}

@@ -101,5 +101,6 @@ import QCore.NeutralExpressionPosition
 import QCore.ReachGatePosition
 import QCore.Transferability
 import QCore.LiteralArgumentPremise
+import QCore.ProtectionGrowthEmission
 
 /-! The executable formal core of QCore-C revision 0.1. -/

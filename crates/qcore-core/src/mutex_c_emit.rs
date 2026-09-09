@@ -17,12 +17,35 @@
 //! event list. Agreement between the two is a translation check for the
 //! selected model and inputs, in the sense of `docs/QCORE_SPEC_r0_3.md` §L15;
 //! it is not a general source refinement.
+//!
+//! # Protection growth (card `CT34-SANITIZED`)
+//!
+//! A `CheckedMutexInvariantV1` footprint is a **declared shape**. This backend
+//! protects by discipline — the checker decided which accesses may run under
+//! which guard — and an `mtx_t` neither knows nor enforces an extent. So a
+//! [`MutexInvariantEvent::GrowProtection`] renders as exactly what it is at C
+//! level: **no operation on the `mtx_t` at all**, plus the one bookkeeping line
+//! that keeps the native and reference observations comparable. Nothing here
+//! claims that the C mutex began protecting more memory; what the sanitized run
+//! shows is that the accesses the checker admitted after the growth are real,
+//! in-bounds accesses to real allocations, performed between the same
+//! `mtx_lock`/`mtx_unlock` pair, and that both renderings agree line for line.
+//!
+//! The backend renders a growth **only** where the supplied certificate admits
+//! it: an [`AdmittedProtectionGrowth`] naming this event index, this task, this
+//! guard, this generation, this interval and this new predicate identity, whose
+//! interval the certificate's own effective
+//! [`MutexInvariantCertificate::protected_shape`] carries. A hand-built or
+//! edited trace whose growth no certificate admits is refused at
+//! [`MutexEmissionRefusal::UnadmittedProtectionGrowth`]: the backend trusts only
+//! checked modules, and there is no path from an unchecked growth to emitted C.
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
 use crate::mutex_invariant::{
-    AccessFootprint, AccessKind, ConcurrencyProfile, MutexInvariantCertificate,
-    MutexInvariantEvent, MutexInvariantProgram, SharedResourceId,
+    AccessFootprint, AccessKind, AdmittedProtectionGrowth, ConcurrencyProfile, GuardId,
+    InvariantId, MutexId, MutexInvariantCertificate, MutexInvariantEvent, MutexInvariantProgram,
+    SharedResourceId, TaskId,
 };
 
 /// One line of the execution observation. The reference interpreter and the
@@ -39,6 +62,13 @@ pub enum MutexEmissionRefusal {
     UnsupportedEvent { event: usize },
     /// A footprint whose extent no initial grant declares.
     UndeclaredResource { resource: SharedResourceId },
+    /// A [`MutexInvariantEvent::GrowProtection`] the supplied certificate does
+    /// not admit: no [`AdmittedProtectionGrowth`] at this event index, one that
+    /// disagrees with the event's own task, guard, generation, interval or new
+    /// predicate identity, or one the certificate's effective
+    /// [`MutexInvariantCertificate::protected_shape`] does not carry. The
+    /// backend renders growths a checker admitted and nothing else.
+    UnadmittedProtectionGrowth { event: usize },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -99,11 +129,71 @@ fn resource_extents(
                 }
             }
             MutexInvariantEvent::Access { footprint, .. }
-            | MutexInvariantEvent::BorrowUnderGuard { footprint, .. } => check(*footprint)?,
+            | MutexInvariantEvent::BorrowUnderGuard { footprint, .. }
+            // A grown interval is memory this backend allocates, so it is
+            // subject to exactly the extent rule every other footprint is.
+            | MutexInvariantEvent::GrowProtection { footprint, .. } => check(*footprint)?,
             _ => {}
         }
     }
     Ok(extents)
+}
+
+/// The bookkeeping line a rendered growth contributes, identical in both
+/// executions. A growth performs no `mtx_t` operation, so this line is the whole
+/// of its runtime rendering.
+fn growth_line(mutex: MutexId, guard: GuardId, footprint: AccessFootprint) -> String {
+    format!(
+        "grow {mutex} {guard} {} {} {}",
+        footprint.resource, footprint.start, footprint.end
+    )
+}
+
+/// Decide whether the supplied certificate admits the growth at `event`, and
+/// return the generation it grew.
+///
+/// Every field of the event is compared against the certificate's own record,
+/// the generation is taken from the guard the trace really minted (never from
+/// the record, which would let a record name a generation the trace never
+/// locked), and the certificate's effective protected shape must carry the
+/// grown interval. Any disagreement is a refusal: this backend renders checked
+/// modules, so a growth no certificate admits has no rendering at all.
+fn admitted_growth(
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    event: usize,
+    task: TaskId,
+    guard: GuardId,
+    footprint: AccessFootprint,
+    invariant: InvariantId,
+) -> Result<MutexId, MutexEmissionRefusal> {
+    let refusal = MutexEmissionRefusal::UnadmittedProtectionGrowth { event };
+    // A guard the trace never minted is refused here rather than guessed, in
+    // exactly the way `Unlock` refuses one.
+    let mutex = holding_mutex(program, event, guard).map_err(|_| refusal.clone())?;
+    let matches = |growth: &&AdmittedProtectionGrowth| {
+        growth.event == event
+            && growth.task == task
+            && growth.guard == guard
+            && growth.mutex == mutex
+            && growth.footprint == footprint
+            && growth.to_invariant == invariant
+    };
+    if !certificate
+        .admitted_protection_growths
+        .iter()
+        .any(|growth| matches(&growth))
+    {
+        return Err(refusal);
+    }
+    // The certificate's *effective* shape is a second, independent binding: a
+    // record that admitted the growth while the published shape denied it would
+    // be a certificate disagreeing with itself, and is refused rather than
+    // rendered.
+    match certificate.protected_shape.get(&mutex) {
+        Some(shape) if shape.contains(&footprint) => Ok(mutex),
+        _ => Err(refusal),
+    }
 }
 
 /// Reference execution of a checked trace. Mirrors the emitted C statement for
@@ -187,6 +277,26 @@ pub fn interpret_mutex_program(
             }
             MutexInvariantEvent::EndBorrow { borrow, .. } => {
                 trace.push(format!("end-borrow {borrow}"));
+            }
+            // A growth changes a *declared* shape. There is no `mtx_t`
+            // operation to mirror, so the reference execution records the same
+            // bookkeeping line the emitted C prints and nothing else.
+            MutexInvariantEvent::GrowProtection {
+                task,
+                guard,
+                footprint,
+                invariant,
+            } => {
+                let mutex = admitted_growth(
+                    program,
+                    certificate,
+                    index,
+                    *task,
+                    *guard,
+                    *footprint,
+                    *invariant,
+                )?;
+                trace.push(growth_line(mutex, *guard, *footprint));
             }
             MutexInvariantEvent::DestroyMutex { mutex, .. } => {
                 trace.push(format!("destroy-mutex {mutex}"));
@@ -326,6 +436,32 @@ pub fn emit_mutex_c11(
                  printf(\"end-borrow {borrow}\\n\");"
             )
             .unwrap(),
+            // Protection growth emits **no** `mtx_t` operation: the profile's
+            // footprints are declared shapes and a C mutex has no extent to
+            // widen. What the emitted program keeps is the bookkeeping line, so
+            // the two observations stay comparable, and the ordinary accesses
+            // the checker admitted afterwards — real, in-bounds reads and writes
+            // of the grown allocation, inside this section's own lock/unlock
+            // pair. No hardware or library protection of the grown region is
+            // claimed here or anywhere else.
+            MutexInvariantEvent::GrowProtection {
+                task,
+                guard,
+                footprint,
+                invariant,
+            } => {
+                let mutex = admitted_growth(
+                    program,
+                    certificate,
+                    index,
+                    *task,
+                    *guard,
+                    *footprint,
+                    *invariant,
+                )?;
+                writeln!(source, "    printf(\"{}\\n\");", growth_line(mutex, *guard, *footprint))
+                    .unwrap();
+            }
             MutexInvariantEvent::DestroyMutex { mutex, .. } => writeln!(
                 source,
                 "    mtx_destroy(&m{mutex});\n    printf(\"destroy-mutex {mutex}\\n\");"

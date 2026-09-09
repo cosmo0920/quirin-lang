@@ -243,6 +243,9 @@ const RUNNER_REGISTRY: &[&str] = &[
     "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
     "compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized",
     "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+    // Card `CT34-SANITIZED`: the one runner that executes a stage on a control
+    // rather than on the case's own fixture.
+    "compiler/tests/ct_corpus.rs::run_mutex_controls",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -253,7 +256,7 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
-const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26"];
+const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26", "CT34"];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
 /// never `executed`.
@@ -590,20 +593,44 @@ struct CheckedMutexReject {
 #[serde(deny_unknown_fields)]
 struct MutexControl {
     source: String,
-    /// `accept`, `accept_check_only` or `reject`; any other spelling fails the
-    /// harness.
+    /// `accept`, `accept_growth`, `accept_check_only` or `reject`; any other
+    /// spelling fails the harness.
     expectation: String,
     diagnostic_sequence: Vec<String>,
-    /// `accept_check_only` only (card CT34-GROWTH boundary 3, CT34-GROWTH-NATIVE):
-    /// the exact ordered code vector `compile_files` produces for a control the
-    /// *checker* admits but the C backend declines to render. Pinning it is what
-    /// keeps a check-only admission from being reported as a full acceptance,
-    /// and what makes the backend's refusal a recorded decision rather than an
-    /// omission.
+    /// `accept_check_only` only: the exact ordered code vector `compile_files`
+    /// produces for a control the *checker* admits but the C backend declines to
+    /// render. Pinning it is what keeps a check-only admission from being
+    /// reported as a full acceptance, and what makes a backend refusal a
+    /// recorded decision rather than an omission. Card CT34-GROWTH's growth
+    /// control carried one until card CT34-SANITIZED made the backend render an
+    /// admitted growth; the expectation is retained because a future check-only
+    /// route needs exactly it.
     #[serde(default)]
     backend_refusal: Vec<String>,
+    /// `accept_growth` only (card `CT34-SANITIZED`): the sanitized native run of
+    /// this control's own emitted C. A case's own fixture is a refusal that
+    /// emits nothing, so the sanitized evidence for a mutex rejection lives on
+    /// the control that renders, and the case's native stages name *that* file
+    /// as their artifact.
+    #[serde(default)]
+    sanitized_run: Option<ControlSanitizedRun>,
     #[allow(dead_code)]
     note: String,
+}
+
+/// A control the harness compiles with `-fsanitize=…` and runs, comparing its
+/// stdout line for line with `interpret_mutex_program` — which is written
+/// against the checked event list and never reads the emitted C. At most one
+/// control per case may carry this, because the case's native stages name a
+/// single artifact.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ControlSanitizedRun {
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    emitted_c_contains: Vec<String>,
+    reference_observation: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -731,6 +758,13 @@ struct StagePlan {
     observations: Option<usize>,
     host_gate: Option<Vec<&'static str>>,
     tool_gate: Option<Vec<&'static str>>,
+    /// The file the runner really executed this stage on. `None` means the
+    /// case's own fixture, which is what every stage of every case ran on until
+    /// card `CT34-SANITIZED`; a stage a runner executed on one of the case's own
+    /// declared controls names that file here, and the manifest must then name
+    /// exactly it. This is a tighter check than the constant it replaces: the
+    /// derived plan now decides the artifact rather than assuming it.
+    artifact: Option<String>,
 }
 
 impl StagePlan {
@@ -741,6 +775,7 @@ impl StagePlan {
             observations: None,
             host_gate: None,
             tool_gate: None,
+            artifact: None,
         }
     }
 
@@ -755,7 +790,15 @@ impl StagePlan {
             observations: Some(observations),
             host_gate,
             tool_gate: None,
+            artifact: None,
         }
+    }
+
+    /// An executed stage a runner ran on a file other than the case's own
+    /// fixture — today, only one of the case's own declared controls.
+    fn on(mut self, artifact: String) -> Self {
+        self.artifact = Some(artifact);
+        self
     }
 
     /// An executed stage whose runner cannot start without an external tool.
@@ -958,14 +1001,56 @@ fn derive_stage_plan(
             StagePlan::executed(deep, native_runs, Some(native_gate)),
         );
     }
+    // Card `CT34-SANITIZED`. A mutex rejection's own fixture is a refusal that
+    // emits nothing, so a sanitized run for such a case can only be of a control
+    // that renders. `run_mutex_controls` compiles and runs exactly the one
+    // control carrying a `sanitized_run` block, so these four stages are
+    // credited to that runner and name that control's own file — never the
+    // case's fixture, which no compiler ever saw. A control that merely reaches
+    // `compile_files` for a verdict assertion, as every other mutex control
+    // does, is not an emission or execution observation and stays absent.
+    let control_runner = "compiler/tests/ct_corpus.rs::run_mutex_controls";
+    let sanitized_control = expected.checked_mutex_reject.as_ref().and_then(|reject| {
+        reject
+            .controls
+            .iter()
+            .find(|control| control.sanitized_run.is_some())
+    });
+    if let Some(control) = sanitized_control {
+        let artifact = format!("compiler/tests/fixtures/ct/{case_id}/{}", control.source);
+        let reference = reference.expect("the mutex route has a reference-execution stage");
+        // The runner returns on Windows after asserting the emission exists, so
+        // emission is reached on all three hosts and the compile-and-run pair is
+        // Unix-only — the same split `run_checked_mutex_sanitized` has.
+        let unix = vec!["linux", "macos"];
+        plan.insert(
+            reference,
+            StagePlan::executed(control_runner, 1, Some(unix.clone())).on(artifact.clone()),
+        );
+        plan.insert(
+            "c_emission",
+            StagePlan::executed(control_runner, 1, Some(all_three.clone())).on(artifact.clone()),
+        );
+        plan.insert(
+            "native_execution",
+            StagePlan::executed(control_runner, 1, Some(unix)).on(artifact),
+        );
+    }
     plan.insert(
         "native_sanitized",
         if SANITIZED_GATED_CASES.contains(&case_id) {
-            StagePlan::executed(
-                deep.expect("a gated sanitized case has a native runner"),
-                native_runs,
-                Some(deep_gate),
-            )
+            match (deep, sanitized_control) {
+                (Some(deep), None) => StagePlan::executed(deep, native_runs, Some(deep_gate)),
+                (None, Some(control)) => {
+                    StagePlan::executed(control_runner, 1, Some(vec!["linux", "macos"])).on(
+                        format!("compiler/tests/fixtures/ct/{case_id}/{}", control.source),
+                    )
+                }
+                _ => panic!(
+                    "{case_id}: a gated sanitized case has exactly one runner that compiles \
+                     and runs it under the sanitizers"
+                ),
+            }
         } else if SANITIZER_TRANSCRIPT_CASES.contains(&case_id) {
             StagePlan::absent("recorded_not_gated")
         } else if !route_stages(route).contains(&"native_sanitized") {
@@ -1142,11 +1227,11 @@ fn run_mapped_case(case: &ManifestCase) {
                 .as_ref()
                 .is_some_and(|reject| reject.controls.iter().any(|control| matches!(
                     control.expectation.as_str(),
-                    // Both admitted-control kinds reach `compile_files`, whose
+                    // Every admitted-control kind reaches `compile_files`, whose
                     // mutex route refuses a non-Linux/macOS/Windows host at
-                    // `Q500` before it ever reaches the backend, so both are
-                    // host-gated in exactly the same way.
-                    "accept" | "accept_check_only"
+                    // `Q500` before it ever reaches the backend, so all of them
+                    // are host-gated in exactly the same way.
+                    "accept" | "accept_growth" | "accept_check_only"
                 )))
             || expected.source_reject.as_ref().is_some_and(|reject| reject
                 .controls
@@ -1241,11 +1326,46 @@ fn run_mapped_case(case: &ManifestCase) {
              only `the profile cannot express this at all`",
             case.id
         );
+        // Card `CT34-SANITIZED`. The sanitized native evidence of a mutex
+        // rejection is one control's own run, and the case's native stages name
+        // that control's file, so there is exactly one of them or none. The two
+        // directions are pinned together: a case cannot carry a sanitized
+        // control without being in the gate, and cannot be in the gate on this
+        // route without carrying one.
+        let sanitized_controls = reject
+            .controls
+            .iter()
+            .filter(|control| control.sanitized_run.is_some())
+            .count();
+        assert!(
+            sanitized_controls <= 1,
+            "{}: at most one control carries the case's sanitized native run",
+            case.id
+        );
+        assert_eq!(
+            sanitized_controls == 1,
+            SANITIZED_GATED_CASES.contains(&case.id.as_str()),
+            "{}: a mutex rejection's sanitized-native claim is exactly its sanitized \
+             control",
+            case.id
+        );
         for control in &reject.controls {
+            assert!(
+                control.sanitized_run.is_none() || control.expectation == "accept_growth",
+                "{}: only a control the backend renders can be compiled and run",
+                case.id
+            );
             match control.expectation.as_str() {
                 "accept" => assert!(
                     control.diagnostic_sequence.is_empty() && control.backend_refusal.is_empty(),
                     "{}: an accepted control has no diagnostics and no backend refusal",
+                    case.id
+                ),
+                // The checker admits it, it really performs a protection growth,
+                // and the C backend renders that growth (card CT34-SANITIZED).
+                "accept_growth" => assert!(
+                    control.diagnostic_sequence.is_empty() && control.backend_refusal.is_empty(),
+                    "{}: a rendered growth control has no diagnostics and no backend refusal",
                     case.id
                 ),
                 // The checker admits it; the C backend declines to render it.
@@ -1573,8 +1693,11 @@ fn run_mapped_case(case: &ManifestCase) {
                     panic!("{}: `{stage}` is executed but names no artifact", case.id)
                 });
                 assert_eq!(
-                    artifact, recorded,
-                    "{}: `{stage}` must be executed on the case's own fixture",
+                    artifact,
+                    planned.artifact.as_deref().unwrap_or(recorded),
+                    "{}: `{stage}` must name the exact file its runner executed — the \
+                     case's own fixture, or the one control this harness derives a \
+                     native run for",
                     case.id
                 );
                 assert!(
@@ -2108,10 +2231,10 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
 /// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
 /// accepted controls are multi-task modules this backend renders in no thread at
-/// all (published checked with `c_source: None`, card T03-F §3.5), and for CT34
-/// only the same gate, because its admitted control is `accept_check_only` — the
-/// checker admits the growth and the C backend deliberately refuses to render it
-/// (card CT34-GROWTH boundary 3). Mapping is not conformance.
+/// all (published checked with `c_source: None`, card T03-F §3.5). CT34 now
+/// records a real compiled and sanitizer-run control (card `CT34-SANITIZED`), so
+/// harness-gated sanitized-native evidence is 4 of 32 — CT03, CT17, CT26 and
+/// CT34 — and proof stays 0 of 32. Mapping is not conformance.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -2316,6 +2439,64 @@ fn unsupported_target(diagnostics: &[qcore_compiler::FileDiagnostic]) {
 /// The controls a mutex rejection carries. An `accept` control compiles through
 /// the Linux/macOS/Windows emission path, so on any other host it must arrive as the
 /// same `Q500` refusal every other route uses — never as a silent skip.
+/// Drive one growth control's own bytes through parse, elaborate,
+/// `lower_source_mutex` and `check_mutex_invariant_program`, and require the
+/// published certificate to record at least one admitted protection growth.
+/// Returns how many it recorded.
+///
+/// This is what makes a growth control attribute anything: a control that
+/// parsed, elaborated, lowered and checked while performing no growth would
+/// distinguish nothing from the case it stands beside. It runs on every host —
+/// nothing here reaches the C backend.
+fn growth_control_admission(id: &str, control: &MutexControl, source: &str) -> usize {
+    let parsed = qcore_frontend::frontend::parse_source_program(source)
+        .unwrap_or_else(|error| panic!("{id} control {}: {error}", control.source));
+    assert!(
+        qcore_frontend::source_mutex::has_source_mutex(&parsed),
+        "{id} control {}: route detection must select the mutex route",
+        control.source
+    );
+    let typed = qcore_frontend::frontend::elaborate_source(&parsed).unwrap_or_else(|diagnostics| {
+        panic!(
+            "{id} control {} must elaborate: {:?}",
+            control.source,
+            diagnostics
+                .iter()
+                .map(|d| d.code.to_owned())
+                .collect::<Vec<_>>()
+        )
+    });
+    let lowered = qcore_frontend::source_mutex::lower_source_mutex(&parsed, &typed, "main")
+        .unwrap_or_else(|diagnostics| {
+            panic!(
+                "{id} control {} must lower: {:?}",
+                control.source,
+                diagnostics
+                    .iter()
+                    .map(|d| d.code.to_owned())
+                    .collect::<Vec<_>>()
+            )
+        });
+    let certificate = qcore_core::mutex_invariant::check_mutex_invariant_program(&lowered.program)
+        .unwrap_or_else(|diagnostics| {
+            panic!(
+                "{id} control {} must check, so the case's refusal is not vacuous: {:?}",
+                control.source,
+                diagnostics
+                    .iter()
+                    .map(|d| lowered.locate(d).code.to_owned())
+                    .collect::<Vec<_>>()
+            )
+        });
+    assert!(
+        !certificate.admitted_protection_growths.is_empty(),
+        "{id} control {} must actually record the growth it performs — a control \
+         that checked without growing would attribute nothing",
+        control.source
+    );
+    certificate.admitted_protection_growths.len()
+}
+
 fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
     for control in &reject.controls {
         let path = directory.join(&control.source);
@@ -2356,66 +2537,108 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
                     control.source
                 );
             }
-            // Card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE): protection growth
-            // is admitted by `CheckedMutexInvariantV1` and deliberately refused by
-            // the C backend, because nothing in that backend reads a generation's
-            // declared shape. A control on that feature is therefore *checked*
-            // rather than *compiled*, and this branch asserts both halves: the
-            // core admits the module and really records the growth, and
-            // `compile_files` refuses with the exact pinned vector. Asserting only
-            // the first would report a check-only admission as an acceptance;
-            // asserting only the second would not distinguish it from a refusal.
-            "accept_check_only" => {
-                let parsed = qcore_frontend::frontend::parse_source_program(&source)
-                    .unwrap_or_else(|error| panic!("{id} control {}: {error}", control.source));
-                assert!(
-                    qcore_frontend::source_mutex::has_source_mutex(&parsed),
-                    "{id} control {}: route detection must select the mutex route",
-                    control.source
-                );
-                let typed = qcore_frontend::frontend::elaborate_source(&parsed).unwrap_or_else(
-                    |diagnostics| {
-                        panic!(
-                            "{id} control {} must elaborate: {:?}",
-                            control.source,
-                            diagnostics
-                                .iter()
-                                .map(|d| d.code.to_owned())
-                                .collect::<Vec<_>>()
-                        )
-                    },
-                );
-                let lowered =
-                    qcore_frontend::source_mutex::lower_source_mutex(&parsed, &typed, "main")
-                        .unwrap_or_else(|diagnostics| {
-                            panic!(
-                                "{id} control {} must lower: {:?}",
-                                control.source,
-                                diagnostics
-                                    .iter()
-                                    .map(|d| d.code.to_owned())
-                                    .collect::<Vec<_>>()
-                            )
-                        });
-                let certificate = qcore_core::mutex_invariant::check_mutex_invariant_program(
-                    &lowered.program,
-                )
-                .unwrap_or_else(|diagnostics| {
+            // Card `CT34-SANITIZED`. A protection growth is admitted by
+            // `CheckedMutexInvariantV1` and rendered by the C backend as what it
+            // is at C level: no `mtx_t` operation at all, plus the bookkeeping
+            // line that keeps the two observations comparable. This branch
+            // asserts the whole chain and never a convenient part of it: the
+            // core admits the control's own bytes and really records a growth
+            // (a control that checked without growing would attribute nothing),
+            // `compile_files` returns a compiled module on the checked mutex
+            // route carrying emitted C, and — where the control carries a
+            // sanitized run — that C is compiled under ASan/UBSan (plus LSan
+            // where the platform has it) and its stdout equals the reference
+            // observation line for line. The reference is computed by
+            // `interpret_mutex_program` from the checked event list and never
+            // reads the emitted C; the pinned vector in the fixture is checked
+            // against it, so neither can drift alone.
+            "accept_growth" => {
+                let growths = growth_control_admission(id, control, &source);
+                if !cfg!(any(
+                    target_os = "linux",
+                    target_os = "macos",
+                    target_os = "windows"
+                )) {
+                    unsupported_target(&result.unwrap_err());
+                    eprintln!(
+                        "{id} control {}: source/core checked ({growths} admitted growth(s)); \
+                         threaded emission unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                let module = result.unwrap_or_else(|diagnostics| {
                     panic!(
-                        "{id} control {} must check, so the case's refusal is not vacuous: {:?}",
+                        "{id} control {} must check and render, so the case's refusal is \
+                         not vacuous:\n{}",
                         control.source,
                         diagnostics
                             .iter()
-                            .map(|d| lowered.locate(d).code.to_owned())
+                            .map(format_diagnostic)
                             .collect::<Vec<_>>()
+                            .join("\n")
                     )
                 });
-                assert!(
-                    !certificate.admitted_protection_growths.is_empty(),
-                    "{id} control {} must actually record the growth it performs — a \
-                     control that checked without growing would attribute nothing",
+                let checked = module.checked.as_checked_mutex_guards().unwrap_or_else(|| {
+                    panic!(
+                        "{id} control {} must take the checked mutex route",
+                        control.source
+                    )
+                });
+                let c = module.c_source.as_deref().unwrap_or_else(|| {
+                    panic!(
+                        "{id} control {}: an admitted growth renders C — a module without \
+                         it would leave the growth unexecuted while claiming acceptance",
+                        control.source
+                    )
+                });
+                let Some(run) = &control.sanitized_run else {
+                    continue;
+                };
+                for wanted in &run.emitted_c_contains {
+                    assert!(
+                        c.contains(wanted.as_str()),
+                        "{id} control {}: emitted C is missing `{wanted}`",
+                        control.source
+                    );
+                }
+                let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
+                    &checked.lowered.program,
+                    &checked.certificate,
+                )
+                .expect("an admitted growth is inside the emitted subset");
+                assert_eq!(
+                    reference, run.reference_observation,
+                    "{id} control {}: reference observation drifted from the pinned \
+                     expectation",
                     control.source
                 );
+                if cfg!(target_os = "windows") {
+                    eprintln!(
+                        "{id} control {}: emitted on Windows; Unix sanitizer evidence \
+                         unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                assert_eq!(
+                    control_sanitized_run(c, run),
+                    reference,
+                    "{id} control {}: native and reference observations must agree line \
+                     for line",
+                    control.source
+                );
+            }
+            // A control the checker admits and the C backend declines to render.
+            // Both halves are asserted, so neither can be quietly dropped: a
+            // check-only admission is never reported as a full acceptance, and
+            // the backend's refusal stays a recorded decision rather than an
+            // omission. No case carries one today — card CT34-SANITIZED retired
+            // the boundary that produced the only one — and the expectation is
+            // retained rather than deleted so a future check-only route states
+            // its refusal instead of inventing a weaker spelling.
+            "accept_check_only" => {
+                growth_control_admission(id, control, &source);
                 if !cfg!(any(
                     target_os = "linux",
                     target_os = "macos",
@@ -3530,6 +3753,30 @@ fn run_checked_mutex_sanitized(
 }
 
 fn mutex_sanitized_run(source: &str, mutex: &CheckedMutexSanitized) -> Vec<String> {
+    sanitized_c_run(
+        source,
+        &mutex.sanitizer_flags,
+        &mutex.asan_options,
+        &mutex.ubsan_options,
+    )
+}
+
+/// Card `CT34-SANITIZED`: the same run for a control that renders its own C.
+fn control_sanitized_run(source: &str, run: &ControlSanitizedRun) -> Vec<String> {
+    sanitized_c_run(
+        source,
+        &run.sanitizer_flags,
+        &run.asan_options,
+        &run.ubsan_options,
+    )
+}
+
+fn sanitized_c_run(
+    source: &str,
+    sanitizer_flags: &[String],
+    asan_options: &str,
+    ubsan_options: &str,
+) -> Vec<String> {
     use std::process::Command;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
@@ -3544,7 +3791,7 @@ fn mutex_sanitized_run(source: &str, mutex: &CheckedMutexSanitized) -> Vec<Strin
     fs::write(&path, source).unwrap();
     let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
     let compiled = Command::new(&compiler)
-        .args(&mutex.sanitizer_flags)
+        .args(sanitizer_flags)
         .arg(&path)
         .arg("-o")
         .arg(&binary)
@@ -3559,11 +3806,11 @@ fn mutex_sanitized_run(source: &str, mutex: &CheckedMutexSanitized) -> Vec<Strin
         // Apple's AddressSanitizer does not implement LeakSanitizer.
         "detect_leaks=0:halt_on_error=1"
     } else {
-        &mutex.asan_options
+        asan_options
     };
     let run = Command::new(&binary)
         .env("ASAN_OPTIONS", asan_options)
-        .env("UBSAN_OPTIONS", &mutex.ubsan_options)
+        .env("UBSAN_OPTIONS", ubsan_options)
         .output()
         .unwrap();
     assert!(

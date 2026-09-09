@@ -84,6 +84,7 @@ EVIDENCE_FILES = [
     "docs/reports/wave9-ctwin/ct_stage_evidence.json",
     "docs/reports/wave11-ct33/ct_stage_evidence.json",
     "docs/reports/wave13-ct34/ct_stage_evidence.json",
+    "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
@@ -175,10 +176,28 @@ def merge_evidence(root: pathlib.Path):
     for relative in EVIDENCE_FILES:
         data = _read(root, relative)
         for case_id, entry in data["mapped_case_stage_matrix"].items():
-            if case_id in merged:
+            superseded = entry.get("supersedes")
+            held = merged.get(case_id)
+            # A later card may re-measure a case an earlier card mapped — new
+            # evidence for the same case, not a second claim on it. It must say
+            # so, and must name the record it replaces, so a silent second claim
+            # stays the error it has always been and a supersession declaration
+            # cannot go stale or vacuous.
+            if held is None:
+                if superseded is not None:
+                    raise SystemExit(
+                        "%s: %s declares it supersedes %s, but no earlier record claims "
+                        "this case" % (case_id, relative, superseded)
+                    )
+            elif superseded is None:
                 raise SystemExit(
                     "%s: two evidence records claim the same case (%s and %s)"
-                    % (case_id, merged[case_id]["source"], relative)
+                    % (case_id, held["source"], relative)
+                )
+            elif superseded != held["source"]:
+                raise SystemExit(
+                    "%s: %s declares it supersedes %s, but the record it would replace "
+                    "is %s" % (case_id, relative, superseded, held["source"])
                 )
             merged[case_id] = dict(entry, source=relative)
     return merged
