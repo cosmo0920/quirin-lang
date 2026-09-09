@@ -639,7 +639,7 @@ Run in this worktree on Linux with Clang available:
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | **1806 passed, 3 ignored**, plus one load-flaky failure that passes in isolation (below) — 1807 total against main's 1787 baseline, exactly +20 |
+| `cargo test --workspace` | **1807 passed, 0 failed, 3 ignored** — against main's 1787 baseline, exactly +20 |
 | `cargo fmt --all -- --check` | clean (workspace and `providers/`) |
 | `cargo clippy --all-targets -- -D warnings` | clean (workspace and `providers/`) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -654,11 +654,13 @@ Run in this worktree on Linux with Clang available:
 The +20 workspace tests are 9 core replay, 3 dependent-boundary, 4 schema wire,
 3 parity, and 1 gateway `compile_fail` doctest.
 
-**Known load-flaky:** `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
-(`compiler/tests/cycle20_verifier_plugins.rs`) asserts a 500 ms wall bound and
-fails under parallel load; it passes in isolation. Its assertion is
-deliberately **not** weakened. The P02 `RLIMIT_NPROC` conformance test's known
-flake did not reproduce in this run.
+**Known load-flaky, observed and recorded.** An intermediate full run failed
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+(`compiler/tests/cycle20_verifier_plugins.rs`, a 500 ms wall bound) under
+parallel load; it passed in isolation and passed in the final full run above.
+Its assertion is deliberately **not** weakened. The baseline run at `05c51a5`
+before any change failed the P02 `RLIMIT_NPROC` conformance test the same way;
+that flake did not reproduce in the final run.
 
 ---
 
