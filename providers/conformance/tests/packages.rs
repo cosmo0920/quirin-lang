@@ -82,6 +82,7 @@ fn v2(request: &VerificationRequest) -> (VerificationRequestV2, VerificationTask
             counter_effect: None,
             reactor_program: None,
             teardown_source: None,
+            call_use_source: None,
             protocol_version: 1,
             evidence_version: 2,
             request_id: request.request_id.clone(),
@@ -327,8 +328,10 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             // (list unlink, nullable-field destructor). Both new profiles are
             // reached through the `chunkio` target, whose profile list is
             // already `*`, so the certificate checker, Lean family and every
-            // existing target/profile entry are unchanged.
-            expected.package_version = "0.6.0".into();
+            // existing target/profile entry are unchanged. 0.7.0 adds the
+            // call-result def/use route on the same `chunkio` target, under
+            // the same already-`*` profile list.
+            expected.package_version = "0.7.0".into();
             expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]

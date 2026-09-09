@@ -93,6 +93,7 @@ fn predicate_for(property: ObligationProperty) -> FactPredicate {
         | ObligationProperty::CounterUpdateContract
         | ObligationProperty::ListUnlinkContract
         | ObligationProperty::FieldDestructorContract
+        | ObligationProperty::CallResultUseContract
         | ObligationProperty::CustodyDischarged
         | ObligationProperty::ParameterModeRespected
         | ObligationProperty::NoUnknownCallEffect => FactPredicate::ResourceBalanced,
@@ -400,6 +401,7 @@ fn dispatch_capability(
             counter_effect: None,
             reactor_program: None,
             teardown_source: None,
+            call_use_source: None,
             protocol_version: PLUGIN_PROTOCOL_VERSION,
             evidence_version: PLUGIN_EVIDENCE_VERSION_V2,
             request_id,

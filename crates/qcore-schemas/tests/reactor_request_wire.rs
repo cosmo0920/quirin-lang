@@ -92,6 +92,7 @@ fn request(
         counter_effect: None,
         reactor_program: program,
         teardown_source: None,
+        call_use_source: None,
     }
 }
 

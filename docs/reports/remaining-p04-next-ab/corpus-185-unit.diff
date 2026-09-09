@@ -1,0 +1,29 @@
+# 185-unit corpus, base 05c51a5 vs branch, same worktree directory,
+# QCORE_CLANG=/usr/bin/clang, canonical pinned route on a freshly prepared
+# pinned clone (Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97).
+# diff -r before/ after/ over monkey-source.json, resource-diagnostics.json,
+# resource-diagnostics.contracts.json, resource-diagnostics.chunk-contracts.json
+# and resource-diagnostics.source-effects.json.
+#
+# The only difference is the rebuilt qcore.chunkio package identity, which
+# this card deliberately moved 0.6.0 -> 0.7.0. No verdict, diagnostic,
+# source digest or compile-task identity differs.
+diff -r /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/corpus/before/resource-diagnostics.source-effects.json /tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/corpus/after/resource-diagnostics.source-effects.json
+162,163c162,163
+<           "package_digest": "2197df42503155c5957e1434812dd9c97f1ab2e72e003d48aaf42b26dda99a6e",
+<           "provider_version": "0.6.0"
+---
+>           "package_digest": "9fd0c11b84285976a97f424df3b1f549a8373b04a0c9ebe09720d0d13e9797e7",
+>           "provider_version": "0.7.0"
+413,414c413,414
+<           "package_digest": "2197df42503155c5957e1434812dd9c97f1ab2e72e003d48aaf42b26dda99a6e",
+<           "provider_version": "0.6.0"
+---
+>           "package_digest": "9fd0c11b84285976a97f424df3b1f549a8373b04a0c9ebe09720d0d13e9797e7",
+>           "provider_version": "0.7.0"
+930,931c930,931
+<           "package_digest": "2197df42503155c5957e1434812dd9c97f1ab2e72e003d48aaf42b26dda99a6e",
+<           "provider_version": "0.6.0"
+---
+>           "package_digest": "9fd0c11b84285976a97f424df3b1f549a8373b04a0c9ebe09720d0d13e9797e7",
+>           "provider_version": "0.7.0"

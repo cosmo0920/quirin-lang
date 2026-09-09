@@ -223,6 +223,7 @@ impl ListUnlinkSourceTask {
             counter_effect: None,
             reactor_program: None,
             teardown_source: Some(self.import.source_input()),
+            call_use_source: None,
         }
     }
 
@@ -442,6 +443,7 @@ impl FieldDestructorSourceTask {
             counter_effect: None,
             reactor_program: None,
             teardown_source: Some(self.import.source_input()),
+            call_use_source: None,
         }
     }
 

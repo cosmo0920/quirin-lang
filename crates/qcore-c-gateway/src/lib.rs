@@ -11,6 +11,7 @@
 mod aggregate_store;
 pub mod boolean_source;
 mod borrowed_actual;
+pub mod call_use_source;
 mod clang;
 pub mod counter_source;
 pub mod legacy_c;

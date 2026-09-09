@@ -186,6 +186,7 @@ impl BooleanFieldSourceTask {
             counter_effect: None,
             reactor_program: None,
             teardown_source: None,
+            call_use_source: None,
         }
     }
 
