@@ -168,9 +168,13 @@ class BuildMatrixSections(unittest.TestCase):
             produced["validation"]["lean_audits"],
             len(produced["validation"]["lean_audit_files"]),
         )
-        # Non-vacuity: at least one of these really was stale in the committed
-        # file, so the assertions above are not comparing a value to itself.
-        self.assertNotEqual(
+        # Non-vacuity: the assertions above compare the produced values to the
+        # live sources, never to the committed file, so they cannot be
+        # comparing a value to itself. The original form of this check
+        # asserted the committed values were stale, which was true only until
+        # the wave-9 consolidation adopted the regenerated output; the steady
+        # state after adoption is agreement, pinned here.
+        self.assertEqual(
             [committed["versions"]["qcore_schemas_rust_api"], committed["validation"]["lean_audits"]],
             [produced["versions"]["qcore_schemas_rust_api"], produced["validation"]["lean_audits"]],
         )

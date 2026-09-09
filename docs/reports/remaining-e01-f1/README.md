@@ -1,5 +1,12 @@
 # E01-F1 — Complete the source function enumeration
 
+> **Superseded as the current baseline, 2026-09-09 (wave-9 consolidation):**
+> the wave-9 integrator measurement on the fully merged tree —
+> `docs/reports/wave9-corpus/artifacts/` — is the current baseline, absorbing
+> E01-F1-RAW's enumeration repair, O04-B08's fail-closed diagnostic movement
+> and REASON-CODES-B3's sidecar field at unchanged headline counts. This
+> directory remains the E01-F1 measurement record.
+
 2026-09-09. Branch base `8d0790a`. Workstream W3/W2, follow-on unit of
 [`docs/reports/remaining-e01/README.md`](../remaining-e01/README.md).
 

@@ -4,6 +4,148 @@
  "generated": "2026-09-07",
  "report": "docs/reports/remaining-d02/README.md",
  "acceptance_record": "docs/reviews/r0_3/acceptance.json",
+ "section_ownership": {
+  "note": "Card D02-GEN-REST. Every top-level key of this file is labelled here, so no section is silently hand-maintained. `derived` sections are recomputed by the generator on every run and a hand edit to them is overwritten; `hand_maintained` sections are carried verbatim from the previous matrix, which is why a regeneration no longer reverts a later reconciliation; `integrator_supplied` numbers are measurements the generator cannot take.",
+  "generator": "docs/reports/remaining-d02/build_matrix.py",
+  "carried_from": "docs/reviews/r0_3/acceptance_matrix.json",
+  "vocabulary": {
+   "derived": "recomputed by docs/reports/remaining-d02/build_matrix.py from the named manifest, validated record or working tree; a hand edit here is overwritten on the next regeneration",
+   "integrator_supplied": "a measurement this script cannot take; supplied through --gate, otherwise carried from the previous matrix and labelled as carried",
+   "hand_maintained": "recorded analysis owned by the integrator; carried verbatim from the previous matrix and never authored or reverted by this script"
+  },
+  "sections": {
+   "schema_version": {
+    "owner": "derived",
+    "source": "generator constant"
+   },
+   "card": {
+    "owner": "derived",
+    "source": "generator constant"
+   },
+   "generated": {
+    "owner": "derived",
+    "source": "generator constant - the date the D02 matrix shape was established"
+   },
+   "report": {
+    "owner": "derived",
+    "source": "generator constant"
+   },
+   "acceptance_record": {
+    "owner": "derived",
+    "source": "generator constant"
+   },
+   "section_ownership": {
+    "owner": "derived",
+    "source": "this block"
+   },
+   "header": {
+    "owner": "hand_maintained",
+    "source": "vocabulary and framing prose; support_status_vocabulary is checked against this script's validator and refuses on drift"
+   },
+   "versions": {
+    "owner": "mixed",
+    "source": "see section_ownership.fields"
+   },
+   "dimensions": {
+    "owner": "derived",
+    "source": "counted from the emitted rows"
+   },
+   "derivation": {
+    "owner": "derived",
+    "source": "generator constant naming its own inputs"
+   },
+   "unverified_specs": {
+    "owner": "hand_maintained",
+    "source": "B02's disposition of the supplied revision-0.3 inputs"
+   },
+   "requirements": {
+    "owner": "hand_maintained",
+    "source": "R01-R10 and W01-W07 analysis rows; every cell's status is revalidated here against the closed class vocabulary"
+   },
+   "ct_conformance": {
+    "owner": "derived",
+    "source": "docs/reevaluation/ct_manifest.json through scripts/ct_stage_summary.py, cross-checked against every archived per-card ct_stage_evidence.json and docs/reviews/r0_3/acceptance.json"
+   },
+   "corpus": {
+    "owner": "mixed",
+    "source": "see section_ownership.fields"
+   },
+   "workspace": {
+    "owner": "derived",
+    "source": "Cargo.toml, providers/Cargo.toml"
+   },
+   "validation": {
+    "owner": "mixed",
+    "source": "see section_ownership.fields"
+   },
+   "named_followups": {
+    "owner": "hand_maintained",
+    "source": "the open follow-on ledger; waves add entries to the committed matrix and this script carries them"
+   },
+   "updated": {
+    "owner": "integrator_supplied",
+    "source": "the integrator's own note for this checkpoint"
+   }
+  },
+  "fields": {
+   "versions.qcore_schemas_rust_api": {
+    "owner": "derived",
+    "source": "crates/qcore-schemas/Cargo.toml"
+   },
+   "versions.provider_packages": {
+    "owner": "derived",
+    "source": "providers/*/provider-template.json package_version"
+   },
+   "versions.*": {
+    "owner": "hand_maintained",
+    "source": "protocol/evidence/schema prose and the version-cause note"
+   },
+   "corpus.contract_modules": {
+    "owner": "derived",
+    "source": "contract/qcore/*/*.qcore on disk"
+   },
+   "corpus.contract_modules_pinned_by": {
+    "owner": "derived",
+    "source": "generator constant"
+   },
+   "corpus.contract_clause_pin": {
+    "owner": "derived",
+    "source": "docs/reports/remaining-b00/ledger.json"
+   },
+   "corpus.contract_modules_per_directory": {
+    "owner": "derived",
+    "source": "docs/reports/remaining-b00/ledger.json"
+   },
+   "corpus.libevent_submodule_pin": {
+    "owner": "derived",
+    "source": "docs/reports/remaining-b00/ledger.json"
+   },
+   "corpus.*": {
+    "owner": "hand_maintained",
+    "source": "measured audit figures (cycle19_raw_units and the configured audits) whose measurement lives in the card report named beside them"
+   },
+   "validation.lean_audits": {
+    "owner": "derived",
+    "source": "proof/Audit*.lean on disk"
+   },
+   "validation.lean_audit_files": {
+    "owner": "derived",
+    "source": "proof/Audit*.lean on disk"
+   },
+   "validation.full_language_conformance": {
+    "owner": "derived",
+    "source": "generator constant: false"
+   },
+   "validation.measurement_provenance": {
+    "owner": "derived",
+    "source": "records whether the gate numbers beside it were supplied for this run or carried"
+   },
+   "validation.*": {
+    "owner": "integrator_supplied",
+    "source": "standing-gate measurements from --gate, else carried"
+   }
+  }
+ },
  "header": {
   "purpose": "A traceable requirement -> implemented profile -> source/model entry point -> executed test stage -> proof/evidence -> remaining-boundary matrix for revision 0.3 as implemented at this checkpoint.",
   "counts_are_run_metadata": "Every count in this file is run metadata about executed gates, manifests and archived measurements. A count is NOT proof of specification coverage: passing test totals, CT mapping counts, contract module counts and audit unit totals say what was executed, not what was proved. Projection coverage is not safety coverage and unknowns stay in the denominator.",
@@ -28,7 +170,7 @@
   "note": "Prose revision 0.3 is the specification revision. It is separate from, and does not move with, the package/protocol/evidence/schema versions below.",
   "prose_specification_revision": "0.3",
   "documentation_revision": "0.3",
-  "qcore_schemas_rust_api": "4.0.0",
+  "qcore_schemas_rust_api": "8.0.0",
   "qcore_schemas_version_cause": "P02 added the public PluginLimits::additional field (3.0.0); P04 then added the counter_summary module and one variant each to witness/obligation/plugin plus an optional request field, three source-incompatible additions the documented policy makes a major change (4.0.0). Existing wire bytes are unchanged and pinned by crates/qcore-schemas/tests/counter_request_wire.rs.",
   "plugin_protocol": "v1 (unchanged)",
   "semantic_evidence": "v2 (unchanged)",
@@ -36,10 +178,10 @@
   "source_set_profile_manifest": "v1 (unchanged)",
   "compile_task_identity": "1 (new in G01)",
   "provider_packages": {
-   "qcore.chunkio": "0.5.0",
+   "qcore.chunkio": "0.7.0",
    "qcore.cmetrics": "0.2.0",
    "qcore.ctraces": "0.1.0",
-   "qcore.libevent": "0.1.0",
+   "qcore.libevent": "0.2.0",
    "qcore.librdkafka": "0.1.0"
   }
  },
@@ -50,12 +192,13 @@
   "evidence_classes": 4,
   "requirement_evidence_cells": 68,
   "ct_rows": 50,
-  "ct_stage_names": 15,
-  "ct_cells": 750,
-  "unverified_spec_items": 7
+  "ct_stage_names": 17,
+  "ct_cells": 850,
+  "unverified_spec_items": 7,
+  "named_followups": 18
  },
  "derivation": {
-  "rule": "no count in this file is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it.",
+  "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
   "sources": {
    "ct_stage_evidence": "docs/reports/remaining-t00/coverage.json",
    "ct_inventory": "docs/reevaluation/ct_manifest.json",
@@ -63,8 +206,10 @@
    "contract_corpus": "contract/qcore/*/*.qcore on disk",
    "workspace_membership": "Cargo.toml, providers/Cargo.toml",
    "schema_version": "crates/qcore-schemas/Cargo.toml",
+   "provider_package_versions": "providers/*/provider-template.json",
    "lean_audit_files": "proof/Audit*.lean",
-   "gate_results": "the standing per-change gate executed at this checkpoint"
+   "gate_results": "--gate PATH, else carried from the previous matrix",
+   "carried_sections": "the previous matrix named in section_ownership.carried_from"
   }
  },
  "unverified_specs": {
@@ -864,13 +1009,14 @@
    "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
    "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
    "docs/reports/wave5-ct-integration/ct_stage_evidence.json",
-   "docs/reports/wave8-epoch-ct/ct_stage_evidence.json"
+   "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
+   "docs/reports/wave9-ctwin/ct_stage_evidence.json"
   ],
-  "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count and its exact target_os gate. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
+  "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 28,
-   "unmapped": 22
+   "mapped": 30,
+   "unmapped": 20
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -891,6 +1037,9 @@
     "any"
    ],
    "epoch_lowering": [
+    "any"
+   ],
+   "legacy_c_twin": [
     "any"
    ],
    "mutex_invariant_check": [
@@ -927,74 +1076,125 @@
     "windows"
    ]
   },
+  "tool_scope": {
+   "c_emission": [
+    "none"
+   ],
+   "elaborate": [
+    "none"
+   ],
+   "epoch_bound_check": [
+    "none"
+   ],
+   "epoch_lowering": [
+    "none"
+   ],
+   "legacy_c_twin": [
+    "clang"
+   ],
+   "mutex_invariant_check": [
+    "none"
+   ],
+   "mutex_lowering": [
+    "none"
+   ],
+   "mutex_reference_execution": [
+    "none"
+   ],
+   "native_execution": [
+    "none"
+   ],
+   "native_sanitized": [
+    "none"
+   ],
+   "parse": [
+    "clang",
+    "none"
+   ],
+   "task_ledger_check": [
+    "none"
+   ],
+   "task_lowering": [
+    "none"
+   ],
+   "task_reference_execution": [
+    "none"
+   ]
+  },
+  "tool_gates_load_bearing": [
+   "clang"
+  ],
   "stage_histogram": {
    "parse": {
-    "executed": 28
+    "executed": 30
    },
    "elaborate": {
-    "executed": 28
+    "executed": 28,
+    "not_applicable": 2
    },
    "task_lowering": {
     "executed": 16,
-    "not_applicable": 12
+    "not_applicable": 14
    },
    "task_ledger_check": {
     "executed": 15,
-    "not_applicable": 13
+    "not_applicable": 15
    },
    "mutex_lowering": {
     "executed": 8,
-    "not_applicable": 20
+    "not_applicable": 22
    },
    "mutex_invariant_check": {
     "executed": 8,
-    "not_applicable": 20
+    "not_applicable": 22
    },
    "epoch_lowering": {
     "executed": 4,
-    "not_applicable": 24
+    "not_applicable": 26
    },
    "epoch_bound_check": {
     "executed": 4,
-    "not_applicable": 24
+    "not_applicable": 26
    },
    "sequential_whole_program": {
-    "not_applicable": 28
+    "not_applicable": 30
    },
    "sequential_reference_execution": {
-    "not_applicable": 28
+    "not_applicable": 30
    },
    "task_reference_execution": {
     "executed": 11,
-    "not_applicable": 17
+    "not_applicable": 19
    },
    "mutex_reference_execution": {
     "executed": 1,
-    "not_applicable": 27
+    "not_applicable": 29
    },
    "c_emission": {
     "executed": 12,
-    "not_applicable": 16
+    "not_applicable": 18
    },
    "native_execution": {
     "executed": 12,
-    "not_applicable": 16
+    "not_applicable": 18
    },
    "native_sanitized": {
     "executed": 3,
-    "not_applicable": 4,
+    "not_applicable": 6,
     "recorded_not_gated": 5,
     "unassessed": 16
    },
    "legacy_c_twin": {
+    "executed": 2,
     "not_applicable": 28
    },
    "proof": {
-    "unassessed": 28
+    "unassessed": 30
    }
   },
   "depth_profile": {
    "epoch_bound_check": 4,
+   "legacy_c_twin": 2,
    "mutex_invariant_check": 7,
    "native_execution": 9,
    "native_sanitized": 3,
@@ -1028,6 +1228,8 @@
    "CT37": "native_execution",
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
+   "CT43": "legacy_c_twin",
+   "CT45": "legacy_c_twin",
    "CT48": "mutex_invariant_check",
    "CT50": "native_execution"
   },
@@ -1036,12 +1238,13 @@
    "elaborate": 28,
    "epoch_bound_check": 4,
    "epoch_lowering": 4,
+   "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "mutex_lowering": 8,
    "mutex_reference_execution": 1,
    "native_execution": 28,
    "native_sanitized": 9,
-   "parse": 28,
+   "parse": 30,
    "task_ledger_check": 15,
    "task_lowering": 16,
    "task_reference_execution": 26
@@ -1056,6 +1259,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1173,6 +1377,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1252,6 +1457,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1360,6 +1566,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1439,6 +1646,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1890,6 +2098,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -1993,6 +2202,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2105,6 +2315,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2209,6 +2420,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2312,6 +2524,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2422,6 +2635,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2530,6 +2744,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2606,6 +2821,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -2694,6 +2910,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3108,6 +3325,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 0,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3216,6 +3434,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3306,6 +3525,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3404,6 +3624,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3494,6 +3715,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3591,6 +3813,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3682,6 +3905,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 1,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3897,6 +4121,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": null,
     "epoch_controls_executed": 2,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -3991,6 +4216,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": null,
     "epoch_controls_executed": 2,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4085,6 +4311,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4195,6 +4422,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": null,
     "epoch_controls_executed": 1,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4282,6 +4510,7 @@
     "manifest_evidence_target": null,
     "source_reject_controls_executed": null,
     "epoch_controls_executed": 1,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -4364,9 +4593,9 @@
     "id": "CT40",
     "mapping_status": "unmapped",
     "expected": "Not certified; unsupported lifetime/publication protocol",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
-    "bucket_changed_since_batch2": false,
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): a store of an owned pointer into a file-scope object is invisible to the resource projection, so the publishing function is Safe with no diagnostic and the verdict is identical with and without `_Atomic`; a unit that also reads the published object is Unknown, but on the reader's unknown-alias diagnostics, not on the publication. The verdict is invariant under the construct the scenario names, so no control can attribute it. Follow-on CT-CTWIN-PUBLISH.",
+    "bucket_changed_since_batch2": true,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -4426,9 +4655,9 @@
     "id": "CT41",
     "mapping_status": "unmapped",
     "expected": "No synchronization proof",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
-    "bucket_changed_since_batch2": false,
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): adding or removing the volatile completion flag changes neither the verdict nor a single diagnostic, in both shapes measured; the gateway models no synchronization, so no verdict it produces is evidence about one and the mapping would be vacuous. Follow-on CT-CTWIN-SYNC.",
+    "bucket_changed_since_batch2": true,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -4488,9 +4717,9 @@
     "id": "CT42",
     "mapping_status": "unmapped",
     "expected": "Preserve shared protocol-cell identity",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "bucket_changed_since_batch2": false,
+    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "blocker": "measured on the legacy_c route (card CT-CTWIN): an int-typed resource identity is refused by the contract loader (`owned result requires a pointer return type`), so the descriptor twin is Unknown on three uncontracted calls — the profile cannot express it at all — and the case asks for a preserved identity, which no measured verdict establishes. Follow-on CT-CTWIN-DESCRIPTOR.",
+    "bucket_changed_since_batch2": true,
     "stage_derived_status": {
      "parse": {
       "status": "unexecuted"
@@ -4548,65 +4777,98 @@
    },
    {
     "id": "CT43",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Unknown; no whole-program proof",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "bucket_changed_since_batch2": false,
+    "route": "legacy_c",
+    "harness_verdict_mode": "legacy_c_twin",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": 2,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT43/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT43/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT43/direct_call.c",
+      "observations": 1,
+      "note": "The same callback body, the same borrowed parameter and the same declarations, called here and now instead of registered: Safe, both functions safe, no diagnostic. This is what makes the case's Unknown attributable to the deferral rather than to the callback, the parameter or the declarations."
+     },
+     "provisional_unsafe_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT43/owned_local.c",
+      "observations": 1,
+      "note": "Registering an owned local is not read as a hand-off: [subject:0:leak:7, subject:8:unsupported:call to uncontracted function `q_register`], unit Unsafe. A provisional Unsafe resting on an unresolved effect; pinned so the reading is visible. Follow-on CT-CTWIN-UNRESOLVED-LEAK."
+     }
+    },
+    "deepest_executed_stage": "legacy_c_twin",
+    "stage_evidence_record": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "semantic_profile": "UnrestrictedC11ResourceProjection"
    },
    {
     "id": "CT44",
@@ -4672,65 +4934,91 @@
    },
    {
     "id": "CT45",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Require access contract or report unknown",
-    "current_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "as CT40",
-    "bucket_changed_since_batch2": false,
+    "route": "legacy_c",
+    "harness_verdict_mode": "legacy_c_twin",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": 2,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT45/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT45/case.c",
+      "observations": 2,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {
+     "accepted_source_control": {
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT45/known_destructor.c",
+      "observations": 1,
+      "note": "The same registry, the same borrowed parameter and the same declarations, calling the destructor the contract set describes: Safe, no diagnostic. The Unknown is not attributable to the parameter, the registry or the file-scope state."
+     }
+    },
+    "deepest_executed_stage": "legacy_c_twin",
+    "stage_evidence_record": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "semantic_profile": "UnrestrictedC11ResourceProjection"
    },
    {
     "id": "CT46",
@@ -4865,6 +5153,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -5025,6 +5314,7 @@
     "manifest_evidence_target": "linux",
     "source_reject_controls_executed": 2,
     "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
       "status": "executed",
@@ -5135,7 +5425,7 @@
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
    "blocked-on-unimplemented-syntax (no mutex value)": 3,
-   "blocked-on-harness-schema (C-twin stage)": 5,
+   "blocked-on-gateway-expressiveness (C-twin measured)": 3,
    "ambiguous": 1,
    "DECIDABLE-NOW (coarser reason)": 1
   },
@@ -5158,7 +5448,8 @@
    "Mapping is not conformance. `proof` is unassessed for every mapped case and no Lean theorem is bound to any CT fixture (T00.7 remains open).",
    "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now refuses an `executed` sanitized claim from any other case.",
    "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this generator's inputs no longer allow.",
-   "The unmapped triage rows are recorded analysis, not stage evidence, and come from T00's audit filtered to the cases that are still unmapped."
+   "The unmapped triage rows are recorded analysis, not stage evidence, and come from T00's audit filtered to the cases that are still unmapped.",
+   "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. Neither adds native, sanitized or proof evidence."
   ],
   "newly_decidable_not_mapped_reasons": {
    "_note": "hand-maintained commentary, not generator output — build_matrix.py drops this key on regeneration and it is re-added deliberately; the generated newly_decidable_not_mapped and unmapped_bucket_counts derive from T00's triage vocabulary, which is coarser than these later per-card refinements (recorded pre-existing divergence, see remaining-t00-ct-schema §integrator notes).",
@@ -5169,7 +5460,7 @@
   }
  },
  "corpus": {
-  "contract_modules": 59,
+  "contract_modules": 60,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -5254,13 +5545,19 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "run metadata for the standing per-change gate executed 2026-09-08 on the merged E03/P03/P04/T03/C03 tree, not a statement of specification coverage.",
-  "workspace_tests": 1080,
-  "provider_tests": 51,
-  "python_evidence_validator_tests": 43,
-  "lean_audits": 21,
+  "note": "wave-9 final merged gate, measured 2026-09-09 on main after all six cards",
+  "workspace_tests": 1888,
+  "provider_tests": 75,
+  "python_evidence_validator_tests": 125,
+  "lean_audits": 48,
   "lean_audit_files": [
+   "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditCallUseAdmission.lean",
+   "AuditCapacityBoundary.lean",
+   "AuditChainedAccess.lean",
+   "AuditChunkIntegrityObservation.lean",
+   "AuditConcurrencyPrelude.lean",
    "AuditCycle10.lean",
    "AuditCycle11.lean",
    "AuditCycle12.lean",
@@ -5276,18 +5573,40 @@
    "AuditCycle7.lean",
    "AuditCycle8.lean",
    "AuditCycle9.lean",
+   "AuditDisjointFootprint.lean",
+   "AuditEpochAccounting.lean",
+   "AuditEpochSourceLowering.lean",
+   "AuditErrorPayload.lean",
+   "AuditExternCall.lean",
    "AuditGenericNames.lean",
+   "AuditLifetimeCorrespondence.lean",
    "AuditMutexInvariant.lean",
+   "AuditNeutralFrameRecursion.lean",
+   "AuditO05.lean",
+   "AuditOsEndpointPostState.lean",
+   "AuditPackageTemplateBinding.lean",
+   "AuditProcessQuotaPlan.lean",
+   "AuditRawDirectiveLexing.lean",
+   "AuditReadLoan.lean",
+   "AuditReadShare.lean",
+   "AuditReasonCarrier.lean",
+   "AuditReasonCategory.lean",
+   "AuditRegionTaskCredit.lean",
+   "AuditSourceEnumeration.lean",
+   "AuditSourceRootAdmission.lean",
    "AuditSourceValidation.lean",
    "AuditTaskExecution.lean",
+   "AuditTaskTraceRelation.lean",
+   "AuditTeardownAdmission.lean",
    "AuditW4.lean"
   ],
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "passed",
-  "full_language_conformance": false
+  "standing_gate": "pass",
+  "full_language_conformance": false,
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate9.json)"
  },
  "named_followups": [
   {
@@ -5327,12 +5646,6 @@
    "source": "docs/reports/remaining-e03-b/README.md"
   },
   {
-   "id": "T03-GUARD-JOIN",
-   "title": "Task created and joined strictly inside a guard",
-   "why": "refused by the unedited CheckedMutexInvariantV1 JoinWhileGuardHeld rule; T03-F landed the smallest sound subset (nested thread scope composed in the mutex ledger only, no captures/owned values). Lifting the rule is a semantic change to the pinned checker and needs its own model argument. A child's drop of the parent's borrow is a grammar refusal where the model's EndBorrow would accept; recorded asymmetry.",
-   "source": "docs/reports/remaining-t03-f/README.md"
-  },
-  {
    "id": "P01-F3",
    "title": "Template-binding residuals: forged executables, TOCTOU, unverified loader",
    "why": "a rebuilt or forged executable carries whatever template its builder chose; there is a TOCTOU window between check and dispatch; ProcessProvider::from_package remains an unverified loader (registration is pointed at verify_executable_package). Signature/immutable-execution proof remains out of scope as documented.",
@@ -5345,18 +5658,6 @@
    "source": "docs/reports/extern-call-v1/README.md SS7"
   },
   {
-   "id": "D02-GEN-REST",
-   "title": "build_matrix.py's non-CT sections are a stale hand-coded snapshot",
-   "why": "only ct_conformance is derived and verified against the manifest; named_followups is a hard-coded literal from the original D02 wave (build_matrix.py:1419) and the gate object hard-codes stale counts (e.g. provider_tests: 47 vs 58), so whole-file regeneration would clobber later reconciliations. The integrator adopts the generated ct_conformance section surgically until the remaining sections are derived from live sources. CORPUS-REPIN adds: the generator's non-CT sections also still record the pre-repin 42-count wording; its own generator_status already flags this.",
-   "source": "docs/reports/remaining-t00-ct-schema/README.md, this integration"
-  },
-  {
-   "id": "REASON-CODES-B",
-   "title": "Reason-code residuals after the L21.1 implementation",
-   "why": "B1: opaque OS/tool text carries no code. B2: ChunkSourceResult's Unknown reason enum is untyped. B3: chunk-contracts.json's third reason vocabulary — and, per CORPUS-REPIN's measurement, source-effects.json, which is assembled by the compatibility adapter rather than qcore-audit's report and therefore carries no reason_code field (a documentation error in REASON-CODES §7, not an implementation defect).",
-   "source": "docs/reports/remaining-reason-codes/README.md, docs/reports/corpus-repin/README.md"
-  },
-  {
    "id": "O03-U4-REACTOR-TARGET",
    "title": "The reactor's event vocabulary carries no close target or errno",
    "why": "after U4's repair the reactor poisons a failed close, but it answers with the unpinned join because CloseSocket records neither the target POSIX profile nor errno; pinning them needs an event-vocabulary extension.",
@@ -5364,9 +5665,9 @@
   },
   {
    "id": "O04-ARMS-O",
-   "title": "Constructor-arm residuals after O04-ARMS",
-   "why": "B08 aggregate stores (incl. ic->chunk = chunk) plus the aggregate branch condition remain the binding constraint on C5; O04-ARMS-VARIADIC (flb_error declared at its one call-site arity, no variadic tail in the contract vocabulary); O04-ARMS-SCALAR-CHAIN (a scalar-terminated chain binds an OpaqueValue rather than deferring to C02's no-op — conservative, one added unknown_alias). The success and unenumerated exits and descriptor/mapping identities stay out of scope.",
-   "source": "docs/reports/remaining-o04-arms/README.md"
+   "title": "Constructor residuals after O04-B08 (C5 discharged)",
+   "why": "B08 closed in wave 9: the aggregate-store admission and bounded branch condition discharge C5; five of six exits settle and only the out-of-scope success exit C6 remains, with O04-B08-READ-BOUND-BASE (a member read through a bound base is still refused) the last blocker toward B09/B10. P-B08-SHALLOW is a named premise (escape carries live linked children; release does not cascade), assumed and modeled, never proved. O04-ARMS-VARIADIC and O04-ARMS-SCALAR-CHAIN carry forward; `flb_time_now` is now the named residual on the routes-mask arm (O04-ARMS's inertness measurement was correct then and false after the store admission — recorded with the updated pin).",
+   "source": "docs/reports/remaining-o04-arms/README.md, docs/reports/remaining-o04-b08/README.md"
   },
   {
    "id": "T08-SRC-O",
@@ -5395,15 +5696,27 @@
   {
    "id": "E01-F1-O",
    "title": "Enumeration residuals after the denominator completion",
-   "why": "E01-F1-RAW: the raw tokenizer reads # on a macro continuation line as a directive, swallowing a closing brace — the actual cause of the 146 hidden rdkafka.c definitions; repairing it changes legacy_c_source_functions and needs its own parity run. E01-F1-STDIN (stdin attribution rests on transport), E01-F1-DENOM (pre-existing non-empty not_projected under Safe), E01-F1-COST (one extra clang -E per unit).",
-   "source": "docs/reports/remaining-e01-f1/README.md"
+   "why": "E01-F1-RAW closed in wave 9: mid-line `#` is no longer a directive introducer, the two enumeration mechanisms agree (absent_from_raw_scan 146→15 on rdkafka.c), zero verdict movement. Remaining: E01-F1-RAW-COND (the 15-row residual — `#if`/`#else` arms each opening a brace; conditional evaluation, not lexing; pinned in both directions), E01-F1-STDIN, E01-F1-DENOM, E01-F1-COST.",
+   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md"
   },
   {
    "id": "P04-NEXT-O",
    "title": "Remaining ChunkIO capabilities after the teardown pair moved",
-   "why": "A: file_attempts needs a third vocabulary (call-result def/use, not path replay). B: file_outcomes and file_delete consume file_attempts' certificate. C: traversal and parent_teardown are behind the sealed SourceMatch boundary. Seven compositions remain over other certificates, two of them also behind SourceMatch. The moved pair (list-unlink, memory-backend destructor) retains its in-process routes pending parity-based removal.",
-   "source": "docs/reports/remaining-p04-next/README.md"
+   "why": "A closed in wave 9: file_attempts travels as the third (call-result def/use, policy-free) vocabulary with 122 refused mutation rows. B is corrected by measurement into two independent blockers: P04-NEXT-B1 (neither cleanup-outcome contract declares any field/syscall/type name, so a transported custody profile has no contract-side referent — the vocabulary must be declared first) and P04-NEXT-B2 (the 268-line symbolic replay over a 9-constructor value lattice is a fourth vocabulary). PrerequisiteIdentity + revalidate_prerequisite are implemented with no production consumer yet (P04-NEXT-AB-CONSUMER). C (sealed SourceMatch) and the seven compositions unchanged.",
+   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md"
+  },
+  {
+   "id": "T03-GUARD-JOIN-O",
+   "title": "Guard-local join residuals",
+   "why": "the admission landed with the joined subtree naming no mutex at all (deadlock structurally impossible). B1: EndBorrow is still not holder-keyed in the model. B2: a guard-local child can hold no share, so it can do nothing this profile models — real work needs a transfer event. B3: G5's closed-invariant requirement is conservative, forced by DeclaredFootprintShape being a premise.",
+   "source": "docs/reports/remaining-t03-guard-join/README.md"
+  },
+  {
+   "id": "CT-CTWIN-O",
+   "title": "C-twin residuals after CT43/CT45 mapped",
+   "why": "CT-CTWIN-PUBLISH (a store of an owned pointer into a file-scope object is invisible to the projection — publish-then-free is Safe with no diagnostic), CT-CTWIN-SYNC (verdicts invariant under the volatile flag), CT-CTWIN-DESCRIPTOR (int-typed resource identity refused by the contract loader), CT-CTWIN-UNRESOLVED-LEAK and CT-CTWIN-ENTRY (the declared entry is inert for projection-complete units; the runner asserts it as the weak check it is), plus D02-BUCKETS (a pre-existing acceptance.json bucket-count divergence, recorded).",
+   "source": "docs/reports/wave9-ctwin/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 8 complete: P09-G removed with archived parity and six routes retained with measured gaps; CT 24/50 -> 28/50 through the epoch route; the function denominator completes at 4,921 with the raw-tokenizer cause named and the baseline deliberately re-pinned to E01-F1's after-measurement at zero verdict movement; the ChunkIO teardown pair moves through the process boundary with a 92-row mutation matrix (qcore-schemas 7.0.0); nothing promoted)"
+ "updated": "2026-09-09 (wave 9 complete: E01-F1-RAW, O04-B08, T03-GUARD-JOIN, CT-CTWIN (CT 28/50 -> 30/50), P04-NEXT-AB (qcore-schemas 8.0.0, ChunkIO 0.7.0) and GEN-REASON close at their stated boundaries; the corpus is deliberately re-pinned to the wave-9 integrator measurement (docs/reports/wave9-corpus/) at unchanged headline counts with every changed leaf attributed; the acceptance-matrix generator's non-CT sections are now derived or carried; nothing promoted)"
 }

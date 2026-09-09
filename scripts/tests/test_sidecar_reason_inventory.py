@@ -29,8 +29,9 @@ import unittest
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-# The current baseline, deliberately re-pinned by card E01-F1.
-ARTIFACTS = ROOT / "docs/reports/remaining-e01-f1/artifacts/after"
+# The current baseline, deliberately re-pinned at the wave-9 consolidation
+# (docs/reports/wave9-corpus/README.md); it carries REASON-CODES-B3's field.
+ARTIFACTS = ROOT / "docs/reports/wave9-corpus/artifacts"
 REASON_CORPUS = ROOT / "crates/qcore-schemas/tests/reason_codes.rs"
 
 # Measured on the archived bytes, read-only. Both sidecars carry the same 96
@@ -60,19 +61,28 @@ class SidecarReasonInventory(unittest.TestCase):
             self.assertEqual(len(unknown), EXPECTED_UNKNOWN_ROWS, name)
             self.assertEqual(Counter(row["reason"] for row in unknown), EXPECTED_REASONS, name)
 
-    def test_the_archived_sidecars_do_not_yet_carry_the_field(self):
-        """The blocking measurement, pinned rather than described.
+    def test_the_repinned_sidecars_carry_the_classified_field(self):
+        """The measurement that replaced the pre-re-pin prediction.
 
-        Emitting `reason_code` adds one key to each of the 93 `unknown` rows in
-        each sidecar - 186 rows in all - and leaves the 3 checked rows and every
-        other artifact byte alone. That is a pinned-artifact byte change, so the
-        archived copies are left for the next deliberate corpus re-pin. This
-        test fails the moment somebody re-pins them, which is when the
-        prediction above has to be replaced by the measurement.
+        GEN-REASON predicted +1 key on each of the 93 `unknown` rows per
+        sidecar and nothing on the 3 checked rows; the wave-9 re-pin measured
+        exactly that (91 unsupported-syntax + 2 incomplete-obligation-coverage
+        per sidecar). The pre-re-pin form of this test asserted the field's
+        absence against the E01-F1 archive, which remains untouched as that
+        card's record.
         """
         for name in SIDECARS:
-            for row in load(name)["results"]:
-                self.assertNotIn("reason_code", row, name)
+            rows = load(name)["results"]
+            unknown = [row for row in rows if row["status"] == "unknown"]
+            codes = Counter(row["reason_code"] for row in unknown)
+            self.assertEqual(
+                codes,
+                Counter({"unsupported-syntax": 91, "incomplete-obligation-coverage": 2}),
+                name,
+            )
+            for row in rows:
+                if row["status"] != "unknown":
+                    self.assertNotIn("reason_code", row, name)
 
     def test_every_archived_reason_is_a_row_of_the_rust_reason_corpus(self):
         """The Rust corpus is what fixes each string's category."""
