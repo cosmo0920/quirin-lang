@@ -1,0 +1,75 @@
+module contract;
+
+// Fluent Bit routes-mask helpers — resource-projection vocabulary version 1.
+//
+// Card PROD-CONTRACTS. TRUSTED ASSUMPTIONS about two upstream functions. This
+// module verifies nothing: the C bodies are not analyzed by this loader, and a
+// declaration is a premise. A function-level `Safe` that rests on it is `Safe`
+// RELATIVE TO these declarations, never a proof of the C implementation.
+//
+// Both bodies were read at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97, `src/flb_routes_mask.c`.
+//
+// ## `flb_routes_mask_set_by_tag` (line 49), argument by argument
+//
+//     int flb_routes_mask_set_by_tag(flb_route_mask_element *routes_mask,
+//                                    const char *tag, int tag_len,
+//                                    struct flb_input_instance *in)
+//
+//   * `in` — read only. `if (!in) return 0;` then
+//     `if (in->config == NULL || in->config->router == NULL) return 0;`, then
+//     `in->config->router` and `&in->config->outputs` are traversed. Never
+//     freed, never stored, never retained. BORROWED.
+//   * `tag`, `tag_len` — forwarded to `flb_router_match(tag, tag_len, ...)`,
+//     which forwards to `router_match` (`src/flb_router.c:140` and its static
+//     inline above it). That reads the bytes, may run a regex over them, and
+//     returns a flag. The tag is never freed and never stored. BORROWED.
+//   * `routes_mask` — the callee WRITES through it:
+//     `memset(routes_mask, 0, sizeof(flb_route_mask_element) * size)` and then
+//     `flb_routes_mask_set_bit(routes_mask, o_ins->id, ...)` per matching
+//     route. It allocates nothing for it, frees nothing through it, and stores
+//     the pointer nowhere. The caller's custody of that storage is exactly
+//     what it was before the call. BORROWED.
+//   * the result is `int has_routes`, a flag. `resource_return_none()`.
+//
+// ## `flb_routes_mask_get_size` (line 27)
+//
+//     size_t flb_routes_mask_get_size(struct flb_router *router)
+//     { if (router == NULL) { return 0; } return router->route_mask_size; }
+//
+// One read, one scalar out. Borrowed parameter, no returned custody.
+//
+// ## What these declarations do NOT say — named, not hidden
+//
+//   * `resource_borrowed(routes_mask)` is a CUSTODY statement. It does not say
+//     the write is in bounds. The callee memsets `size` elements, where `size`
+//     comes from the router, and nothing here relates that to the caller's
+//     allocation. A caller whose mask is shorter than the router's size is a
+//     memory-safety defect this projection neither models nor detects.
+//     Named `PROD-CONTRACTS-MASK-EXTENT` in the card report.
+//   * Neither declaration imposes a non-null precondition. `set_by_tag`
+//     dereferences `routes_mask` unconditionally once `in` and its router are
+//     non-null, but `resource_borrowed` demands no entry custody — the weaker
+//     statement, and deliberately so, because a mode that demanded it would
+//     delete the caller's failure paths.
+//   * Nothing about routing semantics, the output list, the regex engine, the
+//     bit layout or concurrency is claimed.
+
+// --- the tag-to-routes mask writer -----------------------------------------
+extern fn flb_routes_mask_set_by_tag(routes_mask: ptr<mut, u8>, tag: ptr<const, u8>, tag_len: i32, instance: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(routes_mask);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_borrowed(instance);
+    ensures normal resource_return_none();
+};
+
+// --- the mask sizing helper ------------------------------------------------
+extern fn flb_routes_mask_get_size(router: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(router);
+    ensures normal resource_return_none();
+};

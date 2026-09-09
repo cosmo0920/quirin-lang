@@ -215,6 +215,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_hash_table_add",
         7,
     ),
+    // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
+    // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
+    // resource-v1 declaration count 20 -> 25. Deliberate; see
+    // `docs/reports/remaining-prod-contracts/README.md`.
+    (
+        "fluent_bit/input_chunk_name.qcore",
+        "flb_input_chunk_get_name",
+        3,
+    ),
+    ("fluent_bit/logging.qcore", "flb_log_check", 3),
+    ("fluent_bit/logging.qcore", "flb_log_print", 7),
     ("fluent_bit/memory.qcore", "flb_malloc", 6),
     ("fluent_bit/memory.qcore", "flb_calloc", 7),
     ("fluent_bit/memory.qcore", "flb_realloc", 9),
@@ -225,6 +236,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("fluent_bit/resource_memory.qcore", "flb_free", 3),
     ("fluent_bit/resource_memory.qcore", "flb_sds_create_len", 4),
     ("fluent_bit/resource_memory.qcore", "flb_sds_destroy", 3),
+    // Card PROD-CONTRACTS, continued.
+    (
+        "fluent_bit/routes_mask.qcore",
+        "flb_routes_mask_set_by_tag",
+        6,
+    ),
+    (
+        "fluent_bit/routes_mask.qcore",
+        "flb_routes_mask_get_size",
+        3,
+    ),
     (
         "language/quantified_indices.qcore",
         "preserve_five_chunk_credits",
@@ -394,8 +416,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
     // 60 -> 61 by card HASH-CONTRACTS' deliberate addition of
-    // `fluent_bit/hash_table_publication.qcore`.
-    assert_eq!(sources.len(), 61, "unexpected contract corpus size");
+    // `fluent_bit/hash_table_publication.qcore`; 61 -> 64 by card
+    // PROD-CONTRACTS' deliberate addition of
+    // `fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore` and
+    // `fluent_bit/routes_mask.qcore`.
+    assert_eq!(sources.len(), 64, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

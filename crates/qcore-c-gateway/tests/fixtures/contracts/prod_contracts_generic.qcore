@@ -1,0 +1,66 @@
+module contract;
+
+// PROD-CONTRACTS — the held-out generic `w_*` API this card measures its rules
+// on, deliberately unrelated to Fluent Bit, to ChunkIO and to the `g_*` (O04),
+// `h_*` (O04-ARMS), `k_*` (O04-B08), `r_*` (O04-READ-BOUND), `m_*` (O04-B09B10),
+// `v_*` (O04-TRACE) and `p_*` (HASH-CONTRACTS) families. Every rule under test
+// is stated over declared C types and contract modes, so no name in it matters.
+//
+// The shapes mirror what the pinned Fluent Bit logging macros expand to: a
+// scalar-argument LEVEL GATE in a branch condition, a VARIADIC printer with a
+// declared data tail, and a BORROWED-HANDBACK ACCESSOR nested in one tail
+// position.
+
+// --- the resource the caller actually owns ---------------------------------
+extern fn w_open(size: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn w_close(handle: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(handle, nonnull);
+    ensures normal resource_return_none();
+};
+
+// --- the level gate, mirroring `flb_log_check` ------------------------------
+extern fn w_gate(level: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_return_none();
+};
+
+// --- the variadic printer, mirroring `flb_log_print` ------------------------
+extern fn w_print(level: i32, file: ptr<const, u8>, line: i32, format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(level);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(format);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// --- the borrowed-handback accessor, mirroring `flb_input_chunk_get_name` ---
+extern fn w_name(handle: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(handle);
+    ensures normal resource_return_none();
+};
+
+// --- the mask writer, mirroring `flb_routes_mask_set_by_tag` ----------------
+extern fn w_mask(mask: ptr<mut, u8>, tag: ptr<const, u8>, tag_len: i32, instance: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mask);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_borrowed(instance);
+    ensures normal resource_return_none();
+};

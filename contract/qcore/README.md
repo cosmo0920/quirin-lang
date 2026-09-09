@@ -92,14 +92,29 @@ wrapper source projections and remaining composition gates.
 
 ## Declarative resource-projection contracts
 
-`../cycle19-resource-contracts.json` explicitly selects six modules for the
+`../cycle19-resource-contracts.json` explicitly selects nine modules for the
 legacy-C audit: `libc/memory.qcore`, `monkey/memory.qcore`,
 `librdkafka/memory.qcore`, `fluent_bit/resource_memory.qcore`,
-`fluent_bit/hash_table_publication.qcore`, and
-`chunkio/resource_open_close.qcore`. These 20 declarations replace the audit's
-Rust table. They are trusted resource-projection assumptions, separate from the
-more detailed execution and lifecycle profiles above. In particular the
-ChunkIO close declaration does not itself provide a nested teardown certificate.
+`fluent_bit/hash_table_publication.qcore`,
+`fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore`,
+`fluent_bit/routes_mask.qcore`, and `chunkio/resource_open_close.qcore`. These
+25 declarations replace the audit's Rust table. They are trusted
+resource-projection assumptions, separate from the more detailed execution and
+lifecycle profiles above. In particular the ChunkIO close declaration does not
+itself provide a nested teardown certificate.
+
+### Declare the callee the call site reaches (card PROD-CONTRACTS)
+
+`fluent_bit/logging.qcore` declares `flb_log_check` and `flb_log_print`, not
+`flb_trace` and `flb_error`. The latter two are **function-like macros**, so no
+analyzed statement in the pinned corpus ever names them and a declaration for
+either would be inert text. Before writing a production declaration, read the
+preprocessed stream and confirm which symbol the call sites actually reach; a
+declaration for a name the corpus never calls costs a premise and buys nothing,
+and a declaration unfaithful to the body it names is a defect, not a
+conservatism. Each module in this family records, in its own header, the pinned
+file and line of every body it was read from, and names what it deliberately
+leaves undeclared. See `docs/reports/remaining-prod-contracts/README.md`.
 
 ### Declared literal-argument premises (card HASH-CONTRACTS)
 
