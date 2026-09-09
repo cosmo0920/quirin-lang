@@ -19,7 +19,9 @@ use qcore_schemas::witness::{
     ContractObservationRecord, ContractObservationWitness, NativeRunBinding, ObservedRun,
 };
 use qcore_verification::obligation_derivation::{DerivationInputs, derive_task};
-use qcore_verification::verify_dispatch::dispatch_scopes;
+use qcore_verification::verify_dispatch::{
+    DerivationBasis, dispatch_scopes, manifest_dependent_derivation,
+};
 use qcore_verifier_host::*;
 
 const UNIT: &str = "unit.qc";
@@ -586,11 +588,248 @@ fn an_absent_provider_refuses_the_composed_verdict_itself() {
     assert!(report.scopes[0].composed.certificate.is_none());
     assert!(report.scopes[0].composed.composite.is_none());
     // The providers that did answer are still dispatched and still reported.
-    assert_eq!(report.scopes[0].capabilities.len(), 2);
+    // E03-B-O1 deliberately moves this count from 2 to 3: the absent provider
+    // now has a row of its own, carrying the inventory the core could state
+    // and the refusal on it, instead of vanishing from the report.
+    assert_eq!(report.scopes[0].capabilities.len(), 3);
+    let (present, absent): (Vec<_>, Vec<_>) = report.scopes[0]
+        .capabilities
+        .iter()
+        .partition(|dispatch| dispatch.derivation == DerivationBasis::InstalledManifest);
+    assert_eq!(present.len(), 2);
     assert!(
-        report.scopes[0]
+        present.iter().all(
+            |dispatch| dispatch.outcome.verdict == ProposedVerdict::Safe && dispatch.dispatched
+        )
+    );
+    assert_eq!(absent.len(), 1);
+    assert_eq!(absent[0].plugin_id, "example.absent");
+    assert!(!absent[0].dispatched);
+    assert_eq!(absent[0].outcome.verdict, ProposedVerdict::Unknown);
+    assert_eq!(absent[0].outcome.diagnostics[0].code, "QP002");
+    assert!(absent[0].outcome.certificate.is_none());
+}
+
+// ---------------------------------------------------------------------------
+// E03-B-O1 — an absent provider's obligations are derived, then refused.
+// ---------------------------------------------------------------------------
+
+/// The absent provider's use record: exactly what the configuration carries
+/// (plugin id, version, profile, capabilities) and nothing a manifest would.
+fn absent_use(capabilities: &[VerifierCapability]) -> ResolvedVerifierUse {
+    ResolvedVerifierUse {
+        plugin_id: PluginId::new("example.absent").unwrap(),
+        package_version: "0.1.0".into(),
+        profile: "default".into(),
+        capabilities: capabilities.iter().copied().collect(),
+    }
+}
+
+fn dispatch_with_absent(
+    capabilities: &[VerifierCapability],
+) -> qcore_verification::verify_dispatch::ScopeDispatch {
+    let registry = registry(Answer::Honest, Answer::Honest);
+    let parsed = program();
+    let mut resolved = registry.resolve_source_scopes(&parsed).unwrap();
+    resolved[0].providers.push(absent_use(capabilities));
+    let mut report = dispatch_scopes(&parsed, UNIT, &resolved, &registry);
+    report.scopes.remove(0)
+}
+
+/// The measured per-capability table behind `manifest_dependent_derivation`:
+/// derivation reads exactly one manifest field, `required_observation_hooks`,
+/// and exactly one capability reads it. For every other capability the
+/// identifiers derived with no manifest at all are *the same identifiers* the
+/// installed provider's derivation states, because `obligation_id` hashes the
+/// unit, semantic profile, capability, property and subject — never `target`.
+#[test]
+fn an_absent_derivation_reproduces_the_installed_derivation_except_for_observation_hooks() {
+    let parsed = program();
+    let installed = manifest("example.left", "resize");
+    for capability in [
+        VerifierCapability::ResourceContracts,
+        VerifierCapability::EventTraces,
+        VerifierCapability::ChunkLifecycle,
+        VerifierCapability::Concurrency,
+        VerifierCapability::TranslationUnitProjection,
+        VerifierCapability::ObservationHooks,
+    ] {
+        let inputs = |target: TargetProfile, hooks: BTreeSet<String>| DerivationInputs {
+            translation_unit: UNIT,
+            program: &parsed,
+            target,
+            contract_sources: BTreeMap::from([(UNIT.to_owned(), SOURCE.to_owned())]),
+            required_observation_hooks: hooks,
+            assumptions: BTreeMap::new(),
+            verifier: Some("example.absent".to_owned()),
+        };
+        let present = derive_task(
+            &inputs(
+                TargetProfile {
+                    library: "conformance".into(),
+                    revision: "source".into(),
+                    profile: "default".into(),
+                    dialect: "qcore".into(),
+                    platform: std::env::consts::OS.into(),
+                    backend: "native".into(),
+                },
+                installed.required_observation_hooks.clone(),
+            ),
+            capability,
+        );
+        let absent = derive_task(
+            &inputs(
+                TargetProfile {
+                    library: String::new(),
+                    revision: "source".into(),
+                    profile: "default".into(),
+                    dialect: "qcore".into(),
+                    platform: std::env::consts::OS.into(),
+                    backend: "native".into(),
+                },
+                BTreeSet::new(),
+            ),
+            capability,
+        );
+        match manifest_dependent_derivation(capability) {
+            None => {
+                assert_eq!(
+                    absent.task.coverage_for(capability),
+                    present.task.coverage_for(capability),
+                    "{capability}: the manifest contributes nothing to these identifiers"
+                );
+                assert_eq!(
+                    absent.task.derivation_incomplete, present.task.derivation_incomplete,
+                    "{capability}: and nothing to the incompleteness record"
+                );
+            }
+            Some(reason) => {
+                assert_eq!(capability, VerifierCapability::ObservationHooks);
+                assert!(reason.contains("required_observation_hooks"));
+                // The measurement that makes the reason true rather than
+                // asserted: with the denominator the identifiers exist, and
+                // without it there is nothing to state.
+                assert_eq!(present.task.coverage_for(capability).len(), 2);
+                assert!(absent.task.coverage_for(capability).is_empty());
+            }
+        }
+    }
+}
+
+#[test]
+fn an_absent_providers_derivable_obligations_are_stated_and_then_refused() {
+    let scope = dispatch_with_absent(&[
+        VerifierCapability::ResourceContracts,
+        VerifierCapability::TranslationUnitProjection,
+    ]);
+    let absent = scope
+        .capabilities
+        .iter()
+        .filter(|dispatch| dispatch.derivation == DerivationBasis::ProviderAbsent)
+        .collect::<Vec<_>>();
+    assert_eq!(absent.len(), 2, "one row per requested capability");
+    let mut stated = BTreeSet::new();
+    for dispatch in &absent {
+        let coverage = dispatch.task.coverage_for(dispatch.capability);
+        assert!(
+            !coverage.is_empty(),
+            "{}: the inventory is stated, not skipped",
+            dispatch.capability
+        );
+        // The absence is the refusal *on* the obligation, not a reason to omit
+        // it: every stated identifier is in the scope's required denominator.
+        for id in &coverage {
+            assert!(scope.required.contains(id));
+            stated.insert(id.clone());
+        }
+        assert!(
+            !dispatch.dispatched,
+            "no request is built for an absent provider"
+        );
+        assert_eq!(dispatch.outcome.verdict, ProposedVerdict::Unknown);
+        assert_eq!(dispatch.outcome.diagnostics[0].code, "QP002");
+        assert!(
+            dispatch.outcome.diagnostics[0]
+                .message
+                .contains("example.absent")
+        );
+    }
+    // Nothing discharges them, and the scope still refuses first on absence.
+    assert_eq!(scope.composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(scope.composed.diagnostics[0].code, "QP002");
+    let covered = scope
+        .capabilities
+        .iter()
+        .filter_map(|dispatch| dispatch.outcome.certificate.as_ref())
+        .flat_map(|certificate| certificate.coverage().iter().cloned())
+        .collect::<BTreeSet<_>>();
+    assert!(
+        stated.is_disjoint(&covered),
+        "an absent provider's obligations are covered by nobody"
+    );
+    assert!(!scope.verified());
+}
+
+#[test]
+fn an_absent_providers_observation_inventory_is_withheld_with_its_measured_reason() {
+    let scope = dispatch_with_absent(&[VerifierCapability::ObservationHooks]);
+    let absent = scope
+        .capabilities
+        .iter()
+        .find(|dispatch| dispatch.derivation == DerivationBasis::ProviderAbsent)
+        .expect("the absent provider has a row");
+    // No obligation is invented against a denominator the core does not have:
+    // an empty-denominator coverage obligation would be a vacuous claim.
+    assert!(
+        absent
+            .task
+            .coverage_for(VerifierCapability::ObservationHooks)
+            .is_empty()
+    );
+    assert_eq!(absent.task.derivation_incomplete.len(), 1);
+    let incomplete = &absent.task.derivation_incomplete[0];
+    assert_eq!(incomplete.capability, VerifierCapability::ObservationHooks);
+    assert_eq!(
+        incomplete.category,
+        qcore_schemas::reason::ReasonCategory::EnvironmentUnavailable,
+        "a provider the environment does not offer is never a source defect"
+    );
+    assert_eq!(
+        Some(incomplete.reason.as_str()),
+        manifest_dependent_derivation(VerifierCapability::ObservationHooks),
+        "the recorded reason is the measured one"
+    );
+    assert_eq!(scope.composed.diagnostics[0].code, "QP002");
+    assert!(!scope.verified());
+}
+
+/// The stated inventory can only refuse harder: the two present providers'
+/// obligations are unchanged by the absent provider's rows, and the scope's
+/// required set strictly grows.
+#[test]
+fn stating_an_absent_providers_obligations_never_relaxes_the_scope() {
+    let registry = registry(Answer::Honest, Answer::Honest);
+    let parsed = program();
+    let resolved = registry.resolve_source_scopes(&parsed).unwrap();
+    let control = dispatch_scopes(&parsed, UNIT, &resolved, &registry);
+    assert!(control.scopes[0].verified());
+
+    let scope = dispatch_with_absent(&[VerifierCapability::ResourceContracts]);
+    assert!(control.scopes[0].required.is_subset(&scope.required));
+    assert!(control.scopes[0].required.len() < scope.required.len());
+    for dispatch in scope
+        .capabilities
+        .iter()
+        .filter(|dispatch| dispatch.derivation == DerivationBasis::InstalledManifest)
+    {
+        let matching = control.scopes[0]
             .capabilities
             .iter()
-            .all(|dispatch| dispatch.outcome.verdict == ProposedVerdict::Safe)
-    );
+            .find(|other| {
+                other.plugin_id == dispatch.plugin_id && other.capability == dispatch.capability
+            })
+            .expect("the present providers keep their rows");
+        assert_eq!(matching.task.task_digest(), dispatch.task.task_digest());
+        assert_eq!(matching.outcome.verdict, dispatch.outcome.verdict);
+    }
 }

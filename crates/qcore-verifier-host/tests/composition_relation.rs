@@ -1021,3 +1021,367 @@ fn a_safe_verdict_without_a_certificate_never_composes() {
     assert_eq!(composed.verdict, ProposedVerdict::Unknown);
     assert_eq!(codes(&composed), vec!["QP014"]);
 }
+
+// ---------------------------------------------------------------------------
+// E03-B-O2 — composition is associative under its own output.
+// ---------------------------------------------------------------------------
+
+/// Three honest providers over one unit, with disjoint hook coverage.
+fn three_components() -> (
+    VerifierRegistry,
+    VerificationTask,
+    VerificationTask,
+    VerificationTask,
+) {
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.right", Answer::Honest),
+        ("example.third", Answer::Honest),
+    ]);
+    (
+        registry,
+        simple_task('1', &["open"]),
+        simple_task('1', &["close"]),
+        simple_task('1', &["flush"]),
+    )
+}
+
+#[test]
+fn composing_a_composite_publishes_the_same_merge_as_composing_the_parts() {
+    // E03-B-O2, repaired. Before: a composed outcome carried `certificate:
+    // None` for a multi-component merge, so feeding it back refused with
+    // `QP014` — fail-closed, but silently non-associative. After: a composed
+    // outcome is taken apart into its components, so every grouping of the
+    // same components reduces to the same component sequence and publishes the
+    // same composite.
+    let (registry, left, middle, right) = three_components();
+    let a = mint(&registry, "example.left", &left);
+    let b = mint(&registry, "example.right", &middle);
+    let c = mint(&registry, "example.third", &right);
+    let required = union(&[&left, &middle, &right]);
+    assert_eq!(required.len(), 3);
+
+    let flat = compose_verification(vec![a.clone(), b.clone(), c.clone()]);
+    let left_grouped = compose_verification(vec![
+        compose_verification(vec![a.clone(), b.clone()]),
+        c.clone(),
+    ]);
+    let right_grouped = compose_verification(vec![
+        a.clone(),
+        compose_verification(vec![b.clone(), c.clone()]),
+    ]);
+    assert_eq!(
+        flat.verdict,
+        ProposedVerdict::Safe,
+        "{:?}",
+        flat.diagnostics
+    );
+    // Associativity in full, not just in the published verdict: the whole
+    // outcome — composite, component list, premises, coverage, bounds,
+    // provenance and the (absent) representative — is identical.
+    assert_eq!(flat, left_grouped);
+    assert_eq!(flat, right_grouped);
+
+    let composite = flat.composite.as_ref().expect("composite published");
+    assert_eq!(composite.certificates().len(), 3);
+    assert_eq!(*composite.coverage(), required);
+    assert_eq!(composite.plugin_ids().len(), 3);
+    assert!(flat.certificate.is_none());
+
+    // And the required-set check agrees at every grouping, including when the
+    // composed outcome is the only component of the final composition.
+    for composed in [&flat, &left_grouped, &right_grouped] {
+        assert_eq!(
+            compose_verification_with_inventory(vec![composed.clone()], &required).verdict,
+            ProposedVerdict::Safe
+        );
+        assert_eq!(
+            compose_verification_with_inventory(
+                vec![compose_verification(vec![a.clone(), b.clone()]), c.clone()],
+                &required
+            )
+            .verdict,
+            ProposedVerdict::Safe
+        );
+    }
+}
+
+#[test]
+fn regrouping_cannot_hide_a_conflict_from_the_merge_rules() {
+    // Every refusal is decided over the flattened component sequence, so a
+    // conflict between components of *different* groups is refused exactly as
+    // it is when they are composed flat. Three conflict families, three
+    // groupings each.
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.right", Answer::Honest),
+        ("example.third", Answer::Honest),
+    ]);
+    let trusted = simple_task('1', &["open"]);
+    let second = simple_task('1', &["close"]);
+    let cases: [(&str, VerificationTask); 3] = [
+        // A premise bound to two values (QP012).
+        (
+            "QP012",
+            task(
+                unit_identity('1'),
+                &["flush"],
+                BTreeMap::from([("observations_trusted".to_owned(), false)]),
+                TaskBounds::observed_runs(),
+            ),
+        ),
+        // The same obligation discharged under two bounds (QP013).
+        (
+            "QP013",
+            task(
+                unit_identity('1'),
+                &["open"],
+                trusted.assumptions.clone(),
+                TaskBounds::single_path(),
+            ),
+        ),
+        // A different artifact (QP015).
+        ("QP015", simple_task('2', &["flush"])),
+    ];
+    for (code, conflicting) in cases {
+        let a = mint(&registry, "example.left", &trusted);
+        let b = mint(&registry, "example.right", &second);
+        let c = mint(&registry, "example.third", &conflicting);
+        assert_eq!(c.verdict, ProposedVerdict::Safe, "{code}: minted");
+        // The conflicting pair is `a` and `c`, and it is refused with `code`
+        // wherever the grouping puts them.
+        assert_eq!(
+            codes(&compose_verification(vec![a.clone(), c.clone()])),
+            vec![code]
+        );
+        for outcomes in [
+            vec![a.clone(), b.clone(), c.clone()],
+            vec![compose_verification(vec![a.clone(), b.clone()]), c.clone()],
+            vec![a.clone(), compose_verification(vec![b.clone(), c.clone()])],
+            vec![
+                compose_verification(vec![a.clone(), b.clone()]),
+                compose_verification(vec![c.clone()]),
+            ],
+        ] {
+            let composed = compose_verification(outcomes);
+            assert_eq!(composed.verdict, ProposedVerdict::Unknown, "{code}");
+            assert!(composed.composite.is_none(), "{code}");
+            assert!(composed.certificate.is_none(), "{code}");
+            // Either this composition sees the conflict itself, or an inner
+            // group already refused it and contributes an `Unknown` component
+            // (`QP011`). A conflict is never dropped by a grouping.
+            let observed = codes(&composed);
+            assert!(
+                observed == vec![code] || observed == vec!["QP011"],
+                "{code}: a grouping hid the conflict: {observed:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn a_recomposed_composite_is_still_measured_against_the_required_set() {
+    // Re-composition carries no coverage a flat composition would not have:
+    // an obligation no component discharges is still missing after any number
+    // of regroupings.
+    let (registry, left, middle, right) = three_components();
+    let a = mint(&registry, "example.left", &left);
+    let b = mint(&registry, "example.right", &middle);
+    let required = union(&[&left, &middle, &right]);
+    let pair = compose_verification(vec![a, b]);
+    assert_eq!(pair.verdict, ProposedVerdict::Safe);
+    let composed = compose_verification_with_inventory(vec![pair.clone()], &required);
+    assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(codes(&composed), vec!["QP011"]);
+    // The composite it did publish covers exactly the two components' union.
+    assert_eq!(
+        *pair.composite.as_ref().unwrap().coverage(),
+        union(&[&left, &middle])
+    );
+}
+
+#[test]
+fn re_submitting_one_composite_adds_coverage_for_nobody() {
+    // Idempotence in the only sense that matters: the merged fields of
+    // `[composite, composite]` are the merged fields of `composite`, so a
+    // repeat cannot manufacture a discharge.
+    let (registry, left, middle, _) = three_components();
+    let a = mint(&registry, "example.left", &left);
+    let b = mint(&registry, "example.right", &middle);
+    let required = union(&[&left, &middle]);
+    let once = compose_verification(vec![a, b]);
+    let twice = compose_verification(vec![once.clone(), once.clone()]);
+    assert_eq!(twice.verdict, ProposedVerdict::Safe);
+    let (first, second) = (
+        once.composite.as_ref().unwrap(),
+        twice.composite.as_ref().unwrap(),
+    );
+    assert_eq!(second.certificates().len(), 4, "the components are kept");
+    assert_eq!(first.coverage(), second.coverage());
+    assert_eq!(first.premises(), second.premises());
+    assert_eq!(first.bounds(), second.bounds());
+    assert_eq!(first.plugin_ids(), second.plugin_ids());
+    assert_eq!(first.obligation_bounds(), second.obligation_bounds());
+    assert!(second.representative().is_none());
+    assert_eq!(
+        compose_verification_with_inventory(vec![twice], &required).verdict,
+        ProposedVerdict::Safe
+    );
+}
+
+#[test]
+fn only_a_safe_outcome_contributes_its_composite() {
+    // Mutation rows. The verdict gates run before any component is taken
+    // apart, so a composite attached to a non-`Safe` outcome never enters a
+    // merge, and a `Safe` outcome carrying neither a certificate nor a
+    // composite is still `QP014`.
+    let (registry, left, middle, _) = three_components();
+    let a = mint(&registry, "example.left", &left);
+    let b = mint(&registry, "example.right", &middle);
+    let honest = compose_verification(vec![a.clone(), b]);
+    let composite = honest.composite.clone().expect("composite published");
+
+    for (verdict, code) in [
+        (ProposedVerdict::Unknown, "QP011"),
+        (ProposedVerdict::Unsafe, "QP010"),
+    ] {
+        let smuggled = VerificationOutcome {
+            verdict,
+            diagnostics: Vec::new(),
+            certificate: None,
+            composite: Some(composite.clone()),
+        };
+        let composed = compose_verification(vec![a.clone(), smuggled]);
+        assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+        assert_eq!(codes(&composed), vec![code]);
+        assert!(composed.composite.is_none());
+    }
+
+    let empty = VerificationOutcome {
+        verdict: ProposedVerdict::Safe,
+        diagnostics: Vec::new(),
+        certificate: None,
+        composite: None,
+    };
+    let composed = compose_verification(vec![honest, empty]);
+    assert_eq!(composed.verdict, ProposedVerdict::Unknown);
+    assert_eq!(codes(&composed), vec!["QP014"]);
+}
+
+// ---------------------------------------------------------------------------
+// E03-B-O3 — the bounds intersection, kind by kind.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn the_bounds_envelope_is_the_tightest_of_every_kind() {
+    // The algebra of `tighter_bounds`, exercised through the real merge with
+    // real minted certificates. `crates/qcore-verification/tests/
+    // composition_bounds.rs` runs the `BoundedPaths` row against two *derived*
+    // claims; this table covers the kinds and the directions.
+    let registry = registry(&[
+        ("example.left", Answer::Honest),
+        ("example.right", Answer::Honest),
+    ]);
+    let bounds =
+        |path_exploration, schedules_explored, observed_runs_only, max_operations| TaskBounds {
+            path_exploration,
+            schedules_explored,
+            observed_runs_only,
+            max_operations,
+        };
+    let cases = [
+        (
+            "two path counts take the minimum",
+            bounds(PathBounds::BoundedPaths { paths: 5 }, None, false, None),
+            bounds(PathBounds::BoundedPaths { paths: 3 }, None, false, None),
+            bounds(PathBounds::BoundedPaths { paths: 3 }, None, false, None),
+        ),
+        (
+            "a single path absorbs any count",
+            bounds(PathBounds::SinglePath, None, false, None),
+            bounds(PathBounds::BoundedPaths { paths: 3 }, None, false, None),
+            bounds(PathBounds::SinglePath, None, false, None),
+        ),
+        (
+            "two schedule counts take the minimum",
+            bounds(PathBounds::SinglePath, Some(9), false, None),
+            bounds(PathBounds::SinglePath, Some(4), false, None),
+            bounds(PathBounds::SinglePath, Some(4), false, None),
+        ),
+        (
+            "an absent schedule count is not applicable, never unbounded",
+            bounds(PathBounds::SinglePath, None, false, None),
+            bounds(PathBounds::SinglePath, Some(4), false, None),
+            bounds(PathBounds::SinglePath, Some(4), false, None),
+        ),
+        (
+            "two operation counts take the minimum",
+            bounds(PathBounds::SinglePath, None, false, Some(64)),
+            bounds(PathBounds::SinglePath, None, false, Some(16)),
+            bounds(PathBounds::SinglePath, None, false, Some(16)),
+        ),
+        (
+            "an absent operation count does not relax the composite",
+            bounds(PathBounds::SinglePath, None, false, Some(64)),
+            bounds(PathBounds::SinglePath, None, false, None),
+            bounds(PathBounds::SinglePath, None, false, Some(64)),
+        ),
+        (
+            "recorded-run restriction is the disjunction",
+            bounds(PathBounds::SinglePath, None, true, None),
+            bounds(PathBounds::SinglePath, None, false, None),
+            bounds(PathBounds::SinglePath, None, true, None),
+        ),
+    ];
+    let assumptions = BTreeMap::from([("observations_trusted".to_owned(), true)]);
+    for (label, left, right, expected) in cases {
+        let left_task = task(unit_identity('1'), &["open"], assumptions.clone(), left);
+        let right_task = task(unit_identity('1'), &["flush"], assumptions.clone(), right);
+        // Both orders: the envelope does not depend on which component is seen
+        // first.
+        for order in [[&left_task, &right_task], [&right_task, &left_task]] {
+            let composed = compose_verification(vec![
+                mint(&registry, "example.left", order[0]),
+                mint(&registry, "example.right", order[1]),
+            ]);
+            assert_eq!(
+                composed.verdict,
+                ProposedVerdict::Safe,
+                "{label}: {:?}",
+                composed.diagnostics
+            );
+            assert_eq!(
+                composed.composite.as_ref().unwrap().bounds(),
+                Some(&expected),
+                "{label}"
+            );
+        }
+    }
+}
+
+#[test]
+fn a_component_without_a_task_leaves_the_composite_with_no_bounds() {
+    // `None` bounds are "this composite states none", never "unbounded": a
+    // component carrying no task cannot be given one by the merge. Pinned
+    // here because the envelope rule above only holds when every component
+    // states its own.
+    let registry = registry(&[("example.left", Answer::Honest)]);
+    let left = simple_task('1', &["open"]);
+    let with_task = mint(&registry, "example.left", &left);
+    assert!(
+        with_task
+            .certificate
+            .as_ref()
+            .expect("safe result carries a certificate")
+            .task()
+            .is_some()
+    );
+    assert!(
+        compose_verification(vec![with_task])
+            .composite
+            .as_ref()
+            .unwrap()
+            .bounds()
+            .is_some()
+    );
+}

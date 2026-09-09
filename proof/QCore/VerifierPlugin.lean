@@ -561,6 +561,371 @@ theorem honest_scope_with_an_absent_provider_refuses :
       [10, 11] = .unknown := by
   decide
 
+/-! ## E03-B-O1: deriving an absent provider's obligations
+
+`dispatch_scope` used to skip a provider the registry could not find *before*
+deriving anything, so its obligations were never stated. They are stated now
+wherever the derivation reads nothing from the manifest, and the absence
+becomes the refusal on them. Exactly one capability reads a manifest field
+(the required-hook denominator of `ObservationCoverageComplete`), and for that
+one the inventory is withheld rather than stated against a denominator the core
+does not have. -/
+
+/-- An obligation identifier, as a triple: capability, artifact, denominator.
+`0` is the denominator of an obligation that has none. -/
+abbrev Ident := Nat × Nat × Nat
+
+/-- The measured predicate: the capability whose derivation reads the
+provider's declared denominator. -/
+def manifestDependent (capability : Nat) : Bool := capability == 0
+
+/-- What the core states for one capability of one artifact, given the
+provider's declared denominator when the provider is installed. -/
+def derive (capability artifact : Nat) (denominator : Option Nat) : List Ident :=
+  if manifestDependent capability then
+    match denominator with
+    | some d => [(capability, artifact, d)]
+    | none => []
+  else [(capability, artifact, 0)]
+
+/-- E03-B-O1, the completeness half: for a capability whose derivation reads
+no manifest field, the absent provider's inventory *is* the installed
+provider's inventory. -/
+theorem absent_derivation_states_the_installed_inventory
+    (capability artifact denominator : Nat)
+    (independent : manifestDependent capability = false) :
+    derive capability artifact none = derive capability artifact (some denominator) := by
+  simp [derive, independent]
+
+/-- The soundness half: where the denominator is missing, nothing is stated —
+an empty-denominator obligation would be a vacuous claim. -/
+theorem absent_derivation_withholds_a_manifest_dependent_inventory
+    (capability artifact : Nat) (dependent : manifestDependent capability = true) :
+    derive capability artifact none = [] := by
+  simp [derive, dependent]
+
+/-- Non-vacuity for both halves: there is a capability of each kind, and the
+withheld inventory is nonempty when the denominator is available. -/
+theorem the_measured_capability_table_is_not_vacuous (artifact denominator : Nat) :
+    manifestDependent 0 = true ∧ manifestDependent 1 = false ∧
+      (derive 0 artifact (some denominator)).length = 1 ∧
+      (derive 1 artifact none).length = 1 := by
+  refine ⟨rfl, rfl, ?_, ?_⟩ <;> simp [derive, manifestDependent]
+
+/-- And stating them can only refuse harder: an obligation the core states for
+a provider that is not installed is discharged by nobody, so the merge stays
+`unknown` however the rest of the scope answered. -/
+theorem stated_absent_obligations_only_refuse
+    {outcomes : List Outcome} {inventory : List Certificate} (required extra : List Nat)
+    (gathered : collect outcomes = some inventory)
+    (id : Nat) (stated : id ∈ extra) (unclaimed : id ∉ covered inventory) :
+    composeInventory outcomes (required ++ extra) = .unknown :=
+  uncovered_obligation_is_unknown gathered id (List.mem_append_right required stated) unclaimed
+
+/-- The scope-level refusal is unchanged by the wider inventory: absence still
+dominates, whatever was stated. -/
+theorem absent_provider_scope_is_unknown_however_much_is_stated
+    (absent : List Nat) (missing : absent ≠ []) (outcomes : List Outcome)
+    (required extra : List Nat) :
+    composeScope absent outcomes (required ++ extra) = .unknown :=
+  absent_provider_scope_is_unknown absent missing outcomes _
+
+/-! ## E03-B-O2: composition is associative under its own output
+
+A composed outcome carried no component certificate, so feeding it back
+refused (`QP014`): fail-closed, but silently non-associative. Composition now
+takes a composite apart into the components it was built from, so every
+grouping of one component sequence decides its conflicts over exactly the same
+certificates. -/
+
+/-- A composition input: a component certificate, or the composite an earlier
+composition published. -/
+inductive Component where
+  | leaf : Certificate -> Component
+  | merged : List Certificate -> Component
+  deriving Repr
+
+/-- Composing a composite is composing its parts. -/
+def flatten : List Component -> List Certificate
+  | [] => []
+  | .leaf certificate :: rest => certificate :: flatten rest
+  | .merged certificates :: rest => certificates ++ flatten rest
+
+def composeComponents (components : List Component) (required : List Nat) : Verdict :=
+  composeInventory ((flatten components).map Outcome.safe) required
+
+theorem collect_safe (certificates : List Certificate) :
+    collect (certificates.map Outcome.safe) = some certificates := by
+  induction certificates with
+  | nil => rfl
+  | cons head tail ih => simp [collect, ih]
+
+theorem flatten_leaves (certificates : List Certificate) :
+    flatten (certificates.map Component.leaf) = certificates := by
+  induction certificates with
+  | nil => rfl
+  | cons head tail ih => simp [flatten, ih]
+
+/-- The grouping is invisible: both regroupings of three components reduce to
+the same component sequence, so `composeComponents` decides every conflict over
+the same certificates. -/
+theorem regrouping_is_the_same_component_sequence (left middle right : Certificate) :
+    flatten [.merged [left, middle], .leaf right] = [left, middle, right] ∧
+      flatten [.leaf left, .merged [middle, right]] = [left, middle, right] ∧
+      flatten [.leaf left, .leaf middle, .leaf right] = [left, middle, right] := by
+  refine ⟨?_, ?_, ?_⟩ <;> simp [flatten]
+
+/-- E03-B-O2: composition is associative under its own output. -/
+theorem composition_is_associative (left middle right : Certificate) (required : List Nat) :
+    composeComponents [.merged [left, middle], .leaf right] required =
+        composeComponents [.leaf left, .leaf middle, .leaf right] required ∧
+      composeComponents [.leaf left, .merged [middle, right]] required =
+        composeComponents [.leaf left, .leaf middle, .leaf right] required := by
+  refine ⟨?_, ?_⟩ <;> simp [composeComponents, flatten]
+
+/-- Non-vacuity: a regrouped composition still merges. -/
+theorem regrouped_components_merge :
+    composeComponents
+      [.merged [⟨1, [(7, true)], [10], [(10, 1)]⟩, ⟨1, [(7, true)], [11], [(11, 1)]⟩],
+        .leaf ⟨1, [(7, true)], [12], [(12, 1)]⟩]
+      [10, 11, 12] = .safe := by
+  decide
+
+/-- And a conflict between components of two different groups is refused
+exactly as it is when they are composed flat: no grouping can hide it. -/
+theorem regrouping_cannot_hide_a_conflict :
+    composeComponents
+      [.merged [⟨1, [(7, true)], [10], [(10, 1)]⟩, ⟨1, [(7, true)], [11], [(11, 1)]⟩],
+        .leaf ⟨1, [(7, false)], [12], [(12, 1)]⟩]
+      [10, 11, 12] = .unknown ∧
+      composeComponents
+        [.leaf ⟨1, [(7, true)], [10], [(10, 1)]⟩, .leaf ⟨1, [(7, true)], [11], [(11, 1)]⟩,
+          .leaf ⟨1, [(7, false)], [12], [(12, 1)]⟩]
+        [10, 11, 12] = .unknown := by
+  exact ⟨by decide, by decide⟩
+
+/-- Re-submitting one composite adds no coverage: the merge is over a set. -/
+theorem re_submitting_a_composite_adds_no_coverage
+    (left right : Certificate) (id : Nat) :
+    id ∈ covered (flatten [.merged [left, right], .merged [left, right]]) ↔
+      id ∈ covered (flatten [.merged [left, right]]) := by
+  have duplicated : ∀ p q : Prop, (p ∨ q ∨ p ∨ q) ↔ (p ∨ q) := by
+    intro p q
+    constructor
+    · rintro (h | h | h | h)
+      · exact Or.inl h
+      · exact Or.inr h
+      · exact Or.inl h
+      · exact Or.inr h
+    · rintro (h | h)
+      · exact Or.inl h
+      · exact Or.inr (Or.inl h)
+  simpa [flatten, covered] using duplicated (id ∈ left.coverage) (id ∈ right.coverage)
+
+/-! ## E03-B-O3: the tightest-envelope intersection
+
+E03-B recorded the intersection as argued rather than measured because no
+derivation was believed to emit any of the three count kinds. A census
+corrects half of that: three production derivations state `BoundedPaths`
+(`crates/qcore-verification/tests/composition_bounds.rs` composes two of them),
+while no derivation states a schedule or operation count, which a Rust tripwire
+now pins. The algebra is proved here for all three kinds. -/
+
+inductive Paths where
+  | single : Paths
+  | bounded : Nat -> Paths
+  deriving DecidableEq, Repr
+
+/-- `single` is the least path space any derivation claims, so it absorbs. -/
+def tighterPaths : Paths -> Paths -> Paths
+  | .single, _ => .single
+  | _, .single => .single
+  | .bounded left, .bounded right => .bounded (min left right)
+
+/-- `none` is "not applicable" or "structural", never "unbounded": an explicit
+count constrains the composite and an absent one does not relax it. -/
+def tighterCount : Option Nat -> Option Nat -> Option Nat
+  | some left, some right => some (min left right)
+  | some value, none => some value
+  | none, some value => some value
+  | none, none => none
+
+structure Bounds where
+  paths : Paths
+  schedules : Option Nat
+  observedOnly : Bool
+  operations : Option Nat
+  deriving DecidableEq, Repr
+
+def tighter (left right : Bounds) : Bounds :=
+  { paths := tighterPaths left.paths right.paths,
+    schedules := tighterCount left.schedules right.schedules,
+    -- A composite containing one recorded-run component is a recorded-run
+    -- claim: the disjunction, never the conjunction.
+    observedOnly := left.observedOnly || right.observedOnly,
+    operations := tighterCount left.operations right.operations }
+
+def pathsAtMost : Paths -> Paths -> Bool
+  | .single, _ => true
+  | .bounded _, .single => false
+  | .bounded left, .bounded right => left <= right
+
+def countAtMost : Option Nat -> Option Nat -> Bool
+  | _, none => true
+  | none, some _ => false
+  | some left, some right => left <= right
+
+/-- "`left` claims no more than `right`": a narrower path space, counts at
+least as small, and no weaker a recorded-run restriction — if `right` is
+restricted to recorded runs then `left` must be too, or `left` would be
+claiming static safety `right` never established. -/
+def atMost (left right : Bounds) : Bool :=
+  pathsAtMost left.paths right.paths && countAtMost left.schedules right.schedules &&
+    (left.observedOnly || !right.observedOnly) &&
+    countAtMost left.operations right.operations
+
+theorem tighter_paths_is_a_lower_bound (left right : Paths) :
+    pathsAtMost (tighterPaths left right) left = true ∧
+      pathsAtMost (tighterPaths left right) right = true := by
+  cases left <;> cases right <;>
+    simp [tighterPaths, pathsAtMost, Nat.min_le_left, Nat.min_le_right]
+
+theorem tighter_count_is_a_lower_bound (left right : Option Nat) :
+    countAtMost (tighterCount left right) left = true ∧
+      countAtMost (tighterCount left right) right = true := by
+  cases left <;> cases right <;>
+    simp [tighterCount, countAtMost, Nat.min_le_left, Nat.min_le_right]
+
+/-- The published envelope claims no more than either component. -/
+theorem the_envelope_is_a_lower_bound (left right : Bounds) :
+    atMost (tighter left right) left = true ∧ atMost (tighter left right) right = true := by
+  have paths := tighter_paths_is_a_lower_bound left.paths right.paths
+  have schedules := tighter_count_is_a_lower_bound left.schedules right.schedules
+  have operations := tighter_count_is_a_lower_bound left.operations right.operations
+  refine ⟨?_, ?_⟩ <;>
+    simp [atMost, tighter, paths.1, paths.2, schedules.1, schedules.2, operations.1,
+      operations.2] <;>
+    cases left.observedOnly <;> cases right.observedOnly <;> simp
+
+theorem envelope_is_commutative (left right : Bounds) : tighter left right = tighter right left := by
+  cases left with
+  | mk leftPaths leftSchedules leftObserved leftOperations =>
+    cases right with
+    | mk rightPaths rightSchedules rightObserved rightOperations =>
+      cases leftPaths <;> cases rightPaths <;>
+        cases leftSchedules <;> cases rightSchedules <;>
+        cases leftOperations <;> cases rightOperations <;>
+        cases leftObserved <;> cases rightObserved <;>
+        simp [tighter, tighterPaths, tighterCount, Nat.min_comm]
+
+theorem envelope_is_idempotent (bounds : Bounds) : tighter bounds bounds = bounds := by
+  cases bounds with
+  | mk paths schedules observed operations =>
+    cases paths <;> cases schedules <;> cases operations <;> cases observed <;>
+      simp [tighter, tighterPaths, tighterCount]
+
+/-- A single-path component absorbs any explicit path count. -/
+theorem a_single_path_absorbs (paths : Paths) :
+    tighterPaths .single paths = .single ∧ tighterPaths paths .single = .single := by
+  cases paths <;> simp [tighterPaths]
+
+/-- An absent count does not relax the composite. -/
+theorem an_absent_count_does_not_relax (count : Nat) :
+    tighterCount none (some count) = some count ∧
+      tighterCount (some count) none = some count := by
+  simp [tighterCount]
+
+/-- One recorded-run component makes the whole composite a recorded-run claim,
+so it can never be presented as static source safety. -/
+theorem recorded_runs_are_contagious (left right : Bounds) :
+    (tighter left right).observedOnly = (left.observedOnly || right.observedOnly) := rfl
+
+/-- Non-vacuity, kind by kind. The path row is the measured one: the two real
+Boolean-field derivations state 4 and 2 paths for one imported unit, and the
+composite claims 2. -/
+theorem every_count_kind_takes_the_minimum :
+    tighterPaths (.bounded 4) (.bounded 2) = .bounded 2 ∧
+      tighterCount (some 9) (some 4) = some 4 ∧
+      tighterCount (some 64) (some 16) = some 16 := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+theorem pathsAtMost_refl (paths : Paths) : pathsAtMost paths paths = true := by
+  cases paths <;> simp [pathsAtMost]
+
+theorem countAtMost_refl (count : Option Nat) : countAtMost count count = true := by
+  cases count <;> simp [countAtMost]
+
+theorem atMost_refl (bounds : Bounds) : atMost bounds bounds = true := by
+  simp [atMost, pathsAtMost_refl, countAtMost_refl]
+
+theorem pathsAtMost_trans {left middle right : Paths}
+    (first : pathsAtMost left middle = true) (second : pathsAtMost middle right = true) :
+    pathsAtMost left right = true := by
+  cases left <;> cases middle <;> cases right <;> simp_all [pathsAtMost] <;> omega
+
+theorem countAtMost_trans {left middle right : Option Nat}
+    (first : countAtMost left middle = true) (second : countAtMost middle right = true) :
+    countAtMost left right = true := by
+  cases left <;> cases middle <;> cases right <;> simp_all [countAtMost] <;> omega
+
+theorem atMost_trans {left middle right : Bounds}
+    (first : atMost left middle = true) (second : atMost middle right = true) :
+    atMost left right = true := by
+  simp only [atMost, Bool.and_eq_true] at first second ⊢
+  obtain ⟨⟨⟨paths₁, schedules₁⟩, observed₁⟩, operations₁⟩ := first
+  obtain ⟨⟨⟨paths₂, schedules₂⟩, observed₂⟩, operations₂⟩ := second
+  refine ⟨⟨⟨pathsAtMost_trans paths₁ paths₂, countAtMost_trans schedules₁ schedules₂⟩, ?_⟩,
+    countAtMost_trans operations₁ operations₂⟩
+  cases hleft : left.observedOnly <;> cases hmiddle : middle.observedOnly <;>
+    cases hright : right.observedOnly <;> simp_all
+
+/-- The composite's envelope, folded over its components in order. -/
+def envelope : List Bounds -> Option Bounds
+  | [] => none
+  | head :: tail => some (tail.foldl tighter head)
+
+theorem fold_is_a_lower_bound :
+    ∀ (rest : List Bounds) (accumulated component : Bounds),
+      component ∈ accumulated :: rest →
+        atMost (rest.foldl tighter accumulated) component = true := by
+  intro rest
+  induction rest with
+  | nil =>
+    intro accumulated component member
+    simp only [List.mem_singleton] at member
+    subst member
+    simpa using atMost_refl _
+  | cons head tail ih =>
+    intro accumulated component member
+    have step : (head :: tail).foldl tighter accumulated
+        = tail.foldl tighter (tighter accumulated head) := rfl
+    rw [step]
+    have folded : atMost (tail.foldl tighter (tighter accumulated head))
+        (tighter accumulated head) = true :=
+      ih (tighter accumulated head) (tighter accumulated head) (by simp)
+    rcases List.mem_cons.mp member with rfl | inRest
+    · exact atMost_trans folded (the_envelope_is_a_lower_bound component head).1
+    · rcases List.mem_cons.mp inRest with rfl | inTail
+      · exact atMost_trans folded (the_envelope_is_a_lower_bound accumulated component).2
+      · exact ih (tighter accumulated head) component (List.mem_cons_of_mem _ inTail)
+
+/-- However many components a composite has, its published envelope claims no
+more than any one of them: the merge is only as strong as its weakest part. -/
+theorem the_published_envelope_bounds_every_component
+    (components : List Bounds) (published component : Bounds)
+    (states : envelope components = some published) (member : component ∈ components) :
+    atMost published component = true := by
+  cases components with
+  | nil => simp at member
+  | cons head tail =>
+    simp only [envelope, Option.some.injEq] at states
+    subst states
+    exact fold_is_a_lower_bound tail head component member
+
+/-- A composite with no component states no envelope: `none` is "states none",
+never "unbounded". -/
+theorem an_empty_composition_states_no_envelope : envelope [] = none := rfl
+
 end Composition
 
 theorem missing_plugin_composition_is_unknown : compose [] = .unknown := by
