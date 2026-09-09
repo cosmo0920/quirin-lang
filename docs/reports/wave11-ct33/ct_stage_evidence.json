@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "card": "wave11-ct33",
+  "generated": "2026-09-09",
+  "report": "docs/reports/wave11-ct33/README.md",
+  "purpose": "Per-stage executed evidence for the one case this CT lane mapped from card CT33-RANKS's proposal, written in the same shape as docs/reports/wave9-ctwin/ct_stage_evidence.json so scripts/ct_stage_summary.py merges it with the earlier per-card records.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control's execution is recorded under `aux:`, never as the case's own stage.",
+  "route": "mutex_guard (qcore_frontend::source_mutex lowering onto the unedited qcore_core::mutex_invariant checker, reached through compile_files). No production file is in this lane's diff: `git diff` over crates/ and compiler/src/ is empty.",
+  "why_native_sanitized_stays_unassessed": "Card CT33-RANKS carries a sanitized native run of an equivalent ranked nested trace (`ranked_nested_sections_agree_between_the_reference_and_a_sanitized_native_run`, crates/qcore-core/tests/unit/mutex_c_emit.rs). That run is at the core level over a hand-built trace, not through this harness on this case's fixture, and the schema-2 sanitizer gate (SANITIZED_GATED_CASES) lists exactly which cases may read `executed`. Claiming it would be the overclaim the gate exists to prevent. The card proposed `unassessed` for exactly this reason and this lane did not upgrade it.",
+  "why_this_route_has_no_cfg_stage": "Unchanged from wave 5: source.mutex.guard.v1 emits from a checked event list and constructs no CFG, so schema 2's route vocabulary omits every CFG-bearing stage rather than recording an indefinite `unassessed`.",
+  "no_native_or_sanitized_or_proof_evidence_added": "Sanitized-native stays 3 of 31 (CT03, CT17, CT26) and proof 0 of 31. The denominator grew by mapping, not by conformance; this case contributes neither.",
+  "lean_is_not_applicable": "Judged not applicable and recorded, on the same terms as cards T00-CT-SCHEMA, T08-SRC-CT and CT-CTWIN: this lane adds no checker rule, no diagnostic code, no lowering and no model. It adds one fixture, one harness case-set entry and the manifest/acceptance rows derived from them, over an unedited checker whose own 12 theorems landed with card CT33-RANKS. `proof` stays unassessed for this case; no theorem is bound to any CT fixture (T00.7 remains open). The Lean gate was run and passes.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT33"
+    ],
+    "mapped_before": 30,
+    "mapped_after": 31,
+    "unmapped_after": 19,
+    "total": 50
+  },
+  "mapped_case_stage_matrix": {
+    "CT33": {
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": "linux",
+      "mutex_reject_controls_executed": 2,
+      "measured_cascade": [
+        "Q624",
+        "Q612"
+      ],
+      "measured_diagnostics": [
+        "compiler/tests/fixtures/ct/CT33/case.qcore:9:29: Q624: LockRankViolation { event: 7, mutex: 1, rank: 1, held_guard: 3, held_mutex: 2, held_rank: 2 }",
+        "compiler/tests/fixtures/ct/CT33/case.qcore:9:49: Q612: DeadGuard { event: 8, guard: 4 }"
+      ],
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files. Both `mutex rank N guards R` declarations and both nested `with lock` sections lower; the ranked spelling is what admits the nesting at all, and `declares_lock_rank` decides that once over the whole source before any statement is lowered."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT33/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::mutex_invariant::check_mutex_invariant_program. Refusal at Q624 LockRankViolation on the descending acquisition, with the exact ordered cascade [Q624, Q612 DeadGuard]. The trailing entry is pinned rather than filtered: the refused Lock mints no guard, so the inner section's own unlock names a dead one, and a change that started silently releasing or minting a guard would move the vector."
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:accepted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore",
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ],
+          "observations": 1,
+          "emits_c": false,
+          "note": "The case with one statement changed: the second section nests `b` inside `a` again instead of the reverse. It checks and the harness asserts it took the checked mutex-guard route, so Q624 is attributable to the descending edge rather than to nesting, to the two sections, or to the module declaring ranks. Route-checked; no emission or native run is claimed. Measured on Linux; on a host outside the gate the runner reports the Q500 refusal instead of skipping silently."
+        },
+        "aux:unranked_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT33/unranked.qcore",
+          "observations": 1,
+          "measured_cascade": [
+            "Q622",
+            "Q622"
+          ],
+          "note": "The case's own shape with both declarations unranked. Both nestings refuse at Q622 UnsupportedSynchronizationConstruct { NestedProtectingMutex }, one per nesting — the represented refusal that stood before card CT33-RANKS. This is what makes `nesting is admitted only where a rank is declared` a measured statement rather than a claim in prose, and it runs on every host."
+        }
+      }
+    }
+  },
+  "executed_totals_added": {
+    "mutex_lowerings": 1,
+    "mutex_invariant_checks": 1,
+    "mutex_reference_executions": 0,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "in_case_source_controls": 2,
+    "accepted_controls": 1,
+    "refused_controls": 1,
+    "cases_with_proof_evidence": 0
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT34": {
+      "scenario": "Protected owned graph grows/replaces identities",
+      "expected": "Unsupported in fixed-shape profile",
+      "reason_verified_against": "card CT33-RANKS (the ranked discipline landed in wave 10)",
+      "why_still_unmapped": "CreateMutex still fixes its declared footprints at creation and consumes the creator's FULL_ACCESS share over each of them; there is no growth form, and post-creation protection growth is a represented refusal rather than something a program can write down. A lock rank orders acquisitions of existing generations and changes nothing about what a mutex protects, so CT33-RANKS did not create a protection-growth form and the wave-5 reason stands verbatim in substance.",
+      "recorded_reason_unchanged": true
+    },
+    "CT46": {
+      "scenario": "Known shared wrapper with non-Sync but Send payload",
+      "expected": "Accept only through verified mutex protocol",
+      "reason_verified_against": "card CT33-RANKS (the ranked discipline landed in wave 10)",
+      "why_still_unmapped": "Needs Send/Sync derivation, which is outside L09 and outside this profile entirely. Ranks are declared positions in an acquisition order; they say nothing about which payloads may cross a task boundary, so CT33-RANKS supplies no part of what CT46 asks for and the wave-5 reason stands verbatim in substance.",
+      "recorded_reason_unchanged": true
+    }
+  }
+}

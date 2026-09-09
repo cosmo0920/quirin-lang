@@ -1,0 +1,11 @@
+import std.concurrency;
+fn main() -> unit {
+    thread scope s {
+        let x = protected 4;
+        let y = protected 4;
+        let a = mutex rank 1 guards x;
+        let b = mutex rank 2 guards y;
+        with lock a as ga { with lock b as gb { } }
+        with lock b as gc { with lock a as gd { } }
+    }
+}

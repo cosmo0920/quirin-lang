@@ -81,8 +81,8 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
-    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT35", "CT36", "CT37",
-    "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
+    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT35", "CT36",
+    "CT37", "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN). These two cases name C constructs that
 /// no QCore syntax expresses, so their artifact is a `.c` twin analyzed through
@@ -95,10 +95,13 @@ const MAPPED_CASES: &[&str] = &[
 const LEGACY_C_TWIN_CASES: &[&str] = &["CT43", "CT45"];
 /// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
-/// composition, `wait` announcement and guard-scoped facts). Each pins its exact
+/// composition, `wait` announcement and guard-scoped facts, and by CT33-RANKS's
+/// opt-in lock-rank discipline). Each pins its exact
 /// ordered diagnostic code vector, not merely its head, and carries at least one
 /// control that distinguishes the refused construct from the admitted one.
-const MUTEX_REJECT_CASES: &[&str] = &["CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT48"];
+const MUTEX_REJECT_CASES: &[&str] = &[
+    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT48",
+];
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
 const MUTEX_SANITIZED_CASE: &str = "CT26";
@@ -2063,14 +2066,14 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 30 of 50 CT cases are mapped
-/// as executed tests over their own fixture; 20 remain unmapped. Twenty-eight of
-/// the thirty are source-level; CT43 and CT45 are C twins executed through the
-/// unrestricted-C gateway, which is a different artifact and a different
+/// The moving count is the W6 genericity metric: 31 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 19 remain unmapped. Twenty-nine of
+/// the thirty-one are source-level; CT43 and CT45 are C twins executed through
+/// the unrestricted-C gateway, which is a different artifact and a different
 /// property, so they are counted here and separated in the report.
 /// CT13/CT15/CT26 and the
 /// CT03/CT17 sanitized heap scenarios and the accepted controls carried by
-/// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT48 execute on Linux and macOS.
+/// CT04/CT05/CT18/CT27/CT28/CT29/CT30/CT31/CT32/CT33/CT48 execute on Linux and macOS.
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
 /// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
 /// accepted controls are multi-task modules this backend renders in no thread at
