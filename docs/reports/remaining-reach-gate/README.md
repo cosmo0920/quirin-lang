@@ -188,7 +188,8 @@ run on the pinned prepared clone before and after this card:
 | **admitted by the neutral route** | 0 | **1** | **1** |
 | refused | 46 | 45 | 45 |
 
-Every blocker-family count is unchanged, and the two census JSON documents are
+Every blocker-family count is unchanged, and the census JSON documents of all
+three runs — BEFORE, AFTER and a third at the final formatted tree — are
 **byte-identical**. This card's reach movement is **0**.
 
 That is not a defect in the admission; it is a fact about the bodies, and the
@@ -395,7 +396,7 @@ Run from this worktree at the card checkpoint.
 
 | check | result |
 |---|---|
-| `cargo test --workspace` | **2342 passed**, 0 failed, 5 ignored |
+| `cargo test --workspace` | **2344 passed**, 0 failed, 5 ignored |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -405,12 +406,15 @@ Run from this worktree at the card checkpoint.
 | `python3 -m unittest discover -s scripts/tests` | 124 passed, **1 failed by design** (§10.2) |
 | `python3 -B providers/package.py build` | five packages built, for §6's runs |
 | 185-unit corpus, three runs | §6 |
-| reach census, two runs | §5, byte-identical |
+| reach census, **three** runs | §5, all three byte-identical |
 
-The workspace count is 2342 against wave 12's 2332 on this tree before the
-card's own test file: exactly the 25 new tests (15 in `neutral_position`,
-10 in `reach_gate_positions`), one renamed `o04_b08` test and one added, and no
-other binary's count moves.
+The workspace count is 2344 against 2318 on the pristine tree: exactly the
+26 new tests — 15 in `neutral_position`, 10 in `reach_gate_positions` and one
+in `o04_b08` (§8, beside one renamed) — and no other binary's count moves.
+
+The third census run, at the final formatted tree, produced the same SHA-256 as
+both earlier runs, so the reach measurement is reproducible at the committed
+checkpoint and not only at the moment it was taken.
 
 ### 10.1 Known load-flaky, confirmed passing in isolation
 
