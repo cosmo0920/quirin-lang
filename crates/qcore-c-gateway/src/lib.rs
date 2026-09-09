@@ -15,6 +15,7 @@ pub mod call_use_source;
 mod clang;
 pub mod counter_source;
 pub mod legacy_c;
+pub mod legacy_census;
 mod legacy_summary;
 pub mod source_call_use;
 pub mod teardown_source;

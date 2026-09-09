@@ -70,6 +70,19 @@
 //! this route to it.
 use super::*;
 
+use crate::legacy_census::{NeutralComponentOutcome, NeutralMemberRefusal, NeutralRefusal};
+
+/// What one call of [`infer_neutral_component`] decided, for both the caller
+/// that installs contracts and the read-only census (card C03-REACH).
+///
+/// `published` is exactly what the route publishes and is the only field the
+/// derivation reads; `outcome` records the same decision in the census
+/// vocabulary and is never consulted by any analysis.
+pub(super) struct NeutralDecision {
+    pub(super) published: Option<BTreeMap<String, ResourceFunctionContract>>,
+    pub(super) outcome: NeutralComponentOutcome,
+}
+
 /// One member's interprocedural assumption. `Uncontracted` is the conservative
 /// element: a call to the member is an unmodelled call, hence `Unknown`.
 /// `Neutral` is the optimistic one: the call site applies `N(m)`.
@@ -100,7 +113,7 @@ pub(super) fn infer_neutral_component(
     component: &[String],
     declared: &ResourceContracts,
     environment: &ResourceContracts,
-) -> Option<BTreeMap<String, ResourceFunctionContract>> {
+) -> NeutralDecision {
     // (V1) A declared contract keeps the component on the existing route.
     // Declared precedence is never touched, and this route never proposes a
     // contract for a function whose interface a `.qcore` module already fixes.
@@ -108,11 +121,24 @@ pub(super) fn infer_neutral_component(
         .iter()
         .any(|name| declared.contract(name).is_some())
     {
-        return None;
+        return NeutralDecision {
+            published: None,
+            outcome: NeutralComponentOutcome::DeclaredContract,
+        };
     }
     let mut members = BTreeMap::new();
     for name in component {
-        let parameters = function_parameters(tokens, name)?;
+        let Some(parameters) = function_parameters(tokens, name) else {
+            return NeutralDecision {
+                published: None,
+                outcome: NeutralComponentOutcome::Refused {
+                    members: vec![NeutralMemberRefusal {
+                        function: name.clone(),
+                        refusal: NeutralRefusal::ParametersUnreadable,
+                    }],
+                },
+            };
+        };
         let contract = neutral_contract(parameters.len());
         members.insert(name.clone(), (parameters, contract));
     }
@@ -126,6 +152,11 @@ pub(super) fn infer_neutral_component(
     // implicit: each round that demotes anything demotes at least one member,
     // so `|C| + 1` rounds suffice to reach the greatest post-fixed point or to
     // exhaust the component.
+    // Census only: the refusal each member reported the first time it was
+    // examined, i.e. under the all-`Neutral` seed. Later rounds re-examine a
+    // survivor under a weaker map, so the first reading is the one that
+    // describes the member's own body rather than a cascade from a sibling.
+    let mut first_refusals: Vec<NeutralMemberRefusal> = Vec::new();
     for _ in 0..=component.len() {
         let environment = component_environment(component, environment, &members, &assumption);
         let mut demoted = Vec::new();
@@ -134,7 +165,13 @@ pub(super) fn infer_neutral_component(
                 continue;
             }
             let (parameters, contract) = &members[name];
-            if !validate_member(tokens, name, &environment, parameters, contract) {
+            if let Err(refusal) = explain_member(tokens, name, &environment, parameters, contract) {
+                if !first_refusals.iter().any(|entry| entry.function == *name) {
+                    first_refusals.push(NeutralMemberRefusal {
+                        function: name.clone(),
+                        refusal,
+                    });
+                }
                 demoted.push(name);
             }
         }
@@ -147,13 +184,33 @@ pub(super) fn infer_neutral_component(
                 .filter(|name| assumption[*name] == Assumption::Neutral)
                 .map(|name| (name.clone(), members[name].1.clone()))
                 .collect::<BTreeMap<_, _>>();
-            return (!published.is_empty()).then_some(published);
+            if published.is_empty() {
+                return NeutralDecision {
+                    published: None,
+                    outcome: NeutralComponentOutcome::Refused {
+                        members: first_refusals,
+                    },
+                };
+            }
+            let admitted = published.keys().cloned().collect::<Vec<_>>();
+            return NeutralDecision {
+                published: Some(published),
+                outcome: NeutralComponentOutcome::Admitted {
+                    members: admitted,
+                    refused: first_refusals,
+                },
+            };
         }
         for name in demoted {
             assumption.insert(name, Assumption::Uncontracted);
         }
     }
-    None
+    NeutralDecision {
+        published: None,
+        outcome: NeutralComponentOutcome::Refused {
+            members: first_refusals,
+        },
+    }
 }
 
 /// The contract environment one descent round runs under: everything already in
@@ -181,31 +238,38 @@ fn component_environment(
     round
 }
 
-/// Validate one member's body against `N(m)` under the round's assumption.
+/// Validate one member's body against `N(m)` under the round's assumption,
+/// naming the first obligation that refuses it.
 ///
 /// This is where V5–V8 are discharged. Nothing here is bespoke: the entry state
 /// is the ordinary one the contract prescribes, and the gate is the unchanged
 /// [`observations_match_contract`].
-fn validate_member(
+///
+/// The `Err` payload is read only by the read-only census (card C03-REACH);
+/// the route itself branches on `is_err` alone, so naming the obligation
+/// cannot change what is published. The one decomposition — testing
+/// [`observations_match_contract`]'s own first condition (a `Safe` analysis
+/// with no diagnostics) before calling it — is behaviour-preserving because
+/// that condition is exactly what the gate tests first.
+fn explain_member(
     tokens: &[Token],
     function: &str,
     environment: &ResourceContracts,
     parameters: &[Option<String>],
     contract: &ResourceFunctionContract,
-) -> bool {
-    let Ok(cfg) = build_function_cfg(tokens, function, environment) else {
-        return false;
-    };
+) -> Result<(), NeutralRefusal> {
+    let cfg = build_function_cfg(tokens, function, environment)
+        .map_err(|error| NeutralRefusal::CfgUnavailable(error.to_string()))?;
     // The neutral contract binds nothing, so this is the *empty* entry custody
     // (V5): no parameter site, no out slot, a non-nullable result.
     let Some(entry) = EntryCustody::build(&cfg, parameters, contract) else {
-        return false;
+        return Err(NeutralRefusal::EntryUnavailable);
     };
     if entry.parameter_sites.iter().any(Option::is_some)
         || entry.out_slots.iter().any(Option::is_some)
         || entry.result_nullable
     {
-        return false;
+        return Err(NeutralRefusal::NonEmptyEntry);
     }
     // (V5, containment) A node the analysis never reached raises no diagnostic,
     // so an unmodelled construct can survive an otherwise clean run by sitting
@@ -214,12 +278,18 @@ fn validate_member(
     // `Unknown` instruction, so publishing such a member would offer a summary
     // its own containment check later rejects. Refuse it here instead, as the
     // contextual route already refuses a context CFG that retains one.
-    if cfg
+    let retained = cfg
         .nodes
         .iter()
-        .any(|node| matches!(node.instruction, LegacyInstruction::Unknown { .. }))
-    {
-        return false;
+        .filter_map(|node| match &node.instruction {
+            LegacyInstruction::Unknown { description } => Some((node.line, description.clone())),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    if !retained.is_empty() {
+        return Err(NeutralRefusal::RetainedUnknownInstruction {
+            descriptions: retained,
+        });
     }
     let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
     // (V5) `Safe` with zero diagnostics — an unresolved alias, an unsupported
@@ -230,13 +300,26 @@ fn validate_member(
     // (V6) Every reachable exit leaves every formal untracked, the sanctioned
     // containment set is empty, no out slot is claimed or written, and no exit
     // returns a tracked resource.
+    if summary.status != AnalysisStatus::Safe || !summary.diagnostics.is_empty() {
+        return Err(NeutralRefusal::BodyNotClean {
+            status: summary.status,
+            diagnostics: summary.diagnostics.clone(),
+        });
+    }
     if !observations_match_contract(contract, &entry, &summary, &observations) {
-        return false;
+        return Err(if observations.is_empty() {
+            NeutralRefusal::NoReachableExit
+        } else {
+            NeutralRefusal::ExitsDisagree
+        });
     }
     // (V7) The neutral contract must be what validation *reads off* the body,
     // not merely something consistent with it. Reading the modes back off the
     // settled observations must reproduce `N(m)` exactly; there is no fallback
     // to a stronger mode, and a body whose observations read as anything else
     // refuses the candidate outright.
-    propose_contract(&entry, &observations).as_ref() == Some(contract)
+    if propose_contract(&entry, &observations).as_ref() != Some(contract) {
+        return Err(NeutralRefusal::ContractNotReadBack);
+    }
+    Ok(())
 }
