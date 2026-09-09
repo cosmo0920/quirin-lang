@@ -1,0 +1,50 @@
+CHAINED-TAIL archived AFTER vs wave-15 baseline
+  its own leaves: 0 added, 1 removed
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19581 unsupported: indirect memory access is outside the resource projection
+ALIAS-AGGREGATE archived AFTER vs wave-15 baseline
+  its own leaves: 4 added, 13 removed
+    +1 chunkio/chunkio.c cio_create L2337 unknown_alias: unresolved resource identity `ctx`
+    -1 chunkio/chunkio.c cio_create L2337 unsupported: indirect memory access is outside the resource projection
+    +1 chunkio/chunkio.c cio_create L2347 unknown_alias: unresolved resource identity `ctx`
+    -1 chunkio/chunkio.c cio_create L2347 unsupported: indirect memory access is outside the resource projection
+    +1 chunkio/cio_chunk.c cio_chunk_open L2041 unknown_alias: unresolved resource identity `ch`
+    -1 chunkio/cio_chunk.c cio_chunk_open L2041 unsupported: indirect memory access is outside the resource projection
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19607 unsupported: indirect memory access is outside the resource projection
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19608 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19609 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19610 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19611 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19612 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19613 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19615 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19624 unknown_alias: unresolved resource identity `ic`
+    +1 monkey-libevent/mk_server/mk_fifo.c mk_fifo_worker_create L5130 unknown_alias: unresolved resource identity `fw`
+    -1 monkey-libevent/mk_server/mk_fifo.c mk_fifo_worker_create L5130 unsupported: indirect memory access is outside the resource projection
+composed wave-16 measurement vs wave-15 baseline
+  measured leaves: 4 added, 14 removed
+    +1 chunkio/chunkio.c cio_create L2337 unknown_alias: unresolved resource identity `ctx`
+    -1 chunkio/chunkio.c cio_create L2337 unsupported: indirect memory access is outside the resource projection
+    +1 chunkio/chunkio.c cio_create L2347 unknown_alias: unresolved resource identity `ctx`
+    -1 chunkio/chunkio.c cio_create L2347 unsupported: indirect memory access is outside the resource projection
+    +1 chunkio/cio_chunk.c cio_chunk_open L2041 unknown_alias: unresolved resource identity `ch`
+    -1 chunkio/cio_chunk.c cio_chunk_open L2041 unsupported: indirect memory access is outside the resource projection
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19581 unsupported: indirect memory access is outside the resource projection
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19607 unsupported: indirect memory access is outside the resource projection
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19608 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19609 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19610 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19611 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19612 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19613 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19615 unknown_alias: unresolved resource identity `ic`
+    -1 fluent-bit-chunk/flb_input_chunk.c flb_input_chunk_create L19624 unknown_alias: unresolved resource identity `ic`
+    +1 monkey-libevent/mk_server/mk_fifo.c mk_fifo_worker_create L5130 unknown_alias: unresolved resource identity `fw`
+    -1 monkey-libevent/mk_server/mk_fifo.c mk_fifo_worker_create L5130 unsupported: indirect memory access is outside the resource projection
+
+TRIANGULATION
+  union(CHAINED-TAIL, ALIAS-AGGREGATE) == composed measurement: True
+  unattributed leaves: 0
+  composed \ CHAINED-TAIL == ALIAS-AGGREGATE's leaves: True
+  composed \ ALIAS-AGGREGATE == CHAINED-TAIL's leaves: True
+  unit status moves: 0 
+  newly surfaced provisional Unsafe: []

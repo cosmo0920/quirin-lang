@@ -1,0 +1,11 @@
+{
+ "note": "wave-16 seven-card merged gate, 2026-09-10",
+ "workspace_tests": 2746,
+ "provider_tests": 115,
+ "python_evidence_validator_tests": 161,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass"
+}

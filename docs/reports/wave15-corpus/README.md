@@ -1,5 +1,12 @@
 # Wave-15 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-10 (wave-16 consolidation):**
+> `docs/reports/wave16-corpus/artifacts/` is the current baseline — four
+> diagnostics units (NEIGHBOURS-CHAINED-TAIL's one leaf and ALIAS-AGGREGATE's
+> four units, triangulated in both directions), one contract module's text
+> (LOADER-ABI) and the identity/package residue. Headline and every unit and
+> function status unchanged. This directory remains the wave-15 record.
+
 **Date:** 2026-09-10. **Tree:** main `056efb7` (all six wave-15 cards
 merged). Integrator-run, closing the wave under hard invariants 3 and 5.
 

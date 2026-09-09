@@ -39,7 +39,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic library/container/reference-count and reactor/descriptor custody, checked task IR/reference execution and C11 task emission. Also `os_endpoint`, `chunk_integrity`, `capacity_boundary`, `mutex_invariant`. No runtime or workspace dependencies |
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
-| `crates/qcore-schemas/` | L0 published schema surface (Rust API **12.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-schemas/` | L0 published schema surface (Rust API **13.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence |
@@ -68,15 +68,16 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-15 checkpoint (`docs/reports/wave15-corpus/`, the
+Headline numbers at the wave-16 checkpoint (`docs/reports/wave16-corpus/`, the
 current re-pinned baseline):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions, leak 271 |
 | CT01–CT50 conformance | **32/50 mapped**, 18 unmapped; sanitized-native 4 of 32, proof 0 of 32 |
 | Contract corpus | **67 modules** |
-| `qcore-schemas` | 12.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 |
+| `qcore-schemas` | 13.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 |
+| Merged gate | 2,746 workspace tests (8 ignored) · 115 provider · 161 Python · **72 Lean audits** · both probes exit 0 · fmt/clippy clean |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -92,7 +93,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" (every wave and card
 paragraph, in order, each keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-25 entries) plus each report's own follow-on list; per-card evidence in
+26 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
@@ -176,92 +177,130 @@ pointer is the card that established it; read it before deviating.
 7. Leak diagnostics are 271 across the pinned 185-unit corpus. A change that
    moves that number is a finding to attribute in the re-pin, not to absorb.
    `remaining-o04-b08`, `corpus-repin`.
+8. **A declared contract must agree with the C the unit declares.** A contract
+   whose parameter or result ABI projections the analysed translation unit's
+   own C declaration contradicts is **withdrawn for that unit** — every call
+   site rewritten to a marked uncontracted callee, and the name removed from
+   the environment the derivation seeds. Both sides are read from what a
+   certificate already holds (the preprocessed token stream; the environment's
+   retained texts), never from the typed Clang AST, so W4 derivation, W4
+   validation and certificate rechecking reproduce the decision — do not move
+   either reader. A withdrawal is monotone in the refusing direction but **can
+   turn a `Safe` unit into a provisional `Unsafe`** when the withdrawn
+   declaration was discharging an acquisition; that is `Unknown`-class
+   evidence about the declaration, never an upstream defect claim (invariant
+   2). The scalar projection assumes the LP64 model of the audited targets and
+   the reader has no target (`LOADER-ABI-LP64`). `remaining-loader-abi`.
+9. **A fixture prelude is not a production declaration.** A fixture result is
+   a result *for that fixture's declarations*: card O04-B08's flagship
+   aggregate store was measured never to reach production, because the real
+   member is `void *` and the reduced prelude's is `struct cio_chunk *`. When
+   a card publishes a per-function count, say which declarations it rests on
+   (`NEIGHBOURS-FIXTURE-PROXY`). `remaining-alias-aggregate`,
+   `remaining-neighbours`.
+10. **A store into an object that outlives the call is refused, not escaped.**
+    Publishing a tracked identity into a file-scope object or a `static` local
+    withdraws both directions and retires the residual leak through the
+    unresolved-effect mechanism. The escape model was measured to **promote**
+    the publish-without-release body from `Unsafe` to `Safe`, which invariant 1
+    forbids; do not reintroduce it. A borrowed pointer, a null store and a
+    scalar store stay admitted on stated grounds, and the decision reads no
+    per-site status. `remaining-ctwin-publish`.
 
 **Compile-task identity and source transport**
 
-8. **Do not normalize the spelled input path** (that changes `__FILE__`), **do
-   not** let a declared identity survive onto derived text, and **do not** move
-   the pinned Cycle 19 compatibility route off `HistoricalStdin` without
-   re-measuring its 185-unit artifacts. `CompileTaskIdentity` binds this
-   transport as `source_input` — keep it there, or a standard-input run and a
-   declared-file run record the same identity for different preprocessing.
-   `remaining-g02`, `remaining-g01`.
-9. A `#line` directive in analysed source must not be able to move the audited
-   scope; attribution is by include-depth flags no directive can move, and
-   `Safe` requires full analysed coverage at the certificate gate.
-   `remaining-e01-tail`.
+11. **Do not normalize the spelled input path** (that changes `__FILE__`), **do
+    not** let a declared identity survive onto derived text, and **do not** move
+    the pinned Cycle 19 compatibility route off `HistoricalStdin` without
+    re-measuring its 185-unit artifacts. `CompileTaskIdentity` binds this
+    transport as `source_input` — keep it there, or a standard-input run and a
+    declared-file run record the same identity for different preprocessing.
+    `remaining-g02`, `remaining-g01`.
+12. A `#line` directive in analysed source must not be able to move the audited
+    scope; attribution is by include-depth flags no directive can move, and
+    `Safe` requires full analysed coverage at the certificate gate.
+    `remaining-e01-tail`.
 
 **Concurrency source routes**
 
-10. Concurrency is opt-in: a file declares `import std.concurrency;`, the
+13. Concurrency is opt-in: a file declares `import std.concurrency;`, the
     context is unavailable by default, and imports do not leak across
     compilation inputs (`Q014`/`Q015` refuse before checking each file). The
     task profile keeps its separate `concurrency checked;` marker.
     `core-concurrency-prelude`.
-11. New keywords are a recorded compatibility hazard and must be checked
+14. New keywords are a recorded compatibility hazard and must be checked
     against every fixture: T03-F added five reserved words, T08-EPOCH-SRC eight
     (with `work` renamed `effort` rather than editing the pinned golden
     surface), and `source.extern-call.v1` added `succeeds`. `remaining-t03-f`,
     `remaining-t08-epoch-src`, `extern-call-v1`.
-12. Lock ranks and protection growth are **opt-in** disciplines: unranked
+15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
 
 **Providers, packages and limits**
 
-13. **P02-FLAKE:** the `RLIMIT_NPROC` conformance test is load-flaky (it counts
+16. **P02-FLAKE:** the `RLIMIT_NPROC` conformance test is load-flaky (it counts
     every process of the real UID). Its assertion is byte-for-byte unchanged
     with a deterministic companion — do not weaken it. `remaining-p03` §9.1,
     `remaining-p03-f`.
-14. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
+17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
     acquisition and was deliberately not weakened, which is why
     `resource_stored` is checked but unreachable from a single source module.
     `extern-call-f1`, `remaining-extern-err-rel`.
-15. Provider executables embed their manifest template and installed manifests
+18. Provider executables embed their manifest template and installed manifests
     are compared field-for-field against it, so **all five packages must be
     rebuilt and verified** after any change to the template or to a
     `qcore-schemas` major version; `providers/package.py --locked` is part of
     CI. `remaining-p01-f2`, `remaining-p01-f3`, `remaining-p03-f`.
-16. **E03-B deliberately supersedes E03's `QP012`** unequal-premise-set refusal
+19. **E03-B deliberately supersedes E03's `QP012`** unequal-premise-set refusal
     with the premise union (differing *values* still refuse). Do not restore
     the old refusal. `remaining-e03-b`, `remaining-e03-b-o`.
-17. P04's in-process counter route was deliberately **not** removed (live
+20. P04's in-process counter route was deliberately **not** removed (live
     production callers), and routes P09-A..F are retained with named gaps.
     Removal requires invariant 3 parity first. `remaining-p09`,
     `remaining-p09-routes`.
 
 **Pins, archives and measurement**
 
-18. The frozen T00 CT archive was mutated in place by a later lane; that is
-    recorded as pending hygiene. Publish label provenance **beside** the frozen
-    archive (`blocker_current`, `label_source`) rather than editing it.
-    `wave15-ct-labels`, `wave11-ct33`.
-19. **DIFF-TOOL-CONTRACTS:** the contract inventory has a recorded diff-tool
-    blind spot; verify inventory growth by direct comparison, not by the diff
-    summary. `wave14-corpus`.
-20. CT coverage grows by **mapping, not conformance**. A grown denominator is
+21. **Never edit a frozen archive in place.** Card T00's `coverage.json` was
+    rewritten by a later lane and is restored byte-exactly (including its
+    original missing final newline) by HYGIENE-16. Publish label provenance
+    **beside** the frozen archive (`blocker_current`, `label_source`,
+    `archived_bucket`) rather than editing it — the dual publication makes the
+    edit unnecessary, and `QCore.BucketTally` proves an archive edit under lane
+    coverage moves no count. `wave16-hygiene`, `wave15-ct-labels`,
+    `wave11-ct33`.
+22. `contracts.json` is the fifth artifact `diff_artifacts.py` itemizes
+    (document `schema_version: 2`, HYGIENE-16); before that it was not opened
+    at all, so waves 14 and 15 verified inventory growth by hand. Use the tool
+    now, and read its **normalised and raw** module keys together: the raw keys
+    carry the checkout root, and a normalisation collision demotes the section
+    to raw keys rather than merging two modules into one row. The eight
+    archived pre-itemizer diff documents are deliberately not backfilled
+    (`DIFF-TOOL-CONTRACTS-BACKFILL`). `wave16-hygiene`, `wave14-corpus`.
+23. CT coverage grows by **mapping, not conformance**. A grown denominator is
     not new conformance: sanitized-native is 4 of 32 and proof 0 of 32, and a
     stage may read `executed` only where a named workspace test runs it on the
     case's own artifact. `wave5-ct-integration`, `remaining-t00-ct-schema`,
     `remaining-ct34-sanitized`.
-21. **REASON-CODES-B3**'s sidecar `reason_code` tripwire test is flipped at the
+24. **REASON-CODES-B3**'s sidecar `reason_code` tripwire test is flipped at the
     corpus re-pin, per its own design — not silently. `wave9-gen-reason`.
-22. The acceptance-matrix generator carries a `section_ownership` block:
+25. The acceptance-matrix generator carries a `section_ownership` block:
     sections are derived, integrator-supplied via `--gate`, or carried verbatim.
     Whole-file regeneration must not clobber later reconciliations.
     `wave9-gen-reason`.
 
 **Trust boundaries that are true statements, not TODOs**
 
-23. Process providers have process-group containment plus the opt-in
+26. Process providers have process-group containment plus the opt-in
     target-qualified `linux-rlimit-v1` and `linux-confined-v1` profiles — this
     is limit and two-resource-class confinement, **not an OS sandbox** (no
     seccomp, no other namespace). The recorded default remains
     `unenforced-legacy`. `remaining-p02`, `remaining-p03`, `remaining-p03-f`.
-24. The mutex model supports initially-unlocked non-recursive mutexes only.
+27. The mutex model supports initially-unlocked non-recursive mutexes only.
     Dynamic shapes, condition variables, try/timed locks, rwlocks and recursive
     acquisition are represented refusals, not omissions. `remaining-t02`.
-25. Declared profiles, `observations_trusted`, `GuardFootprintAuthority`,
+28. Declared profiles, `observations_trusted`, `GuardFootprintAuthority`,
     `SynchronizedCustodyEdges`, `DeclaredFootprintShape`,
     `InvariantPredicateDeclared` and the C layout/linker equalities are
     **premises**, not proofs. A witness admission conveys no provider
@@ -287,7 +326,7 @@ Clang is required for existing-C analysis tests (`QCORE_CLANG` overrides
 discovery; invalid/empty value is an error, never a silent fallback). `qcorec
 check`/`emit` and generated-C tests work without Clang (MSVC on Windows).
 Lean toolchain via `proof/lean-toolchain` (elan). Provider changes additionally
-need `providers/package.py` build + verify (constraint 15).
+need `providers/package.py` build + verify (constraint 18).
 
 ## Lean CI hygiene
 
