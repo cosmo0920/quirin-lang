@@ -223,17 +223,6 @@ fn emission_refuses_anything_outside_the_single_task_subset() {
             task: 0,
             construct: UnsupportedSynchronization::ConditionVariable,
         },
-        // Card CT34-GROWTH: a checked protection growth is a change to the
-        // model's bookkeeping, not to emitted C — nothing in this backend reads
-        // a generation's declared shape. Rather than emit a `mtx_t` that
-        // protects less than the model says it does, the backend refuses the
-        // trace outright, and this route is check-only.
-        MutexInvariantEvent::GrowProtection {
-            task: 0,
-            guard: 10,
-            footprint: AccessFootprint::new(2, 0, 4),
-            invariant: 99,
-        },
     ] {
         let mut program = base.clone();
         program.events.insert(1, event);
@@ -580,4 +569,244 @@ fn the_reversed_nesting_never_reaches_the_backend() {
         diagnostics.iter().any(|d| d.code() == "Q624"),
         "{diagnostics:?}"
     );
+}
+
+/// Card `CT34-SANITIZED`. One generation that grows its declared shape onto a
+/// second allocation mid-section, with a real access to the originally declared
+/// region *before* the growth and a real access to the newly protected region
+/// *after* it, then a second section that reads both under one guard.
+///
+/// This is the shape the native evidence needs: growth performs no `mtx_t`
+/// operation at all, so what a sanitized run can show is that the accesses the
+/// checker admitted on the strength of the growth are real, in-bounds accesses
+/// to real allocations inside the growing section's own lock/unlock pair, and
+/// that both renderings agree line for line. It shows nothing about the C mutex
+/// protecting more memory, which no `mtx_t` can express.
+fn grown_generation() -> MutexInvariantProgram {
+    let declared = AccessFootprint::new(1, 0, 4);
+    let grown = AccessFootprint::new(2, 0, 4);
+    MutexInvariantProgram {
+        initial_shares: vec![grant(1, 4), grant(2, 4)],
+        initial_custody: [(1, 0), (2, 0)].into_iter().collect(),
+        events: vec![
+            MutexInvariantEvent::CreateMutex {
+                task: 0,
+                mutex: 1,
+                protects: vec![declared],
+                invariant: 1,
+            },
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 1,
+                guard: 1,
+            },
+            MutexInvariantEvent::OpenInvariant { task: 0, guard: 1 },
+            // Pre-growth: the originally declared region, under this guard.
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: declared,
+                kind: AccessKind::Write,
+                guard: Some(1),
+            },
+            MutexInvariantEvent::GrowProtection {
+                task: 0,
+                guard: 1,
+                footprint: grown,
+                invariant: 2,
+            },
+            // Post-growth: the newly protected region, under the same guard.
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: grown,
+                kind: AccessKind::Write,
+                guard: Some(1),
+            },
+            MutexInvariantEvent::CloseInvariant {
+                task: 0,
+                guard: 1,
+                // The declared identity the growth installed, not the one the
+                // generation was created with.
+                witness: InvariantWitness::Declared { invariant: 2 },
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 1 },
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 1,
+                guard: 2,
+            },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: declared,
+                kind: AccessKind::Read,
+                guard: Some(2),
+            },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint: grown,
+                kind: AccessKind::Read,
+                guard: Some(2),
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 2 },
+            MutexInvariantEvent::DestroyMutex { task: 0, mutex: 1 },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 1,
+            },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 2,
+            },
+        ],
+        ..Default::default()
+    }
+}
+
+#[test]
+fn a_grown_generation_agrees_between_the_reference_and_a_sanitized_native_run() {
+    let program = grown_generation();
+    let certificate = check_mutex_invariant_program(&program).expect("the growth is admitted");
+    assert_eq!(
+        certificate.admitted_protection_growths.len(),
+        1,
+        "the fixture must actually grow, or the run witnesses nothing"
+    );
+    assert_eq!(
+        certificate.protected_shape[&1],
+        vec![AccessFootprint::new(1, 0, 4), AccessFootprint::new(2, 0, 4)],
+        "the effective shape carries the grown interval"
+    );
+    let reference = crate::mutex_c_emit::interpret_mutex_program(&program, &certificate)
+        .expect("an admitted growth is inside the emitted subset");
+    assert!(
+        reference.contains(&"grow 1 1 2 0 4".to_owned()),
+        "the growth contributes exactly its bookkeeping line: {reference:?}"
+    );
+    let emission = crate::mutex_c_emit::emit_mutex_c11(&program, &certificate).expect("emitted");
+    // The growth performs no mutex operation. Two sections over one generation
+    // is exactly six `mtx_` calls; a growth that had quietly acquired, released
+    // or re-initialised anything would move one of these counts.
+    assert_eq!(emission.source.matches("mtx_init(&m").count(), 1);
+    assert_eq!(emission.source.matches("mtx_lock(&m").count(), 2);
+    assert_eq!(emission.source.matches("mtx_unlock(&m").count(), 2);
+    assert_eq!(emission.source.matches("mtx_destroy(&m").count(), 1);
+    // Both allocations are reclaimed, which is what LeakSanitizer then checks.
+    assert!(emission.source.contains("free(r1)") && emission.source.contains("free(r2)"));
+    assert_eq!(compile_and_run(&emission.source), reference);
+}
+
+/// The load-bearing half of card CT34-GROWTH's boundary `CT34-GROWTH-NATIVE`,
+/// in its new form. The backend no longer refuses every growth — it renders the
+/// ones a certificate admits — so what must stay refused is a growth the
+/// supplied certificate does *not* admit. A hand-built trace, an edited event
+/// and an edited certificate all reach the same refusal in both renderings:
+/// there is no path from an unchecked growth to emitted C.
+#[test]
+fn an_unadmitted_protection_growth_is_refused_by_both_renderings() {
+    use crate::mutex_c_emit::{MutexEmissionRefusal, emit_mutex_c11, interpret_mutex_program};
+
+    // 1. A growth spliced into a trace whose certificate never saw one.
+    let base = open_write_close();
+    let base_certificate = check_mutex_invariant_program(&base).unwrap();
+    let mut hand_built = base.clone();
+    hand_built.events.insert(
+        3,
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            guard: 1,
+            footprint: AccessFootprint::new(1, 0, 4),
+            invariant: 99,
+        },
+    );
+    assert_eq!(
+        emit_mutex_c11(&hand_built, &base_certificate),
+        Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 3 })
+    );
+    assert_eq!(
+        interpret_mutex_program(&hand_built, &base_certificate),
+        Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 3 })
+    );
+
+    // 2. An admitted growth whose event was edited after the certificate was
+    // issued. Each edit changes exactly one field.
+    let program = grown_generation();
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    for edited in [
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            guard: 1,
+            // a narrower interval than the one admitted
+            footprint: AccessFootprint::new(2, 0, 2),
+            invariant: 2,
+        },
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            // a guard this section never minted
+            guard: 7,
+            footprint: AccessFootprint::new(2, 0, 4),
+            invariant: 2,
+        },
+        MutexInvariantEvent::GrowProtection {
+            // a task that is not the admitted grower
+            task: 3,
+            guard: 1,
+            footprint: AccessFootprint::new(2, 0, 4),
+            invariant: 2,
+        },
+        MutexInvariantEvent::GrowProtection {
+            task: 0,
+            guard: 1,
+            footprint: AccessFootprint::new(2, 0, 4),
+            // a predicate identity the certificate did not record
+            invariant: 3,
+        },
+    ] {
+        let mut mutated = program.clone();
+        mutated.events[4] = edited;
+        assert_eq!(
+            emit_mutex_c11(&mutated, &certificate),
+            Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 4 })
+        );
+        assert_eq!(
+            interpret_mutex_program(&mutated, &certificate),
+            Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 4 })
+        );
+    }
+
+    // 3. Certificates edited instead of events: an emptied record, a record
+    // moved to another event index, and a shape that hides the growth the
+    // record admits. The last is a certificate disagreeing with itself.
+    let emptied = crate::mutex_invariant::MutexInvariantCertificate {
+        admitted_protection_growths: Vec::new(),
+        ..certificate.clone()
+    };
+    let moved = {
+        let mut growths = certificate.admitted_protection_growths.clone();
+        growths[0].event = 5;
+        crate::mutex_invariant::MutexInvariantCertificate {
+            admitted_protection_growths: growths,
+            ..certificate.clone()
+        }
+    };
+    let hidden = {
+        let mut shape = certificate.protected_shape.clone();
+        shape.insert(1, vec![AccessFootprint::new(1, 0, 4)]);
+        crate::mutex_invariant::MutexInvariantCertificate {
+            protected_shape: shape,
+            ..certificate.clone()
+        }
+    };
+    for forged in [emptied, moved, hidden] {
+        assert_eq!(
+            emit_mutex_c11(&program, &forged),
+            Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 4 })
+        );
+        assert_eq!(
+            interpret_mutex_program(&program, &forged),
+            Err(MutexEmissionRefusal::UnadmittedProtectionGrowth { event: 4 })
+        );
+    }
+
+    // 4. The certificate the checker really issued still renders.
+    assert!(emit_mutex_c11(&program, &certificate).is_ok());
+    assert!(interpret_mutex_program(&program, &certificate).is_ok());
 }
