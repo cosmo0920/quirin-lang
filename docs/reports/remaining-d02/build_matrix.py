@@ -319,19 +319,27 @@ for case in triage_cases:
     bucket_counts[case["current_bucket"]] = bucket_counts.get(case["current_bucket"], 0) + 1
 # T00's `blocker` text is frozen at revision ea2af0f, and for a case whose
 # blocker has since been repaired it can read as a false statement about the
-# implementation: CT34's says "no source form creates or declares a mutex",
-# which card T03 and then card CT33-RANKS made untrue without changing why
-# CT34 is unmapped. Where a later card re-verified a still-unmapped case's
-# reason by measurement, that reason is published beside the archived one
-# rather than replacing it, so the history stays visible and the current
-# statement is the accurate one. Only ids a named record really re-verified
-# appear here; the assertion below is what stops this from going stale in turn.
-SUPERSEDING_REASONS = "docs/reports/wave11-ct33/ct_stage_evidence.json"
+# implementation. CT34 was the worked example — its frozen text says "no source
+# form creates or declares a mutex", which card T03 and then card CT33-RANKS
+# made untrue — and card CT34-GROWTH has since supplied the growth form, so the
+# wave-13 CT lane mapped CT34 and it leaves this table entirely. CT46 is the
+# remaining case: card CT46-SENDSYNC retired its recorded Send/Sync-derivation
+# blocker and measured a different one (CT46-MUTEX-CAPTURE). Where a later card
+# re-verified a still-unmapped case's reason by measurement, that reason is
+# published beside the archived one rather than replacing it, so the history
+# stays visible and the current statement is the accurate one. Only ids a named
+# record really re-verified appear here; the assertions below are what stop this
+# from going stale in turn.
+SUPERSEDING_REASONS = "docs/reports/wave13-ct34/ct_stage_evidence.json"
 _superseded = json.loads((ROOT / SUPERSEDING_REASONS).read_text())[
     "cases_examined_and_left_unmapped"
 ]
-assert set(_superseded) == {"CT34", "CT46"}, sorted(_superseded)
+assert set(_superseded) == {"CT46"}, sorted(_superseded)
 assert set(_superseded) <= set(unmapped_ids), "a superseded reason names a mapped case"
+# CT34 left this table by being mapped (wave-13 CT lane), not by its blocker
+# being quietly dropped. Asserting the transition is what keeps "CT34 no longer
+# appears here" from reading as an accident.
+assert "CT34" not in unmapped_ids, "CT34 is mapped; its frozen blocker text is no longer published"
 for case in triage_cases:
     row = {
         "id": case["id"],

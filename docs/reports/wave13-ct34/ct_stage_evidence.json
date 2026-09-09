@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "card": "wave13-ct34",
+  "generated": "2026-09-09",
+  "report": "docs/reports/wave13-ct34/README.md",
+  "purpose": "Per-stage executed evidence for the one case this CT lane mapped from card CT34-GROWTH's proposal, written in the same shape as docs/reports/wave11-ct33/ct_stage_evidence.json so scripts/ct_stage_summary.py merges it with the earlier per-card records.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control's execution is recorded under `aux:`, never as the case's own stage.",
+  "route": "mutex_guard (qcore_frontend::source_mutex lowering onto the unedited qcore_core::mutex_invariant checker, reached through compile_files). No production file is in this lane's diff: `git diff` over crates/ and compiler/src/ is empty.",
+  "why_native_sanitized_stays_unassessed": "Card CT34-GROWTH's boundary 3 (CT34-GROWTH-NATIVE) records that the growth route is check-only by pinned decision: nothing in the C backend reads a generation's declared shape, so both emit_mutex_c11 and interpret_mutex_program refuse a GrowProtection event under the existing UnsupportedEvent catch-all rather than emitting an mtx_t protecting less than the model says. No sanitized native run exists for this case and none is claimed; the card proposed `unassessed` and this lane did not upgrade it. Note that `not_applicable` would ALSO be wrong here: the mutex_guard route does have a c_emission stage (CT26 compiles and runs under ASan/UBSan/LSan), so the schema-2 route rule leaves this case at `unassessed` rather than declaring the stage structurally absent.",
+  "why_this_route_has_no_cfg_stage": "Unchanged from wave 5: source.mutex.guard.v1 emits from a checked event list and constructs no CFG, so schema 2's route vocabulary omits every CFG-bearing stage rather than recording an indefinite `unassessed`.",
+  "no_native_or_sanitized_or_proof_evidence_added": "Sanitized-native stays 3 of 32 (CT03, CT17, CT26) and proof 0 of 32. The denominator grew by mapping, not by conformance; this case contributes neither.",
+  "lean_is_not_applicable": "Judged not applicable and recorded, on the same terms as cards T00-CT-SCHEMA, T08-SRC-CT, CT-CTWIN and the wave-11 CT lane: this lane adds no checker rule, no diagnostic code, no lowering and no model. It adds one fixture, one harness control expectation (`accept_check_only`, which only ever adds assertions), one entry in each pinned case set, and the manifest and acceptance rows derived from them, over an unedited checker whose own 18 growth theorems landed with card CT34-GROWTH. `proof` stays unassessed for this case; no theorem is bound to any CT fixture (T00.7 remains open). The Lean gate was run and passes.",
+  "new_harness_control_expectation": {
+    "name": "accept_check_only",
+    "why": "Card CT34-GROWTH's one-token control is admitted by CheckedMutexInvariantV1 and deliberately refused by the C backend, so it cannot satisfy the existing `accept` expectation, which requires compile_files to return a compiled module. Measured before the manifest was touched: `compile_files` on the control returns Err([\"Q600\"]) with `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }`.",
+    "what_it_asserts": "Both halves, neither alone. (1) parse, elaborate, lower and check_mutex_invariant_program accept the control's own bytes, AND the published certificate records at least one admitted protection growth, so a control that checked without growing cannot pass. (2) compile_files refuses with the exact ordered vector the fixture pins, so a check-only admission is never reported as a full acceptance and the backend's refusal stays a recorded decision.",
+    "gate_direction": "strictly more assertion. The `accept` and `reject` expectations are unchanged; both now additionally require an empty `backend_refusal`, and a mutex rejection now requires at least one non-`reject` control (every pre-existing mutex case already carried one, verified before the assertion was added)."
+  },
+  "inventory": {
+    "added_mapped_ids": [
+      "CT34"
+    ],
+    "mapped_before": 31,
+    "mapped_after": 32,
+    "unmapped_after": 18,
+    "total": 50
+  },
+  "mapped_case_stage_matrix": {
+    "CT34": {
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": "linux",
+      "mutex_reject_controls_executed": 2,
+      "measured_cascade": [
+        "Q613",
+        "Q617",
+        "Q619",
+        "Q613",
+        "Q600",
+        "Q600",
+        "Q600"
+      ],
+      "measured_diagnostics": [
+        "compiler/tests/fixtures/ct/CT34/case.qcore:9:62: Q613: InvariantOpenAtUnlock { event: 6, guard: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:9:36: Q617: FootprintAlreadyProtected { event: 4, mutex: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:10:5: Q619: NonquiescentMutexDestruction { event: 8, mutex: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:9:53: Q613: InvalidInvariantWitness { event: 5, guard: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:10:5: Q600: NonquiescentDestruction { event: 11, resource: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:3:5: Q600: OutstandingGuard { guard: 1 }",
+        "compiler/tests/fixtures/ct/CT34/case.qcore:3:5: Q600: OutstandingMutex { mutex: 1 }"
+      ],
+      "cascade_entry_meanings": {
+        "1_Q613_InvariantOpenAtUnlock": "the section unlocks with its invariant still open, because its `close` was refused",
+        "2_Q617_FootprintAlreadyProtected": "the growth's OWN refusal, and it sits second rather than first: the lowering mints the new predicate identity before the core decides, and the core reports in its own enum order. Card boundary CT34-GROWTH-CASCADE, recorded rather than concealed.",
+        "3_Q619_NonquiescentMutexDestruction": "the generation is destroyed while its guard is still live",
+        "4_Q613_InvalidInvariantWitness": "the refused growth installed nothing, so the section's `close` names a declared identity the generation never took",
+        "5_Q600_NonquiescentDestruction": "scope exit finds the protected resource still held",
+        "6_Q600_OutstandingGuard": "scope exit finds the guard outstanding",
+        "7_Q600_OutstandingMutex": "scope exit finds the generation outstanding. Entries 3-7 together are what show the refusal left the generation's shape, its declared identity and the share ledger exactly as they were; a change that started mutating a generation on a refused growth would move this vector."
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1,
+          "note": "qcore_frontend::source_mutex::lower_source_mutex, reached through compile_files. Both `mutex guards R` declarations, the section and the `grow g guards y;` statement lower; the lowering mints the growth's new predicate identity here, before the core decides, which is exactly why the refusal cascade below leads with the section's close rather than with the growth."
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT34/case.qcore",
+          "observations": 1,
+          "note": "qcore_core::mutex_invariant::check_mutex_invariant_program. Refusal at Q617 FootprintAlreadyProtected on the growth (W4: the new interval must overlap no live generation's declared shape), with the exact ordered seven-entry cascade pinned rather than filtered."
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        },
+        "aux:admitted_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+          "expectation": "accept_check_only",
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ],
+          "observations": 1,
+          "emits_c": false,
+          "measured_core_result": "accepted; admitted_protection_growths = 1; protected_shape = {1: [x[0,4), z[0,4)], 2: [y[0,4)]}",
+          "measured_backend_refusal": [
+            "Q600"
+          ],
+          "note": "The case with exactly ONE TOKEN changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and really records the growth, so the case's Q617 is attributable to the interval already having a protector rather than to growth being written at all, to the third resource existing, or to the second generation being declared. It is `accept_check_only` rather than `accept` because the C backend deliberately refuses a GrowProtection event; that refusal is measured as Q600 `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }` and pinned. Host-gated in exactly the way an `accept` control is: on a host outside the gate the runner reports the Q500 refusal instead of skipping silently."
+        },
+        "aux:own_footprint_control": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+          "artifact": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+          "expectation": "reject",
+          "observations": 1,
+          "measured_cascade": [
+            "Q613",
+            "Q617",
+            "Q619",
+            "Q613",
+            "Q600",
+            "Q600",
+            "Q600"
+          ],
+          "note": "The case with the growth aimed at `x`, generation `m`'s OWN declared interval, rather than at generation `n`'s. It refuses with the identical seven-entry cascade, so W4's `the new interval must overlap no live generation's declared shape, this generation's included` is a measured statement rather than prose. It reaches the same core refusal on every host."
+        }
+      }
+    }
+  },
+  "executed_totals_added": {
+    "mutex_lowerings": 1,
+    "mutex_invariant_checks": 1,
+    "mutex_reference_executions": 0,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "in_case_source_controls": 2,
+    "admitted_check_only_controls": 1,
+    "refused_controls": 1,
+    "cases_with_proof_evidence": 0
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT46": {
+      "scenario": "Known shared wrapper with non-Sync but Send payload",
+      "expected": "Accept only through verified mutex protocol",
+      "reason_verified_against": "card CT46-SENDSYNC (wave 12)",
+      "why_still_unmapped": "The recorded Send/Sync-derivation blocker is retired: card CT46-SENDSYNC landed a closed transferable(T) judgment that decides both matrices whole, so the derivation CT46 was said to need now exists. The measured remaining obstacle is different, and is named CT46-MUTEX-CAPTURE: the mutex ledger and the task ledger compose today by mutual exclusion rather than over a capture - the mutex route admits no task capture of a guarded payload and the task route refuses mutexes outright - so no source text can ask for mutex-mediated sharing across a task boundary and CT46's `accept` half is unwritable. Mapping only the refusing half would answer a different question.",
+      "recorded_reason_unchanged": false,
+      "supersedes": "docs/reports/wave11-ct33/ct_stage_evidence.json"
+    }
+  },
+  "reason_texts_reverified": {
+    "CT33": {
+      "mapping_status": "mapped",
+      "checked": "Card CT34-GROWTH measured the rank/growth interaction directly (its section 4: a ranked module with a growth and ascending nesting is accepted; the same with descending nesting refuses at [Q624, Q612]), so growth orders nothing and CT33's pinned [Q624, Q612] cascade and both its controls are unaffected. Re-measured through the harness on this lane's tree: CT33's case, its one-statement ascending control and its unranked [Q622, Q622] control all pass unchanged.",
+      "text_changed": false
+    },
+    "CT34": {
+      "mapping_status": "mapped_by_this_lane",
+      "checked": "The wave-11 record's CT34 reason (`CreateMutex still fixes its declared footprints at creation; there is no growth form`) was accurate when written and is now superseded by card CT34-GROWTH landing the growth form. The archived wave-11 file is NOT edited - rewriting an archived record would destroy the history it exists to keep - and CT34 simply leaves the unmapped triage rows, so no stale blocker text is published for it any more.",
+      "text_changed": true
+    }
+  }
+}

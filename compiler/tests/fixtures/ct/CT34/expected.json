@@ -1,0 +1,81 @@
+{
+  "id": "CT34",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q613",
+      "message_contains": "InvariantOpenAtUnlock"
+    },
+    {
+      "code": "Q617",
+      "message_contains": "FootprintAlreadyProtected"
+    },
+    {
+      "code": "Q619",
+      "message_contains": "NonquiescentMutexDestruction"
+    },
+    {
+      "code": "Q613",
+      "message_contains": "InvalidInvariantWitness"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "NonquiescentDestruction"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "OutstandingGuard"
+    },
+    {
+      "code": "Q600",
+      "message_contains": "OutstandingMutex"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "mutex_lowering",
+    "mutex_invariant_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared and two generations created over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned rather than filtered, and every entry says something. Entry 1, Q613 InvariantOpenAtUnlock { event: 6, guard: 1 }: the section unlocks with its invariant still open, because its `close` was refused. Entry 2, Q617 FootprintAlreadyProtected { event: 4, mutex: 1 }, is the growth's OWN refusal and sits second, not first — the lowering mints the new predicate identity before the core decides, and the core reports in its own enum order (card boundary CT34-GROWTH-CASCADE; this is recorded, not concealed). Entry 3, Q619 NonquiescentMutexDestruction { event: 8, mutex: 1 }: the generation is destroyed while its guard is still live. Entry 4, Q613 InvalidInvariantWitness { event: 5, guard: 1 }: the refused growth installed nothing, so the section's `close` names a declared identity the generation never took. Entries 5-7 (Q600 NonquiescentDestruction, OutstandingGuard, OutstandingMutex) are the scope exit finding the resource, the guard and the generation still outstanding. Together, entries 3-7 are what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were: a change that started mutating a generation on a refused growth would move this vector. The growth_onto_unprotected.qcore control differs from the case by exactly ONE TOKEN — the growth names the unprotected `z` instead of `y` — so Q617 is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_check_only`, not `accept`: the core admits it and records exactly one admitted protection growth (generation 1's shape becomes x[0,4) plus z[0,4) while generation 2 keeps y[0,4)), and compile_files then refuses with [Q600] `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }`. That refusal is card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE) and is pinned as a decision: nothing in the C backend reads a generation's declared shape, so rather than emit an mtx_t protecting less than the model says, both emit_mutex_c11 and interpret_mutex_program refuse a GrowProtection event. The growth_over_own_footprint.qcore control grows onto `x`, the generation's OWN declared interval, and refuses with the identical seven-entry cascade, so W4's `one protector` rule is measured to cover a generation's own shape and not only another generation's. NOT established: any native or sanitized evidence. native_sanitized is unassessed, not executed — this case compiles no C at all, and the schema-2 gate lists exactly which cases may read `executed`. evidence_target=linux records only that the two compile_files-reaching controls are host-gated (the harness asserts the Q500 refusal on any other target rather than skipping silently); it records NO compiled or executed C. There is no shrink form and no replacement form in this profile, so CT34's `replaces identities` half is answered by refusal, not by a rule about replacement, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage at all.",
+  "checked_mutex_reject": {
+    "diagnostic_sequence": [
+      "Q613",
+      "Q617",
+      "Q619",
+      "Q613",
+      "Q600",
+      "Q600",
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "growth_onto_unprotected.qcore",
+        "expectation": "accept_check_only",
+        "diagnostic_sequence": [],
+        "backend_refusal": [
+          "Q600"
+        ],
+        "note": "the case with exactly one token changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and records one admitted protection growth, so the case's Q617 is attributable to the interval already having a protector — not to growth being written at all, not to the third resource existing, and not to the second generation being declared. It is check-only rather than accepted because the C backend deliberately refuses a GrowProtection event (card CT34-GROWTH boundary 3): the exact backend vector [Q600] is pinned here so the check-only admission is never reported as a full acceptance and the backend's refusal stays a recorded decision rather than an omission."
+      },
+      {
+        "source": "growth_over_own_footprint.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q613",
+          "Q617",
+          "Q619",
+          "Q613",
+          "Q600",
+          "Q600",
+          "Q600"
+        ],
+        "note": "the case with the growth aimed at `x`, generation `m`'s OWN declared interval, rather than at generation `n`'s. It refuses with the identical seven-entry cascade, so W4's `the new interval must overlap no live generation's declared shape, this generation's included` is a measured statement rather than prose, and a reader can see the rule is about protection rather than about which generation holds it."
+      }
+    ]
+  }
+}
