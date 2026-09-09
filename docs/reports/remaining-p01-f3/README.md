@@ -262,6 +262,7 @@ enforced limits because nothing was spawned.
 | `providers/conformance/tests/packages.rs` | row F on the five real shipped executables, with the published per-package window and re-check measurements; the digest-intact manifest mutations now assert that `verify_executable_package` refuses *and* drive the package's own self-check through `UnverifiedProvider::load` |
 | `providers/conformance/tests/composed_five_providers.rs` | the four deliberately-mutated registrations move to the explicit `DeliberatelyUnverified` wrapper |
 | `compiler/tests/cycle20_verifier_plugins.rs` | `package_discovery_verifies_before_it_registers` pins both halves of row J; two registry fixtures install real verifiable packages |
+| `compiler/tests/w3_evidence_v2.rs` | the standalone schemas-only fixture carries no template, so its registration moves to a hand-written `DeliberatelyUnverified` wrapper with the reason stated at the call site; the evidence-v2 replay and forgery assertions are unchanged |
 | `crates/qcore-verifier-host/tests/{enforced_process_limits,confined_process_execution,execution_quota}.rs` | the four registration sites install verifiable packages; every other fixture moves to `UnverifiedProvider` with its assertions unchanged |
 
 ## 6. Lean
@@ -313,17 +314,17 @@ says nothing about `execve` semantics beyond "the path's content is what loads".
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | GATE_WORKSPACE |
-| `cargo fmt --all -- --check` | GATE_FMT |
-| `cargo clippy --all-targets -- -D warnings` | GATE_CLIPPY |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | GATE_PROBE1 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | GATE_PROBE2 |
+| `cargo test --workspace` | **1908 passed, 0 failed, 4 ignored** (125 suites) |
+| `cargo fmt --all -- --check` | clean |
+| `cargo clippy --all-targets -- -D warnings` | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | **49 Lean audits passed** (48 before; `AuditPackageIdentity.lean` is the new one) |
-| `cargo test --manifest-path providers/Cargo.toml --workspace --offline` | GATE_PROVIDERS |
-| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | GATE_PROV_FMT |
-| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --offline -- -D warnings` | GATE_PROV_CLIPPY |
-| `python3 -B providers/package.py build` + `verify` | GATE_PACKAGES |
-| `python3 -m unittest discover -s scripts/tests` | GATE_PYTHON |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --offline` | **0 failed** — every suite `ok`, run exit 0. The aggregate is **76** (the wave-9 baseline of 75 plus this card's one new measurement case); it is reconstructed from two tail-limited captures rather than one whole-run count, because a concurrent build on this host held the workspace lock when the exact-count re-run was queued. The pass/fail result is measured; the total is arithmetic |
+| `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | clean |
+| `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --offline -- -D warnings` | clean |
+| `python3 -B providers/package.py build` + `verify` | all five build and verify (self-check included) |
+| `python3 -m unittest discover -s scripts/tests` | 124 passed, **1 failed by design** — see §7.1 |
 
 ### 7.1 One derived number the card may not update
 
