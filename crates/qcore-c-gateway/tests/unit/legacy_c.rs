@@ -1049,3 +1049,188 @@ fn c11_memory_read_projection_and_certificate_recheck_fail_closed() {
         assert!(check_legacy_safety_certificate(&forged).is_err());
     }
 }
+
+// --------------------------------------------------------------------------
+// C02-P-ALIAS: the may-alias pre-pass
+// --------------------------------------------------------------------------
+
+/// The pre-pass is deliberately separate from the custody work list. These
+/// tests drive it directly over hand-built CFGs, so they measure the dataflow
+/// and not the analyzer around it.
+fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
+    LegacyCfg {
+        function: "w".to_owned(),
+        entry: nodes.len() - 1,
+        nodes,
+    }
+}
+
+fn alias_exit() -> LegacyCfgNode {
+    LegacyCfgNode {
+        instruction: LegacyInstruction::NoOp,
+        successors: Vec::new(),
+        line: 0,
+        is_exit: true,
+    }
+}
+
+fn alias_node(instruction: LegacyInstruction, successors: Vec<LegacyNodeId>) -> LegacyCfgNode {
+    LegacyCfgNode {
+        instruction,
+        successors,
+        line: 1,
+        is_exit: false,
+    }
+}
+
+fn alias_release(source: &str) -> LegacyInstruction {
+    LegacyInstruction::Release {
+        source: source.to_owned(),
+    }
+}
+
+#[test]
+fn the_alias_pre_pass_carries_a_release_forward() {
+    // node 2 (entry): release a -> node 1: no-op -> node 0: exit
+    let cfg = alias_cfg(vec![
+        alias_exit(),
+        alias_node(LegacyInstruction::NoOp, vec![0]),
+        alias_node(alias_release("a"), vec![1]),
+    ]);
+    let facts = alias_facts(&cfg);
+    assert!(facts[2].released.is_empty(), "entry facts precede the node");
+    assert!(facts[1].released.contains("a"));
+    assert!(facts[0].released.contains("a"));
+}
+
+#[test]
+fn the_alias_pre_pass_unions_releases_at_a_join() {
+    // 4: branch -> {3: release a, 2: release b} -> 1 -> 0
+    let cfg = alias_cfg(vec![
+        alias_exit(),
+        alias_node(LegacyInstruction::NoOp, vec![0]),
+        alias_node(alias_release("b"), vec![1]),
+        alias_node(alias_release("a"), vec![1]),
+        alias_node(LegacyInstruction::NoOp, vec![3, 2]),
+    ]);
+    let facts = alias_facts(&cfg);
+    assert!(facts[1].released.contains("a") && facts[1].released.contains("b"));
+}
+
+#[test]
+fn the_alias_pre_pass_intersects_guards_at_a_join() {
+    // 3: branch on a != b -> {2: no-op, 1: no-op} -> 0.
+    // Only the true edge proves distinctness, so the join drops it.
+    let cfg = alias_cfg(vec![
+        alias_exit(),
+        alias_node(LegacyInstruction::NoOp, vec![0]),
+        alias_node(LegacyInstruction::NoOp, vec![0]),
+        alias_node(
+            LegacyInstruction::BranchOnDistinct {
+                left: "a".to_owned(),
+                right: "b".to_owned(),
+                true_is_distinct: true,
+            },
+            vec![2, 1],
+        ),
+    ]);
+    let facts = alias_facts(&cfg);
+    assert!(
+        facts[2].proved_distinct("a", "b"),
+        "the distinct edge carries it"
+    );
+    assert!(
+        !facts[1].proved_distinct("a", "b"),
+        "the other edge does not"
+    );
+    assert!(!facts[0].proved_distinct("a", "b"), "the join intersects");
+}
+
+#[test]
+fn the_alias_pre_pass_drops_a_guard_when_either_name_is_rebound() {
+    for rebound in ["a", "b"] {
+        let cfg = alias_cfg(vec![
+            alias_exit(),
+            alias_node(
+                LegacyInstruction::Acquire {
+                    destination: rebound.to_owned(),
+                    site: 0,
+                },
+                vec![0],
+            ),
+            alias_node(LegacyInstruction::NoOp, vec![0]),
+            alias_node(
+                LegacyInstruction::BranchOnDistinct {
+                    left: "a".to_owned(),
+                    right: "b".to_owned(),
+                    true_is_distinct: true,
+                },
+                vec![1, 2],
+            ),
+        ]);
+        let facts = alias_facts(&cfg);
+        assert!(facts[1].proved_distinct("a", "b"), "before the rebinding");
+        assert!(
+            !facts[0].proved_distinct("a", "b"),
+            "rebinding `{rebound}` drops the guard"
+        );
+    }
+}
+
+#[test]
+fn the_alias_pre_pass_keeps_a_release_across_a_rebinding_of_that_name() {
+    let cfg = alias_cfg(vec![
+        alias_exit(),
+        alias_node(
+            LegacyInstruction::Acquire {
+                destination: "a".to_owned(),
+                site: 0,
+            },
+            vec![0],
+        ),
+        alias_node(alias_release("a"), vec![1]),
+    ]);
+    let facts = alias_facts(&cfg);
+    assert!(
+        facts[0].released.contains("a"),
+        "rebinding a released name does not resurrect the object"
+    );
+}
+
+#[test]
+fn only_a_released_position_of_a_contracted_call_records_a_release() {
+    let modes = [
+        (ResourceParameterMode::Released { nullable: false }, true),
+        (ResourceParameterMode::Consumed { nullable: false }, false),
+        (ResourceParameterMode::Borrowed, false),
+        (ResourceParameterMode::Owned { nullable: false }, false),
+    ];
+    for (mode, expected) in modes {
+        let instruction = LegacyInstruction::ContractCall {
+            function: "f".to_owned(),
+            destination: None,
+            arguments: vec![Some("a".to_owned())],
+            contract: ResourceFunctionContract::new([mode], ResourceReturnMode::None),
+            produced_sites: Vec::new(),
+            aggregate_reads: Vec::new(),
+            alias_reads: Vec::new(),
+        };
+        assert_eq!(
+            released_names(&instruction) == vec!["a"],
+            expected,
+            "{mode:?} must{} record a release",
+            if expected { "" } else { " not" }
+        );
+    }
+}
+
+#[test]
+fn an_indirect_release_place_records_no_release() {
+    let instruction = LegacyInstruction::Release {
+        source: "p->field".to_owned(),
+    };
+    assert!(
+        released_names(&instruction).is_empty(),
+        "a member place is not a name this rule relates"
+    );
+}

@@ -775,6 +775,26 @@ impl FunctionTypes {
     pub(crate) fn is_readable(&self) -> bool {
         self.variables.is_some()
     }
+
+    /// Every name this function declares as exactly `struct TAG *`, paired with
+    /// `TAG`.
+    ///
+    /// Empty when the reader refused this function's declarations, so a rule
+    /// reading it can establish no type sharing there. Used only by
+    /// [`crate::may_alias`], which relates *two* declared names of the same
+    /// record-pointer type; a name whose type this reader will not commit to is
+    /// absent, and therefore relates to nothing.
+    pub(crate) fn record_pointer_names(&self) -> Vec<(&str, &str)> {
+        self.variables
+            .as_ref()
+            .into_iter()
+            .flatten()
+            .filter_map(|(name, declared)| match declared {
+                DeclaredType::RecordPointer(tag) => Some((name.as_str(), tag.as_str())),
+                _ => None,
+            })
+            .collect()
+    }
 }
 
 /// Compound-assignment operators, tokenized one character at a time. `==`,

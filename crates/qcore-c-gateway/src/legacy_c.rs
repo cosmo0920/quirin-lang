@@ -77,10 +77,33 @@ pub enum LegacyInstruction {
         /// field link an admitted store recorded; otherwise the whole call
         /// refuses. Empty for every other statement in the corpus.
         aggregate_reads: Vec<String>,
+        /// The C02-P-ALIAS may-alias obligations of this call's *read*
+        /// arguments: one entry per distinct root name a modeled position
+        /// dereferences that shares a declared record-pointer type with some
+        /// other declared name of this function. [`transfer`] refuses the read
+        /// when one of those peers was released on the path and neither
+        /// discharge applies. Empty for every argument the rule does not
+        /// relate, which is most of the corpus. See [`crate::may_alias`].
+        alias_reads: Vec<AliasPeers>,
     },
     BranchOnNull {
         source: String,
         true_is_null: bool,
+    },
+    /// A branch on `LEFT == RIGHT` or `LEFT != RIGHT` between two plain names
+    /// this function declares with the same record-pointer type (C02-P-ALIAS).
+    ///
+    /// It is *not* a null test — `BranchOnNull` still claims every one of
+    /// those — and it refines nothing about custody. Its only effect is that
+    /// the edge on which the two names are provably distinct carries that fact,
+    /// which discharges the may-alias obligation for exactly that pair until
+    /// either name is rebound. On the other edge nothing at all is assumed.
+    BranchOnDistinct {
+        left: String,
+        right: String,
+        /// Whether the first successor is the edge on which the two names are
+        /// distinct (`!=`), rather than the edge on which they are equal.
+        true_is_distinct: bool,
     },
     /// Bind `destination` to a value this function does not track: the read of
     /// an admitted direct member of an untracked aggregate (C02-P, O04).
@@ -93,6 +116,11 @@ pub enum LegacyInstruction {
     /// function never binds. It never creates, releases or transfers custody.
     OpaqueValue {
         destination: String,
+        /// The C02-P-ALIAS may-alias obligation of the base this read
+        /// dereferences, when the rule relates it to another declared name.
+        /// `None` whenever it relates nothing, which is the pre-existing
+        /// answer.
+        alias_read: Option<AliasPeers>,
     },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
@@ -111,6 +139,24 @@ pub enum LegacyInstruction {
     Unknown {
         description: String,
     },
+}
+
+/// One modeled read's C02-P-ALIAS obligation (card C02-P-ALIAS).
+///
+/// `place` is the root name the read dereferences — `storage` for the actual
+/// `storage->cio`, `b` for the actual `b`. `peers` are the *other* declared
+/// names of this function that share `place`'s declared `struct TAG *` type,
+/// with at least one of the two a formal parameter. Releasing any peer leaves
+/// this read unresolved unless a discharge applies; see [`crate::may_alias`].
+///
+/// Both fields are derived from the same preprocessed token stream every other
+/// typed rule reads, so W4 derivation, W4 validation and
+/// [`check_legacy_safety_certificate`] all reproduce them from the
+/// certificate's own content.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AliasPeers {
+    pub place: String,
+    pub peers: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1259,6 +1305,7 @@ pub(crate) fn build_function_cfg(
         &protected_formals,
         contracts,
     );
+    let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types, &formal_parameters);
     let mut parser = Parser {
         tokens,
         cursor: body_start,
@@ -1270,6 +1317,7 @@ pub(crate) fn build_function_cfg(
         typed_types,
         typed_bases,
         store_bases,
+        alias_classes,
     };
     let statements =
         parser
@@ -2160,6 +2208,10 @@ enum Statement {
         line: usize,
         condition_supported: bool,
         null_condition: Option<PointerNullCondition>,
+        /// C02-P-ALIAS: the pointer-inequality guard this condition expresses,
+        /// when it relates two names the may-alias rule relates. Consulted only
+        /// when `null_condition` is `None`, so no null test changes shape.
+        distinct_condition: Option<PointerDistinctCondition>,
         then_body: Vec<Statement>,
         else_body: Vec<Statement>,
     },
@@ -2221,6 +2273,16 @@ struct PointerNullCondition {
     true_is_null: bool,
 }
 
+/// C02-P-ALIAS: a comparison of two plain declared names the may-alias rule
+/// relates. Nothing else about the condition is read, and no other rule
+/// consults it.
+#[derive(Clone, Debug)]
+struct PointerDistinctCondition {
+    left: String,
+    right: String,
+    true_is_distinct: bool,
+}
+
 struct Parser<'a> {
     tokens: &'a [Token],
     cursor: usize,
@@ -2243,6 +2305,10 @@ struct Parser<'a> {
     /// target (O00 blocker B08). Everything outside that whitelist keeps the
     /// lexical rejection. See [`crate::aggregate_store`].
     store_bases: AggregateStoreBases,
+    /// C02-P-ALIAS: the declared record-pointer classes of this function, used
+    /// only to attach may-alias obligations to modeled reads and to recognise a
+    /// pointer-inequality guard. It admits nothing.
+    alias_classes: crate::may_alias::MayAliasClasses,
 }
 
 impl Parser<'_> {
@@ -2318,6 +2384,118 @@ impl Parser<'_> {
         store.pointer_field.then_some(store.place)
     }
 
+    /// C02-P-ALIAS: the pointer-inequality guard a branch condition expresses.
+    ///
+    /// Exactly `LEFT == RIGHT` or `LEFT != RIGHT`, optionally negated by
+    /// leading `!` and parenthesized, where both operands are plain declared
+    /// names the may-alias rule relates to each other. Anything else — a
+    /// member access, a call, a cast, a comparison against a constant — yields
+    /// `None`, and the branch keeps the shape it has today.
+    fn distinct_condition(&self, condition: &[Token]) -> Option<PointerDistinctCondition> {
+        if !supported_neutral_expression(condition) {
+            return None;
+        }
+        let texts = condition
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let mut found = self.distinct_condition_text(&texts)?;
+        // The rule is symmetric in its two names; normalise so that a
+        // certificate cannot depend on the spelling order of the comparison.
+        if found.left > found.right {
+            std::mem::swap(&mut found.left, &mut found.right);
+        }
+        Some(found)
+    }
+
+    fn distinct_condition_text(&self, texts: &[&str]) -> Option<PointerDistinctCondition> {
+        let texts = strip_parentheses(texts);
+        if let Some(rest) = texts.strip_prefix(&["!"]) {
+            let mut condition = self.distinct_condition_text(rest)?;
+            condition.true_is_distinct = !condition.true_is_distinct;
+            return Some(condition);
+        }
+        let mut depth = 0usize;
+        for index in 0..texts.len().saturating_sub(1) {
+            match texts[index] {
+                "(" | "[" => depth += 1,
+                ")" | "]" => depth = depth.checked_sub(1)?,
+                "=" | "!" if depth == 0 && texts[index + 1] == "=" => {
+                    let (left, right) = (
+                        strip_parentheses(&texts[..index]),
+                        strip_parentheses(&texts[index + 2..]),
+                    );
+                    let ([left], [right]) = (left, right) else {
+                        return None;
+                    };
+                    if !is_identifier(left) || !is_identifier(right) || left == right {
+                        return None;
+                    }
+                    // Both operands must be names this rule relates, or the
+                    // guard proves nothing it could discharge.
+                    if !self
+                        .alias_classes
+                        .peers(left)
+                        .iter()
+                        .any(|peer| peer == right)
+                    {
+                        return None;
+                    }
+                    return Some(PointerDistinctCondition {
+                        left: (*left).to_owned(),
+                        right: (*right).to_owned(),
+                        true_is_distinct: texts[index] == "!",
+                    });
+                }
+                _ => {}
+            }
+        }
+        None
+    }
+
+    /// C02-P-ALIAS: the may-alias obligations of one modeled call's *read*
+    /// arguments, in a stable order and deduplicated by root name.
+    ///
+    /// An `Out` position is deliberately excluded: its actual is the address of
+    /// a slot the callee writes, not a pointer this call dereferences
+    /// (`C02-P-ALIAS-USES`).
+    fn call_alias_reads(
+        &self,
+        arguments: &[Option<String>],
+        contract: &ResourceFunctionContract,
+    ) -> Vec<AliasPeers> {
+        let mut roots = BTreeSet::new();
+        for (index, mode) in contract.parameters.iter().enumerate() {
+            if matches!(mode, ResourceParameterMode::Out { .. }) {
+                continue;
+            }
+            let Some(place) = arguments.get(index).and_then(Option::as_deref) else {
+                continue;
+            };
+            if let Some(root) = crate::may_alias::place_root(place) {
+                roots.insert(root.to_owned());
+            }
+        }
+        roots
+            .into_iter()
+            .filter_map(|place| {
+                let peers = self.alias_classes.peers(&place);
+                (!peers.is_empty()).then_some(AliasPeers { place, peers })
+            })
+            .collect()
+    }
+
+    /// C02-P-ALIAS: the may-alias obligation of one admitted opaque field
+    /// read's base.
+    fn read_alias(&self, base: Option<&str>) -> Option<AliasPeers> {
+        let place = base?;
+        let peers = self.alias_classes.peers(place);
+        (!peers.is_empty()).then(|| AliasPeers {
+            place: place.to_owned(),
+            peers,
+        })
+    }
+
     fn parse_block(&mut self) -> Result<Vec<Statement>, usize> {
         let opening_line = self.tokens.get(self.cursor).map_or(1, |token| token.line);
         if self.text() != Some("{") {
@@ -2352,6 +2530,7 @@ impl Parser<'_> {
                     line,
                     condition_supported: supported_neutral_expression(&condition),
                     null_condition: self.null_condition(&condition),
+                    distinct_condition: self.distinct_condition(&condition),
                     then_body,
                     else_body,
                 })
@@ -2706,7 +2885,10 @@ impl Parser<'_> {
                 &self.typed_bases,
             )
         {
-            return LegacyInstruction::OpaqueValue { destination };
+            return LegacyInstruction::OpaqueValue {
+                destination,
+                alias_read: self.read_alias(texts.get(equal + 1).copied()),
+            };
         }
         // O00 blocker B08: one destination shape leaves the lexical gate — a
         // single `->` selection naming an admitted member of a local aggregate
@@ -2887,6 +3069,7 @@ impl Parser<'_> {
                         site
                     })
                     .collect();
+                let alias_reads = self.call_alias_reads(&arguments, &contract);
                 return LegacyInstruction::ContractCall {
                     function: function.to_owned(),
                     destination,
@@ -2894,6 +3077,7 @@ impl Parser<'_> {
                     contract,
                     produced_sites,
                     aggregate_reads: bound_reads.iter().map(|read| read.place.clone()).collect(),
+                    alias_reads,
                 };
             }
             return LegacyInstruction::Unknown {
@@ -3473,6 +3657,7 @@ impl CfgBuilder {
                 line,
                 condition_supported,
                 null_condition,
+                distinct_condition,
                 then_body,
                 else_body,
             } => {
@@ -3482,6 +3667,16 @@ impl CfgBuilder {
                     LegacyInstruction::BranchOnNull {
                         source: condition.source.clone(),
                         true_is_null: condition.true_is_null,
+                    }
+                } else if let Some(condition) = distinct_condition {
+                    // C02-P-ALIAS. A supported neutral condition would have
+                    // become `NoOp`; this carries the same absence of custody
+                    // effect and additionally lets the distinct edge discharge
+                    // one may-alias obligation.
+                    LegacyInstruction::BranchOnDistinct {
+                        left: condition.left.clone(),
+                        right: condition.right.clone(),
+                        true_is_distinct: condition.true_is_distinct,
                     }
                 } else if *condition_supported {
                     LegacyInstruction::NoOp
@@ -3825,7 +4020,240 @@ impl AbstractState {
         self.unmodeled |= incoming.unmodeled;
         *self != before
     }
+}
 
+/// C02-P-ALIAS: the may-alias facts in force on entry to one node.
+///
+/// They are computed by [`alias_facts`], a **separate** fixed point over the
+/// same CFG, and never live in [`AbstractState`]. That separation is deliberate
+/// and was forced by measurement: carrying them in the custody state changed
+/// how often `AbstractState::join` reported a change, which reordered the
+/// custody work list, and `report_leaks` runs on *intermediate* iterates of an
+/// exit node rather than on its settled state. Two leak diagnostics appeared in
+/// one corpus function from that reordering alone, with the rule's own refusal
+/// disabled. Keeping the facts out of the custody state makes this card
+/// scheduling-neutral; the underlying order-sensitivity of in-loop leak
+/// reporting is recorded as follow-on `C02-P-ALIAS-LEAK-ORDER` and deliberately
+/// not repaired here.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct NodeAliasFacts {
+    /// Names released on some path reaching this node. A *may* fact, joined by
+    /// union. Deliberately never cleared by a rebinding: reassigning the name
+    /// that released an object does not resurrect the object.
+    released: BTreeSet<String>,
+    /// Name pairs a pointer-inequality guard proved distinct on *every* path
+    /// reaching this node, each stored with its two names in ascending order.
+    /// A *must* fact, joined by intersection and dropped when either of its
+    /// names is rebound.
+    distinct: BTreeSet<(String, String)>,
+}
+
+impl NodeAliasFacts {
+    /// Join an incoming edge's facts. Returns whether anything changed.
+    fn absorb(&mut self, incoming: &Self) -> bool {
+        let before = self.clone();
+        self.released.extend(incoming.released.iter().cloned());
+        self.distinct
+            .retain(|pair| incoming.distinct.contains(pair));
+        *self != before
+    }
+
+    /// Whether a pointer-inequality guard proved these two names distinct here.
+    fn proved_distinct(&self, one: &str, other: &str) -> bool {
+        let pair = if one <= other {
+            (one.to_owned(), other.to_owned())
+        } else {
+            (other.to_owned(), one.to_owned())
+        };
+        self.distinct.contains(&pair)
+    }
+}
+
+/// The plain name one instruction *releases*, if any.
+///
+/// Exactly the sites at which [`apply_resource_action`] runs with `escape`
+/// false: an explicit `Release`, and every declared `Released` position of a
+/// contracted call. Consuming a value is deliberately outside v1
+/// (`C02-P-ALIAS-CONSUME`).
+fn released_names(instruction: &LegacyInstruction) -> Vec<&str> {
+    // Only a *plain name* is related by this rule: releasing `p->field`
+    // releases a member, not the name `p`.
+    let plain = |place: &str| crate::may_alias::place_root(place) == Some(place);
+    match instruction {
+        LegacyInstruction::Release { source } if plain(source) => vec![source.as_str()],
+        LegacyInstruction::ContractCall {
+            arguments,
+            contract,
+            ..
+        } => contract
+            .parameters
+            .iter()
+            .zip(arguments)
+            .filter_map(|(mode, argument)| {
+                matches!(mode, ResourceParameterMode::Released { .. })
+                    .then_some(argument.as_deref()?)
+                    .filter(|place| plain(place))
+            })
+            .collect(),
+        _ => Vec::new(),
+    }
+}
+
+/// The names one instruction binds, whose guard facts it therefore invalidates.
+///
+/// Exactly the destinations [`transfer`] and [`create_resource`] write.
+fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
+    let mut names = match instruction {
+        LegacyInstruction::Acquire { destination, .. }
+        | LegacyInstruction::Alias { destination, .. }
+        | LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
+        LegacyInstruction::ContractCall {
+            destination,
+            arguments,
+            contract,
+            ..
+        } => {
+            let mut names = destination.as_deref().into_iter().collect::<Vec<_>>();
+            names.extend(contract.parameters.iter().zip(arguments).filter_map(
+                |(mode, argument)| {
+                    matches!(mode, ResourceParameterMode::Out { .. })
+                        .then_some(argument.as_deref()?)
+                },
+            ));
+            names
+        }
+        _ => Vec::new(),
+    };
+    // A guard is about two plain names, so only a plain destination can
+    // invalidate one; `*out` and `p->field` name no such value.
+    names.retain(|name| crate::may_alias::place_root(name) == Some(*name));
+    names
+}
+
+/// C02-P-ALIAS: the may-alias facts on entry to every node of one CFG.
+///
+/// A separate forward fixed point, independent of custody: which releases have
+/// run and which pointer inequalities a branch proved depend only on the CFG's
+/// shape and its instructions, never on the abstract state. Releases only grow
+/// and guards only shrink, both over finite sets, so it terminates.
+fn alias_facts(cfg: &LegacyCfg) -> Vec<NodeAliasFacts> {
+    let mut entry = vec![None::<NodeAliasFacts>; cfg.nodes.len()];
+    entry[cfg.entry] = Some(NodeAliasFacts::default());
+    let mut work = VecDeque::from([cfg.entry]);
+    while let Some(node_id) = work.pop_front() {
+        let Some(facts) = entry[node_id].clone() else {
+            continue;
+        };
+        let node = &cfg.nodes[node_id];
+        let mut out = facts;
+        for name in released_names(&node.instruction) {
+            out.released.insert(name.to_owned());
+        }
+        for name in rebound_names(&node.instruction) {
+            out.distinct
+                .retain(|(left, right)| left != name && right != name);
+        }
+        for (edge, &successor) in node.successors.iter().enumerate() {
+            let mut edge_out = out.clone();
+            if let LegacyInstruction::BranchOnDistinct {
+                left,
+                right,
+                true_is_distinct,
+            } = &node.instruction
+            {
+                let distinct = if edge == 0 {
+                    *true_is_distinct
+                } else {
+                    !*true_is_distinct
+                };
+                if distinct {
+                    let pair = if left <= right {
+                        (left.clone(), right.clone())
+                    } else {
+                        (right.clone(), left.clone())
+                    };
+                    edge_out.distinct.insert(pair);
+                }
+            }
+            let changed = match &mut entry[successor] {
+                Some(current) => current.absorb(&edge_out),
+                slot @ None => {
+                    *slot = Some(edge_out);
+                    true
+                }
+            };
+            if changed {
+                work.push_back(successor);
+            }
+        }
+    }
+    entry.into_iter().map(Option::unwrap_or_default).collect()
+}
+
+/// C02-P-ALIAS: the provenance discharge.
+///
+/// `place` is bound here to exactly one live identity **this body acquired**.
+/// A body-made acquisition returns an object distinct from every object live
+/// when it ran, so the projection's own identity for `place` answers the
+/// question and no peer's release can reach it. A caller-held entry site is
+/// deliberately *not* provenance: two formals carrying declared entry custody
+/// are exactly the pair this card exists for.
+fn distinct_by_provenance(
+    state: &AbstractState,
+    caller_sites: &BTreeSet<usize>,
+    place: &str,
+) -> bool {
+    let Some(pointer) = state.pointers.get(place) else {
+        return false;
+    };
+    if pointer.unknown || pointer.may_be_null || pointer.targets.len() != 1 {
+        return false;
+    }
+    pointer.targets.iter().all(|site| {
+        !caller_sites.contains(site)
+            && state.resources.get(site) == Some(&LIVE)
+            && !state.unresolved_effect_sites.contains(site)
+    })
+}
+
+/// C02-P-ALIAS: refuse each modeled read whose base may denote an object some
+/// peer's release already destroyed.
+///
+/// Reported as the existing `UnknownAlias` — no diagnostic code is added,
+/// changed or downgraded — naming the read place and the peer that compromises
+/// it, in the `owner/source` composite spelling this module already uses. The
+/// diagnostic poisons the path, so the exit it reaches supports no custody
+/// claim, and the call's own effects still apply exactly as before: this rule
+/// can turn `Safe` into `Unknown` and can never hide a leak.
+fn require_unaliased_reads(
+    function: &str,
+    line: usize,
+    reads: &[AliasPeers],
+    state: &AbstractState,
+    caller_sites: &BTreeSet<usize>,
+    alias: &NodeAliasFacts,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) {
+    for read in reads {
+        if distinct_by_provenance(state, caller_sites, &read.place) {
+            continue;
+        }
+        for peer in &read.peers {
+            if alias.released.contains(peer) && !alias.proved_distinct(&read.place, peer) {
+                diagnostics.insert(LegacyDiagnostic {
+                    function: function.to_owned(),
+                    line,
+                    kind: LegacyDiagnosticKind::UnknownAlias {
+                        variable: format!("{}/{peer}", read.place),
+                    },
+                });
+            }
+        }
+    }
+}
+
+impl AbstractState {
     /// Join the B08 field-link relation.
     ///
     /// The union alone would be unsound in the escaping direction: a child
@@ -4252,6 +4680,9 @@ pub(crate) fn analyze_cfg_with_entry(
             .copied()
             .collect(),
     };
+    // C02-P-ALIAS: computed once, before the custody work list starts, and only
+    // read below. See [`alias_facts`].
+    let alias = alias_facts(&cfg);
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
@@ -4283,6 +4714,7 @@ pub(crate) fn analyze_cfg_with_entry(
             state,
             &acquisition_lines,
             &context,
+            &alias[node_id],
             &mut local,
         );
         // A path that reached a refusal supports no per-exit custody claim.
@@ -4373,6 +4805,7 @@ pub(crate) fn analyze_cfg_with_entry(
             state,
             &acquisition_lines,
             &context,
+            &alias[node_id],
             &mut ignored,
         );
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
@@ -4490,6 +4923,10 @@ fn transfer(
     mut state: AbstractState,
     acquisition_lines: &BTreeMap<usize, usize>,
     context: &TransferContext<'_>,
+    // C02-P-ALIAS: the may-alias facts on entry to this node, precomputed by
+    // [`alias_facts`]. Read only; nothing here writes them, which is what keeps
+    // the custody work list scheduled exactly as it was before this card.
+    alias: &NodeAliasFacts,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
     // A slot name denotes the caller's original pointer only while that
@@ -4498,7 +4935,7 @@ fn transfer(
     let destination = match &node.instruction {
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
-        | LegacyInstruction::OpaqueValue { destination }
+        | LegacyInstruction::OpaqueValue { destination, .. }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. } => destination.as_deref(),
         _ => None,
@@ -4616,6 +5053,35 @@ fn transfer(
             pointer.may_be_null = true;
         }
         return state;
+    }
+    // C02-P-ALIAS: every modeled read of a pointer this rule relates to another
+    // declared name refuses when that peer was released on this path and
+    // neither discharge applies. Reported before the instruction's own effects,
+    // which still apply unchanged: this can only add an `UnknownAlias`, never
+    // suppress a leak or a double release.
+    match &node.instruction {
+        LegacyInstruction::ContractCall { alias_reads, .. } => require_unaliased_reads(
+            function,
+            node.line,
+            alias_reads,
+            &state,
+            &context.caller_sites,
+            alias,
+            diagnostics,
+        ),
+        LegacyInstruction::OpaqueValue {
+            alias_read: Some(read),
+            ..
+        } => require_unaliased_reads(
+            function,
+            node.line,
+            std::slice::from_ref(read),
+            &state,
+            &context.caller_sites,
+            alias,
+            diagnostics,
+        ),
+        _ => {}
     }
     // O00 blocker B08: every store into an admitted aggregate field requires
     // its aggregate to resolve, here and now, to exactly one live identity
@@ -4737,8 +5203,9 @@ fn transfer(
             arguments,
             contract,
             produced_sites,
-            // Revalidated above, before any effect of this call applies.
+            // Both revalidated above, before any effect of this call applies.
             aggregate_reads: _,
+            alias_reads: _,
         } => {
             let unsanctioned = destination
                 .as_deref()
@@ -4792,7 +5259,11 @@ fn transfer(
                 ),
             }
         }
-        LegacyInstruction::OpaqueValue { destination } => {
+        LegacyInstruction::OpaqueValue {
+            destination,
+            // Revalidated above, before the binding takes effect.
+            alias_read: _,
+        } => {
             state.pointers.insert(
                 destination.clone(),
                 AbstractPointer {
@@ -4808,7 +5279,7 @@ fn transfer(
             // is what makes an overwritten resource visible as a residual.
             state.pointers.remove(place);
         }
-        LegacyInstruction::BranchOnNull { .. } => {}
+        LegacyInstruction::BranchOnNull { .. } | LegacyInstruction::BranchOnDistinct { .. } => {}
         LegacyInstruction::Unknown { description } => {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
