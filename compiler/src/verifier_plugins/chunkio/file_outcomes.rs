@@ -24,7 +24,14 @@ pub fn check_file_outcome_sources(
         })
         .collect()
 }
-pub(super) fn profile(function: &str) -> Result<CleanupProfile, String> {
+/// The record profile the retained in-process route composes under.
+///
+/// Public since card P04-COMPOSE so `compiler/tests/composition_route_parity.rs`
+/// can assert directly that this table **is** the vocabulary the pinned
+/// contract declares (P04-B1), which the moved process route derives for
+/// itself. P04-B2 measured that equality end to end through certificate
+/// parity; here it is asserted as an equality of profiles.
+pub fn profile(function: &str) -> Result<CleanupProfile, String> {
     let field = |name: &str, c_type: &str, reset| CleanupField {
         name: name.into(),
         c_type: c_type.into(),

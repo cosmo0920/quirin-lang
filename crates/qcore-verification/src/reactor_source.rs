@@ -446,6 +446,7 @@ impl<P: model::ReactorProfile> ReactorCallbackTask<P> {
             teardown_source: None,
             call_use_source: None,
             cleanup_replay_source: None,
+            composition_source: None,
         }
     }
 

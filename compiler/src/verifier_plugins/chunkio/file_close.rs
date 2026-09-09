@@ -98,7 +98,8 @@ fn check(
     {
         return Err("file-close source/dependency signature/revision mismatch".into());
     }
-    let unmap = unmap.recheck()?;
+    let unmap_profile = super::unmap_wrapper::native_profile()?;
+    let unmap = unmap.recheck(&super::unmap_wrapper::contracts(&unmap_profile))?;
     let close = check_cleanup_outcomes(
         close.source(),
         &file_outcomes::profile("cio_file_native_close")?,

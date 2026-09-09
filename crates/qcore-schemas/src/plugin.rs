@@ -478,6 +478,11 @@ pub struct VerificationRequestV2 {
     /// exchange, and never present together with another projection.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cleanup_replay_source: Option<crate::cleanup_replay_summary::CleanupReplaySourceInput>,
+    /// Optional, separately digest-bound composition projection for one
+    /// admitted ChunkIO composition family. Omitted for every other exchange,
+    /// and never present together with another projection.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub composition_source: Option<crate::composition_summary::CompositionSourceInput>,
 }
 
 impl VerificationRequestV2 {
@@ -653,6 +658,40 @@ impl VerificationRequestV2 {
                     if symbol == input.subject_function()
                         && translation_unit == &self.unit.translation_unit) => {}
             None if cleanup_replay_obligations == 0 => {}
+            _ => return Err(RequestError::InvalidObligations),
+        }
+        // A composition projection carries exactly one obligation, of its own
+        // property, for the wrapper it names, and never travels with another
+        // projection. Its prerequisite triples must each be complete and the
+        // three must be distinct: an empty component is a lookup key that names
+        // nothing, and a repeated one names a prerequisite it has not
+        // established.
+        let composition_obligations = self
+            .obligations
+            .iter()
+            .filter(|obligation| {
+                obligation.property == crate::obligation::ObligationProperty::CompositionContract
+            })
+            .count();
+        match &self.composition_source {
+            Some(input)
+                if input.version_matches()
+                    && input.prerequisites.is_complete()
+                    && input.prerequisites.are_distinct()
+                    && self.source_effect.is_none()
+                    && self.counter_effect.is_none()
+                    && self.reactor_program.is_none()
+                    && self.teardown_source.is_none()
+                    && self.call_use_source.is_none()
+                    && self.cleanup_replay_source.is_none()
+                    && self.capability == VerifierCapability::ResourceContracts
+                    && composition_obligations == 1
+                    && self.obligations.len() == 1
+                    && matches!(&self.obligations[0].subject,
+                    crate::obligation::ObligationSubject::Function { symbol, translation_unit }
+                    if symbol == input.subject_function()
+                        && translation_unit == &self.unit.translation_unit) => {}
+            None if composition_obligations == 0 => {}
             _ => return Err(RequestError::InvalidObligations),
         }
         // The quiescence obligation is the reactor projection's marker: it is

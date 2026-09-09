@@ -466,6 +466,7 @@ fn the_route_declines_every_request_that_is_not_its_own() {
         reactor_program: None,
         teardown_source: None,
         call_use_source: None,
+        composition_source: None,
         cleanup_replay_source: Some(input(CLOSE)),
     };
     assert!(propose(&base, &manifest).is_some());

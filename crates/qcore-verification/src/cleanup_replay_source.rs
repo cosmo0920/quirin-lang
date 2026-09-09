@@ -426,6 +426,7 @@ impl CleanupReplaySourceTask {
             teardown_source: None,
             call_use_source: None,
             cleanup_replay_source: Some(self.import.source_input()),
+            composition_source: None,
         }
     }
 
@@ -436,6 +437,46 @@ impl CleanupReplaySourceTask {
         self.prerequisite
             .revalidate_prerequisite(&self.import.source_input().prerequisite)
             .map(|_| ())
+    }
+
+    /// This task's own identity, for a *dependent* capability to name it by.
+    /// It carries no verdict, certificate or case data — only the semantic
+    /// profile, the task digest and the single obligation identifier, each of
+    /// which the dependent's core re-derives for itself.
+    pub fn prerequisite_identity(&self) -> PrerequisiteIdentity {
+        PrerequisiteIdentity {
+            semantic_profile: self.task.semantic_profile.clone(),
+            task_digest: self.task.task_digest(),
+            obligation_id: self.task.obligations[0].obligation_id.clone(),
+        }
+    }
+
+    /// Re-run this task's own evaluation for a dependent and confirm the
+    /// claimed identity is the one this context derives. The dependent calls
+    /// this before it looks at any dependent proposal.
+    pub fn revalidate_as_prerequisite(
+        &self,
+        claimed: &PrerequisiteIdentity,
+    ) -> Result<CleanupReplayCertificate, String> {
+        if !claimed.is_complete() {
+            return Err("cleanup replay prerequisite identity is incomplete".into());
+        }
+        if *claimed != self.prerequisite_identity() {
+            return Err(
+                "cleanup replay prerequisite identity is not the one the core derives".into(),
+            );
+        }
+        // A dependent inherits this route's own prerequisite obligation too:
+        // re-establishing a prerequisite that has not itself re-established its
+        // prerequisite would admit a chain by its weakest link.
+        self.revalidate_prerequisite()?;
+        self.evaluate()
+    }
+
+    /// The typed summary this task imported, so a dependent can require that
+    /// the body it composes over is the one this prerequisite checked.
+    pub fn summary(&self) -> &qcore_c_gateway::typed_source::SourceSummary {
+        self.import.summary()
     }
 
     /// Re-check the imported body against the pinned contract with the

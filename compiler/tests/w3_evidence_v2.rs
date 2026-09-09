@@ -69,6 +69,7 @@ fn request(task: &VerificationTask) -> VerificationRequestV2 {
         teardown_source: None,
         call_use_source: None,
         cleanup_replay_source: None,
+        composition_source: None,
         protocol_version: 1,
         evidence_version: 2,
         request_id: format!(

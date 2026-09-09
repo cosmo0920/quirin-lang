@@ -1,0 +1,59 @@
+chunk-contracts  archived=  4186178 produced=  4186178 BYTE-IDENTICAL
+contracts        archived=     7958 produced=     8168 DIFFERS
+   leaves: 10
+     /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab2456384ca09e324/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab2456384ca09e324/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/resource_memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab2456384ca09e324/compiler/../contract/profiles/fluent-bit/../../qcore/libc/memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab2456384ca09e324/compiler/../contract/profiles/fluent-bit/../../qcore/librdkafka/memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ab2456384ca09e324/compiler/../contract/profiles/fluent-bit/../../qcore/monkey/memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/resource_memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/libc/memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/librdkafka/memory.qcore
+     /sources//home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/monkey/memory.qcore
+diagnostics      archived= 11148247 produced= 11148247 BYTE-IDENTICAL
+source           archived=  1664550 produced=  1664550 BYTE-IDENTICAL
+source-effects   archived=   118502 produced=   118502 DIFFERS
+   leaves: 35
+     /results[16]/bounds/resource_contracts:3f2a27484cd167dc53cea710
+     /results[16]/bounds/resource_contracts:abbcae1df056eed836ef8037
+     /results[16]/evidence/coverage[0]
+     /results[16]/evidence/reproducibility/package_digest
+     /results[16]/evidence/reproducibility/provider_version
+     /results[16]/evidence/unit/build_digest
+     /results[16]/import_identity/configuration_digest
+     /results[16]/import_identity/helpers/cio_error_reset/configuration_digest
+     /results[16]/task/contract_sources/qcore:boolean-field-import:v1
+     /results[16]/task/obligations[0]/obligation_id
+     /results[16]/task/unit/build_digest
+     /results[16]/witness/task_digest
+     /results[24]/bounds/resource_contracts:72d7882bd1b078d698f0fb93
+     /results[24]/bounds/resource_contracts:a84af02797a48b901d39e309
+     /results[24]/evidence/coverage[0]
+     /results[24]/evidence/reproducibility/package_digest
+     /results[24]/evidence/reproducibility/provider_version
+     /results[24]/evidence/unit/build_digest
+     /results[24]/import_identity/configuration_digest
+     /results[24]/import_identity/helpers/cio_error_reset/configuration_digest
+     /results[24]/task/contract_sources/qcore:boolean-field-import:v1
+     /results[24]/task/obligations[0]/obligation_id
+     /results[24]/task/unit/build_digest
+     /results[24]/witness/task_digest
+     /results[63]/bounds/resource_contracts:737ab83369828820cd4736f7
+     /results[63]/bounds/resource_contracts:f00185aa4d45862f7a34eb54
+     /results[63]/evidence/coverage[0]
+     /results[63]/evidence/reproducibility/package_digest
+     /results[63]/evidence/reproducibility/provider_version
+     /results[63]/evidence/unit/build_digest
+     /results[63]/import_identity/configuration_digest
+     /results[63]/task/contract_sources/qcore:boolean-field-import:v1
+     /results[63]/task/obligations[0]/obligation_id
+     /results[63]/task/unit/build_digest
+     /results[63]/witness/task_digest
+contracts: sources equal after prefix normalisation: True
+contracts: every non-source member byte-identical: True
+source-effects: 35 leaves, 0 unexplained
+source-effects: 282 verdict-surface leaves compared, 0 mismatched
+  results[16] provider_version 0.8.0 -> 0.9.0
+  results[24] provider_version 0.8.0 -> 0.9.0
+  results[63] provider_version 0.8.0 -> 0.9.0

@@ -270,5 +270,6 @@ fn request(input: &CallUseSourceInput) -> VerificationRequestV2 {
         teardown_source: None,
         call_use_source: Some(input.clone()),
         cleanup_replay_source: None,
+        composition_source: None,
     }
 }
