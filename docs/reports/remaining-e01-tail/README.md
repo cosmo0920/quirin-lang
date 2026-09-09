@@ -641,7 +641,7 @@ not about this repository.
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | **2,548 passed, 0 failed** (§7.3). No Rust file has changed since that measurement's commit — `git diff <commit> --name-only` names only `docs/` and `proof/` — so it stands for the delivered tree. |
+| `cargo test --workspace` | **2,548 passed, 0 failed, 8 ignored** (§7.3), measured twice: once during development and once as a confirming re-run at the delivered tree, both exit 0 with identical totals. |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | **one pre-existing failure, not this card's** (§7.1); clean everywhere else, and clean for `--workspace --lib --bins` |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
