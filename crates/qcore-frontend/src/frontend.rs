@@ -2204,6 +2204,14 @@ fn is_reserved_source_word(word: &str) -> bool {
             // load-bearing: without it the ranked declaration collects `rank`
             // as a referenced name and refuses with `Q013`.
             | "rank"
+            // Card CT34-GROWTH's protection growth
+            // (`grow GUARD guards RESOURCE;`). Reserved for the same reason as
+            // every profile keyword above: it is the statement's own keyword,
+            // never a reference to a binding. The guard and resource names that
+            // follow it *are* references and still resolve normally. Measured
+            // load-bearing: without it the statement collects `grow` as a
+            // referenced name and refuses with `Q013`.
+            | "grow"
             | "spawn"
             | "join"
             | "copy"

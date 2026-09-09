@@ -128,6 +128,81 @@
 //! independent recheck, and nothing about the world is taken on trust. A rank
 //! is a name for a position in a declared order, not a claim about memory,
 //! layout or the scheduler.
+//!
+//! # Protection growth (card `CT34-GROWTH`)
+//!
+//! [`MutexInvariantEvent::ExtendProtection`] is, and stays, an unconditional
+//! refusal: a *proposal* to change a mutex's protected shape is refused at
+//! `Q618` with the generation untouched. Beside it,
+//! [`MutexInvariantEvent::GrowProtection`] is one **opt-in** admitted growth.
+//! It is not a relaxation of the fixed-shape rule — it is a second, narrower
+//! rule with its own preconditions, and a trace that uses neither event is
+//! byte-identical to before.
+//!
+//! The soundness argument is the ledger's own. `CreateMutex` is sound because
+//! it *moves* authority: the creator holds `FULL_ACCESS` over every declared
+//! interval, and parking removes exactly that share and installs exactly one
+//! parked `FULL_ACCESS` in its place, so the per-atom total
+//! `sum(task shares) + parked` is unchanged and the atom acquires exactly one
+//! protector. Growth performs the identical move on a further interval, so the
+//! same equation holds for the same reason. Everything else in the rule is
+//! there to keep the *other* invariants that a mid-trace shape change could
+//! disturb:
+//!
+//! * **W1 — inside the generation's own critical section.** The growing task
+//!   must hold a live guard over the generation. `Lock` refuses a held
+//!   generation, so holding the guard means no other task is inside it. That is
+//!   the same exclusivity `CreateMutex` gets for free (nobody can be inside a
+//!   mutex that does not exist yet), and it is what publishes the change: every
+//!   later acquirer merges this section's release clock, so the shape change is
+//!   ordered before every subsequent use by the mutex's own release/acquire
+//!   edge. `guard` is the only identity the event names; the generation is read
+//!   off the guard, so a growth can never name a mutex its holder does not
+//!   hold.
+//! * **W2 — with the invariant open** (`Q626`). Closed means "the predicate
+//!   holds of the protected region". Growing under a closed invariant would
+//!   silently assert the predicate of memory nothing established it for. Open
+//!   is the window in which the predicate need not hold, so the shape change
+//!   belongs there, and the section is then *forced* through a `CloseInvariant`
+//!   before it can unlock or error-exit.
+//! * **W3 — the predicate identity moves with the shape** (`Q627`). A growth
+//!   supplies the generation's new [`InvariantId`], and it must be one this
+//!   generation has never carried. A wider region is a different proposition,
+//!   so a post-growth `CloseInvariant` cannot re-use the pre-growth
+//!   declaration: the reader of a certificate sees the predicate identity move
+//!   exactly when the shape moved. A growth also counts as a write while the
+//!   invariant is open, so the *checked* `NoWriteOccurred` witness — which
+//!   asserts the invariant is unchanged — is unavailable to a section that
+//!   grew, and such a section must close by declaration.
+//! * **W4 — over unprotected memory only** (`Q617`). The new interval may not
+//!   overlap any live generation's declared shape, this one included, and none
+//!   of its atoms may already be parked. Those are the same fact from the
+//!   interval side and the ledger side; both are checked, so a later change to
+//!   either representation cannot open a hole on its own.
+//! * **W5 — by the creator, holding full authority** (`Q621`). The grower must
+//!   hold `FULL_ACCESS` over the whole new interval — parking is
+//!   all-or-nothing, exactly as at creation — *and* must be the generation's
+//!   creator. The second half is `DestroyMutex`'s own rule read forwards:
+//!   destruction returns every parked share to the creator, so authority parked
+//!   by anyone else would arrive at a task that never gave it up. A non-creator
+//!   grower is therefore refused under the same `MutexAuthorityNotConserved`
+//!   the destruction rule uses, for the same reason.
+//!
+//! Growth is **permanent for the generation**: there is no shrink event, and
+//! the grown intervals are released exactly like the declared ones, to the
+//! creator, when the generation is destroyed. Every admitted growth is named on
+//! [`MutexInvariantCertificate::admitted_protection_growths`] with its event,
+//! guard, interval and both invariant identities, and
+//! [`MutexInvariantCertificate::protected_shape`] records the *effective*
+//! shape — what the checker authorised against — so the two together recover
+//! the timeline. An empty growth vector means no growth was admitted at all.
+//!
+//! What growth does **not** establish: that the newly protected memory
+//! satisfies the new predicate (that is the same `InvariantPredicateDeclared`
+//! premise, now attached to a named new identity), that the C layout of the
+//! grown interval is what was declared (`DeclaredFootprintShape`, unchanged),
+//! or anything about shrinking, replacing or re-pointing a protected identity —
+//! all of which remain outside the profile.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -332,6 +407,25 @@ pub enum MutexInvariantEvent {
         mutex: MutexId,
         footprint: AccessFootprint,
     },
+    /// The one admitted protection growth — card `CT34-GROWTH`.
+    ///
+    /// This is opt-in and additive: a plain [`MutexInvariantEvent::ExtendProtection`]
+    /// keeps refusing at `Q618` exactly as before, and a trace using neither
+    /// event is unchanged. The generation is read off `guard`, never named
+    /// separately, so a growth can only ever touch a mutex its holder holds.
+    /// Every condition of `§ Protection growth` (W1-W5) is checked; failing any
+    /// one is a refusal that leaves the generation's shape, its invariant and
+    /// the share ledger untouched.
+    GrowProtection {
+        task: TaskId,
+        /// The live section the growing task holds over the generation. W1.
+        guard: GuardId,
+        /// The interval to add. Must be unprotected, and wholly the grower's.
+        footprint: AccessFootprint,
+        /// The generation's new declared invariant. Must be one this generation
+        /// has never carried: a wider region is a different proposition. W3.
+        invariant: InvariantId,
+    },
     /// A synchronization construct outside this profile. Always refused.
     UnsupportedConstruct {
         task: TaskId,
@@ -389,6 +483,25 @@ pub struct AdmittedGuardLocalJoin {
     /// The child and every descendant of it, all of which the checker verified
     /// named no mutex, guard or guard-scoped fact anywhere in the trace.
     pub quiet_subtree: Vec<TaskId>,
+}
+
+/// One admitted protection growth, named on the certificate so a reader can see
+/// exactly which generation grew, when, under which section, over what, and
+/// which declared predicate identity the growth replaced. A certificate with an
+/// empty vector admitted no growth at all — card `CT34-GROWTH`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct AdmittedProtectionGrowth {
+    pub event: usize,
+    pub task: TaskId,
+    pub mutex: MutexId,
+    pub guard: GuardId,
+    /// The interval added. Disjoint from every interval any live generation
+    /// protected at this point, this one included.
+    pub footprint: AccessFootprint,
+    /// The generation's declared invariant before the growth.
+    pub from_invariant: InvariantId,
+    /// Its declared invariant after: an identity this generation never carried.
+    pub to_invariant: InvariantId,
 }
 
 /// One synchronization edge the checker *derived* and matched against a
@@ -483,6 +596,24 @@ pub enum MutexInvariantDiagnostic {
     MixedLockRankDeclaration {
         event: Option<usize>,
         mutex: MutexId,
+    },
+    /// W2 of `§ Protection growth`: a growth attempted while the generation's
+    /// invariant was not open. A closed invariant asserts the predicate of the
+    /// protected region, so widening the region under one would assert it of
+    /// memory nothing established it for.
+    ProtectionGrowthOutsideOpenInvariant {
+        event: usize,
+        mutex: MutexId,
+        guard: GuardId,
+    },
+    /// W3 of `§ Protection growth`: a growth that did not move the generation's
+    /// declared invariant to an identity it has never carried. A wider region is
+    /// a different proposition, so re-using the predicate identity would widen a
+    /// declared premise silently.
+    ProtectionGrowthInvariantUnchanged {
+        event: usize,
+        mutex: MutexId,
+        invariant: InvariantId,
     },
 
     // ---- family members of the codes above ----
@@ -608,10 +739,16 @@ impl MutexInvariantDiagnostic {
     /// refusals join `Q613`. Card `CT33-RANKS` extends the profile's band to
     /// `Q625` with the two obligations of the opt-in lock-rank discipline:
     /// `Q624` for an acquisition out of rank order and `Q625` for a module
-    /// that declares ranks for only part of itself. Structural refusals
-    /// carried over from the bounded concurrency model keep the existing
-    /// concurrency pass code `Q600`; they are not new obligations of this
-    /// profile.
+    /// that declares ranks for only part of itself. Card `CT34-GROWTH` extends
+    /// it to `Q627` with the two obligations of the opt-in protection growth
+    /// that are its own: `Q626` for a growth outside an open invariant and
+    /// `Q627` for a growth that did not move the declared predicate identity.
+    /// Its other refusals are deliberately existing codes — an already
+    /// protected interval is `Q617` and an unconserved or misrouted parked
+    /// share is `Q621`, both for exactly the reasons those codes already carry.
+    /// Structural refusals carried over from the bounded concurrency model keep
+    /// the existing concurrency pass code `Q600`; they are not new obligations
+    /// of this profile.
     pub const fn code(&self) -> &'static str {
         match self {
             Self::UnprotectedFootprint { .. } => "Q610",
@@ -633,6 +770,8 @@ impl MutexInvariantDiagnostic {
             Self::DeadMutexGeneration { .. } => "Q623",
             Self::LockRankViolation { .. } => "Q624",
             Self::MixedLockRankDeclaration { .. } => "Q625",
+            Self::ProtectionGrowthOutsideOpenInvariant { .. } => "Q626",
+            Self::ProtectionGrowthInvariantUnchanged { .. } => "Q627",
             _ => "Q600",
         }
     }
@@ -658,7 +797,12 @@ pub struct MutexInvariantCertificate {
     pub completed_tasks: Vec<TaskId>,
     pub destroyed_resources: Vec<SharedResourceId>,
     pub destroyed_mutexes: Vec<MutexId>,
-    /// Which mutex generation protected which exact footprints.
+    /// Which mutex generation protected which exact footprints — the
+    /// **effective** shape the checker authorised against, so a generation that
+    /// grew records its declared intervals followed by every admitted growth in
+    /// the order it was admitted. `admitted_protection_growths` names the
+    /// deltas, so the two together recover the timeline; an empty growth vector
+    /// means every entry here is exactly what its `CreateMutex` declared.
     pub protected_shape: BTreeMap<MutexId, Vec<AccessFootprint>>,
     pub admitted_invariant_transitions: Vec<InvariantTransition>,
     pub derived_sync_edges: Vec<DerivedSyncEdge>,
@@ -666,6 +810,11 @@ pub struct MutexInvariantCertificate {
     /// guard-local rule. Empty unless the trace used
     /// [`MutexInvariantEvent::GuardLocalJoin`] *and* every condition held.
     pub admitted_guard_local_joins: Vec<AdmittedGuardLocalJoin>,
+    /// Protected-shape growths admitted by `§ Protection growth`. Empty unless
+    /// the trace used [`MutexInvariantEvent::GrowProtection`] *and* every
+    /// condition held; a reader must not read an empty vector as "growth was
+    /// checked", only as "no generation grew".
+    pub admitted_protection_growths: Vec<AdmittedProtectionGrowth>,
     /// The declared lock ranks the rank discipline ran under, verbatim. Empty
     /// means the discipline was off and no acquisition order was checked; a
     /// reader must not read an empty map as "ranks were satisfied". Non-empty
@@ -790,7 +939,11 @@ impl ShareLedger {
                 MutexInvariantEvent::Access { footprint, .. }
                 | MutexInvariantEvent::BorrowUnderGuard { footprint, .. }
                 | MutexInvariantEvent::AssertFact { footprint, .. }
-                | MutexInvariantEvent::ExtendProtection { footprint, .. } => record(*footprint),
+                | MutexInvariantEvent::ExtendProtection { footprint, .. }
+                // A growth's interval is an atom boundary like any other, so
+                // `atoms_of` stays exact for it and the authority check below
+                // cannot be evaded by an interval the ledger never split on.
+                | MutexInvariantEvent::GrowProtection { footprint, .. } => record(*footprint),
                 _ => {}
             }
         }
@@ -941,6 +1094,10 @@ impl ShareLedger {
 struct MutexState {
     protects: Vec<AccessFootprint>,
     invariant: InvariantId,
+    /// Every declared invariant this generation has carried, creation first. A
+    /// growth must move the identity to one that is not in here (W3), so a
+    /// generation cannot grow and then revert to an earlier declaration.
+    invariant_history: Vec<InvariantId>,
     creator: TaskId,
     holder: Option<GuardId>,
     waiters: BTreeSet<TaskId>,
@@ -998,6 +1155,7 @@ const fn mutex_keying_task(event: &MutexInvariantEvent) -> Option<TaskId> {
         | MutexInvariantEvent::AssertFact { task, .. }
         | MutexInvariantEvent::UseFact { task, .. }
         | MutexInvariantEvent::ExtendProtection { task, .. }
+        | MutexInvariantEvent::GrowProtection { task, .. }
         | MutexInvariantEvent::UnsupportedConstruct { task, .. } => Some(*task),
         MutexInvariantEvent::Access {
             task,
@@ -1093,6 +1251,7 @@ pub fn check_mutex_invariant_program(
     let mut spawn_guards = BTreeMap::<TaskId, BTreeSet<GuardId>>::new();
     let mut mutex_keyed = BTreeSet::<TaskId>::new();
     let mut guard_local_joins = Vec::<AdmittedGuardLocalJoin>::new();
+    let mut protection_growths = Vec::<AdmittedProtectionGrowth>::new();
 
     for (index, event) in program.events.iter().enumerate() {
         // G7 is recorded on *occurrence*, before any admission check, so a task
@@ -1348,6 +1507,7 @@ pub fn check_mutex_invariant_program(
                         MutexState {
                             protects: protects.clone(),
                             invariant: *invariant,
+                            invariant_history: vec![*invariant],
                             creator: *task,
                             holder: None,
                             waiters: BTreeSet::new(),
@@ -2136,6 +2296,155 @@ pub fn check_mutex_invariant_program(
                         mutex: *mutex,
                     });
                 }
+                MutexInvariantEvent::GrowProtection {
+                    task,
+                    guard,
+                    footprint,
+                    invariant,
+                } => {
+                    if !require_active(&clocks, &active, index, *task, &mut diagnostics) {
+                        break 'event;
+                    }
+                    // W1: the generation is read off the guard, and the guard
+                    // must be this task's own live section. A `Lock` refuses a
+                    // held generation, so holding it means no other task is
+                    // inside the mutex while its shape changes.
+                    let Some(guard_state) = guards.get(guard) else {
+                        diagnostics.insert(MutexInvariantDiagnostic::DeadGuard {
+                            event: index,
+                            guard: *guard,
+                        });
+                        break 'event;
+                    };
+                    if guard_state.holder != *task {
+                        diagnostics.insert(MutexInvariantDiagnostic::WrongGuardAffinity {
+                            event: index,
+                            guard: *guard,
+                            task: *task,
+                        });
+                        break 'event;
+                    }
+                    let mutex = guard_state.mutex;
+                    let phase = guard_state.phase;
+                    // A live guard implies a live generation (destruction
+                    // refuses while any guard names it), so this arm is
+                    // unreachable; it blocks rather than admits, so the rule
+                    // stays fail-closed if that ever changes.
+                    let Some(state) = mutexes.get(&mutex) else {
+                        diagnostics.insert(MutexInvariantDiagnostic::UnknownMutex {
+                            event: index,
+                            mutex,
+                        });
+                        break 'event;
+                    };
+                    // W2: a closed invariant asserts the predicate of the
+                    // protected region; widening it there would assert the
+                    // predicate of memory nothing established it for.
+                    if phase != InvariantPhase::Open {
+                        diagnostics.insert(
+                            MutexInvariantDiagnostic::ProtectionGrowthOutsideOpenInvariant {
+                                event: index,
+                                mutex,
+                                guard: *guard,
+                            },
+                        );
+                        break 'event;
+                    }
+                    if !footprint.is_valid() {
+                        diagnostics.insert(MutexInvariantDiagnostic::InvalidFootprint {
+                            event: Some(index),
+                        });
+                        break 'event;
+                    }
+                    if destroyed_resources.contains(&footprint.resource) {
+                        diagnostics.insert(MutexInvariantDiagnostic::DeadResource {
+                            event: index,
+                            resource: footprint.resource,
+                        });
+                        break 'event;
+                    }
+                    // W4: the same fact from the interval side and the ledger
+                    // side. Every parked atom belongs to some live generation's
+                    // declared shape, so the second half is redundant today; it
+                    // is checked anyway so a later change to either
+                    // representation cannot open a hole on its own.
+                    let overlaps_live = mutexes.values().any(|live| {
+                        live.protects
+                            .iter()
+                            .any(|protected| protected.overlaps(*footprint))
+                    });
+                    let already_parked = ledger
+                        .atoms_of(*footprint)
+                        .iter()
+                        .any(|atom| ledger.parked.contains_key(atom));
+                    if overlaps_live || already_parked {
+                        diagnostics.insert(MutexInvariantDiagnostic::FootprintAlreadyProtected {
+                            event: index,
+                            mutex,
+                        });
+                        break 'event;
+                    }
+                    // W5: destruction returns every parked share to the
+                    // creator, so authority parked by anyone else would arrive
+                    // at a task that never gave it up — `DestroyMutex`'s own
+                    // rule, read forwards.
+                    if state.creator != *task {
+                        diagnostics.insert(MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+                            event: Some(index),
+                            resource: footprint.resource,
+                        });
+                        break 'event;
+                    }
+                    // W5, second half: parking is all-or-nothing, exactly as at
+                    // creation.
+                    if ledger.authority(*task, *footprint) != u32::from(FULL_ACCESS) {
+                        diagnostics.insert(MutexInvariantDiagnostic::MutexAuthorityNotConserved {
+                            event: Some(index),
+                            resource: footprint.resource,
+                        });
+                        break 'event;
+                    }
+                    // W3: a wider region is a different proposition, so the
+                    // declared predicate identity must move to one this
+                    // generation has never carried.
+                    if state.invariant_history.contains(invariant) {
+                        diagnostics.insert(
+                            MutexInvariantDiagnostic::ProtectionGrowthInvariantUnchanged {
+                                event: index,
+                                mutex,
+                                invariant: *invariant,
+                            },
+                        );
+                        break 'event;
+                    }
+                    let from_invariant = state.invariant;
+                    ledger.park(*task, mutex, *footprint);
+                    let state = mutexes.get_mut(&mutex).expect("generation was checked");
+                    state.protects.push(*footprint);
+                    state.invariant = *invariant;
+                    state.invariant_history.push(*invariant);
+                    protected_shape.insert(mutex, state.protects.clone());
+                    // A growth changes what the protected region *is*, so it is
+                    // a write for both purposes `writes_while_open` serves: the
+                    // checked `NoWriteOccurred` witness is unavailable to a
+                    // section that grew, and any fact overlapping the change
+                    // dies at the close.
+                    guards
+                        .get_mut(guard)
+                        .expect("guard was checked")
+                        .writes_while_open
+                        .push(*footprint);
+                    protection_growths.push(AdmittedProtectionGrowth {
+                        event: index,
+                        task: *task,
+                        mutex,
+                        guard: *guard,
+                        footprint: *footprint,
+                        from_invariant,
+                        to_invariant: *invariant,
+                    });
+                    tick(&mut clocks, *task);
+                }
                 MutexInvariantEvent::UnsupportedConstruct { task, construct } => {
                     let _ = task;
                     diagnostics.insert(
@@ -2200,6 +2509,7 @@ pub fn check_mutex_invariant_program(
             admitted_invariant_transitions: transitions,
             derived_sync_edges: sync_edges,
             admitted_guard_local_joins: guard_local_joins,
+            admitted_protection_growths: protection_growths,
             declared_lock_ranks: program.lock_ranks.clone(),
         })
     } else {
@@ -2275,6 +2585,10 @@ pub fn recheck_mutex_invariant_certificate(
             mismatch(
                 "admitted_guard_local_joins",
                 derived.admitted_guard_local_joins != certificate.admitted_guard_local_joins,
+            );
+            mismatch(
+                "admitted_protection_growths",
+                derived.admitted_protection_growths != certificate.admitted_protection_growths,
             );
             mismatch(
                 "declared_lock_ranks",
