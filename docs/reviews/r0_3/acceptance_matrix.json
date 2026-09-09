@@ -1012,7 +1012,8 @@
    "docs/reports/wave8-epoch-ct/ct_stage_evidence.json",
    "docs/reports/wave9-ctwin/ct_stage_evidence.json",
    "docs/reports/wave11-ct33/ct_stage_evidence.json",
-   "docs/reports/wave13-ct34/ct_stage_evidence.json"
+   "docs/reports/wave13-ct34/ct_stage_evidence.json",
+   "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
@@ -1169,22 +1170,22 @@
     "not_applicable": 21
    },
    "mutex_reference_execution": {
-    "executed": 1,
-    "not_applicable": 31
+    "executed": 2,
+    "not_applicable": 30
    },
    "c_emission": {
-    "executed": 12,
-    "not_applicable": 20
+    "executed": 13,
+    "not_applicable": 19
    },
    "native_execution": {
-    "executed": 12,
-    "not_applicable": 20
+    "executed": 13,
+    "not_applicable": 19
    },
    "native_sanitized": {
-    "executed": 3,
+    "executed": 4,
     "not_applicable": 6,
     "recorded_not_gated": 5,
-    "unassessed": 18
+    "unassessed": 17
    },
    "legacy_c_twin": {
     "executed": 2,
@@ -1197,9 +1198,9 @@
   "depth_profile": {
    "epoch_bound_check": 4,
    "legacy_c_twin": 2,
-   "mutex_invariant_check": 9,
+   "mutex_invariant_check": 8,
    "native_execution": 9,
-   "native_sanitized": 3,
+   "native_sanitized": 4,
    "task_ledger_check": 4,
    "task_lowering": 1
   },
@@ -1226,7 +1227,7 @@
    "CT31": "mutex_invariant_check",
    "CT32": "mutex_invariant_check",
    "CT33": "mutex_invariant_check",
-   "CT34": "mutex_invariant_check",
+   "CT34": "native_sanitized",
    "CT35": "epoch_bound_check",
    "CT36": "epoch_bound_check",
    "CT37": "native_execution",
@@ -1238,16 +1239,16 @@
    "CT50": "native_execution"
   },
   "observation_counts": {
-   "c_emission": 28,
+   "c_emission": 29,
    "elaborate": 30,
    "epoch_bound_check": 4,
    "epoch_lowering": 4,
    "legacy_c_twin": 3,
    "mutex_invariant_check": 10,
    "mutex_lowering": 10,
-   "mutex_reference_execution": 1,
-   "native_execution": 28,
-   "native_sanitized": 9,
+   "mutex_reference_execution": 2,
+   "native_execution": 29,
+   "native_sanitized": 10,
    "parse": 32,
    "task_ledger_check": 15,
    "task_lowering": 16,
@@ -4154,16 +4155,45 @@
       "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "not_applicable"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "c_emission": {
-      "status": "not_applicable"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "not_applicable"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
+      "artifact": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
       "status": "not_applicable"
@@ -4173,23 +4203,15 @@
      }
     },
     "auxiliary_executed_stages": {
-     "admitted_control": {
+     "one_token_control": {
       "status": "executed",
       "executor": "compiler/tests/ct_corpus.rs::run_mutex_controls",
       "artifact": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
-      "expectation": "accept_check_only",
-      "host_gate": [
-       "linux",
-       "macos",
-       "windows"
-      ],
+      "expectation": "accept_growth",
       "observations": 1,
-      "emits_c": false,
       "measured_core_result": "accepted; admitted_protection_growths = 1; protected_shape = {1: [x[0,4), z[0,4)], 2: [y[0,4)]}",
-      "measured_backend_refusal": [
-       "Q600"
-      ],
-      "note": "The case with exactly ONE TOKEN changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. The core admits it and really records the growth, so the case's Q617 is attributable to the interval already having a protector rather than to growth being written at all, to the third resource existing, or to the second generation being declared. It is `accept_check_only` rather than `accept` because the C backend deliberately refuses a GrowProtection event; that refusal is measured as Q600 `the checked mutex backend refused this trace: UnsupportedEvent { event: 4 }` and pinned. Host-gated in exactly the way an `accept` control is: on a host outside the gate the runner reports the Q500 refusal instead of skipping silently."
+      "emits_c": true,
+      "note": "The case with exactly ONE TOKEN changed: the growth names `z`, which nothing protects, instead of `y`, which generation `n` protects. Wave 13 recorded this control as accept_check_only with a measured backend refusal of [Q600] UnsupportedEvent; that refusal no longer exists, so the expectation moved to accept_growth and its backend_refusal is now empty. The growth-recorded assertion is retained verbatim, so the attribution wave 13 established is unchanged."
      },
      "own_footprint_control": {
       "status": "executed",
@@ -4206,12 +4228,12 @@
        "Q600",
        "Q600"
       ],
-      "note": "The case with the growth aimed at `x`, generation `m`'s OWN declared interval, rather than at generation `n`'s. It refuses with the identical seven-entry cascade, so W4's `the new interval must overlap no live generation's declared shape, this generation's included` is a measured statement rather than prose. It reaches the same core refusal on every host."
+      "note": "Unchanged from wave 13 and re-measured: the growth aimed at `x`, generation `m`'s OWN declared interval, refuses with the identical seven-entry cascade."
      }
     },
-    "deepest_executed_stage": "mutex_invariant_check",
-    "stage_evidence_record": "docs/reports/wave13-ct34/ct_stage_evidence.json",
-    "semantic_profile": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared with generations over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned and every entry says something: the section unlocks with its invariant still open (Q613 InvariantOpenAtUnlock), the growth's own refusal sits SECOND rather than first because the lowering mints the new predicate identity before the core decides (Q617; card boundary CT34-GROWTH-CASCADE, recorded rather than concealed), the generation is destroyed with its guard still live (Q619), the section's `close` names a declared identity the generation never took because the refused growth installed nothing (Q613 InvalidInvariantWitness), and scope exit finds the resource, the guard and the generation outstanding (three Q600). Every entry after Q617 is what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were. The admitted control differs by exactly ONE TOKEN - the growth names the unprotected `z` instead of `y` - so the refusal is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_check_only`: the core admits it and records one admitted protection growth, and compile_files then refuses with [Q600] UnsupportedEvent, which is card CT34-GROWTH boundary 3 (CT34-GROWTH-NATIVE) pinned as a decision - nothing in the C backend reads a generation's declared shape, so it refuses to render a growth rather than emit a mutex protecting less than the model says. A second control grows onto the generation's OWN declared interval and refuses with the identical seven-entry cascade, so W4's one-protector rule is measured to cover this generation's shape too. There is no shrink or replacement form in this profile at all, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage. native_sanitized is unassessed, not executed: this case compiles no C at all, and the schema-2 gate lists exactly which cases may read executed. evidence_target=linux records only the Q500 host gate on the two controls that reach compile_files, NOT any compiled or executed C."
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
+    "semantic_profile": "source.mutex.guard.v1 with card CT34-GROWTH's opt-in protection growth. CT34's scenario has two halves and this case separates them: a generation may GROW its protected footprint over memory nothing protects, and may never REPLACE an identity another generation already protects. Three resources are declared with generations over the first two; the case grows `m` onto `y`, which `n` already protects, and is refused at Q617 FootprintAlreadyProtected. The exact ordered cascade [Q613, Q617, Q619, Q613, Q600, Q600, Q600] is pinned and every entry says something: the section unlocks with its invariant still open (Q613 InvariantOpenAtUnlock), the growth's own refusal sits SECOND rather than first because the lowering mints the new predicate identity before the core decides (Q617; card boundary CT34-GROWTH-CASCADE, recorded rather than concealed), the generation is destroyed with its guard still live (Q619), the section's `close` names a declared identity the generation never took because the refused growth installed nothing (Q613 InvalidInvariantWitness), and scope exit finds the resource, the guard and the generation outstanding (three Q600). Every entry after Q617 is what shows the refusal left the generation's shape, its declared identity and the share ledger exactly as they were. The admitted control differs by exactly ONE TOKEN - the growth names the unprotected `z` instead of `y` - so the refusal is attributable to the interval already having a protector rather than to growth being written down at all. That control is `accept_growth`: the core admits it, records one admitted protection growth, and compile_files returns a compiled module carrying emitted C. Card CT34-SANITIZED retired card CT34-GROWTH's boundary 3 (CT34-GROWTH-NATIVE): the backend now renders a growth the certificate admits, as no mtx_t operation at all plus one bookkeeping line, because a footprint is a DECLARED SHAPE and a C mutex has no extent to widen; a growth no certificate admits is refused at UnadmittedProtectionGrowth. A second control grows onto the generation's OWN declared interval and refuses with the identical seven-entry cascade, so W4's one-protector rule is measured to cover this generation's shape too. There is no shrink or replacement form in this profile at all, and the unconditional Q618 fixed-shape refusal beside the growth is unchanged. Only parse, elaborate, mutex_lowering and mutex_invariant_check execute; this route emits from a checked event list and has no CFG stage. native_sanitized is executed and harness-gated: a third control, growth_then_guarded_access.qcore, writes the originally declared region under the guard, grows onto a second allocation, writes the newly protected region under the SAME guard and reads both in a second section; the harness compiles its emitted C under ASan/UBSan/LSan, runs it, and compares stdout line for line with interpret_mutex_program. The case's own fixture is a refusal that emits nothing, so the four native stages name that control's file as their artifact - the only file a compiler in this case ever saw - rather than case.qcore. The run witnesses in-bounds access to real allocations inside the growing section's own lock/unlock pair and full reclamation under LeakSanitizer; it witnesses NOTHING about a C mutex protecting the grown region, about contention, about any schedule, or about the invariant predicate."
    },
    {
     "id": "CT35",
@@ -5649,10 +5671,10 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2455,
+  "workspace_tests": 2457,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 62,
+  "lean_audits": 63,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5700,6 +5722,7 @@
    "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
    "AuditProcessQuotaPlan.lean",
+   "AuditProtectionGrowthEmission.lean",
    "AuditRawDirectiveLexing.lean",
    "AuditReachGatePosition.lean",
    "AuditReadLoan.lean",
@@ -5723,7 +5746,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14a.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14b.json)"
  },
  "named_followups": [
   {
