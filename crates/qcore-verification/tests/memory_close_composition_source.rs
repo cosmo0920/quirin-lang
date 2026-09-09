@@ -422,3 +422,19 @@ fn anonymous_import() -> qcore_c_gateway::composition_source::MemoryCloseSourceI
     let selection = selection(identities(&tasks), callees(&tasks), PROBE, PROBE_FUNCTION);
     import(SOURCE, Vec::new(), &selection)
 }
+
+/// Regenerate the provider-side fixture from the live import. A conformance
+/// test asserts the committed fixture is still what this import produces, so
+/// the provider matrix cannot drift onto a stale question.
+#[test]
+fn write_the_provider_fixture() {
+    let Some(path) = std::env::var_os("QCORE_WRITE_MEMORY_CLOSE_FIXTURE") else {
+        return;
+    };
+    if !clang_available() {
+        return;
+    }
+    let request = task().request(qcore_schemas::PluginId::new("qcore.chunkio").unwrap());
+    let json = serde_json::to_string_pretty(&request.composition_source.unwrap()).unwrap();
+    std::fs::write(path, json + "\n").unwrap();
+}

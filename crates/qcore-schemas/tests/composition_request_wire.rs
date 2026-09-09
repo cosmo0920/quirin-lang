@@ -9,7 +9,8 @@
 use qcore_schemas::composition_summary::{
     COMPOSITION_SOURCE_INPUT_KEY, COMPOSITION_SOURCE_INPUT_VERSION, CompositionPrerequisiteSet,
     CompositionSourceInput, FILE_CLOSE_DELETE_SEMANTIC_PROFILE, FILE_CLOSE_SEMANTIC_PROFILE,
-    FileClosePrerequisites, UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapWrapperPrerequisites,
+    FileClosePrerequisites, MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryClosePrerequisites,
+    UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapWrapperPrerequisites,
 };
 use qcore_schemas::obligation::{
     Obligation, ObligationProperty, ObligationScope, ObligationSubject, PathBounds, TaskBounds,
@@ -697,15 +698,24 @@ fn composition_vocabulary_is_pinned() {
         projection(),
         file_close_projection(),
         file_close_delete_projection(),
+        memory_close_projection(),
     ]
     .iter()
     .map(|value| value["family"]["family"].as_str().unwrap().to_owned())
     .collect();
     families.sort();
     families.dedup();
+    // Deliberate pin update (card `P04-COMPOSE-MEMCLOSE`): a third family tag.
+    // The **load-bearing negative halves above are untouched** — the operation
+    // and expression inventories did not move, so this card widened no shared
+    // enum.
     assert_eq!(
         families,
-        vec!["file_close".to_string(), "unmap_wrapper".into()]
+        vec![
+            "file_close".to_string(),
+            "memory_close".into(),
+            "unmap_wrapper".into()
+        ]
     );
 }
 
@@ -774,4 +784,216 @@ fn the_prerequisite_rules_are_decidable() {
     sorted.sort_unstable();
     sorted.dedup();
     assert_eq!(sorted.len(), keys.len());
+}
+
+/// The memory-close question: four prerequisites, a wrapper and a probe body
+/// imported from **derived** text, and the derivation carried as a set of
+/// claims the core checks against its own.
+fn memory_close_derivation() -> serde_json::Value {
+    json!({
+        "recipe": "\nint probe(void) { return CIO_STORE_MEM; }\n",
+        "recipe_function": "probe",
+        "base_source_digest": "3".repeat(64),
+        "derived_source_digest": "4".repeat(64),
+        "base_input_class": "declared_file",
+        "derived_input_class": "anonymous_text"
+    })
+}
+
+fn memory_close_callees() -> serde_json::Value {
+    json!({
+        "reset": {"function": "cio_error_reset", "signature": "void (struct cio_chunk *)"},
+        "backend": {"function": "cio_memfs_close", "signature": "void (struct cio_chunk *)"},
+        "unlink": {"function": "mk_list_del", "signature": "void (struct mk_list *)"},
+        "counter": {"function": "cio_chunk_counter_total_sub",
+                    "signature": "unsigned long (struct cio_ctx *)"}
+    })
+}
+
+fn memory_close_projection() -> serde_json::Value {
+    json!({
+        "schema_version": 2,
+        "prerequisites": {
+            "memory_close": {
+                "reset": identity("qcore.c_frame_helper_contract.v1", '1', "rc:1001"),
+                "backend": identity("qcore.c_field_destructor_contract.v1", '2', "rc:1002"),
+                "unlink": identity("qcore.c_list_unlink_contract.v1", '3', "rc:1003"),
+                "counter": identity("qcore.c_counter_contract.v1", '4', "rc:1004")
+            }
+        },
+        "family": {
+            "family": "memory_close",
+            "wrapper": void_body("cio_chunk_close", "void (struct cio_chunk *, int)"),
+            "probe": body("probe", "int (void)"),
+            "derivation": memory_close_derivation(),
+            "callees": memory_close_callees()
+        }
+    })
+}
+
+fn memory_close_input() -> CompositionSourceInput {
+    serde_json::from_value(memory_close_projection()).unwrap()
+}
+
+/// The memory-close question round-trips and carries **no** derived reading —
+/// including the two figures only this family has: the probed discriminant and
+/// the per-entry replay state.
+#[test]
+fn the_memory_close_question_round_trips_and_carries_no_derived_reading() {
+    let input = memory_close_input();
+    assert!(input.version_matches());
+    assert_eq!(input.subject_function(), "cio_chunk_close");
+    assert_eq!(
+        input.family.semantic_profile(),
+        MEMORY_CLOSE_SEMANTIC_PROFILE
+    );
+    assert_eq!(input.family.nesting_depth(), 1);
+    assert!(input.family.nested().is_none());
+    assert!(input.family.native().is_none());
+    assert!(input.family.native_profile().is_none());
+    let derivation = input.family.derivation().expect("the derived family");
+    assert!(derivation.is_complete() && derivation.is_a_derivation());
+    let bytes = serde_json::to_string(&input).unwrap();
+    for absent in [
+        "memory_kind",
+        "cases",
+        "checked_paths",
+        "uncovered_paths",
+        "backend_discharged",
+        "primary_unlinked",
+        "state_unlinked",
+        "name_released",
+        "chunk_released",
+        "counter_decremented",
+        "certificate",
+        "verdict",
+        "source_path",
+    ] {
+        assert!(
+            !bytes.contains(absent),
+            "the memory-close question must not carry `{absent}`"
+        );
+    }
+    let round: CompositionSourceInput = serde_json::from_str(&bytes).unwrap();
+    assert_eq!(round, input);
+}
+
+/// A derivation whose derived text equals its base text is not a derivation,
+/// and a projection is refused rather than treated as a plain import.
+#[test]
+fn a_derivation_that_derives_nothing_is_not_a_derivation() {
+    let mut value = memory_close_projection();
+    value["family"]["derivation"]["derived_source_digest"] = json!("3".repeat(64));
+    let input: CompositionSourceInput = serde_json::from_value(value).unwrap();
+    let derivation = input.family.derivation().unwrap();
+    assert!(derivation.is_complete());
+    assert!(
+        !derivation.is_a_derivation(),
+        "equal digests mean the recipe changed nothing"
+    );
+    for field in [
+        "recipe",
+        "recipe_function",
+        "base_source_digest",
+        "derived_source_digest",
+        "base_input_class",
+        "derived_input_class",
+    ] {
+        let mut value = memory_close_projection();
+        value["family"]["derivation"][field] = json!("");
+        let input: CompositionSourceInput = serde_json::from_value(value).unwrap();
+        assert!(
+            !input.family.derivation().unwrap().is_complete(),
+            "an empty `{field}` leaves the derivation incomplete"
+        );
+    }
+}
+
+/// The memory-close family names the memory-close set, and no other.
+#[test]
+fn the_memory_close_family_never_borrows_another_familys_prerequisite_set() {
+    let memory = memory_close_input();
+    assert!(memory.family.matches(&memory.prerequisites));
+    assert!(memory.prerequisites.memory_close().is_some());
+    assert!(memory.prerequisites.unmap_wrapper().is_none());
+    assert!(memory.prerequisites.file_close().is_none());
+
+    // Neither direction: the memory-close family under another set, and another
+    // family under the memory-close set.
+    let leaf = input();
+    assert!(!memory.family.matches(&leaf.prerequisites));
+    assert!(!leaf.family.matches(&memory.prerequisites));
+    let file_close = file_close_input();
+    assert!(!memory.family.matches(&file_close.prerequisites));
+    assert!(!file_close.family.matches(&memory.prerequisites));
+}
+
+/// Unknown fields are refused in every new record.
+#[test]
+fn unknown_fields_are_refused_in_the_memory_close_records() {
+    for pointer in [
+        vec!["family", "derivation"],
+        vec!["family", "callees"],
+        vec!["family", "callees", "reset"],
+        vec!["prerequisites", "memory_close"],
+    ] {
+        let mut value = memory_close_projection();
+        let mut node = &mut value;
+        for step in &pointer {
+            node = &mut node[*step];
+        }
+        node["invented"] = json!("x");
+        assert!(
+            serde_json::from_value::<CompositionSourceInput>(value).is_err(),
+            "an unknown field survived at {pointer:?}"
+        );
+    }
+}
+
+/// The four identity rules are non-vacuous, and the four digest keys are
+/// distinct from each other and from every other family's.
+#[test]
+fn the_memory_close_prerequisite_rules_are_decidable() {
+    let honest = memory_close_input();
+    let set = honest.prerequisites.memory_close().unwrap().clone();
+    assert!(set.is_complete() && set.are_distinct());
+    for slot in 0..4 {
+        let mut forged = set.clone();
+        *[
+            &mut forged.reset,
+            &mut forged.backend,
+            &mut forged.unlink,
+            &mut forged.counter,
+        ][slot] = qcore_schemas::call_use_summary::PrerequisiteIdentity {
+            semantic_profile: String::new(),
+            task_digest: String::new(),
+            obligation_id: String::new(),
+        };
+        assert!(!forged.is_complete(), "slot {slot} is load-bearing");
+    }
+    let mut repeated = set.clone();
+    repeated.unlink = repeated.counter.clone();
+    assert!(!repeated.are_distinct());
+
+    let mut keys = vec![
+        MemoryClosePrerequisites::RESET_KEY,
+        MemoryClosePrerequisites::BACKEND_KEY,
+        MemoryClosePrerequisites::UNLINK_KEY,
+        MemoryClosePrerequisites::COUNTER_KEY,
+        UnmapWrapperPrerequisites::WRAPPER_CALL_USE_KEY,
+        UnmapWrapperPrerequisites::NATIVE_CLEANUP_KEY,
+        UnmapWrapperPrerequisites::COUNTER_KEY,
+        FileClosePrerequisites::WRAPPER_CALL_USE_KEY,
+        FileClosePrerequisites::UNMAP_COMPOSITION_KEY,
+        FileClosePrerequisites::NATIVE_CLEANUP_KEY,
+        FileClosePrerequisites::NATIVE_DELETE_KEY,
+    ];
+    let count = keys.len();
+    keys.sort_unstable();
+    keys.dedup();
+    assert_eq!(
+        keys.len(),
+        count,
+        "every prerequisite digest key is distinct"
+    );
 }

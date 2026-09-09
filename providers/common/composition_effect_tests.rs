@@ -777,3 +777,364 @@ fn the_file_close_request_gate_binds_family_to_profile() {
     rows += 1;
     assert_eq!(rows, 5, "row count moved");
 }
+
+// ---------------------------------------------------------------------------
+// The memory-close family (card `P04-COMPOSE-MEMCLOSE`).
+// ---------------------------------------------------------------------------
+
+/// The **real** projection the gateway emits for these bodies. A conformance
+/// test asserts the committed fixture is still the live one, so this matrix
+/// cannot drift onto a stale question.
+const MEMORY_CLOSE_PROJECTION: &str =
+    include_str!("fixtures/memory_close_composition_projection.json");
+
+fn memory_close_projection() -> CompositionSourceInput {
+    serde_json::from_str(MEMORY_CLOSE_PROJECTION).unwrap()
+}
+
+fn memory_close_parts() -> (
+    CleanupReplayFunctionRecord,
+    CleanupReplayFunctionRecord,
+    DerivedUnitRecord,
+    MemoryCloseCalleeRecord,
+) {
+    match memory_close_projection().family {
+        CompositionFamilyInput::MemoryClose {
+            wrapper,
+            probe,
+            derivation,
+            callees,
+        } => (wrapper, probe, derivation, callees),
+        other => panic!("the memory-close fixture must carry the memory-close family: {other:?}"),
+    }
+}
+
+fn memory_close_reading() -> Option<MemoryCloseCompositionRecord> {
+    let (wrapper, probe, derivation, callees) = memory_close_parts();
+    compose_memory_close(&wrapper, &probe, &derivation, &callees)
+}
+
+#[test]
+fn the_producer_recomputes_the_whole_memory_close_reading() {
+    let reading = memory_close_reading().expect("the honest question composes");
+    assert_eq!(reading.function, "cio_chunk_close");
+    assert_eq!(
+        reading.memory_kind, 1,
+        "read out of the probe body, not received"
+    );
+    assert_eq!(reading.cases.len(), 2, "the null and nonnull entry states");
+    assert_eq!(reading.checked_paths.len(), 2);
+    assert_eq!(reading.uncovered_paths.len(), 2);
+
+    let null = &reading.cases[0];
+    assert!(!null.nonnull);
+    assert_eq!(null.calls, 0, "the null entry resolves no frame at all");
+    assert!(!null.backend_discharged && !null.chunk_released && !null.counter_decremented);
+
+    let memory = &reading.cases[1];
+    assert!(memory.nonnull);
+    assert_eq!(
+        memory.calls, 7,
+        "reset, backend, two unlinks, two frees, counter"
+    );
+    assert!(
+        memory.backend_discharged
+            && memory.primary_unlinked
+            && memory.state_unlinked
+            && memory.name_released
+            && memory.chunk_released
+            && memory.counter_decremented
+    );
+    // The two entries select different paths, so the reading is not constant.
+    assert_ne!(null.source_path, memory.source_path);
+    assert!(
+        !reading
+            .uncovered_paths
+            .iter()
+            .any(|path| reading.checked_paths.contains(path)),
+        "an uncovered path is never also a checked one"
+    );
+}
+
+/// The producer reads the backend discriminant out of the probe **body**. A
+/// changed probe changes the reading rather than being ignored, which is what
+/// makes the probe a question and not an answer.
+#[test]
+fn a_changed_probe_body_changes_the_reading_rather_than_being_ignored() {
+    let (wrapper, mut probe, derivation, callees) = memory_close_parts();
+    let honest = compose_memory_close(&wrapper, &probe, &derivation, &callees).unwrap();
+    probe.paths[0].operations = vec![CleanupReplayOperationRecord::ReturnValue {
+        value: CleanupReplayValueRecord {
+            c_type: "int".into(),
+            expression: CleanupReplayExpressionRecord::Integer {
+                value: "7".to_owned(),
+            },
+        },
+    }];
+    // The wrapper's guard compares the stream kind against the probed value, so
+    // a different discriminant selects no complete memory path: a decline.
+    let changed = compose_memory_close(&wrapper, &probe, &derivation, &callees);
+    assert!(
+        changed.is_none() || changed.as_ref() != Some(&honest),
+        "the probe body really decides the reading"
+    );
+}
+
+/// Degenerate and hostile questions decline without panicking. Every row is a
+/// *decline*: the process returns no proposal, the host sees no witness and the
+/// obligation stays Unknown.
+#[test]
+fn degenerate_memory_close_questions_decline() {
+    let (wrapper, probe, derivation, callees) = memory_close_parts();
+    let empty_body = |function: &str, signature: &str| CleanupReplayFunctionRecord {
+        function: function.into(),
+        source_revision: wrapper.source_revision.clone(),
+        signature: signature.into(),
+        paths: Vec::new(),
+        profile_assumptions: BTreeMap::new(),
+    };
+    let rows: Vec<(&str, Box<dyn Fn() -> Option<MemoryCloseCompositionRecord>>)> = vec![
+        ("wrapper emptied", {
+            let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
+            let body = empty_body("cio_chunk_close", &wrapper.signature);
+            Box::new(move || compose_memory_close(&body, &probe, &derivation, &callees))
+        }),
+        ("probe emptied", {
+            let (wrapper, derivation, callees) =
+                (wrapper.clone(), derivation.clone(), callees.clone());
+            let body = empty_body("qcore_cio_memory_store_value", "int (void)");
+            Box::new(move || compose_memory_close(&wrapper, &body, &derivation, &callees))
+        }),
+        ("wrapper wrongly signed", {
+            let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
+            let mut body = wrapper.clone();
+            body.signature = "int (struct cio_chunk *, int)".into();
+            Box::new(move || compose_memory_close(&body, &probe, &derivation, &callees))
+        }),
+        ("probe wrongly signed", {
+            let (wrapper, derivation, callees) =
+                (wrapper.clone(), derivation.clone(), callees.clone());
+            let mut body = probe.clone();
+            body.signature = "long (void)".into();
+            Box::new(move || compose_memory_close(&wrapper, &body, &derivation, &callees))
+        }),
+        ("wrapper and probe are one body", {
+            let (derivation, callees) = (derivation.clone(), callees.clone());
+            let body = wrapper.clone();
+            Box::new(move || compose_memory_close(&body, &body.clone(), &derivation, &callees))
+        }),
+        ("the two bodies disagree on the revision", {
+            let (wrapper, derivation, callees) =
+                (wrapper.clone(), derivation.clone(), callees.clone());
+            let mut body = probe.clone();
+            body.source_revision = "0".repeat(40);
+            Box::new(move || compose_memory_close(&wrapper, &body, &derivation, &callees))
+        }),
+        ("the derivation derives nothing", {
+            let (wrapper, probe, callees) = (wrapper.clone(), probe.clone(), callees.clone());
+            let mut record = derivation.clone();
+            record.derived_source_digest = record.base_source_digest.clone();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &record, &callees))
+        }),
+        ("the derivation is incomplete", {
+            let (wrapper, probe, callees) = (wrapper.clone(), probe.clone(), callees.clone());
+            let mut record = derivation.clone();
+            record.recipe = String::new();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &record, &callees))
+        }),
+        ("the recipe names another function than the probe", {
+            let (wrapper, probe, callees) = (wrapper.clone(), probe.clone(), callees.clone());
+            let mut record = derivation.clone();
+            record.recipe_function = "other".into();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &record, &callees))
+        }),
+        ("two callees collapsed onto one frame", {
+            let (wrapper, probe, derivation) = (wrapper.clone(), probe.clone(), derivation.clone());
+            let mut record = callees.clone();
+            record.unlink = record.backend.clone();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &derivation, &record))
+        }),
+        ("a callee identity emptied", {
+            let (wrapper, probe, derivation) = (wrapper.clone(), probe.clone(), derivation.clone());
+            let mut record = callees.clone();
+            record.counter.function = String::new();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &derivation, &record))
+        }),
+        ("a callee renamed, so the wrapper resolves nothing", {
+            let (wrapper, probe, derivation) = (wrapper.clone(), probe.clone(), derivation.clone());
+            let mut record = callees.clone();
+            record.backend.function = "other_close".into();
+            Box::new(move || compose_memory_close(&wrapper, &probe, &derivation, &record))
+        }),
+        ("an oversized body", {
+            let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
+            let mut body = wrapper.clone();
+            let path = body.paths[0].clone();
+            body.paths = std::iter::repeat_n(path, MAX_PATHS + 1).collect();
+            Box::new(move || compose_memory_close(&body, &probe, &derivation, &callees))
+        }),
+        ("a truncated wrapper path", {
+            let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
+            let mut body = wrapper.clone();
+            for path in &mut body.paths {
+                path.operations.truncate(1);
+            }
+            Box::new(move || compose_memory_close(&body, &probe, &derivation, &callees))
+        }),
+        ("duplicated wrapper paths, so an entry selects two", {
+            let (probe, derivation, callees) = (probe.clone(), derivation.clone(), callees.clone());
+            let mut body = wrapper.clone();
+            body.paths.extend(body.paths.clone());
+            Box::new(move || compose_memory_close(&body, &probe, &derivation, &callees))
+        }),
+    ];
+    assert_eq!(rows.len(), 15, "fifteen degenerate memory-close rows");
+    for (label, row) in rows {
+        assert!(row().is_none(), "the `{label}` row was answered");
+    }
+}
+
+/// The request gate: the memory-close question is answered only under its own
+/// semantic profile, and never as another family's.
+#[test]
+fn the_memory_close_request_gate_is_exact() {
+    let manifest: PluginManifest = serde_json::from_str(include_str!(
+        "../qcore-provider-chunkio/provider-template.json"
+    ))
+    .unwrap();
+    let base = |profile: &str,
+                capability: VerifierCapability,
+                dialect: &str,
+                source: Option<CompositionSourceInput>| VerificationRequestV2 {
+        protocol_version: 1,
+        evidence_version: 2,
+        request_id: "composition".into(),
+        plugin_id: manifest.plugin_id.clone(),
+        capability,
+        target: TargetProfile {
+            library: "chunkio".into(),
+            revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
+            profile: profile.into(),
+            dialect: dialect.into(),
+            platform: std::env::consts::OS.into(),
+            backend: "native".into(),
+        },
+        unit: UnitIdentity {
+            translation_unit: "cio_chunk.c".into(),
+            source_digest: "0".repeat(64),
+            build_digest: "0".repeat(64),
+        },
+        facts: Vec::new(),
+        assumptions: Default::default(),
+        task_digest: "0".repeat(64),
+        obligations: Vec::new(),
+        source_effect: None,
+        counter_effect: None,
+        reactor_program: None,
+        teardown_source: None,
+        call_use_source: None,
+        cleanup_replay_source: None,
+        composition_source: source,
+    };
+
+    let honest = base(
+        MEMORY_CLOSE_SEMANTIC_PROFILE,
+        VerifierCapability::ResourceContracts,
+        "c11",
+        Some(memory_close_projection()),
+    );
+    let response = propose(&honest, &manifest).expect("the honest request is answered");
+    assert!(matches!(
+        response.evidence.unwrap().witness,
+        SemanticWitness::Composition(_)
+    ));
+
+    let mut rows: Vec<(&str, VerificationRequestV2)> = vec![
+        (
+            "another profile",
+            base(
+                UNMAP_WRAPPER_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(memory_close_projection()),
+            ),
+        ),
+        (
+            "another family's question under this profile",
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(projection()),
+            ),
+        ),
+        (
+            "this family's question under another family's profile",
+            base(
+                FILE_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(memory_close_projection()),
+            ),
+        ),
+        (
+            "no projection at all",
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                None,
+            ),
+        ),
+        (
+            "another capability",
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ObservationHooks,
+                "c11",
+                Some(memory_close_projection()),
+            ),
+        ),
+        (
+            "an unadmitted dialect",
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c99",
+                Some(memory_close_projection()),
+            ),
+        ),
+    ];
+    // Three rows that mutate the transported question itself.
+    let mut mutated = |label: &'static str, change: fn(&mut CompositionSourceInput)| {
+        let mut projection = memory_close_projection();
+        change(&mut projection);
+        (
+            label,
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(projection),
+            ),
+        )
+    };
+    rows.push(mutated("an unsupported version", |p| p.schema_version = 1));
+    rows.push(mutated("an incomplete identity", |p| {
+        if let CompositionPrerequisiteSet::MemoryClose(set) = &mut p.prerequisites {
+            set.counter.task_digest = String::new();
+        }
+    }));
+    rows.push(mutated("a repeated identity", |p| {
+        if let CompositionPrerequisiteSet::MemoryClose(set) = &mut p.prerequisites {
+            set.unlink = set.counter.clone();
+        }
+    }));
+    assert_eq!(rows.len(), 9, "nine memory-close request-gate rows");
+    for (label, request) in rows {
+        assert!(
+            propose(&request, &manifest).is_none(),
+            "the `{label}` request was answered"
+        );
+    }
+}
