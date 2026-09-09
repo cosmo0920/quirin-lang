@@ -122,6 +122,7 @@ pub(crate) fn untracked_bases(
     body: &[&str],
     protected_formals: &BTreeSet<String>,
     contracts: &ResourceContracts,
+    variadic_tails: &BTreeSet<String>,
     model: &TypedAccessModel,
     types: &FunctionTypes,
 ) -> UntrackedBases {
@@ -130,7 +131,7 @@ pub(crate) fn untracked_bases(
     }
     let mut risky = protected_formals.clone();
     seed_addresses_and_writes(body, &mut risky);
-    seed_call_arguments(body, contracts, &mut risky);
+    seed_call_arguments(body, contracts, variadic_tails, &mut risky);
     // Monotone descent: an assignment can only *add* to the refused set, and a
     // base that becomes refused can only refuse more assignments.
     for _ in 0..CLOSURE_ROUNDS {
@@ -207,7 +208,12 @@ fn seed_addresses_and_writes(body: &[&str], risky: &mut BTreeSet<String>) {
 
 /// Every call argument that is not a declared `Borrowed` position may have its
 /// custody changed by the callee, so its root names are refused as bases.
-fn seed_call_arguments(body: &[&str], contracts: &ResourceContracts, risky: &mut BTreeSet<String>) {
+fn seed_call_arguments(
+    body: &[&str],
+    contracts: &ResourceContracts,
+    variadic_tails: &BTreeSet<String>,
+    risky: &mut BTreeSet<String>,
+) {
     for (open, callee) in call_sites(body) {
         let contract = contracts.contract(callee);
         let Some(arguments) = argument_spans(body, open) else {
@@ -221,11 +227,17 @@ fn seed_call_arguments(body: &[&str], contracts: &ResourceContracts, risky: &mut
             continue;
         };
         for (index, (start, end)) in arguments.iter().copied().enumerate() {
-            let borrowed = contract.is_some_and(|contract| {
-                matches!(
-                    contract.parameters.get(index),
-                    Some(ResourceParameterMode::Borrowed)
-                )
+            // Card O04-TRACE: a position *beyond* the declared parameter
+            // vector of a callee that declares a variadic data tail changes no
+            // custody either, by exactly the declaration this rule already
+            // trusts for a `Borrowed` position. The exemption is decided from
+            // the declaration alone, never from the actual, so a name that is
+            // risky for any other reason — an acquisition, an address, a
+            // custody position elsewhere — stays risky here.
+            let borrowed = contract.is_some_and(|contract| match contract.parameters.get(index) {
+                Some(ResourceParameterMode::Borrowed) => true,
+                Some(_) => false,
+                None => variadic_tails.contains(callee),
             });
             if borrowed {
                 continue;
@@ -618,7 +630,14 @@ mod tests {
         let protected = BTreeSet::new();
         let types = FunctionTypes::read(&model, &[], &body_tokens, &protected);
         let contracts = contracts();
-        let bases = untracked_bases(&body_tokens, &protected, &contracts, &model, &types);
+        let bases = untracked_bases(
+            &body_tokens,
+            &protected,
+            &contracts,
+            &BTreeSet::new(),
+            &model,
+            &types,
+        );
         Fixture {
             model,
             types,

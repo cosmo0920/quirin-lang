@@ -814,6 +814,11 @@ impl FunctionTypes {
         self.declared(name)
     }
 
+    /// Whether `name` is a declared scalar variable of this function.
+    pub(crate) fn declared_is_scalar(&self, name: &str) -> bool {
+        self.declared(name) == Some(&DeclaredType::Scalar)
+    }
+
     /// Whether every declaration of this function was read. When false, no
     /// typed rule may admit anything in it.
     pub(crate) fn is_readable(&self) -> bool {

@@ -957,6 +957,7 @@ mod tests {
             &body,
             &BTreeSet::new(),
             &contracts,
+            &BTreeSet::new(),
             &model,
             &types,
         );

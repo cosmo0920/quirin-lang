@@ -35,6 +35,39 @@
 //! - `resource_return_none()` -> None; `resource_return_owned(nullability)` -> Owned.
 //! - `resource_return_reallocated(p, nullability)` -> Reallocated, requiring
 //!   an Owned parameter; null failure preserves it, success replaces it once.
+//! - `resource_variadic_data_tail()` -> the declaration additionally covers
+//!   calls that pass *more* actuals than it names. See below.
+//!
+//! # The variadic data tail (card O04-TRACE)
+//!
+//! A C variadic function (`void flb_trace(const char *, ...)`) has no
+//! per-argument declaration for its tail, so before this clause the vocabulary
+//! could only describe one arity at a time — card O04-ARMS declared `flb_error`
+//! at its single call site's arity and recorded the gap as
+//! **`O04-ARMS-VARIADIC`**.
+//!
+//! `ensures normal resource_variadic_data_tail();` is that missing form. It
+//! declares, for **every** argument beyond the named parameter vector:
+//!
+//! * the callee takes **no custody** of it, and
+//! * the callee **retains no pointer** to it past the call.
+//!
+//! **What it does not say.** It is a trusted assumption about the callee's
+//! contract, exactly like every other clause here; it verifies nothing about
+//! the callee's body, and it is not a claim that the callee is a `printf`-style
+//! formatter, that the tail is type-correct against a format string, or that
+//! the tail arguments are read at all. It also does not admit anything on its
+//! own: a consumer that honours the tail must still establish, per call site,
+//! that each tail actual really is data. The C gateway does exactly that
+//! (`qcore_c_gateway::variadic_nested`), and an actual that carries a tracked
+//! resource identity is refused there even under this declaration — the
+//! declaration covers what it covers.
+//!
+//! The tail flag is **not** carried on [`ResourceFunctionContract`]. It is
+//! rederived from the retained trusted source texts by
+//! [`variadic_data_tails`], so a contract environment that has no declared
+//! sources — an inferred W4 summary, a provider proposal, a directly
+//! constructed table — has no tails at all, which is the fail-closed direction.
 //!
 //! Signatures are opaque C ABI projections, not checked C layouts. The type
 //! vocabulary is likewise an explicit table, not a wildcard:
@@ -60,7 +93,7 @@
 //! Files are trusted assumptions, not proofs. The exact input texts are retained
 //! in ResourceContracts and independently reloaded by the certificate checker.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -158,12 +191,51 @@ pub fn load_resource_contract_sources(
             if contracts.contract(&decl.name).is_some() {
                 return Err(format!("{context}: duplicate function contract"));
             }
-            let contract = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            let (contract, _tail) = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
             contracts.insert_contract(&decl.name, contract);
         }
     }
     contracts.set_source_assumptions(sources.clone());
     Ok(contracts)
+}
+
+/// The names declaring a `resource_variadic_data_tail()` in `sources`.
+///
+/// Derived from the same trusted texts [`load_resource_contract_sources`]
+/// reads, and total-or-reject in the same way: a source set this loader would
+/// reject yields an error here too, never a partial set.
+pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
+    let mut tails = BTreeSet::new();
+    for (path, source) in sources {
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let (_, tail) = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if tail {
+                tails.insert(decl.name.clone());
+            }
+        }
+    }
+    Ok(tails)
+}
+
+/// The variadic data tails of an environment, rederived from its **retained
+/// trusted sources**.
+///
+/// An environment with no declared sources — an inferred W4 summary, a provider
+/// proposal, a directly constructed table — has no tails, which is the
+/// fail-closed direction: the tail is a declaration, never an inference.
+pub fn declared_variadic_data_tails(
+    contracts: &ResourceContracts,
+) -> Result<BTreeSet<String>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeSet::new());
+    }
+    variadic_data_tails(contracts.source_assumptions())
 }
 
 /// Recheck a declarative environment against its declared trusted sources
@@ -189,7 +261,7 @@ fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {
         .collect())
 }
 
-fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, String> {
+fn load_function(decl: &SourceDeclaration) -> Result<(ResourceFunctionContract, bool), String> {
     if decl.kind != DeclarationKind::ExternFunction {
         return Err("resource modules accept only extern functions".into());
     }
@@ -244,6 +316,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, S
         .ok_or("unsupported signature, effects, or declaration suffix")?;
 
     let mut marker = false;
+    let mut variadic_data_tail = false;
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
     let mut names = BTreeMap::new();
@@ -271,6 +344,17 @@ fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, S
         }
         let words = predicate_call(expression)?;
         let words = words.iter().map(String::as_str).collect::<Vec<_>>();
+        // The variadic data tail is a *whole-declaration* fact, not a parameter
+        // or result mode: it says what the arguments the declaration does not
+        // name carry. It takes no argument (a tail has no index to point at)
+        // and, like every other clause, may occur at most once.
+        if words.as_slice() == ["resource_variadic_data_tail"] {
+            if variadic_data_tail {
+                return Err("duplicate variadic data tail".into());
+            }
+            variadic_data_tail = true;
+            continue;
+        }
         let return_mode = match words.as_slice() {
             ["resource_return_none"] => Some(ResourceReturnMode::None),
             ["resource_return_owned", null] => Some(ResourceReturnMode::Owned {
@@ -375,7 +459,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<ResourceFunctionContract, S
     {
         return Err("reallocation requires an owned input parameter".into());
     }
-    Ok(ResourceFunctionContract::new(parameters, result))
+    Ok((
+        ResourceFunctionContract::new(parameters, result),
+        variadic_data_tail,
+    ))
 }
 
 fn nullability(word: &str) -> Result<bool, String> {

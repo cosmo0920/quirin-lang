@@ -94,6 +94,7 @@ import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.BoundFieldRead
 import QCore.MemberAddress
+import QCore.VariadicNested
 import QCore.MayAlias
 import QCore.NeutralExpressionPosition
 import QCore.ReachGatePosition

@@ -43,6 +43,23 @@ use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
 use crate::neutral_position::ExpressionRole;
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
 
+/// One admitted nested call (card **O04-TRACE**), as modeled.
+///
+/// Its declared effects are applied by [`transfer`] **before** the enclosing
+/// call's, through the same `apply_contract_call` every other modeled call
+/// goes through — the composition is one code path, not a second model. Under
+/// the admission premises (`ResourceReturnMode::None`, every parameter
+/// `Borrowed`, no produced site) that application is the identity on the
+/// abstract state, which is exactly why the order C leaves unspecified cannot
+/// be observed. The alias obligations of its own reads travel with the outer
+/// call's in `alias_reads`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct NestedContractCall {
+    pub function: String,
+    pub contract: ResourceFunctionContract,
+    pub arguments: Vec<Option<String>>,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LegacyInstruction {
     Acquire {
@@ -105,6 +122,17 @@ pub enum LegacyInstruction {
         /// discharge applies. Empty for every argument the rule does not
         /// relate, which is most of the corpus. See [`crate::may_alias`].
         alias_reads: Vec<AliasPeers>,
+        /// Card **O04-TRACE**: the one nested call this statement admits, whose
+        /// declared effects apply **before** this call's own. Boxed so the
+        /// variant does not grow for the overwhelming majority of calls that
+        /// have none.
+        ///
+        /// It is admitted only when its declared effects are the *identity* on
+        /// the abstract state — result `None`, every parameter `Borrowed` — so
+        /// applying it first is well defined despite C leaving the evaluation
+        /// order of arguments unspecified. Every other nested call is refused
+        /// where it stands, with card O04-B09B10's diagnostic.
+        nested: Option<Box<NestedContractCall>>,
     },
     BranchOnNull {
         source: String,
@@ -1331,6 +1359,7 @@ pub(crate) fn build_function_cfg(
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
+    let variadic_tails = declared_variadic_tails(contracts);
     let (typed_model, typed_types, typed_bases, store_bases) = typed_access_facts(
         tokens,
         function,
@@ -1338,6 +1367,7 @@ pub(crate) fn build_function_cfg(
         &parameters,
         &protected_formals,
         contracts,
+        &variadic_tails,
     );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
     let mut parser = Parser {
@@ -1352,6 +1382,7 @@ pub(crate) fn build_function_cfg(
         typed_bases,
         store_bases,
         alias_classes,
+        variadic_tails,
     };
     let statements =
         parser
@@ -1361,6 +1392,27 @@ pub(crate) fn build_function_cfg(
                 line: failure_line.max(line),
             })?;
     Ok(CfgBuilder::build(function, &statements))
+}
+
+/// The callees `contracts` declares a variadic data tail for (card O04-TRACE).
+///
+/// The tail is not carried on `ResourceFunctionContract`; it is rederived from
+/// the environment's own retained trusted texts, which is what makes W4 summary
+/// derivation and [`check_legacy_safety_certificate`] reproduce it from the
+/// same bytes. Two fail-closed properties hold by construction: an environment
+/// with no declared sources has no tails, and a source set the loader rejects
+/// yields the empty set rather than a partial one.
+fn declared_variadic_tails(contracts: &ResourceContracts) -> BTreeSet<String> {
+    // A source that does not contain the clause's spelling cannot declare it,
+    // so the common case costs a scan rather than a parse.
+    if !contracts
+        .source_assumptions()
+        .values()
+        .any(|source| source.contains("resource_variadic_data_tail"))
+    {
+        return BTreeSet::new();
+    }
+    qcore_contract::contract_loader::declared_variadic_data_tails(contracts).unwrap_or_default()
 }
 
 /// Read the declaration facts the typed direct scalar-field whitelist needs.
@@ -1378,6 +1430,7 @@ fn typed_access_facts(
     parameters: &[Option<String>],
     protected_formals: &BTreeSet<String>,
     contracts: &ResourceContracts,
+    variadic_tails: &BTreeSet<String>,
 ) -> (
     TypedAccessModel,
     FunctionTypes,
@@ -1418,6 +1471,7 @@ fn typed_access_facts(
         &texts[body_start + 1..body_end],
         protected_formals,
         contracts,
+        variadic_tails,
         &model,
         &types,
     );
@@ -2343,6 +2397,11 @@ struct Parser<'a> {
     /// only to attach may-alias obligations to modeled reads and to recognise a
     /// pointer-inequality guard. It admits nothing.
     alias_classes: crate::may_alias::MayAliasClasses,
+    /// Card O04-TRACE: the callees whose declaration carries a
+    /// `resource_variadic_data_tail()`, rederived from the environment's own
+    /// retained trusted sources. Empty for an environment with no declared
+    /// sources, so an inferred summary never acquires a tail.
+    variadic_tails: BTreeSet<String>,
 }
 
 impl Parser<'_> {
@@ -3084,10 +3143,33 @@ impl Parser<'_> {
             // `flb_calloc(n, sizeof(T))` — and an *outer* call this analyzer
             // does not model already refuses on its own.
             if let Some(contract) = self.contracts.contract(function).cloned() {
-                if let Some(nested) = nested_call(&texts, call_index) {
+                // Card O04-TRACE, the two halves of card O04-B09B10's measured
+                // residual, decided together because the subject needs both:
+                // one nested call may be admitted, and a declared variadic tail
+                // may cover actuals beyond the declared parameter vector.
+                let argument_spans = call_argument_spans(&texts, call_index);
+                let variadic_tail = self.variadic_tails.contains(function);
+                let nested = argument_spans.as_ref().and_then(|spans| {
+                    crate::variadic_nested::admitted_nested_call(
+                        &texts,
+                        call_index,
+                        spans,
+                        &contract,
+                        variadic_tail,
+                        self.contracts,
+                        &self.typed_model,
+                        &self.typed_types,
+                        &self.typed_bases,
+                    )
+                });
+                // Every nested call the premises do not admit keeps card
+                // O04-B09B10's refusal, with its exact existing wording.
+                if nested.is_none()
+                    && let Some(other) = nested_call(&texts, call_index)
+                {
                     return LegacyInstruction::Unknown {
                         description: format!(
-                            "nested call `{nested}` inside a modeled call is outside the resource projection"
+                            "nested call `{other}` inside a modeled call is outside the resource projection"
                         ),
                     };
                 }
@@ -3164,7 +3246,39 @@ impl Parser<'_> {
                         description: format!("discarded owned result of resource API `{function}`"),
                     };
                 }
-                let raw_arguments = call_arguments(&texts, call_index);
+                let raw_arguments = argument_spans.as_ref().map(|spans| {
+                    spans
+                        .iter()
+                        .map(|&(start, end)| &texts[start..end])
+                        .collect::<Vec<_>>()
+                });
+                // Card O04-TRACE, a fail-closed repair. Everything below zips
+                // the declared parameter vector against the actuals, so an
+                // actual *beyond* that vector was silently dropped — the same
+                // class of hole card O04-B09B10 found for a nested call, and
+                // the reason card O04-ARMS had to declare `flb_error` at one
+                // arity. An excess actual is now admitted only under a declared
+                // variadic data tail, and only when this call site's own tail
+                // actuals are data. Under-supply is unchanged: a missing
+                // custody-bearing actual already reports on its own.
+                if let Some(arguments) = &raw_arguments
+                    && arguments.len() > contract.parameters.len()
+                    && !(variadic_tail
+                        && crate::variadic_nested::tail_arguments_are_data(
+                            arguments,
+                            contract.parameters.len(),
+                            nested.as_ref(),
+                            &self.typed_model,
+                            &self.typed_types,
+                            &self.typed_bases,
+                        ))
+                {
+                    return LegacyInstruction::Unknown {
+                        description: format!(
+                            "arguments beyond the declared parameters of `{function}` are outside the resource projection"
+                        ),
+                    };
+                }
                 // O04-B09B10: an argument this statement's member-address rule
                 // admitted is not "an unmodeled formal address". Its premises —
                 // a complete `struct` base, a member declared with no `*`, a
@@ -3176,13 +3290,18 @@ impl Parser<'_> {
                     .iter()
                     .map(|address| &texts[address.start..address.end])
                     .collect::<Vec<_>>();
+                // Card O04-TRACE: likewise, an *admitted nested call* is no
+                // longer "an unmodeled borrowed expression" — its declared
+                // effects are applied below, in order, before the outer call's.
+                // Every other call-bearing argument keeps its refusal, because
+                // every other one was refused outright above.
                 if raw_arguments.as_ref().is_some_and(|arguments| {
-                    contract
-                        .parameters
-                        .iter()
-                        .zip(arguments)
-                        .any(|(mode, argument)| {
-                            !admitted_addresses.contains(argument)
+                    contract.parameters.iter().zip(arguments).enumerate().any(
+                        |(index, (mode, argument))| {
+                            !nested
+                                .as_ref()
+                                .is_some_and(|nested| nested.argument == index)
+                                && !admitted_addresses.contains(argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
@@ -3190,7 +3309,8 @@ impl Parser<'_> {
                                     && argument
                                         .iter()
                                         .any(|name| self.protected_formals.contains(*name)))
-                        })
+                        },
+                    )
                 }) {
                     return LegacyInstruction::Unknown {
                         description: "call has an unmodeled formal address or borrowed expression"
@@ -3222,7 +3342,20 @@ impl Parser<'_> {
                         site
                     })
                     .collect();
-                let alias_reads = self.call_alias_reads(&arguments, &contract);
+                let mut alias_reads = self.call_alias_reads(&arguments, &contract);
+                // The admitted nested call's own reads carry the same
+                // may-alias obligation the outer call's reads do.
+                if let Some(nested) = &nested {
+                    let inner = self.call_alias_reads(&nested.arguments, &nested.contract);
+                    for read in inner {
+                        if !alias_reads
+                            .iter()
+                            .any(|existing| existing.place == read.place)
+                        {
+                            alias_reads.push(read);
+                        }
+                    }
+                }
                 return LegacyInstruction::ContractCall {
                     function: function.to_owned(),
                     destination,
@@ -3240,6 +3373,13 @@ impl Parser<'_> {
                         .filter_map(|address| address.bound_owner.clone())
                         .collect(),
                     alias_reads,
+                    nested: nested.map(|nested| {
+                        Box::new(NestedContractCall {
+                            function: nested.function,
+                            contract: nested.contract,
+                            arguments: nested.arguments,
+                        })
+                    }),
                 };
             }
             // Card HASH-CONTRACTS: a callee whose declared literal-argument
@@ -3396,7 +3536,7 @@ fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
 
 /// The C type operators, which take a type or an unevaluated operand and can
 /// therefore never acquire, release or transfer a resource identity.
-const TYPE_OPERATORS: [&str; 6] = [
+pub(crate) const TYPE_OPERATORS: [&str; 6] = [
     "sizeof",
     "_Alignof",
     "alignof",
@@ -3687,7 +3827,27 @@ fn is_null_constant(tokens: &[&str]) -> bool {
             .is_some_and(|rest| strip_parentheses(rest) == ["0"])
 }
 
-fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'a [&'a str]>> {
+pub(crate) fn call_arguments<'a>(
+    tokens: &'a [&'a str],
+    call_index: usize,
+) -> Option<Vec<&'a [&'a str]>> {
+    Some(
+        call_argument_spans(tokens, call_index)?
+            .into_iter()
+            .map(|(start, end)| &tokens[start..end])
+            .collect(),
+    )
+}
+
+/// The half-open token spans of one call's arguments, in order.
+///
+/// [`call_arguments`] is exactly this, resolved against `tokens`; card
+/// O04-TRACE needs the indices themselves so an argument can be recognised as
+/// *being* a nested call at a known position.
+pub(crate) fn call_argument_spans(
+    tokens: &[&str],
+    call_index: usize,
+) -> Option<Vec<(usize, usize)>> {
     let mut arguments = Vec::new();
     let mut start = call_index + 2;
     let mut parentheses = 0usize;
@@ -3698,7 +3858,7 @@ fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'
             "(" => parentheses += 1,
             ")" if parentheses == 0 && brackets == 0 => {
                 if cursor > start {
-                    arguments.push(&tokens[start..cursor]);
+                    arguments.push((start, cursor));
                 }
                 return Some(arguments);
             }
@@ -3706,7 +3866,7 @@ fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'
             "[" => brackets += 1,
             "]" => brackets = brackets.checked_sub(1)?,
             "," if parentheses == 0 && brackets == 0 => {
-                arguments.push(&tokens[start..cursor]);
+                arguments.push((start, cursor));
                 start = cursor + 1;
             }
             _ => {}
@@ -3714,6 +3874,11 @@ fn call_arguments<'a>(tokens: &'a [&'a str], call_index: usize) -> Option<Vec<&'
         cursor += 1;
     }
     None
+}
+
+/// The modeled place of one actual at a declared `Borrowed` position.
+pub(crate) fn borrowed_argument_place(argument: &[&str]) -> Option<String> {
+    contract_argument_place(argument, ResourceParameterMode::Borrowed)
 }
 
 fn contract_argument_place(argument: &[&str], mode: ResourceParameterMode) -> Option<String> {
@@ -5604,7 +5769,25 @@ fn transfer(
             aggregate_consumed: _,
             aggregate_addresses: _,
             alias_reads: _,
+            nested,
         } => {
+            // Card O04-TRACE: the admitted nested call's declared effects, in
+            // order, before the enclosing call's. It produces nothing, so its
+            // produced-site vector is empty by construction.
+            if let Some(nested) = nested {
+                apply_contract_call(
+                    function,
+                    node.line,
+                    &nested.function,
+                    None,
+                    &nested.arguments,
+                    &nested.contract,
+                    &[],
+                    &mut state,
+                    acquisition_lines,
+                    diagnostics,
+                );
+            }
             let unsanctioned = destination
                 .as_deref()
                 .filter(|place| is_indirect_place(place) && !context.sanctioned.contains(place));
