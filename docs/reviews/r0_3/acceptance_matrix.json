@@ -5545,18 +5545,20 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "wave-9 final merged gate, measured 2026-09-09 on main after all six cards",
-  "workspace_tests": 1888,
-  "provider_tests": 75,
+  "note": "wave-10 six-card merged gate, 2026-09-09",
+  "workspace_tests": 2034,
+  "provider_tests": 76,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 48,
+  "lean_audits": 51,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditBoundFieldRead.lean",
    "AuditCallUseAdmission.lean",
    "AuditCapacityBoundary.lean",
    "AuditChainedAccess.lean",
    "AuditChunkIntegrityObservation.lean",
+   "AuditCleanupVocabulary.lean",
    "AuditConcurrencyPrelude.lean",
    "AuditCycle10.lean",
    "AuditCycle11.lean",
@@ -5584,6 +5586,7 @@
    "AuditNeutralFrameRecursion.lean",
    "AuditO05.lean",
    "AuditOsEndpointPostState.lean",
+   "AuditPackageIdentity.lean",
    "AuditPackageTemplateBinding.lean",
    "AuditProcessQuotaPlan.lean",
    "AuditRawDirectiveLexing.lean",
@@ -5606,7 +5609,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate9.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate10f.json)"
  },
  "named_followups": [
   {
