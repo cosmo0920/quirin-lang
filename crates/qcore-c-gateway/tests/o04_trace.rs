@@ -76,11 +76,15 @@ fn load(name: &str, source: &str) -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(name.to_owned(), source.to_owned())])).unwrap()
 }
 
+fn normalize_newlines(source: &str) -> String {
+    source.replace("\r\n", "\n")
+}
+
 fn path_contracts() -> String {
-    format!(
+    normalize_newlines(&format!(
         "{}\n{ARMS_CALLEES}\n{B08_CALLEES}\n{B09B10_CALLEES}\n{TRACE_CALLEES}",
-        PATH_CONTRACTS.replace("\r\n", "\n")
-    )
+        normalize_newlines(PATH_CONTRACTS)
+    ))
 }
 
 fn clang_available() -> bool {
@@ -440,7 +444,7 @@ fn the_program_stays_unknown() {
 fn the_variadic_tail_clause_is_total_or_reject() {
     // The callee fixture is a concatenation piece, so it carries no module
     // header of its own; the loader needs one.
-    let module = format!("module contract;\n{TRACE_CALLEES}");
+    let module = normalize_newlines(&format!("module contract;\n{TRACE_CALLEES}"));
     let tails = declared_variadic_data_tails(&load("o04_trace_callees.qcore", &module))
         .expect("the fixture loads");
     assert_eq!(
@@ -833,7 +837,8 @@ fn a_certificate_resting_on_the_tail_is_rederived_from_its_own_sources() {
         .map(|(name, source)| {
             (
                 name.clone(),
-                source.replace("    ensures normal resource_variadic_data_tail();\n", ""),
+                normalize_newlines(source)
+                    .replace("    ensures normal resource_variadic_data_tail();\n", ""),
             )
         })
         .collect::<BTreeMap<_, _>>();
