@@ -6,11 +6,27 @@
 //! 1. **Admission** ([`bridge_contract`]). A complete resource-contract v1
 //!    declaration goes in; either one [`ExternCallee`] inside the closed v1
 //!    bridging table comes out, or a named [`BridgeRefusal`] does. Every C04
-//!    mode outside §3.1 of the design is an explicit refusal constructor, not
-//!    an unhandled case: `resource_owned`, `resource_released`, `resource_out`,
-//!    `resource_stored`, `resource_removed`, `resource_return_reallocated`, a
-//!    nonnull owned return and a nullable consumed parameter each have their
-//!    own refusal, so widening the profile means deleting a refusal on purpose.
+//!    mode outside the admitted table is an explicit refusal constructor, not
+//!    an unhandled case: `resource_released`, `resource_removed`,
+//!    `resource_return_reallocated`, a nonnull owned return, a nullable
+//!    consumed parameter and a `resource_owned` parameter that owns nothing
+//!    each have their own refusal, so widening the profile means deleting a
+//!    refusal on purpose.
+//!
+//!    Card `EXTERN-F1` adds exactly two modes to that table. `resource_out`
+//!    (the callee writes fresh custody through a `ptr<mut, ptr<mut, u8>>`
+//!    slot) reuses the `succeeds` adapter discipline unchanged: the out write
+//!    materializes a checked owned binding only under the success control, and
+//!    the nonnull form stays refused so no acquisition arm is unchecked.
+//!    `resource_stored` (custody of the passed `own<Buffer>` becomes indexed
+//!    beneath a declared owner) removes the identity from the caller's ledger
+//!    permanently with no owned return; the residual accounting beneath that
+//!    owner is a **named declared premise**
+//!    ([`ExternAssumption::StoredCustodyUnderDeclaredOwner`]), never a checked
+//!    fact. Contract spec §C04.2 requires a stored parameter's owner to be a
+//!    *distinct `Owned` parameter*, so admitting `resource_stored` forces
+//!    `resource_owned` to be admitted in exactly that position and nowhere
+//!    else.
 //! 2. **Derivation** ([`derived_custody`], [`derived_effects`]). The custody
 //!    delta and effect row a call site imposes are a *function* of the admitted
 //!    callee, so a certificate consumer can repeat the derivation instead of
@@ -161,6 +177,21 @@ pub enum CallParameter {
     Borrowed(AbiType),
     /// An admitted `ptr<mut, u8>` bound to a consumed `own<Buffer>`.
     Consumed,
+    /// `resource_stored(p, owner, nonnull)` on `ptr<mut, u8>` (card
+    /// `EXTERN-F1`). The passed `own<Buffer>` leaves the caller's ledger
+    /// permanently and becomes indexed beneath the parameter at `owner`. What
+    /// happens to it afterwards is the declared owner's business and is not
+    /// checked here.
+    Stored { owner: usize },
+    /// `resource_owned(p, nonnull)` on `ptr<mut, u8>`, designated as the owner
+    /// of at least one admitted [`CallParameter::Stored`] parameter of the same
+    /// contract (contract spec §C04.2). The caller supplies live custody and
+    /// keeps the identity, so this is a loan with a liveness precondition.
+    Owner,
+    /// `resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` (card
+    /// `EXTERN-F1`). The callee writes fresh custody through the slot; the
+    /// caller's binding materializes only on the adapter's success arm.
+    OutSlot,
 }
 
 /// The admitted v1 bridging of the result (design §3.2).
@@ -181,21 +212,63 @@ pub struct ExternCallee {
     pub parameters: Vec<CallParameter>,
     pub result: CallResult,
     pub result_abi: AbiType,
+    /// Index of the single admitted [`CallParameter::OutSlot`], if any. A
+    /// callee has at most one acquisition source: an owned nullable return or
+    /// one out slot, never both and never two slots.
+    pub out_parameter: Option<usize>,
+}
+
+impl ExternCallee {
+    /// Whether a call to this callee establishes fresh custody, through either
+    /// admitted acquisition source. Exactly the callees for which the
+    /// `succeeds BOOL else raise ERROR` adapter is mandatory.
+    #[must_use]
+    pub const fn acquires(&self) -> bool {
+        matches!(self.result, CallResult::OwnedNullable) || self.out_parameter.is_some()
+    }
 }
 
 /// Why a complete, loadable C04 declaration is still not callable in v1. Each
 /// constructor names one excluded shape; none is a catch-all.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BridgeRefusal {
-    /// `resource_owned`: the call retains custody it never took. Follow-on.
+    /// `resource_owned` on a parameter that is not the designated owner of any
+    /// admitted `resource_stored` parameter of the same contract. Outside that
+    /// one position the mode is still not callable.
     OwnedParameter { parameter: usize },
+    /// `resource_owned(p, nullable)` in owner position: storing beneath an
+    /// owner that may be absent has no modeled meaning.
+    NullableOwnerParameter { parameter: usize },
+    /// `resource_owned` in owner position on other than `ptr<mut, u8>`.
+    UnsupportedOwnerPointer { parameter: usize },
     /// `resource_released`: release through an extern call is the cleanup
     /// relation territory contract spec §C10 reserves. Follow-on.
     ReleasedParameter { parameter: usize },
-    /// `resource_out`: fresh custody through a pointer-to-pointer destination.
-    OutParameter { parameter: usize },
-    /// `resource_stored`: owner-indexed custody. Follow-on.
-    StoredParameter { parameter: usize },
+    /// `resource_out(p, nonnull)`: a trusted non-nullness assertion on the
+    /// written slot, with no checked branch. Excluded for the same reason as
+    /// `resource_return_owned(nonnull)`: every acquisition arm stays checked.
+    NonnullOutParameter { parameter: usize },
+    /// `resource_out` on other than `ptr<mut, ptr<mut, u8>>`.
+    UnsupportedOutPointer { parameter: usize },
+    /// `resource_stored(p, owner, nullable)`: v1 stores nonnull arguments only,
+    /// exactly as it consumes nonnull arguments only.
+    NullableStoredParameter { parameter: usize },
+    /// `resource_stored` on other than `ptr<mut, u8>`.
+    UnsupportedStoredPointer { parameter: usize },
+    /// `resource_stored(p, owner, _)` whose designated owner is not a
+    /// `resource_owned` parameter of the same contract (contract spec §C04.2).
+    StoredOwnerNotOwned { parameter: usize, owner: usize },
+    /// `resource_stored(p, owner, _)` whose designated owner is the stored
+    /// parameter itself.
+    StoredOwnerIsItself { parameter: usize },
+    /// More than one acquisition source in one declaration: two out slots, or
+    /// an out slot beside an owned return. A call establishes at most one
+    /// fresh identity, so the adapter binds exactly one.
+    MultipleAcquisitions,
+    /// A `resource_stored` parameter beside an acquisition source. The stored
+    /// mode is admitted with no owned return: custody leaves the checked world
+    /// and nothing comes back in the same call.
+    StoredWithAcquisition { parameter: usize },
     /// `resource_removed`: owner-indexed custody. Follow-on.
     RemovedParameter { parameter: usize },
     /// `resource_consumed(p, nullable)`: v1 admits the nonnull form only, so
@@ -225,19 +298,50 @@ impl fmt::Display for BridgeRefusal {
         match self {
             Self::OwnedParameter { parameter } => write!(
                 f,
-                "parameter {parameter} declares `resource_owned`, which `source.extern-call.v1` does not call"
+                "parameter {parameter} declares `resource_owned` but owns no `resource_stored` parameter of this contract; outside owner position the mode is not callable"
+            ),
+            Self::NullableOwnerParameter { parameter } => write!(
+                f,
+                "parameter {parameter} is a declared store owner but is `nullable`; an absent owner indexes nothing"
+            ),
+            Self::UnsupportedOwnerPointer { parameter } => write!(
+                f,
+                "parameter {parameter} is a declared store owner on other than `ptr<mut, u8>`"
             ),
             Self::ReleasedParameter { parameter } => write!(
                 f,
                 "parameter {parameter} declares `resource_released`; release through an extern call is reserved for the cleanup relation"
             ),
-            Self::OutParameter { parameter } => write!(
+            Self::NonnullOutParameter { parameter } => write!(
                 f,
-                "parameter {parameter} declares `resource_out`, which `source.extern-call.v1` does not call"
+                "parameter {parameter} declares `resource_out(_, nonnull)`, which asserts the written slot is non-null with no checked branch"
             ),
-            Self::StoredParameter { parameter } => write!(
+            Self::UnsupportedOutPointer { parameter } => write!(
                 f,
-                "parameter {parameter} declares `resource_stored`, which `source.extern-call.v1` does not call"
+                "parameter {parameter} declares `resource_out` on other than `ptr<mut, ptr<mut, u8>>`"
+            ),
+            Self::NullableStoredParameter { parameter } => write!(
+                f,
+                "parameter {parameter} declares `resource_stored(_, _, nullable)`; v1 stores nonnull arguments only"
+            ),
+            Self::UnsupportedStoredPointer { parameter } => write!(
+                f,
+                "parameter {parameter} declares `resource_stored` on other than `ptr<mut, u8>`"
+            ),
+            Self::StoredOwnerNotOwned { parameter, owner } => write!(
+                f,
+                "parameter {parameter} is stored beneath parameter {owner}, which is not a `resource_owned` parameter of this contract"
+            ),
+            Self::StoredOwnerIsItself { parameter } => write!(
+                f,
+                "parameter {parameter} is declared stored beneath itself"
+            ),
+            Self::MultipleAcquisitions => f.write_str(
+                "the declaration has more than one acquisition source; a call establishes at most one fresh identity",
+            ),
+            Self::StoredWithAcquisition { parameter } => write!(
+                f,
+                "parameter {parameter} is stored beneath a declared owner in a call that also establishes fresh custody; the stored mode is admitted with no owned return"
             ),
             Self::RemovedParameter { parameter } => write!(
                 f,
@@ -286,7 +390,21 @@ pub fn bridge_contract(
     name: &str,
     contract: &DeclaredContract,
 ) -> Result<ExternCallee, BridgeRefusal> {
+    // Owner position is a property of the *contract*, not of one parameter:
+    // `resource_owned` is admitted exactly where some `resource_stored`
+    // parameter designates it (contract spec §C04.2) and refused everywhere
+    // else, so this pass runs before per-parameter admission.
+    let designated_owners = contract
+        .parameters
+        .iter()
+        .filter_map(|(_, mode)| match mode {
+            ContractParameterMode::Stored { owner, .. } => Some(*owner),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
     let mut parameters = Vec::with_capacity(contract.parameters.len());
+    let mut out_parameter = None;
+    let mut stored_parameter = None;
     for (index, (abi, mode)) in contract.parameters.iter().enumerate() {
         if *abi == AbiType::Unit {
             return Err(BridgeRefusal::UnitParameter { parameter: index });
@@ -314,12 +432,20 @@ pub fn bridge_contract(
                 }
                 CallParameter::Consumed
             }
-            ContractParameterMode::Owned { .. } => {
-                return Err(if abi.is_pointer() {
-                    BridgeRefusal::OwnedParameter { parameter: index }
-                } else {
-                    BridgeRefusal::ScalarCustody { parameter: index }
-                });
+            ContractParameterMode::Owned { nullable } => {
+                if !abi.is_pointer() {
+                    return Err(BridgeRefusal::ScalarCustody { parameter: index });
+                }
+                if !designated_owners.contains(&index) {
+                    return Err(BridgeRefusal::OwnedParameter { parameter: index });
+                }
+                if *nullable {
+                    return Err(BridgeRefusal::NullableOwnerParameter { parameter: index });
+                }
+                if *abi != AbiType::PtrMutU8 {
+                    return Err(BridgeRefusal::UnsupportedOwnerPointer { parameter: index });
+                }
+                CallParameter::Owner
             }
             ContractParameterMode::Released { .. } => {
                 return Err(if abi.is_pointer() {
@@ -328,19 +454,45 @@ pub fn bridge_contract(
                     BridgeRefusal::ScalarCustody { parameter: index }
                 });
             }
-            ContractParameterMode::Out { .. } => {
-                return Err(if abi.is_pointer() {
-                    BridgeRefusal::OutParameter { parameter: index }
-                } else {
-                    BridgeRefusal::ScalarCustody { parameter: index }
-                });
+            ContractParameterMode::Out { nullable } => {
+                if !abi.is_pointer() {
+                    return Err(BridgeRefusal::ScalarCustody { parameter: index });
+                }
+                if !*nullable {
+                    return Err(BridgeRefusal::NonnullOutParameter { parameter: index });
+                }
+                if *abi != AbiType::PtrMutPtrMutU8 {
+                    return Err(BridgeRefusal::UnsupportedOutPointer { parameter: index });
+                }
+                if out_parameter.replace(index).is_some() {
+                    return Err(BridgeRefusal::MultipleAcquisitions);
+                }
+                CallParameter::OutSlot
             }
-            ContractParameterMode::Stored { .. } => {
-                return Err(if abi.is_pointer() {
-                    BridgeRefusal::StoredParameter { parameter: index }
-                } else {
-                    BridgeRefusal::ScalarCustody { parameter: index }
-                });
+            ContractParameterMode::Stored { owner, nullable } => {
+                if !abi.is_pointer() {
+                    return Err(BridgeRefusal::ScalarCustody { parameter: index });
+                }
+                if *nullable {
+                    return Err(BridgeRefusal::NullableStoredParameter { parameter: index });
+                }
+                if *abi != AbiType::PtrMutU8 {
+                    return Err(BridgeRefusal::UnsupportedStoredPointer { parameter: index });
+                }
+                if *owner == index {
+                    return Err(BridgeRefusal::StoredOwnerIsItself { parameter: index });
+                }
+                if !matches!(
+                    contract.parameters.get(*owner),
+                    Some((_, ContractParameterMode::Owned { .. }))
+                ) {
+                    return Err(BridgeRefusal::StoredOwnerNotOwned {
+                        parameter: index,
+                        owner: *owner,
+                    });
+                }
+                stored_parameter.get_or_insert(index);
+                CallParameter::Stored { owner: *owner }
             }
             ContractParameterMode::Removed { .. } => {
                 return Err(if abi.is_pointer() {
@@ -367,11 +519,20 @@ pub fn bridge_contract(
         }
         ContractReturnMode::Reallocated { .. } => return Err(BridgeRefusal::ReallocatedReturn),
     };
+    if result == CallResult::OwnedNullable && out_parameter.is_some() {
+        return Err(BridgeRefusal::MultipleAcquisitions);
+    }
+    if let Some(parameter) = stored_parameter
+        && (result == CallResult::OwnedNullable || out_parameter.is_some())
+    {
+        return Err(BridgeRefusal::StoredWithAcquisition { parameter });
+    }
     Ok(ExternCallee {
         name: name.to_owned(),
         parameters,
         result,
         result_abi: contract.result,
+        out_parameter,
     })
 }
 
@@ -384,35 +545,53 @@ pub enum ExternCustody {
     Borrowed,
     /// Ownership leaves the caller through the callee.
     Consumed,
+    /// Ownership leaves the caller and becomes indexed beneath the declared
+    /// owner argument. The caller's ledger delta is exactly a consumption; the
+    /// owner designation is recorded on the certificate and premised, not
+    /// checked.
+    Stored,
+    /// A loan with a liveness precondition: the caller supplies live custody
+    /// for a declared store owner and keeps the identity.
+    Owner,
 }
 
-/// Derived custody delta. A function of the admitted callee alone.
+/// Derived custody delta over the *resource-bearing arguments*, in declaration
+/// order. Data parameters carry no custody, and an out slot carries no caller
+/// identity at all — the identity it establishes is the adapter's, recorded in
+/// [`ExternCallCertificate::out_acquisitions`] — so both are absent here and
+/// this vector stays aligned with the caller's argument identity list.
 #[must_use]
 pub fn derived_custody(callee: &ExternCallee) -> Vec<ExternCustody> {
     callee
         .parameters
         .iter()
         .filter_map(|parameter| match parameter {
-            CallParameter::Data(_) => None,
+            CallParameter::Data(_) | CallParameter::OutSlot => None,
             CallParameter::Borrowed(_) => Some(ExternCustody::Borrowed),
             CallParameter::Consumed => Some(ExternCustody::Consumed),
+            CallParameter::Stored { .. } => Some(ExternCustody::Stored),
+            CallParameter::Owner => Some(ExternCustody::Owner),
         })
         .collect()
 }
 
 /// Derived effect row (design §3.4): `Io` always, plus `Alloc` exactly when the
-/// contract returns owned custody, plus `Mut` exactly when some parameter is a
-/// `mut` pointer. The caller's declared row must admit this; that containment
-/// check belongs to the established typed-error pass, not to this module.
+/// call establishes fresh custody through either admitted acquisition source,
+/// plus `Mut` exactly when some parameter is a `mut` pointer. The caller's
+/// declared row must admit this; that containment check belongs to the
+/// established typed-error pass, not to this module.
 #[must_use]
 pub fn derived_effects(callee: &ExternCallee) -> EffectRow {
     let mut effects = BTreeSet::from([Effect::Io]);
-    if callee.result == CallResult::OwnedNullable {
+    if callee.acquires() {
         effects.insert(Effect::Alloc);
     }
     if callee.parameters.iter().any(|parameter| match parameter {
         CallParameter::Data(abi) | CallParameter::Borrowed(abi) => abi.is_mutable_pointer(),
-        CallParameter::Consumed => true,
+        CallParameter::Consumed
+        | CallParameter::Stored { .. }
+        | CallParameter::Owner
+        | CallParameter::OutSlot => true,
     }) {
         effects.insert(Effect::Mut);
     }
@@ -428,6 +607,16 @@ pub enum ExternArgument {
     Borrow(ResourceId),
     /// A live `own<Buffer>` moved into the callee.
     Consume(ResourceId),
+    /// A live `own<Buffer>` moved into the callee's declared owner. Spelled
+    /// `move NAME` in source, exactly like a consumption: the caller's ledger
+    /// delta is identical and the destination is declared by the contract, not
+    /// by the call site.
+    Store(ResourceId),
+    /// A live identity supplied as a declared store owner, kept by the caller.
+    Owner(ResourceId),
+    /// The declared out slot. It carries no caller identity: the identity it
+    /// establishes is the adapter's.
+    OutSlot,
 }
 
 /// The mandatory nullable-owned-return adapter (design §3.3): the null arm is
@@ -497,6 +686,9 @@ pub enum ExternDiagnostic {
     AdapterAbandonsCustody { event: usize, resource: ResourceId },
     /// Q024: an acquisition reuses an identity the trace already introduced.
     DuplicateAcquisition { event: usize, resource: ResourceId },
+    /// Q024: a stored argument names the same identity as its declared owner.
+    /// Custody indexed beneath itself has no modeled meaning.
+    StoredUnderItself { event: usize, resource: ResourceId },
 }
 
 impl ExternDiagnostic {
@@ -506,7 +698,8 @@ impl ExternDiagnostic {
             Self::UnknownCallee { .. } => "Q023",
             Self::ArgumentArity { .. }
             | Self::ArgumentForm { .. }
-            | Self::DuplicateAcquisition { .. } => "Q024",
+            | Self::DuplicateAcquisition { .. }
+            | Self::StoredUnderItself { .. } => "Q024",
             Self::AdapterMissing { .. }
             | Self::AdapterUnexpected { .. }
             | Self::AdapterUnknownError { .. }
@@ -525,7 +718,8 @@ impl ExternDiagnostic {
             | Self::AdapterUnexpected { event }
             | Self::AdapterUnknownError { event, .. }
             | Self::AdapterAbandonsCustody { event, .. }
-            | Self::DuplicateAcquisition { event, .. } => *event,
+            | Self::DuplicateAcquisition { event, .. }
+            | Self::StoredUnderItself { event, .. } => *event,
         }
     }
 }
@@ -552,7 +746,7 @@ impl fmt::Display for ExternDiagnostic {
                 "argument {parameter} does not bridge to its declared mode {expected:?}"
             ),
             Self::AdapterMissing { .. } => f.write_str(
-                "a `resource_return_owned(nullable)` call requires the checked null adapter `succeeds BOOL else raise ERROR`",
+                "a call that establishes fresh custody — a `resource_return_owned(nullable)` result or a `resource_out(_, nullable)` slot — requires the checked adapter `succeeds BOOL else raise ERROR`",
             ),
             Self::AdapterUnexpected { .. } => {
                 f.write_str("this callee returns no custody, so it takes no null adapter")
@@ -567,6 +761,10 @@ impl fmt::Display for ExternDiagnostic {
             Self::DuplicateAcquisition { resource, .. } => {
                 write!(f, "resource identity {resource} is acquired twice")
             }
+            Self::StoredUnderItself { resource, .. } => write!(
+                f,
+                "resource identity {resource} is stored beneath itself; a declared owner must be a distinct live identity"
+            ),
         }
     }
 }
@@ -585,6 +783,18 @@ pub enum ExternAssumption {
     NoExtentTransport,
     /// Which object file provides each symbol is the builder's premise.
     LinkageSuppliedByBuilder,
+    /// The named callee declares a `resource_out(_, nullable)` slot. That the
+    /// callee actually writes it is the declaration's claim, not a checked
+    /// fact: the emitted program initializes the slot to null and compares the
+    /// observed nullness against the declared control, which refutes a
+    /// disagreeing implementation for the observed run and establishes nothing
+    /// beyond it.
+    OutSlotWrittenByCallee(String),
+    /// The named callee declares a `resource_stored(_, owner, nonnull)`
+    /// parameter. The stored identity leaves this profile's accounting
+    /// permanently; that the declared owner keeps, and eventually releases, it
+    /// is a declared premise and is discharged nowhere in this repository.
+    StoredCustodyUnderDeclaredOwner(String),
 }
 
 /// Evidence a checked module publishes. Every field is re-derivable from the
@@ -594,10 +804,19 @@ pub struct ExternCallCertificate {
     pub entry: String,
     /// Admitted call sites, in trace order, as (callee, derived custody).
     pub calls: Vec<(String, Vec<ExternCustody>)>,
-    /// Identities the adapters introduce, in trace order.
+    /// Identities the adapters introduce, in trace order, from either
+    /// acquisition source.
     pub acquisitions: Vec<ResourceId>,
+    /// The subset of `acquisitions` established through a declared out slot
+    /// rather than an owned return, in trace order.
+    pub out_acquisitions: Vec<ResourceId>,
     /// Identities consumed by a call, in trace order.
     pub consumptions: Vec<ResourceId>,
+    /// `(child, owner)` identities whose custody left the caller's ledger
+    /// beneath a declared owner, in trace order. The owner is still the
+    /// caller's; what it does with the child is the premise recorded as
+    /// [`ExternAssumption::StoredCustodyUnderDeclaredOwner`].
+    pub stored: Vec<(ResourceId, ResourceId)>,
     /// Union of the derived rows of every call site.
     pub effects: EffectRow,
     pub assumptions: Vec<ExternAssumption>,
@@ -611,7 +830,9 @@ pub fn check_extern_program(
     let mut diagnostics = Vec::new();
     let mut calls = Vec::new();
     let mut acquisitions = Vec::new();
+    let mut out_acquisitions = Vec::new();
     let mut consumptions = Vec::new();
+    let mut stored = Vec::new();
     let mut live = BTreeSet::<ResourceId>::new();
     let mut introduced = BTreeSet::<ResourceId>::new();
     let mut effects = BTreeSet::new();
@@ -636,6 +857,7 @@ pub fn check_extern_program(
             continue;
         }
         let mut consumed_here = Vec::new();
+        let mut stored_here = Vec::new();
         for (parameter, (argument, declared)) in
             call.arguments.iter().zip(&callee.parameters).enumerate()
         {
@@ -644,6 +866,9 @@ pub fn check_extern_program(
                 (ExternArgument::Data(_), CallParameter::Data(_))
                     | (ExternArgument::Borrow(_), CallParameter::Borrowed(_))
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
+                    | (ExternArgument::Store(_), CallParameter::Stored { .. })
+                    | (ExternArgument::Owner(_), CallParameter::Owner)
+                    | (ExternArgument::OutSlot, CallParameter::OutSlot)
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ArgumentForm {
@@ -653,18 +878,37 @@ pub fn check_extern_program(
                 });
                 continue;
             }
-            if let ExternArgument::Consume(resource) = argument {
-                consumed_here.push(*resource);
+            match (argument, declared) {
+                (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
+                (ExternArgument::Store(child), CallParameter::Stored { owner }) => {
+                    // The declared owner is a position in the same call, so the
+                    // owner identity is read from the argument the declaration
+                    // designates rather than guessed. An argument-form refusal
+                    // there has already been reported, so nothing is inferred.
+                    let Some(ExternArgument::Owner(owner)) = call.arguments.get(*owner) else {
+                        continue;
+                    };
+                    if child == owner {
+                        diagnostics.push(ExternDiagnostic::StoredUnderItself {
+                            event: index,
+                            resource: *child,
+                        });
+                        continue;
+                    }
+                    stored_here.push((*child, *owner));
+                }
+                _ => {}
             }
         }
-        match (&call.adapter, callee.result) {
-            (None, CallResult::OwnedNullable) => {
+        let acquires = callee.acquires();
+        match (&call.adapter, acquires) {
+            (None, true) => {
                 diagnostics.push(ExternDiagnostic::AdapterMissing { event: index });
             }
-            (Some(_), CallResult::Data(_)) => {
+            (Some(_), false) => {
                 diagnostics.push(ExternDiagnostic::AdapterUnexpected { event: index });
             }
-            (Some(adapter), CallResult::OwnedNullable) => {
+            (Some(adapter), true) => {
                 if !program.errors.contains(&adapter.error) {
                     diagnostics.push(ExternDiagnostic::AdapterUnknownError {
                         event: index,
@@ -687,14 +931,26 @@ pub fn check_extern_program(
                     });
                 }
             }
-            (None, CallResult::Data(_)) => {}
+            (None, false) => {}
         }
         for resource in &consumed_here {
             live.remove(resource);
             consumptions.push(*resource);
         }
-        if let (Some(adapter), CallResult::OwnedNullable) = (&call.adapter, callee.result) {
+        // A stored identity leaves the caller's ledger exactly as a consumed
+        // one does. What distinguishes it is where it went, which is recorded
+        // and premised rather than checked.
+        for (child, owner) in &stored_here {
+            live.remove(child);
+            stored.push((*child, *owner));
+        }
+        if let Some(adapter) = &call.adapter
+            && acquires
+        {
             acquisitions.push(adapter.resource);
+            if callee.out_parameter.is_some() {
+                out_acquisitions.push(adapter.resource);
+            }
             // A failed acquisition never makes the identity live; the checked
             // trace keeps the static identity so the caller's passes still see
             // one binding, and the reference/native runs take the error arm.
@@ -707,11 +963,22 @@ pub fn check_extern_program(
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
-    let mut assumptions = program
-        .callees
-        .keys()
-        .map(|name| ExternAssumption::DeclaredContract(name.clone()))
-        .collect::<Vec<_>>();
+    let mut assumptions = Vec::new();
+    for (name, callee) in &program.callees {
+        assumptions.push(ExternAssumption::DeclaredContract(name.clone()));
+        if callee.out_parameter.is_some() {
+            assumptions.push(ExternAssumption::OutSlotWrittenByCallee(name.clone()));
+        }
+        if callee
+            .parameters
+            .iter()
+            .any(|parameter| matches!(parameter, CallParameter::Stored { .. }))
+        {
+            assumptions.push(ExternAssumption::StoredCustodyUnderDeclaredOwner(
+                name.clone(),
+            ));
+        }
+    }
     assumptions.push(ExternAssumption::NoExtentTransport);
     assumptions.push(ExternAssumption::LinkageSuppliedByBuilder);
     assumptions.sort();
@@ -719,7 +986,9 @@ pub fn check_extern_program(
         entry: program.entry.clone(),
         calls,
         acquisitions,
+        out_acquisitions,
         consumptions,
+        stored,
         effects: EffectRow::new(effects),
         assumptions,
     })

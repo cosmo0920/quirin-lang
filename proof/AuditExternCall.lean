@@ -1,16 +1,18 @@
 import QCore.ExternCall
 import QCore.ModuleImports
 
--- Card `source.extern-call.v1`: the bounded extern-call model. Model of
+-- Card `source.extern-call.v1`, extended by card `EXTERN-F1` with the
+-- `resource_out` and `resource_stored` call modes. Model of
 -- `crates/qcore-core/src/extern_call.rs`; the source lowering, the C backend
 -- and the recorded native evidence are separate Rust boundaries, recorded in
--- `docs/reports/extern-call-v1/README.md`.
+-- `docs/reports/extern-call-v1/README.md` and
+-- `docs/reports/extern-call-f1/README.md`.
 
--- Refusal completeness: every resource-contract v1 mode outside design §3.1.
-#print axioms QCore.ExternCall.owned_parameter_refuses
+-- Refusal completeness: every resource-contract v1 mode still outside the
+-- admitted table. `out_parameter_refuses` and `stored_parameter_refuses` are
+-- deliberately retired by `EXTERN-F1`, which admits those two modes; each is
+-- replaced below by the narrower refusals that survive.
 #print axioms QCore.ExternCall.released_parameter_refuses
-#print axioms QCore.ExternCall.out_parameter_refuses
-#print axioms QCore.ExternCall.stored_parameter_refuses
 #print axioms QCore.ExternCall.removed_parameter_refuses
 #print axioms QCore.ExternCall.nullable_consumed_parameter_refuses
 #print axioms QCore.ExternCall.scalar_custody_refuses
@@ -20,32 +22,66 @@ import QCore.ModuleImports
 #print axioms QCore.ExternCall.reallocated_return_refuses
 #print axioms QCore.ExternCall.owned_result_requires_a_mutable_pointer
 
--- The admitted table is not empty, so those refusals are not vacuous.
+-- `resource_owned` is admitted only where a `resource_stored` parameter
+-- designates it, which is the position contract spec §C04.2 forces.
+#print axioms QCore.ExternCall.an_owned_parameter_outside_owner_position_refuses
+#print axioms QCore.ExternCall.owned_parameter_alone_refuses
+#print axioms QCore.ExternCall.a_nullable_owner_refuses
+#print axioms QCore.ExternCall.an_owner_on_other_than_a_flat_mutable_pointer_refuses
+
+-- `resource_out`: admitted nullable, on the pointer-to-pointer projection, at
+-- most one per declaration and never beside an owned return.
+#print axioms QCore.ExternCall.a_nonnull_out_parameter_refuses
+#print axioms QCore.ExternCall.an_out_parameter_on_other_than_the_pointer_to_pointer_projection_refuses
+#print axioms QCore.ExternCall.two_out_slots_refuse
+#print axioms QCore.ExternCall.an_out_slot_beside_an_owned_return_refuses
+
+-- `resource_stored`: admitted nonnull, on a flat mutable pointer, beneath a
+-- distinct declared owner, and with no acquisition in the same call.
+#print axioms QCore.ExternCall.a_nullable_stored_parameter_refuses
+#print axioms QCore.ExternCall.a_stored_parameter_on_other_than_a_flat_mutable_pointer_refuses
+#print axioms QCore.ExternCall.a_stored_parameter_beneath_itself_refuses
+#print axioms QCore.ExternCall.a_stored_parameter_beneath_a_non_owned_parameter_refuses
+#print axioms QCore.ExternCall.a_stored_parameter_beside_an_owned_return_refuses
+
+-- The admitted tables are not empty, so those refusals are not vacuous.
 #print axioms QCore.ExternCall.the_admitted_table_is_inhabited
+#print axioms QCore.ExternCall.the_out_table_is_inhabited
+#print axioms QCore.ExternCall.the_store_table_is_inhabited
 
 -- Summary derivation is a function of the contract, so a certificate consumer
 -- can repeat it instead of believing it.
 #print axioms QCore.ExternCall.admission_is_deterministic
+#print axioms QCore.ExternCall.an_out_slot_carries_no_caller_custody
+#print axioms QCore.ExternCall.a_store_and_its_owner_both_carry_custody
 
--- The derived effect row (design §3.4).
+-- The derived effect row (design §3.4), with both acquisition sources.
 #print axioms QCore.ExternCall.every_derived_row_contains_io
-#print axioms QCore.ExternCall.alloc_is_derived_exactly_for_an_owned_return
+#print axioms QCore.ExternCall.alloc_is_derived_exactly_for_an_acquisition
+#print axioms QCore.ExternCall.alloc_is_derived_for_an_out_slot
 #print axioms QCore.ExternCall.mut_is_derived_exactly_for_a_mutating_parameter
 #print axioms QCore.ExternCall.a_const_loan_of_a_scalar_call_derives_no_mutation
 #print axioms QCore.ExternCall.an_empty_declared_row_admits_no_extern_call
 #print axioms QCore.ExternCall.a_row_without_alloc_refuses_an_acquiring_call
+#print axioms QCore.ExternCall.a_row_without_alloc_refuses_an_out_writing_call
 
--- Adapter totality: a nullable owned return has exactly two exits (§3.3).
+-- Adapter totality: an acquiring call has exactly two exits, whichever source
+-- establishes the custody (§3.3).
 #print axioms QCore.ExternCall.adapter_totality
 #print axioms QCore.ExternCall.a_data_call_never_binds_an_identity
 #print axioms QCore.ExternCall.a_data_call_never_takes_the_error_arm
+#print axioms QCore.ExternCall.a_store_binds_no_identity
 #print axioms QCore.ExternCall.a_failed_acquisition_binds_nothing
 #print axioms QCore.ExternCall.a_successful_acquisition_binds_exactly_the_fresh_identity
+#print axioms QCore.ExternCall.an_out_write_is_an_acquisition_only_on_success
 
 -- Conservation: applying a derived summary changes the ledger by exactly the
 -- declared delta, given the contract premise.
 #print axioms QCore.ExternCall.the_custody_delta_is_exactly_the_declared_one
+#print axioms QCore.ExternCall.a_departing_identity_does_not_survive
 #print axioms QCore.ExternCall.a_consumed_identity_does_not_survive
+#print axioms QCore.ExternCall.a_stored_identity_does_not_survive
+#print axioms QCore.ExternCall.the_owner_survives_a_store
 
 -- The file-local import gate is a second, independent opt-in.
 #print axioms QCore.ModuleImports.empty_imports_grant_no_extern_calls

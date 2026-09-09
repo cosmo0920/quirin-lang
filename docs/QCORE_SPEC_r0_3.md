@@ -360,24 +360,38 @@ filesystem search and no fallback, and an inline source `contract { … }` on a
 called extern declaration is refused rather than enforced. Of the C04 vocabulary
 this path calls only scalars by value, `resource_borrowed` on an admitted
 pointer, `resource_consumed(p, nonnull)`, `resource_return_none()` with a `unit`
-or scalar result, and `resource_return_owned(nullable)` whose null arm MUST be
-branched at the call site into the existing typed-error exit. `resource_owned`,
-`resource_released`, `resource_out`, `resource_stored`, `resource_removed`,
-`resource_return_reallocated`, a nonnull owned return and a nullable consumed
-parameter are each refused by name. Length and extent are not transported: C04
+or scalar result, `resource_return_owned(nullable)` whose null arm MUST be
+branched at the call site into the existing typed-error exit,
+`resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` and
+`resource_stored(p, owner, nonnull)` on `ptr<mut, u8>`. An out slot is the
+second admitted acquisition source and carries the same mandatory adapter: the
+binding it establishes materializes only on the success arm. A store removes the
+passed identity from the caller's ledger permanently, with no owned return in
+the same call; that the declared owner keeps and eventually releases it is a
+named premise on the certificate, discharged nowhere. Because contract spec
+§C04.2 requires a stored parameter's owner to be a **distinct `Owned`
+parameter**, `resource_owned` is admitted in exactly that position — nonnull,
+on `ptr<mut, u8>`, as a loan the caller keeps — and refused everywhere else. A
+declaration establishes at most one fresh identity: two out slots, an out slot
+beside an owned return, and a store beside either are each refused by name, as
+are `resource_released`, `resource_removed`, `resource_return_reallocated`, a
+nonnull owned return, a nonnull out slot, a nullable stored parameter and a
+nullable consumed parameter. Length and extent are not transported: C04
 pointers are extentless `u8` projections, so no declaration on this path says
 how many bytes a callee touches, and every certificate records that premise
 along with each callee's declared contract and the builder's linkage premise.
-The derived effect row is `{Io}`, plus `Alloc` exactly when the contract returns
-owned custody and `Mut` exactly when some parameter is a `mut` pointer; the
-caller's declared `effects { … }` row MUST admit it. Extern calls are admitted
+The derived effect row is `{Io}`, plus `Alloc` exactly when the call establishes
+fresh custody through either acquisition source and `Mut` exactly when some
+parameter is a `mut` pointer; the caller's declared `effects { … }` row MUST
+admit it. Extern calls are admitted
 in a flat sequential entry body only — task workers, `with lock` bodies, error
 regions, nested blocks and the `source.exec12` driver body path keep their
 existing refusals. A result reached through an extern contract is valid only
 *relative to* that declaration (`ContractTrust::Declared`); it is never a proof
 about the C implementation. See
-[implemented grammar G02d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls)
-and the [extern-call evidence](reports/extern-call-v1/README.md).
+[implemented grammar G02d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d-bounded-extern-calls),
+the [extern-call evidence](reports/extern-call-v1/README.md) and the
+[out/stored extension](reports/extern-call-f1/README.md).
 
 ## L15. Lowering, observations, and translation certificates
 
@@ -483,7 +497,7 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `Q001`, `Q016` | `Index` | `qcore-frontend` | `Q001` generic index/quant presentation; `Q016` dimension/axis declaration validity (checked unconditionally) and quant-index type resolution. |
 | `Q010`–`Q015` | `NameResolution` | `qcore-frontend` | `Q010` duplicate declaration, `Q011` duplicate parameter, `Q012` duplicate local binding, `Q013` unknown name, `Q014` unknown imported module, `Q015` concurrency used without its file-local import. |
 | `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule, the task route's source-contract gate, and an `effects { … }` row naming an effect the extern-call profile does not model; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
-| `Q022`–`Q027` | `ExternCall` | `qcore-frontend`, `qcore-verification::driver` | Admission and bridging of a call to a **declared** extern function (`source.extern-call.v1`). `Q022` an extern call in a file without its `import std.extern;`; `Q023` the callee has no admitted declared contract in the explicit selection (no selection, a selection that does not load, or an absent name); `Q024` the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count; `Q025` the mandatory nullable-owned-return adapter is missing, applied to a callee that returns no custody, names a declared non-error, or cannot discharge live custody on its error arm; `Q026` an extern call in a context this profile refuses (a nested block, a non-entry function, or an entry with parameters); `Q027` a declared input and the checked artifact disagree — an `extern fn` declaration against its selected contract, an inline `contract { … }` on a called extern declaration, a selection that no longer reproduces its own sources, or a published certificate against its independent rederivation. |
+| `Q022`–`Q027` | `ExternCall` | `qcore-frontend`, `qcore-verification::driver` | Admission and bridging of a call to a **declared** extern function (`source.extern-call.v1`). `Q022` an extern call in a file without its `import std.extern;`; `Q023` the callee has no admitted declared contract in the explicit selection (no selection, a selection that does not load, or an absent name); `Q024` the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count — including a stored argument that names the same identity as its declared owner; `Q025` the mandatory acquisition adapter is missing, applied to a callee that establishes no fresh custody, names a declared non-error, or cannot discharge live custody on its error arm. The adapter is mandatory for each of the two admitted acquisition sources: a `resource_return_owned(nullable)` result and a `resource_out(_, nullable)` slot; `Q026` an extern call in a context this profile refuses (a nested block, a non-entry function, or an entry with parameters); `Q027` a declared input and the checked artifact disagree — an `extern fn` declaration against its selected contract, an inline `contract { … }` on a called extern declaration, a selection that no longer reproduces its own sources, or a published certificate against its independent rederivation. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
 | `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |

@@ -25,8 +25,8 @@ use std::fmt::Write;
 
 use crate::ResourceId;
 use crate::extern_call::{
-    AbiType, CallParameter, CallResult, ExternArgument, ExternCallCertificate, ExternCallee,
-    ExternEvent, ExternProgram,
+    AbiType, CallParameter, ExternArgument, ExternCallCertificate, ExternCallee, ExternEvent,
+    ExternProgram,
 };
 
 /// One line of the execution observation. The reference interpreter and the
@@ -44,6 +44,13 @@ pub enum ExternEmissionRefusal {
     /// A `unit` result cannot be bound; only `resource_return_none()` callees
     /// may declare one, and those bind nothing.
     UnsupportedResult { event: usize },
+    /// An argument names an identity no earlier adapter in this trace bound.
+    /// The backend declares a C variable per adapter-bound identity and has
+    /// nothing to name otherwise; emitting the name anyway would produce a
+    /// translation unit that only the C compiler could reject. The reference
+    /// interpreter has no such requirement — it prints identities symbolically
+    /// — so this refusal is deliberately emission-only.
+    UnboundIdentity { event: usize, resource: ResourceId },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -55,21 +62,49 @@ fn resource_name(resource: ResourceId) -> String {
     format!("r{resource}")
 }
 
-fn argument_line(argument: &ExternArgument) -> String {
+/// One argument's rendering. The prefix names the *declared mode* the argument
+/// bridged to, so an observation records which custody rule ran rather than
+/// only which identity was passed.
+fn argument_line(argument: &ExternArgument, out: ResourceId) -> String {
     match argument {
         ExternArgument::Data(value) => format!("d:{value}"),
         ExternArgument::Borrow(resource) => format!("b:{}", resource_name(*resource)),
         ExternArgument::Consume(resource) => format!("c:{}", resource_name(*resource)),
+        ExternArgument::Store(resource) => format!("s:{}", resource_name(*resource)),
+        ExternArgument::Owner(resource) => format!("w:{}", resource_name(*resource)),
+        ExternArgument::OutSlot => format!("o:{}", resource_name(out)),
     }
 }
 
+fn argument_lines(arguments: &[ExternArgument], out: ResourceId) -> String {
+    arguments
+        .iter()
+        .map(|argument| format!(" {}", argument_line(argument, out)))
+        .collect()
+}
+
 fn call_observation(callee: &ExternCallee, arguments: &[ExternArgument]) -> String {
-    let mut line = format!("call {}", callee.name);
-    for argument in arguments {
-        line.push(' ');
-        line.push_str(&argument_line(argument));
-    }
-    line
+    format!("call {}{}", callee.name, argument_lines(arguments, 0))
+}
+
+/// A call that establishes fresh custody through a declared out slot, without
+/// its outcome word. Both arms share this prefix, so the emitted `printf`
+/// formats it once and appends the observed nullness.
+fn out_prefix(callee: &ExternCallee, arguments: &[ExternArgument], resource: ResourceId) -> String {
+    format!("out {}{}", callee.name, argument_lines(arguments, resource))
+}
+
+fn out_observation(
+    callee: &ExternCallee,
+    arguments: &[ExternArgument],
+    resource: ResourceId,
+    succeeds: bool,
+) -> String {
+    format!(
+        "{} {}",
+        out_prefix(callee, arguments, resource),
+        if succeeds { "ok" } else { "null" }
+    )
 }
 
 /// Reference execution of a checked trace. Mirrors the emitted C statement for
@@ -91,20 +126,29 @@ pub fn interpret_extern_program(
                         name: call.callee.clone(),
                     }
                 })?;
-                match (&call.adapter, callee.result) {
-                    (Some(adapter), CallResult::OwnedNullable) => {
-                        trace.push(format!(
-                            "acquire {} {} {}",
-                            callee.name,
-                            resource_name(adapter.resource),
-                            if adapter.succeeds { "ok" } else { "null" }
-                        ));
+                match (&call.adapter, callee.acquires()) {
+                    (Some(adapter), true) => {
+                        trace.push(if callee.out_parameter.is_some() {
+                            out_observation(
+                                callee,
+                                &call.arguments,
+                                adapter.resource,
+                                adapter.succeeds,
+                            )
+                        } else {
+                            format!(
+                                "acquire {} {} {}",
+                                callee.name,
+                                resource_name(adapter.resource),
+                                if adapter.succeeds { "ok" } else { "null" }
+                            )
+                        });
                         if !adapter.succeeds {
                             trace.push(format!("raise {}", adapter.error));
                             return Ok(trace);
                         }
                     }
-                    (None, CallResult::Data(_)) => {
+                    (None, false) => {
                         trace.push(call_observation(callee, &call.arguments));
                     }
                     _ => return Err(ExternEmissionRefusal::UnsupportedResult { event: index }),
@@ -127,7 +171,10 @@ fn prototype(callee: &ExternCallee) -> String {
             .map(|(index, parameter)| {
                 let abi = match parameter {
                     CallParameter::Data(abi) | CallParameter::Borrowed(abi) => *abi,
-                    CallParameter::Consumed => AbiType::PtrMutU8,
+                    CallParameter::Consumed
+                    | CallParameter::Stored { .. }
+                    | CallParameter::Owner => AbiType::PtrMutU8,
+                    CallParameter::OutSlot => AbiType::PtrMutPtrMutU8,
                 };
                 let spelling = abi.c_spelling();
                 if spelling.ends_with('*') {
@@ -147,12 +194,28 @@ fn prototype(callee: &ExternCallee) -> String {
     }
 }
 
-fn argument_expression(argument: &ExternArgument) -> String {
+/// The C expression for one argument. `out` is the identity the adapter binds,
+/// which is the only identity an out slot can name.
+fn argument_expression(argument: &ExternArgument, out: ResourceId) -> String {
     match argument {
         ExternArgument::Data(value) => format!("{value}"),
-        ExternArgument::Borrow(resource) | ExternArgument::Consume(resource) => {
-            resource_name(*resource)
-        }
+        ExternArgument::Borrow(resource)
+        | ExternArgument::Consume(resource)
+        | ExternArgument::Store(resource)
+        | ExternArgument::Owner(resource) => resource_name(*resource),
+        ExternArgument::OutSlot => format!("&{}", resource_name(out)),
+    }
+}
+
+/// The caller identity an argument reads, if any. An out slot reads none: it
+/// writes the identity the adapter binds.
+const fn argument_identity(argument: &ExternArgument) -> Option<ResourceId> {
+    match argument {
+        ExternArgument::Data(_) | ExternArgument::OutSlot => None,
+        ExternArgument::Borrow(resource)
+        | ExternArgument::Consume(resource)
+        | ExternArgument::Store(resource)
+        | ExternArgument::Owner(resource) => Some(*resource),
     }
 }
 
@@ -173,6 +236,9 @@ pub fn emit_extern_c11(
         let _ = writeln!(source, "{}", prototype(callee));
     }
     source.push_str("\nint main(void)\n{\n");
+    // Every identity the emitted body may name is one an earlier adapter bound
+    // to a C variable. Anything else is refused rather than printed.
+    let mut bound = std::collections::BTreeSet::<ResourceId>::new();
     for (index, event) in program.events.iter().enumerate() {
         match event {
             ExternEvent::Call(call) => {
@@ -182,20 +248,45 @@ pub fn emit_extern_c11(
                         name: call.callee.clone(),
                     }
                 })?;
+                for argument in &call.arguments {
+                    if let Some(resource) = argument_identity(argument)
+                        && !bound.contains(&resource)
+                    {
+                        return Err(ExternEmissionRefusal::UnboundIdentity {
+                            event: index,
+                            resource,
+                        });
+                    }
+                }
+                let out = call.adapter.as_ref().map_or(0, |adapter| adapter.resource);
                 let arguments = call
                     .arguments
                     .iter()
-                    .map(argument_expression)
+                    .map(|argument| argument_expression(argument, out))
                     .collect::<Vec<_>>()
                     .join(", ");
-                match (&call.adapter, callee.result) {
-                    (Some(adapter), CallResult::OwnedNullable) => {
+                match (&call.adapter, callee.acquires()) {
+                    (Some(adapter), true) => {
                         let binding = resource_name(adapter.resource);
-                        let _ = writeln!(
-                            source,
-                            "    uint8_t *{binding} = {}({arguments});",
-                            callee.name
-                        );
+                        if callee.out_parameter.is_some() {
+                            // The slot starts null, so a callee that does not
+                            // write it is observed as the null arm and caught
+                            // by the declared-outcome check below rather than
+                            // silently believed.
+                            let _ = writeln!(source, "    uint8_t *{binding} = NULL;");
+                            if callee.result_abi == AbiType::Unit {
+                                let _ = writeln!(source, "    {}({arguments});", callee.name);
+                            } else {
+                                let _ =
+                                    writeln!(source, "    (void) {}({arguments});", callee.name);
+                            }
+                        } else {
+                            let _ = writeln!(
+                                source,
+                                "    uint8_t *{binding} = {}({arguments});",
+                                callee.name
+                            );
+                        }
                         // The declared literal outcome control is checked
                         // against the real result rather than assumed.
                         let _ = writeln!(
@@ -206,10 +297,14 @@ pub fn emit_extern_c11(
                             u8::from(adapter.succeeds),
                             callee.name
                         );
+                        let observed = if callee.out_parameter.is_some() {
+                            out_prefix(callee, &call.arguments, adapter.resource)
+                        } else {
+                            format!("acquire {} {binding}", callee.name)
+                        };
                         let _ = writeln!(
                             source,
-                            "    printf(\"acquire {} {binding} %s\\n\", {binding} != NULL ? \"ok\" : \"null\");",
-                            callee.name
+                            "    printf(\"{observed} %s\\n\", {binding} != NULL ? \"ok\" : \"null\");"
                         );
                         let _ = writeln!(
                             source,
@@ -217,8 +312,9 @@ pub fn emit_extern_c11(
                              printf(\"raise {}\\n\");\n        return 0;\n    }}",
                             adapter.error
                         );
+                        bound.insert(adapter.resource);
                     }
-                    (None, CallResult::Data(_)) => {
+                    (None, false) => {
                         if callee.result_abi == AbiType::Unit {
                             let _ = writeln!(source, "    {}({arguments});", callee.name);
                         } else {

@@ -17,10 +17,26 @@
 //!             | CALLEE "(" [arg {"," arg}] ")" ";"
 //!             | "return" ";"
 //! arg       ::= ["-"] INTEGER            -- scalar data
-//!             | NAME                     -- a lent model Buffer
-//!             | "move" NAME              -- a consumed `own<Buffer>`
+//!             | NAME                     -- a lent model Buffer, or a live
+//!                                        --   identity in declared owner
+//!                                        --   position
+//!             | "move" NAME              -- a consumed `own<Buffer>`, or a
+//!                                        --   stored one: which it is comes
+//!                                        --   from the declared mode, never
+//!                                        --   from the call site
+//!             | "out"                    -- the declared out slot
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
+//!
+//! Card `EXTERN-F1` adds the last of those argument forms and one meaning to
+//! each of the two before it. `out` marks the position of a declared
+//! `resource_out(_, nullable)` slot; the `let` binder names the identity the
+//! callee writes into it, and the mandatory `succeeds BOOL else raise ERROR`
+//! adapter is what makes that binding materialize on the success arm only. A
+//! `move NAME` at a declared `resource_stored(_, owner, nonnull)` parameter
+//! removes the binding from this body exactly as a consumption does — every
+//! later use is refused — and the identity's residual accounting beneath the
+//! declared owner becomes a named premise on the certificate.
 //!
 //! The `succeeds BOOL` control is the fixture's literal outcome, exactly the
 //! `qcore_acquire`/`qcore_check` philosophy: these are controlled model
@@ -40,8 +56,8 @@ use crate::lexer::{Span, Symbol, Token, TokenKind, lex};
 use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, ParameterOwnership};
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
-    CallParameter, CallResult, ExternAdapter, ExternArgument, ExternCall, ExternCallee,
-    ExternCustody, ExternEvent, ExternProgram, derived_custody, derived_effects,
+    CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
+    ExternEvent, ExternProgram, derived_custody, derived_effects,
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
@@ -405,7 +421,7 @@ impl Lowering<'_> {
                         }
                     }
                 }
-                ([token], CallParameter::Borrowed(_)) => {
+                ([token], CallParameter::Borrowed(_) | CallParameter::Owner) => {
                     let Some(name) = word(Some(token)) else {
                         self.diagnostics
                             .push(bridging(span, "a lent argument must be a resource binding"));
@@ -419,9 +435,16 @@ impl Lowering<'_> {
                         return None;
                     };
                     resources.push(resource);
-                    ExternArgument::Borrow(resource)
+                    if declared == CallParameter::Owner {
+                        // A declared store owner is a loan with a liveness
+                        // precondition: the caller keeps the identity, so the
+                        // binding is read, never removed.
+                        ExternArgument::Owner(resource)
+                    } else {
+                        ExternArgument::Borrow(resource)
+                    }
                 }
-                ([keyword, token], CallParameter::Consumed)
+                ([keyword, token], CallParameter::Consumed | CallParameter::Stored { .. })
                     if word(Some(keyword)) == Some("move") =>
                 {
                     let Some(name) = word(Some(token)) else {
@@ -440,7 +463,14 @@ impl Lowering<'_> {
                     };
                     resources.push(resource);
                     consumed_names.push(name.to_owned());
-                    ExternArgument::Consume(resource)
+                    if matches!(declared, CallParameter::Stored { .. }) {
+                        ExternArgument::Store(resource)
+                    } else {
+                        ExternArgument::Consume(resource)
+                    }
+                }
+                ([token], CallParameter::OutSlot) if word(Some(token)) == Some("out") => {
+                    ExternArgument::OutSlot
                 }
                 _ => {
                     self.diagnostics.push(bridging(
@@ -590,11 +620,11 @@ pub fn lower_source_extern(
                     ));
                     continue;
                 };
-                if callee.result != CallResult::OwnedNullable {
+                if !callee.acquires() {
                     lowering.diagnostics.push(adapter(
                         span,
                         format!(
-                            "`{}` returns no custody, so it takes no null adapter and binds no resource",
+                            "`{}` establishes no fresh custody, so it takes no adapter and binds no resource",
                             callee.name
                         ),
                     ));
@@ -610,11 +640,29 @@ pub fn lower_source_extern(
                     ));
                     continue;
                 }
-                let Some((arguments, argument_resources, _)) =
+                let Some((arguments, argument_resources, consumed_names)) =
                     lowering.arguments(&parsed_call.arguments, span, &callee)
                 else {
                     continue;
                 };
+                // An acquiring call may also carry departing custody. Those
+                // departures are recorded before the acquisition, in the order
+                // the ledger sees them; the core checker still refuses the
+                // adapter's error arm while anything remains live.
+                let departing = argument_resources
+                    .iter()
+                    .zip(derived_custody(&callee))
+                    .filter(|(_, custody)| {
+                        matches!(custody, ExternCustody::Consumed | ExternCustody::Stored)
+                    })
+                    .map(|(resource, _)| *resource)
+                    .collect::<Vec<_>>();
+                for (resource, name) in departing.iter().zip(&consumed_names) {
+                    ownership.push(OwnershipOp::TransferOut(name.clone()));
+                    error_operations.push(ErrorOp::Drop(*resource));
+                    source_operations.push(SourceOp::Drop(*resource));
+                    live = live.saturating_sub(1);
+                }
                 let resource = lowering.next_resource;
                 lowering.next_resource += 1;
                 lowering.bindings.insert(name.clone(), resource);
@@ -675,11 +723,11 @@ pub fn lower_source_extern(
                     ));
                     continue;
                 };
-                if callee.result == CallResult::OwnedNullable {
+                if callee.acquires() {
                     lowering.diagnostics.push(adapter(
                         span,
                         format!(
-                            "`{}` returns owned custody; its null arm must be branched with `let NAME = … succeeds BOOL else raise ERROR;`",
+                            "`{}` establishes fresh custody; its failure arm must be branched with `let NAME = … succeeds BOOL else raise ERROR;`",
                             callee.name
                         ),
                     ));
@@ -693,10 +741,14 @@ pub fn lower_source_extern(
                 // Consumption discharges the caller's obligation, which is
                 // exactly what `resource_consumed` declares. It is not a claim
                 // that the callee destroys the resource (contract spec §C04.2).
+                // A stored argument has the same caller-side delta; where its
+                // custody went is declared, recorded and premised, not checked.
                 let consumed = argument_resources
                     .iter()
                     .zip(derived_custody(&callee))
-                    .filter(|(_, custody)| *custody == ExternCustody::Consumed)
+                    .filter(|(_, custody)| {
+                        matches!(custody, ExternCustody::Consumed | ExternCustody::Stored)
+                    })
                     .map(|(resource, _)| *resource)
                     .collect::<Vec<_>>();
                 for (resource, name) in consumed.iter().zip(&consumed_names) {
@@ -852,8 +904,10 @@ pub fn extern_summary(callee: &ExternCallee) -> FunctionSummary {
     let parameters = derived_custody(callee)
         .into_iter()
         .map(|custody| match custody {
-            ExternCustody::Borrowed => ParameterOwnership::Borrowed,
-            ExternCustody::Consumed => ParameterOwnership::Consumed,
+            // A declared store owner is a loan: the caller supplies live
+            // custody and keeps the identity.
+            ExternCustody::Borrowed | ExternCustody::Owner => ParameterOwnership::Borrowed,
+            ExternCustody::Consumed | ExternCustody::Stored => ParameterOwnership::Consumed,
         })
         .collect::<Vec<_>>();
     let consumed = parameters
@@ -869,7 +923,7 @@ pub fn extern_summary(callee: &ExternCallee) -> FunctionSummary {
             ))
             .expect("a release composes with the zero flow");
     }
-    if callee.result == CallResult::OwnedNullable {
+    if callee.acquires() {
         flow = flow
             .then(&Flow::acquire(
                 Quantity::single("resources", 1),
