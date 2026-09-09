@@ -349,14 +349,37 @@ invariant predicate.
 
 Run in this worktree at the final commit:
 
-* `cargo test --workspace` — see §11
-* `cargo fmt --all -- --check` — clean
-* `cargo clippy --all-targets -- -D warnings` — clean
-* `cargo run -p qcore-compiler --example reevaluation_probe` — exit 0
-* `cargo run -p qcore-compiler --example reevaluation_followup` — exit 0
-* `python3 scripts/check_lean_audits.py` — 48 audits pass
-* `providers/` workspace tests
-* `python3 -m unittest discover -s scripts/tests`
+| Gate | Result |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **1916 passed, 0 failed, 4 ignored** (wave-9 checkpoint: 1888 / 4 ignored; +28 from this card) |
+| `cargo fmt --all -- --check` | clean |
+| `cargo clippy --all-targets -- -D warnings` | clean |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `python3 scripts/check_lean_audits.py` | **48 audits pass** (file count unchanged; `AuditMutexInvariant.lean` grows by 12 theorems) |
+| `providers/` `cargo test --no-fail-fast` | **75 passed, 0 failed** |
+| `python3 -m unittest discover -s scripts/tests` | **125 tests, OK** |
+
+Load note: this host ran at load average 36–49 during the wave. Three tests
+failed under that load and passed in isolation, none of them touched by this
+card: `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` (the recorded
+load-flaky wall-clock budget, `elapsed < 500ms`), and the providers
+conformance tests
+`configured_helper_is_imported_from_its_real_pinned_compile_entry`,
+`pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter`
+and `configured_second_codebase_has_real_process_checked_source_evidence`
+(Clang-heavy source imports). The numbers above are from runs where each suite
+had the machine to itself; no assertion was weakened.
+
+New tests by file: 21 in `crates/qcore-frontend/tests/source_mutex.rs`
+(42 → 63), 11 in `crates/qcore-core/tests/unit/mutex_invariant.rs`, 2 in
+`crates/qcore-core/tests/unit/mutex_c_emit.rs`.
+
+The four pinned 185-unit artifacts are untouched **by construction, not
+re-measured**: no C-gateway, audit, contract or schema file is in this card's
+diff, and `MutexInvariantCertificate` carries no serde derives, so the new
+field moves no serialized byte. The contract corpus stays 60 modules and
+`qcore-schemas` is unchanged.
 
 ## 11. Boundaries, recorded not repaired
 
