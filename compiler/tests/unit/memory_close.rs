@@ -6,8 +6,7 @@ use crate::verifier_plugins::chunkio::{
     },
 };
 use qcore_verification::memory_close_composition::check_memory_close_bodies;
-pub(crate) const FIXTURE: &str =
-    include_str!("../fixtures/chunkio/memory_close_source.c");
+pub(crate) const FIXTURE: &str = include_str!("../fixtures/chunkio/memory_close_source.c");
 pub(crate) fn dependencies() -> MemoryCloseDependencies {
     let unit = C11TranslationUnit {
         source: FIXTURE,

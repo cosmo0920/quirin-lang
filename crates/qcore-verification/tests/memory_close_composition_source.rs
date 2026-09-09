@@ -12,8 +12,8 @@ mod fixture;
 use fixture::*;
 
 use qcore_schemas::composition_summary::{
-    COMPOSITION_SOURCE_INPUT_KEY, CompositionFamilyInput, CompositionProposalRecord,
-    MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryClosePrerequisites,
+    COMPOSITION_SOURCE_INPUT_KEY, CompositionFamilyInput, MEMORY_CLOSE_SEMANTIC_PROFILE,
+    MemoryClosePrerequisites,
 };
 use qcore_schemas::obligation::{
     ObligationProperty, ObligationScope, ObligationSubject, PathBounds, VERIFICATION_TASK_VERSION,
@@ -115,7 +115,10 @@ fn the_unit_identity_names_the_base_unit_and_binds_both_identities() {
     }
     let task = task();
     let derivation = task.derivation();
-    assert_eq!(task.task().unit.source_digest, derivation.base_source_digest);
+    assert_eq!(
+        task.task().unit.source_digest,
+        derivation.base_source_digest
+    );
     assert_ne!(
         derivation.base_source_digest, derivation.derived_source_digest,
         "the recipe really derives new text"
@@ -226,7 +229,10 @@ fn the_published_premises_are_the_union_of_all_four_components_and_this_routes_o
             "the union is a strict superset: {own}"
         );
     }
-    assert_eq!(task.task().assumptions, task.task().obligations[0].assumptions);
+    assert_eq!(
+        task.task().assumptions,
+        task.task().obligations[0].assumptions
+    );
 }
 
 #[test]
@@ -299,7 +305,10 @@ fn the_transported_question_names_the_family_and_the_four_prerequisites() {
     assert_eq!(callees.backend.function, BACKEND);
     assert_eq!(callees.unlink.function, UNLINK_ENTRY);
     assert_eq!(callees.counter.function, COUNTER);
-    assert_eq!(input.family.semantic_profile(), MEMORY_CLOSE_SEMANTIC_PROFILE);
+    assert_eq!(
+        input.family.semantic_profile(),
+        MEMORY_CLOSE_SEMANTIC_PROFILE
+    );
     assert_eq!(input.family.nesting_depth(), 1);
     assert!(input.family.native().is_none());
     assert!(input.family.native_profile().is_none());
@@ -315,7 +324,10 @@ fn deriving_twice_gives_an_equal_task_identity_and_certificate() {
     let first = task();
     let second = task();
     assert_eq!(first.task().task_digest(), second.task().task_digest());
-    assert_eq!(first.prerequisite_identity(), second.prerequisite_identity());
+    assert_eq!(
+        first.prerequisite_identity(),
+        second.prerequisite_identity()
+    );
     assert_eq!(first.evaluate().unwrap(), second.evaluate().unwrap());
 }
 
@@ -333,4 +345,80 @@ fn the_checker_admits_the_cores_own_reading_and_refuses_a_foreign_task_first() {
     let mut foreign = task.task().clone();
     foreign.semantic_profile = "qcore.c_unmap_wrapper_composition.v1".into();
     assert!(task.check(&foreign, &honest).is_err());
+}
+
+/// **The measured crux.** `CSourceInput::for_derived_text` collapses a declared
+/// file to an anonymous text, so a derived unit's captured identity records
+/// neither the spelled input nor the directory the base unit declared. Two base
+/// units with equal bytes and different declared identities therefore derive
+/// **byte-identical** derived identities — which is exactly why this route binds
+/// the base import under its own key.
+#[test]
+fn the_derived_identity_alone_cannot_stand_in_for_the_base_import() {
+    if !clang_available() {
+        return;
+    }
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-memclose-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&directory).unwrap();
+    std::fs::write(directory.join("cio_chunk.c"), SOURCE).unwrap();
+
+    let anonymous = task();
+    let declared_import = declared_file_import(SOURCE, &directory);
+    let declared = task_from_import(&declared_import, SOURCE).unwrap();
+
+    // 1. The two derived identities are byte-identical: the erasure is real.
+    assert_eq!(
+        serde_json::to_string(declared_import.derived_identity()).unwrap(),
+        serde_json::to_string(anonymous_import_derived_identity()).unwrap(),
+        "for_derived_text erases the declared file, so the derived identities agree"
+    );
+    // 2. The two base identities do not agree.
+    assert_ne!(
+        serde_json::to_string(declared_import.base_identity()).unwrap(),
+        serde_json::to_string(anonymous_import_base_identity()).unwrap(),
+        "the base identities record which file was declared"
+    );
+    assert_eq!(
+        declared_import.derivation().base_input_class,
+        "declared_file"
+    );
+    assert_eq!(
+        declared_import.derivation().derived_input_class,
+        "anonymous_text"
+    );
+    // 3. Because the base import is bound under its own key, the two are
+    //    different tasks — which they would *not* be if only the derived
+    //    identity were bound.
+    assert_ne!(
+        declared.task().task_digest(),
+        anonymous.task().task_digest(),
+        "the base import key separates what the derived identity cannot"
+    );
+    assert!(accept(&declared, &witness_for(&anonymous)).is_err());
+    assert!(accept(&anonymous, &witness_for(&declared)).is_err());
+
+    std::fs::remove_dir_all(&directory).ok();
+}
+
+fn anonymous_import_derived_identity()
+-> &'static qcore_c_gateway::boolean_source::SourceInputIdentity {
+    Box::leak(Box::new(anonymous_import().derived_identity().clone()))
+}
+
+fn anonymous_import_base_identity() -> &'static qcore_c_gateway::boolean_source::SourceInputIdentity
+{
+    Box::leak(Box::new(anonymous_import().base_identity().clone()))
+}
+
+fn anonymous_import() -> qcore_c_gateway::composition_source::MemoryCloseSourceImport {
+    let tasks = prerequisites(SOURCE);
+    let selection = selection(identities(&tasks), callees(&tasks), PROBE, PROBE_FUNCTION);
+    import(SOURCE, Vec::new(), &selection)
 }

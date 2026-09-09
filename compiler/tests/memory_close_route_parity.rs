@@ -24,7 +24,9 @@ use qcore_c_gateway::teardown_source::{
 use qcore_compiler::legacy_c::C11TranslationUnit;
 use qcore_compiler::verifier_plugins::chunkio::{
     PINNED_FLUENT_BIT_REVISION, import_chunk_frame_helper as compiler_frame_helper, memory_close,
-    teardown_source::{check_counter_sources, check_list_unlink_source, check_memory_backend_source},
+    teardown_source::{
+        check_counter_sources, check_list_unlink_source, check_memory_backend_source,
+    },
 };
 use qcore_schemas::TargetProfile;
 use qcore_schemas::composition_summary::{
@@ -303,7 +305,10 @@ fn both_routes_refuse_the_same_body_mutations() {
     assert_eq!(mutations.len(), 6, "six refusal-agreement rows");
     for (old, new) in mutations {
         let source = SOURCE.replace(old, new);
-        assert_ne!(source, SOURCE, "the mutation really changes the body: {new}");
+        assert_ne!(
+            source, SOURCE,
+            "the mutation really changes the body: {new}"
+        );
         let retained = memory_close::check_memory_close_source(
             &unit(&source),
             PINNED_FLUENT_BIT_REVISION,

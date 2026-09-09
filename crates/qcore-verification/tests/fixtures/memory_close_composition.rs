@@ -117,6 +117,23 @@ pub fn unit(source: &str) -> C11TranslationUnit<'_> {
     }
 }
 
+/// A unit that declares a real file as its primary input, so the measured
+/// erasure `CSourceInput::for_derived_text` performs can be driven directly.
+pub fn declared_unit<'a>(
+    source: &'a str,
+    directory: std::path::PathBuf,
+    spelled: &str,
+) -> C11TranslationUnit<'a> {
+    C11TranslationUnit {
+        source,
+        input: qcore_c_gateway::legacy_c::CSourceInput::DeclaredFile {
+            spelled: spelled.to_owned(),
+            directory,
+        },
+        ..Default::default()
+    }
+}
+
 pub fn unit_with(source: &str, definitions: Vec<String>) -> C11TranslationUnit<'_> {
     C11TranslationUnit {
         source,
@@ -229,9 +246,14 @@ pub fn unlink_task(source: &str, contract: &str) -> ListUnlinkSourceTask {
 }
 
 pub fn counter_import(source: &str, function: &str) -> CounterSourceImport {
-    let imports =
-        import_counter_sources(&unit(source), &revision(), &[function], &["cio_ctx"], "struct cio_ctx *")
-            .unwrap();
+    let imports = import_counter_sources(
+        &unit(source),
+        &revision(),
+        &[function],
+        &["cio_ctx"],
+        "struct cio_ctx *",
+    )
+    .unwrap();
     match imports.into_iter().next().unwrap() {
         CounterSourceResult::Import(import) => *import,
         other => panic!("missing typed counter import: {other:?}"),
@@ -258,12 +280,115 @@ pub fn counter_task(source: &str, function: &str, contract: &str) -> CounterSour
 }
 
 pub fn prerequisites(source: &str) -> MemoryClosePrerequisiteTasks {
-    MemoryClosePrerequisiteTasks {
-        reset: frame_task(source, FRAME_CONTRACT),
-        backend: destructor_task(source, BACKEND_CONTRACT),
-        unlink: unlink_task(source, UNLINK_CONTRACT),
-        counter: counter_task(source, COUNTER, COUNTER_CONTRACT),
+    prerequisites_with(
+        source,
+        FRAME_CONTRACT,
+        BACKEND_CONTRACT,
+        UNLINK_CONTRACT,
+        COUNTER_CONTRACT,
+    )
+}
+
+/// Falsify the first `ensures normal` clause of a pinned contract, leaving its
+/// structure — and therefore everything a dependent's `derive` reads off it —
+/// intact, so the refusal can only come from the prerequisite's own evaluation.
+pub fn falsify_first_ensures(contract: &str) -> String {
+    let index = contract
+        .find("ensures normal ")
+        .expect("the contract declares an `ensures normal` clause");
+    let end = index + contract[index..].find(';').expect("clause terminator");
+    format!(
+        "{}ensures normal false{}",
+        &contract[..index],
+        &contract[end..]
+    )
+}
+
+/// Falsify **every** `ensures normal` clause of a pinned contract. A contract
+/// declaring several functions has clauses this composition's own prerequisite
+/// does not read, so falsifying only the first is not always load-bearing —
+/// measured, and the row corrected to falsify all of them rather than the
+/// assertion weakened.
+pub fn falsify_all_ensures(contract: &str) -> String {
+    let mut out = String::new();
+    let mut rest = contract;
+    while let Some(index) = rest.find("ensures normal ") {
+        let after = index + "ensures normal ".len();
+        let end = after + rest[after..].find(';').expect("clause terminator");
+        out.push_str(&rest[..index]);
+        out.push_str("ensures normal false");
+        rest = &rest[end..];
     }
+    out.push_str(rest);
+    out
+}
+
+/// The four prerequisite tasks under an explicit contract selection, so a row
+/// can falsify exactly one prerequisite's own pinned contract while every
+/// identity stays the one the core derives.
+pub fn prerequisites_with(
+    source: &str,
+    frame: &str,
+    backend: &str,
+    unlink: &str,
+    counter: &str,
+) -> MemoryClosePrerequisiteTasks {
+    MemoryClosePrerequisiteTasks {
+        reset: frame_task(source, frame),
+        backend: destructor_task(source, backend),
+        unlink: unlink_task(source, unlink),
+        counter: counter_task(source, COUNTER, counter),
+    }
+}
+
+/// A task built over explicit prerequisite tasks and an explicit contract
+/// selection. `derive` may still succeed with a falsified prerequisite
+/// contract — the identities are the ones the core derives — and the refusal
+/// then happens at evaluation, which is exactly the decisive direction.
+pub fn task_from(
+    source: &str,
+    tasks: MemoryClosePrerequisiteTasks,
+    contracts: &MemoryCloseContracts<'_>,
+) -> Result<MemoryCloseCompositionSourceTask, String> {
+    let selection = selection(identities(&tasks), callees(&tasks), PROBE, PROBE_FUNCTION);
+    let import = try_import(source, &selection)?;
+    MemoryCloseCompositionSourceTask::derive(&import, tasks, UNIT, contracts, target())
+}
+
+/// A task derived over an explicit recipe, so a row can substitute the
+/// derivation recipe while everything else stays honest.
+pub fn task_with_recipe(
+    source: &str,
+    recipe: &'static str,
+    contracts: &MemoryCloseContracts<'_>,
+) -> Result<MemoryCloseCompositionSourceTask, String> {
+    let tasks = prerequisites(source);
+    let selection = selection(identities(&tasks), callees(&tasks), recipe, PROBE_FUNCTION);
+    let import = try_import(source, &selection)?;
+    MemoryCloseCompositionSourceTask::derive(&import, tasks, UNIT, contracts, target())
+}
+
+/// A task whose transported prerequisite identities are supplied explicitly,
+/// so a row can forge one slot while the core's own contexts stay honest.
+pub fn task_with_identities(
+    source: &str,
+    claimed: MemoryClosePrerequisites,
+) -> Result<MemoryCloseCompositionSourceTask, String> {
+    let tasks = prerequisites(source);
+    let selection = selection(claimed, callees(&tasks), PROBE, PROBE_FUNCTION);
+    let import = try_import(source, &selection)?;
+    MemoryCloseCompositionSourceTask::derive(&import, tasks, UNIT, &contracts(), target())
+}
+
+/// A task whose transported callee identities are supplied explicitly.
+pub fn task_with_callees(
+    source: &str,
+    callees: MemoryCloseCalleeRecord,
+) -> Result<MemoryCloseCompositionSourceTask, String> {
+    let tasks = prerequisites(source);
+    let selection = selection(identities(&tasks), callees, PROBE, PROBE_FUNCTION);
+    let import = try_import(source, &selection)?;
+    MemoryCloseCompositionSourceTask::derive(&import, tasks, UNIT, &contracts(), target())
 }
 
 pub fn identities(tasks: &MemoryClosePrerequisiteTasks) -> MemoryClosePrerequisites {
@@ -311,8 +436,8 @@ pub fn import_result(
     source: &str,
     definitions: Vec<String>,
     selection: &MemoryCloseImportSelection<'_>,
-) -> MemoryCloseSourceResult {
-    import_memory_close_source(&unit_with(source, definitions), &revision(), selection).unwrap()
+) -> Result<MemoryCloseSourceResult, String> {
+    import_memory_close_source(&unit_with(source, definitions), &revision(), selection)
 }
 
 pub fn import(
@@ -320,9 +445,21 @@ pub fn import(
     definitions: Vec<String>,
     selection: &MemoryCloseImportSelection<'_>,
 ) -> MemoryCloseSourceImport {
-    match import_result(source, definitions, selection) {
+    match import_result(source, definitions, selection).unwrap() {
         MemoryCloseSourceResult::Import(import) => *import,
         other => panic!("missing typed memory close import: {other:?}"),
+    }
+}
+
+/// The import as a `Result`, so a row that the importer itself refuses is
+/// recorded as a refusal rather than a panic.
+pub fn try_import(
+    source: &str,
+    selection: &MemoryCloseImportSelection<'_>,
+) -> Result<MemoryCloseSourceImport, String> {
+    match import_result(source, Vec::new(), selection)? {
+        MemoryCloseSourceResult::Import(import) => Ok(*import),
+        MemoryCloseSourceResult::Unknown { reason, .. } => Err(reason),
     }
 }
 
@@ -441,4 +578,34 @@ pub fn accept(
 ) -> Result<(), String> {
     use qcore_verifier_host::WitnessChecker;
     task.check(task.task(), witness).map(|_| ())
+}
+
+/// The same question imported from a unit that declares a real file as its
+/// input, so the derived-identity erasure can be measured directly.
+pub fn declared_file_import(source: &str, directory: &std::path::Path) -> MemoryCloseSourceImport {
+    let tasks = prerequisites(source);
+    let selection = selection(identities(&tasks), callees(&tasks), PROBE, PROBE_FUNCTION);
+    match import_memory_close_source(
+        &declared_unit(source, directory.to_path_buf(), "cio_chunk.c"),
+        &revision(),
+        &selection,
+    )
+    .unwrap()
+    {
+        MemoryCloseSourceResult::Import(import) => *import,
+        other => panic!("missing declared-file memory close import: {other:?}"),
+    }
+}
+
+pub fn task_from_import(
+    import: &MemoryCloseSourceImport,
+    source: &str,
+) -> Result<MemoryCloseCompositionSourceTask, String> {
+    MemoryCloseCompositionSourceTask::derive(
+        import,
+        prerequisites(source),
+        UNIT,
+        &contracts(),
+        target(),
+    )
 }
