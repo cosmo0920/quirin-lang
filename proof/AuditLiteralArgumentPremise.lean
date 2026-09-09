@@ -1,7 +1,7 @@
 import QCore.LiteralArgumentPremise
 
-/-! Card HASH-CONTRACTS: declared literal-argument premises, and the hash-table
-publication they bound.
+/-! Cards HASH-CONTRACTS and HASH-CLAUSE: declared literal-argument premises,
+the carrier they are written in, and the hash-table publication they bound.
 
 Two directions are audited for the mechanism. **Withdrawal**: a poisoned set, an
 unmet premise, a mismatched actual and a *missing* actual each withdraw the
@@ -19,7 +19,19 @@ Retention is proved real on the admitted arm and proved not to change the
 caller's effect, so neither fact can be read as the other.
 
 Non-vacuity is audited on the mechanism and against the measured fifteen-site
-corpus census: five sites satisfy the premise and ten are withdrawn. -/
+corpus census: five sites satisfy the premise and ten are withdrawn.
+
+Card HASH-CLAUSE adds the **carrier**. The refusal set at a call site is proved
+to be a function of the premise environment alone, so two carriers stating the
+same premises decide every call site identically — that is what makes the Rust
+side's measurement of *premise-set* equality sufficient for refusal-set parity.
+The carriers are proved able to disagree, so the parity statement is not vacuous.
+Retirement is audited in both directions: silently ignoring a leftover comment
+directive is proved to re-admit exactly the call site the premise withdrew, and
+refusing such a text is proved to withdraw every call site instead. The
+fail-open reading — answering an unreadable text with an empty premise set — is
+proved to apply the declaration where the poisoned reading refuses, including at
+a call that never reaches the declared parameter. -/
 
 -- Conservativity: the premise never invents, alters or widens a declaration.
 #print axioms QCore.LiteralArgumentPremise.an_applied_contract_is_the_declared_one
@@ -44,6 +56,18 @@ corpus census: five sites satisfy the premise and ten are withdrawn. -/
 #print axioms QCore.LiteralArgumentPremise.the_short_call_is_withdrawn
 #print axioms QCore.LiteralArgumentPremise.poison_withdraws_the_literal_call
 #print axioms QCore.LiteralArgumentPremise.without_the_premise_the_positive_call_is_applied
+
+-- Card HASH-CLAUSE: the carrier, parity, and the retirement in both directions.
+#print axioms QCore.LiteralArgumentPremise.equal_carriers_decide_every_call_site_alike
+#print axioms QCore.LiteralArgumentPremise.equal_carriers_withdraw_alike
+#print axioms QCore.LiteralArgumentPremise.the_migrated_carriers_state_the_same_premises
+#print axioms QCore.LiteralArgumentPremise.the_migration_preserves_every_refusal
+#print axioms QCore.LiteralArgumentPremise.the_clause_reading_is_the_declared_environment
+#print axioms QCore.LiteralArgumentPremise.the_carriers_can_disagree
+#print axioms QCore.LiteralArgumentPremise.an_ignored_directive_readmits_the_withdrawn_call
+#print axioms QCore.LiteralArgumentPremise.refusing_the_directive_text_withdraws_every_call
+#print axioms QCore.LiteralArgumentPremise.the_fail_open_reading_applies_what_poison_refuses
+#print axioms QCore.LiteralArgumentPremise.the_fail_open_reading_even_applies_at_an_unmet_premise
 
 -- The measured corpus census.
 #print axioms QCore.LiteralArgumentPremise.the_census_has_fifteen_call_sites

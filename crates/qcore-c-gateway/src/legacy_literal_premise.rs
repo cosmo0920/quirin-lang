@@ -1,16 +1,16 @@
-//! Declared literal-argument premises (card **HASH-CONTRACTS**).
+//! Declared literal-argument premises (cards **HASH-CONTRACTS**,
+//! **HASH-CLAUSE**).
 //!
 //! # Why this exists
 //!
 //! A resource-contract v1 declaration names one custody mode per parameter and
 //! says nothing about argument *values* (`docs/QCORE_CONTRACT_SPEC_r0_3.md`
-//! §C04.2 has no value-dependent mode; §C04.4 records that success-dependent
-//! parameter modes are outside v1). Some real C entry points switch behaviour on
-//! a scalar argument. `flb_hash_table_add(ht, key, key_len, val, val_size)` is
-//! the measured instance: at `val_size == 0` the table stores the caller's
-//! pointer with no copy and never frees it, and at a positive size it allocates
-//! its own copy and reads `val_size` bytes through `val`. A declaration read off
-//! one arm must not be believed on the other.
+//! §C04.2 has no value-dependent mode). Some real C entry points switch
+//! behaviour on a scalar argument. `flb_hash_table_add(ht, key, key_len, val,
+//! val_size)` is the measured instance: at `val_size == 0` the table stores the
+//! caller's pointer with no copy and never frees it, and at a positive size it
+//! allocates its own copy and reads `val_size` bytes through `val`. A
+//! declaration read off one arm must not be believed on the other.
 //!
 //! A *declared literal-argument premise* restricts a declaration to call sites
 //! whose argument at a named parameter is exactly a named integer literal.
@@ -19,44 +19,41 @@
 //! does when it has no model. The premise can therefore only ever refuse call
 //! sites the declaration would otherwise have covered; it can never admit one.
 //!
-//! # Where a premise is declared, and why it is a comment
+//! # Where a premise is declared
 //!
-//! The premise is a line of the contract module's own text:
+//! It is a clause of the declaration itself (§C04.5):
 //!
 //! ```text
-//! // qcore-premise: literal_argument(flb_hash_table_add, 4, 0)
+//! requires resource_literal_argument(val_size, 0);
 //! ```
 //!
-//! It is not a contract clause. The v1 clause grammar is total-or-reject and
-//! closed (`crates/qcore-contract/src/contract_loader.rs`): an unknown clause
-//! introducer rejects the whole module, and representing a new clause would
-//! require a new `qcore_schemas::contract` variant — a published-schema change.
-//! The directive instead rides in the module text that
-//! `ResourceContracts::source_assumptions` already retains verbatim, so it
-//! travels inside every safety certificate, is reloaded by
-//! `check_source_assumptions`, and is reproduced identically by W4 summary
-//! derivation, by validation, and by certificate rederivation, all of which
-//! hold that same text. The deviation is recorded in
-//! `docs/reports/remaining-hash-contracts/README.md`; a first-class clause is
-//! the named follow-on `HASH-CONTRACTS-CLAUSE`.
+//! `qcore_contract::contract_loader` parses and validates it total-or-reject —
+//! an unknown parameter name, a malformed literal or a second premise on one
+//! parameter rejects the **whole module** at load — and
+//! [`LiteralPremises::read`] rederives it from the environment's own retained
+//! declared texts, which is what makes W4 summary derivation, W4 validation and
+//! certificate rederivation reproduce this restriction from the same bytes.
 //!
-//! # Total-or-reject, and fail-closed on malformation
+//! Card HASH-CONTRACTS originally carried the premise as a machine-parsed
+//! `// qcore-premise: literal_argument(...)` comment, because the v1 clause
+//! grammar was closed. That carrier is **retired**: the loader rejects a module
+//! still containing its introducer by name, so a leftover directive fails loudly
+//! rather than silently losing its restriction. HASH-CLAUSE measured the two
+//! carriers' refusal sets equal before removing this one, and pinned the
+//! measured set (`crates/qcore-c-gateway/tests/hash_contracts.rs`).
 //!
-//! A directive must match the grammar exactly, name a function the environment
-//! declares, and name a parameter index inside that function's declared
-//! parameter list. Anything else **poisons** the whole premise set, and a
-//! poisoned set refuses *every* contracted call in the analysis rather than
-//! silently applying the contracts a typo left unrestricted.
+//! # Fail-closed on anything unreadable
+//!
+//! A source set the loader cannot re-read **poisons** the whole premise set,
+//! and a poisoned set refuses *every* contracted call in the analysis. That is
+//! deliberately not the empty set: an empty premise set applies every
+//! declaration at every call site, which is the fail-open direction.
 
 use std::collections::BTreeMap;
 
 use qcore_schemas::contract::ResourceContracts;
 
 use super::Token;
-
-/// The exact directive introducer. A line is a directive when its trimmed text
-/// starts with `//`, and the remainder after the slashes starts with this.
-const DIRECTIVE: &str = "qcore-premise:";
 
 /// Prefix stamped onto a callee whose declared premise the call site does not
 /// satisfy. It is spelled as an ordinary C identifier so that every downstream
@@ -82,42 +79,60 @@ pub(super) struct LiteralArgument {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(super) struct LiteralPremises {
     required: BTreeMap<String, Vec<LiteralArgument>>,
-    /// The first malformed directive, verbatim. `Some` poisons the whole set.
+    /// Why the set is unreadable, if it is. `Some` poisons the whole set.
     malformed: Option<String>,
 }
 
+/// The clause introducer, scanned for before the sources are re-parsed.
+///
+/// A source that does not contain this spelling cannot declare the clause, so
+/// the common case costs a scan rather than a parse. The retired
+/// `qcore-premise` directive is scanned for too: the loader rejects a module
+/// carrying it, but an environment assembled by other means could still hold
+/// one, and a directive nothing reads any more must not silently leave a
+/// declaration unrestricted here either.
+const CLAUSE: &str = "resource_literal_argument";
+
 impl LiteralPremises {
     /// Read every premise the environment's declared module texts carry.
+    ///
+    /// A rederivation failure over sources that mention either spelling
+    /// **poisons** the set rather than yielding an empty one: an empty premise
+    /// set applies every declaration at every call site, which is the fail-open
+    /// direction, so a text the loader cannot read must refuse every contracted
+    /// call instead.
     pub(super) fn read(contracts: &ResourceContracts) -> Self {
         let mut premises = Self::default();
-        for source in contracts.source_assumptions().values() {
-            for line in source.lines() {
-                let Some(body) = directive_body(line) else {
-                    continue;
-                };
-                match parse_directive(body, contracts) {
-                    Ok((function, premise)) => {
-                        let declared = premises.required.entry(function).or_default();
-                        if declared.iter().any(|other| other.index == premise.index) {
-                            premises.poison(line);
-                            continue;
-                        }
-                        declared.push(premise);
+        if !contracts.source_assumptions().values().any(|source| {
+            source.contains(CLAUSE)
+                || source.contains(qcore_contract::contract_loader::RETIRED_PREMISE_DIRECTIVE)
+        }) {
+            return premises;
+        }
+        match qcore_contract::contract_loader::declared_literal_argument_premises(contracts) {
+            Ok(declared) => {
+                for (function, clauses) in declared {
+                    let entry = premises.required.entry(function).or_default();
+                    for clause in clauses {
+                        entry.push(LiteralArgument {
+                            index: clause.parameter,
+                            literal: clause.literal,
+                        });
                     }
-                    Err(()) => premises.poison(line),
                 }
             }
+            Err(message) => premises.poison(&message),
         }
         premises
     }
 
-    fn poison(&mut self, line: &str) {
+    fn poison(&mut self, reason: &str) {
         if self.malformed.is_none() {
-            self.malformed = Some(line.trim().to_owned());
+            self.malformed = Some(reason.trim().to_owned());
         }
     }
 
-    /// The first malformed directive, if the set is poisoned.
+    /// Why the premise set is unreadable, if the set is poisoned.
     pub(super) fn malformed(&self) -> Option<&str> {
         self.malformed.as_deref()
     }
@@ -149,58 +164,6 @@ impl LiteralPremises {
                 .is_none_or(|actual| *actual != premise.literal)
         })
     }
-}
-
-/// The text after `//` when `line` is a premise directive.
-fn directive_body(line: &str) -> Option<&str> {
-    let trimmed = line.trim_start();
-    let comment = trimmed.strip_prefix("//")?.trim_start();
-    Some(comment.strip_prefix(DIRECTIVE)?.trim())
-}
-
-/// `literal_argument(NAME, INDEX, LITERAL)`, exactly. Nothing else is admitted,
-/// and every field is checked against the environment that declared it.
-fn parse_directive(
-    body: &str,
-    contracts: &ResourceContracts,
-) -> Result<(String, LiteralArgument), ()> {
-    let inner = body
-        .strip_prefix("literal_argument(")
-        .and_then(|rest| rest.strip_suffix(')'))
-        .ok_or(())?;
-    let fields = inner.split(',').map(str::trim).collect::<Vec<_>>();
-    let [function, index, literal] = fields.as_slice() else {
-        return Err(());
-    };
-    if !is_c_identifier(function) {
-        return Err(());
-    }
-    let contract = contracts.contract(function).ok_or(())?;
-    let index = index.parse::<usize>().map_err(|_| ())?;
-    if index >= contract.parameters.len() {
-        return Err(());
-    }
-    Ok((
-        (*function).to_owned(),
-        LiteralArgument {
-            index,
-            literal: literal_tokens(literal).ok_or(())?,
-        },
-    ))
-}
-
-/// A decimal integer literal, optionally negated, as the tokens a C lexer
-/// produces for it. No suffixes, no other bases, no whitespace: a spelling this
-/// table cannot compare exactly is rejected rather than approximated.
-fn literal_tokens(text: &str) -> Option<Vec<String>> {
-    let (sign, digits) = match text.strip_prefix('-') {
-        Some(rest) => (Some("-".to_owned()), rest),
-        None => (None, text),
-    };
-    if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
-        return None;
-    }
-    Some(sign.into_iter().chain([digits.to_owned()]).collect())
 }
 
 fn is_c_identifier(text: &str) -> bool {
@@ -320,11 +283,12 @@ mod tests {
         load_resource_contract_sources(&sources).expect("contract module loads")
     }
 
+    /// The declaration under test, restricted by its `requires` clause.
     const MODULE: &str = r"module contract;
-// qcore-premise: literal_argument(publish, 2, 0)
 extern fn publish(table: ptr<mut, u8>, value: ptr<mut, u8>, size: isize) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_literal_argument(size, 0);
     ensures normal resource_borrowed(table);
     ensures normal resource_borrowed(value);
     ensures normal resource_borrowed(size);
@@ -345,56 +309,138 @@ contract {
         );
     }
 
+    /// Every malformed clause spelling rejects the **module**, so the analyzer
+    /// never sees a typo that left a declaration unrestricted. This is strictly
+    /// louder than the directive's poisoning, which admitted the module first.
     #[test]
-    fn a_premise_naming_an_undeclared_function_poisons_the_set() {
-        let text = MODULE.replace("literal_argument(publish,", "literal_argument(absent,");
-        let premises = LiteralPremises::read(&environment(&text));
-        assert!(premises.malformed().is_some(), "{premises:?}");
-    }
-
-    #[test]
-    fn a_premise_naming_a_parameter_beyond_the_signature_poisons_the_set() {
-        let text = MODULE.replace("publish, 2, 0", "publish, 3, 0");
-        let premises = LiteralPremises::read(&environment(&text));
-        assert!(premises.malformed().is_some(), "{premises:?}");
-    }
-
-    #[test]
-    fn a_misspelled_directive_poisons_the_set_rather_than_being_ignored() {
+    fn a_malformed_clause_rejects_the_whole_module() {
         for spelling in [
-            "literal_argument(publish, 2)",
-            "literal_argument(publish, 2, 0",
-            "literal_argument(publish, two, 0)",
-            "literal_argument(publish, 2, 0x0)",
-            "literal_argument(publish, 2, 0u)",
-            "literal_arguments(publish, 2, 0)",
-            "",
+            "requires resource_literal_argument(size)",
+            "requires resource_literal_argument(size, 0, 0)",
+            "requires resource_literal_argument(absent, 0)",
+            "requires resource_literal_argument(size, zero)",
+            "requires resource_literal_argument(size, 0x0)",
+            "requires resource_literal_argument(size, 0u)",
+            "requires resource_literal_arguments(size, 0)",
+            "requires literal_argument(size, 0)",
+            "requires resource_literal_argument(size, 0) and true",
         ] {
-            let text = MODULE.replace("literal_argument(publish, 2, 0)", spelling);
-            let premises = LiteralPremises::read(&environment(&text));
-            assert!(premises.malformed().is_some(), "admitted `{spelling}`");
+            let text = MODULE.replace("requires resource_literal_argument(size, 0)", spelling);
+            let mut sources = BTreeMap::new();
+            sources.insert("premise.qcore".to_owned(), text);
+            assert!(
+                load_resource_contract_sources(&sources).is_err(),
+                "admitted `{spelling}`"
+            );
         }
     }
 
+    /// Two clauses on one parameter reject the module.
     #[test]
-    fn two_premises_on_one_parameter_poison_the_set() {
+    fn two_clauses_on_one_parameter_reject_the_module() {
         let text = MODULE.replace(
-            "// qcore-premise: literal_argument(publish, 2, 0)",
-            "// qcore-premise: literal_argument(publish, 2, 0)\n// qcore-premise: literal_argument(publish, 2, 1)",
+            "    requires resource_literal_argument(size, 0);\n",
+            "    requires resource_literal_argument(size, 0);\n    requires resource_literal_argument(size, 1);\n",
         );
-        let premises = LiteralPremises::read(&environment(&text));
-        assert!(premises.malformed().is_some(), "{premises:?}");
+        let mut sources = BTreeMap::new();
+        sources.insert("premise.qcore".to_owned(), text);
+        assert!(load_resource_contract_sources(&sources).is_err());
     }
 
+    /// A negative literal is the two tokens a C lexer produces for it.
     #[test]
-    fn a_negative_literal_is_two_tokens() {
-        let text = MODULE.replace("publish, 2, 0", "publish, 2, -1");
+    fn a_negative_clause_literal_is_two_tokens() {
+        let text = MODULE.replace("(size, 0)", "(size, -1)");
         let premises = LiteralPremises::read(&environment(&text));
         assert_eq!(premises.malformed(), None);
         assert_eq!(
             premises.declared("publish")[0].literal,
             ["-".to_owned(), "1".to_owned()]
         );
+    }
+
+    /// A source the loader cannot re-read must refuse every contracted call,
+    /// never silently declare no premise: an empty set applies the declaration
+    /// everywhere, which is the fail-open direction.
+    #[test]
+    fn a_clause_source_that_no_longer_reloads_poisons_the_set() {
+        let mut contracts = environment(MODULE);
+        let mut substituted = BTreeMap::new();
+        substituted.insert(
+            "premise.qcore".to_owned(),
+            MODULE.replace("(size, 0)", "(absent, 0)"),
+        );
+        contracts.set_source_assumptions(substituted);
+        let premises = LiteralPremises::read(&contracts);
+        assert!(premises.malformed().is_some(), "{premises:?}");
+    }
+
+    // ----------------------------------------------------------------------
+    // The retired comment carrier fails loudly, in both directions.
+    // ----------------------------------------------------------------------
+
+    /// The exact directive card HASH-CONTRACTS carried in the module text.
+    const RETIRED: &str = "// qcore-premise: literal_argument(publish, 2, 0)";
+
+    /// A module still carrying the directive is **rejected by name**, so a
+    /// leftover cannot quietly leave the declaration unrestricted. The message
+    /// names the clause that replaced it.
+    #[test]
+    fn the_retired_comment_directive_rejects_the_module() {
+        let text = MODULE
+            .replace("    requires resource_literal_argument(size, 0);\n", "")
+            .replace(
+                "module contract;\n",
+                &format!("module contract;\n{RETIRED}\n"),
+            );
+        let mut sources = BTreeMap::new();
+        sources.insert("premise.qcore".to_owned(), text);
+        let error = load_resource_contract_sources(&sources)
+            .expect_err("the retired directive must reject the module");
+        assert!(error.contains("retired"), "{error}");
+        assert!(error.contains("resource_literal_argument"), "{error}");
+    }
+
+    /// The directive is refused even beside a live clause, so a module cannot
+    /// keep the old carrier "for documentation" and rot.
+    #[test]
+    fn the_retired_directive_is_refused_beside_a_live_clause() {
+        let text = MODULE.replace(
+            "module contract;\n",
+            &format!("module contract;\n{RETIRED}\n"),
+        );
+        let mut sources = BTreeMap::new();
+        sources.insert("premise.qcore".to_owned(), text);
+        assert!(load_resource_contract_sources(&sources).is_err());
+    }
+
+    /// An environment assembled elsewhere could still hold the directive in its
+    /// retained text. Reading premises from it **poisons**, so a carrier nothing
+    /// parses any more can never silently widen a declaration back.
+    #[test]
+    fn a_retained_text_still_holding_the_directive_poisons_the_set() {
+        let mut contracts = environment(MODULE);
+        let mut substituted = BTreeMap::new();
+        substituted.insert(
+            "premise.qcore".to_owned(),
+            MODULE
+                .replace("    requires resource_literal_argument(size, 0);\n", "")
+                .replace(
+                    "module contract;\n",
+                    &format!("module contract;\n{RETIRED}\n"),
+                ),
+        );
+        contracts.set_source_assumptions(substituted);
+        let premises = LiteralPremises::read(&contracts);
+        assert!(premises.malformed().is_some(), "{premises:?}");
+    }
+
+    /// An environment with no retained sources declares no premise, and says so
+    /// without claiming one.
+    #[test]
+    fn an_environment_without_sources_declares_no_premise() {
+        let premises = LiteralPremises::read(&ResourceContracts::default());
+        assert!(premises.is_empty());
     }
 
     #[test]

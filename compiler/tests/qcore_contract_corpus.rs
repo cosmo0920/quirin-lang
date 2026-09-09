@@ -210,10 +210,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ),
     // Card HASH-CONTRACTS: the corpus moves 60 -> 61 modules with this file,
     // and the resource-v1 declaration count 19 -> 20. Deliberate.
+    //
+    // Card HASH-CLAUSE: 7 -> 8 clauses. The size-0 boundary moves off a
+    // machine-parsed comment directive onto the §C04.5 clause
+    // `requires resource_literal_argument(val_size, 0);`, which the loader
+    // validates total-or-reject. Deliberate; the declaration's modes and the
+    // premise's refusal set are unchanged and measured so
+    // (`docs/reports/remaining-hash-clause/README.md`).
     (
         "fluent_bit/hash_table_publication.qcore",
         "flb_hash_table_add",
-        7,
+        8,
     ),
     // Card PROD-CONTRACTS: the corpus moves 61 -> 64 modules with this file,
     // `fluent_bit/logging.qcore` and `fluent_bit/routes_mask.qcore`, and the
@@ -424,6 +431,17 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");
+        // Card HASH-CLAUSE. The `qcore-premise` comment directive is retired in
+        // favour of §C04.5's `resource_literal_argument` clause. The resource
+        // loader rejects a module carrying it, but only the six modules the
+        // manifest selects ever reach that loader; this sweeps the whole corpus,
+        // so a directive cannot rot unread in an unselected module either.
+        assert!(
+            !source.contains(qcore_contract::contract_loader::RETIRED_PREMISE_DIRECTIVE),
+            "{}: the retired premise directive must not reappear; declare \
+             `requires resource_literal_argument(PARAMETER, LITERAL);`",
+            path.display()
+        );
         let parsed = parse_source_program(&source)
             .unwrap_or_else(|error| panic!("{}: {error}", path.display()));
         let reparsed = parse_source_program(&parsed.to_string())

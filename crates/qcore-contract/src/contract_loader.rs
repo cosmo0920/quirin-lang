@@ -38,6 +38,12 @@
 //! - `resource_variadic_data_tail()` -> the declaration additionally covers
 //!   calls that pass *more* actuals than it names. See below.
 //!
+//! and one further **precondition** beside the marker:
+//!
+//! - `requires resource_literal_argument(p, LITERAL);` -> the declaration
+//!   applies only at call sites whose actual at `p` is exactly `LITERAL`. See
+//!   below.
+//!
 //! # The variadic data tail (card O04-TRACE)
 //!
 //! A C variadic function (`void flb_trace(const char *, ...)`) has no
@@ -68,6 +74,52 @@
 //! [`variadic_data_tails`], so a contract environment that has no declared
 //! sources — an inferred W4 summary, a provider proposal, a directly
 //! constructed table — has no tails at all, which is the fail-closed direction.
+//!
+//! # The literal-argument premise (card HASH-CLAUSE)
+//!
+//! A v1 declaration names one custody mode per parameter and says nothing about
+//! argument *values* (§C04.2 has no value-dependent mode). Some real C entry
+//! points switch behaviour on a scalar argument:
+//! `flb_hash_table_add(ht, key, key_len, val, val_size)` stores the caller's
+//! pointer uncopied and never frees it at `val_size == 0`, and allocates its own
+//! copy at a positive size. A declaration read off one arm must not be believed
+//! on the other.
+//!
+//! `requires resource_literal_argument(p, LITERAL);` is that restriction, as a
+//! first-class clause. It declares that the contract applies **only** at call
+//! sites whose actual at parameter `p` is exactly the token sequence a C lexer
+//! produces for `LITERAL`; everywhere else a consumer MUST treat the callee as
+//! undeclared. The clause can therefore only ever **withdraw** call sites the
+//! declaration would otherwise have covered — it can never admit one, and it
+//! never alters the modes.
+//!
+//! It is a `requires` clause because it is a precondition on *applicability*,
+//! and it names its parameter by name because every other predicate in this
+//! vocabulary does. `LITERAL` is a decimal integer with an optional leading
+//! minus and no suffix or alternate base; a spelling this loader cannot compare
+//! exactly against a C token vector is rejected rather than approximated.
+//!
+//! Total-or-reject applies in full: an unknown parameter name, a malformed
+//! literal, a second premise on the same parameter, and any other `requires`
+//! spelling each reject the **whole module**, so a typo can never leave a
+//! declaration silently unrestricted.
+//!
+//! Like the variadic tail, the premise is **not** carried on
+//! [`ResourceFunctionContract`]; it is rederived from the retained trusted
+//! source texts by [`literal_argument_premises`], so an environment with no
+//! declared sources — an inferred W4 summary, a provider proposal, a directly
+//! constructed table — declares no premises. That direction is fail-closed for
+//! the *loader* (no premise is claimed) and consumers must treat a rederivation
+//! failure over sources that mention the clause as a refusal, never as an empty
+//! premise set: `qcore_c_gateway::legacy_literal_premise` does exactly that.
+//!
+//! The mechanism this clause replaces was the machine-parsed
+//! `// qcore-premise: literal_argument(...)` comment directive of card
+//! HASH-CONTRACTS. That carrier is **retired**, and a leftover occurrence of it
+//! must fail loudly rather than rot: a module whose text still contains the
+//! directive introducer is rejected by name — see
+//! [`RETIRED_PREMISE_DIRECTIVE`]. Silently ignoring one would drop a declared
+//! restriction, which is exactly the fail-open direction.
 //!
 //! Signatures are opaque C ABI projections, not checked C layouts. The type
 //! vocabulary is likewise an explicit table, not a wildcard:
@@ -116,6 +168,50 @@ pub const SCALAR_ABI_TYPES: &[&str] = &[
 /// Opaque C ABI pointer projections. These are the custody-bearing types.
 pub const POINTER_ABI_TYPES: &[&str] =
     &["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"];
+
+/// The introducer of the retired `qcore-premise` comment directive (card
+/// HASH-CONTRACTS, superseded by HASH-CLAUSE's `resource_literal_argument`
+/// clause).
+///
+/// A contract module whose text still contains it is **rejected**, anywhere in
+/// the text and in any comment shape. Ignoring a leftover directive would drop
+/// the restriction it declares and silently widen the declaration back to every
+/// call site, so the refusal is deliberately broader than the shape the
+/// directive parser recognised: prose that names the retired introducer belongs
+/// in this loader's own documentation, never in a contract module.
+pub const RETIRED_PREMISE_DIRECTIVE: &str = "qcore-premise:";
+
+/// Reject a module carrying the retired directive.
+fn reject_retired_premise_directive(path: &str, source: &str) -> Result<(), String> {
+    if source.contains(RETIRED_PREMISE_DIRECTIVE) {
+        return Err(format!(
+            "{path}: the `{RETIRED_PREMISE_DIRECTIVE}` comment directive is retired; \
+             declare `requires resource_literal_argument(PARAMETER, LITERAL);` instead"
+        ));
+    }
+    Ok(())
+}
+
+/// One declared literal-argument premise (card HASH-CLAUSE): the contract
+/// applies only where the actual at `parameter` is exactly `literal`.
+///
+/// `literal` is the token *texts* a C lexer produces for the declared spelling,
+/// so a consumer comparing against a C token stream compares vectors and never
+/// re-parses a number: `0` is `["0"]` and `-1` is `["-", "1"]`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredLiteralArgument {
+    /// Index into the declaration's parameter list.
+    pub parameter: usize,
+    /// The declared literal, as C token texts.
+    pub literal: Vec<String>,
+}
+
+/// Everything one admitted declaration carries beyond its custody modes.
+struct LoadedDeclaration {
+    contract: ResourceFunctionContract,
+    variadic_data_tail: bool,
+    literal_arguments: Vec<DeclaredLiteralArgument>,
+}
 
 /// The result vocabulary: `unit` plus every parameter type.
 fn result_abi_types() -> impl Iterator<Item = &'static str> {
@@ -181,6 +277,7 @@ pub fn load_resource_contract_sources(
     }
     let mut contracts = ResourceContracts::default();
     for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -191,8 +288,8 @@ pub fn load_resource_contract_sources(
             if contracts.contract(&decl.name).is_some() {
                 return Err(format!("{context}: duplicate function contract"));
             }
-            let (contract, _tail) = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            contracts.insert_contract(&decl.name, contract);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            contracts.insert_contract(&decl.name, loaded.contract);
         }
     }
     contracts.set_source_assumptions(sources.clone());
@@ -207,6 +304,7 @@ pub fn load_resource_contract_sources(
 pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
     let mut tails = BTreeSet::new();
     for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
         let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
         if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
             return Err(format!("{path}: expected a nonempty module contract"));
@@ -214,13 +312,68 @@ pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSe
         for declaration in parsed.declarations {
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let (_, tail) = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if tail {
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if loaded.variadic_data_tail {
                 tails.insert(decl.name.clone());
             }
         }
     }
     Ok(tails)
+}
+
+/// The literal-argument premises `sources` declares, keyed by function name
+/// (card HASH-CLAUSE).
+///
+/// Derived from the same trusted texts [`load_resource_contract_sources`] reads
+/// and total-or-reject in the same way: a source set this loader would reject
+/// yields an error here too, never a partial set. A function with no premise is
+/// absent from the map, which is *unrestricted* — so a consumer must treat an
+/// error as a refusal rather than as an empty map.
+pub fn literal_argument_premises(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, Vec<DeclaredLiteralArgument>>, String> {
+    let mut premises = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if !loaded.literal_arguments.is_empty() {
+                // Function names are unique across a selection, so a name that
+                // is already present is a duplicate declaration, which
+                // `load_resource_contract_sources` rejects; refuse here too
+                // rather than silently keeping one of them.
+                if premises
+                    .insert(decl.name.clone(), loaded.literal_arguments)
+                    .is_some()
+                {
+                    return Err(format!("{context}: duplicate function contract"));
+                }
+            }
+        }
+    }
+    Ok(premises)
+}
+
+/// The literal-argument premises of an environment, rederived from its
+/// **retained trusted sources**.
+///
+/// An environment with no declared sources declares no premises. That is the
+/// honest reading — the loader claims no restriction it cannot read — and it is
+/// why a consumer that acts on premises must refuse, not proceed, when
+/// rederivation over sources that mention the clause fails.
+pub fn declared_literal_argument_premises(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, Vec<DeclaredLiteralArgument>>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    literal_argument_premises(contracts.source_assumptions())
 }
 
 /// The variadic data tails of an environment, rederived from its **retained
@@ -261,7 +414,7 @@ fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {
         .collect())
 }
 
-fn load_function(decl: &SourceDeclaration) -> Result<(ResourceFunctionContract, bool), String> {
+fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> {
     if decl.kind != DeclarationKind::ExternFunction {
         return Err("resource modules accept only extern functions".into());
     }
@@ -317,6 +470,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<(ResourceFunctionContract, 
 
     let mut marker = false;
     let mut variadic_data_tail = false;
+    let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut parameters = vec![None; decl.parameters.len()];
     let mut result = None;
     let mut names = BTreeMap::new();
@@ -334,12 +488,31 @@ fn load_function(decl: &SourceDeclaration) -> Result<(ResourceFunctionContract, 
     for clause in clauses {
         let expression = &clause.value.expression_source;
         if clause.value.kind == SourceContractClauseKind::Requires {
-            if marker || token_kinds(expression)? != token_kinds("resource_contract_v1")? {
+            if token_kinds(expression)? == token_kinds("resource_contract_v1")? {
+                if marker {
+                    return Err(format!(
+                        "unsupported or duplicate requirement `{expression}`"
+                    ));
+                }
+                marker = true;
+                continue;
+            }
+            // Card HASH-CLAUSE. The only other admitted precondition: the
+            // declaration applies at a call site only if the actual at the
+            // named parameter is exactly the named literal. Anything else is
+            // still an unsupported requirement, so the whole module rejects.
+            let (parameter, literal) = literal_argument_clause(expression)?;
+            let parameter = index(&parameter)?;
+            if literal_arguments
+                .iter()
+                .any(|declared| declared.parameter == parameter)
+            {
                 return Err(format!(
-                    "unsupported or duplicate requirement `{expression}`"
+                    "duplicate literal-argument premise for {}",
+                    decl.parameters[parameter].name.value
                 ));
             }
-            marker = true;
+            literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
             continue;
         }
         let words = predicate_call(expression)?;
@@ -459,9 +632,56 @@ fn load_function(decl: &SourceDeclaration) -> Result<(ResourceFunctionContract, 
     {
         return Err("reallocation requires an owned input parameter".into());
     }
-    Ok((
-        ResourceFunctionContract::new(parameters, result),
+    Ok(LoadedDeclaration {
+        contract: ResourceFunctionContract::new(parameters, result),
         variadic_data_tail,
+        literal_arguments,
+    })
+}
+
+/// `resource_literal_argument(PARAM, LITERAL)`, exactly (card HASH-CLAUSE).
+///
+/// This clause is the one place in the v1 vocabulary where an argument is a
+/// *value* rather than a name, so it is parsed here rather than through
+/// [`predicate_call`], whose identifier-only strictness is load-bearing for
+/// every other predicate. `LITERAL` is a decimal integer with an optional
+/// leading minus: the returned vector is the C token texts, which is what a
+/// consumer compares an actual against. Alternate bases and suffixes lex as an
+/// extra token and so fail this match rather than being approximated.
+fn literal_argument_clause(source: &str) -> Result<(String, Vec<String>), String> {
+    let unsupported = || format!("unsupported or duplicate requirement `{source}`");
+    let tokens = token_kinds(source)?;
+    let [
+        TokenKind::Word(name),
+        TokenKind::Symbol(Symbol::LeftParen),
+        TokenKind::Word(parameter),
+        TokenKind::Symbol(Symbol::Comma),
+        literal @ ..,
+    ] = tokens.as_slice()
+    else {
+        return Err(unsupported());
+    };
+    if name != "resource_literal_argument" {
+        return Err(unsupported());
+    }
+    let (sign, digits) = match literal {
+        [
+            TokenKind::Symbol(Symbol::Minus),
+            TokenKind::Integer(digits),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] => (Some("-".to_owned()), digits),
+        [
+            TokenKind::Integer(digits),
+            TokenKind::Symbol(Symbol::RightParen),
+        ] => (None, digits),
+        _ => return Err(unsupported()),
+    };
+    if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(unsupported());
+    }
+    Ok((
+        parameter.clone(),
+        sign.into_iter().chain([digits.clone()]).collect(),
     ))
 }
 

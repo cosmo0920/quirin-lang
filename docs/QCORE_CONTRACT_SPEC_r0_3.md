@@ -67,7 +67,7 @@ The selected source set MUST be nonempty. Every selected source MUST parse as a 
 Every extern declaration MUST satisfy all of the following:
 
 1. Its entire signature belongs to the admitted ABI projection, with unique parameter names and no usage annotations, generics, effects, extra signature syntax, or ignored tail tokens.
-2. It has exactly one `requires resource_contract_v1;` marker and no other precondition.
+2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted precondition is the literal-argument premise of C04.5; every other `requires` spelling is rejected.
 3. Every other clause is an admitted `ensures normal` predicate call. Each parameter receives exactly one mode and the result receives exactly one result mode.
 4. Parameter/result types, nullability arguments, ownership references and return references meet the compatibility rules below.
 
@@ -154,9 +154,27 @@ Only normal C returns are represented by v1 postconditions. A C routine returnin
 
 General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses, effects, access permissions and synchronization are not in v1. Non-null error sentinels such as `MAP_FAILED` and scalar failure sentinels such as `-1` are not representable as tracked endpoint acquisition outcomes by the existing nullability-only return mode.
 
-**Value-dependent parameter modes are not in v1 either.** A parameter mode is fixed per declaration; no clause conditions a mode on an argument's value. Where a real C entry point switches behavior on a scalar argument — `flb_hash_table_add`'s `val_size`, whose zero arm stores the caller's pointer while its positive arm copies into a fresh allocation — a v1 declaration read off one arm silently covers the other. That gap is not closed by loader vocabulary. A **consumer** MAY carry a declared literal-argument premise in the module's own retained text and refuse to apply the declaration where the premise does not hold; the C gateway implements exactly that (`crates/qcore-c-gateway/src/legacy_literal_premise.rs`, card HASH-CONTRACTS). Such a premise MUST only withdraw a declaration, never widen one, and a malformed premise MUST fail closed. It is not part of the version-1 clause vocabulary, and this loader neither parses nor validates it; promoting it to a clause requires a `qcore-schemas` increment.
+**Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
 The loader rejects syntax that attempts to express unsupported semantics. It cannot discover that a syntactically admitted declaration is semantically false of a named C function. For example, merely writing a pointer-returning `mmap`-like name with `resource_return_owned(nullable)` does not enable sentinel validation. Applying that model to an API whose failure is non-null would be an invalid trusted assumption. A broader profile MUST model success tests, endpoint kinds, generations and failure residuals explicitly; it MUST NOT reinterpret v1 nullability silently.
+
+### C04.5. The literal-argument premise
+
+Where a real C entry point switches behavior on a scalar argument — `flb_hash_table_add`'s `val_size`, whose zero arm stores the caller's pointer while its positive arm copies into a fresh allocation — a declaration read off one arm would otherwise silently cover the other. One precondition closes that gap:
+
+```qcore
+requires resource_literal_argument(p, LITERAL);
+```
+
+`p` MUST name a parameter of the same declaration. `LITERAL` is a decimal integer with an optional leading minus and no suffix, alternate base, or other spelling; the loader records the C token texts the spelling produces (`0` is `["0"]`, `-1` is `["-", "1"]`), so a consumer compares token vectors and never re-parses a number.
+
+The clause declares that **the whole declaration applies only at call sites whose actual at `p` is exactly `LITERAL`**. A consumer that honors it MUST treat the callee as *undeclared* at every other call site, including one that does not supply an actual at `p` at all. The clause therefore MUST only withdraw call sites the declaration would otherwise have covered; it MUST NOT widen one, and it MUST NOT alter any mode. It states nothing about the callee's body: it is a bound on where a trusted assumption is believed, not evidence for it.
+
+Total-or-reject applies in full. An unknown parameter name, a malformed literal, a second premise on the same parameter, and any other `requires` spelling each reject the whole module, so a typo cannot leave a declaration silently unrestricted. A declaration MAY carry more than one premise, at most one per parameter; all of them must hold at a call site for the declaration to apply.
+
+Like the variadic data tail, the premise is not carried on the `ResourceFunctionContract` value. It is rederived from the retained trusted source texts (`literal_argument_premises`), so an environment with no declared sources declares no premises. That is the honest reading rather than a fail-closed one, so a consumer that acts on premises MUST refuse — not proceed unrestricted — when rederivation over sources that mention the clause fails; `crates/qcore-c-gateway/src/legacy_literal_premise.rs` implements exactly that refusal.
+
+This clause supersedes the machine-parsed `qcore-premise` comment directive that card HASH-CONTRACTS carried in the module text. That carrier is **retired**: the loader MUST reject a module whose text still contains its introducer, so a leftover directive fails loudly rather than silently losing the restriction it declares. Card HASH-CLAUSE measured the two carriers' refusal sets equal over the generic fixture family and the real upstream body before removing the directive, and pinned the measured set.
 
 ## C05. Manifests and immutable assumptions
 

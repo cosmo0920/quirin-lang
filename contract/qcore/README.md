@@ -116,26 +116,33 @@ conservatism. Each module in this family records, in its own header, the pinned
 file and line of every body it was read from, and names what it deliberately
 leaves undeclared. See `docs/reports/remaining-prod-contracts/README.md`.
 
-### Declared literal-argument premises (card HASH-CONTRACTS)
+### Declared literal-argument premises (cards HASH-CONTRACTS, HASH-CLAUSE)
 
-`fluent_bit/hash_table_publication.qcore` carries a line of the form
+`fluent_bit/hash_table_publication.qcore` carries, beside its marker:
 
-```text
-// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)
+```qcore
+    requires resource_literal_argument(val_size, 0);
 ```
 
-That is **not** a version-1 clause. It is a machine-parsed premise the C gateway
-reads out of the module's retained declared text
-(`crates/qcore-c-gateway/src/legacy_literal_premise.rs`), because the v1 clause
-grammar is closed and cannot condition a mode on an argument's value. It
-restricts the declaration to call sites whose named argument is exactly the named
-integer literal; every other call to that function is refused as if it were
-undeclared. A premise can therefore only ever withdraw a declaration, never
-widen one, and a malformed directive refuses every contracted call rather than
-being ignored. When a declaration's faithfulness argument was read off one
-branch of a value-dependent body, write the premise — do not let the declaration
-cover the branch you did not read. See
-`docs/reports/remaining-hash-contracts/README.md`.
+That is a version-1 clause (§C04.5). It restricts the **whole declaration** to
+call sites whose actual at the named parameter is exactly the named integer
+literal; every other call to that function is refused as if it were undeclared.
+A premise can therefore only ever withdraw a declaration, never widen one, and
+it changes no mode. The loader validates it total-or-reject: a parameter name
+the declaration does not declare, a malformed literal (suffixes and alternate
+bases included), a second premise on one parameter and any other `requires`
+spelling each reject the whole module, so a typo cannot leave a declaration
+silently unrestricted.
+
+When a declaration's faithfulness argument was read off one branch of a
+value-dependent body, write the premise — do not let the declaration cover the
+branch you did not read. See `docs/reports/remaining-hash-contracts/README.md`
+for the reading of the upstream body and
+`docs/reports/remaining-hash-clause/README.md` for the clause.
+
+**The `qcore-premise` comment directive HASH-CONTRACTS used is retired.** A
+module whose text still contains its introducer is rejected by name; do not
+reintroduce it, in a comment or in prose.
 
 The version-1 vocabulary begins with `requires resource_contract_v1`. Normal
 postconditions use `resource_borrowed(p)`,
@@ -175,7 +182,7 @@ quietly returning a weaker table.
 
 | Clause family | Owner |
 | --- | --- |
-| `requires resource_contract_v1` and the `resource_*` predicates above | `contract_loader` (this section) |
+| `requires resource_contract_v1`, `requires resource_literal_argument(p, LITERAL)` and the `resource_*` predicates above | `contract_loader` (this section) |
 | integer/Boolean ghost predicates — `result == 0`, `field_NAME`, `busy`, `lock`, `allocations`, `releases`, `old(...)` arithmetic | `contract_observation` and the ChunkIO/source interpreters |
 | named atomic lifecycle propositions — `chunk_is_live`, `arena_is_discharged`, `descriptor_custody_is_discharged_once`, … | the mechanism/lifecycle interpreters |
 | `own<T>` / `borrow<'a, _, T>` parameters, `use` annotations, `effects { .. }` rows, `quant` clauses, `ensures any`, `ensures error(E)`, `result<T, E>` returns, and `resource type` / `error` / `axis` declarations | the QCore language front end and checker |
