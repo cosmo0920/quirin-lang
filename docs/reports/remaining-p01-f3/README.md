@@ -314,7 +314,7 @@ says nothing about `execve` semantics beyond "the path's content is what loads".
 
 | Gate | Result |
 |---|---|
-| `cargo test --workspace` | **1908 passed, 0 failed, 4 ignored** (125 suites) |
+| `cargo test --workspace` | **1908 passed, 0 failed, 4 ignored** (123 suites) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
