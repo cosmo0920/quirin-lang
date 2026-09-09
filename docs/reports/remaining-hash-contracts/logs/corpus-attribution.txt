@@ -1,0 +1,25 @@
+== headline
+  before: {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2} units 185
+  after : {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2} units 185
+  before counts: {'leak': 271, 'unknown_alias': 4410, 'unsupported': 49960}
+  after  counts: {'leak': 271, 'unknown_alias': 4410, 'unsupported': 49960}
+
+== unit verdict movement
+  0 unit(s)
+
+== unit reason/reason_code movement
+
+== function status movement
+  0 function(s)
+
+== changed units (diagnostics)
+  1 unit(s): ['flb_input_chunk.c']
+
+== diagnostic description delta, whole corpus
+         0 ->      1  call to `flb_hash_table_add` outside its declared literal-argument premise
+     18875 ->  18874  indirect memory access is outside the resource projection
+
+== per-changed-unit leaf attribution
+  flb_input_chunk.c: -1 +1
+      -  update_logs_tag_records_metrics L17794 indirect memory access is outside the resource projection
+      +  update_logs_tag_records_metrics L17794 call to `flb_hash_table_add` outside its declared literal-argument premise

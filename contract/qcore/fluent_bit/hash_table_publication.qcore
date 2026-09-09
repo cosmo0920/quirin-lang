@@ -1,0 +1,95 @@
+module contract;
+
+// Fluent Bit hash-table publication — resource-projection vocabulary version 1.
+//
+// Card HASH-CONTRACTS. This module declares ONE trusted assumption about ONE
+// upstream function, `flb_hash_table_add`, and restricts that assumption to the
+// exact branch of the upstream body it was read from. It verifies nothing: the
+// C body is not analyzed by this loader, and a declaration is a premise.
+//
+// ## What the pinned body does (src/flb_hash_table.c at Fluent Bit
+// ## 66910c10a4d7eafa810b84229cf2dcf7b0f26f97)
+//
+// `flb_hash_table_add(ht, key, key_len, val, val_size)` reaches the value
+// through `entry_set_value(entry, val, val_size)` on both the replacement path
+// (line 437) and the fresh-entry path (line 475). `entry_set_value` (line 357)
+// has exactly two arms:
+//
+//   * `val_size > 0`  — `entry->val = flb_malloc(val_size + 1)` and
+//     `memcpy(entry->val, val, val_size)`. The table holds a COPY it allocated;
+//     `entry->val_size` records the positive size.
+//   * otherwise       — `entry->val = val; entry->val_size = -1;`. The table
+//     holds the CALLER'S POINTER, with no copy and no allocation. The comment
+//     upstream says it: "just do a reference".
+//
+// `flb_hash_table_entry_free` (line 85) frees `entry->val` under exactly
+// `entry->val && entry->val_size > 0`. A referenced value carries `-1`, so the
+// table NEVER frees a pointer it was handed at size 0, on any teardown path.
+//
+// ## Which mode is faithful, and why it is not `resource_stored`
+//
+// `resource_stored(val, ht, ...)` is refused here on two independent measured
+// grounds, either of which is fatal:
+//
+//   1. It is FALSE of the body. §C04.2 reads the stored relation as custody
+//      "indexed beneath the designated owner", whose destruction or transfer
+//      cascades to the child. This table's teardown does not free a referenced
+//      value, so declaring it stored would DELETE the caller's own cleanup
+//      obligation for a resource nothing else releases — the exact direction
+//      hard invariant 1 forbids.
+//   2. It is UNREACHABLE. §C04.2 requires the `owner` parameter to be declared
+//      `Owned`. At every real call site the table is reached as a member read
+//      of a borrowed instance, so no caller supplies live custody of `ht`, and
+//      a declaration requiring it would refuse every call rather than model it.
+//
+// The faithful mode is therefore `resource_borrowed` on every parameter: the
+// call imposes no custody precondition and moves no obligation. That is true on
+// BOTH arms — the copy arm touches only storage the callee itself allocated,
+// and the reference arm frees nothing — so this declaration deletes no cleanup
+// obligation the caller had before the call, which is the whole of what the
+// per-exit resource projection reads out of it.
+//
+// ## What this declaration does NOT say (named, not hidden)
+//
+// At `val_size == 0` the table RETAINS the caller's pointer for as long as the
+// entry lives. This projection models custody, not reachability: it does not
+// claim the retained pointer stays valid, does not model the entry's lifetime,
+// and does not decide whether a later release of the value leaves the table
+// holding a dangling entry. That publication is O00 blockers B03/R13 and stays
+// unmodeled. Declaring `resource_borrowed` is a statement about obligations,
+// never a statement that the callee forgets the pointer.
+//
+// This module also says nothing about the table's own key storage, its eviction
+// modes, its counters, its locking, or `entry_set_value`'s `size_t` parameter
+// receiving an `ssize_t` argument (a negative size reaches the copy arm as a
+// very large unsigned length).
+//
+// ## The size-0 boundary is enforced, not assumed
+//
+// Everything above was read off the reference arm. The copy arm allocates,
+// reads `val_size` bytes through `val`, and can fail — none of which this
+// projection modeled. So the declaration must not be believed at a call site
+// that takes the other arm. Version 1's clause grammar cannot condition a mode
+// on an argument's value (§C04.2 has no value-dependent mode; §C04.4 records
+// that success-dependent parameter modes are not in v1), so the restriction is
+// declared here as a machine-checked premise and enforced by the analyzer at
+// each call site: the contract above is applied only where the argument at
+// parameter 4 is exactly the literal `0`, and every other call to this function
+// is refused as if it were uncontracted.
+//
+// The premise directive is part of this module's declared text. It travels in
+// `source_assumptions`, is reloaded by `check_source_assumptions`, and can only
+// ever REFUSE call sites the declaration would otherwise have covered.
+//
+// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)
+
+extern fn flb_hash_table_add(ht: ptr<mut, u8>, key: ptr<const, u8>, key_len: i32, val: ptr<mut, u8>, val_size: isize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ht);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(key_len);
+    ensures normal resource_borrowed(val);
+    ensures normal resource_borrowed(val_size);
+    ensures normal resource_return_none();
+};

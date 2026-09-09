@@ -208,6 +208,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_release_lock",
         7,
     ),
+    // Card HASH-CONTRACTS: the corpus moves 60 -> 61 modules with this file,
+    // and the resource-v1 declaration count 19 -> 20. Deliberate.
+    (
+        "fluent_bit/hash_table_publication.qcore",
+        "flb_hash_table_add",
+        7,
+    ),
     ("fluent_bit/memory.qcore", "flb_malloc", 6),
     ("fluent_bit/memory.qcore", "flb_calloc", 7),
     ("fluent_bit/memory.qcore", "flb_realloc", 9),
@@ -386,7 +393,9 @@ fn contract_sources(directory: &Path) -> Vec<PathBuf> {
 fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     let root = corpus_root();
     let sources = contract_sources(&root);
-    assert_eq!(sources.len(), 60, "unexpected contract corpus size");
+    // 60 -> 61 by card HASH-CONTRACTS' deliberate addition of
+    // `fluent_bit/hash_table_publication.qcore`.
+    assert_eq!(sources.len(), 61, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

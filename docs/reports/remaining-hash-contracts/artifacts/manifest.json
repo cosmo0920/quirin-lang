@@ -1,0 +1,32 @@
+{
+ "chunk-contracts": {
+  "archived_path": "docs/reports/remaining-hash-contracts/artifacts/chunk-contracts.json.gz",
+  "produced_file": "resource-diagnostics.chunk-contracts.json",
+  "uncompressed_bytes": 4186178,
+  "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "archived_path": "docs/reports/remaining-hash-contracts/artifacts/contracts.json.gz",
+  "produced_file": "resource-diagnostics.contracts.json",
+  "uncompressed_bytes": 13759,
+  "uncompressed_sha256": "b6349139e560cc9dd552f5a75f4c256a3cccb36672af27c280b4ae0e50551192"
+ },
+ "diagnostics": {
+  "archived_path": "docs/reports/remaining-hash-contracts/artifacts/diagnostics.json.gz",
+  "produced_file": "resource-diagnostics.json",
+  "uncompressed_bytes": 11148264,
+  "uncompressed_sha256": "7b050b08e11640b2075656991c23a8fb1f99e5a9f7618e075e7ac8c3799a16ee"
+ },
+ "source": {
+  "archived_path": "docs/reports/remaining-hash-contracts/artifacts/source.json.gz",
+  "produced_file": "monkey-source.json",
+  "uncompressed_bytes": 1664550,
+  "uncompressed_sha256": "53d55b7e1fb174de4268a163c61a6f25a3658e3bca7377160369016c91489df9"
+ },
+ "source-effects": {
+  "archived_path": "docs/reports/remaining-hash-contracts/artifacts/source-effects.json.gz",
+  "produced_file": "resource-diagnostics.source-effects.json",
+  "uncompressed_bytes": 118502,
+  "uncompressed_sha256": "e46fc59a765e801c5f3c96e0a71160a4b0e83e2fdb477dcf19b9b1b8cb7d5fee"
+ }
+}

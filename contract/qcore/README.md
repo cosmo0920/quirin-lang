@@ -92,13 +92,35 @@ wrapper source projections and remaining composition gates.
 
 ## Declarative resource-projection contracts
 
-`../cycle19-resource-contracts.json` explicitly selects five modules for the
+`../cycle19-resource-contracts.json` explicitly selects six modules for the
 legacy-C audit: `libc/memory.qcore`, `monkey/memory.qcore`,
-`librdkafka/memory.qcore`, `fluent_bit/resource_memory.qcore`, and
-`chunkio/resource_open_close.qcore`. These 19 declarations replace the audit's
+`librdkafka/memory.qcore`, `fluent_bit/resource_memory.qcore`,
+`fluent_bit/hash_table_publication.qcore`, and
+`chunkio/resource_open_close.qcore`. These 20 declarations replace the audit's
 Rust table. They are trusted resource-projection assumptions, separate from the
 more detailed execution and lifecycle profiles above. In particular the
 ChunkIO close declaration does not itself provide a nested teardown certificate.
+
+### Declared literal-argument premises (card HASH-CONTRACTS)
+
+`fluent_bit/hash_table_publication.qcore` carries a line of the form
+
+```text
+// qcore-premise: literal_argument(flb_hash_table_add, 4, 0)
+```
+
+That is **not** a version-1 clause. It is a machine-parsed premise the C gateway
+reads out of the module's retained declared text
+(`crates/qcore-c-gateway/src/legacy_literal_premise.rs`), because the v1 clause
+grammar is closed and cannot condition a mode on an argument's value. It
+restricts the declaration to call sites whose named argument is exactly the named
+integer literal; every other call to that function is refused as if it were
+undeclared. A premise can therefore only ever withdraw a declaration, never
+widen one, and a malformed directive refuses every contracted call rather than
+being ignored. When a declaration's faithfulness argument was read off one
+branch of a value-dependent body, write the premise — do not let the declaration
+cover the branch you did not read. See
+`docs/reports/remaining-hash-contracts/README.md`.
 
 The version-1 vocabulary begins with `requires resource_contract_v1`. Normal
 postconditions use `resource_borrowed(p)`,
