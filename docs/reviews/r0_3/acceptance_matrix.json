@@ -5740,7 +5740,7 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2595,
+  "workspace_tests": 2638,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
   "lean_audits": 67,
@@ -5819,7 +5819,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate15d.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate15seal.json)"
  },
  "named_followups": [
   {
@@ -5885,14 +5885,14 @@
   {
    "id": "E01-F1-O",
    "title": "Enumeration residuals after the denominator completion",
-   "why": "E01-F1-RAW-COND closed in wave 11: the max-depth group rule zeroes absent_from_raw_scan in every unit (the rule buys mechanism agreement, not analysis coverage — measured and stated), and a latent phantom-definition hazard in the old summing rule was closed in passing. Remaining: E01-F1-STDIN, E01-F1-DENOM, E01-F1-COST.",
-   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md, docs/reports/remaining-e01-raw-cond/README.md"
+   "why": "E01-TAIL closed the trio in wave 15: STDIN was a live two-direction scope manipulation via #line directives (fail-open in one direction), repaired with depth-flag attribution no directive can move; DENOM found the partial analyzer silently dropping selected definitions — Safe now requires full coverage at the certificate gate (reach 0 today; 89 inert unprojected definitions censused); COST measured at 53 ms and the cache declined — the real redundancies are named as E01-TAIL-COST-SHARE (also a two-denominator correctness seam), -COST-DOUBLE-PP, -COST-DISCOVERY, plus -CERT-SCOPE, -EXCUSE, -REASON-ROWS.",
+   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md, docs/reports/remaining-e01-raw-cond/README.md, docs/reports/remaining-e01-tail/README.md"
   },
   {
    "id": "P04-NEXT-O",
    "title": "Remaining ChunkIO capabilities after the teardown pair moved",
-   "why": "Waves 13-14 close the transported ladder's reachable rungs: unmap_wrapper (fifth vocabulary), both file_close entry points (structural nested recursion, depth 2/4, 171 mutation rows), and the frame/list-unlink/field-destructor verification tasks (P04-FRAME — three unnameable dependencies corrected to nameable; the shared obligation-id proved sound only via the identity triple, P04-FRAME-OBLIGATION-ID). Remaining: P04-COMPOSE-MEMCLOSE (sixth vocabulary, sized: 717-line relocation plus a derived-text input identity question), filesystem_chunk_close and unsupported_close behind it, nested_memory/nested_cleanup behind SourceMatch, P04-COMPOSE-A-CASE-INDEX, -CLOSE-PROFILE-SHARED, P04-B1/B2 residuals.",
-   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md, docs/reports/remaining-p04-compose/README.md, docs/reports/remaining-p04-compose-a/README.md, docs/reports/remaining-p04-frame/README.md"
+   "why": "Waves 13-14 close the transported ladder's reachable rungs: unmap_wrapper (fifth vocabulary), both file_close entry points (structural nested recursion, depth 2/4, 171 mutation rows), and the frame/list-unlink/field-destructor verification tasks (P04-FRAME — three unnameable dependencies corrected to nameable; the shared obligation-id proved sound only via the identity triple, P04-FRAME-OBLIGATION-ID). Remaining: P04-COMPOSE-MEMCLOSE (sixth vocabulary, sized: 717-line relocation plus a derived-text input identity question), filesystem_chunk_close and unsupported_close behind it, nested_memory/nested_cleanup behind SourceMatch, P04-COMPOSE-A-CASE-INDEX, -CLOSE-PROFILE-SHARED, P04-B1/B2 residuals. MEMCLOSE closed in wave 15 (additive-at-wire extension; derived-text identity pinned in four refusal directions; schemas 12.0.0, ChunkIO 0.11.0); filesystem_chunk_close is now composable-now (P04-COMPOSE-FS, needing two derived-text imports in one question); MEMCLOSE-COUNTER-SUGAR/-DERIVED-PREPROCESSING/-PROBE-ISOLATION/-BASE-TIE-TEXT recorded.",
+   "source": "docs/reports/remaining-p04-next/README.md, docs/reports/remaining-p04-next-ab/README.md, docs/reports/remaining-p04-b1/README.md, docs/reports/remaining-p04-b2/README.md, docs/reports/remaining-p04-compose/README.md, docs/reports/remaining-p04-compose-a/README.md, docs/reports/remaining-p04-frame/README.md, docs/reports/remaining-memclose/README.md"
   },
   {
    "id": "T03-GUARD-JOIN-O",
@@ -5927,8 +5927,8 @@
   {
    "id": "C02-P-ALIAS-O",
    "title": "May-alias refinement residuals",
-   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried. BORROW-LIVENESS closed in wave 13: the plainest single-name use-after-free (release-then-borrow, no aliasing involved) was measured Safe with no diagnostics at base and is now refused — verdict class Unknown on three measured grounds (resource_borrowed declares nothing to contradict; Owned's own liveness answer is UnknownAlias; the must-fact bar exceeds DoubleRelease's may-fact bar, proved both directions). Census: 0 settling positions of 267 — reach gated on what the projection binds. New: BORROW-LIVENESS-MIXED/-PRESTATE/-PLACES/-OUT/-ASSUMPTION. HYGIENE-14 closed -MIXED: the refusable joins are exactly {RELEASED} and {RELEASED,ESCAPED} over the modelled bits, enumerated in Rust and decided in Lean; three theorems retired by name.",
-   "source": "docs/reports/remaining-c02-p-alias/README.md, docs/reports/remaining-alias-locals/README.md, docs/reports/remaining-borrow-liveness/README.md"
+   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271). ALIAS-LOCALS landed in wave 12: the formal bound was launderable (measured) and a projection false-Safe (copy-then-release-then-probe) repaired; verdict deliberately stays UnknownAlias on four grounds; census closes the reach item (exactly one released-peer consideration corpus-wide). New: ALIAS-LOCALS-BORROW-LIVENESS, ALIAS-LOCALS-EXIT-CUSTODY (flagged as the B09B10 channel), -UNTYPED/-CONSUME/-USES/-GUARD-FORMS carried. BORROW-LIVENESS closed in wave 13: the plainest single-name use-after-free (release-then-borrow, no aliasing involved) was measured Safe with no diagnostics at base and is now refused — verdict class Unknown on three measured grounds (resource_borrowed declares nothing to contradict; Owned's own liveness answer is UnknownAlias; the must-fact bar exceeds DoubleRelease's may-fact bar, proved both directions). Census: 0 settling positions of 267 — reach gated on what the projection binds. New: BORROW-LIVENESS-MIXED/-PRESTATE/-PLACES/-OUT/-ASSUMPTION. HYGIENE-14 closed -MIXED: the refusable joins are exactly {RELEASED} and {RELEASED,ESCAPED} over the modelled bits, enumerated in Rust and decided in Lean; three theorems retired by name. BORROW-RESIDUALS closed the quartet in wave 15: PRESTATE implemented (a call releasing and borrowing one settled identity in its own declared effects was Safe-with-no-diagnostics, now Unknown — no ordering exists between a callee's own effects); PLACES split by measurement; OUT and ASSUMPTION reasoned refusals with all grounds measured. Census: zero settled, and only cio_chunk_close pairs Released+Borrowed (its borrowed slot a scalar, pinned as control; re-checked on the 31-declaration tree). BORROW-RESIDUALS-SYNTACTIC and -SAME-CALL-MAY recorded.",
+   "source": "docs/reports/remaining-c02-p-alias/README.md, docs/reports/remaining-alias-locals/README.md, docs/reports/remaining-borrow-liveness/README.md, docs/reports/remaining-borrow-residuals/README.md"
   },
   {
    "id": "TRANSFER-DERIVATION",
@@ -5951,19 +5951,19 @@
   {
    "id": "PROD-CONTRACTS-O",
    "title": "Production-contract residuals",
-   "why": "PROD-CONTRACTS-NEIGHBOURS (six uncontracted callees, sized, the sole remaining production blocker on flb_input_chunk_create's trace statement — the C6 discharge stays fixture-route until they are contracted); -ATTRIB (eleven category-swap leaves); -MASK-EXTENT; -TAIL-COST (the tail lookup's short-circuit stopped; mechanism read, cost unmeasured); four functions read and deliberately left undeclared with reasons. Also recorded: flb_trace/flb_error are macros — O04-TRACE's fixture models a function that does not exist upstream; its discharge stands on its own premise set.",
-   "source": "docs/reports/remaining-prod-contracts/README.md"
+   "why": "NEIGHBOURS closed the six-callee blocker by declaration in wave 15 (corpus 67; all six read against pinned bodies, all borrowed/none; flb_input_chunk_create 36 to 21 diagnostics with every callee-naming refusal gone — production Safe still out on 21 residuals in two checker families: twelve aggregate-aliasing, eight chained-read). New: NEIGHBOURS-CHAINED-TAIL (the substitution-isolated next blocker — a two-level chained pointer-field tail actual; checker work with a soundness obligation), NEIGHBOURS-FIXTURE-PROXY (the fixture leg understates production 1 vs 21), and the loader-never-compares-prelude gap flb_time_now exposed (an unfaithful fixture ABI type passes silently — LOADER-ABI candidate). -ATTRIB/-MASK-EXTENT/-TAIL-COST and the four deliberate non-declarations carried.",
+   "source": "docs/reports/remaining-prod-contracts/README.md, docs/reports/remaining-neighbours/README.md"
   },
   {
    "id": "HASH-CLAUSE-O",
    "title": "Literal-argument clause boundaries",
-   "why": "HASH-CLAUSE-TYPE (a premise is accepted on any parameter, not only scalars) and HASH-CLAUSE-LITERAL (decimal integers only — 0L/(0)/enum spellings refused, fail-closed but uncovered); HASH-CONTRACTS-PAIRING/-RETENTION/-CALL-POSITION carried.",
-   "source": "docs/reports/remaining-hash-clause/README.md"
+   "why": "HASH-REFINE closed TYPE (admitted — an integer-constant 0 is C11's null pointer constant, so a pointer premise legitimately declares the null arm; restriction refuses a valid contract and buys no soundness) and LITERAL (matched parens and the 23-entry suffix table admitted structurally; octal/arithmetic/casts/symbols refused with capabilities named; the declared space made canonical). Measured corrections: macros were never refused; zero corpus sites spell zero another way. HASH-CONTRACTS-PAIRING/-RETENTION/-CALL-POSITION carried.",
+   "source": "docs/reports/remaining-hash-clause/README.md, docs/reports/remaining-hash-refine/README.md"
   },
   {
    "id": "D02-BUCKETS-LABELS",
    "title": "Bucket labels are frozen T00 analysis; counts now derive",
-   "why": "HYGIENE-14 made the counts current by construction (derived set, sum-refusals in both derivations, a duplicate-triage-row bug repaired); labels remain T00's archive with blocker_current published beside them. Deriving current labels needs a bucket field in the CT lanes' own evidence records.",
+   "why": "HYGIENE-14 made the counts current by construction (derived set, sum-refusals in both derivations, a duplicate-triage-row bug repaired); labels remain T00's archive with blocker_current published beside them. Deriving current labels needs a bucket field in the CT lanes' own evidence records. CT-LABELS closed the derivation in wave 15: unmapped_reasons field applied forward, labels dual-published with label_source (5 of 18 measured, 13 t00-archive), five verbatim-cited migrations. Recorded: CT-LABELS-T00-REVERT (CT-CTWIN mutated the frozen archive in place — tally-neutral hygiene pending) and CT-LABELS-FLAKE (standalone_host wall-clock, informational).",
    "source": "docs/reports/remaining-hygiene-14/README.md"
   },
   {
@@ -5973,5 +5973,5 @@
    "source": "docs/reports/wave14-corpus/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 14 complete: the sanitized growth backend, production logging contracts (corpus 64, the C6 production blocker isolated to six named neighbours), the real literal-argument clause with the comment carrier loudly retired, derived bucket counts, the frame/list/destructor verification tasks and both file_close compositions (schemas 11.0.0); the corpus re-pins to docs/reports/wave14-corpus/ with one attributed diagnostics unit and the deliberately grown contract inventory; nothing promoted)"
+ "updated": "2026-09-10 (wave 15 complete: six callee contracts land the by-declaration closure of the production blocker (21 residuals in two named checker families remain), the derived-text sixth-capability move, two live enumeration defects repaired (#line scope manipulation; silent definition drops under Safe), the literal-premise boundaries decided, label provenance published, and the liveness quartet dispositioned; the corpus re-pins to docs/reports/wave15-corpus/ with three attributed units and zero status moves; schemas 12.0.0; nothing promoted)"
 }
