@@ -320,7 +320,7 @@ says nothing about `execve` semantics beyond "the path's content is what loads".
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | **49 Lean audits passed** (48 before; `AuditPackageIdentity.lean` is the new one) |
-| `cargo test --manifest-path providers/Cargo.toml --workspace --offline` | **0 failed** — every suite `ok`, run exit 0. The aggregate is **76** (the wave-9 baseline of 75 plus this card's one new measurement case); it is reconstructed from two tail-limited captures rather than one whole-run count, because a concurrent build on this host held the workspace lock when the exact-count re-run was queued. The pass/fail result is measured; the total is arithmetic |
+| `cargo test --manifest-path providers/Cargo.toml --workspace --offline` | **76 passed, 0 failed, 0 ignored** (21 suites) — the wave-9 baseline of 75 plus this card's one new measurement case |
 | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | clean |
 | `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --offline -- -D warnings` | clean |
 | `python3 -B providers/package.py build` + `verify` | all five build and verify (self-check included) |
