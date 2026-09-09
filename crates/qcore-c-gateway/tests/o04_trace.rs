@@ -46,6 +46,10 @@ use qcore_contract::contract_loader::{
     declared_variadic_data_tails, load_resource_contract_sources,
 };
 
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
 const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
 const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
@@ -74,10 +78,6 @@ fn excess_refusal(callee: &str) -> String {
 
 fn load(name: &str, source: &str) -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(name.to_owned(), source.to_owned())])).unwrap()
-}
-
-fn normalize_newlines(source: &str) -> String {
-    source.replace("\r\n", "\n")
 }
 
 fn path_contracts() -> String {

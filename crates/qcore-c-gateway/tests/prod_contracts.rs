@@ -55,6 +55,10 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
 /// **The three production contract modules this card lands.**
 const LOGGING: &str = include_str!("../../../contract/qcore/fluent_bit/logging.qcore");
 const CHUNK_NAME: &str = include_str!("../../../contract/qcore/fluent_bit/input_chunk_name.qcore");
@@ -82,6 +86,10 @@ const CONDITION: &str = "unmodeled call, aggregate or indirect access in branch 
 
 fn load(name: &str, source: &str) -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(name.to_owned(), source.to_owned())])).unwrap()
+}
+
+fn generic_contracts() -> String {
+    normalize_newlines(GENERIC)
 }
 
 fn clang_available() -> bool {
@@ -165,7 +173,7 @@ fn analyze_with(contracts: &str, body: &str, entry: &str) -> UnrestrictedLegacyR
 }
 
 fn analyze_generic(body: &str, entry: &str) -> UnrestrictedLegacyResult {
-    analyze_with(GENERIC, body, entry)
+    analyze_with(&generic_contracts(), body, entry)
 }
 
 fn summary_of(body: &str, entry: &str) -> LegacyFunctionSummary {
@@ -301,8 +309,9 @@ fn withdrawing_the_tail_restores_the_refusal() {
     if !clang_available() {
         return;
     }
-    let without = GENERIC.replace("    ensures normal resource_variadic_data_tail();\n", "");
-    assert_ne!(without, GENERIC, "the substitution must actually happen");
+    let generic = generic_contracts();
+    let without = generic.replace("    ensures normal resource_variadic_data_tail();\n", "");
+    assert_ne!(without, generic, "the substitution must actually happen");
 
     let nested = format!("void w_g5(const char *tag) {{ {OPENED} {EXPANDED} w_close(h); }}");
     let result = analyze_with(&without, &nested, "w_g5");
@@ -348,11 +357,12 @@ fn withdrawing_the_gate_restores_the_branch_condition_refusal() {
     if !clang_available() {
         return;
     }
-    let without = GENERIC.replace(
+    let generic = generic_contracts();
+    let without = generic.replace(
         "extern fn w_gate(level: i32) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(level);\n    ensures normal resource_return_none();\n};\n",
         "",
     );
-    assert_ne!(without, GENERIC, "the substitution must actually happen");
+    assert_ne!(without, generic, "the substitution must actually happen");
     let body = format!("void w_g6(const char *tag) {{ {OPENED} {EXPANDED} w_close(h); }}");
     let result = analyze_with(&without, &body, "w_g6");
     let summary = function(program(&result), "w_g6").clone();
@@ -372,11 +382,12 @@ fn the_accessor_result_mode_is_load_bearing() {
     if !clang_available() {
         return;
     }
-    let owning = GENERIC.replace(
+    let generic = generic_contracts();
+    let owning = generic.replace(
         "extern fn w_name(handle: ptr<mut, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(handle);\n    ensures normal resource_return_none();\n};",
         "extern fn w_name(handle: ptr<mut, u8>) -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(handle);\n    ensures normal resource_return_owned(nullable);\n};",
     );
-    assert_ne!(owning, GENERIC, "the substitution must actually happen");
+    assert_ne!(owning, generic, "the substitution must actually happen");
     let body = format!("void w_g7(const char *tag) {{ {OPENED} {EXPANDED} w_close(h); }}");
     assert!(
         matches!(
@@ -415,11 +426,12 @@ fn the_routes_mask_mode_is_load_bearing_in_both_directions() {
         borrowed.diagnostics
     );
 
-    let releasing = GENERIC.replace(
+    let generic = generic_contracts();
+    let releasing = generic.replace(
         "    ensures normal resource_borrowed(mask);",
         "    ensures normal resource_released(mask, nonnull);",
     );
-    assert_ne!(releasing, GENERIC, "the substitution must actually happen");
+    assert_ne!(releasing, generic, "the substitution must actually happen");
     let result = analyze_with(&releasing, body, "w_g8");
     assert!(
         matches!(result, UnrestrictedLegacyResult::Safe(_)),
@@ -443,7 +455,8 @@ fn a_certificate_resting_on_the_tail_is_rederived_from_its_own_sources() {
     };
     check_legacy_safety_certificate(&certificate).expect("the unmodified certificate rechecks");
 
-    let without = GENERIC.replace("    ensures normal resource_variadic_data_tail();\n", "");
+    let without =
+        generic_contracts().replace("    ensures normal resource_variadic_data_tail();\n", "");
     let withdrawn = load("prod_contracts_generic.qcore", &without);
     // The tail is not carried on a contract, so the loaded table is unchanged.
     for name in ["w_open", "w_close", "w_gate", "w_print", "w_name", "w_mask"] {

@@ -37,6 +37,10 @@ use qcore_c_gateway::legacy_c::{
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
+#[path = "support/text.rs"]
+mod text;
+use text::normalize_newlines;
+
 const PRELUDE: &str = include_str!("fixtures/o04/prelude.c");
 const STORAGE_INPUT: &str = include_str!("fixtures/o04/flb_storage_input.h.txt");
 const CALLER: &str = include_str!("fixtures/o04/flb_input_chunk_create.c.txt");
@@ -308,9 +312,9 @@ fn without_the_declared_premise_the_positive_size_call_is_admitted() {
     if !clang_available() {
         return;
     }
-    let unrestricted =
-        GENERIC_CONTRACTS.replace("    requires resource_literal_argument(size, 0);\n", "");
-    assert_ne!(unrestricted, GENERIC_CONTRACTS, "the substitution applied");
+    let generic = normalize_newlines(GENERIC_CONTRACTS);
+    let unrestricted = generic.replace("    requires resource_literal_argument(size, 0);\n", "");
+    assert_ne!(unrestricted, generic, "the substitution applied");
     let body =
         format!("void p_g7(void) {{ {OPENED} p_publish(t, v, 8); p_release(v); p_close(t); }}");
     assert!(
@@ -588,7 +592,7 @@ fn real_unit() -> String {
 /// declaration and its premise clause byte-for-byte; only that one module
 /// header, which the fixture already supplies, is dropped.
 fn publication_fragment() -> String {
-    let normalized = PUBLICATION.replace("\r\n", "\n");
+    let normalized = normalize_newlines(PUBLICATION);
     let body = normalized
         .strip_prefix("module contract;\n")
         .expect("the production module opens with its module header");
@@ -604,11 +608,10 @@ fn publication_fragment() -> String {
 }
 
 fn real_contracts() -> String {
-    format!(
-        "{}\n{ARMS_CALLEES}\n{B08_CALLEES}\n{OTHER_CALLEES}\n{}",
-        PATH_CONTRACTS.replace("\r\n", "\n"),
+    normalize_newlines(&format!(
+        "{PATH_CONTRACTS}\n{ARMS_CALLEES}\n{B08_CALLEES}\n{OTHER_CALLEES}\n{}",
         publication_fragment()
-    )
+    ))
 }
 
 fn analyze_real(source: &str) -> UnrestrictedLegacyResult {
@@ -720,7 +723,7 @@ fn the_other_four_premises_are_o04_b09b10s_verbatim() {
 /// The declaration text of `name`, from its `extern fn` line to its closing
 /// `};`, with line endings normalized.
 fn declaration_text(module: &str, name: &str) -> String {
-    let normalized = module.replace("\r\n", "\n");
+    let normalized = normalize_newlines(module);
     let start = normalized
         .find(&format!("extern fn {name}("))
         .unwrap_or_else(|| panic!("`{name}` not declared"));
@@ -759,10 +762,9 @@ fn print_the_measured_publication_ledger() {
     if !clang_available() {
         return;
     }
-    let without = format!(
-        "{}\n{ARMS_CALLEES}\n{B08_CALLEES}\n{OTHER_CALLEES}",
-        PATH_CONTRACTS.replace("\r\n", "\n")
-    );
+    let without = normalize_newlines(&format!(
+        "{PATH_CONTRACTS}\n{ARMS_CALLEES}\n{B08_CALLEES}\n{OTHER_CALLEES}"
+    ));
     for (label, contracts) in [("BEFORE", without), ("AFTER", real_contracts())] {
         let unit = real_unit();
         let result = analyze_unrestricted_c11(
