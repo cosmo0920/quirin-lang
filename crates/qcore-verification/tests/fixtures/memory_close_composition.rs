@@ -100,8 +100,18 @@ pub fn clang_available() -> bool {
 }
 
 /// The declared source pin, read from the same profile the other routes use.
+///
+/// The profile directory is located by walking up from this crate's manifest
+/// rather than by a fixed relative depth, because this module is also included
+/// by the compiler crate's parity tests, which sit at a different depth.
 pub fn revision() -> String {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let mut root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    while !root.join("contract/profiles/fluent-bit").is_dir() {
+        root = root
+            .parent()
+            .expect("the fluent-bit profile directory is above this crate")
+            .to_path_buf();
+    }
     load_profile_directory(&root.join("contract/profiles/fluent-bit"))
         .unwrap()
         .pin_for("chunkio")

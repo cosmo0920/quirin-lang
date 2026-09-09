@@ -312,7 +312,7 @@ fn the_transported_question_names_the_family_and_the_four_prerequisites() {
     assert_eq!(input.family.nesting_depth(), 1);
     assert!(input.family.native().is_none());
     assert!(input.family.native_profile().is_none());
-    assert!(input.family.nested().is_none());
+    assert!(input.family.nested().is_empty());
     assert!(input.family.derivation().is_some());
 }
 

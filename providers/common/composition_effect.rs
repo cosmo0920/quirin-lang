@@ -35,7 +35,8 @@ use qcore_schemas::composition_summary::{
     CalleeIdentityRecord, CompositionFamilyInput, CompositionProposalRecord, CompositionRecord,
     CompositionSourceInput, CompositionWitness, DeletingCloseCaseRecord, DeletionOutcomeRecord,
     DerivedUnitRecord, FILE_CLOSE_DELETE_SEMANTIC_PROFILE, FILE_CLOSE_SEMANTIC_PROFILE,
-    FileCloseCaseRecord, FileCloseCompositionRecord, FileCloseDeleteInput,
+    FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE, FileCloseCaseRecord, FileCloseCompositionRecord,
+    FileCloseDeleteInput, FilesystemChunkCloseCaseRecord, FilesystemChunkCloseCompositionRecord,
     MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryCloseCalleeRecord, MemoryCloseCaseRecord,
     MemoryCloseCompositionRecord, ResidualCustodyRecord, UNMAP_WRAPPER_SEMANTIC_PROFILE,
     UnmapCaseRecord,
@@ -1100,6 +1101,11 @@ enum MemoryValue {
 struct MemoryReplay<'a> {
     nonnull: bool,
     memory_kind: i32,
+    /// Whether this replay is walking the **filesystem** arm of the same
+    /// wrapper (card `P04-COMPOSE-FS`). On the memory family it is always
+    /// false, and every branch it guards is unreachable there.
+    filesystem: bool,
+    delete: bool,
     freed: bool,
     backend: bool,
     primary: bool,
@@ -1129,6 +1135,11 @@ impl MemoryReplay<'_> {
             } else {
                 MemoryValue::Null
             }),
+            // The delete flag is only ever read on the filesystem arm; the
+            // memory family's entry states do not resolve it at all.
+            CleanupReplayExpressionRecord::Parameter { index: 1 } if self.filesystem => {
+                Some(MemoryValue::Integer(i32::from(self.delete)))
+            }
             CleanupReplayExpressionRecord::Symbol { operation } => {
                 self.symbols.get(operation).cloned()
             }
@@ -1244,9 +1255,25 @@ impl MemoryReplay<'_> {
                     {
                     } else if !self.freed
                         && !self.backend
-                        && *function == self.callees.backend.function
-                        && *signature == self.callees.backend.signature
-                        && resolved == [MemoryValue::Chunk]
+                        && if self.filesystem {
+                            // The filesystem dispatch frame is not supplied by
+                            // any prerequisite of the memory family: it is the
+                            // backend composition's own wrapper, and this arm
+                            // resolves it by its declared prototype only.
+                            function == FILESYSTEM_DISPATCH_CALLEE.0
+                                && signature == FILESYSTEM_DISPATCH_CALLEE.1
+                                && result_type == "void"
+                                && resolved
+                                    == [
+                                        MemoryValue::Chunk,
+                                        MemoryValue::Integer(i32::from(self.delete)),
+                                    ]
+                                && self.calls == 2
+                        } else {
+                            *function == self.callees.backend.function
+                                && *signature == self.callees.backend.signature
+                                && resolved == [MemoryValue::Chunk]
+                        }
                     {
                         self.backend = true;
                     } else if named(&self.callees.unlink) && !self.freed && self.backend {
@@ -1308,6 +1335,13 @@ impl MemoryReplay<'_> {
 /// own composition regardless.
 const MEMORY_CLOSE_RELEASE_CALLEE: (&str, &str) = ("free", "void (void *)");
 
+/// The filesystem dispatch frame the filesystem arm resolves. It is the backend
+/// composition's own wrapper, matched on name and declared prototype; nothing
+/// about its *reading* is transported, and the receiver re-establishes that
+/// whole composition itself.
+const FILESYSTEM_DISPATCH_CALLEE: (&str, &str) =
+    ("cio_file_close", "void (struct cio_chunk *, int)");
+
 /// Read the backend discriminant out of the transported probe body. The value
 /// is never handed to this process; only the body is.
 fn memory_kind(probe: &CleanupReplayFunctionRecord) -> Option<i32> {
@@ -1365,6 +1399,8 @@ fn compose_memory_close(
             let mut replay = MemoryReplay {
                 nonnull,
                 memory_kind,
+                filesystem: false,
+                delete: false,
                 freed: false,
                 backend: false,
                 primary: false,
@@ -1415,6 +1451,230 @@ fn compose_memory_close(
     })
 }
 
+// ---------------------------------------------------------------------------
+// The filesystem family: two composition prerequisites over two derived units.
+// ---------------------------------------------------------------------------
+
+/// Read the filesystem discriminant out of the transported probe body. The
+/// value is never handed to this process; only the body is.
+fn filesystem_kind(probe: &CleanupReplayFunctionRecord) -> Option<i32> {
+    memory_kind(probe)
+}
+
+/// The single wrapper path one filesystem entry state selects, recomputed by
+/// replaying the *nested memory question's* wrapper on the filesystem arm.
+///
+/// This mirrors the trusted composition's own `filesystem_path`: the entry must
+/// select exactly one complete path, and on the nonnull entry that path must
+/// have performed every one of the six releases and resolved exactly seven
+/// calls. Anything else is a decline.
+fn filesystem_path(
+    wrapper: &CleanupReplayFunctionRecord,
+    callees: &MemoryCloseCalleeRecord,
+    kind: i32,
+    nonnull: bool,
+    delete: bool,
+) -> Option<u32> {
+    let mut selected: Vec<u32> = Vec::new();
+    for (index, path) in wrapper.paths.iter().enumerate() {
+        let index = u32::try_from(index).ok()?;
+        let mut replay = MemoryReplay {
+            nonnull,
+            memory_kind: kind,
+            filesystem: true,
+            delete,
+            freed: false,
+            backend: false,
+            primary: false,
+            state_link: false,
+            name: false,
+            counter: false,
+            calls: 0,
+            symbols: BTreeMap::new(),
+            callees,
+        };
+        if replay.run(&path.operations)? {
+            if [
+                replay.freed,
+                replay.backend,
+                replay.primary,
+                replay.state_link,
+                replay.name,
+                replay.counter,
+            ]
+            .iter()
+            .any(|value| *value != nonnull)
+                || replay.calls != if nonnull { 7 } else { 0 }
+            {
+                return None;
+            }
+            selected.push(index);
+        }
+    }
+    let [index] = selected.as_slice() else {
+        return None;
+    };
+    Some(*index)
+}
+
+/// Recompute the whole three-level filesystem reading from the transported
+/// question.
+///
+/// Both prerequisite readings are recomputed here by running this same
+/// process's memory-close and `file_close` compositions over the two
+/// transported nested questions — not read out of anything, because the
+/// vocabulary cannot carry either.
+fn compose_filesystem_chunk_close(
+    memory: &CompositionFamilyInput,
+    backend: &CompositionFamilyInput,
+    probe: &CleanupReplayFunctionRecord,
+    derivation: &DerivedUnitRecord,
+) -> Option<FilesystemChunkCloseCompositionRecord> {
+    if !bounded(probe) {
+        return None;
+    }
+    // This family's own derivation travels as a claim. This process cannot check
+    // it against any text — it has none — so it checks only that the claim is
+    // well formed and names the body it was handed. The receiver compares it
+    // against its own derivation, which is where the authority is.
+    if !derivation.is_complete()
+        || !derivation.is_a_derivation()
+        || derivation.recipe_function != probe.function
+    {
+        return None;
+    }
+    let CompositionFamilyInput::MemoryClose {
+        wrapper,
+        probe: memory_probe,
+        derivation: memory_derivation,
+        callees,
+    } = memory
+    else {
+        return None;
+    };
+    // Two derivations over one base under two different recipes, checked here
+    // for well-formedness and by the receiver against its own two derivations.
+    if memory_derivation.base_source_digest != derivation.base_source_digest
+        || memory_derivation.recipe == derivation.recipe
+        || memory_derivation.recipe_function == derivation.recipe_function
+        || memory_derivation.derived_source_digest == derivation.derived_source_digest
+    {
+        return None;
+    }
+    // Level two, recomputed rather than received.
+    let memory_reading = compose_memory_close(wrapper, memory_probe, memory_derivation, callees)?;
+    let CompositionFamilyInput::FileClose {
+        wrapper: backend_wrapper,
+        unmap,
+        close,
+        close_profile,
+        delete: Some(delete),
+    } = backend
+    else {
+        return None;
+    };
+    // Levels two and three of the backend half, also recomputed.
+    let backend_reading =
+        compose_file_close(backend_wrapper, unmap, close, close_profile, Some(delete))?;
+    let deleting = backend_reading.deleting_cases.as_ref()?;
+    if backend_reading.source_revision != memory_reading.source_revision
+        || backend_reading.signature != memory_reading.signature
+    {
+        return None;
+    }
+    let kind = filesystem_kind(probe)?;
+    if kind == memory_reading.memory_kind {
+        return None;
+    }
+    let mut cases = Vec::new();
+    let mut covered = BTreeSet::new();
+    for delete_flag in [false, true] {
+        let count = if delete_flag {
+            deleting.len()
+        } else {
+            backend_reading.cases.len()
+        };
+        for entry in std::iter::once(None).chain((0..count).map(Some)) {
+            let nonnull = entry.is_some();
+            let source_path = filesystem_path(wrapper, callees, kind, nonnull, delete_flag)?;
+            let (mapping, descriptor, deletion, backend_released, path_released, up) = match entry {
+                None => (
+                    ResidualCustodyRecord::Absent,
+                    ResidualCustodyRecord::Absent,
+                    None,
+                    false,
+                    false,
+                    0,
+                ),
+                Some(index) if delete_flag => {
+                    let case = deleting.get(index)?;
+                    (
+                        case.mapping,
+                        case.descriptor,
+                        Some(case.deletion),
+                        case.backend_released,
+                        case.path_released,
+                        case.up_counter_decrements,
+                    )
+                }
+                Some(index) => {
+                    let case = backend_reading.cases.get(index)?;
+                    (
+                        case.mapping,
+                        case.descriptor,
+                        None,
+                        case.backend_released,
+                        case.path_released,
+                        case.up_counter_decrements,
+                    )
+                }
+            };
+            covered.insert(source_path);
+            cases.push(FilesystemChunkCloseCaseRecord {
+                source_path,
+                chunk_present: nonnull,
+                delete: delete_flag,
+                backend_case: match entry {
+                    None => None,
+                    Some(index) => Some(u32::try_from(index).ok()?),
+                },
+                backend_released,
+                path_released,
+                mapping,
+                descriptor,
+                deletion,
+                primary_unlinked: nonnull,
+                state_unlinked: nonnull,
+                name_released: nonnull,
+                chunk_released: nonnull,
+                total_counter_decrements: u32::from(nonnull),
+                up_counter_decrements: up,
+            });
+        }
+    }
+    let paths = u32::try_from(wrapper.paths.len()).ok()?;
+    let uncovered: Vec<u32> = (0..paths)
+        .filter(|index| !covered.contains(index))
+        .collect();
+    let combined = uncovered
+        .iter()
+        .filter(|index| !memory_reading.checked_paths.contains(index))
+        .copied()
+        .collect();
+    Some(FilesystemChunkCloseCompositionRecord {
+        function: memory_reading.function.clone(),
+        source_revision: memory_reading.source_revision.clone(),
+        signature: memory_reading.signature.clone(),
+        filesystem_kind: kind,
+        memory_kind: memory_reading.memory_kind,
+        cases,
+        checked_paths: covered.into_iter().collect(),
+        uncovered_paths: uncovered,
+        combined_uncovered_paths: combined,
+        profile_assumptions: memory_reading.profile_assumptions.clone(),
+    })
+}
+
 fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> {
     if !source.version_matches()
         || !source.prerequisites.is_complete()
@@ -1445,6 +1705,13 @@ fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> 
             callees,
         } => compose_memory_close(wrapper, probe, derivation, callees)
             .map(CompositionProposalRecord::MemoryClose),
+        CompositionFamilyInput::FilesystemChunkClose {
+            memory,
+            backend,
+            probe,
+            derivation,
+        } => compose_filesystem_chunk_close(memory, backend, probe, derivation)
+            .map(CompositionProposalRecord::FilesystemChunkClose),
     }
 }
 
@@ -1459,6 +1726,7 @@ pub fn propose(
                 | FILE_CLOSE_SEMANTIC_PROFILE
                 | FILE_CLOSE_DELETE_SEMANTIC_PROFILE
                 | MEMORY_CLOSE_SEMANTIC_PROFILE
+                | FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
         )
         || !matches!(
             request.target.dialect.as_str(),

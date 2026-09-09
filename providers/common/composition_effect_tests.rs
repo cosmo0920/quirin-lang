@@ -35,7 +35,9 @@ fn parts() -> (
             native,
             native_profile,
         } => (wrapper, native, native_profile),
-        CompositionFamilyInput::FileClose { .. } | CompositionFamilyInput::MemoryClose { .. } => {
+        CompositionFamilyInput::FileClose { .. }
+        | CompositionFamilyInput::MemoryClose { .. }
+        | CompositionFamilyInput::FilesystemChunkClose { .. } => {
             panic!("the leaf fixture must carry the leaf family")
         }
     }
@@ -347,7 +349,8 @@ fn file_close_parts(deleting: bool) -> FileCloseParts {
             delete,
         } => (wrapper, *unmap, close, close_profile, delete.map(|d| *d)),
         CompositionFamilyInput::UnmapWrapper { .. }
-        | CompositionFamilyInput::MemoryClose { .. } => {
+        | CompositionFamilyInput::MemoryClose { .. }
+        | CompositionFamilyInput::FilesystemChunkClose { .. } => {
             panic!("the file_close fixture must carry the file_close family")
         }
     }
@@ -1141,4 +1144,493 @@ fn the_memory_close_request_gate_is_exact() {
             "the `{label}` request was answered"
         );
     }
+}
+
+// ---------------------------------------------------------------------------
+// The filesystem family (card `P04-COMPOSE-FS`).
+// ---------------------------------------------------------------------------
+
+/// The **real** projection the gateway emits for these bodies. A conformance
+/// test asserts the committed fixture is still the live one, so this matrix
+/// cannot drift onto a stale question.
+const FS_CLOSE_PROJECTION: &str =
+    include_str!("fixtures/filesystem_chunk_close_composition_projection.json");
+
+fn fs_close_projection() -> CompositionSourceInput {
+    serde_json::from_str(FS_CLOSE_PROJECTION).unwrap()
+}
+
+fn fs_close_parts() -> (
+    CompositionFamilyInput,
+    CompositionFamilyInput,
+    CleanupReplayFunctionRecord,
+    DerivedUnitRecord,
+) {
+    match fs_close_projection().family {
+        CompositionFamilyInput::FilesystemChunkClose {
+            memory,
+            backend,
+            probe,
+            derivation,
+        } => (*memory, *backend, probe, derivation),
+        other => panic!("the filesystem fixture must carry the filesystem family: {other:?}"),
+    }
+}
+
+fn fs_close_reading() -> Option<FilesystemChunkCloseCompositionRecord> {
+    let (memory, backend, probe, derivation) = fs_close_parts();
+    compose_filesystem_chunk_close(&memory, &backend, &probe, &derivation)
+}
+
+#[test]
+fn the_producer_recomputes_the_whole_three_level_filesystem_reading() {
+    let reading = fs_close_reading().expect("the honest question composes");
+    assert_eq!(reading.function, "cio_chunk_close");
+    assert_eq!(
+        reading.filesystem_kind, 0,
+        "read out of this family's own probe body, not received"
+    );
+    assert_eq!(
+        reading.memory_kind, 1,
+        "read out of the *nested* question's probe body, not received"
+    );
+    assert_ne!(reading.filesystem_kind, reading.memory_kind);
+    assert_eq!(reading.cases.len(), 75);
+    assert_eq!(reading.checked_paths.len(), 2);
+    assert_eq!(reading.uncovered_paths.len(), 2);
+    assert_eq!(reading.combined_uncovered_paths.len(), 1);
+
+    // The two null entries resolve no frame and carry no backend case at all.
+    let nulls: Vec<_> = reading
+        .cases
+        .iter()
+        .filter(|case| !case.chunk_present)
+        .collect();
+    assert_eq!(nulls.len(), 2, "one null entry per delete flag");
+    for null in &nulls {
+        assert!(null.backend_case.is_none());
+        assert!(!null.chunk_released && !null.backend_released && !null.path_released);
+        assert_eq!(null.total_counter_decrements, 0);
+        assert_eq!(null.up_counter_decrements, 0);
+        assert_eq!(null.mapping, ResidualCustodyRecord::Absent);
+        assert_eq!(null.descriptor, ResidualCustodyRecord::Absent);
+        assert!(null.deletion.is_none());
+    }
+    // Every present entry names a backend case and releases the chunk.
+    let present: Vec<_> = reading
+        .cases
+        .iter()
+        .filter(|case| case.chunk_present)
+        .collect();
+    assert_eq!(present.len(), 73);
+    for case in &present {
+        assert!(case.backend_case.is_some());
+        assert!(case.chunk_released && case.primary_unlinked && case.state_unlinked);
+        assert_eq!(case.total_counter_decrements, 1);
+        assert_eq!(case.deletion.is_some(), case.delete);
+    }
+    // The two entry states select different wrapper paths, so the reading is
+    // not constant, and no uncovered path is also a checked one.
+    assert_ne!(nulls[0].source_path, present[0].source_path);
+    assert!(
+        !reading
+            .uncovered_paths
+            .iter()
+            .any(|path| reading.checked_paths.contains(path))
+    );
+    // The composed figures really come from the backend composition: at least
+    // one entry carries unresolved OS custody and at least one does not.
+    assert!(
+        present
+            .iter()
+            .any(|case| case.mapping == ResidualCustodyRecord::Unresolved)
+    );
+    assert!(
+        present
+            .iter()
+            .any(|case| case.mapping == ResidualCustodyRecord::Absent)
+    );
+}
+
+/// The producer reads *both* discriminants out of *two different* probe bodies.
+/// A changed probe changes the reading rather than being ignored, which is what
+/// makes each probe a question and not an answer.
+#[test]
+fn a_changed_filesystem_probe_changes_the_reading_rather_than_being_ignored() {
+    let (memory, backend, probe, derivation) = fs_close_parts();
+    let honest = compose_filesystem_chunk_close(&memory, &backend, &probe, &derivation).unwrap();
+    let mut changed_probe = probe.clone();
+    changed_probe.paths[0].operations = vec![CleanupReplayOperationRecord::ReturnValue {
+        value: CleanupReplayValueRecord {
+            c_type: "int".into(),
+            expression: CleanupReplayExpressionRecord::Integer {
+                value: "1".to_owned(),
+            },
+        },
+    }];
+    // A filesystem discriminant equal to the memory one is refused outright:
+    // the two arms would collapse.
+    assert!(
+        compose_filesystem_chunk_close(&memory, &backend, &changed_probe, &derivation).is_none(),
+        "a colliding discriminant is a decline"
+    );
+    // A third value selects no complete filesystem path: also a decline.
+    changed_probe.paths[0].operations = vec![CleanupReplayOperationRecord::ReturnValue {
+        value: CleanupReplayValueRecord {
+            c_type: "int".into(),
+            expression: CleanupReplayExpressionRecord::Integer {
+                value: "7".to_owned(),
+            },
+        },
+    }];
+    let third = compose_filesystem_chunk_close(&memory, &backend, &changed_probe, &derivation);
+    assert!(
+        third.is_none() || third.as_ref() != Some(&honest),
+        "the probe body really decides the reading"
+    );
+}
+
+/// Degenerate and hostile filesystem questions decline without panicking. Every
+/// row is a *decline*: the process returns no proposal, the host sees no
+/// witness, and the obligation stays Unknown.
+#[test]
+fn degenerate_filesystem_questions_decline() {
+    let (memory, backend, probe, derivation) = fs_close_parts();
+    type FsRow = (
+        &'static str,
+        Box<dyn Fn() -> Option<FilesystemChunkCloseCompositionRecord>>,
+    );
+    let compose = |memory: CompositionFamilyInput,
+                   backend: CompositionFamilyInput,
+                   probe: CleanupReplayFunctionRecord,
+                   derivation: DerivedUnitRecord|
+     -> Box<dyn Fn() -> Option<FilesystemChunkCloseCompositionRecord>> {
+        Box::new(move || compose_filesystem_chunk_close(&memory, &backend, &probe, &derivation))
+    };
+    let mut rows: Vec<FsRow> = Vec::new();
+
+    rows.push(("the probe emptied", {
+        let mut body = probe.clone();
+        body.paths.clear();
+        compose(memory.clone(), backend.clone(), body, derivation.clone())
+    }));
+    rows.push(("the probe wrongly signed", {
+        let mut body = probe.clone();
+        body.signature = "void (void)".into();
+        compose(memory.clone(), backend.clone(), body, derivation.clone())
+    }));
+    rows.push(("an oversized probe", {
+        let mut body = probe.clone();
+        body.paths = (0..(MAX_PATHS + 1))
+            .map(|_| body.paths[0].clone())
+            .collect();
+        compose(memory.clone(), backend.clone(), body, derivation.clone())
+    }));
+    rows.push(("a derivation that derives nothing", {
+        let mut record = derivation.clone();
+        record.derived_source_digest = record.base_source_digest.clone();
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("an incomplete derivation", {
+        let mut record = derivation.clone();
+        record.recipe = String::new();
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("a derivation naming another function", {
+        let mut record = derivation.clone();
+        record.recipe_function = "qcore_cio_memory_store_value".into();
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("the two derivations sharing a recipe", {
+        let mut record = derivation.clone();
+        record.recipe = memory
+            .derivation()
+            .expect("the nested question derives")
+            .recipe
+            .clone();
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("the two derivations over different base texts", {
+        let mut record = derivation.clone();
+        record.base_source_digest = "f".repeat(64);
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("the two derivations deriving one text", {
+        let mut record = derivation.clone();
+        record.derived_source_digest = memory
+            .derivation()
+            .expect("the nested question derives")
+            .derived_source_digest
+            .clone();
+        compose(memory.clone(), backend.clone(), probe.clone(), record)
+    }));
+    rows.push(("the memory slot holding another family", {
+        compose(
+            backend.clone(),
+            backend.clone(),
+            probe.clone(),
+            derivation.clone(),
+        )
+    }));
+    rows.push(("the backend slot holding another family", {
+        compose(
+            memory.clone(),
+            memory.clone(),
+            probe.clone(),
+            derivation.clone(),
+        )
+    }));
+    rows.push(("the backend slot holding the non-deleting arm", {
+        let mut stripped = backend.clone();
+        if let CompositionFamilyInput::FileClose { delete, .. } = &mut stripped {
+            *delete = None;
+        }
+        compose(memory.clone(), stripped, probe.clone(), derivation.clone())
+    }));
+    rows.push(("a memory wrapper with no complete path", {
+        let mut broken = memory.clone();
+        if let CompositionFamilyInput::MemoryClose { wrapper, .. } = &mut broken {
+            wrapper.paths.clear();
+        }
+        compose(broken, backend.clone(), probe.clone(), derivation.clone())
+    }));
+    rows.push((
+        "duplicated memory wrapper paths, so an entry selects two",
+        {
+            let mut duplicated = memory.clone();
+            if let CompositionFamilyInput::MemoryClose { wrapper, .. } = &mut duplicated {
+                wrapper.paths.extend(wrapper.paths.clone());
+            }
+            compose(
+                duplicated,
+                backend.clone(),
+                probe.clone(),
+                derivation.clone(),
+            )
+        },
+    ));
+    rows.push(("a memory question whose callees collapse", {
+        let mut collapsed = memory.clone();
+        if let CompositionFamilyInput::MemoryClose { callees, .. } = &mut collapsed {
+            callees.unlink = callees.counter.clone();
+        }
+        compose(
+            collapsed,
+            backend.clone(),
+            probe.clone(),
+            derivation.clone(),
+        )
+    }));
+    rows.push(("a backend wrapper with no complete path", {
+        let mut broken = backend.clone();
+        if let CompositionFamilyInput::FileClose { wrapper, .. } = &mut broken {
+            wrapper.paths.clear();
+        }
+        compose(memory.clone(), broken, probe.clone(), derivation.clone())
+    }));
+    rows.push(("a backend delete body emptied", {
+        let mut broken = backend.clone();
+        if let CompositionFamilyInput::FileClose {
+            delete: Some(delete),
+            ..
+        } = &mut broken
+        {
+            delete.body.paths.clear();
+        }
+        compose(memory.clone(), broken, probe.clone(), derivation.clone())
+    }));
+    rows.push(("a backend revision disagreement", {
+        let mut broken = backend.clone();
+        if let CompositionFamilyInput::FileClose { wrapper, .. } = &mut broken {
+            wrapper.source_revision = "0".repeat(40);
+        }
+        compose(memory.clone(), broken, probe.clone(), derivation.clone())
+    }));
+
+    assert_eq!(rows.len(), 18, "eighteen degenerate filesystem rows");
+    for (label, row) in rows {
+        assert!(row().is_none(), "the `{label}` row was answered");
+    }
+}
+
+/// The request gate: the filesystem question is answered only under its own
+/// semantic profile, and never as another family's.
+#[test]
+fn the_filesystem_request_gate_is_exact() {
+    let manifest: PluginManifest = serde_json::from_str(include_str!(
+        "../qcore-provider-chunkio/provider-template.json"
+    ))
+    .unwrap();
+    let base = |profile: &str,
+                capability: VerifierCapability,
+                dialect: &str,
+                source: Option<CompositionSourceInput>| VerificationRequestV2 {
+        protocol_version: 1,
+        evidence_version: 2,
+        request_id: "composition".into(),
+        plugin_id: manifest.plugin_id.clone(),
+        capability,
+        target: TargetProfile {
+            library: "chunkio".into(),
+            revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
+            profile: profile.into(),
+            dialect: dialect.into(),
+            platform: std::env::consts::OS.into(),
+            backend: "native".into(),
+        },
+        unit: UnitIdentity {
+            translation_unit: "cio_chunk.c".into(),
+            source_digest: "0".repeat(64),
+            build_digest: "0".repeat(64),
+        },
+        facts: Vec::new(),
+        assumptions: Default::default(),
+        task_digest: "0".repeat(64),
+        obligations: Vec::new(),
+        source_effect: None,
+        counter_effect: None,
+        reactor_program: None,
+        teardown_source: None,
+        call_use_source: None,
+        cleanup_replay_source: None,
+        composition_source: source,
+    };
+    let mut rows = vec![
+        (
+            "another profile",
+            base(
+                MEMORY_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(fs_close_projection()),
+            ),
+        ),
+        (
+            "another family's question under this profile",
+            base(
+                FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(memory_close_projection()),
+            ),
+        ),
+        (
+            "no projection at all",
+            base(
+                FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                None,
+            ),
+        ),
+        (
+            "another capability",
+            base(
+                FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ObservationHooks,
+                "c11",
+                Some(fs_close_projection()),
+            ),
+        ),
+        (
+            "an unadmitted dialect",
+            base(
+                FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c99",
+                Some(fs_close_projection()),
+            ),
+        ),
+    ];
+    let mutated = |label: &'static str, change: fn(&mut CompositionSourceInput)| {
+        let mut projection = fs_close_projection();
+        change(&mut projection);
+        (
+            label,
+            base(
+                FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+                VerifierCapability::ResourceContracts,
+                "c11",
+                Some(projection),
+            ),
+        )
+    };
+    rows.push(mutated("an unsupported version", |p| p.schema_version = 1));
+    rows.push(mutated("an incomplete identity", |p| {
+        if let CompositionPrerequisiteSet::FilesystemChunkClose(set) = &mut p.prerequisites {
+            set.memory_close.task_digest = String::new();
+        }
+    }));
+    rows.push(mutated("a repeated identity", |p| {
+        if let CompositionPrerequisiteSet::FilesystemChunkClose(set) = &mut p.prerequisites {
+            set.file_close_delete = set.memory_close.clone();
+        }
+    }));
+    rows.push(mutated("another family's prerequisite set", |p| {
+        p.prerequisites = CompositionPrerequisiteSet::FileClose(FileClosePrerequisites {
+            wrapper_call_use: identity('a'),
+            unmap_composition: identity('b'),
+            native_cleanup: identity('c'),
+            native_delete: Some(identity('d')),
+        });
+    }));
+    assert_eq!(rows.len(), 9, "nine filesystem request-gate rows");
+    for (label, request) in rows {
+        assert!(
+            propose(&request, &manifest).is_none(),
+            "the `{label}` request was answered"
+        );
+    }
+}
+
+/// The honest filesystem question is answered, and the proposal is exactly the
+/// reading the producer recomputed — never anything it was handed.
+#[test]
+fn the_honest_filesystem_question_is_answered_with_the_recomputed_reading() {
+    let manifest: PluginManifest = serde_json::from_str(include_str!(
+        "../qcore-provider-chunkio/provider-template.json"
+    ))
+    .unwrap();
+    let projection = fs_close_projection();
+    let request = VerificationRequestV2 {
+        protocol_version: 1,
+        evidence_version: 2,
+        request_id: "composition".into(),
+        plugin_id: manifest.plugin_id.clone(),
+        capability: VerifierCapability::ResourceContracts,
+        target: TargetProfile {
+            library: "chunkio".into(),
+            revision: "66910c10a4d7eafa810b84229cf2dcf7b0f26f97".into(),
+            profile: FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE.into(),
+            dialect: "c11".into(),
+            platform: std::env::consts::OS.into(),
+            backend: "native".into(),
+        },
+        unit: UnitIdentity {
+            translation_unit: "cio_chunk.c".into(),
+            source_digest: "0".repeat(64),
+            build_digest: "0".repeat(64),
+        },
+        facts: Vec::new(),
+        assumptions: Default::default(),
+        task_digest: "9".repeat(64),
+        obligations: Vec::new(),
+        source_effect: None,
+        counter_effect: None,
+        reactor_program: None,
+        teardown_source: None,
+        call_use_source: None,
+        cleanup_replay_source: None,
+        composition_source: Some(projection),
+    };
+    let response = propose(&request, &manifest).expect("the honest question is answered");
+    let evidence = response.evidence.expect("a proposal carries evidence");
+    let SemanticWitness::Composition(witness) = evidence.witness else {
+        panic!("a composition witness");
+    };
+    assert_eq!(witness.task_digest, request.task_digest);
+    let CompositionProposalRecord::FilesystemChunkClose(record) = witness.summary else {
+        panic!("a filesystem-family proposal");
+    };
+    assert_eq!(Some(record), fs_close_reading());
 }

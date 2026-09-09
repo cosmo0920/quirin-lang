@@ -317,11 +317,11 @@ fn a_projection_round_trips_and_carries_no_derived_reading() {
 #[test]
 fn the_nesting_depth_is_measured_from_the_question() {
     assert_eq!(input().family.nesting_depth(), 1);
-    assert!(input().family.nested().is_none());
+    assert!(input().family.nested().is_empty());
     for input in [file_close_input(), file_close_delete_input()] {
         assert_eq!(input.family.nesting_depth(), 2);
         // And the nested question is exactly the leaf family's own projection.
-        assert_eq!(input.family.nested().unwrap(), &self::input().family);
+        assert_eq!(input.family.nested(), vec![&self::input().family]);
     }
 }
 
@@ -699,20 +699,22 @@ fn composition_vocabulary_is_pinned() {
         file_close_projection(),
         file_close_delete_projection(),
         memory_close_projection(),
+        filesystem_close_projection(),
     ]
     .iter()
     .map(|value| value["family"]["family"].as_str().unwrap().to_owned())
     .collect();
     families.sort();
     families.dedup();
-    // Deliberate pin update (card `P04-COMPOSE-MEMCLOSE`): a third family tag.
-    // The **load-bearing negative halves above are untouched** — the operation
-    // and expression inventories did not move, so this card widened no shared
-    // enum.
+    // Deliberate pin update (card `P04-COMPOSE-FS`): a fourth family tag, after
+    // `P04-COMPOSE-MEMCLOSE`'s third. The **load-bearing negative halves above
+    // are untouched** — the operation and expression inventories did not move,
+    // so this card widened no shared enum either.
     assert_eq!(
         families,
         vec![
             "file_close".to_string(),
+            "filesystem_chunk_close".into(),
             "memory_close".into(),
             "unmap_wrapper".into()
         ]
@@ -848,7 +850,7 @@ fn the_memory_close_question_round_trips_and_carries_no_derived_reading() {
         MEMORY_CLOSE_SEMANTIC_PROFILE
     );
     assert_eq!(input.family.nesting_depth(), 1);
-    assert!(input.family.nested().is_none());
+    assert!(input.family.nested().is_empty());
     assert!(input.family.native().is_none());
     assert!(input.family.native_profile().is_none());
     let derivation = input.family.derivation().expect("the derived family");
@@ -996,4 +998,199 @@ fn the_memory_close_prerequisite_rules_are_decidable() {
         count,
         "every prerequisite digest key is distinct"
     );
+}
+
+// ---------------------------------------------------------------------------
+// The filesystem family (card `P04-COMPOSE-FS`).
+// ---------------------------------------------------------------------------
+
+fn filesystem_close_derivation() -> serde_json::Value {
+    json!({
+        "recipe": "\nint qcore_cio_filesystem_store_value(void) { return CIO_STORE_FS; }\n",
+        "recipe_function": "qcore_cio_filesystem_store_value",
+        "base_source_digest": "3".repeat(64),
+        "derived_source_digest": "7".repeat(64),
+        "base_input_class": "declared_file",
+        "derived_input_class": "anonymous_text"
+    })
+}
+
+fn filesystem_close_projection() -> serde_json::Value {
+    json!({
+        "schema_version": 2,
+        "prerequisites": {
+            "filesystem_chunk_close": {
+                "memory_close": identity("qcore.c_memory_close_composition.v1", '5', "rc:1005"),
+                "file_close_delete":
+                    identity("qcore.c_file_close_delete_composition.v1", '6', "rc:1006")
+            }
+        },
+        "family": {
+            "family": "filesystem_chunk_close",
+            "memory": memory_close_projection()["family"].clone(),
+            "backend": file_close_delete_projection()["family"].clone(),
+            "probe": body("fs_probe", "int (void)"),
+            "derivation": filesystem_close_derivation()
+        }
+    })
+}
+
+fn filesystem_close_input() -> CompositionSourceInput {
+    serde_json::from_value(filesystem_close_projection()).unwrap()
+}
+
+/// The filesystem question round-trips and carries **no** derived reading, at
+/// any of its three levels.
+#[test]
+fn the_filesystem_question_round_trips_and_carries_no_derived_reading() {
+    let input = filesystem_close_input();
+    assert!(input.version_matches());
+    // Its subject is the nested memory question's wrapper: this family carries
+    // no body of its own but the probe.
+    assert_eq!(input.subject_function(), "cio_chunk_close");
+    assert_eq!(
+        input.family.semantic_profile(),
+        qcore_schemas::composition_summary::FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
+    );
+    assert_eq!(input.family.nesting_depth(), 3);
+    assert_eq!(input.family.nested().len(), 2);
+    assert!(input.family.native().is_none());
+    assert!(input.family.native_profile().is_none());
+    assert_eq!(input.family.wrapper(), input.family.nested()[0].wrapper());
+    let derivation = input.family.derivation().expect("the derived family");
+    assert!(derivation.is_complete() && derivation.is_a_derivation());
+    // **Two** derivations, and this family's own is not the nested one's.
+    let nested = input.family.nested()[0]
+        .derivation()
+        .expect("the nested question derives too");
+    assert_ne!(derivation.recipe, nested.recipe);
+    assert_ne!(derivation.recipe_function, nested.recipe_function);
+    assert_ne!(
+        derivation.derived_source_digest,
+        nested.derived_source_digest
+    );
+    assert_eq!(derivation.base_source_digest, nested.base_source_digest);
+    let bytes = serde_json::to_string(&input).unwrap();
+    for absent in [
+        "filesystem_kind",
+        "memory_kind",
+        "cases",
+        "checked_paths",
+        "uncovered_paths",
+        "combined_uncovered_paths",
+        "backend_case",
+        "unmap_case",
+        "close_case",
+        "delete_case",
+        "chunk_released",
+        "backend_discharged",
+        "certificate",
+        "verdict",
+        "source_path",
+    ] {
+        assert!(
+            !bytes.contains(absent),
+            "the filesystem question must not carry `{absent}`"
+        );
+    }
+    let round: CompositionSourceInput = serde_json::from_str(&bytes).unwrap();
+    assert_eq!(round, input);
+}
+
+/// The filesystem family never borrows another family's prerequisite set, and
+/// no other family borrows its.
+#[test]
+fn the_filesystem_family_and_its_prerequisite_set_are_bound_together() {
+    let honest = filesystem_close_input();
+    assert!(honest.family.matches(&honest.prerequisites));
+    for other in [input(), file_close_delete_input(), memory_close_input()] {
+        assert!(
+            !honest.family.matches(&other.prerequisites),
+            "the filesystem family accepted another family's set"
+        );
+        assert!(
+            !other.family.matches(&honest.prerequisites),
+            "another family accepted the filesystem set"
+        );
+    }
+    // Both nested slots are shape-checked: the memory half must be the memory
+    // family, and the backend half the **deleting** file_close family.
+    let mut swapped = filesystem_close_projection();
+    let memory = swapped["family"]["memory"].clone();
+    swapped["family"]["memory"] = swapped["family"]["backend"].clone();
+    swapped["family"]["backend"] = memory;
+    let swapped: CompositionSourceInput = serde_json::from_value(swapped).unwrap();
+    assert!(
+        !swapped.family.matches(&swapped.prerequisites),
+        "the two nested slots are interchangeable"
+    );
+    let mut non_deleting = filesystem_close_projection();
+    non_deleting["family"]["backend"] = file_close_projection()["family"].clone();
+    let non_deleting: CompositionSourceInput = serde_json::from_value(non_deleting).unwrap();
+    assert!(
+        !non_deleting.family.matches(&non_deleting.prerequisites),
+        "the non-deleting backend arm was admitted"
+    );
+}
+
+/// The filesystem prerequisite rules are not vacuous, and its two digest keys
+/// are distinct from every other family's.
+#[test]
+fn the_filesystem_prerequisite_rules_are_decidable_and_its_keys_are_distinct() {
+    use qcore_schemas::composition_summary::FilesystemChunkClosePrerequisites;
+    let complete = filesystem_close_input().prerequisites;
+    assert!(complete.is_complete() && complete.are_distinct());
+    let CompositionPrerequisiteSet::FilesystemChunkClose(set) = complete else {
+        panic!("the filesystem projection must carry the filesystem set");
+    };
+    let repeated = FilesystemChunkClosePrerequisites {
+        file_close_delete: set.memory_close.clone(),
+        ..set.clone()
+    };
+    assert!(repeated.is_complete() && !repeated.are_distinct());
+    let blank = FilesystemChunkClosePrerequisites {
+        memory_close: qcore_schemas::call_use_summary::PrerequisiteIdentity {
+            semantic_profile: String::new(),
+            task_digest: String::new(),
+            obligation_id: String::new(),
+        },
+        ..set.clone()
+    };
+    assert!(!blank.is_complete());
+
+    let mut keys = vec![
+        UnmapWrapperPrerequisites::WRAPPER_CALL_USE_KEY,
+        UnmapWrapperPrerequisites::NATIVE_CLEANUP_KEY,
+        UnmapWrapperPrerequisites::COUNTER_KEY,
+        FileClosePrerequisites::WRAPPER_CALL_USE_KEY,
+        FileClosePrerequisites::UNMAP_COMPOSITION_KEY,
+        FileClosePrerequisites::NATIVE_CLEANUP_KEY,
+        FileClosePrerequisites::NATIVE_DELETE_KEY,
+        MemoryClosePrerequisites::RESET_KEY,
+        MemoryClosePrerequisites::BACKEND_KEY,
+        MemoryClosePrerequisites::UNLINK_KEY,
+        MemoryClosePrerequisites::COUNTER_KEY,
+        FilesystemChunkClosePrerequisites::MEMORY_CLOSE_KEY,
+        FilesystemChunkClosePrerequisites::FILE_CLOSE_DELETE_KEY,
+    ];
+    let count = keys.len();
+    keys.sort_unstable();
+    keys.dedup();
+    assert_eq!(
+        keys.len(),
+        count,
+        "all thirteen prerequisite digest keys across the four families are distinct"
+    );
+}
+
+/// Unknown fields are refused in this family's own records.
+#[test]
+fn unknown_fields_are_refused_in_the_filesystem_records() {
+    let mut value = filesystem_close_projection();
+    value["family"]["derivation"]["extra"] = json!(true);
+    assert!(serde_json::from_value::<CompositionSourceInput>(value).is_err());
+
+    let mut value = filesystem_close_projection();
+    value["prerequisites"]["filesystem_chunk_close"]["extra"] = json!(true);
+    assert!(serde_json::from_value::<CompositionSourceInput>(value).is_err());
 }

@@ -138,22 +138,6 @@ pub(super) fn check_deletion(
     )
 }
 
-/// Re-run a deleting-close reading from its own retained summaries against this
-/// adapter's pinned contracts. The dependent `filesystem_chunk_close` route
-/// calls this rather than trusting a supplied certificate.
-pub(super) fn recheck_deletion(
-    evidence: &FileCloseDeletionEvidence,
-) -> Result<FileCloseDeletionEvidence, String> {
-    let unmap_profile = super::unmap_wrapper::native_profile()?;
-    let unmap_contracts = super::unmap_wrapper::contracts(&unmap_profile);
-    let close_profile = close_profile()?;
-    let delete_profile = super::file_delete::profile();
-    evidence.recheck(
-        &contracts(&unmap_contracts, &close_profile, CONTRACT),
-        &delete_contracts(&delete_profile, DELETE_CONTRACT),
-    )
-}
-
 #[cfg(test)]
 #[path = "../../../tests/unit/file_close.rs"]
 pub(crate) mod tests;

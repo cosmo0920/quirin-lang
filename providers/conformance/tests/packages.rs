@@ -341,7 +341,7 @@ fn real_packages_preserve_unknown_and_reject_mutations() {
             // P04-COMPOSE-A). All of them are reached through the same
             // `chunkio` target, whose profile list is already `*`, so no other
             // manifest field moves.
-            expected.package_version = "0.11.0".into();
+            expected.package_version = "0.12.0".into();
             expected.certificate_checker = "qcore.boolean_field_contract.v2".into();
             expected.lean_theorem_family = "QCore.ChunkSource".into();
             expected.targets[0].dialects = ["c11", "gnu99", "gnu11", "gnu17", "qcore"]

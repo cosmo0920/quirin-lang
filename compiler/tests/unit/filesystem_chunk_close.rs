@@ -145,30 +145,24 @@ fn filesystem_chunk_policy_and_dependencies_fail_closed() {
     let backend = backend();
     let deps = dependencies();
     let e = checked(FIXTURE, &backend, &deps).unwrap();
-    assert_eq!(
-        e,
-        check(
-            &e.memory_scope,
-            &e.filesystem_kind_probe,
-            &e.backend,
-            CONTRACT
+    // The decision half is the relocated procedure; the ChunkIO half — the
+    // pinned contracts, profiles and recipe — is this adapter's own selection.
+    let selection = backend_contracts().unwrap();
+    let decide = |contract: &str| {
+        qcore_verification::filesystem_chunk_close_composition::check_filesystem_chunk_close_bodies(
+            e.memory_scope(),
+            e.filesystem_kind_probe(),
+            e.backend(),
+            &contracts_with(&selection, contract),
         )
-        .unwrap()
-    );
+    };
+    assert_eq!(e, decide(CONTRACT).unwrap());
     for clause in ["requires ", "ensures normal "] {
         for (i, _) in CONTRACT.match_indices(clause) {
             let end = i + CONTRACT[i..].find(';').unwrap();
             for predicate in ["false", "unknown_fact"] {
                 let changed = format!("{}{clause}{predicate}{}", &CONTRACT[..i], &CONTRACT[end..]);
-                assert!(
-                    check(
-                        &e.memory_scope,
-                        &e.filesystem_kind_probe,
-                        &e.backend,
-                        &changed
-                    )
-                    .is_err()
-                );
+                assert!(decide(&changed).is_err());
             }
         }
     }

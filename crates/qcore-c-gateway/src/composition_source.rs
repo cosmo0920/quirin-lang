@@ -90,9 +90,13 @@ pub enum CompositionFamily {
     UnmapWrapper,
     FileClose,
     FileCloseDeleting,
-    /// The one family whose bodies are imported from **derived** text: the base
-    /// unit plus a constant probe recipe. See [`MemoryCloseSelection`].
+    /// The first family whose bodies are imported from **derived** text: the
+    /// base unit plus a constant probe recipe. See [`MemoryCloseSelection`].
     MemoryClose,
+    /// The filesystem arm of the same wrapper, imported from a **second**
+    /// derived text under a second recipe. See
+    /// [`FilesystemChunkCloseSelection`].
+    FilesystemChunkClose,
 }
 
 impl CompositionFamily {
@@ -105,7 +109,7 @@ impl CompositionFamily {
     /// analysis rather than from the unit itself.
     #[must_use]
     pub const fn is_derived(&self) -> bool {
-        matches!(self, Self::MemoryClose)
+        matches!(self, Self::MemoryClose | Self::FilesystemChunkClose)
     }
 }
 
@@ -517,9 +521,10 @@ pub fn import_composition_source(
         // The derived family has its own importer, because it must build its
         // own text before it can import anything. Refused here rather than
         // silently imported from the declared file.
-        (CompositionFamily::MemoryClose, _) => {
+        (CompositionFamily::MemoryClose | CompositionFamily::FilesystemChunkClose, _) => {
             return Err(
-                "the memory close family is imported from derived text by its own importer".into(),
+                "the derived-text families are imported from derived text by their own importers"
+                    .into(),
             );
         }
         _ => return Err("composition family does not match its prerequisite set".into()),
@@ -630,7 +635,7 @@ pub fn import_composition_source(
                 FILE_CLOSE_CALLEES.to_vec()
             }
             // Refused above, before any import.
-            CompositionFamily::MemoryClose => Vec::new(),
+            CompositionFamily::MemoryClose | CompositionFamily::FilesystemChunkClose => Vec::new(),
         };
         // Only the `void` file_close wrapper may end a path without a value.
         let void_wrapper = family.is_file_close();
@@ -701,8 +706,8 @@ fn project_family(
             native: native_body,
             native_profile: native_profile.clone(),
         }),
-        CompositionFamily::MemoryClose => {
-            Err("the memory close family is not projected by this importer".into())
+        CompositionFamily::MemoryClose | CompositionFamily::FilesystemChunkClose => {
+            Err("the derived-text families are not projected by this importer".into())
         }
         CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
             let nested = nested.ok_or("missing nested composition selection")?;
@@ -750,6 +755,9 @@ const fn expected_profile(family: &CompositionFamily) -> &'static str {
         }
         CompositionFamily::MemoryClose => {
             qcore_schemas::composition_summary::MEMORY_CLOSE_SEMANTIC_PROFILE
+        }
+        CompositionFamily::FilesystemChunkClose => {
+            qcore_schemas::composition_summary::FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
         }
     }
 }
@@ -1084,6 +1092,281 @@ fn counter_call_identity(
         }
     }
     None
+}
+
+// ---------------------------------------------------------------------------
+// The filesystem-chunk-close family: a second derived unit in the same question.
+// ---------------------------------------------------------------------------
+
+/// Constructed only by [`import_filesystem_chunk_close_source`], so a wire
+/// record can never be promoted into a source-checked import.
+///
+/// This family imports exactly **one** body of its own — the filesystem
+/// discriminant probe, from a unit this importer derives under its own recipe.
+/// The wrapper it composes over is the nested memory-close question's, which
+/// this import carries verbatim rather than re-importing, so the two halves of
+/// one question cannot name two different bodies.
+///
+/// ```compile_fail
+/// use qcore_c_gateway::composition_source::FilesystemChunkCloseSourceImport;
+/// let _: FilesystemChunkCloseSourceImport = serde_json::from_str("{}").unwrap();
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct FilesystemChunkCloseSourceImport {
+    probe: SourceSummary,
+    #[serde(skip)]
+    base_identity: SourceInputIdentity,
+    #[serde(skip)]
+    derived_identity: SourceInputIdentity,
+    #[serde(skip)]
+    derivation: DerivedUnitRecord,
+    #[serde(skip)]
+    input: CompositionSourceInput,
+}
+
+impl FilesystemChunkCloseSourceImport {
+    /// The trusted typed summary of the probe body this family's recipe defines.
+    pub fn probe_summary(&self) -> &SourceSummary {
+        &self.probe
+    }
+
+    /// The identity of the **base** unit the audit selected — the same unit the
+    /// nested memory-close question derives from.
+    pub fn base_identity(&self) -> &SourceInputIdentity {
+        &self.base_identity
+    }
+
+    /// The identity of the unit **this family's** probe was imported from.
+    pub fn derived_identity(&self) -> &SourceInputIdentity {
+        &self.derived_identity
+    }
+
+    /// The derivation, as this importer measured it. The trusted core rebuilds
+    /// the same record from its own base unit and its own recipe and refuses a
+    /// transported record that is not exactly this.
+    pub fn derivation(&self) -> &DerivedUnitRecord {
+        &self.derivation
+    }
+
+    /// The portable projection, without any derived reading at any level.
+    pub fn source_input(&self) -> CompositionSourceInput {
+        self.input.clone()
+    }
+
+    /// The wrapper this family composes over: the nested memory-close
+    /// question's own body record.
+    pub fn wrapper_record(&self) -> &CleanupReplayFunctionRecord {
+        self.input.family.wrapper()
+    }
+
+    pub fn function(&self) -> &str {
+        &self.wrapper_record().function
+    }
+
+    pub fn source_revision(&self) -> &str {
+        self.probe.source_revision()
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "result", rename_all = "snake_case")]
+pub enum FilesystemChunkCloseSourceResult {
+    Import(Box<FilesystemChunkCloseSourceImport>),
+    Unknown { function: String, reason: String },
+}
+
+/// The filesystem family's own selection: its probe recipe, and the two nested
+/// questions its two composition prerequisites imported.
+///
+/// The two nested questions are **not** re-derived here. They are the values
+/// the core's own nested imports produced, and the trusted task requires each
+/// to be exactly the family input its own nested composition context imported —
+/// which is the same tie `P04-COMPOSE-A` established for its one nested
+/// question, applied twice.
+pub struct FilesystemChunkCloseSelection<'a> {
+    pub recipe: &'a str,
+    pub probe_function: &'a str,
+    /// The nested memory-close question, verbatim.
+    pub memory: CompositionFamilyInput,
+    /// The nested deleting `cio_file_close` question, verbatim.
+    pub backend: CompositionFamilyInput,
+    /// Lookup keys, never conclusions.
+    pub prerequisites: CompositionPrerequisiteSet,
+}
+
+/// Import the filesystem family's one body **from text this importer derives**
+/// and project it.
+///
+/// The caller supplies the base unit and the recipe; the derived text is built
+/// here by the one shared helper the trusted decision procedure also uses, so
+/// the two cannot derive different bytes from the same inputs. No caller — and
+/// certainly no proposal — supplies derived text.
+pub fn import_filesystem_chunk_close_source(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    selection: &FilesystemChunkCloseSelection<'_>,
+) -> Result<FilesystemChunkCloseSourceResult, String> {
+    let FilesystemChunkCloseSelection {
+        recipe,
+        probe_function,
+        memory,
+        backend,
+        prerequisites,
+    } = selection;
+    if recipe.is_empty() || probe_function.is_empty() {
+        return Err("filesystem chunk close import needs a complete derivation recipe".into());
+    }
+    if !prerequisites.is_complete() {
+        return Err("filesystem chunk close import needs complete prerequisite identities".into());
+    }
+    if !prerequisites.are_distinct() {
+        return Err("filesystem chunk close import needs distinct prerequisite identities".into());
+    }
+    if prerequisites.filesystem_chunk_close().is_none() {
+        return Err("filesystem chunk close family does not match its prerequisite set".into());
+    }
+    // Both nested questions must be the families this route's prerequisites
+    // answer, before anything is imported.
+    if !matches!(memory, CompositionFamilyInput::MemoryClose { .. }) {
+        return Err("the filesystem question's memory half is not a memory-close question".into());
+    }
+    if !matches!(
+        backend,
+        CompositionFamilyInput::FileClose {
+            delete: Some(_),
+            ..
+        }
+    ) {
+        return Err(
+            "the filesystem question's backend half is not a deleting file_close question".into(),
+        );
+    }
+    // The two derivations must be two *different* recipes over one base text.
+    // A filesystem probe derived by the memory recipe would read the memory
+    // discriminant and the two arms would collapse.
+    let memory_derivation = memory
+        .derivation()
+        .ok_or("the nested memory-close question carries no derivation")?;
+    if memory_derivation.recipe == *recipe || memory_derivation.recipe_function == *probe_function {
+        return Err("the two derived units must be derived by two different recipes".into());
+    }
+    let compiler = ClangIdentity::capture()?;
+    let base_preprocessed = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    let base_identity = input_identity(
+        unit,
+        &base_preprocessed,
+        source_revision,
+        DEFAULT_SOURCE_RULES,
+        None,
+        &[],
+        compiler.clone(),
+    )?;
+    if base_identity.raw_source_digest() != memory_derivation.base_source_digest {
+        return Err(
+            "the nested memory-close question derives from another base text than this one".into(),
+        );
+    }
+    let combined = derived_source_text(unit.source, recipe);
+    let derived_unit = derived_translation_unit(unit, &combined);
+    let derived_preprocessed =
+        validate_unrestricted_c11(&derived_unit).map_err(|error| error.to_string())?;
+    let derived_identity = input_identity(
+        &derived_unit,
+        &derived_preprocessed,
+        source_revision,
+        DEFAULT_SOURCE_RULES,
+        None,
+        &[],
+        compiler.clone(),
+    )?;
+    let derivation = DerivedUnitRecord {
+        recipe: (*recipe).to_owned(),
+        recipe_function: (*probe_function).to_owned(),
+        base_source_digest: base_identity.raw_source_digest().to_owned(),
+        derived_source_digest: derived_identity.raw_source_digest().to_owned(),
+        base_input_class: unit.input.class().to_owned(),
+        derived_input_class: derived_unit.input.class().to_owned(),
+    };
+    if !derivation.is_complete() || !derivation.is_a_derivation() {
+        return Err("the filesystem chunk close recipe derived no new text".into());
+    }
+    if derivation.derived_source_digest == memory_derivation.derived_source_digest {
+        return Err("the two recipes derived the same text".into());
+    }
+    let imported = import_source_functions(
+        &derived_unit,
+        source_revision,
+        &[probe_function],
+        &SourceImportProfile {
+            records: &[],
+            sizeof_types: &[],
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+    )?;
+    let result = match imported.as_slice() {
+        [SourceResult::Summary(probe_summary)] => match project(probe_summary, &[], false) {
+            Ok(probe_body) => {
+                let family = CompositionFamilyInput::FilesystemChunkClose {
+                    memory: Box::new(memory.clone()),
+                    backend: Box::new(backend.clone()),
+                    probe: probe_body,
+                    derivation: derivation.clone(),
+                };
+                if family.semantic_profile()
+                    != qcore_schemas::composition_summary::FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
+                {
+                    return Err(
+                        "filesystem chunk close family input answers another semantic profile"
+                            .into(),
+                    );
+                }
+                if !family.matches(prerequisites) {
+                    return Err(
+                        "filesystem chunk close family and prerequisite set disagree".into(),
+                    );
+                }
+                FilesystemChunkCloseSourceResult::Import(Box::new(
+                    FilesystemChunkCloseSourceImport {
+                        probe: probe_summary.clone(),
+                        base_identity,
+                        derived_identity,
+                        derivation,
+                        input: CompositionSourceInput {
+                            schema_version: COMPOSITION_SOURCE_INPUT_VERSION,
+                            prerequisites: prerequisites.clone(),
+                            family,
+                        },
+                    },
+                ))
+            }
+            Err(reason) => FilesystemChunkCloseSourceResult::Unknown {
+                function: probe_summary.function().into(),
+                reason,
+            },
+        },
+        _ => {
+            let (function, reason) = imported
+                .iter()
+                .find_map(|result| match result {
+                    SourceResult::Unknown { function, reason } => {
+                        Some((function.clone(), reason.clone()))
+                    }
+                    SourceResult::Summary(_) => None,
+                })
+                .unwrap_or_else(|| {
+                    (
+                        (*probe_function).into(),
+                        format!("filesystem chunk close source import incomplete: {imported:?}"),
+                    )
+                });
+            FilesystemChunkCloseSourceResult::Unknown { function, reason }
+        }
+    };
+    if ClangIdentity::capture()? != compiler {
+        return Err("Clang identity changed during filesystem chunk close source import".into());
+    }
+    Ok(result)
 }
 
 /// Build the four prerequisite callee identities from the bodies the core's own
