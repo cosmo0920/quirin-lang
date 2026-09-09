@@ -2077,3 +2077,925 @@ tests, both reevaluation examples exit 0, fmt and clippy clean, and all five
 provider packages rebuilt and verified at schemas 12.0.0. Follow-on
 accounting lives in `docs/reviews/r0_3/acceptance_matrix.json`
 (`named_followups`, updated for this wave).
+
+### Status paragraphs relocated from AGENTS.md and CLAUDE.md (2026-09-10, card DOCS-COMPACT)
+
+Card DOCS-COMPACT compacted `AGENTS.md` and `CLAUDE.md` to the agent-facing
+minimum (project description, repository map, headline ledger, hard
+invariants, standing subsystem constraints, the per-change gate, entry
+points). Every per-increment status paragraph those two files carried was
+checked against this file paragraph by paragraph. The paragraphs below were
+the ones **not** already preserved here; they are reproduced verbatim, in the
+order they appeared, with their origin recorded. Where AGENTS.md and CLAUDE.md
+carried different wordings of the same increment, both are kept, because each
+carried facts the other did not. Nothing in this section is new: no count,
+verdict or boundary changed, and each paragraph keeps the checkpoint it was
+written at. The per-paragraph disposition ledger is
+`docs/reports/wave16-docs-compact/README.md`.
+
+#### Cycle status ledger as carried in AGENTS.md through wave 15
+
+*Moved verbatim from `AGENTS.md` lines 60-231 — the full bullet ledger, including the long Cycle 19 teardown-observation run and the W0-W6 `Active direction` history.*
+
+Cycle completion labels describe their bounded milestone evidence, not full
+revision-0.3 source-language conformance. `crates/` holds nine crates; the core
+Cargo workspace declares **ten** members (those nine plus `compiler`), and
+`providers/` is a separate six-member workspace excluded from it.
+
+- **Cycles 1–16: complete.** Sequential language (dimensions, quant axes,
+  interval usage grades, ownership, resource flow, typed errors, error-region
+  cleanup, CFG lowering to tagged-error C11 ABI, executable small-step model),
+  structural front end, whole-program checker, multi-file driver with CLI,
+  translation certificates, annotated legacy-C slice, restricted concurrency
+  checker, advanced control, combined closure certificate.
+- **Cycle 17: complete.** Principal product inference, nonzero-net loop
+  invariants, fail-closed unrestricted-C11 preprocessing gateway, explicit
+  weak-memory candidate executions, native threaded custody backend, ledger
+  morphisms. MSVC + ASan platform evidence recorded.
+- **Cycle 18: bounded implementation complete; aggregate acceptance pending.**
+  Libevent event-reactor checker (generation-safe lifecycle/custody, callback
+  authority, priority schedules, cross-context conflicts, source pinning) +
+  Lean theorems. Linux/macOS-kqueue/Windows-IOCP evidence recorded; Libevent
+  sanitizer and deployed observation-hook evidence pending.
+- **Cycle 19: in progress.** Unrestricted-C gateway applied to pinned Fluent
+  Bit (CMetrics, CTraces, librdkafka, ChunkIO, input-chunk wrapper, Monkey).
+  Latest triage: 185 TUs, 4,775 raw functions, 98.2% projected — **2 Safe /
+  42 provisional Unsafe / 137 Unknown**, plus four data-only units
+  (`docs/reports/w4-nullable-removal/README.md`). **Raw units remain unpromoted** until
+  per-path identity imports and real observation evidence satisfy the
+  fail-closed gates in `docs/cycles/CYCLE_19.md`.
+  Source-bound context/stream/chunk/backend teardown now composes bounded
+  memory model identities and 43 conditional mixed-backend cases; 26 retain
+  unresolved OS custody after parent free. Five sanitized native memory cases
+  now bind constructor allocations, rings and exact nested release order (82
+  generations, 13 chunks). Nine injected allocation failures plus a control
+  account for 55 more generations, including six rollback releases. Null chmod
+  and chunk-name success outcomes and zero error output on backend failure are
+  preserved. General caller/failure provenance, full sync/OS guarantees,
+  aggregate custody, remaining wrapper lifecycle and full Monkey/Cycle 18
+  composition remain open. The unsupported backend close arm is now classified
+  symbolically: outer releases retain unresolved backend custody and an explicit
+  `Unknown`; constructor reachability is not inferred. Conditional parent teardown
+  now preserves exact opaque stream/chunk/backend-kind identities. Four sanitized
+  unsupported-type constructor cases return null chunks with unchanged errors;
+  all 24 generations are released (eight rollback, sixteen teardown). Twelve
+  sanitized real Linux cleanup calls now bind close/unmap/delete endpoints to
+  exclusive temporary fixtures, including inode witnesses and retained mapping
+  after invalid-length unmap failure. They do not establish enclosing filesystem
+  teardown, arbitrary OS failure behavior or durability. Six further native
+  one-file constructor/teardown cases account for 66 allocation generations.
+  Suppressed unmap/close calls returning EIO leave observed mapping/descriptor
+  residuals after parent free; failed sync still allows cleanup. These fixtures
+  do not prove general filesystem callers, failures or durability. Twelve filesystem
+  allocation-failure/control processes now account for 81 acquired generations:
+  73 recorded releases and eight outstanding prefix generations across two UBSan
+  null-argument terminations. Ten returning cases complete leak checking; the two
+  interrupted cases do not establish teardown. Failed root/chunk-name copies,
+  null chmod success and a stream returned without a directory stay distinct.
+  Eight further constructor OS-failure/control processes release all 88 allocation
+  generations. Fstat/stat fallback and POSIX resize return/errno stay distinct;
+  suppressed mapping plus rollback-close failures retain the original descriptor/
+  inode after null chunk return and parent release. Harness reclamation is separate.
+  These observations do not prove arbitrary kernel failure post-states.
+  Seven existing-file profiles release all 70 allocation generations while
+  retaining original inode/content and distinct corruption/read-only errors.
+  Suppressed chmod plus rollback-close failures preserve descriptor custody after
+  parent release; harness reclamation stays separate. General profiles remain open.
+  Five native residency/transaction/lock sequences release all 50 allocation
+  generations and seven OS epochs. Rollback preserves mapped header length even
+  while restoring logical length; down/up reloads appended bytes. Locked begin
+  returns retry while direct write still succeeds. These fixed observations do
+  not establish production reachability or general transaction/lock guarantees.
+  Three native one-shot sync-failure sequences release 30 more generations and
+  four OS epochs. Failed commit preserves the active transaction; retry clears
+  it. Down still unmaps/closes after failed sync, and unmapped commit clears the
+  transaction without syncing. These are fixed injected observations, not general
+  synchronization or durability guarantees.
+  Four failed-down sequences release 40 more generations and seven OS epochs.
+  Suppressed unmap retains mapping/descriptor identity, up ring and counter;
+  prior successful sync survives failure, while combined sync/unmap failure
+  stays unsynced. Retry or parent teardown later releases the original epoch.
+  Four descriptor-failure sequences release 40 more generations and acquire five
+  OS epochs. Failed close during down leaves the original descriptor in the down
+  ring with no mapping and a zero up counter; retries of down/up reject. Parent
+  teardown releases that descriptor unless its close is also suppressed, retaining
+  one observed residual after parent free. Harness reclamation is separate.
+  Failed reopen acquires no epoch; successful retry acquires a fresh one. General
+  reopen failures, caller provenance, aggregate custody and event composition
+  remain open. Latest evidence:
+  `docs/reports/cycle19-file-descriptor-failures/README.md`
+  (407 workspace tests, 56 contract modules; prior source/verdict parity preserved).
+- **Cycle 20: active.** Verifier-plugin ecosystem. Protocol v1 carries
+  Boolean assertions only: built-ins return `Unknown`, the core **refuses all
+  v1 `Safe` proposals** (including empty scopes), unchecked `Unsafe`
+  proposals downgrade to `Unknown` (`QP010`). W3's bounded evidence-v2
+  increment derives source obligations and dispatches resolved scopes; trusted
+  observation replay can certify recorded agreement only, under the explicit
+  `observations_trusted` assumption and observed-run bounds. A standalone
+  schemas-only process fixture exercises positive and forged evidence.
+  Lifecycle source effect/ABI import stays incomplete, all unsupported and
+  empty inventories stay `Unknown`, and first-party v1 providers remain
+  unpromoted. Host registry/transport/firewall/composition relocation is executed
+  (`docs/reports/w3-verifier-host/README.md`); production profile/source import
+  and remaining trusted-kernel relocation stay open.
+  See `docs/reports/w3-evidence-v2/README.md`.
+- **Reevaluation (2026-09-05): 6 + 7 findings, all repaired**
+  (`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`). Open
+  boundaries that remain true statements: interprocedural parameter/return
+  custody inference is **implemented for parameter/return custody with
+  validation** (LC01, W4, extended 2026-09-07 with validated `Out`,
+  `Stored`, `Reallocated`, possibly-null returns and direct `Removed` wrappers; general removal aliases and recursive
+  call-graph components, and cost summaries are still not inferred, and every such body
+  keeps its callers `Unknown`); semantic witness schema v2 is implemented for bounded
+  replay (production lifecycle import remains unimplemented); process providers have process-group containment, not an
+  OS sandbox; mutex model supports initially-unlocked non-recursive mutexes
+  only; CT01–CT50 conformance corpus is **39/50 unmapped**
+  (CT01/CT12 execute Linux owned-buffer transfer/creation restoration; CT02
+  rejects actual post-move access. CT16 executes worker-local allocation/error cleanup; CT14/CT37 execute completed-but-unjoined native custody;
+  CT19 checks real sibling failure source, CT13 has Linux creation-recovery
+  evidence, CT15 has Linux native join-failure evidence, and CT20 checks
+  sibling join/owned-result discharge before bound-error rethrow. CT50 checks real
+  mapping address reuse with distinct Buffer generations and stale-binding rejection).
+- **Active direction:** `docs/GENERALIZATION_PLAN.md` — generalize the
+  checker away from pinned source sets and decompose the monolithic crate
+  into a pluggable contract/verification system (workstreams W0–W7). W0 is
+  executed (2026-09-06, `docs/reports/w0-schema-crate/README.md`): the initial
+  workspace had three members (`qcore-schemas` L0 surface, `qcore-compiler`
+  grab-bag, `qcorec` CLI) with a layering-guard test; providers remain
+  compile-time crates for now (decision recorded there — the plan's
+  out-of-process step is deferred, not abandoned). W1's loader
+  (total-or-reject v1) feeds the Cycle 19 audit from a contract manifest,
+  and its relocation is executed (2026-09-06,
+  `docs/reports/w1-contract-crate/README.md`): `qcore-core`,
+  `qcore-frontend`, and `qcore-contract` are extracted with a
+  dependency-matrix guard test. The leftover literal contract sites are
+  migrated to loader-fed `.qcore` fixtures (2026-09-06,
+  `docs/reports/w1-literal-sites/README.md`). **W1 is executed**
+  (2026-09-06, `docs/reports/w1-clause-vocabulary/README.md`): the
+  `requires resource_contract_v1` marker is pinned corpus-wide as the
+  interpreter selector — 19 declarations load and 142 are rejected, not
+  skipped — the clause-family → owner table is documented in the loader
+  header and `contract/qcore/README.md`, and the C ABI scalar type table is
+  complete (borrowed-only, no semantic change; audit diagnostics/callbacks
+  byte-identical). Unifying the resource loader with the observation/
+  lifecycle interpreters is W5-adjacent; non-null error sentinels need
+  target-interface work, not loader vocabulary. W6's CT harness is stood up
+  (2026-09-06, `docs/reports/w6-ct-harness/README.md`):
+  `compiler/tests/ct_corpus.rs` executes every case
+  `docs/reevaluation/ct_manifest.json` marks mapped through the real source
+  pipeline and fails closed on manifest/fixture disagreement. CT02/CT12 now
+  check real Buffer moves/restoration; CT16 executes worker-local allocation
+  and error cleanup while retaining its earlier sequential implicit-cleanup
+  control. CT14/CT37 execute completed-child native custody; CT37 retains its earlier sequential control. CT19 now checks actual sibling-failure source; CT15 executes
+  Linux native join-failure and successful reclamation controls. CT13 checks
+  explicit creation recovery and retained sibling storage. Shares and
+  mutex source paths remain unexercised. Batch 2 (2026-09-06,
+  `docs/reports/w6-ct-batch-2/README.md`) adds CT19/CT37 and records the
+  full triage of all 47 then-unmapped cases (2 decidable-now, 8 blocked on
+  W3/W4, 33 blocked on unimplemented syntax, 4 ambiguous); subsequent owned-task
+  and reused-address mappings leave 39 cases unmapped, counted by a pinned test. W4 is executed for
+  parameter/return custody with
+  validation (2026-09-06, `docs/reports/w4-custody-inference/README.md`):
+  `crates/qcore-c-gateway/src/legacy_summary.rs` derives SCC-ordered custody summaries for
+  internal C functions, publishes only summaries that a re-run of the
+  intraprocedural analyzer validates, expresses them as `qcore-schemas`
+  `ResourceSummaryRecord`s under `ContractTrust::InferredValidated`, and has
+  the certificate recheck re-derive them independently. Declared contracts
+  always win; a disagreement is a `SummaryConflict` diagnostic, never a silent
+  override. On the 156 pinned Fluent Bit units measurable in that run, one unit
+  moved Unknown → Safe (`chunkio/cio_error.c`) and no unit entered the Unsafe
+  class; the 29-unit Monkey/forced-Libevent leg was not re-measured. The bounded extension and remaining restrictions are recorded in
+  `docs/reports/w4-custody-extensions/README.md`. Gateway relocation is executed
+  (2026-09-07, `docs/reports/w4-gateway-crate/README.md`), with exact
+  185-unit verdict/projection/diagnostic parity. Execution
+  is tracked in `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
+
+#### Cycle 19 nested-teardown boundary as carried in CLAUDE.md through wave 15
+
+*Moved verbatim from `CLAUDE.md` lines 36-79 — the Claude-side teardown/failure observation bullet.*
+
+- The current Cycle 19 nested-teardown boundary is recorded in
+  `docs/reports/cycle19-file-descriptor-failures/README.md` and the AGENTS.md status
+  ledger. Its native memory and controlled failure observations bind concrete allocation/
+  ring provenance and rollback. General caller/failure, filesystem and event-
+  composition gates remain open. Unsupported backend close now has a symbolic
+  partial-release classification with unresolved backend custody and `Unknown`;
+  exact opaque identities survive conditional stream/context release. Four
+  observed unsupported-type inputs retain empty streams and return null chunks
+  with complete rollback; this is not a universal caller/reachability proof.
+  Twelve real Linux close/unmap/delete calls additionally bind OS endpoints in
+  exclusive temporary fixtures. Six native one-file constructor/teardown runs
+  bind 66 allocation generations and preserve mapping/descriptor residuals after
+  parent free under EIO injection. General filesystem callers, arbitrary OS
+  failure behavior, full sync guarantees and durability remain open. Twelve
+  filesystem allocation-failure/control processes account for 81 acquired
+  generations and 73 recorded releases. Two UBSan null-argument terminations
+  retain eight outstanding prefix generations; only the ten returning cases
+  complete teardown and leak checking. Failed root/chunk-name copies and a
+  stream returned without a directory remain distinct observed outcomes. Eight
+  further constructor OS-failure/control processes release all 88 generations;
+  a suppressed rollback close retains the original descriptor/inode after null
+  chunk return and parent release. POSIX resize return values and errno remain
+  separate. Seven existing-file profiles additionally release all 70 generations,
+  preserving original inode/content, distinct corrupted/read-only errors and
+  descriptor custody after suppressed chmod/rollback-close failures. These
+  observations do not establish arbitrary kernel failure rules. Five further
+  residency/transaction/lock sequences release 50 generations and seven OS
+  epochs. Logical rollback leaves the mapped header length unchanged and down/up
+  reloads appended bytes. Locked begin retries while direct write succeeds;
+  general transaction, lock and production-caller guarantees remain open.
+  Three sync-failure sequences release 30 generations and four OS epochs.
+  Failed commit retains the transaction and retry clears it. Down continues
+  cleanup after failed sync; unmapped commit succeeds without syncing. These
+  injected observations do not establish general OS failure or durability rules.
+  Four failed-down sequences release 40 more generations and seven OS epochs.
+  Failed unmap preserves mapping/descriptor identity, up ring and counter; prior
+  successful sync survives failure. Combined sync/unmap failure stays unsynced,
+  with recovery through retry or parent teardown releasing the original epoch.
+  Four descriptor-failure sequences release 40 further generations and acquire
+  five OS epochs. Failed close moves the chunk down but retains its descriptor;
+  down/up retries reject. A second suppressed close retains that descriptor after
+  parent free, with harness reclamation recorded separately. Failed reopen creates
+  no epoch; successful retry creates a fresh one. General reopen failure paths,
+  caller provenance, aggregate custody and full event composition remain open.
+
+#### R02 terminal task state, adversarial verification (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 841-860 — fuller variant.*
+
+R02 terminal task state, adversarial verification (2026-09-07): V02 re-examined
+"a joined child can still emit events" and found no soundness failure; no
+production code changed. Evidence was the gap. Four new tests pin the full
+terminal-state x event-kind matrix in `crates/qcore-core`: each joined-child
+event kind now asserts its exact `TerminalTask`/`UnknownJoin`/`DuplicateTask`
+diagnostic and the absence of any authority diagnostic, proving the terminal
+decision precedes every custody, guard and permission check. A refused join is
+not an implicit completion: exact diagnostic vectors show the child keeps its
+authority and duties and stays outstanding, matching CT15 and the native
+abort-before-reclamation path. A completed-but-unjoined child's captures stay
+in `Custodian::Capsule` and all ten ledger operations reject with
+`InactiveTask` in both `Completed` and `Joined` phases, leaving the ledger
+unchanged. Nineteen new Lean theorems give the `Lifetime` model per-constructor
+terminal rejection, post-join corollaries and refused-join retention, with no
+new axioms or placeholders. All 823 workspace tests, 45 provider tests, 43
+Python tests, 20 Lean audits and the standing gates pass; CT coverage remains
+11/50 and all Cycle19 artifacts are untouched. Evidence:
+`docs/reports/remaining-v02/README.md`. Source-to-trace refinement, checked
+mutex invariants, loans, general owned graphs and Rust/Lean/native
+correspondence remain open.
+
+*Moved verbatim from `CLAUDE.md` lines 615-627 — condensed variant, subsumed by the above but kept verbatim.*
+
+R02 terminal task state, adversarial verification (2026-09-07): V02 re-examined
+"a joined child can still emit events" and found no soundness failure; no
+production code changed. Four new `qcore-core` tests pin the full terminal-state
+x event-kind matrix with exact diagnostics (and the absence of authority
+diagnostics), the refused-join direction with exact diagnostic vectors, and the
+`Completed`/`Joined` ledger phases rejecting all ten operations with
+`InactiveTask` while a completed child's captures stay in `Custodian::Capsule`.
+Nineteen new Lean theorems give the `Lifetime` model per-constructor terminal
+rejection, post-join corollaries and refused-join retention, with no new axioms.
+All 823 workspace tests, 45 provider tests, 43 Python tests, 20 Lean audits and
+the standing gates pass; CT coverage remains 11/50 and Cycle19 artifacts are
+untouched. Evidence: `docs/reports/remaining-v02/README.md`. Source-to-trace
+refinement, checked mutex invariants, loans and native correspondence remain open.
+
+#### Compile-task identity (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 862-887 — byte-identical in CLAUDE.md 629-654.*
+
+Compile-task identity (2026-09-07): the configured audit now records a complete
+identity for every accepted compile task — Clang program/version/target, the
+declared driver, the compile working directory, the main source path, the
+complete ordered argument vector, the dialect, the ordered transported
+preprocessing options and analyzed scope, the raw source bytes, the effective
+preprocessing input, and named contract/profile/database/rule dependency
+digests. A used header, a generated configuration header, include order, an
+unread admitted macro option or a contract/profile change now retires the
+recorded identity even when the selected `.c` file, the compilation database and
+the preprocessed token stream are unchanged. The evidence-v2 task digest already
+bound the same inputs; a stale witness is now shown to be refused in both
+directions. One configuration is one (working directory, complete command) pair:
+repeated identical records are one task, conflicting records reject. A read-only
+census records that the pinned Cycle 19 compatibility adapter still chooses
+silently between two configurations for `src/flb_input_chunk.c` and among four
+for each of 27 Monkey/libevent units; repairing that changes the pinned
+artifacts and remains open. Ten new tests; all 829 workspace tests, 45 provider
+tests, 43 Python tests, 20 Lean audits and the standing gates pass, and the
+configured CMetrics audit still reports one checked function contract, six
+Unknown functions and a provisional Unsafe raw unit with identical verdicts,
+diagnostics and source digests. The four pinned 185-unit artifacts could not be
+re-measured: the upstream Fluent Bit checkout has moved off its pin and the
+audit's own pin gate refuses to run. Evidence:
+`docs/reports/remaining-g01/README.md`. Header enumeration, compiler
+equivalence, build hermeticity and the compatibility adapter's ambiguity remain
+open; no verdict changes and no raw unit is promoted.
+
+#### Windows Clang discovery and test portability (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 929-938 — byte-identical in CLAUDE.md 696-705.*
+
+Windows Clang discovery and test portability (2026-09-07): discovery orders
+vswhere results newest first and falls back to standard VS 2026 (`18`) and
+VS 2022 (`2022`) edition directories, including missing/empty locator cases.
+The Windows tests use the discovered executable in compile databases, preserve
+CRLF mutation checks, and run POSIX LP64 cleanup fixtures in isolated child
+tests through that Clang with an explicit Linux target. Native Windows analysis
+retains its native target; no checker rule or production cleanup ABI is widened.
+See `docs/reports/windows-vs2026/README.md` for local validation and limits.
+Windows validation: 828 tests, formatting, Clippy and both reevaluation probes
+pass. The Lean gate was not run because `lake` is not installed on this host.
+
+#### Diagnostic attribution and ownership (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 964-986 — variant carrying the V04/V07 occurrence detail and the spec reconciliation.*
+
+Diagnostic attribution and ownership (2026-09-07): W7 repairs the two real
+attribution defects recorded by V04 and V07. `locate` tested an inclusive bound
+against an exclusive `FileRange::end`, so a diagnostic at byte 0 of a non-first
+input file was blamed on the previous file at a line past its end; all three of
+V07's confirmed occurrences now name the offending file, with its controls
+unchanged. The unconditional dimension/axis check no longer reports
+`Span { 0, 0 }`: slice provenance carries the offending declaration's own span,
+and a parse failure in the reconstructed buffer now reports the caller's byte
+offsets (V04-F2, fixed rather than deferred). `StaticEnvironment::check_located`
+is additive; `check` delegates and the accepted/rejected set is unchanged.
+No diagnostic code changed — attribution is not a code change. `Q700`–`Q703` are
+reconciled in the spec against the code, which is the authority; `Q020` (task)
+and `Q021` (sequential) stay separate by decision because their rejection
+coverage differs. `docs/QCORE_SPEC_r0_3.md` §L21 is the canonical per-code
+ownership table and §L21.1 specifies a closed reason-code vocabulary for
+uncovered obligations, with `environment-unavailable` separated so no
+environment failure can be relabeled a source defect. That vocabulary is
+specified only: carrying it on `DerivationIncomplete` would change every task
+digest, and carrying it on audit-report units would change all four pinned
+185-unit artifacts. Three new tests; 890 workspace tests, standing gates and
+20 Lean audits pass. The 185-unit audit was not re-run — no prepared Clang build
+tree here — and parity is argued by verified disjointness from the C gateway.
+Evidence: `docs/reports/remaining-d01/README.md`.
+
+*Moved verbatim from `CLAUDE.md` lines 731-752 — variant carrying the file paths, the empty-`contract { }` asymmetry and the `DerivationIncomplete` constraint.*
+
+Diagnostic attribution and ownership (2026-09-07): W7 repairs the two real
+attribution defects recorded by V04 and V07 without changing a single diagnostic
+code. `crates/qcore-verification/src/driver.rs` `locate` tested an inclusive
+bound against an exclusive `FileRange::end`, so a diagnostic at byte 0 of a
+non-first input file was blamed on the previous file; the repair selects the
+containing range and keeps a fallback for the separator newline and
+end-of-input. `crates/qcore-frontend/src/frontend.rs` no longer emits
+`Span { 0, 0 }` for unconditional dimension/axis failures: per-slice provenance
+maps back to the offending declaration's original span, and parse failures
+report the caller's byte offsets instead of offsets into the reconstructed
+buffer. `StaticEnvironment::check_located` is purely additive. When touching
+these sites, keep attribution and rejection separate: fixing where a diagnostic
+points is not a code change, and changing a code is semantic. `Q020` (task
+route) and `Q021` (sequential route) both refuse unenforced source contracts and
+must stay separate until a consumer lands — the task gate also refuses an empty
+`contract { }` and the sequential gate accepts it, so unifying them would change
+rejection coverage. `docs/QCORE_SPEC_r0_3.md` §L21 is now the canonical per-code
+ownership table (a semantic pass owns a range; `source_diagnostic` is the
+authoritative map) and §L21.1 specifies the reason-code vocabulary, which is
+prose only — do not add a category field to `DerivationIncomplete` without
+regenerating every task digest, provider package and witness in the same change.
+Evidence: `docs/reports/remaining-d01/README.md`.
+
+#### Configured second source set (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 988-1007 — byte-identical in CLAUDE.md 754-773.*
+
+Configured second source set (2026-09-07): the new `chunkio-core` profile
+audits 13 pinned ChunkIO translation units through the existing `qcore-audit`
+route from `profile.json` and `audit.json` alone, over CMake's unmodified
+Clang compile database and the existing resource-contract manifest. No
+production Rust changed: the whole `crates/` diff is one new test and one new
+test fixture, and `compiler/` is untouched. The run reports 0 Safe /
+2 provisional Unsafe / 11 Unknown across 13 units (1 Safe / 2 Unsafe /
+120 Unknown functions, 3 unprojected); no raw unit is promoted. Changed pins,
+changed audited digests, unsupported compiler flags and absent provider
+packages each reject with no report, against both the real inputs and hermetic
+fixtures, while unmodeled source forms stay Unknown with keyed diagnostics.
+Report and assumption keys match the CMetrics and synthetic-demo routes
+exactly, except the `source_contracts` block only a configured provider route
+emits; both canonical CMetrics artifacts are byte-identical. Two generalization
+gaps are recorded and deliberately not repaired: a source set whose C sources
+sit at the checkout root cannot be expressed (`source_roots[].root` rejects
+`.`), and a second real CMake project's unmodified database rejects because
+only four frontend flags are transported. All 824 workspace tests, 45 provider
+tests, 43 Python tests, 20 Lean audits and the standing gates pass. Evidence:
+`docs/reports/remaining-g03/README.md`.
+
+#### Replay mutation matrix (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 1008-1040 — byte-identical in CLAUDE.md 774-806.*
+
+Replay mutation matrix (2026-09-07): the ChunkIO Boolean-field capability now
+has a systematic 52-row mutation matrix over source-bound witness replay and
+cached summaries. All 52 rows reject; no mutation was admitted, so no gate was
+changed and no repair was required. Newly pinned: analyzed function scope and a
+widened imported function set retire the task and refuse its witness; task,
+obligation, request and source-projection version fields are each bound, and an
+unsupported evidence version rejects in both directions; mismatched obligation
+identifiers reject with the right count, as a foreign vector, as a permutation
+and as another function's real identifier, with the core checker independently
+refusing a task it did not derive; one witness never covers two obligations,
+whether its coverage set claims both or the same certificate is submitted twice
+at composition; a forged record rebound to a real donor task digest is caught by
+the outermost binding; a well-formed path set that belongs to another function
+and satisfies the same contract is refused while the obligation stays Unknown,
+as is a proposal that echoes assertion text, the Lean theorem family and the
+verdict label instead of computed paths; oversized and degenerate proposals fail
+bounded without panicking. Legacy protocol v1 is preserved as non-certifying:
+Unknown flows verbatim with no injected rejection, a complete v1 Safe envelope
+still refuses terminally and an Unsafe allegation still downgrades. No summary
+or evidence cache exists on this route; that is recorded as the current safe
+state and pinned behaviorally. Boundaries recorded, not repaired: witness
+admission conveys no provider authority, because acceptance terminates in the
+core re-evaluating its own sealed import; and this capability's checker returns
+its whole task coverage set, sound only because it derives exactly one
+obligation and refuses every other task, now guarded by a test. Eleven new
+tests; all 861 workspace tests, 46 provider tests, 43 Python tests, 20 Lean
+audits and the standing gates pass, and the configured CMetrics audit still
+reports one checked function contract, six Unknown functions and a provisional
+Unsafe raw unit. No production source file changed, so the pinned 185-unit
+artifacts, contract corpus counts and CT coverage are untouched. Evidence:
+`docs/reports/remaining-e02/README.md`. Other capabilities' matrices,
+out-of-process transport bounds and E01-B1's enumeration gap remain open; no
+verdict changes and no raw unit is promoted.
+
+#### Source-filename-sensitive transport (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 1041-1067 — variant carrying the macro/detection detail and the G01 merge record.*
+
+Source-filename-sensitive transport (2026-09-07): the configured audit now hands
+Clang the compilation database's own input word from its own directory, so
+`__FILE__`, `__FILE_NAME__`, `__BASE_FILE__` and the includer-directory rule for
+quoted includes answer as the recorded compile command does; the synthesized
+source-parent quote path is removed. Declared source bytes must equal the file's.
+`CSourceInput` makes the input identity explicit: an anonymous text rejects
+file-name macros that would expand to `<stdin>`, and `__builtin_FILE`/
+`__builtin_FILE_NAME` reject in every declared mode because the syntax and typed
+AST phases always read preprocessed standard input. Detection scans preprocessed
+output, so header-borne constructs are seen too. A CLI regression reproduces a
+`Safe` verdict decided by the audit's working directory, where a shadowing header
+replaced the real one; it now reports Unknown from any directory. Path spelling is
+preserved, not normalized, and no equivalence with a direct one-shot compilation
+is claimed. The pinned Cycle19 compatibility route explicitly retains its archived
+standard-input projection and both exemptions; its 185-unit artifacts were not
+re-measured. Recorded identities bind the declared input under
+`qcore.declared-input.v1:`; standard-input units keep historical identity bytes.
+Merged with G01's compile-task identity: `CompileTaskIdentity` now also binds
+`source_input`, so the transport is not invisible to the recorded identity, and
+G01's synthesized-quote-include pin is replaced by an explicit `-iquote` plus
+`source_input` assertions. A pre-existing `PluginLimits::additional` build break
+on the integration branch is repaired. All 894 workspace tests, 47 provider
+tests, 43 Python tests and 20 Lean audits pass with the standing gates. The CMetrics audit is unchanged: one checked
+function, six Unknown, a provisional Unsafe raw unit, byte-identical diagnostics,
+with ten identity-digest fields moved because 12 `__FILE__` expansions became the
+real source path. Evidence: `docs/reports/remaining-g02/README.md`. Compatibility
+route migration, single-invocation frontend transport and raw promotion remain open.
+
+*Moved verbatim from `CLAUDE.md` lines 807-824 — variant carrying the `CSourceInput` do-not rules and the `HistoricalStdin` re-measurement rule.*
+
+Source-filename-sensitive transport (2026-09-07): the configured audit hands
+Clang the compilation database's own input word from its own directory, so
+file-name macros and the includer-directory rule for quoted includes answer as
+the recorded compile command does; the synthesized source-parent quote path is
+removed and declared source bytes must equal the file's. `CSourceInput` makes the
+input identity explicit; anonymous texts reject `<stdin>` file-name expansions and
+`__builtin_FILE`/`__builtin_FILE_NAME` reject in every declared mode. When
+touching this transport, do not normalize the spelled input path (that changes
+`__FILE__`), do not let a declared identity survive onto derived text, and do not
+move the pinned Cycle19 compatibility route off `HistoricalStdin` without
+re-measuring its 185-unit artifacts. A CLI regression pins that a shadowing header
+in the audit's working directory can no longer buy a `Safe` verdict. G01's
+`CompileTaskIdentity` binds this transport as `source_input`: keep it there, or a
+standard-input run and a declared-file run record the same identity for different
+preprocessing. All 894 workspace tests, 47 provider tests, 43 Python tests and 20
+Lean audits pass; the CMetrics audit is unchanged at one checked function/six
+Unknown with byte-identical diagnostics. Evidence:
+`docs/reports/remaining-g02/README.md`.
+
+#### Checked mutex invariants (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 1068-1101 — fuller variant.*
+
+Checked mutex invariants (2026-09-07): T02 implements `CheckedMutexInvariantV1`
+as a new `crates/qcore-core/src/mutex_invariant.rs`, beside an unedited
+`check_concurrent` whose body, 26 pinned tests and `Lifetime` Lean model are
+byte-identical; `TrustedExplicitTrace` retains `GuardFootprintAuthority` and
+`SynchronizedCustodyEdges`. Mutex generations are liveness-ledgered under V01's
+rules: a refused destroy leaves the generation live and a repeat destroy reports
+a dead generation, not an ownership complaint. `CreateMutex` fixes its declared
+footprints and consumes the creator's `FULL_ACCESS` share over each, so a
+protected footprint has exactly one protector and no fallback authority path;
+pointwise share conservation over exact interval atoms is verified before the
+first event and after every event, refused events included. Each `Lock` mints a
+fresh never-reused guard; reads need that guard, writes need an open invariant,
+and unlock or typed-error exit requires a closed invariant with no live
+guard-derived borrow, dropping every guard-scoped fact. Custody transfer carries
+a checker-verified `SyncWitness` compared against derived happens-before, in the
+`weak_memory` style; no `bool` occupies an authority position. Dynamic shapes,
+condition variables, try/timed locks, rwlocks, nested protecting mutexes, lock
+ranks and recursive acquisition are represented refusals, not omissions.
+Diagnostics occupy the free `Q610`-`Q623` range with `Q600` retained for carried
+-over structural refusals. Certificates name exact generations, admitted
+invariant transitions and derived edges; an independent recheck rederives every
+field and refuses either trusted premise, including through the plain-string
+route. 48 new tests bring the workspace to 898 passing; 46 provider tests,
+43 Python tests, both probes and the standing gates pass, and
+`check_lean_audits.py` passes 21 audits after a new `QCore.Concurrency.MutexInvariant`
+namespace lands all 18 designed theorems plus 13 supporting ones and 29 decidable
+scenarios, with no new axiom. Evidence:
+`docs/reports/remaining-t02/README.md`. This is model-level only: no source
+lowering, no CT case mapped (11/50 unchanged), no raw unit promoted, and the four
+pinned 185-unit artifacts are unchanged by construction rather than re-measured,
+the corpus being absent from the worktree. `DeclaredFootprintShape` and
+`InvariantPredicateDeclared` are new declared premises; source-to-trace
+refinement, C layout, deadlock freedom, source lowering (T03), general recursive
+shape preservation and `research_closure` profile recording remain open.
+
+*Moved verbatim from `CLAUDE.md` lines 825-851 — variant with the T02 module/entry-point framing.*
+
+Checked mutex invariants (2026-09-07): T02 implements `CheckedMutexInvariantV1`
+in a new `crates/qcore-core/src/mutex_invariant.rs` with its own entry point,
+`check_mutex_invariant_program`. `check_concurrent`'s body, its 26 pinned tests
+and `proof/QCore/Concurrency.lean`'s `Lifetime` namespace are byte-identical;
+`TrustedExplicitTrace` still issues `GuardFootprintAuthority` and
+`SynchronizedCustodyEdges`, and the two premises are discharged only inside the
+new profile, over supplied traces. Generation-indexed mutexes follow V01's
+destruction rules; `CreateMutex` fixes its declared footprints and parks the
+creator's `FULL_ACCESS` share, so protected footprints have one protector and no
+fallback authority. Pointwise conservation over exact interval atoms is checked
+at every step. Fresh guards key all protected access, writes require an open
+invariant, and unlock/error exit require a closed one with no live borrow,
+dropping every guard-scoped fact. `SyncWitness` edges are derived and compared,
+never believed. New diagnostics occupy `Q610`-`Q623`; carried-over structural
+refusals keep `Q600`. Certificates name exact generations and admitted invariant
+transitions, and an independent recheck rederives them and refuses either
+trusted premise through both the typed set and the plain-string route. 48 new
+tests (898 workspace total), 46 provider tests, 43 Python tests, both probes and
+all standing gates pass; a new `QCore.Concurrency.MutexInvariant` Lean namespace
+and `AuditMutexInvariant.lean` bring `check_lean_audits.py` to 21 audits with all
+18 designed theorems proved, no new axiom and no placeholder. Two obligations are
+narrowed and named open: general `step_preserves_declared_shape` and the
+pointwise-atom refinement of the abstract conservation total. Evidence:
+`docs/reports/remaining-t02/README.md`. Source lowering (T03), CT mapping
+(11/50 unchanged), lock-order analysis, condition variables, rwlocks, try/timed
+locks and any raw promotion remain out of scope and open; the four pinned
+185-unit artifacts are unchanged by construction, not re-measured.
+
+#### Typed scalar-field access classification (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 1103-1144 — byte-identical in CLAUDE.md 853-894.*
+
+Typed scalar-field access classification (2026-09-07): W4 replaces the lexical
+indirect-access gate with a typed premise for one conjunctive whitelist. A
+statement is a resource-projection no-op only when it carries no call, no `&`,
+`*`, `[` or `]`, every access is a direct `base -> field` or `base . field` on a
+declared single-star record pointer or record value, the record is a `struct`
+defined exactly once whose every member declaration was read, the field's
+declared type is a non-pointer, non-array arithmetic or enumeration type without
+`volatile` or `_Atomic`, the access does not continue, every other identifier is
+an enumeration constant or a declared scalar variable, and the base is a name
+this function never binds to a resource identity. That last premise was added
+after an implementation of C00's recommendation turned a read through a released
+pointer into `Safe`; the existing fail-closed pin caught it and was not weakened.
+Unions, bitfields, nested anonymous aggregates, function-pointer members,
+pointer and array fields, chains, subscripts, casts, address-of escapes and
+call-bearing statements all keep their existing `Unknown` and diagnostics, and a
+declaration the reader cannot read refuses every access in its function. The
+premise is read from declarations in the same preprocessed token stream rather
+than a separate Clang AST, so W4 derivation, W4 validation and certificate
+rederivation repeat the classification from the certificate's own content; the
+deviation from C00's recommendation and its cost are recorded. Branch, loop and
+return conditions, and C02-P borrowed pointer-field reads, stay out of scope.
+A held-out generic fixture family checks two admitted owned lifetimes, three
+newly surfaced violations (leak, double release, release after escape), a
+caller whose classified callee stops releasing, twelve ambiguous accesses that
+each keep the existing diagnostic, and four declaration substitutions the
+certificate recheck refuses with their measured reason. The canonical CMetrics
+audit changes exactly one function: `cmt_counter_allow_reset` moves Unknown to
+Safe in the resource projection and its unsupported diagnostic disappears
+(36 to 35). `cmt_counter_create` is unchanged because its `calloc`-bound base is
+refused, and the six source-contract Unknown functions remain Unknown on their
+other blockers, as C00 predicted. The raw unit remains provisional Unsafe with
+one checked function contract and six Unknown; no unit is promoted. The pinned
+185-unit corpus cannot be re-audited here — the developer checkout has moved off
+`66910c10` and the pin gate refuses — so the four archived artifacts are left
+untouched and their re-measurement and re-pinning is a named follow-up, where
+any newly surfaced provisional Unsafe unit must be recorded. Thirty-one Lean
+theorems cover the neutral instruction and the whitelist, including its
+non-vacuity and the released-base refusal; the reader's type extraction and C
+effective types remain explicit premises. 937 workspace tests (36 new), 47
+provider tests, 43 Python tests, 20 Lean audits and all standing gates pass.
+CT coverage remains 11/50 mapped and the contract corpus 59 modules. Evidence:
+`docs/reports/remaining-c02/README.md`.
+
+#### Remaining-work wave accounting (2026-09-07)
+
+*Moved verbatim from `AGENTS.md` lines 1146-1179 — fuller variant with the milestone-criteria list and named follow-ups.*
+
+Remaining-work wave accounting (2026-09-07, implementation checkpoint `67b1a9a`):
+the twenty-five cards recorded
+under `docs/reports/remaining-*/` are reconciled into one traceable matrix,
+`docs/reviews/r0_3/acceptance_matrix.json`, with a readable companion at
+`docs/reports/remaining-d02/README.md`. This paragraph supersedes nothing above:
+each card's own record keeps its checkpoint, counts and boundaries. Milestone
+criteria met, at their stated boundaries: the documented checkpoint, submodule
+pin, branch integration, CT inventory, contract corpus and report presence all
+reconcile, and the recorded 819/45/43/20 baseline reproduced exactly before any
+change; the R01–R10 soundness gates were verified adversarially with no
+soundness failure found and no production semantics changed by the V cards;
+source-derived obligation completeness and evidence identity were checked
+against 52 replay/cache mutations and a compile-task identity that retires a
+witness when a used header changes, with zero accepted mutations; the six
+CMetrics Unknown functions are classified into a ranked, corpus-measured blocker
+inventory; one generic blocker family — typed direct scalar-field access — is
+implemented as a conjunctive type-only whitelist with 31 Lean theorems and both
+precision directions exercised; a second pinned source set is audited from
+configuration alone with no analysis-code change; the provider execution profile
+now installs the limits a manifest declares on Linux and refuses rather than
+silently downgrading, with an accurate non-sandbox trust boundary; the CT ledger
+is stage-derived, so no mapped case claims a stage its executed evidence does
+not carry. Nothing is promoted: raw Cycle 19 units remain 2 Safe / 42
+provisional Unsafe / 137 Unknown plus four data-only units, CT coverage remains
+11/50 mapped, the contract corpus remains 59 modules and full language
+conformance remains false. `qcore-schemas` is now 3.0.0 (P02's public
+`PluginLimits::additional` field); prose revision 0.3, plugin protocol v1,
+evidence v2 and program schema/profile v2 are unchanged. Current gate: 997
+workspace tests, 47 provider tests, 43 Python tests, 21 Lean audits, both
+reevaluation examples exit 0, fmt and clippy clean. Named follow-ups: 185-unit
+corpus re-measurement and deliberate re-pinning after C02 and G02; E01-F1
+definition enumeration; C02-P; O04; T03; P03; P01-F2; G03-F1/F2; the L21.1
+reason-code implementation increment; and the T00 stage-derived CT manifest
+schema.
+
+*Moved verbatim from `CLAUDE.md` lines 896-906 — condensed variant.*
+
+Remaining-work wave accounting (2026-09-07): the wave's twenty-five
+`docs/reports/remaining-*/` cards are reconciled into
+`docs/reviews/r0_3/acceptance_matrix.json` (17 requirements x 4 independently
+marked evidence classes, plus stage-derived CT rows) with a readable companion
+at `docs/reports/remaining-d02/README.md`. AGENTS.md carries the single
+consolidated status paragraph; read it there rather than duplicating it. The
+implementation checkpoint for that wave is `67b1a9a`. Nothing is promoted: raw
+Cycle 19 units stay 2 Safe / 42 provisional Unsafe / 137 Unknown plus four
+data-only units, CT coverage stays 11/50 mapped, the contract corpus stays 59
+modules and full language conformance stays false. `qcore-schemas` is 3.0.0;
+prose revision 0.3, protocol v1 and evidence v2 are unchanged.
+
+#### Delegated increment (2026-09-08)
+
+*Moved verbatim from `AGENTS.md` lines 1181-1246 — the five-card wave and its `Nothing is promoted` closing paragraph; byte-identical in CLAUDE.md 908-973.*
+
+Delegated increment (2026-09-08): five bounded cards landed through isolated
+worktrees with per-card reports; this paragraph supersedes nothing above and
+each card's record keeps its own boundaries.
+- Multi-provider composition (E03): seventeen composition properties verified
+  against unchanged code and pinned; two fail-closed repairs in
+  `compose_verification` — an unchecked `Unsafe` component outcome now
+  downgrades to Unknown under QP010 instead of being republished verbatim, and
+  unequal component premise sets refuse under QP012 instead of publishing one
+  component's assumptions. Fifteen audited Lean theorems in a new
+  `Composition` namespace, no new axiom. Four completeness boundaries stay
+  recorded open (E03-B in the acceptance matrix). Evidence:
+  `docs/reports/remaining-e03/README.md`.
+- Enforced confinement (P03): the verifier host gains a target-qualified
+  `linux-confined-v1` profile composing P02's setrlimit plan with Landlock
+  filesystem confinement and a `CLONE_NEWUSER|CLONE_NEWNET` network namespace
+  installed before exec. No default policy; five fail-closed pre-spawn refusal
+  grounds, each a scoped Unknown under QP006 with no downgrade. Twelve
+  adversarial fixtures with legacy controls measure a blocked localhost
+  connect (0 vs 1 accepted connections), blocked out-of-path read/write and
+  working admitted paths. This is confinement of two named resource classes,
+  not an OS sandbox: no seccomp, no cgroup, no other namespace, and admitted
+  paths stay fully reachable. The default remains `unenforced-legacy`.
+  Evidence: `docs/reports/remaining-p03/README.md`.
+- ChunkIO counter through the process boundary (P04): the unsigned
+  unit-counter contract now runs as package `qcore.chunkio` 0.5.0, computing
+  its own typed path projection with no derived result in the request; the
+  core evaluates the pinned contract on its sealed import and only then
+  requires agreement, so agreement alone discharges nothing. Byte-identical
+  certificate parity with the retained in-process route on all four helpers;
+  missing-evidence, tampered and 25 mutation/refusal cases fail closed.
+  `qcore-schemas` is 4.0.0 (three source-incompatible additions; existing wire
+  bytes unchanged and pinned). Thirteen other in-process ChunkIO capabilities
+  keep named blockers. Evidence: `docs/reports/remaining-p04/README.md`.
+- Source mutex/guard lowering (T03): `source.mutex.guard.v1` lowers a lexical
+  `with lock m as g` guard onto the unedited `CheckedMutexInvariantV1`
+  checker, with C11 emission and independent reference execution compared
+  line-for-line under four fixed ASan/UBSan/LSan runs. Twenty-nine tests pin
+  exact diagnostic vectors across Q610–Q622 with Q600/Q013 refusals; guard
+  binders stay body-local and no diagnostic code was added or changed. Fourteen
+  new public Lean theorems; the Lean event model still lacks a
+  resource-destruction constructor, so that half stays Rust-tested. CT26,
+  CT27, CT29 and CT30 mappings are proposed with measured stages, but the
+  manifest is unchanged pending harness fixture integration: CT stays 11/50.
+  Evidence: `docs/reports/remaining-t03/README.md`.
+- Recursive-summary design (C03): neutral-frame recursion is specified as the
+  next W4 family — a two-point per-function lattice with monotone descent to
+  the greatest post-fixed point, an empty alias obligation and a ten-item
+  post-fixed-point validation contract — motivated by a 309-file census
+  (25 of 45 self-recursive functions in scope are effect-neutral; the
+  implemented routes reach at most 3). A demonstrated counterexample shows
+  validation-by-reanalysis alone cannot refuse a circular effectful candidate,
+  so any effectful route keeps a rank. Design only: no production file
+  changed, and heap-link chain teardown is rejected with recorded ASan
+  hazards. Evidence: `docs/reports/remaining-c03/README.md` and
+  `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md`.
+
+Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
+42 provisional Unsafe / 137 Unknown plus four data-only units, CT coverage
+stays 11/50 mapped, the contract corpus stays 59 modules and full language
+conformance stays false. The four pinned 185-unit artifacts were not
+re-measured (CORPUS-REPIN remains open). Merged gate at this checkpoint:
+1080 workspace tests, 51 provider tests, 43 Python tests, 21 Lean audits,
+both reevaluation examples exit 0, fmt and clippy clean. A pre-existing P02
+`RLIMIT_NPROC` conformance test is load-flaky (it counts every process of the
+real UID); recorded in `docs/reports/remaining-p03/README.md` §9.1 with the
+assertion deliberately not weakened.
+
+#### Second delegated increment (2026-09-08)
+
+*Moved verbatim from `AGENTS.md` lines 1248-1349 — the seven-card wave and its `Nothing is promoted` closing paragraph; byte-identical in CLAUDE.md 975-1076.*
+
+Second delegated increment (2026-09-08): seven bounded cards landed through a
+second delegated wave (five isolated worktrees plus two lanes coordinated in
+the integration worktree under explicit per-lane file ownership); this
+paragraph supersedes nothing above and each card's record keeps its own
+boundaries.
+- Scoped read loans (T04): `ScopedReadLoansV1` extends the checked finite task
+  profile with one parent-owned Buffer lent to at most one scoped child as a
+  read-only loan closed by creator join. The ledger adds a `Loaned` owner
+  state with shared-read versus exclusive-use gates; a loan is not a value
+  (refused as result, entry parameter, copy/move/re-loan source and drop
+  operand). Failed creation restores captures; failed join reclaims nothing.
+  `borrow<Buffer>` parameters and `read PLACE share FULL` captures lower with
+  no parser change; native and reference runs pass the same pointer and
+  differ only in what the caller keeps, under fixed ASan/UBSan/LSan runs.
+  Seventeen public Lean theorems in a new `QCore.ReadLoan` namespace; 18 new
+  tests. ThreadSanitizer does not intercept C11 `thrd_create` (measured
+  SEGV), so data-race freedom rests on the checker's no-write-while-loaned
+  rule, not on measurement. CT24/CT25 mappings are proposed in the report
+  only; Buffer writes, fractional shares (T05), write loans and nested
+  workers remain refused. Evidence: `docs/reports/remaining-t04/README.md`.
+- Reactor callback capability through the process boundary (P05): the reactor
+  callback assignment inventory (registration index, event identity and
+  generation, declared callback authority) now runs as package
+  `qcore.libevent` 0.2.0, computing its proposal from a transported program
+  input that carries no derived result; the sealed core import rebinds the
+  proposal to its own program and re-runs `check_event_program` itself, so
+  agreement alone discharges nothing. Bufferevent operations, raw socket
+  custody, ordering assumptions and loop control have no wire record and stay
+  Unknown; an empty accepted-build list is `UnsupportedBackend`, never
+  acceptance. `qcore-schemas` is 5.0.0 (two forced source-incompatible
+  additions; existing wire bytes pinned byte-identical). The moved capability
+  has no production caller yet — it is exercised by the Cycle 18 unit tests,
+  not the Cycle 19 audit — and the in-process route is retained (P09).
+  Evidence: `docs/reports/remaining-p05/README.md`.
+- CTraces capability definition (P06): design only, by measurement — a census
+  of all 273 function definitions in the 17 pinned CTraces units finds zero
+  functions any implemented checker accepts, and the `ctraces` profile entry
+  imports and asserts nothing. `ctraces.span.dropped_counts.v1` is specified
+  over the four dropped-count setters with a 19-row malicious-witness matrix
+  and six negative controls; four refusal tests drive the real importer over
+  real upstream bodies and panic if any CTraces function ever yields a
+  summary. Two dangling manifest identities (an unimplemented
+  `certificate_checker` name and an `evidence_versions` mismatch) are
+  recorded as follow-on P06-I4, not repaired. The contract text stays outside
+  `contract/qcore/`, so the corpus count is untouched. Evidence:
+  `docs/reports/remaining-p06/README.md`.
+- librdkafka capability definition (P07): design only, by measurement — the
+  adapter imports nothing, and its six declared-but-unloaded mechanism
+  operations are mostly unfaithful to the real source (a function-like macro,
+  an absent symbol, a wrong arity, a void return taking the entry as input,
+  and one unsound postcondition); these are defects in declared unloaded
+  contract text, not upstream defect claims, and nothing derived from them.
+  A 96-function census finds zero admissible functions with one single-reason
+  near miss sizing follow-on P07-U1.
+  `qcore.librdkafka.queue_final_destroy.v1` is specified with two disjoint
+  outcomes and seven premises; reclamation, callbacks and concurrency are
+  excluded, not assumed. Evidence: `docs/reports/remaining-p07/README.md`.
+- Constructor-to-caller custody (O04): on byte-verbatim Fluent Bit `90a0109`
+  bodies, the three modeled failure arms of `flb_input_chunk_create` release
+  the chunk produced at `cio_chunk_open` exactly once, all naming the same
+  acquisition site; the constructor's four guard/allocation-failure exits are
+  discharged while its rollback and success exits stay Unknown, so its
+  declared contract remains a named premise, not a fact its body discharges.
+  The C02-P borrowed-actual admission module records per-exit residuals;
+  37 Lean theorems in `QCore.ExitResiduals` include both fail-closed
+  directions. The canonical CMetrics audit is byte-identical before and
+  after; both functions stay Unknown, and one C03 pin was deliberately
+  updated (its named blocker moved to the branch condition, recorded in the
+  test and report). Evidence: `docs/reports/remaining-o04/README.md`.
+- Checker/model correspondence (F01): `check_concurrent` and
+  `QCore.Concurrency.Lifetime.step`/`run` are tied by a seven-conjunct
+  representation relation checked without instrumenting the checker, with
+  domain and transcription agreement pinned as digests both sides compute
+  independently; the whole depth-3 domain is decided in Lean and depths 3-4
+  run differentially in Rust, with no divergence found in the claimed
+  direction. Eight new theorems depend only on `propext` and `Quot.sound`.
+  The claim is bounded at trace length 4 and not inductive; the transcription
+  is digest-checked, not mechanically extracted; data races, unauthorized
+  access and permission overflow are outside every stated correspondence; the
+  `CheckedMutexInvariantV1` pair remains open. Evidence:
+  `docs/reports/remaining-f01/README.md`.
+- T03 CT integration: CT26, CT27, CT29 and CT30 are mapped with stage-derived
+  evidence and exact ordered diagnostic cascades; CT coverage moves from
+  11/50 to 15/50 mapped. CT26 is the first harness-gated sanitized-native CT
+  case. CT28 and CT31 stay unmapped with recorded reasons; `build_matrix.py`
+  is recorded out of date via a `generator_status` field rather than silently
+  regenerated, and a stale T00 blocker label is corrected in both acceptance
+  records. No semantic or diagnostic-code change. Evidence:
+  `docs/reports/remaining-t03-ct-integration/README.md`.
+
+Nothing is promoted by this increment: raw Cycle 19 units stay 2 Safe /
+42 provisional Unsafe / 137 Unknown plus four data-only units, the contract
+corpus stays 59 modules and full language conformance stays false. CT
+coverage advances to 15/50 mapped, by executed-stage evidence only. The four
+pinned 185-unit artifacts were not re-measured (CORPUS-REPIN remains open and
+now names C02, G02 and O04). `qcore-schemas` is 5.0.0. Merged gate at this
+checkpoint: 1141 workspace tests, 56 provider tests, 43 Python tests, 23 Lean
+audits, both reevaluation examples exit 0, fmt and clippy clean in both
+workspaces. Process note: the shared git stash stack caused one
+cross-worktree stash consumption during the wave; the affected work was fully
+recovered from dangling commits and nothing was lost. Prefer temporary WIP
+commits over `git stash` in this repository.
+
+#### Short pointer bullets carried in CLAUDE.md through wave 15
+
+*Moved verbatim from `CLAUDE.md` lines 122-124 — W2 profile migration pointer.*
+
+- W2's bounded profile migration and full 185-TU parity are recorded in
+  `docs/reports/w2-profile-manifests/README.md`; remaining H4/H5/H6 and H7
+  orchestration work is explicit there. Profile data remains declared trust.
+
+*Moved verbatim from `CLAUDE.md` lines 134-140 — W3 evidence-v2 / verifier-host pointer.*
+
+- W3 bounded evidence-v2 replay/dispatch is recorded in
+  `docs/reports/w3-evidence-v2/README.md`. Positive observation certificates
+  describe recorded runs under `observations_trusted`; lifecycle source
+  derivation stays incomplete until real effect/ABI import exists. The generic
+  host is extracted in `crates/qcore-verifier-host` (record:
+  `docs/reports/w3-verifier-host/README.md`); trusted derivation/replay/dispatch now reside
+  in `qcore-verification` above the dependency-free kernel. V1 Safe refusal is unchanged.
+
+*Moved verbatim from `CLAUDE.md` lines 142-144 — W2 H6 provider discovery pointer.*
+
+- W2 H6 provider metadata now loads from profile packages; see
+  `docs/reports/w2-provider-discovery/README.md`. This does not extract providers
+  into processes or change the v1 Safe refusal.
+
+*Moved verbatim from `CLAUDE.md` lines 146-149 — Lean CI hygiene pointer.*
+
+Lean CI hygiene is implemented (2026-09-07): the pinned proof build, all theorem
+audits and the complete QCore axiom closure are checked, with both reevaluation
+examples in Linux/Windows CI. Local gates pass; hosted CI awaits a push.
+See `docs/reports/w7-lean-ci/README.md`.
+
+*Moved verbatim from `CLAUDE.md` lines 151-153 — W7 generic Lean naming pointer.*
+
+W7 generic Lean naming is complete for the bounded targets: DescriptorCustody,
+EventComposition and busy_effect_preserves_lock, with historical aliases and
+unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
+
+*Moved verbatim from `CLAUDE.md` lines 163-165 — qcore-audit driver pointer.*
+
+- The generic `qcore-audit` driver and retained Cycle19 compatibility adapter
+  are documented in `docs/reports/w5-configured-audit/README.md`. No provider
+  module is linked by the new driver; production evidence routes remain.
+
+#### Claude-specific working bullets carried in CLAUDE.md through wave 15
+
+*Moved verbatim from `CLAUDE.md` lines 81-109 — the crate-layering rule, the W4 custody-pass record and its do-not rules, and the three working rules. The imperative halves now live in `AGENTS.md` (constraint 4) and in the rewritten `CLAUDE.md`; the W4 execution record is kept here.*
+
+- Before starting checker/architecture work, read `docs/GENERALIZATION_PLAN.md`
+  and land code according to its target crate layering (§3) and invariants
+  (§2); do not add new code to the monolithic grab-bag once a target crate
+  exists.
+- W4 is executed for parameter/return custody with validation
+  (`crates/qcore-c-gateway/src/legacy_summary.rs`,
+  `docs/reports/w4-custody-inference/README.md`). A call into an internal C
+  function is modeled only through a declared `.qcore` contract or a summary
+  that `observations_match_contract` validated against a fresh analyzer run;
+  everything else stays `Unknown`. When touching that pass, do not let a
+  summary be published without validation, do not seed a formal parameter with
+  entry custody the body did not demand (that asserts non-nullness and deletes
+  failure paths), and do not accept an assume-guarantee fixed point for a
+  recursive component. The 2026-09-07 extension validates direct `Out` slots,
+  `Stored` formals, `Reallocated` results and possibly-null owned returns
+  (`docs/reports/w4-custody-extensions/README.md`). Reassigned out pointers,
+  Direct `Removed` wrappers are inferred and validated; general removal aliases and general recursive components remain unsupported; the
+  `qcore-c-gateway` relocation is executed with compiler compatibility reexports
+  (`docs/reports/w4-gateway-crate/README.md`).
+- Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
+  a diagnostic to make a test pass. If a pinned table (contract corpus counts,
+  submodule revision, archived report) conflicts with your change, the change
+  must update the pin deliberately and say so.
+- Status language matters in this project: keep the Safe/Unsafe/Unknown
+  verdict vocabulary and the "unpromoted" phrasing exactly as defined in
+  AGENTS.md when editing docs, reports, or commit messages.
+- Run the full standing per-change gate from AGENTS.md before reporting a
+  task complete; report probe/example exit codes honestly (a nonzero probe
+  exit is a finding, not a build failure).
+
