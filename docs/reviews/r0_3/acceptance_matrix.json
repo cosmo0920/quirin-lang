@@ -1727,6 +1727,8 @@
     "mapping_status": "unmapped",
     "expected": "Still same permission identity",
     "current_bucket": "ambiguous + unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "ambiguous + unimplemented-syntax",
     "blocker": "expected result is not an accept/reject verdict, and aliasing is refused outright",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -1789,6 +1791,8 @@
     "mapping_status": "unmapped",
     "expected": "Accept with bounds/disjointness proof",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "no array types, indexing or disjointness in source",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -1851,6 +1855,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject or analyzer potential/unknown",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "as CT07; also wants an `unknown` verdict the harness lacks",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -1913,6 +1919,8 @@
     "mapping_status": "unmapped",
     "expected": "Accept only after layout/access proof",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "no struct/field access in source",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -1975,6 +1983,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject independent concurrent writes",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "no bit-fields; no C-twin stage",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -2036,7 +2046,9 @@
     "id": "CT11",
     "mapping_status": "unmapped",
     "expected": "Reject",
-    "current_bucket": "blocked-on-task-lowering (share captures)",
+    "current_bucket": "blocked-on-scenario-mismatch (no local alias form)",
+    "current_bucket_source": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "archived_bucket": "blocked-on-task-lowering (share captures)",
     "blocker": "needs share reconstruction with surviving aliases",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -2092,7 +2104,10 @@
       "status": "unexecuted"
      }
     },
-    "deepest_executed_stage": null
+    "deepest_executed_stage": null,
+    "blocker_current": "The scenario reads 'full permission reconstructed while local shared aliases survive'. ScopedReadSharesV1 has no local alias form at all, and the party retaining the share here is an unjoined child task. The refusal direction matches, but the retaining party does not, so mapping it would claim intra-frame alias evidence the corpus does not have. T05 flagged exactly this and left the decision to the integrator.",
+    "blocker_superseded_by": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/remaining-wave3-ct-integration/README.md section 1.2 (Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] } at the write placed between the two joins)"
    },
    {
     "id": "CT12",
@@ -3016,6 +3031,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject",
     "current_bucket": "blocked-on-W3/W4",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-W3/W4",
     "blocker": "no source path emits RegionOp::QuantOpen",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -3078,6 +3095,8 @@
     "mapping_status": "unmapped",
     "expected": "Accept",
     "current_bucket": "blocked-on-W3/W4",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-W3/W4",
     "blocker": "as CT21; also needs credits",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -3140,6 +3159,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "quantitative credits are not in any executable subset",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -3202,6 +3223,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject",
     "current_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
     "blocker": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -3264,6 +3287,8 @@
     "mapping_status": "unmapped",
     "expected": "Accept",
     "current_bucket": "ambiguous (partially unblocked)",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "ambiguous (partially unblocked)",
     "blocker": "joins now exist; loan expiry does not",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -4717,6 +4742,8 @@
     "mapping_status": "unmapped",
     "expected": "Not certified; unsupported lifetime/publication protocol",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "blocker": "measured on the legacy_c route (card CT-CTWIN): a store of an owned pointer into a file-scope object is invisible to the resource projection, so the publishing function is Safe with no diagnostic and the verdict is identical with and without `_Atomic`; a unit that also reads the published object is Unknown, but on the reader's unknown-alias diagnostics, not on the publication. The verdict is invariant under the construct the scenario names, so no control can attribute it. Follow-on CT-CTWIN-PUBLISH.",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -4772,13 +4799,18 @@
       "status": "unexecuted"
      }
     },
-    "deepest_executed_stage": null
+    "deepest_executed_stage": null,
+    "blocker_current": "The verdict is invariant under removing the construct the scenario names, so no control can attribute it to the publication protocol; mapping it would record either a Safe against a case that demands non-certification, or an Unknown attributable to something else.",
+    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-PUBLISH"
    },
    {
     "id": "CT41",
     "mapping_status": "unmapped",
     "expected": "No synchronization proof",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "blocker": "measured on the legacy_c route (card CT-CTWIN): adding or removing the volatile completion flag changes neither the verdict nor a single diagnostic, in both shapes measured; the gateway models no synchronization, so no verdict it produces is evidence about one and the mapping would be vacuous. Follow-on CT-CTWIN-SYNC.",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -4834,13 +4866,18 @@
       "status": "unexecuted"
      }
     },
-    "deepest_executed_stage": null
+    "deepest_executed_stage": null,
+    "blocker_current": "The gateway has no synchronization model at all, so no verdict it produces is evidence about one; the mapping would be vacuous by the same rule that requires a non-vacuous control.",
+    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-SYNC"
    },
    {
     "id": "CT42",
     "mapping_status": "unmapped",
     "expected": "Preserve shared protocol-cell identity",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "archived_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
     "blocker": "measured on the legacy_c route (card CT-CTWIN): an int-typed resource identity is refused by the contract loader (`owned result requires a pointer return type`), so the descriptor twin is Unknown on three uncontracted calls — the profile cannot express it at all — and the case asks for a preserved identity, which no measured verdict establishes. Follow-on CT-CTWIN-DESCRIPTOR.",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -4896,7 +4933,10 @@
       "status": "unexecuted"
      }
     },
-    "deepest_executed_stage": null
+    "deepest_executed_stage": null,
+    "blocker_current": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors.",
+    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-DESCRIPTOR"
    },
    {
     "id": "CT43",
@@ -4998,6 +5038,8 @@
     "mapping_status": "unmapped",
     "expected": "Reject",
     "current_bucket": "ambiguous",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "ambiguous",
     "blocker": "the available rejection is about the handle, not about a capture whose environment expires",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -5147,7 +5189,9 @@
     "id": "CT46",
     "mapping_status": "unmapped",
     "expected": "Accept only through verified mutex protocol",
-    "current_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
+    "current_bucket": "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)",
+    "current_bucket_source": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+    "archived_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
     "blocker": "needs Send/Sync conditions and a verified mutex protocol",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -5205,13 +5249,16 @@
     },
     "deepest_executed_stage": null,
     "blocker_current": "The recorded Send/Sync-derivation blocker is retired: card CT46-SENDSYNC landed a closed transferable(T) judgment that decides both matrices whole, so the derivation CT46 was said to need now exists. The measured remaining obstacle is different, and is named CT46-MUTEX-CAPTURE: the mutex ledger and the task ledger compose today by mutual exclusion rather than over a capture - the mutex route admits no task capture of a guarded payload and the task route refuses mutexes outright - so no source text can ask for mutex-mediated sharing across a task boundary and CT46's `accept` half is unwritable. Mapping only the refusing half would answer a different question.",
-    "blocker_superseded_by": "docs/reports/wave13-ct34/ct_stage_evidence.json"
+    "blocker_superseded_by": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave13-ct34/README.md section 'CT46 - stale, and updated', carrying card CT46-SENDSYNC (wave 12) forward"
    },
    {
     "id": "CT47",
     "mapping_status": "unmapped",
     "expected": "Reject automatic cross-thread acceptance",
     "current_bucket": "DECIDABLE-NOW (coarser reason)",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "DECIDABLE-NOW (coarser reason)",
     "blocker": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
     "bucket_changed_since_batch2": true,
     "stage_derived_status": {
@@ -5373,6 +5420,8 @@
     "mapping_status": "unmapped",
     "expected": "Validate partial order, not exact total trace",
     "current_bucket": "blocked-on-unimplemented-syntax",
+    "current_bucket_source": "t00-archive",
+    "archived_bucket": "blocked-on-unimplemented-syntax",
     "blocker": "the harness pins an exact total transcript (stdout == render_task_observation), which is the opposite of a partial-order check",
     "bucket_changed_since_batch2": false,
     "stage_derived_status": {
@@ -5545,14 +5594,34 @@
   "unmapped_bucket_counts": {
    "ambiguous + unimplemented-syntax": 1,
    "blocked-on-unimplemented-syntax": 6,
-   "blocked-on-task-lowering (share captures)": 1,
+   "blocked-on-scenario-mismatch (no local alias form)": 1,
    "blocked-on-W3/W4": 2,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 3,
    "ambiguous": 1,
-   "blocked-on-unimplemented-syntax (no mutex value)": 1,
+   "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1,
    "DECIDABLE-NOW (coarser reason)": 1
+  },
+  "unmapped_label_sources": {
+   "CT06": "t00-archive",
+   "CT07": "t00-archive",
+   "CT08": "t00-archive",
+   "CT09": "t00-archive",
+   "CT10": "t00-archive",
+   "CT11": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+   "CT21": "t00-archive",
+   "CT22": "t00-archive",
+   "CT23": "t00-archive",
+   "CT24": "t00-archive",
+   "CT25": "t00-archive",
+   "CT40": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+   "CT41": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+   "CT42": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+   "CT44": "t00-archive",
+   "CT46": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+   "CT47": "t00-archive",
+   "CT49": "t00-archive"
   },
   "newly_decidable_not_mapped": [
    "CT24",
@@ -5573,7 +5642,7 @@
    "Mapping is not conformance. `proof` is unassessed for every mapped case and no Lean theorem is bound to any CT fixture (T00.7 remains open).",
    "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now refuses an `executed` sanitized claim from any other case.",
    "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this generator's inputs no longer allow.",
-   "The unmapped triage rows are recorded analysis, not stage evidence, and come from T00's audit filtered to the cases that are still unmapped.",
+   "The unmapped triage rows are recorded analysis, not stage evidence. The counted set is the manifest's own unmapped set (card HYGIENE-14); each row's current_bucket is the newest CT lane record that measured that case, else T00's archived audit, with current_bucket_source naming which and archived_bucket keeping T00's text beside it (card CT-LABELS). A row whose source is a lane also carries blocker_current and blocker_measured_by; a row on t00-archive carries only T00's frozen blocker, which for such a case has not been re-verified against the current implementation.",
    "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. Neither adds native, sanitized or proof evidence."
   ],
   "newly_decidable_not_mapped_reasons": {
@@ -5671,7 +5740,7 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2536,
+  "workspace_tests": 2542,
   "provider_tests": 94,
   "python_evidence_validator_tests": 125,
   "lean_audits": 64,
@@ -5747,7 +5816,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate14seal.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate15a.json)"
  },
  "named_followups": [
   {
