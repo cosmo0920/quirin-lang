@@ -420,6 +420,7 @@ Run in this worktree on Linux with Clang 21.1.8 available:
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 -B scripts/check_lean_audits.py` | **49 audits passed** (48 → 49), no new axiom |
 | `cargo test --manifest-path providers/Cargo.toml --workspace` | **75 passed, 0 failed** |
+| `python3 -B providers/package.py build` + `qcorec plugins verify` × 5 | all five built and verified (exit 0); ChunkIO stays 0.7.0 |
 | `python3 -m unittest discover -s scripts/tests` | 124 passed, **1 failed** — see §7.2 |
 | 185-unit corpus, before vs after, same directory | 18 leaves, all `contract_source` (§5.1) |
 
