@@ -679,6 +679,18 @@ fn composition_vocabulary_is_pinned() {
          the change before updating this pin"
     );
 
+    // The ninth operation form is admitted **here** and refused at parse time by
+    // the cleanup-replay family, whose own wire test asserts the refusal. Both
+    // halves are checked, so the widening cannot become a silent one.
+    let value_free: CompositionSourceInput =
+        serde_json::from_value(file_close_projection()).unwrap();
+    assert!(
+        serde_json::to_string(&value_free)
+            .unwrap()
+            .contains("return"),
+        "the void wrapper's value-free return did not travel"
+    );
+
     // The transported family tags, pinned so a third cannot appear without a
     // decision here.
     let mut families: Vec<String> = [

@@ -48,16 +48,30 @@ semantic-profile constants.
 `cio_file_close` returns `void`, so its complete paths end without a value, and
 `CleanupReplayOperationRecord` had no `Return`. One variant was added.
 
-The widening is confined by refusal on both sides, not by convention:
+The widening is confined by refusal on four sides, not by convention:
 
+* the cleanup-replay family's transported body refuses a bare `return` **at
+  parse time**, through a field-level `deserialize_with` on both arms of
+  `CleanupReplayFamilyInput` — see below;
 * the gateway's cleanup-replay projector already refuses
   `SourceOperation::Return` **by name**, and still does, so that family cannot
   emit one;
-* the cleanup-replay producer now declines `CleanupReplayOperationRecord::Return`
-  **by name**, so it cannot consume one;
+* the cleanup-replay producer declines `CleanupReplayOperationRecord::Return`
+  **by name**, so it cannot consume one either;
 * the composition projector admits it only for a body the caller declared
   `void`-returning — the `file_close` wrapper — and the leaf family's producer
   declines it too.
+
+**The first of those four is a repair, made because the widening was measured to
+weaken a fail-closed gate.** `cleanup_replay_request_wire.rs`'s
+`the_closed_vocabulary_refuses_every_unrepresented_form` asserts that a bare
+`return` step *cannot be deserialized* into a `CleanupReplaySourceInput`. Adding
+the variant made it deserializable: the refusal moved from the parser to the
+producer's decline and the projector's omission. That is a gate moving one layer
+in, so the parse-time refusal was **restored where it was** rather than the pin
+relaxed to match the new enum. The composition wire test asserts the other half —
+that the same form still travels on this route — so the widening cannot become a
+silent one in either direction.
 
 This is the mechanism `P04-COMPOSE-SHARED-PATHS` asked for: a future widening of
 the shared enums fails at an explicit refusal rather than silently widening a
