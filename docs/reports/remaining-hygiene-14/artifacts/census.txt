@@ -1,0 +1,20 @@
+card HYGIENE-14, BORROW-LIVENESS-MIXED: reach of the widened `Borrowed`
+liveness precondition over the pinned 185-unit Cycle 19 corpus.
+
+Measured by a scratch stderr line per considered position, on the canonical
+pinned route with the widened rule in place. The instrumentation was removed
+before this card's commits and its run produced resource-diagnostics.json
+identical to both the BEFORE and the AFTER run (sha256 70994e38bac7e45a...),
+so it is proved inert.
+
+total borrowed-position considerations: 267
+unbound (scalars / names this projection never tracks): 233
+bound: 34
+settled (the status test is evaluated): 0
+refusals published, widened condition {RELEASED, RELEASED|ESCAPED}: 0
+refusals published, previous condition {RELEASED}: 0
+
+The blocking conjunct is requirement 1 (a settled denotation), not the status
+condition this card widened: no borrowed actual in this corpus reaches a state
+where its status is looked at. This reproduces card BORROW-LIVENESS's archived
+census (267 / 233 / 34 / 0) exactly, re-measured after the widening.

@@ -507,4 +507,4 @@ that field — the committed matrix was not touched).
 | `crates/qcore-c-gateway/src/legacy_c.rs` | four `const`s become `pub(crate)`; one enum-variant rename at the call site. No other line |
 | `crates/qcore-c-gateway/tests/borrow_liveness_boundary.rs` | the mixed-join movement and the three-branch control |
 | `proof/QCore/BorrowLiveness.lean`, `proof/AuditBorrowLiveness.lean` | the widened condition, three retirements, seven new theorems |
-| `docs/reports/remaining-hygiene-14/` | this record |
+| `docs/reports/remaining-hygiene-14/` | this record, `artifacts/census.txt` and `artifacts/run-hashes.json` |
