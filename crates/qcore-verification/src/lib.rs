@@ -18,6 +18,7 @@ pub mod composition_source;
 pub mod counter_source;
 pub mod file_close_composition;
 pub mod frame_source;
+pub mod memory_close_composition;
 pub mod source_effect;
 pub mod teardown_source;
 pub mod unmap_composition;

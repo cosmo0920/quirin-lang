@@ -1,0 +1,1046 @@
+{
+  "schema_version": 2,
+  "prerequisites": {
+    "memory_close": {
+      "reset": {
+        "semantic_profile": "qcore.c_frame_helper_contract.v1",
+        "task_digest": "ab8f665fc39a7d84f039dba8c9247ca76c837b6ffb672b31c50871807cc5decb",
+        "obligation_id": "resource_contracts:e006ad4df12424cad5718925"
+      },
+      "backend": {
+        "semantic_profile": "qcore.c_field_destructor_contract.v1",
+        "task_digest": "0f8d3d4d3146dd3c2bd052635778133ea1294a485d26e238dbc53dec2f9105c3",
+        "obligation_id": "resource_contracts:37eb13e73b64857580baac48"
+      },
+      "unlink": {
+        "semantic_profile": "qcore.c_list_unlink_contract.v1",
+        "task_digest": "bfde3cafc6373f889a913e20fc72c091c5dc2fd838e7636dc9c8e5a05424ea4d",
+        "obligation_id": "resource_contracts:d274a702e5de1f8fd9cb04d4"
+      },
+      "counter": {
+        "semantic_profile": "qcore.c_counter_contract.v1",
+        "task_digest": "e6b6eca8d4649b74b49da594a382bf142c11e8be8dc3d719f3ebced35d5285ab",
+        "obligation_id": "resource_contracts:4539da5b4f0ebcba9e5b933b"
+      }
+    }
+  },
+  "family": {
+    "family": "memory_close",
+    "wrapper": {
+      "function": "cio_chunk_close",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "void (struct cio_chunk *, int)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "local_end",
+              "local": 2
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "call",
+              "function": "cio_error_reset",
+              "signature": "void (struct cio_chunk *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_chunk *",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 0
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 2
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_stream *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "st"
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_stream *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "name": "type"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 2,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 5
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "call",
+              "function": "cio_memfs_close",
+              "signature": "void (struct cio_chunk *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_chunk *",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 0
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_state_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "name"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 11
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "struct cio_chunk *",
+                      "expression": {
+                        "kind": "parameter",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "cio_chunk_counter_total_sub",
+              "signature": "qcore_test_size_t (struct cio_ctx *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_ctx *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                }
+              ],
+              "result_type": "unsigned long"
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "local_end",
+              "local": 2
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "call",
+              "function": "cio_error_reset",
+              "signature": "void (struct cio_chunk *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_chunk *",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 0
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 2
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_stream *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "st"
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_stream *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "name": "type"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 2,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 5
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  }
+                }
+              },
+              "taken": true
+            },
+            {
+              "kind": "call",
+              "function": "cio_file_close",
+              "signature": "void (struct cio_chunk *, int)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_chunk *",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 0
+                  }
+                },
+                {
+                  "c_type": "int",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 1
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_state_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "name"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 12
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "struct cio_chunk *",
+                      "expression": {
+                        "kind": "parameter",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "cio_chunk_counter_total_sub",
+              "signature": "qcore_test_size_t (struct cio_ctx *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_ctx *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                }
+              ],
+              "result_type": "unsigned long"
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "local_end",
+              "local": 2
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        },
+        {
+          "operations": [
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "unary",
+                  "operator": "!",
+                  "value": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "call",
+              "function": "cio_error_reset",
+              "signature": "void (struct cio_chunk *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_chunk *",
+                  "expression": {
+                    "kind": "parameter",
+                    "index": 0
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "ctx"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 3,
+              "value": {
+                "c_type": "struct cio_ctx *",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 2
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "struct cio_stream *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "st"
+                }
+              }
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_stream *",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 4
+                    }
+                  },
+                  "name": "type"
+                }
+              }
+            },
+            {
+              "kind": "local_write",
+              "local": 2,
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "symbol",
+                  "operation": 5
+                }
+              }
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "1"
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "guard",
+              "condition": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "binary",
+                  "operator": "==",
+                  "left": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "symbol",
+                      "operation": 5
+                    }
+                  },
+                  "right": {
+                    "c_type": "int",
+                    "expression": {
+                      "kind": "integer",
+                      "value": "0"
+                    }
+                  }
+                }
+              },
+              "taken": false
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "mk_list_del",
+              "signature": "void (struct mk_list *)",
+              "arguments": [
+                {
+                  "c_type": "struct mk_list *",
+                  "expression": {
+                    "kind": "unary",
+                    "operator": "&",
+                    "value": {
+                      "c_type": "struct mk_list",
+                      "expression": {
+                        "kind": "field",
+                        "base": {
+                          "c_type": "struct cio_chunk *",
+                          "expression": {
+                            "kind": "parameter",
+                            "index": 0
+                          }
+                        },
+                        "name": "_state_head"
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "read",
+              "place": {
+                "c_type": "char *",
+                "expression": {
+                  "kind": "field",
+                  "base": {
+                    "c_type": "struct cio_chunk *",
+                    "expression": {
+                      "kind": "parameter",
+                      "index": 0
+                    }
+                  },
+                  "name": "name"
+                }
+              }
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "char *",
+                      "expression": {
+                        "kind": "symbol",
+                        "operation": 11
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "free",
+              "signature": "void (void *)",
+              "arguments": [
+                {
+                  "c_type": "void *",
+                  "expression": {
+                    "kind": "cast",
+                    "cast": "BitCast",
+                    "value": {
+                      "c_type": "struct cio_chunk *",
+                      "expression": {
+                        "kind": "parameter",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              ],
+              "result_type": "void"
+            },
+            {
+              "kind": "call",
+              "function": "cio_chunk_counter_total_sub",
+              "signature": "qcore_test_size_t (struct cio_ctx *)",
+              "arguments": [
+                {
+                  "c_type": "struct cio_ctx *",
+                  "expression": {
+                    "kind": "symbol",
+                    "operation": 2
+                  }
+                }
+              ],
+              "result_type": "unsigned long"
+            },
+            {
+              "kind": "local_end",
+              "local": 3
+            },
+            {
+              "kind": "local_end",
+              "local": 2
+            },
+            {
+              "kind": "return"
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "probe": {
+      "function": "qcore_cio_memory_store_value",
+      "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+      "signature": "int (void)",
+      "paths": [
+        {
+          "operations": [
+            {
+              "kind": "return_value",
+              "value": {
+                "c_type": "int",
+                "expression": {
+                  "kind": "integer",
+                  "value": "1"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "profile_assumptions": {}
+    },
+    "derivation": {
+      "recipe": "\nint qcore_cio_memory_store_value(void) { return CIO_STORE_MEM; }\n",
+      "recipe_function": "qcore_cio_memory_store_value",
+      "base_source_digest": "51173755f646e951353139ac3a826c16c9f014a86ffc5fc43140760da780a6ef",
+      "derived_source_digest": "2d630822e954d067e7046c079071751d3c65d1324508787cab8b5314a6090c15",
+      "base_input_class": "anonymous_text",
+      "derived_input_class": "anonymous_text"
+    },
+    "callees": {
+      "reset": {
+        "function": "cio_error_reset",
+        "signature": "void (struct cio_chunk *)"
+      },
+      "backend": {
+        "function": "cio_memfs_close",
+        "signature": "void (struct cio_chunk *)"
+      },
+      "unlink": {
+        "function": "mk_list_del",
+        "signature": "void (struct mk_list *)"
+      },
+      "counter": {
+        "function": "cio_chunk_counter_total_sub",
+        "signature": "unsigned long (struct cio_ctx *)"
+      }
+    }
+  }
+}
