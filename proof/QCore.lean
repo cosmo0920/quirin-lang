@@ -88,7 +88,9 @@ import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
+import QCore.ConditionalGroupDepth
 import QCore.AggregateStore
 import QCore.BoundFieldRead
+import QCore.MayAlias
 
 /-! The executable formal core of QCore-C revision 0.1. -/

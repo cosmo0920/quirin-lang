@@ -5595,10 +5595,10 @@
  },
  "validation": {
   "note": "wave-10 six-card merged gate, 2026-09-09",
-  "workspace_tests": 2034,
+  "workspace_tests": 2119,
   "provider_tests": 76,
   "python_evidence_validator_tests": 125,
-  "lean_audits": 51,
+  "lean_audits": 53,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5609,6 +5609,7 @@
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupVocabulary.lean",
    "AuditConcurrencyPrelude.lean",
+   "AuditConditionalGroupDepth.lean",
    "AuditCycle10.lean",
    "AuditCycle11.lean",
    "AuditCycle12.lean",
@@ -5631,6 +5632,7 @@
    "AuditExternCall.lean",
    "AuditGenericNames.lean",
    "AuditLifetimeCorrespondence.lean",
+   "AuditMayAlias.lean",
    "AuditMutexInvariant.lean",
    "AuditNeutralFrameRecursion.lean",
    "AuditO05.lean",
@@ -5658,7 +5660,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate11.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c/ee8436e6-884d-4c06-8388-a333720cb287/scratchpad/gate11c.json)"
  },
  "named_followups": [
   {
@@ -5670,7 +5672,7 @@
   {
    "id": "T03-CT-REST",
    "title": "The two still-unmapped mutex-family CT cases (was three)",
-   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain.",
+   "why": "CT33 is unblocked in wave 10: lock ranks have a source form (`mutex rank N`), an opt-in checked discipline (Q624 LockRankViolation, Q625 MixedLockRankDeclaration; band now Q610–Q625) and rank-gated nesting; its mapping is proposed with the measured [Q624,Q612] cascade and awaits the next CT lane. CT34 (no protection-growth form) and CT46 (needs Send/Sync derivation) remain. CT33 mapped in wave 11 (31/50) with the sharper one-statement control; CT33-SANITIZED and D02-BLOCKER-STALE recorded by the lane.",
    "source": "docs/reports/wave5-ct-integration/README.md, docs/reports/remaining-t03-ct-integration/README.md, docs/reports/remaining-ct33-ranks/README.md"
   },
   {
@@ -5680,16 +5682,10 @@
    "recorded_by": "docs/reports/remaining-wave3-ct-integration/README.md"
   },
   {
-   "id": "C02-P-ALIAS",
-   "title": "May-alias distinct declared names in the borrowed-actual projection",
-   "why": "two distinct declared names that may denote the same object are unrelated by the name-based projection; pinned by a test asserting the field-read and no-field-read forms agree, so a repair moves both rows together. Pre-existing model boundary, not a hole C02-P opened.",
-   "source": "docs/reports/remaining-c02-p/README.md"
-  },
-  {
    "id": "C03-NFR-REACH",
-   "title": "Neutral-frame recursion reach and the dead uncontracted-call hazard",
-   "why": "the implemented route is refusal-complete but measured corpus reach is 0 (the census estimated ~9 from argument shape; V5 requires whole-body modelling; all 12 reachable self-recursive functions refuse on other blockers, mostly indirect access and unmodelled branch conditions). Also recorded, not repaired: a dead uncontracted call in an otherwise-Safe unit surfaces as ProductionParserRejected instead of Unknown (pre-existing).",
-   "source": "docs/reports/remaining-c03-nfr/README.md"
+   "title": "Neutral-frame recursion reach: measured 0 over the true 46-component population",
+   "why": "C03-REACH re-measured with every wave-5..10 admission landed: reach is still 0, over a population 8x the recorded one (46 recursive components / 96 members across 21 units, incl. 17 mutual components; 94 refuse at V5 containment, one at V5 not-clean, one at V3 — C03-REACH-FNPTR-PARAM). The dominant indirect-access blocker is a decoy: admitting it completely admits zero components; only the expression-position families plus member access jointly move 11 components. Next step is docs/design/W4_NEUTRAL_EXPRESSION_POSITIONS.md (position predicate needs the contract environment; minimal validation case digits10).",
+   "source": "docs/reports/remaining-c03-nfr/README.md, docs/reports/remaining-c03-reach/README.md"
   },
   {
    "id": "EXTERN-CALL-F",
@@ -5706,8 +5702,8 @@
   {
    "id": "T08-SRC-O",
    "title": "Epoch source-form residuals",
-   "why": "T08-SRC-EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them). T08-SRC-CT closed in wave 8: CT35/CT36/CT38/CT39 mapped through the epoch route with exhaustive certificate-figure pinning (docs/reports/wave8-epoch-ct/README.md).",
-   "source": "docs/reports/remaining-t08-epoch-src/README.md"
+   "why": "T08-SRC-EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them). T08-SRC-CT closed in wave 8: CT35/CT36/CT38/CT39 mapped through the epoch route with exhaustive certificate-figure pinning (docs/reports/wave8-epoch-ct/README.md). T08-COMPOSE landed in wave 11 (source.epoch.tasks.v1: byte-blanking composition, agreement checked both directions, disposal derived; the extent-derivation example refuted by measurement). Its residuals: T08-COMPOSE-SHARED/-LOAN/-GUARD/-RESULT-REUSE/-EXIT/-PAYLOAD/-DERIVE/-CT.",
+   "source": "docs/reports/remaining-t08-epoch-src/README.md, docs/reports/remaining-t08-compose/README.md"
   },
   {
    "id": "P03-F-O",
@@ -5730,8 +5726,8 @@
   {
    "id": "E01-F1-O",
    "title": "Enumeration residuals after the denominator completion",
-   "why": "E01-F1-RAW closed in wave 9: mid-line `#` is no longer a directive introducer, the two enumeration mechanisms agree (absent_from_raw_scan 146→15 on rdkafka.c), zero verdict movement. Remaining: E01-F1-RAW-COND (the 15-row residual — `#if`/`#else` arms each opening a brace; conditional evaluation, not lexing; pinned in both directions), E01-F1-STDIN, E01-F1-DENOM, E01-F1-COST.",
-   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md"
+   "why": "E01-F1-RAW-COND closed in wave 11: the max-depth group rule zeroes absent_from_raw_scan in every unit (the rule buys mechanism agreement, not analysis coverage — measured and stated), and a latent phantom-definition hazard in the old summing rule was closed in passing. Remaining: E01-F1-STDIN, E01-F1-DENOM, E01-F1-COST.",
+   "source": "docs/reports/remaining-e01-f1/README.md, docs/reports/remaining-e01-f1-raw/README.md, docs/reports/remaining-e01-raw-cond/README.md"
   },
   {
    "id": "P04-NEXT-O",
@@ -5770,11 +5766,11 @@
    "source": "docs/reports/remaining-o03-reactor/README.md"
   },
   {
-   "id": "WAVE11-DEFERRED",
-   "title": "Cards stopped for the fleet-size trim, to relaunch",
-   "why": "C02-P-ALIAS, E01-RAW-COND (restart cherry-picks recovered commit 830e387), C03-REACH and T08-COMPOSE were stopped mid-work when the worktree fleet was cut to seven for storage; their briefs are unchanged.",
-   "source": "session record, 2026-09-09"
+   "id": "C02-P-ALIAS-O",
+   "title": "May-alias refinement residuals",
+   "why": "the v1 rule (same-tag formals, provenance or pointer-inequality discharge) landed with one corpus obligation firing (rd_kafka_new). Residuals: -LOCALS (two locals unrelated), -UNTYPED, -CONSUME, -USES, -GUARD-FORMS, and -LEAK-ORDER — a pre-existing scheduling sensitivity where report_leaks runs on intermediate iterates of an exit node, surfaced and bisected by this card, deliberately not repaired because repairing it moves the pinned leak count (271).",
+   "source": "docs/reports/remaining-c02-p-alias/README.md"
   }
  ],
- "updated": "2026-09-09 (wave 10 complete: O03-REACTOR, P04-B1, P01-F3, CT33-RANKS, E03-B-O, EXTERN-F1 and O04-READ-BOUND close at their stated boundaries; the corpus is re-pinned to docs/reports/wave10-corpus/ with the only movement P04-B1's 18 contract_source leaves; qcore-compiler 0.4.0, qcore-verifier-host/verification 0.3.0, mutex band Q610–Q625; four cards deferred to wave 11 by the fleet-size trim; nothing promoted)"
+ "updated": "2026-09-09 (wave 11 complete: CT33 mapped (31/50), T08-COMPOSE composes epochs over checked task regions, E01-RAW-COND zeroes the raw-scan residual, C03-REACH corrects the recursion population to 46 components with reach honestly 0 and the next-blocker design note, C02-P-ALIAS lands the fail-closed may-alias rule with one obligation firing; the corpus re-pins to docs/reports/wave11-corpus/ with one changed unit fully attributed; nothing promoted)"
 }

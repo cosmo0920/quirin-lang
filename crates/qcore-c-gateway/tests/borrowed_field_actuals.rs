@@ -445,12 +445,18 @@ fn a_custody_summary_derived_through_an_admitted_call_is_validated_and_rederived
 }
 
 /// A recorded boundary, not a claim. Two *distinct declared names* may denote
-/// the same object, and this projection has never related them: releasing one
-/// formal does not refuse a borrow of another. The pointer-field form answers
-/// exactly as the plain-name control does, so the boundary belongs to the
-/// projection's name-based model and is not opened by this admission. If a
+/// the same object, and this projection had never related them: releasing one
+/// formal did not refuse a borrow of another. The pointer-field form answered
+/// exactly as the plain-name control did, so the boundary belonged to the
+/// projection's name-based model and was not opened by C02-P's admission. If a
 /// later increment relates the two names, both rows move together — that is
 /// what this test pins.
+///
+/// **Card C02-P-ALIAS is that increment, and both rows moved together**, from
+/// `Safe == Safe` to `Unknown == Unknown`. The agreement is the load-bearing
+/// half and is unchanged; the shared value is asserted explicitly below so this
+/// pin cannot go quietly vacuous. The obligations each form now reports are
+/// pinned in `tests/may_alias_boundary.rs`.
 #[test]
 fn the_may_alias_boundary_answers_the_same_with_and_without_a_field_read() {
     if !clang_available() {
@@ -467,10 +473,16 @@ fn the_may_alias_boundary_answers_the_same_with_and_without_a_field_read() {
          if (!chunk) { return 0; } b_close(chunk); return 0; }",
         "w",
     );
+    let control = function(program(&control), "w").status;
+    let with_field_read = function(program(&with_field_read), "w").status;
     assert_eq!(
-        function(program(&control), "w").status,
-        function(program(&with_field_read), "w").status,
+        control, with_field_read,
         "the field-read form must not answer differently from the plain-name control"
+    );
+    assert_eq!(
+        control,
+        AnalysisStatus::Unknown,
+        "C02-P-ALIAS moved both rows together; a `Safe` here would be a regression"
     );
 }
 

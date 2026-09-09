@@ -1,0 +1,6 @@
+units: 185
+total absent_from_raw_scan rows: 0
+units with a nonzero residual: 0
+enumeration refusal grounds across the corpus: {} (none)
+unit verdicts: {None: 185}
+enumerated definitions (denominator): 0

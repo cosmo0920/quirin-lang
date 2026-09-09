@@ -1,0 +1,22 @@
+units: 185
+total absent_from_raw_scan rows: 15
+units with a nonzero residual: 1
+  None: 15
+      rd_kafka_Uuid_base64str
+      rd_kafka_Uuid_copy
+      rd_kafka_Uuid_destroy
+      rd_kafka_Uuid_hash
+      rd_kafka_Uuid_least_significant_bits
+      rd_kafka_Uuid_map_hash
+      rd_kafka_Uuid_most_significant_bits
+      rd_kafka_Uuid_new
+      rd_kafka_Uuid_random
+      rd_kafka_Uuid_str
+      rd_kafka_errno
+      rd_kafka_mem_calloc
+      rd_kafka_mem_free
+      rd_kafka_mem_malloc
+      rd_kafka_unittest
+enumeration refusal grounds across the corpus: {} (none)
+unit verdicts: {None: 185}
+enumerated definitions (denominator): 0

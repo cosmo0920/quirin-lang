@@ -1,5 +1,11 @@
 # Wave-10 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-09 (wave-11 consolidation):**
+> `docs/reports/wave11-corpus/artifacts/` is the current baseline — one unit
+> (rdkafka.c) changed, carrying E01-RAW-COND's enumeration agreement and
+> C02-P-ALIAS's one diagnostic, fully attributed there. This directory
+> remains the wave-10 measurement record.
+
 **Date:** 2026-09-09. **Tree:** main `f797337` (all seven wave-10 cards
 merged). Integrator-run, closing the wave under hard invariants 3 and 5.
 
