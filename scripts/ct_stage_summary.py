@@ -62,6 +62,14 @@ STAGE_DEPTH = {
 
 #: The fields this generator owns in `docs/reviews/r0_3/acceptance.json`.
 #: Everything else in that block is recorded analysis, not stage evidence.
+#:
+#: `unmapped_bucket_counts` joined this list in card HYGIENE-14 (finding
+#: `D02-BUCKETS-STALE`). It is derived from a second input — card T00's archived
+#: triage — rather than from stage evidence, because the manifest carries no
+#: per-case blocker record for an unmapped case at all; what makes it *derived*
+#: rather than hand-kept is that the set of cases it counts comes from the
+#: manifest's own `mapping_status`, so a case that gets mapped leaves the tally
+#: in the same commit that maps it.
 GENERATED_FIELDS = [
     "ct_mapped",
     "ct_unmapped",
@@ -71,6 +79,7 @@ GENERATED_FIELDS = [
     "tool_scope",
     "depth_profile",
     "case_depth",
+    "unmapped_bucket_counts",
 ]
 
 #: Per-card stage-evidence records, in landing order. T00's coverage.json is an
@@ -88,6 +97,11 @@ EVIDENCE_FILES = [
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
 MANIFEST = "docs/reevaluation/ct_manifest.json"
+
+#: Card T00's archived triage of the then-unmapped cases. It is the only record
+#: in the repository that carries a per-case bucket label, and it is frozen at
+#: revision ea2af0f: the manifest has no blocker field for an unmapped case.
+TRIAGE = "docs/reports/remaining-t00/coverage.json"
 
 
 def _read(root: pathlib.Path, relative: str):
@@ -108,8 +122,93 @@ def _sorted(mapping):
     return {key: mapping[key] for key in sorted(mapping)}
 
 
+def unmapped_ids(manifest):
+    """The ids the manifest currently records as unmapped, in case order."""
+    return [case["id"] for case in manifest["cases"] if case["mapping_status"] == "unmapped"]
+
+
+def unmapped_bucket_counts(root: pathlib.Path, manifest=None):
+    """Bucket tally over the cases the manifest *currently* leaves unmapped.
+
+    Card HYGIENE-14, finding `D02-BUCKETS-STALE`. The hand-kept mirror in
+    `acceptance.json` had drifted to a sum of 22 against `ct_unmapped: 18`,
+    because a lane that maps a case edits the row its own case left and cannot
+    be expected to audit four rows belonging to another lane's record. The
+    repair is structural rather than arithmetic: the *set* of counted cases is
+    read from the manifest, so mapping a case removes it from the tally in the
+    same commit, and this function refuses rather than publishing a tally that
+    does not account for every unmapped case.
+
+    Two total-or-reject conditions, both load-bearing:
+
+    * every currently-unmapped id must have a triage row — a case the archive
+      does not classify is a hole, not a zero;
+    * the counts must sum to the number of unmapped cases — the exact property
+      whose silent violation is the finding this repair closes.
+
+    What is *not* derived, and is recorded as the card's boundary: the bucket
+    label itself is card T00's frozen analysis at revision ea2af0f. A later card
+    that re-verifies a still-unmapped case's reason by measurement publishes it
+    beside the archived one (`blocker_current` in the acceptance matrix,
+    read from the per-card `ct_stage_evidence.json` records), and does not
+    rewrite the frozen label. So a count here is current by construction while a
+    label is historical by construction.
+    """
+    manifest = manifest or load_manifest(root)
+    triage = _read(root, TRIAGE)["unmapped_triage"]
+    rows: dict[str, dict] = {}
+    for case in triage["cases"]:
+        # A second row for one case would silently decide the label — measured
+        # while writing this: the obvious dict comprehension lets the *last* row
+        # win with no complaint. One case, one classification.
+        if case["id"] in rows:
+            raise SystemExit(
+                "%s: two triage rows classify the same case in %s" % (case["id"], TRIAGE)
+            )
+        rows[case["id"]] = case
+    unmapped = unmapped_ids(manifest)
+    unclassified = [case_id for case_id in unmapped if case_id not in rows]
+    if unclassified:
+        raise SystemExit(
+            "unmapped cases with no archived triage row in %s: %s" % (TRIAGE, unclassified)
+        )
+    counts: dict[str, int] = {}
+    for case_id in unmapped:
+        bucket = rows[case_id]["current_bucket"]
+        counts[bucket] = counts.get(bucket, 0) + 1
+    if sum(counts.values()) != len(unmapped):
+        raise SystemExit(
+            "unmapped_bucket_counts sums to %s against %s unmapped cases"
+            % (sum(counts.values()), len(unmapped))
+        )
+    return counts
+
+
+def check_newly_decidable(root: pathlib.Path):
+    """`newly_decidable_not_mapped` is hand-kept; its ids must still be unmapped.
+
+    This field stays analysis — whether a case is *decidable now* is a judgment
+    no record derives — but "not mapped" is a manifest fact, so the half that can
+    go stale the way the buckets did is checked here.
+    """
+    manifest = load_manifest(root)
+    listed = _read(root, ACCEPTANCE).get("ct_evidence", {}).get("newly_decidable_not_mapped", [])
+    unmapped = set(unmapped_ids(manifest))
+    return [
+        "acceptance.json newly_decidable_not_mapped names %s, which the manifest maps" % case_id
+        for case_id in listed
+        if case_id not in unmapped
+    ]
+
+
 def summarize(root: pathlib.Path):
-    """The generated block, computed from the manifest's stage evidence alone."""
+    """The generated block.
+
+    Every field but one is computed from the manifest's stage evidence alone;
+    `unmapped_bucket_counts` additionally reads card T00's archived triage for
+    the labels, over the case set the manifest itself fixes (see
+    [`unmapped_bucket_counts`]).
+    """
     manifest = load_manifest(root)
     stages = manifest["stage_vocabulary"]["stages"]
     unknown = set(stages) - set(STAGE_DEPTH)
@@ -162,6 +261,7 @@ def summarize(root: pathlib.Path):
         "tool_scope": {stage: sorted(tool_scope[stage]) for stage in sorted(tool_scope)},
         "depth_profile": _sorted(depth_profile),
         "case_depth": _sorted(case_depth),
+        "unmapped_bucket_counts": unmapped_bucket_counts(root, manifest),
     }
 
 
@@ -277,7 +377,7 @@ def main(argv):
     if "--write" in flags:
         write_acceptance(root)
         print("wrote", root / ACCEPTANCE)
-    problems = check_acceptance(root) + check_provenance(root)
+    problems = check_acceptance(root) + check_provenance(root) + check_newly_decidable(root)
     for problem in problems:
         print("DRIFT:", problem)
     summary = summarize(root)
