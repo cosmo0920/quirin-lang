@@ -585,3 +585,245 @@ fn an_unreleased_owned_return_refuses_under_the_established_custody_pass() {
         );
     }
 }
+
+// ==================================================================== //
+// Card EXTERN-F1: the `resource_out` and `resource_stored` call modes. //
+// ==================================================================== //
+
+const OUT_SLOT: &str = include_str!("fixtures/extern_calls/out_slot.qcore");
+const STORED: &str = include_str!("fixtures/extern_calls/stored.qcore");
+
+/// The out fixture with its acquiring callee swapped for the always-refusing
+/// implementation and the declared control flipped, so the null arm is a real
+/// observation rather than a claim.
+fn out_slot_null_arm() -> String {
+    let source = OUT_SLOT.replace(
+        "qcore_extern_open(out, 8) succeeds true",
+        "qcore_extern_open_failing(out, 8) succeeds false",
+    );
+    source.replace(
+        "extern fn qcore_extern_open(slot: ptr<mut, ptr<mut, u8>>, size: usize) -> i32;",
+        "extern fn qcore_extern_open_failing(slot: ptr<mut, ptr<mut, u8>>, size: usize) -> i32;",
+    )
+}
+
+// --- resource_out, end to end. ---
+
+#[test]
+fn an_out_slot_round_trip_selects_the_extern_call_profile() {
+    let module = compile_with(OUT_SLOT, selection()).unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ExternCallsV1
+    );
+    let checked = module.checked.as_extern_calls().unwrap();
+    // The out write is the acquisition, and the certificate records which
+    // source established it rather than only that something did.
+    assert_eq!(checked.certificate.acquisitions, vec![1]);
+    assert_eq!(checked.certificate.out_acquisitions, vec![1]);
+    assert_eq!(checked.certificate.consumptions, vec![1]);
+    assert!(checked.certificate.stored.is_empty());
+    assert!(checked.certificate.assumptions.contains(
+        &extern_call::ExternAssumption::OutSlotWrittenByCallee("qcore_extern_open".to_owned())
+    ));
+    extern_call::recheck_extern_certificate(&checked.lowered.program, &checked.certificate)
+        .expect("the driver publishes only evidence it rederived");
+}
+
+#[test]
+fn out_slot_emission_takes_the_slots_address_and_the_reference_run_agrees() {
+    let module = compile_with(OUT_SLOT, selection()).unwrap();
+    let c = module.c_source.as_deref().expect("this route emits C11");
+    for expected in [
+        "int32_t qcore_extern_open(uint8_t **p0, uintptr_t p1);",
+        "uint8_t *r1 = NULL;",
+        "(void) qcore_extern_open(&r1, 8);",
+        "declared outcome violated: qcore_extern_open",
+        "qcore_extern_release(r1);",
+    ] {
+        assert!(c.contains(expected), "emitted C is missing `{expected}`");
+    }
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "out qcore_extern_open o:r1 d:8 ok",
+            "call qcore_extern_fill b:r1 d:7",
+            "call qcore_extern_sum b:r1 d:8",
+            "call qcore_extern_release c:r1",
+            "return",
+        ]
+    );
+}
+
+/// The out slot materializes a binding only under the success control. On the
+/// declared failure arm the trace raises immediately, so nothing in the rest of
+/// the body — three statements that all read `b` — is ever observed.
+#[test]
+fn the_failing_arm_of_an_out_slot_binds_nothing_and_reads_nothing() {
+    let module = compile_with(&out_slot_null_arm(), selection()).unwrap();
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "out qcore_extern_open_failing o:r1 d:8 null",
+            "raise Failure",
+        ]
+    );
+}
+
+/// Both out arms through the full stage stack on a Unix target: parse,
+/// elaborate, lower, check, emit, link against a **real C implementation** of
+/// every declared callee, and run under ASan/UBSan/LSan with the native
+/// observation compared to the independently computed reference execution.
+///
+/// Scope: one target, one compiler invocation, one process and these two
+/// traces. It is not evidence about the declared contracts in general, about
+/// buffer extents, or about a callee that writes its slot differently — that
+/// last case is exactly what the emitted status-70 check refuses to hide.
+#[cfg(not(target_os = "windows"))]
+#[test]
+fn out_slot_fixtures_run_natively_against_a_linked_c_implementation() {
+    for (label, source) in [
+        ("out-success", OUT_SLOT.to_owned()),
+        ("out-null", out_slot_null_arm()),
+    ] {
+        let module = compile_with(&source, selection()).unwrap();
+        let reference = module.extern_observation.clone().unwrap();
+        assert_eq!(
+            run_native(module.c_source.as_deref().unwrap(), label),
+            reference,
+            "native and reference observations must agree line for line ({label})"
+        );
+    }
+}
+
+// --- resource_out: refusals. ---
+
+#[test]
+fn a_nonnull_out_slot_refuses_at_the_bridging_table() {
+    let contracts = CONTRACTS.replacen(
+        "ensures normal resource_out(slot, nullable);",
+        "ensures normal resource_out(slot, nonnull);",
+        1,
+    );
+    assert_eq!(
+        codes(
+            OUT_SLOT,
+            Some(BTreeMap::from([(
+                "nonnull-out.qcore".to_owned(),
+                contracts
+            )]))
+        ),
+        ["Q024"]
+    );
+}
+
+#[test]
+fn an_out_call_without_the_adapter_refuses() {
+    let source = "import std.extern;\n\
+         error Failure { Failed; }\n\
+         extern fn qcore_extern_open(slot: ptr<mut, ptr<mut, u8>>, size: usize) -> i32;\n\
+         fn main() -> unit effects { io, alloc, mut } {\n    \
+         qcore_extern_open(out, 8);\n    return;\n}\n";
+    let codes = codes(source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+#[test]
+fn passing_a_binding_where_the_contract_declares_the_out_slot_refuses() {
+    let source = OUT_SLOT.replace(
+        "let b = qcore_extern_open(out, 8) succeeds true else raise Failure;",
+        "let a = qcore_extern_open(out, 8) succeeds true else raise Failure;\n    \
+         let b = qcore_extern_open(a, 8) succeeds true else raise Failure;",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+/// `out` names a parameter position, never a binding, so it cannot be smuggled
+/// into an ordinary argument slot: at a declared loan it is simply not a live
+/// resource binding.
+#[test]
+fn the_out_marker_is_not_an_argument_anywhere_else() {
+    let source = OUT_SLOT.replace("qcore_extern_fill(b, 7);", "qcore_extern_fill(out, 7);");
+    assert_eq!(codes(&source, selection()), ["Q024"]);
+}
+
+#[test]
+fn a_mutated_out_contract_refuses_a_previously_admitted_module() {
+    // The admitted module stops being admitted when its selected contract is
+    // silently widened to hand the slot back as a plain loan.
+    compile_with(OUT_SLOT, selection()).expect("the unmutated module is admitted");
+    let contracts = CONTRACTS.replacen(
+        "ensures normal resource_out(slot, nullable);",
+        "ensures normal resource_borrowed(slot);",
+        1,
+    );
+    let codes = codes(
+        OUT_SLOT,
+        Some(BTreeMap::from([(
+            "loaned-slot.qcore".to_owned(),
+            contracts,
+        )])),
+    );
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+// --- resource_stored: admitted shape, measured reachability boundary. ---
+
+/// The store's *bridging* is admitted — the refusal is `Q025` at the second
+/// acquisition, not `Q024` at the contract. A store needs two simultaneously
+/// live checked identities (the child and the distinct `resource_owned` owner
+/// contract spec §C04.2 requires); `source.extern-call.v1` admits at most one,
+/// because its adapter's error arm may abandon nothing. Recorded, not repaired:
+/// lifting that restriction is the already-named EXTERN-CALL-F follow-on.
+#[test]
+fn a_store_is_admitted_but_needs_a_second_live_identity_the_profile_refuses() {
+    let codes = codes(STORED, selection());
+    assert_eq!(
+        codes,
+        ["Q025"],
+        "the blocker is the adapter rule, not the store"
+    );
+}
+
+/// The store's argument bridging *is* reachable from source with one live
+/// identity, because a self-store needs only one — and is refused by name.
+#[test]
+fn storing_an_identity_beneath_itself_refuses() {
+    let source = STORED.replace(
+        "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
+         qcore_extern_attach(owner, move child);",
+        "    qcore_extern_attach(owner, move owner);",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+#[test]
+fn moving_where_the_contract_declares_the_store_owner_refuses() {
+    let source = STORED.replace(
+        "    let child = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
+         qcore_extern_attach(owner, move child);",
+        "    qcore_extern_attach(move owner, move owner);",
+    );
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+#[test]
+fn a_store_beneath_a_non_owned_parameter_refuses_at_the_loader() {
+    // Contract spec §C04.2's own well-formedness rule, re-pinned at this
+    // boundary: the loader refuses the whole selection before bridging runs.
+    let contracts = CONTRACTS.replacen(
+        "ensures normal resource_owned(owner, nonnull);",
+        "ensures normal resource_borrowed(owner);",
+        1,
+    );
+    assert_eq!(
+        codes(
+            STORED,
+            Some(BTreeMap::from([("bad-owner.qcore".to_owned(), contracts)]))
+        ),
+        ["Q023"]
+    );
+}

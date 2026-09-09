@@ -654,7 +654,7 @@ extern_stmt   = acquisition | plain_call | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", "raise", ERROR_NAME, ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
-arg           = [ "-" ], NAT | NAME | "move", NAME ;
+arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
 ```
 
@@ -667,31 +667,53 @@ result type must equal the selected module's, or the call is refused.
 
 Callable C04 shapes are exactly: scalars by value (data only), `resource_borrowed`
 on `ptr<mut, u8>` or `ptr<const, u8>`, `resource_consumed(p, nonnull)` on
-`ptr<mut, u8>`, `resource_return_none()` with a `unit` or scalar result, and
-`resource_return_owned(nullable)` returning `ptr<mut, u8>`. `resource_owned`,
-`resource_released`, `resource_out`, `resource_stored`, `resource_removed`,
-`resource_return_reallocated`, a nonnull owned return, a nullable consumed
-parameter, a custody mode on a scalar, a borrowed `ptr<mut, ptr<mut, u8>>` and a
-consumed `ptr<const, u8>` are each refused by their own name (`Q024`).
+`ptr<mut, u8>`, `resource_return_none()` with a `unit` or scalar result,
+`resource_return_owned(nullable)` returning `ptr<mut, u8>`, and — card
+`EXTERN-F1` — `resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` plus
+`resource_stored(p, owner, nonnull)` on `ptr<mut, u8>` beneath a distinct
+`resource_owned(owner, nonnull)` parameter on `ptr<mut, u8>`. Contract spec
+§C04.2 requires a stored parameter's owner to be a distinct `Owned` parameter,
+so `resource_owned` is callable in that position and nowhere else.
+`resource_released`, `resource_removed`, `resource_return_reallocated`, a
+nonnull owned return, a nonnull out slot, an out slot on any other ABI type, two
+out slots, an out slot beside an owned return, a store beside either, a nullable
+stored parameter, a store on a `const` pointer, a store beneath itself or
+beneath a non-`Owned` parameter, a nullable or `const`-pointer declared owner, a
+`resource_owned` parameter that owns nothing, a nullable consumed parameter, a
+custody mode on a scalar, a borrowed `ptr<mut, ptr<mut, u8>>` and a consumed
+`ptr<const, u8>` are each refused by their own name (`Q024`).
+
+`out` marks the position of the declared out slot; it names a parameter
+position, never a binding, and is reserved. The `let` binder names the identity
+the callee writes into that slot. `move NAME` at a declared store removes the
+binding from the body exactly as a consumption does, so every later use is
+refused; where the custody went is declared by the contract, not by the call
+site, and is recorded on the certificate as a premise.
 
 `succeeds BOOL` is the fixture's literal outcome control, exactly as in
 `qcore_acquire`/`qcore_check`: a controlled model operation, not a claim about
 when a production allocator fails. Both arms are exercisable, and the emitted C
 compares the real result's nullness against the declared control and exits with
-status 70 if they disagree. The `else raise ERROR;` arm is mandatory for a
-nullable owned return (`Q025`); the bounded v1 adapter admits it only where no
-acquired identity is live, because releasing custody on an extern error arm is
-not in this profile.
+status 70 if they disagree — for an out slot the emitted local starts `NULL`, so
+a callee that never wrote it is observed as the failure arm rather than
+believed. The `else raise ERROR;` arm is mandatory for each acquisition source,
+an owned nullable return and an out slot alike (`Q025`); the bounded v1 adapter
+admits it only where no acquired identity is live, because releasing custody on
+an extern error arm is not in this profile. That restriction is why a store is
+not reachable from a single source module: it needs two simultaneously live
+identities, the child and its declared owner.
 
-The derived effect row is `{io}`, plus `alloc` exactly for an owned return and
-`mut` exactly when some parameter is a `mut` pointer; the entry's declared row
-must admit it, and an absent row therefore admits no extern call at all. Length
+The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
+fresh custody through either acquisition source and `mut` exactly when some
+parameter is a `mut` pointer; the entry's declared row must admit it, and an
+absent row therefore admits no extern call at all. Length
 and extent are not transported, so no declaration here constrains how many bytes
 a callee touches. Custody liveness, leaks and resource flow are checked by the
 established sequential passes over the same lowering, not by a second extern
 code. Emission declares each callee from the ABI table and calls it directly;
 which object file supplies the symbol is the builder's premise. See
-[the extern-call record](reports/extern-call-v1/README.md).
+[the extern-call record](reports/extern-call-v1/README.md) and
+[the out/stored extension](reports/extern-call-f1/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

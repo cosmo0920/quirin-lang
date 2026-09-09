@@ -153,39 +153,6 @@ refuses!(
     BridgeRefusal::ReleasedParameter { parameter: 0 }
 );
 refuses!(
-    an_out_parameter_is_not_callable,
-    contract(
-        vec![(
-            AbiType::PtrMutPtrMutU8,
-            ContractParameterMode::Out { nullable: true }
-        )],
-        AbiType::Unit,
-        ContractReturnMode::None
-    ),
-    BridgeRefusal::OutParameter { parameter: 0 }
-);
-refuses!(
-    a_stored_parameter_is_not_callable,
-    contract(
-        vec![
-            (
-                AbiType::PtrMutU8,
-                ContractParameterMode::Owned { nullable: false }
-            ),
-            (
-                AbiType::PtrMutU8,
-                ContractParameterMode::Stored {
-                    owner: 0,
-                    nullable: false
-                }
-            )
-        ],
-        AbiType::Unit,
-        ContractReturnMode::None
-    ),
-    BridgeRefusal::OwnedParameter { parameter: 0 }
-);
-refuses!(
     a_removed_parameter_is_not_callable,
     contract(
         vec![(
@@ -643,5 +610,711 @@ fn emission_refuses_a_certificate_from_another_entry() {
     assert_eq!(
         crate::extern_c_emit::emit_extern_c11(&module, &certificate),
         Err(crate::extern_c_emit::ExternEmissionRefusal::UncheckedProgram)
+    );
+}
+
+// ===================================================================== //
+// Card EXTERN-F1: the `resource_out` and `resource_stored` call modes.  //
+// ===================================================================== //
+
+/// `int32_t qcore_extern_open(uint8_t **slot, uintptr_t size)` writing fresh
+/// custody through the declared slot.
+fn opener() -> ExternCallee {
+    bridge_contract(
+        "qcore_extern_open",
+        &contract(
+            vec![
+                (
+                    AbiType::PtrMutPtrMutU8,
+                    ContractParameterMode::Out { nullable: true },
+                ),
+                (AbiType::Usize, ContractParameterMode::Borrowed),
+            ],
+            AbiType::I32,
+            ContractReturnMode::None,
+        ),
+    )
+    .expect("a nullable out slot on the pointer-to-pointer projection is admitted")
+}
+
+/// `void qcore_extern_attach(uint8_t *owner, uint8_t *child)` indexing the
+/// child beneath the declared owner.
+fn attacher() -> ExternCallee {
+    bridge_contract(
+        "qcore_extern_attach",
+        &contract(
+            vec![
+                (
+                    AbiType::PtrMutU8,
+                    ContractParameterMode::Owned { nullable: false },
+                ),
+                (
+                    AbiType::PtrMutU8,
+                    ContractParameterMode::Stored {
+                        owner: 0,
+                        nullable: false,
+                    },
+                ),
+            ],
+            AbiType::Unit,
+            ContractReturnMode::None,
+        ),
+    )
+    .expect("a nonnull store beneath a nonnull declared owner is admitted")
+}
+
+fn f1_program(events: Vec<ExternEvent>) -> ExternProgram {
+    ExternProgram {
+        entry: "main".into(),
+        callees: [allocator(), consumer(), opener(), attacher()]
+            .into_iter()
+            .map(|callee| (callee.name.clone(), callee))
+            .collect::<BTreeMap<_, _>>(),
+        events,
+        errors: BTreeSet::from(["Failure".to_owned()]),
+    }
+}
+
+fn open(resource: ResourceId, succeeds: bool) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_open".into(),
+        arguments: vec![ExternArgument::OutSlot, ExternArgument::Data(8)],
+        adapter: Some(ExternAdapter {
+            resource,
+            succeeds,
+            error: "Failure".into(),
+        }),
+    })
+}
+
+// --- Admission of the two modes. ---
+
+#[test]
+fn a_nullable_out_slot_bridges_as_an_acquisition_source() {
+    let callee = opener();
+    assert_eq!(callee.parameters[0], CallParameter::OutSlot);
+    assert_eq!(callee.out_parameter, Some(0));
+    assert!(callee.acquires());
+    // The out slot carries no caller identity, so it is absent from the
+    // derived custody vector that lines up with the argument identities.
+    assert_eq!(derived_custody(&callee), Vec::new());
+}
+
+#[test]
+fn a_nonnull_store_beneath_a_designated_owner_bridges() {
+    let callee = attacher();
+    assert_eq!(callee.parameters[0], CallParameter::Owner);
+    assert_eq!(callee.parameters[1], CallParameter::Stored { owner: 0 });
+    assert!(!callee.acquires());
+    assert_eq!(
+        derived_custody(&callee),
+        vec![ExternCustody::Owner, ExternCustody::Stored]
+    );
+}
+
+refuses!(
+    a_nonnull_out_slot_is_not_callable,
+    contract(
+        vec![(
+            AbiType::PtrMutPtrMutU8,
+            ContractParameterMode::Out { nullable: false }
+        )],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::NonnullOutParameter { parameter: 0 }
+);
+refuses!(
+    an_out_slot_on_a_flat_pointer_is_not_callable,
+    contract(
+        vec![(
+            AbiType::PtrMutU8,
+            ContractParameterMode::Out { nullable: true }
+        )],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::UnsupportedOutPointer { parameter: 0 }
+);
+refuses!(
+    an_out_slot_on_a_scalar_is_not_callable,
+    contract(
+        vec![(AbiType::U32, ContractParameterMode::Out { nullable: true })],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::ScalarCustody { parameter: 0 }
+);
+refuses!(
+    two_out_slots_are_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrMutPtrMutU8,
+                ContractParameterMode::Out { nullable: true }
+            ),
+            (
+                AbiType::PtrMutPtrMutU8,
+                ContractParameterMode::Out { nullable: true }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::MultipleAcquisitions
+);
+refuses!(
+    an_out_slot_beside_an_owned_return_is_not_callable,
+    contract(
+        vec![(
+            AbiType::PtrMutPtrMutU8,
+            ContractParameterMode::Out { nullable: true }
+        )],
+        AbiType::PtrMutU8,
+        ContractReturnMode::Owned { nullable: true }
+    ),
+    BridgeRefusal::MultipleAcquisitions
+);
+refuses!(
+    a_nullable_store_is_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Owned { nullable: false }
+            ),
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: true
+                }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::NullableStoredParameter { parameter: 1 }
+);
+refuses!(
+    a_store_on_a_const_pointer_is_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Owned { nullable: false }
+            ),
+            (
+                AbiType::PtrConstU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: false
+                }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::UnsupportedStoredPointer { parameter: 1 }
+);
+refuses!(
+    a_store_beneath_a_non_owned_parameter_is_not_callable,
+    contract(
+        vec![
+            (AbiType::PtrMutU8, ContractParameterMode::Borrowed),
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: false
+                }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::StoredOwnerNotOwned {
+        parameter: 1,
+        owner: 0
+    }
+);
+refuses!(
+    a_store_beneath_itself_is_not_callable,
+    contract(
+        vec![(
+            AbiType::PtrMutU8,
+            ContractParameterMode::Stored {
+                owner: 0,
+                nullable: false
+            }
+        )],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::StoredOwnerIsItself { parameter: 0 }
+);
+refuses!(
+    a_nullable_declared_owner_is_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Owned { nullable: true }
+            ),
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: false
+                }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::NullableOwnerParameter { parameter: 0 }
+);
+refuses!(
+    a_declared_owner_on_a_const_pointer_is_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrConstU8,
+                ContractParameterMode::Owned { nullable: false }
+            ),
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: false
+                }
+            )
+        ],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::UnsupportedOwnerPointer { parameter: 0 }
+);
+refuses!(
+    a_store_beside_an_owned_return_is_not_callable,
+    contract(
+        vec![
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Owned { nullable: false }
+            ),
+            (
+                AbiType::PtrMutU8,
+                ContractParameterMode::Stored {
+                    owner: 0,
+                    nullable: false
+                }
+            )
+        ],
+        AbiType::PtrMutU8,
+        ContractReturnMode::Owned { nullable: true }
+    ),
+    BridgeRefusal::StoredWithAcquisition { parameter: 1 }
+);
+
+/// The load-bearing negative half of the retired `owned_parameter_refuses`
+/// row: `resource_owned` is admitted **only** in designated owner position.
+#[test]
+fn an_owned_parameter_that_owns_nothing_still_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Owned { nullable: false }
+                    ),
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Owned { nullable: false }
+                    ),
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Stored {
+                            owner: 0,
+                            nullable: false
+                        }
+                    )
+                ],
+                AbiType::Unit,
+                ContractReturnMode::None
+            )
+        ),
+        Err(BridgeRefusal::OwnedParameter { parameter: 1 })
+    );
+}
+
+// --- Derivation over the two modes. ---
+
+#[test]
+fn alloc_is_derived_for_an_out_slot_as_for_an_owned_return() {
+    assert!(derived_effects(&opener()).contains(&Effect::Alloc));
+    assert!(!derived_effects(&attacher()).contains(&Effect::Alloc));
+    assert!(derived_effects(&opener()).contains(&Effect::Mut));
+    assert!(derived_effects(&attacher()).contains(&Effect::Mut));
+}
+
+#[test]
+fn admission_of_the_two_modes_is_deterministic() {
+    assert_eq!(opener(), opener());
+    assert_eq!(attacher(), attacher());
+    assert_eq!(derived_custody(&attacher()), derived_custody(&attacher()));
+}
+
+// --- Call-site checking of the out slot. ---
+
+#[test]
+fn an_out_acquisition_checks_rederives_and_records_its_source() {
+    let module = f1_program(vec![
+        open(1, true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).expect("the out trace is admitted");
+    assert_eq!(certificate.acquisitions, vec![1]);
+    assert_eq!(certificate.out_acquisitions, vec![1]);
+    assert_eq!(certificate.consumptions, vec![1]);
+    assert!(certificate.stored.is_empty());
+    assert!(
+        certificate
+            .assumptions
+            .contains(&ExternAssumption::OutSlotWrittenByCallee(
+                "qcore_extern_open".to_owned()
+            ))
+    );
+    recheck_extern_certificate(&module, &certificate).expect("a publisher rederives its evidence");
+}
+
+#[test]
+fn an_owned_return_acquisition_is_not_recorded_as_an_out_acquisition() {
+    let module = f1_program(vec![acquire(true), release(), ExternEvent::Return]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(certificate.acquisitions, vec![1]);
+    assert!(certificate.out_acquisitions.is_empty());
+}
+
+#[test]
+fn an_out_call_without_the_adapter_refuses() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_open".into(),
+            arguments: vec![ExternArgument::OutSlot, ExternArgument::Data(8)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert_eq!(errors, vec![ExternDiagnostic::AdapterMissing { event: 0 }]);
+    assert_eq!(errors[0].code(), "Q025");
+}
+
+#[test]
+fn a_failed_out_write_binds_nothing_live() {
+    let module = f1_program(vec![open(1, false), ExternEvent::Return]);
+    let certificate = check_extern_program(&module).expect("both out arms are admitted");
+    assert_eq!(certificate.out_acquisitions, vec![1]);
+    // Nothing is live after the error arm, so a second acquisition is admitted
+    // where it would not be after a successful one.
+    let recovered = f1_program(vec![open(1, false), open(2, true), ExternEvent::Return]);
+    assert!(check_extern_program(&recovered).is_ok());
+    let blocked = f1_program(vec![open(1, true), open(2, true), ExternEvent::Return]);
+    assert_eq!(
+        check_extern_program(&blocked).unwrap_err(),
+        vec![ExternDiagnostic::AdapterAbandonsCustody {
+            event: 1,
+            resource: 1
+        }]
+    );
+}
+
+#[test]
+fn a_double_bound_out_slot_refuses() {
+    let module = f1_program(vec![
+        open(1, true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: None,
+        }),
+        open(1, true),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::DuplicateAcquisition {
+            event: 2,
+            resource: 1
+        }]
+    );
+}
+
+#[test]
+fn a_borrow_where_the_contract_declares_an_out_slot_refuses() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_open".into(),
+            arguments: vec![ExternArgument::Borrow(1), ExternArgument::Data(8)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: true,
+                error: "Failure".into(),
+            }),
+        }),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ArgumentForm {
+            event: 0,
+            parameter: 0,
+            expected: CallParameter::OutSlot
+        }]
+    );
+}
+
+// --- Call-site checking of the store. ---
+
+#[test]
+fn a_store_removes_the_child_and_keeps_the_owner() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).expect("the store trace is admitted");
+    assert_eq!(certificate.stored, vec![(2, 1)]);
+    assert!(certificate.consumptions.is_empty());
+    assert_eq!(
+        certificate.calls,
+        vec![(
+            "qcore_extern_attach".to_owned(),
+            vec![ExternCustody::Owner, ExternCustody::Stored]
+        )]
+    );
+    assert!(
+        certificate
+            .assumptions
+            .contains(&ExternAssumption::StoredCustodyUnderDeclaredOwner(
+                "qcore_extern_attach".to_owned()
+            ))
+    );
+    recheck_extern_certificate(&module, &certificate).expect("a publisher rederives its evidence");
+}
+
+/// A store removes the child from the caller's ledger exactly as a
+/// consumption does: measured by the bounded adapter rule, which refuses a
+/// later error arm only while something is still live.
+#[test]
+fn a_stored_identity_does_not_survive_in_the_callers_ledger() {
+    let store = ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_attach".into(),
+        arguments: vec![ExternArgument::Owner(2), ExternArgument::Store(1)],
+        adapter: None,
+    });
+    let second = ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_alloc".into(),
+        arguments: vec![ExternArgument::Data(32)],
+        adapter: Some(ExternAdapter {
+            resource: 3,
+            succeeds: true,
+            error: "Failure".into(),
+        }),
+    });
+    let stored_first = f1_program(vec![
+        acquire(true),
+        store,
+        second.clone(),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&stored_first).expect("the child left the ledger");
+    assert_eq!(certificate.stored, vec![(1, 2)]);
+    assert_eq!(certificate.acquisitions, vec![1, 3]);
+    // Control: without the store the same second acquisition refuses, so the
+    // admission above is the store's doing and nothing else's.
+    let kept = f1_program(vec![acquire(true), second, ExternEvent::Return]);
+    assert_eq!(
+        check_extern_program(&kept).unwrap_err(),
+        vec![ExternDiagnostic::AdapterAbandonsCustody {
+            event: 1,
+            resource: 1
+        }]
+    );
+}
+
+#[test]
+fn a_store_beneath_the_same_identity_refuses() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(1)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let errors = check_extern_program(&module).unwrap_err();
+    assert_eq!(
+        errors,
+        vec![ExternDiagnostic::StoredUnderItself {
+            event: 0,
+            resource: 1
+        }]
+    );
+    assert_eq!(errors[0].code(), "Q024");
+}
+
+#[test]
+fn a_borrow_where_the_contract_declares_a_store_refuses() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Owner(1), ExternArgument::Borrow(2)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ArgumentForm {
+            event: 0,
+            parameter: 1,
+            expected: CallParameter::Stored { owner: 0 }
+        }]
+    );
+}
+
+#[test]
+fn a_move_where_the_contract_declares_the_owner_refuses() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Consume(1), ExternArgument::Store(2)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    assert_eq!(
+        check_extern_program(&module).unwrap_err(),
+        vec![ExternDiagnostic::ArgumentForm {
+            event: 0,
+            parameter: 0,
+            expected: CallParameter::Owner
+        }]
+    );
+}
+
+// --- Reference execution and emission of the two modes. ---
+
+#[test]
+fn the_reference_execution_records_both_out_arms() {
+    let module = f1_program(vec![
+        open(1, true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        vec![
+            "out qcore_extern_open o:r1 d:8 ok",
+            "call qcore_extern_release c:r1",
+            "return"
+        ]
+    );
+    let failing = f1_program(vec![open(1, false), ExternEvent::Return]);
+    let failing_certificate = check_extern_program(&failing).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&failing, &failing_certificate).unwrap(),
+        vec!["out qcore_extern_open o:r1 d:8 null", "raise Failure"]
+    );
+}
+
+#[test]
+fn the_reference_execution_names_the_store_and_its_owner() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        vec!["call qcore_extern_attach w:r1 s:r2", "return"]
+    );
+}
+
+#[test]
+fn emission_takes_the_address_of_the_declared_out_slot() {
+    let module = f1_program(vec![
+        open(1, true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    let emission = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    for expected in [
+        "int32_t qcore_extern_open(uint8_t **p0, uintptr_t p1);",
+        // The slot starts null, so an unwritten slot is observed as the null
+        // arm and refuted by the declared-outcome check rather than believed.
+        "uint8_t *r1 = NULL;",
+        "(void) qcore_extern_open(&r1, 8);",
+        "declared outcome violated",
+        "printf(\"out qcore_extern_open o:r1 d:8 %s\\n\", r1 != NULL ? \"ok\" : \"null\");",
+    ] {
+        assert!(
+            emission.source.contains(expected),
+            "emitted C is missing `{expected}`:\n{}",
+            emission.source
+        );
+    }
+}
+
+/// The store's emission needs C variables for both identities, and only an
+/// adapter binds one. A trace that names an identity no adapter established is
+/// refused rather than emitted as a translation unit naming undeclared
+/// variables — this is the measured reachability boundary of the store mode,
+/// recorded in `docs/reports/extern-call-f1/README.md`.
+#[test]
+fn emission_refuses_an_argument_naming_an_unbound_identity() {
+    let module = f1_program(vec![
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_attach".into(),
+            arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
+            adapter: None,
+        }),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::emit_extern_c11(&module, &certificate),
+        Err(
+            crate::extern_c_emit::ExternEmissionRefusal::UnboundIdentity {
+                event: 0,
+                resource: 1
+            }
+        )
     );
 }

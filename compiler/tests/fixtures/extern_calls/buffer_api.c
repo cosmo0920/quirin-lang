@@ -55,3 +55,36 @@ void qcore_extern_release(uint8_t *buffer)
 {
     free(buffer);
 }
+
+/* --- Card EXTERN-F1: the `resource_out` and `resource_stored` callees. --- */
+
+/* `resource_out(slot, nullable)` with `resource_return_none()` and an i32
+ * status. The emitted caller initializes the slot to NULL, so a run in which
+ * this function forgot to write it would be observed as the null arm and
+ * refuted by the emitted declared-outcome check. */
+int32_t qcore_extern_open(uint8_t **slot, uintptr_t size)
+{
+    uint8_t *buffer = (uint8_t *) calloc((size_t) size, 1u);
+    *slot = buffer;
+    return buffer == NULL ? -1 : 0;
+}
+
+/* The same declared shape, always refusing: it writes NULL and reports the
+ * failure, so the checked `succeeds false` arm is a real observation. */
+int32_t qcore_extern_open_failing(uint8_t **slot, uintptr_t size)
+{
+    (void) size;
+    *slot = NULL;
+    return -1;
+}
+
+/* `resource_stored(child, owner, nonnull)`. The declaration says the child's
+ * obligation becomes indexed beneath the owner, not that this implementation
+ * is the only one that could satisfy it; storing the pointer in the owner's
+ * first bytes is this fixture's choice. Whether the owner ever releases the
+ * child is exactly the premise the certificate records and nothing here
+ * discharges. */
+void qcore_extern_attach(uint8_t *owner, uint8_t *child)
+{
+    memcpy(owner, &child, sizeof child);
+}

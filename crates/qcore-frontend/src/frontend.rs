@@ -2228,6 +2228,12 @@ fn is_reserved_source_word(word: &str) -> bool {
             // `succeeds` cannot shadow the adapter form, exactly as the
             // mutex-guard keywords above are protected.
             | "succeeds"
+            // Card EXTERN-F1: the declared out-slot marker in an extern call's
+            // argument list (`CALLEE(out, …) succeeds …`). It names a
+            // *parameter position*, never a binding, so reserving it keeps a
+            // local named `out` from being read as the slot — and keeps the
+            // slot from being read as a reference to a local.
+            | "out"
             // Card T08-EPOCH-SRC's flat-epoch accounting profile keywords
             // (`source.epoch.bound.v1`): the scope marker, the declared
             // overhead header and its measured-basis suffix, the per-task

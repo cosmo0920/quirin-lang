@@ -1,0 +1,16 @@
+import std.extern;
+
+error Failure { Failed; }
+
+extern fn qcore_extern_open(slot: ptr<mut, ptr<mut, u8>>, size: usize) -> i32;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_open(out, 8) succeeds true else raise Failure;
+    qcore_extern_fill(b, 7);
+    qcore_extern_sum(b, 8);
+    qcore_extern_release(move b);
+    return;
+}
