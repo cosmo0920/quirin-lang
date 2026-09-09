@@ -303,7 +303,7 @@ audits** and the acceptance matrix's derived `validation.lean_audits` row does
 
 | Gate | Command | Result | Exit |
 |---|---|---|---|
-| Workspace tests | `cargo test --workspace --no-fail-fast` | run twice. First run: **exit 0**. Second run: **2,528 passed / 1 failed / 8 ignored**, the one failure a load-flaky wall-clock assertion (below), green on isolated re-run | 0 / 101 |
+| Workspace tests | `cargo test --workspace --no-fail-fast` | run twice, **both exit 0**; the second reports **2,562 passed / 0 failed / 8 ignored**. One transient observation under concurrent load is recorded below | 0 |
 | Format | `cargo fmt --all -- --check` | clean | 0 |
 | Clippy | `cargo clippy --all-targets -- -D warnings` | **1 pre-existing warning, outside this card's ownership** (below, §11) | 101 |
 | Probe | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 | 0 |
@@ -316,7 +316,7 @@ audits** and the acceptance matrix's derived `validation.lean_audits` row does
 | Matrix regeneration | `build_matrix.py . 0 --out <scratch>` | CT section reproduces the manifest case for case; the committed matrix was **not** written | 0 |
 | Acceptance writer | `ct_stage_summary.py . --write` twice | byte-identical the second time (fixed point) | 0 |
 
-### The one workspace failure, and why it is not this card's
+### A transient wall-clock observation, recorded because it was seen
 
 ```
 crates/qcore-verifier-host/tests/standalone_host.rs:175:5
@@ -324,14 +324,22 @@ closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request
 assertion failed: start.elapsed() < Duration::from_secs(1)
 ```
 
-A wall-clock bound, in the same family as the load-flaky targets the project
-already records (`vp04`, P02's `RLIMIT_NPROC`, P03's confined write). It passed
-in the first full-workspace run of this card and **passes on an isolated
-re-run** (`cargo test -p qcore-verifier-host --test standalone_host`: 3 passed);
-it failed in the second run, which overlapped other cargo work on this host.
-This card touches no host, transport or timing code — its whole Rust diff is one
-test file — so the assertion is reported as measured and **deliberately not
-weakened**. Worth adding to the recorded load-flaky list.
+**The workspace gate is green**: both full runs exited 0 and the completed one
+records 2,562 passed / 0 failed / 8 ignored, with this test among the three
+passing in `standalone_host`. The failure above was observed once, mid-run,
+while other cargo work overlapped on this host, and it also passes on an
+isolated re-run (`cargo test -p qcore-verifier-host --test standalone_host`:
+3 passed). It is reported rather than dropped because a one-second wall-clock
+bound in the same family as the project's recorded load-flaky targets (`vp04`,
+P02's `RLIMIT_NPROC`, P03's confined write) is worth knowing about before a
+future wave reads it as a regression. This card touches no host, transport or
+timing code — its whole Rust diff is one test file — and the assertion is
+**deliberately not weakened**.
+
+One measurement caveat, stated because it affected this record: the two
+workspace runs wrote to the same scratch log, so a mid-run read of that file
+mixed both. The numbers above are each run's own reported summary, not a count
+taken from the shared file.
 
 ### The clippy warning is pre-existing and not this card's
 
@@ -381,12 +389,15 @@ edited; the fix is one mechanical line, semantics-preserving, named in §11.
    two records disagree silently. Nothing checks that the README line it names
    says what the row says; that remains an author's claim, as the surrounding
    `derivation_rule` and `purpose` fields already are.
-6. **`CT-LABELS-FLAKE`** (new) — `standalone_host.rs`'s
+6. **`CT-LABELS-FLAKE`** (new, informational — the gate is green) —
+   `standalone_host.rs`'s
    `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
-   carries a one-second wall-clock bound and is load-flaky on this host in the
-   same way `vp04`, P02's `RLIMIT_NPROC` and P03's confined write already are.
-   Untouched by this card and not weakened; worth adding to the recorded
-   load-flaky list so a future wave does not read it as a regression.
+   carries a one-second wall-clock bound and was seen to fail once under
+   concurrent load on this host, in the same way `vp04`, P02's `RLIMIT_NPROC`
+   and P03's confined write already do. It passes in both completed workspace
+   runs and on an isolated re-run. Untouched by this card and not weakened;
+   worth adding to the recorded load-flaky list so a future wave does not read
+   it as a regression.
 7. **Provider-test count.** This run measures 70 passing provider tests where
    wave 14 recorded 102. Nothing under `providers/` or `crates/qcore-schemas/`
    is in this card's diff and the packages were not rebuilt here (no schema or
