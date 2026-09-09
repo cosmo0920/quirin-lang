@@ -87,5 +87,6 @@ import QCore.AggregateComposition
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.AggregateStore
+import QCore.BoundFieldRead
 
 /-! The executable formal core of QCore-C revision 0.1. -/

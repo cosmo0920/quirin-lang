@@ -2381,14 +2381,19 @@ impl Parser<'_> {
         // body bound. Its span leaves the lexical gate exactly as a C02-P
         // borrowed actual does; unlike one, it names a place the projection
         // binds, so [`transfer`] revalidates it flow-sensitively before the call
-        // takes effect.
-        let bound_reads = crate::aggregate_store::bound_read_actuals(
-            &texts,
-            self.contracts,
-            &self.typed_model,
-            &self.typed_types,
-            &self.store_bases,
-        );
+        // takes effect. The call index is this function's own `find_call`
+        // result, so the arguments read here are exactly the arguments the
+        // `ContractCall` below will read.
+        let bound_reads = find_call(&texts).map_or_else(Vec::new, |(call_index, _)| {
+            crate::aggregate_store::bound_read_actuals(
+                &texts,
+                call_index,
+                self.contracts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.store_bases,
+            )
+        });
         borrowed_actuals.extend(bound_reads.iter().map(|read| (read.start, read.end)));
         if let Some(equal) = assignment
             && !contains_call(tokens)

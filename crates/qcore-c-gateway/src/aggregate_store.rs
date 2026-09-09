@@ -421,7 +421,12 @@ pub(crate) struct BoundFieldRead {
     pub(crate) place: String,
 }
 
-/// The admitted bound reads of the statement's first call.
+/// The admitted bound reads of the call whose callee name is at `call_index`.
+///
+/// The index is supplied by [`crate::legacy_c`] from its **own** call scan, so
+/// the arguments this function reads are exactly the arguments the statement's
+/// modeled `ContractCall` will read. Deriving it independently here would risk
+/// excluding a span belonging to a different call from the lexical gate.
 ///
 /// Card C02-P admits a member read only through a base the projection **never**
 /// binds (its premise 4). This function is the complementary half: a member read
@@ -447,6 +452,7 @@ pub(crate) struct BoundFieldRead {
 /// function, exactly as the store direction requires it.
 pub(crate) fn bound_read_actuals(
     texts: &[&str],
+    call_index: usize,
     contracts: &ResourceContracts,
     model: &TypedAccessModel,
     types: &FunctionTypes,
@@ -455,12 +461,13 @@ pub(crate) fn bound_read_actuals(
     if !types.is_readable() {
         return Vec::new();
     }
-    let Some(call_index) = (0..texts.len().saturating_sub(1))
-        .find(|index| is_name(texts[*index]) && texts[index + 1] == "(")
-    else {
+    let Some(callee) = texts.get(call_index).copied().filter(|text| is_name(text)) else {
         return Vec::new();
     };
-    let Some(contract) = contracts.contract(texts[call_index]) else {
+    if texts.get(call_index + 1) != Some(&"(") {
+        return Vec::new();
+    }
+    let Some(contract) = contracts.contract(callee) else {
         return Vec::new();
     };
     let Some(arguments) = argument_spans(texts, call_index + 1) else {
@@ -857,6 +864,7 @@ mod tests {
         let tokens = texts(statement);
         bound_read_actuals(
             &tokens,
+            0,
             &contracts,
             &facts.model,
             &facts.types,
@@ -890,6 +898,7 @@ mod tests {
         assert!(
             bound_read_actuals(
                 &tokens,
+                0,
                 &contracts,
                 &facts.model,
                 &facts.types,
@@ -906,6 +915,7 @@ mod tests {
         assert!(
             bound_read_actuals(
                 &tokens,
+                0,
                 &ResourceContracts::default(),
                 &facts.model,
                 &facts.types,
@@ -956,9 +966,47 @@ mod tests {
         let tokens = texts("sink ( b -> kid , b -> other )");
         let unreadable = FunctionTypes::default();
         assert!(
-            bound_read_actuals(&tokens, &contracts, &facts.model, &unreadable, &facts.bases)
-                .is_empty()
+            bound_read_actuals(
+                &tokens,
+                0,
+                &contracts,
+                &facts.model,
+                &unreadable,
+                &facts.bases
+            )
+            .is_empty()
         );
+    }
+
+    /// The caller supplies the call index, so a *second* call in the same
+    /// statement admits nothing through this route: the reads always belong to
+    /// the call the statement's modeled `ContractCall` describes.
+    #[test]
+    fn only_the_supplied_call_admits_bound_reads() {
+        let facts = facts("", BOUND, &[]);
+        let contracts = borrowing_contract(2);
+        let tokens = texts("eat ( sink ( b -> kid , b -> other ) )");
+        let outer = bound_read_actuals(
+            &tokens,
+            0,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        );
+        assert!(outer.is_empty(), "the outer releasing call admits nothing");
+        let inner = bound_read_actuals(
+            &tokens,
+            2,
+            &contracts,
+            &facts.model,
+            &facts.types,
+            &facts.bases,
+        )
+        .into_iter()
+        .map(|read| read.place)
+        .collect::<Vec<_>>();
+        assert_eq!(inner, ["b->kid", "b->other"]);
     }
 
     #[test]
