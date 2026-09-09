@@ -599,7 +599,7 @@ and the digest key moves with it.
 | `qcore-schemas` crate | 10.0.0 | **11.0.0** |
 | `qcore-verification` crate | 0.4.0 | 0.4.0 (unchanged; additive API) |
 | `qcore-verifier-host` crate | 0.4.0 | 0.4.0 (unchanged; no host change) |
-| `qcore-compiler` crate | 0.4.0 | 0.4.0 (unchanged; public API preserved) |
+| `qcore-compiler` crate | 0.4.0 | 0.4.0 (unchanged; every published name still resolves, now as a re-export — the same treatment `P04-COMPOSE` gave `UnmapCase`/`UnmapCertificate`, and on that precedent the version does not move) |
 | Plugin protocol | 1 | 1 |
 | Evidence version | 1, 2 | 1, 2 |
 | Composition source input | 1 | **2** |
