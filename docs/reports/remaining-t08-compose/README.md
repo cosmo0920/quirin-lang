@@ -376,8 +376,11 @@ the F01 kind.
 | `python3 -B -m unittest discover -s scripts/tests` | 125 tests, OK |
 | `cargo test` in `providers/` | 76 passed, 0 failed |
 
-No load-flakes were observed in this run (`P02 RLIMIT_NPROC`, `P03`
-confined-write and `vp04` all passed first time).
+One load-flake was observed and re-run, as the card brief anticipated: P03's
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` failed once under a
+parallel workspace run and passed both in isolation (12/12) and on the next full
+run (2055/0/4). Nothing in this card touches the verifier host; the assertion
+was not weakened. `P02 RLIMIT_NPROC` and `vp04` passed every time.
 
 ---
 
