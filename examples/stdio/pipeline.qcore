@@ -1,0 +1,50 @@
+import std.extern;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// The composed route: one module that both calls declared C and prints.
+//
+// Selecting it needs no marker. A module that uses `std.extern`'s calls *and*
+// `std.io`'s lines is checked by `source.std-io-extern.v1`, which runs both
+// routes' own checkers and publishes both certificates side by side. Composing
+// weakens nothing: every refusal either route gives a module on its own is
+// still given, under that route's own code, at that route's own site.
+//
+// The payoff is the last shape in the entry:
+//
+//     value |> demo_scale(2) |> log warn hex;
+//
+// a literal, through a scalar-returning callee, into a sink. Read it left to
+// right: `x |> f(a)` means `f(x, a)`, and the last stage is the one that
+// consumes the value. The temporaries between stages are hygienic — they have no
+// names to collide with, and the emitted C names them `vN` by identity, exactly
+// as it names resources `rN`.
+//
+// `succeeds 56` / `succeeds 112` / `succeeds 84` are declared outcomes, and this
+// is where they earn their keep. A rendered line is only worth reading if the
+// number in it is the number the run produced, so the emitted C compares each
+// real result against the declaration and exits 70 if they disagree, rather than
+// printing a number nobody computed.
+//
+// The callees' C and their declared contracts live in `../extern/`.
+error Failure { Failed; }
+
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn demo_scale(value: i32, factor: i32) -> i32;
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = demo_alloc(8) succeeds true else raise Failure;
+    demo_fill(b, 7);
+    let total = demo_sum(b, 8) succeeds 56;
+    print dec total;
+    total |> demo_scale(2) succeeds 112 |> log info dec;
+    let value = 42;
+    value |> demo_scale(2) succeeds 84 |> log warn hex;
+    demo_release(move b);
+    flush;
+    return;
+}

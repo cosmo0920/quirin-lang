@@ -1,0 +1,22 @@
+import std.logger;
+
+// `flush` on its own, and what it is worth.
+//
+// A barrier is a **sink handoff**: it pushes what this program has buffered into
+// the stream's implementation and returns. It is not a durability barrier. It
+// does not reach a disk, it does not fsync, and it promises nothing about what
+// survives a crash on the far side of the handoff. Nothing in the checked model
+// claims otherwise, so nothing in the emitted C claims it either — `flush` emits
+// exactly one `fflush`.
+//
+// `flush` names no rendering, so a file that only flushes needs no `std.fmt`
+// import; it is `std.logger` that grants the barrier. This program is therefore
+// the smallest complete `source.std-io.v1` module there is, and it writes not
+// one byte to either stream.
+//
+// `flush` takes no operand. `flush 1;` refuses at `Q030`, and `total |> flush;`
+// refuses at `Q037` — a barrier is not a pipe stage.
+fn main() -> unit effects { io } {
+    flush;
+    return;
+}

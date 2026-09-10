@@ -1,0 +1,49 @@
+error Failure { Failed; }
+
+// Everything an `if` condition can say, in one entry.
+//
+//   * a **constant binding** read from inside a condition — `mask` below;
+//   * the three **bitwise** operators `|`, `^` and `&`;
+//   * the **connectives** `&&` and `||`;
+//   * unary **`!`**.
+//
+// None of these is an operation the checker learned. Each is a token-tier
+// construct that lowers onto the one branch primitive: `A || B` becomes the
+// right-nested `if (A) { … } else if (B) { … }` a reader would have written by
+// hand, and `!C` becomes an arm swap. Short-circuit is therefore *structural* —
+// the second operand of a `||` is the condition of a branch sitting inside the
+// first one's `else` arm, so the emitted C reaches it on exactly one path. The
+// emitted C is byte-identical to the hand-written twin's; nothing downstream can
+// tell a connective or a `!` was written.
+//
+// **The parentheses around each bitwise operand are load-bearing.** C ranks `|`,
+// `^` and `&` *looser* than the comparisons, so C would read `mask | 3 == 15` as
+// `mask | (3 == 15)`. This tier ranks them tighter, and rather than silently
+// redefine a precedence every C programmer already carries, it requires the
+// grouping: the ungrouped spelling is refused. Write the parentheses and the two
+// languages agree about what you meant.
+//
+// The custody join is unmoved by any of this. Every level runs the same join, so
+// all three arms below must still agree — which is why all three release.
+//
+// Walking the conditions with `mask = 12` (binary 1100):
+//
+//   `(mask | 3) == 14`      1100 | 0011 = 1111 = 15, so **false**, and the `&&`
+//                           never reaches its right-hand side;
+//   `!((mask ^ 5) == 9)`    1100 ^ 0101 = 1001 = 9, so the comparison is true
+//                           and the `!` makes it **false** — the `||` therefore
+//                           falls through to its right-hand side;
+//   `(mask & 8) == 8`       1100 & 1000 = 1000 = 8, so **true**, and the second
+//                           arm is the one that runs.
+fn main() -> i32 {
+    let mask = 12;
+    let a = qcore_acquire(1, true, Failure);
+    if ((mask | 3) == 14 && (mask & 4) == 4) {
+        drop a;
+    } else if (!((mask ^ 5) == 9) || (mask & 8) == 8) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

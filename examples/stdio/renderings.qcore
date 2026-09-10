@@ -1,0 +1,26 @@
+import std.fmt;
+import std.io;
+
+// `print` and its two renderings.
+//
+// `std.fmt` grants the rendering words; `std.io` grants the sink. Neither
+// implies the other — drop either import and this file refuses at `Q015`, which
+// is the point of having two modules rather than one `std` blob.
+//
+// `dec` prints a signed decimal `int32_t`; `hex` prints the same value as eight
+// upper-case hexadecimal digits with an `0x` prefix. Both renderings are total
+// on `int32_t` and on nothing else, so there is no width to get wrong and no
+// format string to hold.
+//
+// Every operand is a scalar. `source.std-io.v1` has **no operand form that
+// could denote a resource**, so nothing a `print` touches can be consumed,
+// released or retained. That is why this route's derived effect row is exactly
+// `io` — never `alloc`, never `mut`.
+fn main() -> unit effects { io } {
+    let total = 42;
+    let mask = 255;
+    print dec total;
+    print hex mask;
+    print dec -7;
+    return;
+}

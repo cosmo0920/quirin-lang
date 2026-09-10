@@ -1,0 +1,26 @@
+error Failure { Failed; }
+
+// A branch arm that returns.
+//
+// The arm that returns discharges its custody at **its own exit** — `drop a;`
+// before `return 1;` — which is what the sequential route requires at every
+// exit. Having exited, it never reaches the join, and the join is taken over the
+// arms that survive to it.
+//
+// Here exactly one arm survives, so the statements written after the branch
+// belong to it: they run on the fall-through path and nowhere else, and the
+// driver lowers them inside the implicit `else`. Every checked model then sees a
+// branch both of whose arms end the function, which is why no `else` needs
+// writing and why the shape reads the way an early return reads in C.
+//
+// Remove either `drop a;` and this refuses — but at that *exit*, not at the
+// join. A conditional leak through an early return is still a conditional leak.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+        return 1;
+    }
+    drop a;
+    return 0;
+}

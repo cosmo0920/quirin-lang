@@ -1,0 +1,30 @@
+import std.extern;
+
+// Scalar results, and why they are allowed to leave a declared boundary at all.
+//
+// `demo_sum` and `demo_scale` both declare `resource_return_none()`. Contract
+// spec §C04.1 is the licence: a scalar may carry a descriptor *number* as data,
+// but cannot carry descriptor *custody*. So `total` and `scaled` are ordinary
+// values — they sit beside the buffer's accounting without entering it, and
+// dropping them on the floor leaks nothing.
+//
+// `succeeds 56` and `succeeds 112` are declared outcomes. They are optional (a
+// call with no `succeeds` clause binds whatever the callee returned), and where
+// they are written the emitted C compares the real result and exits 70 rather
+// than carrying on with a number the run did not produce.
+error Failure { Failed; }
+
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn demo_scale(value: i32, factor: i32) -> i32;
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = demo_alloc(8) succeeds true else raise Failure;
+    demo_fill(b, 7);
+    let total = demo_sum(b, 8) succeeds 56;
+    let scaled = demo_scale(total, 2) succeeds 112;
+    demo_release(move b);
+    return;
+}

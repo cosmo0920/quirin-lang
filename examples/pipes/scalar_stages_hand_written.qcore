@@ -1,0 +1,27 @@
+import std.extern;
+
+// `scalar_stages.qcore` with every pipeline written out as the statements it
+// desugars to. This file exists to be *compared*: a test asserts that the two
+// emit byte-identical C11 and produce the same observation.
+//
+// The only difference is that the intermediates are named here and hygienic
+// there. Those names are the reason to prefer the piped spelling — `stage0` and
+// `stage1` say nothing, and inventing better ones for values that exist for one
+// statement is work that buys a reader nothing.
+error Failure { Failed; }
+
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn demo_scale(value: i32, factor: i32) -> i32;
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = demo_alloc(8) succeeds true else raise Failure;
+    demo_fill(b, 7);
+    let stage0 = demo_sum(b, 8);
+    let stage1 = demo_scale(stage0, 2);
+    let scaled = demo_scale(stage1, 3);
+    demo_release(move b);
+    return;
+}

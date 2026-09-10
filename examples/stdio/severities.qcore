@@ -1,0 +1,28 @@
+import std.fmt;
+import std.logger;
+
+// `log` at every severity the logger has, and the barrier that hands the lines
+// on.
+//
+// There are three severities and no more: `info`, `warn`, `fatal`. Each renders
+// its operand through the same `std.fmt` word `print` uses and prefixes the tag
+// `[INFO]`, `[WARN]` or `[FATAL]`. Log lines go to **stderr**; `print` goes to
+// stdout. No order between the two streams is modeled anywhere, because C gives
+// none between two separately buffered streams.
+//
+// The severity a C or Rust reader expects to be spelled `error` is spelled
+// `fatal` here, deliberately: `error` is already the reserved keyword that
+// declares an error type (`error Failure { Failed; }`), and taking it for a log
+// level would have moved a pinned language surface for the sake of a word.
+// Writing `log error dec …` refuses at `Q030`. The README explains the record.
+//
+// `fatal` is a severity tag on a line. It does not exit, abort or raise.
+fn main() -> unit effects { io } {
+    let total = 42;
+    let mask = 255;
+    log info dec total;
+    log warn hex mask;
+    log fatal dec -7;
+    flush;
+    return;
+}

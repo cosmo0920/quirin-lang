@@ -1,0 +1,38 @@
+import std.extern;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// Render something *about* a live resource without consuming it, releasing it,
+// or laundering its identity into a value.
+//
+// `borrow b` renders one thing: the resource's **model identity** — the number
+// the emitted C's own call trace spells `rN`. Not a byte of the object, not an
+// address, not an extent, because no model a rendering can reach carries one.
+//
+// What the borrow buys is a checked precondition. Each rendering below is
+// admitted only because the extern model's ledger holds `b` **live at that
+// statement**. Move the release above the second rendering and this file
+// refuses at `Q043`. That is the whole feature: a diagnostic line about a
+// resource cannot outlive the resource.
+//
+// Two imports are doing separate work here, and both are required: `std.fmt`
+// grants the renderings, `std.io`/`std.logger` grant the two sinks.
+error Failure { Failed; }
+
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = demo_alloc(8) succeeds true else raise Failure;
+    print dec borrow b;
+    demo_fill(b, 7);
+    let total = demo_sum(b, 8) succeeds 56;
+    log info dec total;
+    log warn hex borrow b;
+    demo_release(move b);
+    flush;
+    return;
+}

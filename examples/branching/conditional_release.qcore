@@ -1,0 +1,25 @@
+error Failure { Failed; }
+
+// The shape the branch feature exists for: a resource that must be discharged
+// however the branch goes.
+//
+// At the end of an `if`/`else` the checker takes a **custody join** over the
+// arms. Both arms here release `a`, so they agree and the join succeeds.
+// Delete either `drop a;` and the module refuses at `Q046` — that is the
+// conditional leak, the bug this construct is built to make unwritable.
+//
+// The condition is decided at check time, which is on purpose: it makes the
+// reference execution, the CFG observation and the compiled program's own output
+// single-valued and therefore comparable. What is *not* decided away is the
+// branch. Both arms are validated, both are emitted as real basic blocks, and
+// the emitted C computes `3 < 5` itself — so agreement between the Rust
+// evaluator and a C compiler is a real cross-check rather than a tautology.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

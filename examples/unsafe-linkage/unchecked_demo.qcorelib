@@ -1,0 +1,27 @@
+# The manifest half of `unchecked_calls.qcore`: **which build** was waived.
+#
+# There is no contract here and there never will be — every entry below is
+# explicitly `unchecked`. What a manifest adds is the one thing a bare waiver
+# cannot say: the identity of the artifact the declarations were checked against,
+# and the four ABI premises that build was produced under.
+#
+# The identity is a **pin, not a probe**. Nothing is hashed at check time, no
+# file is opened, and whether the linker actually used this artifact is the
+# builder's act, not the checker's. So the digest below is a **placeholder**: it
+# is all zeros because this repository ships no prebuilt archive, and a real
+# deployment replaces it with the digest of the archive it really links. The
+# printed premise says exactly this — "the artifact identity is declared, not
+# verified here".
+native_library manifest v1;
+library qcore_unchecked_demo;
+version 0.1.0;
+artifact libqcore_unchecked_demo.a;
+hash sha256:0000000000000000000000000000000000000000000000000000000000000000;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+
+unchecked fn demo_unchecked_add(int32_t, int32_t) -> int32_t;
+unchecked fn demo_hidden_effect(uint32_t) -> void;
+unchecked fn demo_measure(uint64_t) -> uint64_t;
