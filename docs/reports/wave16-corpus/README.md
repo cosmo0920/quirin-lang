@@ -1,5 +1,15 @@
 # Wave-16 corpus consolidation — one fresh measurement, deliberately re-pinned
 
+> **Superseded as the current baseline, 2026-09-10 (wave-17 consolidation):**
+> `docs/reports/wave17-corpus/artifacts/` is the current baseline — 21
+> diagnostics units (all of CONSTRUCTOR-RESIDUALS', whose archived AFTER the
+> composed `diagnostics.json` reproduces byte for byte), two added contract
+> modules and one changed, and the identity/package and path-literal residue.
+> Headline and every unit and function status unchanged; **leak moves 271 → 272
+> deliberately**, in the accusing direction, on a function and a unit that were
+> already `Unsafe` (`CONSTRUCTOR-RESIDUALS-LEAK-271`). This directory remains
+> the wave-16 record.
+
 **Date:** 2026-09-10. **Tree:** main `79c1cb8` (all seven wave-16 cards
 merged, including LOADER-ABI's composed-tree reconciliation `c7e20ed`).
 Integrator-run, closing the wave under hard invariants 3 and 5.

@@ -1,0 +1,15 @@
+wave-16 baseline -> CONSTRUCTOR-RESIDUALS archived AFTER: added 12, removed 60
+wave-16 baseline -> composed wave-17 measurement:          added 12, removed 60
+composed diff == CONSTRUCTOR-RESIDUALS' diff: True
+unattributed added leaves: 0
+unattributed removed leaves: 0
+zero leaves attributable to CTWIN-RESIDUALS or LOADER-ABI-MODES: True
+unit status moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+unit status histogram before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status histogram after:  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+category leak: 271 -> 272 (+1)
+category unknown_alias: 4399 -> 4405 (+6)
+category unsupported: 49890 -> 49835 (-55)
+RESULT: attributed

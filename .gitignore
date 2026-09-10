@@ -6,3 +6,8 @@
 *.pyc
 
 /build/cycle19/
+
+# Worktree-private measurement output (see CLAUDE.md, "Worktree and measurement
+# hygiene"): never the shared scratchpad, never under /target/.
+/measure/
+/private/

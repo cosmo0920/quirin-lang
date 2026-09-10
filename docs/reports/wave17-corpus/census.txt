@@ -1,0 +1,146 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 271 -> 272 (+1)
+  unknown_alias: 4399 -> 4405 (+6)
+  unsupported: 49890 -> 49835 (-55)
+units with diagnostic-count changes: 21
+  chunkio/cio_chunk.c: {'unsupported': -2}
+  chunkio/cio_file_unix.c: {'unsupported': -1}
+  chunkio/cio_os.c: {'unsupported': -2}
+  cmetrics/cmt_encode_opentelemetry_batch.c: {'unsupported': -8}
+  fluent-bit-chunk/flb_input_chunk.c: {'leak': 1, 'unknown_alias': -4, 'unsupported': -19}
+  librdkafka/rdaddr.c: {'unsupported': -3}
+  librdkafka/rdkafka_sasl_scram.c: {'unsupported': -1}
+  librdkafka/rdkafka_ssl.c: {'unsupported': -1}
+  librdkafka/tinycthread_extra.c: {'unsupported': -2}
+  monkey-libevent/mk_core/mk_rconf.c: {'unknown_alias': 2, 'unsupported': -2}
+  monkey-libevent/mk_core/mk_string.c: {'unknown_alias': 1, 'unsupported': -1}
+  monkey-libevent/mk_server/mk_config.c: {'unsupported': -1}
+  monkey-libevent/mk_server/mk_fifo.c: {'unknown_alias': 1, 'unsupported': -1}
+  monkey-libevent/mk_server/mk_http.c: {'unsupported': -1}
+  monkey-libevent/mk_server/mk_http_parser.c: {'unsupported': -2}
+  monkey-libevent/mk_server/mk_http_thread.c: {'unknown_alias': 1, 'unsupported': -1}
+  monkey-libevent/mk_server/mk_lib.c: {'unknown_alias': 2, 'unsupported': -2}
+  monkey-libevent/mk_server/mk_mimetype.c: {'unknown_alias': 1, 'unsupported': -1}
+  monkey-libevent/mk_server/mk_socket.c: {'unsupported': -1}
+  monkey-libevent/mk_server/mk_stream.c: {'unsupported': -1}
+  monkey-libevent/mk_server/mk_vhost.c: {'unknown_alias': 2, 'unsupported': -2}
+description inventory deltas:
+  leak / 'live obligation acquired at preprocessed line 19357': 6 -> 7 (+1)
+  unknown_alias / 'unresolved resource identity `chunk`': 3 -> 1 (-2)
+  unknown_alias / 'unresolved resource identity `fw`': 10 -> 11 (+1)
+  unknown_alias / 'unresolved resource identity `ha`': 0 -> 1 (+1)
+  unknown_alias / 'unresolved resource identity `halias`': 2 -> 4 (+2)
+  unknown_alias / 'unresolved resource identity `host`': 9 -> 10 (+1)
+  unknown_alias / 'unresolved resource identity `label_lengths`': 6 -> 5 (-1)
+  unknown_alias / 'unresolved resource identity `meta`': 4 -> 5 (+1)
+  unknown_alias / 'unresolved resource identity `new_mime`': 3 -> 4 (+1)
+  unknown_alias / 'unresolved resource identity `new`': 2 -> 4 (+2)
+  unknown_alias / 'unresolved resource identity `resolved_lengths`': 5 -> 4 (-1)
+  unknown_alias / 'unresolved resource identity `sched`': 0 -> 1 (+1)
+  unsupported / 'call to uncontracted function `__errno_location`': 24 -> 0 (-24)
+  unsupported / 'indirect memory access is outside the resource projection': 18860 -> 18829 (-31)
+leaf-level diff, per changed unit:
+  UNIT chunkio/cio_chunk.c
+    -1 chunk_state_sync L2385 unsupported: indirect memory access is outside the resource projection
+    -1 chunk_state_sync L2388 unsupported: indirect memory access is outside the resource projection
+  UNIT chunkio/cio_file_unix.c
+    -1 cio_file_native_resize L3305 unsupported: call to uncontracted function `__errno_location`
+  UNIT chunkio/cio_os.c
+    -1 cio_os_mkpath L2090 unsupported: call to uncontracted function `__errno_location`
+    -1 cio_os_mkpath L2094 unsupported: call to uncontracted function `__errno_location`
+  UNIT cmetrics/cmt_encode_opentelemetry_batch.c
+    -1 cmt_encode_opentelemetry_create_batches L7104 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_create_batches L7110 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_split_payload L6953 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_split_payload L6959 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_split_payload L6969 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_split_payload L7076 unsupported: call to uncontracted function `__errno_location`
+    -1 cmt_encode_opentelemetry_split_payload L7079 unsupported: call to uncontracted function `__errno_location`
+    -1 empty_batches_create L7089 unsupported: call to uncontracted function `__errno_location`
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 append_to_ring_buffer L20260 unsupported: indirect memory access is outside the resource projection
+    -1 append_to_ring_buffer L20279 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19600 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19601 unknown_alias: unresolved resource identity `chunk`
+    -1 flb_input_chunk_create L19619 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19620 unknown_alias: unresolved resource identity `chunk`
+    -1 flb_input_chunk_create L19621 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_create L19629 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19629 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19359 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19390 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19396 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19397 unknown_alias: unresolved resource identity `label_lengths`
+    +1 flb_input_chunk_get_direct_routes L19399 leak: live obligation acquired at preprocessed line 19357
+    -1 flb_input_chunk_get_direct_routes L19457 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19487 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_get_direct_routes L19521 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18746 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_map L18767 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_write_header_v2 L19061 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_write_header_v2 L19066 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_write_header_v2 L19067 unknown_alias: unresolved resource identity `resolved_lengths`
+    -1 flb_input_chunk_write_header_v2 L19153 unsupported: indirect memory access is outside the resource projection
+    -1 input_chunk_write_header L18968 unsupported: indirect memory access is outside the resource projection
+    -1 update_logs_tag_records_metrics L17772 unsupported: indirect memory access is outside the resource projection
+    -1 update_logs_tag_records_metrics L17812 unsupported: indirect memory access is outside the resource projection
+  UNIT librdkafka/rdaddr.c
+    -1 rd_getaddrinfo L4058 unsupported: call to uncontracted function `__errno_location`
+    -1 rd_getaddrinfo L4073 unsupported: call to uncontracted function `__errno_location`
+    -1 rd_getaddrinfo L4084 unsupported: call to uncontracted function `__errno_location`
+  UNIT librdkafka/rdkafka_sasl_scram.c
+    -1 rd_kafka_sasl_scram_handle_server_first_message L20426 unsupported: call to uncontracted function `__errno_location`
+  UNIT librdkafka/rdkafka_ssl.c
+    -1 rd_kafka_transport_ssl_clear_error L20236 unsupported: call to uncontracted function `__errno_location`
+  UNIT librdkafka/tinycthread_extra.c
+    -1 rwlock_destroy L3051 unsupported: call to uncontracted function `__errno_location`
+    -1 rwlock_init L3043 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_core/mk_rconf.c
+    +1 mk_rconf_meta_add L1889 unknown_alias: unresolved resource identity `meta`
+    -1 mk_rconf_meta_add L1889 unsupported: indirect memory access is outside the resource projection
+    -1 mk_rconf_section_add L2243 unsupported: indirect memory access is outside the resource projection
+    +1 mk_rconf_section_add L2243 unknown_alias: unresolved resource identity `new`
+  UNIT monkey-libevent/mk_core/mk_string.c
+    +1 mk_string_split_line L2225 unknown_alias: unresolved resource identity `new`
+    -1 mk_string_split_line L2225 unsupported: indirect memory access is outside the resource projection
+  UNIT monkey-libevent/mk_server/mk_config.c
+    -1 mk_config_listen_parse L6089 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_server/mk_fifo.c
+    +1 mk_fifo_worker_create L5146 unknown_alias: unresolved resource identity `fw`
+    -1 mk_fifo_worker_create L5146 unsupported: indirect memory access is outside the resource projection
+  UNIT monkey-libevent/mk_server/mk_http.c
+    -1 mk_http_handler_read L6285 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_server/mk_http_parser.c
+    -1 header_lookup L5636 unsupported: call to uncontracted function `__errno_location`
+    -1 http_parser_transfer_encoding_chunked L5839 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_server/mk_http_thread.c
+    +1 mk_http_thread_purge L6123 unknown_alias: unresolved resource identity `sched`
+    -1 mk_http_thread_purge L6123 unsupported: indirect memory access is outside the resource projection
+  UNIT monkey-libevent/mk_server/mk_lib.c
+    -1 mk_vhost_create L6760 unsupported: indirect memory access is outside the resource projection
+    +1 mk_vhost_create L6760 unknown_alias: unresolved resource identity `halias`
+    +1 mk_vhost_set_property L6774 unknown_alias: unresolved resource identity `ha`
+    -1 mk_vhost_set_property L6774 unsupported: indirect memory access is outside the resource projection
+  UNIT monkey-libevent/mk_server/mk_mimetype.c
+    -1 mk_mimetype_add L5852 unsupported: indirect memory access is outside the resource projection
+    +1 mk_mimetype_add L5852 unknown_alias: unresolved resource identity `new_mime`
+  UNIT monkey-libevent/mk_server/mk_socket.c
+    -1 mk_socket_ip_str L5991 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_server/mk_stream.c
+    -1 mk_channel_write L5909 unsupported: call to uncontracted function `__errno_location`
+  UNIT monkey-libevent/mk_server/mk_vhost.c
+    -1 mk_vhost_set_single L6379 unsupported: indirect memory access is outside the resource projection
+    +1 mk_vhost_set_single L6379 unknown_alias: unresolved resource identity `halias`
+    +1 mk_vhost_set_single L6391 unknown_alias: unresolved resource identity `host`
+    -1 mk_vhost_set_single L6391 unsupported: indirect memory access is outside the resource projection
+leaves added: 12; leaves removed: 60

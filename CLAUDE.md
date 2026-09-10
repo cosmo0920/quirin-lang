@@ -46,9 +46,12 @@ guidance for working in this repository that is not in either of those.
 - **Prefer temporary WIP commits over `git stash`.** The shared git stash stack
   is not per-worktree; it caused one cross-worktree stash consumption during
   the second delegated wave (recovered from dangling commits, nothing lost).
-- **Measurement outputs belong in worktree-private directories**, not the
-  shared session scratchpad — delegated agents share it, and a mid-run
-  overwrite was caught and re-measured during wave 15.
+- **Measurement outputs belong in worktree-private directories** — `measure/`
+  or `private/`, both gitignored — not the shared session scratchpad and **not
+  under `target/`**. Delegated agents share the scratchpad, and a mid-run
+  overwrite was caught and re-measured during wave 15; a wave-17 card lost a
+  whole providers run to its own `cargo clean` because the log lived under
+  `target/`.
 - Delegated cards work in isolated worktrees, merge one at a time under the
   failure-gated chain discipline, and close with a per-card report under
   `docs/reports/<card>/README.md`.
