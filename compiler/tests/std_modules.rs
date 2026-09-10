@@ -7,6 +7,9 @@
 //! projection. No order between the two streams is asserted anywhere, because
 //! none is modeled: C gives no order between two separately buffered streams
 //! and this card does not measure one.
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
@@ -17,6 +20,12 @@ fn with_line_endings(source: &str) -> [String; 2] {
     let lf = source.replace("\r\n", "\n");
     let crlf = lf.replace('\n', "\r\n");
     [lf, crlf]
+}
+
+fn without_line(source: &str, line: &str) -> String {
+    source
+        .replace(&format!("{line}\r\n"), "")
+        .replace(&format!("{line}\n"), "")
 }
 
 fn compile(
@@ -146,27 +155,27 @@ fn a_logger_only_module_needs_no_rendering_import() {
 
 #[test]
 fn printing_without_the_io_import_refuses() {
-    for source in with_line_endings(&LINES.replace("import std.io;\n", "")) {
+    for source in with_line_endings(&without_line(LINES, "import std.io;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
 
 #[test]
 fn logging_without_the_logger_import_refuses() {
-    for source in with_line_endings(&LINES.replace("import std.logger;\n", "")) {
+    for source in with_line_endings(&without_line(LINES, "import std.logger;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
 
 #[test]
 fn flushing_without_the_logger_import_refuses() {
-    let source = LOGGER_ONLY.replace("import std.logger;\n", "");
+    let source = without_line(LOGGER_ONLY, "import std.logger;");
     assert_eq!(codes(&source), ["Q015"]);
 }
 
 #[test]
 fn rendering_without_the_fmt_import_refuses() {
-    for source in with_line_endings(&LINES.replace("import std.fmt;\n", "")) {
+    for source in with_line_endings(&without_line(LINES, "import std.fmt;")) {
         assert_eq!(codes(&source), ["Q015"]);
     }
 }
@@ -209,7 +218,7 @@ fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability(
     let diagnostics = compile_files(
         &[
             SourceFile::new("granting.qcore", granting),
-            SourceFile::new("using.qcore", LINES.replace("import std.io;\n", "")),
+            SourceFile::new("using.qcore", without_line(LINES, "import std.io;")),
         ],
         &CompileOptions {
             entry: None,
@@ -356,7 +365,7 @@ fn printing_outside_the_entry_refuses() {
 
 #[test]
 fn an_entry_that_never_returns_refuses() {
-    let source = LINES.replace("    return;\n", "");
+    let source = without_line(LINES, "    return;");
     assert_eq!(codes(&source), ["Q030"]);
 }
 
@@ -415,72 +424,96 @@ fn the_logger_only_program_runs_natively_and_writes_nothing() {
 /// The sanitizer runtimes write their own findings to stderr and abort, so a
 /// clean exit with the expected stderr lines is itself the evidence that no
 /// finding was reported.
-fn run_native(source: &str, label: &str) -> (Vec<String>, Vec<String>) {
-    use std::process::Command;
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-std-modules-{label}-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
+fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
+    #[cfg(target_os = "windows")]
+    {
+        let run = windows_c::run(source, None, &[]);
+        assert!(
+            run.status.success(),
+            "emitted program failed:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = String::from_utf8(run.stdout)
             .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let generated = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&generated, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&generated)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile.status.success(),
-        "C compiler rejected the emitted program:\n{}",
-        String::from_utf8_lossy(&compile.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                // Apple's AddressSanitizer provides no LeakSanitizer, so leak
-                // detection stays a Linux-only observation.
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
-    assert!(
-        run.status.success(),
-        "emitted program failed under ASan/UBSan/LSan:\n{}",
-        String::from_utf8_lossy(&run.stderr)
-    );
-    let out = String::from_utf8(run.stdout)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    let err = String::from_utf8(run.stderr)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    std::fs::remove_dir_all(directory).unwrap();
-    (out, err)
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        let err = String::from_utf8(run.stderr)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        (out, err)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-std-modules-{_label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    // Apple's AddressSanitizer provides no LeakSanitizer, so leak
+                    // detection stays a Linux-only observation.
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        assert!(
+            run.status.success(),
+            "emitted program failed under ASan/UBSan/LSan:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = String::from_utf8(run.stdout)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        let err = String::from_utf8(run.stderr)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        std::fs::remove_dir_all(directory).unwrap();
+        (out, err)
+    }
 }
