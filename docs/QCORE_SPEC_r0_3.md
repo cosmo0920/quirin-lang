@@ -457,6 +457,59 @@ callee. See
 `docs/design/UNSAFE_LINKAGE_V1.md` and the
 [unchecked-linkage evidence](reports/wave18-unsafe-linkage/README.md).
 
+### L14.2. Manifest-resident unchecked linkage
+
+A waiver of §L14.1 MAY additionally be **resident in a library manifest**, so
+that its premise names the artifact it was waived from rather than only the
+symbol (card `UNSAFE-LINKAGE-ARTIFACT`; level L1 of the linkage spectrum in
+`docs/design/UNSAFE_LINKAGE_V1.md` §1.1).
+
+A `source.native-library.v1` manifest binds one library **artifact identity**
+(library name, version, artifact file name, content hash) and four **ABI premise
+fields** (data model, unwinding posture, allocator custody, thread posture) to a
+list of symbols the artifact exports. In this revision every entry is an
+explicitly marked **contract-less** entry: a contracted entry — a contract slice
+member — is refused rather than implemented, so a dropped contract can never be
+read as a waiver. A manifest is loaded **total or reject**: an unknown field, an
+unknown field value, a repeated or missing field, a malformed statement, an
+unimplemented entry kind, a symbol bound twice, a type spelling outside §C04.1
+or a contract-less entry declaring a pointer rejects the whole manifest
+(`Q039`). A selection in which two manifests bind the same symbol is refused
+(`Q040`), because the binding MUST be a function.
+
+Selecting manifests is optional and MUST NOT change any program that selects
+none: an unmanifested waiver keeps the §L14.1 premise unchanged, and the absence
+of an artifact field in it is itself part of the trust statement — **no build
+was named**. Where a manifest does name a waived symbol:
+
+- the declared signature and the manifest's exported header declaration MUST
+  agree, or the symbol is **refused** (`Q041`). The disagreement does not
+  withdraw to the unmanifested premise: the only weaker admissible reading is
+  the bare waiver, and reaching it by contradiction would reward a
+  contradiction with a premise that says less;
+- the **admitted surface does not move**. The closed §L14.1 table decides
+  first and unchanged, so a manifest cannot admit a pointer for a
+  contract-less entry: an artifact identity states *which code*, not what that
+  code does with a capability;
+- the certificate MUST carry the sharpened premise in place of the bare one,
+  and every omission guard of §L14.1 applies to it unchanged — including the
+  publication tripwire, which refuses a certificate that **downgraded** a
+  sharpened premise to a bare one;
+- a name the selected manifest declares contract-less MUST NOT also be reached
+  through a declared contract (`Q042`). This is the mirror of `Q034`: where two
+  declarations are visible they are compared, and the refusing direction wins.
+
+The artifact identity is a **pin, not a probe**. The manifest's well-formedness
+is checked; the artifact itself is neither read nor hashed at check time, and no
+statement is made that the linker used the named build. What a certificate
+therefore states is that the program was checked *on the declaration that this
+symbol comes from this build*, which makes a substitution at link time a
+detectable premise violation rather than an invisible one. The identity and the
+four ABI premise fields are declared assumptions in the sense of §L21's verdict
+rules, exactly as a declared contract is. See
+`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and the
+[manifest evidence](reports/wave19-unsafe-linkage-artifact/README.md).
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -567,6 +620,7 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `Q028`–`Q031` | `StandardIo` | `qcore-frontend`, `qcore-verification::driver` | Admission of the line-producing statements of `std.fmt`, `std.io` and `std.logger` (`source.std-io.v1`, card `STD-MODULES`). `Q028` a rendering operand that is not one of the entry's integer bindings — the refusal that keeps every resource unrenderable, since the v1 operand grammar has no form that could denote one; `Q029` the entry performs `Io` but its declared `effects { … }` row does not admit it; `Q030` the flat entry shape this profile models is violated — a statement it does not model, a nested block, an entry with parameters, a `print`/`log`/`flush` outside the entry, an unknown rendering or level *whose word is reserved*, a `flush` with an operand, a missing or repeated return, or a malformed `effects` row; `Q031` a published certificate against its independent rederivation. An unreserved word in a rendering or level position is collected as a referenced name and refuses earlier at `Q013`; that is fail-closed and recorded, not `Q030`. |
 | `Q032`–`Q035` | `UncheckedLinkage` | `qcore-frontend`, `qcore-verification::driver` | Admission of an extern declaration that has **no** contract at all, so an external library can be linked without one (§L14.1, card `UNSAFE-LINKAGE`). A separate pass from `ExternCall` on purpose: that pass decides whether a *declared contract* bridges to a call, while this one decides whether a signature may cross a boundary nothing checks, and records the premise that says so. `Q032` an `unsafe extern fn` declaration in a file without its `import std.extern.unsafe;` — the gate is on the declaration, not on a call to it; `Q033` the declared signature is outside the closed unchecked table: a pointer parameter or result in any spelling (`ptr<const, u8>` included, deliberately), a `unit` parameter, or a spelling the §C04.1 ABI vocabulary does not contain — the contract is waived, the ABI is not; `Q034` a waiver beside a checkable declaration: an inline `contract { … }` block on the waived declaration, or a name the selected contract environment also declares, in which case the contracted route wins whether or not the signatures agree; `Q035` a published certificate that does not carry an unchecked-linkage premise for an uncontracted callee its own program declares. `Q022`–`Q027` are unchanged: without the waiver an uncontracted callee still refuses at `Q023`. |
 | `Q036`–`Q038` | `Pipe` | `qcore-frontend`, `qcore-verification::driver` | Admission of the pipe operator `\|>` and of the claimed logical-operator tokens `\|` and `&&` (`source.pipe.v1`, card `PIPE-OPERATOR`). The pass runs *before* every other one: a well-formed pipeline is desugared into the tokens of the equivalent unpiped statement at parse time, so no later pass can tell a pipe was written and this pass exists only to attribute the refusals of the forms that are **not** desugared away. Card `PIPE-CHAIN` extends the desugaring from one stage to a chain: a pipeline of `n` stages becomes a sequence of `n` statements, each non-final stage binding its result to a hygienic temporary the next receives, and the final stage keeping the statement form the reader wrote around the whole pipeline (which closes `PIPE-LET`). No diagnostic code moved and none was added. `Q036` a pipeline shape this profile does not model — an empty operand or stage, a stage that is neither a statement head nor a callee name, a sink stage naming the wrong number of selector words, a call stage whose parentheses are unbalanced, a malformed or value-less `let NAME =` binder, an assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage (whose operand already has the language's own spelling), a bare `move` whose incoming value is not a binding, or a file that needs pipeline temporaries and itself writes the reserved `qcore__pipe` prefix (hygiene is enforced by refusal, never by silent renaming); `Q037` a stage that cannot receive the piped operand — `flush`, which takes none, or any non-final stage that produces no value, since only an acquisition adapter binds a result in this source language; `Q038` a claimed-but-unlowered logical operator — `\|`, `\|\|` (two `\|` tokens, with the message naming the single-`\|` spelling) or `&&`, each refusing because the executable subset has no branch construct to lower a short-circuit onto. A single `&` is deliberately **not** claimed by this pass and keeps exactly the meaning it had. Dropping the `;` of a body's last statement is a parse failure at `Q000` before this pass runs. |
+| `Q039`–`Q042` | `NativeLibrary` | `qcore-frontend`, `qcore-verification::driver` | Admission of a `source.native-library.v1` manifest selection and of the manifest-resident waivers it sharpens (§L14.2, card `UNSAFE-LINKAGE-ARTIFACT`; the band `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` §7 reserved after `UNSAFE-LINKAGE` took `Q032`–`Q035` and `PIPE-OPERATOR` `Q036`–`Q038`). A separate pass from `UncheckedLinkage` on purpose: that pass decides whether a *signature* may cross a boundary nothing checks and its decision is unchanged here, while this one decides whether the **manifest** a waiver is resident in loads, binds and agrees — the trust object is the manifest, not the declaration. `Q039` a selected manifest does not load, total-or-reject: a missing marker, an unterminated statement, an unknown field, an unknown field value, a repeated or missing field, a malformed hash, an entry kind this slice does not implement (a contracted entry), a malformed entry, a type spelling outside the §C04.1 ABI projection, a contract-less entry declaring a pointer or a `unit` parameter, a symbol bound twice, or a manifest binding nothing; `Q040` two selected manifests bind the same symbol, so the binding would not be a function; `Q041` a waived declaration and the manifest that names it disagree in arity, a parameter or the result — a refusal, never a withdrawal to the weaker unmanifested premise; `Q042` a name the selected manifest declares contract-less is also reached through a declared contract, the mirror of `Q034`. Selecting no manifest is the default and changes nothing: `Q032`–`Q035` and `Q022`–`Q027` are unchanged, and an unmanifested waiver keeps its §L14.1 premise byte for byte. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
 | `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |

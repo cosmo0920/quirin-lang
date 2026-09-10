@@ -56,6 +56,30 @@ pub struct CompileOptions {
     /// `ContractTrust::Declared` assumptions about C implementations this
     /// repository never analysed.
     pub extern_contracts: Option<BTreeMap<String, String>>,
+    /// Explicit selection of `source.native-library.v1` manifests, as an
+    /// immutable path → source-text map loaded by the total-or-reject manifest
+    /// loader (card `UNSAFE-LINKAGE-ARTIFACT`,
+    /// [`qcore_core::native_library`]).
+    ///
+    /// `None` selects nothing, and nothing selected is *exactly* the wave-18
+    /// world: a waived declaration keeps the bare
+    /// `UncheckedLinkage { callee, signature }` premise, and no program that
+    /// compiled without a manifest can be refused because of one.
+    ///
+    /// What a selection can do is **sharpen** a waiver into a premise naming the
+    /// artifact it was waived from, and **refuse** a declaration the named
+    /// artifact's manifest contradicts. It can never widen the admitted surface:
+    /// a manifest cannot buy a pointer for a contract-less entry, because an
+    /// artifact identity says which code, not what it does with your pointer.
+    ///
+    /// Unlike the waiver itself — which card `UNSAFE-LINKAGE` deliberately put
+    /// in the *source*, so that two byte-identical files cannot mean different
+    /// things — the manifest is a builder-side selection, because it is not the
+    /// trust act. The trust act stays the `unsafe extern fn` declaration the
+    /// reader can see; the manifest only says which build that declaration was
+    /// checked against, and whichever build the builder names, the certificate
+    /// prints it.
+    pub native_libraries: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1578,6 +1602,7 @@ fn compile_task_source(
 fn admit_unchecked_callee(
     declaration: &qcore_frontend::source_extern::SourceExternDeclaration,
     contracts: Option<&qcore_schemas::contract::ResourceContracts>,
+    libraries: &qcore_core::native_library::NativeLibraries,
     ranges: &[FileRange],
     diagnostics: &mut Vec<FileDiagnostic>,
 ) -> Option<extern_call::ExternCallee> {
@@ -1632,7 +1657,45 @@ fn admit_unchecked_callee(
         );
         return None;
     };
-    match extern_call::unchecked_callee(name, &parameters, result) {
+    // The admitted surface is decided **first and unchanged**, so a manifest
+    // demonstrably cannot widen it: a pointer declaration refuses here whether
+    // or not a manifest names the symbol (card `UNSAFE-LINKAGE-ARTIFACT`).
+    let callee = match extern_call::unchecked_callee(name, &parameters, result) {
+        Ok(callee) => callee,
+        Err(refusal) => {
+            refuse(
+                "Q033",
+                format!("`{name}` is not callable through unchecked linkage: {refusal}"),
+            );
+            return None;
+        }
+    };
+    let Some(binding) = libraries.binding(name) else {
+        // No selected manifest names this symbol, so the waiver keeps the bare
+        // premise card `UNSAFE-LINKAGE` published, byte for byte. The absence
+        // of an artifact field is itself part of the trust statement: no build
+        // was named.
+        return Some(callee);
+    };
+    // The manifest's type gate (design §4.2 at the contract-less setting). A
+    // disagreement **refuses**; it does not withdraw to the bare waiver, which
+    // would reward a contradiction with a premise that says less.
+    if let Err(disagreement) =
+        qcore_core::native_library::check_manifest_agreement(binding.entry, &parameters, result)
+    {
+        diagnostics.push(map_raw_diagnostic(
+            "Q041",
+            SemanticPass::NativeLibrary,
+            declaration.span,
+            format!(
+                "`{name}` is declared `unsafe extern fn` here but `{}` declares it otherwise: {disagreement}",
+                binding.module
+            ),
+            ranges,
+        ));
+        return None;
+    }
+    match extern_call::manifest_unchecked_callee(name, &parameters, result, binding.residence()) {
         Ok(callee) => Some(callee),
         Err(refusal) => {
             refuse(
@@ -1642,6 +1705,40 @@ fn admit_unchecked_callee(
             None
         }
     }
+}
+
+/// Card `UNSAFE-LINKAGE-ARTIFACT`. Load the selected `source.native-library.v1`
+/// manifests, or refuse the module.
+///
+/// A selection that does not load is refused rather than ignored, on card
+/// `UNSAFE-LINKAGE` §7.1's measured ground applied to this surface: a silently
+/// dropped selection would downgrade every manifest-resident premise to a bare
+/// waiver, so shipping a deliberately broken manifest would become a way to
+/// stop a certificate saying which build it rests on. The refusal therefore
+/// applies whenever the extern route runs, not only when some callee resolves.
+fn load_native_libraries(
+    options: &CompileOptions,
+    span: Span,
+    ranges: &[FileRange],
+) -> Result<qcore_core::native_library::NativeLibraries, Vec<FileDiagnostic>> {
+    use qcore_core::native_library::{NativeLibraries, SelectionRefusal};
+
+    let Some(sources) = options.native_libraries.as_ref() else {
+        return Ok(NativeLibraries::default());
+    };
+    NativeLibraries::load(sources).map_err(|refusal| {
+        let code = match refusal {
+            SelectionRefusal::Manifest { .. } => "Q039",
+            SelectionRefusal::SymbolBoundTwice { .. } => "Q040",
+        };
+        vec![map_raw_diagnostic(
+            code,
+            SemanticPass::NativeLibrary,
+            span,
+            format!("the selected native-library manifests do not load: {refusal}"),
+            ranges,
+        )]
+    })
 }
 
 /// Card `source.extern-call.v1`. Every step here fails closed: no contract
@@ -1761,6 +1858,7 @@ fn compile_extern_source(
         };
         (contracts, BTreeMap::new())
     };
+    let libraries = load_native_libraries(options, first_span, ranges)?;
     let mut diagnostics = Vec::new();
     let mut callees = BTreeMap::new();
     for (name, span) in &called {
@@ -1768,11 +1866,36 @@ fn compile_extern_source(
             continue;
         };
         if declaration.unchecked {
-            if let Some(callee) =
-                admit_unchecked_callee(declaration, contracts.as_ref(), ranges, &mut diagnostics)
-            {
+            if let Some(callee) = admit_unchecked_callee(
+                declaration,
+                contracts.as_ref(),
+                &libraries,
+                ranges,
+                &mut diagnostics,
+            ) {
                 callees.insert(name.clone(), callee);
             }
+            continue;
+        }
+        // Card `UNSAFE-LINKAGE-ARTIFACT`, the mirror of `Q034`. `Q034` refuses a
+        // waiver for a name the contract environment declares — you may not
+        // waive a contract you have. This refuses a *contract* for a name the
+        // selected manifest declares contract-less: the named build says this
+        // symbol has no contract, and admitting one anyway would assert modes
+        // and effects about an artifact whose own manifest states none. Where
+        // two declarations are visible they are compared, and the refusing
+        // direction wins.
+        if let Some(binding) = libraries.binding(name) {
+            diagnostics.push(map_raw_diagnostic(
+                "Q042",
+                SemanticPass::NativeLibrary,
+                declaration.span,
+                format!(
+                    "`{name}` is declared `extern fn` here, but `{}` declares it a contract-less symbol of `{}`; a contract may not be asserted about a build whose manifest states none",
+                    binding.module, binding.identity.library
+                ),
+                ranges,
+            ));
             continue;
         }
         let contracts = contracts

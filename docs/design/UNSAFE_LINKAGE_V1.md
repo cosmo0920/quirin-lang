@@ -280,7 +280,17 @@ contract slice member and therefore no modes and no effects. Such an entry:
 * **satisfies that document's §4.4 closed-allocator-custody check vacuously**,
   because a contract-less entry cannot acquire.
 
-**Why v1 stops at L0 anyway.** The manifest does not exist yet — its format,
+**Landed (card `UNSAFE-LINKAGE-ARTIFACT`, wave 19).** All six bullets above are
+implemented, with one deviation recorded in that card's report: the header
+agreement is a **refusal** rather than a `LOADER-ABI`-style per-unit withdrawal,
+because the only weaker admissible reading here is the bare L0 waiver, and
+withdrawing to it would reward a contradiction with a premise that says *less*
+about the artifact. The premise is a separate `ExternAssumption` variant rather
+than an optional field on this card's, so the paragraph below stays literally
+true. See
+[`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md).
+
+**Why v1 stopped at L0 anyway.** The manifest did not exist yet — its format,
 loader, header reader, artifact verification and withdrawal semantics are stage
 (a) of that document and are a card of their own. Landing L1 first would mean
 landing the whole manifest to carry one field.
@@ -448,10 +458,12 @@ constrains it.
 * **`UNSAFE-LINKAGE-CLI`** — a `qcorec` flag selecting a contract environment.
   The CLI selects none, so today an all-unchecked module is exactly what it can
   compile end to end.
-* **`UNSAFE-LINKAGE-ARTIFACT`** — bind a waived declaration to a library
-  artifact identity, in the manifest sense `NATIVE-LIBRARY-LINKAGE` §4.3
-  scopes, so the premise names *which build* was waived. See §9.3: this is the
-  composition of the two documents, and it is the single highest-value
-  extension of this card.
+* **`UNSAFE-LINKAGE-ARTIFACT`** — **landed in wave 19.** A waived declaration
+  binds to a library artifact identity in the manifest sense
+  `NATIVE-LIBRARY-LINKAGE` §4.3 scopes, so the premise names *which build* was
+  waived; see §4.2's landed note and
+  [that card's record](../reports/wave19-unsafe-linkage-artifact/README.md).
+  Its own residuals — a contract slice, a real header reader, and a builder-side
+  hash observation — are named there.
 * Variadics, function pointers, structs, floats and verifying the link step,
   which are out of scope for the contracted route too.

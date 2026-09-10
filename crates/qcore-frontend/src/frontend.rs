@@ -1643,6 +1643,19 @@ pub enum SemanticPass {
     /// following the wave-3 `T07`/`T09` precedent. The code-to-condition
     /// mapping is unchanged under the shift.
     Pipe,
+    /// Card `UNSAFE-LINKAGE-ARTIFACT`: admission of a `source.native-library.v1`
+    /// manifest selection and of the manifest-resident waivers it sharpens.
+    /// Owns `Q039`–`Q042` (spec §L21), the band
+    /// `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` §7 reserved for it after
+    /// `UNSAFE-LINKAGE` took `Q032`–`Q035` and `PIPE-OPERATOR` `Q036`–`Q038`.
+    ///
+    /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
+    /// whether a *signature* may cross a boundary nothing checks, and its
+    /// decision is unchanged here. This one decides whether the **library
+    /// manifest** a waiver is resident in loads, binds and agrees — the trust
+    /// object is the manifest, not the declaration, and a manifest that does
+    /// not load is refused without ever reaching a declaration.
+    NativeLibrary,
     PluginVerification,
 }
 
@@ -2427,6 +2440,10 @@ pub fn source_diagnostic(
         // The generic presentation code of the pipe pass. The specific
         // conditions Q037-Q038 are issued at their own emission sites.
         SemanticPass::Pipe => "Q036",
+        // The generic presentation code of the native-library pass. The
+        // specific conditions Q040-Q042 are issued at their own emission
+        // sites; Q039 is the manifest load rejection this code names.
+        SemanticPass::NativeLibrary => "Q039",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

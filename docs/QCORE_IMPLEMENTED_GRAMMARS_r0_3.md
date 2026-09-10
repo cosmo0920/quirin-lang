@@ -865,6 +865,49 @@ contract; a published certificate missing one is refused (`Q035`). See
 `docs/design/UNSAFE_LINKAGE_V1.md` and
 [the unchecked-linkage record](reports/wave18-unsafe-linkage/README.md).
 
+### G02d.2. The native-library manifest
+
+Card `UNSAFE-LINKAGE-ARTIFACT`. A **manifest** is not source: it is a separate
+declarative file a builder selects (`qcorec --native-library MANIFEST`,
+`CompileOptions::native_libraries`), and it adds no form to G02d.1's source
+grammar and no reserved word. What it changes is the *premise* a G02d.1 waiver
+publishes — from "symbol X, unchecked" to "symbol X, unchecked, from artifact
+Y@hash under ABI premises Z".
+
+```ebnf
+manifest     = marker, { field | entry } ;
+marker       = "native_library", "manifest", "v1", ";" ;
+field        = ( "library" | "version" | "artifact" ), TOKEN, ";"
+             | "hash", "sha256:", 64 * LOWER_HEX, ";"
+             | "data_model", "lp64", ";"
+             | "unwinding", "abort", ";"
+             | "allocator_custody", "closed", ";"
+             | "thread_posture", "single_caller", ";" ;
+entry        = "unchecked", "fn", NAME,
+               "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
+               "->", C_ABI_TYPE, ";" ;
+C_ABI_TYPE   = "_Bool" | "int8_t" | "int16_t" | "int32_t" | "int64_t"
+             | "intptr_t" | "uint8_t" | "uint16_t" | "uint32_t"
+             | "uint64_t" | "uintptr_t" | "void" ;
+```
+
+`#` begins a comment; statements are `;`-terminated and may span lines. All
+eight header fields are mandatory and each may be stated once. Entry types are
+the **C** spellings of the exported header declaration, not the QCore ones, so
+the agreement check compares a projection rather than a string. The pointer
+spellings `uint8_t *`, `const uint8_t *` and `uint8_t **` are recognised
+(the space before `*` optional) and then **refused** in a contract-less entry,
+which is a rejection with its own name rather than an unreadable spelling: a
+library's pointer symbols belong in a contract slice entry, which this revision
+does not implement and refuses by name (`contract fn …`).
+
+Loading is total or reject (`Q039`), the selection's binding must be a function
+(`Q040`), a declaration the manifest contradicts is refused (`Q041`), and a name
+the manifest declares contract-less may not also be reached through a declared
+contract (`Q042`). Selecting no manifest is the default and leaves every G02d.1
+program byte-identical. See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and
+[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md).
+
 ## G02e. Flat-epoch quantitative bound
 
 `source.epoch.bound.v1`. Selected before every other concurrent route by the

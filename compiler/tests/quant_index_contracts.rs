@@ -249,6 +249,7 @@ fn mixed_or_unterminated_quant_delimiters_are_refused_not_repaired() {
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
     .map(|module| module.execution_profile)
