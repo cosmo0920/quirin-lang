@@ -92,6 +92,7 @@ import QCore.CapacityBoundary
 import QCore.ExternCall
 import QCore.StdIo
 import QCore.ComposedStdIo
+import QCore.ComposedTasks
 import QCore.UncheckedLinkage
 import QCore.NativeLibrary
 import QCore.NativeLibraryContract
