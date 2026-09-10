@@ -17,6 +17,10 @@ This module turns that record into the consumable numbers:
                            the record that measured it: the newest CT lane's
                            `unmapped_reasons` row, else card T00's frozen
                            archive (card CT-LABELS).
+  * `newly_decidable_reasons(root)` -- the acceptance *matrix*'s companion
+                           reasons map, derived from the same records rather
+                           than hand-kept (card GEN-CTREASONS, follow-on
+                           `D02-GEN-CTREASONS`).
   * `merge_evidence(root)` -- the archived per-card `ct_stage_evidence.json`
                            files (and T00's `coverage.json`) merged into one
                            matrix, including the `aux:` rows the manifest has no
@@ -361,6 +365,127 @@ def unmapped_bucket_counts(root: pathlib.Path, manifest=None):
     return counts
 
 
+#: Where the derived reasons map is published. `docs/reviews/r0_3/acceptance.json`
+#: keeps its own hand-kept copy of the same claim (checked, not derived, by
+#: [`check_newly_decidable`]); this one is the acceptance *matrix*'s copy, which
+#: `docs/reports/remaining-d02/build_matrix.py` owns and now derives.
+MATRIX = "docs/reviews/r0_3/acceptance_matrix.json"
+
+#: The key `build_matrix.py` emits and this module derives.
+REASONS_KEY = "newly_decidable_not_mapped_reasons"
+
+
+def newly_decidable_ids(root: pathlib.Path, manifest=None):
+    """Card T00's newly-decidable ids, filtered to the cases still unmapped.
+
+    "Decidable now" is card T00's judgment and no record derives it; "still not
+    mapped" is a manifest fact, so the filter is the manifest's own unmapped set
+    and a case that gets mapped leaves this list in the same commit that maps it
+    — the structural repair card HYGIENE-14 made for the bucket tally, applied
+    to the field beside it.
+    """
+    manifest = manifest or load_manifest(root)
+    unmapped = set(unmapped_ids(manifest))
+    triage = _read(root, TRIAGE)["unmapped_triage"]
+    return [case_id for case_id in triage["newly_decidable"] if case_id in unmapped]
+
+
+def newly_decidable_reasons(root: pathlib.Path, manifest=None):
+    """`{case: {label, label_source, reason, measured_by}}` — the map, derived.
+
+    Follow-on `D02-GEN-CTREASONS`. Until card GEN-CTREASONS this map was
+    hand-maintained prose that `build_matrix.py` dropped on every regeneration
+    and re-added by hand afterwards, which is why one of its rows explained why
+    CT39 was unmapped for four waves after wave 8 mapped it.
+
+    It is derivable because it is the companion prose of a list this generator
+    already derives: **its keys are the ids of `newly_decidable_not_mapped`, and
+    each value is that case's resolved label and reason** — the newest CT lane
+    record that measured the case, else card T00's frozen archive, exactly as
+    [`unmapped_labels`] resolves them. Publishing `label_source`/`measured_by`
+    beside the text is what makes the difference between a current measurement
+    and 2026-09-07 archive prose legible, the same rule card CT-LABELS applied to
+    the buckets.
+
+    Two total-or-reject conditions:
+
+    * every produced key is a case the manifest currently leaves unmapped — a row
+      explaining why a mapped case is not mapped is the staleness this closes;
+    * every produced key has a resolved label, which [`unmapped_labels`] already
+      refuses to invent.
+    """
+    manifest = manifest or load_manifest(root)
+    unmapped = set(unmapped_ids(manifest))
+    labels = unmapped_labels(root, manifest)
+    rows = {}
+    for case_id in newly_decidable_ids(root, manifest):
+        if case_id not in unmapped:
+            raise SystemExit(
+                "%s: a derived %s row would explain why a mapped case is not mapped"
+                % (case_id, REASONS_KEY)
+            )
+        entry = labels[case_id]
+        rows[case_id] = {
+            "label": entry["label"],
+            "label_source": entry["label_source"],
+            "reason": entry["reason"],
+            "measured_by": entry["measured_by"],
+        }
+    return rows
+
+
+def check_matrix_ct_reasons(root: pathlib.Path):
+    """Both directions between the committed matrix's map and the derivation.
+
+    The generator writes this key, so a run of it reconciles the file. This is
+    the check a hand edit reaches first, and it refuses in both directions:
+
+    * a committed row the derivation cannot produce — a case the manifest maps,
+      or one no record makes newly decidable — is reported by name rather than
+      carried forward;
+    * a derived row the committed map does not carry is reported too, so the
+      key cannot be quietly emptied or dropped again.
+    """
+    matrix_path = root / MATRIX
+    if not matrix_path.is_file():
+        return ["%s does not exist, so its %s map cannot be checked" % (MATRIX, REASONS_KEY)]
+    section = json.loads(matrix_path.read_text()).get("ct_conformance", {})
+    if REASONS_KEY not in section:
+        return [
+            "acceptance_matrix.json carries no %s; the generator derives it and a "
+            "regeneration must publish it" % REASONS_KEY
+        ]
+    committed = section[REASONS_KEY]
+    manifest = load_manifest(root)
+    derived = newly_decidable_reasons(root, manifest)
+    mapped = {case["id"] for case in manifest["cases"]} - set(unmapped_ids(manifest))
+    problems = []
+    # A leading underscore marks the map's own commentary rather than a case.
+    committed_cases = {key: value for key, value in committed.items() if not key.startswith("_")}
+    for case_id in sorted(set(committed_cases) - set(derived)):
+        if case_id in mapped:
+            problems.append(
+                "acceptance_matrix.json %s explains why %s is not mapped, but the manifest "
+                "maps it" % (REASONS_KEY, case_id)
+            )
+        else:
+            problems.append(
+                "acceptance_matrix.json %s carries a %s row the derivation does not produce"
+                % (REASONS_KEY, case_id)
+            )
+    for case_id in sorted(set(derived) - set(committed_cases)):
+        problems.append(
+            "acceptance_matrix.json %s is missing the derived %s row" % (REASONS_KEY, case_id)
+        )
+    for case_id in sorted(set(derived) & set(committed_cases)):
+        if committed_cases[case_id] != derived[case_id]:
+            problems.append(
+                "acceptance_matrix.json %s row for %s is not what the evidence records derive"
+                % (REASONS_KEY, case_id)
+            )
+    return problems
+
+
 def check_newly_decidable(root: pathlib.Path):
     """`newly_decidable_not_mapped` is hand-kept; its ids must still be unmapped.
 
@@ -603,6 +728,7 @@ def main(argv):
         + check_provenance(root)
         + check_newly_decidable(root)
         + check_label_sources(root)
+        + check_matrix_ct_reasons(root)
     )
     for problem in problems:
         print("DRIFT:", problem)

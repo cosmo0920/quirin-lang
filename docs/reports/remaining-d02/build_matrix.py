@@ -13,6 +13,10 @@ validated run record that is read here, never hand-copied:
         coverage.json alone and asserted its mapped set equalled the manifest's.
         That assertion stopped holding at T03-CT and the section diverged by
         thirteen cases; the merge below is what ended that.
+        The newly-decidable list and its companion reasons map are derived
+        here too since card GEN-CTREASONS (follow-on `D02-GEN-CTREASONS`);
+        until then the map was hand-maintained commentary this generator
+        dropped on every run, so nothing could refuse a stale row.
   * contract clause pin / per-directory counts
         <- docs/reports/remaining-b00/ledger.json (B00)
   * contract corpus module count      <- contract/qcore/*/*.qcore on disk
@@ -363,6 +367,20 @@ for case in triage_cases:
     ct_rows.append(row)
 ct_rows.sort(key=lambda row: int(row["id"][2:]))
 
+# The newly-decidable list and its companion reasons map, both derived from the
+# same two records (card T00's triage judgment, filtered by the manifest's own
+# unmapped set; the CT lanes' and T00's own reasons through the resolution rule).
+# Card GEN-CTREASONS, follow-on `D02-GEN-CTREASONS`: the map used to be hand-kept
+# commentary this generator dropped on every run, so nothing could refuse a row
+# that had gone stale.
+newly_decidable = ct_stage_summary.newly_decidable_ids(ROOT, manifest)
+ct_reasons = ct_stage_summary.newly_decidable_reasons(ROOT, manifest)
+assert list(ct_reasons) == newly_decidable, (list(ct_reasons), newly_decidable)
+# Structural, and the direction that was the finding: no row may describe a case
+# the manifest reports as mapped.
+assert not set(ct_reasons) - set(unmapped_ids), sorted(set(ct_reasons) - set(unmapped_ids))
+assert all(not case_id.startswith("_") for case_id in ct_reasons), sorted(ct_reasons)
+
 ct_section = {
     "generator_status": (
         "regenerating: this section is produced by docs/reports/remaining-d02/build_matrix.py "
@@ -412,9 +430,30 @@ ct_section = {
     # Which record decided each current label: a CT lane's own `unmapped_reasons`
     # row, or `t00-archive` for a case no lane has re-measured (card CT-LABELS).
     "unmapped_label_sources": {case: entry["label_source"] for case, entry in labels.items()},
-    "newly_decidable_not_mapped": [
-        cid for cid in triage["newly_decidable"] if cid in set(unmapped_ids)
-    ],
+    "newly_decidable_not_mapped": newly_decidable,
+    # The companion prose of the list above, derived from the same records since
+    # card GEN-CTREASONS (follow-on `D02-GEN-CTREASONS`). It was hand-maintained
+    # commentary this generator dropped on every regeneration and a later step
+    # re-added, which is why one of its rows explained why CT39 was unmapped for
+    # four waves after wave 8 mapped it. Its keys are now the list's own ids by
+    # construction — so a row can neither describe a case the manifest maps nor
+    # a case the list does not name — and each value is that case's resolved
+    # label and reason with the record that decided it published beside them.
+    "newly_decidable_not_mapped_reasons": {
+        "_derivation": (
+            "derived by docs/reports/remaining-d02/build_matrix.py through "
+            "scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, "
+            "follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, "
+            "carrying that case's resolved bucket label and reason — the newest CT lane "
+            "record that measured it, else card T00's frozen archive — and the record that "
+            "decided them. A hand edit here is overwritten on the next regeneration, and "
+            "scripts/ct_stage_summary.py --check refuses a committed row the derivation "
+            "cannot produce as well as a derived row the file does not carry. The "
+            "carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by "
+            "this key existing: its own assertion refuses to run once the generator emits it."
+        ),
+        **ct_reasons,
+    },
     "known_manifest_overstatements": [
         finding["id"] + " - " + finding["finding"]
         if isinstance(finding, dict) and "finding" in finding

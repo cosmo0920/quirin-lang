@@ -5627,6 +5627,21 @@
    "CT24",
    "CT47"
   ],
+  "newly_decidable_not_mapped_reasons": {
+   "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it.",
+   "CT24": {
+    "label": "DECIDABLE-NOW (with a distinguishing fixture)",
+    "label_source": "t00-archive",
+    "reason": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
+    "measured_by": "t00-archive"
+   },
+   "CT47": {
+    "label": "DECIDABLE-NOW (coarser reason)",
+    "label_source": "t00-archive",
+    "reason": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
+    "measured_by": "t00-archive"
+   }
+  },
   "known_manifest_overstatements": [
    "O1 - No assertion targets a CFG artifact. The sequential resource CFG is provably NOT run: compile_task_source (crates/qcore-verification/src/driver.rs:1100-1212) never calls synthesize_semantics or check_whole_program, and returns reference_observation: None. The claim is defensible only under the unstated reading 'cfg' = the task IR's blocks/terminators, which is exercised transitively by check_task_module/emit_task_c11 but never independently checked.",
    "O2 - Both reject at Q600 in qcore_core::task_execution::check_task_module -- the task ledger, which runs AFTER elaboration and after lower_source_tasks. The two-stage label makes a deep ledger rejection indistinguishable from a shallow Q013 name-resolution rejection. Verified: CT02 expects Q600 'not an initialized owned buffer', CT19 expects Q600 'ScopeBusy'.",
@@ -5644,13 +5659,7 @@
    "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this generator's inputs no longer allow.",
    "The unmapped triage rows are recorded analysis, not stage evidence. The counted set is the manifest's own unmapped set (card HYGIENE-14); each row's current_bucket is the newest CT lane record that measured that case, else T00's archived audit, with current_bucket_source naming which and archived_bucket keeping T00's text beside it (card CT-LABELS). A row whose source is a lane also carries blocker_current and blocker_measured_by; a row on t00-archive carries only T00's frozen blocker, which for such a case has not been re-verified against the current implementation.",
    "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. Neither adds native, sanitized or proof evidence."
-  ],
-  "newly_decidable_not_mapped_reasons": {
-   "_note": "hand-maintained commentary, not generator output — build_matrix.py owns ct_conformance wholly and drops this key on regeneration, so it is re-added deliberately (recorded as follow-on D02-GEN-CTREASONS by card HYGIENE-16); the generated newly_decidable_not_mapped and unmapped_bucket_counts derive from the manifest's own unmapped set through scripts/ct_stage_summary.py. Card HYGIENE-16 measured this map stale here — it still carried a CT39 row four waves after wave 8 mapped that case — and dropped it; the acceptance record's copy of the same map is now checked against the manifest by both derivations, this copy is not. The wave-16 consolidation carries this map forward through docs/reports/wave16-corpus/readd_ct_reasons.py, which refuses to carry a row describing a case the manifest reports as mapped — the same staleness, caught mechanically at the one point the regeneration would otherwise lose it.",
-   "CT11": "Measured: ScopedReadSharesV1 refuses reconstruction while a share is retained (Q600 LoanOutstanding { resource: 1, outstanding: 512, borrowers: [3] }). Left unmapped because the scenario says 'while local shared aliases survive' and this profile has no local alias form; the retaining party is an unjoined child task, so mapping it would answer a different question (card T05 section 9).",
-   "CT24": "Card T04's own proposal, unchanged and still unmapped; its fixture stays in docs/reports/remaining-t04/fixtures/.",
-   "CT47": "As recorded by T00; unchanged by this wave."
-  }
+  ]
  },
  "corpus": {
   "contract_modules": 67,
@@ -5745,7 +5754,7 @@
   "workspace_tests": 2746,
   "provider_tests": 115,
   "python_evidence_validator_tests": 161,
-  "lean_audits": 72,
+  "lean_audits": 73,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5762,6 +5771,7 @@
    "AuditCompositionAdmission.lean",
    "AuditConcurrencyPrelude.lean",
    "AuditConditionalGroupDepth.lean",
+   "AuditCtReasons.lean",
    "AuditCycle10.lean",
    "AuditCycle11.lean",
    "AuditCycle12.lean",
@@ -5826,7 +5836,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/wave16-corpus/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
