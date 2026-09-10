@@ -731,3 +731,7 @@ impl ComposedTaskObservation {
         (out, err)
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/composed_tasks.rs"]
+mod tests;

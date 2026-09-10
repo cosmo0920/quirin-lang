@@ -1,4 +1,6 @@
 import std.concurrency;
+import std.logger;
+import std.fmt;
 // Source counterpart of crates/qcore-core/examples/concurrency_prelude.rs.
 // The frontend lowers these operations into the core task model.
 concurrency checked;
@@ -7,7 +9,7 @@ fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
     return move buffer;
 }
 
-fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
     let buffer = qcore_buffer_new(42)?;
     thread scope context {
         match spawn context worker(move buffer) {
@@ -15,12 +17,17 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
                 // The child keeps custody until this explicit collection.
                 let returned = join move handle?;
                 let value = qcore_buffer_read(returned);
+                value |> log info dec;
                 drop returned;
                 return value;
             }
             Result::Err { error: failure } => {
-                // Failed creation restores the original buffer binding.
+                // Failed creation restores the original buffer binding, and the
+                // rollback arm reports it: a line on a branch the successful run
+                // never reaches.
+                log warn dec 0;
                 let value = qcore_buffer_read(buffer);
+                value |> log warn dec;
                 drop buffer;
                 return value;
             }

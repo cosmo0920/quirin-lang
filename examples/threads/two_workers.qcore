@@ -1,26 +1,39 @@
 import std.concurrency;
-// Start both workers before joining either one.
+import std.io;
+import std.logger;
+import std.fmt;
+// Start both workers before joining either one, and report both outcomes.
 concurrency checked;
 
 fn worker(value: i32) -> i32 {
     return value;
 }
 
-fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
     let first_value = 42;
     let second_value = 7;
     thread scope workers {
         let first = spawn workers worker(copy first_value)?;
         match spawn workers worker(copy second_value) {
             Result::Ok { value: second } => {
+                // The creation decision this run took: two workers are running.
+                log info dec 2;
                 // Join order need not match creation order.
                 let second_result = join move second?;
                 let first_result = join move first?;
+                // Both results, from the parent, after both joins.
+                first_result |> log info dec;
+                second_result |> log info dec;
+                // The same number the trace's last line carries, asked for by
+                // the source rather than synthesized.
+                second_result |> print dec;
                 return second_result;
             }
             Result::Err { error: failure } => {
                 // A refused second creation still leaves the first task to join.
+                log warn dec 1;
                 let first_result = join move first?;
+                first_result |> log warn dec;
                 return first_result;
             }
         }

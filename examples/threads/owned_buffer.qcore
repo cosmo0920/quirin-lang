@@ -1,4 +1,6 @@
 import std.concurrency;
+import std.logger;
+import std.fmt;
 // Move one buffer to a worker while the parent uses a separate buffer.
 concurrency checked;
 
@@ -7,7 +9,7 @@ fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
     return move buffer;
 }
 
-fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
     let first = qcore_buffer_new(42)?;
     match qcore_buffer_new(7) {
         Result::Ok { value: second } => {
@@ -16,9 +18,13 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
                     Result::Ok { value: handle } => {
                         // The parent can use second while the child owns first.
                         let local = qcore_buffer_read(second);
+                        local |> log info dec;
                         drop second;
                         let returned = join move handle?;
+                        // Post-join, the parent owns the buffer again: this
+                        // renders the number the model computed out of it.
                         let value = qcore_buffer_read(returned);
+                        value |> log info dec;
                         drop returned;
                         return value;
                     }
@@ -26,6 +32,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
                         // Failed creation restores first to the parent.
                         drop second;
                         let value = qcore_buffer_read(first);
+                        value |> log warn dec;
                         drop first;
                         return value;
                     }
@@ -34,6 +41,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
         }
         Result::Err { error: shortfall } => {
             let value = qcore_buffer_read(first);
+            value |> log fatal dec;
             drop first;
             return value;
         }

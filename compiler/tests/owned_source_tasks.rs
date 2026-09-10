@@ -3,7 +3,7 @@
 #![cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_core::prelude::concurrency::task_execution::{
-    TaskExecutionScript, execute_task_module, render_task_observation,
+    CheckedTaskModule, TaskExecutionScript, execute_task_module, render_task_observation,
 };
 use std::fs;
 use std::process::{Command, Output};
@@ -31,6 +31,17 @@ static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
         matches_reference(&module, &output, vec![created], vec![true]);
         one_buffer_released(&output);
         assert!(String::from_utf8_lossy(&output.stdout).contains("QCORE_TASK_RESULT 0 I32 42\n"));
+        // Card `COMPOSE-CONCURRENCY`: the example now logs on the arm it took,
+        // and the rollback arm's marker is on the failed-creation run only.
+        // Standard output is unchanged in both runs, which is the half this
+        // test has always compared.
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert_eq!(
+            stderr.contains("[WARN] 0\n"),
+            !created,
+            "the rollback arm's line appears exactly on the rolled-back run: {stderr}"
+        );
+        assert!(stderr.contains(if created { "[INFO] 42\n" } else { "[WARN] 42\n" }));
     }
 }
 
@@ -40,7 +51,7 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
         &CompileOptions::default(),
     )
     .unwrap();
-    assert!(module.checked.as_scoped_tasks().is_some());
+    assert!(task_module(&module).is_some());
     let directory = std::env::temp_dir().join(format!(
         "qcore-owned-native-{}-{}",
         std::process::id(),
@@ -81,6 +92,19 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
     (module, output)
 }
 
+/// The checked task module, whichever route published it.
+///
+/// `core_context.qcore` moved to `source.std-io-tasks.v1` when card
+/// `COMPOSE-CONCURRENCY` gave it a rollback-arm log line; its task half is
+/// literally the module the task route checked, and every assertion below is
+/// about that half.
+fn task_module(module: &qcore_compiler::CompiledModule) -> Option<&CheckedTaskModule> {
+    module
+        .checked
+        .as_scoped_tasks()
+        .or_else(|| module.checked.as_composed_tasks().map(|c| c.tasks()))
+}
+
 fn matches_reference(
     module: &qcore_compiler::CompiledModule,
     output: &Output,
@@ -88,7 +112,7 @@ fn matches_reference(
     allocations: Vec<bool>,
 ) {
     let reference = execute_task_module(
-        module.checked.as_scoped_tasks().unwrap(),
+        task_module(module).unwrap(),
         &TaskExecutionScript {
             spawn_outcomes: spawns,
             allocation_outcomes: allocations,
