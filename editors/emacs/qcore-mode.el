@@ -196,7 +196,10 @@ or language-specific indentation.  See `qcore-mode-font-lock-keywords'."
   (setq-local comment-start-skip "\\(?://+\\|/\\*+\\)[ \t]*"))
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.\\(?:qcore\\|qc\\)\\'" . qcore-mode))
+;; `.qcore' is the only source extension.  The retired `.qc' alternative is
+;; deliberately absent (card WAVE21-QUIRIN-RENAME); a `.qc' buffer selects
+;; whatever `auto-mode-alist' otherwise decides, not this mode.
+(add-to-list 'auto-mode-alist '("\\.qcore\\'" . qcore-mode))
 
 (provide 'qcore-mode)
 ;;; qcore-mode.el ends here

@@ -5,6 +5,12 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Configured existing-C resource projection and reproducible audit reports."
 
+# Package and library names are unchanged (`qcore-audit` / `qcore_audit`); only
+# the installed command is branded. See `crates/qcorec/Cargo.toml`.
+[[bin]]
+name = "quirin-audit"
+path = "src/main.rs"
+
 [dependencies]
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }

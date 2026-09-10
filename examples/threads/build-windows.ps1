@@ -22,8 +22,11 @@ foreach ($name in @('two_workers', 'owned_buffer', 'shared_readers', 'core_conte
     $exePath = Join-Path $outputDir "$name.exe"
 
     Write-Host "Building $name"
+    # `-p qcorec` names the package, which is unchanged; the binary it builds is
+    # `quirin`. Selecting by package keeps this working from a checkout without
+    # depending on the installed command name.
     & cargo run --quiet --manifest-path $manifest -p qcorec -- emit $sourcePath -o $cPath
-    if ($LASTEXITCODE -ne 0) { throw "QCore emission failed for $name." }
+    if ($LASTEXITCODE -ne 0) { throw "Quirin emission failed for $name." }
 
     & cl.exe /nologo /std:c11 /utf-8 /W4 /WX $cPath "/Fo$objectPath" "/Fe:$exePath"
     if ($LASTEXITCODE -ne 0) { throw "MSVC compilation failed for $name." }

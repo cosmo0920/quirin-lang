@@ -1,15 +1,24 @@
-# QCore-C
+# Quirin
 
-QCore-C is a research language for **quantitative types**, **owned
+**Quirin** is a research language for **quantitative types**, **owned
 resources**, **typed recoverable errors**, **checked cleanup**, and **checked
 concurrency**, lowering to portable C11. Alongside the language, the project
 builds a conservative, fail-closed checker for *existing* C source — the
 "unrestricted-C gateway" — currently exercised against a pinned Fluent Bit
 corpus.
 
+> **Naming.** The language is **Quirin**; its command is `quirin` (with
+> `quirin-audit` for configured audits) and its sources are `.qcore` files.
+> The core component keeps the `qcore` spelling: Rust crates and namespaces
+> (`qcore-compiler`, `qcore_core`, …), the emitted-C surface (`QCORE_IO_WRITE`,
+> `qcore_task_*`, `qcore_buffer_*`), the diagnostics codes and the `.qcore`
+> extension are all unchanged, and the repository is still `qcore-c`. Only the
+> product name and the installed commands moved. The `.qc` alternative source
+> extension is retired.
+
 Two things live here, and they are useful to keep apart:
 
-- **The language.** A supported executable subset compiles through `qcorec`
+- **The language.** A supported executable subset compiles through `quirin`
   to C11 with a tagged-error ABI and explicit cleanup.
 - **The gateway.** A checker that reads unmodified C, models what it can, and
   answers `Unknown` for everything it cannot — it never guesses in the
@@ -17,7 +26,7 @@ Two things live here, and they are useful to keep apart:
 
 ## What the type system tracks
 
-QCore-C deliberately keeps separate quantitative domains separate instead of
+Quirin deliberately keeps separate quantitative domains separate instead of
 overloading one number:
 
 - **Usage grades** — how many times a value is demanded, as intervals.
@@ -68,7 +77,7 @@ narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
 
 ## Quick start
 
-The Rust compiler and `qcorec check` / `qcorec emit` do not require Clang.
+The Rust compiler and `quirin check` / `quirin emit` do not require Clang.
 Compiling emitted C requires a C11 compiler. Native scoped task and checked
 mutex emission runs on Linux C11 threads, macOS pthreads, and Windows through
 an emitted winpthreads-derived compatibility subset. Emitted C is self-contained;
@@ -89,9 +98,9 @@ python3 scripts/check_lean_audits.py
 Try the CLI:
 
 ```sh
-cargo build --bin qcorec
-./target/debug/qcorec check examples/cycle12.qc
-./target/debug/qcorec emit -o generated.c examples/cycle12.qc
+cargo build --bin quirin
+./target/debug/quirin check examples/cycle12.qcore
+./target/debug/quirin emit -o generated.c examples/cycle12.qcore
 ```
 
 For native multithreading, see the [runnable examples](examples/threads/README.md).
@@ -117,7 +126,7 @@ layout are in [DEVELOPMENT.md](DEVELOPMENT.md#build-and-test).
 | [`docs/GENERALIZATION_PLAN.md`](docs/GENERALIZATION_PLAN.md) | Where the project is going: generalizing the checker away from pinned source sets, decomposing the crate |
 | [`docs/reviews/r0_3/REVIEW.md`](docs/reviews/r0_3/REVIEW.md) | Implementation acceptance ledger for revision 0.3 |
 | [`docs/cycles/`](docs/cycles/) and [`docs/reports/`](docs/reports/) | Per-cycle requirements and archived evidence packages |
-| [`editors/emacs/`](editors/emacs/README.md) | `qcore-mode` syntax highlighting for `.qcore` / `.qc` (lexical support only) |
+| [`editors/emacs/`](editors/emacs/README.md) | `qcore-mode` syntax highlighting for `.qcore` (lexical support only) |
 
 Further reading: [module modes and index syntax](docs/QCORE_MODULE_MODES.md),
 [QTT alignment](docs/QTT_ALIGNMENT.md),

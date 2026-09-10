@@ -1,9 +1,9 @@
-# QCore contract regression corpus
+# Quirin contract regression corpus
 
 These native QCore sources are the durable, source-readable form of the
 external-library contracts used by the compiler's Fluent Bit integration.
 They are grouped by library and kept independent so each file can be checked
-directly with `qcorec`.
+directly with `quirin`.
 
 The regression test in `compiler/tests/qcore_contract_corpus.rs` recursively
 discovers every `.qcore` file, parses its function contracts into structured
@@ -55,7 +55,7 @@ Look for `qcore-contract ...: Checked` for the three field functions. The audit 
 prints an explicit `Unknown` for every unmodeled function in `cio_chunk.c` and
 `flb_input_chunk.c`. Unsupported source bodies never receive a field summary.
 These field contract checks do not promote either translation unit to `Safe`.
-The ordinary `qcorec check FILE.qcore` command continues to perform the compiler
+The ordinary `quirin check FILE.qcore` command continues to perform the compiler
 and contract-syntax checks; use the audit above to bind these contracts to C.
 
 Every contract source now begins with `module contract;` and compiles without

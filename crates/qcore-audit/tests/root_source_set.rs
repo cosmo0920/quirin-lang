@@ -195,7 +195,7 @@ impl Fixture {
     }
 
     fn run(&self) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_qcore-audit"))
+        Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
             .arg(self.0.join("audit.json"))
             .output()
             .unwrap()

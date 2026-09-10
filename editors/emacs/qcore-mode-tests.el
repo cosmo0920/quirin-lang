@@ -16,11 +16,19 @@
   (get-text-property (- (point) (length text)) 'face))
 
 (ert-deftest qcore-mode-file-associations ()
-  (dolist (name '("program.qcore" "cycle12.qc"))
+  (dolist (name '("program.qcore" "contract.qcore"))
     (with-temp-buffer
       (setq buffer-file-name name)
       (set-auto-mode)
       (should (eq major-mode 'qcore-mode)))))
+
+(ert-deftest qcore-mode-retired-qc-extension ()
+  "`.qc' is retired: it must not select `qcore-mode'."
+  (dolist (name '("cycle12.qc" "program.qc"))
+    (with-temp-buffer
+      (setq buffer-file-name name)
+      (set-auto-mode)
+      (should-not (eq major-mode 'qcore-mode)))))
 
 (ert-deftest qcore-mode-source-and-contract-faces ()
   (with-temp-buffer
@@ -119,7 +127,7 @@
   (dolist (directory '("contract/qcore" "examples" "compiler/tests/fixtures/ct"))
     (dolist (file (directory-files-recursively
                    (expand-file-name directory qcore-mode-test--root)
-                   "\\.\\(?:qcore\\|qc\\)\\'"))
+                   "\\.qcore\\'"))
       (with-temp-buffer
         (insert-file-contents file)
         (qcore-mode)

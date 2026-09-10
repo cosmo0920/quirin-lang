@@ -1,4 +1,9 @@
-# QCore implemented input grammars — revision 0.3
+# Quirin implemented input grammars — revision 0.3
+
+> **Name.** The language is **Quirin**; its command is `quirin`. The `QCore`
+> spelling is retained for the core component — Rust namespaces, the emitted-C
+> surface, the diagnostics codes, the `.qcore` extension and this file's name —
+> and every such identifier in this document is unchanged by the branding.
 
 > Repository integration: 2026-09-07. Normative requirements are adopted from
 > the supplied review; implementation status is reconciled with main in the
@@ -922,7 +927,7 @@ The derived effect row of an uncontracted callee is `{io, alloc, mut}`
 unconditionally, because nothing is known about it, so an entry calling one
 declares the whole row. A module may mix contracted and uncontracted callees; a
 module all of whose callees are uncontracted needs no contract selection at all,
-which is what `qcorec check` and `qcorec emit` can compile today.
+which is what `quirin check` and `quirin emit` can compile today.
 
 Every certificate names each uncontracted callee, with its declared ABI, as an
 unchecked-linkage premise, on the same channel that carries a trusted declared
@@ -934,7 +939,7 @@ contract; a published certificate missing one is refused (`Q035`). See
 
 Cards `UNSAFE-LINKAGE-ARTIFACT` and `NATIVE-LIBRARY-CONTRACT-SLICE`. A
 **manifest** is not source: it is a separate
-declarative file a builder selects (`qcorec --native-library MANIFEST`,
+declarative file a builder selects (`quirin --native-library MANIFEST`,
 `CompileOptions::native_libraries`), and it adds no form to G02d's or G02d.1's
 source grammar and no reserved word. What it changes is the *premise* a call
 publishes: a G02d.1 waiver moves from "symbol X, unchecked" to "symbol X,

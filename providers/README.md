@@ -120,12 +120,12 @@ directory, then select it in a fresh registry. For rollback, select the
 previous directory and its retained build record. CLI configuration is explicit and separate from the default registry:
 
 ```sh
-qcorec plugins verify /absolute/path/qcore.libevent
-qcorec plugins enable /absolute/path/qcore.libevent --config ./plugins.json
-qcorec plugins list --config ./plugins.json
-qcorec plugins inspect qcore.libevent --config ./plugins.json
-qcorec check --plugins ./plugins.json main.qcore
-qcorec plugins disable qcore.libevent --config ./plugins.json
+quirin plugins verify /absolute/path/qcore.libevent
+quirin plugins enable /absolute/path/qcore.libevent --config ./plugins.json
+quirin plugins list --config ./plugins.json
+quirin plugins inspect qcore.libevent --config ./plugins.json
+quirin check --plugins ./plugins.json main.qcore
+quirin plugins disable qcore.libevent --config ./plugins.json
 ```
 
 Enable pins the complete manifest, including the executable digest, under its
@@ -145,7 +145,7 @@ compatibility or source authenticity. `package.py verify` additionally executes
 the first-party `--verify-package` self-check, which reaches the same verdict
 from inside the process. Keep packages protected
 from mutation between verification and dispatch; no immutable-file or OS sandbox
-guarantee is added. `qcorec` default provider selection is unchanged. The standalone `package.py verify` command and the
+guarantee is added. `quirin` default provider selection is unchanged. The standalone `package.py verify` command and the
 binary's `--verify-package` mode check an installed package; no new protocol
 message or implicit network lookup is involved.
 
@@ -196,7 +196,7 @@ QCORE_SOURCE_CONTRACTS="$PWD/contract/profiles/fluent-bit/source-contracts.json"
 The configuration maps sealed model-library identities to provider IDs and policy
 paths. Relative paths resolve from its directory. `QCORE_CHUNKIO_PACKAGE` remains
 a compatible package-path alias using the default bindings; setting both selectors
-rejects. Neither selector changes `qcorec` plugin configuration. The audit loads
+rejects. Neither selector changes `quirin` plugin configuration. The audit loads
 one policy snapshot and verified registry before processing units. Unsupported
 functions remain in the `.source-effects.json` sidecar; explicit missing,
 incompatible or rejected providers fail without fallback. Direct evaluation

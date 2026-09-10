@@ -1,4 +1,4 @@
-# QCore library and contract modules
+# Quirin library and contract modules
 
 A `.qcore` file can declare its compilation intent before its declarations:
 
@@ -21,7 +21,7 @@ predicates or grant trust to an external function.
 of helper function definitions to be checked independently. A function named
 `main` in either mode is an ordinary checked definition, never an implicit
 process entry. These modes currently produce checked QCore modules, not C
-library objects or a public C ABI; `qcorec emit` reports that boundary before
+library objects or a public C ABI; `quirin emit` reports that boundary before
 writing any output.
 
 `module executable;` explicitly selects the existing executable behavior.
