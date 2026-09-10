@@ -118,5 +118,6 @@ import QCore.ChainedTailActual
 import QCore.DereferencedResult
 import QCore.PublicationCustody
 import QCore.PipeDesugaring
+import QCore.SingleEmissionRoute
 
 /-! The executable formal core of QCore-C revision 0.1. -/

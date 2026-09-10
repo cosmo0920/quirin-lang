@@ -23,6 +23,7 @@ pub mod extern_c_emit;
 pub mod extern_call;
 pub mod index;
 pub mod inference;
+pub mod io_emit;
 pub mod library_custody;
 pub mod module_imports;
 pub mod mutex_c_emit;

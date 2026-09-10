@@ -115,15 +115,25 @@ fn the_reference_observation_separates_the_two_streams() {
 fn emission_renders_both_streams_and_the_barrier() {
     let module = compile(LINES).unwrap();
     let c = module.c_source.as_deref().expect("this route emits C11");
+    // Card `TRACE-STDIO` moved this route onto the shared emission route that
+    // the four synthesized trace backends now also use, so an emitted program
+    // has one printing mechanism rather than two. Everything this pin is
+    // actually about — which stream, which rendering, which level tag, which
+    // operand expression, and that the barrier is a real flush — is unchanged;
+    // only the spelling of the call moved.
     for expected in [
-        "printf(\"%\" PRId32 \"\\n\", s_total);",
-        "printf(\"0x%08\" PRIX32 \"\\n\", (uint32_t)(s_mask));",
-        "fprintf(stderr, \"[INFO] %\" PRId32 \"\\n\", s_total);",
-        "fprintf(stderr, \"[FATAL] %\" PRId32 \"\\n\", INT32_C(-7));",
-        "(void) fflush(stderr);",
+        "QCORE_IO_WRITE(stdout, \"%\" PRId32 \"\\n\", s_total);",
+        "QCORE_IO_WRITE(stdout, \"0x%08\" PRIX32 \"\\n\", (uint32_t)(s_mask));",
+        "QCORE_IO_WRITE(stderr, \"[INFO] %\" PRId32 \"\\n\", s_total);",
+        "QCORE_IO_WRITE(stderr, \"[FATAL] %\" PRId32 \"\\n\", INT32_C(-7));",
+        "QCORE_IO_FLUSH(stderr);",
     ] {
         assert!(c.contains(expected), "emitted C is missing `{expected}`");
     }
+    // Card `TRACE-STDIO`: this route and the four synthesized trace backends
+    // share one C-level printing route, so an emitted program has no
+    // standard-output call of its own.
+    assert_eq!(qcore_core::io_emit::direct_stdio_calls(c), Vec::new());
 }
 
 #[test]

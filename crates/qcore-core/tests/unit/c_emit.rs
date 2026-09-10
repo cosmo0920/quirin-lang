@@ -91,6 +91,18 @@ fn emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels() {
     assert!(c.contains("q_release(&q_res_1"));
 }
 
+/// Card `TRACE-STDIO`: the sequential harness's four writes — outcome, trace
+/// events and retained payloads — all travel the shared emission route.
+#[test]
+fn the_emitted_program_writes_only_through_the_shared_route() {
+    for source in corpus() {
+        let cfg = lower_cleanup_cfg(&source).unwrap();
+        let c = emit_c11(&cfg).unwrap();
+        assert_eq!(crate::io_emit::direct_stdio_calls(&c), Vec::new());
+        assert!(c.contains("QCORE_IO_WRITE(stdout,"));
+    }
+}
+
 #[test]
 fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
     let cfg = lower_cleanup_cfg(&corpus().remove(1)).unwrap();
@@ -102,8 +114,15 @@ fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
         "    q_trace_events[q_trace_length].kind = kind;",
         "        abort();",
         "    q_trace('A', identity);",
-        "        printf(\"OK %\" PRId32 \"\\n\", q_result.value);",
-        "        printf(\"%c %\" PRIu64 \"\\n\", q_trace_events[index].kind,",
+        // Card `TRACE-STDIO` moved these two lines onto the single emission
+        // route: the spelling is `QCORE_IO_WRITE`, the *printed bytes* are
+        // unchanged, and the load-bearing half of this pin — the four-space
+        // indentation these lines sit at — is what is still asserted. The
+        // trace line is no longer wrapped, because the route builds it as one
+        // call rather than a hand-written continuation.
+        "        QCORE_IO_WRITE(stdout, \"OK %\" PRId32 \"\\n\", q_result.value);",
+        "        QCORE_IO_WRITE(stdout, \"%c %\" PRIu64 \"\\n\", q_trace_events[index].kind, \
+         q_trace_events[index].identity);",
     ] {
         assert!(
             c.lines().any(|line| line == expected),
@@ -118,6 +137,11 @@ fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
         }
         assert!(
             line.starts_with('#')
+                // A file-scope block comment opens at column 0; the single
+                // emission route's prelude is introduced by one. The rule this
+                // test enforces is that no *statement* sits at column 0, and
+                // that half is unchanged.
+                || line.starts_with("/*")
                 || line.starts_with("enum ")
                 || line.starts_with("union ")
                 || line.starts_with("struct ")

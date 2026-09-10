@@ -286,8 +286,12 @@ fn emission_consumes_a_moved_capture_and_never_a_lent_one() {
     let loan_slot = source
         .lines()
         .find_map(|line| {
+            // Card `TRACE-STDIO`: the announcement travels the shared emission
+            // route now. What this test reads off the line — that the lender's
+            // slot is named, and its generation read after creation returns —
+            // is unchanged.
             line.trim()
-                .strip_prefix("printf(\"QCORE_BUFFER_LOAN")
+                .strip_prefix("QCORE_IO_WRITE(stdout, \"QCORE_BUFFER_LOAN")
                 .and(Some(line))
         })
         .expect("the lending program announces its loan");

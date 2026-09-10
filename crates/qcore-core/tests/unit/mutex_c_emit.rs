@@ -183,6 +183,25 @@ fn checked_mutex_traces_agree_between_the_reference_and_a_sanitized_native_run()
     }
 }
 
+/// Card `TRACE-STDIO`: this backend's trace lines and its one runtime-failure
+/// diagnostic both travel the shared emission route, so an emitted program has
+/// no standard-output call of its own. Non-vacuous: it really does write.
+#[test]
+fn the_emitted_program_writes_only_through_the_shared_route() {
+    let program = error_exit_after_close();
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    let emission = crate::mutex_c_emit::emit_mutex_c11(&program, &certificate).unwrap();
+    assert_eq!(
+        crate::io_emit::direct_stdio_calls(&emission.source),
+        Vec::new()
+    );
+    assert!(emission.source.contains("QCORE_IO_WRITE(stdout,"));
+    assert!(
+        emission.source.contains("QCORE_IO_WRITE(stderr,"),
+        "the runtime-failure diagnostic must travel the same route"
+    );
+}
+
 #[test]
 fn the_emitted_release_survives_the_typed_error_path() {
     let program = error_exit_after_close();

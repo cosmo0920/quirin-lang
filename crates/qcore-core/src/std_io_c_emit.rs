@@ -14,6 +14,7 @@
 
 use std::fmt::Write as _;
 
+use crate::io_emit::{self, IO_PRELUDE};
 use crate::std_io::{StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, Stream};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -98,10 +99,12 @@ pub fn interpret_std_io_program(
     Ok(observation)
 }
 
-const PRELUDE: &str = "\
+const INCLUDES: &str = "\
 #include <inttypes.h>\n\
 #include <stdint.h>\n\
-#include <stdio.h>\n\
+#include <stdio.h>\n";
+
+const PRELUDE: &str = "\
 \n\
 /* source.std-io.v1 (card STD-MODULES). Every line below is one admitted\n\
    `print`, `log` or `flush` event. `fflush` is sink handoff, not durability:\n\
@@ -116,7 +119,12 @@ pub fn emit_std_io_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_std_io_program(program, certificate)?;
 
-    let mut source = String::from(PRELUDE);
+    // `source.std-io.v1` and every synthesized trace line now share one C-level
+    // emission route (card `TRACE-STDIO`): this route's `print`/`log`/`flush`
+    // expand to the same `QCORE_IO_*` spelling the four trace backends use.
+    let mut source = String::from(INCLUDES);
+    source.push_str(IO_PRELUDE);
+    source.push_str(PRELUDE);
     source.push_str("\nint main(void)\n{\n");
 
     for (name, value) in &program.scalars {
@@ -137,9 +145,12 @@ pub fn emit_std_io_c11(
                 };
                 let _ = writeln!(
                     source,
-                    "    printf(\"{}\\n\", {});",
-                    rendering.c_conversion(),
-                    rendering.c_operand(&expression)
+                    "    {}",
+                    io_emit::write_line(
+                        Stream::Out,
+                        rendering.c_conversion(),
+                        &[&rendering.c_operand(&expression)],
+                    )
                 );
             }
             StdIoEvent::Log {
@@ -156,14 +167,16 @@ pub fn emit_std_io_c11(
                 };
                 let _ = writeln!(
                     source,
-                    "    fprintf(stderr, \"[{}] {}\\n\", {});",
-                    level.tag(),
-                    rendering.c_conversion(),
-                    rendering.c_operand(&expression)
+                    "    {}",
+                    io_emit::write_line(
+                        Stream::Err,
+                        &format!("[{}] {}", level.tag(), rendering.c_conversion()),
+                        &[&rendering.c_operand(&expression)],
+                    )
                 );
             }
             StdIoEvent::Flush => {
-                let _ = writeln!(source, "    (void) fflush({});", Stream::Err.c_handle());
+                let _ = writeln!(source, "    {}", io_emit::flush(Stream::Err));
             }
             StdIoEvent::Return => {}
         }
