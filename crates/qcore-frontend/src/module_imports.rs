@@ -6,6 +6,7 @@ use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
     CONCURRENCY_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE, LOGGER_MODULE, ModuleImports,
+    UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -47,6 +48,24 @@ pub fn check_source_imports(
             span,
             message: format!(
                 "calling a declared extern function requires an explicit `import {EXTERN_MODULE};` in this source file"
+            ),
+        }]);
+    }
+    // Card `UNSAFE-LINKAGE`. Declaring an extern function with no contract is a
+    // second, independent opt-in on top of `std.extern`: the call vocabulary
+    // never grants the waiver, and the waiver never grants the call. The gate
+    // is on the *declaration*, not on a call to it, because declaring an
+    // uncontracted symbol is itself the trust act — a file that declares one
+    // and never calls it has still linked it.
+    if !imports.unchecked_extern_calls()
+        && let Some(span) = crate::source_extern::unchecked_extern_declaration_span(program)
+    {
+        return Err(vec![SourceDiagnostic {
+            code: "Q032",
+            pass: SemanticPass::UncheckedLinkage,
+            span,
+            message: format!(
+                "declaring an extern function with no contract requires an explicit `import {UNCHECKED_EXTERN_MODULE};` in this source file"
             ),
         }]);
     }

@@ -68,6 +68,18 @@
 //!    (`qcore_frontend::whole_program`); this checker never re-decides them
 //!    under a second diagnostic code.
 //!
+//!    Card `UNSAFE-LINKAGE` adds a second admission table beside
+//!    [`bridge_contract`], for the case where there is **no contract at all**:
+//!    [`unchecked_callee`] admits an `unsafe extern fn` declaration so that an
+//!    external library can be linked without one. Its admitted surface is
+//!    scalars by value in and a scalar or `unit` out — every pointer, in every
+//!    spelling and position, is a named [`UncheckedRefusal`] — so an unchecked
+//!    call is handed no custody and cannot change the caller's ledger whatever
+//!    the callee does. The callee is marked [`ExternTrust::UncheckedLinkage`]
+//!    and carried on every certificate as
+//!    [`ExternAssumption::UncheckedLinkage`], by name and declared ABI. See
+//!    `docs/design/UNSAFE_LINKAGE_V1.md`.
+//!
 //! What a result through this module means. A contract admitted here is a
 //! **declared assumption** (`ContractTrust::Declared`, contract spec §C06): it
 //! is never a proof about the C implementation, its layout, its aliasing or
@@ -75,7 +87,11 @@
 //! [`ExternAssumption::DeclaredContract`] for each callee, and
 //! [`ExternAssumption::NoExtentTransport`], because C04 pointers are extentless
 //! `u8` projections — the declaration cannot say how many bytes the callee
-//! touches, and this profile does not check it.
+//! touches, and this profile does not check it. A callee admitted through
+//! unchecked linkage contributes [`ExternAssumption::UncheckedLinkage`] in place
+//! of the first of those, because it has no contract to declare; that premise is
+//! weaker still — it claims nothing at all about the callee, and printing it is
+//! the point.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -256,11 +272,32 @@ pub enum CallResult {
     ReallocatedNullable { parameter: usize },
 }
 
-/// One admitted callee. Only [`bridge_contract`] constructs this, so a value of
-/// this type always names a shape inside the closed v1 table.
+/// How much is known about a callee. Card `UNSAFE-LINKAGE` adds the second
+/// arm, and the type exists so that the two are a *total match* everywhere a
+/// callee is consulted: there is no representation of an uncontracted callee
+/// that is not marked as one.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ExternTrust {
+    /// A resource-contract v1 declaration was loaded, admitted by
+    /// [`bridge_contract`] and is carried as
+    /// [`ExternAssumption::DeclaredContract`].
+    Contracted,
+    /// No contract exists. The caller declared the ABI signature and nothing
+    /// else, through the explicit `unsafe extern fn` surface, and the callee is
+    /// carried as [`ExternAssumption::UncheckedLinkage`] on every certificate
+    /// that names it. Constructed only by [`unchecked_callee`], whose admitted
+    /// surface carries no custody at all (see [`UncheckedRefusal`]).
+    UncheckedLinkage,
+}
+
+/// One admitted callee. Only [`bridge_contract`] and [`unchecked_callee`]
+/// construct this, so a value of this type always names a shape inside a closed
+/// v1 table — which one is recorded in [`ExternCallee::trust`].
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ExternCallee {
     pub name: String,
+    /// Whether a contract was admitted for this callee, or nothing was.
+    pub trust: ExternTrust,
     pub parameters: Vec<CallParameter>,
     pub result: CallResult,
     pub result_abi: AbiType,
@@ -701,12 +738,132 @@ pub fn bridge_contract(
     }
     Ok(ExternCallee {
         name: name.to_owned(),
+        trust: ExternTrust::Contracted,
         parameters,
         result,
         result_abi: contract.result,
         out_parameter,
         realloc_parameter: realloc_subject,
     })
+}
+
+/// Why an `unsafe extern fn` declaration is still not callable (card
+/// `UNSAFE-LINKAGE`). Each constructor names one excluded shape; none is a
+/// catch-all, so widening the unchecked surface means deleting a refusal on
+/// purpose.
+///
+/// The common ground of all three is that the admitted unchecked surface must
+/// carry **no custody**. A callee with no contract has unknown effects, so the
+/// only positions over which "unknown callee" is still a decidable statement
+/// about the caller's ledger are the ones that hand it nothing to hold. See
+/// `docs/design/UNSAFE_LINKAGE_V1.md` §3.1 for the four failure modes a pointer
+/// argument opens and why none of them has an assumption text to record.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum UncheckedRefusal {
+    /// A pointer parameter. Handing unknown code a capability is not made
+    /// checkable by any assumption: nothing bounds what it reads, nothing ends
+    /// the loan at the return, `const` constrains this declaration rather than
+    /// the implementation, and nothing stops the pointer being published to
+    /// another thread. `ptr<const, u8>` is refused for exactly these reasons,
+    /// not by oversight.
+    PointerParameter { parameter: usize, abi: AbiType },
+    /// A pointer result. Custody arriving from an uncontracted callee has no
+    /// declared release, so binding it would open an obligation nothing in this
+    /// profile could discharge.
+    PointerResult { abi: AbiType },
+    /// A `unit` parameter, which the ABI vocabulary admits as a result type
+    /// only.
+    UnitParameter { parameter: usize },
+}
+
+impl fmt::Display for UncheckedRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::PointerParameter { parameter, abi } => write!(
+                f,
+                "parameter {parameter} is `{}`; unchecked linkage passes scalars by value only, because no assumption makes a pointer handed to unknown code checkable",
+                abi.c_spelling()
+            ),
+            Self::PointerResult { abi } => write!(
+                f,
+                "the result is `{}`; unchecked linkage returns scalars and `void` only, because custody from an uncontracted callee has no declared release",
+                abi.c_spelling()
+            ),
+            Self::UnitParameter { parameter } => {
+                write!(f, "parameter {parameter} is declared `unit`")
+            }
+        }
+    }
+}
+
+impl std::error::Error for UncheckedRefusal {}
+
+/// Admit one `unsafe extern fn` declaration into the closed unchecked table, or
+/// refuse it by name (card `UNSAFE-LINKAGE`).
+///
+/// There is no contract here and none is consulted: the caller declares the ABI
+/// signature and this function decides only whether that signature can cross a
+/// boundary nothing checks. Deterministic, exactly as [`bridge_contract`] is,
+/// so a certificate consumer can repeat the admission.
+pub fn unchecked_callee(
+    name: &str,
+    parameters: &[AbiType],
+    result: AbiType,
+) -> Result<ExternCallee, UncheckedRefusal> {
+    let mut bridged = Vec::with_capacity(parameters.len());
+    for (index, abi) in parameters.iter().enumerate() {
+        if *abi == AbiType::Unit {
+            return Err(UncheckedRefusal::UnitParameter { parameter: index });
+        }
+        if abi.is_pointer() {
+            return Err(UncheckedRefusal::PointerParameter {
+                parameter: index,
+                abi: *abi,
+            });
+        }
+        bridged.push(CallParameter::Data(*abi));
+    }
+    if result.is_pointer() {
+        return Err(UncheckedRefusal::PointerResult { abi: result });
+    }
+    Ok(ExternCallee {
+        name: name.to_owned(),
+        trust: ExternTrust::UncheckedLinkage,
+        parameters: bridged,
+        // Data, so `acquires()` is false: an unchecked call takes no adapter,
+        // binds no identity and reaches the existing plain-call arm of the
+        // backend and the reference interpreter unchanged.
+        result: CallResult::Data(result),
+        result_abi: result,
+        out_parameter: None,
+        realloc_parameter: None,
+    })
+}
+
+/// The declared signature of an admitted callee, rendered from the ABI
+/// projection alone. This is the second half of the unchecked-linkage record:
+/// the premise names *this identity with this ABI*, so a reader can tell two
+/// symbols of the same name apart, and a rederivation reproduces it exactly.
+#[must_use]
+pub fn declared_signature(callee: &ExternCallee) -> String {
+    let parameters = callee
+        .parameters
+        .iter()
+        .map(|parameter| {
+            let abi = match parameter {
+                CallParameter::Data(abi) | CallParameter::Borrowed(abi) => *abi,
+                CallParameter::Consumed
+                | CallParameter::Stored { .. }
+                | CallParameter::Owner
+                | CallParameter::Released
+                | CallParameter::ReallocSubject => AbiType::PtrMutU8,
+                CallParameter::OutSlot => AbiType::PtrMutPtrMutU8,
+            };
+            abi.c_spelling().to_owned()
+        })
+        .collect::<Vec<_>>()
+        .join(", ");
+    format!("({parameters}) -> {}", callee.result_abi.c_spelling())
 }
 
 /// The custody a call site imposes on its resource-bearing arguments, in
@@ -764,8 +921,18 @@ pub fn derived_custody(callee: &ExternCallee) -> Vec<ExternCustody> {
 /// plus `Mut` exactly when some parameter is a `mut` pointer. The caller's
 /// declared row must admit this; that containment check belongs to the
 /// established typed-error pass, not to this module.
+///
+/// Card `UNSAFE-LINKAGE`: an unchecked callee derives the **whole modeled row**
+/// unconditionally. Nothing is known about it, so the row cannot honestly be
+/// narrower than everything this profile can name, and the practical effect is
+/// that an entry calling one must declare `effects { io, alloc, mut }` — the
+/// opt-in stays visible in the entry's own signature, not only at the
+/// declaration.
 #[must_use]
 pub fn derived_effects(callee: &ExternCallee) -> EffectRow {
+    if callee.trust == ExternTrust::UncheckedLinkage {
+        return EffectRow::new(BTreeSet::from([Effect::Io, Effect::Alloc, Effect::Mut]));
+    }
     let mut effects = BTreeSet::from([Effect::Io]);
     if callee.acquires() {
         effects.insert(Effect::Alloc);
@@ -1111,6 +1278,20 @@ pub enum ExternAssumption {
     /// The named callee's declared contract is a trusted assumption about a C
     /// implementation this repository never analysed (`ContractTrust::Declared`).
     DeclaredContract(String),
+    /// Card `UNSAFE-LINKAGE`. The named callee has **no contract at all**: an
+    /// external symbol was linked under an explicit `unsafe extern fn`
+    /// declaration that states its ABI signature and nothing else. Every result
+    /// a program obtains through it holds only relative to this premise, and
+    /// the premise says exactly what it is — *this identity, with this declared
+    /// ABI, was linked and not checked*.
+    ///
+    /// Nothing about the callee's behavior is claimed here, not even the
+    /// weakened claims a declared contract makes: no custody, no effect, no
+    /// termination, no thread-safety. What the profile does establish is that
+    /// the caller handed it nothing to hold — the admitted unchecked surface is
+    /// scalars by value in and out ([`unchecked_callee`]) — so the caller's own
+    /// ledger is unchanged by the call whatever the callee does.
+    UncheckedLinkage { callee: String, signature: String },
     /// C04 pointers are extentless `u8` projections, so no declaration in this
     /// profile promises how many bytes a callee touches.
     NoExtentTransport,
@@ -1548,7 +1729,26 @@ pub fn check_extern_program(
     }
     let mut assumptions = Vec::new();
     for (name, callee) in &program.callees {
-        assumptions.push(ExternAssumption::DeclaredContract(name.clone()));
+        // A total match on the callee's trust, so there is no third arm that
+        // contributes no premise: a contracted callee is carried as its
+        // declared contract, an uncontracted one as unchecked linkage. Card
+        // `UNSAFE-LINKAGE`; the Lean theorem `assumption_totality` states the
+        // same sentence over the model.
+        match callee.trust {
+            ExternTrust::Contracted => {
+                assumptions.push(ExternAssumption::DeclaredContract(name.clone()));
+            }
+            ExternTrust::UncheckedLinkage => {
+                assumptions.push(ExternAssumption::UncheckedLinkage {
+                    callee: name.clone(),
+                    signature: declared_signature(callee),
+                });
+                // An unchecked callee has no contract, so none of the
+                // contract-shaped premises below can apply to it; its admitted
+                // surface has no pointer in any position.
+                continue;
+            }
+        }
         if callee.out_parameter.is_some() {
             assumptions.push(ExternAssumption::OutSlotWrittenByCallee(name.clone()));
         }
@@ -1588,6 +1788,43 @@ pub fn check_extern_program(
         effects: EffectRow::new(effects),
         assumptions,
     })
+}
+
+/// Every unchecked-linkage premise the program's own callee inventory demands,
+/// derived from the program alone (card `UNSAFE-LINKAGE`).
+///
+/// This is the *demand* side of the assumption discipline, computed
+/// independently of any certificate, so a publication boundary can compare a
+/// published inventory against it rather than believe one.
+#[must_use]
+pub fn required_unchecked_assumptions(program: &ExternProgram) -> Vec<ExternAssumption> {
+    program
+        .callees
+        .iter()
+        .filter(|(_, callee)| callee.trust == ExternTrust::UncheckedLinkage)
+        .map(|(name, callee)| ExternAssumption::UncheckedLinkage {
+            callee: name.clone(),
+            signature: declared_signature(callee),
+        })
+        .collect()
+}
+
+/// Whether a published certificate carries an unchecked-linkage premise for
+/// every uncontracted callee its own program declares.
+///
+/// True by construction of [`check_extern_program`], and asserted anyway at the
+/// driver's publication boundary: a certificate that lost a premise between
+/// derivation and publication is refused rather than published. Asserting an
+/// invariant that cannot fail is the point — the day it can, it is caught here
+/// instead of in a `Safe` that stopped mentioning what it rests on.
+#[must_use]
+pub fn certificate_carries_unchecked_linkage(
+    program: &ExternProgram,
+    certificate: &ExternCallCertificate,
+) -> bool {
+    required_unchecked_assumptions(program)
+        .iter()
+        .all(|required| certificate.assumptions.contains(required))
 }
 
 /// Why an independent recheck refused a published certificate.

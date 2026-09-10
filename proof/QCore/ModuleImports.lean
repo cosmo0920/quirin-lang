@@ -13,6 +13,11 @@ structure Imports where
   /-- Card `source.extern-call.v1`: calling a declared extern function is a
   second, independent file-local opt-in. -/
   externCalls : Bool := false
+  /-- Card `UNSAFE-LINKAGE`: declaring an extern function with **no** contract,
+  so an external library can be linked without one. A third, independent
+  file-local opt-in: `std.extern` never grants it and it never grants
+  `std.extern`. -/
+  uncheckedExternCalls : Bool := false
   /-- Card `STD-MODULES`: naming a rendering. Opens no stream on its own. -/
   fmt : Bool := false
   /-- Card `STD-MODULES`: writing a rendered line to standard output. -/
@@ -23,13 +28,15 @@ structure Imports where
   deriving DecidableEq, Repr
 
 /-- The empty selection: every capability withheld. -/
-def none : Imports := ⟨false, false, false, false, false⟩
+def none : Imports := ⟨false, false, false, false, false, false⟩
 
 /-- The field one module name sets. Total-or-reject: a name outside the
 registry has no setter, which is what makes `resolve` refuse it. -/
 def setterFor (name : String) : Option (Imports → Imports) :=
   if name = "std.concurrency" then some (fun i => { i with concurrency := true })
   else if name = "std.extern" then some (fun i => { i with externCalls := true })
+  else if name = "std.extern.unsafe" then
+    some (fun i => { i with uncheckedExternCalls := true })
   else if name = "std.fmt" then some (fun i => { i with fmt := true })
   else if name = "std.io" then some (fun i => { i with io := true })
   else if name = "std.logger" then some (fun i => { i with logger := true })
@@ -48,6 +55,13 @@ def admits (imports : Imports) (needsConcurrency : Bool) : Bool :=
 /-- The extern-call capability is gated by its own module, never by another. -/
 def admitsExternCall (imports : Imports) (callsExtern : Bool) : Bool :=
   !callsExtern || imports.externCalls
+
+/-- Card `UNSAFE-LINKAGE`: declaring an extern function with no contract is
+gated by its own module, never by the call module. The gate is on the
+*declaration*, because declaring an uncontracted symbol is itself the trust
+act. -/
+def admitsUncheckedExtern (imports : Imports) (declaresUnchecked : Bool) : Bool :=
+  !declaresUnchecked || imports.uncheckedExternCalls
 
 /-- Writing to standard output is gated by `std.io`, never by another module. -/
 def admitsPrint (imports : Imports) (prints : Bool) : Bool :=
@@ -78,11 +92,12 @@ theorem empty_imports_grant_no_rendering :
 theorem unknown_module_rejects (name : String) (rest : List String)
     (unknownConcurrency : name ≠ "std.concurrency")
     (unknownExtern : name ≠ "std.extern")
+    (unknownUncheckedExtern : name ≠ "std.extern.unsafe")
     (unknownFmt : name ≠ "std.fmt")
     (unknownIo : name ≠ "std.io")
     (unknownLogger : name ≠ "std.logger") : resolve (name :: rest) = Option.none := by
-  simp [resolve, setterFor, unknownConcurrency, unknownExtern, unknownFmt,
-    unknownIo, unknownLogger]
+  simp [resolve, setterFor, unknownConcurrency, unknownExtern,
+    unknownUncheckedExtern, unknownFmt, unknownIo, unknownLogger]
 
 /-- **The capability-gating theorem.** If resolution enabled a capability, the
 module that owns it was named. Stated once over an arbitrary field and
@@ -119,6 +134,7 @@ private theorem setter_preserves_other_fields
     (field : Imports → Bool) (module : String)
     (h : ∀ i, (field { i with concurrency := true } = field i ∨ module = "std.concurrency")
       ∧ (field { i with externCalls := true } = field i ∨ module = "std.extern")
+      ∧ (field { i with uncheckedExternCalls := true } = field i ∨ module = "std.extern.unsafe")
       ∧ (field { i with fmt := true } = field i ∨ module = "std.fmt")
       ∧ (field { i with io := true } = field i ∨ module = "std.io")
       ∧ (field { i with logger := true } = field i ∨ module = "std.logger")) :
@@ -153,10 +169,16 @@ private theorem setter_preserves_other_fields
         · split at setter
           · next eq => subst eq
                        injection setter with setter; subst setter
-                       rcases (h i).2.2.2.2 with p | p
+                       rcases (h i).2.2.2.2.1 with p | p
                        · exact p
                        · exact absurd p.symm named
-          · simp at setter
+          · split at setter
+            · next eq => subst eq
+                         injection setter with setter; subst setter
+                         rcases (h i).2.2.2.2.2 with p | p
+                         · exact p
+                         · exact absurd p.symm named
+            · simp at setter
 
 theorem admitted_concurrency_requires_import {names : List String} {imports : Imports}
     (resolved : resolve names = some imports) (enabled : imports.concurrency = true) :
@@ -178,7 +200,7 @@ theorem admitted_rendering_requires_the_fmt_import {names : List String}
     (enabled : imports.fmt = true) : "std.fmt" ∈ names :=
   admitted_capability_requires_its_module Imports.fmt "std.fmt" rfl
     (setter_preserves_other_fields _ _
-      (by intro i; refine ⟨Or.inl rfl, Or.inl rfl, Or.inr rfl, ?_⟩; simp))
+      (by intro i; refine ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl, ?_⟩; simp))
     resolved enabled
 
 theorem admitted_output_requires_the_io_import {names : List String}
@@ -186,7 +208,7 @@ theorem admitted_output_requires_the_io_import {names : List String}
     (enabled : imports.io = true) : "std.io" ∈ names :=
   admitted_capability_requires_its_module Imports.io "std.io" rfl
     (setter_preserves_other_fields _ _
-      (by intro i; refine ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl, ?_⟩; simp))
+      (by intro i; refine ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl, ?_⟩; simp))
     resolved enabled
 
 theorem admitted_logging_requires_the_logger_import {names : List String}
@@ -195,35 +217,35 @@ theorem admitted_logging_requires_the_logger_import {names : List String}
   admitted_capability_requires_its_module Imports.logger "std.logger" rfl
     (setter_preserves_other_fields _ _
       (by intro i
-          exact ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl⟩))
+          exact ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl⟩))
     resolved enabled
 
 theorem the_concurrency_import_alone_grants_no_extern_call :
-    admitsExternCall ⟨true, false, false, false, false⟩ true = false := rfl
+    admitsExternCall ⟨true, false, false, false, false, false⟩ true = false := rfl
 
 /-- Card `STD-MODULES`: the three new capabilities are mutually independent.
 Importing standard output does not grant the logger, and vice versa. -/
 theorem the_io_import_alone_grants_no_logging :
-    admitsLog ⟨false, false, true, true, false⟩ true = false := rfl
+    admitsLog ⟨false, false, false, true, true, false⟩ true = false := rfl
 
 theorem the_logger_import_alone_grants_no_output :
-    admitsPrint ⟨false, false, true, false, true⟩ true = false := rfl
+    admitsPrint ⟨false, false, false, true, false, true⟩ true = false := rfl
 
 /-- `std.fmt` opens no stream: holding it alone admits neither writer. -/
 theorem the_fmt_import_alone_grants_no_stream :
-    admitsPrint ⟨false, false, true, false, false⟩ true = false
-      ∧ admitsLog ⟨false, false, true, false, false⟩ true = false := ⟨rfl, rfl⟩
+    admitsPrint ⟨false, false, false, true, false, false⟩ true = false
+      ∧ admitsLog ⟨false, false, false, true, false, false⟩ true = false := ⟨rfl, rfl⟩
 
 /-- Neither writer's module grants the rendering vocabulary. -/
 theorem neither_writer_grants_the_rendering :
-    admitsRendering ⟨false, false, false, true, true⟩ true = false := rfl
+    admitsRendering ⟨false, false, false, false, true, true⟩ true = false := rfl
 
 /-- Concurrency grants none of the three, so a threaded module gets no free
 output channel. -/
 theorem concurrency_grants_no_output_capability :
-    admitsPrint ⟨true, false, false, false, false⟩ true = false
-      ∧ admitsLog ⟨true, false, false, false, false⟩ true = false
-      ∧ admitsRendering ⟨true, false, false, false, false⟩ true = false :=
+    admitsPrint ⟨true, false, false, false, false, false⟩ true = false
+      ∧ admitsLog ⟨true, false, false, false, false, false⟩ true = false
+      ∧ admitsRendering ⟨true, false, false, false, false, false⟩ true = false :=
   ⟨rfl, rfl, rfl⟩
 
 theorem sequential_code_needs_no_extern_import (imports : Imports) :
@@ -251,16 +273,54 @@ theorem duplicate_io_import_is_idempotent (names : List String) :
 
 theorem both_imports_are_independent :
     resolve ["std.concurrency", "std.extern"] =
-      some ⟨true, true, false, false, false⟩ := by
+      some ⟨true, true, false, false, false, false⟩ := by
   simp [resolve, setterFor, none]
 
 theorem the_three_std_modules_are_independent :
     resolve ["std.fmt", "std.io", "std.logger"] =
-      some ⟨false, false, true, true, true⟩ := by
+      some ⟨false, false, false, true, true, true⟩ := by
   simp [resolve, setterFor, none]
 
+/-- Card `UNSAFE-LINKAGE`. The waiver is granted by its own module and by no
+other, and it grants no other capability in return: importing it does not let a
+file call an extern function, and importing `std.extern` does not let a file
+waive one. -/
+theorem admitted_unchecked_linkage_requires_its_module {names : List String}
+    {imports : Imports} (resolved : resolve names = some imports)
+    (enabled : imports.uncheckedExternCalls = true) : "std.extern.unsafe" ∈ names :=
+  admitted_capability_requires_its_module Imports.uncheckedExternCalls
+    "std.extern.unsafe" rfl
+    (setter_preserves_other_fields _ _
+      (by intro i; refine ⟨Or.inl rfl, Or.inl rfl, Or.inr rfl, ?_⟩; simp))
+    resolved enabled
+
+theorem empty_imports_grant_no_unchecked_linkage :
+    (resolve []).map Imports.uncheckedExternCalls = some false := rfl
+
+theorem the_extern_import_alone_grants_no_waiver :
+    admitsUncheckedExtern ⟨false, true, false, false, false, false⟩ true = false := rfl
+
+theorem the_waiver_alone_grants_no_extern_call :
+    admitsExternCall ⟨false, false, true, false, false, false⟩ true = false := rfl
+
+/-- An unchecked-linkage file names both modules, and naming both grants
+exactly both. -/
+theorem the_two_extern_modules_are_independent :
+    resolve ["std.extern", "std.extern.unsafe"] =
+      some ⟨false, true, true, false, false, false⟩ := by
+  simp [resolve, setterFor, none]
+
+theorem code_that_waives_nothing_needs_no_waiver_import (imports : Imports) :
+    admitsUncheckedExtern imports false = true := by simp [admitsUncheckedExtern]
+
+/-- The waiver is not reachable through a near-miss spelling: `std.extern.unsafe`
+is one registry entry, not a prefix rule over `std.extern`. -/
+theorem a_near_miss_waiver_spelling_rejects :
+    resolve ["std.extern.unsafe.please"] = Option.none := by
+  simp [resolve, setterFor]
+
 theorem missing_required_capability_rejects :
-    admits ⟨false, false, false, false, false⟩ true = false := rfl
+    admits ⟨false, false, false, false, false, false⟩ true = false := rfl
 
 theorem sequential_code_needs_no_concurrency (imports : Imports) :
     admits imports false = true := by simp [admits]

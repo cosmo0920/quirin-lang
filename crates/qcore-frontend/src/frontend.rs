@@ -500,6 +500,15 @@ impl<'a> SourceParser<'a> {
             (DeclarationKind::ErrorType, Some(start + 1))
         } else if self.word(start, "const") {
             (DeclarationKind::Constant, Some(start + 1))
+        } else if self.words(start, &["unsafe", "extern", "fn"]) {
+            // Card `UNSAFE-LINKAGE`: an extern declaration with no contract at
+            // all. It keeps `DeclarationKind::ExternFunction`, so no
+            // elaboration, name-resolution or typed-AST path changes shape; the
+            // waiver is read back from the declaration's own leading token by
+            // `source_extern::source_extern_declarations`. `unsafe` was already
+            // a reserved source word introducing the `unsafe { … }` statement,
+            // so this spelling mints no new reserved word.
+            (DeclarationKind::ExternFunction, Some(start + 3))
         } else if self.words(start, &["extern", "fn"]) {
             (DeclarationKind::ExternFunction, Some(start + 2))
         } else if self.word(start, "fn") {
@@ -1481,6 +1490,12 @@ impl<'a> SourceParser<'a> {
             || self.word(index, "error")
             || self.word(index, "const")
             || self.word(index, "extern")
+            // Card `UNSAFE-LINKAGE`: `unsafe extern fn` is a declaration, so a
+            // preceding function body ends where it starts. `unsafe` also
+            // introduces a statement, but this predicate is consulted only at
+            // the token after a *top-level* brace group, where a statement
+            // cannot begin.
+            || self.word(index, "unsafe")
             || self.word(index, "fn")
             || self.word(index, "concurrency")
             || self.word(index, "verify")
@@ -1572,6 +1587,13 @@ pub enum SemanticPass {
     /// *declared* C symbols under selected contracts, while this one admits a
     /// closed set of statements with no callee and no contract at all.
     StandardIo,
+    /// Card `UNSAFE-LINKAGE`: admission of an extern declaration that has **no**
+    /// contract, so an external library can be linked without one. Owns
+    /// `Q032`–`Q035` (spec §L21). A separate pass from `ExternCall` on purpose:
+    /// that pass decides whether a *declared contract* bridges to a call, while
+    /// this one decides whether a signature may cross a boundary nothing checks
+    /// at all, and records the premise that says so.
+    UncheckedLinkage,
     PluginVerification,
 }
 
@@ -2349,6 +2371,10 @@ pub fn source_diagnostic(
         // The generic presentation code of the standard-IO pass. The specific
         // conditions Q028-Q031 are issued at their own emission sites.
         SemanticPass::StandardIo => "Q030",
+        // The generic presentation code of the unchecked-linkage pass. The
+        // specific conditions Q032, Q034 and Q035 are issued at their own
+        // emission sites; Q033 is the table refusal this code names.
+        SemanticPass::UncheckedLinkage => "Q033",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

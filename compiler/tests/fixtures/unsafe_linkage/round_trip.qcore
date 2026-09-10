@@ -1,0 +1,13 @@
+import std.extern;
+import std.extern.unsafe;
+
+unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;
+unsafe extern fn k_unchecked_side_effect(tag: u32) -> unit;
+unsafe extern fn k_unchecked_measure(count: u64) -> u64;
+
+fn main() -> unit effects { io, alloc, mut } {
+    k_unchecked_add(2, 40);
+    k_unchecked_side_effect(7);
+    k_unchecked_measure(16);
+    return;
+}
