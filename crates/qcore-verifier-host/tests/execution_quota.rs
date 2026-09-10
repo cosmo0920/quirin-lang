@@ -26,7 +26,7 @@ use std::sync::Arc;
 #[cfg(target_os = "linux")]
 use std::time::Duration;
 
-#[cfg(unix)]
+#[cfg(target_os = "linux")]
 use std::os::unix::fs::PermissionsExt;
 
 struct Fixture {
@@ -57,7 +57,7 @@ impl Fixture {
         self.root.join("writable")
     }
 
-    #[cfg(unix)]
+    #[cfg(target_os = "linux")]
     fn script(&self, body: &str) {
         let path = self.package().join("provider.sh");
         fs::write(&path, format!("#!/bin/sh\n{body}\n")).unwrap();

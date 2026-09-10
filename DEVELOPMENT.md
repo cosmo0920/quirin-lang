@@ -349,6 +349,17 @@ full suite.
 
 ## Increment records
 
+Post-IF-ARMS gate repair (2026-09-11): the `bitwise_conditions` suite now pins
+the existing `Q044` refusal for an arm-local check-time constant binding on its
+concrete ground — the binding has no position after the join — rather than on
+the superseded pending-owner label. The same gate run narrowed the
+`execution_quota` fixture's script helper from Unix to Linux, matching every
+call site and restoring warning-free macOS clippy without changing the
+provider assertions. The refusal code, span, accepted language, emitted C,
+corpus baseline and headline counts are unchanged; the recorded load-sensitive
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets` row remains unchanged
+and passes in isolation.
+
 Wave-19 remainder increment (2026-09-10): the six-card spine closed through
 delegated worktrees under the failure-gated chain, composed with three
 Windows-validation batches from the user's host by ordinary merges. Five
@@ -3627,4 +3638,3 @@ unchanged models (`docs/reports/w7-generic-lean-names/README.md`).
 - Run the full standing per-change gate from AGENTS.md before reporting a
   task complete; report probe/example exit codes honestly (a nonzero probe
   exit is a finding, not a build failure).
-
