@@ -1,0 +1,46 @@
+# LEAN-PERF campaign, one Linux checkout, paired back to back.
+# Base 862f049 (76 audits). Toolchain leanprover/lean4:v4.33.1, 16 CPUs.
+
+== before ==
+COLD before wall=121.44 cpu=452.26+33.12 maxrss=3041104kB
+INCR before wall=36.54 cpu=21.40+7.90 maxrss=1708136kB
+  cold Passed Lean build in 96.7s
+  incr Passed Lean build in 0.2s
+  QCore axiom audit: 29951 declarations checked; only standard logical axioms
+  Passed 76 Lean audits
+  -- cold build, ten heaviest modules (under 16-way contention) --
+    89.00  QCore.TaskTraceRelation
+    53.00  QCore.CleanupVocabulary
+    50.00  QCore.CapacityBoundary
+    26.00  QCore.MutexInvariant
+    21.00  QCore.ConditionalGroupDepth
+    16.00  QCore.DescriptorCustody
+    12.00  QCore.OsEndpointPostState
+    11.00  QCore.LifetimeCorrespondence
+    10.00  QCore.VerifierPlugin
+     9.80  QCore.ChainedAccess
+  serial sum 617.3s over 119 modules
+
+== after3 ==
+COLD after3 wall=61.02 cpu=319.44+41.04 maxrss=2259608kB
+INCR after3 wall=4.22 cpu=19.76+7.26 maxrss=1706008kB
+  cold Passed Lean build in 56.2s
+  incr Passed Lean build in 0.2s
+  QCore axiom audit: 29990 declarations checked; only standard logical axioms
+  Passed 76 Lean audits
+  -- cold build, ten heaviest modules (under 16-way contention) --
+    55.00  QCore.TaskTraceRelation
+    35.00  QCore.CleanupVocabulary
+    25.00  QCore.CapacityBoundary
+    19.00  QCore.ConditionalGroupDepth
+    18.00  QCore.MutexInvariant
+    15.00  QCore.DescriptorCustody
+    13.00  QCore.OsEndpointPostState
+    13.00  QCore.LifetimeCorrespondence
+     9.40  QCore.VerifierPlugin
+     9.20  QCore.ChainedAccess
+  serial sum 440.4s over 119 modules
+
+== audit phase on the optimized tree, --skip-build ==
+audits-seq.log:SEQ AUDITS WALL 25.50 s
+audits-par.log:PAR AUDITS WALL 3.57 s

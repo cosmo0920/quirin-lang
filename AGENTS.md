@@ -39,7 +39,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-core/` | L1 kernel: quantitative types, ownership/error/cleanup/CFG semantics, concurrency/translation models, chunk lifecycle, generic library/container/reference-count and reactor/descriptor custody, checked task IR/reference execution and C11 task emission. Also `os_endpoint`, `chunk_integrity`, `capacity_boundary`, `mutex_invariant`. No runtime or workspace dependencies |
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
-| `crates/qcore-schemas/` | L0 published schema surface (Rust API **13.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
+| `crates/qcore-schemas/` | L0 published schema surface (Rust API **14.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
 | `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
 | `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
 | `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence |
@@ -53,7 +53,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**67 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**69 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -68,16 +68,16 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-16 checkpoint (`docs/reports/wave16-corpus/`, the
+Headline numbers at the wave-17 checkpoint (`docs/reports/wave17-corpus/`, the
 current re-pinned baseline):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions, leak 271 |
-| CT01–CT50 conformance | **32/50 mapped**, 18 unmapped; sanitized-native 4 of 32, proof 0 of 32 |
-| Contract corpus | **67 modules** |
-| `qcore-schemas` | 13.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 |
-| Merged gate | 2,746 workspace tests (8 ignored) · 115 provider · 161 Python · **72 Lean audits** · both probes exit 0 · fmt/clippy clean |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions, leak **272** (271 → 272 deliberately at the wave-17 re-pin, in the accusing direction; see constraint 7) |
+| CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
+| Contract corpus | **69 modules** |
+| `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
+| Merged gate | 2,902 workspace tests (8 ignored) · 122 provider · 186 Python · **77 Lean audits** · both probes exit 0 · fmt/clippy clean |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -93,7 +93,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" (every wave and card
 paragraph, in order, each keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-26 entries) plus each report's own follow-on list; per-card evidence in
+27 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
@@ -174,9 +174,16 @@ pointer is the card that established it; read it before deviating.
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it
    incidentally. `remaining-c02-p-alias`, `remaining-borrow-liveness`,
    `remaining-hygiene-14`.
-7. Leak diagnostics are 271 across the pinned 185-unit corpus. A change that
-   moves that number is a finding to attribute in the re-pin, not to absorb.
-   `remaining-o04-b08`, `corpus-repin`.
+7. Leak diagnostics are **272** across the pinned 185-unit corpus. A change
+   that moves that number is a finding to attribute in the re-pin, not to
+   absorb. It moved 271 → 272 exactly once, deliberately, at the wave-17
+   re-pin: `flb_input_chunk_get_direct_routes` L19399, in the *accusing*
+   direction on a function and a unit already `Unsafe`, when a neighbouring
+   refusal that hid it was admitted. That leaf is provisional in the documented
+   sense (`CONSTRUCTOR-RESIDUALS-LEAK-271`); deciding it would *withdraw* six
+   standing claims, which no card is scoped to do incidentally.
+   `remaining-o04-b08`, `corpus-repin`, `remaining-constructor-residuals` §6.4,
+   `wave17-corpus`.
 8. **A declared contract must agree with the C the unit declares.** A contract
    whose parameter or result ABI projections the analysed translation unit's
    own C declaration contradicts is **withdrawn for that unit** — every call
@@ -191,6 +198,22 @@ pointer is the card that established it; read it before deviating.
    evidence about the declaration, never an upstream defect claim (invariant
    2). The scalar projection assumes the LP64 model of the audited targets and
    the reader has no target (`LOADER-ABI-LP64`). `remaining-loader-abi`.
+   **The same rule now covers modes, not only types.** A declared contract
+   whose custody *duty* the validated W4 summary of that callee's body in the
+   analysed unit contradicts is withdrawn for that unit too, refusing at every
+   call site with `mode-parameter-contradiction` or
+   `mode-result-contradiction`. The derived summary is **never installed in the
+   declaration's place** — an inferred summary can be weaker than the
+   declaration it convicts. The gate takes the *duty* inequality
+   (`Retained`/`Transferred`/`Delivered`/`Restored`; `Absent`/`Produced`) and
+   deliberately does **not** withdraw on a refinement inside one duty:
+   nullability, a `Stored`/`Removed` owner index and a `Reallocated` replaced
+   parameter keep `SummaryConflict` as their only report, because every
+   derivable comparison in the pinned corpus is a nullability refinement and
+   withdrawing on inequality would withdraw a release contract in every unit
+   including `rd_free`/`mk_mem_free`/`flb_free`'s headers. Absence of evidence
+   is not evidence: nothing is withdrawn on a body this unit does not define or
+   W4 derives no summary for. `remaining-loader-abi-modes`.
 9. **A fixture prelude is not a production declaration.** A fixture result is
    a result *for that fixture's declarations*: card O04-B08's flagship
    aggregate store was measured never to reach production, because the real
@@ -203,9 +226,20 @@ pointer is the card that established it; read it before deviating.
     withdraws both directions and retires the residual leak through the
     unresolved-effect mechanism. The escape model was measured to **promote**
     the publish-without-release body from `Unsafe` to `Safe`, which invariant 1
-    forbids; do not reintroduce it. A borrowed pointer, a null store and a
-    scalar store stay admitted on stated grounds, and the decision reads no
-    per-site status. `remaining-ctwin-publish`.
+    forbids; do not reintroduce it. A null store and a scalar store stay
+    admitted on stated grounds, and the decision reads no per-site status.
+    **The borrowed and `Out` admissions are withdrawn** (wave 17): a body
+    publishing a *borrowed* formal no longer certifies, because `Borrowed`
+    asserts the caller's obligations are unchanged and a publication falsifies
+    exactly that — the launder it enabled crossed the **summary** boundary, so
+    W4 published `Borrowed` for the helper and the helper's caller certified
+    too. A declared `Out` slot naming such a destination is refused before the
+    call's effects apply, being the `Acquire` arm seen from the callee's side.
+    The rule reads no provenance; one exclusion, a declared *scalar* source,
+    was added by measurement. The indirect (pointer-base) shape carried no
+    false `Safe`, so its residual *violation* claim is withdrawn rather than
+    strengthened, each statement keeping the refusal it already had.
+    `remaining-ctwin-publish`, `remaining-ctwin-residuals`.
 
 **Compile-task identity and source transport**
 
@@ -231,18 +265,30 @@ pointer is the card that established it; read it before deviating.
 14. New keywords are a recorded compatibility hazard and must be checked
     against every fixture: T03-F added five reserved words, T08-EPOCH-SRC eight
     (with `work` renamed `effort` rather than editing the pinned golden
-    surface), and `source.extern-call.v1` added `succeeds`. `remaining-t03-f`,
-    `remaining-t08-epoch-src`, `extern-call-v1`.
+    surface), `source.extern-call.v1` added `succeeds`, and STD-MODULES added
+    eight (`print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`) —
+    `error` was measured to collide with the reserved error-type keyword, so
+    the severity is spelled `fatal` on the `work` → `effort` precedent rather
+    than by moving the pinned surface. EXTERN-MODES deliberately added **none**:
+    `move NAME` spells all four departing modes and the declaration decides
+    which ran. `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
+    `wave17-std-modules`, `remaining-extern-modes`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
 
 **Providers, packages and limits**
 
-16. **P02-FLAKE:** the `RLIMIT_NPROC` conformance test is load-flaky (it counts
-    every process of the real UID). Its assertion is byte-for-byte unchanged
-    with a deterministic companion — do not weaken it. `remaining-p03` §9.1,
-    `remaining-p03-f`.
+16. **P02-FLAKE:** four provider/host rows are load- or parallelism-sensitive
+    and are verified in isolation, never weakened: the `RLIMIT_NPROC`
+    conformance test (it counts every process of the real UID, and keeps a
+    deterministic companion), `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+    (wall-clock, measured failing at load 50 and passing at load 37 on the same
+    binary), the confined-fixture write test (`Io(Broken pipe)` under load), and
+    `real_packages_preserve_unknown_and_reject_mutations` (`ExecutableFileBusy`:
+    a sibling test in the same binary executes the file it mutates).
+    `remaining-p03` §9.1, `remaining-p03-f`, `wave17-gen-ctreasons` §4.1,
+    `wave17-corpus`.
 17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
     acquisition and was deliberately not weakened, which is why
     `resource_stored` is checked but unreachable from a single source module.
@@ -275,20 +321,38 @@ pointer is the card that established it; read it before deviating.
     at all, so waves 14 and 15 verified inventory growth by hand. Use the tool
     now, and read its **normalised and raw** module keys together: the raw keys
     carry the checkout root, and a normalisation collision demotes the section
-    to raw keys rather than merging two modules into one row. The eight
-    archived pre-itemizer diff documents are deliberately not backfilled
-    (`DIFF-TOOL-CONTRACTS-BACKFILL`). `wave16-hygiene`, `wave14-corpus`.
+    to raw keys rather than merging two modules into one row. The archived
+    pre-itemizer diff documents of the consolidation chain are **backfilled**
+    (GEN-CTREASONS): append-only, behind a `backfilled_sections` provenance
+    record, with each document its own oracle — the four entries it already
+    carried must reproduce byte-identically from the artifact pair it names or
+    nothing is written. `schema_version` is deliberately not bumped, and the
+    per-card diffs under `docs/reports/remaining-*/artifacts/` are outside that
+    chain (`DIFF-TOOL-CARD-DIFFS`). `wave16-hygiene`, `wave14-corpus`,
+    `wave17-gen-ctreasons`.
 23. CT coverage grows by **mapping, not conformance**. A grown denominator is
-    not new conformance: sanitized-native is 4 of 32 and proof 0 of 32, and a
+    not new conformance: sanitized-native is 4 of 33 and proof 0 of 33, and a
     stage may read `executed` only where a named workspace test runs it on the
-    case's own artifact. `wave5-ct-integration`, `remaining-t00-ct-schema`,
-    `remaining-ct34-sanitized`.
+    case's own artifact. A mapping lane retires an earlier lane's
+    unmapped-bucket row by declaring `retired_unmapped_reasons` in **its own**
+    stage-evidence record, checked total-or-reject in both derivations — never
+    by editing the earlier record (constraint 21). `wave5-ct-integration`,
+    `remaining-t00-ct-schema`, `remaining-ct34-sanitized`, `wave17-ct40`.
 24. **REASON-CODES-B3**'s sidecar `reason_code` tripwire test is flipped at the
     corpus re-pin, per its own design — not silently. `wave9-gen-reason`.
 25. The acceptance-matrix generator carries a `section_ownership` block:
     sections are derived, integrator-supplied via `--gate`, or carried verbatim.
-    Whole-file regeneration must not clobber later reconciliations.
-    `wave9-gen-reason`.
+    Whole-file regeneration must not clobber later reconciliations. The CT
+    `newly_decidable_not_mapped_reasons` map is **derived** as of wave 17 — its
+    keys are the derived newly-decidable list's ids by construction, so a row
+    for a mapped case and a row outside the published list are both structurally
+    impossible; do not reintroduce a hand-carried copy. Two derived fields read
+    from a **frozen** archive rather than from disk
+    (`corpus.contract_modules_per_directory`, `corpus.contract_clause_pin`, both
+    from card B00's ledger) and therefore describe the 59-module checkpoint
+    beside a live 69 — recorded as `D02-B00-LEDGER-SNAPSHOT`, to be repaired by
+    publishing provenance beside them, never by editing the archive.
+    `wave9-gen-reason`, `wave17-gen-ctreasons`, `wave17-corpus`.
 
 **Trust boundaries that are true statements, not TODOs**
 

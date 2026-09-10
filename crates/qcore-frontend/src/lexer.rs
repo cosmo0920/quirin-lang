@@ -56,12 +56,12 @@ pub enum Symbol {
     PipeInto,
     /// `|`, the logical-or operator. Card `PIPE-OPERATOR` claims the token so a
     /// later wave inherits it without a collision; the short-circuit lowering
-    /// is named follow-on `OR-LOWERING` and every occurrence refuses at `Q034`
+    /// is named follow-on `OR-LOWERING` and every occurrence refuses at `Q038`
     /// until it lands. A bare `|` was a lex error before that card; it is still
     /// refused, one layer later and with an actionable message.
     Pipe,
     /// `&&`, the logical-and operator, claimed on the same terms as [`Self::Pipe`]
-    /// (follow-on `AND-LOWERING`, refusing at `Q034`). Single `&` stays
+    /// (follow-on `AND-LOWERING`, refusing at `Q038`). Single `&` stays
     /// [`Self::Ampersand`] and is deliberately left for a future binary/bitwise
     /// operation; this card gives it no new meaning.
     AndAnd,
@@ -223,9 +223,9 @@ impl Lexer<'_> {
     /// | `[\|` | `QuantOpen` | matched at `[`, so `[\|>` is `QuantOpen` then `Greater` |
     /// | `\|]` | `QuantClose` | |
     /// | `\|>` | `PipeInto` | the pipe wins over `Pipe` then `Greater` by width |
-    /// | `\|` | `Pipe` | logical or; refused at `Q034` until `OR-LOWERING` lands |
-    /// | `\|\|` | `Pipe` `Pipe` | refused at `Q034` naming the single-`\|` spelling |
-    /// | `&&` | `AndAnd` | logical and; refused at `Q034` until `AND-LOWERING` |
+    /// | `\|` | `Pipe` | logical or; refused at `Q038` until `OR-LOWERING` lands |
+    /// | `\|\|` | `Pipe` `Pipe` | refused at `Q038` naming the single-`\|` spelling |
+    /// | `&&` | `AndAnd` | logical and; refused at `Q038` until `AND-LOWERING` |
     /// | `&` | `Ampersand` | reserved for a future binary/bitwise operation |
     ///
     /// The one genuine future ambiguity is `a |> b` against a hypothetical

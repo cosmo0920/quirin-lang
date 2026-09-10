@@ -127,7 +127,7 @@ re-lex of rewritten text.
 
 ### 2.3 What v1 does not do, and the measured reason
 
-**A pipeline has exactly one stage.** `x |> f |> g` refuses at `Q033`. The
+**A pipeline has exactly one stage.** `x |> f |> g` refuses at `Q037`. The
 user's own example shape, `value |> render |> log`, is therefore **not
 admitted in v1**, and saying so plainly matters more than shipping something
 that looks like it. Two independent blockers, both measured:
@@ -146,7 +146,7 @@ that looks like it. Two independent blockers, both measured:
    real prerequisite is index-based statement windows or an expression tier.
 
 **A pipeline is a whole statement.** `let r = x |> f succeeds …;` refuses at
-`Q032`; follow-on **`PIPE-LET`**.
+`Q036`; follow-on **`PIPE-LET`**.
 
 ---
 
@@ -167,14 +167,14 @@ denote a resource) is untouched and is re-pinned through a pipe
 | `x \|> print hex` | **yes** | fixture `lines_piped.qcore` |
 | `x \|> log info dec` / `warn` / `fatal` | **yes** | fixture; all three levels exercised |
 | `-7 \|> print dec` | **yes** | a literal operand pipes; fixture |
-| `x \|> flush` | **refused, `Q033`** | `flush` takes no operand — the brief's own instruction, pinned |
-| `x \|> print dec \|> log info dec` | **refused, `Q033`** | `PIPE-CHAIN` (§2.3) |
-| `x \|> print` (no rendering) | **refused, `Q032`** | wrong selector arity |
-| `x \|> print dec hex` | **refused, `Q032`** | wrong selector arity |
+| `x \|> flush` | **refused, `Q037`** | `flush` takes no operand — the brief's own instruction, pinned |
+| `x \|> print dec \|> log info dec` | **refused, `Q037`** | `PIPE-CHAIN` (§2.3) |
+| `x \|> print` (no rendering) | **refused, `Q036`** | wrong selector arity |
+| `x \|> print dec hex` | **refused, `Q036`** | wrong selector arity |
 | a resource as the piped operand | **refused, `Q030`+`Q028`** | the v1 operand type has no resource constructor; unchanged |
-| `let y = x \|> …` | **refused, `Q032`** | `PIPE-LET` |
+| `let y = x \|> …` | **refused, `Q036`** | `PIPE-LET` |
 | **extern call stage** `move b \|> release` | **yes** | this is where linearity is real — §5 |
-| a `drop`/`move`/`defer` statement as a stage | **refused, `Q032`** | not in the closed stage table; `PIPE-STMT-STAGES` |
+| a `drop`/`move`/`defer` statement as a stage | **refused, `Q036`** | not in the closed stage table; `PIPE-STMT-STAGES` |
 
 **Composition with other routes**, measured rather than assumed: a pipeline
 does not change route selection at all
@@ -220,9 +220,9 @@ This is the table future waves build against.
 |---|---|---|
 | `[\|` / `\|]` | `QuantOpen` / `QuantClose` | **unchanged** — G04's quant-index delimiter alias |
 | `\|>` | `PipeInto` | **landed** — desugared away before parsing |
-| `\|` | `Pipe` | **claimed, refused at `Q034`** — logical or; lowering is `OR-LOWERING` |
-| `\|\|` | `Pipe` `Pipe` | **refused at `Q034`**, message: *"QCore spells logical or as a single `\|`, not `\|\|`"* |
-| `&&` | `AndAnd` | **claimed, refused at `Q034`** — logical and; lowering is `AND-LOWERING` |
+| `\|` | `Pipe` | **claimed, refused at `Q038`** — logical or; lowering is `OR-LOWERING` |
+| `\|\|` | `Pipe` `Pipe` | **refused at `Q038`**, message: *"QCore spells logical or as a single `\|`, not `\|\|`"* |
+| `&&` | `AndAnd` | **claimed, refused at `Q038`** — logical and; lowering is `AND-LOWERING` |
 | `&` | `Ampersand` | **reserved, unchanged** — held for a future binary/bitwise operation |
 
 **The asymmetry is deliberate and recorded as the user's declared convention:**
@@ -286,13 +286,13 @@ answer. The initial edit assumed the refusal moved to *the quant-index
 grammar* and kept the pin as `parse_source_program(...).is_err()`. The full
 workspace gate caught it: `quant<n where n := 5> | i32` now **parses**, and
 the refusal is raised one step further out, by the frontend's operator gate at
-`Q034`. The pin is rewritten to assert what actually happens — the program
-parses, and `compile_files` refuses it with exactly `["Q034"]` — rather than
+`Q038`. The pin is rewritten to assert what actually happens — the program
+parses, and `compile_files` refuses it with exactly `["Q038"]` — rather than
 being relaxed to "is refused somehow". The other four mixed/unterminated
 delimiter cases still fail at parse and are untouched, a new
 `quant[|… |>` mixed-pair case joins them, and
 `a_single_ampersand_gains_no_new_meaning` asserts a lone `&` still refuses and
-**never at `Q034`**, which would mean this card had claimed it.
+**never at `Q038`**, which would mean this card had claimed it.
 
 ### 4.3 Flagged, not resolved: bitwise or has no symbol
 
@@ -351,7 +351,7 @@ looks sound.
    removes a second, divergent tokenization path.
 5. **A pipeline missing its `;` mid-body runs into the next statement.** The
    next statement's `;` terminates the run, so the following head becomes a
-   second stage and the multi-stage refusal fires first (`Q033`, not `Q032`).
+   second stage and the multi-stage refusal fires first (`Q037`, not `Q036`).
    Fail-closed and correctly spanned; pinned as measured rather than forced.
 6. **A pipe nested inside an argument list is not desugared.** The run scanner
    records a `|>` only at bracket depth 0, so `f(move b |> g)` is left alone;
@@ -368,8 +368,43 @@ looks sound.
    source-ordered range, so no golden moved.
 9. **The bare-`|` pin moved further than this card first assumed** (§4.2). The
    first edit kept it as a parse-level refusal; the workspace gate caught that
-   `quant<…> | i32` now parses and is refused by the operator gate at `Q034`.
+   `quant<…> | i32` now parses and is refused by the operator gate at `Q038`.
    The pin was rewritten to assert the measured behaviour exactly, not relaxed.
+10. **The diagnostic band relocated at integration: `Q032`–`Q034` →
+    `Q036`–`Q038`.** See §6.1.
+
+### 6.1 Band relocation at integration
+
+This card originally took `Q032`–`Q034` for its `Pipe` pass. The sibling
+wave-18 card `UNSAFE-LINKAGE`, developed off the same base `ad58360`, claimed
+`Q032`–`Q035` for its `UncheckedLinkage` pass independently and **merged and
+shipped to main first**. Per the wave-3 `T07`/`T09` precedent, the unshipped
+band relocates, so this card's did:
+
+| Condition | Was | Now |
+|---|---|---|
+| a pipeline shape this profile does not model | `Q032` | **`Q036`** |
+| a stage that cannot receive the piped operand | `Q033` | **`Q037`** |
+| a claimed-but-unlowered logical operator | `Q034` | **`Q038`** |
+
+The **code-to-condition mapping is unchanged under the shift** — this is a
+renumbering, not a semantic change, and no refusal was added, removed or
+merged. `UncheckedLinkage`'s `Q032`–`Q035` are untouched in every file,
+including its own uses in `qcore-verification::driver`,
+`qcore-frontend::module_imports`, `docs/design/UNSAFE_LINKAGE_V1.md` and the
+`§G02d` grammar section. Both passes coexist in `SemanticPass` and in the §L21
+table, `UncheckedLinkage` first.
+
+**A second, consequential relocation.** Main's adopted
+`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` carried an adjustment note (A2)
+reserving **`Q036` onward** for a future native-library manifest band — written
+when `Q032`–`Q035` was the frontier. This card's relocation takes `Q036`–`Q038`,
+so that note moves to **`Q039` onward** in both places it appears (§7 and the
+adjustment table), with the reason recorded as adjusted twice. That is a
+**prose reservation in a design document, not a shipped code**, so moving it
+costs nothing and refuses nothing differently; the alternative — leaving a
+design doc pointing at a band this card had already taken — would have been a
+latent third collision.
 
 ---
 
@@ -460,8 +495,10 @@ implemented.
 
 **Corpus-neutral by construction.** This is source-language work: no gateway,
 contract-loader, audit or provider file was touched, no `contract/qcore/` file
-changed (corpus stays **67 modules**), no CT manifest entry changed
-(**32/50**), no pinned artifact was edited. The expectation to verify at
+changed, no CT manifest entry changed, no pinned artifact was edited. On the
+merged branch the corpus is **69 modules** and CT is **33/50**; both figures
+are main's, carried in unchanged by the merge, and neither moves for anything
+this card did. The expectation to verify at
 consolidation is that the canonical CMetrics artifacts and the 185-unit
 baseline are **byte-identical**, with the headline unchanged at 2 Safe / 42
 provisional Unsafe / 137 Unknown / 4 data-only.
@@ -479,32 +516,43 @@ grow the denominator without adding evidence.
 
 ### 7.7 Gate
 
+Measured on the **merged branch**, after main `0fd35ba` (`LEAN-PERF` and the
+sibling `UNSAFE-LINKAGE`) was merged in and this card's band relocated (§6.1):
+
 | Gate step | Result |
 |---|---|
 | `cargo test -p qcore-compiler --test pipe_operator` | **28 pass**, including the sanitized native run |
+| `cargo test -p qcore-compiler --test unsafe_linkage` | **28 pass** — the sibling card's suite, unaffected by the relocation |
 | `cargo test -p qcore-frontend` | **225 pass** across 16 targets, 0 failed |
-| `cargo test --workspace --no-fail-fast` | **2,931 passed, 0 failed, 8 ignored** across 176 targets, exit 0 |
-| `python3 -m unittest discover -s scripts/tests` | 186 tests, **1 expected failure** — see the closing note |
+| `cargo test --workspace --no-fail-fast` | **2,959 passed, 0 failed, 8 ignored** across 177 targets, exit 0 |
+| `python3 -m unittest discover -s scripts/tests` | **193 tests, all OK** |
+| `python3 scripts/ct_stage_summary.py --check` | exit 0; mapped 33 / unmapped 17 (this card maps none — the count is main's) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean; one unused import from this card's own change found and removed, not suppressed |
-| `check_lean_audits.py` | **78/78 pass** (77 → 78); no new axiom |
+| `check_lean_audits.py` | **79/79 pass** (main's 78 + this card's `AuditPipeDesugaring`); no new axiom |
 | `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+
+The derived matrix facts are reconciled on the merged branch rather than left
+stale: `validation.lean_audits` composes to **79** and
+`validation.lean_audit_files` carries `AuditPipeDesugaring.lean` in sorted
+position, verified equal to `proof/Audit*.lean` on disk. The pre-merge run of
+this card had deliberately left that value stale at 77-vs-78 for the
+integrator; the merge made 78-vs-79 the composed truth, and reconciling it is
+what makes `scripts/tests` pass whole (193/193) instead of carrying an expected
+failure.
 
 One environment finding, recorded rather than worked around: the
 `third_party/libevent` submodule was not initialized in this fresh worktree, so
 three suites failed the pinned-revision check on the first workspace run. The
 pin was **not** weakened; the gate's own documented
-`git submodule update --init --recursive` fixed it and all three pass. The
-2,931/0/8 figures above come from one complete run after that.
+`git submodule update --init --recursive` fixed it and all three pass. Every
+figure above comes from one complete post-merge run.
 
-**Left for the integrator, by the brief's own instruction:** the derived
-`lean_audits` count in `docs/reviews/r0_3/acceptance_matrix.json` now lags by
-one (77 vs 78), so `scripts/tests`'s
-`test_the_derived_facts_are_recomputed_rather_than_carried` will report
-`lean_audits: 77 != 78`. That is the derived-value tripwire working as
-designed; this card is forbidden from editing acceptance files, so the matrix is
-deliberately left stale for regeneration, the same handling every wave's
-derived sections receive.
+**Superseded note (pre-merge).** Before the merge this card left
+`validation.lean_audits` stale at 77-vs-78 for the integrator, because the
+original brief forbade editing acceptance files. The integration follow-up
+instructed the reconciliation explicitly, so it is done here and the tripwire
+passes; the note is kept rather than deleted so the sequence stays legible.
 
 ---
 
@@ -548,21 +596,26 @@ derived sections receive.
 > nothing to lower a short-circuit onto** (`if` itself refuses at `Q500`, the
 > lowering IR has no branch constructor, and there are zero `if` statements in
 > 294 source-side files), so `\|` (logical or) and `&&` (logical and) landed as
-> **claimed tokens with actionable refusals at `Q034`** and named follow-ons
+> **claimed tokens with actionable refusals at `Q038`** and named follow-ons
 > `OR-LOWERING`/`AND-LOWERING`, under both amendments' scope guards; and a
 > second, divergent tokenization path in `source_extern::statement_tokens` was
 > re-lexing original bytes and bypassing the desugaring — found by a failing
 > test and repaired to read the program's own tokens. Multi-stage pipelines
-> (the user's `value \|> render \|> log` shape) are refused at `Q033` with both
+> (the user's `value \|> render \|> log` shape) are refused at `Q037` with both
 > blockers named — `PIPE-CHAIN`. The operator table is now `[\|`/`\|]`
 > unchanged, `\|>` landed, `\|` and `&&` claimed-and-refused, `\|\|` refused
 > naming the single-`\|` spelling, and `&` **reserved with no new meaning**; the
 > longest-match adjacency table is pinned by test, and the one deliberate pin
 > update (a bare `\|` moves from lex error to grammar refusal) keeps its
 > load-bearing negative half at the new layer. Bitwise or having no symbol is
-> flagged open, not answered. `Q032`-`Q034` under a new `Pipe` pass through the
-> §L21 process, with spec §L21 and grammars §G02h updated in the same change.
-> 28 new tests, 35 audited Lean theorems, no new axiom, 77 → 78 audits.
-> Corpus-neutral by construction: contract corpus stays 67 modules, CT stays
-> 32/50, nothing promoted. Evidence:
+> flagged open, not answered. `Q036`-`Q038` under a new `Pipe` pass through the
+> §L21 process, with spec §L21 and grammars §G02h updated in the same change —
+> **relocated at integration from `Q032`-`Q034`**, because the sibling
+> `UNSAFE-LINKAGE` card claimed `Q032`-`Q035` independently from the same base
+> and shipped first, so the unshipped band moved (the wave-3 `T07`/`T09`
+> precedent); the code-to-condition mapping is unchanged under the shift, and
+> `NATIVE_LIBRARY_LINKAGE_V1.md`'s design-doc reservation moves `Q036+` →
+> `Q039+` in the same commit. 28 new tests, 35 audited Lean theorems, no new
+> axiom, 78 → 79 audits on the merged tree. Corpus-neutral by construction:
+> contract corpus stays 69 modules, CT stays 33/50, nothing promoted. Evidence:
 > `docs/reports/wave18-pipe-operator/README.md`.

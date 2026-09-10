@@ -52,7 +52,7 @@
 //!
 //! # What v1 does not do, and why
 //!
-//! * **A pipeline has exactly one stage.** `x |> f |> g` refuses at `Q033`.
+//! * **A pipeline has exactly one stage.** `x |> f |> g` refuses at `Q037`.
 //!   Two independent blockers, both measured: a call stage's result has no
 //!   name, because QCore source has no expression tier at all
 //!   (`StatementKind::Expression` is payload-free and an expression statement
@@ -61,14 +61,14 @@
 //!   route uses to read its own tokens, since the shared operand would sit
 //!   inside two overlapping statement spans. Named follow-on `PIPE-CHAIN`.
 //! * **A pipeline is a whole statement.** `let r = x |> f succeeds …;` refuses
-//!   at `Q032`. Named follow-on `PIPE-LET`.
-//! * **`flush` takes no operand**, so piping into it refuses at `Q033`.
+//!   at `Q036`. Named follow-on `PIPE-LET`.
+//! * **`flush` takes no operand**, so piping into it refuses at `Q037`.
 //!
 //! # The claimed logical operators
 //!
 //! `|` (logical or) and `&&` (logical and) are lexed as tokens by this card so
 //! that a later wave inherits them without a collision, and both refuse at
-//! `Q034` with an actionable message. Their short-circuit lowering is *not*
+//! `Q038` with an actionable message. Their short-circuit lowering is *not*
 //! implemented, on a measured blocker rather than a scheduling one: the
 //! executable subset has no branch construct to lower onto. `if` itself
 //! refuses at `Q500` ("structured control flow is not in the Cycle 12
@@ -191,7 +191,7 @@ fn pipeline_runs(tokens: &[Token], refusals: &mut Vec<PipeRefusal>) -> Vec<Run> 
             TokenKind::Symbol(Symbol::LeftBrace | Symbol::RightBrace) if depth == 0 => {
                 if let Some(at) = pipe.take() {
                     refusals.push(refusal(
-                        "Q032",
+                        "Q036",
                         tokens[at].span,
                         "a pipeline is one statement ending in `;`; this one reaches a block \
                          boundary first",
@@ -214,7 +214,7 @@ fn pipeline_runs(tokens: &[Token], refusals: &mut Vec<PipeRefusal>) -> Vec<Run> 
     }
     if let Some(at) = pipe {
         refusals.push(refusal(
-            "Q032",
+            "Q036",
             tokens[at].span,
             "a pipeline is one statement ending in `;`; this one has no `;`",
         ));
@@ -236,7 +236,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
         .position(|token| is(token, Symbol::Equal) || is(token, Symbol::Define))
     {
         return Err(refusal(
-            "Q032",
+            "Q036",
             body[equal].span,
             "`source.pipe.v1` admits a pipeline as a whole statement; a pipeline on the right of \
              a binding is follow-on `PIPE-LET`",
@@ -262,14 +262,14 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
     let operand = segments[0];
     if operand.is_empty() {
         return Err(refusal(
-            "Q032",
+            "Q036",
             pipe,
             "`|>` needs a value on its left; this pipeline pipes nothing",
         ));
     }
     if segments.len() > 2 {
         return Err(refusal(
-            "Q033",
+            "Q037",
             segments[2].first().map_or(pipe, |token| token.span),
             "`source.pipe.v1` admits one stage per pipeline. A call stage's result has no name — \
              QCore source has no expression tier — and a chain of statement stages would need \
@@ -280,7 +280,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
     let stage = segments[1];
     let Some(head) = stage.first() else {
         return Err(refusal(
-            "Q032",
+            "Q036",
             pipe,
             "`|>` needs a stage on its right; this pipeline pipes into nothing",
         ));
@@ -288,7 +288,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
 
     let Some(name) = word(head) else {
         return Err(refusal(
-            "Q032",
+            "Q036",
             head.span,
             "a pipeline stage is a statement head or a callee name",
         ));
@@ -296,7 +296,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
 
     if OPERANDLESS_STAGES.contains(&name) {
         return Err(refusal(
-            "Q033",
+            "Q037",
             head.span,
             format!("`{name}` takes no operand, so nothing can be piped into it"),
         ));
@@ -310,7 +310,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
         // operand count with its own diagnostic at the right span.
         if stage.len() != 1 + selectors {
             return Err(refusal(
-                "Q032",
+                "Q036",
                 head.span,
                 format!(
                     "`{name}` names {selectors} selector word(s) before its operand; this stage \
@@ -333,7 +333,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
             if !is(&stage[1], Symbol::LeftParen) || !is(&stage[stage.len() - 1], Symbol::RightParen)
             {
                 return Err(refusal(
-                    "Q032",
+                    "Q036",
                     stage[1].span,
                     "a call stage is a callee name, optionally followed by a parenthesized \
                      argument list",
@@ -361,7 +361,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
 ///
 /// * the desugarer's own refusals, carried on the program; and
 /// * the claimed-but-unlowered logical operators, whose every occurrence
-///   refuses here at `Q034`.
+///   refuses here at `Q038`.
 pub fn check_source_operators(
     refusals: &[PipeRefusal],
     tokens: &[Token],
@@ -413,7 +413,7 @@ pub fn check_source_operators(
             }
         };
         diagnostics.push(SourceDiagnostic {
-            code: "Q034",
+            code: "Q038",
             pass: SemanticPass::Pipe,
             span: token.span,
             message,

@@ -411,6 +411,52 @@ about the C implementation. See
 the [extern-call evidence](reports/extern-call-v1/README.md) and the
 [out/stored extension](reports/extern-call-f1/README.md).
 
+### L14.1. Unchecked linkage
+
+An external library that has **no contract at all** MAY be linked, under an
+explicit recorded waiver and never otherwise (card `UNSAFE-LINKAGE`). Without
+the waiver, an uncontracted callee keeps its `Q023` refusal exactly as above.
+
+The waiver is **per declaration** and needs two independent, file-local opt-ins:
+`import std.extern.unsafe;` (`Q032` otherwise) and the declaration form
+`unsafe extern fn NAME(…) -> ABI;`. Neither extern module implies the other, so
+a file that calls an uncontracted symbol names both. The gate is on the
+declaration rather than on a call to it, because declaring an uncontracted
+symbol is itself the trust act.
+
+The waived thing is the **contract**, not the ABI. The declared spellings MUST
+be in the §C04.1 vocabulary, and the admitted signature is scalars by value in
+and a scalar or `unit` out; **every pointer, in every spelling and every
+position, is refused** (`Q033`), `ptr<const, u8>` included. A pointer argument
+hands unknown code a capability that no assumption makes checkable — nothing
+bounds what it reads, nothing ends the loan at the return, `const` constrains
+the declaration rather than the implementation, and nothing stops the callee
+publishing it — so there is no premise text to record for it. The admitted
+surface therefore carries no custody in either direction, which is why an
+uncontracted call cannot change the caller's ledger whatever the callee does. A
+`unit` parameter is refused, as is any spelling the ABI table does not contain.
+A waiver MUST NOT sit beside a checkable declaration: an inline
+`contract { … }` block on the waived declaration, and a name the selected
+contract environment also declares, are each refused (`Q034`).
+
+The derived effect row of an uncontracted callee is the **whole** modeled row —
+`{Io, Alloc, Mut}` — unconditionally, because nothing is known about it; the
+caller's declared `effects { … }` row MUST admit it, so the waiver is visible in
+the entry's own signature and not only at the declaration.
+
+Every certificate that names an uncontracted callee MUST carry it as a premise
+by name and declared signature, on the same declared-assumption channel that
+carries a trusted declared contract. There MUST be no path to a published
+certificate that omits it: the premise is derived from the program's own callee
+inventory, the certificate is republished only after an independent
+rederivation, and a published inventory missing a required premise is refused
+(`Q035`). A result reached through unchecked linkage is `Safe` **relative to
+that waiver** and MUST be rendered as such; it is never a statement about the
+callee. See
+[implemented grammar G02d.1](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02d1-unchecked-linkage),
+`docs/design/UNSAFE_LINKAGE_V1.md` and the
+[unchecked-linkage evidence](reports/wave18-unsafe-linkage/README.md).
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -519,7 +565,8 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `Q020`, `Q021` | `OrdinaryTypes` | `qcore-frontend`, `qcore-verification::driver` | `Q020` unsupported or ill-typed ordinary construct, including the emitted entry's parameter rule, the task route's source-contract gate, and an `effects { … }` row naming an effect the extern-call profile does not model; `Q021` the sequential whole-program gate refusing an unchecked source `contract { … }`. The two contract gates are route-specific and deliberately not unified — see below. |
 | `Q022`–`Q027` | `ExternCall` | `qcore-frontend`, `qcore-verification::driver` | Admission and bridging of a call to a **declared** extern function (`source.extern-call.v1`). `Q022` an extern call in a file without its `import std.extern;`; `Q023` the callee has no admitted declared contract in the explicit selection (no selection, a selection that does not load, or an absent name); `Q024` the closed v1 bridging table refuses this contract mode, ABI type, argument form or argument count — including a stored argument that names the same identity as its declared owner, and an error-arm disposition of the wrong arity or argument form; `Q025` the mandatory acquisition adapter is missing, applied to a callee that establishes no fresh custody, names a declared non-error, or does not discharge live custody on its error arm. The adapter is mandatory for each of the three admitted acquisition sources: a `resource_return_owned(nullable)` result, a `resource_out(_, nullable)` slot and a `resource_return_reallocated(_, nullable)` result (card `EXTERN-MODES`). Under card `EXTERN-ERR-REL` the error arm may carry explicit dispositions, and `Q025` covers every way one fails to be that acquisition's established cleanup edge: an identity live at the raise that no disposition releases (the retained abandonment refusal), a disposition that itself acquires or stores, one that discharges other than exactly one identity, one that names an identity not live on the arm, an order other than reverse acquisition order, and a disposition whose derived effect row the entry's declared row does not admit. An acquiring call that also moves custody out is refused there too, because a declaration constrains only its normal exit — with the single exception card `EXTERN-MODES` measures, a `resource_return_reallocated` subject, whose failure arm §C04.3 does state and which therefore stays live on the arm and must be dispositioned there; `Q026` an extern call in a context this profile refuses (a nested block, a non-entry function, or an entry with parameters); `Q027` a declared input and the checked artifact disagree — an `extern fn` declaration against its selected contract, an inline `contract { … }` on a called extern declaration, a selection that no longer reproduces its own sources, or a published certificate against its independent rederivation. |
 | `Q028`–`Q031` | `StandardIo` | `qcore-frontend`, `qcore-verification::driver` | Admission of the line-producing statements of `std.fmt`, `std.io` and `std.logger` (`source.std-io.v1`, card `STD-MODULES`). `Q028` a rendering operand that is not one of the entry's integer bindings — the refusal that keeps every resource unrenderable, since the v1 operand grammar has no form that could denote one; `Q029` the entry performs `Io` but its declared `effects { … }` row does not admit it; `Q030` the flat entry shape this profile models is violated — a statement it does not model, a nested block, an entry with parameters, a `print`/`log`/`flush` outside the entry, an unknown rendering or level *whose word is reserved*, a `flush` with an operand, a missing or repeated return, or a malformed `effects` row; `Q031` a published certificate against its independent rederivation. An unreserved word in a rendering or level position is collected as a referenced name and refuses earlier at `Q013`; that is fail-closed and recorded, not `Q030`. |
-| `Q032`–`Q034` | `Pipe` | `qcore-frontend`, `qcore-verification::driver` | Admission of the pipe operator `\|>` and of the claimed logical-operator tokens `\|` and `&&` (`source.pipe.v1`, card `PIPE-OPERATOR`). The pass runs *before* every other one: a well-formed pipeline is desugared into the tokens of the equivalent unpiped statement at parse time, so no later pass can tell a pipe was written and this pass exists only to attribute the refusals of the forms that are **not** desugared away. `Q032` a pipeline shape this profile does not model — an empty operand or stage, a stage that is neither a statement head nor a callee name, a sink stage naming the wrong number of selector words, a call stage whose parentheses are unbalanced, or a pipeline on the right of a binding (follow-on `PIPE-LET`); `Q033` a stage that cannot receive the piped operand — `flush`, which takes none, or any second stage, because a call stage's result has no name in a language with no expression tier and a chain of statement stages would need statement windows this frontend keys by byte span (follow-on `PIPE-CHAIN`); `Q034` a claimed-but-unlowered logical operator — `\|`, `\|\|` (two `\|` tokens, with the message naming the single-`\|` spelling) or `&&`, each refusing because the executable subset has no branch construct to lower a short-circuit onto. A single `&` is deliberately **not** claimed by this pass and keeps exactly the meaning it had. Dropping the `;` of a body's last statement is a parse failure at `Q000` before this pass runs. |
+| `Q032`–`Q035` | `UncheckedLinkage` | `qcore-frontend`, `qcore-verification::driver` | Admission of an extern declaration that has **no** contract at all, so an external library can be linked without one (§L14.1, card `UNSAFE-LINKAGE`). A separate pass from `ExternCall` on purpose: that pass decides whether a *declared contract* bridges to a call, while this one decides whether a signature may cross a boundary nothing checks, and records the premise that says so. `Q032` an `unsafe extern fn` declaration in a file without its `import std.extern.unsafe;` — the gate is on the declaration, not on a call to it; `Q033` the declared signature is outside the closed unchecked table: a pointer parameter or result in any spelling (`ptr<const, u8>` included, deliberately), a `unit` parameter, or a spelling the §C04.1 ABI vocabulary does not contain — the contract is waived, the ABI is not; `Q034` a waiver beside a checkable declaration: an inline `contract { … }` block on the waived declaration, or a name the selected contract environment also declares, in which case the contracted route wins whether or not the signatures agree; `Q035` a published certificate that does not carry an unchecked-linkage premise for an uncontracted callee its own program declares. `Q022`–`Q027` are unchanged: without the waiver an uncontracted callee still refuses at `Q023`. |
+| `Q036`–`Q038` | `Pipe` | `qcore-frontend`, `qcore-verification::driver` | Admission of the pipe operator `\|>` and of the claimed logical-operator tokens `\|` and `&&` (`source.pipe.v1`, card `PIPE-OPERATOR`). The pass runs *before* every other one: a well-formed pipeline is desugared into the tokens of the equivalent unpiped statement at parse time, so no later pass can tell a pipe was written and this pass exists only to attribute the refusals of the forms that are **not** desugared away. `Q036` a pipeline shape this profile does not model — an empty operand or stage, a stage that is neither a statement head nor a callee name, a sink stage naming the wrong number of selector words, a call stage whose parentheses are unbalanced, or a pipeline on the right of a binding (follow-on `PIPE-LET`); `Q037` a stage that cannot receive the piped operand — `flush`, which takes none, or any second stage, because a call stage's result has no name in a language with no expression tier and a chain of statement stages would need statement windows this frontend keys by byte span (follow-on `PIPE-CHAIN`); `Q038` a claimed-but-unlowered logical operator — `\|`, `\|\|` (two `\|` tokens, with the message naming the single-`\|` spelling) or `&&`, each refusing because the executable subset has no branch construct to lower a short-circuit onto. A single `&` is deliberately **not** claimed by this pass and keeps exactly the meaning it had. Dropping the `;` of a body's last statement is a parse failure at `Q000` before this pass runs. |
 | `Q1xx` | `Usage`, `Ownership` | `qcore-frontend` | `Q100` usage grade, `Q103` ownership. |
 | `Q2xx` | `ResourceFlow`, `CleanupLowering` | `qcore-frontend`, `qcore-verification::driver` | `Q200` resource flow, `Q202` cleanup lowering and reference interpretation. |
 | `Q3xx` | `TypedErrors`, `ErrorRegion` | `qcore-frontend` | `Q300` typed errors, `Q302` error region. |

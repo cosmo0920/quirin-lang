@@ -47,7 +47,7 @@ fn tokenizes_quant_delimiters_as_single_symbols_beside_plain_brackets() {
 /// Card `PIPE-OPERATOR` claims `|` and `&&` as tokens and adds `|>`. A bare
 /// `|` was a lex error before that card; the *refusal* is preserved and moves
 /// one layer later, where it can carry an actionable message
-/// (`crates/qcore-frontend/src/pipe.rs`, `Q034`). This is a deliberate pin
+/// (`crates/qcore-frontend/src/pipe.rs`, `Q038`). This is a deliberate pin
 /// update: the load-bearing half — that a bare `|` is not admitted as a quant
 /// delimiter and no program containing one checks — is re-pinned at its new
 /// layer in `compiler/tests/quant_index_contracts.rs` and

@@ -194,6 +194,11 @@ pub struct SourceExternDeclaration {
     pub result_type: String,
     /// Whether the source declaration carries its own `contract { … }` block.
     pub has_inline_contract: bool,
+    /// Card `UNSAFE-LINKAGE`: the declaration is spelled `unsafe extern fn`, so
+    /// it waives the contract requirement and carries an unchecked-linkage
+    /// premise instead. Read from the declaration's own leading token, which is
+    /// the only place the waiver exists.
+    pub unchecked: bool,
 }
 
 /// Collect the extern declarations of a program, normalized for comparison.
@@ -224,8 +229,35 @@ pub fn source_extern_declarations(program: &SourceProgram) -> Vec<SourceExternDe
                 .as_ref()
                 .map_or_else(String::new, |result| normalize_type(&result.source)),
             has_inline_contract: declaration.value.function_contract.is_some(),
+            unchecked: is_unchecked_declaration(&declaration.value),
         })
         .collect()
+}
+
+/// Whether one extern declaration is spelled `unsafe extern fn`. The parser
+/// keeps both spellings on `DeclarationKind::ExternFunction`, so the waiver
+/// lives in the retained token prefix and nowhere else.
+fn is_unchecked_declaration(declaration: &SourceDeclaration) -> bool {
+    matches!(
+        declaration.tokens.first(),
+        Some(TokenKind::Word(word)) if word == "unsafe"
+    )
+}
+
+/// The span of the first `unsafe extern fn` declaration in this program, if any.
+/// Card `UNSAFE-LINKAGE`: the import gate is on the *declaration*, because
+/// declaring an uncontracted symbol is itself the trust act — a file that never
+/// calls it has still linked it.
+#[must_use]
+pub fn unchecked_extern_declaration_span(program: &SourceProgram) -> Option<Span> {
+    program
+        .declarations
+        .iter()
+        .find(|declaration| {
+            declaration.value.kind == DeclarationKind::ExternFunction
+                && is_unchecked_declaration(&declaration.value)
+        })
+        .map(|declaration| declaration.span)
 }
 
 /// Whitespace-insensitive type spelling; the loader's own vocabulary is a

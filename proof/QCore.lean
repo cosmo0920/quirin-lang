@@ -90,6 +90,7 @@ import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ExternCall
 import QCore.StdIo
+import QCore.UncheckedLinkage
 import QCore.ReasonCategory
 import QCore.ReasonCarrier
 import QCore.SourceRootAdmission

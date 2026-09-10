@@ -1,0 +1,9 @@
+=== source-effects.json (package identity)
+changed leaves: 48; by field: {'0': 3, 'build_digest': 6, 'configuration_digest': 5, 'kind': 6, 'obligation_id': 3, 'observed_runs_only': 6, 'package_digest': 3, 'paths': 6, 'preprocessed_source_digest': 1, 'provider_version': 3, 'qcore:boolean-field-import:v1': 3, 'task_digest': 3}
+outside the identity/path classes: 0
+status split before: {'unknown': 93, 'checked_function_contract': 3}
+status split after:  {'unknown': 93, 'checked_function_contract': 3}
+per-result statuses equal: True
+=== source.json (path-literal provenance)
+changed leaves: 17; path literals: 10; char[N] extents: 7; other: 0
+RESULT: both residue classes hold

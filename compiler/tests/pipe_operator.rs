@@ -268,7 +268,7 @@ fn a_resource_operand_is_still_unrenderable_through_a_pipe() {
 #[test]
 fn piping_into_an_operandless_stage_refuses() {
     let source = LINES_PIPED.replace("    flush;\n", "    total |> flush;\n");
-    assert_eq!(codes(&source), ["Q033"]);
+    assert_eq!(codes(&source), ["Q037"]);
     assert!(messages(&source)[0].contains("takes no operand"));
 }
 
@@ -278,7 +278,7 @@ fn a_multi_stage_pipeline_refuses_with_its_measured_reason() {
     // measured blockers rather than a scheduling one. Recorded as
     // follow-on `PIPE-CHAIN`.
     let source = LINES_PIPED.replace("total |> print dec;", "total |> print dec |> log info dec;");
-    assert_eq!(codes(&source), ["Q033"]);
+    assert_eq!(codes(&source), ["Q037"]);
     assert!(messages(&source)[0].contains("PIPE-CHAIN"));
 }
 
@@ -294,12 +294,12 @@ fn a_pipeline_on_the_right_of_a_binding_refuses() {
         .into_iter()
         .map(|diagnostic| diagnostic.code)
         .collect();
-    assert_eq!(codes, ["Q032"]);
+    assert_eq!(codes, ["Q036"]);
 }
 
 #[test]
 fn a_pipeline_with_nothing_on_one_side_refuses() {
-    for (replacement, code) in [("    |> print dec;\n", "Q032"), ("    total |>;\n", "Q032")] {
+    for (replacement, code) in [("    |> print dec;\n", "Q036"), ("    total |>;\n", "Q036")] {
         let source = LINES_PIPED.replace("    total |> print dec;\n", replacement);
         assert_eq!(codes(&source), [code], "for `{replacement}`");
     }
@@ -310,7 +310,7 @@ fn a_pipeline_that_reaches_a_block_boundary_before_its_semicolon_refuses() {
     // Measured: the parser's own "a statement ends in `;`" rule runs before
     // any frontend gate, so the last statement of a body without its `;` is a
     // parse failure (`Q000`) and never reaches the pipe pass. The desugarer
-    // still records its own `Q032` for this shape — that arm is what keeps a
+    // still records its own `Q036` for this shape — that arm is what keeps a
     // pipeline from silently swallowing a block — but it is unreachable from
     // this direction and the reachable refusal is pinned as the truth.
     let source = LINES_PIPED.replace(
@@ -327,15 +327,15 @@ fn a_pipeline_missing_its_semicolon_mid_body_runs_into_the_next_statement() {
     // `;` the run's terminator, so the following statement head becomes a
     // second stage and the multi-stage refusal fires first. That is
     // fail-closed and the span still names the offending region, so the
-    // refusal is recorded as it is rather than a `Q032` being forced.
+    // refusal is recorded as it is rather than a `Q036` being forced.
     let source = LINES_PIPED.replace("    total |> print dec;\n", "    total |> print dec\n");
-    assert_eq!(codes(&source), ["Q033"]);
+    assert_eq!(codes(&source), ["Q037"]);
 }
 
 #[test]
 fn a_sink_stage_with_the_wrong_selector_count_refuses() {
     let source = LINES_PIPED.replace("total |> print dec;", "total |> print dec hex;");
-    assert_eq!(codes(&source), ["Q032"]);
+    assert_eq!(codes(&source), ["Q036"]);
 }
 
 #[test]
@@ -374,7 +374,7 @@ fn the_argument_order_of_a_call_stage_is_the_declared_one() {
 #[test]
 fn the_logical_or_operator_refuses_with_its_measured_blocker() {
     let source = LINES_PIPED.replace("total |> print dec;", "print dec total | mask;");
-    assert_eq!(codes(&source), ["Q034"]);
+    assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
     assert!(message.contains("`|` is the logical-or operator"));
     assert!(message.contains("OR-LOWERING"));
@@ -389,7 +389,7 @@ fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
     let source = LINES_PIPED.replace("total |> print dec;", "print dec total || mask;");
     assert_eq!(
         codes(&source),
-        ["Q034"],
+        ["Q038"],
         "one mistake must produce one diagnostic, not two"
     );
     assert!(messages(&source)[0].contains("not `||`"));
@@ -398,7 +398,7 @@ fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
 #[test]
 fn the_logical_and_operator_refuses_and_redirects_the_single_ampersand() {
     let source = LINES_PIPED.replace("total |> print dec;", "print dec total && mask;");
-    assert_eq!(codes(&source), ["Q034"]);
+    assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
     assert!(message.contains("`&&` is the logical-and operator"));
     assert!(message.contains("AND-LOWERING"));
@@ -411,12 +411,12 @@ fn the_logical_and_operator_refuses_and_redirects_the_single_ampersand() {
 #[test]
 fn a_single_ampersand_gains_no_new_meaning() {
     // `&` lexes exactly as it did before this card and is consumed by nothing,
-    // so a program containing one still refuses — and never at `Q034`, which
+    // so a program containing one still refuses — and never at `Q038`, which
     // would mean this card had claimed it.
     let source = LINES_PIPED.replace("total |> print dec;", "print dec total & mask;");
     let codes = codes(&source);
     assert!(
-        !codes.contains(&"Q034".to_owned()),
+        !codes.contains(&"Q038".to_owned()),
         "a lone `&` must stay reserved, not claimed: {codes:?}"
     );
     assert!(!codes.is_empty(), "and it must still refuse");
@@ -470,7 +470,7 @@ fn a_pipe_nested_inside_an_argument_list_is_not_desugared_and_still_refuses() {
         .collect();
     assert!(!codes.is_empty());
     assert!(
-        !codes.contains(&"Q032".to_owned()) && !codes.contains(&"Q033".to_owned()),
+        !codes.contains(&"Q036".to_owned()) && !codes.contains(&"Q037".to_owned()),
         "the pipe pass does not claim this shape; the route's own refusal is the answer: {codes:?}"
     );
 }
@@ -483,7 +483,7 @@ fn the_operator_gate_reaches_every_module_mode() {
     // contract or library file uses — so this is pinned rather than reasoned.
     for mode in ["module contract;", "module library;", "module executable;"] {
         let source = format!("{mode}\nerror E {{ X; }}\nfn f() -> i32 {{ return 0 | 1; }}\n");
-        assert_eq!(codes(&source), ["Q034"], "for `{mode}`");
+        assert_eq!(codes(&source), ["Q038"], "for `{mode}`");
     }
 }
 
