@@ -852,7 +852,7 @@ fn synthesize_semantics(
 /// arm's contribution to one existing model, and each of those models already
 /// carries its own branch join — `OwnershipOp::Branch`, `ErrorOp::Branch`,
 /// `UsageExpr::Branch` and `Flow::join_branches` all predate this card.
-#[derive(Default)]
+#[derive(Clone, Default)]
 struct SequenceLowering {
     lowering: Vec<SourceOp>,
     ownership: Vec<OwnershipOp>,
@@ -1344,14 +1344,14 @@ impl FunctionLowering<'_> {
             ));
         };
         let condition_tokens = statement_tokens(self.parsed.source(), *condition_span)?;
-        let condition = parse_branch_condition(&condition_tokens).ok_or_else(|| {
+        let condition = parse_condition_tree(&condition_tokens).ok_or_else(|| {
             branch_diagnostic(
                 "Q045",
                 *condition_span,
-                "`source.branch.v1` admits `true`, `false` or a comparison of two signed \
-                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`) as a condition. \
-                 A name, a call, a connective (`||`, `&&`) or a parenthesised sub-condition \
-                 is outside the decidable tier",
+                "`source.branch.v1` admits `true`, `false` and comparisons of two signed \
+                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`), combined with \
+                 the connectives `&&` and `||` and grouped with parentheses, as a condition. \
+                 A name, a call, a pipeline or any other operator is outside the decidable tier",
             )
         })?;
 
@@ -1399,64 +1399,138 @@ impl FunctionLowering<'_> {
             reachable: then_counters.reachable || else_counters.reachable,
         };
 
-        // Each model's own branch join. All four predate this card: only
-        // `SourceOp::Branch` is new, because `cleanup_lowering` was the one
-        // linear IR with no branch constructor.
-        let joined_flow = then_output
-            .flow
-            .join_branches(&else_output.flow)
-            .map_err(|error| {
-                branch_diagnostic(
-                    "Q046",
-                    span,
-                    format!(
-                        "the arms of this branch do not join in the resource-flow model: {error}"
-                    ),
-                )
-            })?;
+        // Card `OR-AND-LOWERING`: a condition carrying `&&` or `||` is a *tree*
+        // of decidable leaves, and each connective becomes one more branch over
+        // the same two arms. The arms are lowered exactly once above and their
+        // operation vectors are duplicated structurally here, so a connective
+        // adds no statement to the program and no rule to any checker.
+        let node = build_connective_branch(span, &condition, &then_output, &else_output)?;
         output.flow = output
             .flow
-            .then(&joined_flow)
+            .then(&node.flow)
             .map_err(|error| diagnostic(SemanticPass::ResourceFlow, span, error.to_string()))?;
-        output.lowering.push(SourceOp::Branch {
-            condition,
-            then_arm: then_output.lowering,
-            else_arm: else_output.lowering,
-        });
-        output.ownership.push(OwnershipOp::Branch {
-            then_ops: then_output.ownership,
-            else_ops: else_output.ownership,
-        });
-        output.error_operations.push(ErrorOp::Branch {
-            then_ops: then_output.error_operations,
-            else_ops: else_output.error_operations,
-        });
-        // An arm admits no call, so every arm demand is a non-exiting one and
-        // the pair's flag is `false` for the joined node too.
-        if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
-            output.demands.push((
-                UsageExpr::Branch {
-                    condition: Box::new(UsageExpr::Unit),
-                    then_expression: Box::new(UsageExpr::Sequence(
-                        then_output
-                            .demands
-                            .into_iter()
-                            .map(|(expression, _)| expression)
-                            .collect(),
-                    )),
-                    else_expression: Box::new(UsageExpr::Sequence(
-                        else_output
-                            .demands
-                            .into_iter()
-                            .map(|(expression, _)| expression)
-                            .collect(),
-                    )),
-                },
-                false,
-            ));
-        }
+        output.lowering.extend(node.lowering);
+        output.ownership.extend(node.ownership);
+        output.error_operations.extend(node.error_operations);
+        output.demands.extend(node.demands);
         Ok(())
     }
+}
+
+/// `source.branch.v1`'s condition after card `OR-AND-LOWERING`: a tree of
+/// decidable leaves joined by the two short-circuit connectives.
+///
+/// The connectives exist **only** in this front-end tree. They are eliminated
+/// by [`build_connective_branch`] into nested [`SourceOp::Branch`] nodes before
+/// any checked model sees them, so `qcore_core` is byte-unchanged by this card
+/// and no checker learned a new rule.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum ConditionTree {
+    Leaf(BranchCondition),
+    /// `LEFT && RIGHT`, binding tighter than [`Self::Or`].
+    And(Box<ConditionTree>, Box<ConditionTree>),
+    /// `LEFT || RIGHT`.
+    Or(Box<ConditionTree>, Box<ConditionTree>),
+}
+
+/// Turn one condition tree into the nested branch a reader would have written
+/// by hand, over the two arms `then_output` and `else_output`.
+///
+/// The two rewrites are the textbook short-circuit ones, and the *reason* they
+/// are short-circuit here is structural rather than asserted: the right operand
+/// is a condition of a branch that sits **inside** an arm of the left operand's
+/// branch, so it is evaluated on exactly one of the two paths.
+///
+/// ```text
+/// if (A || B) T else E   ==>   if (A) { T } else { if (B) { T } else { E } }
+/// if (A && B) T else E   ==>   if (A) { if (B) { T } else { E } } else { E }
+/// ```
+///
+/// Every level runs the same four-model join the single-leaf case runs, so a
+/// connective cannot smuggle a custody disagreement past the gate: an arm pair
+/// that refuses at `Q046` unconnected refuses at every level connected.
+fn build_connective_branch(
+    span: Span,
+    condition: &ConditionTree,
+    then_output: &SequenceLowering,
+    else_output: &SequenceLowering,
+) -> Result<SequenceLowering, SourceDiagnostic> {
+    match condition {
+        ConditionTree::Leaf(leaf) => join_branch_arms(span, *leaf, then_output, else_output),
+        ConditionTree::And(left, right) => {
+            let inner = build_connective_branch(span, right, then_output, else_output)?;
+            build_connective_branch(span, left, &inner, else_output)
+        }
+        ConditionTree::Or(left, right) => {
+            let inner = build_connective_branch(span, right, then_output, else_output)?;
+            build_connective_branch(span, left, then_output, &inner)
+        }
+    }
+}
+
+/// One branch node: the four-model join card `IF-STATEMENT` landed, factored
+/// out so each connective level runs it identically.
+fn join_branch_arms(
+    span: Span,
+    condition: BranchCondition,
+    then_output: &SequenceLowering,
+    else_output: &SequenceLowering,
+) -> Result<SequenceLowering, SourceDiagnostic> {
+    // Each model's own branch join. All four predate card `IF-STATEMENT`: only
+    // `SourceOp::Branch` is new, because `cleanup_lowering` was the one
+    // linear IR with no branch constructor.
+    let flow = then_output
+        .flow
+        .join_branches(&else_output.flow)
+        .map_err(|error| {
+            branch_diagnostic(
+                "Q046",
+                span,
+                format!("the arms of this branch do not join in the resource-flow model: {error}"),
+            )
+        })?;
+    let mut node = SequenceLowering {
+        flow,
+        ..SequenceLowering::default()
+    };
+    node.lowering.push(SourceOp::Branch {
+        condition,
+        then_arm: then_output.lowering.clone(),
+        else_arm: else_output.lowering.clone(),
+    });
+    node.ownership.push(OwnershipOp::Branch {
+        then_ops: then_output.ownership.clone(),
+        else_ops: else_output.ownership.clone(),
+    });
+    node.error_operations.push(ErrorOp::Branch {
+        then_ops: then_output.error_operations.clone(),
+        else_ops: else_output.error_operations.clone(),
+    });
+    // An arm admits no call, so every arm demand is a non-exiting one and
+    // the pair's flag is `false` for the joined node too.
+    if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
+        node.demands.push((
+            UsageExpr::Branch {
+                condition: Box::new(UsageExpr::Unit),
+                then_expression: Box::new(UsageExpr::Sequence(
+                    then_output
+                        .demands
+                        .iter()
+                        .map(|(expression, _)| expression.clone())
+                        .collect(),
+                )),
+                else_expression: Box::new(UsageExpr::Sequence(
+                    else_output
+                        .demands
+                        .iter()
+                        .map(|(expression, _)| expression.clone())
+                        .collect(),
+                )),
+            },
+            false,
+        ));
+    }
+    Ok(node)
 }
 
 /// Present a cleanup-lowering refusal, routing the two conditions card
@@ -1517,19 +1591,83 @@ fn branch_diagnostic(
     }
 }
 
-/// `source.branch.v1`'s decidable condition tier: `true`, `false`, or a
-/// comparison of two signed 32-bit integer literals. Deliberately closed and
-/// deliberately without connectives — `||` and `&&` lower *onto* this
-/// construct in a later card rather than extending this grammar.
-fn parse_branch_condition(tokens: &[Token]) -> Option<BranchCondition> {
+/// `source.branch.v1`'s decidable condition tier.
+///
+/// Card `IF-STATEMENT` admitted a single leaf — `true`, `false`, or a
+/// comparison of two signed 32-bit integer literals. Card `OR-AND-LOWERING`
+/// widens that to a **connective tree** over the same leaves:
+///
+/// ```ebnf
+/// cond    = disjunct , { "||" , disjunct } ;      (* left-associative *)
+/// disjunct= primary  , { "&&" , primary  } ;      (* binds tighter    *)
+/// primary = "(" , cond , ")" | leaf ;
+/// leaf    = "true" | "false" | operand , cmp , operand ;
+/// ```
+///
+/// **Precedence is declared, not inherited from a parser accident:** `&&`
+/// binds tighter than `||`, so `A || B && C` is `A || (B && C)`, and both are
+/// left-associative. Parentheses group. There is no unary negation and no other
+/// operator: `|>`, `!`, `|`, `&` and `^` are all outside the tier, so a
+/// condition mixing a pipeline with a connective has no precedence to declare —
+/// it is refused (`Q045`) rather than given one.
+///
+/// The tier stays **decidable**: every leaf is closed over literals, so
+/// evaluation is state-free and the translation certificate still compares one
+/// reference, one CFG and one native observation (`IF-RUNTIME-CONDITION`).
+fn parse_condition_tree(tokens: &[Token]) -> Option<ConditionTree> {
+    let (tree, rest) = parse_disjunction(tokens)?;
+    rest.is_empty().then_some(tree)
+}
+
+fn parse_disjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    let (mut left, mut rest) = parse_conjunction(tokens)?;
+    while let Some(after) = eat_symbol(rest, Symbol::PipePipe) {
+        let (right, next) = parse_conjunction(after)?;
+        left = ConditionTree::Or(Box::new(left), Box::new(right));
+        rest = next;
+    }
+    Some((left, rest))
+}
+
+fn parse_conjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    let (mut left, mut rest) = parse_condition_primary(tokens)?;
+    while let Some(after) = eat_symbol(rest, Symbol::AndAnd) {
+        let (right, next) = parse_condition_primary(after)?;
+        left = ConditionTree::And(Box::new(left), Box::new(right));
+        rest = next;
+    }
+    Some((left, rest))
+}
+
+fn parse_condition_primary(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    if let Some(inner) = eat_symbol(tokens, Symbol::LeftParen) {
+        let (tree, rest) = parse_disjunction(inner)?;
+        return Some((tree, eat_symbol(rest, Symbol::RightParen)?));
+    }
+    let (leaf, rest) = parse_condition_leaf(tokens)?;
+    Some((ConditionTree::Leaf(leaf), rest))
+}
+
+fn eat_symbol(tokens: &[Token], symbol: Symbol) -> Option<&[Token]> {
+    match tokens.first()?.kind {
+        TokenKind::Symbol(found) if found == symbol => Some(&tokens[1..]),
+        _ => None,
+    }
+}
+
+/// One decidable leaf. Byte-for-byte the tier card `IF-STATEMENT` shipped,
+/// re-expressed to hand back its unconsumed tail so a connective can follow.
+fn parse_condition_leaf(tokens: &[Token]) -> Option<(BranchCondition, &[Token])> {
     if let [
         Token {
             kind: TokenKind::Word(word),
             ..
         },
+        rest @ ..,
     ] = tokens
+        && let Some(value) = parse_bool(word)
     {
-        return parse_bool(word).map(BranchCondition::Literal);
+        return Some((BranchCondition::Literal(value), rest));
     }
     let (left, rest) = parse_condition_operand(tokens)?;
     let (operator, rest) = match rest.first()?.kind {
@@ -1542,14 +1680,14 @@ fn parse_branch_condition(tokens: &[Token]) -> Option<BranchCondition> {
         _ => return None,
     };
     let (right, rest) = parse_condition_operand(rest)?;
-    if !rest.is_empty() {
-        return None;
-    }
-    Some(BranchCondition::Compare {
-        left,
-        operator,
-        right,
-    })
+    Some((
+        BranchCondition::Compare {
+            left,
+            operator,
+            right,
+        },
+        rest,
+    ))
 }
 
 fn parse_condition_operand(tokens: &[Token]) -> Option<(i32, &[Token])> {

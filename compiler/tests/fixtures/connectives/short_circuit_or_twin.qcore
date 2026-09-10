@@ -1,0 +1,28 @@
+error Failure { Failed; }
+
+// The hand-lowered twin of `short_circuit_or.qcore`: the branch a reader would
+// have written having done the or-lowering themselves. Unlike card
+// `IF-STATEMENT`'s `unbranched_twin.qcore`, this one is expected to emit
+// **byte-identical** C — that equality is the card's load-bearing pin, and it
+// is what makes "the connective is a desugaring" a measurement rather than a
+// claim.
+//
+// The comment block above is padded to the same line count as the fixture's so
+// the two `#line` directives agree; the emission pin compares C bytes, and a
+// `#line` is part of them.
+//
+// (padding line)
+// (padding line)
+// (padding line)
+// (padding line)
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+    } else if (2 == 2) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

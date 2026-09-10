@@ -441,10 +441,18 @@ fn the_argument_order_of_a_call_stage_is_the_declared_one() {
     );
 }
 
-// --- 5. The claimed logical operators. ---
+// --- 5. The operator gate, as retabled by card `OR-AND-LOWERING`. ---
+//
+// These four tests are card `PIPE-OPERATOR`'s, kept in place and moved
+// deliberately. That card decided logical or was the single `|` and refused
+// `||` as a misspelling of it; the user's retable amendment inverts the pair,
+// so the *claims* these tests make are rewritten rather than relaxed. The
+// invariant that survives untouched is the one that mattered: every one of
+// these four programs was refused before and is refused now, at the same code.
+// Where the connectives are now *admitted* is `compiler/tests/logical_connectives.rs`.
 
 #[test]
-fn the_logical_or_operator_refuses_with_its_measured_blocker() {
+fn the_single_bar_is_reserved_for_bitwise_or() {
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
@@ -452,16 +460,16 @@ fn the_logical_or_operator_refuses_with_its_measured_blocker() {
     );
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
-    assert!(message.contains("`|` is the logical-or operator"));
-    assert!(message.contains("OR-LOWERING"));
+    assert!(message.contains("`|` is reserved"));
     assert!(
-        message.contains("Q500"),
-        "the message must name the measured blocker"
+        message.contains("`||`"),
+        "the message must redirect to the spelling that is logical or"
     );
+    assert!(message.contains("BITWISE-OPERATORS"));
 }
 
 #[test]
-fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
+fn the_double_bar_outside_a_condition_names_the_only_position_it_is_admitted_in() {
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
@@ -470,13 +478,18 @@ fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
     assert_eq!(
         codes(&source),
         ["Q038"],
-        "one mistake must produce one diagnostic, not two"
+        "`||` is one token, so one mistake produces one diagnostic"
     );
-    assert!(messages(&source)[0].contains("not `||`"));
+    let message = &messages(&source)[0];
+    assert!(message.contains("`||` is the logical-or operator"));
+    assert!(
+        message.contains("`if` condition"),
+        "the message must name the position where the operator is admitted"
+    );
 }
 
 #[test]
-fn the_logical_and_operator_refuses_and_redirects_the_single_ampersand() {
+fn the_double_ampersand_outside_a_condition_refuses_the_same_way() {
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
@@ -485,29 +498,29 @@ fn the_logical_and_operator_refuses_and_redirects_the_single_ampersand() {
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
     assert!(message.contains("`&&` is the logical-and operator"));
-    assert!(message.contains("AND-LOWERING"));
-    assert!(
-        message.contains("single `&` is deliberately reserved"),
-        "a C-family programmer must be redirected in both directions"
-    );
+    assert!(message.contains("`if` condition"));
 }
 
 #[test]
 fn a_single_ampersand_gains_no_new_meaning() {
-    // `&` lexes exactly as it did before this card and is consumed by nothing,
-    // so a program containing one still refuses — and never at `Q038`, which
-    // would mean this card had claimed it.
+    // `&` is consumed by no grammar and is reserved for bitwise and. Card
+    // `PIPE-OPERATOR` asserted its refusal was never at `Q038`, because a
+    // `Q038` would have meant that card had claimed it; the retable moves it
+    // *to* `Q038` deliberately, because the reservation is now stated rather
+    // than left implicit. The load-bearing half is unchanged and re-asserted:
+    // a lone `&` still refuses, and it is still not logical and.
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
         "print dec total & mask;",
     );
-    let codes = codes(&source);
+    assert_eq!(codes(&source), ["Q038"]);
+    let message = &messages(&source)[0];
+    assert!(message.contains("`&` is reserved"));
     assert!(
-        !codes.contains(&"Q038".to_owned()),
-        "a lone `&` must stay reserved, not claimed: {codes:?}"
+        message.contains("`&&`"),
+        "the message must redirect to the spelling that is logical and"
     );
-    assert!(!codes.is_empty(), "and it must still refuse");
 }
 
 #[test]

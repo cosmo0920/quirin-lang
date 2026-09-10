@@ -47,12 +47,18 @@ inductive Kind where
   | rparen
   | comma
   | semi
-  /-- `|`, the logical-or operator: claimed as a token, never lowered. -/
+  /-- `|`, **reserved** for a future bitwise or (card `OR-AND-LOWERING`). -/
   | bar
-  /-- `&&`, the logical-and operator: claimed as a token, never lowered. -/
+  /-- `||`, the logical-**or** operator: one token, admitted in an `if`
+  condition and lowered there (`QCore.Connectives`). -/
+  | barBar
+  /-- `&&`, the logical-**and** operator, on the same terms. -/
   | andAnd
-  /-- `&`, left with exactly the meaning it had before this card. -/
+  /-- `&`, **reserved** for a future bitwise and. -/
   | amp
+  /-- `^`, **reserved** for a future bitwise xor. Card `OR-AND-LOWERING`
+  promotes it from a lexer error to a token that refuses at the gate. -/
+  | caret
   deriving DecidableEq, Repr
 
 /-- A token, with the byte the reader wrote it at. A `synthesized` token has no
@@ -931,64 +937,104 @@ theorem a_rewritten_chain_contains_no_pipe :
       (written Kind.semi 40) 0).all (fun out => !hasPipe out) = true := by
   rfl
 
-/-! ## 6. The claimed logical operators
+/-! ## 6. The operator gate
 
-`|` and `&&` are lexed as tokens by this card so a later wave inherits them
-without a collision, and every occurrence refuses. Nothing here says what they
-would *mean*; the lowering is named follow-on `OR-LOWERING` / `AND-LOWERING`,
-blocked on the measured absence of any branch construct in the executable
-subset. -/
+**Retabled by card `OR-AND-LOWERING`, superseding card `PIPE-OPERATOR`'s
+decision by explicit user direction.** Wave 18 claimed the single `|` as
+logical or and refused `||` as a misspelling of it, holding `&` for binary use;
+the retable makes **both** logical operators double-character (`||` and `&&`)
+and frees **all three** single characters (`|`, `&`, `^`) for a future bitwise
+wave. That also answers wave 18's open note — bitwise or had no spelling left —
+by giving it `|` back.
 
-/-- Whether a token stream contains a claimed-but-unlowered logical operator. -/
-def hasClaimedOperator (ts : List Token) : Bool :=
-  ts.any (fun t => t.kind = Kind.bar || t.kind = Kind.andAnd)
+The gate decides *where* each operator may appear, and nothing else:
 
-/-- A stream is admitted only when it contains neither claimed operator. -/
-def operatorsAdmit (ts : List Token) : Bool := !hasClaimedOperator ts
+* the three reserved characters have no meaning anywhere, so they refuse
+  everywhere, inside a condition as well as outside one;
+* the two connectives are admitted **only in an `if` condition**, which is the
+  only position `source.branch.v1` can lower them in (`QCore.Connectives`) and
+  the only position where anything could hold a Boolean value.
 
-theorem the_or_operator_refuses (o : Nat) (before after : List Token) :
-    operatorsAdmit (before ++ [written Kind.bar o] ++ after) = false := by
-  simp [operatorsAdmit, hasClaimedOperator, written, List.any_append]
+What a well-formed connective *means* is not this section's business: that is
+`QCore.Connectives`. -/
 
-theorem the_and_operator_refuses (o : Nat) (before after : List Token) :
-    operatorsAdmit (before ++ [written Kind.andAnd o] ++ after) = false := by
-  simp [operatorsAdmit, hasClaimedOperator, written, List.any_append]
+/-- The three characters held for a future bitwise operation. -/
+def reserved (k : Kind) : Bool :=
+  k = Kind.bar || k = Kind.amp || k = Kind.caret
 
-/-- `||` is two `|` tokens and refuses for the same reason — it is not a
-distinct operator, which is exactly what the diagnostic tells the reader. -/
-theorem the_double_bar_refuses (o p : Nat) (before after : List Token) :
-    operatorsAdmit (before ++ [written Kind.bar o, written Kind.bar p] ++ after)
-      = false := by
-  simp [operatorsAdmit, hasClaimedOperator, written, List.any_append]
+/-- The two logical connectives. -/
+def connective (k : Kind) : Bool :=
+  k = Kind.barBar || k = Kind.andAnd
 
-/-- **The single ampersand gains no new meaning.** A stream whose only
-ampersand is a lone `&` is not refused *by this card*; it keeps whatever fate it
-had before, which is the reservation the future binary/bitwise wave inherits. -/
-theorem a_single_ampersand_is_not_claimed (o : Nat) :
-    operatorsAdmit [written Kind.amp o] = true := by
+/-- No spelling is both, so the retable partitions the family rather than
+overlapping it. -/
+theorem reserved_and_connective_are_disjoint (k : Kind) :
+    reserved k = false ∨ connective k = false := by
+  cases k <;> simp [reserved, connective]
+
+/-- The gate, given a predicate saying which tokens the parser recorded as
+lying inside an `if` condition. A reserved character refuses regardless; a
+connective refuses exactly outside a condition. -/
+def gateAdmits (inCondition : Token → Bool) (ts : List Token) : Bool :=
+  ts.all (fun t => !reserved t.kind && (!connective t.kind || inCondition t))
+
+/-- A reserved character refuses wherever it appears — including inside a
+condition, where the connectives *are* admitted. -/
+theorem a_reserved_character_refuses_everywhere
+    (k : Kind) (hk : reserved k = true) (inCondition : Token → Bool)
+    (o : Nat) (before after : List Token) :
+    gateAdmits inCondition (before ++ [written k o] ++ after) = false := by
+  simp [gateAdmits, written, List.all_append, hk]
+
+theorem the_single_bar_is_reserved : reserved Kind.bar = true := rfl
+theorem the_single_ampersand_is_reserved : reserved Kind.amp = true := rfl
+theorem the_caret_is_reserved : reserved Kind.caret = true := rfl
+
+/-- A connective outside a condition refuses. This is the whole of what the
+gate says about `||` and `&&`; the tier decides the rest. -/
+theorem a_connective_outside_a_condition_refuses
+    (k : Kind) (hk : connective k = true) (o : Nat) (before after : List Token) :
+    gateAdmits (fun _ => false) (before ++ [written k o] ++ after) = false := by
+  have hr : reserved k = false := by
+    cases k <;> simp_all [reserved, connective]
+  simp [gateAdmits, written, List.all_append, hk, hr]
+
+/-- …and inside one it is admitted, which is what makes the theorem above a
+statement about *position* rather than a second refusal. -/
+theorem a_connective_inside_a_condition_is_admitted (o p : Nat) :
+    gateAdmits (fun _ => true) [written Kind.barBar o, written Kind.andAnd p]
+      = true := by
   rfl
 
-/-- The asymmetry, stated as a theorem so it cannot drift: or is the single
-`|` and and is the double `&&`. Both claimed spellings refuse; the single `&`
-does not, and the `|>` pipe is not a logical operator at all. -/
+/-- The retabled family, stated as one theorem so it cannot drift: `|`, `&` and
+`^` are reserved and refuse even in a condition; `||` and `&&` are admitted in a
+condition and refused outside one; `|>` is not a logical operator at all and is
+untouched by the gate. -/
 theorem the_operator_family_is_exactly_as_declared :
-    operatorsAdmit [written Kind.bar 0] = false ∧
-    operatorsAdmit [written Kind.andAnd 0] = false ∧
-    operatorsAdmit [written Kind.amp 0] = true ∧
-    operatorsAdmit [written Kind.pipeInto 0] = true := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+    gateAdmits (fun _ => true) [written Kind.bar 0] = false ∧
+    gateAdmits (fun _ => true) [written Kind.amp 0] = false ∧
+    gateAdmits (fun _ => true) [written Kind.caret 0] = false ∧
+    gateAdmits (fun _ => false) [written Kind.barBar 0] = false ∧
+    gateAdmits (fun _ => false) [written Kind.andAnd 0] = false ∧
+    gateAdmits (fun _ => true) [written Kind.barBar 0] = true ∧
+    gateAdmits (fun _ => true) [written Kind.andAnd 0] = true ∧
+    gateAdmits (fun _ => false) [written Kind.pipeInto 0] = true := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ## 7. Tokenization: longest match at width two
 
 The lexer tries every two-byte spelling before every one-byte spelling. The
-vertical-bar family is four pairwise-distinct byte pairs, so the resolution is
-decided by width alone and the order inside the table is immaterial. -/
+vertical-bar family is pairwise-distinct byte pairs (or single bytes), so the
+resolution is decided by width alone and the order inside the table is
+immaterial. -/
 
-/-- The two-byte spellings, as the lexer's table. -/
+/-- The two-byte spellings, as the lexer's table. `"||"` is card
+`OR-AND-LOWERING`'s addition: logical or is one token now, not two. -/
 def twoByte : String → Option Kind
   | "[|" => some (Kind.atom "quantOpen")
   | "|]" => some (Kind.atom "quantClose")
   | "|>" => some Kind.pipeInto
+  | "||" => some Kind.barBar
   | "&&" => some Kind.andAnd
   | _ => none
 
@@ -996,6 +1042,7 @@ def twoByte : String → Option Kind
 def oneByte : String → Option Kind
   | "|" => some Kind.bar
   | "&" => some Kind.amp
+  | "^" => some Kind.caret
   | ">" => some (Kind.atom "greater")
   | "[" => some (Kind.atom "lbracket")
   | "]" => some (Kind.atom "rbracket")
@@ -1007,18 +1054,25 @@ def lexStep (pair one : String) : Option Kind :=
   | some k => some k
   | none => oneByte one
 
-/-- `[|` is matched at the `[`, so `[|>` can never become `[` then `|>`. The
-quant-index delimiters are untouched by this card. -/
+/-- `[|` is matched at the `[`, so `[|>` can never become `[` then `|>`, and
+`[||]` is the two delimiters rather than an or-operator. The quant-index
+delimiters are untouched by the retable — the one place it could have reached a
+shipped program. -/
 theorem the_quant_delimiters_are_untouched :
     lexStep "[|" "[" = some (Kind.atom "quantOpen") ∧
     lexStep "|]" "|" = some (Kind.atom "quantClose") := by
   exact ⟨rfl, rfl⟩
 
-/-- `|>` wins over `|` followed by `>`. This is the resolution a future
-or-operator must live with, recorded now rather than discovered later: an
-or-operator followed by a `>` comparison is written spaced or parenthesized. -/
+/-- `|>` wins over `||` and over `|` followed by `>`. The ambiguity wave 18
+recorded therefore now constrains the *bitwise* wave rather than the logical-or
+one: `|| >` is unambiguous, a bitwise `| >` must be spaced. -/
 theorem the_pipe_wins_by_longest_match :
     lexStep "|>" "|" = some Kind.pipeInto ∧ lexStep "| " "|" = some Kind.bar := by
+  exact ⟨rfl, rfl⟩
+
+/-- `||` wins over two `|`, and a lone `|` still lexes to the reserved token. -/
+theorem the_or_wins_by_longest_match :
+    lexStep "||" "|" = some Kind.barBar ∧ lexStep "| " "|" = some Kind.bar := by
   exact ⟨rfl, rfl⟩
 
 /-- `&&` wins over two `&`, and a lone `&` still lexes to the reserved token. -/
@@ -1030,13 +1084,27 @@ theorem the_and_wins_by_longest_match :
 the table is total on its domain and injective, so no spelling is ambiguous. -/
 theorem the_two_byte_table_is_injective :
     twoByte "[|" ≠ twoByte "|>" ∧ twoByte "|]" ≠ twoByte "|>" ∧
-    twoByte "&&" ≠ twoByte "|>" ∧ twoByte "[|" ≠ twoByte "|]" := by
-  refine ⟨by decide, by decide, by decide, by decide⟩
+    twoByte "&&" ≠ twoByte "|>" ∧ twoByte "[|" ≠ twoByte "|]" ∧
+    twoByte "||" ≠ twoByte "|>" ∧ twoByte "||" ≠ twoByte "&&" ∧
+    twoByte "||" ≠ twoByte "[|" ∧ twoByte "||" ≠ twoByte "|]" := by
+  refine ⟨by decide, by decide, by decide, by decide, by decide, by decide,
+    by decide, by decide⟩
 
 /-- A byte pair outside the table falls through to the one-byte spelling, which
-is what keeps `&&&` decided: `&&` then `&`. -/
+is what keeps a run of three decided: `&&` then `&`, and `||` then `|`. -/
 theorem three_ampersands_are_and_then_reserved :
     lexStep "&&" "&" = some Kind.andAnd ∧ lexStep "&" "&" = some Kind.amp := by
+  exact ⟨rfl, rfl⟩
+
+theorem three_bars_are_or_then_reserved :
+    lexStep "||" "|" = some Kind.barBar ∧ lexStep "|" "|" = some Kind.bar := by
+  exact ⟨rfl, rfl⟩
+
+/-- The caret has no two-byte spelling, so it never absorbs a neighbour. It was
+an `unexpected character` lexer error before card `OR-AND-LOWERING`; promoting
+it to a token moved the layer and the message, never the verdict. -/
+theorem the_caret_never_absorbs_a_neighbour :
+    lexStep "^^" "^" = some Kind.caret ∧ lexStep "^ " "^" = some Kind.caret := by
   exact ⟨rfl, rfl⟩
 
 end QCore.PipeDesugaring
