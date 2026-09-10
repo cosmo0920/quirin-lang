@@ -70,7 +70,7 @@ import QCore.Bitwise
 #print axioms QCore.Bitwise.a_conditional_leak_refuses_through_a_negation
 #print axioms QCore.Bitwise.moving_in_one_arm_and_releasing_in_the_other_refuses_through_a_negation
 #print axioms QCore.Bitwise.agreeing_arms_are_admitted_through_a_negation
-#print axioms QCore.Bitwise.a_return_in_an_arm_refuses_through_a_negation
+#print axioms QCore.Bitwise.a_return_in_an_arm_is_admitted_through_a_negation
 #print axioms QCore.Bitwise.refused_negation_shapes_are_exactly_these
 
 -- 8. The declared rankings, and the rule for declaring one: **a precedence is

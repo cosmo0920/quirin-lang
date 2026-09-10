@@ -440,15 +440,22 @@ theorem agreeing_arms_are_admitted_through_a_negation :
             (.cons (.drop 1) .nil))
             (.cons (.ret 0) .nil)))).isOk = true := rfl
 
-/-- A `return` inside an arm is still refused through a negation: the arm subset
-is card `IF-ARMS`' to widen, and this card does not. -/
-theorem a_return_in_an_arm_refuses_through_a_negation :
-    validate
+/-- A `return` inside an arm reached through a negation is admitted exactly as
+one written without it: the negation is eliminated by the arm swap before any
+model runs, so the model-level term is a branch with a returning arm, which
+card `IF-ARMS` admits (join over survivors). Composition pin-move at
+integration: this theorem stated the refusal while the arm subset excluded
+`return`; the subset widened, and the same term now validates. -/
+theorem a_return_in_an_arm_is_admitted_through_a_negation :
+    (validate
         (.cons (lower (.not (.leaf (.lit true))) (.cons (.ret 1) .nil) .nil)
-          (.cons (.ret 0) .nil)) = .error .returnInBranchArm := rfl
+          (.cons (.ret 0) .nil))).isOk = true := rfl
 
 /-- The refusal surface as **one list**, so a future widening has to change a
-theorem rather than slip past one. -/
+theorem rather than slip past one. Card `IF-ARMS` did exactly that at
+integration: the third shape this list carried (`.ret` in an arm, then
+`.returnInBranchArm`) moved to the admission above, so the list holds the two
+join disagreements that remain refused. -/
 theorem refused_negation_shapes_are_exactly_these :
     validate
         (.cons (.acquire 1 true)
@@ -458,11 +465,8 @@ theorem refused_negation_shapes_are_exactly_these :
         (.cons (.acquire 1 true)
           (.cons (lower (.not (.leaf (.lit false))) (.cons (.drop 1) .nil)
             (.cons (.transfer 1) .nil))
-            (.cons (.ret 0) .nil))) = .error .armsDisagree ∧
-    validate
-        (.cons (lower (.not (.leaf (.lit true))) (.cons (.ret 1) .nil) .nil)
-          (.cons (.ret 0) .nil)) = .error .returnInBranchArm :=
-  ⟨rfl, rfl, rfl⟩
+            (.cons (.ret 0) .nil))) = .error .armsDisagree :=
+  ⟨rfl, rfl⟩
 
 /-! ## 4. Precedence, and the two refusals that are the card's decision
 

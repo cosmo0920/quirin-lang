@@ -1194,17 +1194,16 @@ impl FunctionLowering<'_> {
                     // Card `BITWISE-CONDITIONS`: a check-time constant integer
                     // binding, the decidable subset of `IF-CONDITION-BINDINGS`.
                     // Tried **after** `qcore_acquire` cannot match, and only at
-                    // the top level of an entry body: widening the branch arm
-                    // subset belongs to card `IF-ARMS`, so an arm keeps the
-                    // refusal it already had.
+                    // the top level of an entry body: an arm-local binding has
+                    // no position after the join, so an arm (or a continuation
+                    // hoisted into one, card `IF-ARMS`) keeps the refusal.
                     if let Some(value) = parse_constant_binding(&tokens) {
-                        if !top_level {
+                        if position.conditional() {
                             return Err(branch_diagnostic(
                                 "Q044",
                                 statement.span,
                                 "`source.branch.v1` admits no `let` inside a branch arm: an \
-                                 arm-local binding has no position after the join, and \
-                                 widening the arm subset is follow-on `IF-ARMS`",
+                                 arm-local binding has no position after the join",
                             ));
                         }
                         self.constants.insert(binding.clone(), value);
