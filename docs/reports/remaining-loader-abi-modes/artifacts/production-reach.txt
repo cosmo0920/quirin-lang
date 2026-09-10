@@ -1,0 +1,15 @@
+census rows, de-duplicated by (unit base name, contracted name):
+  disagreed    113
+  no-summary   484
+  undefined    598
+of those, inside the pinned audit's analysed function set:
+  no-summary   8
+the production-reachable rows, named:
+    cio_chunk.c	cio_chunk_close	no-summary
+    cio_chunk.c	cio_chunk_down	no-summary
+    cio_chunk.c	cio_chunk_is_up	no-summary
+    cio_chunk.c	cio_chunk_open	no-summary
+    cio_chunk.c	cio_chunk_up_force	no-summary
+    flb_input_chunk.c	flb_input_chunk_get_name	no-summary
+    flb_input_chunk.c	generate_chunk_name	no-summary
+    flb_input_chunk.c	input_chunk_write_header	no-summary

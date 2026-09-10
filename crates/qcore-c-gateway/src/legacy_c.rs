@@ -29,6 +29,13 @@ pub mod declared_abi;
 
 pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_census};
 
+#[path = "legacy_declared_modes.rs"]
+pub mod declared_modes;
+
+pub use declared_modes::{
+    ModeAgreementRow, ModeOutcome, ModeRefusal, declared_mode_census, mode_contradiction,
+};
+
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 use std::io::Write;
@@ -44,7 +51,12 @@ pub use qcore_schemas::contract::{
 
 use crate::aggregate_store::AggregateStoreBases;
 use crate::borrowed_actual::UntrackedBases;
-use crate::legacy_summary::{CustodyDerivation, derive_custody_summaries};
+// Card LOADER-ABI-MODES: every derivation this crate performs now runs inside
+// `declared_modes::ModeGate`, which is why `derive_custody_summaries` is no
+// longer named here. The gate settles the withdrawn set and hands back the
+// derivation it settled on, so there is exactly one derivation per unit in the
+// common case and no route that derives without the mode comparison.
+use crate::legacy_summary::CustodyDerivation;
 use crate::neutral_position::ExpressionRole;
 pub use crate::publication::{IndirectPublication, PublicationFacts};
 use crate::typed_field_access::{FunctionTypes, TypedAccessModel};
@@ -931,6 +943,14 @@ fn analyze_legacy_c_tokens(
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
     let withdrawn_tokens = agreement.withdraw_call_sites(tokens);
     let tokens = withdrawn_tokens.as_deref().unwrap_or(tokens);
+    // Card LOADER-ABI-MODES, applied here for the same uniformity reason: this
+    // entry point does not pass through the translation-unit pass, so a
+    // declaration a body in the same stream contradicts would otherwise still
+    // govern this function's call sites. The definitions are read with no
+    // conditional marks because this entry's own stream carries none.
+    let names = function_names(tokens, &[]).definitions;
+    let gate = declared_modes::ModeGate::apply(tokens, &names, contracts);
+    let tokens = gate.tokens.as_deref().unwrap_or(tokens);
     Ok(analyze_cfg(build_function_cfg(
         tokens, function, contracts,
     )?))
@@ -1334,7 +1354,12 @@ pub(crate) fn recursive_component_census(
         let selected = selected.iter().collect::<BTreeSet<_>>();
         names.retain(|name| selected.contains(name));
     }
-    derive_custody_summaries(&tokens, &names, contracts).census()
+    // Card LOADER-ABI-MODES, for the same reason the type gate runs here: the
+    // census must read the components the analysis reads, over the stream the
+    // analysis reads.
+    declared_modes::ModeGate::apply(&tokens, &names, contracts)
+        .derivation
+        .census()
 }
 
 pub(crate) struct PartialTranslationUnitAnalysis {
@@ -1386,7 +1411,20 @@ fn analyze_legacy_c_translation_unit_selected_partial(
     // through such a contract or through an inferred summary that this pass
     // validated by re-running the intraprocedural analyzer against it (W4).
     // Everything else stays an uncontracted call and therefore `Unknown`.
-    let derivation = derive_custody_summaries(&tokens, &names, contracts);
+    // Card LOADER-ABI-MODES. LOADER-ABI compared the declared *types* against
+    // this unit's C declaration; this gate compares the declared *modes*
+    // against the validated summary W4 derives from the function's own body
+    // here. A measured contradiction — a declared `Borrowed` the body releases,
+    // a declared `Released` the body never performs, a declared absent result
+    // the body produces — withdraws the declaration's application at every call
+    // site in this unit. The environment is deliberately left alone: it is what
+    // makes the derivation record the `SummaryConflict` that already keeps the
+    // defining function `Unknown`, so keeping it is strictly more refusing.
+    // The gate hands back the derivation it settled on, so a unit with no
+    // contradiction derives exactly once, as before this card.
+    let gate = declared_modes::ModeGate::apply(&tokens, &names, contracts);
+    let tokens = gate.tokens.unwrap_or(tokens);
+    let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
     for name in names {
@@ -2061,7 +2099,7 @@ pub(crate) fn tokenize_with_conditionals(source: &str) -> (Vec<Token>, Vec<Condi
     (tokens, conditionals)
 }
 
-fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
+pub(crate) fn find_function_body(tokens: &[Token], function: &str) -> Option<(usize, usize)> {
     for (index, token) in tokens.iter().enumerate() {
         if token.text != function || tokens.get(index + 1).map(|t| t.text.as_str()) != Some("(") {
             continue;
@@ -2448,7 +2486,7 @@ pub(crate) fn direct_calls(
     called
 }
 
-fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<usize> {
+pub(crate) fn matching(tokens: &[Token], start: usize, open: &str, close: &str) -> Option<usize> {
     let mut depth = 0usize;
     for (index, token) in tokens.iter().enumerate().skip(start) {
         if token.text == open {
@@ -3359,6 +3397,20 @@ impl Parser<'_> {
                 ),
             };
         }
+        // Card LOADER-ABI-MODES, in the same position and for the same reason:
+        // a declaration the callee's own body contradicts is the informative
+        // attribution.
+        if let Some((refusal, callee)) =
+            find_call(&texts).and_then(|(_, function)| declared_modes::withdrawn_callee(function))
+        {
+            return LegacyInstruction::Unknown {
+                description: format!(
+                    "call to `{callee}` whose declared contract was withdrawn against the \
+                     summary derived from its body in this translation unit ({})",
+                    refusal.as_str()
+                ),
+            };
+        }
         if unsupported_access {
             return LegacyInstruction::Unknown {
                 description: "indirect memory access is outside the resource projection".into(),
@@ -3649,6 +3701,19 @@ impl Parser<'_> {
                     description: format!(
                         "call to `{callee}` whose declared contract was withdrawn against its C \
                          declaration in this translation unit ({})",
+                        refusal.as_str()
+                    ),
+                };
+            }
+            // Card LOADER-ABI-MODES: likewise for a declaration the callee's
+            // own body in this unit contradicts. The two withdrawals carry
+            // distinct wordings so a report can tell a signature disagreement
+            // from a custody-duty contradiction.
+            if let Some((refusal, callee)) = declared_modes::withdrawn_callee(function) {
+                return LegacyInstruction::Unknown {
+                    description: format!(
+                        "call to `{callee}` whose declared contract was withdrawn against the \
+                         summary derived from its body in this translation unit ({})",
                         refusal.as_str()
                     ),
                 };

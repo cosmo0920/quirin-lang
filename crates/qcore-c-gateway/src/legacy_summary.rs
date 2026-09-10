@@ -177,6 +177,17 @@ impl CustodyDerivation {
         self.environment.contract(function)
     }
 
+    /// The validated summary this derivation read off `function`'s own body,
+    /// whether or not a declared contract overrode it.
+    ///
+    /// Card **LOADER-ABI-MODES** compares it against the declaration. It is
+    /// deliberately the *validated* summary and nothing weaker: an entry that
+    /// failed validation is absent here, so absence is the fail-closed answer
+    /// "nothing to compare" rather than a claim about the body.
+    pub(crate) fn inferred(&self, function: &str) -> Option<&ResourceFunctionContract> {
+        self.inferred.get(function)
+    }
+
     /// `(inferred, declared)` when the two disagree for `function`.
     pub(crate) fn conflict(
         &self,
