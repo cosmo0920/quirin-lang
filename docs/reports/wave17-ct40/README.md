@@ -324,7 +324,7 @@ Run in this worktree at the final commit.
 | `git submodule update --init --recursive` | ok (`third_party/libevent` at `d82464a2`) — see §10.1 |
 | `cargo test --workspace --no-fail-fast` | exit 0: **2551 passed, 0 failed, 8 ignored** over 142 test targets |
 | `cargo fmt --all -- --check` | clean |
-| `cargo clippy --all-targets -- -D warnings` | clean — see §10.1 item 3 |
+| `cargo clippy --all-targets -- -D warnings` | clean, re-verified on the committed tree — see §10.1 item 3 |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **72** Lean audits, all pass |
@@ -347,15 +347,13 @@ silently, because each looks like a test failure in a log.
    both targets then pass — 1 and 18 tests. This worktree is a fresh checkout,
    so it needed the step; nothing about it is specific to this change.
 
-3. **Clippy's ordering.** The clean `cargo clippy --all-targets -- -D warnings`
-   recorded above ran **after every Rust edit and after `cargo fmt`**, which is
-   the state committed: no `.rs` file changed afterwards (the later edits are
-   JSON, Python and Markdown, and the mutation driver restored every file it
-   touched). A confirming re-run at the very end could not start — `couldn't
-   create a temp dir: No space left on device`, the same shared-disk exhaustion
-   as item 1, with 273 MB free at that moment. The recorded result stands on the
-   identical Rust tree; that it could not be repeated on demand is stated rather
-   than glossed.
+3. **Clippy, twice.** The first clean `cargo clippy --all-targets -- -D
+   warnings` ran after every Rust edit and after `cargo fmt`. A confirming
+   re-run then failed to start — `couldn't create a temp dir: No space left on
+   device`, the same shared-disk exhaustion as item 1, with 273 MB free at that
+   moment — and was re-run again once the disk recovered, on the **committed**
+   tree: clean. The intermediate failure is recorded because "clippy failed" in
+   a log should never be left ambiguous.
 
 All three are environment failures, not source defects — precisely the
 distinction the `environment-unavailable` reason category exists to keep
