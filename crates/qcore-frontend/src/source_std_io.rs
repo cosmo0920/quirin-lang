@@ -290,6 +290,80 @@ fn operand(window: &[&Token], cursor: usize) -> Option<(StdIoOperand, usize)> {
     }
 }
 
+/// The **one** grammar of a line-producing statement: `print RENDERING OPERAND;`,
+/// `log LEVEL RENDERING OPERAND;`, `flush;`.
+///
+/// `None` when the head is not one of the three keywords. Every route that
+/// admits these statements reads them here — the lowering below, and the
+/// composed task route (card `COMPOSE-CONCURRENCY`) — so a shape one route
+/// accepts and another refuses is not expressible.
+fn std_io_event(window: &[&Token], head: &str) -> Option<Result<StdIoEvent, &'static str>> {
+    match head {
+        PRINT_KEYWORD => Some({
+            let Some(rendering) = word(window, 1).and_then(Rendering::parse) else {
+                return Some(Err("`print` names a `std.fmt` rendering: `dec` or `hex`"));
+            };
+            match operand(window, 2) {
+                Some((operand, next)) if ends_with_semicolon(window, next) => {
+                    Ok(StdIoEvent::Print { rendering, operand })
+                }
+                _ => Err(
+                    "`print RENDERING OPERAND;` takes one integer literal, one bound integer \
+                     name, or `borrow NAME` for the identity of a live resource",
+                ),
+            }
+        }),
+        LOG_KEYWORD => Some({
+            let Some(level) = word(window, 1).and_then(Level::parse) else {
+                return Some(Err(
+                    "`log` names a level: `info`, `warn` or `fatal` (`error` is the reserved \
+                     error-type declaration keyword)",
+                ));
+            };
+            let Some(rendering) = word(window, 2).and_then(Rendering::parse) else {
+                return Some(Err(
+                    "`log` names a `std.fmt` rendering after its level: `dec` or `hex`",
+                ));
+            };
+            match operand(window, 3) {
+                Some((operand, next)) if ends_with_semicolon(window, next) => Ok(StdIoEvent::Log {
+                    level,
+                    rendering,
+                    operand,
+                }),
+                _ => Err(
+                    "`log LEVEL RENDERING OPERAND;` takes one integer literal, one bound \
+                     integer name, or `borrow NAME` for the identity of a live resource",
+                ),
+            }
+        }),
+        FLUSH_KEYWORD => Some(if ends_with_semicolon(window, 1) {
+            Ok(StdIoEvent::Flush)
+        } else {
+            Err(
+                "`flush;` takes no operand: it hands the logger's stream to its sink and \
+                 renders nothing",
+            )
+        }),
+        _ => None,
+    }
+}
+
+/// [`std_io_event`] over one statement of a parsed program, by span.
+///
+/// Published for the composed task route, which reads statements out of a task
+/// body rather than out of a flat entry.
+#[must_use]
+pub fn std_io_statement(
+    program: &SourceProgram,
+    span: Span,
+) -> Option<Result<StdIoEvent, &'static str>> {
+    let tokens = program.lexical_tokens();
+    let window = window(tokens, span);
+    let head = word(&window, 0)?;
+    std_io_event(&window, head)
+}
+
 fn word<'a>(window: &'a [&Token], cursor: usize) -> Option<&'a str> {
     match window.get(cursor).map(|token| &token.kind) {
         Some(TokenKind::Word(word)) => Some(word.as_str()),
@@ -539,76 +613,15 @@ pub fn lower_source_std_io_skipping(
                     )),
                 }
             }
-            PRINT_KEYWORD => {
-                // `print RENDERING OPERAND ;`
-                let Some(rendering) = word(&window, 1).and_then(Rendering::parse) else {
-                    diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`print` names a `std.fmt` rendering: `dec` or `hex`",
-                    ));
-                    continue;
-                };
-                match operand(&window, 2) {
-                    Some((operand, next)) if ends_with_semicolon(&window, next) => {
-                        events.push(StdIoEvent::Print { rendering, operand });
+            PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
+                match std_io_event(&window, head)
+                    .expect("the three line-producing heads are matched above")
+                {
+                    Ok(event) => {
+                        events.push(event);
                         event_spans.push(span);
                     }
-                    _ => diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`print RENDERING OPERAND;` takes one integer literal, one bound integer \
-                         name, or `borrow NAME` for the identity of a live resource",
-                    )),
-                }
-            }
-            LOG_KEYWORD => {
-                // `log LEVEL RENDERING OPERAND ;`
-                let Some(level) = word(&window, 1).and_then(Level::parse) else {
-                    diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`log` names a level: `info`, `warn` or `fatal` (`error` is the reserved \
-                         error-type declaration keyword)",
-                    ));
-                    continue;
-                };
-                let Some(rendering) = word(&window, 2).and_then(Rendering::parse) else {
-                    diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`log` names a `std.fmt` rendering after its level: `dec` or `hex`",
-                    ));
-                    continue;
-                };
-                match operand(&window, 3) {
-                    Some((operand, next)) if ends_with_semicolon(&window, next) => {
-                        events.push(StdIoEvent::Log {
-                            level,
-                            rendering,
-                            operand,
-                        });
-                        event_spans.push(span);
-                    }
-                    _ => diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`log LEVEL RENDERING OPERAND;` takes one integer literal, one bound \
-                         integer name, or `borrow NAME` for the identity of a live resource",
-                    )),
-                }
-            }
-            FLUSH_KEYWORD => {
-                if ends_with_semicolon(&window, 1) {
-                    events.push(StdIoEvent::Flush);
-                    event_spans.push(span);
-                } else {
-                    diagnostics.push(diagnostic(
-                        "Q030",
-                        span,
-                        "`flush;` takes no operand: it hands the logger's stream to its sink and \
-                         renders nothing",
-                    ));
+                    Err(message) => diagnostics.push(diagnostic("Q030", span, message)),
                 }
             }
             "return" => {

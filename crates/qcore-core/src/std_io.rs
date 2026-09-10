@@ -362,6 +362,34 @@ impl fmt::Display for StdIoError {
     }
 }
 
+/// The **one** place that decides what an accepted event's line looks like.
+///
+/// Both routes that produce these lines call it: `check_std_io_program` below,
+/// and the composed task route (card `COMPOSE-CONCURRENCY`), whose operand
+/// values are computed by a checked task model rather than bound by a `let` and
+/// therefore cannot travel through [`StdIoProgram::scalars`]. Keeping the byte
+/// decision here is what makes "the source lines of a composed program are
+/// `source.std-io.v1`'s lines" a statement about code rather than about two
+/// implementations that happen to agree.
+///
+/// `None` for an event that produces no line: [`StdIoEvent::Flush`] hands the
+/// stream to its sink and [`StdIoEvent::Return`] is the entry's exit.
+pub fn rendered_line(event: &StdIoEvent, value: i32) -> Option<ObservedLine> {
+    match event {
+        StdIoEvent::Print { rendering, .. } => Some(ObservedLine {
+            stream: Stream::Out,
+            text: rendering.render(value),
+        }),
+        StdIoEvent::Log {
+            level, rendering, ..
+        } => Some(ObservedLine {
+            stream: Stream::Err,
+            text: format!("[{}] {}", level.tag(), rendering.render(value)),
+        }),
+        StdIoEvent::Flush | StdIoEvent::Return => None,
+    }
+}
+
 fn operand_value(
     program: &StdIoProgram,
     index: usize,
@@ -423,32 +451,18 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             break;
         }
         match event {
-            StdIoEvent::Print { rendering, operand } => {
-                renderings.insert(*rendering);
-                match operand_value(program, index, operand) {
-                    Ok(value) => {
-                        record_borrow(operand, value, &mut borrowed_renders);
-                        lines.push(ObservedLine {
-                            stream: Stream::Out,
-                            text: rendering.render(value),
-                        });
-                    }
-                    Err(error) => errors.push(error),
-                }
-            }
-            StdIoEvent::Log {
-                level,
-                rendering,
-                operand,
+            StdIoEvent::Print { rendering, operand }
+            | StdIoEvent::Log {
+                rendering, operand, ..
             } => {
                 renderings.insert(*rendering);
                 match operand_value(program, index, operand) {
                     Ok(value) => {
                         record_borrow(operand, value, &mut borrowed_renders);
-                        lines.push(ObservedLine {
-                            stream: Stream::Err,
-                            text: format!("[{}] {}", level.tag(), rendering.render(value)),
-                        });
+                        lines.push(
+                            rendered_line(event, value)
+                                .expect("a print and a log each produce exactly one line"),
+                        );
                     }
                     Err(error) => errors.push(error),
                 }

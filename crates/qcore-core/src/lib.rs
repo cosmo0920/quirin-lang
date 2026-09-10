@@ -17,6 +17,7 @@ pub mod chunk_integrity;
 pub mod cleanup_lowering;
 pub mod composed_std_io;
 pub mod composed_std_io_c_emit;
+pub mod composed_tasks;
 pub mod concurrency;
 pub mod disjoint_footprint;
 pub mod error_region;
