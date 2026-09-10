@@ -1494,36 +1494,70 @@ receiving the decided literal, so the reference evaluator and a C compiler are
 cross-checked by the translation-validation triangle and by a sanitized native
 run. Only the *observation* is single-valued; follow-on `IF-RUNTIME-CONDITION`.
 
-**The custody join is agreement, never widening.** Both arms are validated from
-the same incoming state and the branch is admitted only if they reach the join
-with equal ordered live lists and equal transferred sets. **Four** models check
-that agreement — the cleanup lowering, ownership (`OwnershipOp::Branch`), typed
-errors (`ErrorOp::Branch`) and resource flow (`Flow::join_branches`) — and a
-fifth, usage (`UsageExpr::Branch`), joins the arms' *demands*. Only
-`SourceOp::Branch`, in the cleanup lowering, is new: the other four were all
-already shipped, each with its own mismatch error.
+**The custody join is agreement between the arms that survive it, never
+widening.** Both arms are validated from the same incoming state, and an arm
+that **returns** discharged its obligations at its own exit and does not reach
+the join at all (card `IF-ARMS`); the join compares the arms that fall through,
+and where there are two of them it admits only equal ordered live lists and equal
+transferred sets. **Four** models check that agreement — the cleanup lowering,
+ownership (`OwnershipOp::Branch`), typed errors (`ErrorOp::Branch`) and resource
+flow (`Flow::join_branches`) — and a fifth, usage (`UsageExpr::Branch`), joins
+the arms' *demands*. Only `SourceOp::Branch`, in the cleanup lowering, is new:
+the other four were all already shipped, each with its own mismatch error.
 
-**Refusals.** `Q044` a shape this profile does not model — a `return` inside an
-arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), a `let`
-inside an arm (`IF-ARMS`), or inconsistent block and condition counts; `Q045` a
+### The arm statement subset
+
+| Arm statement | Admitted | Ground |
+|---|---|---|
+| `qcore_check(BOOL, Error);` | yes | custody-neutral |
+| `drop NAME;` / `move NAME;` | yes | the join's own subject |
+| a nested `if` | yes | the shape `\|\|`/`&&` lower onto |
+| an empty arm; `if` with no `else` | yes | the missing arm is the empty arm |
+| `return …;` | **yes** (card `IF-ARMS`) | an exit from an arm carries exactly the obligations the sequential route imposes at any exit, so the returning arm discharges at its own exit and leaves the join |
+| a zero-argument call `f();` | **yes** (card `IF-ARMS`) | a source call emits no C at all in this subset; it composes the callee's summary flow into the caller's, and a *conditional* call is admitted only when that composition is the identity |
+| `let NAME = …;` | no — `Q044` | an arm-local binding has no position after the join |
+| `let n = qcore_acquire(…);` | no — `Q103` | two arms leave different resource-identity ledgers; `IF-ARM-ACQUIRE` |
+| `while`, `match`, `defer`, `raise`, … | no | each keeps its own code; `while` inside an arm is still `Q500` |
+
+**The continuation moves with the exit.** Four of the five models cannot express
+"this arm exited", so the driver does not hand them a one-sided join: the
+statements written *after* a branch one arm of which returns are lowered inside
+the arm that survives to reach them, which is where they run. The rewrite is a
+**move**, never a duplication — the continuation is lowered exactly once — so the
+shape that would need it in two arms (an early return in one arm of a nested
+branch whose sibling also falls through) is refused rather than served by
+duplicating acquisitions, calls and demands.
+
+**Refusals.** `Q044` a shape this profile does not model — inconsistent block and
+condition counts; a `let` inside an arm; a branch with one returning arm and no continuation for the
+survivor to reach, or one whose continuation still reaches no `return`
+(`IF-ARM-RETURN-NESTED`); statements after a branch every arm of which returns;
+or a conditional call whose callee's summary flow is not neutral
+(`IF-ARM-CALL-FLOW`). `Q045` a
 condition outside the tier — a chained comparison, an arithmetic expression, a
 shift, a complement, a pipeline, an empty condition, an unbalanced parenthesis,
 a connective missing an operand, an integer where a condition is required or a
 condition where an integer is required, an **ungrouped** bitwise comparison
 operand or `!` operand, a name bound to a resource identity, or a non-integer
-operand; `Q046` the arms do not reach the join in the same custody state. A name
+operand.
+`Q046` two surviving arms do not reach the join in the same custody state.
+`Q202` an arm exit with an owned resource still live — the same condition, and
+the same code, as the program's own exit, reported at the exit that leaks. A name
 written in a condition that is bound to nothing is collected as a referenced
 name and refuses earlier at `Q013`. An operator token written **outside** a
-condition refuses at `Q038` before the tier is consulted — all five of `|`, `&`,
-`^`, `||` and `&&`. An acquisition inside an arm is refused by the
-pre-existing ownership join at `Q103`, inherited unedited (`IF-ARM-ACQUIRE`).
-Every other route keeps its own refusal, measured: `Q030` on `source.std-io.v1`,
-the extern route's nested-block refusal on `source.extern-call.v1`, and `Q500`
-on the copy-scalar task profile — and a connective in the condition does not
-change which refusal answers. See
+condition refuses at `Q038` before the tier is consulted — all five of `|`,
+`&`, `^`, `||` and `&&`. An acquisition
+inside an arm — or in a continuation hoisted into one — is refused by the
+pre-existing ownership join at `Q103`, inherited unedited and only re-attributed
+(`IF-ARM-ACQUIRE`). Every other route keeps its own refusal, measured: `Q030` on
+`source.std-io.v1`, the extern route's nested-block refusal on
+`source.extern-call.v1`, and `Q500` on the copy-scalar task profile — and neither
+a connective in the condition nor a widened arm statement changes which refusal
+answers. See
 [the branch record](reports/wave19-if-statement/README.md),
 [the connective record](reports/wave19-or-and-lowering/README.md),
-[the integer-tier record](reports/wave20-bitwise-conditions/README.md) and
+[the integer-tier record](reports/wave20-bitwise-conditions/README.md),
+[the arm record](reports/wave20-if-arms/README.md) and
 [the design note](design/SOURCE_BRANCH_V1.md).
 
 ## G03. Source parameter usage grades

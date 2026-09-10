@@ -81,6 +81,7 @@ fn checks_an_acyclic_whole_program_and_preserves_cfg_observation() {
                     arguments: Vec::new(),
                     result: None,
                     span: call_span(&source, "root"),
+                    conditional: false,
                 }],
             ),
         ],
@@ -129,6 +130,7 @@ fn recursive_scc_requires_an_explicit_contract() {
                 arguments: Vec::new(),
                 result: None,
                 span: call_span(&source, "looped"),
+                conditional: false,
             }],
         )],
     )
@@ -149,6 +151,7 @@ fn recursive_post_fixed_summary_is_accepted() {
             arguments: Vec::new(),
             result: None,
             span: call_span(&source, "looped"),
+            conditional: false,
         }],
     );
     body.recursive_contract = Some(zero_summary(Vec::new()));
@@ -175,6 +178,7 @@ fn recursive_summary_must_cover_one_unfolding() {
             arguments: Vec::new(),
             result: None,
             span: call_span(&source, "looped"),
+            conditional: false,
         }],
     );
     body.resource_segments[0] = Flow::acquire(Quantity::single("memory", 1), Quantity::zero());
@@ -210,6 +214,7 @@ fn consumed_parameter_transfers_the_same_identity_across_a_call() {
             arguments: vec![7],
             result: None,
             span: call_span(&source, "root"),
+            conditional: false,
         }],
     );
     root_body.identity_entry = vec![7];
@@ -244,6 +249,7 @@ fn returned_parameter_preserves_identity_for_the_caller() {
             arguments: vec![9],
             result: None,
             span: call_span(&source, "root"),
+            conditional: false,
         }],
     );
     root_body.identity_entry = vec![9];
@@ -275,6 +281,7 @@ fn owned_call_parameters_cannot_alias_one_identity() {
             arguments: vec![3, 3],
             result: None,
             span: call_span(&source, "root"),
+            conditional: false,
         }],
     );
     root_body.identity_entry = vec![3];
@@ -326,6 +333,7 @@ fn callee_effects_must_fit_the_callers_declared_row() {
             arguments: Vec::new(),
             result: None,
             span: call_span(&source, "root"),
+            conditional: false,
         }],
     );
     let errors = check_whole_program(

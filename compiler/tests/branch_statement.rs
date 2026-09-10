@@ -379,9 +379,15 @@ fn the_tier_gained_the_connectives_the_negation_and_the_integer_operands() {
 // ---------------------------------------------------------------------------
 
 #[test]
-fn an_early_return_from_a_branch_arm_refuses() {
-    // This is what `fn main() -> i32 { if (true) { return 1; } }` — the fixture
-    // `reports_unsupported_source_at_the_owning_file` used to carry — does now.
+fn an_early_return_from_a_branch_arm_keeps_this_programs_refusal() {
+    // Card `IF-STATEMENT` pinned this program — `fn main() -> i32 { if (true)
+    // { return 1; } }`, the fixture `reports_unsupported_source_at_the_owning_file`
+    // used to carry — as `Q044` because a `return` inside an arm was refused
+    // outright. Card `IF-ARMS` admits arm returns, so the **pin is moved
+    // deliberately**: the code and the refusal survive, on the narrower ground
+    // that this branch's surviving arm has no continuation to reach, so one path
+    // reaches no `return` at all. The admitted spellings, and the leaking early
+    // return that still refuses, are pinned in `compiler/tests/branch_arms.rs`.
     assert_eq!(
         codes("fn main() -> i32 { if (true) { return 1; } }"),
         vec!["Q044"]
@@ -390,16 +396,16 @@ fn an_early_return_from_a_branch_arm_refuses() {
 }
 
 #[test]
-fn a_call_inside_a_branch_arm_refuses() {
+fn a_call_inside_a_branch_arm_is_now_admitted() {
+    // Card `IF-STATEMENT` pinned this as `["Q044"]`; card `IF-ARM-CALL` admits
+    // it. The pin is **moved deliberately** and its load-bearing half is kept as
+    // an assertion rather than dropped: a call inside an arm is admitted only
+    // when composing the callee into the flat, positional whole-program call
+    // sequence changes nothing, so the callee here is flow-neutral and a callee
+    // that is not stays refused (`branch_arms.rs`).
     let source = "fn leaf() -> i32 { return 0; }\n\
                   fn main() -> i32 { if (true) { leaf(); } else { leaf(); } return 0; }";
-    let codes = compile(source)
-        .map(|module| module.execution_profile)
-        .expect_err("a call inside an arm is outside v1")
-        .into_iter()
-        .map(|diagnostic| diagnostic.code.to_owned())
-        .collect::<Vec<_>>();
-    assert_eq!(codes, vec!["Q044"]);
+    compile(source).expect("a conditional call to a flow-neutral callee is admitted");
 }
 
 #[test]

@@ -1,0 +1,22 @@
+error Failure { Failed; }
+
+// `call_then_arm.qcore` with the condition inverted: the decided condition now
+// selects the arm that does **not** call, so the call is in the arm that is
+// compiled, linked and reachable from the emitted `goto` table but never
+// entered. The reference observation and the compiled program's own output must
+// still agree, and the untaken arm is still validated in full.
+fn helper() -> i32 {
+    qcore_check(true, Failure);
+    return 0;
+}
+
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (5 < 3) {
+        helper();
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

@@ -1,0 +1,23 @@
+error Failure { Failed; }
+
+// `source.branch.v1` after card `IF-ARMS`: an early `return` from a branch arm.
+//
+// The arm that returns discharges its custody at its *own* exit — `drop a;`
+// before `return 1;` — which is exactly what the sequential route requires at
+// any exit. It therefore never reaches the join, and the join is taken over the
+// arms that survive to it. Here there is one survivor, so the statements after
+// the branch belong to it: the driver lowers them inside the `else` arm, which
+// is where they run, and every checked model then sees a branch both of whose
+// arms end the function.
+//
+// Removing either `drop a;` is the conditional leak through an early return,
+// and it refuses — at that exit rather than at the join.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+        return 1;
+    }
+    drop a;
+    return 0;
+}

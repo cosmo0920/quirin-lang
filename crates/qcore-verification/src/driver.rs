@@ -862,6 +862,34 @@ struct SequenceLowering {
     flow: Flow,
 }
 
+/// Where a statement sequence sits relative to the branch construct.
+///
+/// Card `IF-STATEMENT` carried this as a `top_level: bool` that gated both
+/// `return` and a call. Card `IF-ARMS` admits both inside an arm, so what is
+/// left to distinguish is *mechanical* — a call inside an arm may not split the
+/// flat resource segmentation (see `lower_sequence`) — plus one attribution:
+/// statements the reader wrote **after** a branch can end up inside an arm
+/// through the continuation hoisting an arm `return` requires, and a refusal
+/// about them has to say so rather than claim the reader wrote them in an arm.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ArmPosition {
+    /// The entry body itself.
+    TopLevel,
+    /// Lexically inside a branch arm.
+    Arm,
+    /// Written after the branch and placed inside the one arm that reaches it,
+    /// because the other arm returned (card `IF-ARMS`, `IF-ARM-RETURN`).
+    HoistedContinuation,
+}
+
+impl ArmPosition {
+    /// Whether the statements lowered at this position run on one path through
+    /// the branch rather than on every path through the function.
+    const fn conditional(self) -> bool {
+        !matches!(self, Self::TopLevel)
+    }
+}
+
 /// The quantitative counters a sequence advances. Snapshotted and joined at a
 /// branch, componentwise in the same direction `Flow::join_branches` takes.
 #[derive(Clone, Copy)]
@@ -931,7 +959,7 @@ fn synthesize_function(
         },
     };
     let mut sequence = SequenceLowering::default();
-    builder.lower_sequence(&body.statements, &mut sequence, true)?;
+    builder.lower_sequence(&body.statements, &mut sequence, ArmPosition::TopLevel)?;
 
     let FunctionLowering {
         resources,
@@ -962,23 +990,7 @@ fn synthesize_function(
             _ => None,
         })
         .collect();
-    // Callees may exit before their continuation. Without a proved normal-exit
-    // summary, zero is a possible demand on every subsequent source use.
-    let mut reversed_tail = Vec::new();
-    for (expression, may_exit) in sequence.demands.into_iter().rev() {
-        if may_exit && !reversed_tail.is_empty() {
-            reversed_tail.reverse();
-            let continuation = UsageExpr::Branch {
-                condition: Box::new(UsageExpr::Unit),
-                then_expression: Box::new(UsageExpr::Sequence(reversed_tail)),
-                else_expression: Box::new(UsageExpr::Unit),
-            };
-            reversed_tail = vec![continuation];
-        }
-        reversed_tail.push(expression);
-    }
-    reversed_tail.reverse();
-    let usage_expression = UsageExpr::Sequence(reversed_tail);
+    let usage_expression = unfold_exit_demands(sequence.demands);
     Ok(FunctionSemantics {
         symbol: typed_declaration.symbol,
         usage_declarations,
@@ -1002,6 +1014,73 @@ fn synthesize_function(
     })
 }
 
+/// The statements written after a branch, together with the **single**
+/// permission to place them inside the arm that survives to reach them (card
+/// `IF-ARMS`).
+///
+/// A branch level spends the permission when exactly one of its arms returns.
+/// Every level shares one of these, so the statements are lowered at most once:
+/// a second level asking for them is refused rather than served by duplicating
+/// acquisitions, call positions and usage demands. `spent` distinguishes "there
+/// were none" from "a nested level already took them", so the refusal can say
+/// which.
+struct Continuation<'a> {
+    statements: &'a [Located<StatementKind>],
+    spent: bool,
+}
+
+impl<'a> Continuation<'a> {
+    fn new(statements: &'a [Located<StatementKind>]) -> Self {
+        Self {
+            statements,
+            spent: false,
+        }
+    }
+
+    /// Whether the statements are still to be lowered after the join, which is
+    /// where they were before this card and where they stay when no arm exits.
+    const fn available(&self) -> bool {
+        !self.spent
+    }
+
+    fn take(&mut self) -> Option<&'a [Located<StatementKind>]> {
+        if self.spent || self.statements.is_empty() {
+            return None;
+        }
+        self.spent = true;
+        Some(self.statements)
+    }
+}
+
+/// Turn one sequence's `(demand, may_exit)` pairs into the usage expression the
+/// usage checker consumes.
+///
+/// Callees may exit before their continuation. Without a proved normal-exit
+/// summary, zero is a possible demand on every subsequent source use, so a
+/// demand flagged `may_exit` makes everything after it optional.
+///
+/// Card `IF-ARMS` factored this out of `synthesize_function` so a **branch arm**
+/// runs the same unfolding: an arm may now contain a call, and collapsing an
+/// arm's demands into a flat `Sequence` would have asserted that the statements
+/// after that call always run — the opposite of what the flag records.
+fn unfold_exit_demands(demands: Vec<(UsageExpr, bool)>) -> UsageExpr {
+    let mut reversed_tail = Vec::new();
+    for (expression, may_exit) in demands.into_iter().rev() {
+        if may_exit && !reversed_tail.is_empty() {
+            reversed_tail.reverse();
+            let continuation = UsageExpr::Branch {
+                condition: Box::new(UsageExpr::Unit),
+                then_expression: Box::new(UsageExpr::Sequence(reversed_tail)),
+                else_expression: Box::new(UsageExpr::Unit),
+            };
+            reversed_tail = vec![continuation];
+        }
+        reversed_tail.push(expression);
+    }
+    reversed_tail.reverse();
+    UsageExpr::Sequence(reversed_tail)
+}
+
 struct FunctionLowering<'a> {
     parsed: &'a SourceProgram,
     typed: &'a TypedSourceProgram,
@@ -1023,21 +1102,25 @@ struct FunctionLowering<'a> {
 }
 
 impl FunctionLowering<'_> {
-    /// Lower one statement sequence — an entry body, or one arm of a branch.
+    /// Lower one statement sequence — an entry body, or one arm of a branch —
+    /// and report whether it ends the function on **every** path through it.
     ///
-    /// `top_level` is the entry body. It is the only place a `return` may
-    /// appear (`SourceOp::Return` is the last operation of a program) and the
-    /// only place a source call may appear (a call splits `resource_segments`
-    /// and takes a position in a flat `calls` vector that the whole-program
-    /// summary unfolds positionally). Both refuse inside an arm at `Q044`;
-    /// follow-ons `IF-ARM-RETURN` and `IF-ARM-CALL`.
+    /// Card `IF-ARMS` widened the arm subset. `return` and a zero-argument call
+    /// are both admitted inside an arm now; what `position` still decides is
+    /// mechanical (a conditional call may not split the flat resource
+    /// segmentation) plus the attribution of the one shape that stays refused,
+    /// an acquisition inside an arm (`Q103`, follow-on `IF-ARM-ACQUIRE`).
+    ///
+    /// The returned flag is what the branch join needs: an arm that returns does
+    /// not reach the join, so the join is taken over the arms that survive.
     fn lower_sequence(
         &mut self,
         statements: &[Located<StatementKind>],
         output: &mut SequenceLowering,
-        top_level: bool,
-    ) -> Result<(), SourceDiagnostic> {
-        for statement in statements {
+        position: ArmPosition,
+    ) -> Result<bool, SourceDiagnostic> {
+        let mut terminates = false;
+        for (index, statement) in statements.iter().enumerate() {
             // Card `IF-STATEMENT` narrows this gate rather than removing it:
             // `if` is admitted by `source.branch.v1` and every other structured
             // statement keeps the refusal it has always had.
@@ -1055,8 +1138,40 @@ impl FunctionLowering<'_> {
                 branches,
             } = &statement.value
             {
-                self.lower_branch(statement.span, conditions, branches, 0, output)?;
-                continue;
+                // Card `IF-ARMS`. The statements after this branch are its
+                // **continuation**, and an arm that returns needs them: the arm
+                // that survives is the only one that reaches them, so they are
+                // lowered inside it rather than after the join. They are lowered
+                // exactly once either way — see `lower_branch`.
+                let mut continuation = Continuation::new(&statements[index + 1..]);
+                let terminated = self.lower_branch(
+                    statement.span,
+                    conditions,
+                    branches,
+                    0,
+                    output,
+                    &mut continuation,
+                )?;
+                if !continuation.available() {
+                    // Hoisted: the continuation was lowered inside the surviving
+                    // arm, which is why that arm now terminates too.
+                    return Ok(terminated);
+                }
+                let rest = continuation.statements;
+                if terminated {
+                    if let Some(unreachable) = rest.first() {
+                        return Err(branch_diagnostic(
+                            "Q044",
+                            unreachable.span,
+                            "every arm of this branch returns, so the statements after it are \
+                             unreachable",
+                        ));
+                    }
+                    return Ok(true);
+                }
+                // Not hoisted: the continuation follows the join, exactly as it
+                // did before card `IF-ARMS`.
+                return self.lower_sequence(rest, output, position);
             }
             let tokens = statement_tokens(self.parsed.source(), statement.span)?;
             match &statement.value {
@@ -1102,6 +1217,34 @@ impl FunctionLowering<'_> {
                     let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
                         diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
                     })?;
+                    // Card `IF-ARM-ACQUIRE-ATTRIBUTION`. An acquisition on one
+                    // path leaves a resource-identity ledger the other path does
+                    // not have, and `OwnershipState::branch` compares ledgers —
+                    // so this has always refused, at `Q103`, attributed to the
+                    // *function declaration* with a generic ownership message.
+                    // The refusal is deliberately **not weakened**: only its
+                    // span and its wording move, which §L21 says is not a code
+                    // change. Admitting it is follow-on `IF-ARM-ACQUIRE`.
+                    if position.conditional() {
+                        return Err(diagnostic(
+                            SemanticPass::Ownership,
+                            statement.span,
+                            match position {
+                                ArmPosition::Arm => format!(
+                                    "`{binding}` acquires resource identity {resource} inside a \
+                                     branch arm: the arm that does not run leaves a different \
+                                     resource-identity ledger, so the arms cannot join \
+                                     (follow-on `IF-ARM-ACQUIRE`)"
+                                ),
+                                _ => format!(
+                                    "`{binding}` acquires resource identity {resource} after a \
+                                     branch one arm of which returns, so it is reached on one \
+                                     path only and the arms cannot join on their \
+                                     resource-identity ledgers (follow-on `IF-ARM-ACQUIRE`)"
+                                ),
+                            },
+                        ));
+                    }
                     if !self.errors.contains(&error) {
                         return Err(diagnostic(
                             SemanticPass::TypedErrors,
@@ -1159,15 +1302,6 @@ impl FunctionLowering<'_> {
                         output.lowering.push(SourceOp::Check { passes, error });
                         self.counters.reachable &= passes;
                     } else if let Some(callee_name) = parse_zero_argument_call(&tokens) {
-                        if !top_level {
-                            return Err(branch_diagnostic(
-                                "Q044",
-                                statement.span,
-                                "`source.branch.v1` admits no call inside a branch arm: a call \
-                                 takes a position in the whole-program call sequence, which has \
-                                 no branch structure",
-                            ));
-                        }
                         if self.local_usage_names.contains_key(&callee_name)
                             || self
                                 .typed_declaration
@@ -1222,13 +1356,30 @@ impl FunctionLowering<'_> {
                                 true,
                             ));
                         }
-                        self.resource_segments
-                            .push(std::mem::take(&mut output.flow));
+                        // Card `IF-ARM-CALL`. A call splits the caller's flow
+                        // into segments the whole-program summary composes
+                        // **positionally**: `segment · callee · segment · …`.
+                        // Splitting inside an arm would move the arm's own
+                        // custody flow out of the branch and into that flat
+                        // chain, where it would be applied on both paths — the
+                        // conditional release, silently made unconditional. So a
+                        // conditional call contributes a neutral segment and
+                        // leaves the arm's flow where the four-model join can see
+                        // it; the callee's own flow still composes once, which is
+                        // faithful exactly because `unfold_summary` refuses a
+                        // conditional call whose callee is not neutral.
+                        if position.conditional() {
+                            self.resource_segments.push(Flow::zero());
+                        } else {
+                            self.resource_segments
+                                .push(std::mem::take(&mut output.flow));
+                        }
                         self.calls.push(CallSite {
                             callee,
                             arguments: Vec::new(),
                             result: None,
                             span: statement.span,
+                            conditional: position.conditional(),
                         });
                     } else {
                         return Err(diagnostic(
@@ -1305,15 +1456,6 @@ impl FunctionLowering<'_> {
                     self.counters.live = self.counters.live.saturating_sub(1);
                 }
                 StatementKind::Return => {
-                    if !top_level {
-                        return Err(branch_diagnostic(
-                            "Q044",
-                            statement.span,
-                            "`source.branch.v1` admits no `return` inside a branch arm: a return \
-                             is the last operation of a program, and an early exit from an arm \
-                             has no position in this lowering",
-                        ));
-                    }
                     let value = parse_return(&tokens, self.result_type).ok_or_else(|| {
                         diagnostic(
                             SemanticPass::OrdinaryTypes,
@@ -1328,8 +1470,39 @@ impl FunctionLowering<'_> {
                             },
                         )
                     })?;
+                    // Card `IF-ARMS`, attribution. An exit inside a branch is
+                    // checked by the same rule as the program's own exit, and
+                    // the cleanup lowering reports a violation of it as
+                    // `LiveResourcesAtNormalReturn` — but at the *declaration*,
+                    // and only after the resource-flow join has already refused
+                    // the arms for a net disagreement the exiting arm never had.
+                    // Neither model can say "this arm exited", so the honest
+                    // report is made here, at the exit itself, with the code the
+                    // condition already owns (`SemanticPass::CleanupLowering`).
+                    // The top-level exit is deliberately left alone: its
+                    // attribution is pinned elsewhere and this card does not
+                    // move it.
+                    if position.conditional() && self.counters.live != 0 {
+                        return Err(diagnostic(
+                            SemanticPass::CleanupLowering,
+                            statement.span,
+                            format!(
+                                "{} owned resource(s) are still live at this `return`: an exit \
+                                 from a branch arm carries the same cleanup obligation as the \
+                                 program's own exit, so every owned resource must be released \
+                                 or moved before it",
+                                self.counters.live
+                            ),
+                        ));
+                    }
                     output.lowering.push(SourceOp::Return(value));
                     self.counters.reachable = false;
+                    // Card `IF-ARMS`: this exit is now reachable from an arm.
+                    // It carries exactly the obligations the sequential route
+                    // imposes at any exit — `SourceOp::Return` demands an empty
+                    // live list wherever it stands, which is the whole cleanup
+                    // discharge, and the error-region rules are unchanged.
+                    terminates = true;
                 }
                 _ => {
                     return Err(diagnostic(
@@ -1340,14 +1513,35 @@ impl FunctionLowering<'_> {
                 }
             }
         }
-        Ok(())
+        Ok(terminates)
     }
 
     /// Lower the `index`th `if` header of a (possibly `else if`-chained)
-    /// branch statement into one `Branch` operation in each checked model.
+    /// branch statement into one `Branch` operation in each checked model, and
+    /// report whether the branch ends the function on every path.
     ///
     /// An `else if` chain is a right-nested branch: level `index`'s else arm is
     /// level `index + 1`'s whole branch, so the chain needs no separate model.
+    ///
+    /// # The continuation, and why it moves (card `IF-ARMS`)
+    ///
+    /// `SourceOp::Return` is not the only linear IR an arm has to satisfy. Four
+    /// further models join a branch — `Flow::join_branches`, `OwnershipOp::Branch`,
+    /// `ErrorOp::Branch` and the usage model's `UsageExpr::Branch` — and none of
+    /// them can say "this arm exited". So an arm that returns is not *left* as a
+    /// one-sided join for them to choke on: the statements written **after** the
+    /// branch are lowered inside the arm that survives to reach them, which is
+    /// where they run. Both arms then end the function, every model sees a
+    /// two-armed branch it already understood, and `qcore-core`'s general
+    /// join-over-survivors rule is what the arms are validated against.
+    ///
+    /// The continuation is lowered **exactly once**: `continuation` is a budget
+    /// this function may spend, and a shape that would need it twice — an early
+    /// return in one arm of a *nested* branch whose sibling also falls through —
+    /// is refused at `Q044` rather than duplicating statements (which would
+    /// duplicate acquisitions, calls and demands). Follow-on
+    /// `IF-ARM-RETURN-NESTED`.
+    #[allow(clippy::too_many_arguments)]
     fn lower_branch(
         &mut self,
         span: Span,
@@ -1355,7 +1549,8 @@ impl FunctionLowering<'_> {
         branches: &[SourceBlock],
         index: usize,
         output: &mut SequenceLowering,
-    ) -> Result<(), SourceDiagnostic> {
+        continuation: &mut Continuation<'_>,
+    ) -> Result<bool, SourceDiagnostic> {
         // The parser produces either one block per condition, or one more (the
         // trailing `else`). Anything else is a shape this profile cannot read.
         if branches.len() != conditions.len() && branches.len() != conditions.len() + 1 {
@@ -1386,8 +1581,12 @@ impl FunctionLowering<'_> {
         let local_usage_names = self.local_usage_names.clone();
 
         let mut then_output = SequenceLowering::default();
-        self.lower_sequence(&branches[index].statements, &mut then_output, false)?;
-        let then_counters = self.counters;
+        let mut then_terminates = self.lower_sequence(
+            &branches[index].statements,
+            &mut then_output,
+            ArmPosition::Arm,
+        )?;
+        let mut then_counters = self.counters;
 
         // Both arms start from the same custody state. A binding introduced by
         // an arm is arm-local: it is restored away here, so nothing after the
@@ -1398,28 +1597,99 @@ impl FunctionLowering<'_> {
         self.local_usage_names.clone_from(&local_usage_names);
 
         let mut else_output = SequenceLowering::default();
-        if index + 1 < conditions.len() {
-            self.lower_branch(span, conditions, branches, index + 1, &mut else_output)?;
+        let mut else_terminates = if index + 1 < conditions.len() {
+            self.lower_branch(
+                span,
+                conditions,
+                branches,
+                index + 1,
+                &mut else_output,
+                continuation,
+            )?
         } else if branches.len() > conditions.len() {
             self.lower_sequence(
                 &branches[conditions.len()].statements,
                 &mut else_output,
-                false,
-            )?;
+                ArmPosition::Arm,
+            )?
+        } else {
+            false
+        };
+        let mut else_counters = self.counters;
+
+        // Card `IF-ARMS`. Exactly one arm returns: the other is the only arm
+        // that reaches the statements after this branch, so those statements are
+        // lowered inside it. Spending the budget is what makes both arms end the
+        // function, which is what the four models that cannot express an exiting
+        // arm need to see.
+        if then_terminates != else_terminates {
+            let Some(rest) = continuation.take() else {
+                return Err(branch_diagnostic(
+                    "Q044",
+                    span,
+                    if continuation.spent {
+                        "one arm of this branch returns and the other falls through, but the \
+                         statements after the branch have already been placed inside a nested \
+                         branch's surviving arm — placing them here as well would duplicate \
+                         them (follow-on `IF-ARM-RETURN-NESTED`)"
+                    } else {
+                        "one arm of this branch returns and the other falls through, but there \
+                         are no statements after the branch for the surviving arm to continue \
+                         into — every path must reach a `return` (follow-on \
+                         `IF-ARM-RETURN-NESTED`)"
+                    },
+                ));
+            };
+            // The hoisted statements were written *after* the branch, so an
+            // arm's own bindings are not in scope for them: restore the entry
+            // scope, and keep only the surviving arm's quantitative state.
+            self.owners.clone_from(&owners);
+            self.local_usage_names.clone_from(&local_usage_names);
+            let hoisted = if then_terminates {
+                self.counters = else_counters;
+                let terminates =
+                    self.lower_sequence(rest, &mut else_output, ArmPosition::HoistedContinuation)?;
+                else_counters = self.counters;
+                else_terminates = terminates;
+                terminates
+            } else {
+                self.counters = then_counters;
+                let terminates =
+                    self.lower_sequence(rest, &mut then_output, ArmPosition::HoistedContinuation)?;
+                then_counters = self.counters;
+                then_terminates = terminates;
+                terminates
+            };
+            if !hoisted {
+                return Err(branch_diagnostic(
+                    "Q044",
+                    span,
+                    "one arm of this branch returns, so the statements after the branch belong \
+                     to the arm that does not — and they do not reach a `return` of their own \
+                     (follow-on `IF-ARM-RETURN-NESTED`)",
+                ));
+            }
         }
-        let else_counters = self.counters;
 
         // The else arm's own bindings are arm-local too: nothing after the
         // join names a binding either arm introduced.
         self.owners = owners;
         self.local_usage_names = local_usage_names;
         self.counters = Counters {
-            // The arms' live counts agree — the ownership, typed-error, flow
-            // and cleanup-lowering joins below each refuse a disagreement — so
-            // taking the `then` arm's is a choice between equals. The peak and
-            // the cumulative total are joined componentwise upward, the same
-            // direction `Flow::join_branches` takes.
-            live: then_counters.live,
+            // The **surviving** arms' live counts agree — the ownership,
+            // typed-error, flow and cleanup-lowering joins below each refuse a
+            // disagreement — so taking a survivor's is a choice between equals,
+            // and taking a returning arm's would be reading a state that never
+            // reaches the join. The peak and the cumulative total are joined
+            // componentwise upward, the same direction `Flow::join_branches`
+            // takes. `reachable` needs no arm-exit case: a `return` already set
+            // it false on the arm that took one, so the existing disjunction is
+            // the survivors' disjunction.
+            live: if then_terminates {
+                else_counters.live
+            } else {
+                then_counters.live
+            },
             peak_live: then_counters.peak_live.max(else_counters.peak_live),
             total: then_counters.total.max(else_counters.total),
             reachable: then_counters.reachable || else_counters.reachable,
@@ -1439,7 +1709,7 @@ impl FunctionLowering<'_> {
         output.ownership.extend(node.ownership);
         output.error_operations.extend(node.error_operations);
         output.demands.extend(node.demands);
-        Ok(())
+        Ok(then_terminates && else_terminates)
     }
 }
 
@@ -1541,42 +1811,44 @@ fn join_branch_arms(
         then_ops: then_output.error_operations.clone(),
         else_ops: else_output.error_operations.clone(),
     });
-    // An arm admits no call, so every arm demand is a non-exiting one and
-    // the pair's flag is `false` for the joined node too.
+    // Card `IF-STATEMENT` could write a flat `Sequence` here and set the pair's
+    // flag `false`, because an arm admitted no call. Card `IF-ARM-CALL` admits
+    // one, so each arm runs the same `may_exit` unfolding the entry body runs —
+    // otherwise the arm's demands would assert that the statements after its
+    // call always run — and the joined node inherits the flag from its arms: the
+    // branch may exit early exactly when one of its arms may.
     if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
+        let may_exit = then_output
+            .demands
+            .iter()
+            .chain(&else_output.demands)
+            .any(|(_, exits)| *exits);
         node.demands.push((
             UsageExpr::Branch {
                 condition: Box::new(UsageExpr::Unit),
-                then_expression: Box::new(UsageExpr::Sequence(
-                    then_output
-                        .demands
-                        .iter()
-                        .map(|(expression, _)| expression.clone())
-                        .collect(),
-                )),
-                else_expression: Box::new(UsageExpr::Sequence(
-                    else_output
-                        .demands
-                        .iter()
-                        .map(|(expression, _)| expression.clone())
-                        .collect(),
-                )),
+                then_expression: Box::new(unfold_exit_demands(then_output.demands.clone())),
+                else_expression: Box::new(unfold_exit_demands(else_output.demands.clone())),
             },
-            false,
+            may_exit,
         ));
     }
     Ok(node)
 }
 
-/// Present a cleanup-lowering refusal, routing the two conditions card
-/// `IF-STATEMENT` added to the branch pass that owns them.
+/// Present a cleanup-lowering refusal, routing the one condition card
+/// `IF-STATEMENT` added to the branch pass that owns it.
 ///
 /// The custody join is checked by four models — resource flow, ownership,
 /// typed errors and the cleanup lowering — and each of them has carried its own
 /// branch join since its own cycle. Only the cleanup lowering's join is new, so
-/// only its two conditions are re-presented here: a disagreement in the
-/// **custody state** is `Q046` whichever model notices it first, which is what
-/// makes `Q046` one condition rather than a code that fires sometimes.
+/// only its condition is re-presented here: a disagreement in the **custody
+/// state** is `Q046` whichever model notices it first, which is what makes
+/// `Q046` one condition rather than a code that fires sometimes.
+///
+/// Card `IF-STATEMENT` added a second condition here, `ReturnInBranchArm`. Card
+/// `IF-ARMS` admits an arm return and that refusal no longer exists; the shapes
+/// the widening cannot place are refused in `lower_branch`, where the branch and
+/// its continuation are both in scope and a useful span is available.
 ///
 /// The ownership model's `Q103` is deliberately **not** re-presented: it
 /// refuses a different condition — two arms leaving different resource-identity
@@ -1601,11 +1873,6 @@ fn branch_aware_lowering_diagnostic(
                  {else_live:?} and transferred {else_transferred:?}. Both arms must reach the \
                  join in the same custody state"
             ),
-        ),
-        LoweringError::ReturnInBranchArm => branch_diagnostic(
-            "Q044",
-            span,
-            "`source.branch.v1` admits no `return` inside a branch arm",
         ),
         other => diagnostic(SemanticPass::CleanupLowering, span, other.to_string()),
     }
