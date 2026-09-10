@@ -4,7 +4,18 @@ use std::path::Path;
 use std::process::{Command, Output, Stdio};
 use std::sync::atomic::{AtomicU64, Ordering};
 
+#[allow(dead_code)]
 pub fn run(source: &str, header: Option<&str>, defines: &[String]) -> Output {
+    run_with_sources(source, header, defines, &[])
+}
+
+#[allow(dead_code)]
+pub fn run_with_sources(
+    source: &str,
+    header: Option<&str>,
+    defines: &[String],
+    extra_sources: &[(&str, &str)],
+) -> Output {
     static NEXT: AtomicU64 = AtomicU64::new(0);
     let directory = std::env::temp_dir().join(format!(
         "qcore-windows-threads-{}-{}",
@@ -15,6 +26,14 @@ pub fn run(source: &str, header: Option<&str>, defines: &[String]) -> Output {
     let c = directory.join("module.c");
     let exe = directory.join("module.exe");
     fs::write(&c, source).unwrap();
+    let extra_source_paths = extra_sources
+        .iter()
+        .map(|(name, contents)| {
+            let path = directory.join(name);
+            fs::write(&path, contents).unwrap();
+            path
+        })
+        .collect::<Vec<_>>();
     let version = Command::new("rustc").arg("-vV").output().unwrap();
     assert!(version.status.success());
     let version = String::from_utf8(version.stdout).unwrap();
@@ -73,6 +92,7 @@ pub fn run(source: &str, header: Option<&str>, defines: &[String]) -> Output {
         }
     }
     command.arg(&c);
+    command.args(&extra_source_paths);
     if compiler.is_like_msvc() {
         command.arg(format!("/Fe:{}", exe.display()));
     } else {

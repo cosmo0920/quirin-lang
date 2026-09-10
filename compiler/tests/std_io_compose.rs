@@ -799,9 +799,10 @@ fn the_composed_program_matches_the_reference_per_stream() {
 fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
     #[cfg(target_os = "windows")]
     {
-        let run = windows_c::run(
+        let run = windows_c::run_with_sources(
             source,
             None,
+            &[],
             &[(
                 "buffer_api.c",
                 include_str!("fixtures/extern_calls/buffer_api.c"),
