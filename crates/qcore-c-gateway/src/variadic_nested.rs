@@ -104,6 +104,16 @@ pub(crate) struct NestedCallActual {
     /// Half-open token span of the whole nested call within the statement.
     pub(crate) start: usize,
     pub(crate) end: usize,
+    /// The outer argument this nested call occupies is not the bare call but a
+    /// **dereference of its result** — `* f ( )` or `( * f ( ) )` — admitted
+    /// under premise N10 (card **CONSTRUCTOR-RESIDUALS**). The span below is
+    /// the whole argument, wrapper included, because that is what must leave
+    /// the enclosing lexical indirect-access gate.
+    pub(crate) dereferenced: bool,
+    /// Half-open token span of the whole outer argument. Equal to
+    /// `start .. end` unless [`Self::dereferenced`].
+    pub(crate) argument_start: usize,
+    pub(crate) argument_end: usize,
 }
 
 /// The nested call this statement's outer call admits, if any.
@@ -147,10 +157,21 @@ pub(crate) fn admitted_nested_call(
     // call — its callee is the argument's first token and its closing `)` the
     // argument's last. A cast, an arithmetic combination, a comparison or any
     // other surrounding expression refuses.
-    let (argument, &(start, end)) = argument_spans
+    //
+    // Premise **N4-D**, card **CONSTRUCTOR-RESIDUALS**: the one further shape
+    // admitted is a *dereference of the call's result*, written `* f ( )` or
+    // `( * f ( ) )` and nothing else. See [`dereference_wrapper`] for the
+    // argument and for premise N10, which is what keeps the dereferenced value
+    // out of the projection.
+    let (argument, &(argument_start, argument_end)) = argument_spans
         .iter()
         .enumerate()
-        .find(|(_, (start, _))| *start == nested_index)?;
+        .find(|(_, (start, end))| (*start..*end).contains(&nested_index))?;
+    let (prefix, suffix) = dereference_wrapper(texts, argument_start, argument_end)?;
+    if argument_start + prefix != nested_index {
+        return None;
+    }
+    let (start, end) = (nested_index, argument_end - suffix);
     let span = texts.get(start..end)?;
     if span.last().copied() != Some(")") {
         return None;
@@ -176,6 +197,15 @@ pub(crate) fn admitted_nested_call(
             .iter()
             .all(|mode| matches!(mode, ResourceParameterMode::Borrowed))
     {
+        return None;
+    }
+    // Premise **N10**, card **CONSTRUCTOR-RESIDUALS**: a dereferenced result
+    // must be a pointer to a *scalar*, read from this unit's own declarations.
+    // Under N6 the projection binds nothing from the call, so `f ( )` names no
+    // identity; N10 is what makes `* f ( )` a **value** the projection also
+    // never tracks. Without it `* f ( )` could denote, say, a `struct chunk *`
+    // and reach a `Release` position as an identity nobody named.
+    if prefix > 0 && !model.scalar_pointer_result(function) {
         return None;
     }
     // Premise N8: the position the nested result occupies needs no identity.
@@ -223,7 +253,124 @@ pub(crate) fn admitted_nested_call(
         arguments,
         start,
         end,
+        dereferenced: prefix > 0,
+        argument_start,
+        argument_end,
     })
+}
+
+/// The absolute token span of the one outer argument that premise N4-D
+/// admitted as a **dereference** of a nested call's result, if any.
+///
+/// The lexical indirect-access gate in [`crate::legacy_c`] runs over the tokens
+/// no whitelist claimed, and it reads `*`. An admitted dereference wrapper must
+/// therefore leave that gate the same way a declared `Borrowed` actual does, or
+/// the statement reports `indirect memory access` before
+/// [`admitted_nested_call`] is ever consulted — which is exactly the state card
+/// ALIAS-AGGREGATE measured at `flb_input_chunk.c` L19600 and L19619.
+///
+/// **The decision is not repeated here.** This calls [`admitted_nested_call`],
+/// the single place every premise lives, and exempts a span only when that
+/// function admitted it *and* the wrapper was a dereference. A bare nested call
+/// needs no exemption (it carries no `*`), so it is deliberately not returned.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn dereferenced_argument_span(
+    texts: &[&str],
+    call_index: usize,
+    argument_spans: &[(usize, usize)],
+    outer: &ResourceFunctionContract,
+    outer_tail: bool,
+    contracts: &ResourceContracts,
+    model: &TypedAccessModel,
+    types: &FunctionTypes,
+    bases: &UntrackedBases,
+) -> Option<(usize, usize)> {
+    let nested = admitted_nested_call(
+        texts,
+        call_index,
+        argument_spans,
+        outer,
+        outer_tail,
+        contracts,
+        model,
+        types,
+        bases,
+    )?;
+    nested
+        .dereferenced
+        .then_some((nested.argument_start, nested.argument_end))
+}
+
+/// The wrapper premise **N4-D**: how many tokens of the outer argument stand
+/// before and after the nested call.
+///
+/// Exactly three shapes are admitted, and nothing else:
+///
+/// | argument | prefix | suffix |
+/// |---|---|---|
+/// | `f ( … )` | 0 | 0 |
+/// | `* f ( … )` | 1 | 0 |
+/// | `( * f ( … ) )` | 2 | 1 |
+///
+/// The second and third are the same expression; C's `errno` is spelled
+/// `(*__errno_location ())` and a hand-written dereference usually is not, so
+/// refusing either spelling would make the rule depend on parenthesisation.
+///
+/// # Why a dereference of a call result carries nothing
+///
+/// This is the **refined** form of card W4-EXPR-POS's proved sentence. That
+/// sentence — *an admitted neutral expression contains no pointer-valued
+/// operand* — cannot reach here, because a call whose result is dereferenced is
+/// pointer-valued by construction. What replaces it is a statement about what
+/// the projection tracks rather than about C types:
+///
+/// > An admitted dereference-of-a-call-result **binds, releases, escapes and
+/// > addresses nothing this projection tracks.**
+///
+/// Every conjunct is discharged by a premise already required here:
+///
+/// * *binds nothing* — N6 declares the nested result `None`, so no site is
+///   produced and no name is bound to it; and the wrapper shapes contain no
+///   `=`, so the argument is an rvalue in an argument position, never a
+///   destination;
+/// * *releases nothing* — N7 declares every nested parameter `Borrowed`, so the
+///   nested call's declared effects are the identity on the abstract state;
+/// * *escapes nothing* — N9 requires every inner actual to be a place this
+///   projection denotes or data, so no tracked identity is handed to the callee
+///   whose result is being read;
+/// * *addresses nothing* — the wrapper carries no `&`, and N10 requires the
+///   dereferenced pointee to be a **scalar**, so the value of the whole
+///   argument is a scalar rvalue that no position of this projection can bind.
+///
+/// The pointer that is dereferenced is therefore never *this projection's*
+/// pointer: it is a value the projection declined to track at the moment the
+/// call was declared neutral, and the dereference consumes it into a scalar in
+/// the same expression. Nothing is skipped, because there is nothing to model —
+/// exactly card W4-EXPR-POS §2.1's argument, restated for a value the
+/// projection does not name rather than for a type C does not call a pointer.
+///
+/// # What stays refused
+///
+/// `* * f ( )`, `& * f ( )`, `( * f ( ) ) -> m`, `* f ( ) + 1`,
+/// `( ( * f ( ) ) )`, `f ( ) [ 0 ]`, a cast around either shape, and every
+/// dereference of a call whose declaration this unit does not read as returning
+/// a pointer to a scalar (premise N10).
+fn dereference_wrapper(
+    texts: &[&str],
+    argument_start: usize,
+    argument_end: usize,
+) -> Option<(usize, usize)> {
+    match (
+        texts.get(argument_start)?,
+        texts.get(argument_start + 1),
+        texts.get(argument_end.checked_sub(1)?)?,
+    ) {
+        (&"(", Some(&"*"), &")") => Some((2, 1)),
+        (&"(", _, _) => None,
+        (&"*", Some(second), _) if *second != "*" && *second != "&" => Some((1, 0)),
+        (&"*", _, _) => None,
+        _ => Some((0, 0)),
+    }
 }
 
 /// Whether every actual beyond the declared parameter vector carries no custody

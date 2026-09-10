@@ -258,6 +258,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     ("fluent_bit/logging.qcore", "flb_log_check", 3),
+    // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
+    // `libc/errno.qcore`, and this module gains one declaration. Deliberate;
+    // see `docs/reports/remaining-constructor-residuals/README.md`. Five
+    // clauses: the marker, three borrowed scalars/pointers, and the scalar
+    // result. No variadic tail — the C declaration is not variadic.
+    ("fluent_bit/logging.qcore", "flb_errno_print", 5),
     ("fluent_bit/logging.qcore", "flb_log_print", 7),
     ("fluent_bit/memory.qcore", "flb_malloc", 6),
     ("fluent_bit/memory.qcore", "flb_calloc", 7),
@@ -291,6 +297,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "preserve_five_chunk_credits",
         2,
     ),
+    // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
+    // result mode. It takes no parameter, so it has no parameter clause — the
+    // same shape as `fluent_bit/time.qcore`'s `flb_time_now`.
+    ("libc/errno.qcore", "__errno_location", 2),
     ("libc/memory.qcore", "malloc", 3),
     ("libc/memory.qcore", "calloc", 4),
     ("libc/memory.qcore", "free", 3),
@@ -398,6 +408,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "observation_complete",
         8,
     ),
+    // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
+    // borrowed pointers and the unit result.
+    ("monkey/intrusive_list.qcore", "mk_list_add", 4),
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
@@ -460,8 +473,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `fluent_bit/input_chunk_name.qcore`, `fluent_bit/logging.qcore` and
     // `fluent_bit/routes_mask.qcore`; 64 -> 67 by card NEIGHBOURS' deliberate
     // addition of `chunkio/chunk_residency.qcore`,
-    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`.
-    assert_eq!(sources.len(), 67, "unexpected contract corpus size");
+    // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`;
+    // 67 -> 69 by card CONSTRUCTOR-RESIDUALS' deliberate addition of
+    // `libc/errno.qcore` and `monkey/intrusive_list.qcore`.
+    assert_eq!(sources.len(), 69, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

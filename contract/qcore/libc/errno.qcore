@@ -1,0 +1,74 @@
+module contract;
+
+// The C library's `errno` accessor — resource-projection vocabulary version 1.
+//
+// Card CONSTRUCTOR-RESIDUALS. This module declares a TRUSTED ASSUMPTION about
+// one C library function. It verifies nothing: no C body is analyzed by this
+// loader, and a declaration is a premise.
+//
+// ## What the call sites actually reach — measured, not assumed
+//
+// `errno` is not an object in any translation unit of the pinned corpus. C11
+// 7.5p2 permits it to be "a modifiable lvalue ... that expands to a modifiable
+// lvalue", and glibc defines it as a macro over a function call
+// (`/usr/include/errno.h:37-38` on the audited host):
+//
+//     extern int *__errno_location (void) __THROW __attribute_const__;
+//     # define errno (*__errno_location ())
+//
+// So every `errno` a preprocessed unit of this corpus contains is the token
+// sequence `( * __errno_location ( ) )`, and the callee the resource
+// projection sees is `__errno_location`.
+//
+// ## `__errno_location`, read from its declaration
+//
+//   int *__errno_location (void)
+//
+//   * It takes NO parameters, so no argument of any caller can reach it and no
+//     caller's custody obligation can be affected through one.
+//   * It returns a pointer to the calling thread's `errno` object. That object
+//     has static storage duration and thread-local lifetime (C11 7.5p2): it is
+//     not allocated by this call, it is not the caller's to free, and no
+//     library function in this corpus frees it. The caller therefore acquires
+//     NO obligation, which is exactly `resource_return_none()`.
+//   * `__THROW` and `__attribute_const__` carry no type and no effect this
+//     projection models.
+//
+// The result type is spelled `ptr<mut, u8>` because that is this vocabulary's
+// projection of every single-`*` non-`const` pointer (`POINTER_ABI_TYPES`); the
+// declared *pointee* is deliberately not spelled here, and the gateway reads it
+// from the unit's own declarations instead — see below.
+//
+// ## What this declaration does NOT admit on its own
+//
+// Declaring `__errno_location` does not make `errno` readable anywhere. The
+// gateway's dereference-of-a-call-result rule (card CONSTRUCTOR-RESIDUALS,
+// premises N1-N10) independently requires, PER CALL SITE, that the call is the
+// statement's only nested call, that it occupies a whole argument at a declared
+// `Borrowed` position modulo the dereference wrapper, that its written arity
+// equals this declaration's, and — premise N10 — that THIS TRANSLATION UNIT's
+// own declaration of the callee returns exactly one `*` over a scalar type.
+// A unit that declares `__errno_location` differently, or does not declare it
+// at all, refuses every such site under this declaration exactly as without it.
+//
+// ## What no declaration here says
+//
+// Nothing about the value of `errno`, nothing about which library functions set
+// it, nothing about the ordering of a set against a read, and nothing about
+// thread-local storage lifetime beyond the caller acquiring no obligation.
+// This is a per-call custody statement about the CALLER's obligations, and
+// nothing more.
+//
+// ## Portability, recorded rather than assumed
+//
+// `__errno_location` is the glibc spelling. musl declares the same name; macOS
+// spells it `__error()` and Windows `_errno()`. On a host whose headers use a
+// different spelling this declaration names a function no analysed unit
+// contains, so it is inert text there — the same measured-inert situation card
+// PROD-CONTRACTS recorded for `flb_trace`, and harmless for the same reason.
+
+extern fn __errno_location() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};

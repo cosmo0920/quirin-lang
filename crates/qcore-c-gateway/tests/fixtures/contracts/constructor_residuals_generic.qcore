@@ -1,0 +1,124 @@
+module contract;
+
+// CONSTRUCTOR-RESIDUALS — held-out generic dereference-of-a-call-result API.
+//
+// Deliberately unrelated to glibc, to Fluent Bit and to the `g_*` (O04),
+// `h_*` (O04-ARMS), `k_*` (O04-B08), `r_*` (O04-READ-BOUND), `m_*` (O04-B09B10)
+// and `v_*` (ALIAS-AGGREGATE) families: every rule under test is stated over
+// declared C types and contract modes, so no name here can matter. These are
+// synthetic trusted test assumptions, not facts about any library.
+
+// The resource this family accounts for.
+extern fn d_open(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn d_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nullable);
+    ensures normal resource_return_none();
+};
+
+// The outer, custody-free reporter whose first parameter is the dereferenced
+// value. Its second parameter is a borrowed pointer so that a *pointer*-valued
+// dereference has a declared position to reach, which is what premise N10 has
+// to refuse.
+extern fn d_report(code: i32, label: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(code);
+    ensures normal resource_borrowed(label);
+    ensures normal resource_return_none();
+};
+
+// A reporter whose first parameter is declared `Released`: the position a
+// dereferenced value must never be admitted at, whatever it dereferences.
+extern fn d_consume(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nullable);
+    ensures normal resource_return_none();
+};
+
+// The neutral zero-argument accessors. `d_slot` returns a pointer to a scalar —
+// the admitted shape. `d_handle` returns a pointer to a pointer, and
+// `d_record` a pointer to a record: both are pointer-valued *after* the
+// dereference, and premise N10 refuses them.
+extern fn d_slot() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn d_handle() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+extern fn d_record() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
+
+// A zero-argument accessor whose result carries custody: premise N6 refuses it
+// with or without a dereference.
+extern fn d_owned_slot() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nullable);
+};
+
+// A one-argument accessor, so premise N9 and the inner arity gate have a
+// reachable subject under a dereference.
+extern fn d_slot_of(h: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+// A one-argument accessor that releases what it is given: premise N7 refuses it.
+extern fn d_slot_taking(h: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nullable);
+    ensures normal resource_return_none();
+};
+
+// A pointer-returning neutral accessor, so the *bare* nested-call family (no
+// dereference) has a well-typed C subject beside the dereferenced one.
+extern fn d_label_of(h: ptr<mut, u8>) -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(h);
+    ensures normal resource_return_none();
+};
+
+// Two variadic reporters declared at the SAME arity, differing only in whether
+// the declaration covers the actuals beyond it. They are how premise N8's two
+// directions are reached in well-typed C: a dereferenced actual is a scalar, so
+// it can never be passed at a declared custody position (every custody mode
+// requires a pointer parameter), and the tail is the only position N8 decides
+// that a scalar can occupy.
+extern fn d_note(code: i32, label: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(code);
+    ensures normal resource_borrowed(label);
+    ensures normal resource_return_none();
+};
+
+extern fn d_note_tail(code: i32, label: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(code);
+    ensures normal resource_borrowed(label);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};

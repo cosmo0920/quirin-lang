@@ -1,0 +1,334 @@
+function flb_input_chunk_get_direct_routes: status Unsafe
+diagnostics: 99
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L19282  n211  NoOp                                     | int index;
+L19283  n210  NoOp                                     | int labels_present;
+L19284  n209  NoOp                                     | int plugins_present;
+L19285  n208  NoOp                                     | int wide_ids;
+L19286  n207  NoOp                                     | int ret;
+L19287  n206  NoOp                                     | int id_offset;
+L19288  n205  NoOp                                     | int lengths_offset;
+L19289  n204  NoOp                                     | int label_data_offset;
+L19290  n203  NoOp                                     | int plugin_lengths_offset;
+L19291  n202  NoOp                                     | int plugin_data_offset;
+L19292  n201  NoOp                                     | int id_bytes;
+L19293  n200  NoOp                                     | size_t remaining;
+L19294  n199  NoOp                                     | size_t plugin_remaining;
+L19295  n198  NoOp                                     | uint16_t routing_length;
+L19296  n197  NoOp                                     | uint16_t stored_count;
+L19297  n196  NoOp                                     | uint16_t *label_lengths;
+L19298  n195  NoOp                                     | uint8_t *label_alias_flags;
+L19299  n194  NoOp                                     | uint16_t *plugin_lengths;
+L19300  n193  NoOp                                     | struct flb_chunk_direct_route *result;
+L19301  n192  NoOp                                     | struct flb_input_chunk_meta_view view;
+L19302  n191  NoOp                                     | uint32_t read_id;
+L19303  n190  Clear index                              | index = 0;
+L19304  n189  Clear labels_present                     | labels_present = 0;
+L19305  n188  Clear plugins_present                    | plugins_present = 0;
+L19306  n187  Clear wide_ids                           | wide_ids = 0;
+L19307  n186  Clear ret                                | ret = 0;
+L19308  n185  Clear id_offset                          | id_offset = 0;
+L19309  n184  Clear lengths_offset                     | lengths_offset = 0;
+L19310  n183  Clear label_data_offset                  | label_data_offset = 0;
+L19311  n182  Clear plugin_lengths_offset              | plugin_lengths_offset = 0;
+L19312  n181  Clear plugin_data_offset                 | plugin_data_offset = 0;
+L19313  n180  Unknown: C operator `sizeof` requires type/operand analysis | id_bytes = (int) sizeof(uint16_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19314  n179  Clear remaining                          | remaining = 0;
+L19315  n178  Clear plugin_remaining                   | plugin_remaining = 0;
+L19316  n177  Clear routing_length                     | routing_length = 0;
+L19317  n176  Clear stored_count                       | stored_count = 0;
+L19318  n175  Clear label_lengths                      | label_lengths = ((void*)0);
+L19319  n174  Clear label_alias_flags                  | label_alias_flags = ((void*)0);
+L19320  n173  Clear plugin_lengths                     | plugin_lengths = ((void*)0);
+L19321  n172  Clear result                             | result = ((void*)0);
+L19322  n171  Clear read_id                            | read_id = 0;
+L19323  n170  NoOp                                     | if (!routes || !route_count) {
+L19324  n169  NoOp                                     | return -1;
+L19326  n168  Clear *routes                            | *routes = ((void*)0);
+        !! unsupported: store through `*routes` without an out-parameter contract
+L19327  n167  Clear *route_count                       | *route_count = 0;
+        !! unsupported: store through `*route_count` without an out-parameter contract
+L19328  n166  Unknown: call to uncontracted function `input_chunk_metadata_view` | ret = input_chunk_metadata_view(ic, &view);
+        !! unsupported: call to uncontracted function `input_chunk_metadata_view`
+L19329  n165  NoOp                                     | if (ret == -1) {
+L19330  n164  NoOp                                     | return -1;
+L19332  n163  Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((view.flags & (1 << 0)) == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19333  n162  NoOp                                     | return 0;
+L19335  n161  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (view.routing_data == ((void*)0) || view.routing_data_length < sizeof(uint16_t)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19336  n160  NoOp                                     | return -2;
+L19338  n159  Unknown: indirect memory access is outside the resource projection | routing_length = view.routing_data_length;
+        !! unsupported: indirect memory access is outside the resource projection
+L19339  n158  Unknown: indirect memory access is outside the resource projection | stored_count = (uint16_t) (((unsigned char) view.routing_data[0] << 8) |
+        !! unsupported: indirect memory access is outside the resource projection
+L19341  n157  BranchOnNull stored_count true_is_null=true | if (stored_count == 0) {
+        !! unresolved resource identity `stored_count`
+L19342  n156  NoOp                                     | return 0;
+L19344  n155  Unknown: indirect memory access is outside the resource projection | wide_ids = ((view.flags & (1 << 2)) != 0);
+        !! unsupported: indirect memory access is outside the resource projection
+L19345  n154  NoOp                                     | if (wide_ids == 1) {
+L19346  n152  Unknown: C operator `sizeof` requires type/operand analysis | id_bytes = (int) sizeof(uint32_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19349  n153  Unknown: C operator `sizeof` requires type/operand analysis | id_bytes = (int) sizeof(uint16_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19351  n151  Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((size_t) routing_length < (sizeof(uint16_t) +
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19353  n150  NoOp                                     | return -2;
+L19355  n149  Unknown: indirect memory access is outside the resource projection | labels_present = ((view.flags & (1 << 1)) != 0);
+        !! unsupported: indirect memory access is outside the resource projection
+L19356  n148  Unknown: indirect memory access is outside the resource projection | plugins_present = ((view.flags & (1 << 3)) != 0);
+        !! unsupported: indirect memory access is outside the resource projection
+L19357  n147  Call flb_calloc(_, _) -> result          | result = flb_calloc((size_t) stored_count, sizeof(struct flb_chunk_direct_route));
+L19358  n146  BranchOnNull result true_is_null=true    | if (!result) {
+L19359  n145  Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2269);
+L19360  n144  NoOp                                     | return -1;
+L19362  n143  Unknown: C operator `sizeof` requires type/operand analysis | id_offset = sizeof(uint16_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19363  n131  NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19363  n132  NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19363  n142  Clear index                              | for (index = 0; index < stored_count; index++) {
+L19364  n141  NoOp                                     | if (wide_ids == 1) {
+L19365  n139  Unknown: indirect memory access is outside the resource projection | read_id = ((uint32_t) ((unsigned char) view.routing_data[id_offset]) << 24) |
+        !! unsupported: indirect memory access is outside the resource projection
+L19371  n140  Unknown: indirect memory access is outside the resource projection | read_id = ((uint32_t) ((unsigned char) view.routing_data[id_offset]) << 8) |
+        !! unsupported: indirect memory access is outside the resource projection
+L19374  n138  Alias id = read_id                       | result[index].id = read_id;
+L19375  n137  Clear label                              | result[index].label = ((void*)0);
+L19376  n136  Clear label_length                       | result[index].label_length = 0;
+L19377  n135  Clear plugin_name                        | result[index].plugin_name = ((void*)0);
+L19378  n134  Clear plugin_name_length                 | result[index].plugin_name_length = 0;
+L19379  n133  Unknown: unrecognized assignment destination | id_offset += id_bytes;
+        !! unsupported: unrecognized assignment destination
+L19381  n130  Unknown: C operator `sizeof` requires type/operand analysis | lengths_offset = sizeof(uint16_t) + (stored_count * id_bytes);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19382  n129  NoOp                                     | if ((size_t) lengths_offset > routing_length) {
+L19383  n128  Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19384  n127  NoOp                                     | return -2;
+        !! leak from L19357
+L19386  n126  Alias label_data_offset = lengths_offset | label_data_offset = lengths_offset;
+L19387  n125  NoOp                                     | if (labels_present == 1) {
+L19388  n123  Call flb_calloc(_, _) -> label_lengths   | label_lengths = flb_calloc((size_t) stored_count, sizeof(uint16_t));
+L19389  n122  BranchOnNull label_lengths true_is_null=true | if (!label_lengths) {
+L19390  n121  Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2304);
+L19391  n120  Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19392  n119  NoOp                                     | return -1;
+        !! leak from L19357
+L19394  n118  Call flb_calloc(_, _) -> label_alias_flags | label_alias_flags = flb_calloc((size_t) stored_count, sizeof(uint8_t));
+L19395  n117  BranchOnNull label_alias_flags true_is_null=true | if (!label_alias_flags) {
+L19396  n116  Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2311);
+L19397  n115  Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+L19398  n114  Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19399  n113  NoOp                                     | return -1;
+        !! leak from L19357
+L19401  n94   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19401  n95   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19401  n112  Clear index                              | for (index = 0; index < stored_count; index++) {
+L19402  n111  Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((size_t) (label_data_offset + (int) sizeof(uint16_t)) > routing_length) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19403  n110  Call flb_free(label_alias_flags) -> _    | flb_free(label_alias_flags);
+        !! unresolved resource identity `label_alias_flags`
+L19404  n109  Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+        !! unresolved resource identity `label_lengths`
+L19405  n108  Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19406  n107  NoOp                                     | return -2;
+L19408  n106  Unknown: indirect memory access is outside the resource projection | label_lengths[index] = (uint16_t) (((unsigned char) view.routing_data[label_data_offset] << 8) |
+        !! unsupported: indirect memory access is outside the resource projection
+L19410  n105  NoOp                                     | if (plugins_present == 1) {
+L19411  n100  Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((label_lengths[index] & 0x8000) != 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19412  n98   Unknown: unrecognized assignment destination | label_alias_flags[index] = 1;
+        !! unsupported: unrecognized assignment destination
+L19413  n97   Unknown: unrecognized assignment destination | label_lengths[index] &= 0x7FFF;
+        !! unsupported: unrecognized assignment destination
+L19416  n99   Unknown: unrecognized assignment destination | label_alias_flags[index] = 0;
+        !! unsupported: unrecognized assignment destination
+L19420  n104  Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((label_lengths[index] & 0x8000) != 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19421  n102  Unknown: unrecognized assignment destination | label_alias_flags[index] = 1;
+        !! unsupported: unrecognized assignment destination
+L19422  n101  Unknown: unrecognized assignment destination | label_lengths[index] &= 0x7FFF;
+        !! unsupported: unrecognized assignment destination
+L19425  n103  Unknown: unrecognized assignment destination | label_alias_flags[index] = 1;
+        !! unsupported: unrecognized assignment destination
+L19428  n96   Unknown: C operator `sizeof` requires type/operand analysis | label_data_offset += sizeof(uint16_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19430  n93   NoOp                                     | if ((size_t) label_data_offset > routing_length) {
+L19431  n92   Call flb_free(label_alias_flags) -> _    | flb_free(label_alias_flags);
+        !! unresolved resource identity `label_alias_flags`
+L19432  n91   Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+        !! unresolved resource identity `label_lengths`
+L19433  n90   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19434  n89   NoOp                                     | return -2;
+        !! leak from L19357
+L19436  n88   Unknown: unsupported assignment expression | remaining = routing_length - (size_t) label_data_offset;
+        !! unsupported: unsupported assignment expression
+L19437  n56   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19437  n57   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19437  n87   Clear index                              | for (index = 0; index < stored_count; index++) {
+L19438  n86   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (label_lengths[index] == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19439  n85   Clear label                              | result[index].label = ((void*)0);
+L19440  n84   Clear label_length                       | result[index].label_length = 0;
+L19441  n83   BranchOnNull label_alias_flags true_is_null=false | if (label_alias_flags) {
+        !! unresolved resource identity `label_alias_flags`
+L19442  n80   Unknown: indirect memory access is outside the resource projection | result[index].label_is_alias = label_alias_flags[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19444  n82   BranchOnNull plugins_present true_is_null=true | else if (plugins_present == 0) {
+        !! unresolved resource identity `plugins_present`
+L19445  n81   Unknown: unsupported assignment expression | result[index].label_is_alias = 1;
+        !! unsupported: unsupported assignment expression
+L19447  n79   NoOp                                     | continue;
+L19449  n78   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (label_lengths[index] > remaining) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19450  n77   Call flb_free(label_alias_flags) -> _    | flb_free(label_alias_flags);
+        !! unresolved resource identity `label_alias_flags`
+L19451  n76   Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+        !! unresolved resource identity `label_lengths`
+L19452  n75   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19453  n74   NoOp                                     | return -2;
+L19455  n73   Unknown: indirect memory access is outside the resource projection | result[index].label = flb_malloc((size_t) label_lengths[index] + 1);
+        !! unsupported: indirect memory access is outside the resource projection
+L19456  n72   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (!result[index].label) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19457  n71   Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2379);
+L19458  n70   Call flb_free(label_alias_flags) -> _    | flb_free(label_alias_flags);
+        !! unresolved resource identity `label_alias_flags`
+L19459  n69   Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+        !! unresolved resource identity `label_lengths`
+L19460  n68   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19461  n67   NoOp                                     | return -1;
+L19463  n66   Unknown: indirect memory access is outside the resource projection | memcpy((char *) result[index].label,
+        !! unsupported: indirect memory access is outside the resource projection
+L19466  n65   Unknown: unrecognized assignment destination | ((char *) result[index].label)[label_lengths[index]] = '\0';
+        !! unsupported: unrecognized assignment destination
+L19467  n64   Unknown: indirect memory access is outside the resource projection | result[index].label_length = label_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19468  n63   BranchOnNull label_alias_flags true_is_null=false | if (label_alias_flags) {
+        !! unresolved resource identity `label_alias_flags`
+L19469  n60   Unknown: indirect memory access is outside the resource projection | result[index].label_is_alias = label_alias_flags[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19471  n62   BranchOnNull plugins_present true_is_null=true | else if (plugins_present == 0) {
+        !! unresolved resource identity `plugins_present`
+L19472  n61   Unknown: unsupported assignment expression | result[index].label_is_alias = 1;
+        !! unsupported: unsupported assignment expression
+L19474  n59   Unknown: indirect memory access is outside the resource projection | label_data_offset += label_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19475  n58   Unknown: indirect memory access is outside the resource projection | remaining -= label_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19477  n55   Call flb_free(label_alias_flags) -> _    | flb_free(label_alias_flags);
+        !! unresolved resource identity `label_alias_flags`
+L19478  n54   Call flb_free(label_lengths) -> _        | flb_free(label_lengths);
+        !! unresolved resource identity `label_lengths`
+L19481  n124  Unknown: unsupported assignment expression | remaining = routing_length - (size_t) label_data_offset;
+        !! unsupported: unsupported assignment expression
+L19483  n53   Alias plugin_lengths_offset = label_data_offset | plugin_lengths_offset = label_data_offset;
+L19484  n52   NoOp                                     | if (plugins_present == 1) {
+L19485  n46   Call flb_calloc(_, _) -> plugin_lengths  | plugin_lengths = flb_calloc((size_t) stored_count, sizeof(uint16_t));
+L19486  n45   BranchOnNull plugin_lengths true_is_null=true | if (!plugin_lengths) {
+L19487  n44   Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2413);
+L19488  n43   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19489  n42   NoOp                                     | return -1;
+        !! leak from L19357
+L19491  n33   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19491  n34   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19491  n41   Clear index                              | for (index = 0; index < stored_count; index++) {
+L19492  n40   Unknown: unmodeled call, aggregate or indirect access in branch condition | if ((size_t) (plugin_lengths_offset + (int) sizeof(uint16_t)) > routing_length) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19493  n39   Call flb_free(plugin_lengths) -> _       | flb_free(plugin_lengths);
+        !! unresolved resource identity `plugin_lengths`
+L19494  n38   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19495  n37   NoOp                                     | return -2;
+L19497  n36   Unknown: indirect memory access is outside the resource projection | plugin_lengths[index] = (uint16_t) (((unsigned char) view.routing_data[plugin_lengths_offset] << 8) |
+        !! unsupported: indirect memory access is outside the resource projection
+L19499  n35   Unknown: C operator `sizeof` requires type/operand analysis | plugin_lengths_offset += sizeof(uint16_t);
+        !! unsupported: C operator `sizeof` requires type/operand analysis
+L19501  n32   Alias plugin_data_offset = plugin_lengths_offset | plugin_data_offset = plugin_lengths_offset;
+L19502  n31   NoOp                                     | if ((size_t) plugin_data_offset > routing_length) {
+L19503  n30   Call flb_free(plugin_lengths) -> _       | flb_free(plugin_lengths);
+        !! unresolved resource identity `plugin_lengths`
+L19504  n29   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19505  n28   NoOp                                     | return -2;
+        !! leak from L19357
+L19507  n27   Unknown: unsupported assignment expression | plugin_remaining = routing_length - (size_t) plugin_data_offset;
+        !! unsupported: unsupported assignment expression
+L19508  n5    NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19508  n6    NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19508  n26   Clear index                              | for (index = 0; index < stored_count; index++) {
+L19509  n25   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (plugin_lengths[index] == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19510  n24   Clear plugin_name                        | result[index].plugin_name = ((void*)0);
+L19511  n23   Clear plugin_name_length                 | result[index].plugin_name_length = 0;
+L19512  n22   NoOp                                     | continue;
+L19514  n21   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (plugin_lengths[index] > plugin_remaining) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19515  n20   Call flb_free(plugin_lengths) -> _       | flb_free(plugin_lengths);
+        !! unresolved resource identity `plugin_lengths`
+L19516  n19   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19517  n18   NoOp                                     | return -2;
+L19519  n17   Unknown: indirect memory access is outside the resource projection | result[index].plugin_name = flb_malloc((size_t) plugin_lengths[index] + 1);
+        !! unsupported: indirect memory access is outside the resource projection
+L19520  n16   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (!result[index].plugin_name) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19521  n15   Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 2453);
+L19522  n14   Call flb_free(plugin_lengths) -> _       | flb_free(plugin_lengths);
+        !! unresolved resource identity `plugin_lengths`
+L19523  n13   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(result, stored_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L19524  n12   NoOp                                     | return -1;
+L19526  n11   Unknown: indirect memory access is outside the resource projection | memcpy((char *) result[index].plugin_name,
+        !! unsupported: indirect memory access is outside the resource projection
+L19529  n10   Unknown: unrecognized assignment destination | ((char *) result[index].plugin_name)[plugin_lengths[index]] = '\0';
+        !! unsupported: unrecognized assignment destination
+L19530  n9    Unknown: indirect memory access is outside the resource projection | result[index].plugin_name_length = plugin_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19531  n8    Unknown: indirect memory access is outside the resource projection | plugin_data_offset += plugin_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19532  n7    Unknown: indirect memory access is outside the resource projection | plugin_remaining -= plugin_lengths[index];
+        !! unsupported: indirect memory access is outside the resource projection
+L19534  n4    Call flb_free(plugin_lengths) -> _       | flb_free(plugin_lengths);
+        !! unresolved resource identity `plugin_lengths`
+L19537  n47   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19537  n48   NoOp                                     | for (index = 0; index < stored_count; index++) {
+L19537  n51   Clear index                              | for (index = 0; index < stored_count; index++) {
+L19538  n50   Clear plugin_name                        | result[index].plugin_name = ((void*)0);
+L19539  n49   Clear plugin_name_length                 | result[index].plugin_name_length = 0;
+L19542  n3    Alias *routes = result                   | *routes = result;
+        !! unsupported: store through `*routes` without an out-parameter contract
+L19543  n2    Alias *route_count = stored_count        | *route_count = stored_count;
+        !! unsupported: store through `*route_count` without an out-parameter contract
+L19544  n1    NoOp                                     | return 0;
+        !! leak from L19357
+exits:
+  L19544  node 1 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed", "site3@L19485 Mixed"]
+  L19524  node 12 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed", "site3@L19485 Mixed"]
+  L19517  node 18 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed", "site3@L19485 Mixed"]
+  L19505  node 28 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed", "site3@L19485 Mixed"]
+  L19495  node 37 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed", "site3@L19485 Mixed"]
+  L19489  node 42 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed"]
+  L19461  node 67 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed"]
+  L19453  node 74 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed"]
+  L19434  node 89 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed"]
+  L19406  node 107 custody Unknown sites ["site0@L19357 Mixed", "site1@L19388 Mixed", "site2@L19394 Mixed"]
+  L19399  node 113 custody Unknown sites ["site0@L19357 Live", "site1@L19388 Released"]
+  L19392  node 119 custody Unknown sites ["site0@L19357 Live"]
+  L19384  node 127 custody Unknown sites ["site0@L19357 Live"]
+  L19360  node 144 custody Unknown sites []
+  L19353  node 150 custody Unknown sites []
+  L19342  node 156 custody Unknown sites []
+  L19336  node 160 custody Unknown sites []
+  L19333  node 162 custody Unknown sites []
+  L19330  node 164 custody Unknown sites []
+  L19324  node 169 custody Unknown sites []

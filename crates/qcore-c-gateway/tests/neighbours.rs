@@ -838,6 +838,9 @@ fn the_modules_under_test_are_the_production_ones() {
             "{name} is not in force in the production manifest"
         );
     }
-    // 9 -> 12 manifest-selected modules, deliberately.
-    assert_eq!(contracts.source_assumptions().len(), 12);
+    // 9 -> 12 manifest-selected modules, deliberately; 12 -> 14 by card
+    // CONSTRUCTOR-RESIDUALS' deliberate addition of `libc/errno.qcore` and
+    // `monkey/intrusive_list.qcore`. This card's six declarations are asserted
+    // above by name, so the count moving does not weaken what it pins.
+    assert_eq!(contracts.source_assumptions().len(), 14);
 }

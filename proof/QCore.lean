@@ -113,6 +113,7 @@ import QCore.Transferability
 import QCore.LiteralArgumentPremise
 import QCore.ProtectionGrowthEmission
 import QCore.ChainedTailActual
+import QCore.DereferencedResult
 import QCore.PublicationCustody
 
 /-! The executable formal core of QCore-C revision 0.1. -/

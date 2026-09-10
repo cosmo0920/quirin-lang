@@ -3236,6 +3236,29 @@ impl Parser<'_> {
             })
         });
         borrowed_actuals.extend(tail_accesses);
+        // Card CONSTRUCTOR-RESIDUALS: an outer argument that is exactly a
+        // dereference of an admitted nested call's result — `errno`, spelled
+        // `(*__errno_location ())` after preprocessing. Its span leaves the
+        // lexical gate exactly as a C02-P borrowed actual does; the decision is
+        // [`crate::variadic_nested::admitted_nested_call`]'s own, premises N1-N10,
+        // and exempting the span is never on its own an admission: the nested
+        // rule below is consulted again and still governs the statement.
+        let dereferenced = find_call(&texts).and_then(|(call_index, function)| {
+            let contract = self.contracts.contract(function)?;
+            let spans = call_argument_spans(&texts, call_index)?;
+            crate::variadic_nested::dereferenced_argument_span(
+                &texts,
+                call_index,
+                &spans,
+                contract,
+                self.variadic_tails.contains(function),
+                self.contracts,
+                &self.typed_model,
+                &self.typed_types,
+                &self.typed_bases,
+            )
+        });
+        borrowed_actuals.extend(dereferenced);
         if let Some(equal) = assignment
             && !contains_call(tokens)
             && let Some(destination) = direct_assignment_destination(&texts[..equal])
@@ -5348,65 +5371,98 @@ fn require_live_borrowed_actuals(
         let LegacyInstruction::ContractCall {
             arguments,
             contract,
+            nested,
             ..
         } = &node.instruction
         else {
             continue;
         };
-        // Card BORROW-RESIDUALS (`BORROW-LIVENESS-PRESTATE`): what this call's
-        // own declared effects destroy, resolved once against the same settled
-        // pre-state. Only `Released` destroys, exactly as only the `RELEASED`
-        // bit does in `borrow_liveness::custody_definitely_ended`; `Consumed`,
-        // `Stored` and `Removed` move or detach custody, and `Out` writes a
-        // slot.
-        let destroying = contract
-            .parameters
-            .iter()
-            .enumerate()
-            .map(|(index, mode)| {
-                matches!(mode, ResourceParameterMode::Released { .. })
-                    .then(|| arguments.get(index).and_then(Option::as_deref))
-                    .flatten()
-                    .and_then(|place| state.pointers.get(place))
-                    .map(denote_pointer)
-            })
-            .collect::<Vec<_>>();
-        for (index, mode) in contract.parameters.iter().enumerate() {
-            if !matches!(mode, ResourceParameterMode::Borrowed) {
-                continue;
-            }
-            let Some(source) = arguments.get(index).and_then(Option::as_deref) else {
-                continue;
-            };
-            let denotation = state.pointers.get(source).map(denote_pointer);
-            // The path rule, on plain names only: a composite place carries
-            // O04-READ-BOUND's and O04-B09B10's strictly stronger `LIVE`
-            // requirement in this same pre-state (`BORROW-LIVENESS-PLACES`).
-            let path_refuses = crate::may_alias::place_root(source) == Some(source)
-                && crate::borrow_liveness::borrowed_actual_liveness(
-                    crate::borrow_liveness::BorrowSite {
-                        denotation,
-                        resources: &state.resources,
-                        unresolved: &state.unresolved_effect_sites,
+        // Card CONSTRUCTOR-RESIDUALS, a fail-closed repair of a **pre-existing**
+        // hole this card's own subject made reachable, and measured at the base
+        // tree before any of this card's rules existed.
+        //
+        // Card O04-TRACE's admitted nested call carries its own modeled
+        // actuals, and card BORROW-LIVENESS's precondition only ever looked at
+        // the enclosing `ContractCall`'s. So
+        //
+        // ```c
+        // s_close(h); s_note(s_label(h));      /* base: Safe, no diagnostic  */
+        // s_close(h); s_label(h);              /* base: Unknown, UnknownAlias */
+        // ```
+        //
+        // answered differently for the same released identity at the same
+        // declared `Borrowed` mode, purely because one of them was nested. The
+        // nested call's declared effects are the identity on the abstract state
+        // (premises N6/N7), which is exactly why its *reads* need the same
+        // precondition and get no other channel to raise it: `transfer` applies
+        // its effects and produces nothing.
+        //
+        // Both are examined against the **same settled pre-state**, which is
+        // sound in the ordering sense for the same reason O04-TRACE composes
+        // them at all: an admitted nested call changes nothing, so the state
+        // entering the nested call and the state entering the outer call are
+        // the same state.
+        let calls = std::iter::once((arguments, contract)).chain(
+            nested
+                .as_deref()
+                .map(|nested| (&nested.arguments, &nested.contract)),
+        );
+        for (arguments, contract) in calls {
+            // Card BORROW-RESIDUALS (`BORROW-LIVENESS-PRESTATE`): what this call's
+            // own declared effects destroy, resolved once against the same settled
+            // pre-state. Only `Released` destroys, exactly as only the `RELEASED`
+            // bit does in `borrow_liveness::custody_definitely_ended`; `Consumed`,
+            // `Stored` and `Removed` move or detach custody, and `Out` writes a
+            // slot.
+            let destroying = contract
+                .parameters
+                .iter()
+                .enumerate()
+                .map(|(index, mode)| {
+                    matches!(mode, ResourceParameterMode::Released { .. })
+                        .then(|| arguments.get(index).and_then(Option::as_deref))
+                        .flatten()
+                        .and_then(|place| state.pointers.get(place))
+                        .map(denote_pointer)
+                })
+                .collect::<Vec<_>>();
+            for (index, mode) in contract.parameters.iter().enumerate() {
+                if !matches!(mode, ResourceParameterMode::Borrowed) {
+                    continue;
+                }
+                let Some(source) = arguments.get(index).and_then(Option::as_deref) else {
+                    continue;
+                };
+                let denotation = state.pointers.get(source).map(denote_pointer);
+                // The path rule, on plain names only: a composite place carries
+                // O04-READ-BOUND's and O04-B09B10's strictly stronger `LIVE`
+                // requirement in this same pre-state (`BORROW-LIVENESS-PLACES`).
+                let path_refuses = crate::may_alias::place_root(source) == Some(source)
+                    && crate::borrow_liveness::borrowed_actual_liveness(
+                        crate::borrow_liveness::BorrowSite {
+                            denotation,
+                            resources: &state.resources,
+                            unresolved: &state.unresolved_effect_sites,
+                        },
+                    ) == crate::borrow_liveness::BorrowLiveness::DefinitelyNotLive;
+                // The same-call rule, on every place the projection settled: no
+                // other channel asks this call's own effects about its own reads,
+                // so there is nothing here to duplicate.
+                let call_refuses = crate::borrow_liveness::borrow_destroyed_by_this_call(
+                    crate::borrow_liveness::SameCallSite {
+                        borrowed: denotation,
+                        destroying: &destroying,
                     },
-                ) == crate::borrow_liveness::BorrowLiveness::DefinitelyNotLive;
-            // The same-call rule, on every place the projection settled: no
-            // other channel asks this call's own effects about its own reads,
-            // so there is nothing here to duplicate.
-            let call_refuses = crate::borrow_liveness::borrow_destroyed_by_this_call(
-                crate::borrow_liveness::SameCallSite {
-                    borrowed: denotation,
-                    destroying: &destroying,
-                },
-            ) == crate::borrow_liveness::SameCallBorrow::DestroyedByThisCall;
-            if path_refuses || call_refuses {
-                diagnostics.insert(LegacyDiagnostic {
-                    function: cfg.function.clone(),
-                    line: node.line,
-                    kind: LegacyDiagnosticKind::UnknownAlias {
-                        variable: source.to_owned(),
-                    },
-                });
+                ) == crate::borrow_liveness::SameCallBorrow::DestroyedByThisCall;
+                if path_refuses || call_refuses {
+                    diagnostics.insert(LegacyDiagnostic {
+                        function: cfg.function.clone(),
+                        line: node.line,
+                        kind: LegacyDiagnosticKind::UnknownAlias {
+                            variable: source.to_owned(),
+                        },
+                    });
+                }
             }
         }
     }
