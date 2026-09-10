@@ -47,7 +47,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
-| `crates/qcorec/` | CLI binary `qcorec` plus its process-level tests |
+| `crates/qcorec/` | CLI binary `quirin` (crate `qcorec`) plus its process-level tests |
 | `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters |
 | `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition |
@@ -68,16 +68,16 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-17 checkpoint (`docs/reports/wave17-corpus/`, the
-current re-pinned baseline):
+Headline numbers at the wave-20 checkpoint (`docs/reports/wave20-corpus/`, the
+current re-pinned baseline; wave-17's archive stays frozen beneath it):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions, leak **272** (271 → 272 deliberately at the wave-17 re-pin, in the accusing direction; see constraint 7) |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions (150 Safe / 85 provisional Unsafe / 4,599 Unknown incl. `flb_input_chunk_create` function-level **Safe**, wave 20), leak **273** (271 → 272 → 273, each deliberate and accusing; see constraint 7) |
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **70 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,134 workspace tests (8 ignored) · 122 provider · 193 Python · **85 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-19 close: six remainder cards + three Windows batches; corpus baseline stays `docs/reports/wave17-corpus/` — movement exactly two attributed leaves, leak 272, headline unchanged) |
+| Merged gate | 3,277 workspace tests (8 ignored) · 122 provider · 193 Python · **89 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-20 close + wave-21 partial (QUIRIN-RENAME); corpus re-pinned to `docs/reports/wave20-corpus/` — 12 leaves removed / 3 added, all attributed, unit headline unchanged) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -174,16 +174,21 @@ pointer is the card that established it; read it before deviating.
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it
    incidentally. `remaining-c02-p-alias`, `remaining-borrow-liveness`,
    `remaining-hygiene-14`.
-7. Leak diagnostics are **272** across the pinned 185-unit corpus. A change
+7. Leak diagnostics are **273** across the pinned 185-unit corpus. A change
    that moves that number is a finding to attribute in the re-pin, not to
-   absorb. It moved 271 → 272 exactly once, deliberately, at the wave-17
-   re-pin: `flb_input_chunk_get_direct_routes` L19399, in the *accusing*
-   direction on a function and a unit already `Unsafe`, when a neighbouring
-   refusal that hid it was admitted. That leaf is provisional in the documented
-   sense (`CONSTRUCTOR-RESIDUALS-LEAK-271`); deciding it would *withdraw* six
-   standing claims, which no card is scoped to do incidentally.
-   `remaining-o04-b08`, `corpus-repin`, `remaining-constructor-residuals` §6.4,
-   `wave17-corpus`.
+   absorb. It has moved exactly twice, deliberately, each in the *accusing*
+   direction: 271 → 272 at the wave-17 re-pin
+   (`flb_input_chunk_get_direct_routes` L19399, on a function and a unit
+   already `Unsafe`, when a neighbouring refusal that hid it was admitted;
+   provisional as `CONSTRUCTOR-RESIDUALS-LEAK-271` — deciding it would
+   *withdraw* six standing claims), and 272 → 273 at the wave-20 re-pin
+   (`input_chunk_get` L19849: modelling the constructor let W4 bind its
+   summary, exposing a release through the uncontracted
+   `flb_input_chunk_destroy`; the function moved `Unknown` → provisional
+   `Unsafe`, and `ADDRESS-OF-MEMBER-DESTROY-UNDECLARED` names the
+   declaration that would decide the leaf). `remaining-o04-b08`,
+   `corpus-repin`, `remaining-constructor-residuals` §6.4, `wave17-corpus`,
+   `wave20-abi-address-of-member`, `wave20-corpus`.
 8. **A declared contract must agree with the C the unit declares.** A contract
    whose parameter or result ABI projections the analysed translation unit's
    own C declaration contradicts is **withdrawn for that unit** — every call
@@ -284,9 +289,11 @@ pointer is the card that established it; read it before deviating.
     conformance test (it counts every process of the real UID, and keeps a
     deterministic companion), `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
     (wall-clock, measured failing at load 50 and passing at load 37 on the same
-    binary), the confined-fixture write test (`Io(Broken pipe)` under load), and
+    binary), the confined-fixture write test (`Io(Broken pipe)` under load),
     `real_packages_preserve_unknown_and_reject_mutations` (`ExecutableFileBusy`:
-    a sibling test in the same binary executes the file it mutates).
+    a sibling test in the same binary executes the file it mutates), and —
+    fifth, wave 20 — `enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded`
+    (the same `Io(Broken pipe)` shape as its sibling row, at load ~40).
     `remaining-p03` §9.1, `remaining-p03-f`, `wave17-gen-ctreasons` §4.1,
     `wave17-corpus`.
 17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
@@ -387,7 +394,7 @@ python3 scripts/check_lean_audits.py
 ```
 
 Clang is required for existing-C analysis tests (`QCORE_CLANG` overrides
-discovery; invalid/empty value is an error, never a silent fallback). `qcorec
+discovery; invalid/empty value is an error, never a silent fallback). `quirin
 check`/`emit` and generated-C tests work without Clang (MSVC on Windows).
 Lean toolchain via `proof/lean-toolchain` (elan). Provider changes additionally
 need `providers/package.py` build + verify (constraint 18).
@@ -412,8 +419,10 @@ ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 - Library: `parse_source_program`, `elaborate_source`, `check_whole_program`,
   `compile_files` / `compile_files_with_registry`,
   `analyze_unrestricted_c11` / `validate_unrestricted_c11`.
-- CLI: `qcorec check <file>`, `qcorec emit -o out.c <file>`,
-  `qcorec plugins list|inspect <id>|verify <package>|enable|disable`.
+- CLI (binary `quirin`, crate `qcorec`): `quirin check <file>`,
+  `quirin emit -o out.c <file>`,
+  `quirin plugins list|inspect <id>|verify <package>|enable|disable`;
+  configured audits run as `quirin-audit CONFIG.json` (crate `qcore-audit`).
 - Configured audits: `qcore-audit CONFIG.json`;
   `scripts/prepare_cycle19_clang_audit.py`,
   `scripts/prepare_cmetrics_clang_audit.py`,
@@ -421,7 +430,7 @@ ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 - Native threading examples: `examples/threads/README.md` (`cl.exe`);
   `build-windows.ps1 -Run` emits, builds and runs the copied-worker,
   owned-buffer and shared-reader examples into `target/thread-examples/`.
-- Editor: `editors/emacs/qcore-mode.el` gives lexical `.qcore`/`.qc`
+- Editor: `editors/emacs/qcore-mode.el` gives lexical `.qcore`
   highlighting; see `editors/emacs/README.md`. Highlighting does not imply
   executable or verified support.
 
@@ -442,7 +451,8 @@ this table is a summary of it, not a second allocation.
 | `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` an operator token used where this revision gives it no meaning (`\|`, `&`, `^` reserved for bitwise) |
 | `Q039`–`Q042` | `NativeLibrary` | `source.native-library.v1` manifest load, binding and agreement; manifest-resident waivers |
 | `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
-| `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape, decidable condition tier (with `\|\|`/`&&` connectives), custody-join agreement |
+| `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape and arm subset, decidable condition tier (connectives, `!`, bitwise, constant bindings), custody join over survivors |
+| `Q047`–`Q049` | `NativeLibrary` | second band of the same pass: manifest-bound contract slices, identity stacking, withdrawal |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
