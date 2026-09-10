@@ -6,7 +6,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram, interpret_source};
+use qcore_core::cleanup_lowering::{
+    BranchCondition, CompareOp, SourceOp, SourceProgram as LoweringProgram, interpret_source,
+};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
     epoch_accounting, mutex_c_emit, mutex_invariant, task_c_emit, task_execution,
@@ -17,7 +19,7 @@ use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
 use qcore_core::{std_io, std_io_c_emit};
 use qcore_frontend::frontend::{
-    DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceDeclaration,
+    DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
     TypedSourceProgram, elaborate_source, parse_source_program,
 };
@@ -744,6 +746,33 @@ fn synthesize_semantics(
         .collect()
 }
 
+/// The operations one statement sequence contributes to each checked model.
+///
+/// Card `IF-STATEMENT`. Before it, `synthesize_function` was a single flat loop
+/// appending to five parallel vectors; a branch arm is a *sequence* whose
+/// contribution must be bundled so the arms can be joined. Each field is the
+/// arm's contribution to one existing model, and each of those models already
+/// carries its own branch join — `OwnershipOp::Branch`, `ErrorOp::Branch`,
+/// `UsageExpr::Branch` and `Flow::join_branches` all predate this card.
+#[derive(Default)]
+struct SequenceLowering {
+    lowering: Vec<SourceOp>,
+    ownership: Vec<OwnershipOp>,
+    error_operations: Vec<ErrorOp>,
+    demands: Vec<(UsageExpr, bool)>,
+    flow: Flow,
+}
+
+/// The quantitative counters a sequence advances. Snapshotted and joined at a
+/// branch, componentwise in the same direction `Flow::join_branches` takes.
+#[derive(Clone, Copy)]
+struct Counters {
+    live: u64,
+    peak_live: u64,
+    total: u64,
+    reachable: bool,
+}
+
 fn synthesize_function(
     parsed: &SourceProgram,
     declaration: &Located<SourceDeclaration>,
@@ -769,9 +798,7 @@ fn synthesize_function(
             "source function requires a body",
         ));
     };
-    let mut resources = Vec::new();
-    let mut owners = BTreeMap::<String, ResourceId>::new();
-    let mut usage_declarations = typed_declaration
+    let usage_declarations = typed_declaration
         .parameters
         .iter()
         .map(|parameter| {
@@ -784,274 +811,48 @@ fn synthesize_function(
             )
         })
         .collect::<BTreeMap<_, _>>();
-    let mut local_usage_names = BTreeMap::<String, String>::new();
-    let mut runtime_demands = Vec::new();
-    let mut usage_reachable = true;
-    let mut lowering = Vec::new();
-    let mut ownership = Vec::new();
-    let mut error_operations = Vec::new();
-    let mut calls = Vec::new();
-    let mut resource_segments = Vec::new();
-    let mut segment = Flow::zero();
-    let mut peak_live = 0_u64;
-    let mut live = 0_u64;
-    let mut total = 0_u64;
+    let mut builder = FunctionLowering {
+        parsed,
+        typed,
+        typed_declaration,
+        errors,
+        result_type,
+        resources: Vec::new(),
+        owners: BTreeMap::new(),
+        usage_declarations,
+        local_usage_names: BTreeMap::new(),
+        calls: Vec::new(),
+        resource_segments: Vec::new(),
+        counters: Counters {
+            live: 0,
+            peak_live: 0,
+            total: 0,
+            reachable: true,
+        },
+    };
+    let mut sequence = SequenceLowering::default();
+    builder.lower_sequence(&body.statements, &mut sequence, true)?;
 
-    for statement in &body.statements {
-        if !statement.value.nested_blocks().is_empty() {
-            return Err(diagnostic(
-                SemanticPass::CEmission,
-                statement.span,
-                "structured control flow is not in the Cycle 12 executable subset",
-            ));
-        }
-        let tokens = statement_tokens(parsed.source(), statement.span)?;
-        match &statement.value {
-            StatementKind::Let {
-                binding: Some(binding),
-            } => {
-                // Local usage annotations are not in this executable slice.
-                // Reject them instead of silently ignoring a contract.
-                if tokens
-                    .iter()
-                    .take_while(|token| token.kind != TokenKind::Symbol(Symbol::Equal))
-                    .any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "use"))
-                {
-                    return Err(diagnostic(
-                        SemanticPass::Usage,
-                        statement.span,
-                        "local usage annotations are not supported in the executable subset",
-                    ));
-                }
-                let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
-                    diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
-                })?;
-                if !errors.contains(&error) {
-                    return Err(diagnostic(
-                        SemanticPass::TypedErrors,
-                        statement.span,
-                        format!("unknown error type `{error}`"),
-                    ));
-                }
-                resources.push(resource);
-                owners.insert(binding.clone(), resource);
-                // Distinguish a local from a shadowed parameter. Ownership and
-                // implicit error cleanup remain the ownership pass's concern.
-                let usage_name = format!("$local:{}:{binding}", statement.span.start);
-                usage_declarations.insert(usage_name.clone(), Usage::MANY);
-                local_usage_names.insert(binding.clone(), usage_name);
-                usage_reachable &= succeeds;
-                lowering.push(SourceOp::Acquire {
-                    resource,
-                    succeeds,
-                    error,
-                });
-                ownership.push(OwnershipOp::Acquire {
-                    id: resource,
-                    owner: binding.clone(),
-                    resource_type: "Resource".into(),
-                    footprint: Footprint::single("resources", 1),
-                });
-                error_operations.push(ErrorOp::Acquire(resource));
-                segment = segment
-                    .then(&Flow::acquire(
-                        Quantity::single("resources", 1),
-                        Quantity::single("allocations", 1),
-                    ))
-                    .map_err(|error| {
-                        diagnostic(
-                            SemanticPass::ResourceFlow,
-                            statement.span,
-                            error.to_string(),
-                        )
-                    })?;
-                live = live.saturating_add(1);
-                peak_live = peak_live.max(live);
-                total = total.saturating_add(1);
-            }
-            StatementKind::Expression => {
-                if let Some((passes, error)) = parse_check(&tokens) {
-                    if !errors.contains(&error) {
-                        return Err(diagnostic(
-                            SemanticPass::TypedErrors,
-                            statement.span,
-                            format!("unknown error type `{error}`"),
-                        ));
-                    }
-                    lowering.push(SourceOp::Check { passes, error });
-                    usage_reachable &= passes;
-                } else if let Some(callee_name) = parse_zero_argument_call(&tokens) {
-                    if local_usage_names.contains_key(&callee_name)
-                        || typed_declaration
-                            .parameters
-                            .iter()
-                            .any(|parameter| parameter.name == callee_name)
-                    {
-                        return Err(diagnostic(
-                            SemanticPass::OrdinaryTypes,
-                            statement.span,
-                            "indirect calls are not supported in the executable subset",
-                        ));
-                    }
-                    let Some(&callee) = typed.globals.get(&callee_name) else {
-                        return Err(diagnostic(
-                            SemanticPass::NameResolution,
-                            statement.span,
-                            format!("unknown function `{callee_name}`"),
-                        ));
-                    };
-                    let callee_declaration =
-                        typed.declarations.iter().find(|item| item.symbol == callee);
-                    if !callee_declaration
-                        .is_some_and(|item| item.kind == DeclarationKind::Function)
-                    {
-                        return Err(diagnostic(
-                            SemanticPass::OrdinaryTypes,
-                            statement.span,
-                            "only source functions may be called in the executable subset",
-                        ));
-                    }
-                    if callee_declaration.is_some_and(|item| !item.parameters.is_empty()) {
-                        return Err(diagnostic(
-                            SemanticPass::OrdinaryTypes,
-                            statement.span,
-                            "executable source calls must have zero arguments",
-                        ));
-                    }
-                    let usage_name = format!("$function:{}", callee.0);
-                    usage_declarations.insert(usage_name.clone(), Usage::MANY);
-                    if usage_reachable {
-                        runtime_demands.push((
-                            UsageExpr::Apply {
-                                function: Box::new(UsageExpr::Variable(usage_name)),
-                                parameter_usages: Vec::new(),
-                                arguments: Vec::new(),
-                            },
-                            true,
-                        ));
-                    }
-                    resource_segments.push(segment);
-                    segment = Flow::zero();
-                    calls.push(CallSite {
-                        callee,
-                        arguments: Vec::new(),
-                        result: None,
-                        span: statement.span,
-                    });
-                } else {
-                    return Err(diagnostic(
-                        SemanticPass::CEmission,
-                        statement.span,
-                        "unsupported expression statement in the Cycle 12 executable subset",
-                    ));
-                }
-            }
-            StatementKind::Drop { place: Some(place) } => {
-                let resource = *owners.get(place).ok_or_else(|| {
-                    diagnostic(
-                        SemanticPass::Ownership,
-                        statement.span,
-                        format!("unknown resource binding `{place}`"),
-                    )
-                })?;
-                lowering.push(SourceOp::Drop(resource));
-                if usage_reachable {
-                    runtime_demands
-                        .push((UsageExpr::Variable(local_usage_names[place].clone()), false));
-                }
-                ownership.push(OwnershipOp::Drop(place.clone()));
-                error_operations.push(ErrorOp::Drop(resource));
-                segment = segment
-                    .then(&Flow::release(
-                        Quantity::single("resources", 1),
-                        Quantity::zero(),
-                    ))
-                    .map_err(|error| {
-                        diagnostic(
-                            SemanticPass::ResourceFlow,
-                            statement.span,
-                            error.to_string(),
-                        )
-                    })?;
-                live = live.saturating_sub(1);
-            }
-            StatementKind::Move { place: Some(place) } => {
-                let resource = *owners.get(place).ok_or_else(|| {
-                    diagnostic(
-                        SemanticPass::Ownership,
-                        statement.span,
-                        format!("unknown resource binding `{place}`"),
-                    )
-                })?;
-                lowering.push(SourceOp::TransferToResult(resource));
-                if usage_reachable {
-                    runtime_demands
-                        .push((UsageExpr::Variable(local_usage_names[place].clone()), false));
-                }
-                ownership.push(OwnershipOp::TransferOut(place.clone()));
-                error_operations.push(ErrorOp::Drop(resource));
-                segment = segment
-                    .then(&Flow::release(
-                        Quantity::single("resources", 1),
-                        Quantity::zero(),
-                    ))
-                    .map_err(|error| {
-                        diagnostic(
-                            SemanticPass::ResourceFlow,
-                            statement.span,
-                            error.to_string(),
-                        )
-                    })?;
-                live = live.saturating_sub(1);
-            }
-            StatementKind::Return => {
-                let value = parse_return(&tokens, result_type).ok_or_else(|| {
-                    diagnostic(
-                        SemanticPass::OrdinaryTypes,
-                        statement.span,
-                        match result_type {
-                            ExecutableResultType::I32 => {
-                                "an i32 result requires a signed 32-bit integer literal return"
-                            }
-                            ExecutableResultType::Unit => "a unit result requires a bare return",
-                        },
-                    )
-                })?;
-                lowering.push(SourceOp::Return(value));
-                usage_reachable = false;
-            }
-            _ => {
-                return Err(diagnostic(
-                    SemanticPass::CEmission,
-                    statement.span,
-                    "statement is not in the Cycle 12 executable subset",
-                ));
-            }
-        }
-    }
-    resource_segments.push(segment);
+    let FunctionLowering {
+        resources,
+        usage_declarations,
+        calls,
+        mut resource_segments,
+        counters,
+        ..
+    } = builder;
+    resource_segments.push(sequence.flow);
     let lowering = LoweringProgram::new(
         declaration.value.name.clone(),
-        resources.clone(),
+        resources,
         errors.iter().cloned(),
-        lowering,
+        sequence.lowering,
     )
-    .map_err(|error| {
-        diagnostic(
-            SemanticPass::CleanupLowering,
-            declaration.span,
-            error.to_string(),
-        )
-    })?;
+    .map_err(|error| branch_aware_lowering_diagnostic(declaration.span, &error))?;
     // Exercise the source interpreter at the synthesis boundary as well as the
     // whole-program translation validator.
-    interpret_source(&lowering).map_err(|error| {
-        diagnostic(
-            SemanticPass::CleanupLowering,
-            declaration.span,
-            error.to_string(),
-        )
-    })?;
+    interpret_source(&lowering)
+        .map_err(|error| branch_aware_lowering_diagnostic(declaration.span, &error))?;
     let parameters = typed_declaration
         .parameters
         .iter()
@@ -1064,7 +865,7 @@ fn synthesize_function(
     // Callees may exit before their continuation. Without a proved normal-exit
     // summary, zero is a possible demand on every subsequent source use.
     let mut reversed_tail = Vec::new();
-    for (expression, may_exit) in runtime_demands.into_iter().rev() {
+    for (expression, may_exit) in sequence.demands.into_iter().rev() {
         if may_exit && !reversed_tail.is_empty() {
             reversed_tail.reverse();
             let continuation = UsageExpr::Branch {
@@ -1082,15 +883,15 @@ fn synthesize_function(
         symbol: typed_declaration.symbol,
         usage_declarations,
         usage_expression,
-        ownership_operations: ownership,
+        ownership_operations: sequence.ownership,
         resource_segments,
         resource_bounds: ResourceBounds::new(
-            Quantity::single("resources", peak_live),
-            Quantity::single("allocations", total),
+            Quantity::single("resources", counters.peak_live),
+            Quantity::single("allocations", counters.total),
         ),
         allowed_effects: EffectRow::new([Effect::Alloc]),
         initial_error_ledger: ErrorLedger::default(),
-        error_operations,
+        error_operations: sequence.error_operations,
         region_operations: Vec::new(),
         lowering,
         calls,
@@ -1099,6 +900,585 @@ fn synthesize_function(
         parameters,
         recursive_contract: None,
     })
+}
+
+struct FunctionLowering<'a> {
+    parsed: &'a SourceProgram,
+    typed: &'a TypedSourceProgram,
+    typed_declaration: &'a TypedSourceDeclaration,
+    errors: &'a BTreeSet<String>,
+    result_type: ExecutableResultType,
+    resources: Vec<ResourceId>,
+    owners: BTreeMap<String, ResourceId>,
+    usage_declarations: BTreeMap<String, Usage>,
+    local_usage_names: BTreeMap<String, String>,
+    calls: Vec<CallSite>,
+    resource_segments: Vec<Flow>,
+    counters: Counters,
+}
+
+impl FunctionLowering<'_> {
+    /// Lower one statement sequence — an entry body, or one arm of a branch.
+    ///
+    /// `top_level` is the entry body. It is the only place a `return` may
+    /// appear (`SourceOp::Return` is the last operation of a program) and the
+    /// only place a source call may appear (a call splits `resource_segments`
+    /// and takes a position in a flat `calls` vector that the whole-program
+    /// summary unfolds positionally). Both refuse inside an arm at `Q044`;
+    /// follow-ons `IF-ARM-RETURN` and `IF-ARM-CALL`.
+    fn lower_sequence(
+        &mut self,
+        statements: &[Located<StatementKind>],
+        output: &mut SequenceLowering,
+        top_level: bool,
+    ) -> Result<(), SourceDiagnostic> {
+        for statement in statements {
+            // Card `IF-STATEMENT` narrows this gate rather than removing it:
+            // `if` is admitted by `source.branch.v1` and every other structured
+            // statement keeps the refusal it has always had.
+            if !matches!(statement.value, StatementKind::If { .. })
+                && !statement.value.nested_blocks().is_empty()
+            {
+                return Err(diagnostic(
+                    SemanticPass::CEmission,
+                    statement.span,
+                    "structured control flow is not in the Cycle 12 executable subset",
+                ));
+            }
+            if let StatementKind::If {
+                conditions,
+                branches,
+            } = &statement.value
+            {
+                self.lower_branch(statement.span, conditions, branches, 0, output)?;
+                continue;
+            }
+            let tokens = statement_tokens(self.parsed.source(), statement.span)?;
+            match &statement.value {
+                StatementKind::Let {
+                    binding: Some(binding),
+                } => {
+                    // Local usage annotations are not in this executable slice.
+                    // Reject them instead of silently ignoring a contract.
+                    if tokens
+                        .iter()
+                        .take_while(|token| token.kind != TokenKind::Symbol(Symbol::Equal))
+                        .any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "use"))
+                    {
+                        return Err(diagnostic(
+                            SemanticPass::Usage,
+                            statement.span,
+                            "local usage annotations are not supported in the executable subset",
+                        ));
+                    }
+                    let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
+                        diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
+                    })?;
+                    if !self.errors.contains(&error) {
+                        return Err(diagnostic(
+                            SemanticPass::TypedErrors,
+                            statement.span,
+                            format!("unknown error type `{error}`"),
+                        ));
+                    }
+                    self.resources.push(resource);
+                    self.owners.insert(binding.clone(), resource);
+                    // Distinguish a local from a shadowed parameter. Ownership and
+                    // implicit error cleanup remain the ownership pass's concern.
+                    let usage_name = format!("$local:{}:{binding}", statement.span.start);
+                    self.usage_declarations
+                        .insert(usage_name.clone(), Usage::MANY);
+                    self.local_usage_names.insert(binding.clone(), usage_name);
+                    self.counters.reachable &= succeeds;
+                    output.lowering.push(SourceOp::Acquire {
+                        resource,
+                        succeeds,
+                        error,
+                    });
+                    output.ownership.push(OwnershipOp::Acquire {
+                        id: resource,
+                        owner: binding.clone(),
+                        resource_type: "Resource".into(),
+                        footprint: Footprint::single("resources", 1),
+                    });
+                    output.error_operations.push(ErrorOp::Acquire(resource));
+                    output.flow = output
+                        .flow
+                        .then(&Flow::acquire(
+                            Quantity::single("resources", 1),
+                            Quantity::single("allocations", 1),
+                        ))
+                        .map_err(|error| {
+                            diagnostic(
+                                SemanticPass::ResourceFlow,
+                                statement.span,
+                                error.to_string(),
+                            )
+                        })?;
+                    self.counters.live = self.counters.live.saturating_add(1);
+                    self.counters.peak_live = self.counters.peak_live.max(self.counters.live);
+                    self.counters.total = self.counters.total.saturating_add(1);
+                }
+                StatementKind::Expression => {
+                    if let Some((passes, error)) = parse_check(&tokens) {
+                        if !self.errors.contains(&error) {
+                            return Err(diagnostic(
+                                SemanticPass::TypedErrors,
+                                statement.span,
+                                format!("unknown error type `{error}`"),
+                            ));
+                        }
+                        output.lowering.push(SourceOp::Check { passes, error });
+                        self.counters.reachable &= passes;
+                    } else if let Some(callee_name) = parse_zero_argument_call(&tokens) {
+                        if !top_level {
+                            return Err(branch_diagnostic(
+                                "Q044",
+                                statement.span,
+                                "`source.branch.v1` admits no call inside a branch arm: a call \
+                                 takes a position in the whole-program call sequence, which has \
+                                 no branch structure",
+                            ));
+                        }
+                        if self.local_usage_names.contains_key(&callee_name)
+                            || self
+                                .typed_declaration
+                                .parameters
+                                .iter()
+                                .any(|parameter| parameter.name == callee_name)
+                        {
+                            return Err(diagnostic(
+                                SemanticPass::OrdinaryTypes,
+                                statement.span,
+                                "indirect calls are not supported in the executable subset",
+                            ));
+                        }
+                        let Some(&callee) = self.typed.globals.get(&callee_name) else {
+                            return Err(diagnostic(
+                                SemanticPass::NameResolution,
+                                statement.span,
+                                format!("unknown function `{callee_name}`"),
+                            ));
+                        };
+                        let callee_declaration = self
+                            .typed
+                            .declarations
+                            .iter()
+                            .find(|item| item.symbol == callee);
+                        if !callee_declaration
+                            .is_some_and(|item| item.kind == DeclarationKind::Function)
+                        {
+                            return Err(diagnostic(
+                                SemanticPass::OrdinaryTypes,
+                                statement.span,
+                                "only source functions may be called in the executable subset",
+                            ));
+                        }
+                        if callee_declaration.is_some_and(|item| !item.parameters.is_empty()) {
+                            return Err(diagnostic(
+                                SemanticPass::OrdinaryTypes,
+                                statement.span,
+                                "executable source calls must have zero arguments",
+                            ));
+                        }
+                        let usage_name = format!("$function:{}", callee.0);
+                        self.usage_declarations
+                            .insert(usage_name.clone(), Usage::MANY);
+                        if self.counters.reachable {
+                            output.demands.push((
+                                UsageExpr::Apply {
+                                    function: Box::new(UsageExpr::Variable(usage_name)),
+                                    parameter_usages: Vec::new(),
+                                    arguments: Vec::new(),
+                                },
+                                true,
+                            ));
+                        }
+                        self.resource_segments
+                            .push(std::mem::take(&mut output.flow));
+                        self.calls.push(CallSite {
+                            callee,
+                            arguments: Vec::new(),
+                            result: None,
+                            span: statement.span,
+                        });
+                    } else {
+                        return Err(diagnostic(
+                            SemanticPass::CEmission,
+                            statement.span,
+                            "unsupported expression statement in the Cycle 12 executable subset",
+                        ));
+                    }
+                }
+                StatementKind::Drop { place: Some(place) } => {
+                    let resource = *self.owners.get(place).ok_or_else(|| {
+                        diagnostic(
+                            SemanticPass::Ownership,
+                            statement.span,
+                            format!("unknown resource binding `{place}`"),
+                        )
+                    })?;
+                    output.lowering.push(SourceOp::Drop(resource));
+                    if self.counters.reachable {
+                        output.demands.push((
+                            UsageExpr::Variable(self.local_usage_names[place].clone()),
+                            false,
+                        ));
+                    }
+                    output.ownership.push(OwnershipOp::Drop(place.clone()));
+                    output.error_operations.push(ErrorOp::Drop(resource));
+                    output.flow = output
+                        .flow
+                        .then(&Flow::release(
+                            Quantity::single("resources", 1),
+                            Quantity::zero(),
+                        ))
+                        .map_err(|error| {
+                            diagnostic(
+                                SemanticPass::ResourceFlow,
+                                statement.span,
+                                error.to_string(),
+                            )
+                        })?;
+                    self.counters.live = self.counters.live.saturating_sub(1);
+                }
+                StatementKind::Move { place: Some(place) } => {
+                    let resource = *self.owners.get(place).ok_or_else(|| {
+                        diagnostic(
+                            SemanticPass::Ownership,
+                            statement.span,
+                            format!("unknown resource binding `{place}`"),
+                        )
+                    })?;
+                    output.lowering.push(SourceOp::TransferToResult(resource));
+                    if self.counters.reachable {
+                        output.demands.push((
+                            UsageExpr::Variable(self.local_usage_names[place].clone()),
+                            false,
+                        ));
+                    }
+                    output
+                        .ownership
+                        .push(OwnershipOp::TransferOut(place.clone()));
+                    output.error_operations.push(ErrorOp::Drop(resource));
+                    output.flow = output
+                        .flow
+                        .then(&Flow::release(
+                            Quantity::single("resources", 1),
+                            Quantity::zero(),
+                        ))
+                        .map_err(|error| {
+                            diagnostic(
+                                SemanticPass::ResourceFlow,
+                                statement.span,
+                                error.to_string(),
+                            )
+                        })?;
+                    self.counters.live = self.counters.live.saturating_sub(1);
+                }
+                StatementKind::Return => {
+                    if !top_level {
+                        return Err(branch_diagnostic(
+                            "Q044",
+                            statement.span,
+                            "`source.branch.v1` admits no `return` inside a branch arm: a return \
+                             is the last operation of a program, and an early exit from an arm \
+                             has no position in this lowering",
+                        ));
+                    }
+                    let value = parse_return(&tokens, self.result_type).ok_or_else(|| {
+                        diagnostic(
+                            SemanticPass::OrdinaryTypes,
+                            statement.span,
+                            match self.result_type {
+                                ExecutableResultType::I32 => {
+                                    "an i32 result requires a signed 32-bit integer literal return"
+                                }
+                                ExecutableResultType::Unit => {
+                                    "a unit result requires a bare return"
+                                }
+                            },
+                        )
+                    })?;
+                    output.lowering.push(SourceOp::Return(value));
+                    self.counters.reachable = false;
+                }
+                _ => {
+                    return Err(diagnostic(
+                        SemanticPass::CEmission,
+                        statement.span,
+                        "statement is not in the Cycle 12 executable subset",
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Lower the `index`th `if` header of a (possibly `else if`-chained)
+    /// branch statement into one `Branch` operation in each checked model.
+    ///
+    /// An `else if` chain is a right-nested branch: level `index`'s else arm is
+    /// level `index + 1`'s whole branch, so the chain needs no separate model.
+    fn lower_branch(
+        &mut self,
+        span: Span,
+        conditions: &[Span],
+        branches: &[SourceBlock],
+        index: usize,
+        output: &mut SequenceLowering,
+    ) -> Result<(), SourceDiagnostic> {
+        // The parser produces either one block per condition, or one more (the
+        // trailing `else`). Anything else is a shape this profile cannot read.
+        if branches.len() != conditions.len() && branches.len() != conditions.len() + 1 {
+            return Err(branch_diagnostic(
+                "Q044",
+                span,
+                "an `if` statement must carry one block per condition, plus at most one \
+                 trailing `else` block",
+            ));
+        }
+        let Some(condition_span) = conditions.get(index) else {
+            return Err(branch_diagnostic(
+                "Q044",
+                span,
+                "an `if` requires a condition",
+            ));
+        };
+        let condition_tokens = statement_tokens(self.parsed.source(), *condition_span)?;
+        let condition = parse_branch_condition(&condition_tokens).ok_or_else(|| {
+            branch_diagnostic(
+                "Q045",
+                *condition_span,
+                "`source.branch.v1` admits `true`, `false` or a comparison of two signed \
+                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`) as a condition. \
+                 A name, a call, a connective (`||`, `&&`) or a parenthesised sub-condition \
+                 is outside the decidable tier",
+            )
+        })?;
+
+        let entry = self.counters;
+        let owners = self.owners.clone();
+        let local_usage_names = self.local_usage_names.clone();
+
+        let mut then_output = SequenceLowering::default();
+        self.lower_sequence(&branches[index].statements, &mut then_output, false)?;
+        let then_counters = self.counters;
+
+        // Both arms start from the same custody state. A binding introduced by
+        // an arm is arm-local: it is restored away here, so nothing after the
+        // join can name it. `drop`/`move` do not remove an owner entry, so the
+        // restore loses no information about the incoming bindings.
+        self.counters = entry;
+        self.owners.clone_from(&owners);
+        self.local_usage_names.clone_from(&local_usage_names);
+
+        let mut else_output = SequenceLowering::default();
+        if index + 1 < conditions.len() {
+            self.lower_branch(span, conditions, branches, index + 1, &mut else_output)?;
+        } else if branches.len() > conditions.len() {
+            self.lower_sequence(
+                &branches[conditions.len()].statements,
+                &mut else_output,
+                false,
+            )?;
+        }
+        let else_counters = self.counters;
+
+        // The else arm's own bindings are arm-local too: nothing after the
+        // join names a binding either arm introduced.
+        self.owners = owners;
+        self.local_usage_names = local_usage_names;
+        self.counters = Counters {
+            // The arms' live counts agree — the ownership, typed-error, flow
+            // and cleanup-lowering joins below each refuse a disagreement — so
+            // taking the `then` arm's is a choice between equals. The peak and
+            // the cumulative total are joined componentwise upward, the same
+            // direction `Flow::join_branches` takes.
+            live: then_counters.live,
+            peak_live: then_counters.peak_live.max(else_counters.peak_live),
+            total: then_counters.total.max(else_counters.total),
+            reachable: then_counters.reachable || else_counters.reachable,
+        };
+
+        // Each model's own branch join. All four predate this card: only
+        // `SourceOp::Branch` is new, because `cleanup_lowering` was the one
+        // linear IR with no branch constructor.
+        let joined_flow = then_output
+            .flow
+            .join_branches(&else_output.flow)
+            .map_err(|error| {
+                branch_diagnostic(
+                    "Q046",
+                    span,
+                    format!(
+                        "the arms of this branch do not join in the resource-flow model: {error}"
+                    ),
+                )
+            })?;
+        output.flow = output
+            .flow
+            .then(&joined_flow)
+            .map_err(|error| diagnostic(SemanticPass::ResourceFlow, span, error.to_string()))?;
+        output.lowering.push(SourceOp::Branch {
+            condition,
+            then_arm: then_output.lowering,
+            else_arm: else_output.lowering,
+        });
+        output.ownership.push(OwnershipOp::Branch {
+            then_ops: then_output.ownership,
+            else_ops: else_output.ownership,
+        });
+        output.error_operations.push(ErrorOp::Branch {
+            then_ops: then_output.error_operations,
+            else_ops: else_output.error_operations,
+        });
+        // An arm admits no call, so every arm demand is a non-exiting one and
+        // the pair's flag is `false` for the joined node too.
+        if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
+            output.demands.push((
+                UsageExpr::Branch {
+                    condition: Box::new(UsageExpr::Unit),
+                    then_expression: Box::new(UsageExpr::Sequence(
+                        then_output
+                            .demands
+                            .into_iter()
+                            .map(|(expression, _)| expression)
+                            .collect(),
+                    )),
+                    else_expression: Box::new(UsageExpr::Sequence(
+                        else_output
+                            .demands
+                            .into_iter()
+                            .map(|(expression, _)| expression)
+                            .collect(),
+                    )),
+                },
+                false,
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// Present a cleanup-lowering refusal, routing the two conditions card
+/// `IF-STATEMENT` added to the branch pass that owns them.
+///
+/// The custody join is checked by four models — resource flow, ownership,
+/// typed errors and the cleanup lowering — and each of them has carried its own
+/// branch join since its own cycle. Only the cleanup lowering's join is new, so
+/// only its two conditions are re-presented here: a disagreement in the
+/// **custody state** is `Q046` whichever model notices it first, which is what
+/// makes `Q046` one condition rather than a code that fires sometimes.
+///
+/// The ownership model's `Q103` is deliberately **not** re-presented: it
+/// refuses a different condition — two arms leaving different resource-identity
+/// ledgers — which is not a custody-state disagreement and keeps its own code.
+fn branch_aware_lowering_diagnostic(
+    span: Span,
+    error: &qcore_core::cleanup_lowering::LoweringError,
+) -> SourceDiagnostic {
+    use qcore_core::cleanup_lowering::LoweringError;
+    match error {
+        LoweringError::BranchArmsDisagree {
+            then_live,
+            else_live,
+            then_transferred,
+            else_transferred,
+        } => branch_diagnostic(
+            "Q046",
+            span,
+            format!(
+                "the arms of a branch do not join: the `then` arm reaches it with live \
+                 {then_live:?} and transferred {then_transferred:?}, the `else` arm with live \
+                 {else_live:?} and transferred {else_transferred:?}. Both arms must reach the \
+                 join in the same custody state"
+            ),
+        ),
+        LoweringError::ReturnInBranchArm => branch_diagnostic(
+            "Q044",
+            span,
+            "`source.branch.v1` admits no `return` inside a branch arm",
+        ),
+        other => diagnostic(SemanticPass::CleanupLowering, span, other.to_string()),
+    }
+}
+
+/// A branch-pass diagnostic at one of its specific codes. The generic `Q044`
+/// is also the pass's presentation code (spec §L21).
+fn branch_diagnostic(
+    code: &'static str,
+    span: Span,
+    message: impl Into<String>,
+) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code,
+        pass: SemanticPass::Branch,
+        span,
+        message: message.into(),
+    }
+}
+
+/// `source.branch.v1`'s decidable condition tier: `true`, `false`, or a
+/// comparison of two signed 32-bit integer literals. Deliberately closed and
+/// deliberately without connectives — `||` and `&&` lower *onto* this
+/// construct in a later card rather than extending this grammar.
+fn parse_branch_condition(tokens: &[Token]) -> Option<BranchCondition> {
+    if let [
+        Token {
+            kind: TokenKind::Word(word),
+            ..
+        },
+    ] = tokens
+    {
+        return parse_bool(word).map(BranchCondition::Literal);
+    }
+    let (left, rest) = parse_condition_operand(tokens)?;
+    let (operator, rest) = match rest.first()?.kind {
+        TokenKind::Symbol(Symbol::EqualEqual) => (CompareOp::Equal, &rest[1..]),
+        TokenKind::Symbol(Symbol::NotEqual) => (CompareOp::NotEqual, &rest[1..]),
+        TokenKind::Symbol(Symbol::Less) => (CompareOp::Less, &rest[1..]),
+        TokenKind::Symbol(Symbol::LessEqual) => (CompareOp::LessEqual, &rest[1..]),
+        TokenKind::Symbol(Symbol::Greater) => (CompareOp::Greater, &rest[1..]),
+        TokenKind::Symbol(Symbol::GreaterEqual) => (CompareOp::GreaterEqual, &rest[1..]),
+        _ => return None,
+    };
+    let (right, rest) = parse_condition_operand(rest)?;
+    if !rest.is_empty() {
+        return None;
+    }
+    Some(BranchCondition::Compare {
+        left,
+        operator,
+        right,
+    })
+}
+
+fn parse_condition_operand(tokens: &[Token]) -> Option<(i32, &[Token])> {
+    match tokens {
+        [
+            Token {
+                kind: TokenKind::Symbol(Symbol::Minus),
+                ..
+            },
+            Token {
+                kind: TokenKind::Integer(value),
+                ..
+            },
+            rest @ ..,
+        ] => {
+            // Parse the final signed spelling: the minimum's magnitude is not an i32.
+            Some((format!("-{value}").parse().ok()?, rest))
+        }
+        [
+            Token {
+                kind: TokenKind::Integer(value),
+                ..
+            },
+            rest @ ..,
+        ] => Some((value.parse().ok()?, rest)),
+        _ => None,
+    }
 }
 
 fn mark_recursive_contracts(functions: &mut [FunctionSemantics]) {

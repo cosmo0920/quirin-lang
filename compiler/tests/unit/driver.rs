@@ -113,12 +113,19 @@ fn preserves_error_cleanup_and_ownership_transfer_observations() {
     );
 }
 
+/// Card `IF-STATEMENT` moved this test's *fixture*, deliberately, and left its
+/// claim exactly where it was. The claim is that an unsupported structured
+/// construct reports `Q500` at the owning file; the fixture used to be
+/// `if (true) { return 1; }`, which `source.branch.v1` now reads. `while` is
+/// still outside the executable subset and still reports `Q500`, so the pin is
+/// unweakened. What the old fixture does now is pinned separately by
+/// `an_early_return_from_a_branch_arm_refuses` in `compiler/tests/branch_statement.rs`.
 #[test]
 fn reports_unsupported_source_at_the_owning_file() {
     let errors = compile_files(
         &[SourceFile::new(
             "bad.qc",
-            "fn main() -> i32 { if (true) { return 1; } }",
+            "fn main() -> i32 { while (true) { return 1; } }",
         )],
         &CompileOptions::default(),
     )
