@@ -15,14 +15,11 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-/// The driver binary under test.
-///
-/// Named through `option_env!` so a rename of the `[[bin]]` target does not
-/// break this file: whichever name Cargo built, one of the two is present.
-const DRIVER: &str = match option_env!("CARGO_BIN_EXE_quirin") {
-    Some(path) => path,
-    None => env!("CARGO_BIN_EXE_qcorec"),
-};
+/// The driver binary under test: `quirin` (card QUIRIN-RENAME; the crate
+/// stays `qcorec`). The pre-merge two-name fallback is gone because `env!`
+/// resolves even in the arm the match never takes, so it fails to compile
+/// exactly when the fallback name does not exist.
+const DRIVER: &str = env!("CARGO_BIN_EXE_quirin");
 
 const UNSAFE_README: &str = include_str!("../../../examples/unsafe-linkage/README.md");
 
