@@ -52,6 +52,14 @@ fn tokenizes_quant_delimiters_as_single_symbols_beside_plain_brackets() {
 /// delimiter and no program containing one checks — is re-pinned at its new
 /// layer in `compiler/tests/quant_index_contracts.rs` and
 /// `compiler/tests/pipe_operator.rs`.
+///
+/// **Card `OR-AND-LOWERING` retables the family** by user direction: `||` is
+/// now one `PipePipe` token (logical or) rather than two `Pipe` tokens, and
+/// the single `|` is reserved for bitwise or rather than claimed as logical
+/// or. Only the `a || b` row of this test moves; every other row — including
+/// both quant-delimiter rows and the `|>` longest-match row — is asserted
+/// byte-unchanged, which is what makes the retable safe for the shipped
+/// `quant[|…|]` alias.
 #[test]
 fn lexes_the_vertical_bar_family_by_longest_match() {
     let kinds = |source: &str| {
@@ -101,15 +109,38 @@ fn lexes_the_vertical_bar_family_by_longest_match() {
             TokenKind::Eof,
         ]
     );
-    // `||` is two `Pipe` tokens the grammar refuses with an actionable
-    // message; it is deliberately never a lexer-level refusal, so the
-    // diagnostic can name the single-`|` spelling.
+    // `||` is **one** `PipePipe` token: the logical-or operator, atomic by the
+    // same width-two rule that decides `|>`. Card `PIPE-OPERATOR` lexed it as
+    // two `Pipe` tokens because the single bar was then the or-spelling; card
+    // `OR-AND-LOWERING` inverts that, and this row is the deliberate move.
     assert_eq!(
         kinds("a || b"),
         vec![
             TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipePipe),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // Three bars are decided by width and not by a longest-possible-run rule:
+    // `||` then the reserved `|`, which refuses.
+    assert_eq!(
+        kinds("a ||| b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipePipe),
             TokenKind::Symbol(Symbol::Pipe),
-            TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Word("b".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // `||>` is the or-operator then a comparison, never `|` then `|>`.
+    assert_eq!(
+        kinds("a ||> b"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::PipePipe),
+            TokenKind::Symbol(Symbol::Greater),
             TokenKind::Word("b".into()),
             TokenKind::Eof,
         ]
@@ -119,6 +150,16 @@ fn lexes_the_vertical_bar_family_by_longest_match() {
         vec![
             TokenKind::Symbol(Symbol::PipeInto),
             TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Eof,
+        ]
+    );
+    // `[||]` is matched at `[`, so it is the two quant delimiters and never an
+    // or-operator: the retable cannot reach inside a quant-index type.
+    assert_eq!(
+        kinds("[||]"),
+        vec![
+            TokenKind::Symbol(Symbol::QuantOpen),
+            TokenKind::Symbol(Symbol::QuantClose),
             TokenKind::Eof,
         ]
     );
@@ -135,6 +176,44 @@ fn lexes_the_vertical_bar_family_by_longest_match() {
     );
 }
 
+/// The three single-byte reservations of card `OR-AND-LOWERING`. `^` was an
+/// `unexpected character` lex error before this card and is now a token; the
+/// set of accepted programs is unchanged, because the operator gate refuses
+/// every occurrence (`compiler/tests/logical_connectives.rs`).
+#[test]
+fn lexes_the_three_reserved_bitwise_characters() {
+    let kinds = |source: &str| {
+        lex(source)
+            .unwrap()
+            .into_iter()
+            .map(|token| token.kind)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        kinds("a | b & c ^ d"),
+        vec![
+            TokenKind::Word("a".into()),
+            TokenKind::Symbol(Symbol::Pipe),
+            TokenKind::Word("b".into()),
+            TokenKind::Symbol(Symbol::Ampersand),
+            TokenKind::Word("c".into()),
+            TokenKind::Symbol(Symbol::Caret),
+            TokenKind::Word("d".into()),
+            TokenKind::Eof,
+        ]
+    );
+    // `^` has no two-byte spelling in the table, so it never absorbs a
+    // neighbour the way `|` and `&` do.
+    assert_eq!(
+        kinds("^^"),
+        vec![
+            TokenKind::Symbol(Symbol::Caret),
+            TokenKind::Symbol(Symbol::Caret),
+            TokenKind::Eof,
+        ]
+    );
+}
+
 #[test]
 fn lexes_the_ampersand_family_with_the_single_byte_left_reserved() {
     let kinds = |source: &str| {
@@ -144,9 +223,12 @@ fn lexes_the_ampersand_family_with_the_single_byte_left_reserved() {
             .map(|token| token.kind)
             .collect::<Vec<_>>()
     };
-    // `&&` is atomic by longest match; a single `&` keeps exactly the meaning
-    // it had before card `PIPE-OPERATOR` — none — and is held for a future
-    // binary/bitwise operation.
+    // `&&` is atomic by longest match and is **the** logical-and operator
+    // after card `OR-AND-LOWERING`; a single `&` keeps exactly the meaning it
+    // had before card `PIPE-OPERATOR` — none — and is reserved for bitwise
+    // and. This test is byte-unchanged by the retable: `&&` was already the
+    // and-spelling, so only its status moved, from claimed-and-refused to
+    // admitted-in-a-condition.
     assert_eq!(
         kinds("a && b"),
         vec![

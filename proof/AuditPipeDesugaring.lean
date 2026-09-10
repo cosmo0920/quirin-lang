@@ -84,17 +84,27 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.a_chain_preserves_every_written_origin
 #print axioms QCore.PipeDesugaring.a_rewritten_chain_contains_no_pipe
 
--- 6. The claimed logical operators refuse; the single `&` is not claimed.
-#print axioms QCore.PipeDesugaring.the_or_operator_refuses
-#print axioms QCore.PipeDesugaring.the_and_operator_refuses
-#print axioms QCore.PipeDesugaring.the_double_bar_refuses
-#print axioms QCore.PipeDesugaring.a_single_ampersand_is_not_claimed
+-- 6. The operator gate, as retabled by card `OR-AND-LOWERING`: the three
+-- single-byte characters are reserved and refuse everywhere, the two
+-- connectives are admitted in an `if` condition and refused outside one, and
+-- the two families are disjoint. What a connective *means* is
+-- `QCore.Connectives`.
+#print axioms QCore.PipeDesugaring.reserved_and_connective_are_disjoint
+#print axioms QCore.PipeDesugaring.a_reserved_character_refuses_everywhere
+#print axioms QCore.PipeDesugaring.the_single_bar_is_reserved
+#print axioms QCore.PipeDesugaring.the_single_ampersand_is_reserved
+#print axioms QCore.PipeDesugaring.the_caret_is_reserved
+#print axioms QCore.PipeDesugaring.a_connective_outside_a_condition_refuses
+#print axioms QCore.PipeDesugaring.a_connective_inside_a_condition_is_admitted
 #print axioms QCore.PipeDesugaring.the_operator_family_is_exactly_as_declared
 
 -- 7. Tokenization: longest match at width two, with the quant delimiters
--- untouched and the future or-operator's constraint recorded.
+-- untouched and the residual `|>` ambiguity recorded against the bitwise wave.
 #print axioms QCore.PipeDesugaring.the_quant_delimiters_are_untouched
 #print axioms QCore.PipeDesugaring.the_pipe_wins_by_longest_match
+#print axioms QCore.PipeDesugaring.the_or_wins_by_longest_match
 #print axioms QCore.PipeDesugaring.the_and_wins_by_longest_match
 #print axioms QCore.PipeDesugaring.the_two_byte_table_is_injective
 #print axioms QCore.PipeDesugaring.three_ampersands_are_and_then_reserved
+#print axioms QCore.PipeDesugaring.three_bars_are_or_then_reserved
+#print axioms QCore.PipeDesugaring.the_caret_never_absorbs_a_neighbour

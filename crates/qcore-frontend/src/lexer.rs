@@ -35,7 +35,19 @@ pub enum Symbol {
     Slash,
     Percent,
     Bang,
+    /// `&`, **reserved** for a future bitwise-and operation (card
+    /// `OR-AND-LOWERING`; follow-on `BITWISE-OPERATORS`). It is not logical
+    /// and — that is [`Self::AndAnd`] — and it is consumed by no grammar in
+    /// this revision, so every occurrence refuses at `Q038` with a
+    /// reservation message.
     Ampersand,
+    /// `^`, **reserved** for a future bitwise-xor operation on the same terms
+    /// as [`Self::Ampersand`]. Card `OR-AND-LOWERING` promotes it from a lexer
+    /// error (`unexpected character '^'`) to a token whose every occurrence
+    /// refuses at `Q038`: the set of accepted programs is unchanged and only
+    /// the layer and the message move, exactly as card `PIPE-OPERATOR` did for
+    /// a bare `|`.
+    Caret,
     Question,
     Less,
     Greater,
@@ -54,16 +66,26 @@ pub enum Symbol {
     /// parsing by [`crate::pipe::desugar_pipes`]; no later phase sees it in a
     /// well-formed program.
     PipeInto,
-    /// `|`, the logical-or operator. Card `PIPE-OPERATOR` claims the token so a
-    /// later wave inherits it without a collision; the short-circuit lowering
-    /// is named follow-on `OR-LOWERING` and every occurrence refuses at `Q038`
-    /// until it lands. A bare `|` was a lex error before that card; it is still
-    /// refused, one layer later and with an actionable message.
+    /// `|`, **reserved** for a future bitwise-or operation (card
+    /// `OR-AND-LOWERING`; follow-on `BITWISE-OPERATORS`).
+    ///
+    /// Card `PIPE-OPERATOR` had claimed the single bar as *logical or*. The
+    /// user's retable amendment inverts that: logical or is the double
+    /// [`Self::PipePipe`], and the single characters `|`, `&` and `^` are freed
+    /// for binary/bitwise use. A bare `|` was a lex error before
+    /// `PIPE-OPERATOR` and has been a `Q038` refusal since; it stays a `Q038`
+    /// refusal here, with the message redirecting to `||` instead of claiming
+    /// the token.
     Pipe,
-    /// `&&`, the logical-and operator, claimed on the same terms as [`Self::Pipe`]
-    /// (follow-on `AND-LOWERING`, refusing at `Q038`). Single `&` stays
-    /// [`Self::Ampersand`] and is deliberately left for a future binary/bitwise
-    /// operation; this card gives it no new meaning.
+    /// `||`, the **logical-or** operator (card `OR-AND-LOWERING`). Atomic by
+    /// longest match — it was two [`Self::Pipe`] tokens under card
+    /// `PIPE-OPERATOR`. Admitted in an `if` condition, where it lowers onto
+    /// `source.branch.v1` as a right-nested branch; anywhere else it refuses at
+    /// `Q038`.
+    PipePipe,
+    /// `&&`, the **logical-and** operator, admitted and lowered on the same
+    /// terms as [`Self::PipePipe`] and binding tighter than it. Single `&`
+    /// stays [`Self::Ampersand`], reserved for bitwise and.
     AndAnd,
     Arrow,
     FatArrow,
@@ -223,15 +245,22 @@ impl Lexer<'_> {
     /// | `[\|` | `QuantOpen` | matched at `[`, so `[\|>` is `QuantOpen` then `Greater` |
     /// | `\|]` | `QuantClose` | |
     /// | `\|>` | `PipeInto` | the pipe wins over `Pipe` then `Greater` by width |
-    /// | `\|` | `Pipe` | logical or; refused at `Q038` until `OR-LOWERING` lands |
-    /// | `\|\|` | `Pipe` `Pipe` | refused at `Q038` naming the single-`\|` spelling |
-    /// | `&&` | `AndAnd` | logical and; refused at `Q038` until `AND-LOWERING` |
-    /// | `&` | `Ampersand` | reserved for a future binary/bitwise operation |
+    /// | `\|\|` | `PipePipe` | **logical or** — atomic, one token (card `OR-AND-LOWERING`) |
+    /// | `\|` | `Pipe` | reserved for bitwise or; refuses at `Q038` |
+    /// | `&&` | `AndAnd` | **logical and** — binds tighter than `\|\|` |
+    /// | `&` | `Ampersand` | reserved for bitwise and; refuses at `Q038` |
+    /// | `^` | `Caret` | reserved for bitwise xor; refuses at `Q038` |
     ///
-    /// The one genuine future ambiguity is `a |> b` against a hypothetical
-    /// `a | > b`: `|>` wins by longest match, so an or-operator followed by a
-    /// `>` comparison must be spaced or parenthesized. That constraint is
-    /// recorded now rather than discovered by the wave that implements `|`.
+    /// The five members of the vertical-bar family are pairwise distinct byte
+    /// pairs (or a single byte), so the width-two rule decides every one of
+    /// them and the order inside the table below is immaterial.
+    ///
+    /// The one genuine ambiguity in the family is `a |> b` against a
+    /// hypothetical `a | > b`: `|>` wins by longest match, so a bitwise or
+    /// followed by a `>` comparison would have to be spaced or parenthesized.
+    /// Recorded by card `PIPE-OPERATOR` and inherited unchanged; it now
+    /// constrains `BITWISE-OPERATORS` rather than the logical-or wave, because
+    /// logical or is `||` and `|| >` is unambiguous.
     fn symbol(&mut self, start: usize, first: char) -> Result<Symbol, LexError> {
         let pair = self
             .source
@@ -248,6 +277,7 @@ impl Lexer<'_> {
             Some("[|") => Some(Symbol::QuantOpen),
             Some("|]") => Some(Symbol::QuantClose),
             Some("|>") => Some(Symbol::PipeInto),
+            Some("||") => Some(Symbol::PipePipe),
             Some("&&") => Some(Symbol::AndAnd),
             _ => None,
         };
@@ -266,11 +296,13 @@ impl Lexer<'_> {
             '/' => Ok(Symbol::Slash),
             '%' => Ok(Symbol::Percent),
             '!' => Ok(Symbol::Bang),
-            // Unchanged by card `PIPE-OPERATOR`: nothing in the workspace
-            // consumes `Ampersand`, and it is deliberately left that way so a
-            // future binary/bitwise wave inherits a clean single `&`.
+            // The three single-byte reservations of card `OR-AND-LOWERING`.
+            // Nothing in the workspace consumes any of them; each is refused
+            // by the operator gate with a bitwise-reservation message so a
+            // future `BITWISE-OPERATORS` wave inherits all three clean.
             '&' => Ok(Symbol::Ampersand),
             '|' => Ok(Symbol::Pipe),
+            '^' => Ok(Symbol::Caret),
             '?' => Ok(Symbol::Question),
             '<' => Ok(Symbol::Less),
             '>' => Ok(Symbol::Greater),

@@ -322,4 +322,34 @@ stable under such a shift.
 | `IF-ROUTE-WIDENING` | admitting the construct on the std-io, extern, task, mutex or epoch routes. Each is a separate checked model (§5). |
 | `IF-CONDITION-BINDINGS` | comparing against an integer `let` binding rather than a literal; a strict subset of `IF-RUNTIME-CONDITION` only if the binding's value is itself decidable. Note that a name written in a condition is collected as a referenced name and refuses at `Q013` before the branch pass runs — fail-closed, and recorded rather than forced to `Q045`. |
 | `SEQ-STATEMENT-TOKENS` | `qcore-verification::driver::statement_tokens` still re-lexes source bytes, the divergent tokenization path wave 18 repaired in `source_extern::statement_tokens` but not here. Inert for the condition spans this card added (a condition contains no pipe, so re-lexing and filtering agree), but it is a second tokenization path. |
-| `OR-AND-LOWERING` | *(the successor card)* lowering `||` and `&&` onto this construct, and retabling the operator family so `||` is logical or, `&&` logical and, and single `|`/`&` are reserved for binary/bitwise use. |
+| `OR-AND-LOWERING` | *(the successor card)* lowering `||` and `&&` onto this construct, and retabling the operator family so `||` is logical or, `&&` logical and, and single `|`/`&` are reserved for binary/bitwise use. **Landed.** See the addendum below. |
+
+---
+
+## Addendum: what `OR-AND-LOWERING` did to this design (wave 19, phase 2)
+
+The successor card landed against this document without changing anything in
+it. Recorded here so the two records read as one design rather than two:
+
+* **The condition tier widened, and nothing else did.** §2.1's `BranchCondition`
+  is byte-unchanged and `qcore-core` is untouched by that card: the connectives
+  live only in a front-end tree the driver eliminates, so every checked model
+  still sees the leaf tier this document specified. `A || B` becomes the
+  right-nested branch of §2's own `else if` flattening; `A && B` becomes a
+  branch nested in the then arm.
+* **The arms are lowered once.** A connective duplicates the arms' *operation
+  vectors*, not their statements, so §3's custody join runs unchanged at every
+  connective level and the conditional leak refuses through any number of them.
+  That is why nesting an `if` inside an arm — admitted here "because it is what
+  `||`/`&&` will lower onto" — turned out to be the whole of the requirement.
+* **Precedence** is declared in spec §L21 and §G02i: `&&` binds tighter than
+  `||`, both left-associative, parentheses group, `|>` refused rather than
+  ranked. One measured consequence: for a homogeneous chain the lowering is
+  associative on the nose, so the associativity declaration is load-bearing only
+  where the two connectives mix.
+* **The operator table this document assumed is now the shipped one.** The
+  header above spells or as `||` and and as `&&` with `|`/`&` reserved; that is
+  what landed, plus `^` reserved for bitwise xor. `BITWISE-OPERATORS` is the
+  follow-on.
+
+Evidence: [`docs/reports/wave19-or-and-lowering/README.md`](../reports/wave19-or-and-lowering/README.md).
