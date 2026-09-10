@@ -518,14 +518,15 @@ fn a_constant_binding_gains_no_other_position() {
 }
 
 #[test]
-fn a_constant_binding_inside_an_arm_refuses_and_names_its_owner() {
-    // Card `IF-ARMS` owns the branch pass's arm subset, so this card does not
-    // widen it. The refusal is deliberate and says whose it is.
+fn a_constant_binding_inside_an_arm_refuses_on_its_own_ground() {
+    // Written when card `IF-ARMS` was the arm subset's pending owner; that card
+    // landed (without a `let`), so the refusal now states its ground rather
+    // than naming a follow-on. The refusal itself is unchanged and deliberate.
     let source = program("  if (true) { let n = 3; }\n  return 0;");
     assert_eq!(codes(&source), ["Q044"]);
     assert!(
-        message(&source).contains("IF-ARMS"),
-        "the owner must be named"
+        message(&source).contains("no position after the join"),
+        "the ground must be stated"
     );
 }
 
