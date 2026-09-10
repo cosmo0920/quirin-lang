@@ -61,3 +61,15 @@ import QCore.StdIo
 #print axioms QCore.StdIo.logging_requires_the_logger_module
 #print axioms QCore.StdIo.rendering_requires_the_fmt_module
 #print axioms QCore.StdIo.no_module_substitutes_for_another
+
+-- Card `STD-FMT-BORROW`: the borrowed render, and why this route has none.
+-- The refusal is the absence of a custody model, and the two namespaces are two
+-- lookups in two environments that cannot reach each other in either direction.
+#print axioms QCore.StdIo.a_route_without_a_custody_model_renders_no_borrow
+#print axioms QCore.StdIo.a_borrowed_render_reads_no_scalar
+#print axioms QCore.StdIo.a_scalar_render_reads_no_identity
+#print axioms QCore.StdIo.a_literal_render_reads_neither_environment
+#print axioms QCore.StdIo.the_operand_forms_are_exactly_these
+#print axioms QCore.StdIo.a_borrowed_render_still_carries_io
+#print axioms QCore.StdIo.a_borrowed_render_allocates_and_mutates_nothing
+#print axioms QCore.StdIo.a_borrowed_render_writes_one_line_on_its_own_stream

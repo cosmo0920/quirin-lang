@@ -23,6 +23,10 @@ pub enum StdIoEmissionRefusal {
     /// refuses this; the backend refuses it again rather than rendering a
     /// value it cannot justify.
     UnboundScalar { event: usize, name: String },
+    /// A `borrow NAME` operand for which no custody model published an identity
+    /// (card `STD-FMT-BORROW`). Refused again here for the same reason: a
+    /// backend must never render a number no model supplied.
+    UnborrowableIdentity { event: usize, name: String },
     /// A certificate whose line count disagrees with the program's.
     CertificateDisagrees,
 }
@@ -49,6 +53,12 @@ fn operand_value(
                     name: name.clone(),
                 })
         }
+        StdIoOperand::Borrowed(name) => program.identities.get(name).copied().ok_or_else(|| {
+            StdIoEmissionRefusal::UnborrowableIdentity {
+                event: index,
+                name: name.clone(),
+            }
+        }),
     }
 }
 
@@ -109,12 +119,23 @@ pub fn interpret_std_io_program(
 /// The rendering itself — the conversion, the level tag, the stream, the
 /// `fflush` — is decided here and nowhere else, so both routes render one way.
 ///
+/// `identities` maps each borrowed name to the model identity a custody model
+/// published for it (card `STD-FMT-BORROW`). A borrowed render emits that
+/// identity as a **literal**, and it is worth saying plainly what that means:
+/// the emitted program reads nothing out of the object. The identity is a
+/// number the checker determined, exactly as this route's `let`-bound integers
+/// are; what the borrow buys is the *checked precondition* that the resource
+/// was live at this statement, not a run-time read. No address is emitted, and
+/// none could be — an address is not model-determined, so a line carrying one
+/// could not be compared against a reference run at all.
+///
 /// `Err(name)` is a name the caller supplied no expression for. The checker
 /// already refuses that; refusing again is what keeps a backend from naming a
 /// variable it never declared.
 pub fn event_statement(
     event: &StdIoEvent,
     expressions: &std::collections::BTreeMap<String, String>,
+    identities: &std::collections::BTreeMap<String, i32>,
 ) -> Result<Option<String>, String> {
     let expression = |operand: &StdIoOperand| -> Result<String, String> {
         match operand {
@@ -122,6 +143,10 @@ pub fn event_statement(
             StdIoOperand::Scalar(name) => {
                 expressions.get(name).cloned().ok_or_else(|| name.clone())
             }
+            StdIoOperand::Borrowed(name) => identities
+                .get(name)
+                .map(|identity| format!("INT32_C({identity})"))
+                .ok_or_else(|| name.clone()),
         }
     };
     match event {
@@ -193,7 +218,7 @@ pub fn emit_std_io_c11(
             }
             StdIoEvent::Flush | StdIoEvent::Return => {}
         }
-        match event_statement(event, &expressions) {
+        match event_statement(event, &expressions, &program.identities) {
             Ok(Some(statement)) => {
                 let _ = writeln!(source, "    {statement}");
             }

@@ -1,0 +1,44 @@
+import std.extern;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// Card `STD-FMT-BORROW`: a module that renders something *about* a live
+// resource without consuming it, releasing it or laundering its identity into
+// a value.
+//
+// `borrow NAME` renders one thing and one thing only — the resource's **model
+// identity**, the number the emitted C's own call trace spells `rN`. It renders
+// no byte of the object, no address and no extent, because the census behind
+// this card measured that no model a rendering can reach carries one. `borrow`
+// was already a reserved source word, so this form adds none.
+//
+// What the borrow buys is a *checked precondition*: each of the two renderings
+// below is admitted only because the extern model's own published ledger holds
+// `b` live at that statement. The second one is placed after the fill and the
+// sum and before the release, so the identity it names is one this entry still
+// owes a cleanup for. Move the release above either of them and the module
+// refuses at `Q043`.
+//
+// The renderings move nothing. The release below is the same release the
+// uncomposed program performs, and the sanitized run is a **positive** leak
+// control: if rendering had lost or duplicated the obligation, LSan would say
+// so.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    print dec borrow b;
+    qcore_extern_fill(b, 7);
+    let total = qcore_extern_sum(b, 8) succeeds 56;
+    log info dec total;
+    log warn hex borrow b;
+    qcore_extern_release(move b);
+    flush;
+    return;
+}

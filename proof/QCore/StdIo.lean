@@ -5,8 +5,16 @@ import QCore.ModuleImports
 
 The claim proved here is the one the Rust route relies on: **a rendering cannot
 touch custody.** It is proved structurally, not by inspecting a checker — the
-operand type has no resource constructor, so a program on this route has no
-resource occurrence to consume, release, retain or leak.
+operand type's two bare constructors have no resource occurrence to consume,
+release, retain or leak.
+
+Card `STD-FMT-BORROW` adds the third, `borrow NAME`, and it changes none of
+that. A borrowed render resolves against a *separate* environment of identities
+a checked custody model published, and this route publishes none, so every
+borrowed render written here refuses. The theorems below state both halves: the
+refusal, and the wall — neither operand form can reach the other's environment,
+in either direction. Whether a supplied identity is *live* is not this module's
+question; `QCore.ComposedStdIo` proves that where the ledger is.
 
 What is **not** proved here: that the Rust lowering extracts these events
 faithfully from source tokens, that the C backend's `printf` conversions render
@@ -38,11 +46,16 @@ inductive Stream where
   | err
   deriving DecidableEq, Repr
 
-/-- **The effect discipline, as a type.** Two constructors, neither of which can
-denote a resource. Every theorem below is downstream of this. -/
+/-- **The effect discipline, as a type.** The two bare constructors cannot
+denote a resource at all; the third denotes one only through an identity a
+checked custody model published for it, and renders that identity and nothing
+else. Every theorem below is downstream of this. -/
 inductive Operand where
   | literal (value : Int)
   | scalar (name : String)
+  /-- `borrow NAME` (card `STD-FMT-BORROW`). Resolved against the identities a
+  custody model supplied, which on this route is the empty list. -/
+  | borrowed (name : String)
   deriving DecidableEq, Repr
 
 inductive Event where
@@ -161,6 +174,89 @@ theorem a_bare_barrier_writes_nothing :
 counts. A barrier still needs the `Io` effect, so it still needs its module. -/
 theorem the_barrier_still_carries_io :
     derivedEffects [Event.flush, Event.ret] = [Effect.io] := rfl
+
+/-! ## The borrowed render, and why this route has none (card `STD-FMT-BORROW`)
+
+A rendering resolves its operand against **two** environments, and the point of
+them being two is that neither lookup can reach the other's names: a literal
+needs neither, a scalar reads only the integers this entry bound, and a borrow
+reads only the identities a checked custody model supplied. `source.std-io.v1`
+has no custody model, so its identity environment is empty — which is why every
+borrowed render written on this route refuses, structurally rather than by a
+rule. -/
+
+/-- Look one name up in an association list. -/
+def lookup (env : List (String × Int)) (name : String) : Option Int :=
+  match env with
+  | [] => none
+  | (k, v) :: rest => if k = name then some v else lookup rest name
+
+/-- What a rendering publishes, given the two environments, or `none` when it
+has no admitted step. -/
+def renderOperand (scalars identities : List (String × Int)) : Operand → Option Int
+  | .literal value => some value
+  | .scalar name => lookup scalars name
+  | .borrowed name => lookup identities name
+
+/-- **A route with no custody model renders no borrow.** This is the whole
+`source.std-io.v1` half of the card: the refusal is the absence of a model, not
+a rule this route states, so it cannot be weakened by editing a checker. -/
+theorem a_route_without_a_custody_model_renders_no_borrow
+    (scalars : List (String × Int)) (name : String) :
+    renderOperand scalars [] (.borrowed name) = none := rfl
+
+/-- **A borrowed render reads no scalar.** Whatever this entry bound with `let`,
+the borrowed operand's result is the same — the two namespaces are two lookups
+in two environments and nothing crosses. -/
+theorem a_borrowed_render_reads_no_scalar
+    (s₁ s₂ identities : List (String × Int)) (name : String) :
+    renderOperand s₁ identities (.borrowed name)
+      = renderOperand s₂ identities (.borrowed name) := rfl
+
+/-- And the wall in the other direction: a scalar render reads no identity, so
+supplying identities can never make a bare operand denote a resource. This is
+the pin that keeps `Q028`'s resource-free rule for a bare operand unweakened. -/
+theorem a_scalar_render_reads_no_identity
+    (scalars i₁ i₂ : List (String × Int)) (name : String) :
+    renderOperand scalars i₁ (.scalar name) = renderOperand scalars i₂ (.scalar name) := rfl
+
+/-- A literal reads neither environment. -/
+theorem a_literal_render_reads_neither_environment
+    (s₁ s₂ i₁ i₂ : List (String × Int)) (value : Int) :
+    renderOperand s₁ i₁ (.literal value) = renderOperand s₂ i₂ (.literal value) := rfl
+
+/-- **The operand forms are exactly these three**, exhibited as one list so that
+a future widening changes a theorem rather than slipping past it. -/
+theorem the_operand_forms_are_exactly_these (o : Operand) :
+    (∃ value, o = .literal value) ∨ (∃ name, o = .scalar name)
+      ∨ (∃ name, o = .borrowed name) := by
+  cases o with
+  | literal value => exact Or.inl ⟨value, rfl⟩
+  | scalar name => exact Or.inr (Or.inl ⟨name, rfl⟩)
+  | borrowed name => exact Or.inr (Or.inr ⟨name, rfl⟩)
+
+/-- A borrowed render is still a write, so it still needs `Io` and therefore
+still needs its module: the widening buys no capability for free. -/
+theorem a_borrowed_render_still_carries_io (r : Rendering) (name : String) :
+    derivedEffects [Event.print r (.borrowed name), Event.ret] = [Effect.io] := rfl
+
+/-- And it still allocates and mutates nothing: the derived row of a program of
+borrowed renders is the row of any other writing program. -/
+theorem a_borrowed_render_allocates_and_mutates_nothing (r : Rendering) (name : String) :
+    Effect.alloc ∉ derivedEffects [Event.print r (.borrowed name), Event.ret]
+      ∧ Effect.mut ∉ derivedEffects [Event.print r (.borrowed name), Event.ret] :=
+  ⟨no_program_allocates _, no_program_mutates _⟩
+
+/-- A borrowed render writes one line on the stream its statement names, exactly
+as any other rendering does: the marker changes what is read, never where it is
+written. -/
+theorem a_borrowed_render_writes_one_line_on_its_own_stream (r : Rendering) (l : Level)
+    (name : String) :
+    linesOn Stream.out (Event.print r (.borrowed name)) = 1
+      ∧ linesOn Stream.err (Event.print r (.borrowed name)) = 0
+      ∧ linesOn Stream.err (Event.log l r (.borrowed name)) = 1
+      ∧ linesOn Stream.out (Event.log l r (.borrowed name)) = 0 :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ## Capability gating, composed with the resolver -/
 

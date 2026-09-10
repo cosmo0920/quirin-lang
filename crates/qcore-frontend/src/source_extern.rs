@@ -119,10 +119,15 @@ pub struct LoweredExternModule {
     /// The declared ABI spelling behind each bound value, so a composing route
     /// can refuse to render a width it does not render.
     pub value_abi: BTreeMap<ValueId, AbiType>,
-    /// Every name this body bound to a resource identity. The other half of the
-    /// namespace wall: a composing route refuses one of these at a rendering
-    /// operand rather than resolving it.
-    pub resource_bindings: BTreeSet<String>,
+    /// Every name this body bound to a resource identity, with that identity.
+    /// The other half of the namespace wall: a composing route refuses one of
+    /// these at a *bare* rendering operand rather than resolving it, and
+    /// resolves it at a `borrow NAME` operand and nowhere else (card
+    /// `STD-FMT-BORROW`).
+    ///
+    /// A name is in this map or in [`Self::scalar_values`] and never in both —
+    /// name resolution's own `Q012` refuses a body that binds one twice.
+    pub resource_bindings: BTreeMap<String, ResourceId>,
 }
 
 /// Whether this program calls one of its own declared extern functions, i.e.
@@ -443,6 +448,18 @@ struct Lowering<'a> {
     globals: &'a BTreeMap<String, SymbolId>,
     errors: &'a BTreeSet<String>,
     bindings: BTreeMap<String, ResourceId>,
+    /// Card `STD-FMT-BORROW`: every name this body *ever* bound to a resource
+    /// identity, including the ones a departing argument later removed from
+    /// `bindings`.
+    ///
+    /// A second map rather than a change to `bindings`, because the two answer
+    /// different questions and a composing route needs both: `bindings` is what
+    /// this body holds **now**, which is what argument resolution must read,
+    /// and this is the name-to-identity dictionary a borrowed render resolves
+    /// against. Liveness is decided from the extern checker's own published
+    /// ledger and never from a name's presence here, so widening this map can
+    /// never admit a rendering of a departed identity.
+    ever_bound: BTreeMap<String, ResourceId>,
     /// Card `PIPE-SCALAR-RESULT`: the scalar locals this body has bound. A
     /// second map rather than a second kind in `bindings`, so no lookup that
     /// wants an identity can ever return a value or the reverse.
@@ -772,6 +789,7 @@ pub fn lower_source_extern_skipping(
         globals: &typed.globals,
         errors: &errors,
         bindings: BTreeMap::new(),
+        ever_bound: BTreeMap::new(),
         values: BTreeMap::new(),
         value_outcomes: BTreeMap::new(),
         value_abi: BTreeMap::new(),
@@ -1003,6 +1021,7 @@ pub fn lower_source_extern_skipping(
                 let resource = lowering.next_resource;
                 lowering.next_resource += 1;
                 lowering.bindings.insert(name.clone(), resource);
+                lowering.ever_bound.insert(name.clone(), resource);
                 resources.push(resource);
                 record_call(
                     &mut extern_summaries,
@@ -1221,7 +1240,7 @@ pub fn lower_source_extern_skipping(
             })
             .collect(),
         value_abi: lowering.value_abi.clone(),
-        resource_bindings: lowering.bindings.keys().cloned().collect(),
+        resource_bindings: lowering.ever_bound.clone(),
     })
 }
 

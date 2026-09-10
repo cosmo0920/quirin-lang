@@ -28,6 +28,7 @@ const CHAIN: &str = include_str!("fixtures/compose/chain.qcore");
 const HAND_WRITTEN: &str = include_str!("fixtures/compose/chain_hand_written.qcore");
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
+const BORROWED: &str = include_str!("fixtures/compose/borrowed_render.qcore");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
 fn with_line_endings(source: &str) -> [String; 2] {
@@ -760,7 +761,275 @@ fn a_raised_error_ends_the_composed_run_and_its_later_renderings() {
     assert!(err.is_empty());
 }
 
+// --- Card `STD-FMT-BORROW`: the borrowed render of a live resource. ---
+
+#[test]
+fn a_borrowed_render_is_admitted_and_names_the_live_identity() {
+    for source in with_line_endings(BORROWED) {
+        let compiled = compile(&source).unwrap();
+        assert_eq!(
+            compiled.execution_profile,
+            SourceExecutionProfile::ComposedStdIoExternV1
+        );
+        let checked = compiled.checked.as_composed().unwrap();
+        // The identity rendered is the one the extern model acquired, and it is
+        // published as a custody identity rather than folded into the numbers
+        // that crossed the value namespace.
+        assert_eq!(checked.certificate.externs.acquisitions, vec![1]);
+        assert_eq!(
+            checked.certificate.borrowed_renders,
+            vec![("b".to_owned(), 1), ("b".to_owned(), 1)]
+        );
+        assert_eq!(
+            checked.certificate.rendered_values,
+            vec![("total".to_owned(), 56)]
+        );
+        // The two renderings publish the identity, in the two renderings the
+        // `std.fmt` vocabulary has, on their two separate streams.
+        let reference = compiled.extern_observation.as_deref().unwrap();
+        assert!(reference.contains(&"out: 1".to_owned()));
+        assert!(reference.contains(&"err: [INFO] 56".to_owned()));
+        assert!(reference.contains(&"err: [WARN] 0x00000001".to_owned()));
+    }
+}
+
+#[test]
+fn a_borrowed_render_leaves_the_custody_obligations_unchanged() {
+    // The custody argument's second clause, measured rather than asserted: the
+    // extern projection of the module *with* two borrowed renderings is the
+    // extern projection of the module without them, ledger field for ledger
+    // field.
+    let with_renders = compile(BORROWED).unwrap();
+    let without = compile(
+        &BORROWED
+            .replace("    print dec borrow b;\n", "")
+            .replace("    log warn hex borrow b;\n", ""),
+    )
+    .unwrap();
+    let a = &with_renders
+        .checked
+        .as_composed()
+        .unwrap()
+        .certificate
+        .externs;
+    let b = &without.checked.as_composed().unwrap().certificate.externs;
+    assert_eq!(a.acquisitions, b.acquisitions);
+    assert_eq!(a.consumptions, b.consumptions);
+    assert_eq!(a.releases, b.releases);
+    assert_eq!(a.stored, b.stored);
+    assert_eq!(a.reallocations, b.reallocations);
+    assert_eq!(a.error_dispositions, b.error_dispositions);
+    assert_eq!(a.live_after, b.live_after);
+    assert_eq!(
+        a.assumptions, b.assumptions,
+        "a rendering carries no premise"
+    );
+    // And the value namespace is untouched: rendering an identity binds
+    // nothing, so no `ValueId` was introduced for it.
+    assert_eq!(a.scalar_bindings, b.scalar_bindings);
+    assert_eq!(a.literal_bindings, b.literal_bindings);
+}
+
+#[test]
+fn a_borrowed_render_of_a_released_identity_refuses() {
+    // The liveness precondition, in the direction that matters: the release is
+    // moved above the rendering and nothing else changes.
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
+             qcore_extern_release(move b);\n    print dec borrow b;\n"
+        )),
+        vec!["Q043"]
+    );
+}
+
+#[test]
+fn a_borrowed_render_before_its_acquisition_refuses() {
+    // Measured, not designed, and the same shape cards `PIPE-SCALAR-RESULT` and
+    // `STD-IO-COMPOSE` both recorded: name resolution runs over the parsed body
+    // before any lowering, so a use before its binding refuses at `Q013`. The
+    // join's liveness rule would refuse it too — an identity not yet acquired
+    // is not live — and is kept as the fail-closed backstop. Pinning `Q013`
+    // here means a change in that reachability says so rather than passing
+    // silently.
+    assert_eq!(
+        codes(&module(
+            "    print dec borrow b;\n    let b = qcore_extern_alloc(8) succeeds true else raise \
+             Failure;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q013"]
+    );
+}
+
+#[test]
+fn a_borrowed_render_of_a_failed_acquisition_refuses() {
+    // `succeeds false` is the site's declared null arm: the identity is never
+    // established on this run, so it is not live and the rendering refuses
+    // rather than publishing a line about a resource that does not exist.
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds false else raise Failure;\n    print dec \
+             borrow b;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q043"]
+    );
+}
+
+#[test]
+fn a_borrowed_render_of_a_scalar_refuses() {
+    // The namespace wall, in one direction: `borrow` reads the custody
+    // namespace and never the value namespace, so a perfectly renderable
+    // scalar is not borrowable. The module calls, so the composed route really
+    // is the one deciding this.
+    assert_eq!(
+        codes(&module(
+            "    let n = 42;\n    qcore_extern_scale(n, 2);\n    print dec borrow n;\n"
+        )),
+        vec!["Q043"]
+    );
+}
+
+#[test]
+fn a_bare_render_of_a_resource_still_refuses_at_the_standard_io_route() {
+    // The other direction, and the pin card `STD-IO-COMPOSE` established:
+    // dropping the marker does **not** render the identity. `Q028`'s
+    // resource-free rule for a bare operand is unweakened.
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    print dec \
+             b;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q028"]
+    );
+}
+
+#[test]
+fn a_borrowed_render_of_an_unbound_name_refuses_at_name_resolution() {
+    // Measured, not designed: the marker is reserved and the name after it is
+    // an ordinary reference, so the established gate runs first.
+    assert_eq!(codes(&module("    print dec borrow nope;\n")), vec!["Q013"]);
+}
+
+#[test]
+fn a_borrow_marker_with_no_name_refuses_at_the_routes_shape_rule() {
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    print dec \
+             borrow;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q030"]
+    );
+}
+
+#[test]
+fn a_borrowed_render_inside_a_thread_scope_keeps_the_task_routes_refusal() {
+    // The route boundary, pinned in the same shape card `STD-MODULES` pinned
+    // the plain one: a borrow across a task boundary means something this card
+    // does not model, and route selection keeps the concurrent model.
+    let source = "import std.concurrency;\n\
+                  import std.extern;\n\
+                  import std.fmt;\n\
+                  import std.io;\n\
+                  \n\
+                  error Failure { Failed; }\n\
+                  \n\
+                  extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;\n\
+                  extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;\n\
+                  \n\
+                  fn main() -> unit effects { io, alloc, mut } {\n    \
+                  let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    \
+                  thread scope w {\n        print dec borrow b;\n    }\n    \
+                  qcore_extern_release(move b);\n    return;\n}\n";
+    assert_eq!(codes(source), vec!["Q600"]);
+}
+
+#[test]
+fn a_pipeline_cannot_spell_a_borrowed_render() {
+    // The pipe composes with this card deliberately and in the refusing
+    // direction. A sink stage's selector words are the rendering's, so the
+    // marker is one word too many; and dropping the marker desugars to a bare
+    // operand, which is the `Q028` case above. Neither spelling reaches the
+    // borrowed render, so `PIPE-BORROW-SINK` is a named follow-on rather than
+    // an accident.
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    b |> print \
+             dec borrow;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q036"]
+    );
+    assert_eq!(
+        codes(&module(
+            "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n    b |> print \
+             dec;\n    qcore_extern_release(move b);\n"
+        )),
+        vec!["Q028"]
+    );
+}
+
+#[test]
+fn a_tampered_borrowed_render_list_fails_the_independent_recheck() {
+    // The fifth tamper direction, beside the four card `STD-IO-COMPOSE`
+    // pinned: the identities a publication says it rendered are rederived and
+    // compared, so a certificate that quietly dropped or edited them is not a
+    // certificate.
+    use qcore_core::composed_std_io;
+    let compiled = compile(BORROWED).unwrap();
+    let checked = compiled.checked.as_composed().unwrap();
+    let mut tampered = checked.certificate.clone();
+    tampered.borrowed_renders.clear();
+    assert!(
+        composed_std_io::recheck_composed_certificate(&checked.lowered.program, &tampered).is_err(),
+        "a tampered borrowed-render list must not survive the composed recheck"
+    );
+    let mut tampered = checked.certificate.clone();
+    tampered.borrowed_renders = vec![("b".to_owned(), 7)];
+    assert!(
+        composed_std_io::recheck_composed_certificate(&checked.lowered.program, &tampered).is_err(),
+        "and neither must one naming an identity this module never rendered"
+    );
+    // The standard-IO half publishes the same fact on its own, and its own
+    // recheck covers it too.
+    let mut tampered = checked.certificate.clone();
+    tampered.io.borrowed_renders.clear();
+    assert!(
+        composed_std_io::recheck_composed_certificate(&checked.lowered.program, &tampered).is_err(),
+        "the standard-IO projection's own borrowed-render list is rechecked as well"
+    );
+}
+
 // --- Native evidence, under ASan/UBSan/LSan. ---
+
+#[test]
+fn the_borrowed_render_program_matches_the_reference_per_stream() {
+    let compiled = compile(BORROWED).unwrap();
+    let reference = compiled.extern_observation.as_deref().unwrap();
+    let (out, err) = run_native(compiled.c_source.as_deref().unwrap(), "borrowed");
+
+    let expected_out = reference
+        .iter()
+        .filter_map(|line| line.strip_prefix("out: ").map(ToOwned::to_owned))
+        .collect::<Vec<_>>();
+    let expected_err = reference
+        .iter()
+        .filter_map(|line| line.strip_prefix("err: ").map(ToOwned::to_owned))
+        .collect::<Vec<_>>();
+
+    assert_eq!(out, expected_out, "stdout must match the reference");
+    assert_eq!(err, expected_err, "stderr must match the reference");
+    // A **positive** leak control for this card: the fixture allocates, renders
+    // the identity twice while the obligation is open, and releases. Had a
+    // borrowed render moved, duplicated or discharged custody, LSan or the
+    // double-free detector would say so rather than this test passing.
+    assert!(
+        expected_out.iter().any(|line| line.starts_with("acquire ")),
+        "the run must have performed a real acquisition"
+    );
+    assert!(
+        expected_out.contains(&"1".to_owned()),
+        "the identity line is one the native run actually wrote"
+    );
+}
 
 #[test]
 fn the_composed_program_matches_the_reference_per_stream() {

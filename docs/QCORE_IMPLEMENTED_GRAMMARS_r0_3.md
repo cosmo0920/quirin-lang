@@ -1098,7 +1098,7 @@ stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
           | "return", ";" ;
 RENDERING = "dec" | "hex" ;
 LEVEL     = "info" | "warn" | "fatal" ;
-OPERAND   = [ "-" ], INTEGER | NAME ;
+OPERAND   = [ "-" ], INTEGER | NAME | "borrow", NAME ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
@@ -1117,16 +1117,33 @@ fn main() -> unit effects { io } {
 }
 ```
 
-**The operand rule is the effect discipline.** `OPERAND` is an integer literal
-or a name the entry bound with `let` to an integer literal. There is no operand
-form that can denote an owned buffer, a borrow, a share or a handle, so a
-rendering cannot consume, release, store or retain custody of anything — it is
-not that the checker refuses those uses, it is that the profile cannot express
-them. A name that is not one of the entry's integer bindings is `Q028`; a `let`
-bound to anything but an integer literal is `Q030`. The derived effect row is
+**The operand rule is the effect discipline.** A *bare* `OPERAND` is an integer
+literal or a name the entry bound with `let` to an integer literal. Neither form
+can denote an owned buffer, a share or a handle, so a bare rendering cannot
+consume, release, store or retain custody of anything — it is not that the
+checker refuses those uses, it is that the profile cannot express them. A name
+that is not one of the entry's integer bindings is `Q028`; a `let` bound to
+anything but an integer literal is `Q030`. The derived effect row is
 exactly `{Io}` for a program that writes and empty for one that does not; it is
 never `Alloc` and never `Mut`. The entry's declared `effects { … }` row must
 admit the derived one (`Q029`).
+
+**The borrowed render** (card `STD-FMT-BORROW`) is the one operand form that
+names a resource. `borrow NAME` renders that resource's **model identity** — the
+number the emitted C's own call trace spells `rN` — and nothing else: no byte of
+the object, no address, no extent, no descriptor, because no model a rendering
+can reach carries one. It is admitted only where a checked custody model both
+supplied the identity **and** holds it live at that statement, which
+`source.std-io.v1` never does: this route has no custody model, so every
+`borrow NAME` written on it refuses at `Q028` — structurally, for want of a
+model, rather than by a rule the route states. §G02i is where the form is
+reachable, and the liveness rule is that route's join.
+
+`borrow` was **already** a reserved source word (the checked mutex-guard
+profile's), so the form adds none and moves no pinned surface. The marker is
+also what keeps the pipe out: `x |> print dec` desugars to `print dec x;` with
+no marker, and a sink stage naming an extra selector word refuses at `Q036`
+(§G02h), so no pipeline can spell a borrowed render in this revision.
 
 Each module gates its own capability: `print` needs `std.io`, `log` and `flush`
 need `std.logger`, and naming a rendering needs `std.fmt`. `flush` names no
@@ -1189,6 +1206,23 @@ must be a value whose number the source **determined**: a `scalar_literal`, or a
 `scalar_binding` carrying its declared `succeeds INTEGER` outcome. A bound call
 result with no declared outcome is refused at `Q043`, because rendering it would
 publish a line no model computed.
+
+Card `STD-FMT-BORROW` adds one rule to that join and no code: a `borrow NAME`
+operand resolves against the extern model's **custody** namespace — never its
+value namespace — and is admitted only where that model's own published ledger
+holds the identity live at the rendering's composed step. An identity never
+established (including one whose acquisition took its declared null arm), or one
+that departed by consumption, release, storage or reallocation before the
+rendering, is refused at `Q043` rather than rendered. The rendering opens no
+obligation and discharges none: the composed ledger is still exactly the extern
+projection's, and the identity is as live after the line as before it. A
+rendering is not a *publication* in §L21's constraint-10 sense — the destination
+is a byte stream rather than an object of the custody graph, the bytes carry a
+copy of the identity number rather than the address, and no model operation
+reads a stream back — so no second reachable path to the resource exists. The
+emitted program reads nothing out of the object: the identity is a number the
+checker determined, and what the borrow buys is the checked precondition, not a
+run-time read.
 
 The composed program's derived effect row is the **union** of the two models'
 rows and must be admitted by the one row the entry declares. Its observation is

@@ -18,15 +18,16 @@
 //!   checker, with the mandatory nullable-owned-return adapter and the `Q023`
 //!   contract-selection default unmoved;
 //! * every `Q028`–`Q031` standard-IO refusal, including the structural effect
-//!   discipline — [`StdIoOperand`] still has two constructors and neither can
-//!   denote a resource, so a rendering still cannot touch custody;
+//!   discipline — [`StdIoOperand`]'s two *bare* constructors still cannot denote
+//!   a resource, so a bare rendering still cannot touch custody, and the third
+//!   (`borrow NAME`) denotes only an identity this route proved live;
 //! * the established sequential passes over the extern lowering's semantics,
 //!   which the composing driver runs exactly as the extern route does;
 //! * and the *join* rules below, which are the only thing this module owns.
 //!
 //! # The join, in full
 //!
-//! Three rules, each fail-closed, each a refusal under `Q043`:
+//! Four rules, each fail-closed, each a refusal under `Q043`:
 //!
 //! 1. **The order is an interleaving.** [`ComposedProgram::order`] must list
 //!    every event of both projections exactly once, in each projection's own
@@ -42,7 +43,28 @@
 //!    did not determine (a bound call result with no declared outcome) is not a
 //!    renderable operand at all: rendering it would publish a line no model
 //!    computed, so it refuses.
-//! 3. **Nothing is dropped at the join.** The composed effect row is the
+//! 3. **A borrowed rendering names a live identity** (card `STD-FMT-BORROW`).
+//!    `print RENDERING borrow NAME;` renders the **model identity** of a
+//!    resource — the number the emitted C's own trace spells `rN` — and it is
+//!    admitted only where the extern model's *own published ledger*
+//!    ([`ExternCallCertificate::live_after`]) holds that identity live at that
+//!    composed step. This module derives no liveness of its own: it reads the
+//!    extern projection's answer, so composing still owns no custody rule. An
+//!    identity that was never established, or that departed by consumption,
+//!    release, storage or reallocation before the rendering, is refused rather
+//!    than rendered.
+//!
+//!    The rendering itself moves nothing. It opens no obligation, discharges
+//!    none, and leaves the identity exactly as live afterwards as before — so
+//!    the composed ledger is still, theorem for theorem, the extern
+//!    projection's ledger. It is also **not a publication** in the sense
+//!    standing constraint 10 refuses: the destination is a byte stream rather
+//!    than an object of the custody graph, the bytes carry a copy of the
+//!    identity *number* rather than the address, and no operation of any model
+//!    here reads a stream back — so no second reachable path to the resource
+//!    exists and nothing the caller owes has changed.
+//!
+//! 4. **Nothing is dropped at the join.** The composed effect row is the
 //!    **union** of the two derived rows and must be admitted by the one row the
 //!    entry declares; each projection's certificate must be its own, rederived
 //!    here rather than believed; and the composed observation must reproduce
@@ -69,6 +91,7 @@ use crate::extern_call::{
     AbiType, ExternCallCertificate, ExternEvent, ExternProgram, ValueId, check_extern_program,
     recheck_extern_certificate,
 };
+use crate::ownership::ResourceId;
 use crate::std_io::{
     StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, check_std_io_program,
     recheck_std_io_certificate,
@@ -104,6 +127,11 @@ pub struct ComposedProgram {
     /// this profile does not render refuses instead of being emitted with the
     /// wrong conversion.
     pub value_abi: BTreeMap<ValueId, AbiType>,
+    /// The custody identity behind each name a **borrowed** rendering reads
+    /// (card `STD-FMT-BORROW`). Built by the composing lowering from the extern
+    /// model's own resource namespace, which is disjoint from `operand_values`
+    /// by construction: a name is in one map or the other and never in both.
+    pub operand_identities: BTreeMap<String, ResourceId>,
 }
 
 /// The one ABI spelling `source.std-io.v1` renders.
@@ -134,6 +162,18 @@ pub enum ComposedError {
         name: String,
         abi: AbiType,
     },
+    /// `Q043`: a borrowed rendering names something this module binds no
+    /// custody identity for (card `STD-FMT-BORROW`).
+    BorrowUnknown { step: usize, name: String },
+    /// `Q043`: a borrowed rendering names an identity the extern model's own
+    /// published ledger does not hold live at that composed step — it was never
+    /// established, or it departed before the rendering.
+    BorrowNotLive { step: usize, name: String },
+    /// `Q043`: the identity the standard-IO projection rendered is not the one
+    /// the extern model bound to that name. A cross-check, never a source
+    /// shape: reaching it means the two halves disagree about what was
+    /// rendered.
+    BorrowDisagrees { step: usize, name: String },
     /// `Q043`: the union of the two derived effect rows is not admitted by the
     /// one row the entry declares.
     EffectNotDeclared { effect: String },
@@ -176,6 +216,23 @@ impl fmt::Display for ComposedError {
                  renderings are total on `int32_t` and on nothing else",
                 abi.c_spelling()
             ),
+            Self::BorrowUnknown { name, .. } => write!(
+                f,
+                "`borrow {name}` renders the model identity of a live resource, and this module \
+                 binds no resource of that name; a borrowed rendering reads the extern model's \
+                 custody namespace and never its value namespace"
+            ),
+            Self::BorrowNotLive { name, .. } => write!(
+                f,
+                "`{name}` is not live at this rendering, so its identity is not this entry's to \
+                 render; a borrowed rendering requires the resource live at that statement, and \
+                 an identity that was never established or that has departed is refused rather \
+                 than rendered"
+            ),
+            Self::BorrowDisagrees { name, .. } => write!(
+                f,
+                "the identity rendered for `{name}` is not the one the extern model bound to it"
+            ),
             Self::EffectNotDeclared { effect } => write!(
                 f,
                 "this entry performs `{effect}` across its two models but its declared \
@@ -209,6 +266,13 @@ pub struct ComposedCertificate {
     /// the renderings read them. A reader can see which numbers crossed from
     /// the extern model into the rendered lines.
     pub rendered_values: Vec<(String, i32)>,
+    /// Every borrowed rendering, as `(name, identity)` in composed order, with
+    /// the identity the extern model's ledger held live at that step (card
+    /// `STD-FMT-BORROW`). Published separately from `rendered_values` because
+    /// the two say different things: one names a number that crossed the value
+    /// namespace, the other names a **custody identity** the entry still owed a
+    /// cleanup for when the line was written.
+    pub borrowed_renders: Vec<(String, ResourceId)>,
 }
 
 /// Check the interleaving alone. Split out so it can be stated as a property
@@ -303,6 +367,31 @@ fn positions(program: &ComposedProgram) -> (BTreeMap<ValueId, usize>, Vec<usize>
     (bound_at, io_positions)
 }
 
+/// The identities live *before* each composed position, read off the extern
+/// certificate's own published ledger (card `STD-FMT-BORROW`).
+///
+/// The composition owns no custody rule, and this function is where that shows:
+/// it re-derives nothing. It walks the interleaving carrying the extern model's
+/// own `live_after` entry for the last extern event placed, which is exactly the
+/// state the emitted C is in when the next standard-IO statement runs. The empty
+/// ledger before the first extern event is the entry's own starting state.
+fn live_before(
+    program: &ComposedProgram,
+    certificate: &ExternCallCertificate,
+) -> Vec<Vec<ResourceId>> {
+    let mut current: Vec<ResourceId> = Vec::new();
+    let mut live = Vec::with_capacity(program.order.len());
+    for step in &program.order {
+        live.push(current.clone());
+        if let ComposedStep::Extern(index) = step
+            && let Some(after) = certificate.live_after.get(*index)
+        {
+            current = after.clone();
+        }
+    }
+    live
+}
+
 /// Check one composed module and derive its certificate.
 ///
 /// Runs both projections' own checkers first, then the join. Every refusal
@@ -326,12 +415,49 @@ pub fn check_composed_program(
         return Err(vec![error]);
     }
     let (bound_at, io_positions) = positions(program);
+    let live = live_before(program, &extern_certificate);
     let mut rendered_values = Vec::new();
+    let mut borrowed_renders = Vec::new();
     for (index, event) in program.io.events.iter().enumerate() {
         let operand = match event {
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => operand,
             StdIoEvent::Flush | StdIoEvent::Return => continue,
         };
+        // Card `STD-FMT-BORROW`. The three rules below are the whole custody
+        // argument in code: the name must be a resource this module binds, the
+        // extern model's own ledger must hold it live at this step, and the
+        // number the standard-IO projection rendered must be that identity.
+        if let StdIoOperand::Borrowed(name) = operand {
+            let step = io_positions.get(index).copied().unwrap_or_default();
+            let Some(identity) = program.operand_identities.get(name).copied() else {
+                errors.push(ComposedError::BorrowUnknown {
+                    step,
+                    name: name.clone(),
+                });
+                continue;
+            };
+            let live_here = live.get(step).map(Vec::as_slice).unwrap_or_default();
+            if !live_here.contains(&identity) {
+                errors.push(ComposedError::BorrowNotLive {
+                    step,
+                    name: name.clone(),
+                });
+                continue;
+            }
+            match (
+                program.io.identities.get(name).copied(),
+                i32::try_from(identity),
+            ) {
+                (Some(rendered), Ok(expected)) if rendered == expected => {
+                    borrowed_renders.push((name.clone(), identity));
+                }
+                _ => errors.push(ComposedError::BorrowDisagrees {
+                    step,
+                    name: name.clone(),
+                }),
+            }
+            continue;
+        }
         let StdIoOperand::Scalar(name) = operand else {
             continue;
         };
@@ -406,6 +532,7 @@ pub fn check_composed_program(
             order: program.order.clone(),
             effects,
             rendered_values,
+            borrowed_renders,
         })
     } else {
         Err(errors)
@@ -420,6 +547,7 @@ pub enum ComposedRecheckFailure {
     Order,
     Effects,
     RenderedValues,
+    BorrowedRenders,
     Refused,
 }
 
@@ -432,6 +560,7 @@ impl fmt::Display for ComposedRecheckFailure {
             Self::Order => "the composed order",
             Self::Effects => "the composed effect row",
             Self::RenderedValues => "the rendered values",
+            Self::BorrowedRenders => "the borrowed renders and the identities they name",
             Self::Refused => "the program itself, which the recheck refuses",
         };
         write!(f, "{what} does not survive an independent rederivation")
@@ -468,6 +597,9 @@ pub fn recheck_composed_certificate(
     }
     if rederived.rendered_values != certificate.rendered_values {
         return Err(ComposedRecheckFailure::RenderedValues);
+    }
+    if rederived.borrowed_renders != certificate.borrowed_renders {
+        return Err(ComposedRecheckFailure::BorrowedRenders);
     }
     Ok(())
 }
