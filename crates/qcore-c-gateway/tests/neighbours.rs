@@ -842,7 +842,10 @@ fn the_modules_under_test_are_the_production_ones() {
     // CONSTRUCTOR-RESIDUALS' deliberate addition of `libc/errno.qcore` and
     // `monkey/intrusive_list.qcore`; 14 -> 16 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition of
-    // `libc/pthread_mutex.qcore`. This card's six declarations are asserted
+    // `libc/pthread_mutex.qcore`; 15 -> 16 by card
+    // ABI-TYPEDEF-ADDRESS-OF-MEMBER's deliberate addition of
+    // `msgpack/packer.qcore`, which that card measured at a payoff the earlier
+    // one measured at zero. This card's six declarations are asserted
     // above by name, so the count moving does not weaken what it pins.
-    assert_eq!(contracts.source_assumptions().len(), 15);
+    assert_eq!(contracts.source_assumptions().len(), 16);
 }

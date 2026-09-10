@@ -1,0 +1,81 @@
+function input_chunk_get: status Unsafe
+diagnostics: 23
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L19785  n47   NoOp                                     | int id = -1;
+L19786  n46   NoOp                                     | int ret;
+L19787  n45   Clear new_chunk                          | int new_chunk = 0;
+L19788  n44   NoOp                                     | size_t out_size;
+L19789  n43   NoOp                                     | size_t placement_size;
+L19790  n42   Clear ic                                 | struct flb_input_chunk *ic = ((void*)0);
+L19791  n41   NoOp                                     | if (tag_len > (65535 - 4)) {
+L19792  n38   Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "Tag set exceeds limit, truncating from %i to %i bytes", tag_len, (65535 - 4)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "Tag set exceeds limit, truncating from %i to %i bytes", in->p->name, flb_input_name(in), tag_len, (65535 - 4));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19792  n39   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "Tag set exceeds limit, truncating from %i to %i bytes", tag_len, (65535 - 4)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "Tag set exceeds limit, truncating from %i to %i bytes", in->p->name, flb_input_name(in), tag_len, (65535 - 4));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19792  n40   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "Tag set exceeds limit, truncating from %i to %i bytes", tag_len, (65535 - 4)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "Tag set exceeds limit, truncating from %i to %i bytes", in->p->name, flb_input_name(in), tag_len, (65535 - 4));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19793  n37   NoOp                                     | tag_len = (65535 - 4);
+L19795  n36   BranchOnNull event_type true_is_null=true | if (event_type == 0) {
+L19796  n27   Unknown: indirect memory access is outside the resource projection | id = flb_hash_table_get(in->ht_log_chunks, tag, tag_len,
+        !! unsupported: indirect memory access is outside the resource projection
+L19799  n35   NoOp                                     | else if (event_type == 1) {
+L19800  n30   Unknown: indirect memory access is outside the resource projection | pthread_mutex_lock(&in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19801  n29   Unknown: indirect memory access is outside the resource projection | id = flb_hash_table_get(in->ht_metric_chunks, tag, tag_len,
+        !! unsupported: indirect memory access is outside the resource projection
+L19803  n28   Unknown: indirect memory access is outside the resource projection | pthread_mutex_unlock(&in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19805  n34   NoOp                                     | else if (event_type == 2) {
+L19806  n31   Unknown: indirect memory access is outside the resource projection | id = flb_hash_table_get(in->ht_trace_chunks, tag, tag_len,
+        !! unsupported: indirect memory access is outside the resource projection
+L19809  n33   NoOp                                     | else if (event_type == 4) {
+L19810  n32   Unknown: indirect memory access is outside the resource projection | id = flb_hash_table_get(in->ht_profile_chunks, tag, tag_len,
+        !! unsupported: indirect memory access is outside the resource projection
+L19813  n26   NoOp                                     | if (id >= 0) {
+L19814  n25   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->busy == 1 || cio_chunk_is_locked(ic->chunk)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19815  n13   Clear ic                                 | ic = ((void*)0);
+L19817  n24   Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (cio_chunk_is_up(ic->chunk) == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19818  n23   Unknown: indirect memory access is outside the resource projection | ret = cio_chunk_up_force(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L19819  n22   NoOp                                     | if (ret == -3) {
+L19820  n19   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (in->config->storage_del_bad_chunks) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19821  n17   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] discarding corrupted chunk");
+L19821  n18   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] discarding corrupted chunk");
+L19823  n16   Unknown: indirect memory access is outside the resource projection | flb_input_chunk_destroy_corrupted(ic,
+        !! unsupported: indirect memory access is outside the resource projection
+L19826  n15   Clear ic                                 | ic = ((void*)0);
+L19828  n21   BranchOnNull ret true_is_null=false      | else if (ret != 0) {
+L19829  n20   Clear ic                                 | ic = ((void*)0);
+L19831  n14   Unknown: unsupported assignment expression | *set_down = 1;
+        !! unsupported: unsupported assignment expression
+L19834  n12   BranchOnNull ic true_is_null=true        | if (!ic) {
+        !! unresolved resource identity `ic`
+L19835  n11   Call flb_input_chunk_create(in, event_type, _, tag_len) -> ic | ic = flb_input_chunk_create(in, event_type, (char *) tag, tag_len);
+L19836  n10   NoOp                                     | new_chunk = 1;
+L19837  n9    BranchOnNull ic true_is_null=true        | if (!ic) {
+L19838  n8    NoOp                                     | return ((void*)0);
+L19840  n7    Unknown: indirect memory access is outside the resource projection | ic->event_type = event_type;
+        !! unsupported: indirect memory access is outside the resource projection
+L19842  n6    Unknown: call to uncontracted function `flb_input_chunk_get_projected_write_size` | placement_size = flb_input_chunk_get_projected_write_size(ic, chunk_size);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_projected_write_size`
+L19843  n5    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (!flb_routes_mask_is_empty(ic->routes_mask, ic->in->config->router)
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19845  n4    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (new_chunk ||
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19847  n3    Unknown: call to uncontracted function `flb_input_chunk_destroy` | flb_input_chunk_destroy(ic, 1);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy`
+L19849  n2    NoOp                                     | return ((void*)0);
+        !! leak from L19835
+L19851  n1    EscapeIfOwned ic                         | return ic;
+        !! unresolved resource identity `ic`
+        !! unsupported: nullable resource `ic` used by a non-null contract
+exits:
+  L19851  node 1 custody Unknown sites ["site0@L19835 Mixed"]
+  L19849  node 2 custody Unknown sites ["site0@L19835 Live"]
+  L19838  node 8 custody Unknown sites []

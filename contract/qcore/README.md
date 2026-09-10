@@ -92,18 +92,21 @@ wrapper source projections and remaining composition gates.
 
 ## Declarative resource-projection contracts
 
-`../cycle19-resource-contracts.json` explicitly selects fifteen modules for the
+`../cycle19-resource-contracts.json` explicitly selects sixteen modules for the
 legacy-C audit: `libc/errno.qcore`, `libc/memory.qcore`,
 `libc/pthread_mutex.qcore`, `monkey/intrusive_list.qcore`, `monkey/memory.qcore`,
-`librdkafka/memory.qcore`, `fluent_bit/hash_table_publication.qcore`,
+`msgpack/packer.qcore`, `librdkafka/memory.qcore`,
+`fluent_bit/hash_table_publication.qcore`,
 `fluent_bit/input_chunk_helpers.qcore`, `fluent_bit/input_chunk_name.qcore`,
 `fluent_bit/logging.qcore`, `fluent_bit/resource_memory.qcore`,
 `fluent_bit/routes_mask.qcore`, `fluent_bit/time.qcore`,
 `chunkio/chunk_residency.qcore` and `chunkio/resource_open_close.qcore`. These
-36 declarations replace the audit's Rust table. (This paragraph read "twelve
+37 declarations replace the audit's Rust table. (This paragraph read "twelve
 modules … 31 declarations" until card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF: card
 CONSTRUCTOR-RESIDUALS had already moved the manifest to fourteen modules and 34
-declarations without updating it here. The live pin is
+declarations without updating it here. Card ABI-TYPEDEF-ADDRESS-OF-MEMBER moved
+it to sixteen and 37 by landing `msgpack/packer.qcore`, which the previous card
+had written and measured at payoff zero. The live pin is
 `compiler/tests/contract_loader.rs`, which asserts both counts.) They are trusted resource-projection assumptions, separate from the
 more detailed execution and lifecycle profiles above. In particular the ChunkIO
 close declaration does not itself provide a nested teardown certificate.

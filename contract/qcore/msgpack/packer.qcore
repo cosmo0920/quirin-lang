@@ -1,0 +1,57 @@
+module contract;
+
+// msgpack-c packer initialisation — resource-projection vocabulary version 1.
+//
+// Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. This module declares a TRUSTED
+// ASSUMPTION about one C library function. It verifies nothing: no C body is
+// analyzed by this loader, and a declaration is a premise.
+//
+// ## Read from the definition in the analysed unit
+//
+//   static void msgpack_packer_init(msgpack_packer* pk, void* data,
+//                                   msgpack_packer_write callback)
+//   {
+//       pk->data = data;
+//       pk->callback = callback;
+//   }
+//
+// (`lib/msgpack-c/include/msgpack/pack.h:130-134` at the pinned revision; the
+// preprocessed unit carries the definition because the header declares it
+// `inline`.) The body writes two members of `*pk` and does nothing else.
+//
+//   * `msgpack_packer` is `typedef struct msgpack_packer { … } msgpack_packer;`
+//     — an aggregate the typedef DEFINES. Card
+//     CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF widened the declared-ABI reader to
+//     commit to that shape, and this card widened the *resource projection's*
+//     declaration reader to it as well.
+//   * `msgpack_packer_write` is
+//     `typedef int (*msgpack_packer_write)(void *, const char *, size_t);` — a
+//     function-pointer typedef, projected `fnptr` (spec §C04.1), on which
+//     `resource_borrowed` is the only mode the loader admits.
+//
+// ## The custody statement, and only it
+//
+// All three parameters are borrowed and the result carries none. The call
+// allocates nothing, frees nothing and reallocates nothing. Storing a pointer
+// inside an object the caller already owns moves no obligation — the caller
+// must still release `data` exactly as before — which is what card
+// CONSTRUCTOR-RESIDUALS §4.1 settled for `mk_list_add` on the same ground. A
+// function designator is never a resource identity in this model, so
+// `callback` carries none either.
+//
+// ## What this says nothing about
+//
+// Nothing about msgpack's buffer protocol, about whether `*pk` was
+// zero-initialised, about the lifetime relation between `pk` and `data`, or
+// about `msgpack_packer_new`/`msgpack_packer_free`, which DO acquire and
+// release and are deliberately left undeclared: no residual measured by this
+// card or its predecessors reaches them.
+
+extern fn msgpack_packer_init(pk: ptr<mut, u8>, data: ptr<mut, u8>, callback: fnptr) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(pk);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(callback);
+    ensures normal resource_return_none();
+};

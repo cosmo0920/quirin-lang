@@ -33,10 +33,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qcore`,
     // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`); 12 -> 14 by
     // card CONSTRUCTOR-RESIDUALS (`libc/errno.qcore`,
-    // `monkey/intrusive_list.qcore`); 14 -> 16 by card
+    // `monkey/intrusive_list.qcore`); 14 -> 15 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`; that card
-    // deliberately did not land `msgpack/packer.qcore`, measured payoff zero).
-    assert_eq!(contracts.source_assumptions().len(), 15);
+    // deliberately did not land `msgpack/packer.qcore`, measured payoff zero);
+    // 15 -> 16 by card ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired the
+    // blocker that measurement rested on and landed it.
+    assert_eq!(contracts.source_assumptions().len(), 16);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -122,17 +124,21 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("__errno_location", 0),
         ("flb_errno_print", 3),
         ("mk_list_add", 2),
-        // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds three more, listed
-        // explicitly for the same reason and in the same shape: every parameter
-        // borrowed, no result custody. All three were UNWRITABLE before this
-        // card, because card LOADER-ABI's declared-ABI reader would not commit
-        // to a union typedef (`pthread_mutex_t *`) or to a function-pointer
-        // typedef (`msgpack_packer_write`) and withdrew them at every call site.
-        // `msgpack_packer_init` is the corpus's first declaration carrying an
-        // `fnptr` parameter; a function designator is never a resource identity,
-        // so `Borrowed` is both the only admissible mode and the true one.
+        // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds two, listed explicitly
+        // for the same reason and in the same shape: every parameter borrowed,
+        // no result custody. Both were UNWRITABLE before that card, because
+        // card LOADER-ABI's declared-ABI reader would not commit to a union
+        // typedef (`pthread_mutex_t *`) and withdrew them at every call site.
         ("pthread_mutex_lock", 1),
         ("pthread_mutex_unlock", 1),
+        // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER adds the third declaration that
+        // card wrote and then measured at payoff zero, now that the blocker it
+        // named — the address-of-a-member actual refusing the statement before
+        // any contract is consulted — is repaired. It is the corpus's first
+        // declaration carrying an `fnptr` parameter (its `callback`); a
+        // function designator is never a resource identity, so `Borrowed` is
+        // both the only mode the loader admits there and the true one.
+        ("msgpack_packer_init", 3),
     ] {
         old.insert_contract(
             name,
@@ -409,7 +415,7 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
     // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS; 14 -> 15 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 15);
+    assert_eq!(certificate.contracts.source_assumptions().len(), 16);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -541,7 +547,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // manifest-selected.
     // 69 -> 70: card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds
     // `libc/pthread_mutex.qcore`, entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 70, "corpus module count");
+    // 70 -> 71: card ABI-TYPEDEF-ADDRESS-OF-MEMBER adds `msgpack/packer.qcore`,
+    // entirely v1 and manifest-selected — the declaration the previous card
+    // wrote and measured at payoff zero, landed once the blocker that
+    // measurement rested on was repaired.
+    assert_eq!(modules.len(), 71, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -602,11 +612,15 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `monkey/intrusive_list.qcore`'s `mk_list_add`, and `flb_errno_print`
     // added to the existing `fluent_bit/logging.qcore`); 14 -> 15 and 34 -> 36
     // by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`'s
-    // two mutex entry points). The rejected count is unchanged in all five
-    // cases, because every added module is entirely v1.
+    // two mutex entry points); 15 -> 16 and 36 -> 37 by card
+    // ABI-TYPEDEF-ADDRESS-OF-MEMBER (`msgpack/packer.qcore`'s
+    // `msgpack_packer_init`, the declaration the previous card wrote and
+    // measured at payoff zero, landed once the blocker it named was repaired).
+    // The rejected count is unchanged in all six cases, because every added
+    // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (15, 36, 145)
+        (16, 37, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

@@ -440,6 +440,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/wrapper_paths.qcore", "_mk_event_wait_with_flags", 4),
     ("monkey/wrapper_paths.qcore", "_mk_event_wait_2", 5),
     ("monkey/wrapper_paths.qcore", "_mk_event_backend", 3),
+    // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. Five clauses: the marker, three
+    // borrowed parameters and the `unit` result. The third parameter is the
+    // corpus's first `fnptr`, on which `resource_borrowed` is both the only
+    // mode the loader admits (`AGENTS.md` §L21 / spec §C04.1) and the true one,
+    // a function designator never being a resource identity. Card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF wrote this declaration and deliberately
+    // did not land it at measured payoff zero; this card repaired the blocker
+    // it named and measured the payoff, so it lands.
+    ("msgpack/packer.qcore", "msgpack_packer_init", 5),
 ];
 
 fn corpus_root() -> PathBuf {
@@ -487,8 +496,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `libc/pthread_mutex.qcore`. That card read `msgpack/packer.qcore`
     // against its body too and deliberately did NOT land it: measured payoff
     // zero, because the address-of-a-member actual refuses every one of its
-    // call sites before any contract is consulted.
-    assert_eq!(sources.len(), 70, "unexpected contract corpus size");
+    // call sites before any contract is consulted. 70 -> 71 by card
+    // ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired exactly that blocker and
+    // then measured the declaration's payoff on the production constructor, so
+    // `msgpack/packer.qcore` lands under the unchanged PROD-CONTRACTS rule.
+    assert_eq!(sources.len(), 71, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

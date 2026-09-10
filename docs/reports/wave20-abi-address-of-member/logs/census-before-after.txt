@@ -1,0 +1,43 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 2
+  FUNCTION ('fluent-bit-chunk/flb_input_chunk.c', 'flb_input_chunk_create'): Unknown -> Safe
+  FUNCTION ('fluent-bit-chunk/flb_input_chunk.c', 'input_chunk_get'): Unknown -> Unsafe
+corpus diagnostic counts:
+  leak: 272 -> 273 (+1)
+  unknown_alias: 4405 -> 4403 (-2)
+  unsupported: 49833 -> 49825 (-8)
+units with diagnostic-count changes: 2
+  fluent-bit-chunk/flb_input_chunk.c: {'leak': 1, 'unknown_alias': -2, 'unsupported': -5}
+  monkey-libevent/mk_server/mk_scheduler.c: {'unsupported': -3}
+description inventory deltas:
+  leak / 'live obligation acquired at preprocessed line 19835': 8 -> 9 (+1)
+  unknown_alias / 'unresolved resource identity `ic`': 26 -> 24 (-2)
+  unsupported / 'call to uncontracted function `flb_input_chunk_create`': 1 -> 0 (-1)
+  unsupported / 'indirect memory access is outside the resource projection': 18829 -> 18822 (-7)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_create L19628 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19629 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_create L19637 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19639 unsupported: indirect memory access is outside the resource projection
+    -1 flb_input_chunk_create L19647 unsupported: nullable resource `ic` used by a non-null contract
+    -1 flb_input_chunk_create L19647 unknown_alias: unresolved resource identity `ic`
+    +1 flb_input_chunk_map L18755 unknown_alias: unresolved resource identity `ic`
+    -1 flb_input_chunk_map L18755 unsupported: indirect memory access is outside the resource projection
+    -1 input_chunk_get L19835 unsupported: call to uncontracted function `flb_input_chunk_create`
+    -1 input_chunk_get L19837 unknown_alias: unresolved resource identity `ic`
+    +1 input_chunk_get L19849 leak: live obligation acquired at preprocessed line 19835
+    +1 input_chunk_get L19851 unsupported: nullable resource `ic` used by a non-null contract
+  UNIT monkey-libevent/mk_server/mk_scheduler.c
+    -1 mk_sched_launch_thread L6693 unsupported: indirect memory access is outside the resource projection
+    -1 mk_sched_launch_thread L6701 unsupported: indirect memory access is outside the resource projection
+    -1 mk_sched_launch_thread L6708 unsupported: indirect memory access is outside the resource projection
+leaves added: 3; leaves removed: 12
