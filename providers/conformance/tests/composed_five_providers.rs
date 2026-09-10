@@ -920,7 +920,7 @@ fn the_shipped_packages_declare_disjoint_libraries_and_no_observation_hook() {
             // symbolic cleanup-replay route, 0.9.0 the unmap-wrapper
             // composition route and 0.10.0 the two `cio_file_close`
             // composition routes.
-            ("qcore.chunkio".to_owned(), "0.12.0".to_owned()),
+            ("qcore.chunkio".to_owned(), "0.13.0".to_owned()),
             ("qcore.cmetrics".to_owned(), "0.2.0".to_owned()),
             ("qcore.ctraces".to_owned(), "0.1.0".to_owned()),
             ("qcore.librdkafka".to_owned(), "0.1.0".to_owned()),

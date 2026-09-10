@@ -37,7 +37,7 @@
 use qcore_c_gateway::boolean_source::SourceInputIdentity;
 use qcore_c_gateway::composition_source::{
     CompositionFamily, CompositionSourceImport, FilesystemChunkCloseSourceImport,
-    MemoryCloseSourceImport, memory_close_callees,
+    MemoryCloseSourceImport, UnsupportedCloseSourceImport, memory_close_callees,
 };
 use qcore_schemas::call_use_summary::PrerequisiteIdentity;
 use qcore_schemas::composition_summary::{
@@ -48,7 +48,8 @@ use qcore_schemas::composition_summary::{
     FileClosePrerequisites, FilesystemChunkCloseCaseRecord, FilesystemChunkCloseCompositionRecord,
     FilesystemChunkClosePrerequisites, MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryCloseCaseRecord,
     MemoryCloseCompositionRecord, MemoryClosePrerequisites, ResidualCustodyRecord,
-    UNMAP_WRAPPER_SEMANTIC_PROFILE, UnmapCaseRecord, UnmapWrapperPrerequisites,
+    UNMAP_WRAPPER_SEMANTIC_PROFILE, UNSUPPORTED_CLOSE_SEMANTIC_PROFILE, UnmapCaseRecord,
+    UnmapWrapperPrerequisites, UnsupportedCloseCompositionRecord, UnsupportedClosePrerequisites,
 };
 use qcore_schemas::obligation::*;
 use qcore_schemas::plugin::*;
@@ -78,6 +79,10 @@ use crate::memory_close_composition::{
 use crate::teardown_source::{FieldDestructorSourceTask, ListUnlinkSourceTask};
 use crate::unmap_composition::{
     UnmapCertificate, UnmapCompositionContracts, check_unmap_composition,
+};
+use crate::unsupported_close_composition::{
+    OwnedUnsupportedCloseContracts, UnsupportedCloseContracts, UnsupportedCloseEvidence,
+    check_unsupported_close_bodies,
 };
 
 /// Digest keys this route binds beyond the shared input key.
@@ -762,7 +767,8 @@ impl FileCloseCompositionSourceTask {
             CompositionFamily::FileCloseDeleting => true,
             CompositionFamily::UnmapWrapper
             | CompositionFamily::MemoryClose
-            | CompositionFamily::FilesystemChunkClose => {
+            | CompositionFamily::FilesystemChunkClose
+            | CompositionFamily::UnsupportedClose => {
                 return Err("this context checks the file_close compositions only".into());
             }
         };
@@ -2472,6 +2478,29 @@ impl FilesystemChunkCloseCompositionSourceTask {
         }
     }
 
+    /// The question this context imported, for a *dependent* to carry verbatim.
+    pub fn family_input(&self) -> CompositionFamilyInput {
+        self.import.source_input().family
+    }
+
+    /// Re-run this whole three-level composition for a dependent and confirm the
+    /// claimed identity is the one this context derives.
+    pub fn revalidate_as_prerequisite(
+        &self,
+        claimed: &PrerequisiteIdentity,
+    ) -> Result<FilesystemChunkCloseEvidence, String> {
+        if !claimed.is_complete() {
+            return Err("filesystem chunk close prerequisite identity is incomplete".into());
+        }
+        if *claimed != self.prerequisite_identity() {
+            return Err(
+                "filesystem chunk close prerequisite identity is not the one the core derives"
+                    .into(),
+            );
+        }
+        self.evaluate()
+    }
+
     /// The composed reading the core reads out of its own checked certificate.
     fn record(
         &self,
@@ -2637,6 +2666,397 @@ impl WitnessChecker for FilesystemChunkCloseCompositionSourceTask {
         }
         // Both prerequisite compositions are re-established, at every level, and
         // this composition re-run by the core before the proposal is looked at.
+        let evidence = self.evaluate()?;
+        if proposed.summary != self.record(&evidence)? {
+            return Err("composition witness differs from the checked source composition".into());
+        }
+        Ok(task.coverage_for(VerifierCapability::ResourceContracts))
+    }
+}
+
+// ---------------------------------------------------------------------------
+// The symbolic other-backend composition: one prerequisite, no body of its own,
+// and a reading over a class rather than a value.
+// ---------------------------------------------------------------------------
+
+/// Digest keys the symbolic route binds beyond the shared input key.
+pub const UNSUPPORTED_CLOSE_BASE_IMPORT_KEY: &str = "qcore:composition-unsupported-base-import:v1";
+/// This composition's own pinned contract.
+pub const UNSUPPORTED_CLOSE_CONTRACT_KEY: &str = "qcore:composition-unsupported-contract:v1";
+/// The rest of the core's own selection — the pinned revision and the
+/// filesystem probe's function name — which the contract's bytes do not carry
+/// and which decide which body the classification will read at all.
+pub const UNSUPPORTED_CLOSE_SELECTION_KEY: &str = "qcore:composition-unsupported-selection:v1";
+/// The nested filesystem question, verbatim. It carries both derivation records
+/// and all three lower questions, so a moved recipe at any level moves this
+/// digest; a test pins that in both directions rather than assuming it.
+pub const UNSUPPORTED_CLOSE_QUESTION_KEY: &str = "qcore:composition-unsupported-fs-question:v1";
+
+/// The symbolic route's one prerequisite context, which is itself a three-level
+/// composition. Re-establishing it re-establishes every level below.
+pub struct UnsupportedClosePrerequisiteTasks {
+    pub filesystem_chunk_close: FilesystemChunkCloseCompositionSourceTask,
+}
+
+impl UnsupportedClosePrerequisiteTasks {
+    fn identities(&self) -> UnsupportedClosePrerequisites {
+        UnsupportedClosePrerequisites {
+            filesystem_chunk_close: self.filesystem_chunk_close.prerequisite_identity(),
+        }
+    }
+}
+
+/// Sealed symbolic other-backend composition context. A raw wire projection
+/// cannot construct one.
+pub struct UnsupportedCloseCompositionSourceTask {
+    import: UnsupportedCloseSourceImport,
+    contracts: OwnedUnsupportedCloseContracts,
+    prerequisites: UnsupportedClosePrerequisiteTasks,
+    task: VerificationTask,
+}
+
+impl UnsupportedCloseCompositionSourceTask {
+    /// Build the task. `prerequisites` is the core's **own** filesystem
+    /// composition context; the projection's claimed identity is required to be
+    /// the one it derives, and the transported nested question is required to be
+    /// the one that context imported.
+    pub fn derive(
+        import: &UnsupportedCloseSourceImport,
+        prerequisites: UnsupportedClosePrerequisiteTasks,
+        translation_unit: &str,
+        contracts: &UnsupportedCloseContracts<'_>,
+        target: TargetProfile,
+    ) -> Result<Self, String> {
+        check_unsupported_close_target(
+            &target,
+            import.source_revision(),
+            import.base_identity(),
+            translation_unit,
+            contracts,
+        )?;
+        let input = import.source_input();
+        if !input.version_matches() {
+            return Err("unsupported composition projection version".into());
+        }
+        if input.family.semantic_profile() != UNSUPPORTED_CLOSE_SEMANTIC_PROFILE {
+            return Err("the transported question answers another semantic profile".into());
+        }
+        if !input.family.matches(&input.prerequisites) {
+            return Err("composition family and prerequisite set disagree".into());
+        }
+        let CompositionFamilyInput::UnsupportedClose { filesystem } = &input.family else {
+            return Err("this context checks the symbolic other-backend composition only".into());
+        };
+        // 1. The transported nested *question* must be, verbatim, the question
+        //    the core's own filesystem context imported. That one comparison
+        //    carries both derivation records and all three lower questions,
+        //    because they are inside it.
+        if **filesystem != prerequisites.filesystem_chunk_close.family_input() {
+            return Err(
+                "the transported filesystem question is not the one the filesystem composition \
+                 imported"
+                    .into(),
+            );
+        }
+        // 2. The claimed identity is a lookup key, checked against the identity
+        //    the core's own prerequisite context derives.
+        let claimed = input
+            .prerequisites
+            .unsupported_close()
+            .ok_or("composition projection names another family's prerequisite set")?
+            .clone();
+        if !claimed.is_complete() {
+            return Err("unsupported close prerequisite identity is incomplete".into());
+        }
+        if claimed != prerequisites.identities() {
+            return Err(
+                "unsupported close prerequisite identity is not the one the core derives".into(),
+            );
+        }
+        // 3. The single-unit tie. Unlike the filesystem family, this route's own
+        //    prerequisite *is* over the wrapper's own text, so the tie is an
+        //    equality and is pinned in both directions. The cross-unit premise
+        //    the filesystem half carries about its backend arrives here through
+        //    the premise union rather than being restated.
+        if prerequisites
+            .filesystem_chunk_close
+            .task()
+            .unit
+            .source_digest
+            != import.base_identity().raw_source_digest()
+        {
+            return Err(
+                "the filesystem prerequisite was checked over a different unit than this one"
+                    .into(),
+            );
+        }
+        let paths = u64::try_from(import.wrapper_record().paths.len())
+            .map_err(|_| "composition path count out of range")?;
+        if paths == 0 {
+            return Err("composition import has no complete wrapper path".into());
+        }
+        let serialized_base =
+            serde_json::to_vec(import.base_identity()).map_err(|e| e.to_string())?;
+        let serialized_question =
+            serde_json::to_vec(import.nested_question()).map_err(|e| e.to_string())?;
+        let serialized_selection =
+            serde_json::to_vec(&(contracts.pinned_revision, contracts.probe_function))
+                .map_err(|e| e.to_string())?;
+        let contract_sources = BTreeMap::from([
+            (COMPOSITION_SOURCE_INPUT_KEY.to_owned(), input.digest()),
+            (
+                UNSUPPORTED_CLOSE_BASE_IMPORT_KEY.to_owned(),
+                sha256_hex(&serialized_base),
+            ),
+            (
+                UNSUPPORTED_CLOSE_CONTRACT_KEY.to_owned(),
+                sha256_hex(contracts.contract.as_bytes()),
+            ),
+            (
+                UNSUPPORTED_CLOSE_SELECTION_KEY.to_owned(),
+                sha256_hex(&serialized_selection),
+            ),
+            (
+                UNSUPPORTED_CLOSE_QUESTION_KEY.to_owned(),
+                sha256_hex(&serialized_question),
+            ),
+            (
+                UnsupportedClosePrerequisites::FILESYSTEM_CHUNK_CLOSE_KEY.to_owned(),
+                claimed.filesystem_chunk_close.digest(),
+            ),
+        ]);
+        // This route's own premises, over and above what its one component
+        // already assumes. Both are about the symbolic class, and both are
+        // assumptions rather than facts this route establishes.
+        let own = BTreeMap::from([
+            (
+                "symbolic_backend_class_excludes_exactly_the_two_source_probed_constants".into(),
+                true,
+            ),
+            (
+                "int_backend_domain_is_exhausted_by_the_two_constants_and_their_complement".into(),
+                true,
+            ),
+        ]);
+        let sets = vec![
+            &prerequisites.filesystem_chunk_close.task().assumptions,
+            &own,
+        ];
+        let assumptions = composition_premise_union(&sets)?;
+        let bounds = TaskBounds {
+            path_exploration: PathBounds::BoundedPaths { paths },
+            schedules_explored: None,
+            observed_runs_only: false,
+            max_operations: None,
+        };
+        let mut task = VerificationTask {
+            task_version: VERIFICATION_TASK_VERSION,
+            unit: UnitIdentity {
+                translation_unit: translation_unit.into(),
+                source_digest: import.base_identity().raw_source_digest().into(),
+                // This family derives no text, so its build identity is the base
+                // import's alone. The two derived identities its reading depends
+                // on are bound through the nested question's digest.
+                build_digest: sha256_hex(&serialized_base),
+            },
+            target,
+            semantic_profile: UNSUPPORTED_CLOSE_SEMANTIC_PROFILE.into(),
+            contract_sources,
+            bounds: bounds.clone(),
+            assumptions: assumptions.clone(),
+            evidence_version: 2,
+            obligations: Vec::new(),
+            derivation_incomplete: Vec::new(),
+        };
+        let subject = ObligationSubject::Function {
+            symbol: import.function().into(),
+            translation_unit: translation_unit.into(),
+        };
+        let property = ObligationProperty::CompositionContract;
+        let capability = VerifierCapability::ResourceContracts;
+        task.obligations.push(Obligation {
+            obligation_id: task.obligation_id(capability, property, &subject),
+            capability,
+            property,
+            subject,
+            scope: ObligationScope::Functions {
+                symbols: BTreeSet::from([import.function().to_owned()]),
+            },
+            bounds,
+            assumptions,
+            evidence_version: 2,
+        });
+        task.validate().map_err(|e| e.to_string())?;
+        Ok(Self {
+            import: import.clone(),
+            contracts: OwnedUnsupportedCloseContracts::of(contracts),
+            prerequisites,
+            task,
+        })
+    }
+
+    pub fn task(&self) -> &VerificationTask {
+        &self.task
+    }
+
+    /// How many composition levels this task re-establishes, counting itself.
+    /// Four: this family, its filesystem prerequisite, that composition's own
+    /// deleting `file_close` prerequisite, and that composition's nested unmap
+    /// composition. It is the deepest question this vocabulary carries.
+    #[must_use]
+    pub fn nesting_depth(&self) -> u32 {
+        self.import.source_input().family.nesting_depth()
+    }
+
+    pub fn request(&self, plugin_id: PluginId) -> VerificationRequestV2 {
+        VerificationRequestV2 {
+            protocol_version: 1,
+            evidence_version: 2,
+            request_id: format!("composition:{}", self.task.task_digest()),
+            plugin_id,
+            capability: VerifierCapability::ResourceContracts,
+            target: self.task.target.clone(),
+            unit: self.task.unit.clone(),
+            facts: Vec::new(),
+            assumptions: self.task.assumptions.clone(),
+            task_digest: self.task.task_digest(),
+            obligations: self.task.obligations.clone(),
+            source_effect: None,
+            counter_effect: None,
+            reactor_program: None,
+            teardown_source: None,
+            call_use_source: None,
+            cleanup_replay_source: None,
+            composition_source: Some(self.import.source_input()),
+        }
+    }
+
+    /// Re-establish the one composition prerequisite, which re-establishes the
+    /// three levels below it. Nothing a provider sends reaches any level.
+    pub fn revalidate_prerequisites(&self) -> Result<FilesystemChunkCloseEvidence, String> {
+        let input = self.import.source_input();
+        let claimed = input
+            .prerequisites
+            .unsupported_close()
+            .ok_or("composition projection names another family's prerequisite set")?
+            .clone();
+        self.prerequisites
+            .filesystem_chunk_close
+            .revalidate_as_prerequisite(&claimed.filesystem_chunk_close)
+    }
+
+    /// Re-establish every prerequisite at every level and re-run the unedited
+    /// symbolic classification over the core's own certificates and its own
+    /// contract. This is the core's own evaluation; no provider input reaches it.
+    pub fn evaluate(&self) -> Result<UnsupportedCloseEvidence, String> {
+        let filesystem = self.revalidate_prerequisites()?;
+        check_unsupported_close_bodies(
+            filesystem.memory_scope(),
+            filesystem.filesystem_kind_probe(),
+            &self.contracts.borrowed(),
+        )
+    }
+
+    /// This task's own identity, so a further dependent could name it. There is
+    /// none today; the accessor exists so the ladder's top rung is uniform.
+    pub fn prerequisite_identity(&self) -> PrerequisiteIdentity {
+        PrerequisiteIdentity {
+            semantic_profile: self.task.semantic_profile.clone(),
+            task_digest: self.task.task_digest(),
+            obligation_id: self.task.obligations[0].obligation_id.clone(),
+        }
+    }
+
+    /// The composed reading the core reads out of its own checked certificate.
+    ///
+    /// Two figures and the wrapper's identity, because that is what the
+    /// certificate decides. The six release facts are constants of the
+    /// admission, not decided figures, and the `Unknown` status is a constant of
+    /// the arm, so none of them is published as agreement.
+    fn record(
+        &self,
+        evidence: &UnsupportedCloseEvidence,
+    ) -> Result<CompositionProposalRecord, String> {
+        let source = evidence.memory_scope().source();
+        let [memory_kind, filesystem_kind] = evidence.excluded_kinds();
+        Ok(CompositionProposalRecord::UnsupportedClose(
+            UnsupportedCloseCompositionRecord {
+                function: source.function().into(),
+                source_revision: source.source_revision().into(),
+                signature: source.signature().into(),
+                memory_kind,
+                filesystem_kind,
+                source_path: u32::try_from(evidence.source_path())
+                    .map_err(|_| "index out of range".to_owned())?,
+                profile_assumptions: source.profile_assumptions().clone(),
+            },
+        ))
+    }
+}
+
+/// Identity and target checks for the symbolic route. The dialect is compared
+/// against the **base** unit's identity, because this family imports no derived
+/// text of its own; the two derived identities its reading depends on are the
+/// nested question's, and that question is bound verbatim.
+fn check_unsupported_close_target(
+    target: &TargetProfile,
+    import_revision: &str,
+    identity: &SourceInputIdentity,
+    translation_unit: &str,
+    contracts: &UnsupportedCloseContracts<'_>,
+) -> Result<(), String> {
+    if translation_unit.is_empty()
+        || contracts.contract.is_empty()
+        || contracts.probe_function.is_empty()
+        || contracts.pinned_revision.is_empty()
+        || target.library.is_empty()
+        || target.profile != UNSUPPORTED_CLOSE_SEMANTIC_PROFILE
+        || !matches!(target.dialect.as_str(), "c11" | "gnu99" | "gnu11" | "gnu17")
+        || target.revision != import_revision
+        || target.revision != contracts.pinned_revision
+        || target.dialect != identity.dialect()
+        || target.platform != std::env::consts::OS
+        || target.backend != "native"
+    {
+        return Err("incomplete or incompatible unsupported close target identity".into());
+    }
+    let target_os = match std::env::consts::OS {
+        "macos" => "darwin",
+        "windows" => "windows",
+        other => other,
+    };
+    if !identity.compiler_target().contains(target_os) {
+        return Err("Clang target does not match the native composition platform".into());
+    }
+    if !identity.helpers().is_empty() {
+        return Err("the composition route imports no helper bodies".into());
+    }
+    Ok(())
+}
+
+impl WitnessChecker for UnsupportedCloseCompositionSourceTask {
+    fn capability(&self) -> VerifierCapability {
+        VerifierCapability::ResourceContracts
+    }
+
+    fn check(
+        &self,
+        task: &VerificationTask,
+        witness: &SemanticWitness,
+    ) -> Result<BTreeSet<String>, String> {
+        if task != &self.task {
+            return Err("composition task differs from its checked import context".into());
+        }
+        let SemanticWitness::Composition(proposed) = witness else {
+            return Err("expected composition witness".into());
+        };
+        if proposed.task_digest != task.task_digest() {
+            return Err("composition witness is bound to a different task".into());
+        }
+        // The whole four-level stack is re-established and this classification
+        // re-run by the core before the proposal is looked at. An admitted
+        // proposal still publishes `Unknown`: agreement cannot promote an arm
+        // whose conclusion is a withheld one.
         let evidence = self.evaluate()?;
         if proposed.summary != self.record(&evidence)? {
             return Err("composition witness differs from the checked source composition".into());

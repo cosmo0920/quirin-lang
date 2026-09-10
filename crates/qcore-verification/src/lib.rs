@@ -23,6 +23,7 @@ pub mod memory_close_composition;
 pub mod source_effect;
 pub mod teardown_source;
 pub mod unmap_composition;
+pub mod unsupported_close_composition;
 
 pub mod call_use_contract;
 pub mod cleanup_outcome;

@@ -39,7 +39,7 @@ use qcore_schemas::composition_summary::{
     FileCloseDeleteInput, FilesystemChunkCloseCaseRecord, FilesystemChunkCloseCompositionRecord,
     MEMORY_CLOSE_SEMANTIC_PROFILE, MemoryCloseCalleeRecord, MemoryCloseCaseRecord,
     MemoryCloseCompositionRecord, ResidualCustodyRecord, UNMAP_WRAPPER_SEMANTIC_PROFILE,
-    UnmapCaseRecord,
+    UNSUPPORTED_CLOSE_SEMANTIC_PROFILE, UnmapCaseRecord, UnsupportedCloseCompositionRecord,
 };
 use qcore_schemas::plugin::*;
 use std::collections::{BTreeMap, BTreeSet};
@@ -1095,6 +1095,12 @@ enum MemoryValue {
     PrimaryLink,
     StateLink,
     Integer(i32),
+    /// The **symbolic** other-backend class of card `P04-COMPOSE-UNSUPPORTED`:
+    /// every `int` except the two source-probed constants it names. It is not a
+    /// value and no member of it is ever sampled — every comparison this class
+    /// cannot decide for the whole class is a decline, exactly as the trusted
+    /// composition's own `Value::OtherBackend` refuses.
+    OtherBackend(i32, i32),
     Boolean(bool),
 }
 
@@ -1105,6 +1111,10 @@ struct MemoryReplay<'a> {
     /// wrapper (card `P04-COMPOSE-FS`). On the memory family it is always
     /// false, and every branch it guards is unreachable there.
     filesystem: bool,
+    /// The two excluded constants, when this replay is walking the **symbolic**
+    /// arm. `None` on every other arm, and every branch it guards is then
+    /// unreachable.
+    other_kind: Option<(i32, i32)>,
     delete: bool,
     freed: bool,
     backend: bool,
@@ -1118,11 +1128,19 @@ struct MemoryReplay<'a> {
 }
 
 impl MemoryReplay<'_> {
-    fn truth(value: &MemoryValue) -> bool {
-        !matches!(
+    /// `None` is a decline: the symbolic class splits under this test, because
+    /// `0` is inside it and both arms of the branch would be reachable.
+    fn truth(value: &MemoryValue) -> Option<bool> {
+        if let MemoryValue::OtherBackend(memory, file) = value
+            && *memory != 0
+            && *file != 0
+        {
+            return None;
+        }
+        Some(!matches!(
             value,
             MemoryValue::Null | MemoryValue::Boolean(false) | MemoryValue::Integer(0)
-        )
+        ))
     }
 
     fn value(&self, v: &CleanupReplayValueRecord, depth: u32) -> Option<MemoryValue> {
@@ -1137,7 +1155,9 @@ impl MemoryReplay<'_> {
             }),
             // The delete flag is only ever read on the filesystem arm; the
             // memory family's entry states do not resolve it at all.
-            CleanupReplayExpressionRecord::Parameter { index: 1 } if self.filesystem => {
+            CleanupReplayExpressionRecord::Parameter { index: 1 }
+                if self.filesystem || self.other_kind.is_some() =>
+            {
                 Some(MemoryValue::Integer(i32::from(self.delete)))
             }
             CleanupReplayExpressionRecord::Symbol { operation } => {
@@ -1152,7 +1172,7 @@ impl MemoryReplay<'_> {
                 self.value(value, depth + 1)
             }
             CleanupReplayExpressionRecord::Unary { operator, value } if operator == "!" => Some(
-                MemoryValue::Boolean(!Self::truth(&self.value(value, depth + 1)?)),
+                MemoryValue::Boolean(!Self::truth(&self.value(value, depth + 1)?)?),
             ),
             CleanupReplayExpressionRecord::Binary {
                 operator,
@@ -1167,6 +1187,25 @@ impl MemoryReplay<'_> {
                 };
                 let left = integer_bool(self.value(left, depth + 1)?);
                 let right = integer_bool(self.value(right, depth + 1)?);
+                // The symbolic class decides an equality only against the two
+                // constants it excludes; every other integer is inside it *and*
+                // outside it, so the comparison is a decline rather than a
+                // sampled answer.
+                if let (MemoryValue::OtherBackend(memory, file), MemoryValue::Integer(value))
+                | (MemoryValue::Integer(value), MemoryValue::OtherBackend(memory, file)) =
+                    (&left, &right)
+                {
+                    return if value == memory || value == file {
+                        Some(MemoryValue::Boolean(false))
+                    } else {
+                        None
+                    };
+                }
+                if matches!(left, MemoryValue::OtherBackend(..))
+                    || matches!(right, MemoryValue::OtherBackend(..))
+                {
+                    return None;
+                }
                 if matches!(&left, MemoryValue::Integer(_))
                     != matches!(&right, MemoryValue::Integer(_))
                 {
@@ -1202,7 +1241,7 @@ impl MemoryReplay<'_> {
             let index = u32::try_from(index).ok()?;
             match operation {
                 CleanupReplayOperationRecord::Guard { condition, taken } => {
-                    if Self::truth(&self.value(condition, 0)?) != *taken {
+                    if Self::truth(&self.value(condition, 0)?)? != *taken {
                         return Some(false);
                     }
                 }
@@ -1222,9 +1261,11 @@ impl MemoryReplay<'_> {
                         (MemoryValue::Chunk, "name") if !self.name && place.c_type == "char *" => {
                             MemoryValue::Name
                         }
-                        (MemoryValue::Stream, "type") if place.c_type == "int" => {
-                            MemoryValue::Integer(self.memory_kind)
-                        }
+                        (MemoryValue::Stream, "type") if place.c_type == "int" => self
+                            .other_kind
+                            .map_or(MemoryValue::Integer(self.memory_kind), |(m, f)| {
+                                MemoryValue::OtherBackend(m, f)
+                            }),
                         _ => return None,
                     };
                     self.symbols.insert(index, resolved);
@@ -1255,6 +1296,7 @@ impl MemoryReplay<'_> {
                     {
                     } else if !self.freed
                         && !self.backend
+                        && self.other_kind.is_none()
                         && if self.filesystem {
                             // The filesystem dispatch frame is not supplied by
                             // any prerequisite of the memory family: it is the
@@ -1276,7 +1318,10 @@ impl MemoryReplay<'_> {
                         }
                     {
                         self.backend = true;
-                    } else if named(&self.callees.unlink) && !self.freed && self.backend {
+                    } else if named(&self.callees.unlink)
+                        && !self.freed
+                        && (self.backend || self.other_kind.is_some())
+                    {
                         match resolved.as_slice() {
                             [MemoryValue::PrimaryLink] if !self.primary => self.primary = true,
                             [MemoryValue::StateLink] if !self.state_link => {
@@ -1287,7 +1332,7 @@ impl MemoryReplay<'_> {
                     } else if function == MEMORY_CLOSE_RELEASE_CALLEE.0
                         && signature == MEMORY_CLOSE_RELEASE_CALLEE.1
                         && result_type == "void"
-                        && self.backend
+                        && (self.backend || self.other_kind.is_some())
                         && self.primary
                         && self.state_link
                     {
@@ -1400,6 +1445,7 @@ fn compose_memory_close(
                 nonnull,
                 memory_kind,
                 filesystem: false,
+                other_kind: None,
                 delete: false,
                 freed: false,
                 backend: false,
@@ -1482,6 +1528,7 @@ fn filesystem_path(
             nonnull,
             memory_kind: kind,
             filesystem: true,
+            other_kind: None,
             delete,
             freed: false,
             backend: false,
@@ -1675,6 +1722,117 @@ fn compose_filesystem_chunk_close(
     })
 }
 
+// ---------------------------------------------------------------------------
+// The symbolic family: one prerequisite, no body of its own, a class not a value.
+// ---------------------------------------------------------------------------
+
+/// The single wrapper path the **symbolic** other-backend class selects,
+/// recomputed by replaying the memory question's wrapper a third time with the
+/// stream's discriminant standing for the whole excluded class.
+///
+/// This mirrors the trusted composition's own `unsupported_path`: the class must
+/// select exactly one complete path, that path must perform all five of the
+/// wrapper's own releases, must **not** discharge any backend frame, and must
+/// resolve exactly six calls. Anything else is a decline.
+fn unsupported_path(
+    wrapper: &CleanupReplayFunctionRecord,
+    callees: &MemoryCloseCalleeRecord,
+    memory_kind: i32,
+    filesystem_kind: i32,
+    delete: bool,
+) -> Option<u32> {
+    let mut selected: Vec<u32> = Vec::new();
+    for (index, path) in wrapper.paths.iter().enumerate() {
+        let index = u32::try_from(index).ok()?;
+        let mut replay = MemoryReplay {
+            nonnull: true,
+            memory_kind,
+            filesystem: false,
+            other_kind: Some((memory_kind, filesystem_kind)),
+            delete,
+            freed: false,
+            backend: false,
+            primary: false,
+            state_link: false,
+            name: false,
+            counter: false,
+            calls: 0,
+            symbols: BTreeMap::new(),
+            callees,
+        };
+        if replay.run(&path.operations)? {
+            if !replay.freed
+                || !replay.primary
+                || !replay.state_link
+                || !replay.name
+                || !replay.counter
+                || replay.backend
+                || replay.calls != 6
+            {
+                return None;
+            }
+            selected.push(index);
+        }
+    }
+    let [index] = selected.as_slice() else {
+        return None;
+    };
+    Some(*index)
+}
+
+/// Recompute the whole four-level symbolic reading from the transported
+/// question.
+///
+/// The prerequisite reading is recomputed here by running this same process's
+/// filesystem composition over the transported nested question — which itself
+/// recomputes the memory and `file_close` compositions — and only then is the
+/// fourth, symbolic replay run. Nothing is read out of anything: the vocabulary
+/// cannot carry a composed reading at any level.
+fn compose_unsupported_close(
+    filesystem: &CompositionFamilyInput,
+) -> Option<UnsupportedCloseCompositionRecord> {
+    let CompositionFamilyInput::FilesystemChunkClose {
+        memory,
+        backend,
+        probe,
+        derivation,
+    } = filesystem
+    else {
+        return None;
+    };
+    // Levels two, three and four, recomputed rather than received. The symbolic
+    // arm is only asked once the filesystem arm this question depends on has
+    // been recomputed and accepted here.
+    let filesystem_reading = compose_filesystem_chunk_close(memory, backend, probe, derivation)?;
+    let CompositionFamilyInput::MemoryClose {
+        wrapper, callees, ..
+    } = &**memory
+    else {
+        return None;
+    };
+    let memory_kind = filesystem_reading.memory_kind;
+    let filesystem_kind = filesystem_reading.filesystem_kind;
+    if memory_kind == filesystem_kind {
+        return None;
+    }
+    let source_path = unsupported_path(wrapper, callees, memory_kind, filesystem_kind, false)?;
+    // The class's reading must not depend on the delete argument: the wrapper
+    // never reaches a dispatch frame on this arm, so a path that changed with
+    // the flag would mean the replay resolved something it must not have.
+    if unsupported_path(wrapper, callees, memory_kind, filesystem_kind, true)? != source_path {
+        return None;
+    }
+    Some(UnsupportedCloseCompositionRecord {
+        function: filesystem_reading.function.clone(),
+        source_revision: filesystem_reading.source_revision.clone(),
+        signature: filesystem_reading.signature.clone(),
+        memory_kind,
+        filesystem_kind,
+        source_path,
+        profile_assumptions: filesystem_reading.profile_assumptions.clone(),
+    })
+}
+
 fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> {
     if !source.version_matches()
         || !source.prerequisites.is_complete()
@@ -1712,6 +1870,9 @@ fn derive(source: &CompositionSourceInput) -> Option<CompositionProposalRecord> 
             derivation,
         } => compose_filesystem_chunk_close(memory, backend, probe, derivation)
             .map(CompositionProposalRecord::FilesystemChunkClose),
+        CompositionFamilyInput::UnsupportedClose { filesystem } => {
+            compose_unsupported_close(filesystem).map(CompositionProposalRecord::UnsupportedClose)
+        }
     }
 }
 
@@ -1727,6 +1888,7 @@ pub fn propose(
                 | FILE_CLOSE_DELETE_SEMANTIC_PROFILE
                 | MEMORY_CLOSE_SEMANTIC_PROFILE
                 | FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
+                | UNSUPPORTED_CLOSE_SEMANTIC_PROFILE
         )
         || !matches!(
             request.target.dialect.as_str(),

@@ -54,6 +54,7 @@ import QCore.FieldDestructor
 import QCore.ChunkSource
 import QCore.DerivedTextAdmission
 import QCore.TwoDerivationAdmission
+import QCore.SymbolicClassAdmission
 import QCore.DeclaredAbiAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow
