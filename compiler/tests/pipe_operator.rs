@@ -13,6 +13,10 @@ use qcore_compiler::{
     CompileOptions, SourceExecutionProfile, SourceFile, compile_files, parse_source_program,
 };
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
 const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
@@ -26,6 +30,16 @@ fn with_line_endings(source: &str) -> [String; 2] {
     let lf = source.replace("\r\n", "\n");
     let crlf = lf.replace('\n', "\r\n");
     [lf, crlf]
+}
+
+fn replace_fixture(source: &str, from: &str, to: &str) -> String {
+    let line_ending = if source.contains("\r\n") {
+        "\r\n"
+    } else {
+        "\n"
+    };
+    let adapt = |text: &str| text.replace("\r\n", "\n").replace('\n', line_ending);
+    source.replace(&adapt(from), &adapt(to))
 }
 
 fn selection() -> Option<BTreeMap<String, String>> {
@@ -158,11 +172,13 @@ fn an_owned_resource_piped_into_a_consuming_call_is_consumed() {
 fn using_a_binding_after_piping_it_into_a_consumer_refuses() {
     // The pre-existing move refusal, reached through a pipe. The point is that
     // no new rule was needed: the checker never learns a pipe was written.
-    let piped = ROUND_TRIP_PIPED.replace(
+    let piped = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    move b |> qcore_extern_release;\n",
         "    move b |> qcore_extern_release;\n    b |> qcore_extern_fill(7);\n",
     );
-    let plain = ROUND_TRIP.replace(
+    let plain = replace_fixture(
+        ROUND_TRIP,
         "    qcore_extern_release(move b);\n",
         "    qcore_extern_release(move b);\n    qcore_extern_fill(b, 7);\n",
     );
@@ -189,8 +205,12 @@ fn using_a_binding_after_piping_it_into_a_consumer_refuses() {
 
 #[test]
 fn a_pipeline_that_leaks_refuses_exactly_as_its_unpiped_twin_does() {
-    let piped = ROUND_TRIP_PIPED.replace("    move b |> qcore_extern_release;\n", "");
-    let plain = ROUND_TRIP.replace("    qcore_extern_release(move b);\n", "");
+    let piped = replace_fixture(
+        ROUND_TRIP_PIPED,
+        "    move b |> qcore_extern_release;\n",
+        "",
+    );
+    let plain = replace_fixture(ROUND_TRIP, "    qcore_extern_release(move b);\n", "");
     let piped_codes: Vec<String> = compile_with(&piped, selection())
         .map(|module| module.execution_profile)
         .expect_err("an unreleased acquisition must be refused")
@@ -214,7 +234,7 @@ fn an_operand_fault_is_attributed_to_the_piped_operand() {
     // `missing` is bound by nothing. The established name-resolution gate runs
     // first (the `STD-MODULES` measurement), so this is `Q013` — and the span
     // must cover the operand the reader wrote, not a synthetic position.
-    let source = LINES_PIPED.replace("total |> print dec;", "missing |> print dec;");
+    let source = replace_fixture(LINES_PIPED, "total |> print dec;", "missing |> print dec;");
     let diagnostics = compile(&source)
         .map(|module| module.execution_profile)
         .unwrap_err();
@@ -242,7 +262,7 @@ fn an_operand_fault_is_attributed_to_the_piped_operand() {
 
 #[test]
 fn a_stage_fault_is_attributed_to_the_stage() {
-    let source = LINES_PIPED.replace("total |> print dec;", "total |> print nope;");
+    let source = replace_fixture(LINES_PIPED, "total |> print dec;", "total |> print nope;");
     // An unreserved word in a rendering position is collected as a referenced
     // name and refuses at name resolution — the `STD-MODULES` measurement,
     // unchanged by the pipe.
@@ -269,7 +289,7 @@ fn a_resource_operand_is_still_unrenderable_through_a_pipe() {
 
 #[test]
 fn piping_into_an_operandless_stage_refuses() {
-    let source = LINES_PIPED.replace("    flush;\n", "    total |> flush;\n");
+    let source = replace_fixture(LINES_PIPED, "    flush;\n", "    total |> flush;\n");
     assert_eq!(codes(&source), ["Q037"]);
     assert!(messages(&source)[0].contains("takes no operand"));
 }
@@ -281,7 +301,11 @@ fn a_sink_cannot_feed_a_later_stage() {
     // the narrower and permanent rule: `print` produces no value, so it can
     // only be a pipeline's last stage. The code is unchanged at `Q037` and the
     // new message names the stage rather than a follow-on.
-    let source = LINES_PIPED.replace("total |> print dec;", "total |> print dec |> log info dec;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "total |> print dec |> log info dec;",
+    );
     assert_eq!(codes(&source), ["Q037"]);
     assert!(messages(&source)[0].contains("produces no value"));
     assert!(messages(&source)[0].contains("`print`"));
@@ -293,7 +317,8 @@ fn a_pipeline_on_the_right_of_a_binding_binds_its_last_stage() {
     // load-bearing negative half moves rather than disappearing — a bound
     // pipeline whose last stage produces nothing still refuses, and so does an
     // assignment pipeline.
-    let source = ROUND_TRIP_PIPED.replace(
+    let source = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n",
         "    let b = 8 |> qcore_extern_alloc succeeds true else raise Failure;\n",
     );
@@ -304,14 +329,16 @@ fn a_pipeline_on_the_right_of_a_binding_binds_its_last_stage() {
         "a bound pipeline emits what the hand-written binding emits"
     );
 
-    let sink_bound = LINES_PIPED.replace(
+    let sink_bound = replace_fixture(
+        LINES_PIPED,
         "    total |> print dec;\n",
         "    let x = total |> print dec;\n",
     );
     assert_eq!(codes(&sink_bound), ["Q036"]);
     assert!(messages(&sink_bound)[0].contains("produces no value"));
 
-    let assigned = ROUND_TRIP_PIPED.replace(
+    let assigned = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    b |> qcore_extern_fill(7);\n",
         "    b = b |> qcore_extern_fill(7);\n",
     );
@@ -327,7 +354,7 @@ fn a_pipeline_on_the_right_of_a_binding_binds_its_last_stage() {
 #[test]
 fn a_pipeline_with_nothing_on_one_side_refuses() {
     for (replacement, code) in [("    |> print dec;\n", "Q036"), ("    total |>;\n", "Q036")] {
-        let source = LINES_PIPED.replace("    total |> print dec;\n", replacement);
+        let source = replace_fixture(LINES_PIPED, "    total |> print dec;\n", replacement);
         assert_eq!(codes(&source), [code], "for `{replacement}`");
     }
 }
@@ -340,7 +367,8 @@ fn a_pipeline_that_reaches_a_block_boundary_before_its_semicolon_refuses() {
     // still records its own `Q036` for this shape — that arm is what keeps a
     // pipeline from silently swallowing a block — but it is unreachable from
     // this direction and the reachable refusal is pinned as the truth.
-    let source = LINES_PIPED.replace(
+    let source = replace_fixture(
+        LINES_PIPED,
         "    -7 |> print dec;\n    return;\n",
         "    -7 |> print dec\n",
     );
@@ -358,14 +386,22 @@ fn a_pipeline_missing_its_semicolon_mid_body_runs_into_the_next_statement() {
     // (`Q036`, "print names 1 selector word … this stage names 2") rather than
     // wave 18's "too many stages" (`Q037`). Both are fail-closed and correctly
     // spanned; the measured one is pinned rather than the preferred one forced.
-    let source = LINES_PIPED.replace("    total |> print dec;\n", "    total |> print dec\n");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "    total |> print dec;\n",
+        "    total |> print dec\n",
+    );
     assert_eq!(codes(&source), ["Q036"]);
     assert!(messages(&source)[0].contains("selector word"));
 }
 
 #[test]
 fn a_sink_stage_with_the_wrong_selector_count_refuses() {
-    let source = LINES_PIPED.replace("total |> print dec;", "total |> print dec hex;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "total |> print dec hex;",
+    );
     assert_eq!(codes(&source), ["Q036"]);
 }
 
@@ -374,7 +410,8 @@ fn a_call_stage_takes_the_operand_as_its_first_argument() {
     // First-argument insertion, measured: the bare form and the parenthesized
     // form both put the piped value first, and both agree with the unpiped C.
     let piped = compile_with(ROUND_TRIP_PIPED, selection()).unwrap();
-    let explicit = ROUND_TRIP_PIPED.replace(
+    let explicit = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    move b |> qcore_extern_release;\n",
         "    move b |> qcore_extern_release();\n",
     );
@@ -390,7 +427,8 @@ fn the_argument_order_of_a_call_stage_is_the_declared_one() {
     // `b |> qcore_extern_fill(7)` must be `fill(b, 7)`, not `fill(7, b)`:
     // swapping the declared order is refused by the bridging table, which is
     // what makes the insertion position observable rather than assumed.
-    let swapped = ROUND_TRIP_PIPED.replace(
+    let swapped = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    b |> qcore_extern_fill(7);\n",
         "    7 |> qcore_extern_fill(b);\n",
     );
@@ -404,7 +442,11 @@ fn the_argument_order_of_a_call_stage_is_the_declared_one() {
 
 #[test]
 fn the_logical_or_operator_refuses_with_its_measured_blocker() {
-    let source = LINES_PIPED.replace("total |> print dec;", "print dec total | mask;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "print dec total | mask;",
+    );
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
     assert!(message.contains("`|` is the logical-or operator"));
@@ -417,7 +459,11 @@ fn the_logical_or_operator_refuses_with_its_measured_blocker() {
 
 #[test]
 fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
-    let source = LINES_PIPED.replace("total |> print dec;", "print dec total || mask;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "print dec total || mask;",
+    );
     assert_eq!(
         codes(&source),
         ["Q038"],
@@ -428,7 +474,11 @@ fn the_c_family_double_bar_is_redirected_to_the_single_bar_spelling() {
 
 #[test]
 fn the_logical_and_operator_refuses_and_redirects_the_single_ampersand() {
-    let source = LINES_PIPED.replace("total |> print dec;", "print dec total && mask;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "print dec total && mask;",
+    );
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
     assert!(message.contains("`&&` is the logical-and operator"));
@@ -444,7 +494,11 @@ fn a_single_ampersand_gains_no_new_meaning() {
     // `&` lexes exactly as it did before this card and is consumed by nothing,
     // so a program containing one still refuses — and never at `Q038`, which
     // would mean this card had claimed it.
-    let source = LINES_PIPED.replace("total |> print dec;", "print dec total & mask;");
+    let source = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "print dec total & mask;",
+    );
     let codes = codes(&source);
     assert!(
         !codes.contains(&"Q038".to_owned()),
@@ -489,7 +543,8 @@ fn a_pipe_nested_inside_an_argument_list_is_not_desugared_and_still_refuses() {
     // the residual `|>` survives into the tokens and the route's own grammar
     // refuses the argument. Fail-closed, and pinned so a future widening has
     // to decide this case deliberately rather than inherit it.
-    let source = ROUND_TRIP_PIPED.replace(
+    let source = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    move b |> qcore_extern_release;\n",
         "    qcore_extern_release(move b |> qcore_extern_sum);\n",
     );
@@ -553,7 +608,8 @@ fn a_chain_written_without_whitespace_still_separates_its_statements() {
     // the next statement's synthesized tokens at its *end*, two bytes later, so
     // the extents stay disjoint and each route's span-keyed window still gets
     // exactly its own tokens — which the byte-identical emission proves.
-    let dense = REALLOC_PIPED.replace(
+    let dense = replace_fixture(
+        REALLOC_PIPED,
         "    let grown = 8 |> qcore_extern_alloc succeeds true else raise Failure\n                  \
          |> move qcore_extern_grow(32) succeeds true\n                       \
          else qcore_extern_free(move) raise Failure;\n",
@@ -577,7 +633,7 @@ fn every_stage_of_a_chain_keeps_its_own_attribution() {
         ("qcore_extern_alloc succeeds", "qcore_absent_alloc succeeds"),
         ("qcore_extern_grow(32)", "qcore_absent_grow(32)"),
     ] {
-        let source = REALLOC_PIPED.replace(stage, absent);
+        let source = replace_fixture(REALLOC_PIPED, stage, absent);
         assert_ne!(source, REALLOC_PIPED, "the mutation must apply");
         let diagnostics = compile_with(&source, selection())
             .map(|module| module.execution_profile)
@@ -599,7 +655,8 @@ fn a_chain_whose_result_is_never_consumed_leaks_and_refuses() {
     // floor is not silently accepted. The temporary is an ordinary binding by
     // the time the accounting runs, so the pre-existing leak diagnostic is what
     // refuses it — no leak rule was added for pipelines.
-    let source = REALLOC_PIPED.replace(
+    let source = replace_fixture(
+        REALLOC_PIPED,
         "    qcore_extern_fill(grown, 3);\n    qcore_extern_free(move grown);\n",
         "    qcore_extern_fill(grown, 3);\n",
     );
@@ -617,12 +674,14 @@ fn a_value_consumed_mid_chain_cannot_be_used_after_the_pipeline() {
     // The other direction of linearity, and the one that would be a real
     // soundness hole: the pipeline's operand is consumed by the first stage, so
     // naming it afterwards refuses exactly as it does without a pipe.
-    let piped = ROUND_TRIP_PIPED.replace(
+    let piped = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    move b |> qcore_extern_release;\n",
         "    move b |> qcore_extern_grow(32) succeeds true else raise Failure \
          |> move qcore_extern_release;\n    qcore_extern_fill(b, 1);\n",
     );
-    let unpiped = ROUND_TRIP.replace(
+    let unpiped = replace_fixture(
+        ROUND_TRIP,
         "    qcore_extern_release(move b);\n",
         "    let g = qcore_extern_grow(move b, 32) succeeds true else raise Failure;\n    \
          qcore_extern_release(move g);\n    qcore_extern_fill(b, 1);\n",
@@ -659,7 +718,7 @@ fn a_stage_that_produces_nothing_cannot_feed_a_later_stage() {
         ),
     ];
     for (replacement, named) in cases {
-        let source = ROUND_TRIP_PIPED.replace("|> qcore_extern_fill(7);", replacement);
+        let source = replace_fixture(ROUND_TRIP_PIPED, "|> qcore_extern_fill(7);", replacement);
         let diagnostics = compile_with(&source, selection())
             .map(|module| module.execution_profile)
             .expect_err("a value-less intermediate stage must be refused");
@@ -679,7 +738,8 @@ fn a_pipeline_temporary_cannot_be_named_or_shadowed() {
     // Hygiene by refusal, not by silent renaming: a file that writes the
     // reserved prefix and also needs temporaries is refused, so a diagnostic
     // can never name a binding the reader did not write.
-    let source = REALLOC_PIPED.replace(
+    let source = replace_fixture(
+        REALLOC_PIPED,
         "    let grown = 8 |>",
         "    let qcore__pipe0 = 0;\n    let grown = 8 |>",
     );
@@ -698,7 +758,11 @@ fn a_pipeline_temporary_cannot_be_named_or_shadowed() {
 
     // A one-stage pipeline needs no temporary, so the same name is untouched
     // there: the refusal is scoped to files that actually generate one.
-    let single = ROUND_TRIP_PIPED.replace("    let b =", "    let qcore__pipe0 = 0;\n    let b =");
+    let single = replace_fixture(
+        ROUND_TRIP_PIPED,
+        "    let b =",
+        "    let qcore__pipe0 = 0;\n    let b =",
+    );
     assert!(
         compile_with(&single, selection())
             .map(|module| module.execution_profile)
@@ -714,7 +778,8 @@ fn move_is_refused_on_the_first_stage_where_the_operand_has_a_spelling() {
     // One spelling per meaning: the first stage's operand is written by hand,
     // so `move OPERAND |> STAGE` is how it is consumed and `|> move STAGE` is
     // reserved for the value a previous stage produced.
-    let source = ROUND_TRIP_PIPED.replace(
+    let source = replace_fixture(
+        ROUND_TRIP_PIPED,
         "    move b |> qcore_extern_release;\n",
         "    b |> move qcore_extern_release;\n",
     );
@@ -736,7 +801,8 @@ fn a_bare_move_outside_a_pipeline_stage_keeps_its_existing_refusal() {
     // The bare `move` spelling is resolved by the desugaring and never reaches
     // a route, so it means nothing outside a pipeline stage's adapter tail and
     // the extern grammar refuses it exactly as before this card.
-    let source = ROUND_TRIP.replace(
+    let source = replace_fixture(
+        ROUND_TRIP,
         "    qcore_extern_release(move b);\n",
         "    qcore_extern_release(move);\n",
     );
@@ -906,70 +972,94 @@ fn the_native_run_of_a_piped_program_matches_its_reference_per_stream() {
 /// The sanitizer runtimes write their own findings to stderr and abort, so a
 /// clean exit with the expected stderr lines is itself the evidence that no
 /// finding was reported.
-fn run_native(source: &str, label: &str) -> (Vec<String>, Vec<String>) {
-    use std::process::Command;
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-pipe-{label}-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
+fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
+    #[cfg(target_os = "windows")]
+    {
+        let run = windows_c::run(source, None, &[]);
+        assert!(
+            run.status.success(),
+            "emitted program failed:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = String::from_utf8(run.stdout)
             .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let generated = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&generated, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&generated)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile.status.success(),
-        "C compiler rejected the emitted program:\n{}",
-        String::from_utf8_lossy(&compile.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
-    assert!(
-        run.status.success(),
-        "emitted program failed under ASan/UBSan/LSan:\n{}",
-        String::from_utf8_lossy(&run.stderr)
-    );
-    let out = String::from_utf8(run.stdout)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    let err = String::from_utf8(run.stderr)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect();
-    std::fs::remove_dir_all(directory).unwrap();
-    (out, err)
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        let err = String::from_utf8(run.stderr)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        (out, err)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-pipe-{_label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        assert!(
+            run.status.success(),
+            "emitted program failed under ASan/UBSan/LSan:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = String::from_utf8(run.stdout)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        let err = String::from_utf8(run.stderr)
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect();
+        std::fs::remove_dir_all(directory).unwrap();
+        (out, err)
+    }
 }
