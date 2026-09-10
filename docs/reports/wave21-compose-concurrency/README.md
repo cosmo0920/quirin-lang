@@ -629,7 +629,7 @@ observation.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement |
-| `cargo test --workspace --no-fail-fast` | see §11.1 |
+| `cargo test --workspace --no-fail-fast` | **3,296 passed, 0 failed, 8 ignored**, doctests included, exit **0** — see §11.1 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean (one of this card's own lints found and fixed at the source, not suppressed) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
@@ -644,7 +644,27 @@ under `target/` and never in the shared scratchpad.
 
 ### 11.1 The workspace run
 
-PENDING_WORKSPACE_NUMBERS
+One run, no retries, doctests included: **3,296 passed, 0 failed, 8 ignored**
+across 188 targets, exit **0**. **None of the four `P02-FLAKE` rows (standing
+constraint 16) tripped** — the `RLIMIT_NPROC` conformance test, the
+process-lifecycle budget test, the confined-fixture write test and
+`real_packages_preserve_unknown_and_reject_mutations` all passed on the first
+attempt, so nothing here rests on a re-run and no assertion was weakened.
+
+For the integrator: a sibling worktree was building and testing on the same
+machine throughout, so wall-clock timings here are not comparable with a quiet
+run; none of the results depends on them.
+
+**One line was added after that run started, and is named rather than buried.**
+`crates/qcorec/src/main.rs` gained the composed profile's CLI label — one match
+arm printing a description string — while the workspace run was in flight. It
+was an edit to a source file only; no `cargo` invocation was made until the run
+had finished, so nothing rebuilt underneath it (the hazard `STD-IO-COMPOSE`
+§9.1 recorded). The final tree was then re-measured for that crate:
+`cargo test -p qcorec --no-fail-fast` passes (7 + 7 + 0 across its three
+targets), `cargo fmt --all -- --check` is clean, `cargo clippy --all-targets --
+-D warnings` is clean, and both probes exit 0 on the final tree. No test asserts
+that label's text.
 
 ### 11.2 One expected failure, left for the integrator
 
