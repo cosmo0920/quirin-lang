@@ -13,6 +13,7 @@ pub mod parser;
 pub mod pipe;
 pub mod quant_index;
 pub mod source_composed;
+pub mod source_composed_tasks;
 pub mod source_epoch;
 pub mod source_epoch_tasks;
 pub mod source_extern;

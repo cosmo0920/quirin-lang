@@ -5,10 +5,15 @@ Linux and macOS. The Windows instructions below use MSVC's `cl.exe`.
 
 | Example | What it demonstrates | Successful main result |
 |---|---|---|
-| [two_workers.qcore](two_workers.qcore) | Two copied inputs, both workers started before either join, recovery if the second creation fails | `7` |
-| [owned_buffer.qcore](owned_buffer.qcore) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile | `42` |
-| [shared_readers.qcore](shared_readers.qcore) | Two read-only workers share one buffer; joining both restores the parent's write access | `7` |
-| [core_context.qcore](core_context.qcore) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback | `42` |
+| [two_workers.qcore](two_workers.qcore) | Two copied inputs, both workers started before either join, recovery if the second creation fails; both results logged and one printed by the source | `7` |
+| [owned_buffer.qcore](owned_buffer.qcore) | Transfer a buffer to a worker and receive it back at join; the parent uses a separate buffer meanwhile, and logs the number it reads back out of the returned buffer | `42` |
+| [shared_readers.qcore](shared_readers.qcore) | Two read-only workers share one buffer; joining both restores the parent's write access, with the parent logging before, between and after the joins | `7` |
+| [core_context.qcore](core_context.qcore) | Minimal source counterpart of the Rust core prelude: owned handoff, explicit join and creation rollback, with the rollback arm logging on a branch the successful run never reaches | `42` |
+
+All four also `import std.logger;` and `import std.fmt;` (and `two_workers`
+additionally `import std.io;`), which is what lets them say something of their
+own beside the trace the compiler synthesizes — see
+[Reading the output](#reading-the-output).
 
 ## Mapping source examples to the core prelude
 
@@ -111,27 +116,49 @@ but not for building these executables.
 
 ## Reading the output
 
-The runtime prints task events. **None of that output is a source construct.**
-No line below is asked for by any of the four programs: every one is trace
-instrumentation the compiler synthesizes so the emitted C can be compared with
-the reference execution. A source-level `print` cannot appear in these files at
-all — a module that both spawns and prints stays with the task route, which
-refuses the `io` effect (`Q020`) and the statement (`Q500`); both refusals are
-pinned in [`compiler/tests/thread_examples.rs`](../../compiler/tests/thread_examples.rs).
-Since card `TRACE-STDIO` these lines and `std.io`'s `print`/`log` travel one
-shared C-level emission route (`QCORE_IO_WRITE`), so an emitted program has a
-single printing mechanism rather than two; the printed bytes are unchanged.
+Each program writes two kinds of line, and it is worth telling them apart before
+reading a transcript.
 
-The transcript below is not prose: `thread_examples.rs` reads it out of this
-file and compares it with a real sanitized run, so it cannot drift. That test
+**The `QCORE_…` lines on standard output are trace instrumentation the compiler
+synthesizes.** No source statement asks for them; they exist so the emitted C can
+be compared with the reference execution. Since card `TRACE-STDIO` they and
+`std.io`'s own `print`/`log` travel one shared C-level emission route
+(`QCORE_IO_WRITE`), so an emitted program has a single printing mechanism rather
+than two.
+
+**Everything else is a source statement.** Since card `COMPOSE-CONCURRENCY` a
+module may both spawn and print, on the composed route
+`source.std-io-tasks.v1` — so `first_result |> log info dec;` is a line the
+program asks for, on the same emission route as the trace beside it. Before that
+card it was measured impossible: a module that both spawned and printed stayed
+with the task route, which refused the `io` effect (`Q020`) and the statement
+(`Q500`).
+
+**A source line may stand anywhere in the parent's body, and nowhere in a
+worker's.** That split is read off the emitted runtime rather than guessed: every
+write an emitted task program performs is performed by the parent's thread — a
+worker's trace events are buffered in its own private array and replayed by the
+parent inside the join — so a line placed at any point of the parent has a
+determined position relative to every other line. A line inside a worker body
+would be written by that worker's thread, concurrently with the parent's writes
+and with its siblings', and nothing in the checked model orders those; it is
+refused at `Q050`. `shared_readers.qcore`'s worker carries a comment where such
+a line would go.
+
+Both transcripts below are not prose: `thread_examples.rs` reads them out of this
+file and compares them with a real sanitized run, so they cannot drift. That test
 also builds and runs all four examples under ASan/UBSan (and LSan on Linux) and
-compares each one's stdout byte for byte with the reference execution:
+compares each one's stdout and stderr **per stream** with the reference
+execution, and checks that removing the source lines from standard output leaves
+exactly the task rendering those examples produced before they said anything:
 
 ```sh
 cargo test -p qcore-compiler --test thread_examples
 ```
 
-A normal `two_workers` run prints:
+A normal `two_workers` run writes this on standard output:
+
+<!-- transcript:stdout -->
 
 ```text
 QCORE_TASK_SPAWN 1 0
@@ -140,13 +167,31 @@ QCORE_TASK_RESULT 2 I32 7
 QCORE_TASK_JOIN 2
 QCORE_TASK_RESULT 1 I32 42
 QCORE_TASK_JOIN 1
+7
 QCORE_TASK_RESULT 0 I32 7
 ```
 
-Task `0` is the parent. The last line contains the QCore main result; successful
-execution exits with process status `0`, even when that result is `7` or `42`.
-Worker events are buffered and printed after join, so their printed order does
-not reveal which worker the OS scheduled first or prove simultaneous execution.
+and this on standard error:
+
+<!-- transcript:stderr -->
+
+```text
+[INFO] 2
+[INFO] 42
+[INFO] 7
+```
+
+The bare `7` is the source's own `second_result |> print dec;`, and the three
+`[INFO]` lines are its `log` statements: the creation decision this run took, and
+then both joined results. The relative order of the two streams is **not**
+modeled and is not asserted anywhere — C gives no order between two separately
+buffered streams — but each stream's own order is checked.
+
+Task `0` is the parent. The last `QCORE_TASK_RESULT` line contains the QCore main
+result; successful execution exits with process status `0`, even when that result
+is `7` or `42`. Worker events are buffered and printed after join, so their
+printed order does not reveal which worker the OS scheduled first or prove
+simultaneous execution.
 
 The buffer examples also print allocation, access, transfer and release events.
 They explicitly handle allocation or creation refusals so previously acquired

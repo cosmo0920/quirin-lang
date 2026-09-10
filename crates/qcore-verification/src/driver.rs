@@ -18,7 +18,7 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
-use qcore_core::{composed_std_io, composed_std_io_c_emit, std_io, std_io_c_emit};
+use qcore_core::{composed_std_io, composed_std_io_c_emit, composed_tasks, std_io, std_io_c_emit};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -170,6 +170,15 @@ pub enum CheckedSourceModule {
     /// standard-IO checker — with the composed certificate carrying both
     /// projections' own certificates verbatim beside the join.
     Composed(Box<CheckedComposedModule>),
+    /// One entry function checked under `source.std-io-tasks.v1` (card
+    /// `COMPOSE-CONCURRENCY`): a module that both spawns and prints. The task
+    /// half was checked by the **unedited** `check_task_module` and is reachable
+    /// on its own through
+    /// [`qcore_core::composed_tasks::CheckedComposedTaskModule::tasks`], so
+    /// every consumer of a checked task module — the reference execution, the C
+    /// backend, the profile classification — reads exactly what the task route
+    /// would have handed it.
+    ComposedTasks(Box<composed_tasks::CheckedComposedTaskModule>),
 }
 
 /// A checked `source.std-io.v1` module.
@@ -259,7 +268,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
         }
     }
 
@@ -275,7 +285,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -288,7 +299,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -304,7 +316,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -317,7 +330,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -330,7 +344,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -343,7 +358,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -361,8 +377,29 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::ComposedTasks(_) => None,
             Self::Composed(module) => Some(module),
+        }
+    }
+
+    /// The composed task evidence (card `COMPOSE-CONCURRENCY`).
+    ///
+    /// A composed task module answers `None` to `as_scoped_tasks` on the same
+    /// `ComposedEpochTasks` precedent: its task half is one half of a checked
+    /// pair, and a consumer that wants it asks for the composition and takes
+    /// `tasks()` from it, with the placed lines in view beside it.
+    pub fn as_composed_tasks(&self) -> Option<&composed_tasks::CheckedComposedTaskModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
+            Self::ComposedTasks(module) => Some(module),
         }
     }
 
@@ -388,6 +425,9 @@ impl CheckedSourceModule {
             // And likewise for the composition: one entry is lowered, by two
             // models rather than one.
             Self::Composed(_) => 1,
+            // A composed task module's workers *are* checked bodies, so the
+            // count is the task module's, exactly as on the scoped-task route.
+            Self::ComposedTasks(module) => module.tasks().module().functions.len(),
         }
     }
 }
@@ -438,6 +478,14 @@ pub enum SourceExecutionProfile {
     /// composition checks only where they meet, so this profile's guarantees
     /// are exactly the conjunction of the two it composes plus the join.
     ComposedStdIoExternV1,
+    /// `source.std-io-tasks.v1`: the checked composition of `source.std-io.v1`
+    /// with the checked task route in one module (card `COMPOSE-CONCURRENCY`).
+    /// The task half executes exactly as it does on its own route — same
+    /// lowering, same checker, same emission — and the source lines stand in the
+    /// **parent's** body, where the interleaving with the synthesized trace is
+    /// determined because every write of an emitted task program is performed by
+    /// the parent's thread. A line in a worker body is refused.
+    ComposedStdIoTasksV1,
 }
 
 #[derive(Clone, Debug)]
@@ -663,6 +711,15 @@ pub fn compile_files_with_registry(
         // scoped tasks, and a module declaring a mutex generation must not be
         // handed to a route that models no mutex at all.
         return compile_mutex_source(&parsed, &typed, mode, options, &ranges);
+    }
+    // Selected after every *more specific* concurrent route and before the task
+    // route it composes (card `COMPOSE-CONCURRENCY`). The order is what keeps
+    // every other exclusion intact: a module carrying an epoch scope or a mutex
+    // generation never reaches this line, and a module that also extern-calls
+    // fails this conjunction and falls through to the task route with its
+    // existing `Q600`.
+    if qcore_frontend::source_composed_tasks::has_source_composed_tasks(&parsed) {
+        return compile_composed_task_source(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
         return compile_task_source(&parsed, &typed, mode, options, &ranges);
@@ -2603,6 +2660,33 @@ fn compile_task_source(
     options: &CompileOptions,
     ranges: &[FileRange],
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    task_route(parsed, typed, mode, options, ranges, false)
+}
+
+/// `source.std-io-tasks.v1` (card `COMPOSE-CONCURRENCY`).
+///
+/// The same route function with `composing = true`: one lowering, one task
+/// checker, one backend. That is what makes "a module using one feature set
+/// keeps its route byte for byte" structural rather than tested — there is no
+/// second path for it to diverge on.
+fn compile_composed_task_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    task_route(parsed, typed, mode, options, ranges, true)
+}
+
+fn task_route(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+    composing: bool,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
             "Q500",
@@ -2610,14 +2694,24 @@ fn compile_task_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let task_module = qcore_frontend::source_tasks::lower_source_tasks(parsed, typed, &entry)
-        .map_err(|errors| {
-            errors
-                .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
-                .collect::<Vec<_>>()
-        })?;
-    let checked = task_execution::check_task_module(&task_module).map_err(|errors| {
+    let lowered = if composing {
+        qcore_frontend::source_tasks::lower_source_composed_tasks(parsed, typed, &entry)
+    } else {
+        qcore_frontend::source_tasks::lower_source_tasks(parsed, typed, &entry).map(|tasks| {
+            qcore_frontend::source_tasks::LoweredComposedTaskModule {
+                tasks,
+                sites: Vec::new(),
+                declares_io: false,
+            }
+        })
+    }
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let task_diagnostics = |errors: Vec<task_execution::TaskDiagnostic>| {
         errors
             .into_iter()
             .map(|error| {
@@ -2633,7 +2727,57 @@ fn compile_task_source(
                 )
             })
             .collect::<Vec<_>>()
-    })?;
+    };
+    // The task half is checked by `check_task_module` on both routes — through
+    // the composed checker when composing, which runs it first and unedited, so
+    // composing can never admit a task program the task route refuses.
+    let composed = if composing {
+        let program = composed_tasks::ComposedTaskProgram {
+            tasks: lowered.tasks.clone(),
+            sites: lowered.sites.clone(),
+            declares_io: lowered.declares_io,
+        };
+        Some(
+            composed_tasks::check_composed_task_program(&program).map_err(
+                |refusal| match refusal {
+                    composed_tasks::ComposedTaskRefusal::Tasks(errors) => task_diagnostics(errors),
+                    composed_tasks::ComposedTaskRefusal::Join(errors) => errors
+                        .into_iter()
+                        .map(|error| {
+                            map_raw_diagnostic(
+                                "Q050",
+                                SemanticPass::ComposedTasks,
+                                Span {
+                                    start: error.span.start,
+                                    end: error.span.end,
+                                },
+                                error.message,
+                                ranges,
+                            )
+                        })
+                        .collect::<Vec<_>>(),
+                },
+            )?,
+        )
+    } else {
+        None
+    };
+    let checked = match &composed {
+        Some(composed) => composed.tasks().clone(),
+        None => task_execution::check_task_module(&lowered.tasks).map_err(task_diagnostics)?,
+    };
+    // A published composed certificate is never one this driver did not
+    // recompute: the join is rederived from the program alone and compared.
+    if let Some(composed) = &composed {
+        let program = composed.program();
+        composed_tasks::recheck_composed_task_certificate(program, composed.certificate())
+            .map_err(|failure| {
+                vec![plain_diagnostic(
+                    "Q050",
+                    format!("composed task certificate: {failure}"),
+                )]
+            })?;
+    }
     if !cfg!(any(
         target_os = "linux",
         target_os = "macos",
@@ -2644,7 +2788,7 @@ fn compile_task_source(
             "native scoped task emission currently requires a Linux, macOS or Windows threads target",
         )]);
     }
-    let emission = task_c_emit::emit_task_c11(&checked);
+    let emission = task_c_emit::emit_task_c11_with_source_lines(&checked, &lowered.sites);
     use task_execution::{
         FULL_READ_AUTHORITY, ScalarOperand, ScalarType, TaskInstructionKind, TaskTerminatorKind,
     };
@@ -2733,8 +2877,16 @@ fn compile_task_source(
         })
         .collect();
     Ok(CompiledModule {
-        checked: CheckedSourceModule::ScopedTasks(Box::new(checked)),
-        execution_profile: if read_share_profile {
+        checked: match composed {
+            Some(composed) => CheckedSourceModule::ComposedTasks(Box::new(composed)),
+            None => CheckedSourceModule::ScopedTasks(Box::new(checked)),
+        },
+        execution_profile: if composing {
+            // The composition names its own profile rather than being reported
+            // as the task profile it composes: its guarantees are that route's
+            // plus the join's, and a consumer must be able to tell.
+            SourceExecutionProfile::ComposedStdIoTasksV1
+        } else if read_share_profile {
             SourceExecutionProfile::ScopedReadSharesV1
         } else if error_payload_profile {
             SourceExecutionProfile::ScopedErrorPayloadV1

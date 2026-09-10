@@ -1280,6 +1280,68 @@ per stream: standard output carries this route's `print` lines *and* the extern
 route's synthesized call trace, in one real order on that one stream, and no
 order between stdout and stderr is modeled — the boundary §G02g already stated.
 
+## G02j. Composed scoped tasks and rendered lines
+
+`source.std-io-tasks.v1` (card `COMPOSE-CONCURRENCY`) is selected for a module
+that uses **both** the scoped-task forms (§G02c) and the line-producing
+statements (§G02g), and that uses no extern call — the conjunction
+`has_source_tasks ∧ has_source_std_io ∧ ¬has_source_extern`, and nothing else.
+It is selected **after** the composed-epoch, epoch and mutex routes and
+**before** the task route it composes, so every other concurrency exclusion is
+unchanged: a module with an epoch scope or a mutex generation keeps that model's
+refusal, a module that extern-calls and spawns keeps the task route's `Q600`,
+and a module using one of the two composed feature sets falls through to that
+route byte for byte.
+
+The grammar adds **no statement and no reserved word**. The three line-producing
+statements are §G02g's, read by that route's own parser; the scoped-task forms
+are §G02c's, lowered by that route's own lowering. One thing is widened: the
+task entry's `effects { … }` row admits `io`, and *only* on this route — off it,
+`io` is still the unsupported task effect that refuses at `Q020`.
+
+```ebnf
+task_stmt   = ... | io_stmt ;          (* §G02c plus §G02g's three, verbatim *)
+task_effect = "alloc" | "spawn" | "join" | "may_block"
+            | "throws", "<", NAME, ">"
+            | "io" ;                   (* this route only *)
+```
+
+**Placement.** A line stands in the **parent's** body. It may stand anywhere
+there — before any `spawn`, between two `join`s, inside a `match` arm on the
+creation or allocation outcome, or after every join — and the reason is a
+measurement of the emitted runtime rather than a convention: every write an
+emitted task program performs is performed by the parent's thread, because a
+worker's trace events are appended to that worker's private array and replayed
+by the parent at the join. A line inside a **worker** body is refused (`Q050`):
+it would be written by that worker's own thread, concurrently with the parent's
+writes and with its siblings', and nothing in this revision orders those.
+
+**Operands.** A rendering operand is an integer literal or a name the *task*
+model bound to an `i32`:
+
+```ebnf
+OPERAND     = [ "-" ], INTEGER | NAME ;   (* no `borrow NAME` on this route *)
+```
+
+Unlike §G02g's own `let`-bound literals and §G02i's declared outcomes, the number
+is **computed by the task model** at the rendering's own step — the value a
+`qcore_buffer_read` read out of a live buffer, or the outcome a `join`
+collected — so the reference execution reads it out of the slot the task model
+wrote. Whether the name may be read at that position is decided by
+`check_task_module`, over an ordinary copy of the scalar inserted at exactly that
+position; the composition states no liveness rule of its own. A name denoting an
+owned Buffer, a read loan or a task handle is refused, and `borrow NAME` is
+refused on this route entirely (§G02i is where a borrowed render is admitted,
+over a model that publishes a ledger the join can read).
+
+The composed observation is per stream, exactly as elsewhere: standard output
+carries this route's `print` lines *and* the synthesized task trace, in one real
+order on that one stream, and no order between stdout and stderr is modeled.
+Removing this route's own lines from standard output leaves exactly the task
+route's rendering of the same module, which is checked over the four published
+`examples/threads` programs and proved in general as
+`QCore.ComposedTasks.erasing_the_source_lines_leaves_the_task_trace`.
+
 ## G02h. The pipe operator, and the operator token family
 
 `source.pipe.v1` (card `PIPE-OPERATOR`) is a **parse-time desugaring, not a

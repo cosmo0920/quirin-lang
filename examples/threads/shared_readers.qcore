@@ -1,13 +1,18 @@
 import std.concurrency;
+import std.logger;
+import std.fmt;
 // Two readers each borrow half of the buffer's 1024 read-share units.
 concurrency checked;
 
 fn reader(payload: borrow<Buffer>) -> i32 {
+    // A line here would be refused (`Q050`): a worker's writes are performed by
+    // that worker's own thread, and nothing in this model orders them against
+    // the parent's or its sibling's. Every line below is the parent's.
     let seen = qcore_buffer_read(payload);
     return seen;
 }
 
-fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
     let buffer = qcore_buffer_new(1)?;
     let prepared = qcore_buffer_write(buffer, 42);
     thread scope workers {
@@ -17,22 +22,30 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
                     Result::Ok { value: second } => {
                         // Reads remain allowed while the children hold shares.
                         let during = qcore_buffer_read(buffer);
+                        during |> log info dec;
                         let a = join move first?;
+                        // Between the two joins: the first reader's share is
+                        // back, the second's is not.
+                        a |> log info dec;
                         let b = join move second?;
+                        b |> log info dec;
                         // Joining both children restores exclusive write access.
                         let restored = qcore_buffer_write(buffer, 7);
                         let after = qcore_buffer_read(buffer);
+                        after |> log info dec;
                         drop buffer;
                         return after;
                     }
                     Result::Err { error: refused } => {
                         let a = join move first?;
+                        a |> log warn dec;
                         drop buffer;
                         return a;
                     }
                 }
             }
             Result::Err { error: failure } => {
+                log fatal dec 0;
                 drop buffer;
                 return 0;
             }

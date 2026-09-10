@@ -67,6 +67,70 @@ fn c_string(value: &str) -> String {
 }
 
 pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
+    emit_task_c11_with_source_lines(checked, &[])
+}
+
+/// The C statements of the source lines standing immediately before position
+/// `index` of `block`, if this is the entry function (card
+/// `COMPOSE-CONCURRENCY`).
+///
+/// The rendering itself — the conversion, the level tag, the stream, the
+/// `fflush` — is `std_io_c_emit::event_statement`'s, which is
+/// `source.std-io.v1`'s own and which the extern composition already shares. The
+/// only thing decided here is the *expression*: a composed rendering reads
+/// `s_N.value.scalar`, the object this backend already declared for that slot,
+/// never a fresh copy.
+fn source_lines(
+    sites: &[crate::composed_tasks::TaskIoSite],
+    entry: bool,
+    block: usize,
+    index: usize,
+) -> Vec<String> {
+    if !entry {
+        return Vec::new();
+    }
+    let mut statements = Vec::new();
+    for site in sites
+        .iter()
+        .filter(|site| site.block == block && site.index == index)
+    {
+        let expressions = site
+            .operand
+            .map(|slot| {
+                let name = match &site.event {
+                    crate::std_io::StdIoEvent::Print { operand, .. }
+                    | crate::std_io::StdIoEvent::Log { operand, .. } => match operand {
+                        crate::std_io::StdIoOperand::Scalar(name) => name.clone(),
+                        _ => String::new(),
+                    },
+                    _ => String::new(),
+                };
+                BTreeMap::from([(name, format!("s_{slot}.value.scalar"))])
+            })
+            .unwrap_or_default();
+        // The two silent cases are unreachable on a checked program: `Ok(None)`
+        // is the entry's return, which is never a placed event, and `Err` is a
+        // name the checker already refused. Emitting nothing for them is the
+        // fail-closed backstop — never an `unwrap` and never a guessed line.
+        if let Ok(Some(statement)) =
+            crate::std_io_c_emit::event_statement(&site.event, &expressions, &BTreeMap::new())
+        {
+            statements.push(statement);
+        }
+    }
+    statements
+}
+
+/// Emit a checked task module, optionally with `source.std-io.v1` lines placed
+/// in its entry's CFG (card `COMPOSE-CONCURRENCY`).
+///
+/// The **empty** site list is [`emit_task_c11`] above, so a task-route module
+/// travels this identical code path and its emitted C is byte-identical: there
+/// is no second backend to drift.
+pub fn emit_task_c11_with_source_lines(
+    checked: &CheckedTaskModule,
+    sites: &[crate::composed_tasks::TaskIoSite],
+) -> TaskCEmission {
     let module = checked.module();
     let errors: BTreeMap<_, _> = module
         .functions
@@ -201,9 +265,13 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
             })
             .collect::<BTreeMap<_, _>>();
         writeln!(source, "    goto qcore_block_{};", function.entry).unwrap();
+        let entry_function = *id == module.entry;
         for (block_id, block) in &function.blocks {
             writeln!(source, "qcore_block_{block_id}: ;").unwrap();
-            for instruction in &block.instructions {
+            for (index, instruction) in block.instructions.iter().enumerate() {
+                for statement in source_lines(sites, entry_function, *block_id, index) {
+                    writeln!(source, "    {statement}").unwrap();
+                }
                 let start = source.lines().count() + 1;
                 match &instruction.kind {
                     InstructionKind::BindScalar { slot, value } => {
@@ -308,6 +376,11 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     generated_end_line: source.lines().count(),
                     span: instruction.span,
                 });
+            }
+            for statement in
+                source_lines(sites, entry_function, *block_id, block.instructions.len())
+            {
+                writeln!(source, "    {statement}").unwrap();
             }
             let start = source.lines().count() + 1;
             match &block.terminator.kind {

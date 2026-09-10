@@ -1731,6 +1731,22 @@ pub enum SemanticPass {
     /// union of the two derived effect rows. If this pass ever owned a custody
     /// or a rendering rule, the composition would have stopped being a union.
     ComposedStdIo,
+    /// Card `COMPOSE-CONCURRENCY`: the checked composition of
+    /// `source.std-io.v1` with the **checked task route**. Owns the single code
+    /// `Q050` (spec §L21), the first free code above the native-library second
+    /// band `Q047`–`Q049`.
+    ///
+    /// A separate pass from `ComposedStdIo` on purpose. That pass joins two
+    /// straight-line models whose numbers are declared at the site; this one
+    /// joins a **branching, concurrent** model whose numbers are computed by the
+    /// task model at the rendering's own step, and its rules are correspondingly
+    /// different: *where* a line may stand (the parent's body, never a worker's,
+    /// because a worker's writes are performed by that worker's thread and no
+    /// model here orders them), and whether the task checker admits reading the
+    /// operand there. Every other refusal a composed task module receives is the
+    /// task route's `Q600` or the standard-IO route's `Q028`–`Q031`, at that
+    /// route's own site.
+    ComposedTasks,
     PluginVerification,
 }
 
@@ -2532,6 +2548,10 @@ pub fn source_diagnostic(
         // refusal a composed module receives is one of the two composed routes'
         // own.
         SemanticPass::ComposedStdIo => "Q043",
+        // The one code of the composed task pass. It has no band either: a
+        // composed task module's other refusals are the task route's and the
+        // standard-IO route's own.
+        SemanticPass::ComposedTasks => "Q050",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

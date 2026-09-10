@@ -7,6 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::frontend::*;
 use crate::lexer::{Span, Symbol, Token, TokenKind};
+use qcore_core::composed_tasks::TaskIoSite;
 
 /// Detect source task forms in every definition, including empty/nested scopes
 /// and uncalled bodies. This selects a checker, never grants execution support.
@@ -33,6 +34,7 @@ fn failure(span: Span, pass: SemanticPass, message: impl Into<String>) -> Source
             SemanticPass::OrdinaryTypes => "Q020",
             SemanticPass::TypedErrors => "Q300",
             SemanticPass::Concurrency => "Q600",
+            SemanticPass::ComposedTasks => "Q050",
             _ => "Q500",
         },
         pass,
@@ -90,6 +92,11 @@ struct ParsedEffects {
     spawn: bool,
     join: bool,
     may_block: bool,
+    /// Card `COMPOSE-CONCURRENCY`. Admitted **only** when this module is on the
+    /// composed route; on the task route alone `io` is still the unsupported
+    /// effect it has always been, refused at `Q020`, so a module that spawns and
+    /// prints without composing keeps its exact refusal.
+    io: bool,
     errors: BTreeSet<String>,
     /// Card T06. The declared subset of `errors` whose variants carry exactly
     /// one `own<Buffer>`. It is derived from the error type declaration, never
@@ -230,6 +237,7 @@ fn signature(
     declaration: &Located<SourceDeclaration>,
     typed: &TypedSourceDeclaration,
     errors: &BTreeMap<String, ErrorType>,
+    composing: bool,
 ) -> Result<Signature, SourceDiagnostic> {
     let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
     let body = declaration
@@ -351,6 +359,14 @@ fn signature(
                 }
                 "may_block" => {
                     effects.may_block = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                // The one widening card `COMPOSE-CONCURRENCY` makes to this
+                // grammar, and it is gated: off the composed route the arm is
+                // not taken and `io` falls to the refusal below, byte for byte.
+                "io" if composing => {
+                    effects.io = true;
                     key = effect.to_owned();
                     cursor += 1;
                 }
@@ -597,14 +613,43 @@ pub fn lower_source_tasks(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<TaskModule, Vec<SourceDiagnostic>> {
-    lower(source, typed, entry).map_err(|error| vec![error])
+    lower(source, typed, entry, false)
+        .map(|lowered| lowered.tasks)
+        .map_err(|error| vec![error])
+}
+
+/// A task module and the `source.std-io.v1` events placed in its entry
+/// (card `COMPOSE-CONCURRENCY`).
+#[derive(Clone, Debug)]
+pub struct LoweredComposedTaskModule {
+    pub tasks: TaskModule,
+    pub sites: Vec<TaskIoSite>,
+    /// Whether the entry declared `io`.
+    pub declares_io: bool,
+}
+
+/// [`lower_source_tasks`] with the line-producing statements of `std.io`,
+/// `std.logger` and `std.fmt` admitted in the **parent's** body.
+///
+/// `lower_source_tasks` is this function with `composing = false`, so a module
+/// on the task route alone travels the identical code path: `io` is still an
+/// unsupported effect there, a `print` is still an unsupported expression
+/// statement there, and the lowered module is byte-identical. There is no second
+/// lowering to drift.
+pub fn lower_source_composed_tasks(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<LoweredComposedTaskModule, Vec<SourceDiagnostic>> {
+    lower(source, typed, entry, true).map_err(|error| vec![error])
 }
 
 fn lower(
     source: &SourceProgram,
     typed: &TypedSourceProgram,
     entry: &str,
-) -> Result<TaskModule, SourceDiagnostic> {
+    composing: bool,
+) -> Result<LoweredComposedTaskModule, SourceDiagnostic> {
     let span = Span {
         start: 0,
         end: source.source().len(),
@@ -691,7 +736,7 @@ fn lower(
             .iter()
             .find(|d| d.name == declaration.value.name)
             .expect("independent elaboration preserved functions");
-        let signature = signature(source, declaration, resolved, &errors)?;
+        let signature = signature(source, declaration, resolved, &errors, composing)?;
         signatures.insert(signature.id, signature);
     }
     let entry = typed
@@ -714,6 +759,7 @@ fn lower(
         ));
     }
     let mut functions = BTreeMap::new();
+    let mut sites = Vec::new();
     for declaration in source
         .declarations
         .iter()
@@ -733,6 +779,8 @@ fn lower(
             &errors,
             next_temporary(resolved)?,
         );
+        builder.composing = composing;
+        builder.is_entry = resolved.symbol == entry;
         if !builder.block(body, &resolved.statements)? {
             return Err(failure(
                 body.span,
@@ -763,6 +811,7 @@ fn lower(
                 span: core_span(declaration.span),
             },
         );
+        sites.extend(builder.sites);
     }
     // A worker cannot recursively or transitively create tasks in this first
     // executable profile. All source functions were still lowered above.
@@ -795,10 +844,14 @@ fn lower(
             ));
         }
     }
-    Ok(TaskModule {
-        entry: entry.0 as usize,
-        functions,
-        source_len: source.source().len(),
+    Ok(LoweredComposedTaskModule {
+        declares_io: signatures[&entry].effects.io,
+        tasks: TaskModule {
+            entry: entry.0 as usize,
+            functions,
+            source_len: source.source().len(),
+        },
+        sites,
     })
 }
 
@@ -852,6 +905,10 @@ struct Builder<'a> {
     next_block: usize,
     next_temporary: usize,
     instructions: Vec<TaskInstruction>,
+    /// Card `COMPOSE-CONCURRENCY`, both `false` on the task route alone.
+    composing: bool,
+    is_entry: bool,
+    sites: Vec<TaskIoSite>,
 }
 
 impl<'a> Builder<'a> {
@@ -880,7 +937,82 @@ impl<'a> Builder<'a> {
             next_block: 1,
             next_temporary,
             instructions: Vec::new(),
+            composing: false,
+            is_entry: false,
+            sites: Vec::new(),
         }
+    }
+
+    /// Record one `source.std-io.v1` event at the position the emitted program
+    /// will perform it: immediately before the next instruction of the block
+    /// being built.
+    ///
+    /// The operand is resolved here, in the **task** model's own environment, so
+    /// a rendering names a task slot or nothing at all. Whether that slot may be
+    /// *read* there is not decided here: `check_composed_task_program` asks the
+    /// task checker, by copying the scalar at this exact position.
+    fn source_line(
+        &mut self,
+        span: Span,
+        event: qcore_core::std_io::StdIoEvent,
+    ) -> Result<(), SourceDiagnostic> {
+        use qcore_core::std_io::{StdIoEvent, StdIoOperand};
+        if !self.is_entry {
+            return Err(failure(
+                span,
+                SemanticPass::ComposedTasks,
+                "`source.std-io-tasks.v1` writes a line only from the parent's own body: a \
+                 worker's writes would be performed by that worker's thread, concurrently with \
+                 the parent's and with its siblings', and no checked model here orders them. The \
+                 parent's own points are all join-ordered, because a worker's trace events do not \
+                 exist as bytes until the parent replays them at the join",
+            ));
+        }
+        let operand = match &event {
+            StdIoEvent::Flush | StdIoEvent::Return => None,
+            StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => match operand {
+                StdIoOperand::Literal(_) => None,
+                StdIoOperand::Borrowed(name) => {
+                    return Err(failure(
+                        span,
+                        SemanticPass::ComposedTasks,
+                        format!(
+                            "`borrow {name}` renders the model identity a checked custody model \
+                             published for a resource, and `source.std-io-tasks.v1` publishes \
+                             none: the task ledger's parent/child custody edges, read shares and \
+                             join discipline are a different question from the extern route's \
+                             straight-line ledger, and a borrowed render across a task boundary \
+                             needs its own custody argument"
+                        ),
+                    ));
+                }
+                StdIoOperand::Scalar(name) => {
+                    let (id, kind) = self.lookup(name, span)?;
+                    if kind != ValueType::Scalar(Scalar::I32) {
+                        return Err(failure(
+                            span,
+                            SemanticPass::ComposedTasks,
+                            format!(
+                                "`{name}` is not an `i32` this entry bound; \
+                                 `source.std-io-tasks.v1` renders integer literals and the `i32` \
+                                 values the checked task model computes — a copied parameter, a \
+                                 `let`-bound literal, a `qcore_buffer_read` of a live buffer, or \
+                                 a collected join outcome"
+                            ),
+                        ));
+                    }
+                    Some(id.0 as usize)
+                }
+            },
+        };
+        self.sites.push(TaskIoSite {
+            block: self.current,
+            index: self.instructions.len(),
+            event,
+            operand,
+            span: core_span(span),
+        });
+        Ok(())
     }
 
     fn bad(&self, span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -2000,6 +2132,31 @@ impl<'a> Builder<'a> {
                     );
                 }
                 StatementKind::Expression => {
+                    // Card `COMPOSE-CONCURRENCY`. Tried first and only when
+                    // composing, so off the composed route this statement is the
+                    // unsupported expression statement it has always been.
+                    if self.composing
+                        && let Some(parsed) =
+                            crate::source_std_io::std_io_statement(self.source, statement.span)
+                    {
+                        match parsed {
+                            Ok(event) => {
+                                self.source_line(statement.span, event)?;
+                                continue;
+                            }
+                            Err(message) => {
+                                // The shape refusal is `source.std-io.v1`'s own,
+                                // under that route's own code: the composition
+                                // states no grammar of its own.
+                                return Err(SourceDiagnostic {
+                                    code: "Q030",
+                                    pass: SemanticPass::StandardIo,
+                                    span: statement.span,
+                                    message: message.to_owned(),
+                                });
+                            }
+                        }
+                    }
                     if !symbol(tokens.last(), Symbol::Semicolon)
                         || typed.task_expressions.is_empty()
                     {

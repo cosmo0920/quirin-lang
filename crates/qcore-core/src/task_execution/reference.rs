@@ -128,6 +128,12 @@ struct Runtime<'a> {
     ledger: ScopedTaskLedger,
     observations: Vec<TaskObservation>,
     events: Vec<TaskEvent>,
+    /// The `source.std-io.v1` events placed in the entry's CFG by card
+    /// `COMPOSE-CONCURRENCY`. Empty on every task-route run, which is what makes
+    /// that route's observation byte-identical: the whole composed apparatus
+    /// below is guarded by `is_empty()`.
+    io_sites: &'a [crate::composed_tasks::TaskIoSite],
+    io_lines: Vec<(usize, crate::std_io::ObservedLine)>,
 }
 fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<ScalarValue, String> {
     match operand {
@@ -176,6 +182,63 @@ fn take(
     Ok(value)
 }
 impl Runtime<'_> {
+    /// Write the source lines standing immediately before position `index` of
+    /// `block`, if any.
+    ///
+    /// Guarded three ways, and each guard is the model's own statement rather
+    /// than a convenience: sites exist only on the composed route, only the
+    /// parent (`task == 0`) writes, and only the entry function carries sites —
+    /// the refusal behind that last one is
+    /// [`crate::composed_tasks::ComposedTaskRule::SiteOutsideEntry`].
+    fn source_lines(
+        &mut self,
+        function: FunctionId,
+        task: u64,
+        block: BlockId,
+        index: usize,
+        slots: &BTreeMap<SlotId, Value>,
+    ) -> Result<(), String> {
+        if self.io_sites.is_empty() || task != 0 || function != self.module.entry {
+            return Ok(());
+        }
+        let sites = self.io_sites;
+        for site in sites
+            .iter()
+            .filter(|site| site.block == block && site.index == index)
+        {
+            let value = match &site.event {
+                crate::std_io::StdIoEvent::Flush | crate::std_io::StdIoEvent::Return => continue,
+                crate::std_io::StdIoEvent::Print { operand, .. }
+                | crate::std_io::StdIoEvent::Log { operand, .. } => match operand {
+                    crate::std_io::StdIoOperand::Literal(value) => *value,
+                    crate::std_io::StdIoOperand::Scalar(name) => {
+                        let slot = site
+                            .operand
+                            .ok_or_else(|| format!("`{name}` resolves to no task slot"))?;
+                        match slots.get(&slot) {
+                            Some(Value::Scalar(ScalarValue::I32(value))) => *value,
+                            _ => {
+                                return Err(format!(
+                                    "reference rendering of `{name}` requires a readable i32"
+                                ));
+                            }
+                        }
+                    }
+                    crate::std_io::StdIoOperand::Borrowed(name) => {
+                        return Err(format!(
+                            "`borrow {name}` is not rendered by `source.std-io-tasks.v1`"
+                        ));
+                    }
+                },
+            };
+            if let Some(line) = crate::std_io::rendered_line(&site.event, value) {
+                let position = self.events.len();
+                self.io_lines.push((position, line));
+            }
+        }
+        Ok(())
+    }
+
     fn buffer_event(&mut self, task: u64, event: TaskEvent) {
         if task == 0 {
             self.events.push(event);
@@ -202,7 +265,9 @@ impl Runtime<'_> {
         let mut next_buffer = 1u64;
         loop {
             let block = &function.blocks[&block_id];
-            for instruction in &block.instructions {
+            for (index, instruction) in block.instructions.iter().enumerate() {
+                self.source_lines(id, task, block_id, index, &slots)
+                    .map_err(|message| problem(id, instruction.span, message))?;
                 let result: Result<(), String> = (|| {
                     match &instruction.kind {
                         TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
@@ -392,6 +457,8 @@ impl Runtime<'_> {
                 })();
                 result.map_err(|message| problem(id, instruction.span, message))?;
             }
+            self.source_lines(id, task, block_id, block.instructions.len(), &slots)
+                .map_err(|message| problem(id, block.terminator.span, message))?;
             let result: Result<Option<TaskOutcome>, String> = (|| {
                 match &block.terminator.kind {
                     TaskTerminatorKind::TryAllocateBuffer {
@@ -675,6 +742,22 @@ pub fn execute_task_module_with_worker_allocations(
     script: &TaskExecutionScript,
     worker_allocations: &BTreeMap<u64, Vec<bool>>,
 ) -> Result<TaskExecutionObservation, TaskDiagnostic> {
+    execute_with_source_lines(checked, script, worker_allocations, &[])
+        .map(|composed| composed.tasks)
+}
+
+/// One reference run of a composed program (card `COMPOSE-CONCURRENCY`).
+///
+/// The **empty** site list is the task route's own entry point above, so a
+/// module with no source lines travels this identical code path and produces a
+/// byte-identical [`TaskExecutionObservation`]: there is no second reference
+/// interpreter to drift.
+pub fn execute_with_source_lines(
+    checked: &CheckedTaskModule,
+    script: &TaskExecutionScript,
+    worker_allocations: &BTreeMap<u64, Vec<bool>>,
+    io_sites: &[crate::composed_tasks::TaskIoSite],
+) -> Result<crate::composed_tasks::ComposedTaskObservation, TaskDiagnostic> {
     if worker_allocations.contains_key(&0) {
         return Err(problem(
             checked.module().entry,
@@ -696,6 +779,8 @@ pub fn execute_task_module_with_worker_allocations(
         ledger: ScopedTaskLedger::default(),
         observations: vec![],
         events: vec![],
+        io_sites,
+        io_lines: vec![],
     };
     let root_outcome = runtime.execute(runtime.module.entry, 0, vec![])?;
     if runtime.decision < script.spawn_outcomes.len() {
@@ -752,17 +837,36 @@ pub fn execute_task_module_with_worker_allocations(
         joined: false,
     });
     runtime.observations.sort_by_key(|o| o.task);
-    Ok(TaskExecutionObservation {
-        root_outcome,
-        tasks: runtime.observations,
-        events: runtime.events,
+    Ok(crate::composed_tasks::ComposedTaskObservation {
+        tasks: TaskExecutionObservation {
+            root_outcome,
+            tasks: runtime.observations,
+            events: runtime.events,
+        },
+        lines: runtime.io_lines,
     })
 }
 
 pub fn render_task_observation(observation: &TaskExecutionObservation) -> String {
     let mut output = String::new();
-    use std::fmt::Write;
     for event in &observation.events {
+        output.push_str(&render_task_event(event));
+    }
+    output
+}
+
+/// The bytes of one trace event, newline included.
+///
+/// Factored out of [`render_task_observation`] byte for byte so the composed
+/// task route (card `COMPOSE-CONCURRENCY`) can interleave source lines with
+/// these without a second rendering existing. `render_task_observation` is the
+/// concatenation of this over the observation's events, which is what makes
+/// "the composed program's standard output with its source lines removed **is**
+/// the task rendering" a fact rather than an agreement between two renderers.
+pub fn render_task_event(event: &TaskEvent) -> String {
+    let mut output = String::new();
+    use std::fmt::Write;
+    {
         match event {
             TaskEvent::BufferAllocated {
                 task,
