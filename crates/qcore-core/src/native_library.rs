@@ -1,22 +1,35 @@
-//! The `source.native-library.v1` manifest, in the slice card
-//! `UNSAFE-LINKAGE-ARTIFACT` needs: a declared binding from a **library
-//! artifact identity** to the symbols that artifact exports, so that a waived
-//! extern declaration's premise can name *which build* was waived.
+//! The `source.native-library.v1` manifest: a declared binding from a **library
+//! artifact identity** to the symbols that artifact exports, so that an extern
+//! declaration's premise can name *which build* it rests on.
 //!
 //! Design: `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` §4 (the manifest) and
-//! `docs/design/UNSAFE_LINKAGE_V1.md` §4.2 (the contract-less entry, level L1
-//! of the linkage spectrum). This module implements exactly the part of §4 the
-//! contract-less entry needs and refuses the rest by name.
+//! `docs/design/UNSAFE_LINKAGE_V1.md` §4.2 (the linkage spectrum). Card
+//! `UNSAFE-LINKAGE-ARTIFACT` built the contract-less end (level **L1**), where
+//! the premise names a build and nothing else; card
+//! `NATIVE-LIBRARY-CONTRACT-SLICE` built the contracted end (level **L3**),
+//! where a symbol resolves through the manifest to a declared `.qcore` contract
+//! and inherits the identity beside it. Reading a real exported `.h` instead of
+//! the manifest's transcription of one is still follow-on
+//! `NATIVE-LIBRARY-HEADER`, and the link step itself stays the builder's act.
 //!
 //! # What a manifest is
 //!
 //! One declarative file per native library. Its header states the artifact
 //! identity (§4.3) and the four ABI premise fields (§4.4); its body lists one
-//! entry per symbol. Every v1 entry is an **explicitly marked contract-less**
-//! entry (`unchecked fn`), because this slice implements the contract-less end
-//! only — a contract slice member is [`ManifestRefusal::ContractedEntry`], not a
-//! silently ignored line, so a *dropped* contract can never be read as a waiver
-//! (design §4.2).
+//! entry per symbol, in one of **two kinds**:
+//!
+//! * an **explicitly marked contract-less** entry (`unchecked fn`), level L1 of
+//!   the linkage spectrum, which admits no pointer in any position;
+//! * a **contract slice** entry (`contract fn … from MODULE`), level L3 (card
+//!   `NATIVE-LIBRARY-CONTRACT-SLICE`), which binds the symbol to a declared
+//!   `.qcore` contract and is therefore where a library's **pointer** symbols
+//!   belong.
+//!
+//! The two are told apart by their *keyword* and never by their shape: a
+//! `contract fn` with no `from MODULE` tail, and an `unchecked fn` carrying one,
+//! are each a named rejection rather than a lenient reading of the other. That
+//! is what keeps design §4.2's requirement true — a *dropped* contract can never
+//! be read as a waiver.
 //!
 //! ```text
 //! native_library manifest v1;
@@ -30,15 +43,29 @@
 //! thread_posture single_caller;
 //!
 //! unchecked fn k_unchecked_add(int32_t, int32_t) -> int32_t;
+//! contract fn k_alloc(uintptr_t) -> uint8_t * from contracts/lib.qcore;
 //! ```
+//!
+//! # What a contract slice entry does *not* do
+//!
+//! It creates no contract semantics. The manifest **selects and attributes**:
+//! the contract is loaded, admitted and bridged by the unchanged
+//! resource-contract v1 machinery, and the entry says only which declared
+//! contract the artifact's symbol is read through and what the artifact's own
+//! exported header declares for it. The binding is checked total in **both**
+//! directions ([`check_slice_totality`]) against the selected environment, and
+//! §4.4's closed-allocator-custody check ([`check_closed_allocator_custody`]) —
+//! vacuous while entries were contract-less, because a waiver cannot acquire —
+//! becomes real once one can.
 //!
 //! # Total or reject
 //!
 //! [`load_native_library_manifest`] follows the resource-contract v1 loader's
 //! discipline exactly: an unknown field, an unknown field *value*, a repeated
-//! or missing field, a malformed statement, an entry kind this slice does not
-//! implement, a symbol bound twice or a type spelling outside the §C04.1 ABI
-//! projection **rejects the whole manifest**. There is no partial admission and
+//! or missing field, a malformed statement, a malformed entry of either kind, a
+//! symbol bound twice across both kinds, a malformed contract module reference
+//! or a type spelling outside the §C04.1 ABI projection **rejects the whole
+//! manifest**. There is no partial admission and
 //! no skipping, because a manifest that silently dropped the line a reader was
 //! relying on would be a weaker table presented as a complete one.
 //!
@@ -97,7 +124,9 @@ pub enum UnwindingPosture {
 /// The allocator-custody posture (§4.4). v1 admits `closed` only: every
 /// allocation the library hands out is released only through the library's own
 /// entry points. A contract-less entry satisfies the structural half of this
-/// check vacuously, because it cannot acquire (design §4.2).
+/// check vacuously, because it cannot acquire (design §4.2); a contract slice
+/// entry can, so [`check_closed_allocator_custody`] is where the structural half
+/// is actually decided.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum AllocatorCustody {
     /// Spelled `closed`.
@@ -145,6 +174,21 @@ pub struct ArtifactIdentity {
 pub struct ManifestResidence {
     pub identity: ArtifactIdentity,
     pub premises: AbiPremises,
+    /// The declared contract module this symbol's manifest entry named, for a
+    /// `contract fn` entry (card `NATIVE-LIBRARY-CONTRACT-SLICE`), and `None`
+    /// for a contract-less `unchecked fn` entry.
+    ///
+    /// The invariant is maintained by construction: [`ManifestBinding`] is the
+    /// only producer of a residence, and it fills this field from the entry
+    /// kind it resolved. A contract-less residence therefore never names a
+    /// module and a contracted one always does, which is what lets a reader of
+    /// a premise tell the two linkage levels apart by inspection.
+    ///
+    /// The reference is the **selection key** of the contract module, matched
+    /// exactly and never normalised — the same discipline constraint 11 applies
+    /// to a spelled input path, for the same reason: two spellings that
+    /// normalise together are two different selections.
+    pub contract: Option<String>,
 }
 
 /// The four ABI premise fields of §4.4, all mandatory, none checked beyond the
@@ -169,6 +213,34 @@ pub struct UncheckedEntry {
     pub result: AbiType,
 }
 
+/// One contract slice entry: a symbol the artifact exports, the exported header
+/// declaration's ABI projection, and the declared `.qcore` contract module that
+/// states what the symbol *does* (card `NATIVE-LIBRARY-CONTRACT-SLICE`, design
+/// §4.1).
+///
+/// This is where a library's **pointer** symbols belong. A contract-less entry
+/// refuses one ([`ManifestRefusal::PointerInUncheckedEntry`]) because it has no
+/// modes in which to state what a pointer may be used for; a contract slice
+/// entry has exactly that, in the unchanged C04 vocabulary, so the pointer
+/// spellings are admitted here and nowhere else in a manifest.
+///
+/// The manifest **selects and attributes**; it creates no contract semantics.
+/// The contract itself is loaded, admitted and bridged by the unchanged
+/// resource-contract v1 machinery, and this entry only says *which* declared
+/// contract the artifact's symbol is to be read through, and what the artifact's
+/// own exported header declares for it.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ContractedEntry {
+    pub symbol: String,
+    /// The header declaration's parameter types, in order. Pointers admitted.
+    pub parameters: Vec<AbiType>,
+    /// The header declaration's result type.
+    pub result: AbiType,
+    /// The declared contract module reference, as the manifest spells it. It is
+    /// the contract selection's own key, compared exactly.
+    pub contract_module: String,
+}
+
 /// One loaded manifest.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct NativeLibraryManifest {
@@ -176,6 +248,28 @@ pub struct NativeLibraryManifest {
     pub premises: AbiPremises,
     /// Contract-less entries by symbol. A symbol may be bound at most once.
     pub unchecked: BTreeMap<String, UncheckedEntry>,
+    /// Contract slice entries by symbol (card `NATIVE-LIBRARY-CONTRACT-SLICE`).
+    /// A symbol may be bound at most once **across both maps**: an entry that
+    /// is both waived and contracted has no defined premise.
+    pub contracted: BTreeMap<String, ContractedEntry>,
+}
+
+impl NativeLibraryManifest {
+    /// Every contract module this manifest's entries name — the manifest's
+    /// **slice**, derived rather than declared separately.
+    ///
+    /// Design §4.1 makes the slice the unit of the both-directions totality
+    /// check. It is not spelled with its own statement because a second
+    /// spelling would be a second place the slice could be wrong: a module the
+    /// entries never name is not part of the binding, and a module they do name
+    /// is, whether or not a `slice` line agreed.
+    #[must_use]
+    pub fn slice(&self) -> BTreeSet<&str> {
+        self.contracted
+            .values()
+            .map(|entry| entry.contract_module.as_str())
+            .collect()
+    }
 }
 
 /// Why a manifest is rejected. Each constructor names one condition; none is a
@@ -206,13 +300,18 @@ pub enum ManifestRefusal {
     UnknownValue { field: String, value: String },
     /// The stated hash is not `sha256:` followed by 64 lowercase hex digits.
     MalformedHash { hash: String },
-    /// An entry kind this slice does not implement. A contract slice member
-    /// (`contract fn`) is the named case: implementing it is follow-on
-    /// `NATIVE-LIBRARY-CONTRACT-SLICE`, and until then it must reject rather
-    /// than be read as a waiver.
-    ContractedEntry { statement: String },
     /// An entry is not `unchecked fn NAME(TYPES) -> TYPE`.
     MalformedEntry { statement: String },
+    /// A contract slice entry is not
+    /// `contract fn NAME(TYPES) -> TYPE from MODULE` — most often a missing
+    /// `from MODULE` tail, which is the whole difference between the two entry
+    /// kinds and is therefore never inferred (card
+    /// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+    MalformedContractedEntry { statement: String },
+    /// A contract slice entry's module reference is empty or carries
+    /// whitespace. The reference is a selection key compared exactly, so a
+    /// reference that cannot be one is refused rather than trimmed into shape.
+    MalformedContractReference { symbol: String, module: String },
     /// An entry's parameter type is outside the §C04.1 ABI projection. The
     /// manifest states the *exported header declaration*, in the profile's
     /// canonical stdint spellings; reading a real `.h` is follow-on
@@ -228,8 +327,10 @@ pub enum ManifestRefusal {
     /// contract-less entry has no modes to state, and design §3.1 is the
     /// argument that a pointer at that boundary has no assumption text to
     /// write — so an artifact hash cannot buy one. A library's pointer symbols
-    /// belong in a contract slice entry (`NATIVE-LIBRARY-CONTRACT-SLICE`), and
-    /// this refusal is what keeps the two apart.
+    /// belong in a contract slice entry, which card
+    /// `NATIVE-LIBRARY-CONTRACT-SLICE` landed, and this refusal is what keeps
+    /// the two apart: the refusal was **not** weakened when the contracted
+    /// entry arrived, it acquired a destination.
     PointerInUncheckedEntry { symbol: String, spelling: String },
     /// An entry's parameter is declared `unit`, which the ABI vocabulary admits
     /// as a result type only.
@@ -274,13 +375,17 @@ impl fmt::Display for ManifestRefusal {
                 f,
                 "the stated hash `{hash}` is not `sha256:` followed by 64 lowercase hex digits"
             ),
-            Self::ContractedEntry { statement } => write!(
-                f,
-                "the entry `{statement}` carries a contract; this manifest slice implements contract-less entries only, and a contracted entry is refused rather than read as a waiver"
-            ),
             Self::MalformedEntry { statement } => write!(
                 f,
                 "the entry `{statement}` is not `unchecked fn NAME(TYPES) -> TYPE`"
+            ),
+            Self::MalformedContractedEntry { statement } => write!(
+                f,
+                "the entry `{statement}` is not `contract fn NAME(TYPES) -> TYPE from MODULE`; a contract slice entry must name the declared contract module it binds to"
+            ),
+            Self::MalformedContractReference { symbol, module } => write!(
+                f,
+                "entry `{symbol}` names the contract module `{module}`, which is empty or carries whitespace"
             ),
             Self::UnknownParameterSpelling {
                 symbol,
@@ -385,11 +490,24 @@ fn well_formed_symbol(symbol: &str) -> bool {
     characters.all(|c| c.is_ascii_alphanumeric() || c == '_')
 }
 
-/// Parse one contract-less entry body, `NAME(TYPES) -> TYPE`.
-fn parse_unchecked_entry(body: &str, statement: &str) -> Result<UncheckedEntry, ManifestRefusal> {
-    let malformed = || ManifestRefusal::MalformedEntry {
-        statement: statement.to_owned(),
-    };
+/// One entry's declaration head, `NAME(TYPES) -> TYPE`, split before any type
+/// spelling is interpreted. Both entry kinds share it, so the two grammars
+/// cannot drift in how they read a header declaration — only in what they
+/// admit inside one.
+struct EntryHead<'a> {
+    symbol: &'a str,
+    inside: &'a str,
+    result_text: &'a str,
+    /// Whatever followed the result type, trimmed. Empty for a contract-less
+    /// entry; the `from MODULE` tail of a contract slice entry.
+    tail: &'a str,
+}
+
+/// Split `NAME(TYPES) -> TYPE …`, or refuse with the caller's own malformation.
+fn split_entry_head<'a>(
+    body: &'a str,
+    malformed: &dyn Fn() -> ManifestRefusal,
+) -> Result<EntryHead<'a>, ManifestRefusal> {
     let open = body.find('(').ok_or_else(malformed)?;
     let close = body.find(')').ok_or_else(malformed)?;
     if close < open {
@@ -399,54 +517,133 @@ fn parse_unchecked_entry(body: &str, statement: &str) -> Result<UncheckedEntry, 
     if !well_formed_symbol(symbol) {
         return Err(malformed());
     }
-    let tail = body[close + 1..].trim();
-    let result_text = tail.strip_prefix("->").ok_or_else(malformed)?.trim();
+    let after = body[close + 1..].trim();
+    let rest = after.strip_prefix("->").ok_or_else(malformed)?.trim();
+    // The result type and the optional tail are separated by ` from `, which is
+    // sought from the right so a multi-word result spelling (`uint8_t *`) keeps
+    // its space. A module reference carries no whitespace, so the rightmost
+    // separator is the only candidate.
+    let (result_text, tail) = match rest.rsplit_once(" from ") {
+        Some((result, tail)) => (result.trim(), tail.trim()),
+        None => (rest, ""),
+    };
     if result_text.is_empty() {
         return Err(malformed());
     }
-    let inside = body[open + 1..close].trim();
+    Ok(EntryHead {
+        symbol,
+        inside: body[open + 1..close].trim(),
+        result_text,
+        tail,
+    })
+}
+
+/// Interpret one entry's parameter list in the §C04.1 ABI projection.
+///
+/// `pointers` is the one difference between the two entry kinds: a contract
+/// slice entry admits the pointer spellings because its declared contract has
+/// modes in which to state what they may be used for, and a contract-less entry
+/// does not.
+fn parse_entry_parameters(
+    symbol: &str,
+    inside: &str,
+    pointers: bool,
+) -> Result<Vec<AbiType>, ManifestRefusal> {
     let mut parameters = Vec::new();
-    if !inside.is_empty() {
-        for (index, spelling) in inside.split(',').enumerate() {
-            let spelling = spelling.trim();
-            let Some(abi) = parse_c_declaration_type(spelling) else {
-                return Err(ManifestRefusal::UnknownParameterSpelling {
-                    symbol: symbol.to_owned(),
-                    parameter: index,
-                    spelling: spelling.to_owned(),
-                });
-            };
-            if abi == AbiType::Unit {
-                return Err(ManifestRefusal::UnitParameterInEntry {
-                    symbol: symbol.to_owned(),
-                    parameter: index,
-                });
-            }
-            if abi.is_pointer() {
-                return Err(ManifestRefusal::PointerInUncheckedEntry {
-                    symbol: symbol.to_owned(),
-                    spelling: spelling.to_owned(),
-                });
-            }
-            parameters.push(abi);
-        }
+    if inside.is_empty() {
+        return Ok(parameters);
     }
+    for (index, spelling) in inside.split(',').enumerate() {
+        let spelling = spelling.trim();
+        let Some(abi) = parse_c_declaration_type(spelling) else {
+            return Err(ManifestRefusal::UnknownParameterSpelling {
+                symbol: symbol.to_owned(),
+                parameter: index,
+                spelling: spelling.to_owned(),
+            });
+        };
+        if abi == AbiType::Unit {
+            return Err(ManifestRefusal::UnitParameterInEntry {
+                symbol: symbol.to_owned(),
+                parameter: index,
+            });
+        }
+        if !pointers && abi.is_pointer() {
+            return Err(ManifestRefusal::PointerInUncheckedEntry {
+                symbol: symbol.to_owned(),
+                spelling: spelling.to_owned(),
+            });
+        }
+        parameters.push(abi);
+    }
+    Ok(parameters)
+}
+
+/// Interpret one entry's result spelling in the §C04.1 ABI projection.
+fn parse_entry_result(
+    symbol: &str,
+    result_text: &str,
+    pointers: bool,
+) -> Result<AbiType, ManifestRefusal> {
     let Some(result) = parse_c_declaration_type(result_text) else {
         return Err(ManifestRefusal::UnknownResultSpelling {
             symbol: symbol.to_owned(),
             spelling: result_text.to_owned(),
         });
     };
-    if result.is_pointer() {
+    if !pointers && result.is_pointer() {
         return Err(ManifestRefusal::PointerInUncheckedEntry {
             symbol: symbol.to_owned(),
             spelling: result_text.to_owned(),
         });
     }
+    Ok(result)
+}
+
+/// Parse one contract-less entry body, `NAME(TYPES) -> TYPE`.
+fn parse_unchecked_entry(body: &str, statement: &str) -> Result<UncheckedEntry, ManifestRefusal> {
+    let malformed = || ManifestRefusal::MalformedEntry {
+        statement: statement.to_owned(),
+    };
+    let head = split_entry_head(body, &malformed)?;
+    // A contract-less entry has no `from MODULE` tail. One written anyway is a
+    // malformed contract-less entry rather than a silently ignored suffix: the
+    // two entry kinds are told apart by their keyword, never by their tail.
+    if !head.tail.is_empty() {
+        return Err(malformed());
+    }
+    let parameters = parse_entry_parameters(head.symbol, head.inside, false)?;
+    let result = parse_entry_result(head.symbol, head.result_text, false)?;
     Ok(UncheckedEntry {
-        symbol: symbol.to_owned(),
+        symbol: head.symbol.to_owned(),
         parameters,
         result,
+    })
+}
+
+/// Parse one contract slice entry body, `NAME(TYPES) -> TYPE from MODULE` (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+fn parse_contracted_entry(body: &str, statement: &str) -> Result<ContractedEntry, ManifestRefusal> {
+    let malformed = || ManifestRefusal::MalformedContractedEntry {
+        statement: statement.to_owned(),
+    };
+    let head = split_entry_head(body, &malformed)?;
+    if head.tail.is_empty() {
+        return Err(malformed());
+    }
+    if !well_formed_value(head.tail) {
+        return Err(ManifestRefusal::MalformedContractReference {
+            symbol: head.symbol.to_owned(),
+            module: head.tail.to_owned(),
+        });
+    }
+    let parameters = parse_entry_parameters(head.symbol, head.inside, true)?;
+    let result = parse_entry_result(head.symbol, head.result_text, true)?;
+    Ok(ContractedEntry {
+        symbol: head.symbol.to_owned(),
+        parameters,
+        result,
+        contract_module: head.tail.to_owned(),
     })
 }
 
@@ -495,6 +692,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
     }
     let mut fields: BTreeMap<String, String> = BTreeMap::new();
     let mut unchecked: BTreeMap<String, UncheckedEntry> = BTreeMap::new();
+    let mut contracted: BTreeMap<String, ContractedEntry> = BTreeMap::new();
     for statement in iterator {
         if statement.is_empty() {
             continue;
@@ -511,17 +709,34 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
                     });
                 };
                 let entry = parse_unchecked_entry(body.trim(), statement)?;
-                if unchecked.contains_key(&entry.symbol) {
+                if unchecked.contains_key(&entry.symbol) || contracted.contains_key(&entry.symbol) {
                     return Err(ManifestRefusal::SymbolBoundTwice {
                         symbol: entry.symbol,
                     });
                 }
                 unchecked.insert(entry.symbol.clone(), entry);
             }
+            // Card `NATIVE-LIBRARY-CONTRACT-SLICE` implements what card
+            // `UNSAFE-LINKAGE-ARTIFACT` refused by name here. The refusal was a
+            // seam, not a shortcut, and filling it is the whole of this card's
+            // manifest grammar delta.
             "contract" => {
-                return Err(ManifestRefusal::ContractedEntry {
-                    statement: statement.clone(),
-                });
+                let Some(body) = rest.strip_prefix("fn ") else {
+                    return Err(ManifestRefusal::MalformedContractedEntry {
+                        statement: statement.clone(),
+                    });
+                };
+                let entry = parse_contracted_entry(body.trim(), statement)?;
+                // A symbol may not be bound twice **across both kinds**: an
+                // entry that is at once waived and contracted has no defined
+                // premise, and choosing one by entry order would make the
+                // premise depend on the order the author wrote its lines.
+                if unchecked.contains_key(&entry.symbol) || contracted.contains_key(&entry.symbol) {
+                    return Err(ManifestRefusal::SymbolBoundTwice {
+                        symbol: entry.symbol,
+                    });
+                }
+                contracted.insert(entry.symbol.clone(), entry);
             }
             field if HEADER_FIELDS.contains(&field) => {
                 if fields.contains_key(field) {
@@ -586,7 +801,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             ThreadPosture::SingleCaller,
         )?,
     };
-    if unchecked.is_empty() {
+    if unchecked.is_empty() && contracted.is_empty() {
         return Err(ManifestRefusal::NoSymbols);
     }
     Ok(NativeLibraryManifest {
@@ -598,6 +813,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
         },
         premises,
         unchecked,
+        contracted,
     })
 }
 
@@ -640,7 +856,7 @@ impl fmt::Display for SelectionRefusal {
 
 impl std::error::Error for SelectionRefusal {}
 
-/// One symbol's binding, resolved out of a selection.
+/// One contract-less symbol's binding, resolved out of a selection.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ManifestBinding<'a> {
     /// The manifest module this binding came from.
@@ -651,12 +867,41 @@ pub struct ManifestBinding<'a> {
 }
 
 impl ManifestBinding<'_> {
-    /// The residence record this binding contributes to a callee.
+    /// The residence record this binding contributes to a callee. A
+    /// contract-less binding names **no** contract module, which is what keeps
+    /// a level-L1 premise exactly what card `UNSAFE-LINKAGE-ARTIFACT`
+    /// published.
     #[must_use]
     pub fn residence(&self) -> ManifestResidence {
         ManifestResidence {
             identity: self.identity.clone(),
             premises: *self.premises,
+            contract: None,
+        }
+    }
+}
+
+/// One contract slice symbol's binding, resolved out of a selection (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ContractedBinding<'a> {
+    /// The manifest module this binding came from.
+    pub module: &'a str,
+    pub identity: &'a ArtifactIdentity,
+    pub premises: &'a AbiPremises,
+    pub entry: &'a ContractedEntry,
+}
+
+impl ContractedBinding<'_> {
+    /// The residence record this binding contributes to a **contracted**
+    /// callee. It names the contract module, so the premise a certificate
+    /// publishes reads *contracted, per this contract, from this build*.
+    #[must_use]
+    pub fn residence(&self) -> ManifestResidence {
+        ManifestResidence {
+            identity: self.identity.clone(),
+            premises: *self.premises,
+            contract: Some(self.entry.contract_module.clone()),
         }
     }
 }
@@ -687,7 +932,7 @@ impl NativeLibraries {
                     refusal,
                 }
             })?;
-            for symbol in manifest.unchecked.keys() {
+            for symbol in manifest.unchecked.keys().chain(manifest.contracted.keys()) {
                 if let Some(first) = symbols.get(symbol) {
                     return Err(SelectionRefusal::SymbolBoundTwice {
                         symbol: symbol.clone(),
@@ -702,9 +947,15 @@ impl NativeLibraries {
         Ok(Self { manifests, symbols })
     }
 
-    /// Resolve one symbol, or `None` when no selected manifest names it.
+    /// Resolve one symbol as a **contract-less** entry, or `None` when no
+    /// selected manifest names it that way.
+    ///
+    /// Named `unchecked_binding` since card `NATIVE-LIBRARY-CONTRACT-SLICE`:
+    /// with two entry kinds in the grammar, a single `binding` accessor would
+    /// have made "the manifest names this symbol" and "the manifest waives this
+    /// symbol" the same question, and they decide different gates.
     #[must_use]
-    pub fn binding(&self, symbol: &str) -> Option<ManifestBinding<'_>> {
+    pub fn unchecked_binding(&self, symbol: &str) -> Option<ManifestBinding<'_>> {
         let module = self.symbols.get(symbol)?;
         let manifest = self.manifests.get(module)?;
         let entry = manifest.unchecked.get(symbol)?;
@@ -714,6 +965,60 @@ impl NativeLibraries {
             premises: &manifest.premises,
             entry,
         })
+    }
+
+    /// Resolve one symbol as a **contract slice** entry, or `None` when no
+    /// selected manifest names it that way (card
+    /// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+    #[must_use]
+    pub fn contracted_binding(&self, symbol: &str) -> Option<ContractedBinding<'_>> {
+        let module = self.symbols.get(symbol)?;
+        let manifest = self.manifests.get(module)?;
+        let entry = manifest.contracted.get(symbol)?;
+        Some(ContractedBinding {
+            module,
+            identity: &manifest.identity,
+            premises: &manifest.premises,
+            entry,
+        })
+    }
+
+    /// Every contract slice entry of the selection, as
+    /// `(manifest module, entry)`, in manifest-module then symbol order.
+    ///
+    /// This is the **demand** side of design §4.1's totality: what the
+    /// selection asserts about declared contracts, computed from the manifests
+    /// alone so the consumer compares it against a loaded environment rather
+    /// than believing it.
+    #[must_use]
+    pub fn contracted_entries(&self) -> Vec<(&str, &ContractedEntry)> {
+        self.manifests
+            .iter()
+            .flat_map(|(module, manifest)| {
+                manifest
+                    .contracted
+                    .values()
+                    .map(move |entry| (module.as_str(), entry))
+            })
+            .collect()
+    }
+
+    /// Whether any selected manifest binds a contract slice entry.
+    #[must_use]
+    pub fn binds_contracts(&self) -> bool {
+        self.manifests
+            .values()
+            .any(|manifest| !manifest.contracted.is_empty())
+    }
+
+    /// The contract modules the selection's entries name — the union of every
+    /// selected manifest's slice.
+    #[must_use]
+    pub fn slice(&self) -> BTreeSet<&str> {
+        self.manifests
+            .values()
+            .flat_map(NativeLibraryManifest::slice)
+            .collect()
     }
 
     /// Every symbol this selection binds.
@@ -792,15 +1097,64 @@ pub fn check_manifest_agreement(
     declared_parameters: &[AbiType],
     declared_result: AbiType,
 ) -> Result<(), ManifestDisagreement> {
-    if declared_parameters.len() != entry.parameters.len() {
+    check_abi_agreement(
+        &entry.parameters,
+        entry.result,
+        declared_parameters,
+        declared_result,
+    )
+}
+
+/// The same type gate at the **contract slice** setting (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`): the declared contract's own ABI
+/// projection, which the consuming unit's `extern fn` declaration has already
+/// been compared against (`Q027`), must equal the manifest's exported header
+/// declaration.
+///
+/// **Withdrawal, not refusal — and the direction is the argument.** Both cards
+/// apply one rule: *withdraw only when the weaker admissible reading refuses.*
+/// At the contract-less setting the weaker reading below a withdrawn binding is
+/// the bare waiver, which is **accepted**, so withdrawing there would reward a
+/// contradiction with a premise that says less and card
+/// `UNSAFE-LINKAGE-ARTIFACT` refuses outright. Here the weaker reading is the
+/// **uncontracted callee**, which *refuses* (`Q023`), so withdrawal is already
+/// the monotone direction and `LOADER-ABI`'s per-unit withdrawal (constraint 8)
+/// is exactly the right shape: the contradicted declaration is withdrawn for the
+/// analysed unit, every call site becomes an uncontracted callee, and nothing is
+/// silently reinterpreted.
+///
+/// Deciding *which* is a property of this function's callers, not of this
+/// comparison, which is why the comparison itself is shared.
+pub fn check_contracted_agreement(
+    entry: &ContractedEntry,
+    declared_parameters: &[AbiType],
+    declared_result: AbiType,
+) -> Result<(), ManifestDisagreement> {
+    check_abi_agreement(
+        &entry.parameters,
+        entry.result,
+        declared_parameters,
+        declared_result,
+    )
+}
+
+/// The one ABI comparison both entry kinds use, so the two gates cannot drift
+/// in what "agree" means — only in what a disagreement does.
+fn check_abi_agreement(
+    manifest_parameters: &[AbiType],
+    manifest_result: AbiType,
+    declared_parameters: &[AbiType],
+    declared_result: AbiType,
+) -> Result<(), ManifestDisagreement> {
+    if declared_parameters.len() != manifest_parameters.len() {
         return Err(ManifestDisagreement::ParameterCount {
             declared: declared_parameters.len(),
-            manifest: entry.parameters.len(),
+            manifest: manifest_parameters.len(),
         });
     }
     for (index, (declared, manifest)) in declared_parameters
         .iter()
-        .zip(entry.parameters.iter())
+        .zip(manifest_parameters.iter())
         .enumerate()
     {
         if declared != manifest {
@@ -811,11 +1165,217 @@ pub fn check_manifest_agreement(
             });
         }
     }
-    if declared_result != entry.result {
+    if declared_result != manifest_result {
         return Err(ManifestDisagreement::Result {
             declared: declared_result,
-            manifest: entry.result,
+            manifest: manifest_result,
         });
+    }
+    Ok(())
+}
+
+/// Why a manifest selection's **contract slice binding** does not resolve
+/// against the selected contract environment (design §4.1, card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+///
+/// This is a *load-time* rejection of the whole selection, not a per-call-site
+/// decision: an entry whose contract does not resolve leaves the manifest
+/// stating something about a build that the environment does not corroborate,
+/// and a partially resolved slice would silently narrow what the manifest was
+/// selected to attribute.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SliceRefusal {
+    /// The selection binds contracts but no contract environment is selected at
+    /// all, so no entry can resolve.
+    NoContractEnvironment { manifest: String, symbol: String },
+    /// The environment declares no contract for the entry's symbol.
+    UnresolvedContract {
+        manifest: String,
+        symbol: String,
+        module: String,
+    },
+    /// The environment declares the symbol, but in a different module than the
+    /// entry names. The reference is compared exactly: a contract in another
+    /// module is another contract.
+    ContractInAnotherModule {
+        manifest: String,
+        symbol: String,
+        entry_module: String,
+        declared_module: String,
+    },
+    /// §4.4's **closed allocator custody**, structurally: a manifest binds a
+    /// contract that establishes fresh custody and binds none that discharges
+    /// it. Such a library could only ever leak or lie — an allocation it hands
+    /// out has no declared release entry point, and the premise
+    /// `allocator_custody closed` would be stating something its own slice
+    /// contradicts.
+    ///
+    /// The check was **vacuous** while every entry was contract-less (a waiver
+    /// cannot acquire), and card `NATIVE-LIBRARY-CONTRACT-SLICE` is where it
+    /// becomes real. Design §4.4 says "for the same resource shape"; §C04
+    /// projects every resource to one shape (an extentless `u8` buffer), so the
+    /// shape match is vacuous in v1 and this compares the slice as a whole —
+    /// recorded rather than silently narrowed.
+    OpenAllocatorCustody { manifest: String, acquiring: String },
+    /// A contract declared in a module the slice names is bound by **no** entry
+    /// — design §4.1's other direction. The slice is the library's surface, so
+    /// a declaration inside it that names no exported symbol makes the binding
+    /// partial, and a partial binding is not one.
+    UnboundContract { module: String, symbol: String },
+}
+
+impl fmt::Display for SliceRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NoContractEnvironment { manifest, symbol } => write!(
+                f,
+                "the manifest `{manifest}` binds `{symbol}` to a declared contract, but no extern contract environment is selected"
+            ),
+            Self::UnresolvedContract {
+                manifest,
+                symbol,
+                module,
+            } => write!(
+                f,
+                "the manifest `{manifest}` binds `{symbol}` to a contract in `{module}`, which the selected environment does not declare"
+            ),
+            Self::ContractInAnotherModule {
+                manifest,
+                symbol,
+                entry_module,
+                declared_module,
+            } => write!(
+                f,
+                "the manifest `{manifest}` binds `{symbol}` to a contract in `{entry_module}`, but the selected environment declares it in `{declared_module}`"
+            ),
+            Self::OpenAllocatorCustody {
+                manifest,
+                acquiring,
+            } => write!(
+                f,
+                "the manifest `{manifest}` declares `allocator_custody closed` and binds `{acquiring}`, which establishes fresh custody, but binds no contract that consumes or releases it; such a slice could only leak or lie"
+            ),
+            Self::UnboundContract { module, symbol } => write!(
+                f,
+                "the contract module `{module}` is in a manifest's slice but its declaration of `{symbol}` is bound by no manifest entry; the binding must be total in both directions"
+            ),
+        }
+    }
+}
+
+impl std::error::Error for SliceRefusal {}
+
+/// What one bound contract does to custody, projected to the two facts §4.4's
+/// closed-allocator-custody check reads.
+///
+/// A projection rather than the contract itself, because this crate has no
+/// dependencies at all: the *reading* of a C04 declaration belongs to the
+/// contract machinery, and the *decision* belongs here, where it is a function
+/// of its inputs and repeatable at a certificate recheck.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CustodyShape {
+    /// The contract establishes fresh custody — an owned or reallocated result,
+    /// or a declared out slot.
+    pub acquires: bool,
+    /// The contract moves the obligation off the caller's ledger for good — a
+    /// consumption or a declared release. A `resource_stored` parameter does
+    /// **not** count: it relocates custody beneath a declared owner and
+    /// discharges nothing, which is exactly the premise
+    /// `StoredCustodyUnderDeclaredOwner` records as undischarged.
+    pub discharges: bool,
+}
+
+/// Check design §4.4's **closed allocator custody**, structurally: a manifest
+/// whose slice can establish custody must also declare somewhere to discharge
+/// it.
+///
+/// `shapes` maps every bound symbol to what its declared contract does. A symbol
+/// absent from the map contributes nothing, which is fail-closed in the right
+/// direction here: an unknown shape cannot supply the discharge a manifest is
+/// missing.
+pub fn check_closed_allocator_custody(
+    libraries: &NativeLibraries,
+    shapes: &BTreeMap<String, CustodyShape>,
+) -> Result<(), SliceRefusal> {
+    let mut per_manifest: BTreeMap<&str, Vec<&ContractedEntry>> = BTreeMap::new();
+    for (manifest, entry) in libraries.contracted_entries() {
+        per_manifest.entry(manifest).or_default().push(entry);
+    }
+    for (manifest, entries) in per_manifest {
+        let discharges = entries
+            .iter()
+            .any(|entry| shapes.get(&entry.symbol).is_some_and(|s| s.discharges));
+        if discharges {
+            continue;
+        }
+        if let Some(acquiring) = entries
+            .iter()
+            .find(|entry| shapes.get(&entry.symbol).is_some_and(|s| s.acquires))
+        {
+            return Err(SliceRefusal::OpenAllocatorCustody {
+                manifest: manifest.to_owned(),
+                acquiring: acquiring.symbol.clone(),
+            });
+        }
+    }
+    Ok(())
+}
+
+/// Check design §4.1's binding totality, in **both** directions, between a
+/// manifest selection's contract slice entries and a selected contract
+/// environment.
+///
+/// `declared` maps every contract the environment declares to the module that
+/// declares it. Passing `None` means no environment is selected at all.
+///
+/// The check is a function of its two inputs and reads nothing else, so a
+/// certificate consumer repeats it rather than believing it.
+pub fn check_slice_totality(
+    libraries: &NativeLibraries,
+    declared: Option<&BTreeMap<String, String>>,
+) -> Result<(), SliceRefusal> {
+    let entries = libraries.contracted_entries();
+    if entries.is_empty() {
+        return Ok(());
+    }
+    let Some(declared) = declared else {
+        let (manifest, entry) = entries[0];
+        return Err(SliceRefusal::NoContractEnvironment {
+            manifest: manifest.to_owned(),
+            symbol: entry.symbol.clone(),
+        });
+    };
+    // Direction one: every entry resolves to a contract, in the module it names.
+    for (manifest, entry) in &entries {
+        let Some(module) = declared.get(&entry.symbol) else {
+            return Err(SliceRefusal::UnresolvedContract {
+                manifest: (*manifest).to_owned(),
+                symbol: entry.symbol.clone(),
+                module: entry.contract_module.clone(),
+            });
+        };
+        if *module != entry.contract_module {
+            return Err(SliceRefusal::ContractInAnotherModule {
+                manifest: (*manifest).to_owned(),
+                symbol: entry.symbol.clone(),
+                entry_module: entry.contract_module.clone(),
+                declared_module: module.clone(),
+            });
+        }
+    }
+    // Direction two: every contract of every module in the slice is bound.
+    let slice = libraries.slice();
+    let bound: BTreeSet<&str> = entries
+        .iter()
+        .map(|(_, entry)| entry.symbol.as_str())
+        .collect();
+    for (symbol, module) in declared {
+        if slice.contains(module.as_str()) && !bound.contains(symbol.as_str()) {
+            return Err(SliceRefusal::UnboundContract {
+                module: module.clone(),
+                symbol: symbol.clone(),
+            });
+        }
     }
     Ok(())
 }

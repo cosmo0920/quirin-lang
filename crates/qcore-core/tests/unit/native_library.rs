@@ -181,13 +181,23 @@ fn the_stated_hash_must_be_well_formed() {
 }
 
 #[test]
-fn a_contracted_entry_is_refused_and_never_read_as_a_waiver() {
+fn a_contracted_entry_without_its_contract_reference_is_refused() {
     // Design §4.2: a contract-less entry must be *explicitly marked*, so a
-    // dropped contract can never be silently read as a waiver. This slice
-    // implements no contracted entry, so it refuses one by name.
+    // dropped contract can never be silently read as a waiver. Card
+    // `UNSAFE-LINKAGE-ARTIFACT` met that by refusing every contracted entry;
+    // card `NATIVE-LIBRARY-CONTRACT-SLICE` implements the entry and keeps the
+    // requirement, because the two kinds are told apart by their **keyword**
+    // and a `contract fn` that names no contract module is refused rather than
+    // demoted to a waiver.
     assert!(matches!(
         load("contract fn k_add(int32_t, int32_t) -> int32_t;"),
-        Err(ManifestRefusal::ContractedEntry { .. })
+        Err(ManifestRefusal::MalformedContractedEntry { .. })
+    ));
+    // And the converse: an `unchecked fn` carrying a `from MODULE` tail is a
+    // malformed waiver, not a contract entry inferred from its shape.
+    assert!(matches!(
+        load("unchecked fn k_add(int32_t) -> int32_t from lib.qcore;"),
+        Err(ManifestRefusal::MalformedEntry { .. })
     ));
 }
 
@@ -291,7 +301,7 @@ fn selection(entries: &[(&str, &str)]) -> Result<NativeLibraries, SelectionRefus
 fn an_empty_selection_resolves_nothing() {
     let libraries = NativeLibraries::default();
     assert!(libraries.is_empty());
-    assert!(libraries.binding("k_add").is_none());
+    assert!(libraries.unchecked_binding("k_add").is_none());
 }
 
 #[test]
@@ -301,10 +311,10 @@ fn a_selection_resolves_a_symbol_to_its_own_manifests_identity() {
         ("second.qcorelib", "unchecked fn k_other(uint32_t) -> void;"),
     ])
     .unwrap();
-    let binding = libraries.binding("k_other").unwrap();
+    let binding = libraries.unchecked_binding("k_other").unwrap();
     assert_eq!(binding.module, "second.qcorelib");
     assert_eq!(binding.entry.result, AbiType::Unit);
-    assert!(libraries.binding("k_absent").is_none());
+    assert!(libraries.unchecked_binding("k_absent").is_none());
     assert_eq!(
         libraries.symbols(),
         ["k_add", "k_other"].into_iter().collect()
@@ -382,6 +392,7 @@ fn residence() -> ManifestResidence {
     ManifestResidence {
         identity: manifest.identity,
         premises: manifest.premises,
+        contract: None,
     }
 }
 
@@ -449,4 +460,428 @@ fn the_premise_a_callee_contributes_is_a_total_match_with_three_arms() {
         assumption_for_callee(&bare),
         assumption_for_callee(&resident)
     );
+}
+
+// --- The contract slice (card `NATIVE-LIBRARY-CONTRACT-SLICE`) ---
+//
+// Level L2 of the linkage spectrum: where a library's **pointer** symbols
+// belong. The rows below cover the grammar of a `contract fn` entry, the
+// may-not-bind-twice rule across both entry kinds, and design §4.1's binding
+// totality in both directions against a declared environment.
+
+const SLICE: &str = "fixtures/lib.qcore";
+
+fn declared(names: &[(&str, &str)]) -> BTreeMap<String, String> {
+    names
+        .iter()
+        .map(|(name, module)| ((*name).to_owned(), (*module).to_owned()))
+        .collect()
+}
+
+#[test]
+fn a_contract_slice_entry_binds_its_symbol_to_a_declared_contract_module() {
+    let manifest = load(
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;\n\
+         contract fn k_free(uint8_t *) -> void from fixtures/lib.qcore;",
+    )
+    .unwrap();
+    assert!(manifest.unchecked.is_empty());
+    assert_eq!(manifest.contracted.len(), 2);
+    let alloc = &manifest.contracted["k_alloc"];
+    assert_eq!(alloc.parameters, vec![AbiType::Usize]);
+    assert_eq!(alloc.result, AbiType::PtrMutU8);
+    assert_eq!(alloc.contract_module, SLICE);
+    assert_eq!(manifest.slice(), BTreeSet::from([SLICE]));
+}
+
+#[test]
+fn the_pointer_a_contract_less_entry_may_not_declare_is_admitted_here() {
+    // The seam card `UNSAFE-LINKAGE-ARTIFACT` left visible, closed from the
+    // other side: `PointerInUncheckedEntry` was not weakened, it acquired a
+    // destination. The *same* spelling refuses as a waiver and binds as a
+    // contract slice entry.
+    for spelling in ["uint8_t *", "const uint8_t *", "uint8_t **"] {
+        assert!(
+            matches!(
+                load(&format!("unchecked fn k({spelling}) -> int32_t;")),
+                Err(ManifestRefusal::PointerInUncheckedEntry { .. })
+            ),
+            "a waiver must still refuse `{spelling}`"
+        );
+        let manifest = load(&format!(
+            "contract fn k({spelling}) -> int32_t from fixtures/lib.qcore;"
+        ))
+        .unwrap_or_else(|refusal| panic!("`{spelling}` must bind as a contract entry: {refusal}"));
+        assert_eq!(manifest.contracted.len(), 1);
+    }
+    // A pointer **result** likewise.
+    assert!(matches!(
+        load("unchecked fn k(int32_t) -> uint8_t *;"),
+        Err(ManifestRefusal::PointerInUncheckedEntry { .. })
+    ));
+    assert!(load("contract fn k(int32_t) -> uint8_t * from fixtures/lib.qcore;").is_ok());
+}
+
+#[test]
+fn a_unit_parameter_is_refused_in_a_contract_entry_too() {
+    // The ABI vocabulary admits `void` as a result type only. A contract has
+    // modes for a pointer; it has no value for a `void` argument.
+    assert!(matches!(
+        load("contract fn k(void) -> int32_t from fixtures/lib.qcore;"),
+        Err(ManifestRefusal::UnitParameterInEntry { .. })
+    ));
+}
+
+#[test]
+fn an_unknown_spelling_in_a_contract_entry_refuses_by_position() {
+    assert!(matches!(
+        load("contract fn k(int) -> int32_t from fixtures/lib.qcore;"),
+        Err(ManifestRefusal::UnknownParameterSpelling { .. })
+    ));
+    assert!(matches!(
+        load("contract fn k(int32_t) -> struct foo from fixtures/lib.qcore;"),
+        Err(ManifestRefusal::UnknownResultSpelling { .. })
+    ));
+}
+
+#[test]
+fn a_contract_reference_that_could_not_be_a_selection_key_refuses() {
+    assert!(matches!(
+        load("contract fn k(int32_t) -> int32_t from a b;"),
+        Err(ManifestRefusal::MalformedContractReference { .. })
+    ));
+}
+
+#[test]
+fn a_symbol_may_not_be_bound_twice_across_the_two_entry_kinds() {
+    // Both orders, because an entry that is at once waived and contracted has
+    // no defined premise and choosing one by line order would make the premise
+    // depend on the order the author wrote.
+    assert!(matches!(
+        load(
+            "unchecked fn k(int32_t) -> int32_t;\n\
+             contract fn k(int32_t) -> int32_t from fixtures/lib.qcore;"
+        ),
+        Err(ManifestRefusal::SymbolBoundTwice { .. })
+    ));
+    assert!(matches!(
+        load(
+            "contract fn k(int32_t) -> int32_t from fixtures/lib.qcore;\n\
+             unchecked fn k(int32_t) -> int32_t;"
+        ),
+        Err(ManifestRefusal::SymbolBoundTwice { .. })
+    ));
+}
+
+#[test]
+fn a_manifest_binding_only_contracts_is_not_a_manifest_binding_nothing() {
+    // `NoSymbols` counts both kinds: a contract slice is a binding.
+    assert!(load("contract fn k(int32_t) -> int32_t from fixtures/lib.qcore;").is_ok());
+    assert!(matches!(load("# nothing"), Err(ManifestRefusal::NoSymbols)));
+}
+
+#[test]
+fn a_contracted_binding_names_its_module_and_a_waiver_never_does() {
+    let libraries = selection(&[(
+        "lib.qcorelib",
+        "unchecked fn k_tick(uint32_t) -> void;\n\
+         contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+    )])
+    .unwrap();
+    let waived = libraries.unchecked_binding("k_tick").unwrap();
+    assert_eq!(waived.residence().contract, None);
+    assert!(libraries.contracted_binding("k_tick").is_none());
+    let contracted = libraries.contracted_binding("k_alloc").unwrap();
+    assert_eq!(contracted.residence().contract.as_deref(), Some(SLICE));
+    assert!(libraries.unchecked_binding("k_alloc").is_none());
+    assert!(libraries.binds_contracts());
+    assert_eq!(libraries.slice(), BTreeSet::from([SLICE]));
+}
+
+#[test]
+fn two_manifests_may_not_bind_one_symbol_whatever_the_entry_kinds() {
+    assert!(matches!(
+        selection(&[
+            ("first.qcorelib", "unchecked fn k(int32_t) -> int32_t;"),
+            (
+                "second.qcorelib",
+                "contract fn k(int32_t) -> int32_t from fixtures/lib.qcore;"
+            ),
+        ]),
+        Err(SelectionRefusal::SymbolBoundTwice { .. })
+    ));
+}
+
+// --- Design §4.1's binding totality, in both directions ---
+
+#[test]
+fn a_slice_with_no_contract_environment_at_all_refuses() {
+    let libraries = selection(&[(
+        "lib.qcorelib",
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+    )])
+    .unwrap();
+    assert!(matches!(
+        check_slice_totality(&libraries, None),
+        Err(SliceRefusal::NoContractEnvironment { .. })
+    ));
+}
+
+#[test]
+fn an_entry_whose_contract_the_environment_does_not_declare_refuses() {
+    let libraries = selection(&[(
+        "lib.qcorelib",
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+    )])
+    .unwrap();
+    assert!(matches!(
+        check_slice_totality(&libraries, Some(&declared(&[("k_other", SLICE)]))),
+        Err(SliceRefusal::UnresolvedContract { .. })
+    ));
+}
+
+#[test]
+fn an_entry_naming_the_wrong_module_refuses_rather_than_resolving_by_name() {
+    // The reference is compared exactly. A contract in another module is
+    // another contract, and resolving by bare symbol name would let a manifest
+    // attribute a build to a declaration it never named.
+    let libraries = selection(&[(
+        "lib.qcorelib",
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+    )])
+    .unwrap();
+    assert!(matches!(
+        check_slice_totality(
+            &libraries,
+            Some(&declared(&[("k_alloc", "fixtures/other.qcore")]))
+        ),
+        Err(SliceRefusal::ContractInAnotherModule { .. })
+    ));
+}
+
+#[test]
+fn a_contract_in_the_slice_that_no_entry_binds_refuses() {
+    // The other direction of §4.1. The slice is the library's exported surface,
+    // so a declaration inside it that names no entry makes the binding partial.
+    let libraries = selection(&[(
+        "lib.qcorelib",
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+    )])
+    .unwrap();
+    assert!(matches!(
+        check_slice_totality(
+            &libraries,
+            Some(&declared(&[("k_alloc", SLICE), ("k_free", SLICE)]))
+        ),
+        Err(SliceRefusal::UnboundContract { .. })
+    ));
+    // A module *outside* the slice is not the manifest's business, so its
+    // declarations are not demanded.
+    assert!(
+        check_slice_totality(
+            &libraries,
+            Some(&declared(&[
+                ("k_alloc", SLICE),
+                ("k_free", "fixtures/elsewhere.qcore")
+            ]))
+        )
+        .is_ok()
+    );
+}
+
+#[test]
+fn a_selection_binding_no_contract_is_total_vacuously() {
+    let libraries = selection(&[("lib.qcorelib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
+    assert!(!libraries.binds_contracts());
+    assert!(check_slice_totality(&libraries, None).is_ok());
+    assert!(check_slice_totality(&libraries, Some(&declared(&[("k_other", SLICE)]))).is_ok());
+}
+
+// --- The stacked premise ---
+
+#[test]
+fn a_manifest_bound_contract_stacks_its_artifact_premise_and_replaces_nothing() {
+    use crate::extern_call::{
+        CallParameter, CallResult, ExternAssumption, ExternCallee, ExternTrust,
+        assumption_for_callee, assumptions_for_callee, manifest_contracted_callee,
+    };
+
+    let contracted = ExternCallee {
+        name: "k_alloc".to_owned(),
+        trust: ExternTrust::Contracted,
+        parameters: vec![CallParameter::Data(AbiType::Usize)],
+        result: CallResult::OwnedNullable,
+        result_abi: AbiType::PtrMutU8,
+        out_parameter: None,
+        realloc_parameter: None,
+        residence: None,
+    };
+    // Unmanifested: exactly one premise, the declared contract, unmoved.
+    assert_eq!(
+        assumptions_for_callee(&contracted),
+        vec![ExternAssumption::DeclaredContract("k_alloc".to_owned())]
+    );
+
+    let mut resident = residence();
+    resident.contract = Some(SLICE.to_owned());
+    let bound = manifest_contracted_callee(contracted.clone(), resident);
+    let premises = assumptions_for_callee(&bound);
+    assert_eq!(premises.len(), 2, "the premises stack; neither replaces");
+    assert_eq!(
+        premises[0],
+        ExternAssumption::DeclaredContract("k_alloc".to_owned()),
+        "the contract premise is still there"
+    );
+    match &premises[1] {
+        ExternAssumption::ManifestResidentContract {
+            callee,
+            contract_module,
+            residence,
+        } => {
+            assert_eq!(callee, "k_alloc");
+            assert_eq!(contract_module, SLICE);
+            assert_eq!(residence.identity.library, "demo");
+        }
+        other => panic!("a manifest-bound contract must name its artifact: {other:?}"),
+    }
+    // The trust premise is unchanged by the binding, which is what makes the
+    // second one an addition rather than a substitution.
+    assert_eq!(
+        assumption_for_callee(&bound),
+        assumption_for_callee(&contracted)
+    );
+    // And nothing about the callee itself moved.
+    assert_eq!(bound.parameters, contracted.parameters);
+    assert_eq!(bound.result, contracted.result);
+    assert_eq!(bound.trust, contracted.trust);
+}
+
+#[test]
+fn the_contracted_agreement_gate_is_the_same_comparison_as_the_waived_one() {
+    let manifest =
+        load("contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;").unwrap();
+    let entry = &manifest.contracted["k_alloc"];
+    assert!(check_contracted_agreement(entry, &[AbiType::Usize], AbiType::PtrMutU8).is_ok());
+    assert_eq!(
+        check_contracted_agreement(entry, &[], AbiType::PtrMutU8),
+        Err(ManifestDisagreement::ParameterCount {
+            declared: 0,
+            manifest: 1
+        })
+    );
+    assert_eq!(
+        check_contracted_agreement(entry, &[AbiType::U32], AbiType::PtrMutU8),
+        Err(ManifestDisagreement::Parameter {
+            parameter: 0,
+            declared: AbiType::U32,
+            manifest: AbiType::Usize
+        })
+    );
+    assert_eq!(
+        check_contracted_agreement(entry, &[AbiType::Usize], AbiType::PtrConstU8),
+        Err(ManifestDisagreement::Result {
+            declared: AbiType::PtrConstU8,
+            manifest: AbiType::PtrMutU8
+        })
+    );
+}
+
+// --- Design §4.4's closed allocator custody, which becomes real here ---
+
+fn shapes(entries: &[(&str, bool, bool)]) -> BTreeMap<String, CustodyShape> {
+    entries
+        .iter()
+        .map(|(name, acquires, discharges)| {
+            (
+                (*name).to_owned(),
+                CustodyShape {
+                    acquires: *acquires,
+                    discharges: *discharges,
+                },
+            )
+        })
+        .collect()
+}
+
+fn acquiring_slice() -> NativeLibraries {
+    selection(&[(
+        "lib.qcorelib",
+        "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;\n\
+         contract fn k_free(uint8_t *) -> void from fixtures/lib.qcore;",
+    )])
+    .unwrap()
+}
+
+#[test]
+fn a_slice_that_can_acquire_and_never_discharge_refuses() {
+    // A library handing out custody with no declared release entry point could
+    // only leak or lie, and `allocator_custody closed` would be stating what its
+    // own slice contradicts.
+    assert!(matches!(
+        check_closed_allocator_custody(
+            &acquiring_slice(),
+            &shapes(&[("k_alloc", true, false), ("k_free", false, false)])
+        ),
+        Err(SliceRefusal::OpenAllocatorCustody { .. })
+    ));
+}
+
+#[test]
+fn a_slice_with_a_discharge_beside_its_acquisition_is_closed() {
+    assert!(
+        check_closed_allocator_custody(
+            &acquiring_slice(),
+            &shapes(&[("k_alloc", true, false), ("k_free", false, true)])
+        )
+        .is_ok()
+    );
+}
+
+#[test]
+fn a_slice_that_cannot_acquire_is_closed_vacuously() {
+    assert!(
+        check_closed_allocator_custody(
+            &acquiring_slice(),
+            &shapes(&[("k_alloc", false, false), ("k_free", false, false)])
+        )
+        .is_ok()
+    );
+    // And a contract-less selection has nothing to check at all, which is the
+    // sense in which card `UNSAFE-LINKAGE-ARTIFACT` satisfied this vacuously.
+    let waived = selection(&[("lib.qcorelib", "unchecked fn k(int32_t) -> int32_t;")]).unwrap();
+    assert!(check_closed_allocator_custody(&waived, &BTreeMap::new()).is_ok());
+}
+
+#[test]
+fn a_shape_this_check_cannot_read_supplies_no_discharge() {
+    // Fail-closed in the direction that matters: an absent projection cannot be
+    // the discharge a manifest is missing.
+    assert!(matches!(
+        check_closed_allocator_custody(&acquiring_slice(), &shapes(&[("k_alloc", true, false)])),
+        Err(SliceRefusal::OpenAllocatorCustody { .. })
+    ));
+}
+
+#[test]
+fn the_custody_check_is_per_manifest_and_not_across_a_selection() {
+    // Two libraries do not close each other's custody: the premise
+    // `allocator_custody closed` is stated by one manifest about one artifact.
+    let libraries = selection(&[
+        (
+            "first.qcorelib",
+            "contract fn k_alloc(uintptr_t) -> uint8_t * from fixtures/lib.qcore;",
+        ),
+        (
+            "second.qcorelib",
+            "contract fn k_free(uint8_t *) -> void from fixtures/other.qcore;",
+        ),
+    ])
+    .unwrap();
+    assert!(matches!(
+        check_closed_allocator_custody(
+            &libraries,
+            &shapes(&[("k_alloc", true, false), ("k_free", false, true)])
+        ),
+        Err(SliceRefusal::OpenAllocatorCustody { .. })
+    ));
 }

@@ -257,6 +257,45 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
             ExternAssumption::DeclaredContract(callee) => {
                 format!("declared contract: `{callee}` behaves as its selected contract states")
             }
+            // Card `NATIVE-LIBRARY-CONTRACT-SLICE`. Printed **beside** the
+            // declared-contract line above, never in place of it: the two
+            // premises stack, and a reader who saw only this one would have
+            // been shown which build without being shown that its behaviour is
+            // a declaration.
+            //
+            // Unreachable through this binary today, and deliberately present
+            // anyway: `qcorec` selects no extern contract environment (follow-on
+            // `UNSAFE-LINKAGE-CLI`), so no contracted callee is admitted here at
+            // all. Without the arm the premise would render through the
+            // `{other:?}` fallback the moment that follow-on lands, which is how
+            // a premise stops being read.
+            ExternAssumption::ManifestResidentContract {
+                callee,
+                contract_module,
+                residence,
+            } => {
+                let identity = &residence.identity;
+                let premises = &residence.premises;
+                format!(
+                    "contracted linkage: `{callee}` is read through the declared contract `{contract_module}`, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here",
+                    identity.artifact,
+                    identity.library,
+                    identity.version,
+                    identity.hash,
+                    match premises.data_model {
+                        DataModel::Lp64 => "data model lp64",
+                    },
+                    match premises.unwinding {
+                        UnwindingPosture::Abort => "no unwinding across the boundary",
+                    },
+                    match premises.allocator_custody {
+                        AllocatorCustody::Closed => "closed allocator custody",
+                    },
+                    match premises.thread_posture {
+                        ThreadPosture::SingleCaller => "single-threaded caller",
+                    },
+                )
+            }
             ExternAssumption::NoExtentTransport => {
                 "no extent transport: no declaration says how many bytes a callee touches".into()
             }

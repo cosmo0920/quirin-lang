@@ -2539,6 +2539,19 @@ fn admit_unchecked_callee(
         );
         return None;
     }
+    // Card `NATIVE-LIBRARY-CONTRACT-SLICE`, the third face of the same rule, and
+    // a **measured non-addition**. `Q034` refuses a waiver for a name the
+    // contract *environment* declares; `Q042` refuses a contract for a name the
+    // manifest declares contract-less; the missing third case would refuse a
+    // waiver for a name the manifest binds to a **contract**.
+    //
+    // It needs no gate and no code, because two gates already compose to close
+    // it: `Q047` refuses a manifest whose contract slice entry the selected
+    // environment does not declare, so wherever a manifest binds `name` to a
+    // contract, the environment declares `name` — and the `Q034` gate directly
+    // above has already refused. The card measured this rather than assuming it
+    // (`CONTRACT-SLICE-WAIVER-MIRROR`); a gate here would be unreachable, and an
+    // unreachable diagnostic code is a claim a reader cannot check.
     let mut parameters = Vec::with_capacity(declaration.parameter_types.len());
     for (index, spelling) in declaration.parameter_types.iter().enumerate() {
         let Some(abi) = extern_call::AbiType::parse(spelling) else {
@@ -2575,7 +2588,7 @@ fn admit_unchecked_callee(
             return None;
         }
     };
-    let Some(binding) = libraries.binding(name) else {
+    let Some(binding) = libraries.unchecked_binding(name) else {
         // No selected manifest names this symbol, so the waiver keeps the bare
         // premise card `UNSAFE-LINKAGE` published, byte for byte. The absence
         // of an artifact field is itself part of the trust statement: no build
@@ -2609,6 +2622,39 @@ fn admit_unchecked_callee(
             );
             None
         }
+    }
+}
+
+/// Project one declared contract to the two custody facts design §4.4's
+/// closed-allocator-custody check reads (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+///
+/// A `resource_stored` parameter is deliberately **not** a discharge: it
+/// relocates custody beneath a declared owner and discharges nothing, which is
+/// exactly what `ExternAssumption::StoredCustodyUnderDeclaredOwner` records as
+/// undischarged. Counting it would let a slice claim closed custody on the
+/// strength of a premise nothing in this repository discharges.
+fn custody_shape(
+    contract: &qcore_schemas::contract::ResourceFunctionContract,
+) -> qcore_core::native_library::CustodyShape {
+    use qcore_schemas::contract::{ResourceParameterMode, ResourceReturnMode};
+
+    let acquires = matches!(
+        contract.result,
+        ResourceReturnMode::Owned { .. } | ResourceReturnMode::Reallocated { .. }
+    ) || contract
+        .parameters
+        .iter()
+        .any(|mode| matches!(mode, ResourceParameterMode::Out { .. }));
+    let discharges = contract.parameters.iter().any(|mode| {
+        matches!(
+            mode,
+            ResourceParameterMode::Consumed { .. } | ResourceParameterMode::Released { .. }
+        )
+    });
+    qcore_core::native_library::CustodyShape {
+        acquires,
+        discharges,
     }
 }
 
@@ -2753,6 +2799,76 @@ fn admit_extern_callees(
         (contracts, BTreeMap::new())
     };
     let libraries = load_native_libraries(options, first_span, ranges)?;
+    // Card `NATIVE-LIBRARY-CONTRACT-SLICE`. A selection that binds contracts is
+    // resolved against the selected environment **before** any callee is
+    // admitted, in both directions of design §4.1, and a selection that does
+    // not resolve refuses the module rather than resolving partially. The
+    // signatures are the same ones the contracted route already reads; where
+    // the branch above did not need them (an all-waived module that still
+    // selects a contract-binding manifest) they are derived here, so the
+    // `Q023` default above is reached by exactly the callees that reached it
+    // before.
+    let signatures = if libraries.binds_contracts() && !needs_contracts {
+        match contracts.as_ref() {
+            None => signatures,
+            Some(contracts) => qcore_contract::extern_bridge::declared_signatures(contracts)
+                .map_err(|error| {
+                    vec![map_raw_diagnostic(
+                        "Q047",
+                        SemanticPass::NativeLibrary,
+                        first_span,
+                        format!(
+                            "a selected manifest binds declared contracts, but the selected environment does not present its signatures: {error}"
+                        ),
+                        ranges,
+                    )]
+                })?,
+        }
+    } else {
+        signatures
+    };
+    let declared_modules = signatures
+        .iter()
+        .map(|(name, signature)| (name.clone(), signature.module.clone()))
+        .collect::<BTreeMap<_, _>>();
+    qcore_core::native_library::check_slice_totality(
+        &libraries,
+        contracts.as_ref().map(|_| &declared_modules),
+    )
+    .map_err(|refusal| {
+        vec![map_raw_diagnostic(
+            "Q047",
+            SemanticPass::NativeLibrary,
+            first_span,
+            format!("the selected manifest contract slice does not bind: {refusal}"),
+            ranges,
+        )]
+    })?;
+    // Design §4.4's closed-allocator-custody check, which becomes real the
+    // moment a manifest entry can acquire. The projection is read here — where
+    // the contract machinery lives — and the decision is made in `qcore-core`,
+    // where it is a function of its inputs.
+    if let Some(contracts) = contracts.as_ref() {
+        let shapes = libraries
+            .contracted_entries()
+            .into_iter()
+            .filter_map(|(_, entry)| {
+                let contract = contracts.contract(&entry.symbol)?;
+                Some((entry.symbol.clone(), custody_shape(contract)))
+            })
+            .collect::<BTreeMap<_, _>>();
+        qcore_core::native_library::check_closed_allocator_custody(&libraries, &shapes).map_err(
+            |refusal| {
+                vec![map_raw_diagnostic(
+                    "Q047",
+                    SemanticPass::NativeLibrary,
+                    first_span,
+                    format!("the selected manifest contract slice does not bind: {refusal}"),
+                    ranges,
+                )]
+            },
+        )?;
+    }
     let mut diagnostics = Vec::new();
     let mut callees = BTreeMap::new();
     for (name, span) in &called {
@@ -2779,7 +2895,7 @@ fn admit_extern_callees(
         // and effects about an artifact whose own manifest states none. Where
         // two declarations are visible they are compared, and the refusing
         // direction wins.
-        if let Some(binding) = libraries.binding(name) {
+        if let Some(binding) = libraries.unchecked_binding(name) {
             diagnostics.push(map_raw_diagnostic(
                 "Q042",
                 SemanticPass::NativeLibrary,
@@ -2854,8 +2970,68 @@ fn admit_extern_callees(
                     continue;
                 }
             };
+        // Card `NATIVE-LIBRARY-CONTRACT-SLICE`: design §4.2's agreement gate at
+        // the contracted setting, and **withdrawal** on disagreement.
+        //
+        // Both sides are read from what a certificate already holds — the
+        // manifest text and the environment's retained contract text — never
+        // from a typed Clang AST, so a rederivation reproduces the decision
+        // (constraint 8's reader discipline).
+        //
+        // The direction is the argument. `LOADER-ABI` withdraws, card
+        // `UNSAFE-LINKAGE-ARTIFACT` refuses, and both follow one rule: withdraw
+        // only where the weaker admissible reading *refuses*. There the weaker
+        // reading was the bare waiver, which is accepted; here it is the
+        // uncontracted callee, which refuses at `Q023`. So the contradicted
+        // binding is withdrawn for this unit — the name is not seeded into the
+        // admitted environment and every call site becomes an uncontracted one
+        // — and the withdrawal itself is reported rather than performed
+        // silently. Monotone in the refusing direction: this can only turn an
+        // admission into a refusal.
+        let residence = match libraries.contracted_binding(name) {
+            None => None,
+            Some(binding) => {
+                let manifest_view = binding.entry;
+                let projected = declared
+                    .parameters
+                    .iter()
+                    .map(|(abi, _)| *abi)
+                    .collect::<Vec<_>>();
+                if let Err(disagreement) = qcore_core::native_library::check_contracted_agreement(
+                    manifest_view,
+                    &projected,
+                    declared.result,
+                ) {
+                    diagnostics.push(map_raw_diagnostic(
+                        "Q048",
+                        SemanticPass::NativeLibrary,
+                        declaration.span,
+                        format!(
+                            "the contract `{name}` selected from `{}` is withdrawn for this unit: `{}` declares the exported symbol otherwise ({disagreement}); every call site becomes an uncontracted callee",
+                            signature.module, binding.module
+                        ),
+                        ranges,
+                    ));
+                    diagnostics.push(map_raw_diagnostic(
+                        "Q023",
+                        SemanticPass::ExternCall,
+                        *span,
+                        format!(
+                            "`{name}` has no admitted declared contract in the selected extern contract environment"
+                        ),
+                        ranges,
+                    ));
+                    continue;
+                }
+                Some(binding.residence())
+            }
+        };
         match extern_call::bridge_contract(name, &declared) {
             Ok(callee) => {
+                let callee = match residence {
+                    None => callee,
+                    Some(residence) => extern_call::manifest_contracted_callee(callee, residence),
+                };
                 callees.insert(name.clone(), callee);
             }
             Err(refusal) => diagnostics.push(map_raw_diagnostic(
@@ -2949,6 +3125,19 @@ fn compile_extern_source(
             SemanticPass::UncheckedLinkage,
             lowered.scope_span,
             "the published extern-call certificate does not carry an unchecked-linkage premise for every uncontracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+    // Card `NATIVE-LIBRARY-CONTRACT-SLICE`: the same tripwire for the stacked
+    // premises of a manifest-bound contracted callee. It refuses a certificate
+    // that lost either half — the artifact premise, or the declared-contract
+    // premise the artifact premise stacks beside rather than replaces.
+    if !extern_call::certificate_carries_residence_premises(&lowered.program, &certificate) {
+        return Err(vec![map_raw_diagnostic(
+            "Q049",
+            SemanticPass::NativeLibrary,
+            lowered.scope_span,
+            "the published extern-call certificate does not carry both the declared-contract and the artifact premise of every manifest-bound contracted callee this module declares".into(),
             ranges,
         )]);
     }
@@ -3131,6 +3320,23 @@ fn compile_composed_source(
             SemanticPass::UncheckedLinkage,
             lowered.scope_span,
             "the published composed certificate does not carry an unchecked-linkage premise for every uncontracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+    // Card `NATIVE-LIBRARY-CONTRACT-SLICE`'s tripwire, likewise unweakened by
+    // composing.
+    if !extern_call::certificate_carries_residence_premises(
+        &lowered.program.externs,
+        &extern_certificate,
+    ) || !extern_call::certificate_carries_residence_premises(
+        &lowered.program.externs,
+        &certificate.externs,
+    ) {
+        return Err(vec![map_raw_diagnostic(
+            "Q049",
+            SemanticPass::NativeLibrary,
+            lowered.scope_span,
+            "the published composed certificate does not carry both the declared-contract and the artifact premise of every manifest-bound contracted callee this module declares".into(),
             ranges,
         )]);
     }

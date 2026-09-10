@@ -960,6 +960,36 @@ pub fn manifest_unchecked_callee(
     Ok(callee)
 }
 
+/// Attach a manifest's contract slice residence to an **already admitted**
+/// contracted callee (card `NATIVE-LIBRARY-CONTRACT-SLICE`).
+///
+/// The callee must have come out of [`bridge_contract`]: the unchanged C04
+/// admission table decides what may cross, first and alone, so a manifest
+/// binding cannot widen the contracted surface any more than it could widen the
+/// waived one. What it adds is the artifact premise, stacked beside the
+/// declared-contract premise the callee already contributes.
+///
+/// Deliberately takes the callee by value and returns it, so there is no way to
+/// attach a residence to a callee some other code path is still holding as
+/// unattributed.
+#[must_use]
+pub fn manifest_contracted_callee(
+    mut callee: ExternCallee,
+    residence: native_library::ManifestResidence,
+) -> ExternCallee {
+    debug_assert_eq!(
+        callee.trust,
+        ExternTrust::Contracted,
+        "a contract slice residence attaches to a contracted callee only"
+    );
+    debug_assert!(
+        residence.contract.is_some(),
+        "a contract slice residence names the contract module it bound"
+    );
+    callee.residence = Some(residence);
+    callee
+}
+
 /// The premise one admitted callee contributes, as a **total match on its
 /// trust** and, within the waived arm, on whether a manifest names it.
 ///
@@ -983,6 +1013,45 @@ pub fn assumption_for_callee(callee: &ExternCallee) -> ExternAssumption {
             }
         }
     }
+}
+
+/// The artifact premise a **contracted** manifest-resident callee contributes
+/// *in addition to* its declared-contract premise (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`), or `None` when no manifest binds it.
+///
+/// Kept separate from [`assumption_for_callee`] rather than folded into it,
+/// because the contracted route stacks its premises: the declared contract is
+/// what the code does, the residence is which code it is, and neither is
+/// derivable from the other. [`assumptions_for_callee`] is the total inventory
+/// of the two.
+#[must_use]
+pub fn residence_assumption_for_callee(callee: &ExternCallee) -> Option<ExternAssumption> {
+    match (callee.trust, callee.residence.as_ref()) {
+        (ExternTrust::Contracted, Some(residence)) => {
+            residence
+                .contract
+                .as_ref()
+                .map(|module| ExternAssumption::ManifestResidentContract {
+                    callee: callee.name.clone(),
+                    contract_module: module.clone(),
+                    residence: residence.clone(),
+                })
+        }
+        _ => None,
+    }
+}
+
+/// Every premise one admitted callee contributes, in publication order.
+///
+/// One for every callee — [`assumption_for_callee`]'s total match — plus, for a
+/// contracted callee a manifest binds, the artifact premise beside it. The
+/// first element is therefore always the callee's trust premise, and the
+/// inventory is never empty: there is no callee that rests on nothing.
+#[must_use]
+pub fn assumptions_for_callee(callee: &ExternCallee) -> Vec<ExternAssumption> {
+    let mut premises = vec![assumption_for_callee(callee)];
+    premises.extend(residence_assumption_for_callee(callee));
+    premises
 }
 
 /// The declared signature of an admitted callee, rendered from the ABI
@@ -1554,6 +1623,40 @@ pub enum ExternAssumption {
         signature: String,
         residence: native_library::ManifestResidence,
     },
+    /// Card `NATIVE-LIBRARY-CONTRACT-SLICE`. The trust artifact of level **L3**
+    /// of the linkage spectrum (`docs/design/UNSAFE_LINKAGE_V1.md` §1.1):
+    /// the named callee **has** a declared contract, and a
+    /// `source.native-library.v1` manifest binds its symbol to that contract
+    /// and to a named build. The premise reads *contracted `callee` per
+    /// contract `contract_module`, from artifact `…` under stated ABI
+    /// premises*.
+    ///
+    /// This premise **stacks with** [`Self::DeclaredContract`] and never
+    /// replaces it. The two say independent things: the contract premise is
+    /// about what the code does, and this one is about which code it is. A
+    /// certificate through a manifest-bound contracted callee therefore carries
+    /// both, and dropping either would be a weaker statement published by
+    /// accident.
+    ///
+    /// That is the one deliberate asymmetry with
+    /// [`Self::ManifestUncheckedLinkage`], which *replaces*
+    /// [`Self::UncheckedLinkage`]: there the manifest restates the very thing
+    /// the bare premise carried (the signature), so one record is the whole
+    /// statement and two would be one statement told twice. Here it restates
+    /// nothing the contract premise says.
+    ///
+    /// The artifact identity is a **stated pin**, exactly as at L1: nothing is
+    /// hashed, opened or searched for at check time
+    /// (`docs/reports/wave19-unsafe-linkage-artifact/README.md` §5). That the
+    /// declared contract describes the named build is the premise; agreement of
+    /// the manifest's header declaration with the contract's ABI projection is
+    /// *checked*, and a disagreement withdraws the binding rather than
+    /// reinterpreting it.
+    ManifestResidentContract {
+        callee: String,
+        contract_module: String,
+        residence: native_library::ManifestResidence,
+    },
     /// C04 pointers are extentless `u8` projections, so no declaration in this
     /// profile promises how many bytes a callee touches.
     NoExtentTransport,
@@ -2100,7 +2203,12 @@ pub fn check_extern_program(
         // the Lean theorem `assumption_totality` states the same sentence over
         // the model, and `QCore.NativeLibrary.manifest_assumption_totality`
         // states it again with the manifest in the model.
-        assumptions.push(assumption_for_callee(callee));
+        // Card `NATIVE-LIBRARY-CONTRACT-SLICE` adds the second element of this
+        // inventory and removes none: a contracted callee a manifest binds
+        // carries its declared-contract premise **and** the artifact premise,
+        // stacked. `QCore.NativeLibraryContract.the_contract_premise_is_never_replaced`
+        // states that the first is still there.
+        assumptions.extend(assumptions_for_callee(callee));
         if callee.trust == ExternTrust::UncheckedLinkage {
             // An unchecked callee has no contract, so none of the
             // contract-shaped premises below can apply to it; its admitted
@@ -2183,6 +2291,46 @@ pub fn certificate_carries_unchecked_linkage(
     required_unchecked_assumptions(program)
         .iter()
         .all(|required| certificate.assumptions.contains(required))
+}
+
+/// Every **artifact** premise the program's own callee inventory demands for a
+/// manifest-bound contracted callee, derived from the program alone (card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE`).
+///
+/// The contracted twin of [`required_unchecked_assumptions`], and separate from
+/// it for the same reason the premises are separate: a certificate could carry
+/// every declared-contract premise and still have lost the statement of *which
+/// build* each contract was read against.
+#[must_use]
+pub fn required_residence_assumptions(program: &ExternProgram) -> Vec<ExternAssumption> {
+    program
+        .callees
+        .values()
+        .filter_map(residence_assumption_for_callee)
+        .collect()
+}
+
+/// Whether a published certificate carries the artifact premise of every
+/// manifest-bound contracted callee its own program declares, **and** the
+/// declared-contract premise beside it.
+///
+/// The second half is the load-bearing one: the premises stack, so a
+/// certificate that published the artifact premise *instead of* the contract
+/// premise would be refused here rather than read as an equivalent statement.
+#[must_use]
+pub fn certificate_carries_residence_premises(
+    program: &ExternProgram,
+    certificate: &ExternCallCertificate,
+) -> bool {
+    program.callees.values().all(|callee| {
+        let Some(required) = residence_assumption_for_callee(callee) else {
+            return true;
+        };
+        certificate.assumptions.contains(&required)
+            && certificate
+                .assumptions
+                .contains(&ExternAssumption::DeclaredContract(callee.name.clone()))
+    })
 }
 
 /// Why an independent recheck refused a published certificate.

@@ -1,29 +1,34 @@
 <!-- Adopted, with recorded adjustments, by card `UNSAFE-LINKAGE` (wave 18). -->
-<!-- Partly implemented by card `UNSAFE-LINKAGE-ARTIFACT` (wave 19); see the
-     "Landed since" note below. -->
+<!-- Partly implemented by cards `UNSAFE-LINKAGE-ARTIFACT` (wave 19) and
+     `NATIVE-LIBRARY-CONTRACT-SLICE` (wave 20); see the "Landed since" note
+     below. -->
 
-> **Landed since (card `UNSAFE-LINKAGE-ARTIFACT`, wave 19).** The **contract-less
-> slice** of stage (a) is implemented:
+> **Landed since (cards `UNSAFE-LINKAGE-ARTIFACT`, wave 19, and
+> `NATIVE-LIBRARY-CONTRACT-SLICE`, wave 20).** Most of stage (a) is implemented:
 > [`crates/qcore-core/src/native_library.rs`](../../crates/qcore-core/src/native_library.rs)
 > loads a manifest total-or-reject with the artifact identity of §4.3 and the
 > four ABI premise fields of §4.4, binds symbols through §4.1's
-> may-not-bind-twice rule (extended across a selection), and applies §4.2's type
-> gate to a waived declaration. The new pass `NativeLibrary` owns the reserved
-> band as **`Q039`–`Q042`**. Status is therefore no longer "scoped only" as a
-> whole; it is **scoped only except for the contract-less slice**, and the
-> difference is exactly:
+> may-not-bind-twice rule (extended across a selection and across both entry
+> kinds), resolves §4.1's contract slice in **both** directions, and applies
+> §4.2's type gate to a waived and to a contracted declaration. The pass
+> `NativeLibrary` owns the reserved band as **`Q039`–`Q042`** plus a second band
+> **`Q047`–`Q049`** (`Q043`–`Q046` having been allocated between the two cards).
+> Status is therefore **scoped only except for §4, which is landed but for the
+> header reader**:
 >
 > | §4 piece | State |
 > |---|---|
-> | 4.1 symbol table, for **contract-less** entries | landed (a `contract fn` entry is a named rejection) |
-> | 4.1 contract slice binding, in both directions | **not implemented** — follow-on `NATIVE-LIBRARY-CONTRACT-SLICE` |
-> | 4.2 header agreement | landed as a **refusal** for a contract-less entry, not a withdrawal (see the report's §4 for why the two differ here); reading a real `.h` is follow-on `NATIVE-LIBRARY-HEADER` |
-> | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (report §5) |
-> | 4.4 ABI premises | landed as four mandatory closed-vocabulary fields carried onto the certificate |
-> | 4.4 closed-allocator-custody structural check | vacuous by construction — a contract-less entry cannot acquire (`UNSAFE_LINKAGE_V1.md` §9.1 point 2) |
+> | 4.1 symbol table, for **contract-less** entries | landed (wave 19) |
+> | 4.1 contract slice binding, in both directions | **landed** (wave 20): `contract fn NAME(TYPES) -> TYPE from MODULE`, resolved against the selected environment, total or reject (`Q047`) |
+> | 4.2 header agreement | landed **twice, with opposite dispositions on purpose**: a **refusal** for a contract-less entry (`Q041`, wave 19) and a **per-unit withdrawal** for a contracted one (`Q048`, wave 20) — see the wave-20 report §4 for the one rule that yields both. Reading a real `.h` is still follow-on `NATIVE-LIBRARY-HEADER` |
+> | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (wave-19 report §5); unchanged by wave 20 |
+> | 4.4 ABI premises | landed as four mandatory closed-vocabulary fields carried onto the certificate, on both levels |
+> | 4.4 closed-allocator-custody structural check | **landed** (wave 20). It was vacuous while entries were contract-less (a waiver cannot acquire, `UNSAFE_LINKAGE_V1.md` §9.1 point 2); a contract slice entry *can* acquire, so the check became real and was implemented rather than inherited as vacuous. §4.4's "for the same resource shape" is vacuous in v1 — §C04 projects every resource to one shape — and that is recorded, not silently narrowed |
 > | §6 `std.buffer`, §12 stages (b)–(d) | untouched |
 >
-> Evidence: [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md).
+> Evidence:
+> [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md),
+> [`docs/reports/wave20-native-library-contract-slice/README.md`](../reports/wave20-native-library-contract-slice/README.md).
 
 # Native-library linkage for bundled modules: `source.native-library.v1`
 

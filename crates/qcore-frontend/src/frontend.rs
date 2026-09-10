@@ -1681,12 +1681,24 @@ pub enum SemanticPass {
     /// `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` §7 reserved for it after
     /// `UNSAFE-LINKAGE` took `Q032`–`Q035` and `PIPE-OPERATOR` `Q036`–`Q038`.
     ///
+    /// Card `NATIVE-LIBRARY-CONTRACT-SLICE` adds a **second band**,
+    /// `Q047`–`Q050`, for the manifest's contracted entries, through the same
+    /// §L21 process. The band is not contiguous with the first because
+    /// `Q043`–`Q046` were taken between the two cards (`STD-IO-COMPOSE` and
+    /// `IF-STATEMENT`); a pass owning two ranges is the honest record of that
+    /// order, and no code moved to make it look tidier. A collision discovered
+    /// at integration relocates the *unshipped* band, per the wave-3 `T07`/`T09`
+    /// precedent; the code-to-condition mapping is stable under such a shift.
+    ///
     /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
     /// whether a *signature* may cross a boundary nothing checks, and its
     /// decision is unchanged here. This one decides whether the **library
     /// manifest** a waiver is resident in loads, binds and agrees — the trust
     /// object is the manifest, not the declaration, and a manifest that does
-    /// not load is refused without ever reaching a declaration.
+    /// not load is refused without ever reaching a declaration. It is likewise
+    /// separate from `ExternCall`: that pass decides whether a *contract* is
+    /// callable, and this one whether a manifest may attribute that contract's
+    /// symbol to a named build.
     NativeLibrary,
     /// Card `IF-STATEMENT`: admission of the source branching construct
     /// `source.branch.v1` — `if (COND) { … } else { … }`, its decidable

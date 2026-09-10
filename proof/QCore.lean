@@ -94,6 +94,7 @@ import QCore.StdIo
 import QCore.ComposedStdIo
 import QCore.UncheckedLinkage
 import QCore.NativeLibrary
+import QCore.NativeLibraryContract
 import QCore.ReasonCategory
 import QCore.ReasonCarrier
 import QCore.SourceRootAdmission
