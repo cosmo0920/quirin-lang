@@ -322,7 +322,7 @@ code with the transcription remain premises, as for every model here.
 
 | Check | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see the closing note below |
+| `cargo test --workspace --no-fail-fast` | **3,027 passed, 1 failed, 8 ignored** across 181 test binaries — the one failure is the recorded constraint-16 load flake, re-verified green in isolation (§9.1) |
 | `compiler/tests/native_library.rs` | 16 passed |
 | `crates/qcore-core` unit `native_library` | 25 passed |
 | `crates/qcorec` CLI premise printing | 1 passed |
@@ -330,12 +330,43 @@ code with the transcription remain premises, as for every model here.
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `reevaluation_probe` | exit 0 |
 | `reevaluation_followup` | exit 0 |
-| `python3 scripts/check_lean_audits.py` | 81 Lean audits (80 at base + `AuditNativeLibrary`) |
+| `python3 scripts/check_lean_audits.py` | **Passed 81 Lean audits** (80 at base + `AuditNativeLibrary`) |
+| `python3 -m unittest discover -s scripts/tests` | 193 run, 1 expected failure (§9.2) |
 
 `third_party/libevent` was initialised in this fresh worktree before the run
 (`git submodule update --init --recursive`), as wave 18 also recorded.
 
-### 9.1 One expected acceptance-matrix drift, left for the integrator
+### 9.1 The one workspace failure is a recorded load flake, verified in isolation
+
+`qcore-verifier-host::confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths`
+failed once during the workspace run with exactly its recorded signature:
+
+```
+assertion `left == right` failed: Broken pipe (os error 32)
+  left: Io
+ right: Terminated
+```
+
+That is **P02-FLAKE row three** verbatim (`AGENTS.md` constraint 16: "the
+confined-fixture write test (`Io(Broken pipe)` under load)"). The run took place
+with four sibling agent worktrees and the integrator's own merged-tree gate
+building on the same host — one-minute load average between 8 and 65 for the
+duration, peaking at 65 — which is the documented condition. Re-run in isolation
+on the same binary, **unweakened**:
+
+```
+$ cargo test -p qcore-verifier-host --test confined_process_execution -- --test-threads=1
+test result: ok. 12 passed; 0 failed; 0 ignored
+```
+
+No assertion was touched. The other three constraint-16 rows (`RLIMIT_NPROC`,
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`, `real_packages_…`) passed
+in the workspace run itself and needed no isolation.
+
+This card changes nothing that test touches: its production diff contains no
+file under `crates/qcore-verifier-host/`.
+
+### 9.2 One expected acceptance-matrix drift, left for the integrator
 
 `scripts/tests` asserts the acceptance matrix's derived `lean_audits` row, which
 must grow by one now that this card registers an audit file. Acceptance files are
