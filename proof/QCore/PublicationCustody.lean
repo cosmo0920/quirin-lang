@@ -525,10 +525,13 @@ theorem a_caller_held_identity_is_now_refused (s : Site) :
 
 /-! #### Why the exclusion had to go, at the summary boundary
 
-A helper's published summary mode is what a caller reads. The three modes a
-publishing body could be given are compared on the same two callers — one that
-releases after the call and one that does not — against the *inlined* body,
-which card `CTWIN-PUBLISH` already refuses in both directions.
+A helper's published summary mode is what a caller reads. The two modes a
+publishing body could be *given*, plus the no-summary answer a refused body
+yields, are compared on the same two callers — one that releases after the call
+and one that does not — against the *inlined* body, which card
+`CTWIN-PUBLISH` already refuses in both directions. `Consumed` is not modelled
+separately: for this comparison it says exactly what `Escaped` says, that
+custody left the body at the call.
 -/
 
 /-- The custody mode a helper's summary can assert for its formal. -/

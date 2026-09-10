@@ -1,0 +1,27 @@
+== artifact digests
+  chunk-contracts  before c4f438e4ed3d  after c4f438e4ed3d  IDENTICAL
+  contracts        before d11d602d9053  after d11d602d9053  IDENTICAL
+  diagnostics      before 46d0f17845ca  after 46d0f17845ca  IDENTICAL
+  source           before c76567db81f8  after c76567db81f8  IDENTICAL
+  source-effects   before 575c67e704a0  after 575c67e704a0  IDENTICAL
+
+== units 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+unit reason_code moves: 0 []
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0 []
+UNKNOWN->SAFE PROMOTIONS (must be 0): 0 []
+
+projected functions: 4834 -> 4834
+function status moves: 0
+
+corpus diagnostic counts:
+  leak: 271 -> 271 (+0)
+  unknown_alias: 4399 -> 4399 (+0)
+  unsupported: 49890 -> 49890 (+0)
+units with diagnostic changes: 0
+
+total leaves: -0 / +0
