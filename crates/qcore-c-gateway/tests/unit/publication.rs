@@ -155,3 +155,139 @@ fn a_qualifier_does_not_change_the_recognised_name() {
     assert_eq!(scope("volatile struct h * g_p ;"), ["g_p"]);
     assert_eq!(scope("struct h * volatile g_p ;"), ["g_p"]);
 }
+
+// ---------------------------------------------------------------------------
+// Card `CTWIN-RESIDUALS`: the parenthesised specifier, and the indirect reader
+// ---------------------------------------------------------------------------
+
+fn indirect(text: &str, destinations: &[&str]) -> Vec<(usize, String, Vec<String>)> {
+    let tokens = tokens(text);
+    let lines = vec![1usize; tokens.len()];
+    let destinations = destinations
+        .iter()
+        .map(|name| (*name).to_owned())
+        .collect::<BTreeSet<_>>();
+    indirect_publications(&tokens, &lines, &destinations)
+        .into_iter()
+        .map(|(line, publication)| {
+            (
+                line,
+                publication.place,
+                publication.sources.into_iter().collect(),
+            )
+        })
+        .collect()
+}
+
+/// `_Atomic ( type-name )` is a specifier, so the declarator after it is read
+/// exactly as the postfix spelling's is. Measured `Safe` with no diagnostic
+/// before this card, because the `(`-carrying skip swallowed the whole group.
+#[test]
+fn a_parenthesised_atomic_specifier_is_dropped_before_the_declarator_is_read() {
+    assert_eq!(scope("_Atomic ( void * ) g_published ;"), ["g_published"]);
+    assert_eq!(scope("void * _Atomic g_published ;"), ["g_published"]);
+    assert_eq!(
+        scope("_Atomic ( struct h * ) g_a , * g_b ;"),
+        ["g_a", "g_b"]
+    );
+    assert_eq!(scope("static _Atomic ( int ) g_count ;"), ["g_count"]);
+    // A nested parenthesis inside the type name is matched, not counted.
+    assert_eq!(scope("_Atomic ( void ( * ) ( int ) ) g_hook ;"), ["g_hook"]);
+}
+
+/// The drop must not reach a declarator's own parenthesis: a prototype, a
+/// function definition and a function-pointer object still contribute nothing,
+/// so no parameter name can enter the set through this door.
+#[test]
+fn dropping_a_specifier_never_reveals_a_function_declarator() {
+    assert_eq!(scope("void f ( struct h * h ) ;"), Vec::<String>::new());
+    assert_eq!(
+        scope("_Atomic ( int ) f ( struct h * h ) ;"),
+        Vec::<String>::new()
+    );
+    assert_eq!(scope("void ( * g_hook ) ( int ) ;"), Vec::<String>::new());
+}
+
+/// Monotonicity, stated as a comparison rather than as prose: for every
+/// declaration whose `_Atomic(…)` prefix is simply deleted, the reader's answer
+/// on the two spellings is the same — so the extension only ever *adds* names,
+/// which only ever adds refusals.
+#[test]
+fn the_specifier_drop_only_adds_destinations() {
+    for (parenthesised, plain) in [
+        ("_Atomic ( void * ) g ;", "void * g ;"),
+        ("static _Atomic ( int ) g ;", "static int g ;"),
+        ("_Atomic ( struct h * ) g [ 4 ] ;", "struct h * g [ 4 ] ;"),
+        ("_Atomic ( int ) g = 1 ;", "int g = 1 ;"),
+    ] {
+        assert_eq!(
+            scope(parenthesised),
+            scope(plain),
+            "spelling must not change the answer: {parenthesised}"
+        );
+    }
+}
+
+/// The continued-access reader recognises exactly the three shapes whose base
+/// is a destination, and nothing else.
+///
+/// Every punctuator is one token in this gateway's lexer, so `->`, `+=` and
+/// `==` are spelled as two adjacent tokens here exactly as the analyzer sees
+/// them.
+#[test]
+fn the_indirect_reader_recognises_a_continued_access_on_a_destination() {
+    assert_eq!(
+        indirect("g . slot = h ;", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+    assert_eq!(
+        indirect("g - > slot = h ;", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+    assert_eq!(
+        indirect("g [ 0 ] = h ;", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+}
+
+/// Everything the reader must **not** recognise: a bare name (which the
+/// flow-sensitive rule decides), a local base, a compound assignment, a
+/// comparison, and a destination that only appears on the stored side.
+#[test]
+fn the_indirect_reader_refuses_every_other_shape() {
+    for (text, destinations) in [
+        ("g = h ;", &["g"][..]),
+        ("local . slot = h ;", &["g"][..]),
+        ("g . slot + = h ;", &["g"][..]),
+        ("g . slot = = h ;", &["g"][..]),
+        ("h = g . slot ;", &["g"][..]),
+        ("g . slot ;", &["g"][..]),
+    ] {
+        assert!(
+            indirect(text, destinations).is_empty(),
+            "must not be read as a publication: {text}"
+        );
+    }
+    // With no destination at all the reader answers nothing, whatever it sees.
+    assert!(indirect("g . slot = h ;", &[]).is_empty());
+}
+
+/// A statement inside a block is still a statement: the reader restarts at
+/// every brace, so a store in a guarded arm is not swallowed by the `if`
+/// header in front of it.
+#[test]
+fn a_store_inside_a_block_is_read() {
+    assert_eq!(
+        indirect("if ( ! h ) { return ; } g . slot = h ;", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+    assert_eq!(
+        indirect("if ( n ) { g . slot = h ; }", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+    // A `for` header's semicolons are inside parentheses and end nothing.
+    assert_eq!(
+        indirect("for ( i = 0 ; i < n ; i + + ) { g [ i ] = h ; }", &["g"]),
+        [(1, "g".to_owned(), vec!["h".to_owned()])]
+    );
+}

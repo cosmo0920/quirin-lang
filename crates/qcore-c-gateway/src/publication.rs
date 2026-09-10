@@ -38,7 +38,7 @@
 //! argument, and in particular for why the destination is **refused** rather
 //! than modeled as an escape.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::typed_field_access::{is_declaration_candidate, is_name, statement_end};
 
@@ -52,6 +52,17 @@ const STATIC_DURATION_SPECIFIERS: &[&str] = &["static", "_Thread_local"];
 /// Keywords that introduce a *tag*, never an object, when they immediately
 /// precede the trailing identifier of a declarator.
 const TAG_KEYWORDS: &[&str] = &["struct", "union", "enum"];
+
+/// The C11 type specifiers whose spelling is `KEYWORD ( type-name )`.
+///
+/// Card `CTWIN-RESIDUALS`. `_Atomic` is the only one C11 defines (§6.7.2.4),
+/// and the parenthesis it carries belongs to the *specifier*, never to a
+/// declarator — which is what makes dropping it monotone: it can only reveal a
+/// declarator the `(`-carrying skip in [`collect_declared_objects`] hid, never
+/// hide one it recognised. Measured at the wave-16 base, `_Atomic(void *) g;`
+/// was **not** a recognised destination, so `g = h; free(h);` through it was
+/// `Safe` with no diagnostic — CT40's literal atomic-pointer spelling.
+const PARENTHESISED_SPECIFIERS: &[&str] = &["_Atomic"];
 
 /// Token-scan bound. A translation unit longer than this is read in full; the
 /// bound applies per declaration run, mirroring the declaration reader's own.
@@ -147,6 +158,10 @@ fn collect_declared_objects(run: &[&str], names: &mut BTreeSet<String>) {
     }
     for group in split_top_level_commas(run) {
         let group = truncate_at_initializer(group);
+        // Card CTWIN-RESIDUALS: drop a `_Atomic ( type-name )` *specifier*
+        // before the `(`-carrying test below, so the declarator it prefixes is
+        // read exactly as the unparenthesised spelling's is.
+        let group = strip_parenthesised_specifiers(group);
         // A function declarator, a function-pointer declarator and a K&R
         // parameter list all carry `(`. None of them declares an object this
         // rule may name, and skipping the whole group is what keeps a
@@ -154,7 +169,7 @@ fn collect_declared_objects(run: &[&str], names: &mut BTreeSet<String>) {
         if group.contains(&"(") {
             continue;
         }
-        if let Some(name) = declarator_name(group) {
+        if let Some(name) = declarator_name(&group) {
             names.insert(name.to_owned());
         }
     }
@@ -200,6 +215,52 @@ fn declarator_name<'a>(group: &[&'a str]) -> Option<&'a str> {
     Some(name)
 }
 
+/// Drop every `KEYWORD ( type-name )` specifier from one declarator group
+/// (card `CTWIN-RESIDUALS`).
+///
+/// Only a keyword in [`PARENTHESISED_SPECIFIERS`] *immediately* followed by
+/// `(` is dropped, together with its balanced parenthesis run. Nothing else is
+/// touched, and an unbalanced run leaves the group exactly as it was, so this
+/// is monotone in the sense [`file_scope_objects`] promises: it can only reveal
+/// a declarator, never hide one.
+fn strip_parenthesised_specifiers<'a>(group: &[&'a str]) -> Vec<&'a str> {
+    let mut kept = Vec::with_capacity(group.len());
+    let mut index = 0usize;
+    while index < group.len() {
+        if PARENTHESISED_SPECIFIERS.contains(&group[index])
+            && group.get(index + 1) == Some(&"(")
+            && let Some(close) = balanced_close(group, index + 1)
+        {
+            index = close + 1;
+            continue;
+        }
+        kept.push(group[index]);
+        index += 1;
+    }
+    kept
+}
+
+/// The index of the `)` closing the `(` at `open`, when the run is balanced.
+fn balanced_close(group: &[&str], open: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, text) in group.iter().enumerate().skip(open) {
+        match *text {
+            "(" => depth += 1,
+            // The subtraction cannot underflow: `open` always points at a `(`,
+            // which the first iteration counts, and the scan returns the moment
+            // the depth falls back to zero.
+            ")" => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
 /// Split a declaration run at its top-level commas.
 fn split_top_level_commas<'a, 'b>(run: &'b [&'a str]) -> Vec<&'b [&'a str]> {
     let mut groups = Vec::new();
@@ -234,6 +295,168 @@ fn truncate_at_initializer<'a, 'b>(group: &'b [&'a str]) -> &'b [&'a str] {
     group
 }
 
+/// One store whose destination is a *continued access* on a publication
+/// destination — `g.f = v`, `g->f = v`, `g[i] = v` — recorded by line
+/// (card `CTWIN-RESIDUALS`, shape `CTWIN-PUBLISH-INDIRECT`).
+///
+/// Every such statement is **already** refused: the lexical indirect-access
+/// gate, or the unsanctioned-store gate, turns it into an unmodeled
+/// instruction, so it was never a `Safe` answer and this record can never make
+/// one. What it changes is the *residual*: an unmodeled statement poisons the
+/// name bindings but leaves the site's leak claim standing, so the same body
+/// that answers `Unknown` when it publishes directly answered provisional
+/// `Unsafe` with a `Leak` when it published through a member. The identity may
+/// well be released through the published object, so that `Leak` is an
+/// overclaim in exactly the sense card `CTWIN-PUBLISH` §3 withdrew for the
+/// direct shape.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct IndirectPublication {
+    /// The static-storage object the store reaches into, named in the
+    /// diagnostic.
+    pub place: String,
+    /// The identifiers on the stored side. Only sites these names denote are
+    /// marked, so an unrelated resource's residual is untouched.
+    pub sources: BTreeSet<String>,
+}
+
+/// The continued-access stores into a publication destination, keyed by line.
+///
+/// `body` and `lines` are the same slice of the token stream, texts and lines;
+/// `destinations` is [`destinations`]'s answer for the same body. The scan is
+/// positive in the same sense the destination scan is: a statement shape it
+/// cannot read contributes nothing and keeps its pre-existing answer.
+pub(crate) fn indirect_publications(
+    body: &[&str],
+    lines: &[usize],
+    destinations: &BTreeSet<String>,
+) -> BTreeMap<usize, IndirectPublication> {
+    let mut found = BTreeMap::new();
+    if destinations.is_empty() {
+        return found;
+    }
+    // `depth` counts only `(` and `[`: a `;` inside a `for` header or an
+    // initializer list does not end a statement, while a brace *always* does,
+    // whatever block nesting it sits at.
+    let mut depth = 0usize;
+    let mut start = 0usize;
+    for index in 0..body.len() {
+        let boundary = match body[index] {
+            "(" | "[" => {
+                depth += 1;
+                false
+            }
+            ")" | "]" => {
+                depth = depth.saturating_sub(1);
+                false
+            }
+            "{" | "}" => true,
+            ";" => depth == 0,
+            _ => false,
+        };
+        if boundary {
+            if let Some(publication) = read_indirect_store(&body[start..index], destinations)
+                && let Some(line) = lines.get(start)
+            {
+                found.insert(*line, publication);
+            }
+            start = index + 1;
+        }
+    }
+    found
+}
+
+/// Read one statement as a continued-access store into `destinations`.
+fn read_indirect_store(
+    statement: &[&str],
+    destinations: &BTreeSet<String>,
+) -> Option<IndirectPublication> {
+    let place = *statement.first()?;
+    if !destinations.contains(place) {
+        return None;
+    }
+    // A *bare* name is the direct shape, which `legacy_c::transfer` decides
+    // flow-sensitively; only a continued access is this scan's business.
+    match (statement.get(1), statement.get(2)) {
+        (Some(&"."), _) | (Some(&"["), _) | (Some(&"-"), Some(&">")) => {}
+        _ => return None,
+    }
+    let assign = simple_assignment(statement)?;
+    let sources = statement[assign + 1..]
+        .iter()
+        .filter(|text| is_name(text))
+        .map(|text| (*text).to_owned())
+        .collect::<BTreeSet<_>>();
+    Some(IndirectPublication {
+        place: place.to_owned(),
+        sources,
+    })
+}
+
+/// The index of a statement's top-level **simple** assignment `=`.
+///
+/// Every punctuator is one token here, so `==`, `!=`, `<=`, `>=` and every
+/// compound assignment are spelled as two adjacent tokens; each is excluded by
+/// looking at the neighbours. A compound assignment is deliberately not a
+/// publication: it reads the destination and stores an arithmetic value, never
+/// a pointer this projection tracks.
+fn simple_assignment(statement: &[&str]) -> Option<usize> {
+    const COMPOUND_HEADS: &[&str] = &["=", "!", "<", ">", "+", "-", "*", "/", "%", "&", "|", "^"];
+    let mut depth = 0usize;
+    for (index, text) in statement.iter().enumerate() {
+        match *text {
+            "(" | "[" | "{" => depth += 1,
+            ")" | "]" | "}" => depth = depth.saturating_sub(1),
+            "=" if depth == 0
+                && statement.get(index + 1) != Some(&"=")
+                && index > 0
+                && !COMPOUND_HEADS.contains(&statement[index - 1]) =>
+            {
+                return Some(index);
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
+/// The publication facts of one function body: the destinations, the
+/// continued-access stores into them, and the source names no publication may
+/// fire on (card `CTWIN-RESIDUALS`).
+///
+/// Grouped into one record because all three are read from the same token
+/// stream at the same moment and travel together onto
+/// [`crate::legacy_c::LegacyCfg`].
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct PublicationFacts {
+    /// The assignment destinations whose object outlives the call.
+    pub destinations: BTreeSet<String>,
+    /// Continued-access stores into one of those objects, keyed by line.
+    pub indirect: BTreeMap<usize, IndirectPublication>,
+    /// Names this function declares as **scalars**.
+    ///
+    /// A candidate entry custody binds every declared formal to a resource
+    /// site, scalar parameters included, so without this exclusion
+    /// `g_count = n;` — measured `Safe` before and after by card
+    /// `CTWIN-PUBLISH` — would refuse on a modelling artefact rather than on a
+    /// published identity. The exclusion is positive and fails closed: a
+    /// function whose declarations the type reader could not read contributes
+    /// no name here, so nothing is excluded there.
+    pub scalar_sources: BTreeSet<String>,
+}
+
+impl PublicationFacts {
+    /// Union two contexts' facts, for the contextual-recursion combine.
+    ///
+    /// Both directions are unions: a destination or a scalar recognised in
+    /// either context is recognised in the combination, and a line recorded in
+    /// either keeps its record. Refusals therefore only ever accumulate.
+    pub fn absorb(&mut self, mut other: Self) {
+        self.destinations.append(&mut other.destinations);
+        self.scalar_sources.append(&mut other.scalar_sources);
+        self.indirect.extend(other.indirect);
+    }
+}
+
 /// The publication destinations of one function body.
 ///
 /// `unit` is the whole translation unit's token texts and `body` the tokens
@@ -252,6 +475,31 @@ pub(crate) fn destinations(
         destinations.insert(name);
     }
     destinations
+}
+
+/// Every publication fact of one function body, read in one pass.
+pub(crate) fn facts(
+    unit: &[&str],
+    body: &[&str],
+    lines: &[usize],
+    formals: &BTreeSet<String>,
+    types: &crate::typed_field_access::FunctionTypes,
+) -> PublicationFacts {
+    let destinations = destinations(unit, body, formals);
+    let indirect = indirect_publications(body, lines, &destinations);
+    // Every identifier this body mentions, plus its formals — whose only
+    // occurrence may be in the parameter list `body` excludes.
+    let scalar_sources = body
+        .iter()
+        .map(|text| (*text).to_owned())
+        .chain(formals.iter().cloned())
+        .filter(|text| is_name(text) && types.declared_is_scalar(text))
+        .collect();
+    PublicationFacts {
+        destinations,
+        indirect,
+        scalar_sources,
+    }
 }
 
 #[cfg(test)]

@@ -1106,10 +1106,10 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         function: "w".to_owned(),
         entry: nodes.len() - 1,
         nodes,
-        // These hand-built CFGs name no static-storage destination, so the
-        // CTWIN-PUBLISH set is empty and the may-alias pre-pass measures
-        // exactly what it measured before that card.
-        publications: BTreeSet::new(),
+        // These hand-built CFGs name no static-storage destination, so every
+        // CTWIN-PUBLISH / CTWIN-RESIDUALS fact is empty and the may-alias
+        // pre-pass measures exactly what it measured before those cards.
+        publications: PublicationFacts::default(),
     }
 }
 
