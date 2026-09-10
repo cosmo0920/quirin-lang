@@ -90,10 +90,59 @@
 //! per unit rather than assumed away; requiring a declaration would refuse
 //! every callee whose prototype this reader cannot see, which is a different
 //! and larger gate.
+//!
+//! # What card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF widened, and what it did not
+//!
+//! Card CONSTRUCTOR-RESIDUALS (§4.2) measured the whole remaining residual of
+//! production `flb_input_chunk_create` down to **one family**: three callees
+//! this reader would not commit to a parameter type of, and therefore withdrew
+//! at every call site with `abi-unreadable-declaration`. Both shapes were
+//! reader boundaries rather than disagreements:
+//!
+//! * a `struct`/`union`/`enum` **defined by the typedef itself** —
+//!   `typedef union { … } pthread_mutex_t;` — which the earlier `read_typedefs`
+//!   abandoned at the aggregate's own opening brace and never recorded;
+//! * a **function-pointer typedef** —
+//!   `typedef int (*msgpack_packer_write)(void *, const char *, size_t);` —
+//!   whose declarator the earlier reader did not parse.
+//!
+//! Both are now read. Neither is a guess:
+//!
+//! * an aggregate definition is an **object type**, and the pointer projection
+//!   of a pointer to one reads no tag and no member — `union tag *` was already
+//!   readable, and an untagged definition differs from it in nothing this
+//!   vocabulary can spell. A *tagged* definition is recorded as the specifier
+//!   pair `["struct", tag]` it is exactly equal to, so it composes with a
+//!   separate `typedef struct tag tag;` instead of colliding with it. As a
+//!   **value** an aggregate still refuses: this vocabulary has no spelling for
+//!   one, exactly as it has none for a `struct tag` value.
+//! * a pointer to function gets its own projection,
+//!   [`FUNCTION_POINTER_ABI_TYPE`], which is not an entry of `POINTER_ABI_TYPES`
+//!   and is not spelled `ptr<…>`. The loader's two custody gates key on the
+//!   leading word `ptr`, so **no custody mode and no owned result can be written
+//!   on it** — the admission is in the refusing direction for exactly the thing
+//!   card LOADER-ABI exists to stop, a declared type buying a mode the C type
+//!   cannot carry.
+//!
+//! Two boundaries stay, narrowed rather than deleted, and are named:
+//!
+//! * **`ABI-FNPTR-OPAQUE`** — `fnptr` does not distinguish two function
+//!   pointers of different signatures, exactly as `ptr<mut, u8>` does not
+//!   distinguish two object pointers of different pointee types. The opacity is
+//!   the vocabulary's, not this reader's, and nothing can be bought with it
+//!   because the spelling carries no custody.
+//! * **`ABI-FNPTR-DEPTH1`** — a pointer *to* a function pointer refuses. It is
+//!   an object pointer and would project into a custody-bearing spelling; no
+//!   declaration in scope needs it, so it stays refused rather than admitted
+//!   untested.
+//!
+//! An *inline* function-pointer parameter — `int (*cb)(void *)` written out at
+//! the parameter position rather than behind a typedef — also still refuses, as
+//! every nested declarator does.
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_contract::contract_loader::{self, DeclaredAbiSignature};
+use qcore_contract::contract_loader::{self, DeclaredAbiSignature, FUNCTION_POINTER_ABI_TYPE};
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::reason::ReasonCategory;
 
@@ -630,66 +679,196 @@ const SUFFIX_INTRODUCERS: &[&str] = &["__attribute__", "__attribute", "__asm__",
 /// How deep a typedef chain may be followed before the reader gives up.
 const TYPEDEF_DEPTH_LIMIT: usize = 8;
 
-/// One resolved typedef: the specifier words of its target and its pointer depth.
-type TypedefTarget = Option<(Vec<String>, usize)>;
+/// What one `typedef` name stands for, as far as this reader will commit.
+///
+/// Card **CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF** replaced the earlier
+/// `Option<(Vec<String>, usize)>` with this enum so that two shapes the earlier
+/// reader recorded as *unreadable* can be committed to: a `struct`/`union`/
+/// `enum` **defined by the typedef itself**, and a pointer to function. The
+/// unreadable class is narrowed, never deleted: [`TypedefTarget::Unresolved`]
+/// keeps every other shape fail-closed exactly as before.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum TypedefTarget {
+    /// Specifier words plus pointer depth — `typedef struct cio_chunk *handle;`.
+    Declarator {
+        specifiers: Vec<String>,
+        stars: usize,
+    },
+    /// A `struct`/`union`/`enum` defined by this typedef and given **no tag**,
+    /// plus pointer depth — `typedef union { … } pthread_mutex_t;`.
+    ///
+    /// A *tagged* definition is not recorded here: it is recorded as the
+    /// [`TypedefTarget::Declarator`] `["struct", tag]` it is exactly equal to,
+    /// so that `typedef struct msgpack_packer { … } msgpack_packer;` and a
+    /// second `typedef struct msgpack_packer msgpack_packer;` in the same unit
+    /// compose to one reading instead of colliding.
+    Aggregate { stars: usize },
+    /// A pointer to function, at exactly one pointer level —
+    /// `typedef int (*msgpack_packer_write)(void *, const char *, size_t);`.
+    FunctionPointer,
+    /// This reader does not commit to the target.
+    Unresolved,
+}
 
 /// Read every `typedef` this reader can commit to.
 ///
 /// A typedef is *transparent* in C — the declared type is the target type — so
 /// resolving one is exact rather than an approximation, which is why the
-/// comparison admits through it. A typedef whose declarator this reader does
-/// not read (a function pointer, an array, several declarators at once) and a
-/// name typedef'd twice to different targets both record `None`, which makes
-/// every declaration using them unreadable.
+/// comparison admits through it. A name typedef'd twice to different targets
+/// records [`TypedefTarget::Unresolved`], which makes every declaration using it
+/// unreadable, and so does every declarator shape below that this reader does
+/// not parse.
+///
+/// Three shapes are committed to:
+///
+/// 1. a plain declarator — specifier words plus trailing `*`s;
+/// 2. an aggregate **definition**, `typedef struct [TAG] { … } *^k NAME;`;
+/// 3. a function pointer, `typedef RET (*NAME)(…);`.
+///
+/// The terminating `;` is now found at brace/paren/bracket depth zero rather
+/// than as the first of `;`/`{`/`}`. That is what lets shapes 2 and 3 be seen
+/// at all — the earlier scan stopped at the aggregate's own opening brace and
+/// abandoned the declaration.
 fn read_typedefs(texts: &[&str]) -> BTreeMap<String, TypedefTarget> {
     let mut typedefs: BTreeMap<String, TypedefTarget> = BTreeMap::new();
     for index in 0..texts.len() {
         if texts[index] != "typedef" {
             continue;
         }
-        let Some(end) = texts
-            .iter()
-            .enumerate()
-            .skip(index + 1)
-            .find(|(_, text)| **text == ";" || **text == "{" || **text == "}")
-            .filter(|(_, text)| **text == ";")
-            .map(|(offset, _)| offset)
-        else {
+        let Some(end) = typedef_end(texts, index + 1) else {
             continue;
         };
         let slice = &texts[index + 1..end];
-        let Some(last) = slice.last().copied().filter(|last| is_c_identifier(last)) else {
+        let Some((name, resolved)) = read_typedef_declarator(slice) else {
             continue;
         };
-        let body = &slice[..slice.len() - 1];
-        let resolved = if body
-            .iter()
-            .any(|text| matches!(*text, "(" | ")" | "[" | "]" | "," | "{" | "}"))
-        {
-            None
-        } else {
-            let stars = body.iter().rev().take_while(|text| **text == "*").count();
-            let specifiers = &body[..body.len() - stars];
-            if specifiers.contains(&"*") {
-                None
-            } else {
-                Some((
-                    specifiers.iter().map(|text| (*text).to_owned()).collect(),
-                    stars,
-                ))
-            }
-        };
-        match typedefs.get(last) {
+        match typedefs.get(name) {
             Some(existing) if *existing == resolved => {}
             Some(_) => {
-                typedefs.insert(last.to_owned(), None);
+                typedefs.insert(name.to_owned(), TypedefTarget::Unresolved);
             }
             None => {
-                typedefs.insert(last.to_owned(), resolved);
+                typedefs.insert(name.to_owned(), resolved);
             }
         }
     }
     typedefs
+}
+
+/// The index of the `;` ending a `typedef` that starts at `start`, at
+/// brace/paren/bracket depth zero.
+fn typedef_end(texts: &[&str], start: usize) -> Option<usize> {
+    let mut depth = 0usize;
+    for (index, text) in texts.iter().enumerate().skip(start) {
+        match *text {
+            "{" | "(" | "[" => depth += 1,
+            "}" | ")" | "]" => depth = depth.checked_sub(1)?,
+            ";" if depth == 0 => return Some(index),
+            _ => {}
+        }
+    }
+    None
+}
+
+/// Read one `typedef` body — the tokens between `typedef` and its `;`.
+///
+/// `None` means "not a shape this reader recognises at all", which leaves the
+/// name absent from the map and therefore unreadable, exactly as before.
+fn read_typedef_declarator<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+    if let Some(read) = read_function_pointer_typedef(slice) {
+        return Some(read);
+    }
+    if let Some(read) = read_aggregate_typedef(slice) {
+        return Some(read);
+    }
+    let last = slice.last().copied().filter(|last| is_c_identifier(last))?;
+    let body = &slice[..slice.len() - 1];
+    let resolved = if body
+        .iter()
+        .any(|text| matches!(*text, "(" | ")" | "[" | "]" | "," | "{" | "}"))
+    {
+        TypedefTarget::Unresolved
+    } else {
+        let stars = body.iter().rev().take_while(|text| **text == "*").count();
+        let specifiers = &body[..body.len() - stars];
+        if specifiers.contains(&"*") {
+            TypedefTarget::Unresolved
+        } else {
+            TypedefTarget::Declarator {
+                specifiers: specifiers.iter().map(|text| (*text).to_owned()).collect(),
+                stars,
+            }
+        }
+    };
+    Some((last, resolved))
+}
+
+/// `typedef RET (*NAME)(PARAMETERS)` — nothing else.
+///
+/// Only a single pointer level is committed to. A `typedef RET (**NAME)(…)`,
+/// a parenthesised declarator that is not exactly `* NAME`, and a return type
+/// carrying its own declarator punctuation are all left to the caller's
+/// fall-through, which records them unreadable.
+fn read_function_pointer_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+    if slice.last() != Some(&")") {
+        return None;
+    }
+    let parameters_open = matching_open(slice, slice.len() - 1)?;
+    let declarator_close = parameters_open.checked_sub(1)?;
+    if slice[declarator_close] != ")" {
+        return None;
+    }
+    let declarator_open = matching_open(slice, declarator_close)?;
+    let ["*", name] = &slice[declarator_open + 1..declarator_close] else {
+        return None;
+    };
+    if !is_c_identifier(name) {
+        return None;
+    }
+    let head = &slice[..declarator_open];
+    if head.is_empty()
+        || head
+            .iter()
+            .any(|text| matches!(*text, "(" | ")" | "[" | "]" | "," | "{" | "}"))
+    {
+        return None;
+    }
+    Some((name, TypedefTarget::FunctionPointer))
+}
+
+/// `typedef struct|union|enum [TAG] { … } *^k NAME` — nothing else.
+///
+/// A tagged definition is recorded as the specifier pair it *is*, so that it
+/// composes with a separate `typedef struct TAG TAG;` instead of colliding with
+/// it. An untagged one has no specifier spelling and is recorded as
+/// [`TypedefTarget::Aggregate`].
+fn read_aggregate_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarget)> {
+    let kind = *slice.first()?;
+    if !matches!(kind, "struct" | "union" | "enum") {
+        return None;
+    }
+    let (tag, brace) = match (slice.get(1), slice.get(2)) {
+        (Some(&"{"), _) => (None, 1),
+        (Some(tag), Some(&"{")) if is_c_identifier(tag) => (Some(*tag), 2),
+        _ => return None,
+    };
+    let close = matching_close(slice, brace)?;
+    let rest = &slice[close + 1..];
+    let stars = rest.iter().take_while(|text| **text == "*").count();
+    let [name] = &rest[stars..] else {
+        return None;
+    };
+    if !is_c_identifier(name) {
+        return None;
+    }
+    let target = match tag {
+        Some(tag) => TypedefTarget::Declarator {
+            specifiers: vec![kind.to_owned(), tag.to_owned()],
+            stars,
+        },
+        None => TypedefTarget::Aggregate { stars },
+    };
+    Some((name, target))
 }
 
 /// Read the declaration whose declarator name stands at `index`, if the tokens
@@ -935,8 +1114,11 @@ fn project_declarator(
             ["struct"] | ["union"] | ["enum"] => false,
             [name] if !ARITHMETIC_WORDS.contains(name) => {
                 match resolve_typedef(name, typedefs, 0) {
-                    Some((target, target_stars)) => {
-                        let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                    Some(TypedefTarget::Declarator {
+                        specifiers,
+                        stars: target_stars,
+                    }) => {
+                        let target = specifiers.iter().map(String::as_str).collect::<Vec<_>>();
                         return project_declarator_resolved(
                             &target,
                             target_stars + stars,
@@ -945,7 +1127,21 @@ fn project_declarator(
                             result,
                         );
                     }
-                    None => false,
+                    // An aggregate defined by its own typedef is an object type
+                    // exactly as a tagged one is, and the pointer projection
+                    // reads no tag, so a pointer to it projects identically.
+                    Some(TypedefTarget::Aggregate {
+                        stars: target_stars,
+                    }) => {
+                        let projection = pointer_projection(target_stars + stars, const_pointee);
+                        return (!projection.is_empty()).then_some(projection);
+                    }
+                    // `ABI-FNPTR-DEPTH1`: a pointer *to* a function pointer is
+                    // an object pointer, and projecting it would put a function
+                    // pointer's storage into a custody-bearing spelling. No
+                    // declaration in scope needs it, so it stays refused.
+                    Some(TypedefTarget::FunctionPointer) => return None,
+                    Some(TypedefTarget::Unresolved) | None => false,
                 }
             }
             rest => rest.iter().all(|word| ARITHMETIC_WORDS.contains(word)),
@@ -985,7 +1181,13 @@ fn project_declarator_resolved(
         [] => false,
         ["struct", tag] | ["union", tag] | ["enum", tag] => is_c_identifier(tag),
         ["struct"] | ["union"] | ["enum"] => false,
-        [name] if !ARITHMETIC_WORDS.contains(name) => resolve_typedef(name, typedefs, 0).is_some(),
+        // A pointee that is itself an aggregate definition or a function
+        // pointer is readable: the projection of *this* pointer reads neither
+        // the tag nor the pointee's own shape.
+        [name] if !ARITHMETIC_WORDS.contains(name) => !matches!(
+            resolve_typedef(name, typedefs, 0),
+            None | Some(TypedefTarget::Unresolved)
+        ),
         rest => rest.iter().all(|word| ARITHMETIC_WORDS.contains(word)),
     };
     if !readable {
@@ -995,16 +1197,28 @@ fn project_declarator_resolved(
     (!projection.is_empty()).then_some(projection)
 }
 
+/// Follow one typedef name to the target this reader commits to, folding the
+/// pointer depth of every link in the chain.
+///
+/// `None` is "this reader does not commit", which is what every unreadable
+/// shape and every over-deep chain collapses to.
 fn resolve_typedef(
     name: &str,
     typedefs: &BTreeMap<String, TypedefTarget>,
     depth: usize,
-) -> Option<(Vec<String>, usize)> {
+) -> Option<TypedefTarget> {
     if depth >= TYPEDEF_DEPTH_LIMIT {
         return None;
     }
-    let (target, stars) = typedefs.get(name)?.clone()?;
-    let core = target
+    let (specifiers, stars) = match typedefs.get(name)? {
+        TypedefTarget::Unresolved => return None,
+        TypedefTarget::FunctionPointer => return Some(TypedefTarget::FunctionPointer),
+        TypedefTarget::Aggregate { stars } => {
+            return Some(TypedefTarget::Aggregate { stars: *stars });
+        }
+        TypedefTarget::Declarator { specifiers, stars } => (specifiers, *stars),
+    };
+    let core = specifiers
         .iter()
         .map(String::as_str)
         .filter(|word| !QUALIFIERS.contains(word) && !DISCARDED_SPECIFIERS.contains(word))
@@ -1012,11 +1226,37 @@ fn resolve_typedef(
     if let [inner] = core.as_slice()
         && !ARITHMETIC_WORDS.contains(inner)
         && !matches!(*inner, "struct" | "union" | "enum")
-        && let Some((deeper, deeper_stars)) = resolve_typedef(inner, typedefs, depth + 1)
     {
-        return Some((deeper, deeper_stars + stars));
+        match resolve_typedef(inner, typedefs, depth + 1) {
+            Some(TypedefTarget::Declarator {
+                specifiers: deeper,
+                stars: deeper_stars,
+            }) => {
+                return Some(TypedefTarget::Declarator {
+                    specifiers: deeper,
+                    stars: deeper_stars + stars,
+                });
+            }
+            Some(TypedefTarget::Aggregate {
+                stars: deeper_stars,
+            }) => {
+                return Some(TypedefTarget::Aggregate {
+                    stars: deeper_stars + stars,
+                });
+            }
+            // A name for a function pointer keeps its one pointer level; a name
+            // for a *pointer to* one is `ABI-FNPTR-DEPTH1` again.
+            Some(TypedefTarget::FunctionPointer) if stars == 0 => {
+                return Some(TypedefTarget::FunctionPointer);
+            }
+            Some(TypedefTarget::FunctionPointer) => return None,
+            Some(TypedefTarget::Unresolved) | None => {}
+        }
     }
-    Some((target, stars))
+    Some(TypedefTarget::Declarator {
+        specifiers: specifiers.clone(),
+        stars,
+    })
 }
 
 /// Project a non-pointer type into the admissible scalar spellings.
@@ -1127,17 +1367,37 @@ fn project_scalar(
             if !ARITHMETIC_WORDS.contains(name)
                 && !matches!(*name, "struct" | "union" | "enum") =>
         {
-            let (target, stars) = resolve_typedef(name, typedefs, 0)?;
-            if stars > 0 {
-                let target = target.iter().map(String::as_str).collect::<Vec<_>>();
-                return project_declarator_resolved(&target, stars, false, typedefs, result);
+            match resolve_typedef(name, typedefs, 0)? {
+                TypedefTarget::Declarator {
+                    specifiers,
+                    stars: 0,
+                } => {
+                    let target = specifiers
+                        .iter()
+                        .map(String::as_str)
+                        .filter(|word| {
+                            !QUALIFIERS.contains(word) && !DISCARDED_SPECIFIERS.contains(word)
+                        })
+                        .collect::<Vec<_>>();
+                    project_scalar(&target, typedefs, result, depth + 1)
+                }
+                TypedefTarget::Declarator { specifiers, stars } => {
+                    let target = specifiers.iter().map(String::as_str).collect::<Vec<_>>();
+                    project_declarator_resolved(&target, stars, false, typedefs, result)
+                }
+                // An aggregate *value* has no spelling in this vocabulary, for
+                // the same reason a `struct tag` value has none. Refused, not
+                // guessed at some integer.
+                TypedefTarget::Aggregate { stars: 0 } => None,
+                TypedefTarget::Aggregate { stars } => {
+                    let projection = pointer_projection(stars, false);
+                    (!projection.is_empty()).then_some(projection)
+                }
+                // The payoff of this card: a pointer to function has its own
+                // projection, which no custody mode can be written on.
+                TypedefTarget::FunctionPointer => Some(BTreeSet::from([FUNCTION_POINTER_ABI_TYPE])),
+                TypedefTarget::Unresolved => None,
             }
-            let target = target
-                .iter()
-                .map(String::as_str)
-                .filter(|word| !QUALIFIERS.contains(word) && !DISCARDED_SPECIFIERS.contains(word))
-                .collect::<Vec<_>>();
-            project_scalar(&target, typedefs, result, depth + 1)
         }
         // An enumeration's compatible integer type is implementation-defined
         // (C11 6.7.2.2p4), so no spelling of this vocabulary is established by
@@ -1151,6 +1411,7 @@ fn matching_close(texts: &[&str], open: usize) -> Option<usize> {
     let (opener, closer) = match *texts.get(open)? {
         "(" => ("(", ")"),
         "[" => ("[", "]"),
+        "{" => ("{", "}"),
         _ => return None,
     };
     let mut depth = 0usize;
@@ -1162,6 +1423,29 @@ fn matching_close(texts: &[&str], open: usize) -> Option<usize> {
                 return None;
             }
             depth -= 1;
+            if depth == 0 {
+                return Some(index);
+            }
+        }
+    }
+    None
+}
+
+/// The index of the token opening the group closed at `close`.
+fn matching_open(texts: &[&str], close: usize) -> Option<usize> {
+    let (opener, closer) = match *texts.get(close)? {
+        ")" => ("(", ")"),
+        "]" => ("[", "]"),
+        "}" => ("{", "}"),
+        _ => return None,
+    };
+    let mut depth = 0usize;
+    for index in (0..=close).rev() {
+        let text = texts[index];
+        if text == closer {
+            depth += 1;
+        } else if text == opener {
+            depth = depth.checked_sub(1)?;
             if depth == 0 {
                 return Some(index);
             }

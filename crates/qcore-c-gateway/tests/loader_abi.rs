@@ -364,6 +364,125 @@ const ROWS: &[Row] = &[
         c: "typedef unsigned long k_size;\ntypedef int k_size;\nvoid k_use(void *p, k_size n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- typedefs that DEFINE their target (card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF)
+    Row {
+        label: "an untagged `union` definition is an object type: a pointer to it is \
+                the same opaque projection (`pthread_mutex_t *`)",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef union { int a; long b; } k_mutex;\nvoid k_use(k_mutex *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "an untagged `struct` definition behind `const` is the const projection",
+        declared: "p: ptr<const, u8>, n: i32",
+        c: "typedef struct { int a; } k_rec;\nvoid k_use(const k_rec *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "a *tagged* definition is recorded as the specifier pair it equals \
+                (`msgpack_packer`)",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef struct k_packer { int a; } k_packer;\nvoid k_use(k_packer *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "so it composes with a separate plain typedef of the same name \
+                instead of colliding with it",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef struct k_packer { int a; } k_packer;\n\
+            typedef struct k_packer k_packer;\n\
+            void k_use(k_packer *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "an untagged definition dereferenced twice is the out-slot projection",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "typedef struct { int a; } k_rec;\nvoid k_use(k_rec **p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "an aggregate *value* still has no spelling in this vocabulary",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "typedef struct { int a; } k_rec;\nvoid k_use(void *p, k_rec n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "an untagged `enum` value keeps the C11 6.7.2.2p4 refusal",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(void *p, k_kind n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "but a pointer to that enumeration is readable, as `enum tag *` already was",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(k_kind *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "a typedef declaring several declarators at once is still not read",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef struct { int a; } k_rec, *k_recp;\nvoid k_use(k_recp p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    // -- function-pointer typedefs (card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF) --
+    Row {
+        label: "a function-pointer typedef projects to `fnptr` (`msgpack_packer_write`)",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef int (*k_write)(void *, const char *, unsigned long);\n\
+            void k_use(void *p, k_write n);",
+        outcome: None,
+    },
+    Row {
+        label: "`ABI-FNPTR-OPAQUE`: a different function signature agrees with the same \
+                spelling, exactly as two object pointers share `ptr<mut, u8>`",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef void (*k_write)(int);\nvoid k_use(void *p, k_write n);",
+        outcome: None,
+    },
+    Row {
+        label: "a chain ending at a function pointer keeps its one pointer level",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef int (*k_write)(void *);\n\
+            typedef k_write k_writer;\n\
+            void k_use(void *p, k_writer n);",
+        outcome: None,
+    },
+    Row {
+        label: "a function pointer is not an integer: the LP64 size coincidence buys nothing",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "typedef int (*k_write)(void *);\nvoid k_use(void *p, k_write n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and it is not an object pointer either",
+        declared: "p: ptr<mut, u8>, n: ptr<mut, u8>",
+        c: "typedef int (*k_write)(void *);\nvoid k_use(void *p, k_write n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "the refusal runs the other way too: `fnptr` is refused for an object pointer",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "void k_use(void *p, char *n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and for an integer",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "void k_use(void *p, unsigned long n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "`ABI-FNPTR-DEPTH1`: a pointer *to* a function pointer stays refused",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "typedef int (*k_write)(void *);\nvoid k_use(k_write *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "a name typedef'd once to a function pointer and once to an integer refuses",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "typedef int (*k_write)(void *);\ntypedef int k_write;\nvoid k_use(void *p, k_write n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
     // -- types with no established spelling --------------------------------
     Row {
         label: "an enumeration's compatible integer type is implementation-defined",
@@ -378,7 +497,7 @@ const ROWS: &[Row] = &[
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     Row {
-        label: "a function-pointer parameter is not read",
+        label: "an *inline* function-pointer parameter is a nested declarator, still not read",
         declared: "p: ptr<mut, u8>, n: i32",
         c: "void k_use(void (*p)(int), int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),

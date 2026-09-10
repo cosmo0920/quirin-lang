@@ -1,0 +1,5 @@
+765cf20c02ca145c6dd845f33d731c92b39b5b267fcb20eada9ed49c396f89a1  measure/runs/final/monkey-source.json
+c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980  measure/runs/final/resource-diagnostics.chunk-contracts.json
+9254e4da8535cc6ecb58d07842fee8f8f1f6029fc78293b43938f65c742ce98e  measure/runs/final/resource-diagnostics.contracts.json
+38839e7f65d40dcc0a2ef08b1127131400f155d15f33c0a15d3f1d8fcc410211  measure/runs/final/resource-diagnostics.json
+feeb7a353f7b068ddce7d9f2fd7254aba765067d93955bff36ac54c8a1525410  measure/runs/final/resource-diagnostics.source-effects.json

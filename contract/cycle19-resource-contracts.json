@@ -3,6 +3,7 @@
   "modules": [
     "qcore/libc/errno.qcore",
     "qcore/libc/memory.qcore",
+    "qcore/libc/pthread_mutex.qcore",
     "qcore/monkey/intrusive_list.qcore",
     "qcore/monkey/memory.qcore",
     "qcore/librdkafka/memory.qcore",

@@ -840,7 +840,9 @@ fn the_modules_under_test_are_the_production_ones() {
     }
     // 9 -> 12 manifest-selected modules, deliberately; 12 -> 14 by card
     // CONSTRUCTOR-RESIDUALS' deliberate addition of `libc/errno.qcore` and
-    // `monkey/intrusive_list.qcore`. This card's six declarations are asserted
+    // `monkey/intrusive_list.qcore`; 14 -> 16 by card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition of
+    // `libc/pthread_mutex.qcore`. This card's six declarations are asserted
     // above by name, so the count moving does not weaken what it pins.
-    assert_eq!(contracts.source_assumptions().len(), 14);
+    assert_eq!(contracts.source_assumptions().len(), 15);
 }

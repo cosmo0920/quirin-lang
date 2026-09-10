@@ -98,8 +98,18 @@ use std::fmt;
 use crate::ResourceId;
 use crate::typed_errors::{Effect, EffectRow};
 
-/// The C ABI projection of contract spec §C04.1, complete. `Unit` is a result
-/// type only, exactly as in the loader.
+/// The C ABI projection of contract spec §C04.1, as far as **this** pass
+/// projects it. `Unit` is a result type only, exactly as in the loader.
+///
+/// This table is independent of `qcore_contract::contract_loader`'s and is
+/// deliberately narrower than §C04.1: card NEIGHBOURS added `f32`/`f64` to the
+/// loader's vocabulary and card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF added
+/// `fnptr`, and neither is parsed here. A spelling absent from this table is
+/// refused by `Q033`, which is the refusing direction — the *contract* is
+/// waived at that surface, the ABI is not — so widening §C04.1 never widens
+/// what unchecked linkage admits. (The doc comment claimed the table was
+/// "complete" from NEIGHBOURS onward, when it already was not; corrected here
+/// rather than left to rot. No behaviour moved with this comment.)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum AbiType {
     Bool,

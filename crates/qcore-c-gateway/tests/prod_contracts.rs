@@ -834,6 +834,9 @@ fn the_modules_under_test_are_the_production_ones() {
     // the "deliberately left undeclared" entry this card recorded for it: the
     // blocker it named — the `flb_errno()` macro's dereference refusing the
     // statement before any contract is consulted — no longer holds.
+    // 14 -> 15 by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition
+    // of `libc/pthread_mutex.qcore`, again for the same reason: the manifest
+    // grew, nothing measured here moved.
     assert!(LOGGING.contains("extern fn flb_errno_print("));
-    assert_eq!(contracts.source_assumptions().len(), 14);
+    assert_eq!(contracts.source_assumptions().len(), 15);
 }

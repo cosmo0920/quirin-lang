@@ -56,6 +56,7 @@ import QCore.DerivedTextAdmission
 import QCore.TwoDerivationAdmission
 import QCore.SymbolicClassAdmission
 import QCore.DeclaredAbiAgreement
+import QCore.TypedefProjection
 import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow
