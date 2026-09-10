@@ -11,6 +11,10 @@
 //! transported nested question that is not the one the corresponding
 //! composition context imported — in both slots, and with the two slots
 //! exchanged.
+//!
+//! The pinned fixture and contracts model an LP64 target; Windows is LLP64, so
+//! this suite shares the direct file-close route's non-Windows boundary.
+#![cfg(not(target_os = "windows"))]
 
 #[path = "fixtures/filesystem_chunk_close_composition.rs"]
 mod fixture;

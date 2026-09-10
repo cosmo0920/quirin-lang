@@ -7,6 +7,10 @@
 //! transport. The decision procedure is unedited and relocated: `evaluate`
 //! reaches the same replay the retained in-process route reaches, over the same
 //! contracts.
+//!
+//! The pinned fixture and contracts model an LP64 target; Windows is LLP64, so
+//! this suite shares the direct file-close route's non-Windows boundary.
+#![cfg(not(target_os = "windows"))]
 
 #[path = "fixtures/filesystem_chunk_close_composition.rs"]
 mod fixture;
