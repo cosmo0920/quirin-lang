@@ -5,7 +5,9 @@
 //! route this one does *not* take, and one sanitized native run compared with
 //! the composed reference **per stream**.
 
-use qcore_compiler::{CompileOptions, CompiledModule, SourceExecutionProfile, SourceFile, compile_files};
+use qcore_compiler::{
+    CompileOptions, CompiledModule, SourceExecutionProfile, SourceFile, compile_files,
+};
 use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_with_source_lines,
 };
@@ -54,7 +56,12 @@ const TASK_EFFECTS: &str = "throws<SpawnError>, spawn, join, may_block";
 
 #[test]
 fn a_module_that_spawns_and_prints_takes_the_composed_route() {
-    let module = compile(&module(IMPORTS, EFFECTS, "        first_result |> print dec;")).unwrap();
+    let module = compile(&module(
+        IMPORTS,
+        EFFECTS,
+        "        first_result |> print dec;",
+    ))
+    .unwrap();
     assert_eq!(
         module.execution_profile,
         SourceExecutionProfile::ComposedStdIoTasksV1
@@ -338,17 +345,30 @@ fn rendering_a_name_nothing_binds_refuses_at_name_resolution() {
 
 #[test]
 fn writing_without_declaring_io_refuses_at_the_join() {
-    let source = module(IMPORTS, TASK_EFFECTS, "        first_result |> log info dec;");
+    let source = module(
+        IMPORTS,
+        TASK_EFFECTS,
+        "        first_result |> log info dec;",
+    );
     assert_eq!(codes(&source), vec!["Q050"]);
 }
 
 #[test]
 fn each_capability_still_needs_its_own_import() {
     for (imports, body) in [
-        ("import std.fmt;\nimport std.logger;\n", "        first_result |> print dec;"),
-        ("import std.fmt;\nimport std.io;\n", "        first_result |> log info dec;"),
+        (
+            "import std.fmt;\nimport std.logger;\n",
+            "        first_result |> print dec;",
+        ),
+        (
+            "import std.fmt;\nimport std.io;\n",
+            "        first_result |> log info dec;",
+        ),
         ("import std.fmt;\nimport std.io;\n", "        flush;"),
-        ("import std.io;\nimport std.logger;\n", "        first_result |> print dec;"),
+        (
+            "import std.io;\nimport std.logger;\n",
+            "        first_result |> print dec;",
+        ),
     ] {
         let source = module(imports, EFFECTS, body);
         assert_eq!(
@@ -415,10 +435,8 @@ fn the_composed_program_matches_the_reference_per_stream() {
     .unwrap()
     .projections();
 
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-task-io-compose-{}",
-        std::process::id()
-    ));
+    let directory =
+        std::env::temp_dir().join(format!("qcore-task-io-compose-{}", std::process::id()));
     let _ = fs::remove_dir_all(&directory);
     fs::create_dir(&directory).unwrap();
     let c = directory.join("module.c");

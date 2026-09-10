@@ -297,7 +297,9 @@ fn max_slot(module: &TaskModule) -> SlotId {
 
 fn operand_slots(operand: &ScalarOperand) -> Vec<SlotId> {
     match operand {
-        ScalarOperand::Slot(slot) | ScalarOperand::Move(slot) | ScalarOperand::Loan { slot, .. } => {
+        ScalarOperand::Slot(slot)
+        | ScalarOperand::Move(slot)
+        | ScalarOperand::Loan { slot, .. } => {
             vec![*slot]
         }
         ScalarOperand::Unit | ScalarOperand::I32(_) => Vec::new(),
@@ -322,7 +324,9 @@ fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
             result_slot,
             value_slot,
         } => vec![*result_slot, *value_slot],
-        TaskInstructionKind::EnterScope { .. } | TaskInstructionKind::ExitScope { .. } => Vec::new(),
+        TaskInstructionKind::EnterScope { .. } | TaskInstructionKind::ExitScope { .. } => {
+            Vec::new()
+        }
         TaskInstructionKind::Join {
             handle,
             outcome_slot,
@@ -341,7 +345,9 @@ fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
 fn terminator_slots(kind: &TaskTerminatorKind) -> Vec<SlotId> {
     match kind {
         TaskTerminatorKind::TryAllocateBuffer {
-            initial, value_slot, ..
+            initial,
+            value_slot,
+            ..
         } => {
             let mut slots = vec![*value_slot];
             slots.extend(operand_slots(initial));

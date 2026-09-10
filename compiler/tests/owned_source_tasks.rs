@@ -41,7 +41,11 @@ static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
             !created,
             "the rollback arm's line appears exactly on the rolled-back run: {stderr}"
         );
-        assert!(stderr.contains(if created { "[INFO] 42\n" } else { "[WARN] 42\n" }));
+        assert!(stderr.contains(if created {
+            "[INFO] 42\n"
+        } else {
+            "[WARN] 42\n"
+        }));
     }
 }
 

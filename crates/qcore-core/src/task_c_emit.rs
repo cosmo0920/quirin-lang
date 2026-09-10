@@ -108,13 +108,14 @@ fn source_lines(
                 BTreeMap::from([(name, format!("s_{slot}.value.scalar"))])
             })
             .unwrap_or_default();
-        match crate::std_io_c_emit::event_statement(&site.event, &expressions, &BTreeMap::new()) {
-            Ok(Some(statement)) => statements.push(statement),
-            // Both arms are unreachable on a checked program: `Ok(None)` is the
-            // entry's return, which is not a placed event, and `Err` is a name
-            // the checker already refused. They are kept as the fail-closed
-            // backstop rather than an `unwrap`.
-            Ok(None) | Err(_) => {}
+        // The two silent cases are unreachable on a checked program: `Ok(None)`
+        // is the entry's return, which is never a placed event, and `Err` is a
+        // name the checker already refused. Emitting nothing for them is the
+        // fail-closed backstop — never an `unwrap` and never a guessed line.
+        if let Ok(Some(statement)) =
+            crate::std_io_c_emit::event_statement(&site.event, &expressions, &BTreeMap::new())
+        {
+            statements.push(statement);
         }
     }
     statements
@@ -376,12 +377,9 @@ pub fn emit_task_c11_with_source_lines(
                     span: instruction.span,
                 });
             }
-            for statement in source_lines(
-                sites,
-                entry_function,
-                *block_id,
-                block.instructions.len(),
-            ) {
+            for statement in
+                source_lines(sites, entry_function, *block_id, block.instructions.len())
+            {
                 writeln!(source, "    {statement}").unwrap();
             }
             let start = source.lines().count() + 1;

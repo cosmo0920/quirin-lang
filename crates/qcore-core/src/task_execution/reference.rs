@@ -742,7 +742,8 @@ pub fn execute_task_module_with_worker_allocations(
     script: &TaskExecutionScript,
     worker_allocations: &BTreeMap<u64, Vec<bool>>,
 ) -> Result<TaskExecutionObservation, TaskDiagnostic> {
-    execute_with_source_lines(checked, script, worker_allocations, &[]).map(|composed| composed.tasks)
+    execute_with_source_lines(checked, script, worker_allocations, &[])
+        .map(|composed| composed.tasks)
 }
 
 /// One reference run of a composed program (card `COMPOSE-CONCURRENCY`).

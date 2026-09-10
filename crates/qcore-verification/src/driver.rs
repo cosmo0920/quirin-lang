@@ -2738,24 +2738,26 @@ fn task_route(
             declares_io: lowered.declares_io,
         };
         Some(
-            composed_tasks::check_composed_task_program(&program).map_err(|refusal| match refusal {
-                composed_tasks::ComposedTaskRefusal::Tasks(errors) => task_diagnostics(errors),
-                composed_tasks::ComposedTaskRefusal::Join(errors) => errors
-                    .into_iter()
-                    .map(|error| {
-                        map_raw_diagnostic(
-                            "Q050",
-                            SemanticPass::ComposedTasks,
-                            Span {
-                                start: error.span.start,
-                                end: error.span.end,
-                            },
-                            error.message,
-                            ranges,
-                        )
-                    })
-                    .collect::<Vec<_>>(),
-            })?,
+            composed_tasks::check_composed_task_program(&program).map_err(
+                |refusal| match refusal {
+                    composed_tasks::ComposedTaskRefusal::Tasks(errors) => task_diagnostics(errors),
+                    composed_tasks::ComposedTaskRefusal::Join(errors) => errors
+                        .into_iter()
+                        .map(|error| {
+                            map_raw_diagnostic(
+                                "Q050",
+                                SemanticPass::ComposedTasks,
+                                Span {
+                                    start: error.span.start,
+                                    end: error.span.end,
+                                },
+                                error.message,
+                                ranges,
+                            )
+                        })
+                        .collect::<Vec<_>>(),
+                },
+            )?,
         )
     } else {
         None
@@ -2768,14 +2770,13 @@ fn task_route(
     // recompute: the join is rederived from the program alone and compared.
     if let Some(composed) = &composed {
         let program = composed.program();
-        composed_tasks::recheck_composed_task_certificate(program, composed.certificate()).map_err(
-            |failure| {
+        composed_tasks::recheck_composed_task_certificate(program, composed.certificate())
+            .map_err(|failure| {
                 vec![plain_diagnostic(
                     "Q050",
                     format!("composed task certificate: {failure}"),
                 )]
-            },
-        )?;
+            })?;
     }
     if !cfg!(any(
         target_os = "linux",
