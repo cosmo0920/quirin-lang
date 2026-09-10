@@ -5768,10 +5768,11 @@
   "workspace_tests": 3134,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 85,
+  "lean_audits": 86,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
+   "AuditBitwise.lean",
    "AuditBorrowLiveness.lean",
    "AuditBoundFieldRead.lean",
    "AuditBranchJoin.lean",
@@ -5862,7 +5863,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-wave-19-hatch-opening-4f24e4/887d0878-db9e-48ed-9d07-ca374209ab1b/scratchpad/gate-wave19-close.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
