@@ -146,6 +146,15 @@ pub(crate) struct TypedAccessModel {
     /// `None` marks a name this reader refuses to resolve.
     typedefs: BTreeMap<String, Option<Vec<String>>>,
     enum_constants: BTreeSet<String>,
+    /// Function names this unit declares, mapped to whether **every**
+    /// declaration of that name the reader read returns exactly one `*` over a
+    /// specifier list resolving to [`DeclaredType::Scalar`] (card
+    /// **CONSTRUCTOR-RESIDUALS**). `false` is absorbing: a second, disagreeing
+    /// or unreadable declaration of the same name retires the fact rather than
+    /// competing with it, and a name absent here was never read at all. Used
+    /// only by the dereference-of-a-call-result rule in
+    /// [`crate::variadic_nested`].
+    scalar_pointer_results: BTreeMap<String, bool>,
 }
 
 /// Declared types of one function's formals and locals.
@@ -187,6 +196,10 @@ const IGNORED_SPECIFIERS: &[&str] = &[
 ];
 
 const REJECTING_QUALIFIERS: &[&str] = &["volatile", "_Atomic"];
+
+/// Declaration suffixes that carry no type and may stand between a
+/// declarator's parameter list and its `;` or body.
+const DECLARATION_SUFFIXES: &[&str] = &["__attribute__", "__attribute", "__asm__", "asm", "__asm"];
 
 /// Keywords that can never name a declarator.
 const RESERVED_WORDS: &[&str] = &[
@@ -293,7 +306,106 @@ impl TypedAccessModel {
         model.read_typedefs(texts);
         model.read_records(texts);
         model.read_enum_constants(texts);
+        model.read_scalar_pointer_results(texts);
         model
+    }
+
+    /// Read the return type of every function declaration or definition this
+    /// reader can commit to (card **CONSTRUCTOR-RESIDUALS**).
+    ///
+    /// The shape read is `PREFIX NAME ( … ) ;` or `PREFIX NAME ( … ) {`, with
+    /// only type-free attribute or assembler suffixes in between — the same
+    /// declarator shape [`crate::legacy_declared_abi`] reads for the ABI
+    /// comparison, except that the *pointee* is classified here instead of
+    /// being projected away. `PREFIX` is walked backwards from the name over
+    /// stars, qualifiers, storage classes, tag keywords and typedef names, and
+    /// an empty prefix means "not a declaration" — which is exactly what
+    /// separates `f(x);` from `int *f(int);`.
+    ///
+    /// Everything the reader will not commit to records `false`, never absence:
+    /// a `typedef`, a prefix whose stars are not exactly one, a specifier list
+    /// classifying to anything but [`DeclaredType::Scalar`], a K&R definition
+    /// (whose parameter list is followed by a declaration run rather than `;`
+    /// or `{`), and a second declaration of the same name that disagrees. A
+    /// name that occurs only as a call is never recorded at all, so the
+    /// admission that reads this map refuses it.
+    fn read_scalar_pointer_results(&mut self, texts: &[&str]) {
+        for index in 0..texts.len() {
+            if !is_name(texts[index]) || texts.get(index + 1) != Some(&"(") {
+                continue;
+            }
+            let Some(close) = matching_close(texts, index + 1, "(", ")") else {
+                continue;
+            };
+            let mut after = close + 1;
+            while let Some(introducer) = texts.get(after) {
+                if !DECLARATION_SUFFIXES.contains(introducer) || texts.get(after + 1) != Some(&"(")
+                {
+                    break;
+                }
+                let Some(suffix_close) = matching_close(texts, after + 1, "(", ")") else {
+                    break;
+                };
+                after = suffix_close + 1;
+            }
+            if !matches!(texts.get(after), Some(&";") | Some(&"{")) {
+                continue;
+            }
+            let mut start = index;
+            while start > 0 {
+                let previous = texts[start - 1];
+                if previous == "*"
+                    || IGNORED_SPECIFIERS.contains(&previous)
+                    || REJECTING_QUALIFIERS.contains(&previous)
+                    || matches!(previous, "struct" | "union" | "enum" | "typedef")
+                    || (is_name(previous) && !RESERVED_WORDS.contains(&previous))
+                    || ARITHMETIC_KEYWORDS.contains(&previous)
+                    || previous == "void"
+                {
+                    start -= 1;
+                    continue;
+                }
+                break;
+            }
+            if start == index {
+                continue;
+            }
+            // A declaration begins a statement. Without this the reader would
+            // mistake `return * f ( ) ;` and `x = a * f ( ) ;` for declarations
+            // of `f`, and — because `false` is absorbing — would retire the
+            // real declaration's fact from somewhere else in the unit. Both
+            // directions stay fail-closed either way; this only keeps the
+            // reader from losing a fact it did read.
+            if start > 0 && !matches!(texts[start - 1], ";" | "{" | "}") {
+                continue;
+            }
+            let prefix = &texts[start..index];
+            let stars = prefix.iter().rev().take_while(|text| **text == "*").count();
+            let specifiers = &prefix[..prefix.len() - stars];
+            if specifiers.is_empty() {
+                continue;
+            }
+            let scalar = stars == 1
+                && !specifiers.contains(&"typedef")
+                && !specifiers.contains(&"*")
+                && matches!(
+                    self.classify_specifiers(specifiers, 0),
+                    DeclaredType::Scalar
+                );
+            self.scalar_pointer_results
+                .entry(texts[index].to_owned())
+                .and_modify(|agreed| *agreed &= scalar)
+                .or_insert(scalar);
+        }
+    }
+
+    /// Whether every declaration of `function` in this unit returns exactly one
+    /// `*` over a scalar type, and there was at least one.
+    pub(crate) fn scalar_pointer_result(&self, function: &str) -> bool {
+        self.scalar_pointer_results
+            .get(function)
+            .copied()
+            .unwrap_or(false)
     }
 
     fn read_typedefs(&mut self, texts: &[&str]) {
@@ -1616,6 +1728,69 @@ mod tests {
                 "a comparison in `{body}` must not bind the base"
             );
         }
+    }
+
+    /// Card **CONSTRUCTOR-RESIDUALS**: the scalar-pointer return class admits a
+    /// single `*` over a specifier list resolving to `Scalar`, and nothing else.
+    /// Every neighbouring spelling is asserted refused in the same unit, so the
+    /// class cannot widen by accident.
+    #[test]
+    fn only_a_single_star_scalar_return_is_a_scalar_pointer_result() {
+        let model = model(
+            "typedef int alias ; typedef int ( * fnptr ) ( void ) ; \
+             struct q { int f ; } ; \
+             int * plain ( void ) ; alias * through ( void ) ; \
+             int * * deep ( void ) ; struct q * rec ( void ) ; void * opaque ( void ) ; \
+             volatile int * hot ( void ) ; int flat ( void ) ; \
+             fnptr * unresolved ( void ) ; enum e * tag ( void ) ;",
+        );
+        for admitted in ["plain", "through", "tag"] {
+            assert!(model.scalar_pointer_result(admitted), "{admitted}");
+        }
+        for refused in [
+            "deep",
+            "rec",
+            "opaque",
+            "hot",
+            "flat",
+            "unresolved",
+            "absent",
+        ] {
+            assert!(!model.scalar_pointer_result(refused), "{refused}");
+        }
+    }
+
+    /// A second, disagreeing declaration retires the fact rather than competing
+    /// with it. Two disagreeing declarations are not writable in valid C, so
+    /// this direction is pinned here rather than in the Clang-backed family.
+    #[test]
+    fn a_disagreeing_second_declaration_retires_the_scalar_pointer_result() {
+        assert!(model("int * f ( void ) ;").scalar_pointer_result("f"));
+        assert!(!model("int * f ( void ) ; struct q * f ( void ) ;").scalar_pointer_result("f"));
+        assert!(!model("struct q * f ( void ) ; int * f ( void ) ;").scalar_pointer_result("f"));
+    }
+
+    /// The reader's precision guard: an expression carrying the declarator
+    /// shape is not a declaration, so it neither records nor retires a fact.
+    #[test]
+    fn an_expression_with_the_declarator_shape_does_not_retire_the_fact() {
+        for expression in [
+            "int * f ( void ) ; int g ( void ) { return * f ( ) ; }",
+            "int * f ( void ) ; int a ; int g ( void ) { int x ; x = a * f ( ) ; return x ; }",
+        ] {
+            assert!(model(expression).scalar_pointer_result("f"), "{expression}");
+        }
+    }
+
+    /// Attribute suffixes stand between the parameter list and the `;` in
+    /// glibc's own declaration of `__errno_location`, after preprocessing.
+    #[test]
+    fn an_attribute_suffix_does_not_hide_the_declaration() {
+        let model = model(
+            "extern int * __errno_location ( void ) \
+             __attribute__ ( ( __nothrow__ , __leaf__ ) ) __attribute__ ( ( __const__ ) ) ;",
+        );
+        assert!(model.scalar_pointer_result("__errno_location"));
     }
 
     #[test]

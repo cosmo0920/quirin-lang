@@ -1,7 +1,9 @@
 {
   "schema_version": 1,
   "modules": [
+    "qcore/libc/errno.qcore",
     "qcore/libc/memory.qcore",
+    "qcore/monkey/intrusive_list.qcore",
     "qcore/monkey/memory.qcore",
     "qcore/librdkafka/memory.qcore",
     "qcore/fluent_bit/hash_table_publication.qcore",

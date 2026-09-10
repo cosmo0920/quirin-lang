@@ -31,8 +31,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     let contracts = load_resource_contract_manifest(&manifest()).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
     // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qcore`,
-    // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`).
-    assert_eq!(contracts.source_assumptions().len(), 12);
+    // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`); 12 -> 14 by
+    // card CONSTRUCTOR-RESIDUALS (`libc/errno.qcore`,
+    // `monkey/intrusive_list.qcore`).
+    assert_eq!(contracts.source_assumptions().len(), 14);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -108,6 +110,16 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("cio_chunk_is_up", 1),
         ("cio_chunk_up_force", 1),
         ("cio_chunk_down", 1),
+        // Card CONSTRUCTOR-RESIDUALS adds three more, listed explicitly for
+        // the same reason and in the same shape. `__errno_location` takes no
+        // parameter at all; `mk_list_add` is the first production declaration
+        // whose callee **publishes** through an argument, and it is declared
+        // `Borrowed` on exactly card HASH-CONTRACTS' measured ground — the
+        // callee frees nothing and takes no custody, so it deletes no caller
+        // obligation, and the publication itself stays unmodeled.
+        ("__errno_location", 0),
+        ("flb_errno_print", 3),
+        ("mk_list_add", 2),
     ] {
         old.insert_contract(
             name,
@@ -382,8 +394,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     };
     check_legacy_safety_certificate(&certificate).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
-    // NEIGHBOURS.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 12);
+    // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 14);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -494,7 +506,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 64 -> 67: card NEIGHBOURS adds `fluent_bit/input_chunk_helpers.qcore`,
     // `fluent_bit/time.qcore` and `chunkio/chunk_residency.qcore`, all three
     // entirely v1 and all three manifest-selected.
-    assert_eq!(modules.len(), 67, "corpus module count");
+    // 67 -> 69: card CONSTRUCTOR-RESIDUALS adds `libc/errno.qcore` and
+    // `monkey/intrusive_list.qcore`, both entirely v1 and both
+    // manifest-selected.
+    assert_eq!(modules.len(), 69, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -545,16 +560,19 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
             }
         }
     }
-    // The twelve manifest-selected resource projections and their 31
+    // The thirteen manifest-selected resource projections and their 33
     // assumptions; every other declaration belongs to another interpreter and
     // is rejected. 5 -> 6 and 19 -> 20 by card HASH-CONTRACTS; 6 -> 9 and
     // 20 -> 25 by card PROD-CONTRACTS; 9 -> 12 and 25 -> 31 by card NEIGHBOURS
     // (two input-chunk helpers, one clock reading, three ChunkIO residency
-    // helpers). The rejected count is unchanged in all three cases, because
-    // every added module is entirely v1.
+    // helpers); 12 -> 14 and 31 -> 34 by card CONSTRUCTOR-RESIDUALS
+    // (`libc/errno.qcore`'s `__errno_location`,
+    // `monkey/intrusive_list.qcore`'s `mk_list_add`, and `flb_errno_print`
+    // added to the existing `fluent_bit/logging.qcore`). The rejected count is
+    // unchanged in all four cases, because every added module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (12, 31, 145)
+        (14, 34, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

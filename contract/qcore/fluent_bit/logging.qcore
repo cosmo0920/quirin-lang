@@ -94,13 +94,13 @@ module contract;
 //     faithful declaration, tail included. It is measured at ZERO call sites in
 //     the whole preprocessed corpus — only its prototype occurs — so declaring
 //     it would be a premise with no measured payoff. Left undeclared.
-//   * `flb_errno_print(int, const char *, int)` (`src/flb_log.c:1321`) is
-//     reached by the `flb_errno()` macro, which expands its first argument to
-//     `errno`, i.e. `(*__errno_location ())`. The DEREFERENCE refuses the
-//     statement before any contract is consulted, so a declaration cannot
-//     decide those sites. This is the same measured-inert situation card
-//     O04-ARMS recorded for `flb_time_now`, and it is left undeclared for the
-//     same reason.
+//   * `flb_log_is_truncated` — see above. Still undeclared.
+//
+// (Card CONSTRUCTOR-RESIDUALS: `flb_errno_print` was in this list and is no
+// longer. PROD-CONTRACTS left it undeclared because the `flb_errno()` macro's
+// dereference refused the statement before any contract was consulted; that
+// blocker is now the gateway's dereference-of-a-call-result admission, so the
+// declaration is reachable and is made below, read against the pinned body.)
 //   * `flb_log_check_level(int, int)` and
 //     `flb_log_suppress_check(int, const char *, ...)`
 //     (`include/fluent-bit/flb_log.h:153` and `:200`) are the plugin-scoped
@@ -128,6 +128,41 @@ contract {
 };
 
 // --- the variadic diagnostic entry point every logging expansion calls -----
+// --- the `flb_errno()` macro's callee ---------------------------------------
+//
+// Card CONSTRUCTOR-RESIDUALS, read from the pinned body (`src/flb_log.c:1321`,
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97):
+//
+//   int flb_errno_print(int errnum, const char *file, int line)
+//   {
+//       char buf[256];
+//       strerror_r(errnum, buf, sizeof(buf) - 1);
+//       flb_error("[%s:%i errno=%i] %s", file, line, errnum, buf);
+//       return errnum;
+//   }
+//
+//   * `errnum` is an `int` by value. It is passed to `strerror_r`, formatted,
+//     and returned. No custody.
+//   * `file` reaches `flb_error`, i.e. `flb_log_print`'s variadic tail, which
+//     this module already declares `resource_variadic_data_tail()`: read into a
+//     function-local buffer, never freed, never retained. No custody.
+//   * `line` is an `int` by value. No custody.
+//   * `buf` is a function-local array. It never leaves.
+//   * The result is `errnum` — a scalar, so `resource_return_none()` is the
+//     faithful and the only faithful result mode.
+//
+// The declaration is at the ONE arity the macro writes; a variadic tail is not
+// declared because the C declaration is not variadic
+// (`include/fluent-bit/flb_log.h:310`).
+extern fn flb_errno_print(errnum: i32, file: ptr<const, u8>, line: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(errnum);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_return_none();
+};
+
 extern fn flb_log_print(level: i32, file: ptr<const, u8>, line: i32, format: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;

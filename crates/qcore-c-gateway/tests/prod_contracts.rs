@@ -828,5 +828,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // `chunkio/chunk_residency.qcore`. This card's own five declarations, its
     // three modules and every assertion above are unchanged: the pin moves
     // because the manifest grew, not because anything measured here did.
-    assert_eq!(contracts.source_assumptions().len(), 12);
+    // 12 -> 14 by card CONSTRUCTOR-RESIDUALS' deliberate addition of
+    // `libc/errno.qcore` and `monkey/intrusive_list.qcore`, for the same
+    // reason. That card also lands `flb_errno_print` in THIS module, retiring
+    // the "deliberately left undeclared" entry this card recorded for it: the
+    // blocker it named — the `flb_errno()` macro's dereference refusing the
+    // statement before any contract is consulted — no longer holds.
+    assert!(LOGGING.contains("extern fn flb_errno_print("));
+    assert_eq!(contracts.source_assumptions().len(), 14);
 }
