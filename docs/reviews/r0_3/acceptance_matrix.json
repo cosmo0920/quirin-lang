@@ -5768,7 +5768,7 @@
   "workspace_tests": 2902,
   "provider_tests": 122,
   "python_evidence_validator_tests": 186,
-  "lean_audits": 77,
+  "lean_audits": 78,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5845,6 +5845,7 @@
    "AuditTeardownAdmission.lean",
    "AuditTransferability.lean",
    "AuditTwoDerivationAdmission.lean",
+   "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
    "AuditW4.lean"
   ],
