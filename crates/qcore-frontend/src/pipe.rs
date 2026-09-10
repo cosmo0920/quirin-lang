@@ -1,5 +1,5 @@
-//! The pipe operator `|>` and the claimed logical-operator tokens (card
-//! `PIPE-OPERATOR`).
+//! The pipe operator `|>` (card `PIPE-OPERATOR`) and the per-file operator
+//! gate (retabled by card `OR-AND-LOWERING`).
 //!
 //! # What a pipe is here
 //!
@@ -118,19 +118,31 @@
 //!   route, which refuses `print` — and remains the already-recorded
 //!   `STD-IO-COMPOSE`.
 //!
-//! # The claimed logical operators
+//! # The operator gate
 //!
-//! `|` (logical or) and `&&` (logical and) are lexed as tokens by this card so
-//! that a later wave inherits them without a collision, and both refuse at
-//! `Q038` with an actionable message. Their short-circuit lowering is *not*
-//! implemented, on a measured blocker rather than a scheduling one: the
-//! executable subset has no branch construct to lower onto. `if` itself
-//! refuses at `Q500` ("structured control flow is not in the Cycle 12
-//! executable subset"), the lowering IR
-//! [`qcore_core::cleanup_lowering::SourceOp`] has no branch constructor, and
-//! there are zero `if` statements in the 294 source-side `.qcore` files.
-//! Follow-ons `OR-LOWERING` and `AND-LOWERING`.
-use crate::frontend::{SemanticPass, SourceDiagnostic};
+//! This module also carries the per-file **operator gate**
+//! ([`check_source_operators`]), which decides where each operator token is
+//! allowed to appear at all. Card `OR-AND-LOWERING` retabled it:
+//!
+//! | Spelling | Token | Status |
+//! |---|---|---|
+//! | `[\|` / `\|]` | `QuantOpen` / `QuantClose` | unchanged — the quant-index alias |
+//! | `\|>` | `PipeInto` | the pipe operator, desugared away before parsing |
+//! | `\|\|` | `PipePipe` | **logical or**, admitted in an `if` condition and lowered there |
+//! | `&&` | `AndAnd` | **logical and**, same, binding tighter than `\|\|` |
+//! | `\|` / `&` / `^` | `Pipe` / `Ampersand` / `Caret` | reserved for bitwise or/and/xor; `Q038` everywhere |
+//!
+//! This **supersedes** card `PIPE-OPERATOR`'s table, in which the single `|`
+//! was logical or and `||` was refused as a misspelling of it, by explicit user
+//! direction. The single characters are freed so a future `BITWISE-OPERATORS`
+//! wave has all three, which also resolves that card's open note that bitwise
+//! or had no spelling left.
+//!
+//! The connectives are admitted **only** in an `if` condition, because that is
+//! the only position where there is something to lower onto: `source.branch.v1`
+//! (card `IF-STATEMENT`) turns them into nested branches, and there is still no
+//! Boolean expression tier anywhere else to hold the value.
+use crate::frontend::{SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 
 /// A refusal recorded while desugaring. Carried on the parsed program and
@@ -719,19 +731,55 @@ fn emit_tail(out: &mut Vec<Token>, tail: &[Token], incoming: &[Token]) -> Result
     Ok(())
 }
 
+/// The byte extents of every `if` condition in one file — the one position
+/// where a logical connective is admitted (card `OR-AND-LOWERING`).
+///
+/// Collected from the parsed statements rather than from a token scan, so
+/// "condition position" means *the parser decided this is a condition*, not
+/// "there is an `if` somewhere to the left". Whether the connective inside is
+/// well formed is `source.branch.v1`'s business (`Q045`); the gate only
+/// declines to refuse it for being a connective.
+fn condition_spans(program: &SourceProgram) -> Vec<Span> {
+    fn walk(block: &SourceBlock, out: &mut Vec<Span>) {
+        for statement in &block.statements {
+            if let StatementKind::If { conditions, .. } = &statement.value {
+                out.extend(conditions.iter().copied());
+            }
+            for nested in statement.value.nested_blocks() {
+                walk(nested, out);
+            }
+        }
+    }
+    let mut spans = Vec::new();
+    for declaration in &program.declarations {
+        if let Some(body) = declaration.value.body.as_ref() {
+            walk(body, &mut spans);
+        }
+    }
+    spans
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
 /// [`crate::module_imports::check_source_imports`]. Two families:
 ///
 /// * the desugarer's own refusals, carried on the program; and
-/// * the claimed-but-unlowered logical operators, whose every occurrence
-///   refuses here at `Q038`.
-pub fn check_source_operators(
-    refusals: &[PipeRefusal],
-    tokens: &[Token],
-) -> Result<(), Vec<SourceDiagnostic>> {
-    let mut diagnostics: Vec<SourceDiagnostic> = refusals
+/// * the operator tokens this revision gives no meaning **here**: the three
+///   single-byte bitwise reservations `|`, `&` and `^` (which have no meaning
+///   anywhere), and the two logical connectives `||` and `&&` outside an `if`
+///   condition. All refuse at `Q038`.
+///
+/// Card `OR-AND-LOWERING` restated `Q038`'s condition rather than adding a
+/// code. Under card `PIPE-OPERATOR` it read "a claimed-but-unlowered logical
+/// operator"; the connectives are now lowered, so it reads "an operator token
+/// used where this revision gives it no meaning", which is the condition this
+/// gate has always decided. No code moved and no refusal was added or removed
+/// at the *program* level: every byte that refused before still refuses.
+pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceDiagnostic>> {
+    let tokens = program.lexical_tokens();
+    let mut diagnostics: Vec<SourceDiagnostic> = program
+        .pipe_refusals()
         .iter()
         .map(|refusal| SourceDiagnostic {
             code: refusal.code,
@@ -741,41 +789,49 @@ pub fn check_source_operators(
         })
         .collect();
 
-    let mut index = 0usize;
-    while index < tokens.len() {
-        let token = &tokens[index];
+    let conditions = condition_spans(program);
+    let in_condition = |span: Span| {
+        conditions
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
+
+    for token in tokens {
         let message = match &token.kind {
-            // `||` lexes as two `Pipe` tokens by the width-two rule. A
-            // C-family programmer who typed it is redirected to the single-`|`
-            // spelling, and the second `|` is consumed so one mistake produces
-            // one diagnostic.
-            TokenKind::Symbol(Symbol::Pipe)
-                if tokens
-                    .get(index + 1)
-                    .is_some_and(|next| is(next, Symbol::Pipe)) =>
-            {
-                index += 1;
-                "QCore spells logical or as a single `|`, not `||`. Its short-circuit lowering is \
-                 follow-on `OR-LOWERING`: the executable subset has no branch construct to lower \
-                 onto, and `if` itself refuses at `Q500`"
+            // The three single-byte reservations. Each is refused everywhere,
+            // including inside a condition: `||` and `&&` are the connectives,
+            // and these characters are being held rather than spelled.
+            TokenKind::Symbol(Symbol::Pipe) => "`|` is reserved for a future bitwise-or operation \
+                 and has no meaning in this revision. QCore spells logical or as `||` \
+                 (follow-on `BITWISE-OPERATORS`)"
+                .to_owned(),
+            TokenKind::Symbol(Symbol::Ampersand) => "`&` is reserved for a future bitwise-and \
+                 operation and has no meaning in this revision. QCore spells logical and as `&&` \
+                 (follow-on `BITWISE-OPERATORS`)"
+                .to_owned(),
+            TokenKind::Symbol(Symbol::Caret) => "`^` is reserved for a future bitwise-xor \
+                 operation and has no meaning in this revision (follow-on `BITWISE-OPERATORS`)"
+                .to_owned(),
+            // The connectives are admitted only where `source.branch.v1` can
+            // lower them: an `if` condition. Elsewhere there is no branch to
+            // lower onto and no expression tier to hold a Boolean value.
+            TokenKind::Symbol(Symbol::PipePipe) if !in_condition(token.span) => {
+                "`||` is the logical-or operator. It is admitted only in an `if` condition, where \
+                 `source.branch.v1` lowers it to a right-nested branch; there is no Boolean \
+                 expression tier to hold its value anywhere else"
                     .to_owned()
             }
-            TokenKind::Symbol(Symbol::Pipe) => "`|` is the logical-or operator. Its short-circuit \
-                 lowering is follow-on `OR-LOWERING`: the executable subset has no branch \
-                 construct to lower onto, and `if` itself refuses at `Q500`"
-                .to_owned(),
-            TokenKind::Symbol(Symbol::AndAnd) => "`&&` is the logical-and operator. Its \
-                 short-circuit lowering is follow-on `AND-LOWERING`: the executable subset has no \
-                 branch construct to lower onto, and `if` itself refuses at `Q500`. A single `&` \
-                 is deliberately reserved for a future binary operation and is not logical and"
-                .to_owned(),
+            TokenKind::Symbol(Symbol::AndAnd) if !in_condition(token.span) => {
+                "`&&` is the logical-and operator. It is admitted only in an `if` condition, where \
+                 `source.branch.v1` lowers it to a nested branch; there is no Boolean expression \
+                 tier to hold its value anywhere else"
+                    .to_owned()
+            }
             // A `|>` that survived desugaring belongs to a pipeline the
             // rewriter refused; that refusal is already in `diagnostics` and
-            // this residual would only duplicate it.
-            _ => {
-                index += 1;
-                continue;
-            }
+            // this residual would only duplicate it. A connective inside a
+            // condition is the branch pass's to accept or refuse at `Q045`.
+            _ => continue,
         };
         diagnostics.push(SourceDiagnostic {
             code: "Q038",
@@ -783,7 +839,6 @@ pub fn check_source_operators(
             span: token.span,
             message,
         });
-        index += 1;
     }
 
     if diagnostics.is_empty() {

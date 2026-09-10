@@ -91,6 +91,7 @@ import QCore.OsEndpointPostState
 import QCore.CapacityBoundary
 import QCore.ExternCall
 import QCore.StdIo
+import QCore.ComposedStdIo
 import QCore.UncheckedLinkage
 import QCore.NativeLibrary
 import QCore.ReasonCategory
@@ -121,6 +122,7 @@ import QCore.DereferencedResult
 import QCore.PublicationCustody
 import QCore.PipeDesugaring
 import QCore.BranchJoin
+import QCore.Connectives
 import QCore.SingleEmissionRoute
 
 /-! The executable formal core of QCore-C revision 0.1. -/

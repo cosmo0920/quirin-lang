@@ -57,6 +57,19 @@ contract {
     ensures normal resource_return_none();
 };
 
+// Card `STD-IO-COMPOSE`: a scalar-returning callee of a **different width**.
+// It is here so the composed route's "this width is not renderable" refusal is
+// reachable and non-vacuous: `source.std-io.v1`'s two renderings are total on
+// `int32_t` and on nothing else, and a value declared `i64` is refused at the
+// rendering rather than emitted through a conversion that does not describe it.
+// Nothing here carries custody in any position.
+extern fn qcore_extern_widen(value: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
 // --- Card EXTERN-F1: the `resource_out` and `resource_stored` call modes. ---
 
 // Fresh custody written through a declared out slot. The declared nullability

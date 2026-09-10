@@ -19,7 +19,7 @@ pub fn check_source_imports(
     // not depend on what it imported. Running the operator gate before the
     // module gates means `x |> flush;` reports the pipe refusal rather than a
     // missing-import diagnostic for a capability the statement never reached.
-    crate::pipe::check_source_operators(program.pipe_refusals(), program.lexical_tokens())?;
+    crate::pipe::check_source_operators(program)?;
     for import in program.imports() {
         ModuleImports::resolve([import.value.as_str()]).map_err(|error| {
             vec![SourceDiagnostic {

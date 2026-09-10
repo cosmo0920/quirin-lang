@@ -136,6 +136,44 @@ pub fn has_source_std_io(program: &SourceProgram) -> bool {
     !std_io_uses(program).is_empty()
 }
 
+/// Every `print`/`log` statement in the entry whose operand is a **name**, with
+/// that statement's span (card `STD-IO-COMPOSE`).
+///
+/// Published so a composing route can resolve those names against its own value
+/// namespace *before* this lowering runs, and refuse a name it cannot render
+/// with a message about the composition rather than one about this route's
+/// literal bindings. A literal operand is absent: it names nothing to resolve.
+///
+/// This reads the same token window and the same operand grammar the lowering
+/// below reads, so the two cannot disagree about which names an entry renders.
+#[must_use]
+pub fn rendered_scalar_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, String)> {
+    let tokens = program.lexical_tokens();
+    let Some(declaration) = program.declarations.iter().find(|declaration| {
+        declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
+    }) else {
+        return Vec::new();
+    };
+    let Some(body) = &declaration.value.body else {
+        return Vec::new();
+    };
+    let mut found = Vec::new();
+    for statement in &body.statements {
+        let window = window(tokens, statement.span);
+        let cursor = match word(&window, 0) {
+            Some(PRINT_KEYWORD) => 2,
+            Some(LOG_KEYWORD) => 3,
+            _ => continue,
+        };
+        if let Some((StdIoOperand::Scalar(name), next)) = operand(&window, cursor)
+            && ends_with_semicolon(&window, next)
+        {
+            found.push((statement.span, name));
+        }
+    }
+    found
+}
+
 /// The span of the first statement naming a rendering, i.e. the first place
 /// this file needs `std.fmt`. `flush` names none, so a logger-only file that
 /// never renders needs no `std.fmt` import — measured, and pinned by a test.
@@ -259,8 +297,34 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
 /// partially lowered middle state.
 pub fn lower_source_std_io(
     parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
+    lower_source_std_io_skipping(parsed, typed, entry, &[], &BTreeMap::new())
+}
+
+/// [`lower_source_std_io`] with a set of entry-body statement spans left to
+/// another model, and a scalar environment that model bound (card
+/// `STD-IO-COMPOSE`).
+///
+/// `lower_source_std_io` is this function with an empty skip set and an empty
+/// environment, so a module on the standard-IO route alone travels the
+/// identical code path: its lowering, its certificate and its emitted C are
+/// byte-identical by construction rather than by comparison.
+///
+/// `provided_scalars` is what makes a *composed* rendering possible at all.
+/// This route's own `let` binds an integer literal; on the composed route every
+/// `let` belongs to the extern model, which owns the value namespace, and the
+/// composing lowering passes back exactly the values whose numbers that model
+/// determined. A value whose number is not determined is deliberately absent,
+/// so it refuses here as an unbound operand rather than being rendered as a
+/// number no model computed.
+pub fn lower_source_std_io_skipping(
+    parsed: &SourceProgram,
     _typed: &TypedSourceProgram,
     entry: &str,
+    skip: &[Span],
+    provided_scalars: &BTreeMap<String, i32>,
 ) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
@@ -340,12 +404,15 @@ pub fn lower_source_std_io(
         return Err(diagnostics);
     };
 
-    let mut scalars: BTreeMap<String, i32> = BTreeMap::new();
+    let mut scalars: BTreeMap<String, i32> = provided_scalars.clone();
     let mut events = Vec::new();
     let mut event_spans = Vec::new();
 
     for statement in &body.statements {
         let span = statement.span;
+        if skip.contains(&span) {
+            continue;
+        }
         if !statement.value.nested_blocks().is_empty() {
             diagnostics.push(diagnostic(
                 "Q030",

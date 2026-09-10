@@ -68,6 +68,15 @@ int32_t qcore_extern_scale(int32_t value, int32_t factor)
     return value * factor;
 }
 
+/* Card `STD-IO-COMPOSE`: the same shape at a different width. It exists so the
+ * composed route's unrenderable-width refusal is reachable against a real
+ * declaration; nothing links it in any accepted fixture, because every fixture
+ * that names it is a refused one. */
+int64_t qcore_extern_widen(int32_t value)
+{
+    return (int64_t) value;
+}
+
 /* --- Card EXTERN-F1: the `resource_out` and `resource_stored` callees. --- */
 
 /* `resource_out(slot, nullable)` with `resource_return_none()` and an i32

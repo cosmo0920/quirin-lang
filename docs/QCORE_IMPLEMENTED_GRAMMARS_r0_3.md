@@ -702,16 +702,38 @@ extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
 entry         = "fn", NAME, "(", ")", "->", "unit",
                 [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
                 "{", { extern_stmt }, "}" ;
-extern_stmt   = acquisition | scalar_binding | plain_call | "return", ";" ;
+extern_stmt   = acquisition | scalar_binding | scalar_literal | plain_call
+              | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", { disposition },
                 "raise", ERROR_NAME, ";" ;
 disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
-scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
+scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
+                 [ "succeeds", [ "-" ], NAT ], ";" ;
+scalar_literal = "let", NAME, "=", [ "-" ], NAT, ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
 ```
+
+Two of those forms are card `STD-IO-COMPOSE`'s and both stay inside the value
+namespace card `PIPE-SCALAR-RESULT` opened. `scalar_literal` binds a number
+written at the site: it calls nothing, so it derives no effect, admits no
+argument, opens no obligation and can carry no custody in any position — the
+narrowest widening that lets a rendered value originate in the module that
+renders it (`EXTERN-SCALAR-LITERAL`). The optional `succeeds` tail on
+`scalar_binding` is the site's **declared outcome**, the same concept the
+acquisition adapter already spells with that word: `succeeds BOOL` declares
+which arm a nullable owned return takes and `succeeds INTEGER` declares which
+number a scalar result carries. The two are told apart by the literal alone, so
+no malformed adapter tail can be read as the other and `Q025` keeps its exact
+shape; no reserved word was added. Neither control is believed by the emitted
+program, which compares the real result and exits 70 on disagreement.
+
+A bound value whose number the source did **not** declare is still a value: it
+may be passed at a declared scalar parameter exactly as before. What it may not
+do is be *rendered*, which is a `source.std-io-extern.v1` rule (§G02i) and not
+one of this route's — this route renders nothing.
 
 `ABI_TYPE` is exactly the resource-contract v1 projection of §G05. The callee's
 contract is **not** written here: it comes from an explicit `CompileOptions`
@@ -1130,6 +1152,50 @@ and no logger configuration model. A `print` inside a `thread scope` or beside
 an extern call stays with the more specific route and keeps its refusal. See
 [the module record](reports/wave17-std-modules/README.md).
 
+## G02i. Composed extern calls and rendered lines
+
+`source.std-io-extern.v1` (card `STD-IO-COMPOSE`). Selected when a module both
+calls a declared `extern fn` (§G02d) and writes one of the standard-IO
+statements (§G02g) — the conjunction of those two routes' own selectors, and
+nothing else.
+
+```ebnf
+composed_module = "import", "std.extern", ";",
+                  { "import", STD_IO_MODULE, ";" },
+                  { error_decl | extern_decl | entry } ;
+composed_stmt   = extern_stmt | io_stmt ;   (* §G02d and §G02g, verbatim *)
+```
+
+**This route adds no statement.** Every statement of a composed entry is lowered
+by one of the two existing lowerings, unedited, chosen by the statement head
+alone: `print`, `log` and `flush` are the standard-IO model's, `return;` is the
+single return *both* models require, and everything else is the extern model's.
+Each lowering runs with the other's statements skipped, so neither ever sees a
+statement it does not model and neither refusal surface moves. A module using
+one feature set is not composed and keeps that route byte for byte.
+
+Route selection places this composition **after every concurrent route and
+before both routes it composes**. A module that prints and spawns, or
+extern-calls and spawns, therefore keeps its concurrent route's existing
+refusal: this card composes two *sequential* models and no other pair.
+
+What the composition decides, and all it decides, is **which value a rendering
+reads**. The extern model owns the value namespace, so the operand names of
+`print`/`log` resolve against its bindings — a bound scalar, never a resource
+identity, which has no operand form at all (§G02g's effect discipline is
+structural and is unchanged here). The operand must be bound by an earlier
+composed step, must be of the one ABI width the two renderings are total on, and
+must be a value whose number the source **determined**: a `scalar_literal`, or a
+`scalar_binding` carrying its declared `succeeds INTEGER` outcome. A bound call
+result with no declared outcome is refused at `Q043`, because rendering it would
+publish a line no model computed.
+
+The composed program's derived effect row is the **union** of the two models'
+rows and must be admitted by the one row the entry declares. Its observation is
+per stream: standard output carries this route's `print` lines *and* the extern
+route's synthesized call trace, in one real order on that one stream, and no
+order between stdout and stderr is modeled — the boundary §G02g already stated.
+
 ## G02h. The pipe operator, and the operator token family
 
 `source.pipe.v1` (card `PIPE-OPERATOR`) is a **parse-time desugaring, not a
@@ -1229,73 +1295,67 @@ assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage, a bare
 temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
 cannot receive the operand — `flush`, which takes none, or a **sink** in a
 non-final position, since only a call stage binds a result;
-`Q038` a claimed-but-unlowered logical operator. Dropping the `;` of the last
-statement in a body is a parse failure (`Q000`) before the pipe pass runs.
+`Q038` an operator token used where this revision gives it no meaning — one of
+the three reserved single-byte spellings `|`, `&`, `^`, or a logical connective
+`||`/`&&` outside an `if` condition (see the table below). Dropping the `;` of
+the last statement in a body is a parse failure (`Q000`) before the pipe pass
+runs.
 
 ### The operator token family
 
 Two-byte spellings are tried before every one-byte spelling, so tokenization is
-longest-match at a fixed width of two. The four vertical-bar-family spellings
-are pairwise distinct byte pairs, so their order in the table is immaterial.
+longest-match at a fixed width of two. The vertical-bar-family spellings are
+pairwise distinct byte pairs (or a single byte), so their order in the table is
+immaterial and the resolution is decided by width alone.
 
 | Spelling | Token | Status |
 |---|---|---|
 | `[\|` / `\|]` | `QuantOpen` / `QuantClose` | **unchanged** — the G04 quant-index delimiter alias |
-| `\|>` | `PipeInto` | **landed** — desugared away before parsing |
-| `\|` | `Pipe` | **claimed, refused at `Q038`** — logical or; short-circuit lowering is follow-on `OR-LOWERING` |
-| `\|\|` | `Pipe` `Pipe` | **refused at `Q038`**, message naming the single-`\|` spelling |
-| `&&` | `AndAnd` | **claimed, refused at `Q038`** — logical and; lowering is follow-on `AND-LOWERING` |
-| `&` | `Ampersand` | **reserved, unchanged** — held for a future binary/bitwise operation; this card gives it no meaning |
+| `\|>` | `PipeInto` | **landed** — desugared away before parsing (§G02h above) |
+| `\|\|` | `PipePipe` | **logical or** — one token; admitted in an `if` condition and lowered there (§G02i) |
+| `&&` | `AndAnd` | **logical and** — same, binding **tighter** than `\|\|` |
+| `\|` | `Pipe` | **reserved** for bitwise or; `Q038` everywhere |
+| `&` | `Ampersand` | **reserved** for bitwise and; `Q038` everywhere |
+| `^` | `Caret` | **reserved** for bitwise xor; `Q038` everywhere |
 
-The asymmetry is deliberate and is the user's declared convention: or is the
-single `|` and and is the double `&&`, because the single `&` is being held for
-binary/bitwise use. Both error messages redirect a C-family reader in the right
-direction — typing `||` says or is `|`; typing `&&` says the single `&` is
-reserved and is not logical and.
+**This table supersedes card `PIPE-OPERATOR`'s, by explicit user direction**
+(card `OR-AND-LOWERING`). That card had decided the single `|` was logical or
+and `&&` logical and, with `&` held for binary use and `||` refused as a
+misspelling of `|`. The retable inverts the or half: **both** logical operators
+are double-character and short-circuit, and **all three** single characters are
+freed for a future bitwise wave. That also answers the open note wave 18 left —
+bitwise or had no spelling left — by giving it `|` back.
 
 `[|` is matched at the `[`, so `[|>` is always `[|` then `>` and never `[` then
-`|>`; `|>` wins over `|` then `>`, so a future or-operator followed by a `>`
-comparison must be spaced or parenthesized (`a | > b`), and `&&&` is `&&` then
-`&`. A bare `|` was a **lex error** before this card; it is still refused, one
-layer later and with an actionable message — a deliberate pin update whose
-load-bearing half (a bare `|` is not a quant delimiter, and no program
-containing one checks) is re-pinned at its new layer.
+`|>`, and `[||]` is the two quant delimiters and never an or-operator. `|>` wins
+over `||` and over `|`, so the ambiguity wave 18 recorded (`a |> b` against a
+hypothetical `a | > b`) now constrains **`BITWISE-OPERATORS`** rather than the
+logical-or wave: `|| >` is unambiguous, a bitwise `| >` would have to be spaced.
+`|||` is `||` then the reserved `|`; `&&&` is `&&` then the reserved `&`.
 
-**Neither operator is lowered here, on a measured blocker rather than a
-scheduling one.** At wave 18 the executable subset had no branch construct to
-lower a short-circuit onto: `if` itself refused at `Q500` ("structured control
-flow is not in the Cycle 12 executable subset"), the lowering IR
-`qcore_core::cleanup_lowering::SourceOp` had no branch constructor — its whole
-operation set was `Acquire`/`Check` under *literal* outcome controls, `Drop`,
-`TransferToResult` and `Return` — and there were zero `if` statements in the 294
-source-side `.qcore` files. There was no boolean expression tier to extend
-either.
-
-**That blocker is retired.** Card `IF-STATEMENT` landed the branch construct as
-§G02i below: `SourceOp::Branch` and `CfgTerminator::Branch` exist, nested
-branching is admitted inside a branch arm, and the custody join is checked by
-four independent models. Lowering the logical operators onto it — and retabling the operator
-family, since single `|` and `&` are reserved for future **binary/bitwise**
-operations while logical or is `||` and logical and is `&&` — is the successor
-card's work. Nothing about the token claims or the `Q038` refusals in this
-section changed when `IF-STATEMENT` landed: it neither reads nor writes either
-token, and §G02i's condition tier deliberately has no connectives.
-
-**Open, and deliberately not answered here:** the wave-18 table above claims the
-single `|` for logical or and holds `&` for bitwise and, which leaves bitwise
-*or* with no symbol. The successor card retables the family — `||` for or, `&&`
-for and, single `|` and `&` reserved for binary/bitwise use — and that
-retabling, together with the bitwise spellings, is its decision to make.
-Nothing recorded here forecloses the reasonable options. See
-[the operator record](reports/wave18-pipe-operator/README.md).
+**Two deliberate pin updates, neither changing any program's verdict.** A bare
+`|` was a lex error before card `PIPE-OPERATOR` and a `Q038` refusal after it; it
+stays a `Q038` refusal, with the message now redirecting to `||` rather than
+claiming the token. A bare `^` was a lex error (`unexpected character '^'`) and
+is now a token whose every occurrence refuses at `Q038` — the same move one card
+later, for the same reason: an actionable message. A bare `&` refused downstream
+in whichever route claimed the module and now refuses at the gate, which is where
+the reservation can be stated. In all three cases the set of accepted programs is
+unchanged and only the layer and the message move. The census behind the retable
+is in [the card record](reports/wave19-or-and-lowering/README.md): `[|`, `|]`,
+`||`, `&` outside comments and `^` appear in **no** `.qcore` file at all, and
+`|>` only in the four pipe fixtures.
 
 ## G02i. The source branching construct
 
 ```ebnf
-stmt    = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
-cond    = "true" | "false" | operand, cmp, operand ;
-operand = [ "-" ], INTEGER ;
-cmp     = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+stmt     = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
+cond     = disjunct, { "||", disjunct } ;         (* left-associative *)
+disjunct = primary,  { "&&", primary  } ;         (* binds tighter    *)
+primary  = "(", cond, ")" | leaf ;
+leaf     = "true" | "false" | operand, cmp, operand ;
+operand  = [ "-" ], INTEGER ;
+cmp      = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 ```
 
 `source.branch.v1` (card `IF-STATEMENT`), on the **sequential route only**. The
@@ -1318,10 +1378,39 @@ never follows a `}`.
 **The condition is decidable at check time**, exactly as the `succeeds` and
 `passes` literal outcome controls beside it are, because the translation
 certificate compares one reference observation, one CFG observation and one
-observation parsed from the compiled program's own output. The tier is
-deliberately minimal and has **no connectives**: `||` and `&&` lower *onto* this
-construct in a later card rather than extending this grammar, and single `|` and
-`&` are reserved for future binary/bitwise operations.
+observation parsed from the compiled program's own output. Every leaf is closed
+over literals, so evaluation stays state-free however the leaves are combined.
+
+**The connectives (card `OR-AND-LOWERING`).** Card `IF-STATEMENT` shipped the
+tier with one leaf and no connectives, naming the successor card that would add
+them. `||` and `&&` are now admitted **in a condition and nowhere else**, and
+they are a pure desugaring onto this construct:
+
+```text
+if (A || B) T else E   ==>   if (A) { T } else if (B) { T } else { E }
+if (A && B) T else E   ==>   if (A) { if (B) { T } else { E } } else { E }
+```
+
+The arms are lowered **once** and their operation vectors duplicated into nested
+branches, so a connective adds no statement, no acquisition and no checker rule;
+`qcore_core` is byte-unchanged by the card, and the emitted C is byte-identical
+to the hand-lowered twin's. Short-circuit is structural rather than asserted —
+the right operand is the condition of a branch nested inside an arm of the left
+operand's — though it is not *observable*, because every leaf is a pure literal
+comparison; `IF-RUNTIME-CONDITION` is what would make it so. Every connective
+level runs the same four-model custody join, so a connective cannot launder a
+`Q046` disagreement: `if (A || B) { drop a; }` is the conditional leak exactly as
+`if (A) { drop a; }` is.
+
+**Precedence is declared** — `&&` binds tighter than `||`, both left-associative,
+parentheses group — and is pinned against a fully parenthesized twin. One
+measured consequence is recorded rather than designed: for a *homogeneous* chain
+the lowering is associative on the nose, so `(A || B) || C` and `A || (B || C)`
+emit identical C and the associativity declaration is load-bearing only where the
+two connectives mix. `|>` is **not** in the tier and is never given a precedence
+relative to `||`: a condition mixing them is refused at `Q045`. Single `|`, `&`
+and `^` stay reserved for future bitwise operations inside a condition exactly as
+outside one (`Q038`).
 
 **The branch is nonetheless real.** Both arms are validated in full, both are
 emitted as basic blocks, and the emitted C computes the comparison itself —
@@ -1342,15 +1431,20 @@ already shipped, each with its own mismatch error.
 **Refusals.** `Q044` a shape this profile does not model — a `return` inside an
 arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), or
 inconsistent block and condition counts; `Q045` a condition outside the tier —
-a chained comparison, an arithmetic expression, an empty condition, a
+a chained comparison, an arithmetic expression, a pipeline, a unary negation, an
+empty condition, an unbalanced parenthesis, a connective missing an operand, a
 non-integer operand; `Q046` the arms do not reach the join in the same custody
 state. A name written in a condition is collected as a referenced name and
-refuses earlier at `Q013`. An acquisition inside an arm is refused by the
+refuses earlier at `Q013`. A reserved single-byte operator refuses at `Q038`
+before the tier is consulted, and so does a connective written outside a
+condition. An acquisition inside an arm is refused by the
 pre-existing ownership join at `Q103`, inherited unedited (`IF-ARM-ACQUIRE`).
 Every other route keeps its own refusal, measured: `Q030` on `source.std-io.v1`,
 the extern route's nested-block refusal on `source.extern-call.v1`, and `Q500`
-on the copy-scalar task profile. See
-[the branch record](reports/wave19-if-statement/README.md) and
+on the copy-scalar task profile — and a connective in the condition does not
+change which refusal answers. See
+[the branch record](reports/wave19-if-statement/README.md),
+[the connective record](reports/wave19-or-and-lowering/README.md) and
 [the design note](design/SOURCE_BRANCH_V1.md).
 
 ## G03. Source parameter usage grades

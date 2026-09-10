@@ -99,6 +99,51 @@ pub fn interpret_std_io_program(
     Ok(observation)
 }
 
+/// The C statement one standard-IO event lowers to, or `None` for an event
+/// that emits nothing.
+///
+/// `expressions` maps each scalar name to the C expression that denotes it, so
+/// the caller decides where a rendered value lives: this route declares its own
+/// `s_NAME` copies of the literals it binds, and the composed route
+/// (card `STD-IO-COMPOSE`) points at the extern model's `vN` variables instead.
+/// The rendering itself — the conversion, the level tag, the stream, the
+/// `fflush` — is decided here and nowhere else, so both routes render one way.
+///
+/// `Err(name)` is a name the caller supplied no expression for. The checker
+/// already refuses that; refusing again is what keeps a backend from naming a
+/// variable it never declared.
+pub fn event_statement(
+    event: &StdIoEvent,
+    expressions: &std::collections::BTreeMap<String, String>,
+) -> Result<Option<String>, String> {
+    let expression = |operand: &StdIoOperand| -> Result<String, String> {
+        match operand {
+            StdIoOperand::Literal(value) => Ok(format!("INT32_C({value})")),
+            StdIoOperand::Scalar(name) => {
+                expressions.get(name).cloned().ok_or_else(|| name.clone())
+            }
+        }
+    };
+    match event {
+        StdIoEvent::Print { rendering, operand } => Ok(Some(io_emit::write_line(
+            Stream::Out,
+            rendering.c_conversion(),
+            &[&rendering.c_operand(&expression(operand)?)],
+        ))),
+        StdIoEvent::Log {
+            level,
+            rendering,
+            operand,
+        } => Ok(Some(io_emit::write_line(
+            Stream::Err,
+            &format!("[{}] {}", level.tag(), rendering.c_conversion()),
+            &[&rendering.c_operand(&expression(operand)?)],
+        ))),
+        StdIoEvent::Flush => Ok(Some(io_emit::flush(Stream::Err))),
+        StdIoEvent::Return => Ok(None),
+    }
+}
+
 const INCLUDES: &str = "\
 #include <inttypes.h>\n\
 #include <stdint.h>\n\
@@ -131,54 +176,31 @@ pub fn emit_std_io_c11(
         let _ = writeln!(source, "    int32_t s_{name} = INT32_C({value});");
     }
 
+    // Each name denotes this route's own declared copy of the literal it was
+    // bound to. The rendering itself is `event_statement`'s, which the composed
+    // route shares (card `STD-IO-COMPOSE`).
+    let expressions = program
+        .scalars
+        .keys()
+        .map(|name| (name.clone(), format!("s_{name}")))
+        .collect::<std::collections::BTreeMap<_, _>>();
     for (index, event) in program.events.iter().enumerate() {
+        // Rechecked here so the backend never renders a name the program does
+        // not bind.
         match event {
-            StdIoEvent::Print { rendering, operand } => {
-                let expression = match operand {
-                    StdIoOperand::Literal(value) => format!("INT32_C({value})"),
-                    StdIoOperand::Scalar(name) => {
-                        // Rechecked here so the backend never renders a name
-                        // the program does not bind.
-                        let _ = operand_value(program, index, operand)?;
-                        format!("s_{name}")
-                    }
-                };
-                let _ = writeln!(
-                    source,
-                    "    {}",
-                    io_emit::write_line(
-                        Stream::Out,
-                        rendering.c_conversion(),
-                        &[&rendering.c_operand(&expression)],
-                    )
-                );
+            StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => {
+                let _ = operand_value(program, index, operand)?;
             }
-            StdIoEvent::Log {
-                level,
-                rendering,
-                operand,
-            } => {
-                let expression = match operand {
-                    StdIoOperand::Literal(value) => format!("INT32_C({value})"),
-                    StdIoOperand::Scalar(name) => {
-                        let _ = operand_value(program, index, operand)?;
-                        format!("s_{name}")
-                    }
-                };
-                let _ = writeln!(
-                    source,
-                    "    {}",
-                    io_emit::write_line(
-                        Stream::Err,
-                        &format!("[{}] {}", level.tag(), rendering.c_conversion()),
-                        &[&rendering.c_operand(&expression)],
-                    )
-                );
+            StdIoEvent::Flush | StdIoEvent::Return => {}
+        }
+        match event_statement(event, &expressions) {
+            Ok(Some(statement)) => {
+                let _ = writeln!(source, "    {statement}");
             }
-            StdIoEvent::Flush => {
-                let _ = writeln!(source, "    {}", io_emit::flush(Stream::Err));
+            Ok(None) => {}
+            Err(name) => {
+                return Err(StdIoEmissionRefusal::UnboundScalar { event: index, name });
             }
-            StdIoEvent::Return => {}
         }
     }
 

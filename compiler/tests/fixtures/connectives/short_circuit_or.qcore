@@ -1,0 +1,26 @@
+error Failure { Failed; }
+
+// The logical connectives `||` and `&&` in an `if` condition (card
+// `OR-AND-LOWERING`), lowered onto `source.branch.v1` (card `IF-STATEMENT`).
+//
+// A connective is a **pure token-tier construct**: it adds no operation, no
+// checker rule and no core IR node. `A || B` is the right-nested branch a
+// reader would have written by hand as `if (A) { … } else if (B) { … } else
+// { … }`, and this fixture's emitted C is byte-identical to that twin's.
+//
+// Short-circuit is structural rather than asserted: `2 == 2` is the condition
+// of a branch that sits inside the *else* arm of `3 < 5`'s branch, so the
+// emitted C reaches it on exactly one path.
+//
+// The custody join is unmoved. Each connective level runs the same four-model
+// join, so the arms of this branch must still agree — which is why both of
+// them release, and why releasing on only one is still the conditional leak.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5 || 2 == 2) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

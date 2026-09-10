@@ -17,7 +17,7 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
-use qcore_core::{std_io, std_io_c_emit};
+use qcore_core::{composed_std_io, composed_std_io_c_emit, std_io, std_io_c_emit};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -160,6 +160,15 @@ pub enum CheckedSourceModule {
     /// `STD-MODULES`). The certificate is the evidence; the lowered program is
     /// retained beside it so a consumer can re-derive rather than believe it.
     StandardIo(Box<CheckedStdIoModule>),
+    /// One entry function checked under `source.std-io-extern.v1` (card
+    /// `STD-IO-COMPOSE`): a module that both calls declared extern functions and
+    /// prints. All three halves are retained separately, because all three were
+    /// required and none was derived from another — the extern call sites by the
+    /// core extern checker, the surrounding custody, flow and effect obligations
+    /// by the established sequential passes, and the rendered lines by the
+    /// standard-IO checker — with the composed certificate carrying both
+    /// projections' own certificates verbatim beside the join.
+    Composed(Box<CheckedComposedModule>),
 }
 
 /// A checked `source.std-io.v1` module.
@@ -173,6 +182,21 @@ pub enum CheckedSourceModule {
 pub struct CheckedStdIoModule {
     pub lowered: qcore_frontend::source_std_io::LoweredStdIoModule,
     pub certificate: std_io::StdIoCertificate,
+}
+
+/// A checked `source.std-io-extern.v1` module (card `STD-IO-COMPOSE`).
+///
+/// Unlike [`CheckedStdIoModule`], this one **does** carry sequential evidence:
+/// its extern half binds real identities, so the custody, flow and cleanup
+/// passes have something to check and they run exactly as they do on the extern
+/// route.
+#[derive(Clone, Debug)]
+pub struct CheckedComposedModule {
+    pub lowered: qcore_frontend::source_composed::LoweredComposedModule,
+    pub certificate: composed_std_io::ComposedCertificate,
+    /// The same entry re-checked by every established sequential pass, with the
+    /// declared extern summaries supplied as call-site assumptions.
+    pub sequential: CheckedProgram,
 }
 
 /// A checked `source.extern-call.v1` module.
@@ -233,7 +257,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
         }
     }
 
@@ -248,7 +273,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -260,7 +286,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -275,7 +302,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -287,7 +315,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -299,7 +328,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -311,8 +341,27 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::Composed(_) => None,
             Self::StandardIo(module) => Some(module),
+        }
+    }
+
+    /// The composed evidence of a module whose *whole* checked evidence is the
+    /// composition. A composed module answers `None` to `as_extern_calls` and
+    /// `as_standard_io` on the `ComposedEpochTasks` precedent: each of its
+    /// certificates is one half of a checked pair, and a consumer that wants
+    /// one must ask for the composition and see the other beside it.
+    pub fn as_composed(&self) -> Option<&CheckedComposedModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
+            Self::Composed(module) => Some(module),
         }
     }
 
@@ -335,6 +384,9 @@ impl CheckedSourceModule {
             // And likewise for standard IO: one entry is lowered, and the
             // profile admits no calls at all.
             Self::StandardIo(_) => 1,
+            // And likewise for the composition: one entry is lowered, by two
+            // models rather than one.
+            Self::Composed(_) => 1,
         }
     }
 }
@@ -379,6 +431,12 @@ pub enum SourceExecutionProfile {
     /// bundled modules (card `STD-MODULES`). The route's operand grammar admits
     /// no resource, so its derived effect row is exactly `{Io}`.
     StandardIoV1,
+    /// `source.std-io-extern.v1`: the checked composition of
+    /// `source.extern-call.v1` and `source.std-io.v1` in one entry (card
+    /// `STD-IO-COMPOSE`). Both models check their own half unmodified and the
+    /// composition checks only where they meet, so this profile's guarantees
+    /// are exactly the conjunction of the two it composes plus the join.
+    ComposedStdIoExternV1,
 }
 
 #[derive(Clone, Debug)]
@@ -412,6 +470,11 @@ impl CompiledModule {
     pub fn declared_assumptions(&self) -> &[extern_call::ExternAssumption] {
         match &self.checked {
             CheckedSourceModule::ExternCalls(module) => &module.certificate.assumptions,
+            // Card `STD-IO-COMPOSE`: composing must not lose the surface at
+            // which a reader sees an unchecked-linkage waiver. The composed
+            // certificate carries the extern projection's own premise list
+            // verbatim, so this is the same list the extern route publishes.
+            CheckedSourceModule::Composed(module) => &module.certificate.externs.assumptions,
             _ => &[],
         }
     }
@@ -603,6 +666,15 @@ pub fn compile_files_with_registry(
     if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
         return compile_task_source(&parsed, &typed, mode, options, &ranges);
     }
+    // Selected after every concurrent route and before both routes it composes
+    // (card `STD-IO-COMPOSE`). The order is what makes the composition safe to
+    // add: a module that spawns *and* prints, or spawns *and* extern-calls,
+    // never reaches here, so both concurrency exclusions keep their existing
+    // refusals; and a module using one of the two composed feature sets fails
+    // this conjunction and falls through to that route byte for byte.
+    if qcore_frontend::source_composed::has_source_composed(&parsed) {
+        return compile_composed_source(&parsed, &typed, mode, options, &ranges);
+    }
     // Selected after the concurrent routes on purpose: a module that both
     // spawns and calls an extern function stays with the task route, which
     // keeps its existing refusal. Lifting that is a separate card, because a
@@ -611,11 +683,13 @@ pub fn compile_files_with_registry(
         return compile_extern_source(&parsed, &typed, mode, options, &ranges);
     }
     // Selected last among the special routes, on the same principle as the
-    // extern route above: a module that both prints and spawns, or both prints
-    // and calls an extern function, stays with the more specific model, which
-    // keeps its existing refusal for the statements it does not model. Lifting
-    // either composition is a separate card — a worker and an extern callee are
-    // each a separate checked model.
+    // extern route above: a module that both prints and spawns stays with the
+    // more specific model, which keeps its existing refusal for the statements
+    // it does not model. Lifting *that* composition is still a separate card —
+    // a worker is a separate checked model. The print-and-extern-call
+    // composition is no longer a refusal: card `STD-IO-COMPOSE` routes it above,
+    // and reaching this line means the module uses this route's statements and
+    // no extern call.
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -778,7 +852,7 @@ fn synthesize_semantics(
 /// arm's contribution to one existing model, and each of those models already
 /// carries its own branch join — `OwnershipOp::Branch`, `ErrorOp::Branch`,
 /// `UsageExpr::Branch` and `Flow::join_branches` all predate this card.
-#[derive(Default)]
+#[derive(Clone, Default)]
 struct SequenceLowering {
     lowering: Vec<SourceOp>,
     ownership: Vec<OwnershipOp>,
@@ -1270,14 +1344,14 @@ impl FunctionLowering<'_> {
             ));
         };
         let condition_tokens = statement_tokens(self.parsed.source(), *condition_span)?;
-        let condition = parse_branch_condition(&condition_tokens).ok_or_else(|| {
+        let condition = parse_condition_tree(&condition_tokens).ok_or_else(|| {
             branch_diagnostic(
                 "Q045",
                 *condition_span,
-                "`source.branch.v1` admits `true`, `false` or a comparison of two signed \
-                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`) as a condition. \
-                 A name, a call, a connective (`||`, `&&`) or a parenthesised sub-condition \
-                 is outside the decidable tier",
+                "`source.branch.v1` admits `true`, `false` and comparisons of two signed \
+                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`), combined with \
+                 the connectives `&&` and `||` and grouped with parentheses, as a condition. \
+                 A name, a call, a pipeline or any other operator is outside the decidable tier",
             )
         })?;
 
@@ -1325,64 +1399,138 @@ impl FunctionLowering<'_> {
             reachable: then_counters.reachable || else_counters.reachable,
         };
 
-        // Each model's own branch join. All four predate this card: only
-        // `SourceOp::Branch` is new, because `cleanup_lowering` was the one
-        // linear IR with no branch constructor.
-        let joined_flow = then_output
-            .flow
-            .join_branches(&else_output.flow)
-            .map_err(|error| {
-                branch_diagnostic(
-                    "Q046",
-                    span,
-                    format!(
-                        "the arms of this branch do not join in the resource-flow model: {error}"
-                    ),
-                )
-            })?;
+        // Card `OR-AND-LOWERING`: a condition carrying `&&` or `||` is a *tree*
+        // of decidable leaves, and each connective becomes one more branch over
+        // the same two arms. The arms are lowered exactly once above and their
+        // operation vectors are duplicated structurally here, so a connective
+        // adds no statement to the program and no rule to any checker.
+        let node = build_connective_branch(span, &condition, &then_output, &else_output)?;
         output.flow = output
             .flow
-            .then(&joined_flow)
+            .then(&node.flow)
             .map_err(|error| diagnostic(SemanticPass::ResourceFlow, span, error.to_string()))?;
-        output.lowering.push(SourceOp::Branch {
-            condition,
-            then_arm: then_output.lowering,
-            else_arm: else_output.lowering,
-        });
-        output.ownership.push(OwnershipOp::Branch {
-            then_ops: then_output.ownership,
-            else_ops: else_output.ownership,
-        });
-        output.error_operations.push(ErrorOp::Branch {
-            then_ops: then_output.error_operations,
-            else_ops: else_output.error_operations,
-        });
-        // An arm admits no call, so every arm demand is a non-exiting one and
-        // the pair's flag is `false` for the joined node too.
-        if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
-            output.demands.push((
-                UsageExpr::Branch {
-                    condition: Box::new(UsageExpr::Unit),
-                    then_expression: Box::new(UsageExpr::Sequence(
-                        then_output
-                            .demands
-                            .into_iter()
-                            .map(|(expression, _)| expression)
-                            .collect(),
-                    )),
-                    else_expression: Box::new(UsageExpr::Sequence(
-                        else_output
-                            .demands
-                            .into_iter()
-                            .map(|(expression, _)| expression)
-                            .collect(),
-                    )),
-                },
-                false,
-            ));
-        }
+        output.lowering.extend(node.lowering);
+        output.ownership.extend(node.ownership);
+        output.error_operations.extend(node.error_operations);
+        output.demands.extend(node.demands);
         Ok(())
     }
+}
+
+/// `source.branch.v1`'s condition after card `OR-AND-LOWERING`: a tree of
+/// decidable leaves joined by the two short-circuit connectives.
+///
+/// The connectives exist **only** in this front-end tree. They are eliminated
+/// by [`build_connective_branch`] into nested [`SourceOp::Branch`] nodes before
+/// any checked model sees them, so `qcore_core` is byte-unchanged by this card
+/// and no checker learned a new rule.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum ConditionTree {
+    Leaf(BranchCondition),
+    /// `LEFT && RIGHT`, binding tighter than [`Self::Or`].
+    And(Box<ConditionTree>, Box<ConditionTree>),
+    /// `LEFT || RIGHT`.
+    Or(Box<ConditionTree>, Box<ConditionTree>),
+}
+
+/// Turn one condition tree into the nested branch a reader would have written
+/// by hand, over the two arms `then_output` and `else_output`.
+///
+/// The two rewrites are the textbook short-circuit ones, and the *reason* they
+/// are short-circuit here is structural rather than asserted: the right operand
+/// is a condition of a branch that sits **inside** an arm of the left operand's
+/// branch, so it is evaluated on exactly one of the two paths.
+///
+/// ```text
+/// if (A || B) T else E   ==>   if (A) { T } else { if (B) { T } else { E } }
+/// if (A && B) T else E   ==>   if (A) { if (B) { T } else { E } } else { E }
+/// ```
+///
+/// Every level runs the same four-model join the single-leaf case runs, so a
+/// connective cannot smuggle a custody disagreement past the gate: an arm pair
+/// that refuses at `Q046` unconnected refuses at every level connected.
+fn build_connective_branch(
+    span: Span,
+    condition: &ConditionTree,
+    then_output: &SequenceLowering,
+    else_output: &SequenceLowering,
+) -> Result<SequenceLowering, SourceDiagnostic> {
+    match condition {
+        ConditionTree::Leaf(leaf) => join_branch_arms(span, *leaf, then_output, else_output),
+        ConditionTree::And(left, right) => {
+            let inner = build_connective_branch(span, right, then_output, else_output)?;
+            build_connective_branch(span, left, &inner, else_output)
+        }
+        ConditionTree::Or(left, right) => {
+            let inner = build_connective_branch(span, right, then_output, else_output)?;
+            build_connective_branch(span, left, then_output, &inner)
+        }
+    }
+}
+
+/// One branch node: the four-model join card `IF-STATEMENT` landed, factored
+/// out so each connective level runs it identically.
+fn join_branch_arms(
+    span: Span,
+    condition: BranchCondition,
+    then_output: &SequenceLowering,
+    else_output: &SequenceLowering,
+) -> Result<SequenceLowering, SourceDiagnostic> {
+    // Each model's own branch join. All four predate card `IF-STATEMENT`: only
+    // `SourceOp::Branch` is new, because `cleanup_lowering` was the one
+    // linear IR with no branch constructor.
+    let flow = then_output
+        .flow
+        .join_branches(&else_output.flow)
+        .map_err(|error| {
+            branch_diagnostic(
+                "Q046",
+                span,
+                format!("the arms of this branch do not join in the resource-flow model: {error}"),
+            )
+        })?;
+    let mut node = SequenceLowering {
+        flow,
+        ..SequenceLowering::default()
+    };
+    node.lowering.push(SourceOp::Branch {
+        condition,
+        then_arm: then_output.lowering.clone(),
+        else_arm: else_output.lowering.clone(),
+    });
+    node.ownership.push(OwnershipOp::Branch {
+        then_ops: then_output.ownership.clone(),
+        else_ops: else_output.ownership.clone(),
+    });
+    node.error_operations.push(ErrorOp::Branch {
+        then_ops: then_output.error_operations.clone(),
+        else_ops: else_output.error_operations.clone(),
+    });
+    // An arm admits no call, so every arm demand is a non-exiting one and
+    // the pair's flag is `false` for the joined node too.
+    if !then_output.demands.is_empty() || !else_output.demands.is_empty() {
+        node.demands.push((
+            UsageExpr::Branch {
+                condition: Box::new(UsageExpr::Unit),
+                then_expression: Box::new(UsageExpr::Sequence(
+                    then_output
+                        .demands
+                        .iter()
+                        .map(|(expression, _)| expression.clone())
+                        .collect(),
+                )),
+                else_expression: Box::new(UsageExpr::Sequence(
+                    else_output
+                        .demands
+                        .iter()
+                        .map(|(expression, _)| expression.clone())
+                        .collect(),
+                )),
+            },
+            false,
+        ));
+    }
+    Ok(node)
 }
 
 /// Present a cleanup-lowering refusal, routing the two conditions card
@@ -1443,19 +1591,83 @@ fn branch_diagnostic(
     }
 }
 
-/// `source.branch.v1`'s decidable condition tier: `true`, `false`, or a
-/// comparison of two signed 32-bit integer literals. Deliberately closed and
-/// deliberately without connectives — `||` and `&&` lower *onto* this
-/// construct in a later card rather than extending this grammar.
-fn parse_branch_condition(tokens: &[Token]) -> Option<BranchCondition> {
+/// `source.branch.v1`'s decidable condition tier.
+///
+/// Card `IF-STATEMENT` admitted a single leaf — `true`, `false`, or a
+/// comparison of two signed 32-bit integer literals. Card `OR-AND-LOWERING`
+/// widens that to a **connective tree** over the same leaves:
+///
+/// ```ebnf
+/// cond    = disjunct , { "||" , disjunct } ;      (* left-associative *)
+/// disjunct= primary  , { "&&" , primary  } ;      (* binds tighter    *)
+/// primary = "(" , cond , ")" | leaf ;
+/// leaf    = "true" | "false" | operand , cmp , operand ;
+/// ```
+///
+/// **Precedence is declared, not inherited from a parser accident:** `&&`
+/// binds tighter than `||`, so `A || B && C` is `A || (B && C)`, and both are
+/// left-associative. Parentheses group. There is no unary negation and no other
+/// operator: `|>`, `!`, `|`, `&` and `^` are all outside the tier, so a
+/// condition mixing a pipeline with a connective has no precedence to declare —
+/// it is refused (`Q045`) rather than given one.
+///
+/// The tier stays **decidable**: every leaf is closed over literals, so
+/// evaluation is state-free and the translation certificate still compares one
+/// reference, one CFG and one native observation (`IF-RUNTIME-CONDITION`).
+fn parse_condition_tree(tokens: &[Token]) -> Option<ConditionTree> {
+    let (tree, rest) = parse_disjunction(tokens)?;
+    rest.is_empty().then_some(tree)
+}
+
+fn parse_disjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    let (mut left, mut rest) = parse_conjunction(tokens)?;
+    while let Some(after) = eat_symbol(rest, Symbol::PipePipe) {
+        let (right, next) = parse_conjunction(after)?;
+        left = ConditionTree::Or(Box::new(left), Box::new(right));
+        rest = next;
+    }
+    Some((left, rest))
+}
+
+fn parse_conjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    let (mut left, mut rest) = parse_condition_primary(tokens)?;
+    while let Some(after) = eat_symbol(rest, Symbol::AndAnd) {
+        let (right, next) = parse_condition_primary(after)?;
+        left = ConditionTree::And(Box::new(left), Box::new(right));
+        rest = next;
+    }
+    Some((left, rest))
+}
+
+fn parse_condition_primary(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
+    if let Some(inner) = eat_symbol(tokens, Symbol::LeftParen) {
+        let (tree, rest) = parse_disjunction(inner)?;
+        return Some((tree, eat_symbol(rest, Symbol::RightParen)?));
+    }
+    let (leaf, rest) = parse_condition_leaf(tokens)?;
+    Some((ConditionTree::Leaf(leaf), rest))
+}
+
+fn eat_symbol(tokens: &[Token], symbol: Symbol) -> Option<&[Token]> {
+    match tokens.first()?.kind {
+        TokenKind::Symbol(found) if found == symbol => Some(&tokens[1..]),
+        _ => None,
+    }
+}
+
+/// One decidable leaf. Byte-for-byte the tier card `IF-STATEMENT` shipped,
+/// re-expressed to hand back its unconsumed tail so a connective can follow.
+fn parse_condition_leaf(tokens: &[Token]) -> Option<(BranchCondition, &[Token])> {
     if let [
         Token {
             kind: TokenKind::Word(word),
             ..
         },
+        rest @ ..,
     ] = tokens
+        && let Some(value) = parse_bool(word)
     {
-        return parse_bool(word).map(BranchCondition::Literal);
+        return Some((BranchCondition::Literal(value), rest));
     }
     let (left, rest) = parse_condition_operand(tokens)?;
     let (operator, rest) = match rest.first()?.kind {
@@ -1468,14 +1680,14 @@ fn parse_branch_condition(tokens: &[Token]) -> Option<BranchCondition> {
         _ => return None,
     };
     let (right, rest) = parse_condition_operand(rest)?;
-    if !rest.is_empty() {
-        return None;
-    }
-    Some(BranchCondition::Compare {
-        left,
-        operator,
-        right,
-    })
+    Some((
+        BranchCondition::Compare {
+            left,
+            operator,
+            right,
+        },
+        rest,
+    ))
 }
 
 fn parse_condition_operand(tokens: &[Token]) -> Option<(i32, &[Token])> {
@@ -2121,32 +2333,21 @@ fn load_native_libraries(
     })
 }
 
-/// Card `source.extern-call.v1`. Every step here fails closed: no contract
-/// selection, an absent name, an unadmitted mode, an unbridgeable type, a
-/// missing null adapter, a refused context or a declaration that disagrees
-/// with its selected contract each produce a diagnostic and no module.
+/// Admit every declared extern callee this module calls, or refuse by name.
 ///
-/// A module accepted here is checked twice over the same lowering: the core
-/// extern checker validates the call sites and the adapter, and every
-/// established sequential pass validates the surrounding custody, resource
-/// flow and effect obligations with the declared extern summaries supplied as
-/// call-site assumptions. Neither check is derived from the other.
-fn compile_extern_source(
+/// The whole contract-selection, manifest, signature-agreement and bridging
+/// gate of `source.extern-call.v1`, lifted out of [`compile_extern_source`]
+/// unchanged so the composed route (card `STD-IO-COMPOSE`) admits callees by
+/// exactly the same decision. There is no second admission table and no second
+/// `Q023` default: composing a module with a printing model cannot buy it a
+/// callee the extern route alone would refuse.
+fn admit_extern_callees(
     parsed: &SourceProgram,
-    typed: &TypedSourceProgram,
-    mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
-) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+) -> Result<BTreeMap<String, extern_call::ExternCallee>, Vec<FileDiagnostic>> {
     use qcore_frontend::source_extern;
 
-    if mode != SourceModuleMode::Executable {
-        return Err(vec![plain_diagnostic(
-            "Q500",
-            "entry-free extern-calling modules require additional source lowering",
-        )]);
-    }
-    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
     let called = source_extern::called_extern_names(parsed);
     let first_span = called
         .values()
@@ -2356,6 +2557,35 @@ fn compile_extern_source(
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
+    Ok(callees)
+}
+/// Card `source.extern-call.v1`. Every step here fails closed: no contract
+/// selection, an absent name, an unadmitted mode, an unbridgeable type, a
+/// missing null adapter, a refused context or a declaration that disagrees
+/// with its selected contract each produce a diagnostic and no module.
+///
+/// A module accepted here is checked twice over the same lowering: the core
+/// extern checker validates the call sites and the adapter, and every
+/// established sequential pass validates the surrounding custody, resource
+/// flow and effect obligations with the declared extern summaries supplied as
+/// call-site assumptions. Neither check is derived from the other.
+fn compile_extern_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_extern;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free extern-calling modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let callees = admit_extern_callees(parsed, options, ranges)?;
 
     let lowered =
         source_extern::lower_source_extern(parsed, typed, &entry, &callees).map_err(|errors| {
@@ -2460,6 +2690,189 @@ fn compile_extern_source(
         source_map: Vec::new(),
         // The reference observation of this route is the extern call trace, not
         // the sequential cleanup observation this field carries.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.std-io-extern.v1` module: the checked composition of
+/// `source.extern-call.v1` and `source.std-io.v1` (card `STD-IO-COMPOSE`).
+///
+/// Every gate either composed route runs is run here, by that route's own code:
+/// [`admit_extern_callees`] admits the callees, the composed lowering delegates
+/// each statement to that model's own unedited lowering,
+/// [`composed_std_io::check_composed_program`] runs both checkers before its
+/// own join, and the established sequential passes re-check the extern half
+/// exactly as `compile_extern_source` does. What composing adds is the join and
+/// nothing else.
+fn compile_composed_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_composed;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q043",
+            "entry-free composed modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let callees = admit_extern_callees(parsed, options, ranges)?;
+    let lowered = source_composed::lower_source_composed(parsed, typed, &entry, &callees).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    // Both projections are checked by their own checkers first, so a composed
+    // module receives each route's own diagnostics under each route's own code.
+    // The composed checker runs them again inside its own derivation; running
+    // them here as well is what makes the *reported* refusal the specific one.
+    let extern_certificate =
+        extern_call::check_extern_program(&lowered.program.externs).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let span = lowered
+                        .externs
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::ExternCall,
+                        span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    std_io::check_std_io_program(&lowered.program.io).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .io
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardIo,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    let certificate =
+        composed_std_io::check_composed_program(&lowered.program).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::ComposedStdIo,
+                        lowered.scope_span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive — here, all three of them.
+    composed_std_io::recheck_composed_certificate(&lowered.program, &certificate).map_err(
+        |failure| {
+            vec![map_raw_diagnostic(
+                "Q043",
+                SemanticPass::ComposedStdIo,
+                lowered.scope_span,
+                format!("the composed certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        },
+    )?;
+    // Card `UNSAFE-LINKAGE`'s publication tripwire, unchanged and unweakened by
+    // composing: a composed certificate that lost an unchecked-linkage premise
+    // between derivation and publication is refused rather than published.
+    if !extern_call::certificate_carries_unchecked_linkage(
+        &lowered.program.externs,
+        &extern_certificate,
+    ) || !extern_call::certificate_carries_unchecked_linkage(
+        &lowered.program.externs,
+        &certificate.externs,
+    ) {
+        return Err(vec![map_raw_diagnostic(
+            "Q035",
+            SemanticPass::UncheckedLinkage,
+            lowered.scope_span,
+            "the published composed certificate does not carry an unchecked-linkage premise for every uncontracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+
+    let error_names = lowered.program.externs.errors.clone();
+    let sequential = qcore_frontend::whole_program::check_whole_program_with_externs(
+        typed,
+        &ErrorDeclarations::new(error_names.iter().cloned()),
+        vec![lowered.externs.semantics.clone()],
+        &lowered.externs.extern_summaries,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+
+    let reference_observation =
+        composed_std_io_c_emit::interpret_composed_program(&lowered.program, &certificate)
+            .map_err(|refusal| {
+                vec![plain_diagnostic(
+                    "Q043",
+                    format!("the composed reference execution refused this trace: {refusal:?}"),
+                )]
+            })?;
+    let emission = composed_std_io_c_emit::emit_composed_c11(&lowered.program, &certificate)
+        .map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q043",
+                format!("the composed backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::Composed(Box::new(CheckedComposedModule {
+            lowered,
+            certificate,
+            sequential,
+        })),
+        execution_profile: SourceExecutionProfile::ComposedStdIoExternV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream record of
+        // both models' lines, carried beside the extern route's own trace
+        // rather than on the sequential cleanup field, which models something
+        // else entirely.
         reference_observation: None,
         extern_observation: Some(reference_observation),
     })
