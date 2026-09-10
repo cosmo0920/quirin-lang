@@ -1,0 +1,16 @@
+import std.buffer;
+
+// A buffer module that writes no line. It pins that `std.buffer` grants no
+// output capability of its own: this file imports neither `std.io` nor
+// `std.fmt` and needs neither, and its derived effect row is `{alloc, mut}`
+// with no `io` in it.
+//
+// It is also the negative control beside `bytes.qcore`'s positive one: the
+// program allocates and releases and writes nothing, so a native run producing
+// any output at all would be a finding.
+fn main() -> unit effects { alloc, mut } {
+    let b = bytes(4);
+    b[3] = 1;
+    drop b;
+    return;
+}

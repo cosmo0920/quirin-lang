@@ -1,0 +1,60 @@
+import std.buffer;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// An owned, extent-carrying byte buffer (card STD-BUFFER).
+//
+// The acquisition is spelled `bytes` and not `buffer`: `buffer` occurs 555
+// times across the source-side corpus, in binding position in shipped fixtures
+// (`let buffer = qcore_buffer_new(1)?;` in examples/threads/shared_readers.qcore),
+// so reserving it would refuse those files. The syntax was renamed rather than
+// the pinned surface edited — the `work` -> `effort` and `error` -> `fatal`
+// precedent. The *module* is still `std.buffer`.
+//
+// The release is the existing reserved `drop`, because the operation is
+// literally OwnershipOp::Drop; the byte accessors are the existing `[` and `]`,
+// consumed today only in usage-interval positions and never in a statement
+// body. So this card adds exactly two reserved words, `bytes` and `extent`.
+//
+// This fixture is a POSITIVE leak control: it allocates, so LSan has something
+// to find, and finding nothing is evidence rather than a vacuous pass.
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(8);
+
+    // Every index and every stored byte is a check-time constant, so the
+    // checker decides every access before emission. The emitted bounds
+    // comparison is a witness that never fires, not the check.
+    b[0] = 65;
+    b[1] = 66;
+    let last = 7;
+    b[last] = 90;
+
+    // The extent is read back out of the ownership ledger's own footprint --
+    // the capability `NoExtentTransport` names as missing, supplied on the
+    // source side. It binds an ordinary integer, so rendering it needs no new
+    // operand form at all: this is what STD-FMT-EXTENT wanted, reached without
+    // touching a rendering.
+    let n = extent(b);
+    print dec n;
+
+    // A byte read binds an ordinary integer too. The native run must print the
+    // same number the reference computed out of the modelled bytes, which is
+    // the byte-level agreement this route's evidence rests on.
+    let first = b[0];
+    let second = b[1];
+    let ninetieth = b[last];
+    print dec first;
+    print hex second;
+    log info dec ninetieth;
+
+    // A byte never written reads zero, because the emitted program uses
+    // `calloc` and not `malloc`: an indeterminate byte would be undefined
+    // behaviour to read natively and unpredictable in the reference.
+    let untouched = b[5];
+    log warn dec untouched;
+    flush;
+
+    drop b;
+    return;
+}

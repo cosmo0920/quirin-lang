@@ -1747,6 +1747,29 @@ pub enum SemanticPass {
     /// task route's `Q600` or the standard-IO route's `Q028`–`Q031`, at that
     /// route's own site.
     ComposedTasks,
+    /// Card `STD-BUFFER`: admission of `source.buffer.v1` — the `std.buffer`
+    /// bundled module's owned, extent-carrying byte buffer. Owns `Q051`–`Q056`
+    /// (spec §L21), the first free band above `ComposedTasks`'s `Q050`.
+    ///
+    /// A separate pass from `StandardIo` on purpose: that pass admits a closed
+    /// set of statements with **no resource and no custody at all** — its
+    /// operand type structurally cannot denote one — while this pass admits a
+    /// resource acquisition, an indexed access into it and its release. The two
+    /// could not share a band without the code range ceasing to describe what
+    /// the pass decides.
+    ///
+    /// It is likewise separate from `Ownership`, whose `Q103` this pass
+    /// deliberately does **not** emit even though every custody refusal on this
+    /// route is `qcore_core::ownership`'s: the ownership checker is *inherited*
+    /// here rather than run as the sequential passes run it, so a reader
+    /// following `Q054` back finds this route's lowering and not the sequential
+    /// resource-flow bundle. The refusal is the same one; the attribution says
+    /// which route asked.
+    ///
+    /// A collision discovered at integration relocates this band, per the
+    /// wave-3 `T07`/`T09` precedent; the code-to-condition mapping is stable
+    /// under such a shift.
+    StandardBuffer,
     PluginVerification,
 }
 
@@ -2468,6 +2491,33 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "info"
             | "warn"
             | "fatal"
+            // Card `STD-BUFFER`: `source.buffer.v1`'s acquisition and extent
+            // keywords. Reserved for the same reason as every profile keyword
+            // above: they are clause words in a `let` initialiser, never
+            // references to a binding. Measured load-bearing exactly as `grow`
+            // and `rank` are — name resolution collects the tokens after a
+            // `let`'s `=`, so without this `let b = bytes(8);` refuses at
+            // `Q013` with `bytes` reported as an unknown name.
+            //
+            // The acquisition is spelled `bytes` and deliberately **not**
+            // `buffer`: `buffer` occurs 555 times across the source-side
+            // corpus and, unlike a parameter name (which the reference filter
+            // above already shields, being followed by `:`), it occurs in
+            // *binding* position in shipped fixtures —
+            // `let buffer = qcore_buffer_new(1)?;` and `drop buffer;` in
+            // `examples/threads/shared_readers.qcore`. Reserving it would
+            // refuse those files, so this card's syntax was renamed rather
+            // than the pinned surface edited, exactly as card T08-EPOCH-SRC
+            // renamed `work` to `effort` and card `STD-MODULES` spelled a
+            // severity `fatal` rather than `error`. The *module* is still
+            // named `std.buffer`: a module name is a dotted path in an
+            // `import` declaration, never a reserved word.
+            //
+            // The release is the **existing** `drop` and the byte accessors
+            // are the **existing** `[`/`]`, so this card adds two words and
+            // not five.
+            | "bytes"
+            | "extent"
     )
 }
 
@@ -2552,6 +2602,14 @@ pub fn source_diagnostic(
         // composed task module's other refusals are the task route's and the
         // standard-IO route's own.
         SemanticPass::ComposedTasks => "Q050",
+        // The generic presentation code of the buffer pass, and the code of
+        // every shape refusal in it. The specific conditions Q052 (an operand
+        // that is not a check-time constant), Q053 (a bounds, byte-range or
+        // extent-range violation), Q054 (a refusal the inherited ownership
+        // checker reported), Q055 (a buffer at a position it may not cross) and
+        // Q056 (a failed certificate rederivation) are issued at their own
+        // emission sites.
+        SemanticPass::StandardBuffer => "Q051",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {
