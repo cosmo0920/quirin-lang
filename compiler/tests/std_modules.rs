@@ -290,6 +290,61 @@ fn rendering_a_resource_refuses() {
 }
 
 #[test]
+fn a_borrowed_render_refuses_on_this_route_for_want_of_a_custody_model() {
+    // Card `STD-FMT-BORROW`. `borrow NAME` is admitted only where a checked
+    // custody model published the identity **and** held it live at the
+    // statement, and `source.std-io.v1` has no custody model at all: its
+    // identity map is empty, so every borrowed render written here refuses.
+    // The refusal is structural — the absence of a model, not a rule this
+    // route states — and it is the same `Q028` an unbound scalar gets.
+    let source = "import std.fmt;\n\
+                  import std.io;\n\
+                  fn main() -> unit effects { io } {\n    \
+                      let total = 42;\n    \
+                      print dec borrow total;\n    \
+                      return;\n\
+                  }\n";
+    assert_eq!(codes(source), ["Q028"]);
+}
+
+#[test]
+fn a_borrowed_render_of_a_resource_this_route_cannot_bind_still_refuses_twice() {
+    // The marker does not rescue a resource binding this route cannot make in
+    // the first place: `qcore_acquire` is refused as a `let` and the borrowed
+    // operand is refused for want of a custody model. Both halves are pinned,
+    // exactly as `rendering_a_resource_refuses` pins them for a bare operand.
+    let source = "import std.fmt;\n\
+                  import std.io;\n\
+                  fn main() -> unit effects { io } {\n    \
+                      let r = qcore_acquire(true);\n    \
+                      print dec borrow r;\n    \
+                      return;\n\
+                  }\n";
+    assert_eq!(codes(source), ["Q030", "Q028"]);
+}
+
+#[test]
+fn a_module_that_writes_no_borrowed_render_is_byte_identical() {
+    // The widening is inert for every program that does not use it: the
+    // shipped fixture's emitted C and reference observation are what they were
+    // before this card, and its certificate names no borrowed render.
+    let module = compile(LINES).unwrap();
+    let checked = module.checked.as_standard_io().unwrap();
+    assert!(
+        checked.certificate.borrowed_renders.is_empty(),
+        "a module with no borrowed render publishes none"
+    );
+    assert!(
+        checked.lowered.program.identities.is_empty(),
+        "and this route supplies no identity to render"
+    );
+    assert!(
+        !module.c_source.as_deref().unwrap().contains("borrow"),
+        "and the marker reaches no emitted program"
+    );
+}
+
+#[test]
 fn rendering_an_owned_buffer_refuses() {
     // The concurrency-gated allocation refuses even earlier, at its own import
     // gate. Pinned so the buffer form cannot quietly become renderable if that

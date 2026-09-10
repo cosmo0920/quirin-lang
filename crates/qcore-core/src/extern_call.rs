@@ -1748,6 +1748,21 @@ pub struct ExternCallCertificate {
     /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
     pub assumptions: Vec<ExternAssumption>,
+    /// The identities live on this module's **normal** path after each event, in
+    /// trace order and acquisition order, one entry per event of
+    /// [`ExternProgram::events`] (card `STD-FMT-BORROW`).
+    ///
+    /// This is the checker's own ledger, published rather than recomputed. It
+    /// exists so that a *composing* route can decide whether a name is live at a
+    /// step of its own program without re-implementing one custody rule: a
+    /// composed borrowed render reads this list and nothing else. Every entry is
+    /// the state after the event at the same index, so a reader that wants the
+    /// state *before* event `i` reads entry `i - 1` and the empty ledger at
+    /// `i = 0`.
+    ///
+    /// It says nothing about an error arm: a raise leaves this trace, and the
+    /// identities an arm disposes of are `error_dispositions`.
+    pub live_after: Vec<Vec<ResourceId>>,
 }
 
 /// Remove one identity from the acquisition-ordered live list, if present.
@@ -1946,51 +1961,57 @@ pub fn check_extern_program(
     // that reading a value that was never bound is a refusal.
     let mut values = BTreeSet::<ValueId>::new();
     let mut effects = BTreeSet::new();
+    // One ledger snapshot per event, taken after it (card `STD-FMT-BORROW`).
+    // The per-event body is a labelled block rather than the loop body itself so
+    // that *every* exit from it — the early ones included — reaches the snapshot
+    // below: a missed snapshot would silently shift a later index's liveness.
+    let mut live_after: Vec<Vec<ResourceId>> = Vec::with_capacity(program.events.len());
     for (index, event) in program.events.iter().enumerate() {
-        let call = match event {
-            ExternEvent::Call(call) => call,
-            // Card `EXTERN-SCALAR-LITERAL`. A literal binding names no callee,
-            // so it reaches none of the admission, bridging, custody or effect
-            // machinery below: the only thing it can do wrong is reuse a value
-            // identity, which is the same refusal a bound call's result gets.
-            ExternEvent::Bind(literal) => {
-                if !values.insert(literal.value) {
-                    diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
-                        event: index,
-                        value: literal.value,
-                    });
+        'event: {
+            let call = match event {
+                ExternEvent::Call(call) => call,
+                // Card `EXTERN-SCALAR-LITERAL`. A literal binding names no callee,
+                // so it reaches none of the admission, bridging, custody or effect
+                // machinery below: the only thing it can do wrong is reuse a value
+                // identity, which is the same refusal a bound call's result gets.
+                ExternEvent::Bind(literal) => {
+                    if !values.insert(literal.value) {
+                        diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                            event: index,
+                            value: literal.value,
+                        });
+                    }
+                    literal_bindings.push((literal.value, literal.literal));
+                    break 'event;
                 }
-                literal_bindings.push((literal.value, literal.literal));
-                continue;
+                ExternEvent::Return => break 'event,
+            };
+            let Some(callee) = program.callees.get(&call.callee) else {
+                diagnostics.push(ExternDiagnostic::UnknownCallee {
+                    event: index,
+                    name: call.callee.clone(),
+                });
+                break 'event;
+            };
+            effects.extend(derived_effects(callee).iter().cloned());
+            if call.arguments.len() != callee.parameters.len() {
+                diagnostics.push(ExternDiagnostic::ArgumentArity {
+                    event: index,
+                    expected: callee.parameters.len(),
+                    actual: call.arguments.len(),
+                });
+                break 'event;
             }
-            ExternEvent::Return => continue,
-        };
-        let Some(callee) = program.callees.get(&call.callee) else {
-            diagnostics.push(ExternDiagnostic::UnknownCallee {
-                event: index,
-                name: call.callee.clone(),
-            });
-            continue;
-        };
-        effects.extend(derived_effects(callee).iter().cloned());
-        if call.arguments.len() != callee.parameters.len() {
-            diagnostics.push(ExternDiagnostic::ArgumentArity {
-                event: index,
-                expected: callee.parameters.len(),
-                actual: call.arguments.len(),
-            });
-            continue;
-        }
-        let mut consumed_here = Vec::new();
-        let mut released_here = Vec::new();
-        let mut stored_here = Vec::new();
-        let mut realloc_here = None;
-        for (parameter, (argument, declared)) in
-            call.arguments.iter().zip(&callee.parameters).enumerate()
-        {
-            let admitted = matches!(
-                (argument, declared),
-                (ExternArgument::Data(_), CallParameter::Data(_))
+            let mut consumed_here = Vec::new();
+            let mut released_here = Vec::new();
+            let mut stored_here = Vec::new();
+            let mut realloc_here = None;
+            for (parameter, (argument, declared)) in
+                call.arguments.iter().zip(&callee.parameters).enumerate()
+            {
+                let admitted = matches!(
+                    (argument, declared),
+                    (ExternArgument::Data(_), CallParameter::Data(_))
                     | (ExternArgument::Borrow(_), CallParameter::Borrowed(_))
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
                     | (ExternArgument::Store(_), CallParameter::Stored { .. })
@@ -2002,194 +2023,201 @@ pub fn check_extern_program(
                     // a declared `Data` parameter and at no other mode, so the
                     // value namespace cannot reach a custody position.
                     | (ExternArgument::Value(_), CallParameter::Data(_))
-            );
-            if !admitted {
-                diagnostics.push(ExternDiagnostic::ArgumentForm {
-                    event: index,
-                    parameter,
-                    expected: *declared,
-                });
-                continue;
-            }
-            match (argument, declared) {
-                (ExternArgument::Value(value), _) => {
-                    if !values.contains(value) {
-                        diagnostics.push(ExternDiagnostic::ValueNotBound {
-                            event: index,
-                            parameter,
-                            value: *value,
-                        });
-                    }
-                }
-                (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
-                (ExternArgument::Release(resource), _) => released_here.push(*resource),
-                (ExternArgument::Realloc(resource), _) => realloc_here = Some(*resource),
-                (ExternArgument::Store(child), CallParameter::Stored { owner }) => {
-                    // The declared owner is a position in the same call, so the
-                    // owner identity is read from the argument the declaration
-                    // designates rather than guessed. An argument-form refusal
-                    // there has already been reported, so nothing is inferred.
-                    let Some(ExternArgument::Owner(owner)) = call.arguments.get(*owner) else {
-                        continue;
-                    };
-                    if child == owner {
-                        diagnostics.push(ExternDiagnostic::StoredUnderItself {
-                            event: index,
-                            resource: *child,
-                        });
-                        continue;
-                    }
-                    stored_here.push((*child, *owner));
-                }
-                _ => {}
-            }
-        }
-        let acquires = callee.acquires();
-        match (&call.adapter, acquires) {
-            (None, true) => {
-                diagnostics.push(ExternDiagnostic::AdapterMissing { event: index });
-            }
-            (Some(_), false) => {
-                diagnostics.push(ExternDiagnostic::AdapterUnexpected { event: index });
-            }
-            (Some(adapter), true) => {
-                if !program.errors.contains(&adapter.error) {
-                    diagnostics.push(ExternDiagnostic::AdapterUnknownError {
-                        event: index,
-                        error: adapter.error.clone(),
-                    });
-                }
-                // Adapter totality with a bounded error arm: the null path
-                // takes the typed error exit, and that exit is admitted only
-                // where every other live identity is explicitly dispositioned
-                // first. The departures of *this* call have already left the
-                // ledger below-order — they are recorded after the adapter — so
-                // the arm sees exactly the identities the cleanup edge would.
-                // A declaration says what holds on its *normal* exit only, so an
-                // acquiring call that also carries departing custody leaves that
-                // custody's status undecided on the failure arm: the arm can
-                // neither release it (the callee may already have) nor leave it
-                // (the callee may not have). That shape is refused by name
-                // rather than resolved by assumption; it was already refused in
-                // v1, as abandonment, and stays refused here.
-                //
-                // Card `EXTERN-MODES` names the one exception, and it is an
-                // exception because the declaration stops being silent: contract
-                // spec §C04.3 fixes both arms of a reallocation, so the subject
-                // is *known* to survive a null result. It therefore stays on the
-                // arm's live list and the arm must dispose of it like any other
-                // live identity — which is the same rule, not a relaxation of
-                // it. A released argument is not the exception: `resource_released`
-                // constrains the normal exit only, exactly as consumption does.
-                let departing = consumed_here
-                    .iter()
-                    .copied()
-                    .chain(released_here.iter().copied())
-                    .chain(stored_here.iter().map(|(child, _)| *child))
-                    .collect::<Vec<_>>();
-                let mut arm_live = live.clone();
-                for resource in &departing {
-                    if let Some(position) =
-                        arm_live.iter().position(|candidate| candidate == resource)
-                    {
-                        arm_live.remove(position);
-                        diagnostics.push(ExternDiagnostic::AdapterDepartingArgument {
-                            event: index,
-                            resource: *resource,
-                        });
-                    }
-                }
-                let released = check_error_arm(
-                    program,
-                    index,
-                    &arm_live,
-                    &values,
-                    &adapter.releases,
-                    &mut diagnostics,
-                    &mut effects,
                 );
-                error_dispositions.push((adapter.resource, released));
-                if !introduced.insert(adapter.resource) {
-                    diagnostics.push(ExternDiagnostic::DuplicateAcquisition {
+                if !admitted {
+                    diagnostics.push(ExternDiagnostic::ArgumentForm {
                         event: index,
-                        resource: adapter.resource,
+                        parameter,
+                        expected: *declared,
+                    });
+                    continue;
+                }
+                match (argument, declared) {
+                    (ExternArgument::Value(value), _) => {
+                        if !values.contains(value) {
+                            diagnostics.push(ExternDiagnostic::ValueNotBound {
+                                event: index,
+                                parameter,
+                                value: *value,
+                            });
+                        }
+                    }
+                    (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
+                    (ExternArgument::Release(resource), _) => released_here.push(*resource),
+                    (ExternArgument::Realloc(resource), _) => realloc_here = Some(*resource),
+                    (ExternArgument::Store(child), CallParameter::Stored { owner }) => {
+                        // The declared owner is a position in the same call, so the
+                        // owner identity is read from the argument the declaration
+                        // designates rather than guessed. An argument-form refusal
+                        // there has already been reported, so nothing is inferred.
+                        let Some(ExternArgument::Owner(owner)) = call.arguments.get(*owner) else {
+                            continue;
+                        };
+                        if child == owner {
+                            diagnostics.push(ExternDiagnostic::StoredUnderItself {
+                                event: index,
+                                resource: *child,
+                            });
+                            continue;
+                        }
+                        stored_here.push((*child, *owner));
+                    }
+                    _ => {}
+                }
+            }
+            let acquires = callee.acquires();
+            match (&call.adapter, acquires) {
+                (None, true) => {
+                    diagnostics.push(ExternDiagnostic::AdapterMissing { event: index });
+                }
+                (Some(_), false) => {
+                    diagnostics.push(ExternDiagnostic::AdapterUnexpected { event: index });
+                }
+                (Some(adapter), true) => {
+                    if !program.errors.contains(&adapter.error) {
+                        diagnostics.push(ExternDiagnostic::AdapterUnknownError {
+                            event: index,
+                            error: adapter.error.clone(),
+                        });
+                    }
+                    // Adapter totality with a bounded error arm: the null path
+                    // takes the typed error exit, and that exit is admitted only
+                    // where every other live identity is explicitly dispositioned
+                    // first. The departures of *this* call have already left the
+                    // ledger below-order — they are recorded after the adapter — so
+                    // the arm sees exactly the identities the cleanup edge would.
+                    // A declaration says what holds on its *normal* exit only, so an
+                    // acquiring call that also carries departing custody leaves that
+                    // custody's status undecided on the failure arm: the arm can
+                    // neither release it (the callee may already have) nor leave it
+                    // (the callee may not have). That shape is refused by name
+                    // rather than resolved by assumption; it was already refused in
+                    // v1, as abandonment, and stays refused here.
+                    //
+                    // Card `EXTERN-MODES` names the one exception, and it is an
+                    // exception because the declaration stops being silent: contract
+                    // spec §C04.3 fixes both arms of a reallocation, so the subject
+                    // is *known* to survive a null result. It therefore stays on the
+                    // arm's live list and the arm must dispose of it like any other
+                    // live identity — which is the same rule, not a relaxation of
+                    // it. A released argument is not the exception: `resource_released`
+                    // constrains the normal exit only, exactly as consumption does.
+                    let departing = consumed_here
+                        .iter()
+                        .copied()
+                        .chain(released_here.iter().copied())
+                        .chain(stored_here.iter().map(|(child, _)| *child))
+                        .collect::<Vec<_>>();
+                    let mut arm_live = live.clone();
+                    for resource in &departing {
+                        if let Some(position) =
+                            arm_live.iter().position(|candidate| candidate == resource)
+                        {
+                            arm_live.remove(position);
+                            diagnostics.push(ExternDiagnostic::AdapterDepartingArgument {
+                                event: index,
+                                resource: *resource,
+                            });
+                        }
+                    }
+                    let released = check_error_arm(
+                        program,
+                        index,
+                        &arm_live,
+                        &values,
+                        &adapter.releases,
+                        &mut diagnostics,
+                        &mut effects,
+                    );
+                    error_dispositions.push((adapter.resource, released));
+                    if !introduced.insert(adapter.resource) {
+                        diagnostics.push(ExternDiagnostic::DuplicateAcquisition {
+                            event: index,
+                            resource: adapter.resource,
+                        });
+                    }
+                }
+                (None, false) => {}
+            }
+            // Card `PIPE-SCALAR-RESULT`. Checked after the adapter and before any
+            // ledger movement, because a scalar binding is not a ledger event: it
+            // adds a name to a namespace this checker never removes from and never
+            // compares against `live`.
+            if let Some(binding) = call.binding {
+                let value = binding.value;
+                if callee.acquires() {
+                    diagnostics.push(ExternDiagnostic::ResultBindingOnAcquisition {
+                        event: index,
+                        name: callee.name.clone(),
+                    });
+                } else if binds_scalar(callee) {
+                    if !values.insert(value) {
+                        diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                            event: index,
+                            value,
+                        });
+                    }
+                    scalar_bindings.push((callee.name.clone(), value));
+                    if let Some(outcome) = binding.outcome {
+                        declared_outcomes.push((value, outcome));
+                    }
+                } else {
+                    diagnostics.push(ExternDiagnostic::ResultNotScalar {
+                        event: index,
+                        name: callee.name.clone(),
+                        result: callee.result_abi,
                     });
                 }
             }
-            (None, false) => {}
-        }
-        // Card `PIPE-SCALAR-RESULT`. Checked after the adapter and before any
-        // ledger movement, because a scalar binding is not a ledger event: it
-        // adds a name to a namespace this checker never removes from and never
-        // compares against `live`.
-        if let Some(binding) = call.binding {
-            let value = binding.value;
-            if callee.acquires() {
-                diagnostics.push(ExternDiagnostic::ResultBindingOnAcquisition {
-                    event: index,
-                    name: callee.name.clone(),
-                });
-            } else if binds_scalar(callee) {
-                if !values.insert(value) {
-                    diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
-                        event: index,
-                        value,
-                    });
-                }
-                scalar_bindings.push((callee.name.clone(), value));
-                if let Some(outcome) = binding.outcome {
-                    declared_outcomes.push((value, outcome));
-                }
-            } else {
-                diagnostics.push(ExternDiagnostic::ResultNotScalar {
-                    event: index,
-                    name: callee.name.clone(),
-                    result: callee.result_abi,
-                });
+            for resource in &consumed_here {
+                remove_live(&mut live, *resource);
+                consumptions.push(*resource);
             }
-        }
-        for resource in &consumed_here {
-            remove_live(&mut live, *resource);
-            consumptions.push(*resource);
-        }
-        // A released identity leaves the caller's ledger exactly as a consumed
-        // one does; the difference is the declaration, recorded separately.
-        for resource in &released_here {
-            remove_live(&mut live, *resource);
-            releases.push(*resource);
-        }
-        // A stored identity leaves the caller's ledger exactly as a consumed
-        // one does. What distinguishes it is where it went, which is recorded
-        // and premised rather than checked.
-        for (child, owner) in &stored_here {
-            remove_live(&mut live, *child);
-            stored.push((*child, *owner));
-        }
-        if let Some(adapter) = &call.adapter
-            && acquires
-        {
-            acquisitions.push(adapter.resource);
-            if callee.out_parameter.is_some() {
-                out_acquisitions.push(adapter.resource);
+            // A released identity leaves the caller's ledger exactly as a consumed
+            // one does; the difference is the declaration, recorded separately.
+            for resource in &released_here {
+                remove_live(&mut live, *resource);
+                releases.push(*resource);
             }
-            // A failed acquisition never makes the identity live; the checked
-            // trace keeps the static identity so the caller's passes still see
-            // one binding, and the reference/native runs take the error arm.
-            if adapter.succeeds {
-                // A successful reallocation replaces the subject exactly once
-                // (contract spec §C04.3): the old identity stops being live at
-                // the same step the new one starts. On the failure arm neither
-                // happens, which is why the subject was still on the arm's live
-                // list and had to be dispositioned there.
-                if let Some(subject) = realloc_here {
-                    remove_live(&mut live, subject);
-                    reallocations.push((subject, adapter.resource));
+            // A stored identity leaves the caller's ledger exactly as a consumed
+            // one does. What distinguishes it is where it went, which is recorded
+            // and premised rather than checked.
+            for (child, owner) in &stored_here {
+                remove_live(&mut live, *child);
+                stored.push((*child, *owner));
+            }
+            if let Some(adapter) = &call.adapter
+                && acquires
+            {
+                acquisitions.push(adapter.resource);
+                if callee.out_parameter.is_some() {
+                    out_acquisitions.push(adapter.resource);
                 }
-                live.push(adapter.resource);
+                // A failed acquisition never makes the identity live; the checked
+                // trace keeps the static identity so the caller's passes still see
+                // one binding, and the reference/native runs take the error arm.
+                if adapter.succeeds {
+                    // A successful reallocation replaces the subject exactly once
+                    // (contract spec §C04.3): the old identity stops being live at
+                    // the same step the new one starts. On the failure arm neither
+                    // happens, which is why the subject was still on the arm's live
+                    // list and had to be dispositioned there.
+                    if let Some(subject) = realloc_here {
+                        remove_live(&mut live, subject);
+                        reallocations.push((subject, adapter.resource));
+                    }
+                    live.push(adapter.resource);
+                }
             }
+            calls.push((callee.name.clone(), derived_custody(callee)));
         }
-        calls.push((callee.name.clone(), derived_custody(callee)));
+        live_after.push(live.clone());
     }
+    debug_assert_eq!(
+        live_after.len(),
+        program.events.len(),
+        "every event contributes exactly one ledger snapshot"
+    );
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
@@ -2256,6 +2284,7 @@ pub fn check_extern_program(
         declared_outcomes,
         effects: EffectRow::new(effects),
         assumptions,
+        live_after,
     })
 }
 

@@ -84,13 +84,17 @@ inductive ExtEvent where
   | ret
   deriving DecidableEq, Repr
 
-/-- **The rendering discipline, as a type.** Two constructors, and neither can
+/-- **The rendering discipline, as a type.** The two bare constructors cannot
 denote a custody identity: an operand is a literal written at the site, or a
-name resolved in the *value* namespace. Every custody theorem below is
-downstream of this, exactly as `QCore.StdIo.Operand`'s are on its own route. -/
+name resolved in the *value* namespace. The third, card `STD-FMT-BORROW`'s
+`borrow NAME`, resolves in the **custody** namespace instead and renders the
+identity itself — never the object, its address or its extent, none of which
+this model carries. Every custody theorem below is downstream of this, exactly
+as `QCore.StdIo.Operand`'s are on its own route. -/
 inductive Operand where
   | lit (number : Int)
   | scalar (name : Name)
+  | borrowed (name : Name)
   deriving DecidableEq, Repr
 
 inductive IoEvent where
@@ -128,6 +132,11 @@ structure Program where
   Built from that model's own namespace, so a name meaning a custody identity is
   absent by construction. -/
   operandValues : List (Name × Value)
+  /-- The custody identity behind each name a **borrowed** rendering reads (card
+  `STD-FMT-BORROW`). A separate field from `operandValues`, so that "a borrowed
+  render reads no value and a scalar render reads no identity" is a statement
+  about which field a clause consults. -/
+  operandIdentities : List (Name × Ident)
   /-- The premises the extern projection derived. -/
   externPremises : List Premise
   deriving DecidableEq, Repr
@@ -374,21 +383,41 @@ theorem no_step_moves_a_name_between_the_namespaces (p : Program) (live : Ledger
   · exact Or.inl h
   · exact Or.inr ⟨c, extern_steps_are_extern_events p p.order _ hc, hac⟩
 
-/-- **A rendering reads a value, never an identity**, stated structurally: the
-operand type has two constructors and neither carries an `Ident`. There is no
-resource occurrence for a rendering to consume, release, retain or leak, so the
-theorem above has nothing to exclude on this side either. -/
-theorem an_operand_is_a_literal_or_a_value_name (o : Operand) :
-    (∃ number, o = .lit number) ∨ ∃ name, o = .scalar name := by
+/-- **The operand forms are exactly these three**, exhibited as one list so that
+a future widening changes this theorem rather than slipping past it. The first
+two carry no `Ident` at all; the third carries a *name* the custody namespace
+resolves, and even that never becomes a value — see
+`a_borrowed_render_reads_no_value` below. -/
+theorem an_operand_is_a_literal_a_value_name_or_a_borrow (o : Operand) :
+    (∃ number, o = .lit number) ∨ (∃ name, o = .scalar name)
+      ∨ ∃ name, o = .borrowed name := by
   cases o with
   | lit number => exact Or.inl ⟨number, rfl⟩
-  | scalar name => exact Or.inr ⟨name, rfl⟩
+  | scalar name => exact Or.inr (Or.inl ⟨name, rfl⟩)
+  | borrowed name => exact Or.inr (Or.inr ⟨name, rfl⟩)
 
 /-! ## Determinacy: a rendering reads a number some model computed -/
 
 def lookupValue : List (Name × Value) → Name → Option Value
   | [], _ => none
   | (n, v) :: rest, name => if n = name then some v else lookupValue rest name
+
+/-- The custody namespace's own lookup (card `STD-FMT-BORROW`). A separate
+function over a separate field, which is what makes "no rendering resolves one
+name in both namespaces" a fact about the definitions rather than a comment. -/
+def lookupIdent : List (Name × Ident) → Name → Option Ident
+  | [], _ => none
+  | (n, x) :: rest, name => if n = name then some x else lookupIdent rest name
+
+/-- The ledger the emitted program is in when the composed step at `position`
+runs: the extern projection's own ledger, folded over the steps before it from
+the entry's empty starting state.
+
+This is the liveness a borrowed render requires, and it is `stepAt`'s — the
+composition derives no second notion of liveness, exactly as the Rust join reads
+the extern certificate's published `live_after` rather than recomputing one. -/
+def liveBefore (p : Program) (position : Nat) : Ledger :=
+  (p.order.take position).foldl (stepAt p) []
 
 /-- Whether an extern event binds this value at all, in the value namespace.
 Kept apart from `determinedBy` below, because they are different rules: a call
@@ -475,6 +504,14 @@ def renderOperand (p : Program) (position : Nat) : Operand → Option Text
           match boundAt p v with
           | none => none
           | some b => if b < position then (numberOf p.externs v).map render else none
+  -- Card `STD-FMT-BORROW`. Two clauses refuse, and they are the join's own
+  -- custody rules: a name the *custody* namespace does not resolve, and an
+  -- identity the extern projection's ledger does not hold live where the
+  -- rendering stands. Nothing else is consulted, and in particular no value.
+  | .borrowed name =>
+      match lookupIdent p.operandIdentities name with
+      | none => none
+      | some x => if x ∈ liveBefore p position then some (render (Int.ofNat x)) else none
 
 /-- **A rendering reads only a value bound by an earlier composed step.** Every
 admitted rendering of a scalar exhibits the value it resolved to, the earlier
@@ -507,6 +544,91 @@ theorem a_rendering_before_its_binding_has_no_admitted_step (p : Program) (posit
     (hv : lookupValue p.operandValues name = some v) (hb : boundAt p v = some b)
     (hlt : ¬ b < position) : renderOperand p position (.scalar name) = none := by
   simp [renderOperand, hv, hb, hlt]
+
+/-! ## The borrowed render (card `STD-FMT-BORROW`)
+
+The custody argument, as theorems rather than as a comment. Three things have to
+hold and each is one below: the resource must be live where the line is written;
+the rendering must leave every obligation exactly as it found it; and the two
+namespaces must stay two. -/
+
+/-- **A borrowed render reads only a live identity.** Every admitted one
+exhibits the identity it resolved to and the ledger membership that admitted it.
+-/
+theorem a_borrowed_render_reads_only_a_live_identity (p : Program) (position : Nat) (name : Name)
+    (text : Text) (h : renderOperand p position (.borrowed name) = some text) :
+    ∃ x, lookupIdent p.operandIdentities name = some x
+      ∧ x ∈ liveBefore p position ∧ text = render (Int.ofNat x) := by
+  cases hx : lookupIdent p.operandIdentities name with
+  | none => simp [renderOperand, hx] at h
+  | some x =>
+    by_cases hlive : x ∈ liveBefore p position
+    · refine ⟨x, rfl, hlive, ?_⟩
+      simp only [renderOperand, hx, if_pos hlive, Option.some.injEq] at h
+      exact h.symm
+    · simp [renderOperand, hx, hlive] at h
+
+/-- **A borrowed render leaves the ledger unchanged**, so every obligation the
+entry owed before it, it still owes after it. A specialisation of the general
+clause, stated in its own right because it is clause (b) of the card's custody
+argument. -/
+theorem a_borrowed_render_leaves_the_ledger_unchanged (p : Program) (live : Ledger) (i : Nat) :
+    stepAt p live (.io i) = live := a_rendering_leaves_the_ledger_unchanged p live i
+
+/-- **A program of nothing but renderings moves no custody at all.** The
+strongest form of "a rendering is not a publication" this model can state: the
+identities reachable after any number of renderings are exactly the ones that
+were reachable before, so no rendering created a second path to a resource and
+none discharged one. -/
+theorem a_program_of_renderings_leaves_the_ledger_unchanged (p : Program) (live : Ledger)
+    (indices : List Nat) : (indices.map Step.io).foldl (stepAt p) live = live := by
+  induction indices generalizing live with
+  | nil => rfl
+  | cons i rest ih =>
+    simp only [List.map_cons, List.foldl_cons, a_rendering_leaves_the_ledger_unchanged]
+    exact ih live
+
+/-- The same, as a statement about a whole run. -/
+theorem a_program_of_renderings_runs_to_its_starting_ledger (p : Program) (live : Ledger)
+    (indices : List Nat) (h : p.order = indices.map Step.io) : run p live = live := by
+  rw [run, h]
+  exact a_program_of_renderings_leaves_the_ledger_unchanged p live indices
+
+/-- **A borrowed render reads no value.** Whatever the value namespace holds,
+the borrowed clause's answer is the same: the wall is which field a clause
+consults, not a rule a checker applies. -/
+theorem a_borrowed_render_reads_no_value (p : Program) (values : List (Name × Value))
+    (position : Nat) (name : Name) :
+    renderOperand { p with operandValues := values } position (.borrowed name)
+      = renderOperand p position (.borrowed name) := rfl
+
+/-- Changing the custody namespace changes no binding position: `boundAtFrom`
+reads the extern events and the order, and neither is that field. -/
+private theorem boundAtFrom_ignores_the_custody_namespace (p : Program)
+    (identities : List (Name × Ident)) (v : Value) (position : Nat) (steps : List Step) :
+    boundAtFrom { p with operandIdentities := identities } v position steps
+      = boundAtFrom p v position steps := by
+  induction steps generalizing position with
+  | nil => rfl
+  | cons s rest ih =>
+    cases s <;> simp only [boundAtFrom, bindsHere, ih] <;> rfl
+
+/-- And the wall in the other direction: a scalar render reads no identity, so
+supplying identities can never make a bare operand denote a resource. This is
+what keeps the standard-IO route's own resource-free rule for a bare operand
+unweakened by this card. -/
+theorem a_scalar_render_reads_no_identity (p : Program) (identities : List (Name × Ident))
+    (position : Nat) (name : Name) :
+    renderOperand { p with operandIdentities := identities } position (.scalar name)
+      = renderOperand p position (.scalar name) := by
+  simp only [renderOperand, boundAt, boundAtFrom_ignores_the_custody_namespace]
+
+/-- A borrowed render binds nothing in the value namespace either: no `ValueId`
+is introduced for it, which is the model's form of "the rendered identity is
+data at the render site only". -/
+theorem a_borrowed_render_binds_no_value (p : Program) (v : Value) (i : Nat) :
+    bindsHere p v (.io i) = false := by
+  simp [bindsHere]
 
 /-! ## The two streams, counted separately -/
 
@@ -694,6 +816,43 @@ theorem a_barrier_publishes_no_line (p : Program) (position i : Nat)
     stepLines p position (.io i) = some [] := by
   simp [stepLines, h]
 
+/-! ## The borrowed render, at a step (card `STD-FMT-BORROW`)
+
+The three rules of the borrowed render, stated where a step publishes lines:
+what it publishes when the identity is live, and the two ways it refuses. They
+are here rather than beside the definitions above because they are about
+`stepLines`, which the stream section defines. -/
+
+/-- **An identity the ledger does not hold live has no admitted step.** This is
+the released, consumed, stored, reallocated and never-acquired cases at once:
+each of them is exactly "not a member of the ledger here". -/
+theorem a_borrowed_render_of_a_dead_identity_has_no_admitted_step (p : Program)
+    (position i : Nat) (name : Name) (x : Ident)
+    (hio : p.io[i]? = some (.print (.borrowed name)))
+    (hx : lookupIdent p.operandIdentities name = some x)
+    (hlive : x ∉ liveBefore p position) : stepLines p position (.io i) = none := by
+  simp [stepLines, hio, renderOperand, hx, hlive]
+
+/-- A name the custody namespace does not resolve refuses too, rather than
+falling back on the value namespace or on anything else. -/
+theorem an_unresolved_borrow_has_no_admitted_step (p : Program) (position i : Nat) (name : Name)
+    (hio : p.io[i]? = some (.print (.borrowed name)))
+    (hx : lookupIdent p.operandIdentities name = none) :
+    stepLines p position (.io i) = none := by
+  simp [stepLines, hio, renderOperand, hx]
+
+/-- **A live borrowed render publishes exactly one line, carrying exactly the
+identity.** Not the address, not an extent, not a byte of the object: the model
+has no other datum about a resource, and this theorem is where that is pinned.
+-/
+theorem a_borrowed_render_publishes_exactly_one_line (p : Program) (position i : Nat)
+    (name : Name) (x : Ident)
+    (hio : p.io[i]? = some (.print (.borrowed name)))
+    (hx : lookupIdent p.operandIdentities name = some x)
+    (hlive : x ∈ liveBefore p position) :
+    stepLines p position (.io i) = some [⟨Stream.out, some (render (Int.ofNat x))⟩] := by
+  simp [stepLines, hio, renderOperand, hx, hlive]
+
 /-! ## Effects: the union, and what admitting it admits -/
 
 inductive Effect where
@@ -790,6 +949,7 @@ def payoff : Program where
   io := [.log (.scalar 5), .ret]
   order := [.ext 0, .ext 1, .io 0, .ret]
   operandValues := [(5, 1)]
+  operandIdentities := []
   externPremises := [.declaredContract 9]
 
 /-- **Non-vacuity.** The fixture is admitted, publishes the extern trace on

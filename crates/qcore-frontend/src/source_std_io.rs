@@ -13,7 +13,7 @@
 //!             | "return" ";"
 //! RENDERING ::= "dec" | "hex"
 //! LEVEL     ::= "info" | "warn" | "fatal"
-//! OPERAND   ::= ["-"] INTEGER | NAME
+//! OPERAND   ::= ["-"] INTEGER | NAME | "borrow" NAME
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
 //!
@@ -24,13 +24,28 @@
 //!
 //! # The operand rule is the effect discipline
 //!
-//! `OPERAND` is an integer literal or a name this entry bound to an integer
-//! literal. There is no operand form that can denote an owned buffer, a borrow,
-//! a share or a handle, so a rendering on this route cannot consume, release,
-//! store or retain custody of anything. A name that is not one of this entry's
-//! integer bindings — including every resource binding — is refused at `Q028`.
-//! Admitting a *borrowed* render of a live resource is out of v1 and named
-//! `STD-FMT-BORROW`.
+//! A bare `OPERAND` is an integer literal or a name this entry bound to an
+//! integer literal. Neither form can denote an owned buffer, a share or a
+//! handle, so a rendering of either cannot consume, release, store or retain
+//! custody of anything. A name that is not one of this entry's integer
+//! bindings — including every resource binding — is refused at `Q028`.
+//!
+//! `borrow NAME` is the one form that names a resource (card
+//! `STD-FMT-BORROW`), and it renders that resource's **model identity** and
+//! nothing else — no byte of the object, no address, no extent. It is admitted
+//! only where a checked custody model supplied the identity *and* held it live
+//! at the statement, which `source.std-io.v1` never does: this route has no
+//! custody model, so every `borrow NAME` written on it refuses at `Q028`. The
+//! composing route `source.std-io-extern.v1` is where the form is reachable,
+//! and the liveness rule is that route's join (`Q043`), decided from the extern
+//! model's own published ledger.
+//!
+//! `borrow` was already a reserved source word (the checked mutex-guard
+//! profile's), so this form adds **no** reserved word and moves no fixture
+//! surface — standing constraint 14's census was run and found no collision.
+//! The marker is also what keeps the pipe out: `x |> print dec` desugars to
+//! `print dec x;` with no marker, and a sink stage naming an extra selector
+//! word refuses at `Q036`, so no pipeline can spell a borrowed render in v1.
 //!
 //! # What this lowering does not establish
 //!
@@ -62,6 +77,15 @@ pub struct LoweredStdIoModule {
 pub const PRINT_KEYWORD: &str = "print";
 pub const LOG_KEYWORD: &str = "log";
 pub const FLUSH_KEYWORD: &str = "flush";
+
+/// The operand marker of a borrowed render (card `STD-FMT-BORROW`).
+///
+/// Deliberately an **existing** reserved source word — the checked mutex-guard
+/// profile reserved `borrow` — so this card adds none and no pinned fixture
+/// surface moves. Reserving it is also what keeps the word out of name
+/// resolution here: without that, `borrow b` would collect `borrow` as a
+/// referenced name and refuse at `Q013`.
+pub const BORROW_KEYWORD: &str = "borrow";
 
 /// Which of this card's capabilities a statement head requires.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -148,6 +172,38 @@ pub fn has_source_std_io(program: &SourceProgram) -> bool {
 /// below reads, so the two cannot disagree about which names an entry renders.
 #[must_use]
 pub fn rendered_scalar_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, String)> {
+    rendered_operands(program, entry)
+        .into_iter()
+        .filter_map(|(span, operand)| match operand {
+            StdIoOperand::Scalar(name) => Some((span, name)),
+            _ => None,
+        })
+        .collect()
+}
+
+/// Every `print`/`log` statement in the entry whose operand is `borrow NAME`,
+/// with that statement's span (card `STD-FMT-BORROW`).
+///
+/// The custody half of [`rendered_scalar_operands`], and published for the same
+/// reason: a composing route resolves these against its **custody** namespace
+/// before this lowering runs, so the two namespaces are read from two lists and
+/// a name can never be resolved in both.
+#[must_use]
+pub fn rendered_borrowed_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, String)> {
+    rendered_operands(program, entry)
+        .into_iter()
+        .filter_map(|(span, operand)| match operand {
+            StdIoOperand::Borrowed(name) => Some((span, name)),
+            _ => None,
+        })
+        .collect()
+}
+
+/// Every rendering operand of the entry that names something, with its
+/// statement's span. Reads the same token window and the same operand grammar
+/// the lowering below reads, so the two cannot disagree about what an entry
+/// renders.
+fn rendered_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, StdIoOperand)> {
     let tokens = program.lexical_tokens();
     let Some(declaration) = program.declarations.iter().find(|declaration| {
         declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
@@ -165,10 +221,10 @@ pub fn rendered_scalar_operands(program: &SourceProgram, entry: &str) -> Vec<(Sp
             Some(LOG_KEYWORD) => 3,
             _ => continue,
         };
-        if let Some((StdIoOperand::Scalar(name), next)) = operand(&window, cursor)
+        if let Some((rendered, next)) = operand(&window, cursor)
             && ends_with_semicolon(&window, next)
         {
-            found.push((statement.span, name));
+            found.push((statement.span, rendered));
         }
     }
     found
@@ -218,6 +274,17 @@ fn operand(window: &[&Token], cursor: usize) -> Option<(StdIoOperand, usize)> {
         return Some((StdIoOperand::Literal(value), next));
     }
     match window.get(cursor).map(|token| &token.kind) {
+        // `borrow NAME` is tried before the bare name, and the marker is a
+        // reserved word, so a bare `borrow` can never be read as a scalar name
+        // and a borrowed render can never be read as a bare one.
+        Some(TokenKind::Word(marker)) if marker == BORROW_KEYWORD => {
+            match window.get(cursor + 1).map(|token| &token.kind) {
+                Some(TokenKind::Word(name)) => {
+                    Some((StdIoOperand::Borrowed(name.clone()), cursor + 2))
+                }
+                _ => None,
+            }
+        }
         Some(TokenKind::Word(name)) => Some((StdIoOperand::Scalar(name.clone()), cursor + 1)),
         _ => None,
     }
@@ -300,7 +367,14 @@ pub fn lower_source_std_io(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
-    lower_source_std_io_skipping(parsed, typed, entry, &[], &BTreeMap::new())
+    lower_source_std_io_skipping(
+        parsed,
+        typed,
+        entry,
+        &[],
+        &BTreeMap::new(),
+        &BTreeMap::new(),
+    )
 }
 
 /// [`lower_source_std_io`] with a set of entry-body statement spans left to
@@ -319,12 +393,22 @@ pub fn lower_source_std_io(
 /// determined. A value whose number is not determined is deliberately absent,
 /// so it refuses here as an unbound operand rather than being rendered as a
 /// number no model computed.
+///
+/// `provided_identities` is the same mechanism for a **borrowed** render (card
+/// `STD-FMT-BORROW`): a custody model supplies the identity of each name it
+/// binds to a resource, and a name it does not supply refuses here at `Q028`.
+/// This route passes an empty map, which is why every `borrow NAME` written on
+/// `source.std-io.v1` alone refuses — structurally, for want of a custody
+/// model, rather than by a rule this lowering states. Whether the identity is
+/// *live* at the statement is not decided here either: that is the composing
+/// route's join, which reads the extern model's own ledger.
 pub fn lower_source_std_io_skipping(
     parsed: &SourceProgram,
     _typed: &TypedSourceProgram,
     entry: &str,
     skip: &[Span],
     provided_scalars: &BTreeMap<String, i32>,
+    provided_identities: &BTreeMap<String, i32>,
 ) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
@@ -405,6 +489,7 @@ pub fn lower_source_std_io_skipping(
     };
 
     let mut scalars: BTreeMap<String, i32> = provided_scalars.clone();
+    let identities: BTreeMap<String, i32> = provided_identities.clone();
     let mut events = Vec::new();
     let mut event_spans = Vec::new();
 
@@ -472,8 +557,8 @@ pub fn lower_source_std_io_skipping(
                     _ => diagnostics.push(diagnostic(
                         "Q030",
                         span,
-                        "`print RENDERING OPERAND;` takes one integer literal or one bound \
-                         integer name",
+                        "`print RENDERING OPERAND;` takes one integer literal, one bound integer \
+                         name, or `borrow NAME` for the identity of a live resource",
                     )),
                 }
             }
@@ -508,8 +593,8 @@ pub fn lower_source_std_io_skipping(
                     _ => diagnostics.push(diagnostic(
                         "Q030",
                         span,
-                        "`log LEVEL RENDERING OPERAND;` takes one integer literal or one bound \
-                         integer name",
+                        "`log LEVEL RENDERING OPERAND;` takes one integer literal, one bound \
+                         integer name, or `borrow NAME` for the identity of a live resource",
                     )),
                 }
             }
@@ -554,18 +639,36 @@ pub fn lower_source_std_io_skipping(
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => operand,
             StdIoEvent::Flush | StdIoEvent::Return => continue,
         };
-        if let StdIoOperand::Scalar(name) = operand
-            && !scalars.contains_key(name)
-        {
-            diagnostics.push(diagnostic(
-                "Q028",
-                event_spans.get(index).copied().unwrap_or(scope_span),
-                format!(
-                    "`{name}` is not a scalar this entry bound; `source.std-io.v1` renders \
-                     integer literals and `let`-bound integers only, and has no operand form \
-                     that could denote a resource"
-                ),
-            ));
+        let span = event_spans.get(index).copied().unwrap_or(scope_span);
+        match operand {
+            StdIoOperand::Scalar(name) if !scalars.contains_key(name) => {
+                diagnostics.push(diagnostic(
+                    "Q028",
+                    span,
+                    format!(
+                        "`{name}` is not a scalar this entry bound; `source.std-io.v1` renders \
+                         integer literals and `let`-bound integers only, and its bare operand \
+                         form has none that could denote a resource"
+                    ),
+                ));
+            }
+            // Card `STD-FMT-BORROW`. On this route `identities` is empty, so
+            // every borrowed render lands here: the refusal is the absence of a
+            // custody model, not a rule about this statement.
+            StdIoOperand::Borrowed(name) if !identities.contains_key(name) => {
+                diagnostics.push(diagnostic(
+                    "Q028",
+                    span,
+                    format!(
+                        "`borrow {name}` renders the model identity of a live resource, and no \
+                         checked custody model published one here; `source.std-io.v1` has no \
+                         custody model of its own, so a borrowed render needs a route that \
+                         composes this one with a model that holds the identity live at that \
+                         statement"
+                    ),
+                ));
+            }
+            _ => {}
         }
     }
 
@@ -578,6 +681,7 @@ pub fn lower_source_std_io_skipping(
         program: StdIoProgram {
             entry: entry.to_owned(),
             scalars,
+            identities,
             declared_effects,
             events,
         },

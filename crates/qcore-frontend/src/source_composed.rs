@@ -185,7 +185,7 @@ pub fn lower_source_composed(
     let mut operand_values = BTreeMap::new();
     for (span, name) in source_std_io::rendered_scalar_operands(parsed, entry) {
         let Some((value, number)) = externs.scalar_values.get(&name).copied() else {
-            if externs.resource_bindings.contains(&name) {
+            if externs.resource_bindings.contains_key(&name) {
                 // Left to the standard-IO route's own `Q028`, which is the
                 // refusal card STD-MODULES pinned and whose message is exactly
                 // right here: this profile has no operand form that could
@@ -226,12 +226,53 @@ pub fn lower_source_composed(
         scalars.insert(name.clone(), number);
         operand_values.insert(name, value);
     }
+
+    // The custody half (card `STD-FMT-BORROW`). A `borrow NAME` operand
+    // resolves against the extern model's **resource** namespace — the other
+    // map, never this one — and supplies the model identity the rendering
+    // publishes. Whether that identity is *live* at the statement is not
+    // decided here: this lowering has no ledger, and the join reads the extern
+    // checker's own published one rather than deriving a second.
+    let mut identities: BTreeMap<String, i32> = BTreeMap::new();
+    let mut operand_identities = BTreeMap::new();
+    for (span, name) in source_std_io::rendered_borrowed_operands(parsed, entry) {
+        let Some(resource) = externs.resource_bindings.get(&name).copied() else {
+            diagnostics.push(diagnostic(
+                span,
+                format!(
+                    "`borrow {name}` renders the model identity of a live resource, and this \
+                     module binds no resource of that name; a borrowed rendering reads the \
+                     extern model's custody namespace and never its value namespace"
+                ),
+            ));
+            continue;
+        };
+        let Ok(identity) = i32::try_from(resource) else {
+            diagnostics.push(diagnostic(
+                span,
+                format!(
+                    "the model identity of `{name}` is outside the range \
+                     `source.std-io.v1` renders; its two renderings are total on `int32_t` and \
+                     on nothing else"
+                ),
+            ));
+            continue;
+        };
+        identities.insert(name.clone(), identity);
+        operand_identities.insert(name, resource);
+    }
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
 
-    let io =
-        source_std_io::lower_source_std_io_skipping(parsed, typed, entry, &skip_for_io, &scalars)?;
+    let io = source_std_io::lower_source_std_io_skipping(
+        parsed,
+        typed,
+        entry,
+        &skip_for_io,
+        &scalars,
+        &identities,
+    )?;
 
     // The interleaving. Both lowerings publish one span per event, so the
     // composed order is read off the source statement order rather than
@@ -272,6 +313,7 @@ pub fn lower_source_composed(
         order,
         operand_values,
         value_abi,
+        operand_identities,
     };
     Ok(LoweredComposedModule {
         entry: entry.to_owned(),

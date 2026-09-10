@@ -9,19 +9,44 @@
 //!
 //! # The v1 effect discipline, and why it is sound by construction
 //!
-//! [`StdIoOperand`] has exactly two constructors, and **neither of them can
-//! denote a resource**. There is no operand form for an owned buffer, a borrow,
-//! a loan share or a handle. So a rendering on this route cannot consume,
-//! release, store or retain custody of anything: it is not that the checker
-//! refuses those uses, it is that the model cannot express them. That is
-//! stronger than the borrow-only discipline the spec already states for logging
-//! at §L11 ("Matching an error, logging it, or replacing its tag does not
-//! release its payload"), and it is why [`derived_effects`] is exactly `{Io}`
-//! for every program this module accepts — never `Alloc`, never `Mut`.
+//! [`StdIoOperand::Literal`] and [`StdIoOperand::Scalar`] **cannot denote a
+//! resource**. There is no operand form there for an owned buffer, a loan share
+//! or a handle, so a rendering of either cannot consume, release, store or
+//! retain custody of anything: it is not that the checker refuses those uses,
+//! it is that the model cannot express them. That is why [`derived_effects`] is
+//! exactly `{Io}` for every program this module accepts — never `Alloc`, never
+//! `Mut`.
 //!
-//! Admitting a *borrowed* render of a live resource is deliberately out of v1
-//! and named `STD-FMT-BORROW`. Refusing the whole class is the fail-closed
-//! choice; widening it is a separate card with its own custody argument.
+//! # The borrowed render, and what it is exactly (card `STD-FMT-BORROW`)
+//!
+//! [`StdIoOperand::Borrowed`] is the third constructor and the one place this
+//! route names a resource at all. It is spelled `borrow NAME` at the operand
+//! position, and it renders **one thing and one thing only: the model identity
+//! of that resource** — the same number the emitted C's own call trace spells
+//! `rN` and the same number the checked custody model carries. It renders no
+//! byte of the object, no address, no extent and no descriptor: the census
+//! behind this card measured that no such projection exists in any model a
+//! rendering can reach (report §2).
+//!
+//! Three properties make it sound, and none of them is decided here:
+//!
+//! 1. **Liveness is a precondition.** The number in [`StdIoProgram::identities`]
+//!    is supplied by a checked custody model, and that model refuses to supply
+//!    one for an identity it does not hold live at the rendering's own step.
+//!    This route has no custody model of its own, so `identities` is **empty**
+//!    on `source.std-io.v1` and every `borrow NAME` there refuses at `Q028` —
+//!    structurally, exactly as an unbound scalar does.
+//! 2. **Obligations are unchanged.** Rendering appends a line; it opens,
+//!    discharges and moves nothing. The identity is as live after the rendering
+//!    as before it, and its cleanup obligation is the same one.
+//! 3. **A rendering is not a publication.** Standing constraint 10 refuses a
+//!    *store* of a tracked identity into an object that outlives the call,
+//!    because that creates a second reachable path to the resource and
+//!    falsifies `Borrowed`. A rendering creates none: the destination is a byte
+//!    stream and not an object of the custody graph, the bytes are a **copy of
+//!    the identity number** rather than the address, and no operation of any
+//!    model in this repository reads a stream back. There is no path from a
+//!    written line to a custody identity, so nothing the caller owes changed.
 //!
 //! # What is not claimed
 //!
@@ -167,15 +192,26 @@ impl Stream {
 
 /// What a rendering may be applied to.
 ///
-/// **This enum is the v1 effect discipline.** It has no resource constructor,
-/// so no program on this route can hand custody to a rendering. Adding one is
-/// a semantic change requiring its own custody argument, not a convenience.
+/// **This enum is the v1 effect discipline.** Two of its three constructors
+/// cannot denote a resource at all, and the third denotes one only through the
+/// identity a checked custody model published for it — never through the
+/// object, its address, its extent or its contents. Adding a constructor that
+/// carries an object is a semantic change requiring its own custody argument,
+/// not a convenience.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StdIoOperand {
     /// An integer literal written at the site.
     Literal(i32),
     /// A name the entry bound to an integer literal with `let`.
     Scalar(String),
+    /// `borrow NAME` — the **model identity** of a resource a checked custody
+    /// model holds live at this rendering (card `STD-FMT-BORROW`).
+    ///
+    /// Resolved against [`StdIoProgram::identities`], which this route never
+    /// fills: a `source.std-io.v1` module has no custody model, so every
+    /// `borrow NAME` refuses there. See the module header for the custody
+    /// argument.
+    Borrowed(String),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -204,6 +240,15 @@ pub struct StdIoProgram {
     pub entry: String,
     /// The integer values the entry bound with `let`, by name.
     pub scalars: BTreeMap<String, i32>,
+    /// The **model identities** a checked custody model published for the names
+    /// this entry renders with `borrow NAME` (card `STD-FMT-BORROW`).
+    ///
+    /// Deliberately a second map rather than more entries in `scalars`: the two
+    /// namespaces never merge, a borrowed name is never a scalar and a scalar
+    /// name is never borrowable. Empty on `source.std-io.v1`, which has no
+    /// custody model — which is what makes the borrowed render refuse there
+    /// structurally rather than by a rule.
+    pub identities: BTreeMap<String, i32>,
     /// The entry's declared `effects { … }` row, verbatim from source.
     pub declared_effects: EffectRow,
     pub events: Vec<StdIoEvent>,
@@ -249,12 +294,23 @@ pub struct StdIoCertificate {
     /// The renderings actually used, so a certificate names its own `std.fmt`
     /// surface rather than the whole vocabulary.
     pub renderings: BTreeSet<Rendering>,
+    /// `(name, identity)` of every borrowed render, in program order (card
+    /// `STD-FMT-BORROW`). Published beside `lines` rather than folded into
+    /// them, because it is the one field of this certificate that names a
+    /// custody identity: a reader can see at a glance which lines are about a
+    /// resource and which are data.
+    pub borrowed_renders: Vec<(String, i32)>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StdIoError {
     /// `Q028`: the operand does not denote a scalar this entry bound.
     UnboundScalar { event: usize, name: String },
+    /// `Q028`: a `borrow NAME` operand for which no checked custody model
+    /// published a live identity (card `STD-FMT-BORROW`). On
+    /// `source.std-io.v1` this is *every* borrowed render, because that route
+    /// has no custody model at all.
+    UnborrowableIdentity { event: usize, name: String },
     /// `Q029`: the declared effect row does not admit the derived one.
     EffectNotDeclared { event: usize, effect: Effect },
     /// `Q030`: the flat entry shape this profile models is violated.
@@ -264,7 +320,7 @@ pub enum StdIoError {
 impl StdIoError {
     pub fn code(&self) -> &'static str {
         match self {
-            Self::UnboundScalar { .. } => "Q028",
+            Self::UnboundScalar { .. } | Self::UnborrowableIdentity { .. } => "Q028",
             Self::EffectNotDeclared { .. } => "Q029",
             Self::Shape { .. } => "Q030",
         }
@@ -273,6 +329,7 @@ impl StdIoError {
     pub fn event(&self) -> usize {
         match self {
             Self::UnboundScalar { event, .. }
+            | Self::UnborrowableIdentity { event, .. }
             | Self::EffectNotDeclared { event, .. }
             | Self::Shape { event, .. } => *event,
         }
@@ -287,6 +344,13 @@ impl fmt::Display for StdIoError {
                 "`{name}` is not a scalar this entry bound; `source.std-io.v1` renders integer \
                  literals and `let`-bound integers only, and has no operand form that could \
                  denote a resource"
+            ),
+            Self::UnborrowableIdentity { name, .. } => write!(
+                f,
+                "`borrow {name}` renders the model identity of a live resource, and no checked \
+                 custody model published one here; `source.std-io.v1` has no custody model of its \
+                 own, so a borrowed render needs a route that composes this one with a model that \
+                 holds the identity live at that statement"
             ),
             Self::EffectNotDeclared { effect, .. } => write!(
                 f,
@@ -315,6 +379,27 @@ fn operand_value(
                     name: name.clone(),
                 })
         }
+        // The two namespaces are read from two maps and never from one: a
+        // scalar name is not borrowable and a borrowed name is not a scalar,
+        // whatever either map happens to contain.
+        StdIoOperand::Borrowed(name) => {
+            program
+                .identities
+                .get(name)
+                .copied()
+                .ok_or_else(|| StdIoError::UnborrowableIdentity {
+                    event: index,
+                    name: name.clone(),
+                })
+        }
+    }
+}
+
+/// Record a borrowed render in the certificate's own list. A literal or scalar
+/// operand records nothing: the list names custody identities and only those.
+fn record_borrow(operand: &StdIoOperand, value: i32, into: &mut Vec<(String, i32)>) {
+    if let StdIoOperand::Borrowed(name) = operand {
+        into.push((name.clone(), value));
     }
 }
 
@@ -325,6 +410,7 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
     let mut lines = Vec::new();
     let mut flushes = 0;
     let mut renderings = BTreeSet::new();
+    let mut borrowed_renders = Vec::new();
     let mut returned = false;
 
     for (index, event) in program.events.iter().enumerate() {
@@ -340,10 +426,13 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             StdIoEvent::Print { rendering, operand } => {
                 renderings.insert(*rendering);
                 match operand_value(program, index, operand) {
-                    Ok(value) => lines.push(ObservedLine {
-                        stream: Stream::Out,
-                        text: rendering.render(value),
-                    }),
+                    Ok(value) => {
+                        record_borrow(operand, value, &mut borrowed_renders);
+                        lines.push(ObservedLine {
+                            stream: Stream::Out,
+                            text: rendering.render(value),
+                        });
+                    }
                     Err(error) => errors.push(error),
                 }
             }
@@ -354,10 +443,13 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             } => {
                 renderings.insert(*rendering);
                 match operand_value(program, index, operand) {
-                    Ok(value) => lines.push(ObservedLine {
-                        stream: Stream::Err,
-                        text: format!("[{}] {}", level.tag(), rendering.render(value)),
-                    }),
+                    Ok(value) => {
+                        record_borrow(operand, value, &mut borrowed_renders);
+                        lines.push(ObservedLine {
+                            stream: Stream::Err,
+                            text: format!("[{}] {}", level.tag(), rendering.render(value)),
+                        });
+                    }
                     Err(error) => errors.push(error),
                 }
             }
@@ -390,6 +482,7 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             lines,
             flushes,
             renderings,
+            borrowed_renders,
         })
     } else {
         Err(errors)
@@ -403,6 +496,7 @@ pub enum StdIoRecheckFailure {
     Lines,
     Flushes,
     Renderings,
+    BorrowedRenders,
     Refused,
 }
 
@@ -414,6 +508,7 @@ impl fmt::Display for StdIoRecheckFailure {
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
             Self::Renderings => "the used renderings",
+            Self::BorrowedRenders => "the borrowed renders and the identities they name",
             Self::Refused => "the program itself, which the recheck refuses",
         };
         write!(f, "{what} does not survive an independent rederivation")
@@ -441,6 +536,9 @@ pub fn recheck_std_io_certificate(
     }
     if rederived.renderings != certificate.renderings {
         return Err(StdIoRecheckFailure::Renderings);
+    }
+    if rederived.borrowed_renders != certificate.borrowed_renders {
+        return Err(StdIoRecheckFailure::BorrowedRenders);
     }
     Ok(())
 }

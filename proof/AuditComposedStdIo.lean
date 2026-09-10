@@ -14,7 +14,7 @@ import QCore.ComposedStdIo
 -- A rendering reads a value, never an identity: the operand type has no
 -- constructor denoting one, and no step moves a name between the two
 -- namespaces.
-#print axioms QCore.ComposedStdIo.an_operand_is_a_literal_or_a_value_name
+#print axioms QCore.ComposedStdIo.an_operand_is_a_literal_a_value_name_or_a_borrow
 #print axioms QCore.ComposedStdIo.no_step_moves_a_name_between_the_namespaces
 
 -- Nothing is lost or duplicated by the interleaving.
@@ -69,3 +69,15 @@ import QCore.ComposedStdIo
 #print axioms QCore.ComposedStdIo.an_undetermined_outcome_is_refused
 #print axioms QCore.ComposedStdIo.the_undeclared_trace_line_is_reachable
 #print axioms QCore.ComposedStdIo.an_acquiring_composition_needs_its_alloc_declared
+
+-- Card `STD-FMT-BORROW`: the borrowed render of a live resource. Liveness is a
+-- precondition, obligations are unchanged, and the two namespaces stay two.
+#print axioms QCore.ComposedStdIo.a_borrowed_render_reads_only_a_live_identity
+#print axioms QCore.ComposedStdIo.a_borrowed_render_of_a_dead_identity_has_no_admitted_step
+#print axioms QCore.ComposedStdIo.an_unresolved_borrow_has_no_admitted_step
+#print axioms QCore.ComposedStdIo.a_borrowed_render_publishes_exactly_one_line
+#print axioms QCore.ComposedStdIo.a_borrowed_render_leaves_the_ledger_unchanged
+#print axioms QCore.ComposedStdIo.a_program_of_renderings_leaves_the_ledger_unchanged
+#print axioms QCore.ComposedStdIo.a_borrowed_render_reads_no_value
+#print axioms QCore.ComposedStdIo.a_scalar_render_reads_no_identity
+#print axioms QCore.ComposedStdIo.a_borrowed_render_binds_no_value

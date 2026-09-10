@@ -179,7 +179,7 @@ pub fn emit_composed_c11(
                 let Some(event) = program.io.events.get(*index) else {
                     return Err(ComposedEmissionRefusal::ObservationDisagrees);
                 };
-                match std_io_c_emit::event_statement(event, &expressions) {
+                match std_io_c_emit::event_statement(event, &expressions, &program.io.identities) {
                     Ok(Some(statement)) => {
                         let _ = writeln!(source, "    {statement}");
                     }
