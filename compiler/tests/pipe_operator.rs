@@ -441,18 +441,31 @@ fn the_argument_order_of_a_call_stage_is_the_declared_one() {
     );
 }
 
-// --- 5. The operator gate, as retabled by card `OR-AND-LOWERING`. ---
+// --- 5. The operator gate: retabled by `OR-AND-LOWERING`, made positional by
+// `BITWISE-CONDITIONS`. ---
 //
 // These four tests are card `PIPE-OPERATOR`'s, kept in place and moved
-// deliberately. That card decided logical or was the single `|` and refused
-// `||` as a misspelling of it; the user's retable amendment inverts the pair,
-// so the *claims* these tests make are rewritten rather than relaxed. The
-// invariant that survives untouched is the one that mattered: every one of
-// these four programs was refused before and is refused now, at the same code.
-// Where the connectives are now *admitted* is `compiler/tests/logical_connectives.rs`.
+// deliberately, twice. That card decided logical or was the single `|` and
+// refused `||` as a misspelling of it; the user's retable amendment inverted
+// the pair; and `BITWISE-CONDITIONS` then gave the three single characters a
+// meaning inside an `if` condition. So the *claims* these tests make have been
+// rewritten rather than relaxed. The invariant that survives untouched across
+// both moves is the one that mattered: every one of these four programs — all
+// of them in a **rendering** position on the std-io route — was refused before
+// and is refused now, at the same code, by the same per-file gate. Where the
+// operators are *admitted* is `compiler/tests/logical_connectives.rs` and
+// `compiler/tests/bitwise_conditions.rs`.
 
 #[test]
-fn the_single_bar_is_reserved_for_bitwise_or() {
+fn the_single_bar_is_the_bitwise_operator_and_not_admitted_here() {
+    // **Deliberate pin update, card `BITWISE-CONDITIONS`**, the second this
+    // test has taken. Card `PIPE-OPERATOR` claimed the single bar as logical
+    // or; `OR-AND-LOWERING` withdrew that and held it as a reservation;
+    // `BITWISE-CONDITIONS` spends the reservation and gives it a meaning in one
+    // position — a parenthesized comparison operand inside an `if` condition.
+    // What survives every move, and is the reason this test lives in the pipe
+    // suite at all, is that a bare `|` written *here* — in a rendering position
+    // on the std-io route — is refused, at `Q038`, by the same per-file gate.
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
@@ -460,12 +473,11 @@ fn the_single_bar_is_reserved_for_bitwise_or() {
     );
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
-    assert!(message.contains("`|` is reserved"));
+    assert!(message.contains("`|` is the bitwise-or operator"));
     assert!(
-        message.contains("`||`"),
-        "the message must redirect to the spelling that is logical or"
+        message.contains("`if` condition"),
+        "the message must name the one position where the operator is admitted"
     );
-    assert!(message.contains("BITWISE-OPERATORS"));
 }
 
 #[test]
@@ -502,13 +514,14 @@ fn the_double_ampersand_outside_a_condition_refuses_the_same_way() {
 }
 
 #[test]
-fn a_single_ampersand_gains_no_new_meaning() {
-    // `&` is consumed by no grammar and is reserved for bitwise and. Card
-    // `PIPE-OPERATOR` asserted its refusal was never at `Q038`, because a
-    // `Q038` would have meant that card had claimed it; the retable moves it
-    // *to* `Q038` deliberately, because the reservation is now stated rather
-    // than left implicit. The load-bearing half is unchanged and re-asserted:
-    // a lone `&` still refuses, and it is still not logical and.
+fn a_single_ampersand_gains_no_meaning_in_a_rendering_position() {
+    // Card `PIPE-OPERATOR` asserted a lone `&`'s refusal was never at `Q038`,
+    // because a `Q038` would have meant that card had claimed it;
+    // `OR-AND-LOWERING` moved it *to* `Q038` to state the reservation; and
+    // `BITWISE-CONDITIONS` spends the reservation — in an `if` condition, and
+    // nowhere else. The load-bearing half has survived all three moves and is
+    // re-asserted here: a lone `&` in a rendering position still refuses, and
+    // it is still not logical and.
     let source = replace_fixture(
         LINES_PIPED,
         "total |> print dec;",
@@ -516,10 +529,14 @@ fn a_single_ampersand_gains_no_new_meaning() {
     );
     assert_eq!(codes(&source), ["Q038"]);
     let message = &messages(&source)[0];
-    assert!(message.contains("`&` is reserved"));
+    assert!(message.contains("`&` is the bitwise-and operator"));
     assert!(
         message.contains("`&&`"),
-        "the message must redirect to the spelling that is logical and"
+        "the message must still distinguish it from logical and"
+    );
+    assert!(
+        message.contains("`if` condition"),
+        "the message must name the one position where the operator is admitted"
     );
 }
 

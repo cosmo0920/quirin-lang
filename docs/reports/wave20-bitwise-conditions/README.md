@@ -217,8 +217,11 @@ have quietly given that up for the new half, so the tree reaches `qcore-core` an
 `c_emit` writes it, fully parenthesized:
 
 ```c
-q_bb_2:
-    if ((INT32_C(12) | INT32_C(3)) == INT32_C(15)) { goto q_bb_3; } else { goto q_bb_5; }
+    if ((INT32_C(12) | INT32_C(3)) == INT32_C(15)) {
+        goto …;
+    } else {
+        goto …;
+    }
 ```
 
 The parentheses are emitted for every `Bitwise` node and for no `Literal` node,
@@ -303,8 +306,8 @@ Stated plainly, because it is the boundary:
 | the condition tier reads it, in every operand position | nothing else reads it: `drop n`, `move n`, `return n`, `qcore_check(n, …)` and `n = 4` all keep their existing refusal |
 | its value is check-time known **by construction**, not by analysis | it cannot carry a call result, so `succeeds INTEGER` is out of reach from here |
 
-`a_constant_binding_gains_no_other_position` pins the second column's first row as
-one list. **`IF-RUNTIME-CONDITION` is unmoved** and is still what would make a
+`a_constant_binding_gains_no_other_position` pins the "nothing else reads it"
+row as one list. **`IF-RUNTIME-CONDITION` is unmoved** and is still what would make a
 condition read a run-time value; this card did not touch the single-observation
 certificate story, and could not have, because every operand it admits is
 decided.
@@ -323,23 +326,31 @@ deliberate boundary discipline, not a limitation of the mechanism.
 sanitized native run. Three new fixtures under `compiler/tests/fixtures/bitwise/`:
 `negated_condition.qcore`, its hand-swapped twin, and `masked_condition.qcore`.
 
-**Three pinned expectations moved, each deliberately.**
+**Five pinned expectations moved, each deliberately.**
 
 | Pin | Was | Now | What survived |
 |---|---|---|---|
 | `branch_statement.rs::the_tier_gained_exactly_the_two_connectives` | `!true`, `true \| false`, `true & false`, `true ^ false` all refuse | renamed `…_the_connectives_the_negation_and_the_integer_operands`; `!true`, `!(3 < 5)` and `(3 \| 4) == 7` admitted, and seven refused shapes listed including the two C-divergence spellings | the closedness of the tier against everything else, and the card's own boundary-marker role |
 | `logical_connectives.rs::the_three_single_byte_operators_are_reserved_not_spelled` | `\|`/`&`/`^` refuse at `Q038` with *"is reserved"* naming `BITWISE-OPERATORS` | renamed `…_are_spelled_only_in_a_condition`; same code, same gate, message naming the one admitted position | **the load-bearing half** — outside a condition all three still refuse, at the same code, and none is a logical operator |
 | `logical_connectives.rs::a_reserved_character_is_reserved_inside_a_condition_too` | `true \| false` refuses at `Q038` — *"the reservation is not positional"* | renamed `a_single_byte_operator_in_a_condition_is_the_branch_pass_to_decide`; `Q045` instead, with the sort-rule message asserted | **the refusal itself** — `true \| false` is still not a program, because a condition is not an integer |
+| `pipe_operator.rs::the_single_bar_is_reserved_for_bitwise_or` | a bare `\|` in a **rendering** position refuses at `Q038` naming the reservation and `BITWISE-OPERATORS` | renamed `the_single_bar_is_the_bitwise_operator_and_not_admitted_here`; same code, same gate, message naming the one admitted position | the refusal, the code, and the per-file gate that raises it |
+| `pipe_operator.rs::a_single_ampersand_gains_no_new_meaning` | a bare `&` in a rendering position refuses at `Q038` naming the reservation | renamed `a_single_ampersand_gains_no_meaning_in_a_rendering_position`; same code, message naming the position, and the `&&` distinction still asserted | **the load-bearing half across all three moves** — a lone `&` still refuses and is still not logical and |
 
-The second and third moves are the same shape card `OR-AND-LOWERING` made when it
-moved card `PIPE-OPERATOR`'s `a_single_ampersand_gains_no_new_meaning`: the pin's
+The last three moves are the same shape card `OR-AND-LOWERING` made when it moved
+card `PIPE-OPERATOR`'s `a_single_ampersand_gains_no_new_meaning`: the pin's
 negative assertion was written so a *future* card could not silently claim the
 character. This card does not claim it silently — it claims it in one position,
 states the other positions' refusals as a list, and re-asserts the load-bearing
-half at the new layer.
+half at the new layer. That test has now been moved by three consecutive cards
+and its load-bearing half has survived all three, which is the point of writing
+it that way.
+
+`pipe_operator.rs` therefore **is** edited, contrary to this card's first
+estimate: the two `Q038` message assertions had to move with the gate. Its count
+is unchanged at 41 — two rewrites, no additions or deletions.
 
 Unedited and passing: `crates/qcore-frontend/tests/unit/lexer.rs` (all sixteen
-adjacency rows), `compiler/tests/pipe_operator.rs`, `compiler/tests/quant_index_contracts.rs`,
+adjacency rows), `compiler/tests/quant_index_contracts.rs`,
 `compiler/tests/std_modules.rs`, `compiler/tests/extern_calls.rs`.
 
 ### 5.2 Sanitizer evidence — reported honestly
@@ -499,6 +510,16 @@ evidence, which constraint 23 forbids.
    `Q044`'s condition verbatim; the rest is "a condition outside the decidable
    tier", which is `Q045`'s. Adding a code for either would give one condition two
    codes. `Q047` onward stays free, and no reservation was spent.
+9. **Two `pipe_operator` pins had to move, which the card had not predicted.**
+   That suite owns the *gate*'s message assertions for a bare `|` and a bare
+   `&` in a rendering position, and the gate's message changed from "is
+   reserved" to "is the bitwise-or operator … admitted only inside an `if`
+   condition". Both keep their code, their gate and their refusal; the
+   ampersand pin has now been moved by three consecutive cards and its
+   load-bearing half — a lone `&` refuses and is not logical and — has survived
+   all three. The miss was caught by the workspace suite rather than by the
+   card's own targets, which is what the workspace suite is for; recorded so
+   the next operator-gate card budgets for it.
 
 ---
 
@@ -529,17 +550,56 @@ remainder renamed `IF-CONDITION-BINDINGS-RUNTIME` rather than left ambiguous.
 | `cargo test -p qcore-compiler --test bitwise_conditions` | **31 pass**, including the sanitized native run |
 | `cargo test -p qcore-compiler --test branch_statement` | **32 pass** (one pin update) |
 | `cargo test -p qcore-compiler --test logical_connectives` | **25 pass** (two pin updates) |
-| `cargo test -p qcore-compiler --test pipe_operator` | **41 pass**, unedited |
-| `cargo test --workspace --no-fail-fast` | *(see §8.1)* |
+| `cargo test -p qcore-compiler --test pipe_operator` | **41 pass** (two pin updates, §5.1) |
+| the whole workspace, `--no-fail-fast` | **3,165 passed, 0 failed, 8 ignored** across 183 targets, exit 0 — composed from two invocations, §8.1 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `python3 scripts/check_lean_audits.py` | *(see §8.1)* |
-| `python3 -m unittest discover -s scripts/tests` | *(see §8.2)* |
-| `reevaluation_probe` / `reevaluation_followup` | *(see §8.1)* |
+| `python3 scripts/check_lean_audits.py` | **86/86 pass**, exit 0; no new axiom, no warning |
+| `python3 -m unittest discover -s scripts/tests` | **192 pass, 1 fail** — the derived Lean-audit-count tripwire, §8.2 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
 
-### 8.1 Numbers
+### 8.1 Numbers, and one measurement finding
 
-*(filled in at close)*
+**3,165 passed, 0 failed, 8 ignored.** Against the base commit's 3,134 that is
+exactly **+31**, this card's own suite; the five moved pins (§5.1) are renames
+and rewrites, so `branch_statement` stays at 32, `logical_connectives` at 25 and
+`pipe_operator` at 41 and the delta carries no hidden removal.
+
+**The figure is composed from two invocations, and that is a finding rather than
+a convenience.** Three attempts at a single `cargo test --workspace
+--no-fail-fast` were each terminated by the session harness partway through, at
+exit 144, after roughly twenty minutes — twice at the same point in the run, with
+five sibling agents building and testing on the same machine throughout and the
+host's swap fully committed. Rather than report a truncated run or re-run a
+fourth time, the suite was split by package:
+
+```
+cargo test -p qcore-core -p qcore-frontend -p qcore-contract -p qcore-schemas            -p qcore-c-gateway -p qcore-verifier-host -p qcore-verification            -p qcore-audit -p qcorec --no-fail-fast
+        → 133 targets, 2,438 passed, 0 failed, 8 ignored, exit 0
+cargo test -p qcore-compiler --no-fail-fast
+        →  50 targets,   727 passed, 0 failed, 0 ignored, exit 0
+```
+
+The ten workspace members are covered exactly once each, so the composition is a
+partition rather than an overlap. Both halves are in `measure/`.
+
+**None of constraint 16's four load-sensitive rows tripped**, including
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`, which ran in the second
+invocation under the same load and passed. No test was re-run to make it pass.
+
+**Two failures were found by the workspace suite and fixed rather than
+tolerated**: the two `pipe_operator` message pins of §6 finding 9. The card's own
+targets had not covered them, which is what a whole-workspace run is for.
+
+The `third_party/libevent` submodule was uninitialized in this fresh worktree, as
+waves 18–19 each recorded in the same situation. The pin was **not** weakened: the
+gate's own `git submodule update --init --recursive` was run before the closing
+suite and checked out `d82464a277d0f42703702c4dfd9af6af38595a83`
+(`release-2.2.2-alpha-11-gd82464a2`), the declared revision.
+
+Wall-clock timings here are not comparable with a quiet run; nothing about the
+results depends on that.
 
 ### 8.2 The one Python failure, and why it is the integrator's
 
@@ -547,8 +607,8 @@ remainder renamed `IF-CONDITION-BINDINGS-RUNTIME` rather than left ambiguous.
 `validation.lean_audits` and `validation.lean_audit_files` rows.
 `AuditBitwise.lean` makes the composed truth **86**, and that file is outside this
 card's write scope, so the tripwire fires:
-`test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried`.
-That is the tripwire doing its job, not a defect, and it doubles as the
+`test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried`,
+asserting `['14.0.0', 85] != ['14.0.0', 86]`. That is the tripwire doing its job, not a defect, and it doubles as the
 measurement that the base carried 85 audits. §9 lists the reconciliation.
 
 ---
@@ -609,16 +669,19 @@ measurement that the base carried 85 audits. §9 lists the reconciliation.
 > `IF-STATEMENT`'s cross-check of the Rust evaluator against a C compiler extends
 > to the new operators, verified by a sanitized ASan/UBSan/LSan run with a
 > positive leak control; a program that writes no bit operation emits
-> byte-identical C. Three findings, each measured rather than designed: a
+> byte-identical C. Four findings, each measured rather than designed: a
 > negation over *identical* arms is unobservable (caught by a failing
 > non-vacuity assertion), the first precedence witness `1 | 2 & 3` was vacuous
 > because both groupings evaluate to 3, and a backtracking two-sort parser was
 > rejected for being exponential in parenthesis depth in favour of a single-pass
-> two-sorted grammar whose sort mismatches are specific refusals. **No new
+> two-sorted grammar whose sort mismatches are specific refusals, and the
+> `pipe_operator` suite turned out to need two pin updates the card had not
+> predicted, its `Q038` message assertions moving with the gate. **No new
 > reserved word, no new token, no new diagnostic code and no band move** —
 > `Q044` gained a condition it already owned, `Q045`'s tier widened, `Q047`
-> onward stays free — and no lexer byte changed. 31 new tests plus three
-> deliberate pin updates, 39 audited Lean theorems in a new `QCore.Bitwise`
+> onward stays free — and no lexer byte changed. 31 new tests plus five
+> deliberate pin updates across three suites, 39 audited Lean theorems in a new
+> `QCore.Bitwise`
 > built on `QCore.Connectives` and `QCore.BranchJoin`, no new axiom, 85 → 86
 > audits. Corpus-neutral by construction: no gateway, audit, contract or
 > provider file touched; corpus stays 69 modules, CT 33/50, leak 272, nothing
