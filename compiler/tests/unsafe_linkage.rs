@@ -48,6 +48,15 @@ fn codes(source: &str, contracts: Option<BTreeMap<String, String>>) -> Vec<Strin
         .collect()
 }
 
+fn without_import(source: &str, module: &str) -> String {
+    let import = format!("import {module};");
+    source
+        .lines()
+        .filter(|line| *line != import)
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 fn unchecked_premises(module: &qcore_compiler::CompiledModule) -> Vec<(String, String)> {
     module
         .declared_assumptions()
@@ -213,7 +222,7 @@ fn the_derived_effect_row_is_maximal_and_the_entry_must_declare_it() {
 
 #[test]
 fn declaring_an_uncontracted_extern_without_its_module_refuses() {
-    let source = ROUND_TRIP.replace("import std.extern.unsafe;\n", "");
+    let source = without_import(ROUND_TRIP, "std.extern.unsafe");
     assert_ne!(
         source, ROUND_TRIP,
         "the waiver import must have been removed"
@@ -225,11 +234,11 @@ fn declaring_an_uncontracted_extern_without_its_module_refuses() {
 fn the_call_module_alone_does_not_grant_the_waiver() {
     // `std.extern` is the call vocabulary and grants no waiver; the reverse
     // holds too, so an unchecked-linkage file names both modules.
-    let source = ROUND_TRIP.replace("import std.extern.unsafe;\n", "");
+    let source = without_import(ROUND_TRIP, "std.extern.unsafe");
     assert!(source.contains("import std.extern;"));
     assert_eq!(codes(&source, None), ["Q032"]);
 
-    let source = ROUND_TRIP.replace("import std.extern;\n", "");
+    let source = without_import(ROUND_TRIP, "std.extern");
     assert!(source.contains("import std.extern.unsafe;"));
     assert_eq!(codes(&source, None), ["Q022"]);
 }
@@ -242,7 +251,7 @@ fn importing_the_waiver_in_another_file_does_not_grant_this_one() {
     );
     let caller = SourceFile::new(
         "caller.qcore",
-        ROUND_TRIP.replace("import std.extern.unsafe;\n", ""),
+        without_import(ROUND_TRIP, "std.extern.unsafe"),
     );
     let errors = compile_files(
         &[granted, caller],
