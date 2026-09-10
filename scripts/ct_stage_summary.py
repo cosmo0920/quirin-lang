@@ -107,6 +107,7 @@ EVIDENCE_FILES = [
     "docs/reports/wave11-ct33/ct_stage_evidence.json",
     "docs/reports/wave13-ct34/ct_stage_evidence.json",
     "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
+    "docs/reports/wave17-ct40/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
@@ -164,6 +165,81 @@ def _triage_rows(root: pathlib.Path):
     return rows
 
 
+def _lane_row_retirements(records, unmapped: set):
+    """The declared retirements of earlier lanes' `unmapped_reasons` rows.
+
+    Wave-17 CT lane. Mapping a case whose bucket an *earlier* lane recorded used
+    to leave two bad options: refuse, or edit that lane's archived record — the
+    in-place rewrite of a frozen archive that card CT-LABELS built this mechanism
+    to replace and card HYGIENE-16 reverted. The third option is the one
+    `supersedes` already uses for labels: the mapping lane declares the
+    retirement in its *own* record, under `retired_unmapped_reasons`, as
+    `{CASE: {retires, mapped_by}}`, and the earlier record stays byte-identical.
+
+    Total-or-reject, mirroring `ct_corpus.rs::lane_row_retirements` exactly:
+
+    * a retirement naming a case the manifest still leaves unmapped — that would
+      silently drop a live label;
+    * a `retires` that is not a stage-evidence record, that carries no row for
+      the case, or that is not the *newest* record carrying one (so a retirement
+      cannot go stale past a supersession);
+    * a retirement of a record that is not strictly earlier than the retiring
+      one;
+    * two records retiring the same case.
+
+    A row for a mapped case with no retirement at all still fails closed in
+    `_lane_labels`: the mechanism admits a declaration, never silence.
+    """
+    newest_row: dict[str, str] = {}
+    for relative, data in records:
+        for case_id in (data.get("unmapped_reasons") or {}):
+            newest_row[case_id] = relative
+
+    order = {relative: index for index, (relative, _) in enumerate(records)}
+    retirements: dict[str, str] = {}
+    for relative, data in records:
+        for case_id, row in (data.get("retired_unmapped_reasons") or {}).items():
+            if case_id in unmapped:
+                raise SystemExit(
+                    "%s: %s retires this case's bucket, but the manifest still leaves the "
+                    "case unmapped — its label is live" % (case_id, relative)
+                )
+            for field in ("retires", "mapped_by"):
+                value = row.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    raise SystemExit(
+                        "%s: %s carries no %s for this retirement" % (case_id, relative, field)
+                    )
+            retires = row["retires"]
+            if retires not in order:
+                raise SystemExit(
+                    "%s: %s retires %s, which is not a CT stage-evidence record"
+                    % (case_id, relative, retires)
+                )
+            held = newest_row.get(case_id)
+            if held is None:
+                raise SystemExit(
+                    "%s: %s retires a bucket, but no evidence record publishes one for this "
+                    "case" % (case_id, relative)
+                )
+            if retires != held:
+                raise SystemExit(
+                    "%s: %s retires the bucket in %s, but the record holding it is %s"
+                    % (case_id, relative, retires, held)
+                )
+            if order[retires] >= order[relative]:
+                raise SystemExit(
+                    "%s: %s retires %s, which is not an earlier record"
+                    % (case_id, relative, retires)
+                )
+            if case_id in retirements:
+                raise SystemExit(
+                    "%s: two evidence records retire this case's bucket" % case_id
+                )
+            retirements[case_id] = relative
+    return retirements
+
+
 def _lane_labels(root: pathlib.Path, unmapped: set):
     """The per-case buckets the CT lanes measured, newest record winning.
 
@@ -177,7 +253,8 @@ def _lane_labels(root: pathlib.Path, unmapped: set):
 
     * a row naming a case the manifest currently maps — the record would publish
       a blocker for a case that has none, which is exactly the staleness
-      HYGIENE-14's structural repair removed from the *counts*;
+      HYGIENE-14's structural repair removed from the *counts* — unless a later
+      record declares the retirement, see [`_lane_row_retirements`];
     * two records carrying different buckets for one case with no supersession
       declared — the later row would silently decide the label, the same defect
       the duplicate-triage-row refusal above catches on the other input;
@@ -186,16 +263,22 @@ def _lane_labels(root: pathlib.Path, unmapped: set):
       always beats card T00's archive by the resolution rule, so declaring *that*
       is vacuous too.
     """
+    records = [(relative, _read(root, relative)) for relative in EVIDENCE_FILES]
+    retirements = _lane_row_retirements(records, unmapped)
     held: dict[str, dict] = {}
-    for relative in EVIDENCE_FILES:
-        data = _read(root, relative)
+    for relative, data in records:
         rows = data.get("unmapped_reasons") or {}
         for case_id, row in rows.items():
             if case_id not in unmapped:
-                raise SystemExit(
-                    "%s: %s records an unmapped-case bucket, but the manifest maps this case"
-                    % (case_id, relative)
-                )
+                # The case is mapped now. A row for it is admissible only where a
+                # later record declares the retirement; the retirement's own
+                # conditions were checked above.
+                if case_id not in retirements:
+                    raise SystemExit(
+                        "%s: %s records an unmapped-case bucket, but the manifest maps this "
+                        "case" % (case_id, relative)
+                    )
+                continue
             for field in ("bucket", "reason", "measured_by"):
                 value = row.get(field)
                 if not isinstance(value, str) or not value.strip():

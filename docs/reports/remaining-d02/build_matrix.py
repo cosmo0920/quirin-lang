@@ -426,8 +426,9 @@ ct_section = {
         "theorem is bound to any CT fixture (T00.7 remains open).",
         "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the "
         "transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. "
-        "Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now "
-        "refuses an `executed` sanitized claim from any other case.",
+        "Only CT03, CT17, CT26 and CT34 carry the harness-gated sanitized run — CT34 since card "
+        "CT34-SANITIZED, which this note had not been updated for — and the harness refuses an "
+        "`executed` sanitized claim from any other case.",
         "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the "
         "record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this "
         "generator's inputs no longer allow.",
@@ -438,12 +439,17 @@ ct_section = {
         "(card CT-LABELS). A row whose source is a lane also carries blocker_current and "
         "blocker_measured_by; a row on t00-archive carries only T00's frozen blocker, which for "
         "such a case has not been re-verified against the current implementation.",
-        "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed "
-        "through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a "
+        "Thirty of the mapped cases are QCore source; CT40, CT43 and CT45 are C twins analyzed "
+        "through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN, joined by "
+        "CT40 in the wave-17 CT lane). That is a "
         "different artifact and a different property — a resource projection over declared "
         "contracts, not a source-language check — and their Unknown verdicts are what their "
         "scenarios ask for, each with a control the gateway checks so the refusal is "
-        "attributable. Neither adds native, sanitized or proof evidence.",
+        "attributable. None of them adds native, sanitized or proof evidence, and the route "
+        "structurally cannot: it analyzes C rather than emitting any. CT40 additionally carries "
+        "two controls pinned for NOT moving the verdict — `_Atomic` removed, and the release "
+        "removed — which is what bounds its mapping to the publication protocol its `expected` "
+        "text names rather than to the atomicity or the premature free in its title.",
     ],
 }
 

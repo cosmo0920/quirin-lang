@@ -416,9 +416,11 @@ class SummaryTest(unittest.TestCase):
         The committed record and the derivation agree today, so a test that only
         reads the tree cannot show that a *re-inflated* hand edit would be
         caught. This restores the exact historical shape — the four cases wave 8
-        mapped still counted, summing 22 against `ct_unmapped: 18` — into a
-        scratch acceptance record and requires the drift to be reported by
-        field name.
+        mapped still counted — into a scratch acceptance record and requires the
+        drift to be reported by field name. The sum moves with `ct_unmapped`
+        (22 against 18 when card HYGIENE-16 wrote it, 21 against 17 since the
+        wave-17 CT lane mapped CT40); what is pinned is the four undecremented
+        rows, not the total.
         """
         acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
         derived = summary.summarize(ROOT)
@@ -431,7 +433,7 @@ class SummaryTest(unittest.TestCase):
         # The wave-8 epoch bucket, never decremented when CT35/36/38/39 mapped.
         stale["blocked-on-epoch-source-syntax"] = 4
         acceptance["ct_evidence"]["unmapped_bucket_counts"] = stale
-        self.assertEqual(sum(stale.values()), 22)
+        self.assertEqual(sum(stale.values()), derived["ct_unmapped"] + 4)
         with MutableRoot() as scratch:
             scratch.write_acceptance(acceptance)
             self.assertIn(
@@ -447,13 +449,15 @@ class SummaryTest(unittest.TestCase):
         left the current labels to the dual-publication mechanism. The property
         that makes the restoration tally-neutral is the resolution rule itself:
         for a case a lane measured, the archived label is not read at all. This
-        drives it directly — rewriting the archive rows of all three to an
-        invented bucket must change neither the counts nor the sources.
+        drives it directly — rewriting the archive rows of the lane-measured
+        cases to an invented bucket must change neither the counts nor the
+        sources. The wave-17 CT lane mapped CT40, so the set is CT41/CT42 and
+        CT40 is asserted out of the label map entirely.
         """
         before_counts = summary.unmapped_bucket_counts(ROOT)
         before_sources = summary.unmapped_label_sources(ROOT)
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
-        measured = {"CT40", "CT41", "CT42"}
+        measured = {"CT41", "CT42"}
         touched = 0
         for case in coverage["unmapped_triage"]["cases"]:
             if case["id"] in measured:
@@ -470,27 +474,33 @@ class SummaryTest(unittest.TestCase):
             # lane measured, so the neutrality above is a property of the
             # resolution rule and not of the archive being ignored everywhere.
             labels = summary.unmapped_labels(scratch.directory)
-            self.assertEqual(labels["CT40"]["archived_label"], "invented-archive-label")
-            self.assertNotEqual(labels["CT40"]["label"], "invented-archive-label")
+            self.assertEqual(labels["CT41"]["archived_label"], "invented-archive-label")
+            self.assertNotEqual(labels["CT41"]["label"], "invented-archive-label")
             self.assertEqual(labels["CT44"]["label_source"], summary.ARCHIVE_SOURCE)
+            # A mapped case has no label at all, whatever the archive says about
+            # it: CT40 keeps its archived row and its retired lane row, and
+            # neither reaches the published map.
+            self.assertNotIn("CT40", labels)
 
     # ------------------------------------------------------------------
     # Card CT-LABELS, finding D02-BUCKETS-LABELS: the label, not just the count.
     # ------------------------------------------------------------------
 
-    #: The three lanes that measured a still-unmapped case's bucket, and the
-    #: newest evidence record overall (which measures none, so it is the natural
-    #: place to stage a conflicting second claim).
+    #: The lanes that measured a still-unmapped case's bucket, the wave-17 lane
+    #: that mapped CT40 and retired its wave-9 row, and an evidence record that
+    #: measures no case (the natural place to stage a conflicting second claim —
+    #: it is no longer the newest file, only the newest that labels nothing).
     WAVE3 = "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json"
     WAVE9 = "docs/reports/wave9-ctwin/ct_stage_evidence.json"
     WAVE13 = "docs/reports/wave13-ct34/ct_stage_evidence.json"
     NEWEST = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
+    WAVE17 = "docs/reports/wave17-ct40/ct_stage_evidence.json"
 
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Five of the eighteen unmapped cases now carry a lane's measured bucket;
-        the other thirteen still read card T00's 2026-09-07 analysis, and the
+        Four of the seventeen unmapped cases carry a lane's measured bucket; the
+        other thirteen still read card T00's 2026-09-07 analysis, and the
         published source is what makes the difference legible.
         """
         labels = summary.unmapped_labels(ROOT)
@@ -503,9 +513,8 @@ class SummaryTest(unittest.TestCase):
             measured,
             {
                 "CT11": self.WAVE3,
-                "CT40": self.WAVE9,
-                "CT41": self.WAVE9,
-                "CT42": self.WAVE9,
+                "CT41": self.WAVE17,
+                "CT42": self.WAVE17,
                 "CT46": self.WAVE13,
             },
         )
@@ -522,11 +531,15 @@ class SummaryTest(unittest.TestCase):
         # CT40/CT41/CT42 used to read byte-identically to the archive, because
         # card CT-CTWIN wrote its own measurement into T00's archived audit in
         # place. Card HYGIENE-16 restored that file to its pre-CTWIN bytes
-        # (`CT-LABELS-T00-REVERT`), so the two halves now differ for these three
-        # and the assertion is inverted deliberately: the current label comes
-        # from the lane's own record, T00's original text is retained beside it,
-        # and the tally did not move in either direction.
-        for case in ["CT40", "CT41", "CT42"]:
+        # (`CT-LABELS-T00-REVERT`), so the two halves now differ for these
+        # cases and the assertion is inverted deliberately: the current label
+        # comes from the lane's own record, T00's original text is retained
+        # beside it, and the tally did not move in either direction. CT40 left
+        # the set entirely when the wave-17 CT lane mapped it — the label the
+        # wave-9 record holds for it is retired, not deleted, and the case has
+        # no published blocker any more.
+        self.assertNotIn("CT40", labels)
+        for case in ["CT41", "CT42"]:
             self.assertEqual(
                 labels[case]["label"], "blocked-on-gateway-expressiveness (C-twin measured)"
             )
@@ -698,11 +711,121 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 18)
+            self.assertEqual(sum(counts.values()), 17)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
             )
+
+    # ------------------------------------------------------------------
+    # Wave-17 CT lane: retiring an earlier lane's row instead of editing it.
+    # ------------------------------------------------------------------
+
+    def test_a_retired_row_is_admitted_and_publishes_no_label(self):
+        """The admitted direction, on the real tree.
+
+        The wave-9 record still carries CT40's `unmapped_reasons` row, byte for
+        byte; the wave-17 record declares the retirement. The row is therefore
+        admitted without publishing a blocker for a case that has none, and the
+        earlier record needed no edit — the whole point of the mechanism.
+        """
+        wave9 = json.loads((ROOT / self.WAVE9).read_text())
+        self.assertIn("CT40", wave9["unmapped_reasons"])
+        wave17 = json.loads((ROOT / self.WAVE17).read_text())
+        self.assertEqual(wave17["retired_unmapped_reasons"]["CT40"]["retires"], self.WAVE9)
+        self.assertNotIn("CT40", summary.unmapped_labels(ROOT))
+        self.assertNotIn("CT40", summary.unmapped_label_sources(ROOT))
+
+    def test_a_row_for_a_mapped_case_still_fails_closed_without_a_retirement(self):
+        """Silence is not a retirement.
+
+        Dropping the declaration leaves exactly the pre-wave-17 state: the
+        wave-9 row names a case the manifest maps, and the derivation refuses.
+        """
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.WAVE17)
+            del data["retired_unmapped_reasons"]
+            scratch.write_evidence(self.WAVE17, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_retiring_a_still_unmapped_case_fails_closed(self):
+        """The direction that would silently drop a live label."""
+        with MutableRoot() as scratch:
+            data = scratch.read_evidence(self.WAVE17)
+            data["retired_unmapped_reasons"]["CT46"] = {
+                "retires": self.WAVE13,
+                "mapped_by": "nothing — CT46 is still unmapped",
+            }
+            scratch.write_evidence(self.WAVE17, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_a_stale_or_vacuous_retirement_fails_closed(self):
+        """Three ways to name the wrong record, each refused."""
+        with MutableRoot() as scratch:
+            # Stale: names a record that carries no row for this case.
+            data = scratch.read_evidence(self.WAVE17)
+            data["retired_unmapped_reasons"]["CT40"]["retires"] = self.WAVE13
+            scratch.write_evidence(self.WAVE17, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+            # Not a stage-evidence record at all.
+            data["retired_unmapped_reasons"]["CT40"]["retires"] = "docs/reports/wave9-ctwin/README.md"
+            scratch.write_evidence(self.WAVE17, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+            # Vacuous: no record publishes a bucket for this case at all.
+            data["retired_unmapped_reasons"] = {
+                "CT34": {"retires": self.WAVE9, "mapped_by": "the wave-13 CT lane"}
+            }
+            scratch.write_evidence(self.WAVE17, data)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_a_retirement_of_a_later_record_fails_closed(self):
+        """A record cannot retire a row that lands after it.
+
+        Staged the only way it is reachable: the wave-9 record is made to retire
+        the wave-17 record's own row for a case, which is not an earlier file.
+        """
+        with MutableRoot() as scratch:
+            wave17 = scratch.read_evidence(self.WAVE17)
+            wave17["unmapped_reasons"]["CT40"] = {
+                "bucket": "a later row for the mapped case",
+                "reason": "staged",
+                "measured_by": "nothing",
+            }
+            del wave17["retired_unmapped_reasons"]
+            scratch.write_evidence(self.WAVE17, wave17)
+            wave9 = scratch.read_evidence(self.WAVE9)
+            wave9["retired_unmapped_reasons"] = {
+                "CT40": {"retires": self.WAVE17, "mapped_by": "the wave-17 CT lane"}
+            }
+            scratch.write_evidence(self.WAVE9, wave9)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_two_records_retiring_one_case_fail_closed(self):
+        with MutableRoot() as scratch:
+            newest = scratch.read_evidence(self.NEWEST)
+            newest["retired_unmapped_reasons"] = {
+                "CT40": {"retires": self.WAVE9, "mapped_by": "a second claim on the retirement"}
+            }
+            scratch.write_evidence(self.NEWEST, newest)
+            with self.assertRaises(SystemExit):
+                summary.unmapped_labels(scratch.directory)
+
+    def test_a_retirement_missing_a_required_field_fails_closed(self):
+        for field in ["retires", "mapped_by"]:
+            with self.subTest(field=field), MutableRoot() as scratch:
+                data = scratch.read_evidence(self.WAVE17)
+                data["retired_unmapped_reasons"]["CT40"][field] = "   "
+                scratch.write_evidence(self.WAVE17, data)
+                with self.assertRaises(SystemExit):
+                    summary.unmapped_labels(scratch.directory)
 
     def test_derived_from_pins_the_evidence_file_set(self):
         """The third record that ties the Python and Rust derivations together.

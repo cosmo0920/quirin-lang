@@ -1,0 +1,63 @@
+{
+  "id": "CT40",
+  "verdict": "legacy_c_twin",
+  "entry": "subject",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": ["parse", "legacy_c_twin"],
+  "notes": "CT40's construct is a C construct: a store of an owned pointer into an object that outlives the call. No QCore syntax expresses it, so the case's artifact is the C twin in case.c, analyzed through the real unrestricted-C gateway. The scenario expects `Not certified; unsupported lifetime/publication protocol`, and that is what the gateway reports since card CTWIN-PUBLISH: the publication is refused, so the projection is withdrawn rather than completed. Two invariance controls bound what the mapping claims. `plain_pointer.c` removes `_Atomic` and does not move one byte of the verdict — the projection derives no atomicity or synchronization fact, so it cannot — and `no_release.c` removes the release instead and is still refused, so the refusal is the publication and not the `prematurely freed` half of the scenario title. Nothing here decides what reads the published object; the measurement is that no certificate is issued for a publication protocol this projection does not model.",
+  "legacy_c_twin": {
+    "contracts": ["contracts.qcore"],
+    "attributed_to": "the publication `g_published = p`, a store of a tracked identity into a file-scope object that outlives the call",
+    "verdict": "unknown",
+    "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+    "function_status": {
+      "subject": "unknown"
+    },
+    "diagnostics": [
+      "subject:4:unknown-alias:p",
+      "subject:4:unsupported:publication of a tracked resource into the static-storage object `g_published` is outside the resource projection"
+    ],
+    "controls": [
+      {
+        "source": "no_publication.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "safe",
+        "reason": null,
+        "function_status": {
+          "subject": "safe"
+        },
+        "diagnostics": [],
+        "note": "The attribution control: the same declarations, the same `_Atomic` object, the same acquisition and release, with exactly the publication statement removed. It checks, so the case's Unknown is attributable to the publication rather than to the contracts, the local, the release or the presence of the object."
+      },
+      {
+        "source": "plain_pointer.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+        "function_status": {
+          "subject": "unknown"
+        },
+        "diagnostics": [
+          "subject:4:unknown-alias:p",
+          "subject:4:unsupported:publication of a tracked resource into the static-storage object `g_published` is outside the resource projection"
+        ],
+        "note": "The invariance control, pinned because it does NOT move the verdict: `_Atomic` removed and nothing else, and every measured byte — verdict, reason, statuses, ordered diagnostics — is identical to the case's. The scenario's title names an atomic pointer, but the construct its `expected` text names is the publication protocol, and that is what this mapping rests on. Card CTWIN-PUBLISH measured the same invariance (§7); card CT-CTWIN asserted it for `volatile` (CT-CTWIN-SYNC)."
+      },
+      {
+        "source": "no_release.c",
+        "contracts": ["contracts.qcore"],
+        "expectation": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+        "function_status": {
+          "subject": "unknown"
+        },
+        "diagnostics": [
+          "subject:4:unsupported:publication of a tracked resource into the static-storage object `g_published` is outside the resource projection"
+        ],
+        "note": "The boundary control: publish and never release. Still refused, with one diagnostic instead of two — the alias the case's release reads is gone, the publication is not — so the refusal is the publication and not the premature free. This body was a provisional Unsafe with a leak before card CTWIN-PUBLISH, which withdrew that claim because it depended on an unresolved publication protocol."
+      }
+    ]
+  }
+}
