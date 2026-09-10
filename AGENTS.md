@@ -53,7 +53,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**69 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**70 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -75,9 +75,9 @@ current re-pinned baseline):
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions, leak **272** (271 → 272 deliberately at the wave-17 re-pin, in the accusing direction; see constraint 7) |
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
-| Contract corpus | **69 modules** |
+| Contract corpus | **70 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 2,986 workspace tests (8 ignored) · 122 provider · 193 Python · **80 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-19 partial checkpoint incl. Windows validation batches; corpus baseline stays `docs/reports/wave17-corpus/` — waves 18–19 corpus-neutral by construction) |
+| Merged gate | 3,134 workspace tests (8 ignored) · 122 provider · 193 Python · **85 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-19 close: six remainder cards + three Windows batches; corpus baseline stays `docs/reports/wave17-corpus/` — movement exactly two attributed leaves, leak 272, headline unchanged) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -439,9 +439,10 @@ this table is a summary of it, not a second allocation.
 | `Q022`–`Q027` | `ExternCall` | admission and bridging of `source.extern-call.v1` declared extern calls |
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
-| `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` claimed-but-unlowered logical-operator tokens |
+| `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` an operator token used where this revision gives it no meaning (`\|`, `&`, `^` reserved for bitwise) |
 | `Q039`–`Q042` | `NativeLibrary` | `source.native-library.v1` manifest load, binding and agreement; manifest-resident waivers |
-| `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape, decidable condition tier, custody-join agreement |
+| `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
+| `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape, decidable condition tier (with `\|\|`/`&&` connectives), custody-join agreement |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
