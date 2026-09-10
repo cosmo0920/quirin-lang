@@ -10,6 +10,11 @@
 //! symbolic arm's own question proposed under a supported family's tag, in both
 //! directions. The **withheld-conclusion** group measures that an admitted
 //! proposal cannot be turned into a discharge by anything a producer sends.
+//!
+//! The pinned filesystem prerequisite fixture and contracts model an LP64
+//! target; Windows is LLP64, so this suite shares that prerequisite's
+//! non-Windows boundary.
+#![cfg(not(target_os = "windows"))]
 
 #[path = "fixtures/unsupported_close_composition.rs"]
 mod fixture;
