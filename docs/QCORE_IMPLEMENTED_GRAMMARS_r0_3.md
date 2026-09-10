@@ -702,11 +702,12 @@ extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
 entry         = "fn", NAME, "(", ")", "->", "unit",
                 [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
                 "{", { extern_stmt }, "}" ;
-extern_stmt   = acquisition | plain_call | "return", ";" ;
+extern_stmt   = acquisition | scalar_binding | plain_call | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", { disposition },
                 "raise", ERROR_NAME, ";" ;
 disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
+scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
@@ -801,6 +802,37 @@ because a declaration constrains only its normal exit. The arm is a path: a
 disposition never removes a binding from the success path. That is what makes a
 store reachable — it needs two simultaneously live identities, the child and its
 declared owner, which the second acquisition's arm now accounts for.
+
+Card `PIPE-SCALAR-RESULT` adds `scalar_binding` and one meaning to a bare
+`NAME` argument, and adds no reserved word. `let NAME = CALLEE(ARGS);` binds a
+**non-acquiring call's scalar result** to a local, and a bound scalar may then
+be passed at a declared scalar (data) parameter. The admission is exactly:
+the callee establishes fresh custody through none of the three acquisition
+sources, and its declared result is a custody-free scalar of the §C04.1 ABI
+vocabulary. `unit` is refused — there is no value — and every pointer result is
+refused, including a pointer declared `resource_return_none()`, because such a
+result is an address the declaration says nothing about (`Q024`, naming the
+declared result). Binding an acquiring call's result refuses at `Q025`: an
+acquisition has exactly one spelling, the mandatory adapter, and this card adds
+no second one.
+
+Scalars and identities are **separate namespaces**. A bound scalar is admitted
+at a declared data parameter and at no other mode; a resource binding is refused
+at a data parameter (`Q024`, "a declared scalar parameter carries data, never
+custody"); a scalar binding removes nothing from and adds nothing to the ledger,
+so an unread one is not a leak; and a `let` whose name already means the other
+kind of thing is refused rather than resolved by lookup order — measured, the
+reachable refusal is name resolution's own `Q012` (duplicate local binding), and
+the lowering keeps its `Q026` arm as an unreachable fail-closed backstop. The
+certificate publishes `(callee, value)` per binding in trace order, beside the
+custody fields and never inside them. A **scalar literal** binding
+(`let n = 42;`) is deliberately *not* added here and stays refused; it is
+follow-on `EXTERN-SCALAR-LITERAL`, and `STD-IO-COMPOSE` is the card that needs
+it. The emitted C declares the result at its ABI spelling, discards it to
+`void` so the translation unit stays warning-clean, and prints an observation
+that names the callee, the value and the arguments but **not** the number
+returned — a reference interpreter cannot compute a C function's result
+(follow-on `EXTERN-SCALAR-OUTCOME`).
 
 The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
 fresh custody through any of the three acquisition sources and `mut` exactly
@@ -1095,9 +1127,20 @@ temporary is an ordinary binding — so a chain that drops a live result refuses
 at the pre-existing `Q202`, and a value consumed mid-chain cannot be used after
 the pipeline.
 
-**Only an acquisition adapter binds a result**, so "produces a value" is decided
-syntactically by the presence of `succeeds`, with no contract knowledge in the
-desugaring. A sink, a discarding call and `flush` are therefore last-stage-only.
+**"Produces a value" is decided by stage kind**, syntactically and with no
+contract knowledge in the desugaring: a call stage produces a value, and a sink
+(`print`, `log`) or an operandless statement (`flush`) does not. Card
+`PIPE-CHAIN` decided it by the presence of `succeeds`, because the acquisition
+adapter was then the only `let`-with-call the language admitted; card
+`PIPE-SCALAR-RESULT` adds the other one — a non-acquiring call's scalar result
+(§G02d) — so the keyword no longer separates the two. Whether a particular
+callee's declared result is bindable is the **route's** question, answered from
+the declaration and reported at that stage's own span: a `unit`-returning callee
+in a non-final position still refuses, at `Q024` naming its result rather than
+at `Q037` naming the pipe. This is what makes `x |> render |> scale`
+expressible, which card `PIPE-CHAIN` measured as the first of the two boundaries
+under the brief's `value |> render |> log`; the second, a module that both calls
+an extern function and prints, is unchanged and remains `STD-IO-COMPOSE`.
 
 **Two spellings name the value a previous stage produced**, because a hygienic
 temporary has no name a reader could write: `|> move STAGE` consumes it,
@@ -1141,8 +1184,8 @@ unbalanced call stage, a malformed or value-less `let NAME =` binder, an
 assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage, a bare
 `move` whose incoming value is not a binding, or a file that needs pipeline
 temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
-cannot receive the operand — `flush`, which takes none, or any non-final stage
-that produces no value, since only an acquisition adapter binds a result;
+cannot receive the operand — `flush`, which takes none, or a **sink** in a
+non-final position, since only a call stage binds a result;
 `Q038` a claimed-but-unlowered logical operator. Dropping the `;` of the last
 statement in a body is a parse failure (`Q000`) before the pipe pass runs.
 

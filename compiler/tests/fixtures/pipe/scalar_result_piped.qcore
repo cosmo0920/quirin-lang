@@ -1,0 +1,32 @@
+import std.extern;
+
+// The piped twin of `extern_calls/scalar_result.qcore`, card
+// `PIPE-SCALAR-RESULT`. The middle statement is the payoff: a **scalar**
+// intermediate stage, which card `PIPE-CHAIN` measured as unreachable — every
+// non-final stage then had to carry the acquisition adapter, so the only value a
+// chain could carry was a resource identity.
+//
+//     let scaled = b |> qcore_extern_sum(8) |> qcore_extern_scale(2);
+//
+// desugars to the two statements the hand-written twin writes:
+//
+//     let ⟨t0⟩ = qcore_extern_sum(b, 8);
+//     let scaled = qcore_extern_scale(⟨t0⟩, 2);
+//
+// This is `x |> f(a) |> g(b)` meaning `g(f(x, a), b)` over data rather than over
+// custody, and the emitted C is byte-identical to the hand-written form's.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = 8 |> qcore_extern_alloc succeeds true else raise Failure;
+    b |> qcore_extern_fill(7);
+    let scaled = b |> qcore_extern_sum(8) |> qcore_extern_scale(2);
+    move b |> qcore_extern_release;
+    return;
+}

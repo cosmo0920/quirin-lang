@@ -21,12 +21,22 @@
 //! declared control and exits with status 70 if they disagree, so a fixture
 //! whose C implementation stops matching its declared arm fails loudly instead
 //! of silently observing the other branch.
+//!
+//! Card `PIPE-SCALAR-RESULT` adds one statement shape and one argument
+//! rendering, both in a namespace disjoint from the identities: a bound scalar
+//! is declared at its own ABI spelling under a `v` name beside the `r` names of
+//! resources. There is deliberately **no** runtime check of the *value* a bound
+//! call returned, and no observation of it: the reference interpreter cannot
+//! compute a C function's result, so printing it would make the two runs
+//! disagree by construction. What both runs establish is that the same call
+//! bound the same value in the same position of the same trace. Follow-on
+//! `EXTERN-SCALAR-OUTCOME`.
 use std::fmt::Write;
 
 use crate::ResourceId;
 use crate::extern_call::{
     AbiType, CallParameter, ExternArgument, ExternCallCertificate, ExternCallee, ExternEvent,
-    ExternProgram,
+    ExternProgram, ValueId,
 };
 use crate::io_emit::IO_PRELUDE;
 
@@ -52,6 +62,10 @@ pub enum ExternEmissionRefusal {
     /// interpreter has no such requirement — it prints identities symbolically
     /// — so this refusal is deliberately emission-only.
     UnboundIdentity { event: usize, resource: ResourceId },
+    /// An argument names a scalar value no earlier call in this trace bound
+    /// (card `PIPE-SCALAR-RESULT`). The mirror of [`Self::UnboundIdentity`] for
+    /// the value namespace, and emission-only for the same reason.
+    UnboundValue { event: usize, value: ValueId },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -61,6 +75,14 @@ pub struct ExternCEmission {
 
 fn resource_name(resource: ResourceId) -> String {
     format!("r{resource}")
+}
+
+/// The C variable of a bound scalar (card `PIPE-SCALAR-RESULT`). A separate
+/// prefix from [`resource_name`] on purpose: the two id spaces are disjoint but
+/// numerically overlapping, and a reader of the emitted C or of an observation
+/// must be able to tell a value from an identity by its name alone.
+fn value_name(value: ValueId) -> String {
+    format!("v{value}")
 }
 
 /// One argument's rendering. The prefix names the *declared mode* the argument
@@ -79,6 +101,11 @@ fn argument_line(argument: &ExternArgument, out: ResourceId) -> String {
         // `c:`, so an observation still records which custody rule ran.
         ExternArgument::Release(resource) => format!("f:{}", resource_name(*resource)),
         ExternArgument::Realloc(resource) => format!("g:{}", resource_name(*resource)),
+        // `v` a bound scalar read as data. Distinct from `d:` — a literal —
+        // because the two are the same *mode* and different provenances, and
+        // an observation that could not tell them apart would hide which call
+        // produced the number the next call received.
+        ExternArgument::Value(value) => format!("v:{}", value_name(*value)),
     }
 }
 
@@ -91,6 +118,26 @@ fn argument_lines(arguments: &[ExternArgument], out: ResourceId) -> String {
 
 fn call_observation(callee: &ExternCallee, arguments: &[ExternArgument]) -> String {
     format!("call {}{}", callee.name, argument_lines(arguments, 0))
+}
+
+/// A call whose scalar result is bound (card `PIPE-SCALAR-RESULT`). The
+/// observation names the callee, the value the binding introduces and the
+/// arguments — but **not** the number the callee returned. The reference
+/// interpreter cannot compute a C function's result, so observing it would make
+/// the two runs disagree by construction; what both runs do establish is that
+/// the same call bound the same value in the same position of the same trace.
+/// Observing the number itself is follow-on `EXTERN-SCALAR-OUTCOME`.
+fn value_observation(
+    callee: &ExternCallee,
+    arguments: &[ExternArgument],
+    value: ValueId,
+) -> String {
+    format!(
+        "value {} {}{}",
+        callee.name,
+        value_name(value),
+        argument_lines(arguments, 0)
+    )
 }
 
 /// A call that establishes fresh custody through a declared out slot, without
@@ -194,9 +241,12 @@ pub fn interpret_extern_program(
                             return Ok(trace);
                         }
                     }
-                    (None, false) => {
-                        trace.push(call_observation(callee, &call.arguments));
-                    }
+                    (None, false) => match call.binding {
+                        Some(value) => {
+                            trace.push(value_observation(callee, &call.arguments, value));
+                        }
+                        None => trace.push(call_observation(callee, &call.arguments)),
+                    },
                     _ => return Err(ExternEmissionRefusal::UnsupportedResult { event: index }),
                 }
             }
@@ -254,6 +304,24 @@ fn argument_expression(argument: &ExternArgument, out: ResourceId) -> String {
         | ExternArgument::Release(resource)
         | ExternArgument::Realloc(resource) => resource_name(*resource),
         ExternArgument::OutSlot => format!("&{}", resource_name(out)),
+        ExternArgument::Value(value) => value_name(*value),
+    }
+}
+
+/// The scalar value an argument reads, if any. The mirror of
+/// [`argument_identity`] over the disjoint value namespace: every argument
+/// answers exactly one of the two with `Some`, or neither.
+const fn argument_value(argument: &ExternArgument) -> Option<ValueId> {
+    match argument {
+        ExternArgument::Value(value) => Some(*value),
+        ExternArgument::Data(_)
+        | ExternArgument::OutSlot
+        | ExternArgument::Borrow(_)
+        | ExternArgument::Consume(_)
+        | ExternArgument::Store(_)
+        | ExternArgument::Owner(_)
+        | ExternArgument::Release(_)
+        | ExternArgument::Realloc(_) => None,
     }
 }
 
@@ -261,7 +329,7 @@ fn argument_expression(argument: &ExternArgument, out: ResourceId) -> String {
 /// writes the identity the adapter binds.
 const fn argument_identity(argument: &ExternArgument) -> Option<ResourceId> {
     match argument {
-        ExternArgument::Data(_) | ExternArgument::OutSlot => None,
+        ExternArgument::Data(_) | ExternArgument::OutSlot | ExternArgument::Value(_) => None,
         ExternArgument::Borrow(resource)
         | ExternArgument::Consume(resource)
         | ExternArgument::Store(resource)
@@ -293,6 +361,10 @@ pub fn emit_extern_c11(
     // Every identity the emitted body may name is one an earlier adapter bound
     // to a C variable. Anything else is refused rather than printed.
     let mut bound = std::collections::BTreeSet::<ResourceId>::new();
+    // The same rule over the disjoint value namespace (card
+    // `PIPE-SCALAR-RESULT`): the backend declares a C variable per bound scalar
+    // and refuses to print a name it never declared.
+    let mut bound_values = std::collections::BTreeSet::<ValueId>::new();
     for (index, event) in program.events.iter().enumerate() {
         match event {
             ExternEvent::Call(call) => {
@@ -309,6 +381,14 @@ pub fn emit_extern_c11(
                         return Err(ExternEmissionRefusal::UnboundIdentity {
                             event: index,
                             resource,
+                        });
+                    }
+                    if let Some(value) = argument_value(argument)
+                        && !bound_values.contains(&value)
+                    {
+                        return Err(ExternEmissionRefusal::UnboundValue {
+                            event: index,
+                            value,
                         });
                     }
                 }
@@ -380,6 +460,14 @@ pub fn emit_extern_c11(
                                         resource,
                                     });
                                 }
+                                if let Some(value) = argument_value(argument)
+                                    && !bound_values.contains(&value)
+                                {
+                                    return Err(ExternEmissionRefusal::UnboundValue {
+                                        event: index,
+                                        value,
+                                    });
+                                }
                             }
                             let released_arguments = release
                                 .arguments
@@ -414,18 +502,43 @@ pub fn emit_extern_c11(
                         );
                         bound.insert(adapter.resource);
                     }
-                    (None, false) => {
-                        if callee.result_abi == AbiType::Unit {
-                            let _ = writeln!(source, "    {}({arguments});", callee.name);
-                        } else {
-                            let _ = writeln!(source, "    (void) {}({arguments});", callee.name);
+                    (None, false) => match call.binding {
+                        // Card `PIPE-SCALAR-RESULT`. The result is declared at
+                        // its own ABI spelling and immediately discarded to
+                        // `void`, so the translation unit stays warning-clean
+                        // under `-Wall -Wextra -Werror` whether or not a later
+                        // call reads the value. The number itself is never
+                        // printed — see `value_observation`.
+                        Some(value) => {
+                            let binding = value_name(value);
+                            let _ = writeln!(
+                                source,
+                                "    {} {binding} = {}({arguments});",
+                                callee.result_abi.c_spelling(),
+                                callee.name
+                            );
+                            let _ = writeln!(source, "    (void) {binding};");
+                            let _ = writeln!(
+                                source,
+                                "    QCORE_IO_WRITE(stdout, \"{}\\n\");",
+                                value_observation(callee, &call.arguments, value)
+                            );
+                            bound_values.insert(value);
                         }
-                        let _ = writeln!(
-                            source,
-                            "    QCORE_IO_WRITE(stdout, \"{}\\n\");",
-                            call_observation(callee, &call.arguments)
-                        );
-                    }
+                        None => {
+                            if callee.result_abi == AbiType::Unit {
+                                let _ = writeln!(source, "    {}({arguments});", callee.name);
+                            } else {
+                                let _ =
+                                    writeln!(source, "    (void) {}({arguments});", callee.name);
+                            }
+                            let _ = writeln!(
+                                source,
+                                "    QCORE_IO_WRITE(stdout, \"{}\\n\");",
+                                call_observation(callee, &call.arguments)
+                            );
+                        }
+                    },
                     _ => return Err(ExternEmissionRefusal::UnsupportedResult { event: index }),
                 }
             }

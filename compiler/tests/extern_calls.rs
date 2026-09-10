@@ -189,6 +189,11 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
         ("released", RELEASED.to_owned()),
         ("realloc", REALLOC.to_owned()),
         ("realloc-failure", REALLOC_FAILURE.to_owned()),
+        // Card `PIPE-SCALAR-RESULT`. The two scalar bindings sit inside the
+        // pinned round trip's own custody, so this run is a *negative* control
+        // for the widening: if binding a scalar had touched the ledger, LSan
+        // would report the buffer this fixture still allocates and releases.
+        ("scalar", SCALAR_RESULT.to_owned()),
     ] {
         let module = compile_with(&source, selection()).unwrap();
         let reference = module.extern_observation.clone().unwrap();
@@ -1315,5 +1320,315 @@ fn a_removed_parameter_is_still_not_callable() {
     assert!(
         codes.contains(&"Q023".to_owned()) || codes.contains(&"Q024".to_owned()),
         "{codes:?}"
+    );
+}
+
+// --- Card `PIPE-SCALAR-RESULT`: binding a non-acquiring call's scalar result. ---
+
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
+
+/// The admitted form, end to end: a scalar result bound to a local, and that
+/// local read at a declared scalar parameter of a later call. The two halves are
+/// one widening and are pinned together, because a binding nothing can read
+/// would not be the missing `render` stage.
+#[test]
+fn a_scalar_result_is_bound_and_read_at_a_declared_scalar_parameter() {
+    let module = compile_with(SCALAR_RESULT, selection()).unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ExternCallsV1
+    );
+    let checked = module.checked.as_extern_calls().unwrap();
+    // The scalar bindings are published by name, and they are the only
+    // certificate field they touch: the custody accounting beside them is
+    // `round_trip.qcore`'s exactly.
+    assert_eq!(
+        checked.certificate.scalar_bindings,
+        vec![
+            ("qcore_extern_sum".to_owned(), 1),
+            ("qcore_extern_scale".to_owned(), 2),
+        ]
+    );
+    assert_eq!(checked.certificate.acquisitions, vec![1]);
+    assert_eq!(checked.certificate.consumptions, vec![1]);
+    assert!(checked.certificate.releases.is_empty());
+    assert!(checked.certificate.stored.is_empty());
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "call qcore_extern_fill b:r1 d:7",
+            "value qcore_extern_sum v1 b:r1 d:8",
+            "value qcore_extern_scale v2 v:v1 d:2",
+            "call qcore_extern_release c:r1",
+            "return",
+        ]
+    );
+    let c = module.c_source.as_deref().expect("this route emits C11");
+    for expected in [
+        "int32_t qcore_extern_scale(int32_t p0, int32_t p1);",
+        "int32_t v1 = qcore_extern_sum(r1, 8);",
+        "int32_t v2 = qcore_extern_scale(v1, 2);",
+    ] {
+        assert!(c.contains(expected), "emitted C is missing `{expected}`");
+    }
+    // The value namespace never reaches the identity namespace: no call the
+    // custody accounting sees takes a `v` name.
+    assert!(!c.contains("qcore_extern_release(v"));
+}
+
+/// The published certificate still rederives with the new field included: a
+/// tampered scalar-binding list is refused exactly as a tampered acquisition
+/// list is.
+#[test]
+fn a_tampered_scalar_binding_list_fails_the_independent_recheck() {
+    let module = compile_with(SCALAR_RESULT, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    extern_call::recheck_extern_certificate(&checked.lowered.program, &checked.certificate)
+        .expect("the driver publishes only evidence it rederived");
+    let mut tampered = checked.certificate.clone();
+    tampered.scalar_bindings.clear();
+    assert!(extern_call::recheck_extern_certificate(&checked.lowered.program, &tampered).is_err());
+}
+
+/// A `unit` result binds nothing: there is no value. Refused at `Q024` naming
+/// the declared result, with the discarding form spelled out.
+#[test]
+fn binding_a_unit_result_refuses() {
+    let source = SCALAR_RESULT.replace("\r\n", "\n").replace(
+        "    qcore_extern_fill(b, 7);\n",
+        "    let u = qcore_extern_fill(b, 7);\n",
+    );
+    let diagnostics = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a unit result binds nothing");
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|d| d.code.clone())
+            .collect::<Vec<_>>(),
+        ["Q024"]
+    );
+    assert!(diagnostics[0].message.contains("not a custody-free scalar"));
+    assert!(diagnostics[0].message.contains("void"));
+}
+
+/// An acquiring callee's result is an identity, not a scalar. The mandatory
+/// adapter is the one spelling of an acquisition and this card adds no second
+/// one — so dropping the adapter refuses at `Q025` rather than quietly becoming
+/// a scalar binding.
+#[test]
+fn binding_an_acquiring_result_without_the_adapter_refuses() {
+    let source = SCALAR_RESULT.replace("\r\n", "\n").replace(
+        "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n",
+        "    let b = qcore_extern_alloc(8);\n",
+    );
+    let diagnostics = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("an acquisition still needs its adapter");
+    assert_eq!(diagnostics[0].code, "Q025");
+    assert!(diagnostics[0].message.contains("establishes fresh custody"));
+}
+
+/// The same for the other two acquisition sources: an out slot and a declared
+/// reallocation both bind identities, and a scalar binder does not reach them.
+#[test]
+fn binding_an_out_or_reallocating_result_refuses() {
+    for source in [
+        OUT_SLOT.replace("\r\n", "\n").replace(
+            "let b = qcore_extern_open(out, 8) succeeds true else raise Failure;",
+            "let b = qcore_extern_open(out, 8);",
+        ),
+        REALLOC.replace("\r\n", "\n").replace(
+            "    let grown = qcore_extern_grow(move b, 32) succeeds true\n",
+            "    let grown = qcore_extern_grow(move b, 32);\n    let unused = qcore_extern_grow(move b, 32) succeeds true\n",
+        ),
+    ] {
+        let codes = codes(&source, selection());
+        assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+    }
+}
+
+/// A pointer result outside the two declared acquisition modes is not a scalar.
+/// This is the fail-closed half of the bridging rule: `resource_return_none()`
+/// admits any §C04.1 ABI result type, and only the custody-free scalars among
+/// them may be bound.
+#[test]
+fn binding_a_pointer_result_declared_without_custody_refuses() {
+    let contracts = CONTRACTS.replace("\r\n", "\n").replacen(
+        "extern fn qcore_extern_scale(value: i32, factor: i32) -> i32",
+        "extern fn qcore_extern_scale(value: i32, factor: i32) -> ptr<mut, u8>",
+        1,
+    );
+    assert_ne!(
+        contracts, CONTRACTS,
+        "the scale declaration must be present"
+    );
+    let source = SCALAR_RESULT.replace("\r\n", "\n").replace(
+        "extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;",
+        "extern fn qcore_extern_scale(value: i32, factor: i32) -> ptr<mut, u8>;",
+    );
+    let diagnostics = compile_with(
+        &source,
+        Some(BTreeMap::from([(
+            "pointer-result.qcore".to_owned(),
+            contracts,
+        )])),
+    )
+    .map(|module| module.execution_profile)
+    .expect_err("a pointer result is not a bindable scalar");
+    assert_eq!(diagnostics[0].code, "Q024");
+    assert!(diagnostics[0].message.contains("not a custody-free scalar"));
+}
+
+/// A resource binding is not a scalar and a scalar is not a resource binding:
+/// each refuses in the other's position. This is the linearity half of the
+/// card — the two namespaces are checked apart and never merged.
+#[test]
+fn the_two_namespaces_do_not_cross_at_a_call_site() {
+    let source = SCALAR_RESULT.replace("\r\n", "\n");
+
+    // A live resource where the declaration writes a scalar.
+    let resource_as_scalar =
+        source.replace("qcore_extern_scale(total, 2);", "qcore_extern_scale(b, 2);");
+    let diagnostics = compile_with(&resource_as_scalar, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a resource binding is not scalar data");
+    assert_eq!(diagnostics[0].code, "Q024");
+    assert!(diagnostics[0].message.contains("never custody"));
+
+    // A bound scalar where the declaration writes a departing mode.
+    let scalar_as_resource = source.replace(
+        "qcore_extern_release(move b);",
+        "qcore_extern_release(move total);",
+    );
+    let moved_scalar = codes(&scalar_as_resource, selection());
+    assert!(
+        moved_scalar.contains(&"Q024".to_owned()),
+        "{moved_scalar:?}"
+    );
+
+    // And a scalar this body never bound. Measured, not designed: name
+    // resolution refuses an unknown name (`Q013`) before the lowering reaches
+    // the bridging table, so the reachable refusal is that one. The lowering's
+    // own "not a bound scalar" arm stays as the fail-closed backstop — it is
+    // what refuses a name that *does* resolve but names nothing this body
+    // bound, which is the previous case above.
+    let unbound = source.replace(
+        "qcore_extern_scale(total, 2);",
+        "qcore_extern_scale(nope, 2);",
+    );
+    let unbound = codes(&unbound, selection());
+    assert_eq!(unbound, ["Q013"]);
+}
+
+/// A `let` whose name already means the other kind of thing is refused rather
+/// than resolved by lookup order — and the **measured** refusal is name
+/// resolution's own, not this card's.
+///
+/// `Q012` (duplicate local binding) runs over the parsed body before any
+/// lowering, so it catches every cross-namespace shadow in both directions and
+/// the lowering's own `Q026` arm turns out to be unreachable from source. That
+/// arm is kept anyway, exactly as the pipe desugarer's block-boundary arm is
+/// kept: it is what keeps the lowering fail-closed if a future route ever hands
+/// it a body name resolution did not see. Both halves are pinned — the
+/// reachable code, and the fact that neither direction reaches the lowering.
+#[test]
+fn a_binding_that_shadows_the_other_namespace_refuses() {
+    let source = SCALAR_RESULT.replace("\r\n", "\n");
+
+    let scalar_over_resource = source.replace(
+        "    let total = qcore_extern_sum(b, 8);\n",
+        "    let b = qcore_extern_sum(b, 8);\n",
+    );
+    let scalar_first = codes(&scalar_over_resource, selection());
+    assert!(
+        scalar_first.contains(&"Q012".to_owned()),
+        "{scalar_first:?}"
+    );
+    assert!(
+        !scalar_first.contains(&"Q026".to_owned()),
+        "{scalar_first:?}"
+    );
+
+    let resource_over_scalar = source.replace(
+        "    let scaled = qcore_extern_scale(total, 2);\n",
+        "    let total = qcore_extern_alloc(8) succeeds true else raise Failure;\n",
+    );
+    let resource_first = codes(&resource_over_scalar, selection());
+    assert!(
+        resource_first.contains(&"Q012".to_owned()),
+        "{resource_first:?}"
+    );
+    assert!(
+        !resource_first.contains(&"Q026".to_owned()),
+        "{resource_first:?}"
+    );
+}
+
+/// A scalar binding opens no obligation, so an unread one is not a leak — which
+/// is the whole difference between the value namespace and the ledger.
+#[test]
+fn an_unread_scalar_binding_is_not_a_leak() {
+    let source = SCALAR_RESULT
+        .replace("\r\n", "\n")
+        .replace("    let scaled = qcore_extern_scale(total, 2);\n", "");
+    let module = compile_with(&source, selection()).expect("an unread scalar is not an obligation");
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(
+        checked.certificate.scalar_bindings,
+        vec![("qcore_extern_sum".to_owned(), 1)]
+    );
+}
+
+/// An `unsafe extern fn` scalar result is bindable, and binding it deposits
+/// exactly the waiver the discarding call deposits — by name and by declared
+/// ABI. The premise is per *callee*, not per call site, so a binding can no more
+/// launder it than a pipeline can.
+#[test]
+fn an_unchecked_scalar_result_binds_and_keeps_its_waiver() {
+    let discarding = "import std.extern;\nimport std.extern.unsafe;\n\n\
+                      unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\n\
+                      fn main() -> unit effects { io, alloc, mut } {\n    \
+                      k_unchecked_add(2, 40);\n    return;\n}\n";
+    let binding = "import std.extern;\nimport std.extern.unsafe;\n\n\
+                   unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\n\
+                   fn main() -> unit effects { io, alloc, mut } {\n    \
+                   let n = k_unchecked_add(2, 40);\n    return;\n}\n";
+    let discarding = compile_with(discarding, selection()).unwrap();
+    let binding = compile_with(binding, selection()).unwrap();
+    let waiver = extern_call::ExternAssumption::UncheckedLinkage {
+        callee: "k_unchecked_add".to_owned(),
+        signature: "(int32_t, int32_t) -> int32_t".to_owned(),
+    };
+    for module in [&discarding, &binding] {
+        assert!(
+            module
+                .checked
+                .as_extern_calls()
+                .unwrap()
+                .certificate
+                .assumptions
+                .contains(&waiver),
+            "the unchecked-linkage premise must be carried in both spellings"
+        );
+    }
+    assert_eq!(
+        binding
+            .checked
+            .as_extern_calls()
+            .unwrap()
+            .certificate
+            .scalar_bindings,
+        vec![("k_unchecked_add".to_owned(), 1)]
+    );
+    assert!(
+        discarding
+            .checked
+            .as_extern_calls()
+            .unwrap()
+            .certificate
+            .scalar_bindings
+            .is_empty()
     );
 }

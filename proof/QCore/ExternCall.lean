@@ -1061,4 +1061,216 @@ theorem a_failed_reallocation_round_trip_with_an_empty_arm_refuses :
     stepRealloc [1] 1 2 false [] = none := by
   decide
 
+/-! ## Card `PIPE-SCALAR-RESULT`: binding a non-acquiring call's scalar result.
+
+The widening this card lands is one predicate, [`bindsScalar`], and one new
+namespace. A call whose declared result is a **custody-free scalar** may bind
+that result to a local, and a bound scalar may be passed where a declaration
+writes a scalar parameter. Neither form touches the ledger.
+
+The property to establish is therefore not a custody rule but its absence, and
+it has two halves. *Refusal completeness*: every acquisition source, `unit` and
+every pointer keep the refusal they had, so the mandatory adapter is still the
+one spelling of an acquisition. *Non-interference*: a scalar binding leaves the
+ledger exactly as the discarding call would, adds nothing to it, and can never
+name an identity — which is the sentence "a scalar binding must not launder a
+resource identity", proved rather than asserted.
+
+Scalar names and identities are both `Nat` in this model and are kept in
+separate fields; the collision refusal in [`stepBind`] is what makes that
+separation a *statement about source*, since a name the reader could write into
+either position is refused before it can mean two things. -/
+
+/-- Whether a call to this callee may bind its result to a scalar local.
+
+Deliberately narrow, and each clause is load-bearing: `acquires` excludes all
+three acquisition sources, `unit` has no value to bind, and a pointer result
+outside `resource_return_owned`/`resource_return_reallocated` is an address the
+declaration says nothing about. -/
+def bindsScalar (k : Callee) : Bool :=
+  !acquires k &&
+    (match k.result with
+     | .data t => !isPointer t && t != .unit
+     | .ownedNullable => false
+     | .reallocatedNullable _ => false)
+
+/-- Non-vacuity: the scalar-binding table is inhabited, and by exactly the shape
+`qcore_extern_sum` declares — scalar and pointer loans in, a scalar out. -/
+theorem the_scalar_binding_table_is_inhabited :
+    bindsScalar ⟨[.borrowed .ptrConst, .data .scalar], .data .scalar, .scalar, false, false⟩
+      = true := by
+  decide
+
+/-- And it is reached through the admission table rather than only postulated:
+the contract that bridges to that callee binds a scalar. -/
+theorem a_bridged_scalar_returning_contract_binds_its_result :
+    (bridge ⟨[(.ptrConst, .borrowed), (.scalar, .borrowed)], .scalar, .noCustody⟩).map
+        bindsScalar = some true := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored,
+    resultAcquires, hasReallocSubject, bindsScalar, acquires]
+
+/-! ### Refusal completeness: nothing an acquisition or a non-scalar can bind -/
+
+/-- An owned nullable return binds an identity, not a scalar. -/
+theorem an_owned_return_binds_no_scalar (k : Callee) (h : k.result = .ownedNullable) :
+    bindsScalar k = false := by
+  simp [bindsScalar, h]
+
+/-- A declared reallocation binds an identity, not a scalar. -/
+theorem a_reallocating_return_binds_no_scalar (k : Callee) (p : Nat)
+    (h : k.result = .reallocatedNullable p) : bindsScalar k = false := by
+  simp [bindsScalar, h]
+
+/-- A declared out slot binds an identity, not a scalar — even though its
+*result* is a scalar status code, which is exactly the case a rule written over
+the result alone would have got wrong. -/
+theorem an_out_writing_call_binds_no_scalar (k : Callee) (h : k.outSlot = true) :
+    bindsScalar k = false := by
+  simp [bindsScalar, acquires, h]
+
+/-- The general statement of the three above: no acquisition binds a scalar, so
+the mandatory adapter remains the one spelling of an acquisition. -/
+theorem an_acquiring_callee_binds_no_scalar (k : Callee) (h : acquires k = true) :
+    bindsScalar k = false := by
+  simp [bindsScalar, h]
+
+/-- A `unit` result binds nothing: there is no value. -/
+theorem a_unit_result_binds_no_scalar (k : Callee) (h : k.result = .data .unit) :
+    bindsScalar k = false := by
+  simp [bindsScalar, h, isPointer]
+
+/-- A pointer result declared with no custody is not bindable either. Refusing
+it is what keeps an unmodelled address out of the value namespace. -/
+theorem a_pointer_result_binds_no_scalar (k : Callee) (t : AbiType)
+    (hr : k.result = .data t) (hp : isPointer t = true) : bindsScalar k = false := by
+  simp [bindsScalar, hr, hp]
+
+/-! ### Non-interference: the value namespace and the ledger do not meet -/
+
+/-- The state of a body under this profile: the linear ledger, and the scalar
+names bound so far. Two fields, never one — every theorem below is a statement
+about the fact that no operation moves a name between them. -/
+structure Env where
+  live : Ledger
+  scalars : List Nat
+  deriving DecidableEq, Repr
+
+/-- Binding a non-acquiring call's scalar result.
+
+`departing` are the identities the same call's declared parameter modes remove,
+exactly as in `stepCall`: a scalar-result callee may still consume, store or
+release, because nothing in the bridging table couples the result mode to the
+parameter modes. What the binding itself contributes is one name in `scalars`
+and nothing at all in `live`.
+
+`none` is a refusal: the callee does not bind a scalar, or the name is already a
+live identity — the cross-namespace shadow, refused rather than resolved by
+lookup order. -/
+def stepBind (e : Env) (k : Callee) (departing : List Nat) (n : Nat) : Option Env :=
+  if !bindsScalar k then none
+  else if e.live.contains n then none
+  else some ⟨removeAll e.live departing, n :: e.scalars⟩
+
+/-- A scalar binding that carries no departing argument leaves the ledger
+**byte for byte** as it found it. This is the card's central claim. -/
+theorem a_scalar_binding_leaves_the_ledger_unchanged (e : Env) (k : Callee) (n : Nat)
+    (h : bindsScalar k = true) (hn : n ∉ e.live) :
+    (stepBind e k [] n).map (·.live) = some e.live := by
+  simp [stepBind, h, hn, removeAll]
+
+/-- And with departing arguments it changes the ledger by **exactly** what the
+discarding call would: `stepBind`'s ledger is `stepCall`'s, so the binding
+itself contributes no custody delta at all. -/
+theorem a_scalar_binding_has_the_discarding_calls_ledger (e : Env) (k : Callee)
+    (departing : List Nat) (n : Nat) (h : bindsScalar k = true)
+    (hn : n ∉ e.live) (fresh : Nat) (succeeds : Bool) :
+    (stepBind e k departing n).map (·.live)
+      = some (match stepCall e.live k departing fresh succeeds with
+              | .success l _ => l
+              | .errorExit l => l) := by
+  have hacq : acquires k = false := by
+    by_cases ha : acquires k = true
+    · simp [an_acquiring_callee_binds_no_scalar k ha] at h
+    · simpa using ha
+  simp [stepBind, stepCall, h, hn, hacq]
+
+/-- Nothing enters the ledger: every identity live after a scalar binding was
+live before it. There is no arm on which the bound name becomes an identity. -/
+theorem a_scalar_binding_introduces_no_identity (e : Env) (k : Callee)
+    (departing : List Nat) (n : Nat) (e' : Env) (h : stepBind e k departing n = some e')
+    (x : Nat) (hx : x ∈ e'.live) : x ∈ e.live := by
+  have base : ∀ (cs : List Nat) (ls : Ledger), x ∈ removeAll ls cs → x ∈ ls := by
+    intro cs
+    induction cs with
+    | nil => intro ls h; simpa [removeAll] using h
+    | cons c rest ih =>
+      intro ls hm
+      exact (List.mem_filter.mp (ih _ hm)).1
+  by_cases hb : bindsScalar k = true
+  · by_cases hn : n ∈ e.live
+    · simp [stepBind, hb, hn] at h
+    · simp only [stepBind, hb, hn, Bool.not_true, Bool.false_eq_true, if_false,
+        Option.some.injEq, List.elem_iff] at h
+      subst h
+      exact base departing e.live hx
+  · simp [stepBind, hb] at h
+
+/-- The bound name is never an identity of the resulting ledger. Stated as the
+laundering theorem it is: after `let n = f(x);` the name `n` denotes data, and
+no later `move n` can find it in the ledger. -/
+theorem a_scalar_binding_never_names_a_live_identity (e : Env) (k : Callee)
+    (departing : List Nat) (n : Nat) (e' : Env) (h : stepBind e k departing n = some e') :
+    n ∉ e'.live := by
+  intro hin
+  have hbefore := a_scalar_binding_introduces_no_identity e k departing n e' h n hin
+  by_cases hb : bindsScalar k = true
+  · by_cases hn : n ∈ e.live
+    · simp [stepBind, hb, hn] at h
+    · exact hn hbefore
+  · simp [stepBind, hb] at h
+
+/-- The cross-namespace shadow refuses: a scalar `let` whose name is already a
+live identity has no admitted step. Fail-closed rather than resolved by lookup
+order — the machine could tell the two apart, and a reader could not. -/
+theorem a_scalar_binding_over_a_live_identity_refuses (e : Env) (k : Callee)
+    (departing : List Nat) (n : Nat) (h : n ∈ e.live) :
+    stepBind e k departing n = none := by
+  by_cases hb : bindsScalar k = true <;> simp [stepBind, hb, h]
+
+/-- An acquiring call has no scalar-binding step at all, so the widening cannot
+be used as a second spelling of an acquisition. -/
+theorem an_acquisition_has_no_scalar_binding_step (e : Env) (k : Callee)
+    (departing : List Nat) (n : Nat) (h : acquires k = true) :
+    stepBind e k departing n = none := by
+  simp [stepBind, an_acquiring_callee_binds_no_scalar k h]
+
+/-- A scalar actual reaches a `data` parameter, and `derivedCustody` drops every
+`data` parameter — so passing a bound scalar contributes nothing to the derived
+summary the caller's passes consume. The argument side of non-interference. -/
+theorem a_scalar_actual_carries_no_custody (t : AbiType) (rest : List CallParam) :
+    derivedCustody (.data t :: rest) = derivedCustody rest := rfl
+
+/-- The refusal surface of the scalar binding, exhibited as one list so a future
+widening has to change this theorem rather than slip past it: an owned return,
+a reallocation, an out slot, a `unit` result and a pointer result. -/
+theorem refused_scalar_bindings_are_exactly_these :
+    bindsScalar ⟨[], .ownedNullable, .ptrMut, false, false⟩ = false ∧
+    bindsScalar ⟨[.reallocSubject], .reallocatedNullable 0, .ptrMut, false, true⟩ = false ∧
+    bindsScalar ⟨[.outSlot], .data .scalar, .scalar, true, false⟩ = false ∧
+    bindsScalar ⟨[], .data .unit, .unit, false, false⟩ = false ∧
+    bindsScalar ⟨[], .data .ptrMut, .ptrMut, false, false⟩ = false ∧
+    bindsScalar ⟨[], .data .scalar, .scalar, false, false⟩ = true := by
+  refine ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
+
+/-- Non-vacuity for the whole round trip, in the shape the fixture pins: a
+scalar binding over a live identity's ledger, then a second binding that reads
+it, and the identity untouched throughout. -/
+theorem a_scalar_chain_leaves_one_live_identity :
+    (stepBind ⟨[1], []⟩ ⟨[.borrowed .ptrConst, .data .scalar], .data .scalar, .scalar,
+        false, false⟩ [] 7).bind
+      (fun e => stepBind e ⟨[.data .scalar, .data .scalar], .data .scalar, .scalar,
+        false, false⟩ [] 8)
+      = some ⟨[1], [8, 7]⟩ := by
+  decide
+
 end QCore.ExternCall

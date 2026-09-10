@@ -149,6 +149,34 @@ import QCore.ModuleImports
 #print axioms QCore.ExternCall.a_failed_reallocation_round_trip_is_admitted
 #print axioms QCore.ExternCall.a_failed_reallocation_round_trip_with_an_empty_arm_refuses
 
+-- Card `PIPE-SCALAR-RESULT`: binding a non-acquiring call's scalar result.
+-- Refusal completeness first — every acquisition source, `unit` and every
+-- pointer keep the refusal they had, so the mandatory adapter remains the one
+-- spelling of an acquisition.
+#print axioms QCore.ExternCall.an_owned_return_binds_no_scalar
+#print axioms QCore.ExternCall.a_reallocating_return_binds_no_scalar
+#print axioms QCore.ExternCall.an_out_writing_call_binds_no_scalar
+#print axioms QCore.ExternCall.an_acquiring_callee_binds_no_scalar
+#print axioms QCore.ExternCall.a_unit_result_binds_no_scalar
+#print axioms QCore.ExternCall.a_pointer_result_binds_no_scalar
+#print axioms QCore.ExternCall.refused_scalar_bindings_are_exactly_these
+
+-- The admitted table is not empty, and it is reached through admission rather
+-- than only postulated.
+#print axioms QCore.ExternCall.the_scalar_binding_table_is_inhabited
+#print axioms QCore.ExternCall.a_bridged_scalar_returning_contract_binds_its_result
+
+-- Non-interference: the value namespace and the ledger do not meet. This is
+-- "a scalar binding must not launder a resource identity", proved.
+#print axioms QCore.ExternCall.a_scalar_binding_leaves_the_ledger_unchanged
+#print axioms QCore.ExternCall.a_scalar_binding_has_the_discarding_calls_ledger
+#print axioms QCore.ExternCall.a_scalar_binding_introduces_no_identity
+#print axioms QCore.ExternCall.a_scalar_binding_never_names_a_live_identity
+#print axioms QCore.ExternCall.a_scalar_binding_over_a_live_identity_refuses
+#print axioms QCore.ExternCall.an_acquisition_has_no_scalar_binding_step
+#print axioms QCore.ExternCall.a_scalar_actual_carries_no_custody
+#print axioms QCore.ExternCall.a_scalar_chain_leaves_one_live_identity
+
 -- The file-local import gate is a second, independent opt-in.
 #print axioms QCore.ModuleImports.empty_imports_grant_no_extern_calls
 #print axioms QCore.ModuleImports.admitted_extern_calls_require_the_extern_import

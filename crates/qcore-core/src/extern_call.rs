@@ -92,11 +92,35 @@
 //! of the first of those, because it has no contract to declare; that premise is
 //! weaker still — it claims nothing at all about the callee, and printing it is
 //! the point.
+//!
+//!    Card `PIPE-SCALAR-RESULT` adds one thing to the call-site checker and
+//!    nothing to the admission tables: a **non-acquiring call's scalar result
+//!    may be bound**, and a bound scalar may be passed at a declared `Data`
+//!    parameter. Both live in [`ValueId`], a namespace disjoint from
+//!    [`ResourceId`]: no operation in this module moves a name between the two,
+//!    [`derived_custody`] never sees a scalar, and the ledger this checker
+//!    maintains is untouched by either form. The widening is exactly
+//!    [`binds_scalar`] — nothing owned, nothing nullable-owned, no pointer, no
+//!    `unit` — so the mandatory nullable-owned-return adapter and every
+//!    acquisition rule are byte-unchanged, and there is no second way to spell
+//!    an acquisition.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ResourceId;
 use crate::typed_errors::{Effect, EffectRow};
+
+/// Identity of a bound scalar value (card `PIPE-SCALAR-RESULT`).
+///
+/// A **separate namespace** from [`ResourceId`], and deliberately so. A scalar
+/// binding carries data — contract spec §C04.1's "a scalar may carry a
+/// descriptor number as data, but cannot carry descriptor custody" — so nothing
+/// in this module converts one into the other: [`ExternArgument::Value`] is
+/// admitted only at [`CallParameter::Data`], [`derived_custody`] filters `Data`
+/// parameters out, and the live ledger of [`check_extern_program`] is never
+/// read or written by a scalar binding. The two id spaces are both `u64` and may
+/// collide numerically; they are never compared.
+pub type ValueId = u64;
 
 /// The C ABI projection of contract spec §C04.1, complete. `Unit` is a result
 /// type only, exactly as in the loader.
@@ -322,6 +346,28 @@ impl ExternCallee {
             CallResult::OwnedNullable | CallResult::ReallocatedNullable { .. }
         ) || self.out_parameter.is_some()
     }
+}
+
+/// Whether a call to this callee may bind its result to a scalar local (card
+/// `PIPE-SCALAR-RESULT`).
+///
+/// The whole widening is this predicate, and it is deliberately narrow. The
+/// callee must establish no fresh custody through **any** of the three
+/// acquisition sources — so an acquisition keeps its one spelling, the mandatory
+/// `succeeds BOOL else raise ERROR` adapter — and its declared result must be a
+/// custody-free scalar of the closed §C04.1 ABI vocabulary. `unit` is excluded
+/// because there is no value to bind, and every pointer is excluded because a
+/// pointer result outside `resource_return_owned`/`resource_return_reallocated`
+/// is a value the declaration says nothing about: binding it would put an
+/// unmodelled address into a body under a name, which is the laundering this
+/// card exists to make impossible.
+#[must_use]
+pub fn binds_scalar(callee: &ExternCallee) -> bool {
+    !callee.acquires()
+        && matches!(
+            callee.result,
+            CallResult::Data(abi) if abi != AbiType::Unit && !abi.is_pointer()
+        )
 }
 
 /// Why a complete, loadable C04 declaration is still not callable in v1. Each
@@ -979,6 +1025,11 @@ pub enum ExternArgument {
     /// reallocation. It survives the failure arm and is replaced on the
     /// success arm.
     Realloc(ResourceId),
+    /// A bound scalar local, read at a declared `Data` parameter (card
+    /// `PIPE-SCALAR-RESULT`). Data, exactly as [`Self::Data`] is: it names a
+    /// [`ValueId`], carries no custody, and is admitted at no other parameter
+    /// mode.
+    Value(ValueId),
 }
 
 /// One disposition on an adapter's error arm (card `EXTERN-ERR-REL`): a call
@@ -1019,6 +1070,12 @@ pub struct ExternCall {
     pub arguments: Vec<ExternArgument>,
     /// Present exactly for a `resource_return_owned(nullable)` callee.
     pub adapter: Option<ExternAdapter>,
+    /// The scalar local this call's result is bound to (card
+    /// `PIPE-SCALAR-RESULT`), present exactly for a call that
+    /// [`binds_scalar`]. Exclusive with `adapter` by construction: an
+    /// acquisition binds an identity, a scalar binding binds a value, and a
+    /// callee cannot be both.
+    pub binding: Option<ValueId>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1126,6 +1183,29 @@ pub enum ExternDiagnostic {
     /// Q024: a stored argument names the same identity as its declared owner.
     /// Custody indexed beneath itself has no modeled meaning.
     StoredUnderItself { event: usize, resource: ResourceId },
+    /// Q024: the call binds its result, but the declared result is not a
+    /// custody-free scalar — a `unit`, or a pointer the declaration says
+    /// nothing about (card `PIPE-SCALAR-RESULT`).
+    ResultNotScalar {
+        event: usize,
+        name: String,
+        result: AbiType,
+    },
+    /// Q025: the call binds its result to a scalar local, but it establishes
+    /// fresh custody. An acquisition has exactly one spelling — the mandatory
+    /// `succeeds BOOL else raise ERROR` adapter — and this card does not add a
+    /// second one.
+    ResultBindingOnAcquisition { event: usize, name: String },
+    /// Q024: a scalar binding reuses a value identity the trace already bound.
+    DuplicateValueBinding { event: usize, value: ValueId },
+    /// Q024: an argument reads a scalar value no earlier call in this trace
+    /// bound. The mirror of [`Self::UnknownCallee`] for the value namespace,
+    /// and the reason a scalar can never be conjured at a call site.
+    ValueNotBound {
+        event: usize,
+        parameter: usize,
+        value: ValueId,
+    },
 }
 
 impl ExternDiagnostic {
@@ -1138,7 +1218,11 @@ impl ExternDiagnostic {
             | Self::DuplicateAcquisition { .. }
             | Self::StoredUnderItself { .. }
             | Self::ReleaseArity { .. }
-            | Self::ReleaseArgumentForm { .. } => "Q024",
+            | Self::ReleaseArgumentForm { .. }
+            | Self::ResultNotScalar { .. }
+            | Self::DuplicateValueBinding { .. }
+            | Self::ValueNotBound { .. } => "Q024",
+            Self::ResultBindingOnAcquisition { .. } => "Q025",
             Self::AdapterMissing { .. }
             | Self::AdapterUnexpected { .. }
             | Self::AdapterUnknownError { .. }
@@ -1173,7 +1257,11 @@ impl ExternDiagnostic {
             | Self::ReleaseStores { event, .. }
             | Self::ReleaseNotSingular { event, .. }
             | Self::ReleaseNotLive { event, .. }
-            | Self::ReleaseOrder { event, .. } => *event,
+            | Self::ReleaseOrder { event, .. }
+            | Self::ResultNotScalar { event, .. }
+            | Self::ResultBindingOnAcquisition { event, .. }
+            | Self::DuplicateValueBinding { event, .. }
+            | Self::ValueNotBound { event, .. } => *event,
         }
     }
 }
@@ -1264,6 +1352,24 @@ impl fmt::Display for ExternDiagnostic {
             Self::StoredUnderItself { resource, .. } => write!(
                 f,
                 "resource identity {resource} is stored beneath itself; a declared owner must be a distinct live identity"
+            ),
+            Self::ResultNotScalar { name, result, .. } => write!(
+                f,
+                "`{name}` declares the result `{}`, which is not a custody-free scalar; only a scalar result may be bound to a local",
+                result.c_spelling()
+            ),
+            Self::ResultBindingOnAcquisition { name, .. } => write!(
+                f,
+                "`{name}` establishes fresh custody, so its result is an identity and not a scalar; it takes the checked adapter `succeeds BOOL else raise ERROR`"
+            ),
+            Self::DuplicateValueBinding { value, .. } => {
+                write!(f, "scalar value {value} is bound twice")
+            }
+            Self::ValueNotBound {
+                parameter, value, ..
+            } => write!(
+                f,
+                "argument {parameter} reads scalar value {value}, which no earlier call in this trace bound"
             ),
         }
     }
@@ -1362,6 +1468,12 @@ pub struct ExternCallCertificate {
     /// nothing else was live records an empty vector, so a reader can tell the
     /// two apart.
     pub error_dispositions: Vec<(ResourceId, Vec<ResourceId>)>,
+    /// `(callee, value)` of every call whose scalar result was bound, in trace
+    /// order (card `PIPE-SCALAR-RESULT`). Published beside the custody fields
+    /// rather than folded into them, because it is the one field of this
+    /// certificate that names no resource identity: a reader can see at a
+    /// glance which calls moved data and which moved custody.
+    pub scalar_bindings: Vec<(String, ValueId)>,
     /// Union of the derived rows of every call site, error-arm dispositions
     /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
@@ -1386,10 +1498,12 @@ fn remove_live(live: &mut Vec<ResourceId>, resource: ResourceId) {
 ///
 /// Returns the identities the arm released, in order, and the effects its calls
 /// derive. On refusal it returns every diagnostic found rather than the first.
+#[allow(clippy::too_many_arguments)]
 fn check_error_arm(
     program: &ExternProgram,
     event: usize,
     live: &[ResourceId],
+    values: &BTreeSet<ValueId>,
     releases: &[ExternRelease],
     diagnostics: &mut Vec<ExternDiagnostic>,
     effects: &mut BTreeSet<Effect>,
@@ -1443,6 +1557,7 @@ fn check_error_arm(
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
                     | (ExternArgument::Owner(_), CallParameter::Owner)
                     | (ExternArgument::Release(_), CallParameter::Released)
+                    | (ExternArgument::Value(_), CallParameter::Data(_))
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ReleaseArgumentForm {
@@ -1470,6 +1585,20 @@ fn check_error_arm(
                         diagnostics.push(ExternDiagnostic::ReleaseNotLive {
                             event,
                             resource: *resource,
+                        });
+                        malformed = true;
+                    }
+                }
+                // A scalar the arm reads must have been bound before the
+                // acquisition it disposes of, exactly as an identity it reads
+                // must be live: the arm is a path out of this body, not a
+                // place where an unbound name becomes readable.
+                ExternArgument::Value(value) => {
+                    if !values.contains(value) {
+                        diagnostics.push(ExternDiagnostic::ValueNotBound {
+                            event,
+                            parameter,
+                            value: *value,
                         });
                         malformed = true;
                     }
@@ -1534,10 +1663,16 @@ pub fn check_extern_program(
     let mut reallocations = Vec::new();
     let mut stored = Vec::new();
     let mut error_dispositions = Vec::new();
+    let mut scalar_bindings = Vec::new();
     // Acquisition order, because the established cleanup edge releases in
     // reverse acquisition order and the error arm is required to match it.
     let mut live = Vec::<ResourceId>::new();
     let mut introduced = BTreeSet::<ResourceId>::new();
+    // The scalar namespace (card `PIPE-SCALAR-RESULT`). Deliberately not a
+    // second ledger: a value is never removed, never ordered and never
+    // released, because binding one imposes no obligation. It exists only so
+    // that reading a value that was never bound is a refusal.
+    let mut values = BTreeSet::<ValueId>::new();
     let mut effects = BTreeSet::new();
     for (index, event) in program.events.iter().enumerate() {
         let ExternEvent::Call(call) = event else {
@@ -1576,6 +1711,10 @@ pub fn check_extern_program(
                     | (ExternArgument::OutSlot, CallParameter::OutSlot)
                     | (ExternArgument::Release(_), CallParameter::Released)
                     | (ExternArgument::Realloc(_), CallParameter::ReallocSubject)
+                    // Card `PIPE-SCALAR-RESULT`: a bound scalar is admitted at
+                    // a declared `Data` parameter and at no other mode, so the
+                    // value namespace cannot reach a custody position.
+                    | (ExternArgument::Value(_), CallParameter::Data(_))
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ArgumentForm {
@@ -1586,6 +1725,15 @@ pub fn check_extern_program(
                 continue;
             }
             match (argument, declared) {
+                (ExternArgument::Value(value), _) => {
+                    if !values.contains(value) {
+                        diagnostics.push(ExternDiagnostic::ValueNotBound {
+                            event: index,
+                            parameter,
+                            value: *value,
+                        });
+                    }
+                }
                 (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
                 (ExternArgument::Release(resource), _) => released_here.push(*resource),
                 (ExternArgument::Realloc(resource), _) => realloc_here = Some(*resource),
@@ -1668,6 +1816,7 @@ pub fn check_extern_program(
                     program,
                     index,
                     &arm_live,
+                    &values,
                     &adapter.releases,
                     &mut diagnostics,
                     &mut effects,
@@ -1681,6 +1830,32 @@ pub fn check_extern_program(
                 }
             }
             (None, false) => {}
+        }
+        // Card `PIPE-SCALAR-RESULT`. Checked after the adapter and before any
+        // ledger movement, because a scalar binding is not a ledger event: it
+        // adds a name to a namespace this checker never removes from and never
+        // compares against `live`.
+        if let Some(value) = call.binding {
+            if callee.acquires() {
+                diagnostics.push(ExternDiagnostic::ResultBindingOnAcquisition {
+                    event: index,
+                    name: callee.name.clone(),
+                });
+            } else if binds_scalar(callee) {
+                if !values.insert(value) {
+                    diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                        event: index,
+                        value,
+                    });
+                }
+                scalar_bindings.push((callee.name.clone(), value));
+            } else {
+                diagnostics.push(ExternDiagnostic::ResultNotScalar {
+                    event: index,
+                    name: callee.name.clone(),
+                    result: callee.result_abi,
+                });
+            }
         }
         for resource in &consumed_here {
             remove_live(&mut live, *resource);
@@ -1785,6 +1960,7 @@ pub fn check_extern_program(
         reallocations,
         stored,
         error_dispositions,
+        scalar_bindings,
         effects: EffectRow::new(effects),
         assumptions,
     })

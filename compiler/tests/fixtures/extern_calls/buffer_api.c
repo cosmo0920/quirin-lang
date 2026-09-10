@@ -56,6 +56,18 @@ void qcore_extern_release(uint8_t *buffer)
     free(buffer);
 }
 
+/* --- Card `PIPE-SCALAR-RESULT`: a scalar-in, scalar-out callee. ---
+ *
+ * `resource_return_none()` with an int32_t result and scalar parameters only.
+ * It touches no memory, so it is the one callee in this file about which a
+ * sanitizer run says nothing beyond "it was called with these arguments" — which
+ * is exactly the point: a scalar carries data across the boundary and no
+ * custody. */
+int32_t qcore_extern_scale(int32_t value, int32_t factor)
+{
+    return value * factor;
+}
+
 /* --- Card EXTERN-F1: the `resource_out` and `resource_stored` callees. --- */
 
 /* `resource_out(slot, nullable)` with `resource_return_none()` and an i32

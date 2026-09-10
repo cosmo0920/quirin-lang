@@ -53,10 +53,16 @@
 //! own written tokens to the *start* of the `|>` that ends it, and statement
 //! `k+1`'s synthesized tokens sit at that same `|>`'s *end*, two bytes later.
 //!
-//! Only an acquisition adapter binds a result in this source language, so
-//! "produces a value" is decided syntactically by the presence of `succeeds` —
-//! no contract knowledge enters the desugaring. A sink, a discarding call and
-//! `flush` therefore cannot feed a later stage, each refusing by name.
+//! "Produces a value" is decided syntactically, with no contract knowledge, by
+//! **stage kind**: a call stage produces a value and a sink (`print`, `log`) or
+//! an operandless statement (`flush`) does not. Card `PIPE-CHAIN` decided it by
+//! the presence of `succeeds`, because the acquisition adapter was then the only
+//! `let`-with-call the language admitted; card `PIPE-SCALAR-RESULT` adds the
+//! other one, so the keyword no longer separates them. Whether a particular
+//! callee's declared result is bindable is the *route's* decision and is
+//! reported by the route's own diagnostic at that stage's own span — a
+//! `unit`-returning callee in a non-final position still refuses, at `Q024`
+//! naming its result rather than at `Q037` naming the pipe.
 //!
 //! Two spellings exist for the value a previous stage produced, because a
 //! hygienic temporary has no name a reader could write:
@@ -100,18 +106,17 @@
 //!
 //! # What this profile does not do, and why
 //!
-//! * **A stage that produces no value cannot feed a later one.** Only the
-//!   acquisition adapter binds a result, so a sink, a discarding call and
-//!   `flush` are last-stage-only and refuse at `Q037` naming the stage.
+//! * **A sink cannot feed a later stage.** `print`, `log` and `flush` are
+//!   last-stage-only and refuse at `Q037` naming the stage.
 //! * **An assignment pipeline** — `x = y |> f;` — refuses at `Q036`; follow-on
 //!   `PIPE-ASSIGN`.
-//! * **A chain cannot cross a route.** `value |> render |> log` in its literal
-//!   reading needs a call whose scalar result a `std.io` sink can render, and
-//!   the source language has neither: no route binds a scalar call result, and
-//!   a module that both calls an extern function and prints stays on the extern
-//!   route, which refuses `print`. Both are pre-existing boundaries the pipe
-//!   neither widens nor narrows; follow-ons `PIPE-SCALAR-RESULT` and the
-//!   already-recorded `STD-IO-COMPOSE`.
+//! * **A chain still cannot cross a route.** Card `PIPE-SCALAR-RESULT` closes
+//!   the first half of `value |> render |> log`: a call whose declared result is
+//!   a custody-free scalar now binds it, so a `render` stage exists and
+//!   `x |> render |> scale` is expressible. The second half is unchanged — a
+//!   module that both calls an extern function and prints stays on the extern
+//!   route, which refuses `print` — and remains the already-recorded
+//!   `STD-IO-COMPOSE`.
 //!
 //! # The claimed logical operators
 //!
@@ -179,9 +184,6 @@ fn word(token: &Token) -> Option<&str> {
 /// α-renaming is deliberately not done — a renamed binding would make a later
 /// diagnostic name a binding the reader never wrote.
 const TEMPORARY_PREFIX: &str = "qcore__pipe";
-
-/// The adapter keyword that makes a call stage result-producing.
-const ADAPTER_KEYWORD: &str = "succeeds";
 
 /// The stage prefix that consumes the incoming temporary (card `PIPE-CHAIN`).
 const MOVE_KEYWORD: &str = "move";
@@ -335,14 +337,24 @@ impl Stage<'_> {
 
     /// Whether this stage produces a value a later stage could receive.
     ///
-    /// Decided syntactically, with no contract knowledge: the acquisition
-    /// adapter `succeeds BOOL else … raise ERROR` is the one call form in the
-    /// source language that binds a result, so a stage carrying the keyword is
-    /// result-producing and every other stage is a sink or a discarding call.
+    /// Decided syntactically, with no contract knowledge — which is what keeps
+    /// the pipe a pure token pass — but by **stage kind** rather than by the
+    /// acquisition keyword. A call stage produces a value; a sink (`print`,
+    /// `log`) and an operandless statement (`flush`) do not, and that is a
+    /// property of the closed statement table, not of any declaration.
+    ///
+    /// Card `PIPE-CHAIN` decided it by the presence of `succeeds`, because at
+    /// that time the acquisition adapter was the only `let`-with-call the source
+    /// language admitted. Card `PIPE-SCALAR-RESULT` adds the other one — a
+    /// non-acquiring call's scalar result — so the keyword no longer separates
+    /// the two. What separates a stage that can feed a later one from a stage
+    /// that cannot is now exactly whether it is a call, and *whether the call's
+    /// declared result is bindable* is the route's decision, reported by the
+    /// route's own diagnostic at that stage's own span. A `unit`-returning
+    /// callee therefore still refuses in a non-final position; it refuses at
+    /// `Q024` naming its declared result rather than at `Q037` naming the pipe.
     fn produces_a_result(&self) -> bool {
-        self.tokens
-            .iter()
-            .any(|token| word(token) == Some(ADAPTER_KEYWORD))
+        matches!(classify(self), Ok(StageKind::Call { .. }))
     }
 }
 
@@ -456,9 +468,8 @@ fn rewrite(
                 "Q037",
                 stage.tokens[0].span,
                 format!(
-                    "`{name}` produces no value, so it cannot feed a later stage: it is a sink or \
-                     a discarding call, and only an acquisition `CALLEE(ARGS) succeeds BOOL else \
-                     … raise ERROR` binds a result. Make it the pipeline's last stage"
+                    "`{name}` produces no value, so it cannot feed a later stage: it is a sink, \
+                     and only a call stage binds a result. Make it the pipeline's last stage"
                 ),
             ));
         }

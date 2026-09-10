@@ -456,12 +456,22 @@ def pipeWidth : Nat := 2
 
 /-- Whether a stage produces a value a later stage could receive.
 
-Decided **syntactically**, with no contract knowledge: the acquisition adapter
-`succeeds BOOL else … raise ERROR` is the one call form in this source language
-that binds a result, so a stage carrying the keyword is result-producing and
-every other stage — a sink, a discarding call, `flush` — is not. -/
+Decided **syntactically**, with no contract knowledge — but by *stage kind*
+rather than by a keyword. A call stage produces a value; a sink (`print`, `log`)
+and an operandless statement (`flush`) do not, and that is a property of the
+closed statement table, not of any declaration.
+
+Card `PIPE-CHAIN` decided it by the presence of `succeeds`, because at that time
+the acquisition adapter was the only `let`-with-call the source language
+admitted. Card `PIPE-SCALAR-RESULT` adds the other one — a non-acquiring call's
+scalar result — so the keyword no longer separates the two. Whether a particular
+callee's declared result is bindable is then the *route's* decision, taken by
+`QCore.ExternCall.bindsScalar` over the declaration and reported at that stage's
+own span; a `unit`-returning callee in a non-final position still refuses. -/
 def producesResult (s : Stage) : Bool :=
-  s.tokens.any (fun t => t.kind = Kind.atom "succeeds")
+  match headText s.tokens with
+  | none => false
+  | some name => !operandless name && (sinkSelectors name).isNone
 
 /-- The hygienic temporary bound by the stage at position `i`. -/
 def temporaryName (i : Nat) : String := "qcore__pipe" ++ toString i
@@ -683,17 +693,90 @@ theorem an_empty_chain_refuses (operand : List Token) (semi : Token) (i : Nat) :
   simp [chainRewrite]
 
 /-- The refusal surface of a chain, exhibited as one list so a future widening
-has to change this theorem rather than slip past it. -/
+has to change this theorem rather than slip past it.
+
+**Card `PIPE-SCALAR-RESULT` changed it, which is the mechanism working.** The
+third conjunct used to be `x |> f |> g` — an adapterless call stage feeding a
+later one — and it is now admitted (see
+`a_call_stage_may_feed_a_later_stage`). It is replaced here by the shape that
+takes its place in the refusal surface: a **sink** in a non-final position,
+which no widening of the call vocabulary can reach. -/
 theorem refused_chains_rewrite_to_nothing :
     chainRewrite [written (Kind.atom "x") 0] [] (written Kind.semi 9) 0 = none ∧
     chainRewrite [written (Kind.atom "x") 0]
       [⟨[written (Kind.atom "f") 5], true, 2⟩] (written Kind.semi 9) 0 = none ∧
     chainRewrite [written (Kind.atom "x") 0]
-      [⟨[written (Kind.atom "f") 5], false, 2⟩,
-       ⟨[written (Kind.atom "g") 12], false, 9⟩] (written Kind.semi 15) 0 = none ∧
+      [⟨[written (Kind.atom "print") 5, written (Kind.atom "dec") 11], false, 2⟩,
+       ⟨[written (Kind.atom "g") 20], false, 17⟩] (written Kind.semi 23) 0 = none ∧
     chainRewrite [written (Kind.atom "x") 0]
       [⟨[written (Kind.atom "flush") 5], false, 2⟩] (written Kind.semi 12) 0 = none := by
   refine ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ### 5.2.1 Card `PIPE-SCALAR-RESULT`: a call stage may feed a later stage
+
+The widening, stated in both directions. A call stage carrying no acquisition
+adapter is now a legitimate intermediate — it is how a scalar `render` stage
+reaches the next stage — and every sink stays last-stage-only, because a sink's
+refusal is a property of the closed statement table rather than of any
+declaration. -/
+
+/-- The shape card `PIPE-CHAIN` refused and this card admits: `x |> f |> g`
+rewrites to the statement sequence `let ⟨t0⟩ = f(x); g(⟨t0⟩);`, token for
+token. Whether `f`'s declared result is bindable is the route's question, asked
+of the declaration and answered at `f`'s own span. -/
+theorem a_call_stage_may_feed_a_later_stage :
+    chainRewrite [written (Kind.atom "x") 0]
+      [⟨[written (Kind.atom "f") 5], false, 2⟩,
+       ⟨[written (Kind.atom "g") 12], false, 9⟩] (written Kind.semi 15) 0
+      = some
+        ([synth (Kind.atom "let") 2, synth (Kind.atom "qcore__pipe0") 2,
+          synth (Kind.atom "=") 2,
+          written (Kind.atom "f") 5, synth Kind.lparen 2,
+          written (Kind.atom "x") 0, synth Kind.rparen 2, synth Kind.semi 9]
+         ++
+         [written (Kind.atom "g") 12, synth Kind.lparen 11,
+          synth (Kind.atom "qcore__pipe0") 11, synth Kind.rparen 11,
+          written Kind.semi 15]) := by
+  rfl
+
+/-- The two-argument composition of the brief over data rather than custody:
+`x |> f(a) |> g(b)` is `g(f(x, a), b)`, with a scalar intermediate. -/
+theorem a_two_argument_scalar_composition_is_its_hand_written_sequence :
+    chainRewrite [written (Kind.atom "b") 0]
+      [⟨[written (Kind.atom "sum") 5, written Kind.lparen 8,
+         written (Kind.atom "8") 9, written Kind.rparen 10], false, 2⟩,
+       ⟨[written (Kind.atom "scale") 16, written Kind.lparen 21,
+         written (Kind.atom "2") 22, written Kind.rparen 23], false, 13⟩]
+      (written Kind.semi 24) 0
+      = some
+        ([synth (Kind.atom "let") 2, synth (Kind.atom "qcore__pipe0") 2,
+          synth (Kind.atom "=") 2,
+          written (Kind.atom "sum") 5, synth Kind.lparen 2,
+          written (Kind.atom "b") 0, synth Kind.comma 2,
+          written (Kind.atom "8") 9, synth Kind.rparen 2, synth Kind.semi 13]
+         ++
+         [written (Kind.atom "scale") 16, synth Kind.lparen 15,
+          synth (Kind.atom "qcore__pipe0") 15, synth Kind.comma 15,
+          written (Kind.atom "2") 22, synth Kind.rparen 15,
+          written Kind.semi 24]) := by
+  rfl
+
+/-- A stage carrying the acquisition adapter is still result-producing, so
+nothing card `PIPE-CHAIN` landed moves: the widening adds shapes and removes
+none. -/
+theorem an_adapter_stage_still_produces_a_result :
+    producesResult ⟨[written (Kind.atom "alloc") 9, written (Kind.atom "succeeds") 15],
+      false, 6⟩ = true := by
+  decide
+
+/-- And a sink is still last-stage-only, by the same predicate. -/
+theorem a_sink_still_produces_nothing :
+    producesResult ⟨[written (Kind.atom "print") 13, written (Kind.atom "dec") 19],
+      false, 10⟩ = false ∧
+    producesResult ⟨[written (Kind.atom "log") 13, written (Kind.atom "info") 17,
+      written (Kind.atom "dec") 22], false, 10⟩ = false ∧
+    producesResult ⟨[written (Kind.atom "flush") 13], false, 10⟩ = false := by
+  refine ⟨by decide, by decide, by decide⟩
 
 /-! ### 5.3 Why the statement sequence is admissible: disjoint byte extents
 
