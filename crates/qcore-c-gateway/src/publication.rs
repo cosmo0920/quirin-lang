@@ -246,6 +246,9 @@ fn balanced_close(group: &[&str], open: usize) -> Option<usize> {
     for (index, text) in group.iter().enumerate().skip(open) {
         match *text {
             "(" => depth += 1,
+            // The subtraction cannot underflow: `open` always points at a `(`,
+            // which the first iteration counts, and the scan returns the moment
+            // the depth falls back to zero.
             ")" => {
                 depth -= 1;
                 if depth == 0 {
