@@ -359,13 +359,57 @@ theorem of_domainAll {P : Target → Premises → Observation → Outcome → Bo
   have hobs := (List.all_eq_true.mp hp) o ho
   exact (List.all_eq_true.mp hobs) out hout
 
-/-! ## Standing invariants over the checked domain -/
+/-! ## Standing invariants over the checked domain
+
+Each invariant below is a predicate over the same domain, and each one starts by
+computing `growPostState` at the point. Deciding them one at a time enumerated
+the domain — and recomputed every post-state — once per invariant. `allInvariants`
+conjoins the six checks behind a single `growPostState`, so `all_invariants_hold`
+decides the domain once and `invariants_at` hands the result to each invariant's
+own pointwise lemma. The domain, the six checks and every theorem statement are
+unchanged; a check that drifted away from its copy here would fail its pointwise
+lemma rather than pass silently. -/
+
+private def allInvariants
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome) : Bool :=
+  match growPostState t p o out with
+  | none => true
+  | some s =>
+      (s.duties.noStoreBeyondReserved || s.backing.isReserved)
+        && (!s.isPoisoned ||
+              (s.recovery == Recovery.none && s.duties == Duties.poisoned &&
+                s.backing == Backing.unknown && s.logicalAdvance == 0))
+        && (o.call.mayTransferPartially || s.logicalAdvance == 0)
+        && (t != Target.unpinned || s.isPoisoned)
+        && (p.soleWriter || s.isPoisoned)
+        && (p.resultObserved || out == Outcome.notAttempted || s.isPoisoned)
+
+private theorem all_invariants_hold : domainAll allInvariants = true := by decide
+
+private theorem invariants_at (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    allInvariants t p o out = true :=
+  of_domainAll all_invariants_hold t p o out ho hout
 
 private def neverAuthorisesAnUnreservedStore
     (t : Target) (p : Premises) (o : Observation) (out : Outcome) : Bool :=
   match growPostState t p o out with
   | none => true
   | some s => s.duties.noStoreBeyondReserved || s.backing.isReserved
+
+private theorem never_authorises_unreserved_store_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    neverAuthorisesAnUnreservedStore t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold neverAuthorisesAnUnreservedStore
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.1.1.1.1.1
 
 /-- No arm drops the store duty without having reserved the range. A length a
 call merely reported is never writable authority. -/
@@ -375,7 +419,7 @@ theorem no_arm_authorises_an_unreserved_store
     (h : growPostState t p o out = some s)
     (hd : s.duties.noStoreBeyondReserved = false) : s.backing.isReserved = true := by
   have hall : neverAuthorisesAnUnreservedStore t p o out = true :=
-    of_domainAll (by decide) t p o out ho hout
+    never_authorises_unreserved_store_holds t p o out ho hout
   unfold neverAuthorisesAnUnreservedStore at hall
   rw [h] at hall
   simp [hd] at hall
@@ -390,6 +434,20 @@ private def poisonedPermitsNothing
         (s.recovery == Recovery.none && s.duties == Duties.poisoned &&
           s.backing == Backing.unknown && s.logicalAdvance == 0)
 
+private theorem poisoned_permits_nothing_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    poisonedPermitsNothing t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold poisonedPermitsNothing
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.1.1.1.1.2
+
 /-- **Acceptance item 3, in the model.** A poisoned post-state permits no
 recovery, carries the whole conservative duty set, claims no backing and
 authorises no content. -/
@@ -400,7 +458,7 @@ theorem a_poisoned_arm_permits_nothing
     s.recovery = Recovery.none ∧ s.duties = Duties.poisoned ∧
       s.backing = Backing.unknown ∧ s.logicalAdvance = 0 := by
   have hall : poisonedPermitsNothing t p o out = true :=
-    of_domainAll (by decide) t p o out ho hout
+    poisoned_permits_nothing_holds t p o out ho hout
   unfold poisonedPermitsNothing at hall
   rw [h] at hall
   simp [hp] at hall
@@ -412,6 +470,20 @@ private def capacityIsNeverContent
   | none => true
   | some s => o.call.mayTransferPartially || s.logicalAdvance == 0
 
+private theorem capacity_is_never_content_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    capacityIsNeverContent t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold capacityIsNeverContent
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.1.1.1.2
+
 /-- Capacity is not content: no resizing call advances the content length.
 Only an observed transfer does. -/
 theorem capacity_is_never_content
@@ -420,7 +492,7 @@ theorem capacity_is_never_content
     (h : growPostState t p o out = some s)
     (hc : o.call.mayTransferPartially = false) : s.logicalAdvance = 0 := by
   have hall : capacityIsNeverContent t p o out = true :=
-    of_domainAll (by decide) t p o out ho hout
+    capacity_is_never_content_holds t p o out ho hout
   unfold capacityIsNeverContent at hall
   rw [h] at hall
   simp [hc] at hall
@@ -432,13 +504,27 @@ private def unpinnedConcludesNothing
   | none => true
   | some s => t != Target.unpinned || s.isPoisoned
 
+private theorem unpinned_concludes_nothing_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    unpinnedConcludesNothing t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold unpinnedConcludesNothing
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.1.1.2
+
 /-- Without a pinned target nothing is concluded. -/
 theorem an_unpinned_target_concludes_nothing
     (p : Premises) (o : Observation) (out : Outcome) (s : PostState)
     (ho : o ∈ allObservations) (hout : out ∈ allOutcomes)
     (h : growPostState .unpinned p o out = some s) : s.isPoisoned = true := by
   have hall : unpinnedConcludesNothing .unpinned p o out = true :=
-    of_domainAll (by decide) .unpinned p o out ho hout
+    unpinned_concludes_nothing_holds .unpinned p o out ho hout
   unfold unpinnedConcludesNothing at hall
   rw [h] at hall
   simpa using hall
@@ -449,6 +535,20 @@ private def concurrentWriterPoisons
   | none => true
   | some s => p.soleWriter || s.isPoisoned
 
+private theorem concurrent_writer_poisons_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    concurrentWriterPoisons t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold concurrentWriterPoisons
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.1.2
+
 /-- A writer the observation did not exclude poisons every arm. -/
 theorem a_concurrent_writer_poisons_every_arm
     (t : Target) (p : Premises) (o : Observation) (out : Outcome) (s : PostState)
@@ -456,7 +556,7 @@ theorem a_concurrent_writer_poisons_every_arm
     (h : growPostState t p o out = some s) (hw : p.soleWriter = false) :
     s.isPoisoned = true := by
   have hall : concurrentWriterPoisons t p o out = true :=
-    of_domainAll (by decide) t p o out ho hout
+    concurrent_writer_poisons_holds t p o out ho hout
   unfold concurrentWriterPoisons at hall
   rw [h] at hall
   simp [hw] at hall
@@ -468,6 +568,20 @@ private def unobservedResultPoisons
   | none => true
   | some s => p.resultObserved || out == Outcome.notAttempted || s.isPoisoned
 
+private theorem unobserved_result_poisons_holds
+    (t : Target) (p : Premises) (o : Observation) (out : Outcome)
+    (ho : o ∈ allObservations) (hout : out ∈ allOutcomes) :
+    unobservedResultPoisons t p o out = true := by
+  have hi := invariants_at t p o out ho hout
+  unfold allInvariants at hi
+  unfold unobservedResultPoisons
+  cases hg : growPostState t p o out with
+  | none => rfl
+  | some s =>
+      rw [hg] at hi
+      simp only [Bool.and_eq_true] at hi
+      exact hi.2
+
 /-- An unobserved result concludes nothing, whatever else was measured. The
 not-attempted arm is excluded because it issues no call and so has no result to
 observe. -/
@@ -477,7 +591,7 @@ theorem an_unobserved_result_poisons_every_attempt
     (h : growPostState t p o out = some s) (hr : p.resultObserved = false)
     (hne : out ≠ Outcome.notAttempted) : s.isPoisoned = true := by
   have hall : unobservedResultPoisons t p o out = true :=
-    of_domainAll (by decide) t p o out ho hout
+    unobserved_result_poisons_holds t p o out ho hout
   unfold unobservedResultPoisons at hall
   rw [h] at hall
   have hbeq : (out == Outcome.notAttempted) = false := by
