@@ -77,7 +77,7 @@ current re-pinned baseline):
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **69 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 2,959 workspace tests (8 ignored) · 122 provider · 193 Python · **79 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-18 checkpoint; corpus baseline stays `docs/reports/wave17-corpus/` — wave 18 was corpus-neutral by construction, gateway/audit/contract/provider surfaces byte-untouched) |
+| Merged gate | 2,986 workspace tests (8 ignored) · 122 provider · 193 Python · **80 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-19 partial checkpoint incl. Windows validation batches; corpus baseline stays `docs/reports/wave17-corpus/` — waves 18–19 corpus-neutral by construction) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded

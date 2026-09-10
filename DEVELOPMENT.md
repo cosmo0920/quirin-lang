@@ -349,6 +349,45 @@ full suite.
 
 ## Increment records
 
+Wave-19 partial increment (2026-09-10): two user-directed cards landed
+through delegated worktrees and were composed with two Windows-validation
+batches pushed concurrently from the maintainer's Windows host (the
+non-fast-forward chain merged them; one fmt/clippy hygiene repair on a
+Windows fixture was applied at integration with test behavior unchanged).
+Corpus-neutral by construction; the baseline stays
+`docs/reports/wave17-corpus/`. Nothing is promoted.
+- Stream pipelines (PIPE-CHAIN): multi-stage `|>` lands as
+  statement-sequence desugaring with hygienic per-stage temporaries —
+  custody flows through the unedited checkers, so pipelines inherit
+  linearity, leak and use-after-move checking; `PIPE-LET` closes; the
+  wave-18 span blocker is retired by measurement (consecutive stage extents
+  provably disjoint). `x |> f(a) |> g(b)` composes with real custody; sinks
+  are final-stage-only; an unsafe extern stage deposits its
+  UncheckedLinkage assumption through a pipeline. The literal
+  `value |> render |> log` stays gated on two pre-existing measured
+  boundaries recorded as PIPE-SCALAR-RESULT and STD-IO-COMPOSE.
+  21 new audited theorems (`QCore.PipeDesugaring` 35 → 56). Evidence:
+  `docs/reports/wave19-pipe-chain/README.md`.
+- One printing route (TRACE-STDIO): all 46 compiler-synthesized print sites
+  across the five C backends migrate onto the single
+  `QCORE_IO_WRITE`/`QCORE_IO_FLUSH` route `std.io` lowers to, with no
+  printed byte moved — every line-for-line reader keeps its evidence, the
+  F02 emission digests are deliberately re-pinned with the relation
+  re-verified, and 23 audited theorems (`QCore.SingleEmissionRoute`)
+  characterize the single-route property both ways. The census corrected
+  the premise: `examples/threads` verified nothing before and now carries
+  five tests (compiled under -Werror, run sanitized, byte-compared against
+  reference execution, README transcript checked against a real run); a
+  source-level `print` in a threaded module is measured impossible and
+  pinned. Windows residuals recorded (TRACE-STDIO-WIN-DIGEST/-WIN-RUN).
+  Evidence: `docs/reports/wave19-trace-stdio/README.md`.
+Merged gate at this checkpoint: 2,986 workspace tests (8 ignored),
+122 provider tests, 193 Python tests, 80 Lean audits, both reevaluation
+examples exit 0, fmt and clippy clean. The remaining wave-19 spine —
+a source branching construct, the or/and lowerings onto it, and the
+scalar-result binding gap — is recorded in the follow-on ledger.
+
+
 Wave-18 delegated increment (2026-09-10): three user-directed cards landed
 through delegated worktrees, merged onto main under the failure-gated chain
 with one integration-time diagnostic-band relocation; this paragraph

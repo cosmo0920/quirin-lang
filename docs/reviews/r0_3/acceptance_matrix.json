@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 30
+  "named_followups": 32
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -5764,8 +5764,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "wave-18 three-card merged gate, 2026-09-10",
-  "workspace_tests": 2959,
+  "note": "wave-19 partial (two-card) merged gate with Windows validation batches, 2026-09-10",
+  "workspace_tests": 2986,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
   "lean_audits": 80,
@@ -5857,7 +5857,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-wave-16-hatch-opening-43bc0d/a8726dc0-d36a-4272-b430-8150dfe09a06/scratchpad/gate18.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-wave-16-hatch-opening-43bc0d/a8726dc0-d36a-4272-b430-8150dfe09a06/scratchpad/gate19.json)"
  },
  "named_followups": [
   {
@@ -6039,6 +6039,18 @@
    "title": "|> landed; | and && claimed-refused pending branching; operator table pinned",
    "why": "Wave 18 landed the pipe operator |> as a pure token-stream desugaring (first-argument insertion, left-associative; byte-identical emitted C vs the hand-written twin; linearity through pipelines inherited from the existing checkers; a pre-existing divergent re-tokenization path in source_extern found and repaired). The measured surface bounds the rest: QCore has NO if statement (Q500; zero ifs across 294 source files) and no boolean expression tier, so the logical operators landed as claimed tokens with actionable refusals under the scope guards — single | is logical or and && is logical and BY DECISION, both refusing at Q038 until a lowering exists; || redirects to |, a lone & in logical position redirects to &&, bare & stays reserved for a future binary/bitwise operation, [| and |] are byte-unchanged, and bitwise OR having no symbol left is flagged open, not answered. The Pipe pass owns Q036-Q038 after an integration-time band relocation (UncheckedLinkage shipped Q032-Q035 first; the T07/T09 precedent). Residuals in dependency order: a source if/branching construct is the prerequisite for OR-LOWERING and AND-LOWERING; PIPE-CHAIN (multi-stage pipelines need expression-valued statements), PIPE-LET, PIPE-STMT-STAGES.",
    "source": "docs/reports/wave18-pipe-operator/README.md"
+  },
+  {
+   "id": "PIPE-CHAIN-O",
+   "title": "Multi-stage pipelines landed; the literal render-log chain gated on scalar-result binding",
+   "why": "Wave 19 landed multi-stage |> as statement-sequence desugaring with hygienic per-stage temporaries — custody flows through the unedited checkers, so linearity, leaks and use-after-move are inherited; PIPE-LET closes with it, and the wave-18 span blocker was retired by measurement (consecutive stage extents are provably disjoint). x |> f(a) |> g(b) composes with real reallocation custody through the temporary; sinks are final-stage-only; an unsafe extern stage still deposits its UncheckedLinkage assumption through a pipeline. The user's literal value |> render |> log stays unreachable on two pre-existing measured boundaries, not new refusals: PIPE-SCALAR-RESULT (no route binds a scalar call result — let n = f(x); refuses at Q025) and the recorded STD-IO-COMPOSE route split (a module that both calls extern and prints stays on the extern route where print refuses at Q500). One spelling landed beyond the brief and recorded: a bare move in a stage's error arm names the value piped into that stage, without which Q025 caps every chain at one acquisition.",
+   "source": "docs/reports/wave19-pipe-chain/README.md"
+  },
+  {
+   "id": "TRACE-STDIO-O",
+   "title": "One printing route for every emitted line; residual platform legs",
+   "why": "Wave 19 migrated all 46 compiler-synthesized print sites across the five C backends onto the single QCORE_IO_WRITE/QCORE_IO_FLUSH route std.io lowers to — no printed byte moved (all four examples' stdout/stderr measured identical), so every line-for-line reader kept its evidence; the F02 emission digests were deliberately re-pinned with the relation re-verified, and QCore.SingleEmissionRoute (23 audited theorems) characterizes the single-route property including the maximality direction whose absence hid the card's own first defect. The census corrected the premise: examples/threads verified nothing before (three of four programs untested, exit-code-only Windows script, prose transcript); it now has five tests compiling all four under -Werror, running them sanitized, byte-comparing against reference execution and checking the README transcript against a real run. A source-level print is measured impossible in a threaded module (pinned). Residuals: TRACE-STDIO-WIN-DIGEST (Windows F02 digests carry Linux-measured values pending an MSVC host), TRACE-STDIO-WIN-RUN (build-windows.ps1 still checks exit codes only), STD-FMT-CONVERSIONS, TRACE-STDIO-ROUTE-COMPLETENESS.",
+   "source": "docs/reports/wave19-trace-stdio/README.md"
   }
  ],
  "updated": "2026-09-10 (wave 16 complete: the agent-facing docs compacted onto DEVELOPMENT.md's increment records with 25 standing subsystem constraints carried; three tally-neutral ledger and tooling follow-ons closed; the last shared fixture/production blocker admitted as a declared variadic data tail; the twelve identity residuals measured to have no aliasing cause and eight of them cleared by a third, store-only member class; the declared/C ABI fail-open closed with eight unfaithful declarations corrected; the publication hazard closed by refusal after the proposed escape was measured to promote; and the fourth composition module moved through the process boundary. The corpus re-pins to docs/reports/wave16-corpus/ with four attributed diagnostics units, the diff triangulated in both directions against the two gateway cards, and zero unit or function status moves; schemas 13.0.0; nothing promoted)"
