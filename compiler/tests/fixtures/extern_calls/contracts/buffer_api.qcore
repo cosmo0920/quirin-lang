@@ -91,3 +91,45 @@ contract {
     ensures normal resource_consumed(owner, nonnull);
     ensures normal resource_return_none();
 };
+
+// --- Card `EXTERN-MODES`: the released and reallocated call modes. ---
+
+// `resource_released` says something `resource_consumed` deliberately does not:
+// contract spec §C04.2 reads "the trusted call contract discharges the resource
+// obligation. A false declaration here can invalidate a safety conclusion."
+// Declaring it here is exactly that trusted claim; the certificate records it
+// as its own premise so a reader can see which callees a leak-freedom reading
+// rests on. The nullable form is refused by the bridging table (`Q024`), so
+// this declaration is `nonnull` and the caller must supply a live identity.
+extern fn qcore_extern_free(buffer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(buffer, nonnull);
+    ensures normal resource_return_none();
+};
+
+// `resource_return_reallocated(buffer, nullable)`. Contract spec §C04.3 fixes
+// both arms: a null failure preserves the incoming custody, and a successful
+// replacement consumes the old resource exactly once and establishes the result
+// identity. That is why the subject must be `resource_owned` — the caller
+// supplies live custody — and why a reallocation is the one departing argument
+// an acquiring call may carry: its status on the failure arm is declared rather
+// than left silent.
+extern fn qcore_extern_grow(buffer: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(buffer, nonnull);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_reallocated(buffer, nullable);
+};
+
+// The same declared shape, always refusing. Its C implementation returns null
+// and leaves the subject untouched, so the preserved-custody arm of §C04.3 is a
+// real observation and the error arm's disposition is a real release.
+extern fn qcore_extern_grow_failing(buffer: ptr<mut, u8>, size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_owned(buffer, nonnull);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_reallocated(buffer, nullable);
+};

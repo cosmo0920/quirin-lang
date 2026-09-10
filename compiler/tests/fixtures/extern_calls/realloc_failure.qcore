@@ -1,0 +1,23 @@
+import std.extern;
+
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_grow_failing(buffer: ptr<mut, u8>, size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_free(buffer: ptr<mut, u8>) -> unit;
+
+// The preserving arm of contract spec §C04.3, executed. The reallocation fails,
+// so the subject `b` was never replaced and is still live at the raise — which
+// is why the error arm must dispose of it, and why a checker that treated the
+// subject as departed at the call would have written a leak. The disposition is
+// a real `free` of the block `qcore_extern_grow_failing` deliberately left
+// untouched; a double free here is what ASan would report.
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    let grown = qcore_extern_grow_failing(move b, 32) succeeds false
+        else qcore_extern_free(move b) raise Failure;
+    qcore_extern_fill(grown, 3);
+    qcore_extern_free(move grown);
+    return;
+}

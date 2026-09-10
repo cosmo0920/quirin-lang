@@ -1,12 +1,15 @@
 /-! Card `source.extern-call.v1`: the bounded extern-call model, extended by
-card `EXTERN-F1` with the `resource_out` and `resource_stored` call modes.
+card `EXTERN-F1` with the `resource_out` and `resource_stored` call modes and by
+card `EXTERN-MODES` with `resource_released` and
+`resource_return_reallocated`.
 
 This is a model of `crates/qcore-core/src/extern_call.rs`. It establishes four
 things about the *model*: which resource-contract v1 shapes are callable, that
 the derived summary is a function of the contract, that applying a derived
 summary changes the ledger by exactly the declared delta, and that the
-acquisition adapter has exactly two exits — for both admitted acquisition
-sources, an owned nullable return and a declared out slot.
+acquisition adapter has exactly two exits — for each of the three admitted
+acquisition sources, an owned nullable return, a declared out slot and a
+declared reallocation.
 
 Two premises are explicit and are **not** discharged here or anywhere else in
 this repository: that a callee's C implementation satisfies its declared
@@ -71,13 +74,31 @@ inductive CallParam where
   /-- `resource_out(p, nullable)`: the callee writes fresh custody through the
   slot, under the checked adapter. -/
   | outSlot
+  /-- `resource_released(p, nonnull)` (card `EXTERN-MODES`): the declared
+  contract discharges the obligation. The caller-side delta is the same as
+  `consumed`; what differs is the claim, which contract spec §C04.2 warns can
+  invalidate a safety conclusion when false. -/
+  | released
+  /-- The subject of `resource_return_reallocated(p, nullable)` (card
+  `EXTERN-MODES`): a `resource_owned` parameter the *result* mode designates.
+  It is preserved on the failure arm and replaced exactly once on the success
+  arm. -/
+  | reallocSubject
   deriving DecidableEq, Repr
 
 /-- The admitted v1 bridging of the result (design §3.2). -/
 inductive CallResult where
   | data (t : AbiType)
   | ownedNullable
+  /-- `resource_return_reallocated(p, nullable)` (card `EXTERN-MODES`). -/
+  | reallocatedNullable (parameter : Nat)
   deriving DecidableEq, Repr
+
+/-- Whether the result mode is an acquisition source. -/
+def resultAcquires : CallResult → Bool
+  | .ownedNullable => true
+  | .reallocatedNullable _ => true
+  | .data _ => false
 
 structure Callee where
   parameters : List CallParam
@@ -85,10 +106,13 @@ structure Callee where
   resultAbi : AbiType
   /-- Whether the declaration carries the single admitted out slot. -/
   outSlot : Bool
+  /-- Whether the declaration carries the single admitted reallocation subject. -/
+  reallocSubject : Bool
   deriving DecidableEq, Repr
 
-/-- The two admitted acquisition sources, and there are only two. -/
-def acquires (k : Callee) : Bool := k.result == .ownedNullable || k.outSlot
+/-- The three admitted acquisition sources, and there are only three. Each is
+exclusive with the others, so the adapter always binds exactly one identity. -/
+def acquires (k : Callee) : Bool := resultAcquires k.result || k.outSlot
 
 def isPointer : AbiType → Bool
   | .ptrMut | .ptrConst | .ptrMutPtrMut => true
@@ -106,10 +130,17 @@ def isDesignatedOwner (ps : List (AbiType × ParamMode)) (i : Nat) : Bool :=
     | .stored o _ => o == i
     | _ => false
 
-/-- Admission of one parameter at index `i` of `ps`. Every excluded mode
-returns `none` by its own match arm; there is no catch-all that could silently
-absorb a new mode. -/
-def bridgeParamAt (ps : List (AbiType × ParamMode)) (i : Nat) :
+/-- The parameter the result mode designates as a reallocation subject, if any.
+Like owner position, subject position is a property of the whole declaration —
+here of its *result* — which is why per-parameter admission is indexed. -/
+def subjectOf : ReturnMode → Option Nat
+  | .reallocated p _ => some p
+  | _ => none
+
+/-- Admission of one parameter at index `i` of `ps`, given the subject the
+result mode designates. Every excluded mode returns `none` by its own match
+arm; there is no catch-all that could silently absorb a new mode. -/
+def bridgeParamAt (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i : Nat) :
     AbiType → ParamMode → Option CallParam
   | .unit, _ => none
   | t, .borrowed => if isPointer t then
@@ -121,6 +152,9 @@ def bridgeParamAt (ps : List (AbiType × ParamMode)) (i : Nat) :
       else if t = .ptrMut then some .consumed else none
   | t, .owned nullable =>
       if !isPointer t then none
+      else if subject = some i then
+        (if nullable then none
+         else if t = .ptrMut then some .reallocSubject else none)
       else if !isDesignatedOwner ps i then none
       else if nullable then none
       else if t = .ptrMut then some .owner else none
@@ -136,22 +170,33 @@ def bridgeParamAt (ps : List (AbiType × ParamMode)) (i : Nat) :
       else match ps[owner]? with
         | some (_, .owned _) => some (.stored owner)
         | _ => none
-  | _, .released _ => none
+  | t, .released nullable =>
+      if !isPointer t then none
+      else if nullable then none
+      else if t = .ptrMut then some .released else none
   | _, .removed _ _ => none
 
-def bridgeParamsFrom (ps : List (AbiType × ParamMode)) :
+def bridgeParamsFrom (ps : List (AbiType × ParamMode)) (subject : Option Nat) :
     Nat → List (AbiType × ParamMode) → Option (List CallParam)
   | _, [] => some []
   | i, (t, m) :: rest =>
-    match bridgeParamAt ps i t m, bridgeParamsFrom ps (i + 1) rest with
+    match bridgeParamAt ps subject i t m, bridgeParamsFrom ps subject (i + 1) rest with
     | some p, some qs => some (p :: qs)
     | _, _ => none
 
-def bridgeResult : AbiType → ReturnMode → Option CallResult
+/-- Result admission. The reallocation arm carries contract spec §C04.3's own
+well-formedness rule — the subject must be a parameter of this declaration and
+must be `Owned` — because both are properties of the whole contract rather than
+of any one parameter. -/
+def bridgeResult (ps : List (AbiType × ParamMode)) : AbiType → ReturnMode → Option CallResult
   | t, .noCustody => some (.data t)
   | _, .owned false => none
   | t, .owned true => if t = .ptrMut then some .ownedNullable else none
-  | _, .reallocated _ _ => none
+  | _, .reallocated _ false => none
+  | t, .reallocated p true =>
+      match ps[p]? with
+      | some (_, .owned _) => if t = .ptrMut then some (.reallocatedNullable p) else none
+      | _ => none
 
 def outCount (ks : List CallParam) : Nat := (ks.filter (· == .outSlot)).length
 
@@ -160,24 +205,38 @@ def hasStored (ks : List CallParam) : Bool :=
     | .stored _ => true
     | _ => false
 
+def hasReallocSubject (ks : List CallParam) : Bool := ks.any (· == .reallocSubject)
+
 /-- Admit one complete declaration, or refuse it. Beyond per-parameter
 admission there are exactly two contract-level rules, both of which keep the
 adapter binding exactly one identity: at most one acquisition source, and no
 store beside one. -/
 def bridge (c : Contract) : Option Callee :=
-  match bridgeParamsFrom c.parameters 0 c.parameters, bridgeResult c.result c.resultMode with
+  match bridgeParamsFrom c.parameters (subjectOf c.resultMode) 0 c.parameters,
+      bridgeResult c.parameters c.result c.resultMode with
   | some ps, some r =>
     if outCount ps > 1 then none
-    else if outCount ps = 1 ∧ r = .ownedNullable then none
-    else if hasStored ps ∧ (r = .ownedNullable ∨ outCount ps = 1) then none
-    else some ⟨ps, r, c.result, outCount ps = 1⟩
+    else if outCount ps = 1 ∧ resultAcquires r = true then none
+    else if hasStored ps ∧ (resultAcquires r = true ∨ outCount ps = 1) then none
+    else some ⟨ps, r, c.result, outCount ps = 1, hasReallocSubject ps⟩
   | _, _ => none
 
 /-! ## Refusal completeness for every non-admitted C04 mode. -/
 
-theorem released_parameter_refuses (t : AbiType) (n : Bool) (rest : List (AbiType × ParamMode))
-    (r : AbiType) (rm : ReturnMode) : bridge ⟨(t, .released n) :: rest, r, rm⟩ = none := by
-  cases t <;> simp [bridge, bridgeParamsFrom, bridgeParamAt]
+/-! Card `EXTERN-MODES` retires `released_parameter_refuses` by name: the mode
+is admitted. Its load-bearing halves survive as `nullable_released_parameter_refuses`
+and `releasing_other_than_a_flat_mutable_pointer_refuses` below, and the mode's
+admission is pinned non-vacuously by `the_release_table_is_inhabited`. -/
+
+theorem nullable_released_parameter_refuses (ps : List (AbiType × ParamMode))
+    (subject : Option Nat) (i : Nat) (t : AbiType) :
+    bridgeParamAt ps subject i t (.released true) = none := by
+  cases t <;> simp [bridgeParamAt, isPointer]
+
+theorem releasing_other_than_a_flat_mutable_pointer_refuses
+    (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i : Nat) (t : AbiType) (n : Bool)
+    (h : t ≠ .ptrMut) : bridgeParamAt ps subject i t (.released n) = none := by
+  cases t <;> simp_all [bridgeParamAt, isPointer]
 
 theorem removed_parameter_refuses (t : AbiType) (o : Nat) (n : Bool)
     (rest : List (AbiType × ParamMode)) (r : AbiType) (rm : ReturnMode) :
@@ -205,9 +264,44 @@ theorem nonnull_owned_return_refuses (ps : List (AbiType × ParamMode)) (r : Abi
     bridge ⟨ps, r, .owned false⟩ = none := by
   simp [bridge, bridgeResult]
 
-theorem reallocated_return_refuses (ps : List (AbiType × ParamMode)) (r : AbiType)
-    (p : Nat) (n : Bool) : bridge ⟨ps, r, .reallocated p n⟩ = none := by
+/-! Card `EXTERN-MODES` retires `reallocated_return_refuses` by name: the mode
+is admitted. Its load-bearing halves survive as the four refusals below, and
+the mode's admission is pinned non-vacuously by
+`the_reallocation_table_is_inhabited`. -/
+
+theorem nonnull_reallocated_return_refuses (ps : List (AbiType × ParamMode)) (r : AbiType)
+    (p : Nat) : bridge ⟨ps, r, .reallocated p false⟩ = none := by
   simp [bridge, bridgeResult]
+
+/-- Contract spec §C04.3: the subject must be a parameter of this declaration. -/
+theorem a_reallocation_subject_out_of_range_refuses (r : AbiType) (p : Nat) :
+    bridge ⟨[], r, .reallocated p true⟩ = none := by
+  simp [bridge, bridgeResult, bridgeParamsFrom]
+
+/-- Contract spec §C04.3: the subject must be `Owned`. -/
+theorem a_reallocation_subject_that_is_not_owned_refuses (r : AbiType) :
+    bridge ⟨[(.ptrMut, .borrowed)], r, .reallocated 0 true⟩ = none := by
+  simp [bridge, bridgeResult, bridgeParamsFrom, bridgeParamAt, isPointer]
+
+theorem a_reallocated_result_on_other_than_a_flat_mutable_pointer_refuses
+    (ps : List (AbiType × ParamMode)) (r : AbiType) (p : Nat) (h : r ≠ .ptrMut) :
+    bridge ⟨ps, r, .reallocated p true⟩ = none := by
+  cases hp : ps[p]? with
+  | none => simp [bridge, bridgeResult, hp]
+  | some entry =>
+    obtain ⟨t, m⟩ := entry
+    cases m <;> simp [bridge, bridgeResult, hp, h]
+
+/-- A nullable subject supplies no live custody, so there is nothing for the
+success arm to replace exactly once. -/
+theorem a_nullable_reallocation_subject_refuses (ps : List (AbiType × ParamMode))
+    (i : Nat) (t : AbiType) : bridgeParamAt ps (some i) i t (.owned true) = none := by
+  cases t <;> simp [bridgeParamAt, isPointer]
+
+theorem a_reallocation_subject_on_other_than_a_flat_mutable_pointer_refuses
+    (ps : List (AbiType × ParamMode)) (i : Nat) (t : AbiType) (n : Bool) (h : t ≠ .ptrMut) :
+    bridgeParamAt ps (some i) i t (.owned n) = none := by
+  cases t <;> simp_all [bridgeParamAt, isPointer]
 
 theorem owned_result_requires_a_mutable_pointer (ps : List (AbiType × ParamMode))
     (r : AbiType) (h : r ≠ .ptrMut) : bridge ⟨ps, r, .owned true⟩ = none := by
@@ -218,33 +312,39 @@ else. The card that admits `resource_stored` is forced to admit it there,
 because contract spec §C04.2 requires a stored parameter's owner to be a
 distinct `Owned` parameter; every other position keeps its refusal. -/
 
+/-- Card `EXTERN-MODES` adds the second designated position — a reallocation
+subject — without widening the first: an owned parameter that is neither a
+declared subject nor a store owner still refuses. -/
 theorem an_owned_parameter_outside_owner_position_refuses
-    (ps : List (AbiType × ParamMode)) (i : Nat) (t : AbiType) (n : Bool)
-    (h : isDesignatedOwner ps i = false) : bridgeParamAt ps i t (.owned n) = none := by
-  cases t <;> simp [bridgeParamAt, isPointer, h]
+    (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i : Nat) (t : AbiType) (n : Bool)
+    (hs : subject ≠ some i) (h : isDesignatedOwner ps i = false) :
+    bridgeParamAt ps subject i t (.owned n) = none := by
+  cases t <;> simp [bridgeParamAt, isPointer, h, hs]
 
 theorem owned_parameter_alone_refuses (t : AbiType) (n : Bool) (r : AbiType)
-    (rm : ReturnMode) : bridge ⟨[(t, .owned n)], r, rm⟩ = none := by
-  cases t <;> simp [bridge, bridgeParamsFrom, bridgeParamAt, isPointer, isDesignatedOwner]
+    (rm : ReturnMode) (hs : subjectOf rm = none) : bridge ⟨[(t, .owned n)], r, rm⟩ = none := by
+  cases t <;>
+    simp [bridge, bridgeParamsFrom, bridgeParamAt, isPointer, isDesignatedOwner, hs]
 
-theorem a_nullable_owner_refuses (ps : List (AbiType × ParamMode)) (i : Nat) (t : AbiType) :
-    bridgeParamAt ps i t (.owned true) = none := by
-  cases t <;> simp [bridgeParamAt, isPointer]
+theorem a_nullable_owner_refuses (ps : List (AbiType × ParamMode)) (subject : Option Nat)
+    (i : Nat) (t : AbiType) : bridgeParamAt ps subject i t (.owned true) = none := by
+  cases t <;> by_cases hs : subject = some i <;> simp [bridgeParamAt, isPointer, hs]
 
 theorem an_owner_on_other_than_a_flat_mutable_pointer_refuses
-    (ps : List (AbiType × ParamMode)) (i : Nat) (t : AbiType) (n : Bool)
-    (h : t ≠ .ptrMut) : bridgeParamAt ps i t (.owned n) = none := by
-  cases t <;> simp_all [bridgeParamAt, isPointer]
+    (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i : Nat) (t : AbiType) (n : Bool)
+    (h : t ≠ .ptrMut) : bridgeParamAt ps subject i t (.owned n) = none := by
+  cases t <;> by_cases hs : subject = some i <;> simp_all [bridgeParamAt, isPointer]
 
 /-! ## `resource_out` (card `EXTERN-F1`). -/
 
-theorem a_nonnull_out_parameter_refuses (ps : List (AbiType × ParamMode)) (i : Nat)
-    (t : AbiType) : bridgeParamAt ps i t (.out false) = none := by
+theorem a_nonnull_out_parameter_refuses (ps : List (AbiType × ParamMode))
+    (subject : Option Nat) (i : Nat) (t : AbiType) :
+    bridgeParamAt ps subject i t (.out false) = none := by
   cases t <;> simp [bridgeParamAt, isPointer]
 
 theorem an_out_parameter_on_other_than_the_pointer_to_pointer_projection_refuses
-    (ps : List (AbiType × ParamMode)) (i : Nat) (t : AbiType) (n : Bool)
-    (h : t ≠ .ptrMutPtrMut) : bridgeParamAt ps i t (.out n) = none := by
+    (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i : Nat) (t : AbiType) (n : Bool)
+    (h : t ≠ .ptrMutPtrMut) : bridgeParamAt ps subject i t (.out n) = none := by
   cases t <;> simp_all [bridgeParamAt, isPointer]
 
 theorem two_out_slots_refuse (r : AbiType) (rm : ReturnMode) :
@@ -254,31 +354,42 @@ theorem two_out_slots_refuse (r : AbiType) (rm : ReturnMode) :
   | owned n =>
     cases n <;> cases r <;>
       simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount]
-  | reallocated _ _ => simp [bridge, bridgeResult]
+  | reallocated p n =>
+    -- The subject must be `Owned`; both parameters here are out slots, so the
+    -- lookup either misses or finds a mode the result admission refuses.
+    match p, n with
+    | 0, false | 1, false | 0, true | 1, true =>
+      simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer]
+    | (_ + 2), false | (_ + 2), true =>
+      simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer]
 
 theorem an_out_slot_beside_an_owned_return_refuses :
     bridge ⟨[(.ptrMutPtrMut, .out true)], .ptrMut, .owned true⟩ = none := by
-  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount]
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount,
+    resultAcquires]
 
 /-- Non-vacuity for the out mode. -/
 theorem the_out_table_is_inhabited :
     bridge ⟨[(.ptrMutPtrMut, .out true), (.scalar, .borrowed)], .scalar, .noCustody⟩ =
-      some ⟨[.outSlot, .data .scalar], .data .scalar, .scalar, true⟩ := by
-  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored]
+      some ⟨[.outSlot, .data .scalar], .data .scalar, .scalar, true, false⟩ := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored,
+    resultAcquires, hasReallocSubject]
 
 /-! ## `resource_stored` (card `EXTERN-F1`). -/
 
-theorem a_nullable_stored_parameter_refuses (ps : List (AbiType × ParamMode)) (i o : Nat)
-    (t : AbiType) : bridgeParamAt ps i t (.stored o true) = none := by
+theorem a_nullable_stored_parameter_refuses (ps : List (AbiType × ParamMode))
+    (subject : Option Nat) (i o : Nat) (t : AbiType) :
+    bridgeParamAt ps subject i t (.stored o true) = none := by
   cases t <;> simp [bridgeParamAt, isPointer]
 
 theorem a_stored_parameter_on_other_than_a_flat_mutable_pointer_refuses
-    (ps : List (AbiType × ParamMode)) (i o : Nat) (t : AbiType) (n : Bool)
-    (h : t ≠ .ptrMut) : bridgeParamAt ps i t (.stored o n) = none := by
+    (ps : List (AbiType × ParamMode)) (subject : Option Nat) (i o : Nat) (t : AbiType) (n : Bool)
+    (h : t ≠ .ptrMut) : bridgeParamAt ps subject i t (.stored o n) = none := by
   cases t <;> simp_all [bridgeParamAt, isPointer]
 
-theorem a_stored_parameter_beneath_itself_refuses (ps : List (AbiType × ParamMode)) (i : Nat)
-    (t : AbiType) (n : Bool) : bridgeParamAt ps i t (.stored i n) = none := by
+theorem a_stored_parameter_beneath_itself_refuses (ps : List (AbiType × ParamMode))
+    (subject : Option Nat) (i : Nat) (t : AbiType) (n : Bool) :
+    bridgeParamAt ps subject i t (.stored i n) = none := by
   cases t <;> cases n <;> simp [bridgeParamAt, isPointer]
 
 theorem a_stored_parameter_beneath_a_non_owned_parameter_refuses :
@@ -289,21 +400,22 @@ theorem a_stored_parameter_beside_an_owned_return_refuses :
     bridge ⟨[(.ptrMut, .owned false), (.ptrMut, .stored 0 false)], .ptrMut, .owned true⟩ =
       none := by
   simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, isDesignatedOwner,
-    outCount, hasStored]
+    outCount, hasStored, subjectOf, resultAcquires]
 
 /-- Non-vacuity for the store mode, and the shape contract spec §C04.2 forces:
 the owner is a distinct `resource_owned` parameter of the same contract. -/
 theorem the_store_table_is_inhabited :
     bridge ⟨[(.ptrMut, .owned false), (.ptrMut, .stored 0 false)], .unit, .noCustody⟩ =
-      some ⟨[.owner, .stored 0], .data .unit, .unit, false⟩ := by
+      some ⟨[.owner, .stored 0], .data .unit, .unit, false, false⟩ := by
   simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, isDesignatedOwner,
-    outCount, hasStored]
+    outCount, hasStored, subjectOf, resultAcquires, hasReallocSubject]
 
 /-- Non-vacuity, unchanged from the v1 card. -/
 theorem the_admitted_table_is_inhabited :
     bridge ⟨[(.scalar, .borrowed), (.ptrMut, .consumed false)], .ptrMut, .owned true⟩ =
-      some ⟨[.data .scalar, .consumed], .ownedNullable, .ptrMut, false⟩ := by
-  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored]
+      some ⟨[.data .scalar, .consumed], .ownedNullable, .ptrMut, false, false⟩ := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored,
+    resultAcquires, hasReallocSubject]
 
 /-! ## Derivation is a function of the contract (design §3.4). -/
 
@@ -319,6 +431,11 @@ inductive Custody where
   | consumed
   | stored
   | owner
+  /-- Card `EXTERN-MODES`: the declared contract discharges the obligation. -/
+  | released
+  /-- Card `EXTERN-MODES`: the identity is replaced on the success arm and
+  preserved on the failure arm. -/
+  | reallocated
   deriving DecidableEq, Repr
 
 def derivedCustody : List CallParam → List Custody
@@ -329,6 +446,8 @@ def derivedCustody : List CallParam → List Custody
   | .consumed :: rest => .consumed :: derivedCustody rest
   | .stored _ :: rest => .stored :: derivedCustody rest
   | .owner :: rest => .owner :: derivedCustody rest
+  | .released :: rest => .released :: derivedCustody rest
+  | .reallocSubject :: rest => .reallocated :: derivedCustody rest
 
 theorem an_out_slot_carries_no_caller_custody (rest : List CallParam) :
     derivedCustody (.outSlot :: rest) = derivedCustody rest := rfl
@@ -345,7 +464,7 @@ structure Effects where
 
 def paramMutates : CallParam → Bool
   | .data t | .borrowed t => isMutablePointer t
-  | .consumed | .stored _ | .owner | .outSlot => true
+  | .consumed | .stored _ | .owner | .outSlot | .released | .reallocSubject => true
 
 def derivedEffects (k : Callee) : Effects :=
   { io := true
@@ -355,8 +474,14 @@ def derivedEffects (k : Callee) : Effects :=
 theorem every_derived_row_contains_io (k : Callee) : (derivedEffects k).io = true := rfl
 
 theorem alloc_is_derived_exactly_for_an_acquisition (k : Callee) :
-    (derivedEffects k).alloc = true ↔ (k.result = .ownedNullable ∨ k.outSlot = true) := by
+    (derivedEffects k).alloc = true ↔ (resultAcquires k.result = true ∨ k.outSlot = true) := by
   simp [derivedEffects, acquires]
+
+/-- Card `EXTERN-MODES`: a reallocation is an acquisition source, so it derives
+`alloc` exactly as the other two do. -/
+theorem alloc_is_derived_for_a_reallocation (k : Callee) (p : Nat)
+    (h : k.result = .reallocatedNullable p) : (derivedEffects k).alloc = true := by
+  simp [derivedEffects, acquires, resultAcquires, h]
 
 theorem alloc_is_derived_for_an_out_slot (k : Callee) (h : k.outSlot = true) :
     (derivedEffects k).alloc = true := by
@@ -384,7 +509,12 @@ theorem an_empty_declared_row_admits_no_extern_call (k : Callee) :
 theorem a_row_without_alloc_refuses_an_acquiring_call (k : Callee)
     (h : k.result = .ownedNullable) :
     admits ⟨true, false, true⟩ (derivedEffects k) = false := by
-  simp [admits, derivedEffects, acquires, h]
+  simp [admits, derivedEffects, acquires, resultAcquires, h]
+
+theorem a_row_without_alloc_refuses_a_reallocating_call (k : Callee) (p : Nat)
+    (h : k.result = .reallocatedNullable p) :
+    admits ⟨true, false, true⟩ (derivedEffects k) = false := by
+  simp [admits, derivedEffects, acquires, resultAcquires, h]
 
 theorem a_row_without_alloc_refuses_an_out_writing_call (k : Callee)
     (h : k.outSlot = true) :
@@ -438,13 +568,13 @@ theorem a_data_call_never_binds_an_identity (live : Ledger) (k : Callee)
     (departing : List Nat) (fresh : Nat) (succeeds : Bool) (t : AbiType)
     (hr : k.result = .data t) (ho : k.outSlot = false) :
     stepCall live k departing fresh succeeds = .success (removeAll live departing) none := by
-  simp [stepCall, acquires, hr, ho]
+  simp [stepCall, acquires, resultAcquires, hr, ho]
 
 theorem a_data_call_never_takes_the_error_arm (live : Ledger) (k : Callee)
     (departing : List Nat) (fresh : Nat) (succeeds : Bool) (t : AbiType)
     (hr : k.result = .data t) (ho : k.outSlot = false) (l : Ledger) :
     stepCall live k departing fresh succeeds ≠ .errorExit l := by
-  simp [stepCall, acquires, hr, ho]
+  simp [stepCall, acquires, resultAcquires, hr, ho]
 
 /-- A store binds nothing: `resource_stored` is admitted with no owned return,
 so a storing call is a departure and never an acquisition. -/
@@ -452,7 +582,7 @@ theorem a_store_binds_no_identity (live : Ledger) (k : Callee) (departing : List
     (fresh : Nat) (succeeds : Bool) (t : AbiType) (hr : k.result = .data t)
     (ho : k.outSlot = false) (_hs : hasStored k.parameters = true) :
     stepCall live k departing fresh succeeds = .success (removeAll live departing) none := by
-  simp [stepCall, acquires, hr, ho]
+  simp [stepCall, acquires, resultAcquires, hr, ho]
 
 theorem a_failed_acquisition_binds_nothing (live : Ledger) (k : Callee)
     (departing : List Nat) (fresh : Nat) (h : acquires k = true) :
@@ -755,10 +885,10 @@ arm releases that identity, leaving two live identities for the store the
 bridging table already accepted. -/
 
 /-- The consuming callee an arm disposes through, in the model's vocabulary. -/
-def releaseCallee : Callee := ⟨[.consumed], .data .unit, .unit, false⟩
+def releaseCallee : Callee := ⟨[.consumed], .data .unit, .unit, false, false⟩
 
 /-- The storing callee contract spec §C04.2 forces: a distinct declared owner. -/
-def attachCallee : Callee := ⟨[.owner, .stored 0], .data .unit, .unit, false⟩
+def attachCallee : Callee := ⟨[.owner, .stored 0], .data .unit, .unit, false, false⟩
 
 theorem the_release_callee_is_a_disposition : isRelease ⟨releaseCallee, 1⟩ = true := by
   decide
@@ -769,14 +899,14 @@ theorem the_attach_callee_is_not_a_disposition : isRelease ⟨attachCallee, 1⟩
 /-- The second acquisition over one live identity is admitted exactly because
 its arm releases that identity. -/
 theorem a_second_acquisition_is_admitted_when_its_arm_releases_the_first :
-    stepAdapter [1] ⟨[], .ownedNullable, .ptrMut, false⟩ 2 true [⟨releaseCallee, 1⟩] =
+    stepAdapter [1] ⟨[], .ownedNullable, .ptrMut, false, false⟩ 2 true [⟨releaseCallee, 1⟩] =
       some (.success [2, 1] (some 2)) := by
   decide
 
 /-- And is refused without it, which is EXTERN-F1's measured boundary reproduced
 rather than deleted. -/
 theorem the_same_acquisition_with_an_empty_arm_refuses :
-    stepAdapter [1] ⟨[], .ownedNullable, .ptrMut, false⟩ 2 true [] = none := by
+    stepAdapter [1] ⟨[], .ownedNullable, .ptrMut, false, false⟩ 2 true [] = none := by
   decide
 
 /-- STORE-REACH, non-vacuity: the two live identities the previous theorem
@@ -788,7 +918,147 @@ theorem the_store_is_reachable_from_two_live_identities :
       stepCall [2, 1] attachCallee [2] 0 true = .success [1] none := by
   constructor
   · simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, isDesignatedOwner,
-      outCount, hasStored, attachCallee]
+      outCount, hasStored, attachCallee, subjectOf, resultAcquires, hasReallocSubject]
   · decide
+
+/-! ## Card `EXTERN-MODES`: `resource_released` and `resource_return_reallocated`.
+
+The two modes this card admits differ in what they let the model *say*, not in
+how much it believes. A release has the same caller-side ledger delta as a
+consumption, so nothing about accounting moves; what moves is that the model can
+now distinguish the declaration that discharges an obligation from the one that
+relocates it, which contract spec §C04.2 separates and warns about. A
+reallocation is the one departing mode whose *failure* arm §C04.3 states, which
+is exactly why its subject stays on the error arm's live list and must be
+dispositioned there — the same abandonment rule, not a relaxation of it. -/
+
+/-- Non-vacuity for the release mode. -/
+theorem the_release_table_is_inhabited :
+    bridge ⟨[(.ptrMut, .released false)], .unit, .noCustody⟩ =
+      some ⟨[.released], .data .unit, .unit, false, false⟩ := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored,
+    resultAcquires, hasReallocSubject]
+
+/-- Non-vacuity for the reallocation mode, in the shape contract spec §C04.3
+forces: the subject is a `resource_owned` parameter of the same contract. -/
+theorem the_reallocation_table_is_inhabited :
+    bridge ⟨[(.ptrMut, .owned false), (.scalar, .borrowed)], .ptrMut, .reallocated 0 true⟩ =
+      some ⟨[.reallocSubject, .data .scalar], .reallocatedNullable 0, .ptrMut, false, true⟩ := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount, hasStored,
+    resultAcquires, hasReallocSubject, subjectOf]
+
+/-- A reallocation is an acquisition source, so it is exclusive with the other
+two: the adapter still binds exactly one identity. -/
+theorem a_reallocation_beside_an_out_slot_refuses :
+    bridge ⟨[(.ptrMut, .owned false), (.ptrMutPtrMut, .out true)], .ptrMut, .reallocated 0 true⟩ =
+      none := by
+  simp [bridge, bridgeParamsFrom, bridgeParamAt, bridgeResult, isPointer, outCount,
+    resultAcquires, subjectOf]
+
+theorem a_reallocating_callee_acquires (k : Callee) (p : Nat)
+    (h : k.result = .reallocatedNullable p) : acquires k = true := by
+  simp [acquires, resultAcquires, h]
+
+theorem a_release_carries_its_own_custody (rest : List CallParam) :
+    derivedCustody (.released :: rest) = .released :: derivedCustody rest := rfl
+
+theorem a_reallocation_subject_carries_its_own_custody (rest : List CallParam) :
+    derivedCustody (.reallocSubject :: rest) = .reallocated :: derivedCustody rest := rfl
+
+/-- A declared release is an admitted error-arm disposition. This is what the
+arm was always describing: `cleanup_lowering` releases, and before this card the
+profile could spell that only as a transfer. -/
+def freeCallee : Callee := ⟨[.released], .data .unit, .unit, false, false⟩
+
+theorem the_free_callee_is_a_disposition : isRelease ⟨freeCallee, 1⟩ = true := by
+  decide
+
+theorem an_arm_rendered_by_a_declared_release_is_admitted :
+    armAdmits [1] [⟨freeCallee, 1⟩] = true := by
+  decide
+
+/-- The adapter of a declared reallocation. Contract spec §C04.3 fixes both
+arms: a null failure preserves the incoming custody, so the subject is on the
+arm's live list, and a successful replacement consumes the old resource exactly
+once, so it is removed only there. -/
+def stepRealloc (live : Ledger) (subject fresh : Nat) (succeeds : Bool)
+    (ds : List Disposition) : Option Outcome :=
+  if !armAdmits live ds then none
+  else if succeeds then some (.success (fresh :: removeAll live [subject]) (some fresh))
+  else some (.errorExit [])
+
+theorem reallocation_adapter_totality (live : Ledger) (subject fresh : Nat) (succeeds : Bool)
+    (ds : List Disposition) :
+    stepRealloc live subject fresh succeeds ds = none ∨
+      (∃ l b, stepRealloc live subject fresh succeeds ds = some (.success l b)) ∨
+      (∃ l, stepRealloc live subject fresh succeeds ds = some (.errorExit l)) := by
+  unfold stepRealloc
+  by_cases h : armAdmits live ds = true
+  · simp only [h, Bool.not_true, Bool.false_eq_true, if_false]
+    cases succeeds with
+    | false => exact Or.inr (Or.inr ⟨_, rfl⟩)
+    | true => exact Or.inr (Or.inl ⟨_, _, rfl⟩)
+  · simp [h]
+
+theorem a_removed_identity_is_gone (live : Ledger) (x : Nat) : x ∉ removeAll live [x] := by
+  simp [removeAll, List.mem_filter]
+
+/-- The success arm: the subject is replaced exactly once. It is not in the
+resulting ledger, the established identity is, and nothing else moved. -/
+theorem a_successful_reallocation_replaces_its_subject (live : Ledger) (subject fresh : Nat)
+    (ds : List Disposition) (h : armAdmits live ds = true) (hne : fresh ≠ subject) :
+    ∃ l, stepRealloc live subject fresh true ds = some (.success l (some fresh)) ∧
+      fresh ∈ l ∧ subject ∉ l := by
+  refine ⟨fresh :: removeAll live [subject], by simp [stepRealloc, h], by simp, ?_⟩
+  simp only [List.mem_cons, not_or]
+  exact ⟨fun hEq => hne hEq.symm, a_removed_identity_is_gone live subject⟩
+
+/-- The failure arm: nothing is bound, and the residual is empty — which is only
+possible because the arm released the preserved subject too. -/
+theorem a_failed_reallocation_binds_nothing (live : Ledger) (subject fresh : Nat)
+    (ds : List Disposition) (h : armAdmits live ds = true) :
+    stepRealloc live subject fresh false ds = some (.errorExit []) := by
+  simp [stepRealloc, h]
+
+/-- The half of §C04.3 that makes a reallocation different from every other
+departing mode, stated as a fact about the arm: a subject live at the attempt is
+released by the admitted arm. -/
+theorem a_preserved_subject_is_released_by_the_arm (live : Ledger) (ds : List Disposition)
+    (subject : Nat) (h : armAdmits live ds = true) (hin : subject ∈ live) :
+    subject ∈ armReleases ds :=
+  error_arm_conservation live ds h subject hin
+
+/-- And the refusing direction, which is the pin: an arm that ignores the
+preserved subject is refused, so the checker cannot silently write a leak on the
+path §C04.3 says preserved the custody. -/
+theorem a_failed_reallocation_whose_arm_ignores_the_subject_refuses (live : Ledger)
+    (subject fresh : Nat) (succeeds : Bool) (ds : List Disposition) (hin : subject ∈ live)
+    (hout : subject ∉ armReleases ds) : stepRealloc live subject fresh succeeds ds = none := by
+  simp [stepRealloc, an_abandoned_identity_refuses live ds subject hin hout]
+
+/-- The asymmetry, in one statement. An ordinary departing identity is off the
+ledger before the arm runs, so the arm neither may nor must dispose of it; a
+reallocation subject is still on it. `stepCall`'s `departing` and `stepRealloc`'s
+`subject` are therefore different positions, not two spellings of one. -/
+theorem a_departing_identity_is_absent_where_a_subject_is_present (live : Ledger) (x : Nat)
+    (hin : x ∈ live) : x ∉ removeAll live [x] ∧ x ∈ live :=
+  ⟨a_removed_identity_is_gone live x, hin⟩
+
+/-- Non-vacuity for the whole reallocation round trip: one live identity, a
+successful replacement, and a release of the result. -/
+theorem a_reallocation_round_trip_is_admitted :
+    stepRealloc [1] 1 2 true [⟨freeCallee, 1⟩] = some (.success [2] (some 2)) := by
+  decide
+
+/-- And its failure arm, which releases the subject the declaration preserved. -/
+theorem a_failed_reallocation_round_trip_is_admitted :
+    stepRealloc [1] 1 2 false [⟨freeCallee, 1⟩] = some (.errorExit []) := by
+  decide
+
+/-- The same failure arm with nothing disposed refuses, so the admission above
+is not an artefact of an arm that never had to do anything. -/
+theorem a_failed_reallocation_round_trip_with_an_empty_arm_refuses :
+    stepRealloc [1] 1 2 false [] = none := by
+  decide
 
 end QCore.ExternCall

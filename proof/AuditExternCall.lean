@@ -2,24 +2,33 @@ import QCore.ExternCall
 import QCore.ModuleImports
 
 -- Card `source.extern-call.v1`, extended by card `EXTERN-F1` with the
--- `resource_out` and `resource_stored` call modes. Model of
+-- `resource_out` and `resource_stored` call modes and by card `EXTERN-MODES`
+-- with `resource_released` and `resource_return_reallocated`. Model of
 -- `crates/qcore-core/src/extern_call.rs`; the source lowering, the C backend
 -- and the recorded native evidence are separate Rust boundaries, recorded in
--- `docs/reports/extern-call-v1/README.md` and
--- `docs/reports/extern-call-f1/README.md`.
+-- `docs/reports/extern-call-v1/README.md`,
+-- `docs/reports/extern-call-f1/README.md` and
+-- `docs/reports/remaining-extern-modes/README.md`.
 
 -- Refusal completeness: every resource-contract v1 mode still outside the
 -- admitted table. `out_parameter_refuses` and `stored_parameter_refuses` are
--- deliberately retired by `EXTERN-F1`, which admits those two modes; each is
--- replaced below by the narrower refusals that survive.
-#print axioms QCore.ExternCall.released_parameter_refuses
+-- deliberately retired by `EXTERN-F1`, which admits those two modes, and
+-- `released_parameter_refuses` and `reallocated_return_refuses` by
+-- `EXTERN-MODES`; each is replaced below by the narrower refusals that survive.
+#print axioms QCore.ExternCall.nullable_released_parameter_refuses
+#print axioms QCore.ExternCall.releasing_other_than_a_flat_mutable_pointer_refuses
 #print axioms QCore.ExternCall.removed_parameter_refuses
 #print axioms QCore.ExternCall.nullable_consumed_parameter_refuses
 #print axioms QCore.ExternCall.scalar_custody_refuses
 #print axioms QCore.ExternCall.borrowing_a_pointer_to_pointer_refuses
 #print axioms QCore.ExternCall.consuming_a_const_pointer_refuses
 #print axioms QCore.ExternCall.nonnull_owned_return_refuses
-#print axioms QCore.ExternCall.reallocated_return_refuses
+#print axioms QCore.ExternCall.nonnull_reallocated_return_refuses
+#print axioms QCore.ExternCall.a_reallocation_subject_out_of_range_refuses
+#print axioms QCore.ExternCall.a_reallocation_subject_that_is_not_owned_refuses
+#print axioms QCore.ExternCall.a_reallocated_result_on_other_than_a_flat_mutable_pointer_refuses
+#print axioms QCore.ExternCall.a_nullable_reallocation_subject_refuses
+#print axioms QCore.ExternCall.a_reallocation_subject_on_other_than_a_flat_mutable_pointer_refuses
 #print axioms QCore.ExternCall.owned_result_requires_a_mutable_pointer
 
 -- `resource_owned` is admitted only where a `resource_stored` parameter
@@ -114,6 +123,31 @@ import QCore.ModuleImports
 #print axioms QCore.ExternCall.a_second_acquisition_is_admitted_when_its_arm_releases_the_first
 #print axioms QCore.ExternCall.the_same_acquisition_with_an_empty_arm_refuses
 #print axioms QCore.ExternCall.the_store_is_reachable_from_two_live_identities
+
+-- Card `EXTERN-MODES`. `resource_released` is admitted nonnull on a flat
+-- mutable pointer and is the mode the error arm was always describing;
+-- `resource_return_reallocated` is admitted nullable over an `Owned` subject
+-- and is the one departing mode whose failure arm the declaration states.
+#print axioms QCore.ExternCall.the_release_table_is_inhabited
+#print axioms QCore.ExternCall.the_reallocation_table_is_inhabited
+#print axioms QCore.ExternCall.a_reallocation_beside_an_out_slot_refuses
+#print axioms QCore.ExternCall.a_reallocating_callee_acquires
+#print axioms QCore.ExternCall.alloc_is_derived_for_a_reallocation
+#print axioms QCore.ExternCall.a_row_without_alloc_refuses_a_reallocating_call
+#print axioms QCore.ExternCall.a_release_carries_its_own_custody
+#print axioms QCore.ExternCall.a_reallocation_subject_carries_its_own_custody
+#print axioms QCore.ExternCall.the_free_callee_is_a_disposition
+#print axioms QCore.ExternCall.an_arm_rendered_by_a_declared_release_is_admitted
+#print axioms QCore.ExternCall.reallocation_adapter_totality
+#print axioms QCore.ExternCall.a_removed_identity_is_gone
+#print axioms QCore.ExternCall.a_successful_reallocation_replaces_its_subject
+#print axioms QCore.ExternCall.a_failed_reallocation_binds_nothing
+#print axioms QCore.ExternCall.a_preserved_subject_is_released_by_the_arm
+#print axioms QCore.ExternCall.a_failed_reallocation_whose_arm_ignores_the_subject_refuses
+#print axioms QCore.ExternCall.a_departing_identity_is_absent_where_a_subject_is_present
+#print axioms QCore.ExternCall.a_reallocation_round_trip_is_admitted
+#print axioms QCore.ExternCall.a_failed_reallocation_round_trip_is_admitted
+#print axioms QCore.ExternCall.a_failed_reallocation_round_trip_with_an_empty_arm_refuses
 
 -- The file-local import gate is a second, independent opt-in.
 #print axioms QCore.ModuleImports.empty_imports_grant_no_extern_calls

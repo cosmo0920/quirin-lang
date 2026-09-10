@@ -141,17 +141,44 @@ refuses!(
     ),
     BridgeRefusal::OwnedParameter { parameter: 0 }
 );
+// Card `EXTERN-MODES` retires the blanket `resource_released` refusal by name.
+// Its load-bearing halves survive as the two narrower refusals below: a
+// nullable release and a release on any other pointer projection.
 refuses!(
-    a_released_parameter_is_not_callable,
+    a_nullable_released_parameter_is_not_callable,
     contract(
         vec![(
             AbiType::PtrMutU8,
+            ContractParameterMode::Released { nullable: true }
+        )],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::NullableReleasedParameter { parameter: 0 }
+);
+refuses!(
+    releasing_a_const_pointer_is_not_callable,
+    contract(
+        vec![(
+            AbiType::PtrConstU8,
             ContractParameterMode::Released { nullable: false }
         )],
         AbiType::Unit,
         ContractReturnMode::None
     ),
-    BridgeRefusal::ReleasedParameter { parameter: 0 }
+    BridgeRefusal::UnsupportedReleasedPointer { parameter: 0 }
+);
+refuses!(
+    releasing_a_scalar_is_not_callable,
+    contract(
+        vec![(
+            AbiType::U32,
+            ContractParameterMode::Released { nullable: false }
+        )],
+        AbiType::Unit,
+        ContractReturnMode::None
+    ),
+    BridgeRefusal::ScalarCustody { parameter: 0 }
 );
 refuses!(
     a_removed_parameter_is_not_callable,
@@ -189,8 +216,10 @@ refuses!(
     ),
     BridgeRefusal::NonnullOwnedReturn
 );
+// Card `EXTERN-MODES`: this exact shape is the one the card admits, so the
+// refusal it used to carry moves to the nullability that has no checked branch.
 refuses!(
-    a_reallocated_return_is_not_callable,
+    a_nonnull_reallocated_return_is_not_callable,
     contract(
         vec![(
             AbiType::PtrMutU8,
@@ -199,10 +228,10 @@ refuses!(
         AbiType::PtrMutU8,
         ContractReturnMode::Reallocated {
             parameter: 0,
-            nullable: true
+            nullable: false
         }
     ),
-    BridgeRefusal::OwnedParameter { parameter: 0 }
+    BridgeRefusal::NonnullReallocatedReturn
 );
 refuses!(
     a_custody_mode_on_a_scalar_is_not_callable,
@@ -249,8 +278,12 @@ refuses!(
     }
 );
 
+/// Card `EXTERN-MODES` retires the blanket `resource_return_reallocated`
+/// refusal by name. Its load-bearing half survives: a reallocated result whose
+/// subject is not a `resource_owned` parameter is still refused, now by the
+/// name contract spec §C04.3 gives that requirement.
 #[test]
-fn a_reallocated_return_over_admitted_parameters_still_refuses_by_its_own_name() {
+fn a_reallocated_return_over_a_borrowed_subject_still_refuses() {
     assert_eq!(
         bridge_contract(
             "f",
@@ -263,7 +296,7 @@ fn a_reallocated_return_over_admitted_parameters_still_refuses_by_its_own_name()
                 }
             )
         ),
-        Err(BridgeRefusal::ReallocatedReturn)
+        Err(BridgeRefusal::ReallocSubjectNotOwned { parameter: 0 })
     );
 }
 
@@ -1778,5 +1811,500 @@ fn a_certificate_that_hides_a_disposition_fails_its_recheck() {
     assert_eq!(
         recheck_extern_certificate(&module, &tampered),
         Err(ExternRecheckFailure::Mismatch)
+    );
+}
+
+// ========================================================================= //
+// Card EXTERN-MODES: `resource_released` and `resource_return_reallocated`. //
+// ========================================================================= //
+
+fn releaser() -> ExternCallee {
+    bridge_contract(
+        "qcore_extern_free",
+        &contract(
+            vec![(
+                AbiType::PtrMutU8,
+                ContractParameterMode::Released { nullable: false },
+            )],
+            AbiType::Unit,
+            ContractReturnMode::None,
+        ),
+    )
+    .expect("a nonnull release on a flat mutable pointer is admitted")
+}
+
+fn grower(name: &str) -> ExternCallee {
+    bridge_contract(
+        name,
+        &contract(
+            vec![
+                (
+                    AbiType::PtrMutU8,
+                    ContractParameterMode::Owned { nullable: false },
+                ),
+                (AbiType::Usize, ContractParameterMode::Borrowed),
+            ],
+            AbiType::PtrMutU8,
+            ContractReturnMode::Reallocated {
+                parameter: 0,
+                nullable: true,
+            },
+        ),
+    )
+    .expect("a nullable reallocation over an owned subject is admitted")
+}
+
+fn modes_program(events: Vec<ExternEvent>) -> ExternProgram {
+    ExternProgram {
+        entry: "main".into(),
+        callees: [
+            allocator(),
+            consumer(),
+            reader(),
+            releaser(),
+            grower("qcore_extern_grow"),
+        ]
+        .into_iter()
+        .map(|callee| (callee.name.clone(), callee))
+        .collect::<BTreeMap<_, _>>(),
+        events,
+        errors: BTreeSet::from(["Failure".to_owned()]),
+    }
+}
+
+fn free(resource: ResourceId) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_free".into(),
+        arguments: vec![ExternArgument::Release(resource)],
+        adapter: None,
+    })
+}
+
+fn grow(
+    subject: ResourceId,
+    fresh: ResourceId,
+    succeeds: bool,
+    arm: Vec<ExternRelease>,
+) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        callee: "qcore_extern_grow".into(),
+        arguments: vec![ExternArgument::Realloc(subject), ExternArgument::Data(32)],
+        adapter: Some(ExternAdapter {
+            resource: fresh,
+            succeeds,
+            releases: arm,
+            error: "Failure".into(),
+        }),
+    })
+}
+
+// --- Admission. ---
+
+#[test]
+fn a_nonnull_released_pointer_bridges_as_a_discharge() {
+    assert_eq!(releaser().parameters[0], CallParameter::Released);
+}
+
+#[test]
+fn a_nullable_reallocation_bridges_as_a_subject_and_a_checked_result() {
+    let callee = grower("qcore_extern_grow");
+    assert_eq!(callee.parameters[0], CallParameter::ReallocSubject);
+    assert_eq!(
+        callee.result,
+        CallResult::ReallocatedNullable { parameter: 0 }
+    );
+    assert_eq!(callee.realloc_parameter, Some(0));
+    // A reallocation is an acquisition source, so the adapter is mandatory —
+    // the same rule the other two sources follow, not a new one.
+    assert!(callee.acquires());
+    assert!(callee.out_parameter.is_none());
+}
+
+#[test]
+fn a_reallocation_subject_out_of_range_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                Vec::new(),
+                AbiType::PtrMutU8,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::ReallocSubjectOutOfRange { parameter: 0 })
+    );
+}
+
+#[test]
+fn a_nullable_reallocation_subject_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![(
+                    AbiType::PtrMutU8,
+                    ContractParameterMode::Owned { nullable: true }
+                )],
+                AbiType::PtrMutU8,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::NullableReallocSubject { parameter: 0 })
+    );
+}
+
+#[test]
+fn a_reallocation_subject_on_a_const_pointer_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![(
+                    AbiType::PtrConstU8,
+                    ContractParameterMode::Owned { nullable: false }
+                )],
+                AbiType::PtrMutU8,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::UnsupportedReallocSubjectPointer { parameter: 0 })
+    );
+}
+
+#[test]
+fn a_reallocated_result_on_other_than_a_flat_mutable_pointer_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![(
+                    AbiType::PtrMutU8,
+                    ContractParameterMode::Owned { nullable: false }
+                )],
+                AbiType::I32,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::UnsupportedReallocatedResultType {
+            result: AbiType::I32
+        })
+    );
+}
+
+/// `resource_owned` remains callable in a designated position and nowhere else.
+/// Card `EXTERN-MODES` adds the second such position — a reallocation subject —
+/// without widening the first: an owned parameter that neither owns a store nor
+/// is a declared subject still refuses by its original name.
+#[test]
+fn an_owned_parameter_beside_a_reallocation_of_another_parameter_refuses() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Owned { nullable: false }
+                    ),
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Owned { nullable: false }
+                    ),
+                ],
+                AbiType::PtrMutU8,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::OwnedParameter { parameter: 1 })
+    );
+}
+
+#[test]
+fn a_reallocation_beside_an_out_slot_refuses_as_two_acquisitions() {
+    assert_eq!(
+        bridge_contract(
+            "f",
+            &contract(
+                vec![
+                    (
+                        AbiType::PtrMutU8,
+                        ContractParameterMode::Owned { nullable: false }
+                    ),
+                    (
+                        AbiType::PtrMutPtrMutU8,
+                        ContractParameterMode::Out { nullable: true }
+                    ),
+                ],
+                AbiType::PtrMutU8,
+                ContractReturnMode::Reallocated {
+                    parameter: 0,
+                    nullable: true
+                }
+            )
+        ),
+        Err(BridgeRefusal::MultipleAcquisitions)
+    );
+}
+
+// --- Derivation. ---
+
+#[test]
+fn a_release_and_a_reallocation_derive_their_own_custody() {
+    assert_eq!(derived_custody(&releaser()), vec![ExternCustody::Released]);
+    assert_eq!(
+        derived_custody(&grower("qcore_extern_grow")),
+        vec![ExternCustody::Reallocated]
+    );
+}
+
+#[test]
+fn a_reallocation_derives_alloc_because_it_establishes_an_identity() {
+    let row = derived_effects(&grower("qcore_extern_grow"));
+    assert!(row.contains(&Effect::Alloc));
+    assert!(row.contains(&Effect::Io));
+    assert!(row.contains(&Effect::Mut));
+}
+
+// --- Call-site checking. ---
+
+#[test]
+fn a_released_identity_is_published_apart_from_a_consumed_one() {
+    let module = modes_program(vec![acquire(true), free(1), ExternEvent::Return]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(certificate.releases, vec![1]);
+    assert!(certificate.consumptions.is_empty());
+    assert!(
+        certificate
+            .assumptions
+            .contains(&ExternAssumption::DeclaredRelease(
+                "qcore_extern_free".to_owned()
+            ))
+    );
+    recheck_extern_certificate(&module, &certificate).unwrap();
+}
+
+#[test]
+fn a_released_identity_that_is_never_released_still_leaves_the_arm_dirty() {
+    // Two acquisitions with an empty arm on the second: the first is live and
+    // must be dispositioned, exactly as before this card.
+    let module = modes_program(vec![
+        acquire(true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_alloc".into(),
+            arguments: vec![ExternArgument::Data(4)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: true,
+                releases: Vec::new(),
+                error: "Failure".into(),
+            }),
+        }),
+    ]);
+    assert!(matches!(
+        check_extern_program(&module).unwrap_err().as_slice(),
+        [ExternDiagnostic::AdapterAbandonsCustody { resource: 1, .. }]
+    ));
+}
+
+/// A declared release may render an error-arm disposition. This is what the
+/// error arm was always describing — `cleanup_lowering` releases, and before
+/// this card the profile could only spell that as a transfer.
+#[test]
+fn an_error_arm_disposition_may_be_a_declared_release() {
+    let module = modes_program(vec![
+        acquire(true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_alloc".into(),
+            arguments: vec![ExternArgument::Data(4)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: false,
+                releases: vec![ExternRelease {
+                    callee: "qcore_extern_free".into(),
+                    arguments: vec![ExternArgument::Release(1)],
+                }],
+                error: "Failure".into(),
+            }),
+        }),
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        certificate.error_dispositions,
+        vec![(1, vec![]), (2, vec![1])]
+    );
+    recheck_extern_certificate(&module, &certificate).unwrap();
+}
+
+/// The asymmetry this card is careful about. A consumption beside an
+/// acquisition is refused because the declaration is silent about the failure
+/// arm; a reallocation subject is admitted because contract spec §C04.3 states
+/// that arm. Both directions are pinned here so neither can drift into the
+/// other.
+#[test]
+fn a_departing_consumption_refuses_where_a_reallocation_subject_does_not() {
+    let consuming = modes_program(vec![
+        acquire(true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_alloc".into(),
+            arguments: vec![ExternArgument::Data(4)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: true,
+                releases: vec![ExternRelease {
+                    callee: "qcore_extern_free".into(),
+                    arguments: vec![ExternArgument::Release(1)],
+                }],
+                error: "Failure".into(),
+            }),
+        }),
+        consume(2),
+        consume(1),
+        ExternEvent::Return,
+    ]);
+    check_extern_program(&consuming).expect("the control checks");
+    // The same shape with the second acquisition also consuming the first.
+    let departing = modes_program(vec![
+        acquire(true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Consume(1)],
+            adapter: Some(ExternAdapter {
+                resource: 2,
+                succeeds: true,
+                releases: Vec::new(),
+                error: "Failure".into(),
+            }),
+        }),
+    ]);
+    assert!(
+        check_extern_program(&departing)
+            .unwrap_err()
+            .iter()
+            .any(|diagnostic| matches!(
+                diagnostic,
+                ExternDiagnostic::AdapterUnexpected { .. }
+                    | ExternDiagnostic::AdapterDepartingArgument { .. }
+            ))
+    );
+    // A reallocation subject in the same position checks, with its arm
+    // releasing the subject the failure arm preserved.
+    let reallocating = modes_program(vec![
+        acquire(true),
+        grow(
+            1,
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_free".into(),
+                arguments: vec![ExternArgument::Release(1)],
+            }],
+        ),
+        free(2),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&reallocating).unwrap();
+    assert_eq!(certificate.reallocations, vec![(1, 2)]);
+    assert_eq!(certificate.releases, vec![2]);
+}
+
+#[test]
+fn a_failed_reallocation_records_no_replacement_and_keeps_its_subject_live() {
+    let module = modes_program(vec![
+        acquire(true),
+        grow(
+            1,
+            2,
+            false,
+            vec![ExternRelease {
+                callee: "qcore_extern_free".into(),
+                arguments: vec![ExternArgument::Release(1)],
+            }],
+        ),
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert!(certificate.reallocations.is_empty());
+    assert_eq!(
+        certificate.error_dispositions,
+        vec![(1, vec![]), (2, vec![1])]
+    );
+}
+
+#[test]
+fn a_reallocation_whose_arm_abandons_its_preserved_subject_refuses() {
+    let module = modes_program(vec![acquire(true), grow(1, 2, false, Vec::new())]);
+    assert!(matches!(
+        check_extern_program(&module).unwrap_err().as_slice(),
+        [ExternDiagnostic::AdapterAbandonsCustody { resource: 1, .. }]
+    ));
+}
+
+#[test]
+fn a_reallocation_argument_at_a_consumed_parameter_refuses_by_form() {
+    let module = modes_program(vec![
+        acquire(true),
+        ExternEvent::Call(ExternCall {
+            callee: "qcore_extern_release".into(),
+            arguments: vec![ExternArgument::Realloc(1)],
+            adapter: None,
+        }),
+    ]);
+    assert!(
+        check_extern_program(&module)
+            .unwrap_err()
+            .iter()
+            .any(|diagnostic| matches!(diagnostic, ExternDiagnostic::ArgumentForm { .. }))
+    );
+}
+
+/// The emitted C names the subject and binds the result, and the reference
+/// interpreter renders the same line. Both are written against the model.
+#[test]
+fn a_reallocation_emits_a_replacement_and_the_reference_run_agrees() {
+    let module = modes_program(vec![
+        acquire(true),
+        grow(
+            1,
+            2,
+            true,
+            vec![ExternRelease {
+                callee: "qcore_extern_free".into(),
+                arguments: vec![ExternArgument::Release(1)],
+            }],
+        ),
+        free(2),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    assert!(
+        emitted
+            .source
+            .contains("uint8_t *r2 = qcore_extern_grow(r1, 32);"),
+        "{}",
+        emitted.source
+    );
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "realloc qcore_extern_grow r2 g:r1 d:32 ok",
+            "call qcore_extern_free f:r2",
+            "return",
+        ]
     );
 }

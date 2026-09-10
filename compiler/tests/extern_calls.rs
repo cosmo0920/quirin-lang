@@ -180,6 +180,15 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
         // both allocations on either path.
         ("store", STORED.to_owned()),
         ("store-failure", STORED_FAILURE.to_owned()),
+        // Card `EXTERN-MODES`. The release fixture links a callee whose
+        // declaration claims discharge and whose implementation performs it;
+        // the two reallocation fixtures execute both arms of contract spec
+        // §C04.3 against a real `realloc`, so the preserved-subject arm is a
+        // real observation and its checked disposition is a real `free` — a
+        // double free there is what ASan would report.
+        ("released", RELEASED.to_owned()),
+        ("realloc", REALLOC.to_owned()),
+        ("realloc-failure", REALLOC_FAILURE.to_owned()),
     ] {
         let module = compile_with(&source, selection()).unwrap();
         let reference = module.extern_observation.clone().unwrap();
@@ -362,16 +371,23 @@ fn a_duplicate_declaration_across_two_selected_modules_refuses() {
 
 // --- Q024: the closed bridging table, at the source boundary. ---
 
+/// Card `EXTERN-MODES` moved this pin deliberately. Its original substitution
+/// was `resource_released(buffer, nonnull)`, which is now admitted; the
+/// admitting direction is pinned by `a_released_argument_is_recorded_apart_from_
+/// a_consumed_one` and its nullable form still refuses here. The negative half
+/// this test carries — an excluded C04 mode refuses at the source boundary
+/// under `Q024`, not somewhere later — is kept on the nullable consumed mode,
+/// which the closed table has always excluded.
 #[test]
 fn an_excluded_contract_mode_refuses_at_the_bridging_table() {
     let contracts = CONTRACTS.replace(
         "ensures normal resource_consumed(buffer, nonnull);",
-        "ensures normal resource_released(buffer, nonnull);",
+        "ensures normal resource_consumed(buffer, nullable);",
     );
     assert_eq!(
         codes(
             ROUND_TRIP,
-            Some(BTreeMap::from([("released.qcore".to_owned(), contracts)]))
+            Some(BTreeMap::from([("nullable.qcore".to_owned(), contracts)]))
         ),
         ["Q024"]
     );
@@ -1085,5 +1101,219 @@ fn a_store_beneath_a_non_owned_parameter_refuses_at_the_loader() {
             Some(BTreeMap::from([("bad-owner.qcore".to_owned(), contracts)]))
         ),
         ["Q023"]
+    );
+}
+
+// ========================================================================= //
+// Card EXTERN-MODES: `resource_released` and `resource_return_reallocated`. //
+// ========================================================================= //
+
+const RELEASED: &str = include_str!("fixtures/extern_calls/released.qcore");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
+const REALLOC_FAILURE: &str = include_str!("fixtures/extern_calls/realloc_failure.qcore");
+
+/// A release is published as a release, not as a consumption. The two have the
+/// same caller-side ledger delta, so nothing about leak accounting moves; what
+/// moves is which field the identity lands in and which premise the certificate
+/// names. Contract spec §C04.2 is explicit that a false `resource_released`
+/// declaration can invalidate a safety conclusion while a false
+/// `resource_consumed` declaration only relocates an obligation, and a reader
+/// that could not tell the two apart could not tell which callees a
+/// leak-freedom reading depends on.
+#[test]
+fn a_released_argument_is_recorded_apart_from_a_consumed_one() {
+    let module = compile_with(RELEASED, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(checked.certificate.releases, vec![1]);
+    assert!(checked.certificate.consumptions.is_empty());
+    assert!(
+        checked
+            .certificate
+            .assumptions
+            .contains(&extern_call::ExternAssumption::DeclaredRelease(
+                "qcore_extern_free".to_owned()
+            )),
+        "{:?}",
+        checked.certificate.assumptions
+    );
+    // The round trip's consuming callee keeps its own answer, in both
+    // directions: it is not silently reclassified as a release.
+    let consuming = compile_with(ROUND_TRIP, selection()).unwrap();
+    let consuming = consuming.checked.as_extern_calls().unwrap();
+    assert_eq!(consuming.certificate.consumptions, vec![1]);
+    assert!(consuming.certificate.releases.is_empty());
+    assert!(!consuming.certificate.assumptions.iter().any(|assumption| {
+        matches!(
+            assumption,
+            extern_call::ExternAssumption::DeclaredRelease(_)
+        )
+    }));
+}
+
+#[test]
+fn a_released_binding_cannot_be_used_again() {
+    let released = RELEASED.replace("\r\n", "\n");
+    let source = released.replace(
+        "    qcore_extern_free(move b);",
+        "    qcore_extern_free(move b);\n    qcore_extern_fill(b, 1);",
+    );
+    assert_ne!(source, released, "the release must have been substituted");
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+/// The nullable form is refused by name. A nullable release discharges nothing
+/// when the modeled value is null (contract spec §C04.2), so admitting it would
+/// make the discharge conditional on a value this profile does not model —
+/// exactly the reason the consumed mode is nonnull-only. Recorded as reach
+/// limit `EXTERN-MODES-NULLABLE-RELEASE`: contract spec §C04's own minimal
+/// `release` example declares `nullable` and is therefore not callable here.
+#[test]
+fn a_nullable_release_declaration_refuses_at_the_bridging_table() {
+    let contracts = CONTRACTS.replacen(
+        "ensures normal resource_released(buffer, nonnull);",
+        "ensures normal resource_released(buffer, nullable);",
+        1,
+    );
+    assert_ne!(contracts, CONTRACTS, "the release clause must be present");
+    assert_eq!(
+        codes(
+            RELEASED,
+            Some(BTreeMap::from([(
+                "nullable-release.qcore".to_owned(),
+                contracts
+            )]))
+        ),
+        ["Q024"]
+    );
+}
+
+/// A successful reallocation replaces the subject exactly once: the old
+/// identity leaves the ledger and the result identity enters it, recorded as
+/// one pair rather than as an unrelated consumption and acquisition.
+#[test]
+fn a_successful_reallocation_records_the_replacement_as_one_pair() {
+    let module = compile_with(REALLOC, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(checked.certificate.reallocations, vec![(1, 2)]);
+    assert_eq!(checked.certificate.acquisitions, vec![1, 2]);
+    assert_eq!(checked.certificate.releases, vec![2]);
+    assert!(checked.certificate.assumptions.contains(
+        &extern_call::ExternAssumption::DeclaredReallocation("qcore_extern_grow".to_owned())
+    ));
+    extern_call::recheck_extern_certificate(&checked.lowered.program, &checked.certificate)
+        .expect("the driver publishes only evidence it rederived");
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "realloc qcore_extern_grow r2 g:r1 d:32 ok",
+            "call qcore_extern_fill b:r2 d:3",
+            "call qcore_extern_free f:r2",
+            "return",
+        ]
+    );
+}
+
+#[test]
+fn a_reallocated_subject_cannot_be_used_after_the_replacement() {
+    let realloc = REALLOC.replace("\r\n", "\n");
+    let source = realloc.replace(
+        "    qcore_extern_fill(grown, 3);",
+        "    qcore_extern_fill(b, 3);",
+    );
+    assert_ne!(source, realloc, "the read must have been substituted");
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q024".to_owned()), "{codes:?}");
+}
+
+/// The half of contract spec §C04.3 that makes a reallocation different from
+/// every other departing mode: a null failure *preserves* the incoming custody.
+/// The subject is therefore still live on the error arm and must be
+/// dispositioned there — the same abandonment rule as always, applied to an
+/// identity an ordinary consumption would have taken off the arm.
+#[test]
+fn a_failed_reallocation_preserves_its_subject_for_the_error_arm() {
+    let module = compile_with(REALLOC_FAILURE, selection()).unwrap();
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert!(
+        checked.certificate.reallocations.is_empty(),
+        "a failed reallocation replaced nothing"
+    );
+    assert_eq!(
+        checked.certificate.error_dispositions,
+        vec![(1, vec![]), (2, vec![1])]
+    );
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "realloc qcore_extern_grow_failing r2 g:r1 d:32 null",
+            "call qcore_extern_free f:r1",
+            "raise Failure",
+        ]
+    );
+}
+
+/// Dropping the disposition abandons the preserved subject. This is the pin
+/// that keeps the admission honest: had the checker treated the subject as
+/// departed at the call — the way it treats a consumption — this source would
+/// have checked, and the emitted program would have leaked.
+#[test]
+fn a_failed_reallocation_whose_arm_abandons_the_subject_refuses() {
+    let failure = REALLOC_FAILURE.replace("\r\n", "\n");
+    let source = failure.replace(
+        "        else qcore_extern_free(move b) raise Failure;",
+        "        else raise Failure;",
+    );
+    assert_ne!(source, failure, "the arm must have been substituted");
+    let codes = codes(&source, selection());
+    assert!(codes.contains(&"Q025".to_owned()), "{codes:?}");
+}
+
+/// A reallocated result whose subject is not `resource_owned` is refused before
+/// any of this runs: contract spec §C04.3's own well-formedness rule, re-pinned
+/// at this boundary.
+#[test]
+fn a_reallocation_subject_that_is_not_owned_refuses() {
+    let contracts = CONTRACTS.replacen(
+        "    ensures normal resource_owned(buffer, nonnull);",
+        "    ensures normal resource_borrowed(buffer);",
+        1,
+    );
+    assert_ne!(contracts, CONTRACTS, "the grow clause must be present");
+    let codes = codes(
+        REALLOC,
+        Some(BTreeMap::from([(
+            "bad-subject.qcore".to_owned(),
+            contracts,
+        )])),
+    );
+    assert!(
+        codes.contains(&"Q023".to_owned()) || codes.contains(&"Q024".to_owned()),
+        "{codes:?}"
+    );
+}
+
+/// `resource_removed` stays refused, and the refusal is this card's measured
+/// finding rather than an omission: a removal names a child this profile
+/// stopped tracking when it was stored, because `EXTERN-F1` records the
+/// residual beneath an owner as a premise and not as a modeled index.
+/// Follow-on `EXTERN-MODES-REMOVED-INDEX`.
+#[test]
+fn a_removed_parameter_is_still_not_callable() {
+    let contracts = CONTRACTS.replacen(
+        "ensures normal resource_stored(child, owner, nonnull);",
+        "ensures normal resource_removed(child, owner, nonnull);",
+        1,
+    );
+    assert_ne!(contracts, CONTRACTS, "the store clause must be present");
+    let codes = codes(
+        STORED,
+        Some(BTreeMap::from([("removed.qcore".to_owned(), contracts)])),
+    );
+    assert!(
+        codes.contains(&"Q023".to_owned()) || codes.contains(&"Q024".to_owned()),
+        "{codes:?}"
     );
 }
