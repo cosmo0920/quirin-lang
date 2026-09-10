@@ -360,6 +360,42 @@ corpus baseline and headline counts are unchanged; the recorded load-sensitive
 `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` row remains unchanged
 and passes in isolation.
 
+Wave-21 close increment (2026-09-11): the two remaining cards merged under
+the failure-gated chain, which caught one composition seam (the example
+suite's rename-proof driver constant failed to compile once only `quirin`
+existed — `env!` resolves in the arm a match never takes). Wave 21 is
+corpus-neutral by construction; the baseline stays
+`docs/reports/wave20-corpus/`.
+- Source logging in the thread examples (COMPOSE-CONCURRENCY): the new
+  route `source.std-io-tasks.v1` composes the checked task route with
+  `std.io`/`std.logger` — the task half is the unedited task lowering and
+  checker, the line half is each std-io definition extracted and shared,
+  so no second lowering or backend exists. The v1 boundary is measured,
+  not chosen: every write an emitted task program performs happens on the
+  parent's thread, so any parent-body line is join-ordered and admitted;
+  a worker-body line refuses at `Q050` (new `ComposedTasks` pass,
+  standing constraint 15a). TRACE-STDIO's impossibility pin is rewritten
+  into three tests; one STD-IO-COMPOSE route exclusion is lifted and the
+  other two re-pinned; `STD-FMT-BUFFER-READ` lands
+  (`value |> log info dec` over `qcore_buffer_read`). All four
+  `examples/threads` programs gain source logging, sanitized and
+  per-stream byte-compared; no synthesized trace byte moved. Evidence:
+  `docs/reports/wave21-compose-concurrency/README.md`.
+- The example suite (EXAMPLES-SUITE): five families under `examples/` —
+  stdio (both renderings, all three severities with the `fatal` collision
+  asserted, `flush`'s no-durability boundary, the composed
+  `value |> render |> log` chain), pipes, branching, extern, and
+  unsafe-linkage — 14 programs, 32 tests, with refused programs and
+  quoted diagnostics extracted from the READMEs and compiled, so no
+  documented refusal can drift. Evidence:
+  `docs/reports/wave21-examples-suite/README.md`.
+Merged gate at this checkpoint: 3,343 workspace tests (8 ignored),
+122 provider tests, 193 Python tests, 90 Lean audits, both reevaluation
+examples exit 0, fmt and clippy clean. Follow-on accounting lives in
+`docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`, updated
+for this wave).
+
+
 Wave-21 partial increment (2026-09-11): QUIRIN-RENAME landed through a
 delegated worktree — the language presents as **Quirin**, the CLI binaries
 rename to `quirin` and `quirin-audit` via `[[bin]] name` alone, and the

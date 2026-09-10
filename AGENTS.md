@@ -77,7 +77,7 @@ current re-pinned baseline; wave-17's archive stays frozen beneath it):
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **70 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,277 workspace tests (8 ignored) · 122 provider · 193 Python · **89 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-20 close + wave-21 partial (QUIRIN-RENAME); corpus re-pinned to `docs/reports/wave20-corpus/` — 12 leaves removed / 3 added, all attributed, unit headline unchanged) |
+| Merged gate | 3,343 workspace tests (8 ignored) · 122 provider · 193 Python · **90 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-21 close: QUIRIN-RENAME, COMPOSE-CONCURRENCY, EXAMPLES-SUITE; corpus baseline `docs/reports/wave20-corpus/`, untouched by wave 21 by construction) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -281,6 +281,15 @@ pointer is the card that established it; read it before deviating.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
+15a. **Source lines in a composed task module are parent-body-only.** The
+    `source.std-io-tasks.v1` admission rests on a measurement, not a
+    preference: every write an emitted task program performs is performed by
+    the parent's thread (workers buffer events privately; the parent replays
+    them at collect), so any parent-body point is join-ordered and the
+    per-stream byte comparison stays well-defined. A worker-body line refuses
+    at `Q050`; admitting one requires the comparison-up-to-an-admitted-
+    reordering capability (`COMPOSE-WORKER-LINES`), not a gate change.
+    `wave21-compose-concurrency`.
 
 **Providers, packages and limits**
 
@@ -453,6 +462,7 @@ this table is a summary of it, not a second allocation.
 | `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
 | `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape and arm subset, decidable condition tier (connectives, `!`, bitwise, constant bindings), custody join over survivors |
 | `Q047`–`Q049` | `NativeLibrary` | second band of the same pass: manifest-bound contract slices, identity stacking, withdrawal |
+| `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals (worker-body lines, borrows, unbound operands) |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
