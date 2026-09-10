@@ -1,4 +1,5 @@
 import QCore.BucketTally
+import QCore.CtReasons
 import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
 import QCore.ConcurrencyPrelude

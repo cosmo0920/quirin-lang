@@ -265,7 +265,22 @@ class RecordedBlindSpotTest(unittest.TestCase):
             with self.subTest(recorded.name):
                 committed = read_diff(recorded)
                 self.assertEqual(committed["schema_version"], 1)
-                self.assertEqual(sorted(committed["artifacts"]), PRE_EXISTING)
+                # Card GEN-CTREASONS backfilled the fifth section into these
+                # archived documents (follow-on `DIFF-TOOL-CONTRACTS-BACKFILL`),
+                # so the pin moves deliberately: the document is still a
+                # schema-1 document, it still carries the four pre-existing
+                # entries, and the `contracts` entry it now also carries is
+                # marked as backfilled rather than passing as original. The
+                # load-bearing half below — the four entries reproducing
+                # byte-identically — is unchanged and is what this test is for.
+                self.assertEqual(
+                    sorted(committed["artifacts"]), sorted(PRE_EXISTING + ["contracts"])
+                )
+                self.assertIn(
+                    "artifacts.contracts",
+                    committed.get("backfilled_sections", {}),
+                    "a contracts section in a schema-1 document must say it was backfilled",
+                )
                 with tempfile.TemporaryDirectory(prefix="qcore-diff-") as scratch:
                     directory = pathlib.Path(scratch)
                     unpack(measured, directory)

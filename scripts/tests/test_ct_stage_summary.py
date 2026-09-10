@@ -38,6 +38,9 @@ class MutableRoot:
             summary.MANIFEST,
             summary.ACCEPTANCE,
             summary.TRIAGE,
+            # Card GEN-CTREASONS: the acceptance *matrix*'s copy of the reasons
+            # map is derived and checked now, so the scratch tree carries it too.
+            summary.MATRIX,
         ] + summary.EVIDENCE_FILES:
             target = self.directory / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -64,6 +67,20 @@ class MutableRoot:
 
     def write_triage(self, coverage):
         (self.directory / summary.TRIAGE).write_text(json.dumps(coverage, indent=2) + "\n")
+
+    def read_matrix(self):
+        return json.loads((self.directory / summary.MATRIX).read_text())
+
+    def write_matrix(self, matrix):
+        (self.directory / summary.MATRIX).write_text(
+            json.dumps(matrix, indent=1, ensure_ascii=False) + "\n"
+        )
+
+    def write_matrix_reasons(self, reasons):
+        """Replace only the reasons map, leaving the rest of the matrix alone."""
+        matrix = self.read_matrix()
+        matrix["ct_conformance"][summary.REASONS_KEY] = reasons
+        self.write_matrix(matrix)
 
 
 class SummaryTest(unittest.TestCase):
@@ -380,8 +397,9 @@ class SummaryTest(unittest.TestCase):
         Measured on the committed tree while writing this: the acceptance
         *matrix*'s copy of this map still carried a CT39 row explaining why the
         case had no epoch source syntax, four waves after wave 8 mapped it. The
-        matrix copy is hand-carried commentary no derivation reads; the
-        acceptance record's copy is now checked, in both derivations.
+        acceptance record's copy is checked here, in both derivations; the
+        matrix's copy was hand-carried commentary no derivation read until card
+        GEN-CTREASONS derived it (`check_matrix_ct_reasons`, below).
         """
         self.assertEqual(summary.check_newly_decidable(ROOT), [])
         acceptance = json.loads((ROOT / summary.ACCEPTANCE).read_text())
@@ -409,6 +427,187 @@ class SummaryTest(unittest.TestCase):
         with MutableRoot() as scratch:
             scratch.write_acceptance(acceptance)
             self.assertEqual(summary.check_newly_decidable(scratch.directory), [])
+
+    # ------------------------------------------------------------------
+    # Card GEN-CTREASONS, follow-on D02-GEN-CTREASONS: the matrix's copy of
+    # the same map, derived rather than carried.
+    #
+    # Nothing below names a case id or a count that is not read out of the
+    # committed manifest at run time: the CT lanes move those, and a test that
+    # pinned them would fail on the lane's commit rather than on a defect.
+    # ------------------------------------------------------------------
+
+    def test_the_committed_matrix_reasons_map_is_what_the_records_derive(self):
+        self.assertEqual(summary.check_matrix_ct_reasons(ROOT), [])
+
+    def test_the_derived_rows_are_the_resolved_labels_of_the_published_list(self):
+        """Keys are the companion list; values are that case's resolved label.
+
+        The defect this closes was structural rather than arithmetic: the map
+        was prose nothing derived, so it could explain a case the manifest maps
+        (the CT39 row HYGIENE-16 found) or a case its own companion list does
+        not name (the CT11 row this card found). Keying it to the list makes
+        both impossible.
+        """
+        derived = summary.newly_decidable_reasons(ROOT)
+        published = summary.newly_decidable_ids(ROOT)
+        self.assertEqual(list(derived), published)
+        labels = summary.unmapped_labels(ROOT)
+        for case_id, row in derived.items():
+            self.assertEqual(
+                row,
+                {
+                    "label": labels[case_id]["label"],
+                    "label_source": labels[case_id]["label_source"],
+                    "reason": labels[case_id]["reason"],
+                    "measured_by": labels[case_id]["measured_by"],
+                },
+            )
+        # Non-vacuity: the derivation is not the empty map, and every id it
+        # publishes is a case the manifest currently leaves unmapped.
+        self.assertTrue(derived)
+        self.assertTrue(set(derived) <= set(summary.unmapped_ids(load_manifest())))
+
+    def test_a_matrix_reason_row_for_a_mapped_case_is_refused(self):
+        """Refusal direction one, the shape of the CT39 staleness."""
+        mapped = [
+            case["id"] for case in load_manifest()["cases"] if case["mapping_status"] == "mapped"
+        ]
+        self.assertTrue(mapped)
+        case_id = mapped[0]
+        with MutableRoot() as scratch:
+            reasons = dict(summary.newly_decidable_reasons(ROOT))
+            reasons[case_id] = {
+                "label": "invented",
+                "label_source": "invented",
+                "reason": "invented: this case has no source form",
+                "measured_by": "invented",
+            }
+            scratch.write_matrix_reasons(reasons)
+            self.assertEqual(
+                summary.check_matrix_ct_reasons(scratch.directory),
+                [
+                    "acceptance_matrix.json %s explains why %s is not mapped, but the "
+                    "manifest maps it" % (summary.REASONS_KEY, case_id)
+                ],
+            )
+
+    def test_a_committed_row_the_derivation_cannot_produce_is_refused(self):
+        """Refusal direction two: an unmapped case the list does not name."""
+        newly = set(summary.newly_decidable_ids(ROOT))
+        others = [case for case in summary.unmapped_ids(load_manifest()) if case not in newly]
+        self.assertTrue(others, "every unmapped case is newly decidable; this test is vacuous")
+        case_id = others[0]
+        with MutableRoot() as scratch:
+            reasons = dict(summary.newly_decidable_reasons(ROOT))
+            reasons[case_id] = {"label": "x", "label_source": "x", "reason": "x", "measured_by": "x"}
+            scratch.write_matrix_reasons(reasons)
+            self.assertEqual(
+                summary.check_matrix_ct_reasons(scratch.directory),
+                [
+                    "acceptance_matrix.json %s carries a %s row the derivation does not "
+                    "produce" % (summary.REASONS_KEY, case_id)
+                ],
+            )
+
+    def test_the_historical_ct11_row_is_refused(self):
+        """The measured before-state of this card, as a regression.
+
+        The committed map carried a CT11 row while its own companion list named
+        only CT24 and CT47 — a second staleness class beside HYGIENE-16's CT39
+        row: not "a mapped case keeps its paragraph" but "a paragraph belongs to
+        no published claim". CT11's blocker is not lost by dropping it here; the
+        same section publishes it, with more provenance, as that case's
+        `blocker_current`.
+        """
+        manifest = load_manifest()
+        mapped = {
+            case["id"] for case in manifest["cases"] if case["mapping_status"] == "mapped"
+        }
+        expected = (
+            "acceptance_matrix.json %s explains why CT11 is not mapped, but the manifest "
+            "maps it" % summary.REASONS_KEY
+            if "CT11" in mapped
+            else "acceptance_matrix.json %s carries a CT11 row the derivation does not "
+            "produce" % summary.REASONS_KEY
+        )
+        with MutableRoot() as scratch:
+            reasons = dict(summary.newly_decidable_reasons(ROOT))
+            reasons["CT11"] = (
+                "Measured: ScopedReadSharesV1 refuses reconstruction while a share is "
+                "retained (Q600 LoanOutstanding { resource: 1, outstanding: 512, "
+                "borrowers: [3] })."
+            )
+            scratch.write_matrix_reasons(reasons)
+            self.assertEqual(summary.check_matrix_ct_reasons(scratch.directory), [expected])
+
+    def test_dropping_the_map_or_a_row_of_it_is_refused(self):
+        """The direction that let the key be lost on every regeneration."""
+        derived = summary.newly_decidable_reasons(ROOT)
+        case_id = next(iter(derived))
+        with MutableRoot() as scratch:
+            matrix = scratch.read_matrix()
+            del matrix["ct_conformance"][summary.REASONS_KEY]
+            scratch.write_matrix(matrix)
+            problems = summary.check_matrix_ct_reasons(scratch.directory)
+            self.assertEqual(len(problems), 1)
+            self.assertIn("carries no %s" % summary.REASONS_KEY, problems[0])
+
+            reasons = {key: value for key, value in derived.items() if key != case_id}
+            scratch.write_matrix_reasons(reasons)
+            self.assertEqual(
+                summary.check_matrix_ct_reasons(scratch.directory),
+                [
+                    "acceptance_matrix.json %s is missing the derived %s row"
+                    % (summary.REASONS_KEY, case_id)
+                ],
+            )
+
+    def test_a_rewritten_reason_paragraph_is_refused(self):
+        """The map is the records' text, not the editor's."""
+        derived = summary.newly_decidable_reasons(ROOT)
+        case_id = next(iter(derived))
+        with MutableRoot() as scratch:
+            reasons = copy.deepcopy(derived)
+            reasons[case_id]["reason"] = "rewritten by hand"
+            scratch.write_matrix_reasons(reasons)
+            self.assertEqual(
+                summary.check_matrix_ct_reasons(scratch.directory),
+                [
+                    "acceptance_matrix.json %s row for %s is not what the evidence records "
+                    "derive" % (summary.REASONS_KEY, case_id)
+                ],
+            )
+
+    def test_mapping_a_newly_decidable_case_retires_its_reason_row(self):
+        """A lane that maps a case takes the row with it, editing nothing."""
+        derived = summary.newly_decidable_reasons(ROOT)
+        case_id = next(iter(derived))
+        manifest = load_manifest()
+        for case in manifest["cases"]:
+            if case["id"] == case_id:
+                case["mapping_status"] = "mapped"
+        with MutableRoot() as scratch:
+            scratch.write_manifest(manifest)
+            after = summary.newly_decidable_reasons(scratch.directory)
+            self.assertNotIn(case_id, after)
+            self.assertEqual(set(after), set(derived) - {case_id})
+            # And the committed copy is now reported as stale by name, rather
+            # than surviving as a paragraph about a mapped case.
+            self.assertEqual(
+                summary.check_matrix_ct_reasons(scratch.directory),
+                [
+                    "acceptance_matrix.json %s explains why %s is not mapped, but the "
+                    "manifest maps it" % (summary.REASONS_KEY, case_id)
+                ],
+            )
+
+    def test_the_maps_own_derivation_key_is_not_read_as_a_case(self):
+        """`_derivation` is the map's own prose; the committed file carries it."""
+        committed = json.loads((ROOT / summary.MATRIX).read_text())
+        block = committed["ct_conformance"][summary.REASONS_KEY]
+        self.assertIn("_derivation", block)
+        self.assertEqual(summary.check_matrix_ct_reasons(ROOT), [])
 
     def test_the_historical_stale_bucket_block_is_refused(self):
         """Card HYGIENE-16, finding `D02-BUCKETS-STALE`, as a regression.

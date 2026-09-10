@@ -19,6 +19,7 @@ Everything runs into a scratch file; the committed matrix is never written.
 
 import json
 import pathlib
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -298,6 +299,97 @@ class BuildMatrixSections(unittest.TestCase):
             previous.write_text(json.dumps(committed))
             finished = generate(scratch / "out.json", previous=previous)
         self.assertNotEqual(finished.returncode, 0)
+
+    # ------------------------------------------------------------------
+    # Card GEN-CTREASONS, follow-on D02-GEN-CTREASONS.
+    # ------------------------------------------------------------------
+
+    def test_the_committed_reasons_map_is_a_fixed_point_of_the_generator(self):
+        """The key the generator used to drop is now derived and committed.
+
+        Deliberately scoped to this one derived key rather than to the whole
+        `ct_conformance` section: a CT lane that maps a case moves that
+        section's rows, and a test pinning them would fail on the lane's commit
+        instead of on a defect. Nothing here names a case id or a count — both
+        sides are read at run time.
+        """
+        committed = json.loads(COMMITTED.read_text())
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            out = pathlib.Path(scratch) / "acceptance_matrix.json"
+            produced = generate_ok(self, out)
+        key = "newly_decidable_not_mapped_reasons"
+        self.assertIn(key, produced["ct_conformance"], "the generator dropped the map again")
+        self.assertEqual(
+            produced["ct_conformance"][key],
+            committed["ct_conformance"].get(key),
+            "regenerating moved the derived reasons map; the committed matrix is not a "
+            "fixed point of its own generator",
+        )
+        # Non-vacuity in the direction that matters: the map is not empty, its
+        # keys are exactly the companion list the same section publishes, and
+        # its rows are objects carrying the record that decided them.
+        rows = {
+            case: row for case, row in produced["ct_conformance"][key].items()
+            if not case.startswith("_")
+        }
+        self.assertTrue(rows)
+        self.assertEqual(
+            list(rows), produced["ct_conformance"]["newly_decidable_not_mapped"]
+        )
+        for row in rows.values():
+            self.assertEqual(
+                sorted(row), ["label", "label_source", "measured_by", "reason"]
+            )
+
+    @unittest.skipUnless(shutil.which("git"), "git is required to drive the carry step")
+    def test_the_wave16_carry_step_retires_itself_once_the_map_is_derived(self):
+        """`docs/reports/wave16-corpus/readd_ct_reasons.py` is superseded, loudly.
+
+        The wave-16 consolidation carried this map forward by hand after every
+        regeneration, guarding only that a carried row does not describe a
+        mapped case — a guard at the carry, not a derivation. Its author left
+        the retirement tripwire in it (`assert KEY not in ct`), so the derivation
+        landing here retires it by name rather than silently: the archived
+        script's bytes are untouched, and running it now refuses.
+
+        Driven in a scratch repository so the committed matrix is never written.
+        """
+        carry = ROOT / "docs/reports/wave16-corpus/readd_ct_reasons.py"
+        self.assertTrue(carry.is_file(), "the carry step this test supersedes is missing")
+        with tempfile.TemporaryDirectory(prefix="qcore-carry-") as scratch:
+            scratch = pathlib.Path(scratch)
+            (scratch / "docs/reports/wave16-corpus").mkdir(parents=True)
+            (scratch / "docs/reviews/r0_3").mkdir(parents=True)
+            shutil.copyfile(carry, scratch / "docs/reports/wave16-corpus/readd_ct_reasons.py")
+            matrix = scratch / "docs/reviews/r0_3/acceptance_matrix.json"
+            carried = {
+                "ct_conformance": {
+                    "ct_rows": [],
+                    "newly_decidable_not_mapped": [],
+                    "newly_decidable_not_mapped_reasons": {"_note": "hand-maintained"},
+                }
+            }
+            matrix.write_text(json.dumps(carried, indent=1) + "\n")
+            for command in (
+                ["git", "init", "-q"],
+                ["git", "add", "-A"],
+                [
+                    "git",
+                    "-c", "user.email=card@example.invalid",
+                    "-c", "user.name=card",
+                    "commit", "-qm", "scratch",
+                ],
+            ):
+                subprocess.run(command, cwd=scratch, check=True, capture_output=True)
+            # The state after this card: the generator emits the key itself.
+            matrix.write_text(json.dumps(carried, indent=1) + "\n")
+            finished = subprocess.run(
+                [sys.executable, "-B", str(scratch / "docs/reports/wave16-corpus/readd_ct_reasons.py")],
+                capture_output=True,
+                text=True,
+            )
+        self.assertNotEqual(finished.returncode, 0, "the retired carry step still ran")
+        self.assertIn("retire D02-GEN-CTREASONS", finished.stderr)
 
     def test_the_positional_workspace_count_still_works(self):
         """T00-CT-SCHEMA documents `build_matrix.py . <workspace_test_count>`."""
