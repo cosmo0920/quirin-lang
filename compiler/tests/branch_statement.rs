@@ -32,6 +32,7 @@ fn compile_with(
         &CompileOptions {
             entry: None,
             extern_contracts: contracts,
+            native_libraries: None,
         },
     )
 }
