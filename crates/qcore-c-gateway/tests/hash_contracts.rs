@@ -653,9 +653,9 @@ fn a_pointer_premise_only_ever_withdraws() {
     if !clang_available() {
         return;
     }
-    let unrestricted =
-        GENERIC_CONTRACTS.replace("    requires resource_literal_argument(v, 0);\n", "");
-    assert_ne!(unrestricted, GENERIC_CONTRACTS, "the substitution applied");
+    let generic = normalize_newlines(GENERIC_CONTRACTS);
+    let unrestricted = generic.replace("    requires resource_literal_argument(v, 0);\n", "");
+    assert_ne!(unrestricted, generic, "the substitution applied");
     let body = format!("void p_gu(void) {{ {OPENED} p_forget(t, v); p_release(v); p_close(t); }}");
     assert!(
         matches!(

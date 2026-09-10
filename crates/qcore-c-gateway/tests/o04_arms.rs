@@ -66,7 +66,7 @@ fn load(name: &str, source: &str) -> ResourceContracts {
 }
 
 fn arms_contracts() -> String {
-    format!("{}\n{ARMS_CALLEES}", PATH_CONTRACTS.replace("\r\n", "\n"))
+    format!("{PATH_CONTRACTS}\n{ARMS_CALLEES}").replace("\r\n", "\n")
 }
 
 fn clang_available() -> bool {

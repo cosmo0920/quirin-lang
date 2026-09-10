@@ -884,13 +884,15 @@ fn the_constructor_body_still_does_not_discharge_its_own_contract() {
 
 /// The discharge rests on *declared* member types read from this same token
 /// stream: substituting one member declaration in the real fixture withdraws
-/// the arm, in each case for its own measured reason.
+/// the arm, in each case for its own measured reason. Supporting C declarations
+/// and casts are adjusted where a newer Clang would otherwise reject the probe
+/// before the analyzer can measure that member premise.
 #[test]
 fn substituting_a_member_declaration_withdraws_the_arm() {
     if !clang_available() {
         return;
     }
-    let substitutions: [(&str, &str, &str); 4] = [
+    let substitutions: [(&str, &str, &str, &[(&str, &str)]); 4] = [
         // `ic->chunk = chunk` becomes invalid C if only the destination gains
         // a pointer level. Use the null-initialized member of the same record
         // so Clang accepts the mutation and the analyzer must refuse it.
@@ -900,11 +902,13 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
             "the null-initialized member becomes a double pointer",
             "struct flb_task *task;",
             "struct flb_task **task;",
+            &[],
         ),
         (
             "the stored member becomes volatile",
             "struct cio_chunk *chunk;",
             "volatile struct cio_chunk *chunk;",
+            &[],
         ),
         // **Deliberate pin update, card ALIAS-AGGREGATE.** `void *` is now an
         // admitted member class, so the substitution that violates the premise
@@ -913,6 +917,16 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
             "the branched member stops being a single pointer",
             "flb_route_mask_element *routes_mask;",
             "flb_route_mask_element **routes_mask;",
+            &[
+                (
+                    "flb_route_mask_element *routes_mask,",
+                    "flb_route_mask_element **routes_mask,",
+                ),
+                (
+                    "(flb_route_mask_element *)",
+                    "(flb_route_mask_element **)",
+                ),
+            ],
         ),
         // Retagging or duplicating `struct flb_input_chunk` is not
         // expressible on the real fixture — Clang rejects the unit, exactly as
@@ -927,12 +941,20 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
             "an admitted scalar member stops being one",
             "size_t stream_off;",
             "size_t **stream_off;",
+            &[],
         ),
     ];
-    for (reason, from, to) in substitutions {
+    for (reason, from, to, supporting_substitutions) in substitutions {
         let unit = real_unit();
         assert!(unit.contains(from), "{reason}: `{from}` is present");
-        let substituted = unit.replacen(from, to, 1);
+        let mut substituted = unit.replacen(from, to, 1);
+        for (supporting_from, supporting_to) in supporting_substitutions {
+            assert!(
+                substituted.contains(supporting_from),
+                "{reason}: supporting declaration `{supporting_from}` is present"
+            );
+            substituted = substituted.replacen(supporting_from, supporting_to, 1);
+        }
         let result = analyze_real(&substituted);
         let caller = function(program(&result), "flb_input_chunk_create");
         assert_eq!(caller.status, AnalysisStatus::Unknown, "{reason}");
