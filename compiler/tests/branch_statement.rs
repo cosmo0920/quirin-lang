@@ -17,6 +17,10 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const CONDITIONAL_RELEASE: &str = include_str!("fixtures/branch/conditional_release.qcore");
 const UNBRANCHED_TWIN: &str = include_str!("fixtures/branch/unbranched_twin.qcore");
 const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
@@ -504,58 +508,66 @@ fn the_task_route_keeps_its_profile_refusal() {
 /// **positive** control — the program allocates and frees.
 #[test]
 fn the_native_run_of_a_branch_matches_its_reference() {
-    use std::process::Command;
     let module = compile(CONDITIONAL_RELEASE).unwrap();
     let source = module.c_source.as_deref().unwrap();
     let reference = module.reference_observation.as_ref().unwrap();
 
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-branch-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let generated = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&generated, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile_status = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&generated)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile_status.status.success(),
-        "C compiler rejected the emitted branch:\n{}",
-        String::from_utf8_lossy(&compile_status.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
+    #[cfg(target_os = "windows")]
+    let run = windows_c::run(source, None, &[]);
+
+    #[cfg(not(target_os = "windows"))]
+    let run = {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-branch-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile_status = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile_status.status.success(),
+            "C compiler rejected the emitted branch:\n{}",
+            String::from_utf8_lossy(&compile_status.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        let _ = std::fs::remove_dir_all(&directory);
+        run
+    };
     assert!(
         run.status.success(),
         "the emitted branch failed under ASan/UBSan/LSan:\n{}",
@@ -571,5 +583,4 @@ fn the_native_run_of_a_branch_matches_its_reference() {
         &observed, reference,
         "the compiled program must observe what the reference does"
     );
-    let _ = std::fs::remove_dir_all(&directory);
 }

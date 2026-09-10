@@ -1,5 +1,7 @@
 
+#ifndef _WIN32
 typedef unsigned long size_t;
+#endif
 struct cio_ctx {size_t total_chunks_up; size_t total_chunks;};
 struct cio_stream {char *name;};
 struct cio_chunk {void *backend; struct cio_ctx *ctx; struct cio_stream *st; char *name;};

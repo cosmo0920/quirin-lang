@@ -74,6 +74,22 @@ pub const DELETE_ATTEMPT_CONTRACT: &str =
 pub const COUNTER_CONTRACT: &str =
     include_str!("../../../../contract/qcore/chunkio/counters.qcore");
 
+#[cfg(target_os = "windows")]
+fn outcomes_contract() -> &'static str {
+    static CONTRACT: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    CONTRACT.get_or_init(|| {
+        OUTCOMES_CONTRACT.replace(
+            "cleanup_field__1__alloc_size__unsigned_long__integer_0",
+            "cleanup_field__1__alloc_size__unsigned_long_long__integer_0",
+        )
+    })
+}
+
+#[cfg(not(target_os = "windows"))]
+fn outcomes_contract() -> &'static str {
+    OUTCOMES_CONTRACT
+}
+
 /// The very C file the retained in-process `file_close` suite builds and
 /// asserts it still builds.
 pub const SOURCE: &str =
@@ -152,7 +168,7 @@ pub fn pinned() -> RouteContracts<'static> {
         close: CLOSE_CONTRACT,
         close_delete: CLOSE_DELETE_CONTRACT,
         unmap: UNMAP_CONTRACT,
-        outcomes: OUTCOMES_CONTRACT,
+        outcomes: outcomes_contract(),
         delete_outcomes: DELETE_OUTCOMES_CONTRACT,
         attempt: ATTEMPT_CONTRACT,
         delete_attempt: DELETE_ATTEMPT_CONTRACT,

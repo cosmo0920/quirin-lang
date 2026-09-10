@@ -358,7 +358,7 @@ impl<'a> Replay<'a> {
                         if v == Value::Integer(0)
                             && matches!(
                                 value.c_type.as_str(),
-                                "unsigned long" | "unsigned int" | "int"
+                                "unsigned long" | "unsigned long long" | "unsigned int" | "int"
                             ) =>
                     {
                         Ok(v)

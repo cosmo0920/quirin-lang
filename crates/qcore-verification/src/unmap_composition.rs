@@ -331,7 +331,11 @@ impl Replay {
                         Ok(result)
                     }
                     "IntegralCast"
-                        if result == Value::Integer(0) && v.c_type == "unsigned long" =>
+                        if result == Value::Integer(0)
+                            && matches!(
+                                v.c_type.as_str(),
+                                "unsigned long" | "unsigned long long"
+                            ) =>
                     {
                         Ok(result)
                     }
@@ -440,7 +444,10 @@ impl Replay {
                         || self.counter_calls != 0
                         || self.value(base)? != Value::Backend
                         || base.c_type != "struct cio_file *"
-                        || place.c_type != "unsigned long"
+                        || !matches!(
+                            place.c_type.as_str(),
+                            "unsigned long" | "unsigned long long"
+                        )
                         || !matches!(name.as_str(), "data_size" | "alloc_size")
                         || self.value(value)? != Value::Integer(0)
                     {
@@ -495,7 +502,7 @@ impl Replay {
                         (
                             "cio_chunk_counter_total_up_sub",
                             "size_t (struct cio_ctx *)",
-                            "unsigned long",
+                            "unsigned long" | "unsigned long long",
                         ) if args == [Value::Context]
                             && self.native_calls == 1
                             && self.outcome == Some(0)

@@ -87,6 +87,7 @@ pub const SCALAR_C_TYPES: &[(&str, &str)] = &[
     ("int", "int"),
     ("char *", "char_ptr"),
     ("unsigned long", "unsigned_long"),
+    ("unsigned long long", "unsigned_long_long"),
     ("size_t", "size_t"),
     ("void *", "void_ptr"),
     ("const char *", "const_char_ptr"),
