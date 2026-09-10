@@ -1013,13 +1013,14 @@
    "docs/reports/wave9-ctwin/ct_stage_evidence.json",
    "docs/reports/wave11-ct33/ct_stage_evidence.json",
    "docs/reports/wave13-ct34/ct_stage_evidence.json",
-   "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
+   "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
+   "docs/reports/wave17-ct40/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 32,
-   "unmapped": 18
+   "mapped": 33,
+   "unmapped": 17
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1129,75 +1130,75 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 32
+    "executed": 33
    },
    "elaborate": {
     "executed": 30,
-    "not_applicable": 2
+    "not_applicable": 3
    },
    "task_lowering": {
     "executed": 16,
-    "not_applicable": 16
+    "not_applicable": 17
    },
    "task_ledger_check": {
     "executed": 15,
-    "not_applicable": 17
+    "not_applicable": 18
    },
    "mutex_lowering": {
     "executed": 10,
-    "not_applicable": 22
+    "not_applicable": 23
    },
    "mutex_invariant_check": {
     "executed": 10,
-    "not_applicable": 22
+    "not_applicable": 23
    },
    "epoch_lowering": {
     "executed": 4,
-    "not_applicable": 28
+    "not_applicable": 29
    },
    "epoch_bound_check": {
     "executed": 4,
-    "not_applicable": 28
+    "not_applicable": 29
    },
    "sequential_whole_program": {
-    "not_applicable": 32
+    "not_applicable": 33
    },
    "sequential_reference_execution": {
-    "not_applicable": 32
+    "not_applicable": 33
    },
    "task_reference_execution": {
     "executed": 11,
-    "not_applicable": 21
+    "not_applicable": 22
    },
    "mutex_reference_execution": {
     "executed": 2,
-    "not_applicable": 30
+    "not_applicable": 31
    },
    "c_emission": {
     "executed": 13,
-    "not_applicable": 19
+    "not_applicable": 20
    },
    "native_execution": {
     "executed": 13,
-    "not_applicable": 19
+    "not_applicable": 20
    },
    "native_sanitized": {
     "executed": 4,
-    "not_applicable": 6,
+    "not_applicable": 7,
     "recorded_not_gated": 5,
     "unassessed": 17
    },
    "legacy_c_twin": {
-    "executed": 2,
+    "executed": 3,
     "not_applicable": 30
    },
    "proof": {
-    "unassessed": 32
+    "unassessed": 33
    }
   },
   "depth_profile": {
    "epoch_bound_check": 4,
-   "legacy_c_twin": 2,
+   "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "native_execution": 9,
    "native_sanitized": 4,
@@ -1233,6 +1234,7 @@
    "CT37": "native_execution",
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
+   "CT40": "legacy_c_twin",
    "CT43": "legacy_c_twin",
    "CT45": "legacy_c_twin",
    "CT48": "mutex_invariant_check",
@@ -1243,13 +1245,13 @@
    "elaborate": 30,
    "epoch_bound_check": 4,
    "epoch_lowering": 4,
-   "legacy_c_twin": 3,
+   "legacy_c_twin": 4,
    "mutex_invariant_check": 10,
    "mutex_lowering": 10,
    "mutex_reference_execution": 2,
    "native_execution": 29,
    "native_sanitized": 10,
-   "parse": 32,
+   "parse": 33,
    "task_ledger_check": 15,
    "task_lowering": 16,
    "task_reference_execution": 26
@@ -4739,77 +4741,90 @@
    },
    {
     "id": "CT40",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Not certified; unsupported lifetime/publication protocol",
-    "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
-    "blocker": "no legacy-C stage exists in STAGE_NAMES; needs an `unknown` verdict and Clang gating",
-    "bucket_changed_since_batch2": false,
+    "route": "legacy_c",
+    "harness_verdict_mode": "legacy_c_twin",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": 3,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT40/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+      "artifact": "compiler/tests/fixtures/ct/CT40/case.c",
+      "observations": 1,
+      "tool_gate": [
+       "clang"
+      ]
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "The verdict is invariant under removing the construct the scenario names, so no control can attribute it to the publication protocol; mapping it would record either a Safe against a case that demands non-certification, or an Unknown attributable to something else.",
-    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-PUBLISH"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "legacy_c_twin",
+    "stage_evidence_record": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "semantic_profile": "UnrestrictedC11ResourceProjection"
    },
    {
     "id": "CT41",
     "mapping_status": "unmapped",
     "expected": "No synchronization proof",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "current_bucket_source": "docs/reports/wave17-ct40/ct_stage_evidence.json",
     "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
     "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
     "bucket_changed_since_batch2": false,
@@ -4867,16 +4882,16 @@
      }
     },
     "deepest_executed_stage": null,
-    "blocker_current": "The gateway has no synchronization model at all, so no verdict it produces is evidence about one; the mapping would be vacuous by the same rule that requires a non-vacuous control.",
-    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-SYNC"
+    "blocker_current": "The resource projection has no synchronization model; the `volatile` invariance is asserted as correct by card CTWIN-PUBLISH §5 rather than open, so no verdict of this gateway is evidence about a synchronization proof and a mapping would be vacuous.",
+    "blocker_superseded_by": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-measured over three shapes; the decision is card CTWIN-PUBLISH §5, follow-on CT-CTWIN-SYNC"
    },
    {
     "id": "CT42",
     "mapping_status": "unmapped",
     "expected": "Preserve shared protocol-cell identity",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+    "current_bucket_source": "docs/reports/wave17-ct40/ct_stage_evidence.json",
     "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
     "blocker": "as CT40",
     "bucket_changed_since_batch2": false,
@@ -4934,9 +4949,9 @@
      }
     },
     "deepest_executed_stage": null,
-    "blocker_current": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors.",
-    "blocker_superseded_by": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave9-ctwin/README.md (card CT-CTWIN), follow-on CT-CTWIN-DESCRIPTOR"
+    "blocker_current": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; an int-typed resource identity is still not expressible at all, the contract loader refusing `owned result requires a pointer return type`.",
+    "blocker_superseded_by": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-verified against card CT-CTWIN's measurement; follow-on CT-CTWIN-DESCRIPTOR"
    },
    {
     "id": "CT43",
@@ -5598,7 +5613,7 @@
    "blocked-on-W3/W4": 2,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
-   "blocked-on-gateway-expressiveness (C-twin measured)": 3,
+   "blocked-on-gateway-expressiveness (C-twin measured)": 2,
    "ambiguous": 1,
    "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1,
    "DECIDABLE-NOW (coarser reason)": 1
@@ -5615,9 +5630,8 @@
    "CT23": "t00-archive",
    "CT24": "t00-archive",
    "CT25": "t00-archive",
-   "CT40": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-   "CT41": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
-   "CT42": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+   "CT41": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+   "CT42": "docs/reports/wave17-ct40/ct_stage_evidence.json",
    "CT44": "t00-archive",
    "CT46": "docs/reports/wave13-ct34/ct_stage_evidence.json",
    "CT47": "t00-archive",
@@ -5655,10 +5669,10 @@
   ],
   "notes": [
    "Mapping is not conformance. `proof` is unassessed for every mapped case and no Lean theorem is bound to any CT fixture (T00.7 remains open).",
-   "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. Only CT03, CT17 and CT26 carry the harness-gated sanitized run, and the harness now refuses an `executed` sanitized claim from any other case.",
+   "The sanitized-native evidence for CT14/CT16/CT20/CT37/CT50 is recorded_not_gated: the transcripts live in docs/reports/w6-*/README.md and no workspace test re-runs them. Only CT03, CT17, CT26 and CT34 carry the harness-gated sanitized run — CT34 since card CT34-SANITIZED, which this note had not been updated for — and the harness refuses an `executed` sanitized claim from any other case.",
    "known_manifest_overstatements is T00's audit at revision ea2af0f, retained as the record of what schema 2 repaired; its O1/O2/O3/O4/O7 findings are the ones this generator's inputs no longer allow.",
    "The unmapped triage rows are recorded analysis, not stage evidence. The counted set is the manifest's own unmapped set (card HYGIENE-14); each row's current_bucket is the newest CT lane record that measured that case, else T00's archived audit, with current_bucket_source naming which and archived_bucket keeping T00's text beside it (card CT-LABELS). A row whose source is a lane also carries blocker_current and blocker_measured_by; a row on t00-archive carries only T00's frozen blocker, which for such a case has not been re-verified against the current implementation.",
-   "Twenty-eight of the mapped cases are QCore source; CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. Neither adds native, sanitized or proof evidence."
+   "Thirty of the mapped cases are QCore source; CT40, CT43 and CT45 are C twins analyzed through the unrestricted-C gateway on the legacy_c route (card CT-CTWIN, joined by CT40 in the wave-17 CT lane). That is a different artifact and a different property — a resource projection over declared contracts, not a source-language check — and their Unknown verdicts are what their scenarios ask for, each with a control the gateway checks so the refusal is attributable. None of them adds native, sanitized or proof evidence, and the route structurally cannot: it analyzes C rather than emitting any. CT40 additionally carries two controls pinned for NOT moving the verdict — `_Atomic` removed, and the release removed — which is what bounds its mapping to the publication protocol its `expected` text names rather than to the atomicity or the premature free in its title."
   ]
  },
  "corpus": {
