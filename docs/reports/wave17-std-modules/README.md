@@ -459,7 +459,30 @@ Unsafe / 137 Unknown / 4 data-only.
 
 ### 9.5 Gate
 
-Recorded in `gate.txt` beside this report.
+Full command evidence is in `gate.txt` beside this report. Summary:
+
+| Gate step | Result |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **169 suites pass, 1 fails** — the failure is the recorded P02 `RLIMIT_NPROC` load-flake, verified clean in isolation (12/12) and deliberately not weakened |
+| `cargo fmt --all -- --check` | clean |
+| `cargo clippy --all-targets -- -D warnings` | clean; three of this card's own lints were found and fixed, not suppressed |
+| `reevaluation_probe` / `reevaluation_followup` | exit 0 / exit 0 |
+| `check_lean_audits.py` | **73/73 pass** (72 → 73 for this card's new audit); no new axiom |
+| `python3 -m unittest discover -s scripts/tests` | 161 tests, 1 expected failure — see below |
+| `cargo test -p qcore-compiler --test std_modules` | 31 pass, including both sanitized native runs |
+
+Two environment findings, recorded rather than worked around:
+
+* The `third_party/libevent` submodule was never initialized in this fresh
+  worktree, so three suites failed on the pinned-revision check. The pin was
+  **not** weakened; the gate's own documented
+  `git submodule update --init --recursive` fixed it, and all three were
+  re-run individually and pass.
+* The shared disk filled to 100% three times during the card (five sibling
+  worktrees at 25–36 GB of build artifacts each), killing two workspace runs
+  mid-flight. This card's build tree was pruned twice, returning ~32 GB to the
+  pool, and the suite then completed. **No result above is inferred from a
+  truncated run** — the 169/1 figures come from one complete run.
 
 **One expected failure, left for the integrator.** `scripts/tests` reports
 `test_the_derived_facts_are_recomputed_rather_than_carried` failing with

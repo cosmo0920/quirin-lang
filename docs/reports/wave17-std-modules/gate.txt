@@ -31,7 +31,38 @@ once-per-checkout step:
 
 and the three targets were then re-run and pass (see "Re-verification" below).
 
-RESULT: see the final section of this file.
+SECOND, CLEAN RUN (submodule initialized, from a fresh build tree):
+
+    169 test suites passed, 1 suite failed.
+
+The single failure is the KNOWN, PRE-EXISTING load-flake:
+
+    a_declared_process_limit_stops_the_fixture_from_forking
+    (crates/qcore-verifier-host/tests/enforced_process_limits.rs)
+
+This is the P02 `RLIMIT_NPROC` conformance test recorded in AGENTS.md and in
+docs/reports/remaining-p03/README.md §9.1 — it counts every process of the real
+UID, so it fails under load. The host load average was 32-63 throughout, with
+five sibling agent worktrees building and testing concurrently.
+
+Verified in isolation as the card brief directs:
+
+    cargo test -p qcore-verifier-host --test enforced_process_limits \
+        -- --test-threads=1
+    -> test result: ok. 12 passed; 0 failed.
+       (a_declared_process_limit_stops_the_fixture_from_forking ... ok)
+
+Its assertion was NOT weakened, in keeping with the standing record.
+
+RESULT: PASS — 169 suites clean; the one failure is the recorded flake,
+reproduced-clean in isolation.
+
+Environment note, recorded rather than hidden: this wave's shared disk filled
+to 100% three times during the card (five sibling worktrees, ~25-36 GB of build
+artifacts each). Two earlier workspace runs died on `No space left on device`
+before completing. The card's own build tree was pruned twice (~32 GB returned
+to the shared pool) and the suite then completed. No test outcome was inferred
+from a truncated run: the 169/1 figures above come from one complete run.
 
 --------------------------------------------------------------------------
 cargo fmt --all -- --check
@@ -42,13 +73,35 @@ whitespace/line-breaking only and are in commit "STD-MODULES: apply rustfmt").
 --------------------------------------------------------------------------
 cargo clippy --all-targets -- -D warnings
 --------------------------------------------------------------------------
-(filled in below)
+PASS — clean. Three of this card's own lints were found and fixed rather than
+allowed or suppressed:
+  * two `needless_lifetimes` in crates/qcore-frontend/src/source_std_io.rs
+    (`statement_head`, `window`);
+  * one `needless_borrows_for_generic_args` in compiler/tests/std_modules.rs.
+Commit: "STD-MODULES: clippy fixes (elided lifetimes, needless borrow)".
 
 --------------------------------------------------------------------------
 cargo run -p qcore-compiler --example reevaluation_probe
 cargo run -p qcore-compiler --example reevaluation_followup
 --------------------------------------------------------------------------
-(filled in below)
+PASS — reevaluation_probe    exit 0
+PASS — reevaluation_followup exit 0
+
+--------------------------------------------------------------------------
+Re-verification after the submodule initialization
+--------------------------------------------------------------------------
+cargo test -p qcore-compiler --test libevent_submodule
+  PASS — 1 passed, 0 failed.
+cargo test -p qcore-compiler --test profile_loader
+  PASS — 18 passed, 0 failed  (covers both
+  declared_pins_match_the_checkouts_and_the_retained_rust_constant and
+  f9_and_f10_missing_files_and_digest_drift_reject_the_inventory).
+cargo test -p qcore-compiler --test std_modules
+  PASS — 31 passed, 0 failed.
+
+All three suites that failed in the first workspace run now pass, and the
+failure cause was the uninitialized submodule in a fresh worktree, not this
+card's changes.
 
 --------------------------------------------------------------------------
 PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py
