@@ -6302,11 +6302,22 @@ fn transfer(
             // unrelated resource's residual is untouched; a statement that
             // names no tracked identity marks nothing, and nothing here can
             // turn a refusal into an admission.
+            //
+            // The value test is the direct arm's, exactly: a source must denote
+            // at least one site and must not be a declared scalar. Presence in
+            // the binding map is *not* enough — an ordinary scalar assignment
+            // puts a name there with no targets — and refusing on that would be
+            // refusal without a property. Measured: `crc32c_table[k][n] = crc;`
+            // in `librdkafka/crc32c.c` is the corpus's own witness, and it
+            // publishes nothing.
             if let Some(publication) = context.publications.indirect.get(&node.line) {
                 let published = publication
                     .sources
                     .iter()
-                    .filter_map(|source| state.pointers.get(source).cloned())
+                    .filter(|source| !context.publications.scalar_sources.contains(*source))
+                    .filter_map(|source| state.pointers.get(source))
+                    .filter(|pointer| !pointer.targets.is_empty())
+                    .cloned()
                     .collect::<Vec<_>>();
                 if !published.is_empty() {
                     for pointer in &published {

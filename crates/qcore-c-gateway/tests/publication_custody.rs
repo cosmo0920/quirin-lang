@@ -991,3 +991,49 @@ fn the_rule_reads_no_provenance() {
     assert_ne!(body_acquired.0, "safe");
     assert_ne!(caller_held.0, "safe");
 }
+
+/// The corpus's own witness, reduced: `librdkafka/crc32c.c`'s `crc32c_init_sw`
+/// fills a file-scope table with `crc32c_table[k][n] = crc;`, where every
+/// operand is a declared scalar. A first implementation of the indirect record
+/// tested only whether the source *name* was present in the binding map — which
+/// an ordinary scalar assignment makes true — and the pinned corpus answered
+/// with two refusals at exactly those two lines. That is refusal without a
+/// property, so the value test was tightened to the direct arm's: a source must
+/// denote at least one site and must not be a declared scalar.
+///
+/// Pinned in both directions here, so the imprecision cannot come back.
+#[test]
+fn a_scalar_table_fill_is_not_an_indirect_publication() {
+    if !clang_available() {
+        return;
+    }
+    let (_, keys) = verdict(
+        "int g_table[8][256]; \
+         void w(int n) { int k; int crc; crc = n; \
+         for (k = 0; k < 8; k = k + 1) { g_table[k][n] = crc; } }",
+    );
+    assert!(
+        !keys.iter().any(|key| key.starts_with("publication:")),
+        "every operand is a scalar, so nothing is published: {keys:?}"
+    );
+}
+
+/// And the control that keeps the tightening from disabling the rule: the same
+/// destination shape with a **tracked** source still refuses and still withdraws
+/// its residual claim.
+#[test]
+fn a_tracked_source_into_the_same_shape_still_refuses() {
+    if !clang_available() {
+        return;
+    }
+    refused(
+        "tracked-into-array",
+        "struct b_handle *g_slots[4]; \
+         void w(int n) { struct b_handle *h; h = b_open(0,0,n); if (!h) { return; } \
+         g_slots[n] = h; }",
+        &[
+            "publication:g_slots",
+            "unsupported:unrecognized assignment destination",
+        ],
+    );
+}
