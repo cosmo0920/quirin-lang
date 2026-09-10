@@ -42,6 +42,15 @@ import QCore.ComposedStdIo
 #print axioms QCore.ComposedStdIo.the_extern_trace_shares_standard_output
 #print axioms QCore.ComposedStdIo.a_barrier_publishes_no_line
 
+-- Card `EXTERN-SCALAR-OUTCOME` (trace half): what an extern call's own trace
+-- line names. A declared outcome is named; an undeclared one names nothing; and
+-- the number a trace line names is the number that call determines, so a trace
+-- line and a rendering of the same value cannot disagree.
+#print axioms QCore.ComposedStdIo.a_declared_outcome_is_named_on_the_calls_trace_line
+#print axioms QCore.ComposedStdIo.an_undeclared_outcome_names_no_number
+#print axioms QCore.ComposedStdIo.the_undeclared_shapes_name_no_number
+#print axioms QCore.ComposedStdIo.the_trace_line_names_the_number_the_call_determines
+
 -- No assumption is dropped at the join: the composed row is the union, and
 -- admitting the union admits each projection.
 #print axioms QCore.ComposedStdIo.mem_row
@@ -58,4 +67,5 @@ import QCore.ComposedStdIo
 #print axioms QCore.ComposedStdIo.the_payoff_fixture_carries_only_its_extern_premises
 #print axioms QCore.ComposedStdIo.a_rendering_before_its_binding_is_refused
 #print axioms QCore.ComposedStdIo.an_undetermined_outcome_is_refused
+#print axioms QCore.ComposedStdIo.the_undeclared_trace_line_is_reachable
 #print axioms QCore.ComposedStdIo.an_acquiring_composition_needs_its_alloc_declared

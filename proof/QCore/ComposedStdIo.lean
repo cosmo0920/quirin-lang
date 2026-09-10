@@ -515,8 +515,9 @@ inductive Stream where
   | err
   deriving DecidableEq, Repr
 
-/-- One published line. `text = none` is the extern route's synthesized call
-trace, whose digits this model does not describe — only its stream. -/
+/-- One published line. `text = none` is a line naming **no number**: the
+extern route's synthesized call trace for a call whose declaration states no
+outcome, whose other fields this model does not describe — only its stream. -/
 structure Line where
   stream : Stream
   text : Option Text
@@ -524,11 +525,30 @@ structure Line where
 
 def linesOn (s : Stream) (ls : List Line) : Nat := (ls.filter (fun l => l.stream == s)).length
 
+/-- The number an extern call's own trace line names, if any (card
+`EXTERN-SCALAR-OUTCOME`, trace half).
+
+A call whose declaration states an outcome names that number; a call that binds
+nothing, or binds without a declared outcome, names none. This is deliberately
+the *same* `outcome` field `determinedBy` reads, so the trace line and a
+rendering of the same value cannot name two different numbers — proved below.
+
+Why naming the declared number is an observation rather than a claim is a
+property of the Rust backend, not of this model: the emitted program compares
+the real result against the declaration and exits before the write, so a run
+that publishes the line has already established the equality. What this model
+owns is the weaker and still load-bearing half — that the number published is
+the declared one, and that an undeclared binding publishes none. -/
+def externLineText (c : Call) : Option Text :=
+  match c.binding with
+  | some s => s.outcome.map render
+  | none => none
+
 /-- The lines one composed step publishes, or `none` when it has no admitted
 step. -/
 def stepLines (p : Program) (position : Nat) : Step → Option (List Line)
   | .ext i => match p.externs[i]? with
-      | some (.call _) => some [⟨Stream.out, none⟩]
+      | some (.call c) => some [⟨Stream.out, externLineText c⟩]
       | some _ => some []
       | none => some []
   | .io i => match p.io[i]? with
@@ -618,8 +638,55 @@ theorem the_extern_trace_shares_standard_output (p : Program) (position i : Nat)
     (h : p.externs[i]? = some (.call c)) :
     ∃ ls, stepLines p position (.ext i) = some ls
       ∧ linesOn Stream.out ls = 1 ∧ linesOn Stream.err ls = 0 := by
-  refine ⟨[⟨Stream.out, none⟩], ?_, rfl, rfl⟩
+  refine ⟨[⟨Stream.out, externLineText c⟩], ?_, rfl, rfl⟩
   simp [stepLines, h]
+
+/-! ## The trace half: what an extern call's own line names -/
+
+/-- **A call whose declaration states an outcome names exactly that number on
+its trace line** (card `EXTERN-SCALAR-OUTCOME`). One line, on standard output,
+carrying the declared number and nothing else. -/
+theorem a_declared_outcome_is_named_on_the_calls_trace_line (p : Program) (position i : Nat)
+    (c : Call) (v : Value) (n : Int)
+    (h : p.externs[i]? = some (.call c)) (hb : c.binding = some ⟨v, some n⟩) :
+    stepLines p position (.ext i) = some [⟨Stream.out, some (render n)⟩] := by
+  simp [stepLines, h, externLineText, hb]
+
+/-- **A call with no declared outcome names no number**, whether it binds a
+value or binds nothing at all. This is the boundary the trace half did not
+cross: nothing determines a number for such a call, so its line publishes none —
+the Lean statement of the byte-identical undeclared observation the Rust tests
+pin. -/
+theorem an_undeclared_outcome_names_no_number (p : Program) (position i : Nat) (c : Call)
+    (h : p.externs[i]? = some (.call c)) (hnone : externLineText c = none) :
+    stepLines p position (.ext i) = some [⟨Stream.out, none⟩] := by
+  simp [stepLines, h, hnone]
+
+/-- The two undeclared shapes, spelled out: a call binding nothing, and a call
+binding a value its declaration states no outcome for. -/
+theorem the_undeclared_shapes_name_no_number (c : Call) (v : Value) :
+    (c.binding = none → externLineText c = none)
+      ∧ (c.binding = some ⟨v, none⟩ → externLineText c = none) := by
+  constructor
+  · intro h; simp [externLineText, h]
+  · intro h; simp [externLineText, h]
+
+/-- **The trace line and a rendering cannot name two different numbers.** The
+number an extern call publishes on its own line is the number that call
+*determines* for the value it binds — the same relation `renderOperand` reads —
+so a composed program whose `print` renders that value publishes the same
+number twice rather than two numbers. -/
+theorem the_trace_line_names_the_number_the_call_determines (c : Call) (v : Value) (n : Int)
+    (hb : ∃ o, c.binding = some ⟨v, o⟩) :
+    externLineText c = some (render n) ↔ determinedBy (.call c) v = some n := by
+  obtain ⟨o, hb⟩ := hb
+  cases o with
+  | none => simp [externLineText, determinedBy, hb]
+  | some m =>
+    simp only [externLineText, determinedBy, hb, Option.map_some]
+    constructor
+    · intro h; simp [render] at h; simp [h]
+    · intro h; simp at h; simp [render, h]
 
 /-- A barrier publishes no line, on either stream. -/
 theorem a_barrier_publishes_no_line (p : Program) (position i : Nat)
@@ -727,10 +794,16 @@ def payoff : Program where
 
 /-- **Non-vacuity.** The fixture is admitted, publishes the extern trace on
 standard output and the declared outcome on standard error, and ends with an
-empty ledger — the composition held no custody at any point. -/
+empty ledger — the composition held no custody at any point.
+
+Re-pinned by card `EXTERN-SCALAR-OUTCOME` (trace half): the standard-output
+line was `⟨Stream.out, none⟩` and is now `⟨Stream.out, some (render 42)⟩`,
+because the call this fixture makes declares its outcome. The two lines this
+fixture publishes now carry the same number, on their two streams, which is the
+whole content of the trace half at this level. -/
 theorem the_payoff_fixture_is_admitted :
     admitted payoff [Effect.io] = true
-      ∧ lines payoff = some [⟨Stream.out, none⟩, ⟨Stream.err, some (render 42)⟩]
+      ∧ lines payoff = some [⟨Stream.out, some (render 42)⟩, ⟨Stream.err, some (render 42)⟩]
       ∧ run payoff [] = []
       ∧ composedEffects payoff = [Effect.io] := by
   refine ⟨by decide, by decide, by decide, by decide⟩
@@ -761,6 +834,27 @@ theorem an_undetermined_outcome_is_refused :
       ∧ lines undeterminedOutcome = none
       ∧ admitted undeterminedOutcome [Effect.io] = false := by
   refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-- The same undeclared call in a module that does **not** render its value: the
+rendering names the literal instead, so the program is admitted and its trace
+line names no number (card `EXTERN-SCALAR-OUTCOME`, trace half).
+
+This is the reachability of the undeclared observation. Without it,
+`an_undeclared_outcome_names_no_number` would be a statement about a shape no
+admitted program has — and the boundary the trace half declines to cross would
+be vacuous rather than kept. -/
+def undeclaredTrace : Program where
+  externs := [.bind ⟨0, 7⟩, .call ⟨some ⟨1, none⟩, none, []⟩, .ret]
+  io := [.log (.scalar 5), .ret]
+  order := [.ext 0, .ext 1, .io 0, .ret]
+  operandValues := [(5, 0)]
+  externPremises := [.declaredContract 9]
+
+theorem the_undeclared_trace_line_is_reachable :
+    admitted undeclaredTrace [Effect.io] = true
+      ∧ lines undeclaredTrace = some [⟨Stream.out, none⟩, ⟨Stream.err, some (render 7)⟩]
+      ∧ numberOf undeclaredTrace.externs 1 = none := by
+  refine ⟨by decide, by decide, by decide⟩
 
 /-- An acquisition inside a composed module still needs its `alloc` declared,
 and the identity it establishes is still on the ledger at the end: the union

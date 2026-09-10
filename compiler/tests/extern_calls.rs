@@ -195,6 +195,12 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
         // for the widening: if binding a scalar had touched the ledger, LSan
         // would report the buffer this fixture still allocates and releases.
         ("scalar", SCALAR_RESULT.to_owned()),
+        // Card `EXTERN-SCALAR-OUTCOME` (trace half). The same fixture with both
+        // bindings' outcomes declared, so the two `-> N` fields the reference
+        // computes from the declaration are compared against a run that took
+        // the numbers from the linked C — and that run exits 70 rather than
+        // agreeing, if they differ.
+        ("scalar-outcome", declared_outcomes()),
     ] {
         let module = compile_with(&source, selection()).unwrap();
         let reference = module.extern_observation.clone().unwrap();
@@ -1633,4 +1639,210 @@ fn an_unchecked_scalar_result_binds_and_keeps_its_waiver() {
             .scalar_bindings
             .is_empty()
     );
+}
+
+// --- Card `EXTERN-SCALAR-OUTCOME` (trace half): the observation names the
+// returned number where a declared outcome makes it well-defined. ---
+
+/// `scalar_result.qcore` with both of its bindings given the site's declared
+/// outcome. `qcore_extern_fill(b, 7)` writes eight bytes of 7, so the real
+/// `qcore_extern_sum(b, 8)` is 56 and the real `qcore_extern_scale(56, 2)` is
+/// 112 — both numbers are the source's, and the emitted program refuses to go
+/// on if the linked implementation disagrees.
+fn declared_outcomes() -> String {
+    let source = SCALAR_RESULT.replace("\r\n", "\n");
+    let source = source.replace(
+        "    let total = qcore_extern_sum(b, 8);",
+        "    let total = qcore_extern_sum(b, 8) succeeds 56;",
+    );
+    let source = source.replace(
+        "    let scaled = qcore_extern_scale(total, 2);",
+        "    let scaled = qcore_extern_scale(total, 2) succeeds 112;",
+    );
+    assert!(
+        source.contains("succeeds 112"),
+        "both sites must be declared"
+    );
+    source
+}
+
+/// **The whole change, at the route that owns the format.** The two declared
+/// bindings name their numbers; every other line of the trace — the
+/// acquisition, the lend, the consumption, the return — is
+/// `scalar_result.qcore`'s exactly, so the diff against the undeclared pin
+/// above is the two `-> N` fields and nothing else.
+#[test]
+fn a_declared_outcome_is_named_in_the_observation() {
+    let module = compile_with(&declared_outcomes(), selection()).unwrap();
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ExternCallsV1
+    );
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "call qcore_extern_fill b:r1 d:7",
+            "value qcore_extern_sum v1 b:r1 d:8 -> 56",
+            "value qcore_extern_scale v2 v:v1 d:2 -> 112",
+            "call qcore_extern_release c:r1",
+            "return",
+        ]
+    );
+    // The declaration is carried on the certificate too, and the two agree: a
+    // binding named here is a binding named there.
+    let checked = module.checked.as_extern_calls().unwrap();
+    assert_eq!(
+        checked.certificate.declared_outcomes,
+        vec![(1, 56), (2, 112)]
+    );
+    // The custody accounting is untouched by the widening, in both directions.
+    assert_eq!(checked.certificate.acquisitions, vec![1]);
+    assert_eq!(checked.certificate.consumptions, vec![1]);
+}
+
+/// The observation's honesty rests on an ordering inside the emitted C: the
+/// comparison against the real result dominates the write of the line. A run
+/// that reaches the observation has already proved the declared number is the
+/// returned one.
+#[test]
+fn the_emitted_check_dominates_the_observation_it_licenses() {
+    let module = compile_with(&declared_outcomes(), selection()).unwrap();
+    let c = module.c_source.as_deref().unwrap();
+    let check = c.find("if (v1 != 56)").expect("emitted C compares v1");
+    let observed = c
+        .find("value qcore_extern_sum v1 b:r1 d:8 -> 56")
+        .expect("emitted C observes v1");
+    assert!(check < observed, "emitted C: {c}");
+    assert!(c.contains("declared outcome violated: qcore_extern_sum"));
+    assert!(c.contains("return 70;"));
+}
+
+/// A wrong declared outcome is **still admitted by the checker** — a literal
+/// outcome control is a fixture control, and no checker in this repository
+/// computes a C function's result — and is then caught by the run. This is the
+/// fail-closed direction of the trace half: the native program exits 70, writes
+/// the disagreement to standard error, and publishes **no** observation line
+/// for that call, so a declared number that is not the returned one never
+/// appears as an observation anywhere.
+#[cfg(not(target_os = "windows"))]
+#[test]
+fn a_wrong_declared_outcome_exits_70_and_observes_nothing() {
+    // A trace with no live acquisition at the moment of the refusal, so the
+    // leak checker has nothing to report and the exit status this test reads is
+    // the emitted program's own 70 rather than LSan's.
+    let wrong = "import std.extern;\n\
+                 extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;\n\
+                 fn main() -> unit effects { io } {\n\
+                 \x20   let n = qcore_extern_scale(21, 2) succeeds 41;\n\
+                 \x20   return;\n}\n";
+    let module = compile_with(wrong, selection()).expect("a literal control is a fixture control");
+    // The reference execution believes the declaration, as it always has.
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        ["value qcore_extern_scale v1 d:21 d:2 -> 41", "return"]
+    );
+    let run = run_native_status(module.c_source.as_deref().unwrap(), "wrong-outcome");
+    assert_eq!(run.0, Some(70), "stderr was:\n{:?}", run.2);
+    assert!(
+        !run.1
+            .iter()
+            .any(|line| line.contains("value qcore_extern_scale")),
+        "a disagreeing run must publish no observation for that call: {:?}",
+        run.1
+    );
+    assert!(
+        run.2
+            .iter()
+            .any(|line| line == "declared outcome violated: qcore_extern_scale -> 42"),
+        "{:?}",
+        run.2
+    );
+
+    // The positive control: the same program with the number the linked
+    // implementation actually returns runs to completion and publishes the
+    // line, which is what makes the refusal above a discrimination rather than
+    // a program that never works.
+    let right = wrong.replace("succeeds 41", "succeeds 42");
+    let module = compile_with(&right, selection()).unwrap();
+    let run = run_native_status(module.c_source.as_deref().unwrap(), "right-outcome");
+    assert_eq!(run.0, Some(0), "stderr was:\n{:?}", run.2);
+    assert_eq!(
+        run.1,
+        ["value qcore_extern_scale v1 d:21 d:2 -> 42", "return"]
+    );
+    assert_eq!(module.extern_observation.as_deref().unwrap(), run.1);
+}
+
+/// Compile and run the emitted C against the real callees, returning
+/// `(exit status, stdout lines, stderr lines)` **without** asserting success.
+///
+/// [`run_native`] deliberately asserts a clean exit, because every fixture it
+/// runs must have one; this variant exists for the one case whose whole point
+/// is a nonzero status.
+#[cfg(not(target_os = "windows"))]
+fn run_native_status(source: &str, label: &str) -> (Option<i32>, Vec<String>, Vec<String>) {
+    use std::process::Command;
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-extern-status-{label}-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&directory).unwrap();
+    let generated = directory.join("generated.c");
+    let callees = directory.join("buffer_api.c");
+    let binary = directory.join("generated");
+    std::fs::write(&generated, source).unwrap();
+    std::fs::write(&callees, include_str!("fixtures/extern_calls/buffer_api.c")).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let compile = Command::new(&compiler)
+        .args([
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-pedantic",
+            "-g",
+            "-O0",
+            "-fsanitize=address,undefined",
+            "-fno-omit-frame-pointer",
+        ])
+        .arg(&generated)
+        .arg(&callees)
+        .arg("-o")
+        .arg(&binary)
+        .output()
+        .unwrap();
+    assert!(
+        compile.status.success(),
+        "C compiler rejected the emitted program:\n{}",
+        String::from_utf8_lossy(&compile.stderr)
+    );
+    let run = Command::new(&binary)
+        .env(
+            "ASAN_OPTIONS",
+            if cfg!(target_os = "macos") {
+                "detect_leaks=0:halt_on_error=1"
+            } else {
+                "detect_leaks=1:halt_on_error=1"
+            },
+        )
+        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+        .output()
+        .unwrap();
+    let out = String::from_utf8(run.stdout)
+        .unwrap()
+        .lines()
+        .map(ToOwned::to_owned)
+        .collect();
+    let err = String::from_utf8(run.stderr)
+        .unwrap()
+        .lines()
+        .map(ToOwned::to_owned)
+        .collect();
+    std::fs::remove_dir_all(directory).unwrap();
+    (run.status.code(), out, err)
 }

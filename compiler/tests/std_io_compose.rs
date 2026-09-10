@@ -900,3 +900,59 @@ fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
         (out, err)
     }
 }
+
+// --- Card `EXTERN-SCALAR-OUTCOME` (trace half): the composed route inherits
+// the extended extern observation, because there is only one emission of it. ---
+
+/// **The composed chain's whole observation, pinned as a literal.** Before the
+/// trace half this fixture's extern lines were pinned only by the native
+/// comparison — which is self-consistent by construction and would have moved
+/// silently with the format — so the pin is established here rather than moved.
+///
+/// The payoff is visible on two adjacent lines: the call's trace line and the
+/// `print` that renders the same value now name the same number, which is what
+/// makes the trace readable beside the rendering instead of only beside itself.
+#[test]
+fn the_composed_extern_trace_names_the_numbers_its_renderings_render() {
+    let compiled = compile(CHAIN).unwrap();
+    assert_eq!(
+        compiled.extern_observation.as_deref().unwrap(),
+        [
+            "out: acquire qcore_extern_alloc r1 ok",
+            "out: call qcore_extern_fill b:r1 d:7",
+            "out: value qcore_extern_sum v1 b:r1 d:8 -> 56",
+            "out: 56",
+            "out: value qcore_extern_scale v2 v:v1 d:2 -> 112",
+            "err: [INFO] 112",
+            "out: value qcore_extern_scale v4 v:v3 d:2 -> 84",
+            "err: [WARN] 0x00000054",
+            "out: call qcore_extern_release c:r1",
+            "out: -7",
+            "out: return",
+        ]
+    );
+    // The literal binding is still observed as nothing: `let value = 42;` calls
+    // nothing, so `v3` appears only where a call reads it.
+    assert!(
+        !compiled
+            .extern_observation
+            .as_deref()
+            .unwrap()
+            .iter()
+            .any(|line| line.contains("value  v3") || line.ends_with("-> 42"))
+    );
+}
+
+/// And the composed route's C is the extern route's C, so its trace lines carry
+/// the same field for the same reason — there is one lowering of an extern call
+/// site, not two.
+#[test]
+fn the_composed_emission_observes_through_the_same_single_route() {
+    let compiled = compile(CHAIN).unwrap();
+    let c = compiled.c_source.as_deref().unwrap();
+    let check = c.find("if (v1 != 56)").expect("emitted C compares v1");
+    let observed = c
+        .find("value qcore_extern_sum v1 b:r1 d:8 -> 56")
+        .expect("emitted C observes v1");
+    assert!(check < observed, "emitted C: {c}");
+}
