@@ -1008,6 +1008,7 @@ def undeclaredTrace : Program where
   io := [.log (.scalar 5), .ret]
   order := [.ext 0, .ext 1, .io 0, .ret]
   operandValues := [(5, 0)]
+  operandIdentities := []
   externPremises := [.declaredContract 9]
 
 theorem the_undeclared_trace_line_is_reachable :
