@@ -107,12 +107,22 @@ pub enum SourceOp {
     Return(i32),
     /// Structured two-way branching (card `IF-STATEMENT`, `source.branch.v1`).
     ///
-    /// Both arms are validated from the same incoming custody state and must
-    /// reach the join agreeing on the ordered live list and on the transferred
-    /// set; a disagreement is [`LoweringError::BranchArmsDisagree`], never a
-    /// silent join.  Neither arm may return: `Return` is the last operation of
-    /// a program, and an early exit from an arm has no position in this linear
-    /// representation (follow-on `IF-ARM-RETURN`).
+    /// Both arms are validated from the same incoming custody state.  Card
+    /// `IF-ARMS` changed the *shape* of what happens next: an arm that returns
+    /// discharged its obligations at its own exit — `Return` demands an empty
+    /// live list wherever it stands — and **does not reach the join**, so the
+    /// join is taken over the arms that survive to it.
+    ///
+    /// * neither arm returns — the join is agreement, exactly as card
+    ///   `IF-STATEMENT` landed it: equal ordered live lists and equal
+    ///   transferred sets, or [`LoweringError::BranchArmsDisagree`].
+    /// * exactly one arm returns — the survivor is the only arm at the join, so
+    ///   the branch carries that arm's state forward.  A one-element join has
+    ///   nothing to disagree with, which is why it is admitted rather than
+    ///   widened.
+    /// * both arms return — the branch terminates the function.  Nothing
+    ///   follows it; an operation that does is
+    ///   [`LoweringError::OperationAfterReturn`].
     Branch {
         condition: BranchCondition,
         then_arm: Vec<SourceOp>,
@@ -268,18 +278,7 @@ impl SourceProgram {
                     self.validate_sequence(then_arm, declared, acquired, &mut then_state)?;
                     let mut else_state = custody.clone();
                     self.validate_sequence(else_arm, declared, acquired, &mut else_state)?;
-                    if then_state.returned || else_state.returned {
-                        return Err(LoweringError::ReturnInBranchArm);
-                    }
-                    if then_state != else_state {
-                        return Err(LoweringError::BranchArmsDisagree {
-                            then_live: then_state.live,
-                            else_live: else_state.live,
-                            then_transferred: then_state.transferred.into_iter().collect(),
-                            else_transferred: else_state.transferred.into_iter().collect(),
-                        });
-                    }
-                    *custody = then_state;
+                    *custody = join_arms(then_state, else_state)?;
                 }
             }
         }
@@ -292,6 +291,73 @@ impl SourceProgram {
         } else {
             Err(LoweringError::UnknownError(error.into()))
         }
+    }
+}
+
+/// **The join rule, over the arms that survive to the join** (cards
+/// `IF-STATEMENT` and `IF-ARMS`).
+///
+/// Factored out as a function of the two arms' end states so the rule the
+/// validator applies is one named thing rather than an inlined paraphrase, and
+/// so the Lean model (`QCore.BranchJoin.joinArms`) states the same rule.
+///
+/// An arm that returned is not a survivor: `SourceOp::Return` already demanded
+/// an empty live list at its own exit, which is the whole cleanup obligation
+/// the sequential route imposes at any exit, so there is nothing left for the
+/// join to check about it. The join therefore compares only the arms that fall
+/// through, and it still **agrees rather than widens** wherever there are two
+/// of them.
+fn join_arms(
+    then_state: CustodyState,
+    else_state: CustodyState,
+) -> Result<CustodyState, LoweringError> {
+    match (then_state.returned, else_state.returned) {
+        // Both arms exited. The branch terminates the function; nothing after
+        // it is reachable, and `OperationAfterReturn` says so. `live` is empty
+        // on both sides (a `Return` demands it), and the transferred sets are
+        // unioned rather than compared: the two exits carry their own payloads,
+        // and a union is the refusing direction for any later fallible
+        // operation — of which, after a return, there can be none.
+        (true, true) => Ok(CustodyState {
+            live: Vec::new(),
+            transferred: then_state
+                .transferred
+                .union(&else_state.transferred)
+                .copied()
+                .collect(),
+            returned: true,
+        }),
+        // Exactly one arm survives. A one-element join is that element.
+        (true, false) => Ok(else_state),
+        (false, true) => Ok(then_state),
+        // Two survivors: agreement, never widening.
+        (false, false) => {
+            if then_state != else_state {
+                return Err(LoweringError::BranchArmsDisagree {
+                    then_live: then_state.live,
+                    else_live: else_state.live,
+                    then_transferred: then_state.transferred.into_iter().collect(),
+                    else_transferred: else_state.transferred.into_iter().collect(),
+                });
+            }
+            Ok(then_state)
+        }
+    }
+}
+
+/// Whether a statement sequence ends the function on **every** path through it.
+///
+/// A validated sequence puts a `Return` last (an operation after one is
+/// [`LoweringError::OperationAfterReturn`]), and a branch terminates exactly
+/// when both of its arms do — which is the same recursion `join_arms` performs
+/// on states.
+pub fn sequence_returns(operations: &[SourceOp]) -> bool {
+    match operations.last() {
+        Some(SourceOp::Return(_)) => true,
+        Some(SourceOp::Branch {
+            then_arm, else_arm, ..
+        }) => sequence_returns(then_arm) && sequence_returns(else_arm),
+        _ => false,
     }
 }
 
@@ -462,10 +528,25 @@ impl Lowerer<'_> {
                     self.lower_sequence(then_arm, then_allocation, &mut then_live, next)?;
                     let mut else_live = live.clone();
                     self.lower_sequence(else_arm, else_allocation, &mut else_live, next)?;
-                    // `validate` proved the two agree before any block was
-                    // built; taking `then_live` is a choice between equals.
-                    debug_assert_eq!(then_live, else_live);
-                    *live = then_live;
+                    // The live list carried past a branch is the **surviving**
+                    // arm's, mirroring `join_arms`. An arm that returns released
+                    // everything at its own exit, so its (empty) list says
+                    // nothing about what is live at the join it never reaches.
+                    let then_returns = sequence_returns(then_arm);
+                    let else_returns = sequence_returns(else_arm);
+                    *live = match (then_returns, else_returns) {
+                        // Nothing follows a branch both of whose arms return.
+                        (true, true) => Vec::new(),
+                        (true, false) => else_live,
+                        (false, true) => then_live,
+                        (false, false) => {
+                            // `validate` proved the two agree before any block
+                            // was built; taking `then_live` is a choice between
+                            // equals.
+                            debug_assert_eq!(then_live, else_live);
+                            then_live
+                        }
+                    };
                 }
             }
         }
@@ -633,15 +714,16 @@ pub enum LoweringError {
     /// disagreeing custody states — the conditional leak / conditional
     /// double-release shape. Fail-closed by construction: there is no join
     /// rule that widens or narrows one arm's state to the other's.
+    ///
+    /// Card `IF-ARMS` narrowed *when* this is reached without weakening it: an
+    /// arm that returns is not compared at all, because it never reaches the
+    /// join. Two surviving arms are compared exactly as before.
     BranchArmsDisagree {
         then_live: Vec<ResourceId>,
         else_live: Vec<ResourceId>,
         then_transferred: Vec<ResourceId>,
         else_transferred: Vec<ResourceId>,
     },
-    /// Card `IF-STATEMENT`. `return` inside a branch arm; follow-on
-    /// `IF-ARM-RETURN`.
-    ReturnInBranchArm,
 }
 
 impl fmt::Display for LoweringError {

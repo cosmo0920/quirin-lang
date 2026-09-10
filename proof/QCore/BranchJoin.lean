@@ -156,7 +156,6 @@ inductive Refusal where
   | liveResourcesAtReturn
   | operationAfterReturn
   | missingReturn
-  | returnInBranchArm
   | armsDisagree
   deriving DecidableEq, Repr
 
@@ -167,14 +166,33 @@ abbrev State := List Resource × Custody
 
 /-! ## 3. Validation, with the join -/
 
-/-- **The join rule**, as a function of the two arms' end states, so the
-theorems below are about the rule the validator actually applies rather than
-about a paraphrase of it. There is exactly one way to produce a joined state:
-the two arms agree. -/
+/-- **The join rule, over the arms that survive to the join**, as a function of
+the two arms' end states, so the theorems below are about the rule the validator
+actually applies rather than about a paraphrase of it.
+
+Card `IF-STATEMENT` wrote this as "neither arm returned, and the two agree".
+Card `IF-ARMS` changed its *shape* rather than weakening it: an arm that
+returned discharged its obligations at its own exit — `.ret` demands an empty
+live list wherever it stands, which is the whole cleanup obligation this route
+imposes at any exit — and it does not reach the join, so it is not a survivor
+and there is nothing about it left to compare. With two survivors the rule is
+unchanged and unweakened: agreement, never widening. -/
 def joinArms (thenState elseState : Custody) : Option Custody :=
-  if thenState.returned || elseState.returned then none
-  else if thenState = elseState then some thenState
-  else none
+  match thenState.returned, elseState.returned with
+  -- No survivor: the branch ends the function, and `operationAfterReturn`
+  -- refuses anything written after it. `live` is empty on both sides (a `.ret`
+  -- demanded it); the two exits carry their own payloads, so `transferred` is
+  -- **unioned** rather than compared — the refusing direction for any later
+  -- fallible operation, of which after a return there can be none.
+  | true,  true  =>
+      some { live := []
+             transferred := elseState.transferred.foldr insertSorted thenState.transferred
+             returned := true }
+  -- One survivor: a one-element join is that element.
+  | true,  false => some elseState
+  | false, true  => some thenState
+  -- Two survivors: agreement, never widening.
+  | false, false => if thenState = elseState then some thenState else none
 
 mutual
 
@@ -211,9 +229,9 @@ def stepOp (state : State) : Op → Except Refusal State
           | .ok afterElse =>
               match joinArms afterThen.2 afterElse.2 with
               | some joined => .ok (afterElse.1, joined)
-              | none =>
-                  if afterThen.2.returned || afterElse.2.returned then .error .returnInBranchArm
-                  else .error .armsDisagree
+              -- The only shape with no joined state is two *surviving* arms
+              -- that disagree.
+              | none => .error .armsDisagree
 
 def runSeq (state : State) : Seq → Except Refusal State
   | .nil => .ok state
@@ -237,64 +255,104 @@ def Admits (program : Seq) : Prop := (validate program).isOk = true
 instance (program : Seq) : Decidable (Admits program) := by
   unfold Admits; infer_instance
 
-/-! ## 4. The join is agreement, never widening -/
+/-! ## 4. The join is agreement between survivors, never widening -/
 
-/-- The load-bearing statement of the card: a branch produces a joined state
-**only** when its two arms reach the join in equal custody states, and the
-joined state is that common state. There is no rule that widens one arm's state
-to the other's, and none that drops a component. -/
-theorem the_join_is_the_common_state
+/-- The load-bearing statement of card `IF-STATEMENT`, now stated of the two
+*surviving* arms: where both fall through to the join, a joined state is
+produced **only** when they reach it in equal custody states, and the joined
+state is that common state. There is no rule that widens one arm's state to the
+other's, and none that drops a component. -/
+theorem the_join_of_two_survivors_is_their_common_state
     {thenState elseState joined : Custody}
+    (thenSurvives : thenState.returned = false) (elseSurvives : elseState.returned = false)
     (result : joinArms thenState elseState = some joined) :
     thenState = elseState ∧ joined = thenState := by
   unfold joinArms at result
+  rw [thenSurvives, elseSurvives] at result
+  simp only at result
   split at result
+  · rename_i agree
+    refine ⟨agree, ?_⟩
+    injection result with equality
+    exact equality.symm
   · contradiction
-  · split at result
-    · rename_i agree
-      refine ⟨agree, ?_⟩
-      injection result with equality
-      exact equality.symm
-    · contradiction
 
-/-- The joined state is *both* arms' state, so nothing either arm established is
+/-- The joined state is *both* survivors' state, so nothing either established is
 lost at the join and nothing neither established is invented. -/
-theorem the_join_widens_neither_arm
+theorem the_join_widens_neither_survivor
     {thenState elseState joined : Custody}
+    (thenSurvives : thenState.returned = false) (elseSurvives : elseState.returned = false)
     (result : joinArms thenState elseState = some joined) :
     joined = thenState ∧ joined = elseState := by
-  obtain ⟨agree, equality⟩ := the_join_is_the_common_state result
+  obtain ⟨agree, equality⟩ :=
+    the_join_of_two_survivors_is_their_common_state thenSurvives elseSurvives result
   exact ⟨equality, equality.trans agree⟩
 
-/-- The contrapositive, in the form that matters: disagreeing arms do not join. -/
-theorem disagreeing_arms_do_not_join
-    {thenState elseState : Custody} (disagree : thenState ≠ elseState) :
-    joinArms thenState elseState = none := by
-  unfold joinArms
-  split
-  · rfl
-  · simp_all
-
-/-- An arm that returned does not join either, whatever its custody state:
-`return` inside an arm is refused rather than merged. -/
-theorem a_returning_arm_does_not_join
+/-- The contrapositive, in the form that matters: two survivors that disagree do
+not join. -/
+theorem disagreeing_survivors_do_not_join
     {thenState elseState : Custody}
-    (returned : thenState.returned = true ∨ elseState.returned = true) :
+    (thenSurvives : thenState.returned = false) (elseSurvives : elseState.returned = false)
+    (disagree : thenState ≠ elseState) :
     joinArms thenState elseState = none := by
   unfold joinArms
-  cases returned with
-  | inl h => simp [h]
-  | inr h => simp [h]
+  rw [thenSurvives, elseSurvives]
+  simp_all
 
-/-- …and the whole rule: a join succeeds exactly when neither arm returned and
-the two states are equal. -/
-theorem the_join_rule_is_exactly_agreement (thenState elseState : Custody) :
-    (joinArms thenState elseState).isSome =
-      (!(thenState.returned || elseState.returned) && thenState == elseState) := by
+/-- **The shape card `IF-ARMS` changed.** An arm that returned is not a
+survivor, so it constrains the join not at all: whatever custody state it
+reached, the branch carries the *other* arm's state forward. This is what makes
+an early return from an arm a widening of the construct rather than a hole in
+it — the returning arm's obligations were discharged at its own exit, and the
+join is over what is left. -/
+theorem a_returning_arm_does_not_constrain_the_join
+    {thenState elseState : Custody}
+    (returned : thenState.returned = true) (survives : elseState.returned = false) :
+    joinArms thenState elseState = some elseState := by
   unfold joinArms
-  by_cases returned : (thenState.returned || elseState.returned) = true
-  · simp [returned]
-  · by_cases agree : thenState = elseState <;> simp_all
+  rw [returned, survives]
+
+theorem a_returning_else_arm_does_not_constrain_the_join
+    {thenState elseState : Custody}
+    (survives : thenState.returned = false) (returned : elseState.returned = true) :
+    joinArms thenState elseState = some thenState := by
+  unfold joinArms
+  rw [survives, returned]
+
+/-- With no survivor at all the branch itself ends the function, so nothing
+after it is reachable — which is what `operationAfterReturn` says. -/
+theorem a_branch_whose_arms_both_return_returns
+    {thenState elseState joined : Custody}
+    (thenReturned : thenState.returned = true) (elseReturned : elseState.returned = true)
+    (result : joinArms thenState elseState = some joined) :
+    joined.returned = true ∧ joined.live = [] := by
+  unfold joinArms at result
+  rw [thenReturned, elseReturned] at result
+  injection result with equality
+  subst equality
+  exact ⟨rfl, rfl⟩
+
+/-- …and the whole rule, as one biconditional: the **only** shape with no joined
+state is two surviving arms that disagree. Every other combination joins, which
+is the precise sense in which the arm-exit widening is a change of shape rather
+than a relaxation — nothing that refused before is admitted by a *join* here;
+the returning arm is admitted by its own exit's obligations instead. -/
+theorem the_join_refuses_only_two_disagreeing_survivors (thenState elseState : Custody) :
+    joinArms thenState elseState = none ↔
+      (thenState.returned = false ∧ elseState.returned = false ∧ thenState ≠ elseState) := by
+  unfold joinArms
+  cases thenState.returned <;> cases elseState.returned <;> simp <;>
+    (by_cases agree : thenState = elseState <;> simp [agree])
+
+/-- Restated for the two-survivor case in the form card `IF-STATEMENT` pinned:
+a join succeeds exactly when the two states are equal. -/
+theorem the_join_rule_is_exactly_agreement_between_survivors
+    {thenState elseState : Custody}
+    (thenSurvives : thenState.returned = false) (elseSurvives : elseState.returned = false) :
+    (joinArms thenState elseState).isSome = (thenState == elseState) := by
+  unfold joinArms
+  rw [thenSurvives, elseSurvives]
+  by_cases agree : thenState = elseState <;> simp_all
 
 /-! ## 5. Concrete fail-closed instances -/
 
@@ -324,9 +382,21 @@ def leakInUntakenArm : Seq :=
     (.cons (.branch (.lit true) (.cons (.drop 1) .nil) .nil)
       (.cons (.ret 0) .nil))
 
-/-- `return` inside an arm. -/
-def returnInsideArm : Seq :=
+/-- `return` inside an arm, with the other arm falling through to the join.
+Card `IF-STATEMENT` refused this outright; card `IF-ARMS` admits it, because the
+returning arm discharged its obligations at its own exit and the join is over
+the one survivor. This is the definition card `IF-ARMS` moved, and it is kept
+here under its own name so the move is visible rather than silent. -/
+def armReturnWithSurvivor : Seq :=
   .cons (.branch (.lit true) (.cons (.ret 1) .nil) .nil) (.cons (.ret 0) .nil)
+
+/-- The same shape with a resource still live at the arm's exit. `.ret` demands
+an empty live list **wherever it stands**, so an early return leaks nothing:
+this is the obligation that makes the widening safe, and it refuses. -/
+def earlyReturnLeaks : Seq :=
+  .cons (.acquire 1 true)
+    (.cons (.branch (.lit true) (.cons (.ret 1) .nil) (.cons (.drop 1) .nil))
+      (.cons (.ret 0) .nil))
 
 /-- Both arms acquiring: one identity, one emitted slot, so this refuses rather
 than joining two acquisitions of the same name. -/
@@ -349,19 +419,33 @@ theorem moving_in_one_arm_and_releasing_in_the_other_refuses :
 theorem a_leak_in_the_untaken_arm_refuses :
     validate leakInUntakenArm = .error .armsDisagree := rfl
 
-theorem a_return_inside_an_arm_refuses :
-    validate returnInsideArm = .error .returnInBranchArm := rfl
+/-- **The widening, and the theorem it had to change.** Card `IF-STATEMENT`
+proved `validate returnInsideArm = .error .returnInBranchArm`; that refusal
+constructor no longer exists, and the program is admitted. The returning arm is
+not admitted by the *join* — it never reaches one — but by discharging at its
+own exit, which `an_arm_return_must_discharge_its_custody` below shows is a real
+obligation rather than a waiver. -/
+theorem an_arm_return_joins_over_the_survivor : Admits armReturnWithSurvivor := by decide
+
+/-- …and the price of it: an early return with a resource still live refuses,
+with exactly the refusal a top-level return with a live resource gets. The
+obligation at an arm exit **is** the obligation at the program exit. -/
+theorem an_arm_return_must_discharge_its_custody :
+    validate earlyReturnLeaks = .error .liveResourcesAtReturn := rfl
 
 theorem two_arms_cannot_spend_one_acquisition_identity :
     validate bothArmsAcquireOneIdentity = .error (.alreadyOwned 1) := rfl
 
 /-- Collected as one list, so widening the construct must change a theorem
-rather than slip past one. -/
+rather than slip past one. Card `IF-ARMS` did exactly that: the fourth row was
+`returnInsideArm`, refusing at a constructor this revision no longer has, and it
+is replaced by the leaking early return — the obligation the widening rests on
+rather than the shape it opened. -/
 theorem refused_shapes_are_exactly_these :
     [validate conditionalLeak, validate moveVersusRelease, validate leakInUntakenArm,
-      validate returnInsideArm, validate bothArmsAcquireOneIdentity] =
+      validate earlyReturnLeaks, validate bothArmsAcquireOneIdentity] =
       [.error .armsDisagree, .error .armsDisagree, .error .armsDisagree,
-        .error .returnInBranchArm, .error (.alreadyOwned 1)] := rfl
+        .error .liveResourcesAtReturn, .error (.alreadyOwned 1)] := rfl
 
 /-! ## 6. Nothing branch-free moves -/
 

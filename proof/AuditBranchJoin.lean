@@ -18,25 +18,38 @@ import QCore.BranchJoin
 #print axioms QCore.BranchJoin.evaluation_is_state_free
 #print axioms QCore.BranchJoin.the_comparisons_are_the_relations
 
--- 2. The join is agreement, never widening. The joined state is *both* arms'
--- state, so nothing either arm established is lost and nothing neither
--- established is invented.
-#print axioms QCore.BranchJoin.the_join_is_the_common_state
-#print axioms QCore.BranchJoin.the_join_widens_neither_arm
-#print axioms QCore.BranchJoin.disagreeing_arms_do_not_join
-#print axioms QCore.BranchJoin.a_returning_arm_does_not_join
-#print axioms QCore.BranchJoin.the_join_rule_is_exactly_agreement
+-- 2. The join is agreement between the arms that *survive* to it, never
+-- widening. The joined state is both survivors' state, so nothing either
+-- established is lost and nothing neither established is invented.
+--
+-- Card `IF-ARMS` changed this section's shape, not its strength: an arm that
+-- returned discharged its obligations at its own exit and does not reach the
+-- join, so it constrains it not at all. The last theorem is the complete
+-- characterisation — the only shape with no joined state is two surviving arms
+-- that disagree — so nothing that refused at the join before is admitted at it
+-- now.
+#print axioms QCore.BranchJoin.the_join_of_two_survivors_is_their_common_state
+#print axioms QCore.BranchJoin.the_join_widens_neither_survivor
+#print axioms QCore.BranchJoin.disagreeing_survivors_do_not_join
+#print axioms QCore.BranchJoin.a_returning_arm_does_not_constrain_the_join
+#print axioms QCore.BranchJoin.a_returning_else_arm_does_not_constrain_the_join
+#print axioms QCore.BranchJoin.a_branch_whose_arms_both_return_returns
+#print axioms QCore.BranchJoin.the_join_refuses_only_two_disagreeing_survivors
+#print axioms QCore.BranchJoin.the_join_rule_is_exactly_agreement_between_survivors
 
 -- 3. Fail-closed, on concrete programs: the conditional leak, the shape where
 -- one arm moves what the other releases (which comparing live resources alone
--- would admit), a leak in the arm the decided condition does *not* take, a
--- `return` inside an arm, and two arms spending one acquisition identity.
--- Collected as one list so a future widening must change a theorem.
+-- would admit), a leak in the arm the decided condition does *not* take, an
+-- early return that leaves a resource live, and two arms spending one
+-- acquisition identity. Collected as one list so a future widening must change
+-- a theorem — as card `IF-ARMS` did, replacing the `return`-inside-an-arm row
+-- with the obligation that widening rests on.
 #print axioms QCore.BranchJoin.a_conditional_leak_refuses
 #print axioms QCore.BranchJoin.both_arms_releasing_is_admitted
 #print axioms QCore.BranchJoin.moving_in_one_arm_and_releasing_in_the_other_refuses
 #print axioms QCore.BranchJoin.a_leak_in_the_untaken_arm_refuses
-#print axioms QCore.BranchJoin.a_return_inside_an_arm_refuses
+#print axioms QCore.BranchJoin.an_arm_return_joins_over_the_survivor
+#print axioms QCore.BranchJoin.an_arm_return_must_discharge_its_custody
 #print axioms QCore.BranchJoin.two_arms_cannot_spend_one_acquisition_identity
 #print axioms QCore.BranchJoin.refused_shapes_are_exactly_these
 

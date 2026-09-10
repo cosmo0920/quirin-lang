@@ -1367,6 +1367,10 @@ fn record_call(
         arguments,
         result,
         span,
+        // `source.extern-call.v1` admits a flat sequential entry body only, so
+        // no extern call sits inside a branch arm; its own nested-block refusal
+        // is what makes this constant rather than computed (card `IF-ARMS`).
+        conditional: false,
     });
 }
 

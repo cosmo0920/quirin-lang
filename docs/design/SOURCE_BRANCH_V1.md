@@ -353,3 +353,48 @@ it. Recorded here so the two records read as one design rather than two:
   follow-on.
 
 Evidence: [`docs/reports/wave19-or-and-lowering/README.md`](../reports/wave19-or-and-lowering/README.md).
+
+## Addendum: what `IF-ARMS` did to this design (wave 20)
+
+The second successor card widened §4's arm statement subset and, in doing so,
+changed the *shape* of §3's join rule. Recorded here so the three records read
+as one design.
+
+* **§4's two named refusals are gone, and their grounds with them.** This
+  document refused a `return` in an arm because "`SourceOp::Return` is the last
+  operation of a program", and a call because "a call takes a position in the
+  flat `calls` vector the whole-program summary unfolds positionally". Both
+  grounds were true; neither was load-bearing.
+  * A `return` is not privileged by position but by *obligation*:
+    `SourceOp::Return` demands an empty live list wherever it stands, which is
+    the whole cleanup discharge the sequential route imposes at any exit. So an
+    arm may return, having discharged.
+  * A call was measured to emit **no C at all** in this executable subset — it
+    composes the callee's summary flow and effects into the caller's and demands
+    the callee's usage, and contributes nothing to the emitted program or to the
+    observation. The positional call vector is still real, and is what the card
+    had to answer; the observation was never the difficulty §4 assumed.
+* **§3.1's rule becomes a join over survivors.** An arm that returns does not
+  reach the join, so the join compares the arms that fall through — agreement,
+  unweakened, wherever there are two of them; the surviving arm's own state
+  wherever there is one; and a terminated branch wherever there are none. The
+  complete characterisation is that the only combination with no joined state is
+  two surviving arms that disagree, so nothing that refused at the join before is
+  admitted at it now.
+* **§3.4's table gains a row, and one moves.** An arm exit that leaks is `Q202` —
+  the program exit's own condition and code, reported at the exit that leaks
+  rather than at the declaration. A conditional call whose callee's summary flow
+  is not neutral is `Q044`.
+* **The continuation moves with the exit, and that is a front-end rewrite.**
+  §3.3 recorded that five of six models already branched. Four of them still
+  cannot express "this arm exited", so the driver does not hand them a one-sided
+  join: the statements after the branch are lowered inside the arm that survives
+  to reach them. `qcore-core`'s own rule is the general one; the rewrite exists
+  for the other four. It is a **move**, never a duplication — which is why the
+  shape needing the continuation in two arms is refused.
+* **§4's `let n = qcore_acquire(…)` row is unchanged and deliberately so.** The
+  pre-existing ownership ledger join still refuses it at `Q103`; only its span
+  and wording moved. `IF-ARM-ACQUIRE` is still open, and it is what would let an
+  early return stand *before* an acquisition.
+
+Evidence: [`docs/reports/wave20-if-arms/README.md`](../reports/wave20-if-arms/README.md).

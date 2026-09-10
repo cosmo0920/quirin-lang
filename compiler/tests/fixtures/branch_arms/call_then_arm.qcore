@@ -1,0 +1,32 @@
+error Failure { Failed; }
+
+// `source.branch.v1` after card `IF-ARMS`: a call inside a branch arm, with the
+// decided condition selecting the arm that performs it.
+//
+// A source call in this executable subset emits **no C at all** — it is a
+// checking construct that composes the callee's summary flow and effects into
+// the caller's and demands the callee's usage. So the reference/CFG/native
+// observation comparison is untouched by where the call stands, and the real
+// question a conditional call raises is the flat, positional call sequence the
+// whole-program summary unfolds. That is answered by refusing a conditional
+// call whose callee's summary flow is not neutral: composing a neutral flow
+// once is the identity, so applying it on a path that never performs the call
+// changes nothing.
+//
+// `call_else_arm.qcore` is the same program with the condition inverted, so the
+// pair pins both polarities.
+fn helper() -> i32 {
+    qcore_check(true, Failure);
+    return 0;
+}
+
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        helper();
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

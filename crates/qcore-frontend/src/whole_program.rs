@@ -49,6 +49,17 @@ pub struct CallSite {
     /// established sequential subset.
     pub result: Option<ResourceId>,
     pub span: Span,
+    /// The call sits inside a branch arm, so it runs on some paths through the
+    /// caller and not on others (card `IF-ARMS`, `source.branch.v1`).
+    ///
+    /// The call sequence this vector belongs to is **flat and positional**:
+    /// [`unfold_summary`] composes `segment · callee · segment · …` in order,
+    /// which applies every callee's flow on every path. That is exact for an
+    /// unconditional call and it is *not* a model of a conditional one, so a
+    /// conditional call is admitted only when composing its callee changes
+    /// nothing at all — a neutral callee summary flow. Anything else is
+    /// refused rather than approximated; follow-on `IF-ARM-CALL-FLOW`.
+    pub conditional: bool,
 }
 
 /// The interprocedural contract consumed at call sites.
@@ -558,6 +569,21 @@ fn unfold_summary(
                 SemanticPass::OrdinaryTypes,
                 call.span,
                 "call ownership arity does not match the callee summary",
+            ));
+        }
+        // Card `IF-ARMS`. A call inside a branch arm runs on one path and not
+        // the other, but this composition is flat: it applies the callee's flow
+        // on every path. That is faithful only when applying it is the identity,
+        // so a conditional call demands a **neutral** callee summary — refused,
+        // never approximated, and never silently joined into one of the arms.
+        if call.conditional && callee.flow != Flow::zero() {
+            return Err(diagnostic(
+                SemanticPass::Branch,
+                call.span,
+                "`source.branch.v1` admits a call inside a branch arm only when the callee's \
+                 summary flow is neutral: the whole-program call sequence is flat, so a \
+                 conditional call would otherwise compose its callee's resource flow on paths \
+                 that never perform it",
             ));
         }
         flow = flow
