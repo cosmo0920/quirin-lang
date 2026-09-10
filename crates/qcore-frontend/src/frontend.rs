@@ -1566,6 +1566,12 @@ pub enum SemanticPass {
     /// *unenforced source contracts* and keep their exact behavior, while this
     /// pass consumes *explicitly selected declared* contracts.
     ExternCall,
+    /// Card `STD-MODULES`: admission of the `std.fmt`, `std.io` and
+    /// `std.logger` line-producing statements. Owns `Q028`–`Q031` (spec §L21).
+    /// A separate pass from `ExternCall` on purpose: that pass admits calls to
+    /// *declared* C symbols under selected contracts, while this one admits a
+    /// closed set of statements with no callee and no contract at all.
+    StandardIo,
     PluginVerification,
 }
 
@@ -2265,6 +2271,28 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "retained"
             | "latency"
             | "measured"
+            // Card `STD-MODULES`: the `std.io`/`std.logger` statement keywords
+            // and the `std.fmt` rendering and level words. Reserved for the
+            // same reason as every profile keyword above: they are clause words
+            // in a statement, never references to a binding. Measured
+            // load-bearing exactly as `grow` and `rank` are — without this the
+            // statement collects `print`/`log`/`dec`/… as referenced names and
+            // refuses with `Q013`.
+            //
+            // The severity spelled `fatal` is deliberately not `error`, which
+            // is already reserved above as the error-type declaration keyword
+            // (34 occurrences across the source corpus at this card's census).
+            // The syntax was renamed rather than the pinned declaration
+            // surface edited, exactly as card T08-EPOCH-SRC renamed `work` to
+            // `effort`.
+            | "print"
+            | "log"
+            | "flush"
+            | "dec"
+            | "hex"
+            | "info"
+            | "warn"
+            | "fatal"
     )
 }
 
@@ -2318,6 +2346,9 @@ pub fn source_diagnostic(
         // The generic presentation code of the extern-call pass. The specific
         // conditions Q023-Q027 are issued at their own emission sites.
         SemanticPass::ExternCall => "Q022",
+        // The generic presentation code of the standard-IO pass. The specific
+        // conditions Q028-Q031 are issued at their own emission sites.
+        SemanticPass::StandardIo => "Q030",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

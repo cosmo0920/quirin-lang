@@ -1,0 +1,174 @@
+Card STD-MODULES — standing per-change gate
+Host: x86_64 Linux. Base commit: main 8ec8402.
+
+Commands run, in the order the AGENTS.md gate lists them.
+
+--------------------------------------------------------------------------
+cargo test --workspace --no-fail-fast
+--------------------------------------------------------------------------
+Three suites failed on a single ENVIRONMENT cause, not on this card's changes:
+
+    libevent_submodule_matches_the_audited_revision
+    declared_pins_match_the_checkouts_and_the_retained_rust_constant
+    f9_and_f10_missing_files_and_digest_drift_reject_the_inventory
+
+All three read `third_party/libevent`, which was never initialized in this
+fresh worktree:
+
+    Pin(SourceRevisionMismatch { pin: "libevent",
+        expected: "d82464a277d0f42703702c4dfd9af6af38595a83",
+        actual:   "61b5a4bd3fc0c6a59d2ae1b7362199f30ff4f2fe" })
+
+`git submodule status` confirmed the diagnosis — a leading `-`, i.e. not
+initialized, with the *recorded* commit already correct.
+
+The pin was NOT weakened. The fix is the standing gate's own documented
+once-per-checkout step:
+
+    git submodule update --init --recursive
+    -> Submodule path 'third_party/libevent': checked out
+       'd82464a277d0f42703702c4dfd9af6af38595a83'
+
+and the three targets were then re-run and pass (see "Re-verification" below).
+
+SECOND, CLEAN RUN (submodule initialized, from a fresh build tree):
+
+    169 test suites passed, 1 suite failed.
+
+The single failure is the KNOWN, PRE-EXISTING load-flake:
+
+    a_declared_process_limit_stops_the_fixture_from_forking
+    (crates/qcore-verifier-host/tests/enforced_process_limits.rs)
+
+This is the P02 `RLIMIT_NPROC` conformance test recorded in AGENTS.md and in
+docs/reports/remaining-p03/README.md §9.1 — it counts every process of the real
+UID, so it fails under load. The host load average was 32-63 throughout, with
+five sibling agent worktrees building and testing concurrently.
+
+Verified in isolation as the card brief directs:
+
+    cargo test -p qcore-verifier-host --test enforced_process_limits \
+        -- --test-threads=1
+    -> test result: ok. 12 passed; 0 failed.
+       (a_declared_process_limit_stops_the_fixture_from_forking ... ok)
+
+Its assertion was NOT weakened, in keeping with the standing record.
+
+RESULT: PASS — 169 suites clean; the one failure is the recorded flake,
+reproduced-clean in isolation.
+
+Environment note, recorded rather than hidden: this wave's shared disk filled
+to 100% three times during the card (five sibling worktrees, ~25-36 GB of build
+artifacts each). Two earlier workspace runs died on `No space left on device`
+before completing. The card's own build tree was pruned twice (~32 GB returned
+to the shared pool) and the suite then completed. No test outcome was inferred
+from a truncated run: the 169/1 figures above come from one complete run.
+
+--------------------------------------------------------------------------
+cargo fmt --all -- --check
+--------------------------------------------------------------------------
+PASS — clean (one formatting pass was applied first; the diffs were
+whitespace/line-breaking only and are in commit "STD-MODULES: apply rustfmt").
+
+--------------------------------------------------------------------------
+cargo clippy --all-targets -- -D warnings
+--------------------------------------------------------------------------
+PASS — clean. Three of this card's own lints were found and fixed rather than
+allowed or suppressed:
+  * two `needless_lifetimes` in crates/qcore-frontend/src/source_std_io.rs
+    (`statement_head`, `window`);
+  * one `needless_borrows_for_generic_args` in compiler/tests/std_modules.rs.
+Commit: "STD-MODULES: clippy fixes (elided lifetimes, needless borrow)".
+
+--------------------------------------------------------------------------
+cargo run -p qcore-compiler --example reevaluation_probe
+cargo run -p qcore-compiler --example reevaluation_followup
+--------------------------------------------------------------------------
+PASS — reevaluation_probe    exit 0
+PASS — reevaluation_followup exit 0
+
+--------------------------------------------------------------------------
+Re-verification after the submodule initialization
+--------------------------------------------------------------------------
+cargo test -p qcore-compiler --test libevent_submodule
+  PASS — 1 passed, 0 failed.
+cargo test -p qcore-compiler --test profile_loader
+  PASS — 18 passed, 0 failed  (covers both
+  declared_pins_match_the_checkouts_and_the_retained_rust_constant and
+  f9_and_f10_missing_files_and_digest_drift_reject_the_inventory).
+cargo test -p qcore-compiler --test std_modules
+  PASS — 31 passed, 0 failed.
+
+All three suites that failed in the first workspace run now pass, and the
+failure cause was the uninitialized submodule in a fresh worktree, not this
+card's changes.
+
+--------------------------------------------------------------------------
+PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py
+--------------------------------------------------------------------------
+PASS — exit 0, "Passed 73 Lean audits".
+The count moves 72 -> 73: this card adds proof/AuditStdIo.lean, which audits
+45 theorems across QCore.ModuleImports (registry generalised two -> five
+modules) and the new QCore.StdIo (effect discipline, stream separation,
+barrier, capability gating). No new axiom and no placeholder; every audited
+theorem depends on nothing or only on propext / Classical.choice / Quot.sound.
+
+--------------------------------------------------------------------------
+python3 -m unittest discover -s scripts/tests
+--------------------------------------------------------------------------
+161 tests, 1 failure — EXPECTED, and deliberately left for the integrator.
+
+  FAIL: test_the_derived_facts_are_recomputed_rather_than_carried
+        (test_build_matrix_sections)
+        AssertionError: ['13.0.0', 72] != ['13.0.0', 73]
+
+That is the derived-value tripwire working as designed: this card adds one
+audited Lean module and docs/reviews/r0_3/acceptance_matrix.json carries the
+pre-card count of 72. The base commit 8ec8402 was self-consistent (72 audit
+files, matrix value 72), so the delta is entirely this card's and is not a
+pre-existing failure. This card's brief forbids editing acceptance files, so
+the matrix is left stale for the wave integrator to regenerate — the same
+handling every wave's derived sections receive.
+
+--------------------------------------------------------------------------
+Sanitizer fixtures (ASan/UBSan/LSan), reported honestly
+--------------------------------------------------------------------------
+Two fixed runs inside compiler/tests/std_modules.rs, x86_64 Linux:
+  cc -std=c11 -Wall -Wextra -Werror -pedantic -g -O0
+     -fsanitize=address,undefined -fno-omit-frame-pointer
+  ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+  UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+
+  lines.qcore        PASS — compiles clean under -Werror, exit 0; stdout
+                     matched the reference's stdout projection and stderr
+                     matched the stderr projection, per stream.
+  logger_only.qcore  PASS — compiles clean, exit 0, wrote nothing on either
+                     stream, as the barrier model predicts.
+
+Honest scope: these programs allocate nothing, so the leak check is a NEGATIVE
+CONTROL — it confirms the emitted program introduces no allocation, which is
+itself the effect discipline's prediction. It is not evidence about a route
+that does allocate. Apple ASan provides no LSan, so leak detection remains a
+Linux-only observation (existing repository convention). No threaded native
+program is run by this card, so T04's measured "TSan does not intercept C11
+thrd_create" is recorded but not relied on.
+
+--------------------------------------------------------------------------
+Card-local suite
+--------------------------------------------------------------------------
+cargo test -p qcore-compiler --test std_modules
+  PASS — 31 passed, 0 failed, 0 ignored (includes the two sanitized native
+  runs above).
+
+--------------------------------------------------------------------------
+Untouched by construction (verified against the base commit)
+--------------------------------------------------------------------------
+contract/qcore/            unchanged — corpus pin stays 67 modules
+docs/reevaluation/         unchanged — CT coverage stays 32/50 mapped
+docs/reviews/r0_3/         unchanged — deliberately, see the Python note above
+AGENTS.md CLAUDE.md DEVELOPMENT.md   unchanged, per the brief
+No pinned audit artifact was edited. The card is corpus-neutral by
+construction: it touches no gateway, contract-loader, audit or provider file,
+so the canonical CMetrics artifacts and the 185-unit baseline are expected
+byte-identical at consolidation, with the headline unchanged at
+2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only.

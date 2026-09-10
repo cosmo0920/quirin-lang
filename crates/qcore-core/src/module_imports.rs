@@ -12,10 +12,27 @@ pub const CONCURRENCY_MODULE: &str = "std.concurrency";
 /// conclusion drawn through it remains a declared assumption.
 pub const EXTERN_MODULE: &str = "std.extern";
 
+/// Card `STD-MODULES`: the rendering vocabulary shared by `std.io` and
+/// `std.logger`. It names how a scalar becomes the bytes of a line and nothing
+/// else — it opens no stream, so importing it alone produces no output.
+pub const FMT_MODULE: &str = "std.fmt";
+
+/// Card `STD-MODULES`: writing a rendered line to the standard output stream.
+pub const IO_MODULE: &str = "std.io";
+
+/// Card `STD-MODULES`: writing a level-tagged rendered line to the standard
+/// error stream, plus the `flush` sink-handoff barrier. Separate from
+/// `std.io` because a diagnostic stream and a data stream are different
+/// capabilities; neither grants the other.
+pub const LOGGER_MODULE: &str = "std.logger";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
     extern_calls: bool,
+    fmt: bool,
+    io: bool,
+    logger: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -36,6 +53,9 @@ impl ModuleImports {
             match name {
                 CONCURRENCY_MODULE => imports.concurrency = true,
                 EXTERN_MODULE => imports.extern_calls = true,
+                FMT_MODULE => imports.fmt = true,
+                IO_MODULE => imports.io = true,
+                LOGGER_MODULE => imports.logger = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -49,5 +69,21 @@ impl ModuleImports {
     /// Whether this file may call a declared extern function at all.
     pub fn extern_calls(self) -> bool {
         self.extern_calls
+    }
+
+    /// Whether this file may name a rendering (`dec`, `hex`).
+    pub fn fmt(self) -> bool {
+        self.fmt
+    }
+
+    /// Whether this file may write a rendered line to standard output.
+    pub fn io(self) -> bool {
+        self.io
+    }
+
+    /// Whether this file may write a level-tagged line to standard error, or
+    /// hand the logger's stream to its sink with `flush`.
+    pub fn logger(self) -> bool {
+        self.logger
     }
 }

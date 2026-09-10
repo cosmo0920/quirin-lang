@@ -934,6 +934,78 @@ execution are the scoped-task route's own, byte for byte; the epoch is
 check-only on top. See
 [the composition record](reports/remaining-t08-compose/README.md).
 
+## G02g. Rendered lines: `std.fmt`, `std.io` and `std.logger`
+
+`source.std-io.v1` (card `STD-MODULES`) is the whole implemented surface of the
+three output modules. A file selects it by using one of its three statements.
+
+```ebnf
+module    = { import }, { error_decl | entry } ;
+import    = "import", ( "std.fmt" | "std.io" | "std.logger" ), ";" ;
+entry     = "fn", NAME, "(", ")", "->", "unit",
+            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+            "{", { stmt }, "}" ;
+stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
+          | "print", RENDERING, OPERAND, ";"
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "flush", ";"
+          | "return", ";" ;
+RENDERING = "dec" | "hex" ;
+LEVEL     = "info" | "warn" | "fatal" ;
+OPERAND   = [ "-" ], INTEGER | NAME ;
+EFFECT    = "io" | "alloc" | "mut" ;
+```
+
+```qcore
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io } {
+    let total = 42;
+    print dec total;            // stdout: 42
+    print hex 255;              // stdout: 0x000000FF
+    log warn dec total;         // stderr: [WARN] 42
+    flush;                      // sink handoff; writes no line
+    return;
+}
+```
+
+**The operand rule is the effect discipline.** `OPERAND` is an integer literal
+or a name the entry bound with `let` to an integer literal. There is no operand
+form that can denote an owned buffer, a borrow, a share or a handle, so a
+rendering cannot consume, release, store or retain custody of anything — it is
+not that the checker refuses those uses, it is that the profile cannot express
+them. A name that is not one of the entry's integer bindings is `Q028`; a `let`
+bound to anything but an integer literal is `Q030`. The derived effect row is
+exactly `{Io}` for a program that writes and empty for one that does not; it is
+never `Alloc` and never `Mut`. The entry's declared `effects { … }` row must
+admit the derived one (`Q029`).
+
+Each module gates its own capability: `print` needs `std.io`, `log` and `flush`
+need `std.logger`, and naming a rendering needs `std.fmt`. `flush` names no
+rendering, so a logger-only file that never renders needs no `std.fmt`. A
+missing import is `Q015` naming the module.
+
+The severity is spelled `fatal`, not `error`: `error` is the reserved
+error-type declaration keyword, and this card renamed its own syntax rather than
+edit the pinned declaration surface, exactly as `work` became `effort` in G02e.
+Eight words are newly reserved — `print`, `log`, `flush`, `dec`, `hex`, `info`,
+`warn`, `fatal`. An **unreserved** word in a rendering or level position is
+collected as a referenced name and refuses at `Q013` before this route's own
+`Q030` message; the refusal is correct and fail-closed, and only the message is
+less specific.
+
+The route emits C11 and has a reference execution, compared **per stream**: the
+run's stdout against the reference's stdout projection and its stderr against
+the stderr projection. **No order between the two streams is modeled or
+claimed.** `flush` emits `fflush` and produces no line — sink handoff, not
+durability: no `fsync` is performed and no crash survival is claimed. There is
+no format-string language, no string or character value, no file or descriptor,
+and no logger configuration model. A `print` inside a `thread scope` or beside
+an extern call stays with the more specific route and keeps its refusal. See
+[the module record](reports/wave17-std-modules/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf
