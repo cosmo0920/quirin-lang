@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 27
+  "named_followups": 30
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -5764,10 +5764,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "wave-17 eight-card merged gate, 2026-09-10",
-  "workspace_tests": 2902,
+  "note": "wave-18 three-card merged gate, 2026-09-10",
+  "workspace_tests": 2959,
   "provider_tests": 122,
-  "python_evidence_validator_tests": 186,
+  "python_evidence_validator_tests": 193,
   "lean_audits": 79,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
@@ -5856,7 +5856,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/wave17-corpus/gate.json)"
+  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-wave-16-hatch-opening-43bc0d/a8726dc0-d36a-4272-b430-8150dfe09a06/scratchpad/gate18.json)"
  },
  "named_followups": [
   {
@@ -6020,6 +6020,24 @@
    "title": "Standard output modules provided; four residuals",
    "why": "STD-MODULES' census contradicts its own card premise and is the result: QCore source has NO printing, logging, formatting, string-interpolation or IO construct and never had one (21 statement kinds, none writing; no string or char type; zero string and character literals outside comments across 290 source-side files), so the migrated implicit-use count is 0. What looked implicit is two other things, both recorded: compiler-synthesized trace instrumentation in four C backends, read back for translation validation, and an `Effect::Io` label stamped on every extern call regardless of what the callee does — a capability NAME with nothing gating it and nothing performing it. With nothing to migrate, `std.fmt`, `std.io` and `std.logger` are PROVIDED instead as `source.std-io.v1`: two renderings, a line to stdout, a level-tagged line to stderr and a `flush` barrier, each gated by its own module through the existing Q014/Q015 and refused without it, with Q028-Q031 under a new `StandardIo` pass through the §L21 process. The v1 effect discipline is STRUCTURAL rather than checked — the operand type has two constructors and neither can denote a resource, so a rendering cannot consume, release, store or retain custody, and the derived row is exactly {Io}, never Alloc, never Mut. The route is selected LAST, after the concurrent and extern routes, so a module that both prints and spawns stays with the more specific model and keeps its refusal. Two sanitized native runs match the reference PER STREAM; no interleaving between stdout and stderr is modeled or claimed, and `flush` is sink handoff (`fflush`), explicitly not durability. Eight reserved words added (`print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`), checked against every .qcore file; `error` was measured to collide with the reserved error-type keyword (34 uses), so the severity is spelled `fatal` — the T08-EPOCH-SRC `work` to `effort` precedent — rather than editing the pinned surface. 31 tests, 45 audited theorems (QCore.StdIo; QCore.ModuleImports generalised from two modules to five), no new axiom. Corpus-neutral by construction. Residuals: STD-LOGGER-ASYNC — the amendment's asynchronous logger is REFUSED on a measured blocker rather than faked, because the task ledger has no post-creation transfer (every parent-to-child custody edge is at creation) and the checked mutex backend emits one thread, so a bounded queue whose custody is modeled cannot be written; only the barrier half landed. STD-FMT-DIAGNOSTIC — an unreserved word in a rendering or level position refuses correctly but GENERICALLY at Q013, with no specific message; the boundary is asserted by `rendering_a_name_nothing_binds_refuses_at_name_resolution`, a test corrected to assert the measurement rather than the design expectation. STD-FMT-BORROW — admitting a borrowed render of a live resource needs its own custody argument and the sequential-pass evidence a widened route would owe. STD-IO-COMPOSE — composing this route with the task or extern routes, each a separate checked model.",
    "source": "docs/reports/wave17-std-modules/README.md"
+  },
+  {
+   "id": "UNSAFE-LINKAGE-O",
+   "title": "Explicit unchecked external linkage landed scalars-only; artifact identity staged",
+   "why": "source.extern-call.unsafe.v1 landed in wave 18: an uncontracted external library links end to end behind import std.extern.unsafe; and unsafe extern fn, scalars by value in and a scalar or unit out, EVERY pointer refused by name (an assumption that cannot be stated cannot be carried, so no custody crosses), ExternAssumption::UncheckedLinkage carried on the existing declared-assumption channel with three independent omission guards and a Lean totality theorem, the Q023 default pinned unmoved, new pass UncheckedLinkage owning Q032-Q035. The prior workflow's NATIVE_LIBRARY_LINKAGE_V1.md is adopted into the tree (provenance-noted, band reservation moved twice, now Q039+) and reconciled with this card as one rule: pointers cross exactly where a contract exists to state their premise. Residual: UNSAFE-LINKAGE-ARTIFACT — the manifest-resident contract-less entry that would make the premise name WHICH artifact was waived, blocked on the library manifest itself not existing.",
+   "source": "docs/reports/wave18-unsafe-linkage/README.md, docs/design/UNSAFE_LINKAGE_V1.md, docs/design/NATIVE_LIBRARY_LINKAGE_V1.md"
+  },
+  {
+   "id": "LEAN-PERF-O",
+   "title": "Proof-phase shortening landed; residual costs named",
+   "why": "Wave 18 cut the audit gate with nothing proved changed (no statement, domain, digest or pinned number moved; native_decide not introduced; axiom closure pinned before/after at propext/Classical.choice/Quot.sound): cold 121.4s to 61.0s, incremental 36.5s to 4.2s, audit phase parallelised behind a still-serialised build. Module wins: TaskTraceRelation shares one cbv expansion of the 3,025-trace domain (residual ~27s named the cost of the D3 claim); CapacityBoundary decides one fused predicate (CPU 60.2s to 14.6s); CleanupVocabulary uses decide +kernel (NOT a blanket win — it regressed CapacityBoundary and was reverted there, measured). Residuals: LEAN-PERF-CV-QUADRATIC, LEAN-PERF-CAPACITY-DRIFT, LEAN-PERF-CACHE (no content-addressed cache across worktrees; CI stays cold, which is the trust argument), LEAN-PERF-AUDIT-IMPORTS.",
+   "source": "docs/reports/wave18-lean-perf/README.md"
+  },
+  {
+   "id": "PIPE-OPERATOR-O",
+   "title": "|> landed; | and && claimed-refused pending branching; operator table pinned",
+   "why": "Wave 18 landed the pipe operator |> as a pure token-stream desugaring (first-argument insertion, left-associative; byte-identical emitted C vs the hand-written twin; linearity through pipelines inherited from the existing checkers; a pre-existing divergent re-tokenization path in source_extern found and repaired). The measured surface bounds the rest: QCore has NO if statement (Q500; zero ifs across 294 source files) and no boolean expression tier, so the logical operators landed as claimed tokens with actionable refusals under the scope guards — single | is logical or and && is logical and BY DECISION, both refusing at Q038 until a lowering exists; || redirects to |, a lone & in logical position redirects to &&, bare & stays reserved for a future binary/bitwise operation, [| and |] are byte-unchanged, and bitwise OR having no symbol left is flagged open, not answered. The Pipe pass owns Q036-Q038 after an integration-time band relocation (UncheckedLinkage shipped Q032-Q035 first; the T07/T09 precedent). Residuals in dependency order: a source if/branching construct is the prerequisite for OR-LOWERING and AND-LOWERING; PIPE-CHAIN (multi-stage pipelines need expression-valued statements), PIPE-LET, PIPE-STMT-STAGES.",
+   "source": "docs/reports/wave18-pipe-operator/README.md"
   }
  ],
  "updated": "2026-09-10 (wave 16 complete: the agent-facing docs compacted onto DEVELOPMENT.md's increment records with 25 standing subsystem constraints carried; three tally-neutral ledger and tooling follow-ons closed; the last shared fixture/production blocker admitted as a declared variadic data tail; the twelve identity residuals measured to have no aliasing cause and eight of them cleared by a third, store-only member class; the declared/C ABI fail-open closed with eight unfaithful declarations corrected; the publication hazard closed by refusal after the proposed escape was measured to promote; and the fourth composition module moved through the process boundary. The corpus re-pins to docs/reports/wave16-corpus/ with four attributed diagnostics units, the diff triangulated in both directions against the two gateway cards, and zero unit or function status moves; schemas 13.0.0; nothing promoted)"
