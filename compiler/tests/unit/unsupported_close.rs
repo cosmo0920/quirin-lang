@@ -4,6 +4,7 @@ use crate::verifier_plugins::chunkio::{
     filesystem_chunk_close::{check_filesystem_chunk_close_source, tests::backend},
     memory_close::tests::{FIXTURE, dependencies},
 };
+use qcore_verification::unsupported_close_composition::check_unsupported_close_bodies;
 
 #[test]
 fn unsupported_close_classifies_the_remaining_path_without_discharge() {
@@ -41,16 +42,18 @@ fn unsupported_close_classifies_the_remaining_path_without_discharge() {
                 .unwrap_err()
                 .starts_with("Unknown:")
         );
-        assert_eq!(evidence.status, "Unknown");
+        assert_eq!(evidence.status(), "Unknown");
         assert_eq!(
             evidence,
-            check(
-                &evidence.memory_scope,
-                &evidence.filesystem_kind_probe,
-                CONTRACT
+            check_unsupported_close_bodies(
+                evidence.memory_scope(),
+                evidence.filesystem_kind_probe(),
+                &contracts(CONTRACT),
             )
             .unwrap()
         );
+        // `recheck` re-runs the whole reading under the same retained contracts.
+        assert_eq!(evidence.recheck().unwrap(), evidence);
     }
 }
 
@@ -116,7 +119,12 @@ fn unsupported_close_policy_rejects_false_and_unknown_predicates() {
             for predicate in ["false", "unknown_fact"] {
                 let changed = format!("{}{clause}{predicate}{}", &CONTRACT[..i], &CONTRACT[end..]);
                 assert!(
-                    check(file.memory_scope(), file.filesystem_kind_probe(), &changed).is_err()
+                    check_unsupported_close_bodies(
+                        file.memory_scope(),
+                        file.filesystem_kind_probe(),
+                        &contracts(&changed),
+                    )
+                    .is_err()
                 );
             }
         }

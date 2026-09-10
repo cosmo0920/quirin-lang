@@ -56,6 +56,26 @@
 //! bytes, and therefore every existing task digest, are unchanged**, and the
 //! projection version stays `2`.
 //!
+//! Card `P04-COMPOSE-UNSUPPORTED` extended it a final time, to the **symbolic**
+//! other-backend arm of the same `cio_chunk_close` wrapper. Again no new
+//! vocabulary and no new projection version. Three things are new to it:
+//!
+//! * **it is the first family that imports no body of its own.** Its whole
+//!   question is one nested question — the filesystem composition, verbatim —
+//!   plus one prerequisite identity. Both bodies it reads (the wrapper and the
+//!   filesystem probe) are the nested question's, so restating either here would
+//!   have let one question name two bodies.
+//! * **its reading is over a symbolic domain, not a sampled constant.** The
+//!   backend discriminant on this arm is *any* `int` except the two the two
+//!   probes return. No representative integer stands in for it: a comparison the
+//!   class cannot decide is a refusal on both sides, never a sampled answer.
+//! * **its published conclusion is `Unknown`.** The wrapper's own releases are
+//!   read, and the backend's custody and the constructor's reachability are
+//!   explicitly *not* established. The record therefore carries the two excluded
+//!   constants and the one selected path and nothing else: a figure the checker
+//!   does not decide has no place in it, and this family decides fewer figures
+//!   than any other because it deliberately concludes less.
+//!
 //! ## What a composition projection may and may not carry
 //!
 //! It carries the *question* and never a derived result:
@@ -157,6 +177,18 @@ pub const MEMORY_CLOSE_SEMANTIC_PROFILE: &str = "qcore.c_memory_close_compositio
 /// translation units. See [`FilesystemChunkClosePrerequisites`].
 pub const FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE: &str =
     "qcore.c_filesystem_chunk_close_composition.v1";
+
+/// The semantic profile of the **symbolic** other-backend arm of the same
+/// `cio_chunk_close` wrapper, whose single prerequisite is the filesystem
+/// composition above.
+///
+/// This is the only family whose backend discriminant is not a value at all: it
+/// is the class of every `int` except the two the two probes return. Nothing in
+/// this vocabulary can name a representative of that class, and the trusted
+/// replay refuses — rather than samples — any comparison the class does not
+/// decide. Its conclusion is an explicit `Unknown`: the wrapper's own six
+/// releases are read, and backend custody and constructor reachability are not.
+pub const UNSUPPORTED_CLOSE_SEMANTIC_PROFILE: &str = "qcore.c_unsupported_close_composition.v1";
 
 /// The semantic profile of the deleting `cio_file_close` composition. It answers
 /// a strictly larger question than the non-deleting one — the whole non-deleting
@@ -381,6 +413,49 @@ impl FilesystemChunkClosePrerequisites {
     }
 }
 
+/// The single prerequisite the symbolic other-backend `cio_chunk_close`
+/// composition depends on: the filesystem composition (card `P04-COMPOSE-FS`),
+/// which is itself a three-level composed reading.
+///
+/// One identity, not two, and the reason is measured rather than convenient.
+/// This family reads exactly two things out of that prerequisite — the memory
+/// composition's own certificate and the filesystem discriminant probe — and
+/// both are inside it. Naming the memory composition separately here would name
+/// a prerequisite this question does not have: the filesystem composition
+/// already re-establishes it, and a second claim about it could disagree with
+/// the first.
+///
+/// Because the set has one member, [`Self::are_distinct`] is **vacuously true**.
+/// That is recorded rather than dressed up: the distinctness rule the other
+/// three families carry has no work to do here, and the single identity's own
+/// completeness and its equality with the identity the core derives are what
+/// carry the weight.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnsupportedClosePrerequisites {
+    pub filesystem_chunk_close: PrerequisiteIdentity,
+}
+
+impl UnsupportedClosePrerequisites {
+    /// The digest key under which a dependent task binds this identity. It is
+    /// distinct from every other family's, so no other family's prerequisite can
+    /// be absorbed under it.
+    pub const FILESYSTEM_CHUNK_CLOSE_KEY: &'static str =
+        "qcore:composition-prerequisite-unsupported-filesystem:v1";
+
+    #[must_use]
+    pub fn is_complete(&self) -> bool {
+        self.filesystem_chunk_close.is_complete()
+    }
+
+    /// Vacuously true: a one-member set cannot repeat an identity. Kept so the
+    /// tagged enum's rule is total, and pinned as vacuous by test.
+    #[must_use]
+    pub const fn are_distinct(&self) -> bool {
+        true
+    }
+}
+
 /// The identity of one callee a composition's wrapper replay is allowed to
 /// resolve, matched on **both** the name and the declared C prototype.
 ///
@@ -511,6 +586,7 @@ pub enum CompositionPrerequisiteSet {
     FileClose(FileClosePrerequisites),
     MemoryClose(MemoryClosePrerequisites),
     FilesystemChunkClose(FilesystemChunkClosePrerequisites),
+    UnsupportedClose(UnsupportedClosePrerequisites),
 }
 
 impl CompositionPrerequisiteSet {
@@ -521,6 +597,7 @@ impl CompositionPrerequisiteSet {
             Self::FileClose(set) => set.is_complete(),
             Self::MemoryClose(set) => set.is_complete(),
             Self::FilesystemChunkClose(set) => set.is_complete(),
+            Self::UnsupportedClose(set) => set.is_complete(),
         }
     }
 
@@ -531,6 +608,7 @@ impl CompositionPrerequisiteSet {
             Self::FileClose(set) => set.are_distinct(),
             Self::MemoryClose(set) => set.are_distinct(),
             Self::FilesystemChunkClose(set) => set.are_distinct(),
+            Self::UnsupportedClose(set) => set.are_distinct(),
         }
     }
 
@@ -562,6 +640,14 @@ impl CompositionPrerequisiteSet {
     pub fn filesystem_chunk_close(&self) -> Option<&FilesystemChunkClosePrerequisites> {
         match self {
             Self::FilesystemChunkClose(set) => Some(set),
+            _ => None,
+        }
+    }
+
+    #[must_use]
+    pub fn unsupported_close(&self) -> Option<&UnsupportedClosePrerequisites> {
+        match self {
+            Self::UnsupportedClose(set) => Some(set),
             _ => None,
         }
     }
@@ -681,6 +767,23 @@ pub enum CompositionFamilyInput {
         /// from one base text under two different recipes.
         derivation: DerivedUnitRecord,
     },
+    /// `cio_chunk_close`'s **symbolic** other-backend arm: the same wrapper
+    /// replayed with the stream's backend discriminant standing for the class of
+    /// every `int` except the two the two probes return.
+    ///
+    /// This family carries **no body and no derivation of its own at all**. Its
+    /// whole question is the nested filesystem question, verbatim: that question
+    /// already carries the wrapper (through *its* nested memory question), the
+    /// memory probe, the filesystem probe and both derivation records. A
+    /// producer must therefore recompute the whole three-level filesystem
+    /// reading before it can answer this one, and then run a fourth replay over
+    /// a domain no transported value names.
+    UnsupportedClose {
+        /// **The nested filesystem question, verbatim.** The core requires it to
+        /// be exactly the family input its own filesystem composition context
+        /// imported.
+        filesystem: Box<CompositionFamilyInput>,
+    },
 }
 
 impl CompositionFamilyInput {
@@ -699,6 +802,9 @@ impl CompositionFamilyInput {
             // This family has no wrapper of its own: it replays the nested
             // memory-close question's wrapper on the filesystem arm.
             Self::FilesystemChunkClose { memory, .. } => memory.wrapper(),
+            // Nor does this one: it replays the same body a third time, on the
+            // symbolic arm, reached through the nested filesystem question.
+            Self::UnsupportedClose { filesystem } => filesystem.wrapper(),
         }
     }
 
@@ -711,7 +817,12 @@ impl CompositionFamilyInput {
         match self {
             Self::MemoryClose { derivation, .. }
             | Self::FilesystemChunkClose { derivation, .. } => Some(derivation),
-            Self::UnmapWrapper { .. } | Self::FileClose { .. } => None,
+            // The symbolic family derives no text of its own: both derivations
+            // it depends on are inside its nested question, reached through
+            // [`Self::nested`], and it must not appear to own either.
+            Self::UnmapWrapper { .. } | Self::FileClose { .. } | Self::UnsupportedClose { .. } => {
+                None
+            }
         }
     }
 
@@ -723,7 +834,9 @@ impl CompositionFamilyInput {
             Self::MemoryClose { probe, .. } | Self::FilesystemChunkClose { probe, .. } => {
                 Some(probe)
             }
-            Self::UnmapWrapper { .. } | Self::FileClose { .. } => None,
+            Self::UnmapWrapper { .. } | Self::FileClose { .. } | Self::UnsupportedClose { .. } => {
+                None
+            }
         }
     }
 
@@ -735,7 +848,9 @@ impl CompositionFamilyInput {
         match self {
             Self::UnmapWrapper { native, .. } => Some(native),
             Self::FileClose { close, .. } => Some(close),
-            Self::MemoryClose { .. } | Self::FilesystemChunkClose { .. } => None,
+            Self::MemoryClose { .. }
+            | Self::FilesystemChunkClose { .. }
+            | Self::UnsupportedClose { .. } => None,
         }
     }
 
@@ -744,7 +859,9 @@ impl CompositionFamilyInput {
         match self {
             Self::UnmapWrapper { native_profile, .. } => Some(native_profile),
             Self::FileClose { close_profile, .. } => Some(close_profile),
-            Self::MemoryClose { .. } | Self::FilesystemChunkClose { .. } => None,
+            Self::MemoryClose { .. }
+            | Self::FilesystemChunkClose { .. }
+            | Self::UnsupportedClose { .. } => None,
         }
     }
 
@@ -762,6 +879,7 @@ impl CompositionFamilyInput {
             Self::FilesystemChunkClose {
                 memory, backend, ..
             } => vec![memory, backend],
+            Self::UnsupportedClose { filesystem } => vec![filesystem],
         }
     }
 
@@ -789,6 +907,7 @@ impl CompositionFamilyInput {
             } => FILE_CLOSE_DELETE_SEMANTIC_PROFILE,
             Self::MemoryClose { .. } => MEMORY_CLOSE_SEMANTIC_PROFILE,
             Self::FilesystemChunkClose { .. } => FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE,
+            Self::UnsupportedClose { .. } => UNSUPPORTED_CLOSE_SEMANTIC_PROFILE,
         }
     }
 
@@ -826,6 +945,25 @@ impl CompositionFamilyInput {
                         } if matches!(**unmap, Self::UnmapWrapper { .. })
                     )
             }
+            // The one nested question must be the family this route's single
+            // prerequisite answers — the filesystem composition — and not the
+            // memory or file_close question one level below it. Its own two
+            // nested halves are checked here too, so a filesystem question with
+            // a non-deleting backend arm cannot reach this route's importer by
+            // hiding one level down.
+            (
+                Self::UnsupportedClose { filesystem },
+                CompositionPrerequisiteSet::UnsupportedClose(_),
+            ) => matches!(
+                &**filesystem,
+                Self::FilesystemChunkClose { memory, backend, .. }
+                    if matches!(**memory, Self::MemoryClose { .. })
+                        && matches!(
+                            &**backend,
+                            Self::FileClose { delete: Some(_), unmap, .. }
+                                if matches!(**unmap, Self::UnmapWrapper { .. })
+                        )
+            ),
             _ => false,
         }
     }
@@ -996,6 +1134,40 @@ pub enum CompositionProposalRecord {
     FileClose(FileCloseCompositionRecord),
     MemoryClose(MemoryCloseCompositionRecord),
     FilesystemChunkClose(FilesystemChunkCloseCompositionRecord),
+    UnsupportedClose(UnsupportedCloseCompositionRecord),
+}
+
+/// One composed **symbolic** other-backend reading.
+///
+/// This is the thinnest of the five proposal records, deliberately. The trusted
+/// composition publishes exactly two figures on this arm — the two excluded
+/// constants and the one wrapper path the symbolic class selects — and the
+/// discipline every record in this module follows is that a figure the checker
+/// does not decide has no place in it. The six release facts this arm asserts
+/// are *constants of the admission* (the replay refuses unless all six hold and
+/// exactly six calls resolve), not decided figures, so publishing them would
+/// have invented agreement rather than measured it.
+///
+/// The two `kind` fields together **are** the excluded class: the symbolic
+/// domain is every `int` other than these two. They travel in the proposal
+/// because a producer that did not read both probes cannot name them, and the
+/// core requires them to differ.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct UnsupportedCloseCompositionRecord {
+    pub function: String,
+    pub source_revision: String,
+    pub signature: String,
+    /// The discriminant the nested memory question's probe returns.
+    pub memory_kind: i32,
+    /// The discriminant the nested filesystem question's probe returns.
+    pub filesystem_kind: i32,
+    /// The single wrapper path the symbolic class selects. It is the same under
+    /// either delete flag — the trusted composition refuses the reading outright
+    /// when it is not — so one field, not two, and the independence is a
+    /// refusal rather than a published figure.
+    pub source_path: u32,
+    pub profile_assumptions: BTreeMap<String, String>,
 }
 
 /// One filesystem-backed `cio_chunk_close` entry state's composed reading.

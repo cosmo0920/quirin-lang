@@ -8,7 +8,7 @@ description = "Configured existing-C resource projection and reproducible audit 
 [dependencies]
 qcore-c-gateway = { path = "../qcore-c-gateway", version = "0.1.0" }
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
-qcore-schemas = { path = "../qcore-schemas", version = "13.0.0" }
+qcore-schemas = { path = "../qcore-schemas", version = "14.0.0" }
 qcore-verification = { path = "../qcore-verification", version = "0.4.0" }
 qcore-verifier-host = { path = "../qcore-verifier-host", version = "0.4.0" }
 serde = { version = "1.0.229", features = ["derive"] }

@@ -97,6 +97,10 @@ pub enum CompositionFamily {
     /// derived text under a second recipe. See
     /// [`FilesystemChunkCloseSelection`].
     FilesystemChunkClose,
+    /// The symbolic other-backend arm of the same wrapper. It imports **no body
+    /// at all**: its whole question is the filesystem question, verbatim. See
+    /// [`UnsupportedCloseSelection`].
+    UnsupportedClose,
 }
 
 impl CompositionFamily {
@@ -110,6 +114,15 @@ impl CompositionFamily {
     #[must_use]
     pub const fn is_derived(&self) -> bool {
         matches!(self, Self::MemoryClose | Self::FilesystemChunkClose)
+    }
+
+    /// Whether this family imports no body of its own. Exactly one family does:
+    /// the symbolic arm reads the wrapper and the probe out of its nested
+    /// question rather than importing either, so restating one here could name a
+    /// different body than the nested question does.
+    #[must_use]
+    pub const fn is_body_less(&self) -> bool {
+        matches!(self, Self::UnsupportedClose)
     }
 }
 
@@ -527,6 +540,15 @@ pub fn import_composition_source(
                     .into(),
             );
         }
+        // The body-less family has its own importer too, for the opposite
+        // reason: it has no body to import, and a wrapper selected here would be
+        // a *second* naming of the body its nested question already carries.
+        (CompositionFamily::UnsupportedClose, _) => {
+            return Err(
+                "the composed-only family imports no body of its own and has its own importer"
+                    .into(),
+            );
+        }
         _ => return Err("composition family does not match its prerequisite set".into()),
     }
     let deleting = matches!(family, CompositionFamily::FileCloseDeleting);
@@ -635,7 +657,9 @@ pub fn import_composition_source(
                 FILE_CLOSE_CALLEES.to_vec()
             }
             // Refused above, before any import.
-            CompositionFamily::MemoryClose | CompositionFamily::FilesystemChunkClose => Vec::new(),
+            CompositionFamily::MemoryClose
+            | CompositionFamily::FilesystemChunkClose
+            | CompositionFamily::UnsupportedClose => Vec::new(),
         };
         // Only the `void` file_close wrapper may end a path without a value.
         let void_wrapper = family.is_file_close();
@@ -706,9 +730,11 @@ fn project_family(
             native: native_body,
             native_profile: native_profile.clone(),
         }),
-        CompositionFamily::MemoryClose | CompositionFamily::FilesystemChunkClose => {
-            Err("the derived-text families are not projected by this importer".into())
-        }
+        CompositionFamily::MemoryClose
+        | CompositionFamily::FilesystemChunkClose
+        | CompositionFamily::UnsupportedClose => Err(
+            "the derived-text and composed-only families are not projected by this importer".into(),
+        ),
         CompositionFamily::FileClose | CompositionFamily::FileCloseDeleting => {
             let nested = nested.ok_or("missing nested composition selection")?;
             let nested_wrapper = project(&summaries[2], &UNMAP_WRAPPER_CALLEES, false)?;
@@ -758,6 +784,9 @@ const fn expected_profile(family: &CompositionFamily) -> &'static str {
         }
         CompositionFamily::FilesystemChunkClose => {
             qcore_schemas::composition_summary::FILESYSTEM_CHUNK_CLOSE_SEMANTIC_PROFILE
+        }
+        CompositionFamily::UnsupportedClose => {
+            qcore_schemas::composition_summary::UNSUPPORTED_CLOSE_SEMANTIC_PROFILE
         }
     }
 }
@@ -1365,6 +1394,175 @@ pub fn import_filesystem_chunk_close_source(
     };
     if ClangIdentity::capture()? != compiler {
         return Err("Clang identity changed during filesystem chunk close source import".into());
+    }
+    Ok(result)
+}
+
+// ---------------------------------------------------------------------------
+// The symbolic other-backend family: a question with no body of its own.
+// ---------------------------------------------------------------------------
+
+/// Constructed only by [`import_unsupported_close_source`], so a wire record can
+/// never be promoted into a source-checked import.
+///
+/// This family imports **no body at all**. Both bodies its reading needs — the
+/// `cio_chunk_close` wrapper and the filesystem discriminant probe — are already
+/// inside the nested filesystem question, which this import carries verbatim.
+/// Importing either again here would let one question name two bodies, exactly
+/// the failure the filesystem family avoided by delegating its wrapper.
+///
+/// What the import does capture is the **base unit's own identity**, because the
+/// route still has to tie its task to a translation unit and its dependent core
+/// still has to check that the nested question was checked over that same text.
+///
+/// ```compile_fail
+/// use qcore_c_gateway::composition_source::UnsupportedCloseSourceImport;
+/// let _: UnsupportedCloseSourceImport = serde_json::from_str("{}").unwrap();
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UnsupportedCloseSourceImport {
+    #[serde(skip)]
+    base_identity: SourceInputIdentity,
+    #[serde(skip)]
+    input: CompositionSourceInput,
+}
+
+impl UnsupportedCloseSourceImport {
+    /// The identity of the **base** unit the audit selected — the unit the
+    /// nested filesystem question's two derivations both derive from.
+    pub fn base_identity(&self) -> &SourceInputIdentity {
+        &self.base_identity
+    }
+
+    /// The portable projection, without any derived reading at any level.
+    pub fn source_input(&self) -> CompositionSourceInput {
+        self.input.clone()
+    }
+
+    /// The wrapper this family composes over: the nested memory-close question's
+    /// own body record, reached two levels down.
+    pub fn wrapper_record(&self) -> &CleanupReplayFunctionRecord {
+        self.input.family.wrapper()
+    }
+
+    /// The nested filesystem question, verbatim.
+    pub fn nested_question(&self) -> &CompositionFamilyInput {
+        let [nested] = self.input.family.nested()[..] else {
+            unreachable!("the symbolic family nests exactly one question");
+        };
+        nested
+    }
+
+    pub fn function(&self) -> &str {
+        &self.wrapper_record().function
+    }
+
+    pub fn source_revision(&self) -> &str {
+        &self.wrapper_record().source_revision
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(tag = "result", rename_all = "snake_case")]
+pub enum UnsupportedCloseSourceResult {
+    Import(Box<UnsupportedCloseSourceImport>),
+    Unknown { function: String, reason: String },
+}
+
+/// The symbolic family's own selection: the one nested question its single
+/// composition prerequisite imported, and that prerequisite's lookup key.
+///
+/// The nested question is **not** re-derived here. It is the value the core's
+/// own filesystem import produced, and the trusted task requires it to be
+/// exactly the family input that context imported.
+pub struct UnsupportedCloseSelection<'a> {
+    /// The nested filesystem question, verbatim.
+    pub filesystem: CompositionFamilyInput,
+    /// A lookup key, never a conclusion.
+    pub prerequisites: &'a CompositionPrerequisiteSet,
+}
+
+/// Project the symbolic family's question. Nothing is imported: the base unit is
+/// preprocessed only so its identity can be captured and tied to the nested
+/// question's own derivations.
+pub fn import_unsupported_close_source(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    selection: &UnsupportedCloseSelection<'_>,
+) -> Result<UnsupportedCloseSourceResult, String> {
+    let UnsupportedCloseSelection {
+        filesystem,
+        prerequisites,
+    } = selection;
+    if source_revision.is_empty() {
+        return Err("unsupported close import needs a declared source revision".into());
+    }
+    if !prerequisites.is_complete() {
+        return Err("unsupported close import needs a complete prerequisite identity".into());
+    }
+    if prerequisites.unsupported_close().is_none() {
+        return Err("unsupported close family does not match its prerequisite set".into());
+    }
+    let CompositionFamilyInput::FilesystemChunkClose {
+        memory,
+        derivation: filesystem_derivation,
+        ..
+    } = filesystem
+    else {
+        return Err(
+            "the symbolic question's nested half is not a filesystem chunk close question".into(),
+        );
+    };
+    let memory_derivation = memory
+        .derivation()
+        .ok_or("the nested memory-close question carries no derivation")?;
+    // The nested question was derived under two recipes over one base text. This
+    // route imports neither text, so what it can check is that the base text is
+    // the unit it was handed — and it checks it against **both** derivations,
+    // not one, so a nested question assembled from two different units cannot
+    // pass by matching on its filesystem half alone.
+    let compiler = ClangIdentity::capture()?;
+    let base_preprocessed = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
+    let base_identity = input_identity(
+        unit,
+        &base_preprocessed,
+        source_revision,
+        DEFAULT_SOURCE_RULES,
+        None,
+        &[],
+        compiler.clone(),
+    )?;
+    if filesystem_derivation.base_source_digest != base_identity.raw_source_digest()
+        || memory_derivation.base_source_digest != base_identity.raw_source_digest()
+    {
+        return Err(
+            "the nested filesystem question derives from another base text than this one".into(),
+        );
+    }
+    let family = CompositionFamilyInput::UnsupportedClose {
+        filesystem: Box::new((*filesystem).clone()),
+    };
+    if family.semantic_profile()
+        != qcore_schemas::composition_summary::UNSUPPORTED_CLOSE_SEMANTIC_PROFILE
+    {
+        return Err("unsupported close family input answers another semantic profile".into());
+    }
+    if !family.matches(prerequisites) {
+        return Err("unsupported close family and prerequisite set disagree".into());
+    }
+    if family.wrapper().paths.is_empty() {
+        return Err("unsupported close question carries no complete wrapper path".into());
+    }
+    let result = UnsupportedCloseSourceResult::Import(Box::new(UnsupportedCloseSourceImport {
+        base_identity,
+        input: CompositionSourceInput {
+            schema_version: COMPOSITION_SOURCE_INPUT_VERSION,
+            prerequisites: (*prerequisites).clone(),
+            family,
+        },
+    }));
+    if ClangIdentity::capture()? != compiler {
+        return Err("Clang identity changed during unsupported close source import".into());
     }
     Ok(result)
 }

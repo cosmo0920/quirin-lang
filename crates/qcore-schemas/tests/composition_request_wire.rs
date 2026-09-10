@@ -704,19 +704,26 @@ fn composition_vocabulary_is_pinned() {
     .iter()
     .map(|value| value["family"]["family"].as_str().unwrap().to_owned())
     .collect();
+    families.push(
+        unsupported_close_projection()["family"]["family"]
+            .as_str()
+            .unwrap()
+            .to_owned(),
+    );
     families.sort();
     families.dedup();
-    // Deliberate pin update (card `P04-COMPOSE-FS`): a fourth family tag, after
-    // `P04-COMPOSE-MEMCLOSE`'s third. The **load-bearing negative halves above
-    // are untouched** — the operation and expression inventories did not move,
-    // so this card widened no shared enum either.
+    // Deliberate pin update (card `P04-COMPOSE-UNSUPPORTED`): a fifth family
+    // tag, after `P04-COMPOSE-FS`'s fourth. The **load-bearing negative halves
+    // above are untouched** — the operation and expression inventories did not
+    // move, so this card widened no shared enum either.
     assert_eq!(
         families,
         vec![
             "file_close".to_string(),
             "filesystem_chunk_close".into(),
             "memory_close".into(),
-            "unmap_wrapper".into()
+            "unmap_wrapper".into(),
+            "unsupported_close".into()
         ]
     );
 }
@@ -1193,4 +1200,242 @@ fn unknown_fields_are_refused_in_the_filesystem_records() {
     let mut value = filesystem_close_projection();
     value["prerequisites"]["filesystem_chunk_close"]["extra"] = json!(true);
     assert!(serde_json::from_value::<CompositionSourceInput>(value).is_err());
+}
+
+// ---------------------------------------------------------------------------
+// The symbolic other-backend family (card `P04-COMPOSE-UNSUPPORTED`).
+// ---------------------------------------------------------------------------
+
+fn unsupported_close_projection() -> serde_json::Value {
+    json!({
+        "schema_version": 2,
+        "prerequisites": {
+            "unsupported_close": {
+                "filesystem_chunk_close": identity(
+                    "qcore.c_filesystem_chunk_close_composition.v1", '8', "rc:1008")
+            }
+        },
+        "family": {
+            "family": "unsupported_close",
+            "filesystem": filesystem_close_projection()["family"].clone()
+        }
+    })
+}
+
+fn unsupported_close_input() -> CompositionSourceInput {
+    serde_json::from_value(unsupported_close_projection()).unwrap()
+}
+
+/// The symbolic question round-trips and carries **no** derived reading, at any
+/// of its four levels — and no classification word either.
+#[test]
+fn the_symbolic_question_round_trips_and_carries_no_derived_reading() {
+    let input = unsupported_close_input();
+    assert!(input.version_matches());
+    // Its subject is the nested memory question's wrapper, two levels down: this
+    // family carries no body of its own at all.
+    assert_eq!(input.subject_function(), "cio_chunk_close");
+    assert_eq!(
+        input.family.semantic_profile(),
+        qcore_schemas::composition_summary::UNSUPPORTED_CLOSE_SEMANTIC_PROFILE
+    );
+    assert!(input.family.derivation().is_none(), "it derives no text");
+    assert!(input.family.probe().is_none(), "it imports no probe");
+    assert!(input.family.native().is_none());
+    assert!(input.family.native_profile().is_none());
+    // Four levels, one nested question.
+    assert_eq!(input.family.nesting_depth(), 4);
+    let nested = input.family.nested();
+    assert_eq!(nested.len(), 1);
+    assert_eq!(nested[0].nesting_depth(), 3);
+    // Its wrapper *is* the nested question's, which is the memory question's.
+    assert_eq!(input.family.wrapper(), nested[0].wrapper());
+    // Both derivations it depends on are inside the one nested question.
+    assert!(nested[0].derivation().is_some());
+    assert!(nested[0].nested()[0].derivation().is_some());
+
+    let bytes = serde_json::to_string(&input).unwrap();
+    for absent in [
+        "excluded_kinds",
+        "source_path",
+        "cases",
+        "memory_kind",
+        "filesystem_kind",
+        "checked_paths",
+        "uncovered_paths",
+        "combined_uncovered_paths",
+        "verdict",
+        "certificate",
+        "Unknown",
+        "backend_custody_unresolved",
+        "nested_discharge_permitted",
+    ] {
+        assert!(!bytes.contains(absent), "`{absent}` travelled");
+    }
+    let round_tripped: CompositionSourceInput = serde_json::from_str(&bytes).unwrap();
+    assert_eq!(round_tripped, input);
+}
+
+/// The family and its prerequisite set are bound together, in both directions,
+/// and the nested question's own shape rule is enforced at this level too.
+#[test]
+fn the_symbolic_family_and_its_prerequisite_set_are_bound_together() {
+    let input = unsupported_close_input();
+    assert!(input.family.matches(&input.prerequisites));
+    // Every other family's set is refused under this family.
+    for other in [
+        projection(),
+        file_close_projection(),
+        file_close_delete_projection(),
+        memory_close_projection(),
+        filesystem_close_projection(),
+    ] {
+        let borrowed: CompositionSourceInput = serde_json::from_value(other).unwrap();
+        assert!(
+            !input.family.matches(&borrowed.prerequisites),
+            "the symbolic family borrowed another family's set"
+        );
+        assert!(
+            !borrowed.family.matches(&input.prerequisites),
+            "another family borrowed the symbolic family's set"
+        );
+    }
+    // A nested question of the wrong family is refused here.
+    for wrong in ["memory_close", "file_close", "unmap_wrapper"] {
+        let mut value = unsupported_close_projection();
+        value["family"]["filesystem"] = match wrong {
+            "memory_close" => memory_close_projection()["family"].clone(),
+            "file_close" => file_close_projection()["family"].clone(),
+            _ => projection()["family"].clone(),
+        };
+        let borrowed: CompositionSourceInput = serde_json::from_value(value).unwrap();
+        assert!(
+            !borrowed.family.matches(&borrowed.prerequisites),
+            "a `{wrong}` question was accepted as the symbolic family's nested half"
+        );
+    }
+    // And a nested filesystem question whose backend arm is the *non-deleting*
+    // one is refused here as well, one level down.
+    let mut value = unsupported_close_projection();
+    value["family"]["filesystem"]["backend"] = file_close_projection()["family"].clone();
+    let borrowed: CompositionSourceInput = serde_json::from_value(value).unwrap();
+    assert!(
+        !borrowed.family.matches(&borrowed.prerequisites),
+        "a non-deleting backend arm reached the symbolic family"
+    );
+}
+
+/// The one-member prerequisite set's rules, and the fourteen distinct digest
+/// keys across all five families.
+#[test]
+fn the_symbolic_prerequisite_rules_are_decidable_and_its_key_is_distinct() {
+    use qcore_schemas::composition_summary::UnsupportedClosePrerequisites;
+    let complete = unsupported_close_input().prerequisites;
+    assert!(complete.is_complete() && complete.are_distinct());
+    let CompositionPrerequisiteSet::UnsupportedClose(set) = complete else {
+        panic!("the symbolic projection must carry the symbolic set");
+    };
+    let blank = UnsupportedClosePrerequisites {
+        filesystem_chunk_close: qcore_schemas::call_use_summary::PrerequisiteIdentity {
+            semantic_profile: String::new(),
+            task_digest: String::new(),
+            obligation_id: String::new(),
+        },
+    };
+    assert!(!blank.is_complete());
+    // Recorded rather than dressed up: distinctness is *vacuous* on a one-member
+    // set, so completeness is the rule that carries the weight here.
+    assert!(
+        blank.are_distinct(),
+        "distinctness is vacuous on a singleton, and is pinned as such"
+    );
+    let _ = set;
+
+    let mut keys = vec![
+        UnmapWrapperPrerequisites::WRAPPER_CALL_USE_KEY,
+        UnmapWrapperPrerequisites::NATIVE_CLEANUP_KEY,
+        UnmapWrapperPrerequisites::COUNTER_KEY,
+        FileClosePrerequisites::WRAPPER_CALL_USE_KEY,
+        FileClosePrerequisites::UNMAP_COMPOSITION_KEY,
+        FileClosePrerequisites::NATIVE_CLEANUP_KEY,
+        FileClosePrerequisites::NATIVE_DELETE_KEY,
+        MemoryClosePrerequisites::RESET_KEY,
+        MemoryClosePrerequisites::BACKEND_KEY,
+        MemoryClosePrerequisites::UNLINK_KEY,
+        MemoryClosePrerequisites::COUNTER_KEY,
+        qcore_schemas::composition_summary::FilesystemChunkClosePrerequisites::MEMORY_CLOSE_KEY,
+        qcore_schemas::composition_summary::FilesystemChunkClosePrerequisites::FILE_CLOSE_DELETE_KEY,
+        UnsupportedClosePrerequisites::FILESYSTEM_CHUNK_CLOSE_KEY,
+    ];
+    let count = keys.len();
+    keys.sort_unstable();
+    keys.dedup();
+    assert_eq!(
+        keys.len(),
+        count,
+        "all fourteen prerequisite digest keys across the five families are distinct"
+    );
+}
+
+/// Unknown fields are refused in this family's own records, and the proposal
+/// record has no field a conclusion could hide in.
+///
+/// **A measured boundary, recorded rather than asserted away.** The family enum
+/// is internally tagged, and serde does not apply `deny_unknown_fields` to an
+/// internally-tagged variant's own object, so an unrecognised key *beside* the
+/// `family` tag is silently dropped. That is true of all five families, not just
+/// this one, and the test below pins it in both places so the limitation is
+/// visible and cannot be mistaken for this card's doing. It buys a producer
+/// nothing — a dropped key is not in the projection the core digests, so the
+/// digest, the task and the comparison are all unaffected — but it is a real
+/// difference from every `deny_unknown_fields` record here, and it is named:
+/// `P04-COMPOSE-TAGGED-UNKNOWN`.
+#[test]
+fn unknown_fields_are_refused_in_the_symbolic_records() {
+    use qcore_schemas::composition_summary::UnsupportedCloseCompositionRecord;
+    let mut value = unsupported_close_projection();
+    value["extra"] = json!(true);
+    assert!(
+        serde_json::from_value::<CompositionSourceInput>(value).is_err(),
+        "the projection envelope denies unknown fields"
+    );
+
+    let mut value = unsupported_close_projection();
+    value["prerequisites"]["unsupported_close"]["extra"] = json!(true);
+    assert!(serde_json::from_value::<CompositionSourceInput>(value).is_err());
+
+    // The nested question's own `deny_unknown_fields` records still refuse,
+    // through this family's box.
+    let mut value = unsupported_close_projection();
+    value["family"]["filesystem"]["derivation"]["extra"] = json!(true);
+    assert!(serde_json::from_value::<CompositionSourceInput>(value).is_err());
+
+    // `P04-COMPOSE-TAGGED-UNKNOWN`, pinned in both places: the key beside the
+    // tag is dropped, and the parsed value is exactly the honest one, so nothing
+    // it carried survives into anything the core digests.
+    let mut value = unsupported_close_projection();
+    value["family"]["extra"] = json!(true);
+    let parsed: CompositionSourceInput = serde_json::from_value(value)
+        .expect("an internally-tagged variant drops a key beside its tag");
+    assert_eq!(parsed, unsupported_close_input(), "the key was dropped");
+    let mut value = filesystem_close_projection();
+    value["family"]["extra"] = json!(true);
+    let parsed: CompositionSourceInput = serde_json::from_value(value)
+        .expect("the same is true of the filesystem family, and every other");
+    assert_eq!(parsed, filesystem_close_input());
+
+    let record = json!({
+        "function": "cio_chunk_close",
+        "source_revision": "0".repeat(40),
+        "signature": "void (struct cio_chunk *, int)",
+        "memory_kind": 1,
+        "filesystem_kind": 0,
+        "source_path": 3,
+        "profile_assumptions": {},
+        "status": "Safe"
+    });
+    assert!(
+        serde_json::from_value::<UnsupportedCloseCompositionRecord>(record).is_err(),
+        "a conclusion smuggled into the proposal record was accepted"
+    );
 }
