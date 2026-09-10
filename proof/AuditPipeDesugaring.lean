@@ -50,12 +50,22 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.a_later_stage_receives_the_previous_temporary
 #print axioms QCore.PipeDesugaring.a_consuming_stage_moves_the_previous_temporary
 
--- 5.2 Fail-closed: only an acquisition adapter may feed a later stage.
+-- 5.2 Fail-closed: only a call stage may feed a later stage, and every sink is
+-- last-stage-only. Card `PIPE-SCALAR-RESULT` widened `producesResult` from the
+-- acquisition keyword to the stage kind; the refusal theorems below are
+-- unchanged in statement, and `refused_chains_rewrite_to_nothing` changed one
+-- conjunct on purpose rather than being slipped past.
 #print axioms QCore.PipeDesugaring.a_non_final_stage_that_produces_nothing_refuses
 #print axioms QCore.PipeDesugaring.a_sink_is_last_stage_only
 #print axioms QCore.PipeDesugaring.move_on_the_first_stage_refuses
 #print axioms QCore.PipeDesugaring.an_empty_chain_refuses
 #print axioms QCore.PipeDesugaring.refused_chains_rewrite_to_nothing
+
+-- 5.2.1 Card `PIPE-SCALAR-RESULT`: the widening, in both directions.
+#print axioms QCore.PipeDesugaring.a_call_stage_may_feed_a_later_stage
+#print axioms QCore.PipeDesugaring.a_two_argument_scalar_composition_is_its_hand_written_sequence
+#print axioms QCore.PipeDesugaring.an_adapter_stage_still_produces_a_result
+#print axioms QCore.PipeDesugaring.a_sink_still_produces_nothing
 
 -- 5.3 Why the sequence is admissible at all: consecutive statements' byte
 -- extents are disjoint by construction, and the naive anchoring's are not.

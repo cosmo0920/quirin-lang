@@ -1,0 +1,12 @@
+error Failure { Failed; }
+
+// The hand-written twin of `conditional_release.qcore`: the statement sequence
+// a reader would have written having decided the condition themselves. It is
+// *not* expected to emit identical C — a branch is a real branch, with both
+// arms present — but its reference observation is identical, which is what the
+// decided condition buys.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    drop a;
+    return 0;
+}

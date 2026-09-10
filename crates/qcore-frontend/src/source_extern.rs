@@ -15,13 +15,17 @@
 //! stmt      ::= "let" NAME "=" CALLEE "(" [arg {"," arg}] ")"
 //!                   "succeeds" ("true"|"false") "else" {disposition}
 //!                   "raise" ERROR ";"
+//!             | "let" NAME "=" CALLEE "(" [arg {"," arg}] ")" ";"
 //!             | CALLEE "(" [arg {"," arg}] ")" ";"
 //!             | "return" ";"
 //! disposition ::= CALLEE "(" [arg {"," arg}] ")"   -- one release, error arm
 //! arg       ::= ["-"] INTEGER            -- scalar data
-//!             | NAME                     -- a lent model Buffer, or a live
+//!             | NAME                     -- a lent model Buffer, a live
 //!                                        --   identity in declared owner
-//!                                        --   position
+//!                                        --   position, or a bound scalar in
+//!                                        --   declared data position: which
+//!                                        --   one comes from the declared
+//!                                        --   mode, never from the call site
 //!             | "move" NAME              -- a consumed `own<Buffer>`, or a
 //!                                        --   stored one: which it is comes
 //!                                        --   from the declared mode, never
@@ -29,6 +33,16 @@
 //!             | "out"                    -- the declared out slot
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
+//!
+//! Card `PIPE-SCALAR-RESULT` adds the second `let` form and the second meaning
+//! of a bare `NAME`. The two are one widening: a call whose declared result is a
+//! custody-free scalar may bind that result to a local, and a bound scalar may
+//! be passed where the declaration writes a scalar parameter. Neither touches
+//! custody. Scalar bindings live in their own map, never in the resource
+//! bindings; a name may be in one or the other and never in both, which is
+//! refused rather than resolved by lookup order; and the two forms are decided
+//! by [`qcore_core::extern_call::binds_scalar`], so `unit`, every pointer and
+//! every acquisition keep the refusals they already had.
 //!
 //! Card `EXTERN-F1` adds the last of those argument forms and one meaning to
 //! each of the two before it. `out` marks the position of a declared
@@ -68,7 +82,7 @@ use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, Paramet
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
     CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
-    ExternEvent, ExternProgram, derived_custody, derived_effects,
+    ExternEvent, ExternProgram, ValueId, binds_scalar, derived_custody, derived_effects,
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
@@ -412,11 +426,47 @@ struct Lowering<'a> {
     globals: &'a BTreeMap<String, SymbolId>,
     errors: &'a BTreeSet<String>,
     bindings: BTreeMap<String, ResourceId>,
+    /// Card `PIPE-SCALAR-RESULT`: the scalar locals this body has bound. A
+    /// second map rather than a second kind in `bindings`, so no lookup that
+    /// wants an identity can ever return a value or the reverse.
+    values: BTreeMap<String, ValueId>,
     next_resource: ResourceId,
+    next_value: ValueId,
     diagnostics: Vec<SourceDiagnostic>,
 }
 
 impl Lowering<'_> {
+    /// Refuse a `let` whose name is already bound in the *other* namespace
+    /// (card `PIPE-SCALAR-RESULT`).
+    ///
+    /// A scalar binding that shadows a live resource, or an acquisition that
+    /// shadows a bound scalar, is unambiguous to this lowering — the two maps
+    /// are consulted by declared mode — and ambiguous to a reader, who cannot
+    /// tell which `n` a later `move n` or `f(n)` means. Fail-closed: refused.
+    /// Rebinding a name inside one namespace is deliberately untouched, so
+    /// nothing this card did not add changes behaviour.
+    fn refuse_cross_namespace_shadow(&mut self, name: &str, span: Span, scalar: bool) -> bool {
+        let clash = if scalar {
+            self.bindings.contains_key(name)
+        } else {
+            self.values.contains_key(name)
+        };
+        if clash {
+            let (kind, other) = if scalar {
+                ("a scalar", "a live resource binding")
+            } else {
+                ("an extern acquisition", "a bound scalar")
+            };
+            self.diagnostics.push(refused_context(
+                span,
+                format!(
+                    "`{name}` already names {other} in this body, so binding {kind} to it would make a later use of `{name}` ambiguous; rename one of them"
+                ),
+            ));
+        }
+        clash
+    }
+
     /// Resolve one call's arguments against the live bindings.
     ///
     /// `consume` is false on an adapter's error arm: that arm is a *path*, so
@@ -505,6 +555,26 @@ impl Lowering<'_> {
                             return None;
                         }
                     }
+                }
+                // Card `PIPE-SCALAR-RESULT`: a bare `NAME` at a declared scalar
+                // parameter is a bound scalar local. It is resolved against the
+                // *value* map only, so a resource binding of the same name can
+                // never reach a data position — and, being refused as a
+                // cross-namespace shadow at the `let`, cannot exist anyway.
+                ([token], CallParameter::Data(_)) if word(Some(token)).is_some() => {
+                    let name = word(Some(token)).expect("matched above");
+                    let Some(value) = self.values.get(name).copied() else {
+                        let detail = if self.bindings.contains_key(name) {
+                            format!(
+                                "`{name}` is a live resource binding; a declared scalar parameter carries data, never custody"
+                            )
+                        } else {
+                            format!("`{name}` is not a bound scalar in this body")
+                        };
+                        self.diagnostics.push(bridging(span, detail));
+                        return None;
+                    };
+                    ExternArgument::Value(value)
                 }
                 ([token], CallParameter::Borrowed(_) | CallParameter::Owner) => {
                     let Some(name) = word(Some(token)) else {
@@ -652,7 +722,9 @@ pub fn lower_source_extern(
         globals: &typed.globals,
         errors: &errors,
         bindings: BTreeMap::new(),
+        values: BTreeMap::new(),
         next_resource: 1,
+        next_value: 1,
         diagnostics: Vec::new(),
     };
     let mut events = Vec::new();
@@ -699,12 +771,43 @@ pub fn lower_source_extern(
                 binding: Some(name),
             } => {
                 let Some(parsed_call) = parse_adapter_statement(&tokens) else {
+                    // Card `PIPE-SCALAR-RESULT`: the same statement shape
+                    // without the adapter binds a non-acquiring call's scalar
+                    // result. It is tried second, so an adapter statement is
+                    // never reinterpreted as one, and it refuses for its own
+                    // reasons rather than falling back to the acquisition's.
+                    if let Some(plain) = parse_bound_call(&tokens) {
+                        let moved = lower_scalar_binding(
+                            &mut lowering,
+                            &plain,
+                            name,
+                            span,
+                            &declared_effects,
+                            &mut extern_summaries,
+                            &mut calls,
+                            &mut events,
+                            &mut event_spans,
+                        );
+                        // Exactly the discarding-call arm's departure delta;
+                        // see its comment for why a consumption, a store and a
+                        // release share it.
+                        for (moved_name, resource, _) in &moved {
+                            ownership.push(OwnershipOp::TransferOut(moved_name.clone()));
+                            error_operations.push(ErrorOp::Drop(*resource));
+                            source_operations.push(SourceOp::Drop(*resource));
+                            live = live.saturating_sub(1);
+                        }
+                        continue;
+                    }
                     lowering.diagnostics.push(adapter(
                         span,
-                        "an extern acquisition must read `let NAME = CALLEE(ARGS) succeeds BOOL else raise ERROR;`",
+                        "an extern `let` must read either an acquisition, `let NAME = CALLEE(ARGS) succeeds BOOL else raise ERROR;`, or a scalar-result binding, `let NAME = CALLEE(ARGS);`",
                     ));
                     continue;
                 };
+                if lowering.refuse_cross_namespace_shadow(name, span, false) {
+                    continue;
+                }
                 let Some(callee) = lowering.callees.get(&parsed_call.callee).cloned() else {
                     lowering.diagnostics.push(diagnostic(
                         "Q023",
@@ -721,8 +824,8 @@ pub fn lower_source_extern(
                     lowering.diagnostics.push(adapter(
                         span,
                         format!(
-                            "`{}` establishes no fresh custody, so it takes no adapter and binds no resource",
-                            callee.name
+                            "`{name}` establishes no fresh custody, so it takes no adapter and binds no resource; write `let NAME = {name}(ARGS);` to bind a scalar result, or `{name}(ARGS);` to discard it",
+                            name = callee.name
                         ),
                     ));
                     continue;
@@ -875,6 +978,7 @@ pub fn lower_source_extern(
                         releases,
                         error: parsed_call.error,
                     }),
+                    binding: None,
                 }));
                 event_spans.push(span);
             }
@@ -943,6 +1047,7 @@ pub fn lower_source_extern(
                     callee: callee.name.clone(),
                     arguments,
                     adapter: None,
+                    binding: None,
                 }));
                 event_spans.push(span);
             }
@@ -1032,6 +1137,110 @@ pub fn lower_source_extern(
         extern_summaries,
         declared_effects,
     })
+}
+
+/// Lower one `let NAME = CALLEE(ARGS);` scalar-result binding (card
+/// `PIPE-SCALAR-RESULT`).
+///
+/// Every refusal here is named, and the order is the fail-closed one: the callee
+/// must have an admitted contract, must not acquire, must declare a
+/// custody-free scalar result, and must not shadow a live resource binding.
+/// Nothing about the ledger, the cleanup lowering or the error accounting is
+/// touched — a scalar binding emits no [`SourceOp`], no [`OwnershipOp`] and no
+/// [`ErrorOp`], because it opens no obligation. Its call site is recorded like
+/// any other non-acquiring call, with no result identity.
+///
+/// Returns the `move NAME` arguments the call carried, so the caller applies
+/// exactly the departure bookkeeping the discarding-call arm applies: a
+/// scalar-result callee may still consume, store or release, because nothing in
+/// the bridging table couples the result mode to the parameter modes. The
+/// converse is what this card forbids — a *binding* that takes part in custody —
+/// and [`binds_scalar`] is where it is forbidden.
+#[allow(clippy::too_many_arguments)]
+fn lower_scalar_binding(
+    lowering: &mut Lowering<'_>,
+    parsed_call: &ParsedCall,
+    name: &str,
+    span: Span,
+    declared_effects: &EffectRow,
+    extern_summaries: &mut BTreeMap<SymbolId, FunctionSummary>,
+    calls: &mut Vec<CallSite>,
+    events: &mut Vec<ExternEvent>,
+    event_spans: &mut Vec<Span>,
+) -> Vec<(String, ResourceId, CallParameter)> {
+    let Some(callee) = lowering.callees.get(&parsed_call.callee).cloned() else {
+        lowering.diagnostics.push(diagnostic(
+            "Q023",
+            SemanticPass::ExternCall,
+            span,
+            format!(
+                "`{}` has no admitted declared contract in the selected extern contract environment",
+                parsed_call.callee
+            ),
+        ));
+        return Vec::new();
+    };
+    if callee.acquires() {
+        lowering.diagnostics.push(adapter(
+            span,
+            format!(
+                "`{}` establishes fresh custody; its failure arm must be branched with `let NAME = … succeeds BOOL else raise ERROR;`",
+                callee.name
+            ),
+        ));
+        return Vec::new();
+    }
+    if !binds_scalar(&callee) {
+        lowering.diagnostics.push(bridging(
+            span,
+            format!(
+                "`{}` declares the result `{}`, which is not a custody-free scalar; only a scalar result may be bound to a local, and `{}(ARGS);` discards it",
+                callee.name,
+                callee.result_abi.c_spelling(),
+                callee.name
+            ),
+        ));
+        return Vec::new();
+    }
+    if !derived_effects(&callee).is_subset_of(declared_effects) {
+        lowering.diagnostics.push(adapter(
+            span,
+            format!(
+                "`{}` derives an effect row the entry's declared row does not admit",
+                callee.name
+            ),
+        ));
+        return Vec::new();
+    }
+    if lowering.refuse_cross_namespace_shadow(name, span, true) {
+        return Vec::new();
+    }
+    let Some((arguments, argument_resources, moved)) =
+        lowering.arguments(&parsed_call.arguments, span, &callee, true)
+    else {
+        return Vec::new();
+    };
+    let value = lowering.next_value;
+    lowering.next_value += 1;
+    lowering.values.insert(name.to_owned(), value);
+    record_call(
+        extern_summaries,
+        lowering.globals,
+        &callee,
+        calls,
+        span,
+        argument_resources,
+        None,
+        &mut lowering.diagnostics,
+    );
+    events.push(ExternEvent::Call(ExternCall {
+        callee: callee.name.clone(),
+        arguments,
+        adapter: None,
+        binding: Some(value),
+    }));
+    event_spans.push(span);
+    moved
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1176,6 +1385,31 @@ fn parse_adapter_statement(tokens: &[Token]) -> Option<ParsedCall> {
         succeeds,
         releases,
         error,
+    })
+}
+
+/// `let NAME = CALLEE(ARGS);` — a scalar-result binding (card
+/// `PIPE-SCALAR-RESULT`).
+///
+/// Deliberately the *adapterless* shape and nothing else: the trailing `;` must
+/// close the statement, so an acquisition with a malformed adapter tail cannot
+/// be reinterpreted as a scalar binding and lose its own diagnostic. The binder
+/// name is read by the caller from the statement's own `Let` kind, so this
+/// function reports only the call.
+fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
+    if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
+        return None;
+    }
+    let (callee, arguments, next) = call_head(tokens, 3)?;
+    if !symbol(tokens.get(next), Symbol::Semicolon) || tokens.len() != next + 1 {
+        return None;
+    }
+    Some(ParsedCall {
+        callee,
+        arguments,
+        succeeds: true,
+        releases: Vec::new(),
+        error: String::new(),
     })
 }
 

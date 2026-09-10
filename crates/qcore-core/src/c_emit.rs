@@ -8,6 +8,7 @@ use crate::cfg::{
     BasicBlock, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ExecutionObservation,
     ExecutionOutcome, TraceEvent, TypedCfg,
 };
+use crate::cleanup_lowering::BranchCondition;
 use crate::io_emit::{self, IO_PRELUDE};
 use crate::std_io::{Rendering, Stream};
 
@@ -255,6 +256,21 @@ fn emit_terminator(
             writeln!(output, "        goto {};", target_label(cfg, *failure)?).unwrap();
             writeln!(output, "    }}").unwrap();
         }
+        CfgTerminator::Branch {
+            condition,
+            then_block,
+            else_block,
+        } => {
+            // The emitted program computes the condition itself rather than
+            // receiving the decided literal: that makes the reference / CFG /
+            // compiled-C observation agreement a real cross-check of the Rust
+            // evaluator against a C compiler instead of a tautology.
+            writeln!(output, "    if ({}) {{", c_condition(*condition)).unwrap();
+            writeln!(output, "        goto {};", target_label(cfg, *then_block)?).unwrap();
+            writeln!(output, "    }} else {{").unwrap();
+            writeln!(output, "        goto {};", target_label(cfg, *else_block)?).unwrap();
+            writeln!(output, "    }}").unwrap();
+        }
         CfgTerminator::ReturnOk(value) => {
             writeln!(output, "    q_result.ok = true;").unwrap();
             writeln!(output, "    q_result.value = {};", c_i32(*value)).unwrap();
@@ -340,6 +356,18 @@ fn lower_identifier(name: &str) -> String {
 
 const fn c_bool(value: bool) -> &'static str {
     if value { "true" } else { "false" }
+}
+
+/// The C11 spelling of a `source.branch.v1` condition (card `IF-STATEMENT`).
+fn c_condition(condition: BranchCondition) -> String {
+    match condition {
+        BranchCondition::Literal(value) => c_bool(value).to_owned(),
+        BranchCondition::Compare {
+            left,
+            operator,
+            right,
+        } => format!("{} {} {}", c_i32(left), operator.c_operator(), c_i32(right)),
+    }
 }
 
 fn c_i32(value: i32) -> String {

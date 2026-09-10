@@ -76,6 +76,7 @@ fn program(events: Vec<ExternEvent>) -> ExternProgram {
 
 fn acquire(succeeds: bool) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_alloc".into(),
         arguments: vec![ExternArgument::Data(16)],
         adapter: Some(ExternAdapter {
@@ -89,6 +90,7 @@ fn acquire(succeeds: bool) -> ExternEvent {
 
 fn release() -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_release".into(),
         arguments: vec![ExternArgument::Consume(1)],
         adapter: None,
@@ -408,6 +410,7 @@ fn the_failing_arm_of_the_adapter_is_exercisable() {
 fn an_owned_nullable_return_without_the_adapter_refuses() {
     let module = program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_alloc".into(),
             arguments: vec![ExternArgument::Data(16)],
             adapter: None,
@@ -423,6 +426,7 @@ fn an_owned_nullable_return_without_the_adapter_refuses() {
 fn an_adapter_on_a_data_result_refuses() {
     let module = program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: Some(ExternAdapter {
@@ -456,6 +460,7 @@ fn an_adapter_naming_an_undeclared_error_refuses() {
 #[test]
 fn an_adapter_that_would_abandon_live_custody_refuses() {
     let second = ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_alloc".into(),
         arguments: vec![ExternArgument::Data(32)],
         adapter: Some(ExternAdapter {
@@ -478,6 +483,7 @@ fn an_adapter_that_would_abandon_live_custody_refuses() {
 #[test]
 fn a_second_acquisition_after_the_first_is_consumed_is_admitted() {
     let second = ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_alloc".into(),
         arguments: vec![ExternArgument::Data(32)],
         adapter: Some(ExternAdapter {
@@ -488,6 +494,7 @@ fn a_second_acquisition_after_the_first_is_consumed_is_admitted() {
         }),
     });
     let free_second = ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_release".into(),
         arguments: vec![ExternArgument::Consume(2)],
         adapter: None,
@@ -525,6 +532,7 @@ fn a_reused_acquisition_identity_refuses() {
 fn a_wrong_argument_arity_refuses() {
     let module = program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_alloc".into(),
             arguments: Vec::new(),
             adapter: Some(ExternAdapter {
@@ -551,6 +559,7 @@ fn a_move_where_the_contract_declares_a_loan_refuses() {
     let module = program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_peek".into(),
             arguments: vec![ExternArgument::Consume(1), ExternArgument::Data(0)],
             adapter: None,
@@ -572,6 +581,7 @@ fn a_move_where_the_contract_declares_a_loan_refuses() {
 fn a_call_to_an_undeclared_callee_refuses() {
     let module = program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_absent".into(),
             arguments: Vec::new(),
             adapter: None,
@@ -730,6 +740,7 @@ fn f1_program(events: Vec<ExternEvent>) -> ExternProgram {
 
 fn open(resource: ResourceId, succeeds: bool) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_open".into(),
         arguments: vec![ExternArgument::OutSlot, ExternArgument::Data(8)],
         adapter: Some(ExternAdapter {
@@ -1028,6 +1039,7 @@ fn an_out_acquisition_checks_rederives_and_records_its_source() {
     let module = f1_program(vec![
         open(1, true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: None,
@@ -1061,6 +1073,7 @@ fn an_owned_return_acquisition_is_not_recorded_as_an_out_acquisition() {
 fn an_out_call_without_the_adapter_refuses() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_open".into(),
             arguments: vec![ExternArgument::OutSlot, ExternArgument::Data(8)],
             adapter: None,
@@ -1096,6 +1109,7 @@ fn a_double_bound_out_slot_refuses() {
     let module = f1_program(vec![
         open(1, true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: None,
@@ -1116,6 +1130,7 @@ fn a_double_bound_out_slot_refuses() {
 fn a_borrow_where_the_contract_declares_an_out_slot_refuses() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_open".into(),
             arguments: vec![ExternArgument::Borrow(1), ExternArgument::Data(8)],
             adapter: Some(ExternAdapter {
@@ -1143,6 +1158,7 @@ fn a_borrow_where_the_contract_declares_an_out_slot_refuses() {
 fn a_store_removes_the_child_and_keeps_the_owner() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
             adapter: None,
@@ -1175,11 +1191,13 @@ fn a_store_removes_the_child_and_keeps_the_owner() {
 #[test]
 fn a_stored_identity_does_not_survive_in_the_callers_ledger() {
     let store = ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_attach".into(),
         arguments: vec![ExternArgument::Owner(2), ExternArgument::Store(1)],
         adapter: None,
     });
     let second = ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_alloc".into(),
         arguments: vec![ExternArgument::Data(32)],
         adapter: Some(ExternAdapter {
@@ -1214,6 +1232,7 @@ fn a_stored_identity_does_not_survive_in_the_callers_ledger() {
 fn a_store_beneath_the_same_identity_refuses() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(1)],
             adapter: None,
@@ -1235,6 +1254,7 @@ fn a_store_beneath_the_same_identity_refuses() {
 fn a_borrow_where_the_contract_declares_a_store_refuses() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Owner(1), ExternArgument::Borrow(2)],
             adapter: None,
@@ -1255,6 +1275,7 @@ fn a_borrow_where_the_contract_declares_a_store_refuses() {
 fn a_move_where_the_contract_declares_the_owner_refuses() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Consume(1), ExternArgument::Store(2)],
             adapter: None,
@@ -1278,6 +1299,7 @@ fn the_reference_execution_records_both_out_arms() {
     let module = f1_program(vec![
         open(1, true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: None,
@@ -1305,6 +1327,7 @@ fn the_reference_execution_records_both_out_arms() {
 fn the_reference_execution_names_the_store_and_its_owner() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
             adapter: None,
@@ -1323,6 +1346,7 @@ fn emission_takes_the_address_of_the_declared_out_slot() {
     let module = f1_program(vec![
         open(1, true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: None,
@@ -1361,6 +1385,7 @@ fn emission_takes_the_address_of_the_declared_out_slot() {
 fn emission_refuses_an_argument_naming_an_unbound_identity() {
     let module = f1_program(vec![
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_attach".into(),
             arguments: vec![ExternArgument::Owner(1), ExternArgument::Store(2)],
             adapter: None,
@@ -1390,6 +1415,7 @@ fn acquire_with_arm(
     releases: Vec<ExternRelease>,
 ) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_alloc".into(),
         arguments: vec![ExternArgument::Data(16)],
         adapter: Some(ExternAdapter {
@@ -1410,6 +1436,7 @@ fn dispose(resource: ResourceId) -> ExternRelease {
 
 fn consume(resource: ResourceId) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_release".into(),
         arguments: vec![ExternArgument::Consume(resource)],
         adapter: None,
@@ -1726,6 +1753,7 @@ fn an_acquiring_call_that_also_consumes_refuses() {
     let mut module = program(vec![
         acquire_with_arm(1, true, Vec::new()),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_regrow".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: Some(ExternAdapter {
@@ -1893,6 +1921,7 @@ fn modes_program(events: Vec<ExternEvent>) -> ExternProgram {
 
 fn free(resource: ResourceId) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_free".into(),
         arguments: vec![ExternArgument::Release(resource)],
         adapter: None,
@@ -1906,6 +1935,7 @@ fn grow(
     arm: Vec<ExternRelease>,
 ) -> ExternEvent {
     ExternEvent::Call(ExternCall {
+        binding: None,
         callee: "qcore_extern_grow".into(),
         arguments: vec![ExternArgument::Realloc(subject), ExternArgument::Data(32)],
         adapter: Some(ExternAdapter {
@@ -2124,6 +2154,7 @@ fn a_released_identity_that_is_never_released_still_leaves_the_arm_dirty() {
     let module = modes_program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_alloc".into(),
             arguments: vec![ExternArgument::Data(4)],
             adapter: Some(ExternAdapter {
@@ -2148,6 +2179,7 @@ fn an_error_arm_disposition_may_be_a_declared_release() {
     let module = modes_program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_alloc".into(),
             arguments: vec![ExternArgument::Data(4)],
             adapter: Some(ExternAdapter {
@@ -2179,6 +2211,7 @@ fn a_departing_consumption_refuses_where_a_reallocation_subject_does_not() {
     let consuming = modes_program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_alloc".into(),
             arguments: vec![ExternArgument::Data(4)],
             adapter: Some(ExternAdapter {
@@ -2200,6 +2233,7 @@ fn a_departing_consumption_refuses_where_a_reallocation_subject_does_not() {
     let departing = modes_program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Consume(1)],
             adapter: Some(ExternAdapter {
@@ -2277,6 +2311,7 @@ fn a_reallocation_argument_at_a_consumed_parameter_refuses_by_form() {
     let module = modes_program(vec![
         acquire(true),
         ExternEvent::Call(ExternCall {
+            binding: None,
             callee: "qcore_extern_release".into(),
             arguments: vec![ExternArgument::Realloc(1)],
             adapter: None,

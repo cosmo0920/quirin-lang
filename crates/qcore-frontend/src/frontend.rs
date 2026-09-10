@@ -192,7 +192,20 @@ pub enum StatementKind {
         binding: Option<String>,
     },
     Guard,
+    /// `if (COND) { … } [ else … ]`, with `else if` flattened: `conditions`
+    /// carries one span per `if` header in the chain, and `branches` carries
+    /// either `conditions.len()` blocks (no trailing `else`) or one more.
+    ///
+    /// The condition spans are recorded by card `IF-STATEMENT`; before it the
+    /// parser located the header's parentheses and discarded everything between
+    /// them, so no pass could read a condition at all. The span is the extent of
+    /// the tokens *inside* the parentheses, or of the parentheses themselves
+    /// when the condition is empty. Recording a span rather than a parsed
+    /// condition keeps the frontend structural: the semantic route reads its own
+    /// statement out of a byte-span token window, exactly as every other route
+    /// does.
     If {
+        conditions: Vec<Span>,
         branches: Vec<SourceBlock>,
     },
     Match {
@@ -229,7 +242,7 @@ pub enum StatementKind {
 impl StatementKind {
     pub fn nested_blocks(&self) -> Vec<&SourceBlock> {
         match self {
-            Self::If { branches } | Self::Match { arms: branches } => branches.iter().collect(),
+            Self::If { branches, .. } | Self::Match { arms: branches } => branches.iter().collect(),
             Self::While { body }
             | Self::Unsafe { body }
             | Self::ThreadScope { body, .. }
@@ -1266,11 +1279,21 @@ impl<'a> SourceParser<'a> {
         &self,
         start: usize,
     ) -> Result<(Located<StatementKind>, usize), SourceParseError> {
-        let condition = self.find_symbol(start, Symbol::LeftParen)?;
-        let then_open = self.close(condition)? + 1;
+        let open = self.find_symbol(start, Symbol::LeftParen)?;
+        let close = self.close(open)?;
+        // The extent of the tokens between the parentheses. An empty condition
+        // has no such tokens, so the span is the parentheses themselves rather
+        // than an inverted range; the branch pass refuses it at `Q045`.
+        let condition = if close == open + 1 {
+            self.range_span(open, close + 1)
+        } else {
+            self.range_span(open + 1, close)
+        };
+        let then_open = close + 1;
         if !self.symbol(then_open, Symbol::LeftBrace) {
             return Err(self.error(then_open, "if condition must be followed by a block"));
         }
+        let mut conditions = vec![condition];
         let mut branches = vec![self.block(then_open)?];
         let mut next = self.close(then_open)? + 1;
         if self.word(next, "else") {
@@ -1280,9 +1303,11 @@ impl<'a> SourceParser<'a> {
             } else if self.word(next + 1, "if") {
                 let (nested, nested_next) = self.if_statement(next + 1)?;
                 if let StatementKind::If {
+                    conditions: nested_conditions,
                     branches: nested_branches,
                 } = nested.value
                 {
+                    conditions.extend(nested_conditions);
                     branches.extend(nested_branches);
                 }
                 next = nested_next;
@@ -1290,7 +1315,14 @@ impl<'a> SourceParser<'a> {
                 return Err(self.error(next + 1, "else must be followed by a block or if"));
             }
         }
-        Ok(self.located_statement(start, next, StatementKind::If { branches }))
+        Ok(self.located_statement(
+            start,
+            next,
+            StatementKind::If {
+                conditions,
+                branches,
+            },
+        ))
     }
 
     fn match_statement(
@@ -1643,6 +1675,37 @@ pub enum SemanticPass {
     /// following the wave-3 `T07`/`T09` precedent. The code-to-condition
     /// mapping is unchanged under the shift.
     Pipe,
+    /// Card `UNSAFE-LINKAGE-ARTIFACT`: admission of a `source.native-library.v1`
+    /// manifest selection and of the manifest-resident waivers it sharpens.
+    /// Owns `Q039`–`Q042` (spec §L21), the band
+    /// `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` §7 reserved for it after
+    /// `UNSAFE-LINKAGE` took `Q032`–`Q035` and `PIPE-OPERATOR` `Q036`–`Q038`.
+    ///
+    /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
+    /// whether a *signature* may cross a boundary nothing checks, and its
+    /// decision is unchanged here. This one decides whether the **library
+    /// manifest** a waiver is resident in loads, binds and agrees — the trust
+    /// object is the manifest, not the declaration, and a manifest that does
+    /// not load is refused without ever reaching a declaration.
+    NativeLibrary,
+    /// Card `IF-STATEMENT`: admission of the source branching construct
+    /// `source.branch.v1` — `if (COND) { … } else { … }`, its decidable
+    /// condition tier and its custody join. Owns `Q044`–`Q046` (spec §L21).
+    ///
+    /// A separate pass from `CEmission` on purpose: `Q500` refuses a construct
+    /// the reduced C11 CFG *cannot encode*, and this construct is encoded — the
+    /// typed CFG has carried branch terminators since Cycle 7. What this pass
+    /// decides is whether a written branch is inside `source.branch.v1`: the
+    /// condition tier, the arm statement subset, and whether the two arms reach
+    /// the join in agreeing custody states.
+    ///
+    /// The band deliberately leaves `Q039`–`Q043` free for the native-library
+    /// manifest band that `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` adjustment
+    /// A2 reserves as "`Q039` onward". A collision discovered at integration
+    /// relocates the *unshipped* band, per the wave-3 `T07`/`T09` precedent the
+    /// `Pipe` band above already followed; the code-to-condition mapping is
+    /// stable under such a shift.
+    Branch,
     PluginVerification,
 }
 
@@ -2379,7 +2442,11 @@ fn statement_metadata(statement: &StatementKind) -> (Option<&str>, Option<&str>,
             (None, binding.as_deref(), SemanticPass::ErrorRegion)
         }
         StatementKind::Guard => (None, None, SemanticPass::Index),
-        StatementKind::If { .. } | StatementKind::Match { .. } | StatementKind::While { .. } => {
+        // Card `IF-STATEMENT`: `if` is the branch pass's own statement. `match`
+        // and `while` are untouched and keep `Usage`, because nothing admits
+        // them and this card does not claim them.
+        StatementKind::If { .. } => (None, None, SemanticPass::Branch),
+        StatementKind::Match { .. } | StatementKind::While { .. } => {
             (None, None, SemanticPass::Usage)
         }
         StatementKind::Return => (None, None, SemanticPass::OrdinaryTypes),
@@ -2427,6 +2494,15 @@ pub fn source_diagnostic(
         // The generic presentation code of the pipe pass. The specific
         // conditions Q037-Q038 are issued at their own emission sites.
         SemanticPass::Pipe => "Q036",
+        // The generic presentation code of the native-library pass. The
+        // specific conditions Q040-Q042 are issued at their own emission
+        // sites; Q039 is the manifest load rejection this code names.
+        SemanticPass::NativeLibrary => "Q039",
+        // The generic presentation code of the branch pass, and the code of
+        // every shape refusal in it. The specific conditions Q045 (a condition
+        // outside the decidable tier) and Q046 (the arms disagree at the join)
+        // are issued at their own emission sites.
+        SemanticPass::Branch => "Q044",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

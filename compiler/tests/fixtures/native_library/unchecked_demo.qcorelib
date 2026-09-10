@@ -1,0 +1,24 @@
+# A `source.native-library.v1` manifest for the uncontracted C library card
+# `UNSAFE-LINKAGE` links in `fixtures/unsafe_linkage/unchecked_api.c`.
+#
+# There is still **no contract** anywhere for these symbols and there never will
+# be: every entry below is explicitly marked contract-less. What the manifest
+# adds is the one thing a bare waiver cannot say — *which build* was waived —
+# together with the four ABI premise fields that build was produced under.
+#
+# The hash is the stated identity of the artifact this fixture's declarations
+# are checked against. It is a **pin, not a probe**: nothing here is hashed at
+# check time, and whether the linker used this artifact is the builder's act.
+native_library manifest v1;
+library qcore_unchecked_demo;
+version 0.1.0;
+artifact libqcore_unchecked_demo.a;
+hash sha256:9f2c4a1e7b3d05860f14ca9e2d7b58311c06ae4f9d2b7c8e5a0341f6d9b8c72e;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+
+unchecked fn k_unchecked_add(int32_t, int32_t) -> int32_t;
+unchecked fn k_unchecked_side_effect(uint32_t) -> void;
+unchecked fn k_unchecked_measure(uint64_t) -> uint64_t;

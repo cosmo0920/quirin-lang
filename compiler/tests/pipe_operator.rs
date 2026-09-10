@@ -23,6 +23,8 @@ const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qcore");
 const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
 const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qcore");
+const SCALAR_RESULT: &str = include_str!("fixtures/extern_calls/scalar_result.qcore");
+const SCALAR_RESULT_PIPED: &str = include_str!("fixtures/pipe/scalar_result_piped.qcore");
 const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
@@ -58,6 +60,7 @@ fn compile_with(
         &CompileOptions {
             entry: None,
             extern_contracts: contracts,
+            native_libraries: None,
         },
     )
 }
@@ -704,33 +707,119 @@ fn a_value_consumed_mid_chain_cannot_be_used_after_the_pipeline() {
 
 #[test]
 fn a_stage_that_produces_nothing_cannot_feed_a_later_stage() {
-    // The rule that makes a chain decidable without contract knowledge: only
-    // the acquisition adapter binds a result, so every other stage is final.
-    // Three shapes, one rule, and each names the offending stage.
-    let cases = [
-        (
-            "|> qcore_extern_fill(7) |> move qcore_extern_free;",
-            "qcore_extern_fill",
-        ),
-        (
-            "|> qcore_extern_free |> move qcore_extern_free;",
-            "qcore_extern_free",
-        ),
-    ];
-    for (replacement, named) in cases {
-        let source = replace_fixture(ROUND_TRIP_PIPED, "|> qcore_extern_fill(7);", replacement);
-        let diagnostics = compile_with(&source, selection())
-            .map(|module| module.execution_profile)
-            .expect_err("a value-less intermediate stage must be refused");
-        assert_eq!(
-            diagnostics
-                .iter()
-                .map(|d| d.code.clone())
-                .collect::<Vec<_>>(),
-            ["Q037"]
-        );
-        assert!(diagnostics[0].message.contains(named));
-    }
+    // **Deliberate pin update, card `PIPE-SCALAR-RESULT`.** The rule that makes
+    // a chain decidable without contract knowledge is unchanged in kind and
+    // wider in reach: "produces a value" is now decided by *stage kind*, so a
+    // call stage may be intermediate and only a sink may not.
+    //
+    // A `unit`-returning callee therefore still refuses in a non-final
+    // position — nothing was promoted — but the refusal is the **route's**,
+    // naming the declared result, rather than the pipe's naming the pipe. That
+    // is the honest answer to why the stage cannot feed a later one, and it is
+    // the same answer the hand-written statement sequence gets. The cascade is
+    // pinned as measured rather than trimmed: the second statement then reads a
+    // temporary the first never bound.
+    let source = replace_fixture(
+        ROUND_TRIP_PIPED,
+        "|> qcore_extern_fill(7);",
+        "|> qcore_extern_fill(7) |> move qcore_extern_release;",
+    );
+    let diagnostics = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a value-less intermediate stage must still be refused");
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|d| d.code.clone())
+            .collect::<Vec<_>>(),
+        ["Q024", "Q024"]
+    );
+    assert!(diagnostics[0].message.contains("qcore_extern_fill"));
+    assert!(diagnostics[0].message.contains("not a custody-free scalar"));
+
+    // The sink half of the rule is unmoved and still the pipe's own, at `Q037`.
+    let sink = replace_fixture(
+        LINES_PIPED,
+        "total |> print dec;",
+        "total |> print dec |> log info dec;",
+    );
+    assert_eq!(codes(&sink), ["Q037"]);
+    assert!(messages(&sink)[0].contains("it is a sink"));
+}
+
+/// **The card's payoff.** A pipeline stage whose callee returns a scalar feeds
+/// the next stage through the hygienic temporary, and the chain emits
+/// byte-identical C11 against its hand-written twin.
+///
+/// This is `x |> f(a) |> g(b)` meaning `g(f(x, a), b)` over *data*: card
+/// `PIPE-CHAIN` shipped the same shape over custody and recorded that the
+/// data version was unreachable, because every non-final stage then had to
+/// carry the acquisition adapter.
+#[test]
+fn a_scalar_stage_feeds_the_next_stage_and_emits_its_hand_written_twin() {
+    let piped = compile_with(SCALAR_RESULT_PIPED, selection())
+        .expect("a scalar chain checks after `PIPE-SCALAR-RESULT`");
+    let unpiped = compile_with(SCALAR_RESULT, selection()).unwrap();
+    assert_eq!(
+        piped.c_source, unpiped.c_source,
+        "a scalar chain emits what the hand-written statement sequence emits"
+    );
+    assert_eq!(piped.extern_observation, unpiped.extern_observation);
+    assert_eq!(
+        piped.extern_observation.as_deref().unwrap()[2..4],
+        [
+            "value qcore_extern_sum v1 b:r1 d:8".to_owned(),
+            "value qcore_extern_scale v2 v:v1 d:2".to_owned(),
+        ]
+    );
+    // The temporary's name reaches neither the C nor the observation: the
+    // emitted program names values by identity, exactly as it names resources.
+    assert!(!piped.c_source.as_deref().unwrap().contains("qcore__pipe"));
+}
+
+/// A scalar chain inherits the custody accounting unchanged, in both
+/// directions. The buffer the chain reads is still lent, still consumed, and
+/// still refused if the reader consumes it too early — the scalar temporary
+/// takes no part in any of it.
+#[test]
+fn a_scalar_chain_changes_no_custody() {
+    let checked = compile_with(SCALAR_RESULT_PIPED, selection()).unwrap();
+    let certificate = &checked.checked.as_extern_calls().unwrap().certificate;
+    assert_eq!(certificate.acquisitions, vec![1]);
+    assert_eq!(certificate.consumptions, vec![1]);
+    assert_eq!(
+        certificate.scalar_bindings,
+        vec![
+            ("qcore_extern_sum".to_owned(), 1),
+            ("qcore_extern_scale".to_owned(), 2),
+        ]
+    );
+
+    // Consume the buffer before the chain reads it and the pre-existing
+    // linearity refusal fires, with the piped and unpiped diagnostic vectors
+    // asserted equal rather than merely both non-empty.
+    let piped = replace_fixture(
+        SCALAR_RESULT_PIPED,
+        "    b |> qcore_extern_fill(7);\n",
+        "    move b |> qcore_extern_release;\n",
+    );
+    let unpiped = replace_fixture(
+        SCALAR_RESULT,
+        "    qcore_extern_fill(b, 7);\n",
+        "    qcore_extern_release(move b);\n",
+    );
+    let piped = codes_with(&piped);
+    assert_eq!(piped, codes_with(&unpiped));
+    assert!(!piped.is_empty());
+}
+
+fn codes_with(source: &str) -> Vec<String> {
+    compile_with(source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("this fixture must be refused")
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect()
 }
 
 #[test]

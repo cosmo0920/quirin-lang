@@ -11,7 +11,7 @@ use qcore_compiler::{
     format_diagnostic, load_first_party_registry,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins profile [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins profile [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -46,6 +46,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     let mut entry = None;
     let mut plugins = None::<PathBuf>;
     let mut output = None::<PathBuf>;
+    let mut manifests = Vec::<PathBuf>::new();
     let mut inputs = Vec::new();
     let mut index = 1;
     while index < arguments.len() {
@@ -59,6 +60,14 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                     arguments
                         .get(index)
                         .ok_or("--plugins requires a config path")?,
+                ));
+            }
+            "--native-library" => {
+                index += 1;
+                manifests.push(PathBuf::from(
+                    arguments
+                        .get(index)
+                        .ok_or("--native-library requires a manifest path")?,
                 ));
             }
             "--entry" => {
@@ -97,9 +106,33 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     // The CLI selects no extern contract environment. A source file that calls
     // a declared extern function is therefore refused at `Q023` through this
     // entry point; a selection flag is a named follow-on, not a default.
+    //
+    // It *does* select native-library manifests, one per `--native-library`
+    // (card `UNSAFE-LINKAGE-ARTIFACT`). Selecting none is the default and keeps
+    // every existing invocation byte-identical; selecting one sharpens the
+    // waiver premises of the symbols it names, and the sharpened premise is
+    // printed below. A manifest that does not load refuses the module rather
+    // than being ignored.
+    let native_libraries = if manifests.is_empty() {
+        None
+    } else {
+        let mut selected = std::collections::BTreeMap::new();
+        for path in &manifests {
+            let text =
+                fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+            if selected.insert(path.display().to_string(), text).is_some() {
+                return Err(format!(
+                    "the manifest `{}` is selected more than once",
+                    path.display()
+                ));
+            }
+        }
+        Some(selected)
+    };
     let options = CompileOptions {
         entry,
         extern_contracts: None,
+        native_libraries,
     };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
@@ -177,6 +210,9 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
 /// there is nothing to print keeps every existing route's output byte-identical.
 fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     use qcore_compiler::extern_call::ExternAssumption;
+    use qcore_compiler::native_library::{
+        AllocatorCustody, DataModel, ThreadPosture, UnwindingPosture,
+    };
 
     let assumptions = module.declared_assumptions();
     if assumptions.is_empty() {
@@ -188,6 +224,33 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
             ExternAssumption::UncheckedLinkage { callee, signature } => format!(
                 "unchecked linkage: `{callee}` is linked as `{signature}` with no contract; nothing about its behavior is checked"
             ),
+            ExternAssumption::ManifestUncheckedLinkage {
+                callee,
+                signature,
+                residence,
+            } => {
+                let identity = &residence.identity;
+                let premises = &residence.premises;
+                format!(
+                    "unchecked linkage: `{callee}` is linked as `{signature}` with no contract, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here, and nothing about the callee's behavior is checked",
+                    identity.artifact,
+                    identity.library,
+                    identity.version,
+                    identity.hash,
+                    match premises.data_model {
+                        DataModel::Lp64 => "data model lp64",
+                    },
+                    match premises.unwinding {
+                        UnwindingPosture::Abort => "no unwinding across the boundary",
+                    },
+                    match premises.allocator_custody {
+                        AllocatorCustody::Closed => "closed allocator custody",
+                    },
+                    match premises.thread_posture {
+                        ThreadPosture::SingleCaller => "single-threaded caller",
+                    },
+                )
+            }
             ExternAssumption::DeclaredContract(callee) => {
                 format!("declared contract: `{callee}` behaves as its selected contract states")
             }

@@ -80,6 +80,16 @@
 //!    [`ExternAssumption::UncheckedLinkage`], by name and declared ABI. See
 //!    `docs/design/UNSAFE_LINKAGE_V1.md`.
 //!
+//!    Card `UNSAFE-LINKAGE-ARTIFACT` sharpens that premise where, and only
+//!    where, a `source.native-library.v1` manifest names the waived symbol
+//!    ([`crate::native_library`]): [`manifest_unchecked_callee`] attaches the
+//!    manifest's artifact identity and ABI premises, and the callee then
+//!    contributes [`ExternAssumption::ManifestUncheckedLinkage`] — the same
+//!    waiver, now naming *which build* it was waived from. Nothing else moves:
+//!    the admitted table is the one above, decided before any manifest is
+//!    consulted, and a waiver no manifest names keeps the bare premise
+//!    unchanged.
+//!
 //! What a result through this module means. A contract admitted here is a
 //! **declared assumption** (`ContractTrust::Declared`, contract spec §C06): it
 //! is never a proof about the C implementation, its layout, its aliasing or
@@ -92,11 +102,36 @@
 //! of the first of those, because it has no contract to declare; that premise is
 //! weaker still — it claims nothing at all about the callee, and printing it is
 //! the point.
+//!
+//!    Card `PIPE-SCALAR-RESULT` adds one thing to the call-site checker and
+//!    nothing to the admission tables: a **non-acquiring call's scalar result
+//!    may be bound**, and a bound scalar may be passed at a declared `Data`
+//!    parameter. Both live in [`ValueId`], a namespace disjoint from
+//!    [`ResourceId`]: no operation in this module moves a name between the two,
+//!    [`derived_custody`] never sees a scalar, and the ledger this checker
+//!    maintains is untouched by either form. The widening is exactly
+//!    [`binds_scalar`] — nothing owned, nothing nullable-owned, no pointer, no
+//!    `unit` — so the mandatory nullable-owned-return adapter and every
+//!    acquisition rule are byte-unchanged, and there is no second way to spell
+//!    an acquisition.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ResourceId;
+use crate::native_library;
 use crate::typed_errors::{Effect, EffectRow};
+
+/// Identity of a bound scalar value (card `PIPE-SCALAR-RESULT`).
+///
+/// A **separate namespace** from [`ResourceId`], and deliberately so. A scalar
+/// binding carries data — contract spec §C04.1's "a scalar may carry a
+/// descriptor number as data, but cannot carry descriptor custody" — so nothing
+/// in this module converts one into the other: [`ExternArgument::Value`] is
+/// admitted only at [`CallParameter::Data`], [`derived_custody`] filters `Data`
+/// parameters out, and the live ledger of [`check_extern_program`] is never
+/// read or written by a scalar binding. The two id spaces are both `u64` and may
+/// collide numerically; they are never compared.
+pub type ValueId = u64;
 
 /// The C ABI projection of contract spec §C04.1, complete. `Unit` is a result
 /// type only, exactly as in the loader.
@@ -309,6 +344,18 @@ pub struct ExternCallee {
     /// `resource_return_reallocated`. A reallocation is a third acquisition
     /// source and, like the other two, is exclusive with them.
     pub realloc_parameter: Option<usize>,
+    /// Card `UNSAFE-LINKAGE-ARTIFACT`: the library manifest this callee is
+    /// resident in, when one names it.
+    ///
+    /// Only [`manifest_unchecked_callee`] ever sets this, so it is `None` for
+    /// every contracted callee and for every waiver no manifest names — which
+    /// is what keeps a bare waiver's premise byte-identical to the one card
+    /// `UNSAFE-LINKAGE` published. Its presence sharpens
+    /// [`ExternAssumption::UncheckedLinkage`] into
+    /// [`ExternAssumption::ManifestUncheckedLinkage`], which names *which build*
+    /// was waived; its absence is itself part of the trust statement — **no
+    /// build was named**.
+    pub residence: Option<native_library::ManifestResidence>,
 }
 
 impl ExternCallee {
@@ -322,6 +369,28 @@ impl ExternCallee {
             CallResult::OwnedNullable | CallResult::ReallocatedNullable { .. }
         ) || self.out_parameter.is_some()
     }
+}
+
+/// Whether a call to this callee may bind its result to a scalar local (card
+/// `PIPE-SCALAR-RESULT`).
+///
+/// The whole widening is this predicate, and it is deliberately narrow. The
+/// callee must establish no fresh custody through **any** of the three
+/// acquisition sources — so an acquisition keeps its one spelling, the mandatory
+/// `succeeds BOOL else raise ERROR` adapter — and its declared result must be a
+/// custody-free scalar of the closed §C04.1 ABI vocabulary. `unit` is excluded
+/// because there is no value to bind, and every pointer is excluded because a
+/// pointer result outside `resource_return_owned`/`resource_return_reallocated`
+/// is a value the declaration says nothing about: binding it would put an
+/// unmodelled address into a body under a name, which is the laundering this
+/// card exists to make impossible.
+#[must_use]
+pub fn binds_scalar(callee: &ExternCallee) -> bool {
+    !callee.acquires()
+        && matches!(
+            callee.result,
+            CallResult::Data(abi) if abi != AbiType::Unit && !abi.is_pointer()
+        )
 }
 
 /// Why a complete, loadable C04 declaration is still not callable in v1. Each
@@ -744,6 +813,9 @@ pub fn bridge_contract(
         result_abi: contract.result,
         out_parameter,
         realloc_parameter: realloc_subject,
+        // A contracted callee names no artifact: the manifest slice card
+        // `UNSAFE-LINKAGE-ARTIFACT` landed binds contract-less entries only.
+        residence: None,
     })
 }
 
@@ -837,7 +909,58 @@ pub fn unchecked_callee(
         result_abi: result,
         out_parameter: None,
         realloc_parameter: None,
+        residence: None,
     })
+}
+
+/// Admit one `unsafe extern fn` declaration that a library manifest names, or
+/// refuse it by name (card `UNSAFE-LINKAGE-ARTIFACT`).
+///
+/// This is [`unchecked_callee`] with the manifest's residence attached, and it
+/// is deliberately nothing more. **The admitted surface does not move**: the
+/// same closed table decides, so a manifest cannot buy a pointer for a
+/// contract-less entry — an artifact hash says *which code*, not what it does
+/// with your pointer (`docs/design/UNSAFE_LINKAGE_V1.md` §4.2). What the
+/// manifest changes is only the premise the callee contributes.
+///
+/// The manifest's own type gate
+/// ([`native_library::check_manifest_agreement`]) is a separate decision and
+/// belongs to the driver, because it compares the *declaration* against the
+/// manifest rather than deciding what may cross.
+pub fn manifest_unchecked_callee(
+    name: &str,
+    parameters: &[AbiType],
+    result: AbiType,
+    residence: native_library::ManifestResidence,
+) -> Result<ExternCallee, UncheckedRefusal> {
+    let mut callee = unchecked_callee(name, parameters, result)?;
+    callee.residence = Some(residence);
+    Ok(callee)
+}
+
+/// The premise one admitted callee contributes, as a **total match on its
+/// trust** and, within the waived arm, on whether a manifest names it.
+///
+/// Three arms, no fourth: a contracted callee contributes its declared
+/// contract, a waived callee no manifest names contributes the bare waiver, and
+/// a manifest-resident waived callee contributes the sharpened one. There is no
+/// arm that contributes nothing, which is what makes the inventory total.
+#[must_use]
+pub fn assumption_for_callee(callee: &ExternCallee) -> ExternAssumption {
+    match (callee.trust, callee.residence.as_ref()) {
+        (ExternTrust::Contracted, _) => ExternAssumption::DeclaredContract(callee.name.clone()),
+        (ExternTrust::UncheckedLinkage, None) => ExternAssumption::UncheckedLinkage {
+            callee: callee.name.clone(),
+            signature: declared_signature(callee),
+        },
+        (ExternTrust::UncheckedLinkage, Some(residence)) => {
+            ExternAssumption::ManifestUncheckedLinkage {
+                callee: callee.name.clone(),
+                signature: declared_signature(callee),
+                residence: residence.clone(),
+            }
+        }
+    }
 }
 
 /// The declared signature of an admitted callee, rendered from the ABI
@@ -979,6 +1102,11 @@ pub enum ExternArgument {
     /// reallocation. It survives the failure arm and is replaced on the
     /// success arm.
     Realloc(ResourceId),
+    /// A bound scalar local, read at a declared `Data` parameter (card
+    /// `PIPE-SCALAR-RESULT`). Data, exactly as [`Self::Data`] is: it names a
+    /// [`ValueId`], carries no custody, and is admitted at no other parameter
+    /// mode.
+    Value(ValueId),
 }
 
 /// One disposition on an adapter's error arm (card `EXTERN-ERR-REL`): a call
@@ -1019,6 +1147,12 @@ pub struct ExternCall {
     pub arguments: Vec<ExternArgument>,
     /// Present exactly for a `resource_return_owned(nullable)` callee.
     pub adapter: Option<ExternAdapter>,
+    /// The scalar local this call's result is bound to (card
+    /// `PIPE-SCALAR-RESULT`), present exactly for a call that
+    /// [`binds_scalar`]. Exclusive with `adapter` by construction: an
+    /// acquisition binds an identity, a scalar binding binds a value, and a
+    /// callee cannot be both.
+    pub binding: Option<ValueId>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1126,6 +1260,29 @@ pub enum ExternDiagnostic {
     /// Q024: a stored argument names the same identity as its declared owner.
     /// Custody indexed beneath itself has no modeled meaning.
     StoredUnderItself { event: usize, resource: ResourceId },
+    /// Q024: the call binds its result, but the declared result is not a
+    /// custody-free scalar — a `unit`, or a pointer the declaration says
+    /// nothing about (card `PIPE-SCALAR-RESULT`).
+    ResultNotScalar {
+        event: usize,
+        name: String,
+        result: AbiType,
+    },
+    /// Q025: the call binds its result to a scalar local, but it establishes
+    /// fresh custody. An acquisition has exactly one spelling — the mandatory
+    /// `succeeds BOOL else raise ERROR` adapter — and this card does not add a
+    /// second one.
+    ResultBindingOnAcquisition { event: usize, name: String },
+    /// Q024: a scalar binding reuses a value identity the trace already bound.
+    DuplicateValueBinding { event: usize, value: ValueId },
+    /// Q024: an argument reads a scalar value no earlier call in this trace
+    /// bound. The mirror of [`Self::UnknownCallee`] for the value namespace,
+    /// and the reason a scalar can never be conjured at a call site.
+    ValueNotBound {
+        event: usize,
+        parameter: usize,
+        value: ValueId,
+    },
 }
 
 impl ExternDiagnostic {
@@ -1138,7 +1295,11 @@ impl ExternDiagnostic {
             | Self::DuplicateAcquisition { .. }
             | Self::StoredUnderItself { .. }
             | Self::ReleaseArity { .. }
-            | Self::ReleaseArgumentForm { .. } => "Q024",
+            | Self::ReleaseArgumentForm { .. }
+            | Self::ResultNotScalar { .. }
+            | Self::DuplicateValueBinding { .. }
+            | Self::ValueNotBound { .. } => "Q024",
+            Self::ResultBindingOnAcquisition { .. } => "Q025",
             Self::AdapterMissing { .. }
             | Self::AdapterUnexpected { .. }
             | Self::AdapterUnknownError { .. }
@@ -1173,7 +1334,11 @@ impl ExternDiagnostic {
             | Self::ReleaseStores { event, .. }
             | Self::ReleaseNotSingular { event, .. }
             | Self::ReleaseNotLive { event, .. }
-            | Self::ReleaseOrder { event, .. } => *event,
+            | Self::ReleaseOrder { event, .. }
+            | Self::ResultNotScalar { event, .. }
+            | Self::ResultBindingOnAcquisition { event, .. }
+            | Self::DuplicateValueBinding { event, .. }
+            | Self::ValueNotBound { event, .. } => *event,
         }
     }
 }
@@ -1265,6 +1430,24 @@ impl fmt::Display for ExternDiagnostic {
                 f,
                 "resource identity {resource} is stored beneath itself; a declared owner must be a distinct live identity"
             ),
+            Self::ResultNotScalar { name, result, .. } => write!(
+                f,
+                "`{name}` declares the result `{}`, which is not a custody-free scalar; only a scalar result may be bound to a local",
+                result.c_spelling()
+            ),
+            Self::ResultBindingOnAcquisition { name, .. } => write!(
+                f,
+                "`{name}` establishes fresh custody, so its result is an identity and not a scalar; it takes the checked adapter `succeeds BOOL else raise ERROR`"
+            ),
+            Self::DuplicateValueBinding { value, .. } => {
+                write!(f, "scalar value {value} is bound twice")
+            }
+            Self::ValueNotBound {
+                parameter, value, ..
+            } => write!(
+                f,
+                "argument {parameter} reads scalar value {value}, which no earlier call in this trace bound"
+            ),
         }
     }
 }
@@ -1292,6 +1475,29 @@ pub enum ExternAssumption {
     /// scalars by value in and out ([`unchecked_callee`]) — so the caller's own
     /// ledger is unchanged by the call whatever the callee does.
     UncheckedLinkage { callee: String, signature: String },
+    /// Card `UNSAFE-LINKAGE-ARTIFACT`. The strongest honest form of the waiver
+    /// above: the named callee has no contract **and** a library manifest
+    /// declares it, so the premise names *which build* was waived and under
+    /// which stated ABI premises — level L1 of the linkage spectrum
+    /// (`docs/design/UNSAFE_LINKAGE_V1.md` §1.1, §4.2).
+    ///
+    /// It says strictly more than [`Self::UncheckedLinkage`] and strictly less
+    /// than [`Self::DeclaredContract`]: still nothing whatever about the
+    /// callee's behavior — no custody, no effect, no termination — but the
+    /// waiver is now attached to a named artifact rather than to whatever the
+    /// linker happened to supply. The identity is **stated, not probed**: see
+    /// [`crate::native_library`] for why hashing a candidate file at check time
+    /// would be a stronger-looking statement that is not a stronger one.
+    ///
+    /// The two variants are deliberately distinct rather than one variant with
+    /// an optional field, so a bare waiver stays a valid weaker statement
+    /// instead of becoming a malformed sharpened one, and a reader can tell
+    /// them apart by inspection.
+    ManifestUncheckedLinkage {
+        callee: String,
+        signature: String,
+        residence: native_library::ManifestResidence,
+    },
     /// C04 pointers are extentless `u8` projections, so no declaration in this
     /// profile promises how many bytes a callee touches.
     NoExtentTransport,
@@ -1362,6 +1568,12 @@ pub struct ExternCallCertificate {
     /// nothing else was live records an empty vector, so a reader can tell the
     /// two apart.
     pub error_dispositions: Vec<(ResourceId, Vec<ResourceId>)>,
+    /// `(callee, value)` of every call whose scalar result was bound, in trace
+    /// order (card `PIPE-SCALAR-RESULT`). Published beside the custody fields
+    /// rather than folded into them, because it is the one field of this
+    /// certificate that names no resource identity: a reader can see at a
+    /// glance which calls moved data and which moved custody.
+    pub scalar_bindings: Vec<(String, ValueId)>,
     /// Union of the derived rows of every call site, error-arm dispositions
     /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
@@ -1386,10 +1598,12 @@ fn remove_live(live: &mut Vec<ResourceId>, resource: ResourceId) {
 ///
 /// Returns the identities the arm released, in order, and the effects its calls
 /// derive. On refusal it returns every diagnostic found rather than the first.
+#[allow(clippy::too_many_arguments)]
 fn check_error_arm(
     program: &ExternProgram,
     event: usize,
     live: &[ResourceId],
+    values: &BTreeSet<ValueId>,
     releases: &[ExternRelease],
     diagnostics: &mut Vec<ExternDiagnostic>,
     effects: &mut BTreeSet<Effect>,
@@ -1443,6 +1657,7 @@ fn check_error_arm(
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
                     | (ExternArgument::Owner(_), CallParameter::Owner)
                     | (ExternArgument::Release(_), CallParameter::Released)
+                    | (ExternArgument::Value(_), CallParameter::Data(_))
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ReleaseArgumentForm {
@@ -1470,6 +1685,20 @@ fn check_error_arm(
                         diagnostics.push(ExternDiagnostic::ReleaseNotLive {
                             event,
                             resource: *resource,
+                        });
+                        malformed = true;
+                    }
+                }
+                // A scalar the arm reads must have been bound before the
+                // acquisition it disposes of, exactly as an identity it reads
+                // must be live: the arm is a path out of this body, not a
+                // place where an unbound name becomes readable.
+                ExternArgument::Value(value) => {
+                    if !values.contains(value) {
+                        diagnostics.push(ExternDiagnostic::ValueNotBound {
+                            event,
+                            parameter,
+                            value: *value,
                         });
                         malformed = true;
                     }
@@ -1534,10 +1763,16 @@ pub fn check_extern_program(
     let mut reallocations = Vec::new();
     let mut stored = Vec::new();
     let mut error_dispositions = Vec::new();
+    let mut scalar_bindings = Vec::new();
     // Acquisition order, because the established cleanup edge releases in
     // reverse acquisition order and the error arm is required to match it.
     let mut live = Vec::<ResourceId>::new();
     let mut introduced = BTreeSet::<ResourceId>::new();
+    // The scalar namespace (card `PIPE-SCALAR-RESULT`). Deliberately not a
+    // second ledger: a value is never removed, never ordered and never
+    // released, because binding one imposes no obligation. It exists only so
+    // that reading a value that was never bound is a refusal.
+    let mut values = BTreeSet::<ValueId>::new();
     let mut effects = BTreeSet::new();
     for (index, event) in program.events.iter().enumerate() {
         let ExternEvent::Call(call) = event else {
@@ -1576,6 +1811,10 @@ pub fn check_extern_program(
                     | (ExternArgument::OutSlot, CallParameter::OutSlot)
                     | (ExternArgument::Release(_), CallParameter::Released)
                     | (ExternArgument::Realloc(_), CallParameter::ReallocSubject)
+                    // Card `PIPE-SCALAR-RESULT`: a bound scalar is admitted at
+                    // a declared `Data` parameter and at no other mode, so the
+                    // value namespace cannot reach a custody position.
+                    | (ExternArgument::Value(_), CallParameter::Data(_))
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ArgumentForm {
@@ -1586,6 +1825,15 @@ pub fn check_extern_program(
                 continue;
             }
             match (argument, declared) {
+                (ExternArgument::Value(value), _) => {
+                    if !values.contains(value) {
+                        diagnostics.push(ExternDiagnostic::ValueNotBound {
+                            event: index,
+                            parameter,
+                            value: *value,
+                        });
+                    }
+                }
                 (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
                 (ExternArgument::Release(resource), _) => released_here.push(*resource),
                 (ExternArgument::Realloc(resource), _) => realloc_here = Some(*resource),
@@ -1668,6 +1916,7 @@ pub fn check_extern_program(
                     program,
                     index,
                     &arm_live,
+                    &values,
                     &adapter.releases,
                     &mut diagnostics,
                     &mut effects,
@@ -1681,6 +1930,32 @@ pub fn check_extern_program(
                 }
             }
             (None, false) => {}
+        }
+        // Card `PIPE-SCALAR-RESULT`. Checked after the adapter and before any
+        // ledger movement, because a scalar binding is not a ledger event: it
+        // adds a name to a namespace this checker never removes from and never
+        // compares against `live`.
+        if let Some(value) = call.binding {
+            if callee.acquires() {
+                diagnostics.push(ExternDiagnostic::ResultBindingOnAcquisition {
+                    event: index,
+                    name: callee.name.clone(),
+                });
+            } else if binds_scalar(callee) {
+                if !values.insert(value) {
+                    diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                        event: index,
+                        value,
+                    });
+                }
+                scalar_bindings.push((callee.name.clone(), value));
+            } else {
+                diagnostics.push(ExternDiagnostic::ResultNotScalar {
+                    event: index,
+                    name: callee.name.clone(),
+                    result: callee.result_abi,
+                });
+            }
         }
         for resource in &consumed_here {
             remove_live(&mut live, *resource);
@@ -1729,25 +2004,20 @@ pub fn check_extern_program(
     }
     let mut assumptions = Vec::new();
     for (name, callee) in &program.callees {
-        // A total match on the callee's trust, so there is no third arm that
-        // contributes no premise: a contracted callee is carried as its
-        // declared contract, an uncontracted one as unchecked linkage. Card
-        // `UNSAFE-LINKAGE`; the Lean theorem `assumption_totality` states the
-        // same sentence over the model.
-        match callee.trust {
-            ExternTrust::Contracted => {
-                assumptions.push(ExternAssumption::DeclaredContract(name.clone()));
-            }
-            ExternTrust::UncheckedLinkage => {
-                assumptions.push(ExternAssumption::UncheckedLinkage {
-                    callee: name.clone(),
-                    signature: declared_signature(callee),
-                });
-                // An unchecked callee has no contract, so none of the
-                // contract-shaped premises below can apply to it; its admitted
-                // surface has no pointer in any position.
-                continue;
-            }
+        // A total match on the callee's trust ([`assumption_for_callee`]), so
+        // there is no arm that contributes no premise: a contracted callee is
+        // carried as its declared contract, an uncontracted one as unchecked
+        // linkage — sharpened to name the artifact when a library manifest
+        // declares it (card `UNSAFE-LINKAGE-ARTIFACT`). Card `UNSAFE-LINKAGE`;
+        // the Lean theorem `assumption_totality` states the same sentence over
+        // the model, and `QCore.NativeLibrary.manifest_assumption_totality`
+        // states it again with the manifest in the model.
+        assumptions.push(assumption_for_callee(callee));
+        if callee.trust == ExternTrust::UncheckedLinkage {
+            // An unchecked callee has no contract, so none of the
+            // contract-shaped premises below can apply to it; its admitted
+            // surface has no pointer in any position.
+            continue;
         }
         if callee.out_parameter.is_some() {
             assumptions.push(ExternAssumption::OutSlotWrittenByCallee(name.clone()));
@@ -1785,6 +2055,7 @@ pub fn check_extern_program(
         reallocations,
         stored,
         error_dispositions,
+        scalar_bindings,
         effects: EffectRow::new(effects),
         assumptions,
     })
@@ -1802,10 +2073,7 @@ pub fn required_unchecked_assumptions(program: &ExternProgram) -> Vec<ExternAssu
         .callees
         .iter()
         .filter(|(_, callee)| callee.trust == ExternTrust::UncheckedLinkage)
-        .map(|(name, callee)| ExternAssumption::UncheckedLinkage {
-            callee: name.clone(),
-            signature: declared_signature(callee),
-        })
+        .map(|(_, callee)| assumption_for_callee(callee))
         .collect()
 }
 

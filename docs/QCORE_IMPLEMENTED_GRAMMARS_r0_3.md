@@ -702,11 +702,12 @@ extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
 entry         = "fn", NAME, "(", ")", "->", "unit",
                 [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
                 "{", { extern_stmt }, "}" ;
-extern_stmt   = acquisition | plain_call | "return", ";" ;
+extern_stmt   = acquisition | scalar_binding | plain_call | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", { disposition },
                 "raise", ERROR_NAME, ";" ;
 disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
+scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
@@ -802,6 +803,37 @@ disposition never removes a binding from the success path. That is what makes a
 store reachable — it needs two simultaneously live identities, the child and its
 declared owner, which the second acquisition's arm now accounts for.
 
+Card `PIPE-SCALAR-RESULT` adds `scalar_binding` and one meaning to a bare
+`NAME` argument, and adds no reserved word. `let NAME = CALLEE(ARGS);` binds a
+**non-acquiring call's scalar result** to a local, and a bound scalar may then
+be passed at a declared scalar (data) parameter. The admission is exactly:
+the callee establishes fresh custody through none of the three acquisition
+sources, and its declared result is a custody-free scalar of the §C04.1 ABI
+vocabulary. `unit` is refused — there is no value — and every pointer result is
+refused, including a pointer declared `resource_return_none()`, because such a
+result is an address the declaration says nothing about (`Q024`, naming the
+declared result). Binding an acquiring call's result refuses at `Q025`: an
+acquisition has exactly one spelling, the mandatory adapter, and this card adds
+no second one.
+
+Scalars and identities are **separate namespaces**. A bound scalar is admitted
+at a declared data parameter and at no other mode; a resource binding is refused
+at a data parameter (`Q024`, "a declared scalar parameter carries data, never
+custody"); a scalar binding removes nothing from and adds nothing to the ledger,
+so an unread one is not a leak; and a `let` whose name already means the other
+kind of thing is refused rather than resolved by lookup order — measured, the
+reachable refusal is name resolution's own `Q012` (duplicate local binding), and
+the lowering keeps its `Q026` arm as an unreachable fail-closed backstop. The
+certificate publishes `(callee, value)` per binding in trace order, beside the
+custody fields and never inside them. A **scalar literal** binding
+(`let n = 42;`) is deliberately *not* added here and stays refused; it is
+follow-on `EXTERN-SCALAR-LITERAL`, and `STD-IO-COMPOSE` is the card that needs
+it. The emitted C declares the result at its ABI spelling, discards it to
+`void` so the translation unit stays warning-clean, and prints an observation
+that names the callee, the value and the arguments but **not** the number
+returned — a reference interpreter cannot compute a C function's result
+(follow-on `EXTERN-SCALAR-OUTCOME`).
+
 The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
 fresh custody through any of the three acquisition sources and `mut` exactly
 when some parameter is a `mut` pointer; the entry's declared row must admit it, and an
@@ -864,6 +896,49 @@ unchecked-linkage premise, on the same channel that carries a trusted declared
 contract; a published certificate missing one is refused (`Q035`). See
 `docs/design/UNSAFE_LINKAGE_V1.md` and
 [the unchecked-linkage record](reports/wave18-unsafe-linkage/README.md).
+
+### G02d.2. The native-library manifest
+
+Card `UNSAFE-LINKAGE-ARTIFACT`. A **manifest** is not source: it is a separate
+declarative file a builder selects (`qcorec --native-library MANIFEST`,
+`CompileOptions::native_libraries`), and it adds no form to G02d.1's source
+grammar and no reserved word. What it changes is the *premise* a G02d.1 waiver
+publishes — from "symbol X, unchecked" to "symbol X, unchecked, from artifact
+Y@hash under ABI premises Z".
+
+```ebnf
+manifest     = marker, { field | entry } ;
+marker       = "native_library", "manifest", "v1", ";" ;
+field        = ( "library" | "version" | "artifact" ), TOKEN, ";"
+             | "hash", "sha256:", 64 * LOWER_HEX, ";"
+             | "data_model", "lp64", ";"
+             | "unwinding", "abort", ";"
+             | "allocator_custody", "closed", ";"
+             | "thread_posture", "single_caller", ";" ;
+entry        = "unchecked", "fn", NAME,
+               "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
+               "->", C_ABI_TYPE, ";" ;
+C_ABI_TYPE   = "_Bool" | "int8_t" | "int16_t" | "int32_t" | "int64_t"
+             | "intptr_t" | "uint8_t" | "uint16_t" | "uint32_t"
+             | "uint64_t" | "uintptr_t" | "void" ;
+```
+
+`#` begins a comment; statements are `;`-terminated and may span lines. All
+eight header fields are mandatory and each may be stated once. Entry types are
+the **C** spellings of the exported header declaration, not the QCore ones, so
+the agreement check compares a projection rather than a string. The pointer
+spellings `uint8_t *`, `const uint8_t *` and `uint8_t **` are recognised
+(the space before `*` optional) and then **refused** in a contract-less entry,
+which is a rejection with its own name rather than an unreadable spelling: a
+library's pointer symbols belong in a contract slice entry, which this revision
+does not implement and refuses by name (`contract fn …`).
+
+Loading is total or reject (`Q039`), the selection's binding must be a function
+(`Q040`), a declaration the manifest contradicts is refused (`Q041`), and a name
+the manifest declares contract-less may not also be reached through a declared
+contract (`Q042`). Selecting no manifest is the default and leaves every G02d.1
+program byte-identical. See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and
+[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 
@@ -1095,9 +1170,20 @@ temporary is an ordinary binding — so a chain that drops a live result refuses
 at the pre-existing `Q202`, and a value consumed mid-chain cannot be used after
 the pipeline.
 
-**Only an acquisition adapter binds a result**, so "produces a value" is decided
-syntactically by the presence of `succeeds`, with no contract knowledge in the
-desugaring. A sink, a discarding call and `flush` are therefore last-stage-only.
+**"Produces a value" is decided by stage kind**, syntactically and with no
+contract knowledge in the desugaring: a call stage produces a value, and a sink
+(`print`, `log`) or an operandless statement (`flush`) does not. Card
+`PIPE-CHAIN` decided it by the presence of `succeeds`, because the acquisition
+adapter was then the only `let`-with-call the language admitted; card
+`PIPE-SCALAR-RESULT` adds the other one — a non-acquiring call's scalar result
+(§G02d) — so the keyword no longer separates the two. Whether a particular
+callee's declared result is bindable is the **route's** question, answered from
+the declaration and reported at that stage's own span: a `unit`-returning callee
+in a non-final position still refuses, at `Q024` naming its result rather than
+at `Q037` naming the pipe. This is what makes `x |> render |> scale`
+expressible, which card `PIPE-CHAIN` measured as the first of the two boundaries
+under the brief's `value |> render |> log`; the second, a module that both calls
+an extern function and prints, is unchanged and remains `STD-IO-COMPOSE`.
 
 **Two spellings name the value a previous stage produced**, because a hygienic
 temporary has no name a reader could write: `|> move STAGE` consumes it,
@@ -1141,8 +1227,8 @@ unbalanced call stage, a malformed or value-less `let NAME =` binder, an
 assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage, a bare
 `move` whose incoming value is not a binding, or a file that needs pipeline
 temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
-cannot receive the operand — `flush`, which takes none, or any non-final stage
-that produces no value, since only an acquisition adapter binds a result;
+cannot receive the operand — `flush`, which takes none, or a **sink** in a
+non-final position, since only a call stage binds a result;
 `Q038` a claimed-but-unlowered logical operator. Dropping the `;` of the last
 statement in a body is a parse failure (`Q000`) before the pipe pass runs.
 
@@ -1175,18 +1261,97 @@ layer later and with an actionable message — a deliberate pin update whose
 load-bearing half (a bare `|` is not a quant delimiter, and no program
 containing one checks) is re-pinned at its new layer.
 
-**Neither `|` nor `&&` is lowered, on a measured blocker rather than a
-scheduling one.** The executable subset has no branch construct to lower a
-short-circuit onto: `if` itself refuses at `Q500` ("structured control flow is
-not in the Cycle 12 executable subset"), the lowering IR
-`qcore_core::cleanup_lowering::SourceOp` has no branch constructor — its whole
-operation set is `Acquire`/`Check` under *literal* outcome controls, `Drop`,
-`TransferToResult` and `Return` — and there are zero `if` statements in the 294
-source-side `.qcore` files. There is no boolean expression tier to extend
-either. **Open, and deliberately not answered here:** with `|` claimed by
-logical or and `&` held for bitwise and, bitwise *or* has no symbol; the future
-bitwise wave must choose one, and nothing in this card forecloses the
-reasonable options. See [the operator record](reports/wave18-pipe-operator/README.md).
+**Neither operator is lowered here, on a measured blocker rather than a
+scheduling one.** At wave 18 the executable subset had no branch construct to
+lower a short-circuit onto: `if` itself refused at `Q500` ("structured control
+flow is not in the Cycle 12 executable subset"), the lowering IR
+`qcore_core::cleanup_lowering::SourceOp` had no branch constructor — its whole
+operation set was `Acquire`/`Check` under *literal* outcome controls, `Drop`,
+`TransferToResult` and `Return` — and there were zero `if` statements in the 294
+source-side `.qcore` files. There was no boolean expression tier to extend
+either.
+
+**That blocker is retired.** Card `IF-STATEMENT` landed the branch construct as
+§G02i below: `SourceOp::Branch` and `CfgTerminator::Branch` exist, nested
+branching is admitted inside a branch arm, and the custody join is checked by
+four independent models. Lowering the logical operators onto it — and retabling the operator
+family, since single `|` and `&` are reserved for future **binary/bitwise**
+operations while logical or is `||` and logical and is `&&` — is the successor
+card's work. Nothing about the token claims or the `Q038` refusals in this
+section changed when `IF-STATEMENT` landed: it neither reads nor writes either
+token, and §G02i's condition tier deliberately has no connectives.
+
+**Open, and deliberately not answered here:** the wave-18 table above claims the
+single `|` for logical or and holds `&` for bitwise and, which leaves bitwise
+*or* with no symbol. The successor card retables the family — `||` for or, `&&`
+for and, single `|` and `&` reserved for binary/bitwise use — and that
+retabling, together with the bitwise spellings, is its decision to make.
+Nothing recorded here forecloses the reasonable options. See
+[the operator record](reports/wave18-pipe-operator/README.md).
+
+## G02i. The source branching construct
+
+```ebnf
+stmt    = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
+cond    = "true" | "false" | operand, cmp, operand ;
+operand = [ "-" ], INTEGER ;
+cmp     = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+```
+
+`source.branch.v1` (card `IF-STATEMENT`), on the **sequential route only**. The
+statement shape is the one the parser has always accepted; what the card added
+is that the condition's bytes are now *recorded* rather than discarded, so a
+semantic pass can read them. `else if` flattens into one statement with one
+condition per header, and lowers to a right-nested branch. Nesting an `if`
+inside an arm is admitted — it is the shape a short-circuit lowering needs.
+
+**No new reserved word and no new token.** `if`, `else`, `true` and `false` were
+already reserved source words, and `==`, `!=`, `<=`, `>=`, `<` and `>` were
+already single tokens. The census across all 369 `.qcore`/`.qc` files (317 of
+them source-side, where wave 18 counted 294) found `if`
+as a word in four files — three of them `//` comment text quoting C inside
+`contract/qcore/fluent_bit/`, and one an archived probe the standing gate does
+not replay — and `else` in sixteen, every one of them the extern adapter's
+`succeeds BOOL else … raise ERROR` tail, which is a `;`-terminated statement and
+never follows a `}`.
+
+**The condition is decidable at check time**, exactly as the `succeeds` and
+`passes` literal outcome controls beside it are, because the translation
+certificate compares one reference observation, one CFG observation and one
+observation parsed from the compiled program's own output. The tier is
+deliberately minimal and has **no connectives**: `||` and `&&` lower *onto* this
+construct in a later card rather than extending this grammar, and single `|` and
+`&` are reserved for future binary/bitwise operations.
+
+**The branch is nonetheless real.** Both arms are validated in full, both are
+emitted as basic blocks, and the emitted C computes the comparison itself —
+`if (INT32_C(3) < INT32_C(5)) { goto …; } else { goto …; }` — rather than
+receiving the decided literal, so the reference evaluator and a C compiler are
+cross-checked by the translation-validation triangle and by a sanitized native
+run. Only the *observation* is single-valued; follow-on `IF-RUNTIME-CONDITION`.
+
+**The custody join is agreement, never widening.** Both arms are validated from
+the same incoming state and the branch is admitted only if they reach the join
+with equal ordered live lists and equal transferred sets. **Four** models check
+that agreement — the cleanup lowering, ownership (`OwnershipOp::Branch`), typed
+errors (`ErrorOp::Branch`) and resource flow (`Flow::join_branches`) — and a
+fifth, usage (`UsageExpr::Branch`), joins the arms' *demands*. Only
+`SourceOp::Branch`, in the cleanup lowering, is new: the other four were all
+already shipped, each with its own mismatch error.
+
+**Refusals.** `Q044` a shape this profile does not model — a `return` inside an
+arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), or
+inconsistent block and condition counts; `Q045` a condition outside the tier —
+a chained comparison, an arithmetic expression, an empty condition, a
+non-integer operand; `Q046` the arms do not reach the join in the same custody
+state. A name written in a condition is collected as a referenced name and
+refuses earlier at `Q013`. An acquisition inside an arm is refused by the
+pre-existing ownership join at `Q103`, inherited unedited (`IF-ARM-ACQUIRE`).
+Every other route keeps its own refusal, measured: `Q030` on `source.std-io.v1`,
+the extern route's nested-block refusal on `source.extern-call.v1`, and `Q500`
+on the copy-scalar task profile. See
+[the branch record](reports/wave19-if-statement/README.md) and
+[the design note](design/SOURCE_BRANCH_V1.md).
 
 ## G03. Source parameter usage grades
 

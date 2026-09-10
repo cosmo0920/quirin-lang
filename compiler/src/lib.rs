@@ -196,7 +196,7 @@ pub use ownership::{
 pub use parser::{ParseError, parse_program};
 /// Card `source.extern-call.v1`: the bounded extern-call model, its C11
 /// backend and its reference execution.
-pub use qcore_core::{extern_c_emit, extern_call};
+pub use qcore_core::{extern_c_emit, extern_call, native_library};
 pub use research_closure::{
     OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, PROMOTED_RESEARCH_QUESTIONS, Progress,
     ResearchClosureCertificate, ResearchClosureError, ResearchProgram, ResourceSafetyCertificate,
