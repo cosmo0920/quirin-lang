@@ -36,6 +36,7 @@ fn compile(
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
 }
@@ -233,6 +234,7 @@ fn importing_the_modules_in_another_file_does_not_grant_this_one_the_capability(
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
     .expect_err("imports are file-local");

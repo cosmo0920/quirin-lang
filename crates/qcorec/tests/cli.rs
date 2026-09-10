@@ -312,3 +312,86 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
     );
     std::fs::remove_dir_all(directory).unwrap();
 }
+
+/// Card `UNSAFE-LINKAGE-ARTIFACT`. A `Safe` obtained through unchecked linkage
+/// is never printed bare (card `UNSAFE-LINKAGE` §4.1), and when a library
+/// manifest names the waived symbol the printed premise says *which build* it
+/// was waived from.
+#[test]
+fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
+    let fixtures =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
+    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
+    let manifest = fixtures.join("native_library/unchecked_demo.qcorelib");
+
+    // Without the flag: the bare premise, exactly as wave 18 printed it.
+    let bare = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg(&source)
+        .output()
+        .unwrap();
+    assert!(bare.status.success(), "{bare:?}");
+    let bare = String::from_utf8_lossy(&bare.stdout).into_owned();
+    assert!(bare.contains("under 5 declared assumption(s):"), "{bare}");
+    assert!(
+        bare.contains(
+            "unchecked linkage: `k_unchecked_add` is linked as `(int32_t, int32_t) -> int32_t` with no contract; nothing about its behavior is checked"
+        ),
+        "{bare}"
+    );
+    assert!(!bare.contains("artifact"), "no build was named: {bare}");
+
+    // With the flag: the same waiver, now naming the artifact and its hash.
+    let sharp = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg("--native-library")
+        .arg(&manifest)
+        .arg(&source)
+        .output()
+        .unwrap();
+    assert!(sharp.status.success(), "{sharp:?}");
+    let sharp = String::from_utf8_lossy(&sharp.stdout).into_owned();
+    assert!(sharp.contains("under 5 declared assumption(s):"), "{sharp}");
+    assert!(
+        sharp.contains(
+            "from artifact `libqcore_unchecked_demo.a` of library `qcore_unchecked_demo 0.1.0` at sha256:9f2c4a1e7b3d05860f14ca9e2d7b58311c06ae4f9d2b7c8e5a0341f6d9b8c72e"
+        ),
+        "{sharp}"
+    );
+    // The stated identity is printed as what it is: declared, not verified.
+    assert!(
+        sharp.contains("the artifact identity is declared, not verified here"),
+        "{sharp}"
+    );
+    assert!(
+        sharp.contains(
+            "under stated ABI premises (data model lp64, no unwinding across the boundary, closed allocator custody, single-threaded caller)"
+        ),
+        "{sharp}"
+    );
+
+    // A manifest that does not load refuses the module rather than being
+    // ignored, and the CLI reports it as a diagnostic.
+    let broken =
+        std::env::temp_dir().join(format!("qcore-manifest-{}.qcorelib", std::process::id()));
+    std::fs::write(
+        &broken,
+        std::fs::read_to_string(&manifest)
+            .unwrap()
+            .replace("data_model lp64;", "data_model ilp32;"),
+    )
+    .unwrap();
+    let refused = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        .arg("check")
+        .arg("--native-library")
+        .arg(&broken)
+        .arg(&source)
+        .output()
+        .unwrap();
+    assert!(!refused.status.success(), "{refused:?}");
+    assert!(
+        String::from_utf8_lossy(&refused.stderr).contains("Q039"),
+        "{refused:?}"
+    );
+    std::fs::remove_file(&broken).unwrap();
+}

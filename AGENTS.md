@@ -440,6 +440,7 @@ this table is a summary of it, not a second allocation.
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
 | `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` claimed-but-unlowered logical-operator tokens |
+| `Q039`–`Q042` | `NativeLibrary` | `source.native-library.v1` manifest load, binding and agreement; manifest-resident waivers |
 | `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape, decidable condition tier, custody-join agreement |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |

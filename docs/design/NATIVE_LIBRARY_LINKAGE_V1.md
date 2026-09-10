@@ -1,4 +1,29 @@
 <!-- Adopted, with recorded adjustments, by card `UNSAFE-LINKAGE` (wave 18). -->
+<!-- Partly implemented by card `UNSAFE-LINKAGE-ARTIFACT` (wave 19); see the
+     "Landed since" note below. -->
+
+> **Landed since (card `UNSAFE-LINKAGE-ARTIFACT`, wave 19).** The **contract-less
+> slice** of stage (a) is implemented:
+> [`crates/qcore-core/src/native_library.rs`](../../crates/qcore-core/src/native_library.rs)
+> loads a manifest total-or-reject with the artifact identity of §4.3 and the
+> four ABI premise fields of §4.4, binds symbols through §4.1's
+> may-not-bind-twice rule (extended across a selection), and applies §4.2's type
+> gate to a waived declaration. The new pass `NativeLibrary` owns the reserved
+> band as **`Q039`–`Q042`**. Status is therefore no longer "scoped only" as a
+> whole; it is **scoped only except for the contract-less slice**, and the
+> difference is exactly:
+>
+> | §4 piece | State |
+> |---|---|
+> | 4.1 symbol table, for **contract-less** entries | landed (a `contract fn` entry is a named rejection) |
+> | 4.1 contract slice binding, in both directions | **not implemented** — follow-on `NATIVE-LIBRARY-CONTRACT-SLICE` |
+> | 4.2 header agreement | landed as a **refusal** for a contract-less entry, not a withdrawal (see the report's §4 for why the two differ here); reading a real `.h` is follow-on `NATIVE-LIBRARY-HEADER` |
+> | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (report §5) |
+> | 4.4 ABI premises | landed as four mandatory closed-vocabulary fields carried onto the certificate |
+> | 4.4 closed-allocator-custody structural check | vacuous by construction — a contract-less entry cannot acquire (`UNSAFE_LINKAGE_V1.md` §9.1 point 2) |
+> | §6 `std.buffer`, §12 stages (b)–(d) | untouched |
+>
+> Evidence: [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md).
 
 # Native-library linkage for bundled modules: `source.native-library.v1`
 
@@ -233,7 +258,10 @@ machinery with zero new trust concepts.
 
 ## 7. Diagnostics
 
-New codes in the first free band, **`Q039` onward** **[adjusted, A2]** (the
+New codes in the first free band, **`Q039` onward** **[adjusted, A2]**
+(**taken**: card `UNSAFE-LINKAGE-ARTIFACT` allocated `Q039`–`Q042` to the new
+`NativeLibrary` pass through the §L21 process; a contract-slice card continues
+from `Q043`) (the
 `Q028`–`Q031` band is owned by `StandardIo`, `Q032`–`Q035` by card
 `UNSAFE-LINKAGE`'s `UncheckedLinkage` pass, and `Q036`–`Q038` by card
 `PIPE-OPERATOR`'s `Pipe` pass), owned by a new semantic pass entry

@@ -5768,7 +5768,7 @@
   "workspace_tests": 2986,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 81,
+  "lean_audits": 82,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5820,6 +5820,7 @@
    "AuditMayAlias.lean",
    "AuditMemberAddress.lean",
    "AuditMutexInvariant.lean",
+   "AuditNativeLibrary.lean",
    "AuditNeutralExpressionPosition.lean",
    "AuditNeutralFrameRecursion.lean",
    "AuditO05.lean",

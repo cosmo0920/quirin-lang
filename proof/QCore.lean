@@ -91,6 +91,7 @@ import QCore.CapacityBoundary
 import QCore.ExternCall
 import QCore.StdIo
 import QCore.UncheckedLinkage
+import QCore.NativeLibrary
 import QCore.ReasonCategory
 import QCore.ReasonCarrier
 import QCore.SourceRootAdmission

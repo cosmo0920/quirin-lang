@@ -35,6 +35,7 @@ fn compile_with(
         &CompileOptions {
             entry: None,
             extern_contracts: contracts,
+            native_libraries: None,
         },
     )
 }
@@ -317,6 +318,7 @@ fn importing_the_module_in_another_file_does_not_grant_this_one_the_call() {
             &CompileOptions {
                 entry: None,
                 extern_contracts: selection(),
+                native_libraries: None,
             },
         )
         .unwrap_err();

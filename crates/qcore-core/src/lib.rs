@@ -29,6 +29,7 @@ pub mod module_imports;
 pub mod mutex_c_emit;
 pub mod mutex_invariant;
 pub mod native_concurrency;
+pub mod native_library;
 pub mod os_endpoint;
 pub mod ownership;
 pub mod prelude;

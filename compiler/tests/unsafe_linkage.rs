@@ -35,6 +35,7 @@ fn compile_with(
         &CompileOptions {
             entry: None,
             extern_contracts: contracts,
+            native_libraries: None,
         },
     )
 }
@@ -147,6 +148,7 @@ fn the_premises_reach_a_consumer_that_does_not_know_the_route() {
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
     .unwrap();
@@ -258,6 +260,7 @@ fn importing_the_waiver_in_another_file_does_not_grant_this_one() {
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
     .unwrap_err();
@@ -430,6 +433,7 @@ fn a_name_cannot_be_declared_both_ways_across_two_files() {
         &CompileOptions {
             entry: None,
             extern_contracts: None,
+            native_libraries: None,
         },
     )
     .unwrap_err();
