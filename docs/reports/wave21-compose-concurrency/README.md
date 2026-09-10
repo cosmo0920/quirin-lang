@@ -642,6 +642,10 @@ observation.
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad.
 
+### 11.1 The workspace run
+
+PENDING_WORKSPACE_NUMBERS
+
 ### 11.2 One expected failure, left for the integrator
 
 `scripts/tests` reports
@@ -742,7 +746,8 @@ derived sections receive.
 > the task rendering those examples produced before. No synthesized line moved,
 > pinned by comparing the composed emission with the task emission statement for
 > statement, so the F02 digests, the CT fixtures and every pinned trace byte are
-> untouched. 30 new tests, five sanitized ASan/UBSan/LSan runs (three of them
+> untouched. 33 new tests (16 route/refusal, 14 against the model, 3 more over
+> the published examples), five sanitized ASan/UBSan/LSan runs (three of them
 > positive leak controls), 31 audited Lean theorems in a new `QCore.ComposedTasks`
 > that reuses `QCore.StdIo`'s vocabulary, 89/89 audits and no new axiom.
 > Corpus-neutral by construction. Evidence:

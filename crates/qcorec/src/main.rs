@@ -177,6 +177,10 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::ComposedStdIoExternV1 => {
                     "; declared extern calls composed with rendered lines (both models checked)"
                 }
+                qcore_compiler::SourceExecutionProfile::ComposedStdIoTasksV1 => {
+                    "; scoped tasks composed with rendered lines in the parent \
+                     (Linux/macOS/Windows threads)"
+                }
                 _ => "",
             };
             println!(
