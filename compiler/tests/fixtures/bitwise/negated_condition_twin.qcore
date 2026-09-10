@@ -1,0 +1,27 @@
+error Failure { Failed; }
+
+// The hand-swapped twin of `negated_condition.qcore`: the branch a reader
+// would have written having done the negation themselves, by exchanging the
+// two arms. The emitted C is expected to be **byte-identical**, which is this
+// half of the card's load-bearing pin.
+//
+// The comment block above is padded to the same line count as the fixture's so
+// the two `#line` directives agree; the emission pin compares C bytes, and a
+// `#line` is part of them.
+//
+// (padding line)
+// (padding line)
+// (padding line)
+// (padding line)
+// (padding line)
+// (padding line)
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+    } else {
+        qcore_check(true, Failure);
+        drop a;
+    }
+    return 0;
+}

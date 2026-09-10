@@ -1,0 +1,27 @@
+error Failure { Failed; }
+
+// Unary `!` in an `if` condition (card `BITWISE-CONDITIONS`), lowered onto
+// `source.branch.v1` (card `IF-STATEMENT`) by an **arm swap**.
+//
+// `if (!C) { A } else { B }` is exactly the branch a reader would have written
+// as `if (C) { B } else { A }`, and this fixture's emitted C is byte-identical
+// to that twin's. The negation is therefore a pure token-tier construct: no
+// operation, no checker rule, no core IR node, and nothing downstream can tell
+// a `!` was written.
+//
+// The two arms are deliberately **distinguishable** — one carries a
+// `qcore_check` the other does not — so the byte equality is a statement about
+// the swap rather than about two identical arms. They are nonetheless
+// custody-equal, because a check leaves the ledger alone, which is what the
+// join requires.
+//
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (!(3 < 5)) {
+        qcore_check(true, Failure);
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

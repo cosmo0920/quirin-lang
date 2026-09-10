@@ -35,18 +35,19 @@ pub enum Symbol {
     Slash,
     Percent,
     Bang,
-    /// `&`, **reserved** for a future bitwise-and operation (card
-    /// `OR-AND-LOWERING`; follow-on `BITWISE-OPERATORS`). It is not logical
-    /// and — that is [`Self::AndAnd`] — and it is consumed by no grammar in
-    /// this revision, so every occurrence refuses at `Q038` with a
-    /// reservation message.
+    /// `&`, the **bitwise-and** operator (card `OR-AND-LOWERING` reserved it,
+    /// card `BITWISE-CONDITIONS` spelled it). It is not logical and — that is
+    /// [`Self::AndAnd`] — and it is consumed in exactly one position, a
+    /// parenthesized comparison operand inside an `if` condition; everywhere
+    /// else it refuses at `Q038`.
     Ampersand,
-    /// `^`, **reserved** for a future bitwise-xor operation on the same terms
-    /// as [`Self::Ampersand`]. Card `OR-AND-LOWERING` promotes it from a lexer
-    /// error (`unexpected character '^'`) to a token whose every occurrence
-    /// refuses at `Q038`: the set of accepted programs is unchanged and only
-    /// the layer and the message move, exactly as card `PIPE-OPERATOR` did for
-    /// a bare `|`.
+    /// `^`, the **bitwise-xor** operator, on the same terms as
+    /// [`Self::Ampersand`] and binding between it and [`Self::Pipe`]. Card
+    /// `OR-AND-LOWERING` promoted it from a lexer error
+    /// (`unexpected character '^'`) to a token refusing at `Q038` — the set of
+    /// accepted programs unchanged, only the layer and the message moved,
+    /// exactly as card `PIPE-OPERATOR` did for a bare `|` — and card
+    /// `BITWISE-CONDITIONS` gave it its meaning.
     Caret,
     Question,
     Less,
@@ -66,8 +67,9 @@ pub enum Symbol {
     /// parsing by [`crate::pipe::desugar_pipes`]; no later phase sees it in a
     /// well-formed program.
     PipeInto,
-    /// `|`, **reserved** for a future bitwise-or operation (card
-    /// `OR-AND-LOWERING`; follow-on `BITWISE-OPERATORS`).
+    /// `|`, the **bitwise-or** operator (card `OR-AND-LOWERING` reserved it,
+    /// card `BITWISE-CONDITIONS` spelled it). Loosest of the three bitwise
+    /// levels, exactly as in C.
     ///
     /// Card `PIPE-OPERATOR` had claimed the single bar as *logical or*. The
     /// user's retable amendment inverts that: logical or is the double
@@ -84,8 +86,8 @@ pub enum Symbol {
     /// `Q038`.
     PipePipe,
     /// `&&`, the **logical-and** operator, admitted and lowered on the same
-    /// terms as [`Self::PipePipe`] and binding tighter than it. Single `&`
-    /// stays [`Self::Ampersand`], reserved for bitwise and.
+    /// terms as [`Self::PipePipe`] and binding tighter than it. Single `&` is
+    /// [`Self::Ampersand`], the bitwise-and operator of a different sort.
     AndAnd,
     Arrow,
     FatArrow,
@@ -246,10 +248,10 @@ impl Lexer<'_> {
     /// | `\|]` | `QuantClose` | |
     /// | `\|>` | `PipeInto` | the pipe wins over `Pipe` then `Greater` by width |
     /// | `\|\|` | `PipePipe` | **logical or** — atomic, one token (card `OR-AND-LOWERING`) |
-    /// | `\|` | `Pipe` | reserved for bitwise or; refuses at `Q038` |
+    /// | `\|` | `Pipe` | **bitwise or** — admitted as a grouped comparison operand in a condition; `Q038` elsewhere |
     /// | `&&` | `AndAnd` | **logical and** — binds tighter than `\|\|` |
-    /// | `&` | `Ampersand` | reserved for bitwise and; refuses at `Q038` |
-    /// | `^` | `Caret` | reserved for bitwise xor; refuses at `Q038` |
+    /// | `&` | `Ampersand` | **bitwise and** — same position, tightest of the three |
+    /// | `^` | `Caret` | **bitwise xor** — same position, between `&` and `\|` |
     ///
     /// The five members of the vertical-bar family are pairwise distinct byte
     /// pairs (or a single byte), so the width-two rule decides every one of
@@ -257,10 +259,12 @@ impl Lexer<'_> {
     ///
     /// The one genuine ambiguity in the family is `a |> b` against a
     /// hypothetical `a | > b`: `|>` wins by longest match, so a bitwise or
-    /// followed by a `>` comparison would have to be spaced or parenthesized.
-    /// Recorded by card `PIPE-OPERATOR` and inherited unchanged; it now
-    /// constrains `BITWISE-OPERATORS` rather than the logical-or wave, because
-    /// logical or is `||` and `|| >` is unambiguous.
+    /// followed by a `>` comparison has to be spaced. Recorded by card
+    /// `PIPE-OPERATOR`, inherited by `BITWISE-CONDITIONS` and measured there:
+    /// the adjacency can never produce a wrong *acceptance*, only a refusal,
+    /// because `>` has no left operand inside an integer expression. `(1 | 2)
+    /// > 0` is the spaced spelling and it parses; `1 |> 2` is a pipeline in a
+    /// condition and refuses at `Q045`.
     fn symbol(&mut self, start: usize, first: char) -> Result<Symbol, LexError> {
         let pair = self
             .source
@@ -296,10 +300,10 @@ impl Lexer<'_> {
             '/' => Ok(Symbol::Slash),
             '%' => Ok(Symbol::Percent),
             '!' => Ok(Symbol::Bang),
-            // The three single-byte reservations of card `OR-AND-LOWERING`.
-            // Nothing in the workspace consumes any of them; each is refused
-            // by the operator gate with a bitwise-reservation message so a
-            // future `BITWISE-OPERATORS` wave inherits all three clean.
+            // The three bitwise operators: reserved by card
+            // `OR-AND-LOWERING`, spelled by card `BITWISE-CONDITIONS`. Each is
+            // consumed only by `source.branch.v1`'s integer tier, inside an
+            // `if` condition; the operator gate refuses every other position.
             '&' => Ok(Symbol::Ampersand),
             '|' => Ok(Symbol::Pipe),
             '^' => Ok(Symbol::Caret),

@@ -353,3 +353,37 @@ it. Recorded here so the two records read as one design rather than two:
   follow-on.
 
 Evidence: [`docs/reports/wave19-or-and-lowering/README.md`](../reports/wave19-or-and-lowering/README.md).
+
+## Addendum, card `BITWISE-CONDITIONS`
+
+The second successor card landed against this document, again without changing
+anything in it. It unifies the three follow-ons that all lived in this tier —
+`BITWISE-OPERATORS`, `IF-CONNECTIVE-NEGATION` and `IF-CONDITION-BINDINGS`.
+
+* **The condition tier widened a second time, and the construct did not.** The
+  three bitwise operators reach `qcore-core` — `BranchCondition::Compare` now
+  carries an `IntExpr` operand tree instead of a bare `i32`, so the emitted C
+  computes the bit operation itself on §2.1's own ground — but no `SourceOp`, no
+  `CfgTerminator` and no checker rule was added, and a comparison of two plain
+  literals emits exactly the bytes it emitted before.
+* **Unary `!` is the arm swap.** `if (!C) { A } else { B }` is `if (C) { B }
+  else { A }`, so it is eliminated in the front end like a connective, it costs
+  nothing, `!!A` is literally `A`'s own lowering, and §3's join runs unchanged
+  because a swap of two arms that must agree is a swap of equals. The
+  byte-equality pin against the hand-swapped twin is the measurement.
+* **The one new rule for declaring precedence.** A precedence is declared only
+  where it agrees with C; where this tier's two sorts force a different ranking,
+  the unparenthesized spelling is **refused** rather than silently redefined.
+  That is why `(A | B) == C` is a program and `A | B == C` is not, and why
+  `!(A < B)` is a program and `!A < B` is not.
+* **The decidable subset of `IF-CONDITION-BINDINGS`.** `let NAME = INTEGER;` at
+  the top level of a sequential entry body is a check-time constant binding,
+  substituted for its value where a condition reads it. §2.1's reason for a
+  decidable tier is therefore untouched: the certificate still compares one
+  observation. A resource name in a condition is refused, so §3's custody
+  discipline is not reached from the expression tier at all —
+  `IF-RUNTIME-CONDITION` remains the follow-on that would move the boundary.
+* **A `let` inside an arm is refused (`Q044`).** Widening §5's arm subset is
+  card `IF-ARMS`' business, and the refusal names it.
+
+Evidence: [`docs/reports/wave20-bitwise-conditions/README.md`](../reports/wave20-bitwise-conditions/README.md).

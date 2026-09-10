@@ -326,42 +326,44 @@ pub fn interpret_cfg(cfg: &TypedCfg) -> Result<ExecutionObservation, CfgError> {
                 }
             }
         }
-        match *block.terminator() {
-            CfgTerminator::Goto(target) => block_id = target,
+        match block.terminator() {
+            CfgTerminator::Goto(target) => block_id = *target,
             CfgTerminator::TryAcquire {
                 resource,
                 succeeds,
                 success,
                 failure,
             } => {
-                if succeeds {
+                let resource = *resource;
+                if *succeeds {
                     if !acquired.insert(resource) {
                         return Err(CfgError::DuplicateAcquisitionIdentity(resource));
                     }
                     live.insert(resource);
                     trace.push(TraceEvent::Acquire(resource));
-                    block_id = success;
+                    block_id = *success;
                 } else {
-                    block_id = failure;
+                    block_id = *failure;
                 }
             }
             CfgTerminator::Check {
                 passes,
                 success,
                 failure,
-            } => block_id = if passes { success } else { failure },
+            } => block_id = if *passes { *success } else { *failure },
             CfgTerminator::Branch {
                 condition,
                 then_block,
                 else_block,
             } => {
                 block_id = if condition.evaluate() {
-                    then_block
+                    *then_block
                 } else {
-                    else_block
+                    *else_block
                 };
             }
             CfgTerminator::ReturnOk(value) => {
+                let value = *value;
                 if !live.is_empty() {
                     return Err(CfgError::LiveResourcesAtExit(live.into_iter().collect()));
                 }
@@ -374,6 +376,7 @@ pub fn interpret_cfg(cfg: &TypedCfg) -> Result<ExecutionObservation, CfgError> {
                 });
             }
             CfgTerminator::ReturnError(tag) => {
+                let tag = *tag;
                 if !live.is_empty() {
                     return Err(CfgError::LiveResourcesAtExit(live.into_iter().collect()));
                 }

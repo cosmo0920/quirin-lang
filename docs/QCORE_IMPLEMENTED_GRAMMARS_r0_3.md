@@ -1296,10 +1296,12 @@ temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
 cannot receive the operand — `flush`, which takes none, or a **sink** in a
 non-final position, since only a call stage binds a result;
 `Q038` an operator token used where this revision gives it no meaning — one of
-the three reserved single-byte spellings `|`, `&`, `^`, or a logical connective
-`||`/`&&` outside an `if` condition (see the table below). Dropping the `;` of
-the last statement in a body is a parse failure (`Q000`) before the pipe pass
-runs.
+the five operator spellings `|`, `&`, `^`, `||`, `&&` **outside an `if`
+condition** (see the table below). Card `BITWISE-CONDITIONS` gave the three
+single-byte spellings a meaning in that one position, so the gate is now
+positional for all five and no longer holds any of them as a pure reservation.
+Dropping the `;` of the last statement in a body is a parse failure (`Q000`)
+before the pipe pass runs.
 
 ### The operator token family
 
@@ -1314,9 +1316,9 @@ immaterial and the resolution is decided by width alone.
 | `\|>` | `PipeInto` | **landed** — desugared away before parsing (§G02h above) |
 | `\|\|` | `PipePipe` | **logical or** — one token; admitted in an `if` condition and lowered there (§G02i) |
 | `&&` | `AndAnd` | **logical and** — same, binding **tighter** than `\|\|` |
-| `\|` | `Pipe` | **reserved** for bitwise or; `Q038` everywhere |
-| `&` | `Ampersand` | **reserved** for bitwise and; `Q038` everywhere |
-| `^` | `Caret` | **reserved** for bitwise xor; `Q038` everywhere |
+| `\|` | `Pipe` | **bitwise or** — admitted only as a parenthesized comparison operand in an `if` condition (§G02i); `Q038` elsewhere |
+| `&` | `Ampersand` | **bitwise and** — same position, binding **tighter** than `^` |
+| `^` | `Caret` | **bitwise xor** — same position, between `&` and `\|` |
 
 **This table supersedes card `PIPE-OPERATOR`'s, by explicit user direction**
 (card `OR-AND-LOWERING`). That card had decided the single `|` was logical or
@@ -1329,19 +1331,25 @@ bitwise or had no spelling left — by giving it `|` back.
 `[|` is matched at the `[`, so `[|>` is always `[|` then `>` and never `[` then
 `|>`, and `[||]` is the two quant delimiters and never an or-operator. `|>` wins
 over `||` and over `|`, so the ambiguity wave 18 recorded (`a |> b` against a
-hypothetical `a | > b`) now constrains **`BITWISE-OPERATORS`** rather than the
-logical-or wave: `|| >` is unambiguous, a bitwise `| >` would have to be spaced.
+hypothetical `a | > b`) was inherited by **`BITWISE-CONDITIONS`**, which
+measured it and recorded the answer: `|| >` is unambiguous, and a bitwise `|`
+adjacent to a `>` must be spaced — but the adjacency can never produce a wrong
+*acceptance*, only a refusal, because `>` has no left operand inside an integer
+expression. `(1 | 2) > 0` is the spaced spelling and it parses; `1 |> 2` is a
+pipeline in a condition and refuses at `Q045`.
 `|||` is `||` then the reserved `|`; `&&&` is `&&` then the reserved `&`.
 
 **Two deliberate pin updates, neither changing any program's verdict.** A bare
 `|` was a lex error before card `PIPE-OPERATOR` and a `Q038` refusal after it; it
-stays a `Q038` refusal, with the message now redirecting to `||` rather than
-claiming the token. A bare `^` was a lex error (`unexpected character '^'`) and
-is now a token whose every occurrence refuses at `Q038` — the same move one card
-later, for the same reason: an actionable message. A bare `&` refused downstream
-in whichever route claimed the module and now refuses at the gate, which is where
-the reservation can be stated. In all three cases the set of accepted programs is
-unchanged and only the layer and the message move. The census behind the retable
+stays a `Q038` refusal outside a condition, with the message naming the position
+it *is* admitted in rather than claiming the token. A bare `^` was a lex error
+(`unexpected character '^'`) and became a token whose occurrences refuse at
+`Q038` — the same move one card later, for the same reason: an actionable
+message. A bare `&` refused downstream in whichever route claimed the module and
+now refuses at the gate. In all three cases the retable itself left the set of
+accepted programs unchanged and moved only the layer and the message; card
+`BITWISE-CONDITIONS` then *widened* the set, in one position and by one
+grammar production each (§G02i). The census behind the retable
 is in [the card record](reports/wave19-or-and-lowering/README.md): `[|`, `|]`,
 `||`, `&` outside comments and `^` appear in **no** `.qcore` file at all, and
 `|>` only in the four pipe fixtures.
@@ -1350,13 +1358,22 @@ is in [the card record](reports/wave19-or-and-lowering/README.md): `[|`, `|]`,
 
 ```ebnf
 stmt     = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
-cond     = disjunct, { "||", disjunct } ;         (* left-associative *)
-disjunct = primary,  { "&&", primary  } ;         (* binds tighter    *)
-primary  = "(", cond, ")" | leaf ;
-leaf     = "true" | "false" | operand, cmp, operand ;
-operand  = [ "-" ], INTEGER ;
-cmp      = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+cond     = conj, { "||", conj } ;                 (* 1, left-associative  *)
+conj     = neg,  { "&&", neg  } ;                 (* 2, left-associative  *)
+neg      = "!", neg | cmp ;                       (* 3, right-associative *)
+cmp      = int, [ op, int ] ;                     (* 4, non-associative   *)
+int      = xor, { "|", xor } ;                    (* 5, left-associative  *)
+xor      = and, { "^", and } ;                    (* 6, left-associative  *)
+and      = atom, { "&", atom } ;                  (* 7, left-associative  *)
+atom     = "(", cond, ")" | "true" | "false"
+         | [ "-" ], INTEGER | NAME ;
+op       = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 ```
+
+The grammar is **two-sorted**: levels 1–4 produce a *condition* and levels 5–7
+an *integer*, `atom` produces either, and one parser reads both — so a sort
+mismatch is a refusal rather than a second parse. There is no coercion in either
+direction: `if (mask & 4)` and `if (true | false)` are both refused (`Q045`).
 
 `source.branch.v1` (card `IF-STATEMENT`), on the **sequential route only**. The
 statement shape is the one the parser has always accepted; what the card added
@@ -1402,15 +1419,39 @@ level runs the same four-model custody join, so a connective cannot launder a
 `Q046` disagreement: `if (A || B) { drop a; }` is the conditional leak exactly as
 `if (A) { drop a; }` is.
 
-**Precedence is declared** — `&&` binds tighter than `||`, both left-associative,
-parentheses group — and is pinned against a fully parenthesized twin. One
-measured consequence is recorded rather than designed: for a *homogeneous* chain
-the lowering is associative on the nose, so `(A || B) || C` and `A || (B || C)`
-emit identical C and the associativity declaration is load-bearing only where the
-two connectives mix. `|>` is **not** in the tier and is never given a precedence
-relative to `||`: a condition mixing them is refused at `Q045`. Single `|`, `&`
-and `^` stay reserved for future bitwise operations inside a condition exactly as
-outside one (`Q038`).
+**The negation and the integer tier (card `BITWISE-CONDITIONS`).** Unary `!` is
+eliminated by an **arm swap**: `if (!C) { A } else { B }` is the branch a reader
+writes as `if (C) { B } else { A }`, so `!!A` is literally `A`'s own lowering,
+the emitted C is byte-identical to the hand-swapped twin's, and no checked model
+sees a negation. The three bitwise operators `|`, `^` and `&` are admitted in
+**one** position — a parenthesized comparison operand — over signed 32-bit
+literals and names bound to one. A `NAME` atom is a **check-time constant
+binding**, `let NAME = INTEGER;`, admitted at the top level of a sequential
+entry body and substituted for its value here; a name that denotes a resource
+identity is refused, so no custody-bearing value gains a position in this tier.
+
+**Precedence is declared, and the rule for declaring it is stated once: a
+precedence is declared only where it agrees with C, and where this tier's two
+sorts would force a different ranking than C's, the unparenthesized spelling is
+refused rather than silently redefined.** Levels 1, 2, 5, 6 and 7 are C's own
+order and are declared: `&&` tighter than `||`, `&` tighter than `^` tighter
+than `|`, all left-associative, parentheses group. Levels 3 and 4 are not — C
+ranks `!` tighter and `|`/`^`/`&` looser than the comparisons, while a tier in
+which a comparison yields a condition and a condition is never an integer
+operand must rank them the other way — so `!A < B` and `A | B == C` are
+**refused** (`Q045`) and `!(A < B)` and `(A | B) == C` are the spellings. A
+comparison is non-associative, so `1 < 2 < 3` is refused too.
+
+Two measured consequences are recorded rather than designed. For a *homogeneous*
+chain the lowering is associative on the nose — `(A || B) || C` and
+`A || (B || C)` emit identical C, and so do the two groupings of `1 | 2 | 4` —
+so each associativity declaration is load-bearing only where operators of
+different levels mix. And a negation over two *identical* arms is unobservable,
+for the same reason a swap of equals is: `!` is load-bearing exactly when the
+arms differ.
+
+`|>` is **not** in the tier and is never given a precedence relative to anything
+in it: a condition mixing them is refused at `Q045`.
 
 **The branch is nonetheless real.** Both arms are validated in full, both are
 emitted as basic blocks, and the emitted C computes the comparison itself —
@@ -1429,22 +1470,26 @@ fifth, usage (`UsageExpr::Branch`), joins the arms' *demands*. Only
 already shipped, each with its own mismatch error.
 
 **Refusals.** `Q044` a shape this profile does not model — a `return` inside an
-arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), or
-inconsistent block and condition counts; `Q045` a condition outside the tier —
-a chained comparison, an arithmetic expression, a pipeline, a unary negation, an
-empty condition, an unbalanced parenthesis, a connective missing an operand, a
-non-integer operand; `Q046` the arms do not reach the join in the same custody
-state. A name written in a condition is collected as a referenced name and
-refuses earlier at `Q013`. A reserved single-byte operator refuses at `Q038`
-before the tier is consulted, and so does a connective written outside a
-condition. An acquisition inside an arm is refused by the
+arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), a `let`
+inside an arm (`IF-ARMS`), or inconsistent block and condition counts; `Q045` a
+condition outside the tier — a chained comparison, an arithmetic expression, a
+shift, a complement, a pipeline, an empty condition, an unbalanced parenthesis,
+a connective missing an operand, an integer where a condition is required or a
+condition where an integer is required, an **ungrouped** bitwise comparison
+operand or `!` operand, a name bound to a resource identity, or a non-integer
+operand; `Q046` the arms do not reach the join in the same custody state. A name
+written in a condition that is bound to nothing is collected as a referenced
+name and refuses earlier at `Q013`. An operator token written **outside** a
+condition refuses at `Q038` before the tier is consulted — all five of `|`, `&`,
+`^`, `||` and `&&`. An acquisition inside an arm is refused by the
 pre-existing ownership join at `Q103`, inherited unedited (`IF-ARM-ACQUIRE`).
 Every other route keeps its own refusal, measured: `Q030` on `source.std-io.v1`,
 the extern route's nested-block refusal on `source.extern-call.v1`, and `Q500`
 on the copy-scalar task profile — and a connective in the condition does not
 change which refusal answers. See
 [the branch record](reports/wave19-if-statement/README.md),
-[the connective record](reports/wave19-or-and-lowering/README.md) and
+[the connective record](reports/wave19-or-and-lowering/README.md),
+[the integer-tier record](reports/wave20-bitwise-conditions/README.md) and
 [the design note](design/SOURCE_BRANCH_V1.md).
 
 ## G03. Source parameter usage grades

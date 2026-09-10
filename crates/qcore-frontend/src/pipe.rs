@@ -798,20 +798,32 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
 
     for token in tokens {
         let message = match &token.kind {
-            // The three single-byte reservations. Each is refused everywhere,
-            // including inside a condition: `||` and `&&` are the connectives,
-            // and these characters are being held rather than spelled.
-            TokenKind::Symbol(Symbol::Pipe) => "`|` is reserved for a future bitwise-or operation \
-                 and has no meaning in this revision. QCore spells logical or as `||` \
-                 (follow-on `BITWISE-OPERATORS`)"
-                .to_owned(),
-            TokenKind::Symbol(Symbol::Ampersand) => "`&` is reserved for a future bitwise-and \
-                 operation and has no meaning in this revision. QCore spells logical and as `&&` \
-                 (follow-on `BITWISE-OPERATORS`)"
-                .to_owned(),
-            TokenKind::Symbol(Symbol::Caret) => "`^` is reserved for a future bitwise-xor \
-                 operation and has no meaning in this revision (follow-on `BITWISE-OPERATORS`)"
-                .to_owned(),
+            // Card `BITWISE-CONDITIONS` spends the three reservations card
+            // `OR-AND-LOWERING` held: `|`, `^` and `&` are the bitwise
+            // operators of `source.branch.v1`'s integer tier, and that tier
+            // lives in **one** position — a comparison operand inside an `if`
+            // condition. Everywhere else there is no integer tier to hold their
+            // value, so the gate keeps refusing them, exactly as it refuses the
+            // two logical connectives outside a condition.
+            TokenKind::Symbol(Symbol::Pipe) if !in_condition(token.span) => {
+                "`|` is the bitwise-or operator. It is admitted only inside an `if` \
+                 condition, as a parenthesized comparison operand; there is no integer \
+                 expression tier to hold its value anywhere else"
+                    .to_owned()
+            }
+            TokenKind::Symbol(Symbol::Ampersand) if !in_condition(token.span) => {
+                "`&` is the bitwise-and operator. It is admitted only inside an `if` \
+                 condition, as a parenthesized comparison operand; there is no integer \
+                 expression tier to hold its value anywhere else. QCore spells logical \
+                 and as `&&`"
+                    .to_owned()
+            }
+            TokenKind::Symbol(Symbol::Caret) if !in_condition(token.span) => {
+                "`^` is the bitwise-xor operator. It is admitted only inside an `if` \
+                 condition, as a parenthesized comparison operand; there is no integer \
+                 expression tier to hold its value anywhere else"
+                    .to_owned()
+            }
             // The connectives are admitted only where `source.branch.v1` can
             // lower them: an `if` condition. Elsewhere there is no branch to
             // lower onto and no expression tier to hold a Boolean value.
@@ -829,8 +841,9 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             }
             // A `|>` that survived desugaring belongs to a pipeline the
             // rewriter refused; that refusal is already in `diagnostics` and
-            // this residual would only duplicate it. A connective inside a
-            // condition is the branch pass's to accept or refuse at `Q045`.
+            // this residual would only duplicate it. A connective or a bitwise
+            // operator inside a condition is the branch pass's to accept or
+            // refuse at `Q045`.
             _ => continue,
         };
         diagnostics.push(SourceDiagnostic {

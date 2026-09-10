@@ -58,32 +58,119 @@ impl CompareOp {
     }
 }
 
+/// The bitwise relations of `source.branch.v1`'s integer tier (card
+/// `BITWISE-CONDITIONS`).  Closed at three, because those are exactly the three
+/// single-byte spellings card `OR-AND-LOWERING` reserved when it made both
+/// logical connectives double-character.  Shifts, arithmetic and complement are
+/// **not** here: each is a separate decision and each keeps a named refusal.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BitwiseOp {
+    /// `|`.  Loosest of the three, exactly as in C.
+    Or,
+    /// `^`.
+    Xor,
+    /// `&`.  Tightest of the three, exactly as in C.
+    And,
+}
+
+impl BitwiseOp {
+    /// The relation itself.  Total on `i32` and free of undefined behaviour in
+    /// C for every pair of operands, which is why this family could be admitted
+    /// while shifts (whose C behaviour is operand-dependent) could not.
+    pub const fn apply(self, left: i32, right: i32) -> i32 {
+        match self {
+            Self::Or => left | right,
+            Self::Xor => left ^ right,
+            Self::And => left & right,
+        }
+    }
+
+    /// The C11 spelling.  The emitted program computes the bit operation itself
+    /// rather than receiving a folded literal, on card `IF-STATEMENT`'s ground:
+    /// that keeps the reference / CFG / compiled-C agreement a cross-check of
+    /// the Rust evaluator against a C compiler instead of a tautology.
+    pub const fn c_operator(self) -> &'static str {
+        match self {
+            Self::Or => "|",
+            Self::Xor => "^",
+            Self::And => "&",
+        }
+    }
+}
+
+/// One operand of a `source.branch.v1` comparison (card `BITWISE-CONDITIONS`).
+///
+/// The whole tier is closed over **signed 32-bit literals**: a name written in
+/// a condition is substituted by the front end for the literal its check-time
+/// constant binding carries, so nothing here can denote a resource identity,
+/// a call result or any run-time value.  Card `IF-STATEMENT`'s single-valued
+/// observation therefore still holds — evaluation is state-free.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum IntExpr {
+    Literal(i32),
+    Bitwise {
+        operator: BitwiseOp,
+        left: Box<IntExpr>,
+        right: Box<IntExpr>,
+    },
+}
+
+impl IntExpr {
+    /// Total and state-free: every operand of the tier has one value.
+    pub fn evaluate(&self) -> i32 {
+        match self {
+            Self::Literal(value) => *value,
+            Self::Bitwise {
+                operator,
+                left,
+                right,
+            } => operator.apply(left.evaluate(), right.evaluate()),
+        }
+    }
+
+    /// `true` for the shape card `IF-STATEMENT` shipped.  Used to keep the
+    /// emitted C byte-identical for a program that writes no bit operation.
+    pub const fn is_literal(&self) -> bool {
+        matches!(self, Self::Literal(_))
+    }
+}
+
 /// A `source.branch.v1` condition.  Decidable at check time, exactly as the
 /// `succeeds` and `passes` literal outcome controls beside it are: the
 /// translation certificate compares one reference observation, one CFG
 /// observation and one observation parsed from the compiled program's own
 /// output, and a run-time-varying condition would leave "the" observation
 /// ill-defined.  Lifting that is named follow-on `IF-RUNTIME-CONDITION`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BranchCondition {
     Literal(bool),
     Compare {
-        left: i32,
+        left: IntExpr,
         operator: CompareOp,
-        right: i32,
+        right: IntExpr,
     },
 }
 
 impl BranchCondition {
+    /// A comparison of two plain literals — the tier card `IF-STATEMENT`
+    /// shipped, spelled without the operand constructor.
+    pub fn compare(left: i32, operator: CompareOp, right: i32) -> Self {
+        Self::Compare {
+            left: IntExpr::Literal(left),
+            operator,
+            right: IntExpr::Literal(right),
+        }
+    }
+
     /// Total: every condition in the tier has a value.
-    pub const fn evaluate(self) -> bool {
+    pub fn evaluate(&self) -> bool {
         match self {
-            Self::Literal(value) => value,
+            Self::Literal(value) => *value,
             Self::Compare {
                 left,
                 operator,
                 right,
-            } => operator.apply(left, right),
+            } => operator.apply(left.evaluate(), right.evaluate()),
         }
     }
 }
@@ -453,7 +540,7 @@ impl Lowerer<'_> {
                         false,
                         Vec::new(),
                         CfgTerminator::Branch {
-                            condition: *condition,
+                            condition: condition.clone(),
                             then_block,
                             else_block,
                         },

@@ -7,7 +7,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use qcore_core::cleanup_lowering::{
-    BranchCondition, CompareOp, SourceOp, SourceProgram as LoweringProgram, interpret_source,
+    BitwiseOp, BranchCondition, CompareOp, IntExpr, SourceOp, SourceProgram as LoweringProgram,
+    interpret_source,
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
@@ -917,6 +918,7 @@ fn synthesize_function(
         result_type,
         resources: Vec::new(),
         owners: BTreeMap::new(),
+        constants: BTreeMap::new(),
         usage_declarations,
         local_usage_names: BTreeMap::new(),
         calls: Vec::new(),
@@ -1008,6 +1010,11 @@ struct FunctionLowering<'a> {
     result_type: ExecutableResultType,
     resources: Vec<ResourceId>,
     owners: BTreeMap<String, ResourceId>,
+    /// Check-time constant integer bindings, `let NAME = INTEGER;` (card
+    /// `BITWISE-CONDITIONS`). A separate namespace from `owners` by
+    /// construction: nothing moves a name between the two, and the tier that
+    /// reads this map has no constructor that could denote an identity.
+    constants: BTreeMap<String, i32>,
     usage_declarations: BTreeMap<String, Usage>,
     local_usage_names: BTreeMap<String, String>,
     calls: Vec<CallSite>,
@@ -1068,6 +1075,29 @@ impl FunctionLowering<'_> {
                             statement.span,
                             "local usage annotations are not supported in the executable subset",
                         ));
+                    }
+                    // Card `BITWISE-CONDITIONS`: a check-time constant integer
+                    // binding, the decidable subset of `IF-CONDITION-BINDINGS`.
+                    // Tried **after** `qcore_acquire` cannot match, and only at
+                    // the top level of an entry body: widening the branch arm
+                    // subset belongs to card `IF-ARMS`, so an arm keeps the
+                    // refusal it already had.
+                    if let Some(value) = parse_constant_binding(&tokens) {
+                        if !top_level {
+                            return Err(branch_diagnostic(
+                                "Q044",
+                                statement.span,
+                                "`source.branch.v1` admits no `let` inside a branch arm: an \
+                                 arm-local binding has no position after the join, and \
+                                 widening the arm subset is follow-on `IF-ARMS`",
+                            ));
+                        }
+                        self.constants.insert(binding.clone(), value);
+                        let usage_name = format!("$constant:{}:{binding}", statement.span.start);
+                        self.usage_declarations
+                            .insert(usage_name.clone(), Usage::MANY);
+                        self.local_usage_names.insert(binding.clone(), usage_name);
+                        continue;
                     }
                     let (resource, succeeds, error) = parse_acquire(&tokens).ok_or_else(|| {
                         diagnostic(SemanticPass::CEmission, statement.span, "`let` must use `qcore_acquire(resource_id, succeeds, ErrorType)` in the executable subset")
@@ -1344,16 +1374,12 @@ impl FunctionLowering<'_> {
             ));
         };
         let condition_tokens = statement_tokens(self.parsed.source(), *condition_span)?;
-        let condition = parse_condition_tree(&condition_tokens).ok_or_else(|| {
-            branch_diagnostic(
-                "Q045",
-                *condition_span,
-                "`source.branch.v1` admits `true`, `false` and comparisons of two signed \
-                 32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`), combined with \
-                 the connectives `&&` and `||` and grouped with parentheses, as a condition. \
-                 A name, a call, a pipeline or any other operator is outside the decidable tier",
-            )
-        })?;
+        let context = ConditionContext {
+            constants: &self.constants,
+            owners: &self.owners,
+        };
+        let condition = parse_condition_tree(&condition_tokens, &context)
+            .map_err(|message| branch_diagnostic("Q045", *condition_span, message))?;
 
         let entry = self.counters;
         let owners = self.owners.clone();
@@ -1427,6 +1453,11 @@ impl FunctionLowering<'_> {
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum ConditionTree {
     Leaf(BranchCondition),
+    /// `!OPERAND` (card `BITWISE-CONDITIONS`). Eliminated by an **arm swap**:
+    /// `if (!A) T else E` is `if (A) E else T`, which is the program a reader
+    /// would have written by hand. No checked model sees a negation and
+    /// `qcore_core` gains no constructor for one.
+    Not(Box<ConditionTree>),
     /// `LEFT && RIGHT`, binding tighter than [`Self::Or`].
     And(Box<ConditionTree>, Box<ConditionTree>),
     /// `LEFT || RIGHT`.
@@ -1456,7 +1487,11 @@ fn build_connective_branch(
     else_output: &SequenceLowering,
 ) -> Result<SequenceLowering, SourceDiagnostic> {
     match condition {
-        ConditionTree::Leaf(leaf) => join_branch_arms(span, *leaf, then_output, else_output),
+        ConditionTree::Leaf(leaf) => join_branch_arms(span, leaf.clone(), then_output, else_output),
+        // Card `BITWISE-CONDITIONS`: negation is the **arm swap**, so it is
+        // eliminated here at zero cost and `!!A` is literally `A`'s own
+        // lowering. Nothing downstream can tell a `!` was written.
+        ConditionTree::Not(inner) => build_connective_branch(span, inner, else_output, then_output),
         ConditionTree::And(left, right) => {
             let inner = build_connective_branch(span, right, then_output, else_output)?;
             build_connective_branch(span, left, &inner, else_output)
@@ -1597,55 +1632,355 @@ fn branch_diagnostic(
 /// comparison of two signed 32-bit integer literals. Card `OR-AND-LOWERING`
 /// widens that to a **connective tree** over the same leaves:
 ///
+/// Card `BITWISE-CONDITIONS` widens it again — with unary `!`, the three
+/// bitwise operators inside a comparison operand, and names bound to integer
+/// literals — and the whole tier is now one **two-sorted** grammar:
+///
 /// ```ebnf
-/// cond    = disjunct , { "||" , disjunct } ;      (* left-associative *)
-/// disjunct= primary  , { "&&" , primary  } ;      (* binds tighter    *)
-/// primary = "(" , cond , ")" | leaf ;
-/// leaf    = "true" | "false" | operand , cmp , operand ;
+/// cond     = conj , { "||" , conj } ;                 (* 1, left  *)
+/// conj     = neg  , { "&&" , neg  } ;                 (* 2, left  *)
+/// neg      = "!" , neg | cmp ;                        (* 3, right *)
+/// cmp      = int , [ op , int ] ;                     (* 4, none  *)
+/// int      = xor , { "|" , xor } ;                    (* 5, left  *)
+/// xor      = and , { "^" , and } ;                    (* 6, left  *)
+/// and      = atom , { "&" , atom } ;                  (* 7, left  *)
+/// atom     = "(" , cond , ")" | "true" | "false"
+///          | [ "-" ] , INTEGER | NAME ;
 /// ```
 ///
-/// **Precedence is declared, not inherited from a parser accident:** `&&`
-/// binds tighter than `||`, so `A || B && C` is `A || (B && C)`, and both are
-/// left-associative. Parentheses group. There is no unary negation and no other
-/// operator: `|>`, `!`, `|`, `&` and `^` are all outside the tier, so a
-/// condition mixing a pipeline with a connective has no precedence to declare —
-/// it is refused (`Q045`) rather than given one.
+/// **Precedence is declared, not inherited from a parser accident**, and the
+/// rule for declaring it is stated once: *a precedence is declared only where
+/// it agrees with C; where this tier's two sorts would force a different
+/// ranking than C's, the unparenthesized spelling is refused rather than
+/// silently redefined.* Levels 1, 2, 5, 6 and 7 agree with C and are declared.
+/// Levels 3 and 4 do not — C ranks `!` tighter and `|`/`^`/`&` looser than the
+/// comparisons, while a tier in which a comparison yields a condition and a
+/// condition is never an integer operand must rank them the other way — so
+/// `!A < B` and `A | B == C` are **refused** (`Q045`) and `!(A < B)` and
+/// `(A | B) == C` are the spellings.
 ///
-/// The tier stays **decidable**: every leaf is closed over literals, so
-/// evaluation is state-free and the translation certificate still compares one
-/// reference, one CFG and one native observation (`IF-RUNTIME-CONDITION`).
-fn parse_condition_tree(tokens: &[Token]) -> Option<ConditionTree> {
-    let (tree, rest) = parse_disjunction(tokens)?;
-    rest.is_empty().then_some(tree)
+/// `|>` is still never given a relative precedence: it is not in the tier at
+/// all, and a condition mixing a pipeline with anything is refused.
+///
+/// The tier stays **decidable**: every atom is a literal or a name the front
+/// end substitutes by a literal, so evaluation is state-free and the
+/// translation certificate still compares one reference, one CFG and one native
+/// observation (`IF-RUNTIME-CONDITION`).
+fn parse_condition_tree(
+    tokens: &[Token],
+    context: &ConditionContext<'_>,
+) -> Result<ConditionTree, String> {
+    let (parsed, rest) = parse_disjunction(tokens, context)?;
+    if !rest.is_empty() {
+        return Err(TIER.to_owned());
+    }
+    match parsed.node {
+        Node::Cond(tree) => Ok(tree),
+        // The tier has no integer-to-Boolean coercion: `if (mask & 4)` is a
+        // C idiom this revision deliberately does not inherit, because
+        // "non-zero is true" is a rule the checked models do not have.
+        Node::Int(_) => Err(
+            "an integer is not a condition in `source.branch.v1`: there is no \
+             integer-to-Boolean coercion, so write the comparison you mean \
+             (`(mask & 4) != 0`) rather than relying on `non-zero is true`"
+                .to_owned(),
+        ),
+    }
 }
 
-fn parse_disjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
-    let (mut left, mut rest) = parse_conjunction(tokens)?;
+/// The generic refusal text card `IF-STATEMENT` shipped, widened once by
+/// `OR-AND-LOWERING` and once here. It is the message for a *structural* parse
+/// failure; every sort and grouping refusal below carries its own text instead.
+const TIER: &str = "`source.branch.v1` admits `true`, `false` and comparisons of two signed \
+     32-bit integer literals (`==`, `!=`, `<`, `<=`, `>`, `>=`), combined with \
+     the connectives `&&` and `||`, negated with `!` and grouped with \
+     parentheses, as a condition. A comparison operand may be a bitwise \
+     expression over `|`, `^` and `&` when it is parenthesized, or a name bound \
+     to an integer literal earlier in this body. A call, a pipeline or any \
+     other operator is outside the decidable tier";
+
+/// What a name written inside a condition may resolve to.
+///
+/// Card `BITWISE-CONDITIONS` admits exactly one kind: a **check-time constant
+/// binding**, `let NAME = INTEGER;`, whose value the front end substitutes here.
+/// A resource binding is deliberately *not* admitted — no custody-bearing value
+/// gains a position in this tier — and it is told apart from an unbound name so
+/// the refusal can say which rule it broke.
+struct ConditionContext<'a> {
+    constants: &'a BTreeMap<String, i32>,
+    owners: &'a BTreeMap<String, ResourceId>,
+}
+
+/// One parsed node of the unified condition/integer grammar.
+///
+/// The tier has **two sorts** and **one** parser: a sort mismatch is a refusal
+/// rather than a second parse, which is what keeps the parse linear and the
+/// refusal specific.
+enum Node {
+    Cond(ConditionTree),
+    Int(IntExpr),
+}
+
+struct Parsed {
+    node: Node,
+    /// The node's outermost spelling needs no grouping to be read the way this
+    /// tier reads it — a parenthesised group, a literal, a name, or a `!`
+    /// applied to one of those.
+    ///
+    /// This flag is the whole mechanism behind the card's headline decision:
+    /// **QCore declares a precedence only where it agrees with C, and refuses
+    /// the unparenthesized spelling where it would have to diverge.** C ranks
+    /// `|`, `^` and `&` *looser* than the comparisons; this tier must rank them
+    /// tighter, because a comparison yields a condition and no condition is an
+    /// integer operand. Rather than silently redefine `flags | MASK == 0`, an
+    /// ungrouped bitwise operand of a comparison is refused. The same holds for
+    /// `!`, which C ranks tighter than every comparison.
+    grouped: bool,
+}
+
+impl Parsed {
+    const fn cond(tree: ConditionTree, grouped: bool) -> Self {
+        Self {
+            node: Node::Cond(tree),
+            grouped,
+        }
+    }
+
+    const fn int(value: IntExpr, grouped: bool) -> Self {
+        Self {
+            node: Node::Int(value),
+            grouped,
+        }
+    }
+
+    fn expect_cond(self, operator: &str) -> Result<ConditionTree, String> {
+        match self.node {
+            Node::Cond(tree) => Ok(tree),
+            Node::Int(_) => Err(format!(
+                "`{operator}` combines conditions, and this operand is an integer. \
+                 `source.branch.v1` has no integer-to-Boolean coercion"
+            )),
+        }
+    }
+
+    fn expect_int(self, operator: &str) -> Result<IntExpr, String> {
+        match self.node {
+            Node::Int(value) => Ok(value),
+            Node::Cond(_) => Err(format!(
+                "`{operator}` combines integers, and this operand is a condition. \
+                 `source.branch.v1` has no Boolean-to-integer coercion"
+            )),
+        }
+    }
+}
+
+type Step<'a> = Result<(Parsed, &'a [Token]), String>;
+
+/// Level 1, loosest: `||`, left-associative, over conditions.
+fn parse_disjunction<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    let (mut left, mut rest) = parse_conjunction(tokens, context)?;
     while let Some(after) = eat_symbol(rest, Symbol::PipePipe) {
-        let (right, next) = parse_conjunction(after)?;
-        left = ConditionTree::Or(Box::new(left), Box::new(right));
+        let tree = left.expect_cond("||")?;
+        let (right, next) = parse_conjunction(after, context)?;
+        left = Parsed::cond(
+            ConditionTree::Or(Box::new(tree), Box::new(right.expect_cond("||")?)),
+            false,
+        );
         rest = next;
     }
-    Some((left, rest))
+    Ok((left, rest))
 }
 
-fn parse_conjunction(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
-    let (mut left, mut rest) = parse_condition_primary(tokens)?;
+/// Level 2: `&&`, left-associative, binding tighter than `||` exactly as in C.
+fn parse_conjunction<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    let (mut left, mut rest) = parse_negation(tokens, context)?;
     while let Some(after) = eat_symbol(rest, Symbol::AndAnd) {
-        let (right, next) = parse_condition_primary(after)?;
-        left = ConditionTree::And(Box::new(left), Box::new(right));
+        let tree = left.expect_cond("&&")?;
+        let (right, next) = parse_negation(after, context)?;
+        left = Parsed::cond(
+            ConditionTree::And(Box::new(tree), Box::new(right.expect_cond("&&")?)),
+            false,
+        );
         rest = next;
     }
-    Some((left, rest))
+    Ok((left, rest))
 }
 
-fn parse_condition_primary(tokens: &[Token]) -> Option<(ConditionTree, &[Token])> {
-    if let Some(inner) = eat_symbol(tokens, Symbol::LeftParen) {
-        let (tree, rest) = parse_disjunction(inner)?;
-        return Some((tree, eat_symbol(rest, Symbol::RightParen)?));
+/// Level 3: prefix `!`, right-associative, binding tighter than `&&` exactly as
+/// in C (card `BITWISE-CONDITIONS`).
+///
+/// Its operand must be **grouped**: C ranks `!` tighter than every comparison,
+/// so `!a < b` is `(!a) < b` there and would have to be `!(a < b)` here. The
+/// spelling is refused rather than redefined.
+fn parse_negation<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    let Some(after) = eat_symbol(tokens, Symbol::Bang) else {
+        return parse_comparison(tokens, context);
+    };
+    let (operand, rest) = parse_negation(after, context)?;
+    if !operand.grouped {
+        return Err(
+            "`!` negates a grouped condition: C binds `!` tighter than every comparison \
+             while this tier would have to bind it looser, so write `!(A < B)` rather \
+             than `!A < B` and let the parentheses say which you mean"
+                .to_owned(),
+        );
     }
-    let (leaf, rest) = parse_condition_leaf(tokens)?;
-    Some((ConditionTree::Leaf(leaf), rest))
+    Ok((
+        Parsed::cond(
+            ConditionTree::Not(Box::new(operand.expect_cond("!")?)),
+            true,
+        ),
+        rest,
+    ))
+}
+
+/// Level 4: the six comparisons, **non-associative**, integer × integer →
+/// condition. Card `IF-STATEMENT` shipped this level over bare literals; card
+/// `BITWISE-CONDITIONS` widens each operand to the integer tier below.
+fn parse_comparison<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    let (left, rest) = parse_bit_or(tokens, context)?;
+    let (operator, rest) = match rest.first().map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::EqualEqual)) => (CompareOp::Equal, &rest[1..]),
+        Some(TokenKind::Symbol(Symbol::NotEqual)) => (CompareOp::NotEqual, &rest[1..]),
+        Some(TokenKind::Symbol(Symbol::Less)) => (CompareOp::Less, &rest[1..]),
+        Some(TokenKind::Symbol(Symbol::LessEqual)) => (CompareOp::LessEqual, &rest[1..]),
+        Some(TokenKind::Symbol(Symbol::Greater)) => (CompareOp::Greater, &rest[1..]),
+        Some(TokenKind::Symbol(Symbol::GreaterEqual)) => (CompareOp::GreaterEqual, &rest[1..]),
+        // No comparison here: hand the operand up unchanged, whatever its sort.
+        _ => return Ok((left, rest)),
+    };
+    let left = compare_operand(left)?;
+    let (right, rest) = parse_bit_or(rest, context)?;
+    let right = compare_operand(right)?;
+    Ok((
+        Parsed::cond(
+            ConditionTree::Leaf(BranchCondition::Compare {
+                left,
+                operator,
+                right,
+            }),
+            false,
+        ),
+        rest,
+    ))
+}
+
+/// The card's headline refusal: a comparison operand that is an ungrouped
+/// bitwise expression. See [`Parsed::grouped`].
+fn compare_operand(operand: Parsed) -> Result<IntExpr, String> {
+    if !operand.grouped {
+        return Err(
+            "a bitwise comparison operand must be parenthesized: C ranks `|`, `^` and `&` \
+             looser than the comparisons while this tier must rank them tighter, so \
+             `flags | MASK == 0` would mean one thing to a C reader and another here. \
+             Write `(flags | MASK) == 0` and let the parentheses say which you mean"
+                .to_owned(),
+        );
+    }
+    operand.expect_int("a comparison")
+}
+
+/// Levels 5–7: `|`, then `^`, then `&`, each left-associative, in **C's own
+/// order** — which is why this ranking is declared rather than refused.
+fn parse_bit_or<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    parse_bitwise_level(tokens, context, 0)
+}
+
+/// `|` is level 0 of this table, `^` level 1, `&` level 2; level 3 is the atom.
+const BITWISE_LEVELS: [(Symbol, BitwiseOp, &str); 3] = [
+    (Symbol::Pipe, BitwiseOp::Or, "|"),
+    (Symbol::Caret, BitwiseOp::Xor, "^"),
+    (Symbol::Ampersand, BitwiseOp::And, "&"),
+];
+
+fn parse_bitwise_level<'a>(
+    tokens: &'a [Token],
+    context: &ConditionContext<'_>,
+    level: usize,
+) -> Step<'a> {
+    let Some((symbol, operator, spelling)) = BITWISE_LEVELS.get(level).copied() else {
+        return parse_condition_atom(tokens, context);
+    };
+    let (mut left, mut rest) = parse_bitwise_level(tokens, context, level + 1)?;
+    while let Some(after) = eat_symbol(rest, symbol) {
+        let value = left.expect_int(spelling)?;
+        let (right, next) = parse_bitwise_level(after, context, level + 1)?;
+        left = Parsed::int(
+            IntExpr::Bitwise {
+                operator,
+                left: Box::new(value),
+                right: Box::new(right.expect_int(spelling)?),
+            },
+            false,
+        );
+        rest = next;
+    }
+    Ok((left, rest))
+}
+
+/// The atom level: a parenthesised group of either sort, a Boolean literal, a
+/// signed integer literal, or a name bound to one earlier in this body.
+fn parse_condition_atom<'a>(tokens: &'a [Token], context: &ConditionContext<'_>) -> Step<'a> {
+    if let Some(inner) = eat_symbol(tokens, Symbol::LeftParen) {
+        let (parsed, rest) = parse_disjunction(inner, context)?;
+        let Some(after) = eat_symbol(rest, Symbol::RightParen) else {
+            return Err(TIER.to_owned());
+        };
+        // A group is grouped whatever its sort: that is the whole point of
+        // writing it.
+        return Ok((
+            Parsed {
+                node: parsed.node,
+                grouped: true,
+            },
+            after,
+        ));
+    }
+    match tokens.first().map(|token| &token.kind) {
+        Some(TokenKind::Word(word)) => {
+            if let Some(value) = parse_bool(word) {
+                return Ok((
+                    Parsed::cond(ConditionTree::Leaf(BranchCondition::Literal(value)), true),
+                    &tokens[1..],
+                ));
+            }
+            if let Some(value) = context.constants.get(word) {
+                return Ok((Parsed::int(IntExpr::Literal(*value), true), &tokens[1..]));
+            }
+            if context.owners.contains_key(word) {
+                // The custody rule, stated at the position it protects: an
+                // identity is not a number, and admitting one here would put a
+                // resource in an expression tier for the first time.
+                return Err(format!(
+                    "`{word}` names a resource, and a resource identity is not an integer. \
+                     A `source.branch.v1` condition reads only integer literals and names \
+                     bound to one by `let {word} = INTEGER;`"
+                ));
+            }
+            Err(format!(
+                "`{word}` is not bound to an integer literal in this body. A \
+                 `source.branch.v1` condition reads `true`, `false`, integer literals and \
+                 names introduced by `let NAME = INTEGER;` earlier in this entry"
+            ))
+        }
+        Some(TokenKind::Symbol(Symbol::Minus)) => {
+            let Some(TokenKind::Integer(value)) = tokens.get(1).map(|token| &token.kind) else {
+                return Err(TIER.to_owned());
+            };
+            // Parse the final signed spelling: the minimum's magnitude is not an i32.
+            let Ok(value) = format!("-{value}").parse::<i32>() else {
+                return Err(TIER.to_owned());
+            };
+            Ok((Parsed::int(IntExpr::Literal(value), true), &tokens[2..]))
+        }
+        Some(TokenKind::Integer(value)) => {
+            let Ok(value) = value.parse::<i32>() else {
+                return Err(TIER.to_owned());
+            };
+            Ok((Parsed::int(IntExpr::Literal(value), true), &tokens[1..]))
+        }
+        _ => Err(TIER.to_owned()),
+    }
 }
 
 fn eat_symbol(tokens: &[Token], symbol: Symbol) -> Option<&[Token]> {
@@ -1655,64 +1990,42 @@ fn eat_symbol(tokens: &[Token], symbol: Symbol) -> Option<&[Token]> {
     }
 }
 
-/// One decidable leaf. Byte-for-byte the tier card `IF-STATEMENT` shipped,
-/// re-expressed to hand back its unconsumed tail so a connective can follow.
-fn parse_condition_leaf(tokens: &[Token]) -> Option<(BranchCondition, &[Token])> {
-    if let [
-        Token {
-            kind: TokenKind::Word(word),
-            ..
-        },
-        rest @ ..,
-    ] = tokens
-        && let Some(value) = parse_bool(word)
-    {
-        return Some((BranchCondition::Literal(value), rest));
-    }
-    let (left, rest) = parse_condition_operand(tokens)?;
-    let (operator, rest) = match rest.first()?.kind {
-        TokenKind::Symbol(Symbol::EqualEqual) => (CompareOp::Equal, &rest[1..]),
-        TokenKind::Symbol(Symbol::NotEqual) => (CompareOp::NotEqual, &rest[1..]),
-        TokenKind::Symbol(Symbol::Less) => (CompareOp::Less, &rest[1..]),
-        TokenKind::Symbol(Symbol::LessEqual) => (CompareOp::LessEqual, &rest[1..]),
-        TokenKind::Symbol(Symbol::Greater) => (CompareOp::Greater, &rest[1..]),
-        TokenKind::Symbol(Symbol::GreaterEqual) => (CompareOp::GreaterEqual, &rest[1..]),
-        _ => return None,
-    };
-    let (right, rest) = parse_condition_operand(rest)?;
-    Some((
-        BranchCondition::Compare {
-            left,
-            operator,
-            right,
-        },
-        rest,
-    ))
-}
-
-fn parse_condition_operand(tokens: &[Token]) -> Option<(i32, &[Token])> {
-    match tokens {
+/// `let NAME = INTEGER;` — a **check-time constant binding** (card
+/// `BITWISE-CONDITIONS`), the decidable subset of follow-on
+/// `IF-CONDITION-BINDINGS`.
+///
+/// The binding is custody-free by construction: its initializer is a signed
+/// 32-bit literal, so it opens no obligation, enters no ledger and takes no
+/// position in any of the four checked models. It contributes **no operation**
+/// — the name is substituted for its value where a condition reads it, exactly
+/// as a connective is eliminated before any model sees it — so a program that
+/// writes one emits the C it would have emitted with the literal written out.
+///
+/// Returned as `Some(value)` only for the exact shape `= INTEGER ;` or
+/// `= - INTEGER ;`; anything else keeps the executable subset's existing
+/// `qcore_acquire` refusal.
+fn parse_constant_binding(tokens: &[Token]) -> Option<i32> {
+    let kinds: Vec<&TokenKind> = tokens
+        .iter()
+        .map(|token| &token.kind)
+        .filter(|kind| **kind != TokenKind::Eof)
+        .collect();
+    match kinds.as_slice() {
         [
-            Token {
-                kind: TokenKind::Symbol(Symbol::Minus),
-                ..
-            },
-            Token {
-                kind: TokenKind::Integer(value),
-                ..
-            },
-            rest @ ..,
-        ] => {
-            // Parse the final signed spelling: the minimum's magnitude is not an i32.
-            Some((format!("-{value}").parse().ok()?, rest))
-        }
+            TokenKind::Word(keyword),
+            TokenKind::Word(_),
+            TokenKind::Symbol(Symbol::Equal),
+            TokenKind::Integer(value),
+            TokenKind::Symbol(Symbol::Semicolon),
+        ] if keyword == "let" => value.parse().ok(),
         [
-            Token {
-                kind: TokenKind::Integer(value),
-                ..
-            },
-            rest @ ..,
-        ] => Some((value.parse().ok()?, rest)),
+            TokenKind::Word(keyword),
+            TokenKind::Word(_),
+            TokenKind::Symbol(Symbol::Equal),
+            TokenKind::Symbol(Symbol::Minus),
+            TokenKind::Integer(value),
+            TokenKind::Symbol(Symbol::Semicolon),
+        ] if keyword == "let" => format!("-{value}").parse().ok(),
         _ => None,
     }
 }

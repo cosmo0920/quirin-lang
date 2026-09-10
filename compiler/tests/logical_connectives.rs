@@ -433,15 +433,18 @@ fn a_connective_on_another_route_keeps_that_routes_refusal() {
 // ---------------------------------------------------------------------------
 
 #[test]
-fn the_three_single_byte_operators_are_reserved_not_spelled() {
-    // `|`, `&` and `^` are reserved for bitwise or/and/xor and have no meaning
-    // in this revision. `^` was an `unexpected character` lex error before this
-    // card; the set of accepted programs is unchanged and only the layer and
-    // the message move, exactly as card `PIPE-OPERATOR` did for a bare `|`.
+fn the_three_single_byte_operators_are_spelled_only_in_a_condition() {
+    // **Deliberate pin update, card `BITWISE-CONDITIONS`.** This card reserved
+    // `|`, `&` and `^` and pinned that they meant nothing anywhere; its named
+    // follow-on `BITWISE-OPERATORS` spends the reservation, so the three now
+    // have a meaning — in exactly one position, a comparison operand inside an
+    // `if` condition. What survives unchanged is the half that was load-bearing
+    // here: outside that position all three still refuse, at the same `Q038`,
+    // from the same gate, and none of them is a logical operator.
     for (operator, expected) in [
-        ("|", "`|` is reserved"),
-        ("&", "`&` is reserved"),
-        ("^", "`^` is reserved"),
+        ("|", "`|` is the bitwise-or operator"),
+        ("&", "`&` is the bitwise-and operator"),
+        ("^", "`^` is the bitwise-xor operator"),
     ] {
         let source = format!(
             "error Failure {{ Failed; }}\nfn main() -> i32 {{\n    return 1 {operator} 2;\n}}\n"
@@ -450,19 +453,30 @@ fn the_three_single_byte_operators_are_reserved_not_spelled() {
         let message = message(&source);
         assert!(message.contains(expected), "for `{operator}`: {message}");
         assert!(
-            message.contains("BITWISE-OPERATORS"),
-            "for `{operator}`: the follow-on must be named"
+            message.contains("`if` condition"),
+            "for `{operator}`: the one admitted position must be named"
         );
     }
 }
 
 #[test]
-fn a_reserved_character_is_reserved_inside_a_condition_too() {
-    // The reservation is not positional: a condition admits the connectives,
-    // never the held characters.
+fn a_single_byte_operator_in_a_condition_is_the_branch_pass_to_decide() {
+    // **Deliberate pin update, card `BITWISE-CONDITIONS`.** Card
+    // `OR-AND-LOWERING` pinned that the reservation was *not* positional —
+    // `true | false` refused at `Q038` inside a condition too. Now it is
+    // positional: the operator gate declines to refuse the three characters in
+    // a condition and the branch pass decides them, exactly as it already did
+    // for `||` and `&&`. Both halves are asserted so the move is visible: the
+    // code changes from `Q038` to `Q045`, and **the refusal survives** —
+    // `true | false` is still not a program, because a condition is not an
+    // integer.
     for operator in ["|", "&", "^"] {
         let source = balanced(&format!("true {operator} false"));
-        assert_eq!(codes(&source), ["Q038"], "for `{operator}`");
+        assert_eq!(codes(&source), ["Q045"], "for `{operator}`");
+        assert!(
+            message(&source).contains("no Boolean-to-integer coercion"),
+            "for `{operator}`: the refusal must name the sort rule"
+        );
     }
 }
 

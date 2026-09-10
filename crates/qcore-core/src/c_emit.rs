@@ -8,7 +8,7 @@ use crate::cfg::{
     BasicBlock, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ExecutionObservation,
     ExecutionOutcome, TraceEvent, TypedCfg,
 };
-use crate::cleanup_lowering::BranchCondition;
+use crate::cleanup_lowering::{BranchCondition, IntExpr};
 use crate::io_emit::{self, IO_PRELUDE};
 use crate::std_io::{Rendering, Stream};
 
@@ -265,7 +265,7 @@ fn emit_terminator(
             // receiving the decided literal: that makes the reference / CFG /
             // compiled-C observation agreement a real cross-check of the Rust
             // evaluator against a C compiler instead of a tautology.
-            writeln!(output, "    if ({}) {{", c_condition(*condition)).unwrap();
+            writeln!(output, "    if ({}) {{", c_condition(condition)).unwrap();
             writeln!(output, "        goto {};", target_label(cfg, *then_block)?).unwrap();
             writeln!(output, "    }} else {{").unwrap();
             writeln!(output, "        goto {};", target_label(cfg, *else_block)?).unwrap();
@@ -359,14 +359,41 @@ const fn c_bool(value: bool) -> &'static str {
 }
 
 /// The C11 spelling of a `source.branch.v1` condition (card `IF-STATEMENT`).
-fn c_condition(condition: BranchCondition) -> String {
+fn c_condition(condition: &BranchCondition) -> String {
     match condition {
-        BranchCondition::Literal(value) => c_bool(value).to_owned(),
+        BranchCondition::Literal(value) => c_bool(*value).to_owned(),
         BranchCondition::Compare {
             left,
             operator,
             right,
-        } => format!("{} {} {}", c_i32(left), operator.c_operator(), c_i32(right)),
+        } => format!(
+            "{} {} {}",
+            c_int_expr(left),
+            operator.c_operator(),
+            c_int_expr(right)
+        ),
+    }
+}
+
+/// The C11 spelling of one comparison operand (card `BITWISE-CONDITIONS`).
+///
+/// A bit operation is emitted **fully parenthesized**, which is what keeps the
+/// grouping this tier declared from depending on the C compiler's own
+/// precedence table.  A plain literal is emitted exactly as card `IF-STATEMENT`
+/// emitted it, so a program that writes no bit operation moves no byte.
+fn c_int_expr(expression: &IntExpr) -> String {
+    match expression {
+        IntExpr::Literal(value) => c_i32(*value),
+        IntExpr::Bitwise {
+            operator,
+            left,
+            right,
+        } => format!(
+            "({} {} {})",
+            c_int_expr(left),
+            operator.c_operator(),
+            c_int_expr(right)
+        ),
     }
 }
 

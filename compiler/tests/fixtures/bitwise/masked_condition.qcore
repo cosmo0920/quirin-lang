@@ -1,0 +1,27 @@
+error Failure { Failed; }
+
+// The integer tier of `source.branch.v1` (card `BITWISE-CONDITIONS`): the
+// three bitwise operators `|`, `^` and `&` as a **parenthesized comparison
+// operand**, and a check-time constant binding read from inside one.
+//
+// Every operand here is decided at check time, so card `IF-STATEMENT`'s
+// single-observation certificate is untouched — but the emitted C computes the
+// bit operations and the comparison **itself** rather than receiving a folded
+// literal, which is what makes the reference / CFG / native agreement a real
+// cross-check of the Rust evaluator against a C compiler.
+//
+// The parentheses are not decoration: C ranks `|`, `^` and `&` looser than the
+// comparisons while this tier must rank them tighter, so the ungrouped
+// spelling is refused rather than silently redefined.
+fn main() -> i32 {
+    let mask = 12;
+    let a = qcore_acquire(1, true, Failure);
+    if ((mask | 3) == 15 && (mask & 4) == 4) {
+        drop a;
+    } else if ((mask ^ 5) == 9) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

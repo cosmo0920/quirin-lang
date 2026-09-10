@@ -123,6 +123,7 @@ import QCore.PublicationCustody
 import QCore.PipeDesugaring
 import QCore.BranchJoin
 import QCore.Connectives
+import QCore.Bitwise
 import QCore.SingleEmissionRoute
 
 /-! The executable formal core of QCore-C revision 0.1. -/

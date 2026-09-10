@@ -330,25 +330,42 @@ fn the_condition_refusal_is_attributed_to_the_condition() {
 }
 
 #[test]
-fn the_tier_gained_exactly_the_two_connectives() {
+fn the_tier_gained_the_connectives_the_negation_and_the_integer_operands() {
     // Card `IF-STATEMENT` pinned this as `the_tier_has_no_connectives`,
-    // asserting `Q038` for both spellings. Its successor `OR-AND-LOWERING`
-    // lowers them onto this construct, so the pin is **moved deliberately**:
-    // the two connectives are admitted, and the tier is otherwise closed
-    // exactly as it was. The full connective suite is
-    // `compiler/tests/logical_connectives.rs`; this is the branch card's own
-    // boundary marker, kept here so a widening of the tier has to move a
-    // second test rather than one.
-    for condition in ["true && false", "true || false", "(true) || (false)"] {
+    // asserting `Q038` for both spellings. `OR-AND-LOWERING` lowered the two
+    // connectives onto this construct and moved the pin once;
+    // `BITWISE-CONDITIONS` adds unary `!` and the bitwise integer operands and
+    // moves it a second time. Each move is **deliberate**, and the closedness
+    // half below is what makes the next widening move a test rather than slip
+    // past one. The full suites are `compiler/tests/logical_connectives.rs` and
+    // `compiler/tests/bitwise_conditions.rs`; this is the branch card's own
+    // boundary marker.
+    for condition in [
+        "true && false",
+        "true || false",
+        "(true) || (false)",
+        "!true",
+        "!(3 < 5)",
+        "(3 | 4) == 7",
+    ] {
         compile(&program(&format!(
             "  let a = qcore_acquire(1, true, Failure);\n  \
              if ({condition}) {{ drop a; }} else {{ drop a; }}\n  return 0;"
         )))
         .unwrap_or_else(|errors| panic!("`{condition}` must be admitted: {errors:?}"));
     }
-    // Everything else the tier refused, it still refuses — including the three
-    // reserved single-byte spellings and a unary negation.
-    for condition in ["true | false", "true & false", "true ^ false", "!true"] {
+    // Everything else the tier refused, it still refuses: a bitwise operator
+    // over conditions, an integer standing in for a condition, and the two
+    // spellings whose C precedence this tier would have had to redefine.
+    for condition in [
+        "true | false",
+        "true & false",
+        "true ^ false",
+        "3 | 4",
+        "3 | 4 == 7",
+        "!3 < 5",
+        "1 |> 2",
+    ] {
         let codes = codes(&program(&format!("  if ({condition}) {{ }}\n  return 0;")));
         assert!(
             !codes.is_empty(),
