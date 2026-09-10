@@ -1067,11 +1067,13 @@ statement. A piped program and its hand-written twin are `syntax_equivalent`
 and emit byte-identical C11.
 
 ```ebnf
-stmt      = OPERAND, "|>", STAGE, ";" ;
-OPERAND   = token, { token } ;             (* verbatim: `x`, `-7`, `move b` *)
-STAGE     = "print", RENDERING             (* a G02g sink *)
-          | "log", LEVEL, RENDERING        (* a G02g sink *)
-          | NAME, [ "(", [ arg, { ",", arg } ], ")" ] ;   (* a G02d call *)
+stmt       = [ "let", NAME, "=" ], OPERAND, ( "|>", STAGE )+, ";" ;
+OPERAND    = token, { token } ;            (* verbatim: `x`, `-7`, `move b` *)
+STAGE      = [ "move" ], STAGE_BODY ;
+STAGE_BODY = "print", RENDERING            (* a G02g sink *)
+           | "log", LEVEL, RENDERING       (* a G02g sink *)
+           | NAME, [ "(", [ arg, { ",", arg } ], ")" ], [ ADAPTER ] ;  (* a G02d call *)
+ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
 ```
 
 | Written | Desugars to |
@@ -1081,6 +1083,34 @@ STAGE     = "print", RENDERING             (* a G02g sink *)
 | `x \|> f;` and `x \|> f();` | `f(x);` |
 | `b \|> f(7);` | `f(b, 7);` |
 | `move b \|> release;` | `release(move b);` |
+| `8 \|> alloc succeeds true else raise E \|> move free;` | `let ⟨t⟩ = alloc(8) succeeds true else raise E;` then `free(move ⟨t⟩);` |
+| `let r = x \|> f succeeds true else raise E;` | `let r = f(x) succeeds true else raise E;` |
+
+**A chain is a statement sequence** (card `PIPE-CHAIN`). A pipeline of `n`
+stages desugars to `n` statements: each non-final stage binds its result to a
+hygienic temporary the next stage receives, and the final stage keeps the
+statement form the reader wrote around the whole pipeline. Custody flows through
+the temporaries under the unedited checkers — by the time any of them runs a
+temporary is an ordinary binding — so a chain that drops a live result refuses
+at the pre-existing `Q202`, and a value consumed mid-chain cannot be used after
+the pipeline.
+
+**Only an acquisition adapter binds a result**, so "produces a value" is decided
+syntactically by the presence of `succeeds`, with no contract knowledge in the
+desugaring. A sink, a discarding call and `flush` are therefore last-stage-only.
+
+**Two spellings name the value a previous stage produced**, because a hygienic
+temporary has no name a reader could write: `|> move STAGE` consumes it,
+mirroring `move OPERAND |> STAGE` for the first stage (where `move` on the stage
+is refused, one spelling per meaning); and a bare `move` inside a stage's adapter
+tail names it, so an acquisition's error arm can dispose of the value piped into
+it. Without the second, `Q025` would cap a chain at one acquisition.
+
+**Hygiene is enforced by refusal.** Temporaries are named `qcore__pipeN`; a file
+that needs them and also writes that prefix is refused at `Q036` rather than
+silently α-renamed, so no diagnostic can name a binding the reader did not
+write. A file whose pipelines are all single-stage generates none and is
+untouched.
 
 **Insertion is at the stage's first operand position** — Elixir-style
 first-argument insertion, chosen because QCore is subject-first and has no
@@ -1093,16 +1123,26 @@ statement stages take exactly one operand, so "first operand position" and
 
 **Attribution.** Every token the reader wrote keeps its own span, unmoved, so a
 refusal inside a desugared statement points at the bytes that were typed: an
-operand fault at the operand, a stage fault at the stage. Only `(`, `)` and `,`
-are synthesized, each anchored zero-width at the `|>` it came from.
+operand fault at the operand, a stage fault at *that stage*. Only `let`, `=`,
+`;`, `(`, `)`, `,` and the temporaries are synthesized, each anchored zero-width
+at the `|>` it came from — at that pipe's start for the first stage and at its
+end for a later one, which is what keeps consecutive statements' byte spans
+strictly disjoint where a `|>` abuts its neighbours, since a statement's
+synthesized terminator sits at the next pipe's start and `|>` is two bytes wide.
+The one exception is recorded rather than hidden: in a **multi-stage** bound
+pipeline the `let NAME =` the reader wrote sits to the left of every stage, so
+keeping its spans would make the last statement's span swallow the ones before
+it; the binder is re-anchored at the final `|>` with the reader's own name
+preserved. A one-stage bound pipeline keeps its binder tokens where they were.
 
 **Refusals.** `Q036` a pipeline shape this profile does not model — an empty
 side, a stage that is not a name, a sink stage of the wrong selector arity, an
-unbalanced call stage, or a pipeline on the right of a binding (follow-on
-`PIPE-LET`); `Q037` a stage that cannot receive the operand — `flush`, which
-takes none, or a second stage, because a call stage's result has no name (QCore
-source has no expression tier) and a chain of statement stages would need
-statement windows this frontend keys by byte span (follow-on `PIPE-CHAIN`);
+unbalanced call stage, a malformed or value-less `let NAME =` binder, an
+assignment pipeline (follow-on `PIPE-ASSIGN`), `move` on the first stage, a bare
+`move` whose incoming value is not a binding, or a file that needs pipeline
+temporaries and writes the `qcore__pipe` prefix itself; `Q037` a stage that
+cannot receive the operand — `flush`, which takes none, or any non-final stage
+that produces no value, since only an acquisition adapter binds a result;
 `Q038` a claimed-but-unlowered logical operator. Dropping the `;` of the last
 statement in a body is a parse failure (`Q000`) before the pipe pass runs.
 

@@ -336,9 +336,11 @@ theorem synthesized_tokens_are_anchored_at_the_pipe (k : Kind) (pipe : Nat) :
     (synth k pipe).origin = pipe ∧ (synth k pipe).synthesized = true :=
   ⟨rfl, rfl⟩
 
-/-- Only three kinds are ever synthesized. Nothing that could carry meaning —
-no word, no literal, no operator — is invented by the desugaring. -/
-theorem only_delimiters_are_synthesized :
+/-- Only three kinds are synthesized for a **single-stage** pipeline. Nothing
+that could carry meaning — no word, no literal, no operator — is invented there.
+A chain synthesizes its own binders and temporaries as well, and exactly those:
+see `a_chain_synthesizes_only_delimiters_binders_and_temporaries` in §5. -/
+theorem only_delimiters_are_synthesized_in_a_single_stage_pipeline :
     (synth Kind.lparen 0).kind = Kind.lparen ∧
     (synth Kind.rparen 0).kind = Kind.rparen ∧
     (synth Kind.comma 0).kind = Kind.comma := by
@@ -426,7 +428,427 @@ theorem a_refused_statement_keeps_its_pipe
     hasPipe (desugarStatement operand stage semi pipe) = true := by
   simp [desugarStatement, h, hasPipe, written, List.any_append]
 
-/-! ## 5. The claimed logical operators
+/-! ## 5. Chains: a pipeline of `n` stages is a sequence of `n` statements
+
+Card `PIPE-CHAIN`. Wave 18 recorded two blockers for multi-stage pipelines. The
+first — a call stage's result has no name — is answered by *giving* it one: each
+non-final stage binds its result to a hygienic temporary the next stage
+receives. The second — that a statement sequence is incompatible with the
+byte-span statement windows every route uses — rested on the assumption that the
+statements would **share** the operand token. With a fresh temporary per stage
+they share nothing, and §5.3 below proves the extents are disjoint *by
+construction*, together with the theorem that the naive anchoring (everything at
+the pipe's start) would not be — which is what makes the anchoring choice
+load-bearing rather than incidental. -/
+
+/-- One stage of a chain, as written: its tokens with any `move` prefix already
+stripped, whether that prefix was written, and the start byte of the `|>` that
+feeds it. -/
+structure Stage where
+  tokens : List Token
+  consumes : Bool
+  pipe : Nat
+  deriving Repr
+
+/-- The width of the `|>` operator in bytes. Load-bearing in §5.3: it is the
+gap that keeps two consecutive statements' extents apart. -/
+def pipeWidth : Nat := 2
+
+/-- Whether a stage produces a value a later stage could receive.
+
+Decided **syntactically**, with no contract knowledge: the acquisition adapter
+`succeeds BOOL else … raise ERROR` is the one call form in this source language
+that binds a result, so a stage carrying the keyword is result-producing and
+every other stage — a sink, a discarding call, `flush` — is not. -/
+def producesResult (s : Stage) : Bool :=
+  s.tokens.any (fun t => t.kind = Kind.atom "succeeds")
+
+/-- The hygienic temporary bound by the stage at position `i`. -/
+def temporaryName (i : Nat) : String := "qcore__pipe" ++ toString i
+
+/-- The binder a non-final stage is given, anchored at its own `|>`. -/
+def binderOf (i : Nat) (at_ : Nat) : List Token :=
+  [synth (Kind.atom "let") at_, synth (Kind.atom (temporaryName i)) at_,
+   synth (Kind.atom "=") at_]
+
+/-- What a stage receives: the reader's own operand for the first stage, and the
+previous stage's temporary afterwards — optionally consumed, which is what
+`|> move STAGE` spells for a value that has no name a reader could write. -/
+def incomingOf (operand : List Token) (s : Stage) (index : Nat) : List Token :=
+  if index = 0 then operand
+  else
+    (if s.consumes then [written (Kind.atom "move") s.pipe] else []) ++
+      [synth (Kind.atom (temporaryName (index - 1))) (s.pipe + pipeWidth)]
+
+/-- Split a call stage after its callee name into its argument list and its
+adapter tail. The model scans flatly for the closing `)`, which is exact for
+every stage the grammar admits — an argument is a literal, a name or `move NAME`
+and never a nested call. -/
+def takeArgs : List Token → List Token → Option (List Token × List Token)
+  | [], _ => none
+  | ⟨Kind.rparen, _, _⟩ :: tail, acc => some (acc.reverse, tail)
+  | t :: rest, acc => takeArgs rest (t :: acc)
+
+def splitArgs : List Token → Option (List Token × List Token)
+  | [] => some ([], [])
+  | ⟨Kind.lparen, _, _⟩ :: inner => takeArgs inner []
+  | rest => some ([], rest)
+
+/-- **The desugaring of one stage**, generalizing `rewrite` in the two ways a
+chain needs: the incoming value may be a synthesized temporary rather than the
+reader's operand, and a call stage may carry an acquisition adapter after its
+argument list, which is passed through verbatim before the `;`. On a stage with
+no adapter tail the two agree — see
+`the_stage_rewrite_agrees_with_the_single_stage_rewrite`. -/
+def rewriteStage (incoming stage : List Token) (semi : Token) (anchor : Nat) :
+    Option (List Token) :=
+  if incoming.isEmpty then none
+  else
+    match headText stage with
+    | none => none
+    | some name =>
+      if operandless name then none
+      else
+        match sinkSelectors name with
+        | some selectors =>
+          if stage.length = 1 + selectors then some (stage ++ incoming ++ [semi])
+          else none
+        | none =>
+          match stage with
+          | [] => none
+          | head :: rest =>
+            match splitArgs rest with
+            | none => none
+            | some (args, tail) =>
+              if args.isEmpty then
+                some ([head, synth Kind.lparen anchor] ++ incoming ++
+                  [synth Kind.rparen anchor] ++ tail ++ [semi])
+              else
+                some ([head, synth Kind.lparen anchor] ++ incoming ++
+                  [synth Kind.comma anchor] ++ args ++
+                  [synth Kind.rparen anchor] ++ tail ++ [semi])
+
+/-- The byte a stage's synthesized tokens are anchored at: its `|>`'s start for
+the first stage, and its `|>`'s end for every later one. §5.3 is why. -/
+def anchorOf (s : Stage) (index : Nat) : Nat :=
+  if index = 0 then s.pipe else s.pipe + pipeWidth
+
+/-- **The desugaring of a chain.** Each non-final stage becomes a `let ⟨t⟩ = …;`
+statement terminated at the *start* of the pipe that ends it; the final stage
+keeps the reader's own `;`. A non-final stage that produces no value refuses,
+and so does `move` on the first stage, whose operand the reader already has a
+spelling for. -/
+def chainRewrite (operand : List Token) (stages : List Stage) (semi : Token)
+    (index : Nat) : Option (List Token) :=
+  match stages with
+  | [] => none
+  | [s] =>
+    if index = 0 && s.consumes then none
+    else rewriteStage (incomingOf operand s index) s.tokens semi (anchorOf s index)
+  | s :: rest =>
+    if index = 0 && s.consumes then none
+    else if !producesResult s then none
+    else
+      match rest.head? with
+      | none => none
+      | some next =>
+        match rewriteStage (incomingOf operand s index) s.tokens
+            (synth Kind.semi next.pipe) (anchorOf s index) with
+        | none => none
+        | some head =>
+          match chainRewrite operand rest semi (index + 1) with
+          | none => none
+          | some tail => some (binderOf index (anchorOf s index) ++ head ++ tail)
+
+/-! ### 5.1 The identity: a chain is its hand-written sequence -/
+
+/-- A one-stage chain is exactly the single-stage rewrite card `PIPE-OPERATOR`
+landed, so nothing already written moves. -/
+theorem a_one_stage_chain_is_the_single_stage_rewrite
+    (operand : List Token) (s : Stage) (semi : Token) :
+    chainRewrite operand [s] semi 0
+      = (if s.consumes then none
+         else rewriteStage operand s.tokens semi s.pipe) := by
+  cases h : s.consumes <;> simp [chainRewrite, incomingOf, anchorOf, h]
+
+/-- And on a stage with no adapter tail, `rewriteStage` *is* the single-stage
+`rewrite` card `PIPE-OPERATOR` landed — exhibited on all three stage shapes, so
+nothing already written moves. -/
+theorem the_stage_rewrite_agrees_with_the_single_stage_rewrite :
+    rewriteStage [written (Kind.atom "total") 4]
+        [written (Kind.atom "print") 13, written (Kind.atom "dec") 19]
+        (written Kind.semi 22) 10
+      = rewrite [written (Kind.atom "total") 4]
+        [written (Kind.atom "print") 13, written (Kind.atom "dec") 19]
+        (written Kind.semi 22) 10 ∧
+    rewriteStage [written (Kind.atom "move") 4, written (Kind.atom "b") 9]
+        [written (Kind.atom "release") 15] (written Kind.semi 22) 11
+      = rewrite [written (Kind.atom "move") 4, written (Kind.atom "b") 9]
+        [written (Kind.atom "release") 15] (written Kind.semi 22) 11 ∧
+    rewriteStage [written (Kind.atom "b") 4]
+        [written (Kind.atom "fill") 9, written Kind.lparen 13,
+         written (Kind.atom "7") 14, written Kind.rparen 15]
+        (written Kind.semi 16) 6
+      = rewrite [written (Kind.atom "b") 4]
+        [written (Kind.atom "fill") 9, written Kind.lparen 13,
+         written (Kind.atom "7") 14, written Kind.rparen 15]
+        (written Kind.semi 16) 6 := by
+  refine ⟨rfl, rfl, rfl⟩
+
+/-- **The concrete two-stage chain the fixture pins**, token for token equal to
+the hand-written pair of statements. `8 |> alloc succeeds |> move free;` is
+`let ⟨t0⟩ = alloc(8) succeeds; free(move ⟨t0⟩);` — the operand keeps its own
+byte, the callees keep theirs, and only the binder, the delimiters and the
+temporary are invented. -/
+theorem the_two_stage_chain_is_its_hand_written_sequence :
+    chainRewrite [written (Kind.atom "8") 4]
+      [⟨[written (Kind.atom "alloc") 9, written (Kind.atom "succeeds") 15], false, 6⟩,
+       ⟨[written (Kind.atom "free") 32], true, 24⟩]
+      (written Kind.semi 40) 0
+      = some
+        ([synth (Kind.atom "let") 6, synth (Kind.atom "qcore__pipe0") 6,
+          synth (Kind.atom "=") 6,
+          written (Kind.atom "alloc") 9, synth Kind.lparen 6,
+          written (Kind.atom "8") 4, synth Kind.rparen 6,
+          written (Kind.atom "succeeds") 15, synth Kind.semi 24]
+         ++
+         [written (Kind.atom "free") 32, synth Kind.lparen 26,
+          written (Kind.atom "move") 24, synth (Kind.atom "qcore__pipe0") 26,
+          synth Kind.rparen 26, written Kind.semi 40]) := by
+  rfl
+
+/-- The first stage receives the bytes the reader wrote, unmoved. -/
+theorem the_first_stage_receives_the_readers_operand
+    (operand : List Token) (s : Stage) :
+    incomingOf operand s 0 = operand := by
+  simp [incomingOf]
+
+/-- A later stage receives the previous stage's temporary, and nothing else. -/
+theorem a_later_stage_receives_the_previous_temporary
+    (operand : List Token) (s : Stage) (i : Nat) (h : s.consumes = false) :
+    incomingOf operand s (i + 1)
+      = [synth (Kind.atom (temporaryName i)) (s.pipe + pipeWidth)] := by
+  simp [incomingOf, h]
+
+/-- Consuming that temporary is the `move` prefix, and it prefixes the same
+token rather than replacing it. -/
+theorem a_consuming_stage_moves_the_previous_temporary
+    (operand : List Token) (s : Stage) (i : Nat) (h : s.consumes = true) :
+    incomingOf operand s (i + 1)
+      = [written (Kind.atom "move") s.pipe,
+         synth (Kind.atom (temporaryName i)) (s.pipe + pipeWidth)] := by
+  simp [incomingOf, h]
+
+/-! ### 5.2 Fail-closed: only an adapter stage may feed a later one -/
+
+/-- A non-final stage that produces no value refuses. This is the rule that
+makes a chain decidable without any contract knowledge. -/
+theorem a_non_final_stage_that_produces_nothing_refuses
+    (operand : List Token) (s : Stage) (rest : List Stage) (semi : Token)
+    (index : Nat) (hrest : rest ≠ []) (hmove : ¬(index = 0 ∧ s.consumes = true))
+    (h : producesResult s = false) :
+    chainRewrite operand (s :: rest) semi index = none := by
+  cases rest with
+  | nil => exact absurd rfl hrest
+  | cons r rs =>
+    have : (index = 0 && s.consumes) = false := by
+      by_cases hi : index = 0
+      · simp [hi] at hmove ⊢; simpa using hmove
+      · simp [hi]
+    simp [chainRewrite, this, h]
+
+/-- A sink produces no value, so it is last-stage-only: `x |> print dec |> …`
+refuses. This is the user-facing shape `value |> render |> log` measured against
+the vocabulary the language actually has — a `std.io` sink cannot be a `render`. -/
+theorem a_sink_is_last_stage_only :
+    chainRewrite [written (Kind.atom "total") 4]
+      [⟨[written (Kind.atom "print") 13, written (Kind.atom "dec") 19], false, 10⟩,
+       ⟨[written (Kind.atom "log") 26, written (Kind.atom "info") 30,
+         written (Kind.atom "dec") 35], false, 23⟩]
+      (written Kind.semi 39) 0 = none := by
+  rfl
+
+/-- `move` on the first stage refuses: the reader's own operand already has the
+language's spelling, `move OPERAND |> STAGE`, so the prefix is reserved for the
+value a previous stage produced. One spelling per meaning. -/
+theorem move_on_the_first_stage_refuses
+    (operand : List Token) (s : Stage) (rest : List Stage) (semi : Token)
+    (h : s.consumes = true) :
+    chainRewrite operand (s :: rest) semi 0 = none := by
+  cases rest <;> simp [chainRewrite, h]
+
+/-- An empty chain refuses; there is no pipeline without a stage. -/
+theorem an_empty_chain_refuses (operand : List Token) (semi : Token) (i : Nat) :
+    chainRewrite operand [] semi i = none := by
+  simp [chainRewrite]
+
+/-- The refusal surface of a chain, exhibited as one list so a future widening
+has to change this theorem rather than slip past it. -/
+theorem refused_chains_rewrite_to_nothing :
+    chainRewrite [written (Kind.atom "x") 0] [] (written Kind.semi 9) 0 = none ∧
+    chainRewrite [written (Kind.atom "x") 0]
+      [⟨[written (Kind.atom "f") 5], true, 2⟩] (written Kind.semi 9) 0 = none ∧
+    chainRewrite [written (Kind.atom "x") 0]
+      [⟨[written (Kind.atom "f") 5], false, 2⟩,
+       ⟨[written (Kind.atom "g") 12], false, 9⟩] (written Kind.semi 15) 0 = none ∧
+    chainRewrite [written (Kind.atom "x") 0]
+      [⟨[written (Kind.atom "flush") 5], false, 2⟩] (written Kind.semi 12) 0 = none := by
+  refine ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ### 5.3 Why the statement sequence is admissible: disjoint byte extents
+
+Every route reads its own statement by filtering the program's tokens with
+`span.start ≤ t.start ∧ t.end ≤ span.end`, and a statement's span is the minimum
+start and maximum end over its tokens. A chain is therefore admissible exactly
+when consecutive statements' extents do not overlap — which wave 18 believed
+they could not avoid doing. They can, and the anchoring is what does it. -/
+
+/-- The byte extent `range_span` computes for one desugared statement. -/
+structure Extent where
+  start : Nat
+  stop : Nat
+  deriving DecidableEq, Repr
+
+/-- Whether a zero-width token at byte `b` falls inside a statement's window,
+which is exactly the filter every route applies:
+`span.start ≤ t.start ∧ t.end ≤ span.end`. -/
+def Extent.covers (e : Extent) (b : Nat) : Bool := e.start ≤ b && b ≤ e.stop
+
+/-- The extent of statement `i` of an `n`-stage pipeline whose `|>` operators
+start at `pipes i`.
+
+Statement `0` starts at the operand the reader wrote; every later statement
+starts at the **end** of its own `|>`. Every non-final statement stops at the
+**start** of the next `|>`, where its synthesized `;` is anchored; the final one
+stops at the reader's `;`. -/
+def statementExtent (operandStart semiStop : Nat) (pipes : Nat → Nat) (n i : Nat) :
+    Extent :=
+  { start := if i = 0 then operandStart else pipes i + pipeWidth,
+    stop := if i + 1 = n then semiStop else pipes (i + 1) }
+
+/-- **Consecutive statements of a chain never overlap**, with no hypothesis at
+all about where the pipes are: statement `i` stops at the next `|>`'s start and
+statement `i+1` begins `pipeWidth` bytes later. This is the theorem that
+retires wave 18's recorded `PIPE-CHAIN` blocker. -/
+theorem consecutive_statements_are_disjoint
+    (operandStart semiStop : Nat) (pipes : Nat → Nat) (n i : Nat)
+    (h : i + 1 < n) :
+    (statementExtent operandStart semiStop pipes n i).stop
+      < (statementExtent operandStart semiStop pipes n (i + 1)).start := by
+  have hi : i + 1 ≠ n := by omega
+  simp [statementExtent, hi, pipeWidth]
+
+/-- **And the naive anchoring would not.** If a non-final statement's terminator
+and the next statement's synthesized tokens were both anchored at the same
+pipe's start — the wave-18 convention, which is correct for a single stage —
+the two extents would meet exactly at that byte. The two-byte gap is therefore
+load-bearing, not incidental. -/
+def naiveExtent (operandStart semiStop : Nat) (pipes : Nat → Nat) (n i : Nat) :
+    Extent :=
+  { start := if i = 0 then operandStart else pipes i,
+    stop := if i + 1 = n then semiStop else pipes (i + 1) }
+
+theorem the_naive_anchoring_touches_at_the_pipe
+    (operandStart semiStop : Nat) (pipes : Nat → Nat) (n i : Nat)
+    (h : i + 1 < n) :
+    (naiveExtent operandStart semiStop pipes n i).stop
+      = (naiveExtent operandStart semiStop pipes n (i + 1)).start := by
+  have hi : i + 1 ≠ n := by omega
+  simp [naiveExtent, hi]
+
+/-- …and a zero-width token at that byte is then covered by **both** windows, so
+each route's span-keyed filter would return the other statement's tokens too.
+Exhibited concretely: three stages, pipes at 10, 20 and 30. -/
+theorem the_touching_byte_is_covered_by_both_naive_windows :
+    (naiveExtent 0 40 (fun i => 10 * i) 3 0).covers 10 = true ∧
+    (naiveExtent 0 40 (fun i => 10 * i) 3 1).covers 10 = true := by
+  refine ⟨by decide, by decide⟩
+
+/-- Under the anchoring that landed, the same byte belongs to the first window
+and to nothing else — the second statement begins two bytes later. -/
+theorem the_landed_anchoring_separates_the_same_byte :
+    (statementExtent 0 40 (fun i => 10 * i) 3 0).covers 10 = true ∧
+    (statementExtent 0 40 (fun i => 10 * i) 3 1).covers 10 = false := by
+  refine ⟨by decide, by decide⟩
+
+/-! ### 5.4 Hygiene -/
+
+/-- Temporaries are distinct, exhibited at the widths a chain reaches. A file
+that writes the reserved prefix itself and also needs a temporary is refused
+rather than silently α-renamed, so no diagnostic can ever name a binding the
+reader did not write. -/
+theorem temporaries_are_pairwise_distinct :
+    temporaryName 0 ≠ temporaryName 1 ∧ temporaryName 1 ≠ temporaryName 2 ∧
+    temporaryName 0 ≠ temporaryName 2 ∧ temporaryName 2 ≠ temporaryName 3 := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-- Whether a stream already writes the reserved prefix, which is the condition
+the desugarer refuses on. -/
+def writesReservedPrefix (ts : List Token) : Bool :=
+  ts.any (fun t => match t.kind with
+    | Kind.atom text => "qcore__pipe".isPrefixOf text
+    | _ => false)
+
+theorem a_temporary_carries_the_reserved_prefix (i : Nat) :
+    writesReservedPrefix [written (Kind.atom (temporaryName i)) 0] = true := by
+  simp [writesReservedPrefix, written, temporaryName, String.isPrefixOf]
+
+theorem an_ordinary_binding_does_not :
+    writesReservedPrefix [written (Kind.atom "grown") 0] = false := by
+  decide
+
+/-- Exactly which tokens a chain invents: the delimiters a single-stage
+pipeline invents, plus its own binders and temporaries — and nothing else. No
+callee name, no literal, no operator and no user binding is ever synthesized.
+This is the chain counterpart of
+`only_delimiters_are_synthesized_in_a_single_stage_pipeline`. -/
+def synthesizedKinds (ts : List Token) : List Kind :=
+  (ts.filter (fun t => t.synthesized)).map (fun t => t.kind)
+
+theorem a_chain_synthesizes_only_delimiters_binders_and_temporaries :
+    synthesizedKinds
+      ([synth (Kind.atom "let") 6, synth (Kind.atom "qcore__pipe0") 6,
+        synth (Kind.atom "=") 6,
+        written (Kind.atom "alloc") 9, synth Kind.lparen 6,
+        written (Kind.atom "8") 4, synth Kind.rparen 6,
+        written (Kind.atom "succeeds") 15, synth Kind.semi 24]
+       ++
+       [written (Kind.atom "free") 32, synth Kind.lparen 26,
+        written (Kind.atom "move") 24, synth (Kind.atom "qcore__pipe0") 26,
+        synth Kind.rparen 26, written Kind.semi 40])
+      = [Kind.atom "let", Kind.atom "qcore__pipe0", Kind.atom "=",
+         Kind.lparen, Kind.rparen, Kind.semi,
+         Kind.lparen, Kind.atom "qcore__pipe0", Kind.rparen] := by
+  rfl
+
+/-- The written half of the same chain is exactly what the reader typed, in the
+order the hand-written sequence would have it. -/
+theorem a_chain_preserves_every_written_origin :
+    writtenOnly
+      ([synth (Kind.atom "let") 6, synth (Kind.atom "qcore__pipe0") 6,
+        synth (Kind.atom "=") 6,
+        written (Kind.atom "alloc") 9, synth Kind.lparen 6,
+        written (Kind.atom "8") 4, synth Kind.rparen 6,
+        written (Kind.atom "succeeds") 15, synth Kind.semi 24]
+       ++
+       [written (Kind.atom "free") 32, synth Kind.lparen 26,
+        written (Kind.atom "move") 24, synth (Kind.atom "qcore__pipe0") 26,
+        synth Kind.rparen 26, written Kind.semi 40])
+      = [written (Kind.atom "alloc") 9, written (Kind.atom "8") 4,
+         written (Kind.atom "succeeds") 15, written (Kind.atom "free") 32,
+         written (Kind.atom "move") 24, written Kind.semi 40] := by
+  rfl
+
+/-- A rewritten chain carries no `|>`: the operator is consumed at every stage,
+not relocated, so no later pass can see one in a well-formed program. -/
+theorem a_rewritten_chain_contains_no_pipe :
+    (chainRewrite [written (Kind.atom "8") 4]
+      [⟨[written (Kind.atom "alloc") 9, written (Kind.atom "succeeds") 15], false, 6⟩,
+       ⟨[written (Kind.atom "free") 32], true, 24⟩]
+      (written Kind.semi 40) 0).all (fun out => !hasPipe out) = true := by
+  rfl
+
+/-! ## 6. The claimed logical operators
 
 `|` and `&&` are lexed as tokens by this card so a later wave inherits them
 without a collision, and every occurrence refuses. Nothing here says what they
@@ -473,7 +895,7 @@ theorem the_operator_family_is_exactly_as_declared :
     operatorsAdmit [written Kind.pipeInto 0] = true := by
   refine ⟨rfl, rfl, rfl, rfl⟩
 
-/-! ## 6. Tokenization: longest match at width two
+/-! ## 7. Tokenization: longest match at width two
 
 The lexer tries every two-byte spelling before every one-byte spelling. The
 vertical-bar family is four pairwise-distinct byte pairs, so the resolution is

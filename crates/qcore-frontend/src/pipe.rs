@@ -14,11 +14,13 @@
 //! statement of "the desugaring adds no semantics".
 //!
 //! ```text
-//! statement ::= OPERAND "|>" STAGE ";"
+//! statement ::= [ "let" NAME "=" ] OPERAND ("|>" STAGE)+ ";"
 //! OPERAND   ::= token+          -- passed through verbatim, e.g. `x`, `-7`, `move b`
-//! STAGE     ::= "print" WORD                 -- a `source.std-io.v1` sink
+//! STAGE     ::= [ "move" ] STAGE_BODY
+//! STAGE_BODY::= "print" WORD                 -- a `source.std-io.v1` sink
 //!             | "log" WORD WORD              -- a `source.std-io.v1` sink
-//!             | NAME [ "(" [arg {"," arg}] ")" ]   -- a call stage
+//!             | NAME [ "(" [arg {"," arg}] ")" ] [ ADAPTER ]   -- a G02d call
+//! ADAPTER   ::= "succeeds" BOOL "else" {disposition} "raise" NAME
 //! ```
 //!
 //! | Written | Desugars to |
@@ -28,6 +30,44 @@
 //! | `x \|> f;` | `f(x);` |
 //! | `x \|> f(a, b);` | `f(x, a, b);` |
 //! | `move b \|> release;` | `release(move b);` |
+//! | `8 \|> alloc succeeds true else raise E \|> move free;` | `let ⟨t⟩ = alloc(8) succeeds true else raise E; free(move ⟨t⟩);` |
+//! | `let r = x \|> f succeeds true else raise E;` | `let r = f(x) succeeds true else raise E;` |
+//!
+//! # Chains (card `PIPE-CHAIN`)
+//!
+//! A pipeline of `n` stages desugars to a **sequence of `n` statements**. Each
+//! non-final stage binds its result to a hygienic temporary the next stage
+//! receives; the final stage keeps the statement form the reader wrote around
+//! the whole pipeline, which is either a bare statement or a `let NAME =`
+//! binding. Nothing about custody is re-implemented: by the time any checker
+//! runs, a temporary is an ordinary binding, so linearity, leak accounting and
+//! use-after-move are inherited. A chain whose result is never consumed leaks
+//! and refuses at the pre-existing `Q202`.
+//!
+//! Wave 18 recorded two blockers for this. The first — a call stage's result
+//! has no name — is answered by *giving* it one. The second — that a statement
+//! sequence would need statement windows this frontend keys by byte span —
+//! turned out to rest on the assumption that the statements would **share** the
+//! operand token. With a fresh temporary per stage they share nothing, and
+//! their byte spans are disjoint by construction: statement `k` runs from its
+//! own written tokens to the *start* of the `|>` that ends it, and statement
+//! `k+1`'s synthesized tokens sit at that same `|>`'s *end*, two bytes later.
+//!
+//! Only an acquisition adapter binds a result in this source language, so
+//! "produces a value" is decided syntactically by the presence of `succeeds` —
+//! no contract knowledge enters the desugaring. A sink, a discarding call and
+//! `flush` therefore cannot feed a later stage, each refusing by name.
+//!
+//! Two spellings exist for the value a previous stage produced, because a
+//! hygienic temporary has no name a reader could write:
+//!
+//! * `|> move STAGE` consumes it, mirroring `move OPERAND |> STAGE` for the
+//!   first stage, where the reader's own operand already has a spelling (so
+//!   `move` is refused there — one spelling per meaning); and
+//! * a **bare `move`** inside a stage's adapter tail names it, so an
+//!   acquisition's error arm can dispose of the value piped into it. That arm
+//!   is mandatory whenever another identity is live (`Q025`), so without this a
+//!   chain could hold at most one acquisition.
 //!
 //! # Insertion position
 //!
@@ -44,25 +84,34 @@
 //! # Attribution
 //!
 //! Every token that came from the source keeps its own span, unmoved. A
-//! refusal inside the desugared statement therefore points at the byte range
-//! the reader wrote: an operand fault at the operand, a stage fault at the
-//! stage. Only `(`, `)` and `,` are synthesized, and each is anchored
-//! zero-width at the `|>` it came from, so even a fault that lands on
-//! punctuation names the pipe rather than an invented position.
+//! refusal inside a desugared statement therefore points at the byte range the
+//! reader wrote — and in a chain, at *that stage's* bytes rather than at the
+//! pipeline's first token. Only `let`, `=`, `;`, `(`, `)`, `,` and the
+//! temporaries themselves are synthesized, each anchored zero-width at the `|>`
+//! it came from, so even a fault that lands on synthesized punctuation names
+//! the pipe rather than an invented position.
 //!
-//! # What v1 does not do, and why
+//! One case cannot keep the reader's bytes and is recorded rather than hidden:
+//! in a **multi-stage** `let NAME = …` pipeline the binder is written to the
+//! left of every stage, so keeping its spans would make the last statement's
+//! byte span swallow the statements before it. The binder is re-anchored at the
+//! final `|>`, with the reader's own name preserved. A one-stage bound pipeline
+//! keeps its binder tokens exactly where they were.
 //!
-//! * **A pipeline has exactly one stage.** `x |> f |> g` refuses at `Q037`.
-//!   Two independent blockers, both measured: a call stage's result has no
-//!   name, because QCore source has no expression tier at all
-//!   (`StatementKind::Expression` is payload-free and an expression statement
-//!   refuses at `Q500`); and expanding one pipeline into a statement
-//!   *sequence* is incompatible with the byte-span statement windows every
-//!   route uses to read its own tokens, since the shared operand would sit
-//!   inside two overlapping statement spans. Named follow-on `PIPE-CHAIN`.
-//! * **A pipeline is a whole statement.** `let r = x |> f succeeds …;` refuses
-//!   at `Q036`. Named follow-on `PIPE-LET`.
-//! * **`flush` takes no operand**, so piping into it refuses at `Q037`.
+//! # What this profile does not do, and why
+//!
+//! * **A stage that produces no value cannot feed a later one.** Only the
+//!   acquisition adapter binds a result, so a sink, a discarding call and
+//!   `flush` are last-stage-only and refuse at `Q037` naming the stage.
+//! * **An assignment pipeline** — `x = y |> f;` — refuses at `Q036`; follow-on
+//!   `PIPE-ASSIGN`.
+//! * **A chain cannot cross a route.** `value |> render |> log` in its literal
+//!   reading needs a call whose scalar result a `std.io` sink can render, and
+//!   the source language has neither: no route binds a scalar call result, and
+//!   a module that both calls an extern function and prints stays on the extern
+//!   route, which refuses `print`. Both are pre-existing boundaries the pipe
+//!   neither widens nor narrows; follow-ons `PIPE-SCALAR-RESULT` and the
+//!   already-recorded `STD-IO-COMPOSE`.
 //!
 //! # The claimed logical operators
 //!
@@ -119,16 +168,23 @@ fn word(token: &Token) -> Option<&str> {
     }
 }
 
-/// A synthesized delimiter, anchored zero-width at the `|>` it came from.
-fn synthesized(symbol: Symbol, pipe: Span) -> Token {
-    Token {
-        kind: TokenKind::Symbol(symbol),
-        span: Span {
-            start: pipe.start,
-            end: pipe.start,
-        },
-    }
-}
+/// The reserved prefix of a hygienic pipeline temporary (card `PIPE-CHAIN`).
+///
+/// A temporary is a synthesized [`TokenKind::Word`], so it never passes through
+/// the lexer and could carry bytes no source can spell — but it *does* reach
+/// name resolution and every diagnostic that names a binding, so it has to be a
+/// legible identifier. Hygiene is therefore enforced by refusal rather than by
+/// an unspellable name: if a file that needs temporaries also writes a word
+/// beginning with this prefix, the whole pipeline is refused. Silent
+/// α-renaming is deliberately not done — a renamed binding would make a later
+/// diagnostic name a binding the reader never wrote.
+const TEMPORARY_PREFIX: &str = "qcore__pipe";
+
+/// The adapter keyword that makes a call stage result-producing.
+const ADAPTER_KEYWORD: &str = "succeeds";
+
+/// The stage prefix that consumes the incoming temporary (card `PIPE-CHAIN`).
+const MOVE_KEYWORD: &str = "move";
 
 /// Rewrite every well-formed pipeline in `tokens` and record a refusal for
 /// every ill-formed one.
@@ -144,12 +200,22 @@ pub fn desugar_pipes(tokens: Vec<Token>) -> (Vec<Token>, Vec<PipeRefusal>) {
     if runs.is_empty() {
         return (tokens, refusals);
     }
+    let collision = tokens
+        .iter()
+        .find(|token| word(token).is_some_and(|word| word.starts_with(TEMPORARY_PREFIX)))
+        .map(|token| token.span);
 
-    let mut output: Vec<Token> = Vec::with_capacity(tokens.len() + 2 * runs.len());
+    let mut output: Vec<Token> = Vec::with_capacity(tokens.len() + 8 * runs.len());
     let mut cursor = 0usize;
+    let mut counter = 0usize;
     for run in runs {
         output.extend_from_slice(&tokens[cursor..run.start]);
-        match rewrite(&tokens[run.start..run.end], run.pipe) {
+        match rewrite(
+            &tokens[run.start..run.end],
+            run.pipe,
+            collision,
+            &mut counter,
+        ) {
             Ok(rewritten) => output.extend(rewritten),
             Err(error) => {
                 refusals.push(error);
@@ -222,15 +288,91 @@ fn pipeline_runs(tokens: &[Token], refusals: &mut Vec<PipeRefusal>) -> Vec<Run> 
     runs
 }
 
-/// Rewrite one run `OPERAND |> STAGE ;` into the tokens of the equivalent
-/// unpiped statement.
-fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
-    let semicolon = run.last().expect("a run always ends in its `;`").clone();
-    let body = &run[..run.len() - 1];
+/// A synthesized word, anchored zero-width at `at`.
+fn synthesized_word(name: String, at: usize) -> Token {
+    Token {
+        kind: TokenKind::Word(name),
+        span: Span { start: at, end: at },
+    }
+}
 
-    // `let`/assignment pipelines are follow-on `PIPE-LET`: this profile admits
-    // a pipeline only as a whole statement, so a binder would have to be
-    // reassembled around the rewritten call.
+/// A synthesized symbol, anchored zero-width at `at`.
+fn synthesized_at(symbol: Symbol, at: usize) -> Token {
+    Token {
+        kind: TokenKind::Symbol(symbol),
+        span: Span { start: at, end: at },
+    }
+}
+
+/// One stage of a pipeline, as written, with its feeding `|>`.
+struct Stage<'a> {
+    /// The stage's own tokens, with any `move` prefix already stripped.
+    tokens: &'a [Token],
+    /// The `move` prefix, when the stage consumes its incoming value.
+    consumes: Option<&'a Token>,
+    /// The `|>` that feeds this stage.
+    pipe: Span,
+}
+
+impl Stage<'_> {
+    /// The byte offset at which this stage's synthesized tokens are anchored.
+    ///
+    /// The first stage anchors at the *start* of its `|>`, which is where card
+    /// `PIPE-OPERATOR` put the synthesized delimiters of a one-stage pipeline
+    /// and is inside the statement either way, since the operand it receives
+    /// was written further left. Every later stage anchors at its `|>`'s
+    /// **end**, which is what keeps consecutive desugared statements' byte
+    /// spans strictly disjoint even where a `|>` abuts its neighbours: the
+    /// previous statement's synthesized `;` sits at the same pipe's start, and
+    /// `|>` is two bytes wide.
+    fn anchor(&self, first: bool) -> usize {
+        if first {
+            self.pipe.start
+        } else {
+            self.pipe.end
+        }
+    }
+
+    /// Whether this stage produces a value a later stage could receive.
+    ///
+    /// Decided syntactically, with no contract knowledge: the acquisition
+    /// adapter `succeeds BOOL else … raise ERROR` is the one call form in the
+    /// source language that binds a result, so a stage carrying the keyword is
+    /// result-producing and every other stage is a sink or a discarding call.
+    fn produces_a_result(&self) -> bool {
+        self.tokens
+            .iter()
+            .any(|token| word(token) == Some(ADAPTER_KEYWORD))
+    }
+}
+
+/// Rewrite one run `[ "let" NAME "=" ] OPERAND { "|>" STAGE } ";"` into the
+/// tokens of the statement sequence a reader would have written by hand.
+fn rewrite(
+    run: &[Token],
+    first_pipe: Span,
+    collision: Option<Span>,
+    counter: &mut usize,
+) -> Result<Vec<Token>, PipeRefusal> {
+    let semicolon = run.last().expect("a run always ends in its `;`").clone();
+    let mut body = &run[..run.len() - 1];
+
+    // An optional leading binder. Card `PIPE-CHAIN` closes `PIPE-LET`: the
+    // final stage keeps the statement form the reader wrote around the whole
+    // pipeline, so `let r = x |> f succeeds …;` binds `r` to the last stage's
+    // result exactly as the hand-written statement does.
+    let mut binder: Option<[Token; 3]> = None;
+    if word(&body[0]) == Some("let") {
+        if body.len() < 3 || word(&body[1]).is_none() || !is(&body[2], Symbol::Equal) {
+            return Err(refusal(
+                "Q036",
+                body[0].span,
+                "a bound pipeline reads `let NAME = OPERAND |> STAGE …;`",
+            ));
+        }
+        binder = Some([body[0].clone(), body[1].clone(), body[2].clone()]);
+        body = &body[3..];
+    }
     if let Some(equal) = body
         .iter()
         .position(|token| is(token, Symbol::Equal) || is(token, Symbol::Define))
@@ -238,12 +380,13 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
         return Err(refusal(
             "Q036",
             body[equal].span,
-            "`source.pipe.v1` admits a pipeline as a whole statement; a pipeline on the right of \
-             a binding is follow-on `PIPE-LET`",
+            "`source.pipe.v1` admits a pipeline as a whole statement or on the right of a leading \
+             `let NAME =`; an assignment pipeline is follow-on `PIPE-ASSIGN`",
         ));
     }
 
     let mut segments: Vec<&[Token]> = Vec::new();
+    let mut pipes: Vec<Span> = Vec::new();
     let mut segment_start = 0usize;
     let mut depth = 0i32;
     for (index, token) in body.iter().enumerate() {
@@ -252,6 +395,7 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
             TokenKind::Symbol(Symbol::RightParen | Symbol::RightBracket) => depth -= 1,
             TokenKind::Symbol(Symbol::PipeInto) if depth == 0 => {
                 segments.push(&body[segment_start..index]);
+                pipes.push(token.span);
                 segment_start = index + 1;
             }
             _ => {}
@@ -263,29 +407,157 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
     if operand.is_empty() {
         return Err(refusal(
             "Q036",
-            pipe,
+            first_pipe,
             "`|>` needs a value on its left; this pipeline pipes nothing",
         ));
     }
-    if segments.len() > 2 {
-        return Err(refusal(
-            "Q037",
-            segments[2].first().map_or(pipe, |token| token.span),
-            "`source.pipe.v1` admits one stage per pipeline. A call stage's result has no name — \
-             QCore source has no expression tier — and a chain of statement stages would need \
-             statement windows this frontend keys by byte span. Follow-on `PIPE-CHAIN`; bind the \
-             intermediate value instead",
-        ));
+
+    let mut stages: Vec<Stage> = Vec::with_capacity(segments.len() - 1);
+    for (index, segment) in segments[1..].iter().enumerate() {
+        let pipe = pipes[index];
+        if segment.is_empty() {
+            return Err(refusal(
+                "Q036",
+                pipe,
+                "`|>` needs a stage on its right; this pipeline pipes into nothing",
+            ));
+        }
+        // `move` in front of a stage consumes the value the previous stage
+        // produced. It is the only way to say it for a synthesized temporary,
+        // and it is deliberately refused on the first stage, where the reader
+        // already has the language's own spelling: `move OPERAND |> STAGE`.
+        let consumes =
+            (word(&segment[0]) == Some(MOVE_KEYWORD) && segment.len() > 1).then(|| &segment[0]);
+        if consumes.is_some() && index == 0 {
+            return Err(refusal(
+                "Q036",
+                segment[0].span,
+                "`move` consumes the value a previous stage produced; the first stage's operand \
+                 is written by hand, so spell it `move OPERAND |> STAGE`",
+            ));
+        }
+        stages.push(Stage {
+            tokens: if consumes.is_some() {
+                &segment[1..]
+            } else {
+                &segment[..]
+            },
+            consumes,
+            pipe,
+        });
     }
-    let stage = segments[1];
-    let Some(head) = stage.first() else {
+
+    let last = stages.len() - 1;
+    for (index, stage) in stages.iter().enumerate() {
+        classify(stage)?;
+        if index != last && !stage.produces_a_result() {
+            let name = word(&stage.tokens[0]).unwrap_or("this stage");
+            return Err(refusal(
+                "Q037",
+                stage.tokens[0].span,
+                format!(
+                    "`{name}` produces no value, so it cannot feed a later stage: it is a sink or \
+                     a discarding call, and only an acquisition `CALLEE(ARGS) succeeds BOOL else \
+                     … raise ERROR` binds a result. Make it the pipeline's last stage"
+                ),
+            ));
+        }
+    }
+    if binder.is_some() && !stages[last].produces_a_result() {
+        let name = word(&stages[last].tokens[0]).unwrap_or("this stage");
         return Err(refusal(
             "Q036",
-            pipe,
-            "`|>` needs a stage on its right; this pipeline pipes into nothing",
+            stages[last].tokens[0].span,
+            format!("`{name}` produces no value, so a bound pipeline cannot end in it"),
         ));
-    };
+    }
+    if let (true, Some(span)) = (stages.len() > 1, collision) {
+        return Err(refusal(
+            "Q036",
+            span,
+            format!(
+                "a multi-stage pipeline binds hygienic temporaries named `{TEMPORARY_PREFIX}N`, \
+                 and this file writes that prefix itself; rename the binding rather than letting \
+                 the desugaring rename it"
+            ),
+        ));
+    }
 
+    let mut out = Vec::with_capacity(run.len() + 8 * stages.len());
+    let mut incoming: Vec<Token> = operand.to_vec();
+    for (index, stage) in stages.iter().enumerate() {
+        let first = index == 0;
+        let anchor = stage.anchor(first);
+        let final_stage = index == last;
+        if final_stage {
+            if let Some(binder) = &binder {
+                // A one-stage bound pipeline keeps the reader's own `let NAME =`
+                // tokens in place. A multi-stage one cannot: those bytes sit to
+                // the left of every earlier stage, so keeping them would make
+                // this statement's byte span swallow the statements before it
+                // and every route's span-keyed token window would return the
+                // wrong tokens. The binder is re-anchored at the last `|>`
+                // instead, with the reader's own name preserved.
+                if stages.len() == 1 {
+                    out.extend(binder.iter().cloned());
+                } else {
+                    out.push(synthesized_word("let".to_owned(), anchor));
+                    out.push(synthesized_word(
+                        word(&binder[1])
+                            .expect("the binder name is a word")
+                            .to_owned(),
+                        anchor,
+                    ));
+                    out.push(synthesized_at(Symbol::Equal, anchor));
+                }
+            }
+        } else {
+            out.push(synthesized_word("let".to_owned(), anchor));
+            out.push(synthesized_word(temporary(*counter), anchor));
+            out.push(synthesized_at(Symbol::Equal, anchor));
+        }
+        emit_stage(&mut out, stage, &incoming, anchor)?;
+        if final_stage {
+            out.push(semicolon.clone());
+        } else {
+            // The terminator anchors at the *start* of the next stage's `|>`,
+            // and that stage's own synthesized tokens anchor at its end, so the
+            // two statements' spans cannot touch.
+            out.push(synthesized_at(
+                Symbol::Semicolon,
+                stages[index + 1].pipe.start,
+            ));
+            incoming = Vec::new();
+            if let Some(token) = stages[index + 1].consumes {
+                incoming.push((*token).clone());
+            }
+            incoming.push(synthesized_word(
+                temporary(*counter),
+                stages[index + 1].anchor(false),
+            ));
+            *counter += 1;
+        }
+    }
+    Ok(out)
+}
+
+fn temporary(index: usize) -> String {
+    format!("{TEMPORARY_PREFIX}{index}")
+}
+
+/// What kind of statement one stage is, refusing every shape outside the closed
+/// stage table.
+enum StageKind {
+    /// A statement head with `selectors` closed selector words before its
+    /// operand.
+    Sink { selectors: usize },
+    /// A callee name, an optional parenthesized argument list ending at
+    /// `arguments_end`, and an optional adapter tail after it.
+    Call { arguments_end: Option<usize> },
+}
+
+fn classify(stage: &Stage<'_>) -> Result<StageKind, PipeRefusal> {
+    let head = &stage.tokens[0];
     let Some(name) = word(head) else {
         return Err(refusal(
             "Q036",
@@ -293,7 +565,6 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
             "a pipeline stage is a statement head or a callee name",
         ));
     };
-
     if OPERANDLESS_STAGES.contains(&name) {
         return Err(refusal(
             "Q037",
@@ -301,57 +572,140 @@ fn rewrite(run: &[Token], pipe: Span) -> Result<Vec<Token>, PipeRefusal> {
             format!("`{name}` takes no operand, so nothing can be piped into it"),
         ));
     }
-
-    let mut out = Vec::with_capacity(run.len() + 2);
     if let Some((_, selectors)) = SINK_STAGES.iter().find(|(head, _)| *head == name) {
-        // A statement stage: the head and its closed selector words are not
-        // arguments, so the operand follows them. Arity is left to the route's
-        // own grammar, which already refuses a wrong selector or a wrong
-        // operand count with its own diagnostic at the right span.
-        if stage.len() != 1 + selectors {
+        if let Some(token) = stage.consumes {
+            return Err(refusal(
+                "Q036",
+                token.span,
+                format!("`{name}` renders a scalar; it takes no `move`"),
+            ));
+        }
+        if stage.tokens.len() != 1 + selectors {
             return Err(refusal(
                 "Q036",
                 head.span,
                 format!(
                     "`{name}` names {selectors} selector word(s) before its operand; this stage \
                      names {}",
-                    stage.len() - 1
+                    stage.tokens.len() - 1
                 ),
             ));
         }
-        out.extend_from_slice(stage);
-        out.extend_from_slice(operand);
-        out.push(semicolon);
-        return Ok(out);
+        return Ok(StageKind::Sink {
+            selectors: *selectors,
+        });
     }
-
-    // A call stage. `f` and `f()` both take the operand as the sole argument;
-    // `f(a, b)` takes it as the first of three.
-    let existing: &[Token] = match stage.len() {
-        1 => &[],
-        _ => {
-            if !is(&stage[1], Symbol::LeftParen) || !is(&stage[stage.len() - 1], Symbol::RightParen)
-            {
-                return Err(refusal(
-                    "Q036",
-                    stage[1].span,
-                    "a call stage is a callee name, optionally followed by a parenthesized \
-                     argument list",
-                ));
+    if stage.tokens.len() == 1 {
+        return Ok(StageKind::Call {
+            arguments_end: None,
+        });
+    }
+    if !is(&stage.tokens[1], Symbol::LeftParen) {
+        // No argument list: everything after the callee name is the adapter
+        // tail, which the route's own grammar checks.
+        return Ok(StageKind::Call {
+            arguments_end: None,
+        });
+    }
+    let mut depth = 0i32;
+    for (index, token) in stage.tokens.iter().enumerate().skip(1) {
+        match &token.kind {
+            TokenKind::Symbol(Symbol::LeftParen) => depth += 1,
+            TokenKind::Symbol(Symbol::RightParen) => {
+                depth -= 1;
+                if depth == 0 {
+                    return Ok(StageKind::Call {
+                        arguments_end: Some(index),
+                    });
+                }
             }
-            &stage[2..stage.len() - 1]
+            _ => {}
         }
-    };
-    out.push(head.clone());
-    out.push(synthesized(Symbol::LeftParen, pipe));
-    out.extend_from_slice(operand);
-    if !existing.is_empty() {
-        out.push(synthesized(Symbol::Comma, pipe));
-        out.extend_from_slice(existing);
     }
-    out.push(synthesized(Symbol::RightParen, pipe));
-    out.push(semicolon);
-    Ok(out)
+    Err(refusal(
+        "Q036",
+        stage.tokens[1].span,
+        "a call stage is a callee name, optionally followed by a parenthesized argument list",
+    ))
+}
+
+/// Emit one stage's statement body — everything between its binder, if it has
+/// one, and its `;`.
+fn emit_stage(
+    out: &mut Vec<Token>,
+    stage: &Stage<'_>,
+    incoming: &[Token],
+    anchor: usize,
+) -> Result<(), PipeRefusal> {
+    match classify(stage)? {
+        StageKind::Sink { selectors } => {
+            // A statement stage: the head and its closed selector words are not
+            // arguments, so the operand follows them. Arity beyond the selector
+            // count is left to the route's own grammar, which already refuses a
+            // wrong selector or a wrong operand with its own diagnostic at the
+            // right span.
+            out.extend_from_slice(&stage.tokens[..1 + selectors]);
+            out.extend_from_slice(incoming);
+        }
+        StageKind::Call { arguments_end } => {
+            // A call stage. `f` and `f()` both take the incoming value as the
+            // sole argument; `f(a, b)` takes it as the first of three. Anything
+            // after the argument list is the acquisition adapter, carried
+            // through verbatim.
+            let (existing, tail): (&[Token], &[Token]) = match arguments_end {
+                Some(end) => (&stage.tokens[2..end], &stage.tokens[end + 1..]),
+                None => (&[], &stage.tokens[1..]),
+            };
+            out.push(stage.tokens[0].clone());
+            out.push(synthesized_at(Symbol::LeftParen, anchor));
+            out.extend_from_slice(incoming);
+            if !existing.is_empty() {
+                out.push(synthesized_at(Symbol::Comma, anchor));
+                out.extend_from_slice(existing);
+            }
+            out.push(synthesized_at(Symbol::RightParen, anchor));
+            emit_tail(out, tail, incoming)?;
+        }
+    }
+    Ok(())
+}
+
+/// Emit a call stage's adapter tail, resolving every bare `move`.
+///
+/// A `move` with no name after it — admitted nowhere else in the source
+/// language — denotes *the value piped into this stage*. It exists because a
+/// hygienic temporary has no name the reader could write, and an acquisition's
+/// error arm must name every live identity it disposes of (`Q025`). Resolving
+/// it here keeps the pipe a pure token substitution: what reaches the extern
+/// route is the ordinary `CALLEE(move NAME)` disposition it already checks.
+fn emit_tail(out: &mut Vec<Token>, tail: &[Token], incoming: &[Token]) -> Result<(), PipeRefusal> {
+    // The name of the incoming value, when it has one: `NAME` or `move NAME`.
+    let piped = incoming
+        .last()
+        .filter(|token| word(token).is_some())
+        .filter(|_| incoming.len() == 1 || word(&incoming[0]) == Some(MOVE_KEYWORD));
+    for (index, token) in tail.iter().enumerate() {
+        out.push(token.clone());
+        if word(token) != Some(MOVE_KEYWORD) {
+            continue;
+        }
+        let bare = tail
+            .get(index + 1)
+            .is_none_or(|next| is(next, Symbol::RightParen) || is(next, Symbol::Comma));
+        if !bare {
+            continue;
+        }
+        let Some(piped) = piped else {
+            return Err(refusal(
+                "Q036",
+                token.span,
+                "a bare `move` names the value piped into this stage, and this stage's incoming \
+                 value is not a binding",
+            ));
+        };
+        out.push(piped.clone());
+    }
+    Ok(())
 }
 
 /// Raise the operator refusals recorded for one input file.

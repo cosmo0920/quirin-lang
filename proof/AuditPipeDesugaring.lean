@@ -1,6 +1,7 @@
 import QCore.PipeDesugaring
 
--- Card `PIPE-OPERATOR`: the pipe `|>` and the claimed logical-operator tokens.
+-- Cards `PIPE-OPERATOR` (the pipe `|>` and the claimed logical-operator
+-- tokens) and `PIPE-CHAIN` (multi-stage pipelines as statement sequences).
 
 -- 1. The identity. A piped statement and the statement a reader would have
 -- written by hand are the same token sequence, so no checker downstream can
@@ -25,7 +26,7 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.rewrite_preserves_written_origins
 #print axioms QCore.PipeDesugaring.a_sink_pipeline_synthesizes_nothing
 #print axioms QCore.PipeDesugaring.synthesized_tokens_are_anchored_at_the_pipe
-#print axioms QCore.PipeDesugaring.only_delimiters_are_synthesized
+#print axioms QCore.PipeDesugaring.only_delimiters_are_synthesized_in_a_single_stage_pipeline
 
 -- 4. Fail-closed: every shape outside the v1 grammar refuses, and a refusal
 -- leaves the statement untouched rather than half-rewritten.
@@ -39,14 +40,48 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.a_refused_statement_is_unchanged
 #print axioms QCore.PipeDesugaring.a_refused_statement_keeps_its_pipe
 
--- 5. The claimed logical operators refuse; the single `&` is not claimed.
+-- 5. Chains (card `PIPE-CHAIN`): a pipeline of n stages is the sequence of n
+-- statements a reader would have written, each non-final stage binding a
+-- hygienic temporary the next receives.
+#print axioms QCore.PipeDesugaring.a_one_stage_chain_is_the_single_stage_rewrite
+#print axioms QCore.PipeDesugaring.the_stage_rewrite_agrees_with_the_single_stage_rewrite
+#print axioms QCore.PipeDesugaring.the_two_stage_chain_is_its_hand_written_sequence
+#print axioms QCore.PipeDesugaring.the_first_stage_receives_the_readers_operand
+#print axioms QCore.PipeDesugaring.a_later_stage_receives_the_previous_temporary
+#print axioms QCore.PipeDesugaring.a_consuming_stage_moves_the_previous_temporary
+
+-- 5.2 Fail-closed: only an acquisition adapter may feed a later stage.
+#print axioms QCore.PipeDesugaring.a_non_final_stage_that_produces_nothing_refuses
+#print axioms QCore.PipeDesugaring.a_sink_is_last_stage_only
+#print axioms QCore.PipeDesugaring.move_on_the_first_stage_refuses
+#print axioms QCore.PipeDesugaring.an_empty_chain_refuses
+#print axioms QCore.PipeDesugaring.refused_chains_rewrite_to_nothing
+
+-- 5.3 Why the sequence is admissible at all: consecutive statements' byte
+-- extents are disjoint by construction, and the naive anchoring's are not.
+-- This is what retires wave 18's recorded `PIPE-CHAIN` blocker.
+#print axioms QCore.PipeDesugaring.consecutive_statements_are_disjoint
+#print axioms QCore.PipeDesugaring.the_naive_anchoring_touches_at_the_pipe
+#print axioms QCore.PipeDesugaring.the_touching_byte_is_covered_by_both_naive_windows
+#print axioms QCore.PipeDesugaring.the_landed_anchoring_separates_the_same_byte
+
+-- 5.4 Hygiene: temporaries are distinct, carry the reserved prefix, and an
+-- ordinary binding does not.
+#print axioms QCore.PipeDesugaring.temporaries_are_pairwise_distinct
+#print axioms QCore.PipeDesugaring.a_temporary_carries_the_reserved_prefix
+#print axioms QCore.PipeDesugaring.an_ordinary_binding_does_not
+#print axioms QCore.PipeDesugaring.a_chain_synthesizes_only_delimiters_binders_and_temporaries
+#print axioms QCore.PipeDesugaring.a_chain_preserves_every_written_origin
+#print axioms QCore.PipeDesugaring.a_rewritten_chain_contains_no_pipe
+
+-- 6. The claimed logical operators refuse; the single `&` is not claimed.
 #print axioms QCore.PipeDesugaring.the_or_operator_refuses
 #print axioms QCore.PipeDesugaring.the_and_operator_refuses
 #print axioms QCore.PipeDesugaring.the_double_bar_refuses
 #print axioms QCore.PipeDesugaring.a_single_ampersand_is_not_claimed
 #print axioms QCore.PipeDesugaring.the_operator_family_is_exactly_as_declared
 
--- 6. Tokenization: longest match at width two, with the quant delimiters
+-- 7. Tokenization: longest match at width two, with the quant delimiters
 -- untouched and the future or-operator's constraint recorded.
 #print axioms QCore.PipeDesugaring.the_quant_delimiters_are_untouched
 #print axioms QCore.PipeDesugaring.the_pipe_wins_by_longest_match

@@ -17,6 +17,8 @@ const LINES: &str = include_str!("fixtures/std_modules/lines.qcore");
 const LINES_PIPED: &str = include_str!("fixtures/pipe/lines_piped.qcore");
 const ROUND_TRIP: &str = include_str!("fixtures/extern_calls/round_trip.qcore");
 const ROUND_TRIP_PIPED: &str = include_str!("fixtures/pipe/round_trip_piped.qcore");
+const REALLOC: &str = include_str!("fixtures/extern_calls/realloc.qcore");
+const REALLOC_PIPED: &str = include_str!("fixtures/pipe/realloc_piped.qcore");
 const EXTERN_CONTRACTS: &str = include_str!("fixtures/extern_calls/contracts/buffer_api.qcore");
 
 // Exercise both checkout styles regardless of the host's Git configuration.
@@ -273,24 +275,49 @@ fn piping_into_an_operandless_stage_refuses() {
 }
 
 #[test]
-fn a_multi_stage_pipeline_refuses_with_its_measured_reason() {
-    // The user-facing shape `value |> render |> log` is refused in v1, on two
-    // measured blockers rather than a scheduling one. Recorded as
-    // follow-on `PIPE-CHAIN`.
+fn a_sink_cannot_feed_a_later_stage() {
+    // Deliberate pin update, card `PIPE-CHAIN`. This shape was refused in wave
+    // 18 for being a *chain*; chains are now admitted, so what refuses it is
+    // the narrower and permanent rule: `print` produces no value, so it can
+    // only be a pipeline's last stage. The code is unchanged at `Q037` and the
+    // new message names the stage rather than a follow-on.
     let source = LINES_PIPED.replace("total |> print dec;", "total |> print dec |> log info dec;");
     assert_eq!(codes(&source), ["Q037"]);
-    assert!(messages(&source)[0].contains("PIPE-CHAIN"));
+    assert!(messages(&source)[0].contains("produces no value"));
+    assert!(messages(&source)[0].contains("`print`"));
 }
 
 #[test]
-fn a_pipeline_on_the_right_of_a_binding_refuses() {
+fn a_pipeline_on_the_right_of_a_binding_binds_its_last_stage() {
+    // Deliberate pin update, card `PIPE-CHAIN`: this closes `PIPE-LET`. The
+    // load-bearing negative half moves rather than disappearing — a bound
+    // pipeline whose last stage produces nothing still refuses, and so does an
+    // assignment pipeline.
     let source = ROUND_TRIP_PIPED.replace(
         "    let b = qcore_extern_alloc(8) succeeds true else raise Failure;\n",
         "    let b = 8 |> qcore_extern_alloc succeeds true else raise Failure;\n",
     );
-    let codes: Vec<String> = compile_with(&source, selection())
+    let bound = compile_with(&source, selection()).expect("a bound pipeline checks");
+    let unpiped = compile_with(ROUND_TRIP, selection()).unwrap();
+    assert_eq!(
+        bound.c_source, unpiped.c_source,
+        "a bound pipeline emits what the hand-written binding emits"
+    );
+
+    let sink_bound = LINES_PIPED.replace(
+        "    total |> print dec;\n",
+        "    let x = total |> print dec;\n",
+    );
+    assert_eq!(codes(&sink_bound), ["Q036"]);
+    assert!(messages(&sink_bound)[0].contains("produces no value"));
+
+    let assigned = ROUND_TRIP_PIPED.replace(
+        "    b |> qcore_extern_fill(7);\n",
+        "    b = b |> qcore_extern_fill(7);\n",
+    );
+    let codes: Vec<String> = compile_with(&assigned, selection())
         .map(|module| module.execution_profile)
-        .expect_err("a bound pipeline must be refused")
+        .expect_err("an assignment pipeline must be refused")
         .into_iter()
         .map(|diagnostic| diagnostic.code)
         .collect();
@@ -324,12 +351,16 @@ fn a_pipeline_that_reaches_a_block_boundary_before_its_semicolon_refuses() {
 #[test]
 fn a_pipeline_missing_its_semicolon_mid_body_runs_into_the_next_statement() {
     // Measured, not designed: dropping the `;` makes the *next* statement's
-    // `;` the run's terminator, so the following statement head becomes a
-    // second stage and the multi-stage refusal fires first. That is
-    // fail-closed and the span still names the offending region, so the
-    // refusal is recorded as it is rather than a `Q036` being forced.
+    // `;` the run's terminator, so the following statement's head and operand
+    // are swallowed into this pipeline's first stage. Card `PIPE-CHAIN` moved
+    // which rule catches it — a stage is checked for well-formedness before it
+    // is checked for its role, so the refusal is now the sink-arity one
+    // (`Q036`, "print names 1 selector word … this stage names 2") rather than
+    // wave 18's "too many stages" (`Q037`). Both are fail-closed and correctly
+    // spanned; the measured one is pinned rather than the preferred one forced.
     let source = LINES_PIPED.replace("    total |> print dec;\n", "    total |> print dec\n");
-    assert_eq!(codes(&source), ["Q037"]);
+    assert_eq!(codes(&source), ["Q036"]);
+    assert!(messages(&source)[0].contains("selector word"));
 }
 
 #[test]
@@ -485,6 +516,351 @@ fn the_operator_gate_reaches_every_module_mode() {
         let source = format!("{mode}\nerror E {{ X; }}\nfn f() -> i32 {{ return 0 | 1; }}\n");
         assert_eq!(codes(&source), ["Q038"], "for `{mode}`");
     }
+}
+
+// --- 5b. Multi-stage pipelines (card `PIPE-CHAIN`). ---
+
+#[test]
+fn a_multi_stage_pipeline_is_its_hand_written_statement_sequence() {
+    // The load-bearing claim of this card, in the same form wave 18 used for
+    // one stage: a chain is *the same program* as the sequence a reader would
+    // have written, so it emits byte-identical C11 and observes identically.
+    // `realloc_piped.qcore` is a three-stage pipeline over a shipped fixture,
+    // not a program written to make a test pass.
+    for [piped, unpiped] in [with_line_endings(REALLOC_PIPED)]
+        .into_iter()
+        .zip(with_line_endings(REALLOC))
+        .map(|(piped, unpiped)| [piped[0].clone(), unpiped])
+    {
+        let chained = compile_with(&piped, selection()).expect("the chain checks");
+        let twin = compile_with(&unpiped, selection()).expect("the twin checks");
+        assert_eq!(
+            chained.c_source, twin.c_source,
+            "a chain and its hand-written sequence emit the same C11"
+        );
+        assert_eq!(
+            chained.extern_observation, twin.extern_observation,
+            "a chain and its hand-written sequence observe the same trace"
+        );
+    }
+}
+
+#[test]
+fn a_chain_written_without_whitespace_still_separates_its_statements() {
+    // The adversarial case for the anchoring: with every `|>` abutting its
+    // neighbours, a statement's synthesized terminator sits at the same byte a
+    // written token ends at. The terminator anchors at the pipe's *start* and
+    // the next statement's synthesized tokens at its *end*, two bytes later, so
+    // the extents stay disjoint and each route's span-keyed window still gets
+    // exactly its own tokens — which the byte-identical emission proves.
+    let dense = REALLOC_PIPED.replace(
+        "    let grown = 8 |> qcore_extern_alloc succeeds true else raise Failure\n                  \
+         |> move qcore_extern_grow(32) succeeds true\n                       \
+         else qcore_extern_free(move) raise Failure;\n",
+        "    let grown = 8|>qcore_extern_alloc succeeds true else raise Failure|>move \
+         qcore_extern_grow(32) succeeds true else qcore_extern_free(move) raise Failure;\n",
+    );
+    assert_ne!(dense, REALLOC_PIPED, "the mutation must apply");
+    let packed = compile_with(&dense, selection()).expect("a dense chain checks");
+    let spaced = compile_with(REALLOC_PIPED, selection()).unwrap();
+    assert_eq!(packed.c_source, spaced.c_source);
+    assert_eq!(packed.extern_observation, spaced.extern_observation);
+}
+
+#[test]
+fn every_stage_of_a_chain_keeps_its_own_attribution() {
+    // The D01 discipline through a chain: a fault inside stage N points at the
+    // bytes of stage N, not at the pipeline's first token and not at an
+    // invented position. Each mutation names a different callee, and the
+    // reported span must cover that callee's own name.
+    for (stage, absent) in [
+        ("qcore_extern_alloc succeeds", "qcore_absent_alloc succeeds"),
+        ("qcore_extern_grow(32)", "qcore_absent_grow(32)"),
+    ] {
+        let source = REALLOC_PIPED.replace(stage, absent);
+        assert_ne!(source, REALLOC_PIPED, "the mutation must apply");
+        let diagnostics = compile_with(&source, selection())
+            .map(|module| module.execution_profile)
+            .expect_err("an undeclared callee must be refused");
+        let named = absent.split(['(', ' ']).next().unwrap();
+        assert!(
+            diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.location.line_source.contains(named)),
+            "a fault in the `{named}` stage must be reported on that stage's own line: \
+             {diagnostics:?}"
+        );
+    }
+}
+
+#[test]
+fn a_chain_whose_result_is_never_consumed_leaks_and_refuses() {
+    // Requirement, measured rather than designed: dropping a live result on the
+    // floor is not silently accepted. The temporary is an ordinary binding by
+    // the time the accounting runs, so the pre-existing leak diagnostic is what
+    // refuses it — no leak rule was added for pipelines.
+    let source = REALLOC_PIPED.replace(
+        "    qcore_extern_fill(grown, 3);\n    qcore_extern_free(move grown);\n",
+        "    qcore_extern_fill(grown, 3);\n",
+    );
+    let codes: Vec<String> = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a leaked chain result must be refused")
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect();
+    assert_eq!(codes, ["Q202"]);
+}
+
+#[test]
+fn a_value_consumed_mid_chain_cannot_be_used_after_the_pipeline() {
+    // The other direction of linearity, and the one that would be a real
+    // soundness hole: the pipeline's operand is consumed by the first stage, so
+    // naming it afterwards refuses exactly as it does without a pipe.
+    let piped = ROUND_TRIP_PIPED.replace(
+        "    move b |> qcore_extern_release;\n",
+        "    move b |> qcore_extern_grow(32) succeeds true else raise Failure \
+         |> move qcore_extern_release;\n    qcore_extern_fill(b, 1);\n",
+    );
+    let unpiped = ROUND_TRIP.replace(
+        "    qcore_extern_release(move b);\n",
+        "    let g = qcore_extern_grow(move b, 32) succeeds true else raise Failure;\n    \
+         qcore_extern_release(move g);\n    qcore_extern_fill(b, 1);\n",
+    );
+    let codes = |source: &str| -> Vec<String> {
+        compile_with(source, selection())
+            .map(|module| module.execution_profile)
+            .expect_err("using a consumed binding must be refused")
+            .into_iter()
+            .map(|diagnostic| diagnostic.code)
+            .collect()
+    };
+    assert_eq!(
+        codes(&piped),
+        codes(&unpiped),
+        "the piped and unpiped diagnostic vectors must be equal, not merely both non-empty"
+    );
+    assert!(!codes(&piped).is_empty());
+}
+
+#[test]
+fn a_stage_that_produces_nothing_cannot_feed_a_later_stage() {
+    // The rule that makes a chain decidable without contract knowledge: only
+    // the acquisition adapter binds a result, so every other stage is final.
+    // Three shapes, one rule, and each names the offending stage.
+    let cases = [
+        (
+            "|> qcore_extern_fill(7) |> move qcore_extern_free;",
+            "qcore_extern_fill",
+        ),
+        (
+            "|> qcore_extern_free |> move qcore_extern_free;",
+            "qcore_extern_free",
+        ),
+    ];
+    for (replacement, named) in cases {
+        let source = ROUND_TRIP_PIPED.replace("|> qcore_extern_fill(7);", replacement);
+        let diagnostics = compile_with(&source, selection())
+            .map(|module| module.execution_profile)
+            .expect_err("a value-less intermediate stage must be refused");
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|d| d.code.clone())
+                .collect::<Vec<_>>(),
+            ["Q037"]
+        );
+        assert!(diagnostics[0].message.contains(named));
+    }
+}
+
+#[test]
+fn a_pipeline_temporary_cannot_be_named_or_shadowed() {
+    // Hygiene by refusal, not by silent renaming: a file that writes the
+    // reserved prefix and also needs temporaries is refused, so a diagnostic
+    // can never name a binding the reader did not write.
+    let source = REALLOC_PIPED.replace(
+        "    let grown = 8 |>",
+        "    let qcore__pipe0 = 0;\n    let grown = 8 |>",
+    );
+    assert_ne!(source, REALLOC_PIPED, "the mutation must apply");
+    let diagnostics = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a colliding binding must be refused");
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|d| d.code.clone())
+            .collect::<Vec<_>>(),
+        ["Q036"]
+    );
+    assert!(diagnostics[0].message.contains("qcore__pipe"));
+
+    // A one-stage pipeline needs no temporary, so the same name is untouched
+    // there: the refusal is scoped to files that actually generate one.
+    let single = ROUND_TRIP_PIPED.replace("    let b =", "    let qcore__pipe0 = 0;\n    let b =");
+    assert!(
+        compile_with(&single, selection())
+            .map(|module| module.execution_profile)
+            .unwrap_err()
+            .iter()
+            .all(|diagnostic| diagnostic.code != "Q036"),
+        "a pipe-free-of-temporaries file keeps its own refusal"
+    );
+}
+
+#[test]
+fn move_is_refused_on_the_first_stage_where_the_operand_has_a_spelling() {
+    // One spelling per meaning: the first stage's operand is written by hand,
+    // so `move OPERAND |> STAGE` is how it is consumed and `|> move STAGE` is
+    // reserved for the value a previous stage produced.
+    let source = ROUND_TRIP_PIPED.replace(
+        "    move b |> qcore_extern_release;\n",
+        "    b |> move qcore_extern_release;\n",
+    );
+    let diagnostics = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("`move` on the first stage must be refused");
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|d| d.code.clone())
+            .collect::<Vec<_>>(),
+        ["Q036"]
+    );
+    assert!(diagnostics[0].message.contains("move OPERAND |> STAGE"));
+}
+
+#[test]
+fn a_bare_move_outside_a_pipeline_stage_keeps_its_existing_refusal() {
+    // The bare `move` spelling is resolved by the desugaring and never reaches
+    // a route, so it means nothing outside a pipeline stage's adapter tail and
+    // the extern grammar refuses it exactly as before this card.
+    let source = ROUND_TRIP.replace(
+        "    qcore_extern_release(move b);\n",
+        "    qcore_extern_release(move);\n",
+    );
+    let codes: Vec<String> = compile_with(&source, selection())
+        .map(|module| module.execution_profile)
+        .expect_err("a bare `move` is not a call argument")
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect();
+    assert!(!codes.is_empty());
+    assert!(
+        !codes.contains(&"Q036".to_owned()) && !codes.contains(&"Q037".to_owned()),
+        "the pipe pass does not claim this shape: {codes:?}"
+    );
+}
+
+#[test]
+fn a_piped_unsafe_stage_deposits_the_same_waiver_as_its_unpiped_twin() {
+    // Requirement: a pipeline must not launder the `UncheckedLinkage`
+    // assumption an `unsafe extern fn` stage carries.
+    //
+    // Measured while writing this: an unsafe stage is *structurally* the last
+    // stage of any pipeline, twice over. It produces no value (no adapter, so
+    // it cannot feed a later stage), and `unsafe extern fn` is scalars-only
+    // (`UNSAFE_LINKAGE_V1.md` L0), so it cannot receive a chain temporary
+    // either — the only result-producing stage binds a resource. The waiver is
+    // therefore pinned where it is reachable: the piped and unpiped forms emit
+    // identical C and observe identically, so the assumption travels unchanged.
+    let unpiped = "import std.extern;\nimport std.extern.unsafe;\n\n\
+                   unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
+                   unsafe extern fn k_unchecked_measure(count: u64) -> u64;\n\n\
+                   fn main() -> unit effects { io, alloc, mut } {\n    \
+                   k_unchecked_add(2, 40);\n    k_unchecked_measure(16);\n    return;\n}\n";
+    let piped = "import std.extern;\nimport std.extern.unsafe;\n\n\
+                 unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;\n\
+                 unsafe extern fn k_unchecked_measure(count: u64) -> u64;\n\n\
+                 fn main() -> unit effects { io, alloc, mut } {\n    \
+                 2 |> k_unchecked_add(40);\n    16 |> k_unchecked_measure;\n    return;\n}\n";
+    let piped = compile(piped).expect("the piped unsafe stages check");
+    let unpiped = compile(unpiped).expect("the unpiped unsafe stages check");
+    assert_eq!(piped.c_source, unpiped.c_source);
+    assert_eq!(piped.extern_observation, unpiped.extern_observation);
+}
+
+#[cfg(not(target_os = "windows"))]
+#[test]
+fn the_native_run_of_a_multi_stage_pipeline_matches_its_reference() {
+    // One fixed ASan/UBSan/LSan run of a real chain against the real C callees
+    // the shipped extern suite links, so the custody flowing through the
+    // hygienic temporaries is executed, not only checked.
+    let module = compile_with(REALLOC_PIPED, selection()).unwrap();
+    let reference = module.extern_observation.clone().unwrap();
+    assert_eq!(
+        run_native_with_callees(module.c_source.as_deref().unwrap(), "realloc-piped"),
+        reference,
+        "native and reference observations must agree line for line"
+    );
+}
+
+#[cfg(not(target_os = "windows"))]
+fn run_native_with_callees(source: &str, label: &str) -> Vec<String> {
+    use std::process::Command;
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-pipe-chain-{label}-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&directory).unwrap();
+    let generated = directory.join("generated.c");
+    let callees = directory.join("buffer_api.c");
+    let binary = directory.join("generated");
+    std::fs::write(&generated, source).unwrap();
+    std::fs::write(&callees, include_str!("fixtures/extern_calls/buffer_api.c")).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let compile = Command::new(&compiler)
+        .args([
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-pedantic",
+            "-g",
+            "-O0",
+            "-fsanitize=address,undefined",
+            "-fno-omit-frame-pointer",
+        ])
+        .arg(&generated)
+        .arg(&callees)
+        .arg("-o")
+        .arg(&binary)
+        .output()
+        .unwrap();
+    assert!(
+        compile.status.success(),
+        "C compiler rejected the emitted program:\n{}",
+        String::from_utf8_lossy(&compile.stderr)
+    );
+    let run = Command::new(&binary)
+        .env(
+            "ASAN_OPTIONS",
+            if cfg!(target_os = "macos") {
+                "detect_leaks=0:halt_on_error=1"
+            } else {
+                "detect_leaks=1:halt_on_error=1"
+            },
+        )
+        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+        .output()
+        .unwrap();
+    assert!(
+        run.status.success(),
+        "emitted program failed under ASan/UBSan/LSan:\n{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let observation = String::from_utf8(run.stdout)
+        .unwrap()
+        .lines()
+        .map(ToOwned::to_owned)
+        .collect();
+    std::fs::remove_dir_all(directory).unwrap();
+    observation
 }
 
 // --- 6. Corpus neutrality of the token change. ---

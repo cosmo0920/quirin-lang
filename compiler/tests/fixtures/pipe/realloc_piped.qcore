@@ -1,0 +1,37 @@
+import std.extern;
+
+// The piped twin of `fixtures/extern_calls/realloc.qcore` (card `PIPE-CHAIN`).
+//
+// This is a *multi-stage* pipeline, and it is where the chain's soundness claim
+// is testable: the value flowing from stage to stage is a real owned resource
+// with a real declared reallocation in the middle. Statement for statement it
+// says what the shipped fixture says, so the two emit byte-identical C11 and
+// produce the same reference observation.
+//
+// Three things this one line exercises that a single-stage pipeline cannot:
+//
+//   * the first stage's result is bound to a hygienic temporary the reader
+//     cannot name, and the second stage consumes it — `move` in front of a
+//     stage is how that is spelled, because the value it consumes has no name;
+//   * the second stage's error arm disposes of the value piped into it, spelled
+//     as a bare `move`, which is the same temporary under the same rule;
+//   * the whole pipeline is bound with `let grown =`, so the last stage keeps
+//     the statement form the reader wrote around it.
+//
+// Custody is checked by the unedited checkers throughout: the temporary is an
+// ordinary binding by the time any of them runs.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_grow(buffer: ptr<mut, u8>, size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_free(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let grown = 8 |> qcore_extern_alloc succeeds true else raise Failure
+                  |> move qcore_extern_grow(32) succeeds true
+                       else qcore_extern_free(move) raise Failure;
+    qcore_extern_fill(grown, 3);
+    qcore_extern_free(move grown);
+    return;
+}
