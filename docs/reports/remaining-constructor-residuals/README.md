@@ -85,8 +85,25 @@ unchanged by this card):
 | 11 | 19647 | `nullable resource \`ic\` used by a non-null contract` | `return ic;` | R4 |
 
 After this card, rows 1-5 and row 7's diagnostic are gone; row 7's line reports
-the reaching state instead (§6.3). Transcript:
-[`logs/probe-after.txt`](logs/probe-after.txt).
+the reaching state instead (§6.3).
+
+Both ends are measured on the same prepared corpus, with the card's five changed
+source and contract files checked out at `8ec8402` for the BEFORE run and
+restored afterwards. The BEFORE transcript
+([`logs/probe-before.txt`](logs/probe-before.txt)) independently reproduces the
+wave-16 consolidation's published count of **11**, which is what makes the
+comparison a measurement rather than a carried number:
+
+| | BEFORE (`8ec8402`) | AFTER |
+|---|---|---|
+| diagnostics | **11** | **6** |
+| `L19582` / `L19589` / `L19596` | Discharged | Discharged |
+| `L19602` | `Unknown`, `site0 Mixed` | **Discharged**, `site0 Released` |
+| `L19622` | `Unknown`, two `Mixed` | **Discharged**, two `Released` |
+| `L19647` (success) | `Unknown`, three `Mixed` | `Unknown`, three `Mixed` — unchanged |
+| exits Discharged | **3 of 6** | **5 of 6** |
+
+AFTER transcript: [`logs/probe-after.txt`](logs/probe-after.txt).
 
 ---
 
@@ -578,7 +595,7 @@ Run in this worktree at the card's final tree:
 
 | gate | result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see `logs/workspace-tests.txt` |
+| `cargo test --workspace --no-fail-fast` | **2,767 passed, 0 failed, 8 ignored** across 172 targets — [`logs/workspace-tests.txt`](logs/workspace-tests.txt). The 18 tests of [`tests/constructor_residuals.rs`](../../../crates/qcore-c-gateway/tests/constructor_residuals.rs) were re-run after that transcript was taken, because one was added while it ran; all pass |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -586,6 +603,10 @@ Run in this worktree at the card's final tree:
 | `python3 scripts/check_lean_audits.py` | **73 Lean audits** pass, no new axiom |
 | `python3 -m unittest discover -s scripts/tests` | 161 tests, OK |
 | 185-unit pinned audit, twice | both exit 0, zero gateway failures (§6) |
+
+All five provider packages were rebuilt at this tree before both corpus runs.
+No `qcore-schemas` type, no provider source and no package manifest changed, so
+no package version moved.
 
 ---
 
