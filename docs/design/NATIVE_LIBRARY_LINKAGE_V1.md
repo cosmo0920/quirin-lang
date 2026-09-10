@@ -26,7 +26,7 @@ Nothing about the design's substance is changed.
 | # | Where | As written | Adjusted to | Why |
 |---|---|---|---|---|
 | A1 | §1, §11 | "the five-name … precedent" | **six** names | card `UNSAFE-LINKAGE` added `std.extern.unsafe` to the registry. |
-| A2 | §7 | "the first free band after `Q031`" | **`Q036` onward** | card `UNSAFE-LINKAGE` took `Q032`–`Q035` for its `UncheckedLinkage` pass. This is the only load-bearing collision between the two documents. |
+| A2 | §7 | "the first free band after `Q031`" | **`Q039` onward** | card `UNSAFE-LINKAGE` took `Q032`–`Q035` for its `UncheckedLinkage` pass, and card `PIPE-OPERATOR` then took `Q036`–`Q038` for its `Pipe` pass at wave-18 integration. Adjusted twice for the same reason; this is the only load-bearing collision between the two documents. |
 | A3 | §9 | "the 67-module corpus pin" | **69 modules** | card `CONSTRUCTOR-RESIDUALS` moved the pin 67 → 69 in wave 17. |
 | A4 | §2, §4.2, §4.3, §4.4 | "constraint 8 / 18 / 28" | kept, with referents named | the numbering is the authoring workflow's, not this repository's. The referents are: **8** = `LOADER-ABI`'s declared-ABI agreement with per-unit withdrawal (`docs/reports/remaining-loader-abi/README.md`); **18** = `P01-F2`'s embedded-manifest field-for-field package verification (`docs/reports/remaining-p01-f2/README.md`); **28** = the declared-assumption discipline of hard invariant 2. Left in place rather than rewritten so the adopted text stays comparable to its original. |
 
@@ -233,9 +233,10 @@ machinery with zero new trust concepts.
 
 ## 7. Diagnostics
 
-New codes in the first free band, **`Q036` onward** **[adjusted, A2]** (the
-`Q028`–`Q031` band is owned by `StandardIo` and `Q032`–`Q035` by card
-`UNSAFE-LINKAGE`'s `UncheckedLinkage` pass), owned by a new semantic pass entry
+New codes in the first free band, **`Q039` onward** **[adjusted, A2]** (the
+`Q028`–`Q031` band is owned by `StandardIo`, `Q032`–`Q035` by card
+`UNSAFE-LINKAGE`'s `UncheckedLinkage` pass, and `Q036`–`Q038` by card
+`PIPE-OPERATOR`'s `Pipe` pass), owned by a new semantic pass entry
 through the §L21 process, in the same change that lands the code. Candidate conditions, one
 code each: manifest missing/rejecting for an imported native-backed module;
 manifest↔slice binding failure (either direction of §4.1); header

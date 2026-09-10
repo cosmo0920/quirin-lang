@@ -1055,6 +1055,99 @@ and no logger configuration model. A `print` inside a `thread scope` or beside
 an extern call stays with the more specific route and keeps its refusal. See
 [the module record](reports/wave17-std-modules/README.md).
 
+## G02h. The pipe operator, and the operator token family
+
+`source.pipe.v1` (card `PIPE-OPERATOR`) is a **parse-time desugaring, not a
+profile**: a file does not select it, and no route knows it exists. A
+well-formed pipeline is rewritten into the tokens of the statement a reader
+would have written without it, before the delimiter map is built and before any
+parsing, so name resolution, custody, effects, linearity, concurrency,
+whole-program checking, reference execution and C emission all see an ordinary
+statement. A piped program and its hand-written twin are `syntax_equivalent`
+and emit byte-identical C11.
+
+```ebnf
+stmt      = OPERAND, "|>", STAGE, ";" ;
+OPERAND   = token, { token } ;             (* verbatim: `x`, `-7`, `move b` *)
+STAGE     = "print", RENDERING             (* a G02g sink *)
+          | "log", LEVEL, RENDERING        (* a G02g sink *)
+          | NAME, [ "(", [ arg, { ",", arg } ], ")" ] ;   (* a G02d call *)
+```
+
+| Written | Desugars to |
+|---|---|
+| `total \|> print dec;` | `print dec total;` |
+| `total \|> log fatal dec;` | `log fatal dec total;` |
+| `x \|> f;` and `x \|> f();` | `f(x);` |
+| `b \|> f(7);` | `f(b, 7);` |
+| `move b \|> release;` | `release(move b);` |
+
+**Insertion is at the stage's first operand position** — Elixir-style
+first-argument insertion, chosen because QCore is subject-first and has no
+currying, so there is no partial application for a last-argument rule to
+compose with. For a parenthesized call that position is immediately after `(`,
+before any argument already written. For a statement stage the head and its
+closed selector words are not arguments, so the operand follows them; both v1
+statement stages take exactly one operand, so "first operand position" and
+"append" coincide and no selector-arity table is needed.
+
+**Attribution.** Every token the reader wrote keeps its own span, unmoved, so a
+refusal inside a desugared statement points at the bytes that were typed: an
+operand fault at the operand, a stage fault at the stage. Only `(`, `)` and `,`
+are synthesized, each anchored zero-width at the `|>` it came from.
+
+**Refusals.** `Q036` a pipeline shape this profile does not model — an empty
+side, a stage that is not a name, a sink stage of the wrong selector arity, an
+unbalanced call stage, or a pipeline on the right of a binding (follow-on
+`PIPE-LET`); `Q037` a stage that cannot receive the operand — `flush`, which
+takes none, or a second stage, because a call stage's result has no name (QCore
+source has no expression tier) and a chain of statement stages would need
+statement windows this frontend keys by byte span (follow-on `PIPE-CHAIN`);
+`Q038` a claimed-but-unlowered logical operator. Dropping the `;` of the last
+statement in a body is a parse failure (`Q000`) before the pipe pass runs.
+
+### The operator token family
+
+Two-byte spellings are tried before every one-byte spelling, so tokenization is
+longest-match at a fixed width of two. The four vertical-bar-family spellings
+are pairwise distinct byte pairs, so their order in the table is immaterial.
+
+| Spelling | Token | Status |
+|---|---|---|
+| `[\|` / `\|]` | `QuantOpen` / `QuantClose` | **unchanged** — the G04 quant-index delimiter alias |
+| `\|>` | `PipeInto` | **landed** — desugared away before parsing |
+| `\|` | `Pipe` | **claimed, refused at `Q038`** — logical or; short-circuit lowering is follow-on `OR-LOWERING` |
+| `\|\|` | `Pipe` `Pipe` | **refused at `Q038`**, message naming the single-`\|` spelling |
+| `&&` | `AndAnd` | **claimed, refused at `Q038`** — logical and; lowering is follow-on `AND-LOWERING` |
+| `&` | `Ampersand` | **reserved, unchanged** — held for a future binary/bitwise operation; this card gives it no meaning |
+
+The asymmetry is deliberate and is the user's declared convention: or is the
+single `|` and and is the double `&&`, because the single `&` is being held for
+binary/bitwise use. Both error messages redirect a C-family reader in the right
+direction — typing `||` says or is `|`; typing `&&` says the single `&` is
+reserved and is not logical and.
+
+`[|` is matched at the `[`, so `[|>` is always `[|` then `>` and never `[` then
+`|>`; `|>` wins over `|` then `>`, so a future or-operator followed by a `>`
+comparison must be spaced or parenthesized (`a | > b`), and `&&&` is `&&` then
+`&`. A bare `|` was a **lex error** before this card; it is still refused, one
+layer later and with an actionable message — a deliberate pin update whose
+load-bearing half (a bare `|` is not a quant delimiter, and no program
+containing one checks) is re-pinned at its new layer.
+
+**Neither `|` nor `&&` is lowered, on a measured blocker rather than a
+scheduling one.** The executable subset has no branch construct to lower a
+short-circuit onto: `if` itself refuses at `Q500` ("structured control flow is
+not in the Cycle 12 executable subset"), the lowering IR
+`qcore_core::cleanup_lowering::SourceOp` has no branch constructor — its whole
+operation set is `Acquire`/`Check` under *literal* outcome controls, `Drop`,
+`TransferToResult` and `Return` — and there are zero `if` statements in the 294
+source-side `.qcore` files. There is no boolean expression tier to extend
+either. **Open, and deliberately not answered here:** with `|` claimed by
+logical or and `&` held for bitwise and, bitwise *or* has no symbol; the future
+bitwise wave must choose one, and nothing in this card forecloses the
+reasonable options. See [the operator record](reports/wave18-pipe-operator/README.md).
+
 ## G03. Source parameter usage grades
 
 ```ebnf

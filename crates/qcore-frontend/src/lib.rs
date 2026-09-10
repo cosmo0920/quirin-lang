@@ -10,6 +10,7 @@ pub mod frontend;
 pub mod lexer;
 pub mod module_imports;
 pub mod parser;
+pub mod pipe;
 pub mod quant_index;
 pub mod source_epoch;
 pub mod source_epoch_tasks;

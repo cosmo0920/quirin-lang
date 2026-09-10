@@ -229,6 +229,35 @@ fn mixed_or_unterminated_quant_delimiters_are_refused_not_repaired() {
     ] {
         assert!(parse_source_program(&source(quant)).is_err(), "{quant}");
     }
-    // A bare vertical bar stays a lex error; only `[|` / `|]` are admitted.
-    assert!(parse_source_program(&source("quant<n where n := 5> | i32")).is_err());
+    // An unterminated `[|` closed by a `|>` is a mixed pair like the four
+    // above, and still fails at parse.
+    assert!(parse_source_program(&source("quant[|n where n := 5|>")).is_err());
+
+    // A bare vertical bar is still not a quant delimiter; only `[|` / `|]` are
+    // admitted. **Deliberate pin update, card `PIPE-OPERATOR`:** `|` was a lex
+    // error, so this used to fail inside `parse_source_program`. The card
+    // claims `|` as the logical-or token, so it now lexes and parses, and the
+    // refusal is raised by the frontend's operator gate at `Q038` — measured,
+    // not assumed: the layer moved one step further than "the quant grammar".
+    // The load-bearing half is unchanged and re-pinned here at its new layer:
+    // no program containing a bare `|` checks, and the message is actionable
+    // rather than `unexpected character '|'`.
+    let bar = source("quant<n where n := 5> | i32");
+    assert!(parse_source_program(&bar).is_ok());
+    let diagnostics = compile_files(
+        &[SourceFile::new("quant.qcore", &bar)],
+        &CompileOptions {
+            entry: None,
+            extern_contracts: None,
+        },
+    )
+    .map(|module| module.execution_profile)
+    .expect_err("a bare vertical bar must still be refused");
+    assert_eq!(
+        diagnostics
+            .iter()
+            .map(|diagnostic| diagnostic.code.as_str())
+            .collect::<Vec<_>>(),
+        ["Q038"]
+    );
 }

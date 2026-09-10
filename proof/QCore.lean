@@ -117,5 +117,6 @@ import QCore.ProtectionGrowthEmission
 import QCore.ChainedTailActual
 import QCore.DereferencedResult
 import QCore.PublicationCustody
+import QCore.PipeDesugaring
 
 /-! The executable formal core of QCore-C revision 0.1. -/

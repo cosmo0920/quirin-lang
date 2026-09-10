@@ -1,0 +1,22 @@
+import std.extern;
+
+// The piped twin of `fixtures/extern_calls/round_trip.qcore` (card
+// PIPE-OPERATOR). This is where linearity through a pipeline is real: `move b`
+// is the operand of the last pipeline, and after the desugaring the consuming
+// call is the ordinary `qcore_extern_release(move b);` the unpiped fixture
+// writes. The checker sees no pipe, so move semantics are unchanged — a use of
+// `b` after this statement refuses exactly as it does without the pipe.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    b |> qcore_extern_fill(7);
+    b |> qcore_extern_sum(8);
+    move b |> qcore_extern_release;
+    return;
+}

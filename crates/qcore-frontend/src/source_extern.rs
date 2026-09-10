@@ -63,7 +63,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::frontend::*;
-use crate::lexer::{Span, Symbol, Token, TokenKind, lex};
+use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, ParameterOwnership};
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
@@ -297,15 +297,24 @@ fn unsupported(span: Span, message: impl Into<String>) -> SourceDiagnostic {
     diagnostic("Q500", SemanticPass::CEmission, span, message)
 }
 
-fn statement_tokens(source: &str, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
-    let mut tokens =
-        lex(&source[span.start..span.end]).map_err(|error| unsupported(span, error.to_string()))?;
-    tokens.pop();
-    for token in &mut tokens {
-        token.span = Span {
-            start: token.span.start + span.start,
-            end: token.span.end + span.start,
-        };
+/// The tokens of one statement, read from the program's own token stream.
+///
+/// This used to re-lex `source[span]` and shift the resulting spans. Card
+/// `PIPE-OPERATOR` replaced that with a containment filter over the tokens the
+/// parse produced, for a correctness reason and not a tidiness one: re-lexing
+/// the original bytes bypasses the pipe desugaring, so a pipeline reaching this
+/// route would have been read back in its written form and refused. For a
+/// program with no pipe the two agree token for token — the parse lexed the
+/// same bytes — and every existing extern fixture is unmoved.
+fn statement_tokens(program: &SourceProgram, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
+    let tokens: Vec<Token> = program
+        .lexical_tokens()
+        .iter()
+        .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
+        .cloned()
+        .collect();
+    if tokens.is_empty() {
+        return Err(unsupported(span, "this statement has no tokens"));
     }
     Ok(tokens)
 }
@@ -667,7 +676,7 @@ pub fn lower_source_extern(
             ));
             continue;
         }
-        let tokens = match statement_tokens(parsed.source(), span) {
+        let tokens = match statement_tokens(parsed, span) {
             Ok(tokens) => tokens,
             Err(error) => {
                 lowering.diagnostics.push(error);
