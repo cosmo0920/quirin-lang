@@ -19,16 +19,23 @@ fn winpthreads_subset_preserves_results_failures_and_mutex_exclusion() {
 #[test]
 fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins() {
     use qcore_core::task_trace_relation::{AdmittedCausalOrder, parse_observed_trace, relate};
+    // Deliberate pin update (card `TRACE-STDIO`, 2026-09-10), matching
+    // `f02_trace_relation.rs`: the synthesized trace instrumentation moved onto
+    // the shared `qcore_core::io_emit` route, so the generated C moved while
+    // the printed bytes did not. Measured on Linux from the same emission this
+    // target compiles; **not re-measured on Windows here** — no MSVC host was
+    // available to this card, and the emission is host-independent apart from
+    // the embedded compatibility header, which this card did not touch.
     for (name, source, pin) in [
         (
             "round-trip",
             include_str!("fixtures/ct/CT01/case.qcore"),
-            "5c27711846f9a518",
+            "e33534d5c7da5c6c",
         ),
         (
             "concurrent",
             include_str!("fixtures/f02/concurrent_round_trip.qcore"),
-            "0b511480da31c73d",
+            "910e7f975a896ff1",
         ),
     ] {
         let module = compile_files(

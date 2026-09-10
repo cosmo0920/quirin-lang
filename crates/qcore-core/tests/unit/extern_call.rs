@@ -615,6 +615,21 @@ fn the_reference_execution_records_both_adapter_arms() {
     );
 }
 
+/// Card `TRACE-STDIO`: this backend's observations and its declared-outcome
+/// violation diagnostic both travel the shared emission route.
+#[test]
+fn the_emitted_program_writes_only_through_the_shared_route() {
+    let module = program(vec![acquire(true), release(), ExternEvent::Return]);
+    let certificate = check_extern_program(&module).unwrap();
+    let emission = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    assert_eq!(
+        crate::io_emit::direct_stdio_calls(&emission.source),
+        Vec::new()
+    );
+    assert!(emission.source.contains("QCORE_IO_WRITE(stdout,"));
+    assert!(emission.source.contains("QCORE_IO_WRITE(stderr,"));
+}
+
 #[test]
 fn emission_declares_every_callee_and_calls_it_directly() {
     let module = program(vec![acquire(true), release(), ExternEvent::Return]);
@@ -1323,7 +1338,11 @@ fn emission_takes_the_address_of_the_declared_out_slot() {
         "uint8_t *r1 = NULL;",
         "(void) qcore_extern_open(&r1, 8);",
         "declared outcome violated",
-        "printf(\"out qcore_extern_open o:r1 d:8 %s\\n\", r1 != NULL ? \"ok\" : \"null\");",
+        // Card `TRACE-STDIO`: the spelling moved onto the single emission
+        // route; the rendered line, and the fact that the *observed* nullness
+        // rather than the declared one is what reaches it, are unchanged.
+        "QCORE_IO_WRITE(stdout, \"out qcore_extern_open o:r1 d:8 %s\\n\", \
+         r1 != NULL ? \"ok\" : \"null\");",
     ] {
         assert!(
             emission.source.contains(expected),

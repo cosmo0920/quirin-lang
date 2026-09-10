@@ -111,7 +111,27 @@ but not for building these executables.
 
 ## Reading the output
 
-The runtime prints task events. A normal `two_workers` run prints:
+The runtime prints task events. **None of that output is a source construct.**
+No line below is asked for by any of the four programs: every one is trace
+instrumentation the compiler synthesizes so the emitted C can be compared with
+the reference execution. A source-level `print` cannot appear in these files at
+all — a module that both spawns and prints stays with the task route, which
+refuses the `io` effect (`Q020`) and the statement (`Q500`); both refusals are
+pinned in [`compiler/tests/thread_examples.rs`](../../compiler/tests/thread_examples.rs).
+Since card `TRACE-STDIO` these lines and `std.io`'s `print`/`log` travel one
+shared C-level emission route (`QCORE_IO_WRITE`), so an emitted program has a
+single printing mechanism rather than two; the printed bytes are unchanged.
+
+The transcript below is not prose: `thread_examples.rs` reads it out of this
+file and compares it with a real sanitized run, so it cannot drift. That test
+also builds and runs all four examples under ASan/UBSan (and LSan on Linux) and
+compares each one's stdout byte for byte with the reference execution:
+
+```sh
+cargo test -p qcore-compiler --test thread_examples
+```
+
+A normal `two_workers` run prints:
 
 ```text
 QCORE_TASK_SPAWN 1 0

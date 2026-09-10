@@ -50,8 +50,16 @@ const COMPILE_FLAGS: [&str; 7] = [
 // the Linux/Apple branch bodies are unchanged. Windows native relation checks
 // and the byte comparison are in the Windows thread report; archived Linux
 // executable evidence remains historical until the Linux tests run again.
-const ROUND_TRIP_C_DIGEST: &str = "5c27711846f9a518";
-const CONCURRENT_C_DIGEST: &str = "0b511480da31c73d";
+// Deliberate pin update (card `TRACE-STDIO`, 2026-09-10): the four synthesized
+// C backends' trace instrumentation moved onto one shared emission route
+// (`qcore_core::io_emit`), so the generated C carries the route's prelude and
+// spells each write `QCORE_IO_WRITE` instead of `printf`. **The printed bytes
+// did not move** — the observer below, `parse_observed_trace`, reads the same
+// lines, and the relation was re-verified against fresh native runs in this
+// same commit. This is the third recorded move of these two pins; the record
+// is `docs/reports/wave19-trace-stdio/README.md`.
+const ROUND_TRIP_C_DIGEST: &str = "e33534d5c7da5c6c";
+const CONCURRENT_C_DIGEST: &str = "910e7f975a896ff1";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 

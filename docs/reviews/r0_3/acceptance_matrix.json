@@ -5768,7 +5768,7 @@
   "workspace_tests": 2959,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 79,
+  "lean_audits": 80,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5836,6 +5836,7 @@
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditSingleEmissionRoute.lean",
    "AuditSourceEnumeration.lean",
    "AuditSourceRootAdmission.lean",
    "AuditSourceValidation.lean",

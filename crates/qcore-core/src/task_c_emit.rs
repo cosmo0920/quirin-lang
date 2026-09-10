@@ -5,6 +5,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
+use crate::io_emit::{self, IO_PRELUDE};
+use crate::std_io::Stream;
 use crate::task_execution::{
     CheckedTaskModule, ErrorOperand, ScalarOperand, ScalarType,
     TaskInstructionKind as InstructionKind, TaskSpan, TaskTerminatorKind as TerminatorKind,
@@ -99,6 +101,10 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
         "#define QCORE_TASK_ARGUMENT_CAPACITY {capacity}\n#define QCORE_BUFFER_EVENT_CAPACITY {event_capacity}\n"
     );
     source.push_str(include_str!("c11_threads_compat.h"));
+    // The single printing route is installed after this runtime's own
+    // `<stdio.h>` and before any code that writes.
+    source.push_str(RUNTIME_INCLUDES);
+    source.push_str(IO_PRELUDE);
     source.push_str(RUNTIME);
     source.push_str("static const char *qcore_task_error_name(int tag) {\n    switch (tag) {\n");
     for (name, tag) in &errors {
@@ -282,9 +288,15 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                         }
                         writeln!(source, "        s_{handle}.handle = NULL;").unwrap();
                         for lent_slot in lent {
+                            let generation = format!("s_{lent_slot}.value.buffer->generation");
                             writeln!(
                                 source,
-                                "        printf(\"QCORE_BUFFER_RETURN %\" PRIu64 \" %\" PRIu64 \"\\n\", borrower, s_{lent_slot}.value.buffer->generation);"
+                                "        {}",
+                                io_emit::write_line(
+                                    Stream::Out,
+                                    "QCORE_BUFFER_RETURN %\" PRIu64 \" %\" PRIu64 \"",
+                                    &["borrower", &generation],
+                                )
                             )
                             .unwrap();
                         }
@@ -326,9 +338,16 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
                     // ever announced for a child that does not exist.
                     for argument in arguments {
                         if let ScalarOperand::Loan { slot, .. } = argument {
+                            let borrower = format!("s_{handle_slot}.handle->identity");
+                            let generation = format!("s_{slot}.value.buffer->generation");
                             writeln!(
                                 source,
-                                "        printf(\"QCORE_BUFFER_LOAN %\" PRIu64 \" %\" PRIu64 \"\\n\", s_{handle_slot}.handle->identity, s_{slot}.value.buffer->generation);"
+                                "        {}",
+                                io_emit::write_line(
+                                    Stream::Out,
+                                    "QCORE_BUFFER_LOAN %\" PRIu64 \" %\" PRIu64 \"",
+                                    &[&borrower, &generation],
+                                )
                             )
                             .unwrap();
                         }
@@ -418,11 +437,14 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
     TaskCEmission { source, source_map }
 }
 
-const RUNTIME: &str = r#"#include <inttypes.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#ifndef QCORE_TASK_CALLOC
+/// The runtime's headers, kept separate from [`RUNTIME`] so the single printing
+/// route can be installed between them.
+const RUNTIME_INCLUDES: &str = "#include <inttypes.h>\n\
+#include <stdint.h>\n\
+#include <stdio.h>\n\
+#include <stdlib.h>\n";
+
+const RUNTIME: &str = r#"#ifndef QCORE_TASK_CALLOC
 #define QCORE_TASK_CALLOC calloc
 #endif
 #ifndef QCORE_TASK_FREE
@@ -476,11 +498,11 @@ struct qcore_task_slot {
 static const char *qcore_task_error_name(int);
 static void qcore_buffer_print_event(uint64_t task, struct qcore_buffer_event event) {
     switch (event.kind) {
-    case 0: printf("QCORE_BUFFER_ALLOC %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
-    case 1: printf("QCORE_BUFFER_ALLOC_FAILED %" PRIu64 "\n", task); break;
-    case 2: printf("QCORE_BUFFER_READ %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
-    case 3: printf("QCORE_BUFFER_DROP %" PRIu64 " %" PRIu64 "\n", task, event.generation); break;
-    case 4: printf("QCORE_BUFFER_WRITE %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
+    case 0: QCORE_IO_WRITE(stdout, "QCORE_BUFFER_ALLOC %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
+    case 1: QCORE_IO_WRITE(stdout, "QCORE_BUFFER_ALLOC_FAILED %" PRIu64 "\n", task); break;
+    case 2: QCORE_IO_WRITE(stdout, "QCORE_BUFFER_READ %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
+    case 3: QCORE_IO_WRITE(stdout, "QCORE_BUFFER_DROP %" PRIu64 " %" PRIu64 "\n", task, event.generation); break;
+    case 4: QCORE_IO_WRITE(stdout, "QCORE_BUFFER_WRITE %" PRIu64 " %" PRIu64 " %" PRId32 "\n", task, event.generation, event.payload); break;
     default: abort();
     }
 }
@@ -531,17 +553,17 @@ static void qcore_buffer_drop(struct qcore_buffer *buffer, struct qcore_task_con
 }
 static void qcore_task_print_result(uint64_t identity, struct qcore_task_result result) {
     if (result.error != 0 && result.value.buffer != NULL)
-        printf("QCORE_TASK_RESULT %" PRIu64 " ERROR_BUFFER %s %" PRIu64 "\n", identity,
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_RESULT %" PRIu64 " ERROR_BUFFER %s %" PRIu64 "\n", identity,
                qcore_task_error_name(result.error), result.value.buffer->generation);
     else if (result.error != 0)
-        printf("QCORE_TASK_RESULT %" PRIu64 " ERROR %s\n", identity, qcore_task_error_name(result.error));
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_RESULT %" PRIu64 " ERROR %s\n", identity, qcore_task_error_name(result.error));
     else if (result.kind == 0)
-        printf("QCORE_TASK_RESULT %" PRIu64 " UNIT\n", identity);
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_RESULT %" PRIu64 " UNIT\n", identity);
     else if (result.kind == 1)
-        printf("QCORE_TASK_RESULT %" PRIu64 " I32 %" PRId32 "\n", identity, result.value.scalar);
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_RESULT %" PRIu64 " I32 %" PRId32 "\n", identity, result.value.scalar);
     else if (result.kind == 2) {
         if (result.value.buffer == NULL) abort();
-        printf("QCORE_TASK_RESULT %" PRIu64 " BUFFER %" PRIu64 "\n", identity, result.value.buffer->generation);
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_RESULT %" PRIu64 " BUFFER %" PRIu64 "\n", identity, result.value.buffer->generation);
     } else abort();
 }
 static int qcore_task_trampoline(void *pointer) {
@@ -554,7 +576,7 @@ static struct qcore_task_start_record *qcore_task_start(qcore_task_worker worker
     if (context->next_task == 0 || context->next_task > UINT32_MAX) abort();
     struct qcore_task_start_record *record = QCORE_TASK_CALLOC(1, sizeof(*record));
     if (record == NULL) {
-        printf("QCORE_TASK_CREATE_FAILED %zu\n", worker_id);
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_CREATE_FAILED %zu\n", worker_id);
         return NULL;
     }
     record->worker = worker;
@@ -566,11 +588,11 @@ static struct qcore_task_start_record *qcore_task_start(qcore_task_worker worker
         /* Creation failure never transfers the buffer; discard only the
          * environment's non-owning copies. The parent still owns each slot. */
         QCORE_TASK_FREE(record);
-        printf("QCORE_TASK_CREATE_FAILED %zu\n", worker_id);
+        QCORE_IO_WRITE(stdout, "QCORE_TASK_CREATE_FAILED %zu\n", worker_id);
         return NULL;
     }
     ++context->next_task;
-    printf("QCORE_TASK_SPAWN %" PRIu64 " %zu\n", record->identity, worker_id);
+    QCORE_IO_WRITE(stdout, "QCORE_TASK_SPAWN %" PRIu64 " %zu\n", record->identity, worker_id);
     return record;
 }
 static struct qcore_task_result qcore_task_collect(struct qcore_task_start_record *record) {
@@ -583,7 +605,7 @@ static struct qcore_task_result qcore_task_collect(struct qcore_task_start_recor
     for (size_t i = 0; i < record->context.event_count; ++i)
         qcore_buffer_print_event(record->identity, record->context.events[i]);
     qcore_task_print_result(record->identity, result);
-    printf("QCORE_TASK_JOIN %" PRIu64 "\n", record->identity);
+    QCORE_IO_WRITE(stdout, "QCORE_TASK_JOIN %" PRIu64 "\n", record->identity);
     QCORE_TASK_FREE(record);
     return result;
 }

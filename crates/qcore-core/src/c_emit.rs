@@ -8,6 +8,8 @@ use crate::cfg::{
     BasicBlock, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ExecutionObservation,
     ExecutionOutcome, TraceEvent, TypedCfg,
 };
+use crate::io_emit::{self, IO_PRELUDE};
+use crate::std_io::{Rendering, Stream};
 
 /// Emit a standalone, strictly conforming C11 translation unit.  The small
 /// harness prints the observable result and resource trace, allowing compiled
@@ -19,7 +21,9 @@ pub fn emit_c11(cfg: &TypedCfg) -> Result<String, CEmitError> {
     writeln!(output, "#include <stdbool.h>").unwrap();
     writeln!(output, "#include <stdint.h>").unwrap();
     writeln!(output, "#include <stdio.h>").unwrap();
-    writeln!(output, "#include <stdlib.h>\n").unwrap();
+    writeln!(output, "#include <stdlib.h>").unwrap();
+    output.push_str(IO_PRELUDE);
+    output.push('\n');
 
     writeln!(output, "enum qcore_error_tag {{").unwrap();
     writeln!(output, "    QERR_NONE = 0,").unwrap();
@@ -150,21 +154,62 @@ static void q_release(void **slot, uint64_t identity)
         cfg.function()
     )
     .unwrap();
-    output.push_str(
-        r#"    if (q_result.ok) {
-        printf("OK %" PRId32 "\n", q_result.value);
-    } else {
-        printf("ERR %" PRIu32 "\n", (uint32_t)q_result.error.tag);
-    }
-    for (size_t index = 0; index < q_trace_length; index += 1) {
-        printf("%c %" PRIu64 "\n", q_trace_events[index].kind,
-               q_trace_events[index].identity);
-    }
-"#,
-    );
+    // The outcome word renders an `i32` in decimal, which is exactly
+    // `std.fmt`'s `dec`; the conversion comes from that vocabulary rather than
+    // being written again here. The remaining conversions (`PRIu32`, `PRIu64`,
+    // `%c`) have no `std.fmt` counterpart, and none was added: `Rendering` is
+    // the source-visible `std.fmt` grammar, so widening it to serve a backend
+    // would be a language change, not a refactor.
+    writeln!(output, "    if (q_result.ok) {{").unwrap();
+    writeln!(
+        output,
+        "        {}",
+        io_emit::write_line(
+            Stream::Out,
+            &format!("OK {}", Rendering::Dec.c_conversion()),
+            &["q_result.value"],
+        )
+    )
+    .unwrap();
+    writeln!(output, "    }} else {{").unwrap();
+    writeln!(
+        output,
+        "        {}",
+        io_emit::write_line(
+            Stream::Out,
+            "ERR %\" PRIu32 \"",
+            &["(uint32_t)q_result.error.tag"],
+        )
+    )
+    .unwrap();
+    writeln!(output, "    }}").unwrap();
+    writeln!(
+        output,
+        "    for (size_t index = 0; index < q_trace_length; index += 1) {{"
+    )
+    .unwrap();
+    writeln!(
+        output,
+        "        {}",
+        io_emit::write_line(
+            Stream::Out,
+            "%c %\" PRIu64 \"",
+            &[
+                "q_trace_events[index].kind",
+                "q_trace_events[index].identity",
+            ],
+        )
+    )
+    .unwrap();
+    writeln!(output, "    }}").unwrap();
     for resource in cfg.resources() {
         writeln!(output, "    if (q_result.owned_{resource} != NULL) {{").unwrap();
-        writeln!(output, "        printf(\"P {resource}\\n\");").unwrap();
+        writeln!(
+            output,
+            "        {}",
+            io_emit::write_text(Stream::Out, &format!("P {resource}"))
+        )
+        .unwrap();
         writeln!(output, "        free(q_result.owned_{resource});").unwrap();
         writeln!(output, "        q_result.owned_{resource} = NULL;").unwrap();
         writeln!(output, "    }}").unwrap();

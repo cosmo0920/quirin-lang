@@ -1,0 +1,36 @@
+{
+  "runs": [
+    {
+      "program": "round-trip",
+      "source_digest": "339fe1fc7828dc6c",
+      "generated_c_digest": "e33534d5c7da5c6c",
+      "executable_digest": "755c91097cd1a7af",
+      "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+      "target": "x86_64-pc-linux-gnu",
+      "compile_flags": ["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror", "-g", "-O1"],
+      "runtime": "c11-threads/qcore_task_start+qcore_task_collect",
+      "observer": "qcore_core::task_trace_relation::parse_observed_trace",
+      "relation": "qcore.task-trace-relation.v1",
+      "events": 7,
+      "admitted_edges": 16,
+      "reference_positions": [0, 1, 2, 3, 4, 5, 6],
+      "is_reference_order": true
+    },
+    {
+      "program": "concurrent",
+      "source_digest": "6910b7dbce5791c7",
+      "generated_c_digest": "910e7f975a896ff1",
+      "executable_digest": "1232ce815e9be478",
+      "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+      "target": "x86_64-pc-linux-gnu",
+      "compile_flags": ["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror", "-g", "-O1"],
+      "runtime": "c11-threads/qcore_task_start+qcore_task_collect",
+      "observer": "qcore_core::task_trace_relation::parse_observed_trace",
+      "relation": "qcore.task-trace-relation.v1",
+      "events": 11,
+      "admitted_edges": 31,
+      "reference_positions": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "is_reference_order": true
+    }
+  ]
+}

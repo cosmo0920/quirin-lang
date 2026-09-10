@@ -102,7 +102,7 @@
             "mtx_lock",
             "mtx_unlock",
             "mtx_destroy",
-            "printf(\"grow 1 1 2 0 4\\n\")",
+            "QCORE_IO_WRITE(stdout, \"grow 1 1 2 0 4\\n\")",
             "free(r1)",
             "free(r2)"
           ],
