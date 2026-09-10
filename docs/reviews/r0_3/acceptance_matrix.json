@@ -5768,7 +5768,7 @@
   "workspace_tests": 2986,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 83,
+  "lean_audits": 84,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5783,6 +5783,7 @@
    "AuditChunkIntegrityObservation.lean",
    "AuditCleanupReplayAgreement.lean",
    "AuditCleanupVocabulary.lean",
+   "AuditComposedStdIo.lean",
    "AuditCompositionAdmission.lean",
    "AuditConcurrencyPrelude.lean",
    "AuditConditionalGroupDepth.lean",
