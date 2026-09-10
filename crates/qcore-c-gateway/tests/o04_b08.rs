@@ -887,12 +887,15 @@ fn the_constructor_body_still_does_not_discharge_its_own_contract() {
 /// the arm, in each case for its own measured reason. Supporting C declarations
 /// and casts are adjusted where a newer Clang would otherwise reject the probe
 /// before the analyzer can measure that member premise.
+/// One substitution row: (name, original, replacement, supporting C edits).
+type MemberSubstitution<'a> = (&'a str, &'a str, &'a str, &'a [(&'a str, &'a str)]);
+
 #[test]
 fn substituting_a_member_declaration_withdraws_the_arm() {
     if !clang_available() {
         return;
     }
-    let substitutions: [(&str, &str, &str, &[(&str, &str)]); 4] = [
+    let substitutions: [MemberSubstitution; 4] = [
         // `ic->chunk = chunk` becomes invalid C if only the destination gains
         // a pointer level. Use the null-initialized member of the same record
         // so Clang accepts the mutation and the analyzer must refuse it.
@@ -922,10 +925,7 @@ fn substituting_a_member_declaration_withdraws_the_arm() {
                     "flb_route_mask_element *routes_mask,",
                     "flb_route_mask_element **routes_mask,",
                 ),
-                (
-                    "(flb_route_mask_element *)",
-                    "(flb_route_mask_element **)",
-                ),
+                ("(flb_route_mask_element *)", "(flb_route_mask_element **)"),
             ],
         ),
         // Retagging or duplicating `struct flb_input_chunk` is not
