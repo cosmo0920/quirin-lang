@@ -5,6 +5,7 @@
     "qcore/libc/memory.qcore",
     "qcore/libc/pthread_mutex.qcore",
     "qcore/monkey/intrusive_list.qcore",
+    "qcore/msgpack/packer.qcore",
     "qcore/monkey/memory.qcore",
     "qcore/librdkafka/memory.qcore",
     "qcore/fluent_bit/hash_table_publication.qcore",

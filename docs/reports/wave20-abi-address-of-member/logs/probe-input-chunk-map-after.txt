@@ -1,0 +1,367 @@
+function flb_input_chunk_map: status Unknown
+diagnostics: 99
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L18719  n208  NoOp                                     | int records;
+L18720  n207  NoOp                                     | int tag_len;
+L18721  n206  NoOp                                     | int has_routes;
+L18722  n205  NoOp                                     | int ret;
+L18723  n204  NoOp                                     | int direct_status;
+L18724  n203  NoOp                                     | int direct_loaded;
+L18725  n202  NoOp                                     | int direct_index;
+L18726  n201  NoOp                                     | int direct_missing;
+L18727  n200  NoOp                                     | uint32_t missing_id;
+L18728  n199  NoOp                                     | uint16_t missing_label_length;
+L18729  n198  NoOp                                     | struct flb_chunk_direct_route *direct_routes;
+L18730  n197  NoOp                                     | const char *missing_label;
+L18731  n196  NoOp                                     | int direct_count;
+L18732  n195  NoOp                                     | uint64_t ts;
+L18733  n194  NoOp                                     | char *buf_data;
+L18734  n193  NoOp                                     | size_t buf_size;
+L18735  n192  NoOp                                     | size_t offset;
+L18736  n191  NoOp                                     | ssize_t bytes;
+L18737  n190  NoOp                                     | const char *tag_buf;
+L18738  n189  NoOp                                     | struct flb_output_instance **direct_matches;
+L18739  n188  NoOp                                     | size_t direct_match_count;
+L18740  n187  NoOp                                     | size_t direct_match_index;
+L18741  n186  NoOp                                     | struct flb_input_chunk *ic;
+L18742  n185  NoOp                                     | size_t mask_size;
+L18743  n184  Clear records                            | records = 0;
+L18744  n183  Call flb_calloc(_, _) -> ic              | ic = flb_calloc(1, sizeof(struct flb_input_chunk));
+L18745  n182  BranchOnNull ic true_is_null=true        | if (!ic) {
+L18746  n181  Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 1489);
+L18747  n180  NoOp                                     | return ((void*)0);
+L18749  n179  AggregateStore ic->event_type            | ic->event_type = event_type;
+L18750  n178  AggregateStore ic->busy                  | ic->busy = 0;
+L18751  n177  AggregateStore ic->fs_counted            | ic->fs_counted = 0;
+L18752  n176  AggregateStore ic->fs_backlog            | ic->fs_backlog = 1;
+L18753  n175  Unknown: indirect memory access is outside the resource projection | ic->chunk = chunk;
+        !! unsupported: indirect memory access is outside the resource projection
+L18754  n174  Alias ic->in = in                        | ic->in = in;
+        !! unresolved resource identity `ic`
+L18755  n173  Call msgpack_packer_init(_, ic, flb_input_chunk_write) -> _ addresses["ic"] | msgpack_packer_init(&ic->mp_pck, ic, flb_input_chunk_write);
+        !! unresolved resource identity `ic`
+L18756  n172  Unknown: indirect memory access is outside the resource projection | ret = cio_chunk_get_content(ic->chunk, &buf_data, &buf_size);
+        !! unsupported: indirect memory access is outside the resource projection
+L18757  n171  BranchOnNull ret true_is_null=false      | if (ret != 0) {
+L18758  n169  Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error retrieving content for metrics");
+L18758  n170  NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error retrieving content for metrics");
+L18759  n168  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18760  n167  NoOp                                     | return ((void*)0);
+L18762  n166  Unknown: indirect memory access is outside the resource projection | mask_size = flb_routes_mask_get_size(in->config->router);
+        !! unsupported: indirect memory access is outside the resource projection
+L18763  n165  Call flb_calloc(mask_size, _) -> ic->routes_mask | ic->routes_mask = (flb_route_mask_element *)
+        !! unresolved resource identity `ic`
+L18766  n164  BranchOnNull ic->routes_mask true_is_null=true | if (ic->routes_mask == ((void*)0)) {
+L18767  n163  Call flb_errno_print(_, __qcore_literal__, _) -> _ nested=__errno_location | flb_errno_print((*__errno_location ()), "<stdin>", 1513);
+L18768  n162  Call cio_chunk_close(chunk, _) -> _      | cio_chunk_close(chunk, !0);
+        !! unresolved resource identity `chunk`
+L18769  n161  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18770  n160  NoOp                                     | return ((void*)0);
+L18772  n159  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->event_type == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18773  n136  Unknown: call to uncontracted function `flb_mp_validate_log_chunk` | ret = flb_mp_validate_log_chunk(buf_data, buf_size, &records, &offset);
+        !! unsupported: call to uncontracted function `flb_mp_validate_log_chunk`
+L18774  n135  NoOp                                     | if (ret == -1) {
+L18775  n134  NoOp                                     | if (records <= 0) {
+L18776  n131  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18776  n132  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18776  n133  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18777  n130  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18778  n129  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18779  n128  NoOp                                     | return ((void*)0);
+L18781  n127  NoOp                                     | if (records > 0 && offset > 32) {
+L18782  n118  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18782  n119  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18782  n120  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18783  n117  Unknown: call to uncontracted function `cio_chunk_write_at` | cio_chunk_write_at(chunk, offset, ((void*)0), 0);
+        !! unsupported: call to uncontracted function `cio_chunk_write_at`
+L18786  n124  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18786  n125  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18786  n126  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18787  n123  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18788  n122  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18789  n121  NoOp                                     | return ((void*)0);
+L18793  n158  Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (ic->event_type == 1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18794  n156  Unknown: call to uncontracted function `flb_mp_validate_metric_chunk` | ret = flb_mp_validate_metric_chunk(buf_data, buf_size, &records, &offset);
+        !! unsupported: call to uncontracted function `flb_mp_validate_metric_chunk`
+L18795  n155  NoOp                                     | if (ret == -1) {
+L18796  n154  NoOp                                     | if (records <= 0) {
+L18797  n151  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18797  n152  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18797  n153  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18798  n150  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18799  n149  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18800  n148  NoOp                                     | return ((void*)0);
+L18802  n147  NoOp                                     | if (records > 0 && offset > 32) {
+L18803  n138  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18803  n139  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18803  n140  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", records, offset) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Recovering valid records.", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18804  n137  Unknown: call to uncontracted function `cio_chunk_write_at` | cio_chunk_write_at(chunk, offset, ((void*)0), 0);
+        !! unsupported: call to uncontracted function `cio_chunk_write_at`
+L18807  n144  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18807  n145  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18807  n146  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", records, offset) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "metrics chunk validation failed, data might be corrupted. " "Found %d valid records, failed content starts " "right after byte %lu. Cannot recover chunk,", in->p->name, flb_input_name(in), records, offset);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18808  n143  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18809  n142  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18810  n141  NoOp                                     | return ((void*)0);
+L18814  n157  Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (ic->event_type == 2) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18816  n116  BranchOnNull records true_is_null=true   | if (records == 0) {
+        !! unresolved resource identity `records`
+L18817  n113  Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18817  n114  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18817  n115  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.") == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "chunk validation failed, data might be corrupted. " "No valid records found, the chunk will be discarded.", in->p->name, flb_input_name(in));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18818  n112  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18819  n111  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18820  n110  NoOp                                     | return ((void*)0);
+L18822  n109  Unknown: call to uncontracted function `cio_chunk_get_content_size` | bytes = cio_chunk_get_content_size(chunk);
+        !! unsupported: call to uncontracted function `cio_chunk_get_content_size`
+L18823  n108  NoOp                                     | if (bytes == -1) {
+L18824  n107  Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18825  n106  Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18826  n105  NoOp                                     | return ((void*)0);
+L18828  n104  NoOp                                     | if (offset < bytes) {
+L18829  n103  Unknown: call to uncontracted function `cio_chunk_write_at` | cio_chunk_write_at(chunk, offset, ((void*)0), 0);
+        !! unsupported: call to uncontracted function `cio_chunk_write_at`
+L18831  n102  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->event_type == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18832  n100  Unknown: call to uncontracted function `flb_mp_count_log_records` | ic->total_records = flb_mp_count_log_records(buf_data, offset);
+        !! unsupported: call to uncontracted function `flb_mp_count_log_records`
+L18835  n101  AggregateStore ic->total_records         | ic->total_records = records;
+        !! unresolved resource identity `ic`
+L18837  n99   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->total_records > 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18838  n98   Unknown: call to uncontracted function `cfl_time_now` | ts = cfl_time_now();
+        !! unsupported: call to uncontracted function `cfl_time_now`
+L18839  n97   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_records, ts, ic->total_records,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18841  n96   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_bytes, ts, buf_size,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18843  n95   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->fs_backlog != 1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18844  n94   Unknown: indirect memory access is outside the resource projection | flb_input_rate_update(in, ts, ic->total_records, buf_size);
+        !! unsupported: indirect memory access is outside the resource projection
+L18846  n93   Unknown: indirect memory access is outside the resource projection | flb_metrics_sum(0, ic->total_records, in->metrics);
+        !! unsupported: indirect memory access is outside the resource projection
+L18847  n92   Unknown: indirect memory access is outside the resource projection | flb_metrics_sum(1, buf_size, in->metrics);
+        !! unsupported: indirect memory access is outside the resource projection
+L18849  n91   Unknown: call to uncontracted function `flb_input_chunk_get_tag` | ret = flb_input_chunk_get_tag(ic, &tag_buf, &tag_len);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_tag`
+L18850  n90   NoOp                                     | if (ret == -1) {
+L18851  n88   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error retrieving tag of input chunk");
+L18851  n89   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error retrieving tag of input chunk");
+L18852  n87   Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18853  n86   Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18854  n85   NoOp                                     | return ((void*)0);
+L18856  n84   Clear direct_routes                      | direct_routes = ((void*)0);
+L18857  n83   Clear direct_count                       | direct_count = 0;
+L18858  n82   Clear direct_loaded                      | direct_loaded = 0;
+L18859  n81   Clear missing_label                      | missing_label = ((void*)0);
+L18860  n80   Clear missing_label_length               | missing_label_length = 0;
+L18861  n79   Unknown: call to uncontracted function `flb_input_chunk_get_direct_routes` | direct_status = flb_input_chunk_get_direct_routes(ic, &direct_routes, &direct_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_direct_routes`
+L18862  n78   NoOp                                     | if (direct_status == 0 && direct_count > 0) {
+L18863  n73   Clear direct_missing                     | direct_missing = 0;
+L18864  n72   Clear missing_id                         | missing_id = 0;
+L18865  n50   NoOp                                     | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18865  n51   NoOp                                     | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18865  n71   Clear direct_index                       | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18866  n70   Clear direct_matches                     | direct_matches = ((void*)0);
+L18867  n69   Clear direct_match_count                 | direct_match_count = 0;
+L18868  n68   Unknown: indirect memory access is outside the resource projection | ret = input_chunk_collect_output_references(in->config,
+        !! unsupported: indirect memory access is outside the resource projection
+L18872  n67   NoOp                                     | if (ret == -1) {
+L18873  n64   Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "failed collecting restored routes for chunk %s", flb_input_chunk_get_name(ic)) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "failed collecting restored routes for chunk %s", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18873  n65   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "failed collecting restored routes for chunk %s", flb_input_chunk_get_name(ic)) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "failed collecting restored routes for chunk %s", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18873  n66   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 1)) if (flb_log_suppress_check(in->log_suppress_interval, "failed collecting restored routes for chunk %s", flb_input_chunk_get_name(ic)) == 0) flb_log_print(1, ((void*)0), 0, "[input:%s:%s] " "failed collecting restored routes for chunk %s", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18875  n63   NoOp                                     | if (ret != 0 || direct_match_count == 0) {
+L18876  n62   NoOp                                     | direct_missing = 1;
+L18877  n61   Unknown: indirect memory access is outside the resource projection | missing_id = direct_routes[direct_index].id;
+        !! unsupported: indirect memory access is outside the resource projection
+L18878  n60   Unknown: indirect memory access is outside the resource projection | missing_label = direct_routes[direct_index].label;
+        !! unsupported: indirect memory access is outside the resource projection
+L18879  n59   Unknown: indirect memory access is outside the resource projection | missing_label_length = direct_routes[direct_index].label_length;
+        !! unsupported: indirect memory access is outside the resource projection
+L18880  n58   NoOp                                     | if (missing_label_length == 0 && missing_label != ((void*)0)) {
+L18881  n57   Unknown: call to uncontracted function `strlen` | missing_label_length = (uint16_t) strlen(missing_label);
+        !! unsupported: call to uncontracted function `strlen`
+L18883  n56   BranchOnNull direct_matches true_is_null=false | if (direct_matches != ((void*)0)) {
+        !! unresolved resource identity `direct_matches`
+L18884  n55   Call flb_free(direct_matches) -> _       | flb_free(direct_matches);
+        !! unresolved resource identity `direct_matches`
+L18886  n54   NoOp                                     | break;
+L18888  n53   BranchOnNull direct_matches true_is_null=false | if (direct_matches != ((void*)0)) {
+        !! unresolved resource identity `direct_matches`
+L18889  n52   Call flb_free(direct_matches) -> _       | flb_free(direct_matches);
+        !! unresolved resource identity `direct_matches`
+L18892  n49   BranchOnNull direct_missing true_is_null=true | if (direct_missing == 0) {
+        !! unresolved resource identity `direct_missing`
+L18893  n45   Unknown: indirect memory access is outside the resource projection | memset(ic->routes_mask, 0,
+        !! unsupported: indirect memory access is outside the resource projection
+L18895  n44   Clear has_routes                         | has_routes = 0;
+L18896  n28   NoOp                                     | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18896  n29   NoOp                                     | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18896  n43   Clear direct_index                       | for (direct_index = 0; direct_index < direct_count; direct_index++) {
+L18897  n42   Clear direct_matches                     | direct_matches = ((void*)0);
+L18898  n41   Clear direct_match_count                 | direct_match_count = 0;
+L18899  n40   Unknown: indirect memory access is outside the resource projection | ret = input_chunk_collect_output_references(in->config,
+        !! unsupported: indirect memory access is outside the resource projection
+L18903  n39   NoOp                                     | if (ret != 0 || direct_match_count == 0 || direct_matches == ((void*)0)) {
+L18904  n38   BranchOnNull direct_matches true_is_null=false | if (direct_matches != ((void*)0)) {
+        !! unresolved resource identity `direct_matches`
+L18905  n37   Call flb_free(direct_matches) -> _       | flb_free(direct_matches);
+        !! unresolved resource identity `direct_matches`
+L18907  n36   NoOp                                     | continue;
+L18909  n31   NoOp                                     | for (direct_match_index = 0;
+L18909  n32   NoOp                                     | for (direct_match_index = 0;
+L18909  n35   Clear direct_match_index                 | for (direct_match_index = 0;
+L18912  n34   Unknown: indirect memory access is outside the resource projection | flb_routes_mask_set_bit(ic->routes_mask,
+        !! unsupported: indirect memory access is outside the resource projection
+L18915  n33   NoOp                                     | has_routes++;
+L18917  n30   Call flb_free(direct_matches) -> _       | flb_free(direct_matches);
+        !! unresolved resource identity `direct_matches`
+L18919  n27   NoOp                                     | direct_loaded = 1;
+L18922  n46   Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18922  n47   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18922  n48   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct route output id=%u label=%.*s not found for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), (unsigned int) missing_id, (int) missing_label_length, missing_label ? missing_label : "", flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18925  n77   NoOp                                     | else if (direct_status == -2) {
+L18926  n74   Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "invalid direct routing metadata for chunk %s, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "invalid direct routing metadata for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18926  n75   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "invalid direct routing metadata for chunk %s, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "invalid direct routing metadata for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18926  n76   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "invalid direct routing metadata for chunk %s, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "invalid direct routing metadata for chunk %s, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18928  n26   BranchOnNull direct_routes true_is_null=false | if (direct_routes) {
+        !! unresolved resource identity `direct_routes`
+L18929  n25   Unknown: call to uncontracted function `flb_input_chunk_destroy_direct_routes` | flb_input_chunk_destroy_direct_routes(direct_routes, direct_count);
+        !! unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+L18930  n24   Clear direct_routes                      | direct_routes = ((void*)0);
+L18932  n23   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | bytes = flb_input_chunk_get_real_size(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L18933  n22   NoOp                                     | if (bytes < 0) {
+L18934  n20   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] could not retrieve chunk real size");
+L18934  n21   NoOp                                     | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] could not retrieve chunk real size");
+L18935  n19   Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L18936  n18   Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L18937  n17   NoOp                                     | return ((void*)0);
+L18939  n16   BranchOnNull direct_loaded true_is_null=true | if (direct_loaded == 0) {
+        !! unresolved resource identity `direct_loaded`
+L18940  n7    Call flb_routes_mask_set_by_tag(ic->routes_mask, tag_buf, tag_len, in) -> has_routes reads["ic->routes_mask"] | has_routes = flb_routes_mask_set_by_tag(ic->routes_mask, tag_buf, tag_len, in);
+        !! unresolved resource identity `ic`
+L18941  n6    BranchOnNull has_routes true_is_null=true | if (has_routes == 0) {
+        !! unresolved resource identity `has_routes`
+L18942  n4    Call flb_log_print(_, _, _, __qcore_literal__) -> _ nested=flb_input_chunk_get_name | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] no matching route for backoff log chunk %s", flb_input_chunk_get_name(ic));
+L18942  n5    NoOp                                     | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] no matching route for backoff log chunk %s", flb_input_chunk_get_name(ic));
+L18945  n15   BranchOnNull has_routes true_is_null=true | else if (has_routes == 0) {
+        !! unresolved resource identity `has_routes`
+L18946  n12   Unknown: indirect memory access is outside the resource projection | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct routing metadata for chunk %s produced no routes, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct routing metadata for chunk %s produced no routes, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18946  n13   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct routing metadata for chunk %s produced no routes, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct routing metadata for chunk %s produced no routes, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18946  n14   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check_level(in->log_level, 2)) if (flb_log_suppress_check(in->log_suppress_interval, "direct routing metadata for chunk %s produced no routes, falling back to tag routing", flb_input_chunk_get_name(ic)) == 0) flb_log_print(2, ((void*)0), 0, "[input:%s:%s] " "direct routing metadata for chunk %s produced no routes, falling back to tag routing", in->p->name, flb_input_name(in), flb_input_chunk_get_name(ic));
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18947  n11   Call flb_routes_mask_set_by_tag(ic->routes_mask, tag_buf, tag_len, in) -> has_routes reads["ic->routes_mask"] | has_routes = flb_routes_mask_set_by_tag(ic->routes_mask, tag_buf, tag_len, in);
+        !! unresolved resource identity `ic`
+L18948  n10   BranchOnNull has_routes true_is_null=true | if (has_routes == 0) {
+        !! unresolved resource identity `has_routes`
+L18949  n8    Call flb_log_print(_, _, _, __qcore_literal__) -> _ nested=flb_input_chunk_get_name | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] no matching route for backoff log chunk %s", flb_input_chunk_get_name(ic));
+L18949  n9    NoOp                                     | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] no matching route for backoff log chunk %s", flb_input_chunk_get_name(ic));
+L18952  n3    Unknown: indirect memory access is outside the resource projection | mk_list_add(&ic->_head, &in->chunks);
+        !! unsupported: indirect memory access is outside the resource projection
+L18953  n2    Unknown: call to uncontracted function `flb_input_chunk_update_output_instances` | flb_input_chunk_update_output_instances(ic, bytes);
+        !! unsupported: call to uncontracted function `flb_input_chunk_update_output_instances`
+L18954  n1    EscapeIfOwned ic                         | return ic;
+        !! unresolved resource identity `ic`
+        !! unsupported: nullable resource `ic` used by a non-null contract
+exits:
+  L18954  node 1 custody Unknown sites ["site0@L18744 Mixed"]
+  L18937  node 17 custody Unknown sites ["site0@L18744 Mixed"]
+  L18854  node 85 custody Unknown sites ["site0@L18744 Mixed"]
+  L18826  node 105 custody Unknown sites ["site0@L18744 Mixed"]
+  L18820  node 110 custody Unknown sites ["site0@L18744 Mixed"]
+  L18789  node 121 custody Unknown sites ["site0@L18744 Mixed"]
+  L18779  node 128 custody Unknown sites ["site0@L18744 Mixed"]
+  L18810  node 141 custody Unknown sites ["site0@L18744 Mixed"]
+  L18800  node 148 custody Unknown sites ["site0@L18744 Mixed"]
+  L18770  node 160 custody Unknown sites ["site0@L18744 Mixed"]
+  L18760  node 167 custody Unknown sites ["site0@L18744 Mixed"]
+  L18747  node 180 custody Discharged sites []

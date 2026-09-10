@@ -837,6 +837,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // 14 -> 15 by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition
     // of `libc/pthread_mutex.qcore`, again for the same reason: the manifest
     // grew, nothing measured here moved.
+    // 15 -> 16 by card ABI-TYPEDEF-ADDRESS-OF-MEMBER's deliberate addition of
+    // `msgpack/packer.qcore`. That card retires the "measured payoff zero"
+    // entry the ABI-TYPEDEF card recorded for `msgpack_packer_init` on exactly
+    // this rule's own terms: the blocker it named — the address-of-a-member
+    // actual refusing the statement before any contract is consulted — no
+    // longer holds.
     assert!(LOGGING.contains("extern fn flb_errno_print("));
-    assert_eq!(contracts.source_assumptions().len(), 15);
+    assert_eq!(contracts.source_assumptions().len(), 16);
 }

@@ -118,14 +118,51 @@ struct RecordInfo {
     /// rule in [`crate::aggregate_store`], and there only on the *store* side.
     void_pointer_fields: BTreeSet<String>,
     /// Members declared with **no** `*`, no array modifier and no rejecting
-    /// qualifier, over a specifier list this reader resolved to an
-    /// arithmetic/enumeration type or to a `struct` tag. Such a member is a
-    /// sub-object of the record that can never itself hold a pointer this
-    /// projection links, so its *address* denotes storage disjoint from every
-    /// linkable member. `union`-typed members, pointer members, arrays,
-    /// bitfields and unresolved typedefs are absent by construction. Used only
-    /// by the member-address rule in [`crate::aggregate_store`].
+    /// qualifier, over a specifier list this reader committed to as a
+    /// **non-pointer object type** ([`TypedAccessModel::is_non_pointer_object`]).
+    /// Such a member is a sub-object of the record that can never itself *be* a
+    /// pointer this projection links, so its *address* denotes storage disjoint
+    /// from every linkable member. Pointer members (including pointer
+    /// typedefs), arrays, bitfields and every typedef this reader will not
+    /// resolve are absent by construction. Used only by the member-address rule
+    /// in [`crate::aggregate_store`].
+    ///
+    /// Card **ABI-TYPEDEF-ADDRESS-OF-MEMBER** widened the specifier side of
+    /// this set from `struct TAG`/arithmetic to every non-pointer object type
+    /// the reader commits to — a `union TAG` member and a member whose typedef
+    /// *defines* its own `struct`/`union`/`enum` join it. The disjointness
+    /// argument reads only "this member is not a pointer", never the member's
+    /// own shape, so it is indifferent to which of those the member is.
     non_pointer_fields: BTreeSet<String>,
+}
+
+/// What one `typedef` declaration of this unit names, as far as this reader is
+/// willing to commit to it (card **ABI-TYPEDEF-ADDRESS-OF-MEMBER**).
+///
+/// Before that card the table held only the specifier-list reading, and every
+/// other shape — an aggregate the typedef itself *defines* above all — recorded
+/// the absent reading `None`. Recording the aggregate case distinctly keeps
+/// [`TypedAccessModel::classify_specifiers`] answering exactly what it answered
+/// before (an aggregate definition is [`DeclaredType::Opaque`], as an
+/// unresolved name was), while letting the *one* premise that needs no more
+/// than "this is an object type and it is not a pointer" —
+/// [`TypedAccessModel::is_non_pointer_object`] — commit to it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum TypedefTarget {
+    /// The specifier tokens the typedef expands to, with no declarator at all.
+    /// Exactly the reading this table held before the card above.
+    Specifiers(Vec<String>),
+    /// A `struct`, `union` or `enum` the typedef declaration itself defines,
+    /// with the declarator exactly the typedef name — `typedef union { … } t;`
+    /// and `typedef struct tag { … } t;`.
+    ///
+    /// The payload is the definition's *head* — the tag keyword, and the tag
+    /// when the definition carries one (`"union"`, `"struct msgpack_packer"`).
+    /// It is carried so that two disagreeing declarations of one name still
+    /// disagree under this enum's `PartialEq`, and it is the only part of the
+    /// definition read: a member of such a type is not a pointer whatever its
+    /// body holds.
+    Aggregate(String),
 }
 
 /// The member classifications one readable record body yields.
@@ -144,7 +181,7 @@ struct RecordMembers {
 pub(crate) struct TypedAccessModel {
     records: BTreeMap<String, RecordInfo>,
     /// `None` marks a name this reader refuses to resolve.
-    typedefs: BTreeMap<String, Option<Vec<String>>>,
+    typedefs: BTreeMap<String, Option<TypedefTarget>>,
     enum_constants: BTreeSet<String>,
     /// Function names this unit declares, mapped to whether **every**
     /// declaration of that name the reader read returns exactly one `*` over a
@@ -283,6 +320,46 @@ fn is_numeric_literal(text: &str) -> bool {
     text.as_bytes().first().is_some_and(u8::is_ascii_digit)
 }
 
+/// Read one `typedef` declaration that **defines** the aggregate it names
+/// (card **ABI-TYPEDEF-ADDRESS-OF-MEMBER**).
+///
+/// `slice` is the token run strictly between `typedef` and the `;` that ends
+/// the declaration, whose last token the caller has already checked is a name.
+/// The shape recognised is exactly
+///
+/// ```text
+/// struct|union|enum [TAG] { … } NAME
+/// ```
+///
+/// with the matching `}` immediately before `NAME`, so nothing — no `*`, no
+/// `[`, no second declarator — stands between the aggregate and the declared
+/// name. A `typedef struct { … } *p;`, a `typedef struct { … } a, *b;` and a
+/// `typedef struct { … } a[4];` are all refused here and keep the absent
+/// reading they had.
+///
+/// The body is **not** read: this reading commits only to "the name denotes an
+/// object type with no pointer level", which is all
+/// [`TypedAccessModel::is_non_pointer_object`] consumes.
+fn read_aggregate_definition(slice: &[&str]) -> Option<TypedefTarget> {
+    let keyword = *slice.first()?;
+    if !matches!(keyword, "struct" | "union" | "enum") {
+        return None;
+    }
+    let (head, open) = match slice.get(1) {
+        Some(&"{") => (keyword.to_owned(), 1usize),
+        Some(text) if is_name(text) && slice.get(2) == Some(&"{") => {
+            (format!("{keyword} {text}"), 2)
+        }
+        _ => return None,
+    };
+    // The matching `}` must be the token immediately before the declared name,
+    // which is the last token of the slice.
+    if matching_close(slice, open, "{", "}")? + 2 != slice.len() {
+        return None;
+    }
+    Some(TypedefTarget::Aggregate(head))
+}
+
 fn matching_close(texts: &[&str], open_index: usize, open: &str, close: &str) -> Option<usize> {
     let mut depth = 0usize;
     for (index, text) in texts.iter().enumerate().skip(open_index) {
@@ -408,6 +485,76 @@ impl TypedAccessModel {
             .unwrap_or(false)
     }
 
+    /// Whether `specifiers` name an **object type that is not a pointer type**
+    /// (card **ABI-TYPEDEF-ADDRESS-OF-MEMBER**).
+    ///
+    /// This is deliberately weaker than [`Self::classify_specifiers`] and is
+    /// consulted by exactly one premise: a member declared with no `*` over
+    /// such a specifier list is a sub-object of its record, so its *address*
+    /// denotes storage C's object model keeps disjoint from every sibling
+    /// member. That argument needs to know only that the member is not itself a
+    /// pointer; it reads nothing about the member's own shape, size or
+    /// contents, so an aggregate, a `union` and an `enum` all satisfy it as
+    /// exactly as an `int` does.
+    ///
+    /// What it still refuses, each fail-closed:
+    ///
+    /// * a **pointer typedef** — `typedef struct s *p; … p m;` declares a
+    ///   member with no `*` that *is* a pointer, and `&x->m` would then be the
+    ///   `struct s **` laundering shape the member-address rule exists to
+    ///   refuse. [`Self::read_typedefs`] records such a typedef unresolved, and
+    ///   an unresolved name is refused here;
+    /// * a **function-pointer typedef**, an **array typedef** and a
+    ///   **multi-declarator typedef** — unresolved for the same reason;
+    /// * a name typedef'd twice to disagreeing targets — unresolved;
+    /// * a name with no typedef in this unit at all;
+    /// * `void`, which is not an object type.
+    fn is_non_pointer_object(&self, specifiers: &[&str], depth: usize) -> bool {
+        if specifiers
+            .iter()
+            .any(|text| REJECTING_QUALIFIERS.contains(text))
+        {
+            return false;
+        }
+        let core = specifiers
+            .iter()
+            .copied()
+            .filter(|text| !IGNORED_SPECIFIERS.contains(text))
+            .collect::<Vec<_>>();
+        match core.as_slice() {
+            // A tagged aggregate. `struct TAG` already classified `Record`;
+            // `union TAG` and `enum TAG` are the members this widening adds,
+            // and both are object types with no pointer level.
+            ["struct", tag] | ["union", tag] | ["enum", tag] if is_name(tag) => true,
+            ["enum"] => true,
+            [name] if is_name(name) => {
+                if depth >= TYPEDEF_DEPTH_LIMIT {
+                    return false;
+                }
+                match self.typedefs.get(*name) {
+                    // The head is read rather than assumed: only the three tag
+                    // keywords name an aggregate, and nothing else may reach
+                    // this arm.
+                    Some(Some(TypedefTarget::Aggregate(head))) => matches!(
+                        head.split(' ').next(),
+                        Some("struct") | Some("union") | Some("enum")
+                    ),
+                    Some(Some(TypedefTarget::Specifiers(target))) => {
+                        let target = target.iter().map(String::as_str).collect::<Vec<_>>();
+                        self.is_non_pointer_object(&target, depth + 1)
+                    }
+                    _ => false,
+                }
+            }
+            rest if !rest.is_empty()
+                && rest.iter().all(|text| ARITHMETIC_KEYWORDS.contains(text)) =>
+            {
+                true
+            }
+            _ => false,
+        }
+    }
+
     fn read_typedefs(&mut self, texts: &[&str]) {
         for index in 0..texts.len() {
             if texts[index] != "typedef" {
@@ -428,9 +575,18 @@ impl TypedAccessModel {
                 .iter()
                 .any(|text| matches!(*text, "{" | "}" | "(" | ")" | "[" | "]" | "*" | ","))
             {
-                None
+                // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER: exactly one of the shapes
+                // this branch used to discard is read — an aggregate the
+                // typedef itself defines, whose declarator is the bare typedef
+                // name. Every other shape (a pointer typedef, a
+                // function-pointer typedef, an array typedef, a
+                // multi-declarator typedef, an aggregate under a `*`) still
+                // records the absent reading, exactly as before.
+                read_aggregate_definition(slice)
             } else {
-                Some(specifiers.iter().map(|text| (*text).to_owned()).collect())
+                Some(TypedefTarget::Specifiers(
+                    specifiers.iter().map(|text| (*text).to_owned()).collect(),
+                ))
             };
             match self.typedefs.get(*last) {
                 Some(existing) if *existing == resolved => {}
@@ -536,15 +692,17 @@ impl TypedAccessModel {
                 // O04-B09B10: a member with no `*` is a sub-object of this
                 // record. Its address denotes storage disjoint from every other
                 // member, so handing it to a borrowing callee cannot disturb a
-                // linked pointer member. `union` specifiers and every typedef
-                // this reader will not resolve classify `Opaque` and are
-                // excluded here, exactly as they are elsewhere in this model.
-                if declarator.stars == 0
-                    && !qualified
-                    && matches!(
-                        self.classify_specifiers(&specifiers, 0),
-                        DeclaredType::Record(_) | DeclaredType::Scalar
-                    )
+                // linked pointer member.
+                //
+                // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER: the specifier premise is
+                // [`Self::is_non_pointer_object`] rather than the
+                // `Record`/`Scalar` classification, because the disjointness
+                // argument reads only "this member is not a pointer". A
+                // `union`-typed member and a member whose typedef defines its
+                // own aggregate join the set; a pointer typedef, an array
+                // member, a `volatile`/`_Atomic` member and every typedef this
+                // reader will not resolve stay out of it.
+                if declarator.stars == 0 && !qualified && self.is_non_pointer_object(&specifiers, 0)
                 {
                     non_pointer_fields.insert(name.clone());
                 }
@@ -658,10 +816,19 @@ impl TypedAccessModel {
                     return DeclaredType::Opaque;
                 }
                 match self.typedefs.get(*name) {
-                    Some(Some(target)) => {
+                    Some(Some(TypedefTarget::Specifiers(target))) => {
                         let target = target.iter().map(String::as_str).collect::<Vec<_>>();
                         self.classify_specifiers(&target, depth + 1)
                     }
+                    // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER records an aggregate a
+                    // typedef defines, and this classifier deliberately answers
+                    // for it exactly what it answered when the reading was
+                    // absent: `Opaque`. Every premise that reads this function
+                    // — the scalar no-op rule, the borrowable/single-pointer/
+                    // `void *` member sets, the chain walker, the declared
+                    // types of locals — therefore decides byte-identically to
+                    // the tree before that card. Only
+                    // [`Self::is_non_pointer_object`] reads the new target.
                     _ => DeclaredType::Opaque,
                 }
             }

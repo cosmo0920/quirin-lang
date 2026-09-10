@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 12 tests
+test the_profile_is_target_qualified ... ok
+test an_undeclared_cpu_budget_is_derived_and_labeled ... ok
+test the_enforceable_kind_inventory_is_explicit ... ok
+test the_default_profile_is_the_unenforced_legacy_one ... ok
+test a_declared_but_unenforceable_limit_kind_is_refused ... ok
+test output_flooding_beyond_the_cap_is_bounded ... ok
+test a_well_behaved_provider_completes_under_the_enforced_profile ... ok
+test memory_growth_beyond_the_declared_limit_is_bounded ... ok
+test a_wall_clock_hang_is_killed_within_tolerance ... ok
+test a_cpu_spin_is_killed_by_the_declared_cpu_limit ... ok
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+test descendants_do_not_outlive_the_execution ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.80s
+
+ 01:46:00 up 7 days, 10:30,  1 user,  load average: 12.92, 14.50, 19.19

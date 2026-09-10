@@ -1,0 +1,35 @@
+function mk_sched_launch_thread: status Unsafe
+diagnostics: 11
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L6689   n18   NoOp                                     | pthread_t tid;
+L6690   n17   NoOp                                     | pthread_attr_t attr;
+L6691   n16   NoOp                                     | struct mk_sched_thread_conf *thconf;
+L6692   n15   Unknown: indirect memory access is outside the resource projection | server->pth_init = 0;
+        !! unsupported: indirect memory access is outside the resource projection
+L6693   n14   Call pthread_mutex_lock(_) -> _          | pthread_mutex_lock(&server->pth_mutex);
+L6694   n13   Call mk_mem_alloc_z(_) -> thconf         | thconf = mk_mem_alloc_z(sizeof(struct mk_sched_thread_conf));
+L6695   n12   AggregateStore thconf->server            | thconf->server = server;
+        !! unresolved resource identity `thconf`
+L6696   n11   Unknown: call to uncontracted function `pthread_attr_init` | pthread_attr_init(&attr);
+        !! unsupported: call to uncontracted function `pthread_attr_init`
+L6697   n10   Unknown: call to uncontracted function `pthread_attr_setdetachstate` | pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+        !! unsupported: call to uncontracted function `pthread_attr_setdetachstate`
+L6698   n9    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (pthread_create(&tid, &attr, mk_sched_launch_worker_loop,
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L6700   n8    Unknown: call to uncontracted function `mk_utils_libc_error` | mk_utils_libc_error("pthread_create", "<stdin>", 447);
+        !! unsupported: call to uncontracted function `mk_utils_libc_error`
+L6701   n7    Call pthread_mutex_unlock(_) -> _        | pthread_mutex_unlock(&server->pth_mutex);
+L6702   n6    NoOp                                     | return -1;
+        !! leak from L6694
+L6704   n5    Alias *tout = tid                        | *tout = tid;
+        !! unsupported: store through `*tout` without an out-parameter contract
+L6705   n3    Unknown: unmodeled call, aggregate or indirect access in loop condition | while (!server->pth_init) {
+        !! unsupported: unmodeled call, aggregate or indirect access in loop condition
+L6706   n4    Unknown: indirect memory access is outside the resource projection | pthread_cond_wait(&server->pth_cond, &server->pth_mutex);
+        !! unsupported: indirect memory access is outside the resource projection
+L6708   n2    Call pthread_mutex_unlock(_) -> _        | pthread_mutex_unlock(&server->pth_mutex);
+L6709   n1    NoOp                                     | return 0;
+        !! leak from L6694
+exits:
+  L6709   node 1 custody Unknown sites ["site0@L6694 Live"]
+  L6702   node 6 custody Unknown sites ["site0@L6694 Live"]

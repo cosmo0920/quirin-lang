@@ -1,0 +1,52 @@
+module contract;
+
+// ABI-TYPEDEF-ADDRESS-OF-MEMBER — held-out generic API for the widened
+// addressed-member reader.
+//
+// Deliberately unrelated to ChunkIO, Fluent Bit, msgpack, pthread and to the
+// `b_*` (C02-P), `g_*` (O04), `h_*` (O04-ARMS), `k_*` (O04-B08), `m_*`
+// (O04-B09B10) and `r_*` (O04-READ-BOUND) families: every rule under test is
+// stated over declared C types and contract modes, so no name here can matter.
+// These are synthetic trusted test assumptions, not facts about any library.
+
+extern fn a_open(cio: ptr<mut, u8>, flags: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cio);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn a_close(h: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(h, nonnull);
+    ensures normal resource_return_none();
+};
+
+// The borrowing sink: the only position at which a member address is ever
+// admitted.
+extern fn a_borrow(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+// A sink that CONSUMES its argument. Releasing or consuming a sub-object of a
+// live aggregate is not an effect this projection could account for, so a
+// member address is never admitted here.
+extern fn a_adopt(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+// A sink that RELEASES its argument, for the same reason.
+extern fn a_release(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
