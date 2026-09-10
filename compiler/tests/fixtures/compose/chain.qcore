@@ -1,0 +1,43 @@
+import std.extern;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// Card `STD-IO-COMPOSE`: one module that both calls declared extern functions
+// and prints. Everything here is checked twice over — the call sites and the
+// adapter by `source.extern-call.v1`'s own checker, the surrounding custody,
+// flow and effect obligations by the established sequential passes, and the
+// rendered lines by `source.std-io.v1`'s own checker — and the composition
+// checks only where the two meet.
+//
+// The two pipelines are the acceptance sentence card `PIPE-CHAIN` measured as
+// unreachable, in its literal reading: a scalar binding, piped through a
+// scalar-returning callee, into a sink. The first starts from a value this
+// entry read out of a real buffer; the second from a scalar literal, which is
+// the `EXTERN-SCALAR-LITERAL` half.
+//
+// `succeeds INTEGER` is the site's declared outcome, exactly what
+// `succeeds true` is for a nullable owned return: the emitted program does not
+// believe it, it compares the real result and exits 70 if they disagree. That
+// is what makes a rendered line comparable against a native run.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    qcore_extern_fill(b, 7);
+    let total = qcore_extern_sum(b, 8) succeeds 56;
+    print dec total;
+    total |> qcore_extern_scale(2) succeeds 112 |> log info dec;
+    let value = 42;
+    value |> qcore_extern_scale(2) succeeds 84 |> log warn hex;
+    qcore_extern_release(move b);
+    flush;
+    print dec -7;
+    return;
+}

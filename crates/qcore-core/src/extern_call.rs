@@ -114,6 +114,18 @@
 //!    `unit` — so the mandatory nullable-owned-return adapter and every
 //!    acquisition rule are byte-unchanged, and there is no second way to spell
 //!    an acquisition.
+//!
+//!    Card `STD-IO-COMPOSE` adds two more things to the same namespace and
+//!    still nothing to the admission tables. [`ExternEvent::Bind`] is a scalar
+//!    **literal** binding, `let NAME = INTEGER;`, which calls nothing and so
+//!    can carry no custody at all; and a scalar binding may carry a *declared
+//!    outcome*, [`ScalarBinding::outcome`], on exactly the
+//!    [`ExternAdapter::succeeds`] precedent — a literal control written at the
+//!    site, believed by the reference execution and **compared against the real
+//!    callee at run time** by the emitted C, which exits 70 rather than
+//!    silently observing a different number. Neither touches the ledger, and
+//!    an outcome is optional: a binding without one is exactly the binding card
+//!    `PIPE-SCALAR-RESULT` shipped.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -1162,12 +1174,46 @@ pub struct ExternCall {
     /// [`binds_scalar`]. Exclusive with `adapter` by construction: an
     /// acquisition binds an identity, a scalar binding binds a value, and a
     /// callee cannot be both.
-    pub binding: Option<ValueId>,
+    pub binding: Option<ScalarBinding>,
+}
+
+/// One bound scalar result: the value identity it introduces and, optionally,
+/// the number the site declares the call returns (card `STD-IO-COMPOSE`).
+///
+/// The optional half is the [`ExternAdapter::succeeds`] control one step
+/// further: `succeeds true` declares *which arm* a nullable owned return takes,
+/// and `succeeds INTEGER` declares *which number* a scalar result carries. Both
+/// are fixture-literal outcome controls in the `qcore_acquire`/`qcore_check`
+/// sense — a controlled model operation, never a claim about what a production
+/// callee computes — and neither is believed by the emitted program, which
+/// compares the real result against the control and exits 70 on disagreement.
+///
+/// `None` is the card-`PIPE-SCALAR-RESULT` binding: the value is bound and its
+/// number is not modeled, so nothing may read it as data.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ScalarBinding {
+    pub value: ValueId,
+    pub outcome: Option<i32>,
+}
+
+/// One scalar literal binding, `let NAME = INTEGER;` (card
+/// `EXTERN-SCALAR-LITERAL`, folded into `STD-IO-COMPOSE`).
+///
+/// It calls nothing, so it derives no effect, admits no argument and can carry
+/// no custody in any position — the narrowest possible widening of the value
+/// namespace, and the one that makes a rendered value able to originate in the
+/// module that renders it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ScalarLiteral {
+    pub value: ValueId,
+    pub literal: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ExternEvent {
     Call(ExternCall),
+    /// `let NAME = INTEGER;` — see [`ScalarLiteral`].
+    Bind(ScalarLiteral),
     Return,
 }
 
@@ -1584,6 +1630,17 @@ pub struct ExternCallCertificate {
     /// certificate that names no resource identity: a reader can see at a
     /// glance which calls moved data and which moved custody.
     pub scalar_bindings: Vec<(String, ValueId)>,
+    /// `(value, literal)` of every scalar literal binding, in trace order (card
+    /// `EXTERN-SCALAR-LITERAL`). Published beside `scalar_bindings` rather than
+    /// merged into it: one names a call that produced a number and the other
+    /// names a number written at the site, and a reader of the evidence must be
+    /// able to tell those apart.
+    pub literal_bindings: Vec<(ValueId, i32)>,
+    /// `(value, outcome)` of every scalar binding whose site declared what the
+    /// call returns (card `STD-IO-COMPOSE`), in trace order. A binding absent
+    /// here carries no modeled number, which is what makes it unreadable as
+    /// data.
+    pub declared_outcomes: Vec<(ValueId, i32)>,
     /// Union of the derived rows of every call site, error-arm dispositions
     /// included: a release the error arm performs is a call this module makes.
     pub effects: EffectRow,
@@ -1774,6 +1831,8 @@ pub fn check_extern_program(
     let mut stored = Vec::new();
     let mut error_dispositions = Vec::new();
     let mut scalar_bindings = Vec::new();
+    let mut literal_bindings = Vec::new();
+    let mut declared_outcomes = Vec::new();
     // Acquisition order, because the established cleanup edge releases in
     // reverse acquisition order and the error arm is required to match it.
     let mut live = Vec::<ResourceId>::new();
@@ -1785,8 +1844,23 @@ pub fn check_extern_program(
     let mut values = BTreeSet::<ValueId>::new();
     let mut effects = BTreeSet::new();
     for (index, event) in program.events.iter().enumerate() {
-        let ExternEvent::Call(call) = event else {
-            continue;
+        let call = match event {
+            ExternEvent::Call(call) => call,
+            // Card `EXTERN-SCALAR-LITERAL`. A literal binding names no callee,
+            // so it reaches none of the admission, bridging, custody or effect
+            // machinery below: the only thing it can do wrong is reuse a value
+            // identity, which is the same refusal a bound call's result gets.
+            ExternEvent::Bind(literal) => {
+                if !values.insert(literal.value) {
+                    diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                        event: index,
+                        value: literal.value,
+                    });
+                }
+                literal_bindings.push((literal.value, literal.literal));
+                continue;
+            }
+            ExternEvent::Return => continue,
         };
         let Some(callee) = program.callees.get(&call.callee) else {
             diagnostics.push(ExternDiagnostic::UnknownCallee {
@@ -1945,7 +2019,8 @@ pub fn check_extern_program(
         // ledger movement, because a scalar binding is not a ledger event: it
         // adds a name to a namespace this checker never removes from and never
         // compares against `live`.
-        if let Some(value) = call.binding {
+        if let Some(binding) = call.binding {
+            let value = binding.value;
             if callee.acquires() {
                 diagnostics.push(ExternDiagnostic::ResultBindingOnAcquisition {
                     event: index,
@@ -1959,6 +2034,9 @@ pub fn check_extern_program(
                     });
                 }
                 scalar_bindings.push((callee.name.clone(), value));
+                if let Some(outcome) = binding.outcome {
+                    declared_outcomes.push((value, outcome));
+                }
             } else {
                 diagnostics.push(ExternDiagnostic::ResultNotScalar {
                     event: index,
@@ -2066,6 +2144,8 @@ pub fn check_extern_program(
         stored,
         error_dispositions,
         scalar_bindings,
+        literal_bindings,
+        declared_outcomes,
         effects: EffectRow::new(effects),
         assumptions,
     })

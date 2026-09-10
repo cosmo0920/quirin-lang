@@ -81,8 +81,9 @@ use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, ParameterOwnership};
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
-    CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
-    ExternEvent, ExternProgram, ValueId, binds_scalar, derived_custody, derived_effects,
+    AbiType, CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
+    ExternEvent, ExternProgram, ScalarBinding, ScalarLiteral, ValueId, binds_scalar,
+    derived_custody, derived_effects,
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
@@ -106,6 +107,22 @@ pub struct LoweredExternModule {
     pub extern_summaries: BTreeMap<SymbolId, FunctionSummary>,
     /// The row the entry declares, which must admit the derived one.
     pub declared_effects: EffectRow,
+    /// Card `STD-IO-COMPOSE`: every scalar this body bound, by source name, as
+    /// `(identity, declared number)`. The number is present for a literal
+    /// binding and for a call binding whose site declared its outcome, and
+    /// absent otherwise — a bound value whose number is not modeled.
+    ///
+    /// Published so a *composing* route can resolve a rendering operand against
+    /// the value namespace and nothing else. It is deliberately not consulted by
+    /// this route, which renders nothing.
+    pub scalar_values: BTreeMap<String, (ValueId, Option<i32>)>,
+    /// The declared ABI spelling behind each bound value, so a composing route
+    /// can refuse to render a width it does not render.
+    pub value_abi: BTreeMap<ValueId, AbiType>,
+    /// Every name this body bound to a resource identity. The other half of the
+    /// namespace wall: a composing route refuses one of these at a rendering
+    /// operand rather than resolving it.
+    pub resource_bindings: BTreeSet<String>,
 }
 
 /// Whether this program calls one of its own declared extern functions, i.e.
@@ -430,6 +447,14 @@ struct Lowering<'a> {
     /// second map rather than a second kind in `bindings`, so no lookup that
     /// wants an identity can ever return a value or the reverse.
     values: BTreeMap<String, ValueId>,
+    /// Card `STD-IO-COMPOSE`: the number a bound value carries, when the source
+    /// declares one. A literal binding always does; a call binding does exactly
+    /// when the site wrote `succeeds INTEGER`. Absent means *the value is bound
+    /// and its number is not modeled*, which is what keeps it unrenderable.
+    value_outcomes: BTreeMap<ValueId, i32>,
+    /// The declared ABI spelling behind each bound value, so a consumer that
+    /// must render one can refuse a width this profile does not render.
+    value_abi: BTreeMap<ValueId, AbiType>,
     next_resource: ResourceId,
     next_value: ValueId,
     diagnostics: Vec<SourceDiagnostic>,
@@ -663,6 +688,31 @@ pub fn lower_source_extern(
     entry: &str,
     callees: &BTreeMap<String, ExternCallee>,
 ) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
+    lower_source_extern_skipping(parsed, typed, entry, callees, &[])
+}
+
+/// [`lower_source_extern`] with a set of entry-body statement spans left to
+/// another model (card `STD-IO-COMPOSE`).
+///
+/// The composed route hands this function the spans of the `print`, `log` and
+/// `flush` statements, which the standard-IO model owns, and hands the
+/// standard-IO lowering the spans of everything else. Nothing else differs:
+/// `lower_source_extern` is this function with an empty skip set, so a module
+/// on the extern route alone travels the identical code path and its lowering,
+/// its certificate and its emitted C are byte-identical by construction rather
+/// than by comparison.
+///
+/// A skipped statement contributes no event, no span, no ledger operation and
+/// no diagnostic here. It is *not* silently admitted: the composing driver has
+/// already routed it to a model that checks it, and refuses to compose at all
+/// if any statement reaches neither.
+pub fn lower_source_extern_skipping(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    callees: &BTreeMap<String, ExternCallee>,
+    skip: &[Span],
+) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
     let mut diagnostics = Vec::new();
     let errors = parsed
         .declarations
@@ -723,6 +773,8 @@ pub fn lower_source_extern(
         errors: &errors,
         bindings: BTreeMap::new(),
         values: BTreeMap::new(),
+        value_outcomes: BTreeMap::new(),
+        value_abi: BTreeMap::new(),
         next_resource: 1,
         next_value: 1,
         diagnostics: Vec::new(),
@@ -741,6 +793,9 @@ pub fn lower_source_extern(
 
     for statement in &body.statements {
         let span = statement.span;
+        if skip.contains(&span) {
+            continue;
+        }
         if !statement.value.nested_blocks().is_empty() {
             lowering.diagnostics.push(refused_context(
                 span,
@@ -799,9 +854,28 @@ pub fn lower_source_extern(
                         }
                         continue;
                     }
+                    // Card `EXTERN-SCALAR-LITERAL`. Tried last of the three, so
+                    // nothing naming a callee can reach it and no call shape
+                    // loses its own diagnostic to it. A literal binds a number
+                    // and calls nothing, so it emits no `SourceOp`, no
+                    // `OwnershipOp` and no `ErrorOp`: there is no obligation to
+                    // open.
+                    if let Some(literal) = parse_literal_binding(&tokens) {
+                        if lowering.refuse_cross_namespace_shadow(name, span, true) {
+                            continue;
+                        }
+                        let value = lowering.next_value;
+                        lowering.next_value += 1;
+                        lowering.values.insert(name.clone(), value);
+                        lowering.value_outcomes.insert(value, literal);
+                        lowering.value_abi.insert(value, AbiType::I32);
+                        events.push(ExternEvent::Bind(ScalarLiteral { value, literal }));
+                        event_spans.push(span);
+                        continue;
+                    }
                     lowering.diagnostics.push(adapter(
                         span,
-                        "an extern `let` must read either an acquisition, `let NAME = CALLEE(ARGS) succeeds BOOL else raise ERROR;`, or a scalar-result binding, `let NAME = CALLEE(ARGS);`",
+                        "an extern `let` must read an acquisition, `let NAME = CALLEE(ARGS) succeeds BOOL else raise ERROR;`, a scalar-result binding, `let NAME = CALLEE(ARGS) [succeeds INTEGER];`, or a scalar literal, `let NAME = INTEGER;`",
                     ));
                     continue;
                 };
@@ -1136,6 +1210,18 @@ pub fn lower_source_extern(
         semantics,
         extern_summaries,
         declared_effects,
+        scalar_values: lowering
+            .values
+            .iter()
+            .map(|(name, value)| {
+                (
+                    name.clone(),
+                    (*value, lowering.value_outcomes.get(value).copied()),
+                )
+            })
+            .collect(),
+        value_abi: lowering.value_abi.clone(),
+        resource_bindings: lowering.bindings.keys().cloned().collect(),
     })
 }
 
@@ -1223,6 +1309,10 @@ fn lower_scalar_binding(
     let value = lowering.next_value;
     lowering.next_value += 1;
     lowering.values.insert(name.to_owned(), value);
+    lowering.value_abi.insert(value, callee.result_abi);
+    if let Some(outcome) = parsed_call.outcome {
+        lowering.value_outcomes.insert(value, outcome);
+    }
     record_call(
         extern_summaries,
         lowering.globals,
@@ -1237,7 +1327,10 @@ fn lower_scalar_binding(
         callee: callee.name.clone(),
         arguments,
         adapter: None,
-        binding: Some(value),
+        binding: Some(ScalarBinding {
+            value,
+            outcome: parsed_call.outcome,
+        }),
     }));
     event_spans.push(span);
     moved
@@ -1331,6 +1424,10 @@ struct ParsedCall {
     callee: String,
     arguments: Vec<Token>,
     succeeds: bool,
+    /// Card `STD-IO-COMPOSE`: the number a scalar-result site declares the call
+    /// returns, from a `succeeds INTEGER` tail. Only [`parse_bound_call`] ever
+    /// sets it; an acquisition's control is the boolean above.
+    outcome: Option<i32>,
     /// The error arm's dispositions, in written order: `(callee, arguments)`.
     releases: Vec<(String, Vec<Token>)>,
     error: String,
@@ -1383,6 +1480,7 @@ fn parse_adapter_statement(tokens: &[Token]) -> Option<ParsedCall> {
         callee,
         arguments,
         succeeds,
+        outcome: None,
         releases,
         error,
     })
@@ -1401,6 +1499,18 @@ fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
         return None;
     }
     let (callee, arguments, next) = call_head(tokens, 3)?;
+    // Card `STD-IO-COMPOSE`: an optional declared outcome, `succeeds INTEGER`.
+    // The word is `succeeds` and not a ninth reserved word because this is the
+    // same concept the acquisition adapter already spells with it — the site's
+    // literal outcome control — and an acquisition's control is a boolean, so
+    // the two tails are told apart by the literal alone and no malformed
+    // adapter tail can be read as this one.
+    let (outcome, next) = if word(tokens.get(next)) == Some("succeeds") {
+        let (value, after) = signed_integer(tokens, next + 1)?;
+        (Some(value), after)
+    } else {
+        (None, next)
+    };
     if !symbol(tokens.get(next), Symbol::Semicolon) || tokens.len() != next + 1 {
         return None;
     }
@@ -1408,9 +1518,43 @@ fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
         callee,
         arguments,
         succeeds: true,
+        outcome,
         releases: Vec::new(),
         error: String::new(),
     })
+}
+
+/// Read `["-"] INTEGER` at `cursor`, returning the value and the next cursor.
+///
+/// Out-of-range literals are refused, never wrapped: a number this profile
+/// cannot carry exactly is not carried at all, which is the same rule
+/// `source.std-io.v1` already applies to its operands.
+fn signed_integer(tokens: &[Token], cursor: usize) -> Option<(i32, usize)> {
+    let (negative, cursor) = match tokens.get(cursor).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Minus)) => (true, cursor + 1),
+        _ => (false, cursor),
+    };
+    let TokenKind::Integer(text) = &tokens.get(cursor)?.kind else {
+        return None;
+    };
+    let value = text.parse::<i64>().ok()?;
+    let value = if negative { -value } else { value };
+    i32::try_from(value).ok().map(|value| (value, cursor + 1))
+}
+
+/// `let NAME = ["-"] INTEGER;` — a scalar literal binding (card
+/// `EXTERN-SCALAR-LITERAL`).
+///
+/// Tried after both call shapes, so nothing that names a callee can reach it.
+fn parse_literal_binding(tokens: &[Token]) -> Option<i32> {
+    if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
+        return None;
+    }
+    let (value, next) = signed_integer(tokens, 3)?;
+    if !symbol(tokens.get(next), Symbol::Semicolon) || tokens.len() != next + 1 {
+        return None;
+    }
+    Some(value)
 }
 
 fn parse_plain_call(tokens: &[Token]) -> Option<ParsedCall> {
@@ -1422,6 +1566,7 @@ fn parse_plain_call(tokens: &[Token]) -> Option<ParsedCall> {
         callee,
         arguments,
         succeeds: true,
+        outcome: None,
         releases: Vec::new(),
         error: String::new(),
     })

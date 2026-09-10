@@ -1706,6 +1706,19 @@ pub enum SemanticPass {
     /// `Pipe` band above already followed; the code-to-condition mapping is
     /// stable under such a shift.
     Branch,
+    /// Card `STD-IO-COMPOSE`: the checked composition of `source.extern-call.v1`
+    /// and `source.std-io.v1`. Owns the single code `Q043` (spec §L21), the one
+    /// left free between the native-library band `Q039`–`Q042` and the branch
+    /// band `Q044`–`Q046`.
+    ///
+    /// A separate pass from both composed passes on purpose, and deliberately a
+    /// *small* one: every refusal either composed route already gives a module
+    /// is still given by that route under that route's own code, so this pass
+    /// owns only the rules that exist because the two models meet — the
+    /// interleaving, the rendering of a value the extern model bound, and the
+    /// union of the two derived effect rows. If this pass ever owned a custody
+    /// or a rendering rule, the composition would have stopped being a union.
+    ComposedStdIo,
     PluginVerification,
 }
 
@@ -2503,6 +2516,10 @@ pub fn source_diagnostic(
         // outside the decidable tier) and Q046 (the arms disagree at the join)
         // are issued at their own emission sites.
         SemanticPass::Branch => "Q044",
+        // The one code of the composed-route pass. It has no band: every other
+        // refusal a composed module receives is one of the two composed routes'
+        // own.
+        SemanticPass::ComposedStdIo => "Q043",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

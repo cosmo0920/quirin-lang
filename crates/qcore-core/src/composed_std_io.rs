@@ -1,0 +1,473 @@
+//! `source.std-io-extern.v1` — the checked composition of
+//! `source.extern-call.v1` and `source.std-io.v1` (card `STD-IO-COMPOSE`).
+//!
+//! # What this model is, stated before anything else
+//!
+//! It is a **union of two checked models, not a third one**. A composed program
+//! carries an [`ExternProgram`] and a [`StdIoProgram`] side by side plus the
+//! program order that interleaves them, and [`check_composed_program`] runs
+//! [`check_extern_program`] and [`check_std_io_program`] **unmodified** over
+//! them before checking anything of its own. Nothing here re-implements a
+//! custody rule, an adapter rule, an effect rule or a rendering rule; nothing
+//! here can weaken one either, because neither projection is constructed by
+//! this module.
+//!
+//! Concretely, a module on this route gets:
+//!
+//! * every `Q022`–`Q027` extern refusal, at the same site, from the same
+//!   checker, with the mandatory nullable-owned-return adapter and the `Q023`
+//!   contract-selection default unmoved;
+//! * every `Q028`–`Q031` standard-IO refusal, including the structural effect
+//!   discipline — [`StdIoOperand`] still has two constructors and neither can
+//!   denote a resource, so a rendering still cannot touch custody;
+//! * the established sequential passes over the extern lowering's semantics,
+//!   which the composing driver runs exactly as the extern route does;
+//! * and the *join* rules below, which are the only thing this module owns.
+//!
+//! # The join, in full
+//!
+//! Three rules, each fail-closed, each a refusal under `Q043`:
+//!
+//! 1. **The order is an interleaving.** [`ComposedProgram::order`] must list
+//!    every event of both projections exactly once, in each projection's own
+//!    order, ending with the single `Return` both models require. A composed
+//!    program whose order lost, duplicated or reordered an event is refused
+//!    rather than checked, because either projection would then have been
+//!    checked against a program the emitted C does not perform.
+//! 2. **A rendered value is bound earlier, and its number is modeled.** The
+//!    extern model owns the value namespace, so a rendering operand naming a
+//!    scalar resolves to a [`ValueId`] that model bound — never to a resource
+//!    identity, which has no operand form — and the composed step that bound it
+//!    must precede the step that renders it. A value whose number the source
+//!    did not determine (a bound call result with no declared outcome) is not a
+//!    renderable operand at all: rendering it would publish a line no model
+//!    computed, so it refuses.
+//! 3. **Nothing is dropped at the join.** The composed effect row is the
+//!    **union** of the two derived rows and must be admitted by the one row the
+//!    entry declares; each projection's certificate must be its own, rederived
+//!    here rather than believed; and the composed observation must reproduce
+//!    both projections' own observations, per stream.
+//!
+//! # What is not claimed
+//!
+//! * **No cross-stream interleaving.** Standard output carries this module's
+//!   `print` lines *and* the extern route's synthesized call trace, and their
+//!   relative order on that one stream is real and checked. The order between
+//!   stdout and stderr is not modeled, exactly as `source.std-io.v1` already
+//!   stated — C gives no order between two separately buffered streams.
+//! * **No new premise.** Every `ExternAssumption` a composed module carries is
+//!   one its extern projection derived: `DeclaredContract`, `NoExtentTransport`,
+//!   `LinkageSuppliedByBuilder` and `UncheckedLinkage` cross the join
+//!   unchanged, and composing adds none.
+//! * A declared outcome is a fixture control, not a claim about a production
+//!   callee. See [`crate::extern_call::ScalarBinding`].
+
+use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
+
+use crate::extern_call::{
+    AbiType, ExternCallCertificate, ExternEvent, ExternProgram, ValueId, check_extern_program,
+    recheck_extern_certificate,
+};
+use crate::std_io::{
+    StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, check_std_io_program,
+    recheck_std_io_certificate,
+};
+use crate::typed_errors::EffectRow;
+
+/// One step of the composed program, naming the projection that models it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ComposedStep {
+    /// Event `usize` of the extern projection.
+    Extern(usize),
+    /// Event `usize` of the standard-IO projection.
+    Io(usize),
+    /// The single `return;`, which is the last event of **both** projections.
+    /// One source statement, two models, one step.
+    Return,
+}
+
+/// A complete composed module.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComposedProgram {
+    pub entry: String,
+    pub externs: ExternProgram,
+    pub io: StdIoProgram,
+    /// Program order over both projections; see the join rules in the module
+    /// header.
+    pub order: Vec<ComposedStep>,
+    /// The value identity behind each scalar name a rendering may read. Built
+    /// by the composing lowering from the extern model's own value namespace,
+    /// so a name that means a resource identity is absent by construction.
+    pub operand_values: BTreeMap<String, ValueId>,
+    /// The declared ABI spelling of each bound value, so a rendering of a width
+    /// this profile does not render refuses instead of being emitted with the
+    /// wrong conversion.
+    pub value_abi: BTreeMap<ValueId, AbiType>,
+}
+
+/// The one ABI spelling `source.std-io.v1` renders.
+///
+/// Both of its renderings are total on `i32` — `dec` is the signed decimal and
+/// `hex` the unsigned reinterpretation of the *same 32 bits* — so a value of
+/// any other width would be rendered through a conversion specifier that does
+/// not describe it. Refusing is the fail-closed answer; widening the renderable
+/// set is a separate card with its own conversion table.
+pub const RENDERABLE_ABI: AbiType = AbiType::I32;
+
+/// Refusals this composition owns. Everything else a composed module can be
+/// refused for belongs to one of the two projections and keeps that
+/// projection's own code.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ComposedError {
+    /// `Q043`: the order is not an interleaving of the two projections.
+    Order { reason: &'static str },
+    /// `Q043`: a rendering names a scalar whose binding this program does not
+    /// place before it.
+    OperandBoundLater { step: usize, name: String },
+    /// `Q043`: a rendering names a scalar whose number no model determined.
+    OperandNotDetermined { step: usize, name: String },
+    /// `Q043`: a rendering names a value of a width this profile does not
+    /// render.
+    OperandNotRenderable {
+        step: usize,
+        name: String,
+        abi: AbiType,
+    },
+    /// `Q043`: the union of the two derived effect rows is not admitted by the
+    /// one row the entry declares.
+    EffectNotDeclared { effect: String },
+    /// `Q043`: a projection's own checker refused. Reported so the composition
+    /// never produces a certificate over a program a projection rejected; the
+    /// driver reports the projection's own diagnostics beside this.
+    Projection { which: &'static str },
+}
+
+impl ComposedError {
+    /// One code, one pass. Every other refusal a composed module can receive is
+    /// the refusal one of the two composed routes already gave it.
+    #[must_use]
+    pub const fn code(&self) -> &'static str {
+        "Q043"
+    }
+}
+
+impl fmt::Display for ComposedError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Order { reason } => write!(
+                f,
+                "the composed program order does not interleave its two models: {reason}"
+            ),
+            Self::OperandBoundLater { name, .. } => write!(
+                f,
+                "`{name}` is rendered before the statement that binds it; a composed rendering \
+                 reads a value the same entry already bound"
+            ),
+            Self::OperandNotDetermined { name, .. } => write!(
+                f,
+                "`{name}` is bound to a call result this module does not model a number for, so \
+                 rendering it would publish a line no model computed; declare the result with \
+                 `succeeds INTEGER` or render a value this entry determines"
+            ),
+            Self::OperandNotRenderable { name, abi, .. } => write!(
+                f,
+                "`{name}` is declared `{}`, which `source.std-io.v1` does not render; its two \
+                 renderings are total on `int32_t` and on nothing else",
+                abi.c_spelling()
+            ),
+            Self::EffectNotDeclared { effect } => write!(
+                f,
+                "this entry performs `{effect}` across its two models but its declared \
+                 `effects {{ … }}` row does not admit it"
+            ),
+            Self::Projection { which } => {
+                write!(f, "the {which} projection of this module refuses it")
+            }
+        }
+    }
+}
+
+impl std::error::Error for ComposedError {}
+
+/// Evidence a checked composed module publishes.
+///
+/// It carries **both** projections' certificates verbatim. That is the point:
+/// a reader of a composed result reads exactly the two results the two routes
+/// publish on their own, plus the join fields below, and can check either one
+/// against that route's own rules without trusting this module.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComposedCertificate {
+    pub entry: String,
+    pub externs: ExternCallCertificate,
+    pub io: StdIoCertificate,
+    /// The interleaving, rederived and compared rather than copied.
+    pub order: Vec<ComposedStep>,
+    /// The union of the two derived rows.
+    pub effects: EffectRow,
+    /// Every value a rendering read, with the number it carried, in the order
+    /// the renderings read them. A reader can see which numbers crossed from
+    /// the extern model into the rendered lines.
+    pub rendered_values: Vec<(String, i32)>,
+}
+
+/// Check the interleaving alone. Split out so it can be stated as a property
+/// rather than only as a step of the whole check.
+fn check_order(program: &ComposedProgram) -> Result<(), ComposedError> {
+    let extern_events = program.externs.events.len();
+    let io_events = program.io.events.len();
+    // The `Return` is the last event of each projection and one composed step,
+    // so the order is one shorter than the two event counts together.
+    if extern_events == 0 || io_events == 0 {
+        return Err(ComposedError::Order {
+            reason: "a composed module has events in both models; a module using one model is not \
+                     composed and keeps that model's own route",
+        });
+    }
+    if program.externs.events.last() != Some(&ExternEvent::Return)
+        || program.io.events.last() != Some(&StdIoEvent::Return)
+    {
+        return Err(ComposedError::Order {
+            reason: "each projection ends in its own `return`",
+        });
+    }
+    if program.order.last() != Some(&ComposedStep::Return) {
+        return Err(ComposedError::Order {
+            reason: "the composed order ends in the one `return` both models share",
+        });
+    }
+    let mut next_extern = 0;
+    let mut next_io = 0;
+    for (position, step) in program.order.iter().enumerate() {
+        match step {
+            ComposedStep::Extern(index) => {
+                if *index != next_extern {
+                    return Err(ComposedError::Order {
+                        reason: "the extern events appear in their own order, each exactly once",
+                    });
+                }
+                next_extern += 1;
+            }
+            ComposedStep::Io(index) => {
+                if *index != next_io {
+                    return Err(ComposedError::Order {
+                        reason: "the standard-IO events appear in their own order, each exactly \
+                                 once",
+                    });
+                }
+                next_io += 1;
+            }
+            ComposedStep::Return => {
+                if position + 1 != program.order.len() {
+                    return Err(ComposedError::Order {
+                        reason: "nothing follows the composed `return`",
+                    });
+                }
+            }
+        }
+    }
+    // The trailing `Return` of each projection is the composed `Return` step.
+    if next_extern != extern_events - 1 || next_io != io_events - 1 {
+        return Err(ComposedError::Order {
+            reason: "every event of both models is placed exactly once",
+        });
+    }
+    Ok(())
+}
+
+/// Which composed position binds each value name, and which composed position
+/// each standard-IO event occupies.
+fn positions(program: &ComposedProgram) -> (BTreeMap<ValueId, usize>, Vec<usize>) {
+    let mut bound_at = BTreeMap::new();
+    let mut io_positions = vec![0; program.io.events.len()];
+    for (position, step) in program.order.iter().enumerate() {
+        match step {
+            ComposedStep::Extern(index) => {
+                if let Some(ExternEvent::Call(call)) = program.externs.events.get(*index) {
+                    if let Some(binding) = call.binding {
+                        bound_at.insert(binding.value, position);
+                    }
+                } else if let Some(ExternEvent::Bind(literal)) = program.externs.events.get(*index)
+                {
+                    bound_at.insert(literal.value, position);
+                }
+            }
+            ComposedStep::Io(index) => {
+                if let Some(slot) = io_positions.get_mut(*index) {
+                    *slot = position;
+                }
+            }
+            ComposedStep::Return => {}
+        }
+    }
+    (bound_at, io_positions)
+}
+
+/// Check one composed module and derive its certificate.
+///
+/// Runs both projections' own checkers first, then the join. Every refusal
+/// found is reported, so a caller sees the whole cascade rather than the first
+/// step of it.
+pub fn check_composed_program(
+    program: &ComposedProgram,
+) -> Result<ComposedCertificate, Vec<ComposedError>> {
+    let Ok(extern_certificate) = check_extern_program(&program.externs) else {
+        return Err(vec![ComposedError::Projection { which: "extern" }]);
+    };
+    let Ok(io_certificate) = check_std_io_program(&program.io) else {
+        return Err(vec![ComposedError::Projection {
+            which: "standard-IO",
+        }]);
+    };
+    let mut errors = Vec::new();
+    if let Err(error) = check_order(program) {
+        // Every later rule reads the order, so a broken interleaving is
+        // reported alone rather than followed by its own consequences.
+        return Err(vec![error]);
+    }
+    let (bound_at, io_positions) = positions(program);
+    let mut rendered_values = Vec::new();
+    for (index, event) in program.io.events.iter().enumerate() {
+        let operand = match event {
+            StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => operand,
+            StdIoEvent::Flush | StdIoEvent::Return => continue,
+        };
+        let StdIoOperand::Scalar(name) = operand else {
+            continue;
+        };
+        let step = io_positions.get(index).copied().unwrap_or_default();
+        let Some(value) = program.operand_values.get(name).copied() else {
+            errors.push(ComposedError::OperandNotDetermined {
+                step,
+                name: name.clone(),
+            });
+            continue;
+        };
+        match program.value_abi.get(&value) {
+            Some(abi) if *abi == RENDERABLE_ABI => {}
+            Some(abi) => {
+                errors.push(ComposedError::OperandNotRenderable {
+                    step,
+                    name: name.clone(),
+                    abi: *abi,
+                });
+                continue;
+            }
+            None => {
+                errors.push(ComposedError::OperandNotDetermined {
+                    step,
+                    name: name.clone(),
+                });
+                continue;
+            }
+        }
+        match bound_at.get(&value) {
+            Some(binding_step) if *binding_step < step => {}
+            _ => {
+                errors.push(ComposedError::OperandBoundLater {
+                    step,
+                    name: name.clone(),
+                });
+                continue;
+            }
+        }
+        // The number itself comes from the standard-IO projection's own scalar
+        // environment, which the composing lowering filled from the extern
+        // model. Absence here is the "no model computed a number" case and is
+        // already a refusal of that projection's checker; it is repeated rather
+        // than assumed away.
+        match program.io.scalars.get(name) {
+            Some(number) => rendered_values.push((name.clone(), *number)),
+            None => errors.push(ComposedError::OperandNotDetermined {
+                step,
+                name: name.clone(),
+            }),
+        }
+    }
+    // The union of the two derived rows, against the one row the entry
+    // declares. Neither projection sees the other's effects, so this is the
+    // one place the composed row exists at all.
+    let mut effects = BTreeSet::new();
+    effects.extend(extern_certificate.effects.iter().cloned());
+    effects.extend(io_certificate.effects.iter().cloned());
+    let effects = EffectRow::new(effects);
+    for effect in effects.iter() {
+        if !program.io.declared_effects.contains(effect) {
+            errors.push(ComposedError::EffectNotDeclared {
+                effect: format!("{effect:?}"),
+            });
+        }
+    }
+    if errors.is_empty() {
+        Ok(ComposedCertificate {
+            entry: program.entry.clone(),
+            externs: extern_certificate,
+            io: io_certificate,
+            order: program.order.clone(),
+            effects,
+            rendered_values,
+        })
+    } else {
+        Err(errors)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ComposedRecheckFailure {
+    Entry,
+    Extern,
+    Io,
+    Order,
+    Effects,
+    RenderedValues,
+    Refused,
+}
+
+impl fmt::Display for ComposedRecheckFailure {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let what = match self {
+            Self::Entry => "the entry name",
+            Self::Extern => "the extern projection's certificate",
+            Self::Io => "the standard-IO projection's certificate",
+            Self::Order => "the composed order",
+            Self::Effects => "the composed effect row",
+            Self::RenderedValues => "the rendered values",
+            Self::Refused => "the program itself, which the recheck refuses",
+        };
+        write!(f, "{what} does not survive an independent rederivation")
+    }
+}
+
+/// Rederive the composed certificate from the program alone and compare it
+/// field for field, **including** rechecking each projection's certificate
+/// against that projection's own recheck. A composed publication that dropped
+/// or edited either sub-certificate is refused here rather than published.
+pub fn recheck_composed_certificate(
+    program: &ComposedProgram,
+    certificate: &ComposedCertificate,
+) -> Result<(), ComposedRecheckFailure> {
+    recheck_extern_certificate(&program.externs, &certificate.externs)
+        .map_err(|_| ComposedRecheckFailure::Extern)?;
+    recheck_std_io_certificate(&program.io, &certificate.io)
+        .map_err(|_| ComposedRecheckFailure::Io)?;
+    let rederived = check_composed_program(program).map_err(|_| ComposedRecheckFailure::Refused)?;
+    if rederived.entry != certificate.entry {
+        return Err(ComposedRecheckFailure::Entry);
+    }
+    if rederived.externs != certificate.externs {
+        return Err(ComposedRecheckFailure::Extern);
+    }
+    if rederived.io != certificate.io {
+        return Err(ComposedRecheckFailure::Io);
+    }
+    if rederived.order != certificate.order {
+        return Err(ComposedRecheckFailure::Order);
+    }
+    if rederived.effects != certificate.effects {
+        return Err(ComposedRecheckFailure::Effects);
+    }
+    if rederived.rendered_values != certificate.rendered_values {
+        return Err(ComposedRecheckFailure::RenderedValues);
+    }
+    Ok(())
+}

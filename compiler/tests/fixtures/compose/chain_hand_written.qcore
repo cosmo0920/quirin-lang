@@ -1,0 +1,36 @@
+import std.extern;
+import std.fmt;
+import std.io;
+import std.logger;
+
+// The hand-written twin of `chain.qcore`: the same program with both pipelines
+// spelled as the statement sequences they desugar to. The two emit
+// **byte-identical** C11 and observe identically, which is the pipe operator's
+// own claim (`SourceProgram::syntax_equivalent`) surviving the composition.
+//
+// The temporaries are named here and hygienic there, and the names never reach
+// the emitted C: it names values `vN` by identity, exactly as it names
+// resources `rN`.
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn qcore_extern_scale(value: i32, factor: i32) -> i32;
+extern fn qcore_extern_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    qcore_extern_fill(b, 7);
+    let total = qcore_extern_sum(b, 8) succeeds 56;
+    print dec total;
+    let scaled = qcore_extern_scale(total, 2) succeeds 112;
+    log info dec scaled;
+    let value = 42;
+    let doubled = qcore_extern_scale(value, 2) succeeds 84;
+    log warn hex doubled;
+    qcore_extern_release(move b);
+    flush;
+    print dec -7;
+    return;
+}

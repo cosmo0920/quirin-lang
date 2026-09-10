@@ -847,18 +847,25 @@ fn a_pipeline_temporary_cannot_be_named_or_shadowed() {
 
     // A one-stage pipeline needs no temporary, so the same name is untouched
     // there: the refusal is scoped to files that actually generate one.
+    //
+    // Card `STD-IO-COMPOSE` moved this half's *measurement* and not its rule.
+    // `let qcore__pipe0 = 0;` used to be refused at `Q025` for being an extern
+    // `let` that named no callee, so this half asserted the absence of `Q036`
+    // among that refusal's diagnostics; the same statement is now an admitted
+    // scalar literal binding (`EXTERN-SCALAR-LITERAL`) and the file compiles.
+    // The claim under test is unchanged and is pinned more strongly than
+    // before: a file that generates no temporary may write the prefix, and
+    // nothing refuses it.
     let single = replace_fixture(
         ROUND_TRIP_PIPED,
         "    let b =",
         "    let qcore__pipe0 = 0;\n    let b =",
     );
-    assert!(
-        compile_with(&single, selection())
-            .map(|module| module.execution_profile)
-            .unwrap_err()
-            .iter()
-            .all(|diagnostic| diagnostic.code != "Q036"),
-        "a pipe-free-of-temporaries file keeps its own refusal"
+    let module = compile_with(&single, selection())
+        .expect("a file that generates no temporary may write the reserved prefix");
+    assert_eq!(
+        module.execution_profile,
+        qcore_compiler::SourceExecutionProfile::ExternCallsV1
     );
 }
 

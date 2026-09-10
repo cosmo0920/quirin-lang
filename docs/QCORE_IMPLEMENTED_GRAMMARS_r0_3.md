@@ -702,16 +702,38 @@ extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")",
 entry         = "fn", NAME, "(", ")", "->", "unit",
                 [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
                 "{", { extern_stmt }, "}" ;
-extern_stmt   = acquisition | scalar_binding | plain_call | "return", ";" ;
+extern_stmt   = acquisition | scalar_binding | scalar_literal | plain_call
+              | "return", ";" ;
 acquisition   = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
                 "succeeds", BOOL, "else", { disposition },
                 "raise", ERROR_NAME, ";" ;
 disposition   = CALLEE, "(", [ arg, { ",", arg } ], ")" ;
-scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
+scalar_binding = "let", NAME, "=", CALLEE, "(", [ arg, { ",", arg } ], ")",
+                 [ "succeeds", [ "-" ], NAT ], ";" ;
+scalar_literal = "let", NAME, "=", [ "-" ], NAT, ";" ;
 plain_call    = CALLEE, "(", [ arg, { ",", arg } ], ")", ";" ;
 arg           = [ "-" ], NAT | NAME | "move", NAME | "out" ;
 EFFECT        = "io" | "alloc" | "mut" ;
 ```
+
+Two of those forms are card `STD-IO-COMPOSE`'s and both stay inside the value
+namespace card `PIPE-SCALAR-RESULT` opened. `scalar_literal` binds a number
+written at the site: it calls nothing, so it derives no effect, admits no
+argument, opens no obligation and can carry no custody in any position — the
+narrowest widening that lets a rendered value originate in the module that
+renders it (`EXTERN-SCALAR-LITERAL`). The optional `succeeds` tail on
+`scalar_binding` is the site's **declared outcome**, the same concept the
+acquisition adapter already spells with that word: `succeeds BOOL` declares
+which arm a nullable owned return takes and `succeeds INTEGER` declares which
+number a scalar result carries. The two are told apart by the literal alone, so
+no malformed adapter tail can be read as the other and `Q025` keeps its exact
+shape; no reserved word was added. Neither control is believed by the emitted
+program, which compares the real result and exits 70 on disagreement.
+
+A bound value whose number the source did **not** declare is still a value: it
+may be passed at a declared scalar parameter exactly as before. What it may not
+do is be *rendered*, which is a `source.std-io-extern.v1` rule (§G02i) and not
+one of this route's — this route renders nothing.
 
 `ABI_TYPE` is exactly the resource-contract v1 projection of §G05. The callee's
 contract is **not** written here: it comes from an explicit `CompileOptions`
@@ -1129,6 +1151,50 @@ no format-string language, no string or character value, no file or descriptor,
 and no logger configuration model. A `print` inside a `thread scope` or beside
 an extern call stays with the more specific route and keeps its refusal. See
 [the module record](reports/wave17-std-modules/README.md).
+
+## G02i. Composed extern calls and rendered lines
+
+`source.std-io-extern.v1` (card `STD-IO-COMPOSE`). Selected when a module both
+calls a declared `extern fn` (§G02d) and writes one of the standard-IO
+statements (§G02g) — the conjunction of those two routes' own selectors, and
+nothing else.
+
+```ebnf
+composed_module = "import", "std.extern", ";",
+                  { "import", STD_IO_MODULE, ";" },
+                  { error_decl | extern_decl | entry } ;
+composed_stmt   = extern_stmt | io_stmt ;   (* §G02d and §G02g, verbatim *)
+```
+
+**This route adds no statement.** Every statement of a composed entry is lowered
+by one of the two existing lowerings, unedited, chosen by the statement head
+alone: `print`, `log` and `flush` are the standard-IO model's, `return;` is the
+single return *both* models require, and everything else is the extern model's.
+Each lowering runs with the other's statements skipped, so neither ever sees a
+statement it does not model and neither refusal surface moves. A module using
+one feature set is not composed and keeps that route byte for byte.
+
+Route selection places this composition **after every concurrent route and
+before both routes it composes**. A module that prints and spawns, or
+extern-calls and spawns, therefore keeps its concurrent route's existing
+refusal: this card composes two *sequential* models and no other pair.
+
+What the composition decides, and all it decides, is **which value a rendering
+reads**. The extern model owns the value namespace, so the operand names of
+`print`/`log` resolve against its bindings — a bound scalar, never a resource
+identity, which has no operand form at all (§G02g's effect discipline is
+structural and is unchanged here). The operand must be bound by an earlier
+composed step, must be of the one ABI width the two renderings are total on, and
+must be a value whose number the source **determined**: a `scalar_literal`, or a
+`scalar_binding` carrying its declared `succeeds INTEGER` outcome. A bound call
+result with no declared outcome is refused at `Q043`, because rendering it would
+publish a line no model computed.
+
+The composed program's derived effect row is the **union** of the two models'
+rows and must be admitted by the one row the entry declares. Its observation is
+per stream: standard output carries this route's `print` lines *and* the extern
+route's synthesized call trace, in one real order on that one stream, and no
+order between stdout and stderr is modeled — the boundary §G02g already stated.
 
 ## G02h. The pipe operator, and the operator token family
 

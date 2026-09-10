@@ -17,7 +17,7 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
-use qcore_core::{std_io, std_io_c_emit};
+use qcore_core::{composed_std_io, composed_std_io_c_emit, std_io, std_io_c_emit};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -160,6 +160,15 @@ pub enum CheckedSourceModule {
     /// `STD-MODULES`). The certificate is the evidence; the lowered program is
     /// retained beside it so a consumer can re-derive rather than believe it.
     StandardIo(Box<CheckedStdIoModule>),
+    /// One entry function checked under `source.std-io-extern.v1` (card
+    /// `STD-IO-COMPOSE`): a module that both calls declared extern functions and
+    /// prints. All three halves are retained separately, because all three were
+    /// required and none was derived from another — the extern call sites by the
+    /// core extern checker, the surrounding custody, flow and effect obligations
+    /// by the established sequential passes, and the rendered lines by the
+    /// standard-IO checker — with the composed certificate carrying both
+    /// projections' own certificates verbatim beside the join.
+    Composed(Box<CheckedComposedModule>),
 }
 
 /// A checked `source.std-io.v1` module.
@@ -173,6 +182,21 @@ pub enum CheckedSourceModule {
 pub struct CheckedStdIoModule {
     pub lowered: qcore_frontend::source_std_io::LoweredStdIoModule,
     pub certificate: std_io::StdIoCertificate,
+}
+
+/// A checked `source.std-io-extern.v1` module (card `STD-IO-COMPOSE`).
+///
+/// Unlike [`CheckedStdIoModule`], this one **does** carry sequential evidence:
+/// its extern half binds real identities, so the custody, flow and cleanup
+/// passes have something to check and they run exactly as they do on the extern
+/// route.
+#[derive(Clone, Debug)]
+pub struct CheckedComposedModule {
+    pub lowered: qcore_frontend::source_composed::LoweredComposedModule,
+    pub certificate: composed_std_io::ComposedCertificate,
+    /// The same entry re-checked by every established sequential pass, with the
+    /// declared extern summaries supplied as call-site assumptions.
+    pub sequential: CheckedProgram,
 }
 
 /// A checked `source.extern-call.v1` module.
@@ -233,7 +257,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
         }
     }
 
@@ -248,7 +273,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -260,7 +286,8 @@ impl CheckedSourceModule {
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -275,7 +302,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -287,7 +315,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ExternCalls(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -299,7 +328,8 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::StandardIo(_) => None,
+            | Self::StandardIo(_)
+            | Self::Composed(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -311,8 +341,27 @@ impl CheckedSourceModule {
             | Self::CheckedMutexGuards(_)
             | Self::CheckedEpochBound(_)
             | Self::ComposedEpochTasks(_)
-            | Self::ExternCalls(_) => None,
+            | Self::ExternCalls(_)
+            | Self::Composed(_) => None,
             Self::StandardIo(module) => Some(module),
+        }
+    }
+
+    /// The composed evidence of a module whose *whole* checked evidence is the
+    /// composition. A composed module answers `None` to `as_extern_calls` and
+    /// `as_standard_io` on the `ComposedEpochTasks` precedent: each of its
+    /// certificates is one half of a checked pair, and a consumer that wants
+    /// one must ask for the composition and see the other beside it.
+    pub fn as_composed(&self) -> Option<&CheckedComposedModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_) => None,
+            Self::Composed(module) => Some(module),
         }
     }
 
@@ -335,6 +384,9 @@ impl CheckedSourceModule {
             // And likewise for standard IO: one entry is lowered, and the
             // profile admits no calls at all.
             Self::StandardIo(_) => 1,
+            // And likewise for the composition: one entry is lowered, by two
+            // models rather than one.
+            Self::Composed(_) => 1,
         }
     }
 }
@@ -379,6 +431,12 @@ pub enum SourceExecutionProfile {
     /// bundled modules (card `STD-MODULES`). The route's operand grammar admits
     /// no resource, so its derived effect row is exactly `{Io}`.
     StandardIoV1,
+    /// `source.std-io-extern.v1`: the checked composition of
+    /// `source.extern-call.v1` and `source.std-io.v1` in one entry (card
+    /// `STD-IO-COMPOSE`). Both models check their own half unmodified and the
+    /// composition checks only where they meet, so this profile's guarantees
+    /// are exactly the conjunction of the two it composes plus the join.
+    ComposedStdIoExternV1,
 }
 
 #[derive(Clone, Debug)]
@@ -412,6 +470,11 @@ impl CompiledModule {
     pub fn declared_assumptions(&self) -> &[extern_call::ExternAssumption] {
         match &self.checked {
             CheckedSourceModule::ExternCalls(module) => &module.certificate.assumptions,
+            // Card `STD-IO-COMPOSE`: composing must not lose the surface at
+            // which a reader sees an unchecked-linkage waiver. The composed
+            // certificate carries the extern projection's own premise list
+            // verbatim, so this is the same list the extern route publishes.
+            CheckedSourceModule::Composed(module) => &module.certificate.externs.assumptions,
             _ => &[],
         }
     }
@@ -603,6 +666,15 @@ pub fn compile_files_with_registry(
     if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
         return compile_task_source(&parsed, &typed, mode, options, &ranges);
     }
+    // Selected after every concurrent route and before both routes it composes
+    // (card `STD-IO-COMPOSE`). The order is what makes the composition safe to
+    // add: a module that spawns *and* prints, or spawns *and* extern-calls,
+    // never reaches here, so both concurrency exclusions keep their existing
+    // refusals; and a module using one of the two composed feature sets fails
+    // this conjunction and falls through to that route byte for byte.
+    if qcore_frontend::source_composed::has_source_composed(&parsed) {
+        return compile_composed_source(&parsed, &typed, mode, options, &ranges);
+    }
     // Selected after the concurrent routes on purpose: a module that both
     // spawns and calls an extern function stays with the task route, which
     // keeps its existing refusal. Lifting that is a separate card, because a
@@ -611,11 +683,13 @@ pub fn compile_files_with_registry(
         return compile_extern_source(&parsed, &typed, mode, options, &ranges);
     }
     // Selected last among the special routes, on the same principle as the
-    // extern route above: a module that both prints and spawns, or both prints
-    // and calls an extern function, stays with the more specific model, which
-    // keeps its existing refusal for the statements it does not model. Lifting
-    // either composition is a separate card — a worker and an extern callee are
-    // each a separate checked model.
+    // extern route above: a module that both prints and spawns stays with the
+    // more specific model, which keeps its existing refusal for the statements
+    // it does not model. Lifting *that* composition is still a separate card —
+    // a worker is a separate checked model. The print-and-extern-call
+    // composition is no longer a refusal: card `STD-IO-COMPOSE` routes it above,
+    // and reaching this line means the module uses this route's statements and
+    // no extern call.
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -2121,32 +2195,21 @@ fn load_native_libraries(
     })
 }
 
-/// Card `source.extern-call.v1`. Every step here fails closed: no contract
-/// selection, an absent name, an unadmitted mode, an unbridgeable type, a
-/// missing null adapter, a refused context or a declaration that disagrees
-/// with its selected contract each produce a diagnostic and no module.
+/// Admit every declared extern callee this module calls, or refuse by name.
 ///
-/// A module accepted here is checked twice over the same lowering: the core
-/// extern checker validates the call sites and the adapter, and every
-/// established sequential pass validates the surrounding custody, resource
-/// flow and effect obligations with the declared extern summaries supplied as
-/// call-site assumptions. Neither check is derived from the other.
-fn compile_extern_source(
+/// The whole contract-selection, manifest, signature-agreement and bridging
+/// gate of `source.extern-call.v1`, lifted out of [`compile_extern_source`]
+/// unchanged so the composed route (card `STD-IO-COMPOSE`) admits callees by
+/// exactly the same decision. There is no second admission table and no second
+/// `Q023` default: composing a module with a printing model cannot buy it a
+/// callee the extern route alone would refuse.
+fn admit_extern_callees(
     parsed: &SourceProgram,
-    typed: &TypedSourceProgram,
-    mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
-) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+) -> Result<BTreeMap<String, extern_call::ExternCallee>, Vec<FileDiagnostic>> {
     use qcore_frontend::source_extern;
 
-    if mode != SourceModuleMode::Executable {
-        return Err(vec![plain_diagnostic(
-            "Q500",
-            "entry-free extern-calling modules require additional source lowering",
-        )]);
-    }
-    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
     let called = source_extern::called_extern_names(parsed);
     let first_span = called
         .values()
@@ -2356,6 +2419,35 @@ fn compile_extern_source(
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
+    Ok(callees)
+}
+/// Card `source.extern-call.v1`. Every step here fails closed: no contract
+/// selection, an absent name, an unadmitted mode, an unbridgeable type, a
+/// missing null adapter, a refused context or a declaration that disagrees
+/// with its selected contract each produce a diagnostic and no module.
+///
+/// A module accepted here is checked twice over the same lowering: the core
+/// extern checker validates the call sites and the adapter, and every
+/// established sequential pass validates the surrounding custody, resource
+/// flow and effect obligations with the declared extern summaries supplied as
+/// call-site assumptions. Neither check is derived from the other.
+fn compile_extern_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_extern;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q500",
+            "entry-free extern-calling modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let callees = admit_extern_callees(parsed, options, ranges)?;
 
     let lowered =
         source_extern::lower_source_extern(parsed, typed, &entry, &callees).map_err(|errors| {
@@ -2460,6 +2552,189 @@ fn compile_extern_source(
         source_map: Vec::new(),
         // The reference observation of this route is the extern call trace, not
         // the sequential cleanup observation this field carries.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.std-io-extern.v1` module: the checked composition of
+/// `source.extern-call.v1` and `source.std-io.v1` (card `STD-IO-COMPOSE`).
+///
+/// Every gate either composed route runs is run here, by that route's own code:
+/// [`admit_extern_callees`] admits the callees, the composed lowering delegates
+/// each statement to that model's own unedited lowering,
+/// [`composed_std_io::check_composed_program`] runs both checkers before its
+/// own join, and the established sequential passes re-check the extern half
+/// exactly as `compile_extern_source` does. What composing adds is the join and
+/// nothing else.
+fn compile_composed_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_frontend::source_composed;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q043",
+            "entry-free composed modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let callees = admit_extern_callees(parsed, options, ranges)?;
+    let lowered = source_composed::lower_source_composed(parsed, typed, &entry, &callees).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    // Both projections are checked by their own checkers first, so a composed
+    // module receives each route's own diagnostics under each route's own code.
+    // The composed checker runs them again inside its own derivation; running
+    // them here as well is what makes the *reported* refusal the specific one.
+    let extern_certificate =
+        extern_call::check_extern_program(&lowered.program.externs).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let span = lowered
+                        .externs
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::ExternCall,
+                        span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    std_io::check_std_io_program(&lowered.program.io).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .io
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardIo,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    let certificate =
+        composed_std_io::check_composed_program(&lowered.program).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::ComposedStdIo,
+                        lowered.scope_span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive — here, all three of them.
+    composed_std_io::recheck_composed_certificate(&lowered.program, &certificate).map_err(
+        |failure| {
+            vec![map_raw_diagnostic(
+                "Q043",
+                SemanticPass::ComposedStdIo,
+                lowered.scope_span,
+                format!("the composed certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        },
+    )?;
+    // Card `UNSAFE-LINKAGE`'s publication tripwire, unchanged and unweakened by
+    // composing: a composed certificate that lost an unchecked-linkage premise
+    // between derivation and publication is refused rather than published.
+    if !extern_call::certificate_carries_unchecked_linkage(
+        &lowered.program.externs,
+        &extern_certificate,
+    ) || !extern_call::certificate_carries_unchecked_linkage(
+        &lowered.program.externs,
+        &certificate.externs,
+    ) {
+        return Err(vec![map_raw_diagnostic(
+            "Q035",
+            SemanticPass::UncheckedLinkage,
+            lowered.scope_span,
+            "the published composed certificate does not carry an unchecked-linkage premise for every uncontracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+
+    let error_names = lowered.program.externs.errors.clone();
+    let sequential = qcore_frontend::whole_program::check_whole_program_with_externs(
+        typed,
+        &ErrorDeclarations::new(error_names.iter().cloned()),
+        vec![lowered.externs.semantics.clone()],
+        &lowered.externs.extern_summaries,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+
+    let reference_observation =
+        composed_std_io_c_emit::interpret_composed_program(&lowered.program, &certificate)
+            .map_err(|refusal| {
+                vec![plain_diagnostic(
+                    "Q043",
+                    format!("the composed reference execution refused this trace: {refusal:?}"),
+                )]
+            })?;
+    let emission = composed_std_io_c_emit::emit_composed_c11(&lowered.program, &certificate)
+        .map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q043",
+                format!("the composed backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::Composed(Box::new(CheckedComposedModule {
+            lowered,
+            certificate,
+            sequential,
+        })),
+        execution_profile: SourceExecutionProfile::ComposedStdIoExternV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream record of
+        // both models' lines, carried beside the extern route's own trace
+        // rather than on the sequential cleanup field, which models something
+        // else entirely.
         reference_observation: None,
         extern_observation: Some(reference_observation),
     })
