@@ -54,6 +54,7 @@ import QCore.ChunkSource
 import QCore.DerivedTextAdmission
 import QCore.TwoDerivationAdmission
 import QCore.DeclaredAbiAgreement
+import QCore.DeclaredModeAgreement
 import QCore.FrameHelperTask
 import QCore.ControlFlow
 import QCore.ExecutableModel

@@ -460,7 +460,11 @@ impl AbiAgreement {
 /// would rename a function this unit declares, and the declaration is exactly
 /// what the comparison read. The test is the one card HASH-CLAUSE established,
 /// conservative in the refusing direction.
-fn is_call_position(tokens: &[Token], index: usize) -> bool {
+///
+/// Card **LOADER-ABI-MODES** withdraws by the same mechanism and reuses this
+/// rule rather than restating it, so the two withdrawals cannot drift apart in
+/// what they consider a call site.
+pub(crate) fn is_call_position(tokens: &[Token], index: usize) -> bool {
     match index.checked_sub(1).map(|previous| &tokens[previous].text) {
         None => false,
         Some(previous) if previous == "*" => false,

@@ -1,0 +1,315 @@
+--- contracts: 24 differing leaves
+       24  other
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/chunk_residency.qcore
+        - <absent>
+        + module contract;
+
+// ChunkIO chunk residency — resource-projection vocabulary version 1.
+//
+// Card NEIGHBOURS
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+        - <absent>
+        + module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycl
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/hash_table_publication.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit hash-table publication — resource-projection vocabulary version 1.
+//
+// Card 
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/input_chunk_helpers.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit input-chunk file-static helpers — resource-projection vocabulary
+// version 1.
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/input_chunk_name.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit input-chunk name accessor — resource-projection vocabulary v1.
+//
+// Card PROD
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/logging.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit diagnostic logging — resource-projection vocabulary version 1.
+//
+// Card PROD
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/resource_memory.qcore
+        - <absent>
+        + module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycl
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/routes_mask.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit routes-mask helpers — resource-projection vocabulary version 1.
+//
+// Card PRO
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/time.qcore
+        - <absent>
+        + module contract;
+
+// Fluent Bit clock reading — resource-projection vocabulary version 1.
+//
+// Card NEIGHBOUR
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/libc/memory.qcore
+        - <absent>
+        + module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycl
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/librdkafka/memory.qcore
+        - <absent>
+        + module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycl
+    sources//home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a484da31d8f034250/compiler/../contract/profiles/fluent-bit/../../qcore/monkey/memory.qcore
+        - <absent>
+        + module contract;
+
+// Trusted resource-projection assumptions, vocabulary version 1.
+// These preserve the Cycl
+--- source-effects: 45 differing leaves
+        6  identity digest: build_digest
+        5  identity digest: configuration_digest
+        3  identity digest: package_digest
+        1  identity digest: preprocessed_source_digest
+        3  identity digest: task_digest
+       27  other
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/observed_runs_only
+        - False
+        + <absent>
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/path_exploration/kind
+        - bounded_paths
+        + <absent>
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/path_exploration/paths
+        - 4
+        + <absent>
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/observed_runs_only
+        - <absent>
+        + False
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/path_exploration/kind
+        - <absent>
+        + bounded_paths
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/path_exploration/paths
+        - <absent>
+        + 4
+    results/16/evidence/coverage/0
+        - resource_contracts:86c20a4e58b7e910c29b4355
+        + resource_contracts:e6f09ab904532d9f571b4242
+    results/16/evidence/reproducibility/package_digest
+        - 4d69b3d9e2649659e167a65e203c03e51c72361511e99b332c352d7a99886509
+        + 32af033a52e00d1ca8ed4d7588e70865432238f7c13a57941d16cda780f12fa7
+    results/16/evidence/unit/build_digest
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/16/import_identity/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/16/import_identity/helpers/cio_error_reset/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/16/task/contract_sources/qcore:boolean-field-import:v1
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+--- source: 17 differing leaves
+        7  other
+       10  path-literal (this worktree's absolute path)
+    wrappers/5/paths/0/operations/3/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/5/paths/1/operations/6/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/0/operations/2/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/1/operations/5/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/3/operations/12/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+--- contracts: 0 leaves differ after normalising path provenance
+--- source-effects: 45 leaves differ after normalising path provenance
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/observed_runs_only
+        - False
+        + <absent>
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/path_exploration/kind
+        - bounded_paths
+        + <absent>
+    results/16/bounds/resource_contracts:86c20a4e58b7e910c29b4355/path_exploration/paths
+        - 4
+        + <absent>
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/observed_runs_only
+        - <absent>
+        + False
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/path_exploration/kind
+        - <absent>
+        + bounded_paths
+    results/16/bounds/resource_contracts:e6f09ab904532d9f571b4242/path_exploration/paths
+        - <absent>
+        + 4
+    results/16/evidence/coverage/0
+        - resource_contracts:86c20a4e58b7e910c29b4355
+        + resource_contracts:e6f09ab904532d9f571b4242
+    results/16/evidence/reproducibility/package_digest
+        - 4d69b3d9e2649659e167a65e203c03e51c72361511e99b332c352d7a99886509
+        + 32af033a52e00d1ca8ed4d7588e70865432238f7c13a57941d16cda780f12fa7
+    results/16/evidence/unit/build_digest
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/16/import_identity/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/16/import_identity/helpers/cio_error_reset/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/16/task/contract_sources/qcore:boolean-field-import:v1
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/16/task/obligations/0/obligation_id
+        - resource_contracts:86c20a4e58b7e910c29b4355
+        + resource_contracts:e6f09ab904532d9f571b4242
+    results/16/task/unit/build_digest
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/16/witness/task_digest
+        - 02f8b67c58d4d31585e8ca4cb9da80a94a3c692c05160b06afb59b4e04f41c7c
+        + f990068baf62ed3f14f6d39eaab2a7ecfe34e5268e3c2347414bdbcb79313d25
+    results/24/bounds/resource_contracts:5f19abddb18d20b0c3bb93ce/observed_runs_only
+        - <absent>
+        + False
+    results/24/bounds/resource_contracts:5f19abddb18d20b0c3bb93ce/path_exploration/kind
+        - <absent>
+        + bounded_paths
+    results/24/bounds/resource_contracts:5f19abddb18d20b0c3bb93ce/path_exploration/paths
+        - <absent>
+        + 4
+    results/24/bounds/resource_contracts:7e01fca253080d817516abd6/observed_runs_only
+        - False
+        + <absent>
+    results/24/bounds/resource_contracts:7e01fca253080d817516abd6/path_exploration/kind
+        - bounded_paths
+        + <absent>
+    results/24/bounds/resource_contracts:7e01fca253080d817516abd6/path_exploration/paths
+        - 4
+        + <absent>
+    results/24/evidence/coverage/0
+        - resource_contracts:7e01fca253080d817516abd6
+        + resource_contracts:5f19abddb18d20b0c3bb93ce
+    results/24/evidence/reproducibility/package_digest
+        - 4d69b3d9e2649659e167a65e203c03e51c72361511e99b332c352d7a99886509
+        + 32af033a52e00d1ca8ed4d7588e70865432238f7c13a57941d16cda780f12fa7
+    results/24/evidence/unit/build_digest
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/24/import_identity/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/24/import_identity/helpers/cio_error_reset/configuration_digest
+        - ea05fc77752fe1c27533310b22bf85cd9762c9bd2a62562a1665917d12e9f4c1
+        + 3fccd33a1dc3349b270bf40c2e634122fc8c0be78c397d726602f84a58a7bb00
+    results/24/task/contract_sources/qcore:boolean-field-import:v1
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/24/task/obligations/0/obligation_id
+        - resource_contracts:7e01fca253080d817516abd6
+        + resource_contracts:5f19abddb18d20b0c3bb93ce
+    results/24/task/unit/build_digest
+        - f074bd749f2fb9c68fa5b0d0792b78ae3d5750331006f08137ac8d03843047d6
+        + 97bd891228d39d93886d55915dca7fdc7c17dfb12fa183663d560d808c92482e
+    results/24/witness/task_digest
+        - 24bfe67273e9c5b11730e7464e0d5e343ef18db2c79a91f9ece617000aab2197
+        + 13a430c6b238095b1efadef11b9c1996739257625ce4cbeb2a3537b7ef178652
+    results/63/bounds/resource_contracts:9089584d951896ec9e6d169e/observed_runs_only
+        - False
+        + <absent>
+    results/63/bounds/resource_contracts:9089584d951896ec9e6d169e/path_exploration/kind
+        - bounded_paths
+        + <absent>
+    results/63/bounds/resource_contracts:9089584d951896ec9e6d169e/path_exploration/paths
+        - 4
+        + <absent>
+    results/63/bounds/resource_contracts:bd07cee8e0420924ad6b996a/observed_runs_only
+        - <absent>
+        + False
+    results/63/bounds/resource_contracts:bd07cee8e0420924ad6b996a/path_exploration/kind
+        - <absent>
+        + bounded_paths
+    results/63/bounds/resource_contracts:bd07cee8e0420924ad6b996a/path_exploration/paths
+        - <absent>
+        + 4
+    results/63/evidence/coverage/0
+        - resource_contracts:9089584d951896ec9e6d169e
+        + resource_contracts:bd07cee8e0420924ad6b996a
+    results/63/evidence/reproducibility/package_digest
+        - 4d69b3d9e2649659e167a65e203c03e51c72361511e99b332c352d7a99886509
+        + 32af033a52e00d1ca8ed4d7588e70865432238f7c13a57941d16cda780f12fa7
+    results/63/evidence/unit/build_digest
+        - de216df655b69b7ad821cf3328ff8c205c9256f27c0dd04d3d2d4e4a0f580492
+        + 28474b090f490e3caeef087bd3bb93f3d7a978a5ea96b191a3929f5f62d9d22b
+    results/63/import_identity/configuration_digest
+        - fe3c50e633655d7ddb5a4ba4cd78cf3ea09cd14c604e2709936c1df62cc3e6d8
+        + f2c4c0d4409bb3d29289c02c0f0b90ffa2d8fd8594750d74404ee83c9c132c37
+--- source: 17 leaves differ after normalising path provenance
+    compile_entry/command
+        - /usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK
+        + /usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK
+    compile_entry/directory
+        - <root>/measure/clang66910c10/monkey/monkey-build/mk_core
+        + <root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-build/mk_core
+    compile_entry/file
+        - <root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event.c
+        + <root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk_
+    wrappers/5/paths/0/operations/3/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/5/paths/0/operations/3/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/5/paths/1/operations/6/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/5/paths/1/operations/6/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/6/paths/0/operations/2/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/0/operations/2/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/6/paths/1/operations/5/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/1/operations/5/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/6/paths/3/operations/12/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/6/paths/3/operations/12/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/7/paths/0/operations/5/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/7/paths/0/operations/5/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk
+    wrappers/9/paths/0/operations/3/arguments/3/expression/value/c_type
+        - char[150]
+        + char[189]
+    wrappers/9/paths/0/operations/3/arguments/3/expression/value/expression/value
+        - "<root>/measure/clang66910c10/monkey/monkey-source/mk_core/mk_event_libevent.c"
+        + "<root>/build/cycle19/clang/66910c10a4d7eafa810b84229cf2dcf7b0f26f97/monkey/monkey-source/mk_core/mk

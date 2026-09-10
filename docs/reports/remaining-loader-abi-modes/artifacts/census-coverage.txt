@@ -1,0 +1,4 @@
+pinned units: 185; covered by a compile-db entry: 185
+not covered: 0
+pinned unit base names that are not unique: 1
+    mk_utils.c ['mk_core/mk_utils.c', 'mk_server/mk_utils.c']

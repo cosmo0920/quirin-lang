@@ -1,0 +1,23 @@
+=== .card-scratch/corpus-before
+  diagnostics      46d0f17845ca  identical-to-wave16  (11133547 bytes)
+  chunk-contracts  c4f438e4ed3d  identical-to-wave16  (4186178 bytes)
+  contracts        e5b2a8077ef6  differs  (48408 bytes)
+  source-effects   4fcbfcadf915  differs  (118505 bytes)
+  source           7da5d442a1cc  differs  (1665474 bytes)
+  headline: 185 units {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+=== .card-scratch/corpus-after
+  diagnostics      46d0f17845ca  identical-to-wave16  (11133547 bytes)
+  chunk-contracts  c4f438e4ed3d  identical-to-wave16  (4186178 bytes)
+  contracts        e5b2a8077ef6  differs  (48408 bytes)
+  source-effects   4fcbfcadf915  differs  (118505 bytes)
+  source           7da5d442a1cc  differs  (1665474 bytes)
+  headline: 185 units {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+=== unit status moves between the two runs: 0
+=== diagnostic leaves: only-in-first 0, only-in-second 0
+=== wave16 baseline digests
+  diagnostics      46d0f17845ca
+  chunk-contracts  c4f438e4ed3d
+  contracts        6322c6737905
+  source-effects   155fcdbb2714
+  source           1300e0266127
+  headline: 185 units {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
