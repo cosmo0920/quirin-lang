@@ -1175,18 +1175,97 @@ layer later and with an actionable message — a deliberate pin update whose
 load-bearing half (a bare `|` is not a quant delimiter, and no program
 containing one checks) is re-pinned at its new layer.
 
-**Neither `|` nor `&&` is lowered, on a measured blocker rather than a
-scheduling one.** The executable subset has no branch construct to lower a
-short-circuit onto: `if` itself refuses at `Q500` ("structured control flow is
-not in the Cycle 12 executable subset"), the lowering IR
-`qcore_core::cleanup_lowering::SourceOp` has no branch constructor — its whole
-operation set is `Acquire`/`Check` under *literal* outcome controls, `Drop`,
-`TransferToResult` and `Return` — and there are zero `if` statements in the 294
-source-side `.qcore` files. There is no boolean expression tier to extend
-either. **Open, and deliberately not answered here:** with `|` claimed by
-logical or and `&` held for bitwise and, bitwise *or* has no symbol; the future
-bitwise wave must choose one, and nothing in this card forecloses the
-reasonable options. See [the operator record](reports/wave18-pipe-operator/README.md).
+**Neither operator is lowered here, on a measured blocker rather than a
+scheduling one.** At wave 18 the executable subset had no branch construct to
+lower a short-circuit onto: `if` itself refused at `Q500` ("structured control
+flow is not in the Cycle 12 executable subset"), the lowering IR
+`qcore_core::cleanup_lowering::SourceOp` had no branch constructor — its whole
+operation set was `Acquire`/`Check` under *literal* outcome controls, `Drop`,
+`TransferToResult` and `Return` — and there were zero `if` statements in the 294
+source-side `.qcore` files. There was no boolean expression tier to extend
+either.
+
+**That blocker is retired.** Card `IF-STATEMENT` landed the branch construct as
+§G02i below: `SourceOp::Branch` and `CfgTerminator::Branch` exist, nested
+branching is admitted inside a branch arm, and the custody join is checked by
+four independent models. Lowering the logical operators onto it — and retabling the operator
+family, since single `|` and `&` are reserved for future **binary/bitwise**
+operations while logical or is `||` and logical and is `&&` — is the successor
+card's work. Nothing about the token claims or the `Q038` refusals in this
+section changed when `IF-STATEMENT` landed: it neither reads nor writes either
+token, and §G02i's condition tier deliberately has no connectives.
+
+**Open, and deliberately not answered here:** the wave-18 table above claims the
+single `|` for logical or and holds `&` for bitwise and, which leaves bitwise
+*or* with no symbol. The successor card retables the family — `||` for or, `&&`
+for and, single `|` and `&` reserved for binary/bitwise use — and that
+retabling, together with the bitwise spellings, is its decision to make.
+Nothing recorded here forecloses the reasonable options. See
+[the operator record](reports/wave18-pipe-operator/README.md).
+
+## G02i. The source branching construct
+
+```ebnf
+stmt    = "if", "(", cond, ")", block, [ "else", ( block | stmt ) ] ;
+cond    = "true" | "false" | operand, cmp, operand ;
+operand = [ "-" ], INTEGER ;
+cmp     = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+```
+
+`source.branch.v1` (card `IF-STATEMENT`), on the **sequential route only**. The
+statement shape is the one the parser has always accepted; what the card added
+is that the condition's bytes are now *recorded* rather than discarded, so a
+semantic pass can read them. `else if` flattens into one statement with one
+condition per header, and lowers to a right-nested branch. Nesting an `if`
+inside an arm is admitted — it is the shape a short-circuit lowering needs.
+
+**No new reserved word and no new token.** `if`, `else`, `true` and `false` were
+already reserved source words, and `==`, `!=`, `<=`, `>=`, `<` and `>` were
+already single tokens. The census across all 369 `.qcore`/`.qc` files (317 of
+them source-side, where wave 18 counted 294) found `if`
+as a word in four files — three of them `//` comment text quoting C inside
+`contract/qcore/fluent_bit/`, and one an archived probe the standing gate does
+not replay — and `else` in sixteen, every one of them the extern adapter's
+`succeeds BOOL else … raise ERROR` tail, which is a `;`-terminated statement and
+never follows a `}`.
+
+**The condition is decidable at check time**, exactly as the `succeeds` and
+`passes` literal outcome controls beside it are, because the translation
+certificate compares one reference observation, one CFG observation and one
+observation parsed from the compiled program's own output. The tier is
+deliberately minimal and has **no connectives**: `||` and `&&` lower *onto* this
+construct in a later card rather than extending this grammar, and single `|` and
+`&` are reserved for future binary/bitwise operations.
+
+**The branch is nonetheless real.** Both arms are validated in full, both are
+emitted as basic blocks, and the emitted C computes the comparison itself —
+`if (INT32_C(3) < INT32_C(5)) { goto …; } else { goto …; }` — rather than
+receiving the decided literal, so the reference evaluator and a C compiler are
+cross-checked by the translation-validation triangle and by a sanitized native
+run. Only the *observation* is single-valued; follow-on `IF-RUNTIME-CONDITION`.
+
+**The custody join is agreement, never widening.** Both arms are validated from
+the same incoming state and the branch is admitted only if they reach the join
+with equal ordered live lists and equal transferred sets. **Four** models check
+that agreement — the cleanup lowering, ownership (`OwnershipOp::Branch`), typed
+errors (`ErrorOp::Branch`) and resource flow (`Flow::join_branches`) — and a
+fifth, usage (`UsageExpr::Branch`), joins the arms' *demands*. Only
+`SourceOp::Branch`, in the cleanup lowering, is new: the other four were all
+already shipped, each with its own mismatch error.
+
+**Refusals.** `Q044` a shape this profile does not model — a `return` inside an
+arm (follow-on `IF-ARM-RETURN`), a call inside an arm (`IF-ARM-CALL`), or
+inconsistent block and condition counts; `Q045` a condition outside the tier —
+a chained comparison, an arithmetic expression, an empty condition, a
+non-integer operand; `Q046` the arms do not reach the join in the same custody
+state. A name written in a condition is collected as a referenced name and
+refuses earlier at `Q013`. An acquisition inside an arm is refused by the
+pre-existing ownership join at `Q103`, inherited unedited (`IF-ARM-ACQUIRE`).
+Every other route keeps its own refusal, measured: `Q030` on `source.std-io.v1`,
+the extern route's nested-block refusal on `source.extern-call.v1`, and `Q500`
+on the copy-scalar task profile. See
+[the branch record](reports/wave19-if-statement/README.md) and
+[the design note](design/SOURCE_BRANCH_V1.md).
 
 ## G03. Source parameter usage grades
 

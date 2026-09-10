@@ -1,0 +1,21 @@
+error Failure { Failed; }
+
+// `source.branch.v1` (card `IF-STATEMENT`). The archetypal shape the custody
+// join exists for: a resource released on both arms of a branch. Releasing it
+// on only one is the conditional leak, and refuses at `Q046`.
+//
+// The condition is decidable at check time, exactly as the `succeeds` and
+// `passes` literal outcome controls beside it are, so the reference
+// observation, the CFG observation and the compiled program's own output are
+// single-valued and comparable. What is *not* decided away is the branch: both
+// arms are validated, both are emitted as real basic blocks, and the emitted C
+// computes `3 < 5` itself.
+fn main() -> i32 {
+    let a = qcore_acquire(1, true, Failure);
+    if (3 < 5) {
+        drop a;
+    } else {
+        drop a;
+    }
+    return 0;
+}

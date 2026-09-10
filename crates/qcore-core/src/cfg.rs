@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ResourceId;
+use crate::cleanup_lowering::BranchCondition;
 
 pub type BlockId = usize;
 pub type ErrorTag = u32;
@@ -81,6 +82,17 @@ pub enum CfgTerminator {
         passes: bool,
         success: BlockId,
         failure: BlockId,
+    },
+    /// Structured two-way branching (card `IF-STATEMENT`, `source.branch.v1`).
+    ///
+    /// Deliberately **not** spelled as a [`Self::Check`] with a non-cleanup
+    /// failure edge, though the two emit the same C shape: `Check`'s failure
+    /// edge is an error cleanup edge, and reusing it would make the typed CFG
+    /// describe a fallible operation where the source wrote a branch.
+    Branch {
+        condition: BranchCondition,
+        then_block: BlockId,
+        else_block: BlockId,
     },
     ReturnOk(i32),
     ReturnError(ErrorTag),
@@ -191,6 +203,14 @@ impl TypedCfg {
                 } => {
                     require_block(&block_map, *success)?;
                     require_block(&block_map, *failure)?;
+                }
+                CfgTerminator::Branch {
+                    then_block,
+                    else_block,
+                    ..
+                } => {
+                    require_block(&block_map, *then_block)?;
+                    require_block(&block_map, *else_block)?;
                 }
                 CfgTerminator::ReturnOk(_) => {}
                 CfgTerminator::ReturnError(tag) => {
@@ -330,6 +350,17 @@ pub fn interpret_cfg(cfg: &TypedCfg) -> Result<ExecutionObservation, CfgError> {
                 success,
                 failure,
             } => block_id = if passes { success } else { failure },
+            CfgTerminator::Branch {
+                condition,
+                then_block,
+                else_block,
+            } => {
+                block_id = if condition.evaluate() {
+                    then_block
+                } else {
+                    else_block
+                };
+            }
             CfgTerminator::ReturnOk(value) => {
                 if !live.is_empty() {
                     return Err(CfgError::LiveResourcesAtExit(live.into_iter().collect()));
