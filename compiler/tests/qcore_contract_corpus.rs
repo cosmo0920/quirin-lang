@@ -304,6 +304,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/memory.qcore", "malloc", 3),
     ("libc/memory.qcore", "calloc", 4),
     ("libc/memory.qcore", "free", 3),
+    // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. Three clauses each: the marker,
+    // the borrowed mutex pointer and the `int` result. `pthread_mutex_t` is a
+    // union the typedef DEFINES, which card LOADER-ABI's reader would not read;
+    // this card's widening reads it, and neither function takes custody of the
+    // object, so `resource_borrowed` is the whole custody statement.
+    ("libc/pthread_mutex.qcore", "pthread_mutex_lock", 3),
+    ("libc/pthread_mutex.qcore", "pthread_mutex_unlock", 3),
     (
         "library/custody_evidence.qcore",
         "publish_library_resource",
@@ -475,8 +482,13 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // addition of `chunkio/chunk_residency.qcore`,
     // `fluent_bit/input_chunk_helpers.qcore` and `fluent_bit/time.qcore`;
     // 67 -> 69 by card CONSTRUCTOR-RESIDUALS' deliberate addition of
-    // `libc/errno.qcore` and `monkey/intrusive_list.qcore`.
-    assert_eq!(sources.len(), 69, "unexpected contract corpus size");
+    // `libc/errno.qcore` and `monkey/intrusive_list.qcore`; 69 -> 70 by card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF's deliberate addition of
+    // `libc/pthread_mutex.qcore`. That card read `msgpack/packer.qcore`
+    // against its body too and deliberately did NOT land it: measured payoff
+    // zero, because the address-of-a-member actual refuses every one of its
+    // call sites before any contract is consulted.
+    assert_eq!(sources.len(), 70, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

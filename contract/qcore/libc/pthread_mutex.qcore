@@ -1,0 +1,65 @@
+module contract;
+
+// POSIX mutex acquire/release — resource-projection vocabulary version 1.
+//
+// Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. This module declares TRUSTED
+// ASSUMPTIONS about two C library functions. It verifies nothing: no C body is
+// analyzed by this loader, and a declaration is a premise.
+//
+// ## Read from the declaration in the analysed unit
+//
+//   extern int pthread_mutex_lock (pthread_mutex_t *__mutex)
+//     __THROWNL __nonnull ((1));
+//   extern int pthread_mutex_unlock (pthread_mutex_t *__mutex)
+//     __THROWNL __nonnull ((1));
+//
+// (`/usr/include/pthread.h:794` and `:835` on the audited host.) Both take one
+// `pthread_mutex_t *` and return `int`.
+//
+//   * `pthread_mutex_t` is `typedef union { … } pthread_mutex_t;`
+//     (`/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:67-72`) — an aggregate
+//     the typedef DEFINES rather than names. Card LOADER-ABI's reader would not
+//     commit to it and withdrew both declarations at every call site
+//     (`abi-unreadable-declaration`); this card's widening reads it, and a
+//     pointer to it is the same opaque `ptr<mut, u8>` projection every other
+//     object pointer has.
+//   * `__THROWNL` and `__nonnull ((1))` expand to `__attribute__` suffixes,
+//     which carry no type and which the ABI reader steps over.
+//
+// ## The custody statement, and only it
+//
+// Neither function allocates, frees, reallocates or takes custody of the mutex
+// object. The caller owns the storage on both sides of either call, so the
+// caller's obligations are unchanged: that is exactly `resource_borrowed`, and
+// an `int` return is `resource_return_none()`.
+//
+// ## What this says nothing about
+//
+// Nothing about mutual exclusion, lock ordering, deadlock, recursion, error
+// returns (`EDEADLK`, `EOWNERDEAD`, `EINVAL`), the initialised state of the
+// mutex, or which data the mutex protects. QCore's checked-concurrency mutex
+// model (`CheckedMutexInvariantV1`, `AGENTS.md` constraint 27) is a separate
+// discipline over declared QCore source and is untouched by this declaration:
+// this is a per-call custody statement about the CALLER's obligations on the
+// pointed-to object, and nothing more.
+//
+// ## Portability, recorded rather than assumed
+//
+// These are the POSIX spellings. On a host whose analysed units do not declare
+// them, this module names functions no unit contains and is inert text there —
+// the same measured-inert situation card PROD-CONTRACTS recorded for
+// `flb_trace`, and harmless for the same reason.
+
+extern fn pthread_mutex_lock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};
+
+extern fn pthread_mutex_unlock(mutex: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(mutex);
+    ensures normal resource_return_none();
+};

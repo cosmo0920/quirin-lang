@@ -2,8 +2,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use qcore_compiler::contract_loader::{
-    POINTER_ABI_TYPES, SCALAR_ABI_TYPES, check_source_assumptions, load_resource_contract_files,
-    load_resource_contract_manifest, load_resource_contract_sources,
+    FUNCTION_POINTER_ABI_TYPE, POINTER_ABI_TYPES, SCALAR_ABI_TYPES, check_source_assumptions,
+    load_resource_contract_files, load_resource_contract_manifest, load_resource_contract_sources,
 };
 use qcore_compiler::{
     AnalysisStatus, CCompilerDialect, ContractTrust, LegacyFunctionScope, LegacySafetyCertificate,
@@ -33,8 +33,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // NEIGHBOURS (`fluent_bit/input_chunk_helpers.qcore`,
     // `fluent_bit/time.qcore`, `chunkio/chunk_residency.qcore`); 12 -> 14 by
     // card CONSTRUCTOR-RESIDUALS (`libc/errno.qcore`,
-    // `monkey/intrusive_list.qcore`).
-    assert_eq!(contracts.source_assumptions().len(), 14);
+    // `monkey/intrusive_list.qcore`); 14 -> 16 by card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`; that card
+    // deliberately did not land `msgpack/packer.qcore`, measured payoff zero).
+    assert_eq!(contracts.source_assumptions().len(), 15);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -120,6 +122,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("__errno_location", 0),
         ("flb_errno_print", 3),
         ("mk_list_add", 2),
+        // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds three more, listed
+        // explicitly for the same reason and in the same shape: every parameter
+        // borrowed, no result custody. All three were UNWRITABLE before this
+        // card, because card LOADER-ABI's declared-ABI reader would not commit
+        // to a union typedef (`pthread_mutex_t *`) or to a function-pointer
+        // typedef (`msgpack_packer_write`) and withdrew them at every call site.
+        // `msgpack_packer_init` is the corpus's first declaration carrying an
+        // `fnptr` parameter; a function designator is never a resource identity,
+        // so `Borrowed` is both the only admissible mode and the true one.
+        ("pthread_mutex_lock", 1),
+        ("pthread_mutex_unlock", 1),
     ] {
         old.insert_contract(
             name,
@@ -394,8 +407,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     };
     check_legacy_safety_certificate(&certificate).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
-    // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 14);
+    // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS; 14 -> 15 by card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 15);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -427,7 +441,23 @@ fn every_abi_scalar_is_a_borrowed_only_projection() {
         POINTER_ABI_TYPES,
         ["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"]
     );
-    for scalar in SCALAR_ABI_TYPES {
+    // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF added the projection of a pointer
+    // to function, under the same condition NEIGHBOURS stated for the floats: a
+    // resource API in scope passes one — msgpack's `msgpack_packer_init`, which
+    // production `flb_input_chunk_create` calls. It is deliberately NOT an entry
+    // of `POINTER_ABI_TYPES` and deliberately not spelled `ptr<…>`, because both
+    // custody gates key on the leading word `ptr`. The loop below therefore runs
+    // over it as well, and checks it rejects every custody mode exactly as an
+    // integer entry does: a function designator is never a resource identity, so
+    // no declaration may claim custody of one.
+    assert_eq!(FUNCTION_POINTER_ABI_TYPE, "fnptr");
+    assert!(!POINTER_ABI_TYPES.contains(&FUNCTION_POINTER_ABI_TYPE));
+    assert!(!SCALAR_ABI_TYPES.contains(&FUNCTION_POINTER_ABI_TYPE));
+    assert!(!FUNCTION_POINTER_ABI_TYPE.starts_with("ptr"));
+    for scalar in SCALAR_ABI_TYPES
+        .iter()
+        .chain(std::iter::once(&FUNCTION_POINTER_ABI_TYPE))
+    {
         let argument = format!(
             "module contract;
         extern fn probe(n: {scalar}) -> ptr<mut, u8> contract {{
@@ -509,7 +539,9 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 67 -> 69: card CONSTRUCTOR-RESIDUALS adds `libc/errno.qcore` and
     // `monkey/intrusive_list.qcore`, both entirely v1 and both
     // manifest-selected.
-    assert_eq!(modules.len(), 69, "corpus module count");
+    // 69 -> 70: card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF adds
+    // `libc/pthread_mutex.qcore`, entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 70, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -568,11 +600,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // helpers); 12 -> 14 and 31 -> 34 by card CONSTRUCTOR-RESIDUALS
     // (`libc/errno.qcore`'s `__errno_location`,
     // `monkey/intrusive_list.qcore`'s `mk_list_add`, and `flb_errno_print`
-    // added to the existing `fluent_bit/logging.qcore`). The rejected count is
-    // unchanged in all four cases, because every added module is entirely v1.
+    // added to the existing `fluent_bit/logging.qcore`); 14 -> 15 and 34 -> 36
+    // by card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`'s
+    // two mutex entry points). The rejected count is unchanged in all five
+    // cases, because every added module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (14, 34, 145)
+        (15, 36, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

@@ -91,13 +91,33 @@ ptr<const, u8>
 ptr<mut, ptr<mut, u8>>
 ```
 
-The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a parameter type. Arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader. The two real-valued scalars are admitted for readings a resource API in scope passes by value; they carry no custody, exactly as every other scalar does.
+The function-pointer vocabulary is exactly:
+
+```text
+fnptr
+```
+
+`fnptr` is the projection of a pointer to function (card
+CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF). It is deliberately **not** a member of the
+pointer vocabulary and is deliberately not spelled `ptr<…>`: a function
+designator is never a resource identity, so `fnptr` MUST carry no custody, and
+the mode rules below — which key on an admitted *pointer* type — deliver that
+without a rule of its own. It MUST NOT be folded onto `usize`/`u64` even where
+the target's data model gives them the same width, because the declared
+spelling is compared against the analysed unit's C declaration and the two
+readings are different readings. A consumer comparing projections MUST refuse
+`fnptr` for a C type that is not a pointer to function, and MUST refuse every
+other spelling for one that is. `fnptr` does not distinguish two function
+pointers of different signatures, exactly as `ptr<mut, u8>` does not distinguish
+two object pointers of different pointee types.
+
+The result vocabulary adds `unit` to the parameter vocabulary. `unit` is not a parameter type. Arbitrary named types, general pointer nesting, `own<T>`, `borrow<...>`, and language-level `result<T,E>` are not accepted by this loader. The two real-valued scalars are admitted for readings a resource API in scope passes by value; they carry no custody, exactly as every other scalar does; `fnptr` was admitted on the same condition, for msgpack's `msgpack_packer_init` in the pinned Cycle 19 corpus.
 
 **Agreement with the analysed source (card LOADER-ABI).** A consumer analysing a translation unit MUST compare a declaration's projections against that unit's own C declaration of the same function wherever it can read one, and MUST withdraw the declaration for that unit — at every call site, and as the interface any body defined there is checked against — when the two disagree in the result type, a parameter type, the parameter count, or a claimed variadic tail. Withdrawal makes the callee uncontracted, which is the refusing direction; a consumer may never repair a disagreement by preferring either side. The projections are not decoration: the mode admissibility rules of this section are keyed on them, so an unfaithful projection is what would buy a mode the C type could not carry.
 
 **Agreement with a derived summary (card LOADER-ABI-MODES).** Where a consumer independently derives a *validated* custody summary from a contracted function's own body in the analysed translation unit, it MUST compare the declared custody duties against the derived ones and MUST withdraw the declaration for that unit, at every call site, when they contradict. A parameter's duty is `retained` for `resource_owned` and `resource_borrowed`, `transferred` for `resource_released`, `resource_consumed` and `resource_stored`, `delivered` for `resource_out` and `restored` for `resource_removed`; a result's duty is `produced` for an owned or reallocated result and absent otherwise. A contradiction is a duty inequality at some position and nothing else: nullability, a `resource_stored`/`resource_removed` owner parameter and a reallocated result's replaced parameter are refinements within one duty and MUST NOT withdraw on their own. A consumer MUST NOT require a derived summary before applying a declaration — absence of evidence is not evidence, and a callee defined in another translation unit is never compared — and MUST NOT install the derived summary in the declaration's place, because a derived summary may be weaker than the declaration it contradicts. Withdrawal makes the callee uncontracted, which is the refusing direction.
 
-These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar may carry a descriptor number as data, but it cannot carry descriptor custody in v1. Only `resource_borrowed` may apply to a scalar. Every other parameter mode requires an admitted pointer type; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned or reallocated result requires an admitted pointer result.
+These are opaque interface projections. They do not check actual C layouts, ABI compatibility, pointee validity, allocation size, alignment, aliasing, or thread-safety. A scalar may carry a descriptor number as data, but it cannot carry descriptor custody in v1. Only `resource_borrowed` may apply to a scalar or to `fnptr`. Every other parameter mode requires an admitted pointer type; `resource_out` specifically requires `ptr<mut, ptr<mut, u8>>`. An owned or reallocated result requires an admitted pointer result.
 
 ### C04.2. Parameter modes
 

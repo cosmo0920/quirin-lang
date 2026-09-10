@@ -163,6 +163,9 @@
 //! - [`POINTER_ABI_TYPES`] — the custody-bearing projections. `resource_out`
 //!   additionally requires `ptr<mut, ptr<mut, u8>>`, and any non-`None` result
 //!   requires a pointer return type.
+//! - [`FUNCTION_POINTER_ABI_TYPE`] (`fnptr`) — the projection of a pointer to
+//!   function. Borrowed only, by the same two gates that hold every scalar
+//!   borrowed-only: both key on the leading word `ptr`, which `fnptr` is not.
 //! - `unit` is a result type only, never a parameter type.
 //!
 //! Acquire/Release/Escape/Neutral compatibility kinds map respectively to Owned
@@ -209,6 +212,36 @@ pub const SCALAR_ABI_TYPES: &[&str] = &[
 /// Opaque C ABI pointer projections. These are the custody-bearing types.
 pub const POINTER_ABI_TYPES: &[&str] =
     &["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"];
+
+/// The opaque C ABI projection of a **pointer to function** (card
+/// **CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF**).
+///
+/// It is deliberately *not* an entry of [`POINTER_ABI_TYPES`] and deliberately
+/// not spelled `ptr<…>`. A function designator is never a resource identity in
+/// this model, so a function pointer can never carry custody, and the two gates
+/// that decide custody both key on the leading word `ptr`:
+/// `custody mode requires a pointer parameter` and
+/// `owned result requires a pointer return type`. Spelling this projection
+/// `fnptr` therefore makes every custody mode on it — and an owned result of it
+/// — a **load-time rejection**, by the rules that were already there.
+///
+/// It is not folded onto `u64`/`usize` either. That would be the same
+/// eight-byte reading on the LP64 targets audited here, but it would also make
+/// a declaration of an *integer* parameter and a declaration of a *callback*
+/// parameter indistinguishable, and card LOADER-ABI's whole point is that the
+/// declared spelling is compared against the C declaration. A separate spelling
+/// keeps the comparison exact in both directions: a `fnptr` declaration is
+/// refused for every C type that is not a pointer to function, and every other
+/// spelling is refused for one that is.
+///
+/// Like [`SCALAR_ABI_TYPES`], widening the vocabulary changes which signatures
+/// can be *written*, never what a loaded contract means. The condition card
+/// NEIGHBOURS stated for `f32`/`f64` is met here too: a resource API in scope
+/// passes one — msgpack's
+/// `msgpack_packer_init(msgpack_packer *, void *, msgpack_packer_write)`,
+/// whose third parameter is `typedef int (*msgpack_packer_write)(void *, const
+/// char *, size_t)` and which the production `flb_input_chunk_create` calls.
+pub const FUNCTION_POINTER_ABI_TYPE: &str = "fnptr";
 
 /// The introducer of the retired `qcore-premise` comment directive (card
 /// HASH-CONTRACTS, superseded by HASH-CLAUSE's `resource_literal_argument`
@@ -281,11 +314,18 @@ struct LoadedDeclaration {
     abi: DeclaredAbiSignature,
 }
 
+/// The parameter vocabulary: every scalar, every pointer, and `fnptr`.
+fn parameter_abi_types() -> impl Iterator<Item = &'static str> {
+    SCALAR_ABI_TYPES
+        .iter()
+        .copied()
+        .chain(POINTER_ABI_TYPES.iter().copied())
+        .chain(std::iter::once(FUNCTION_POINTER_ABI_TYPE))
+}
+
 /// The result vocabulary: `unit` plus every parameter type.
 fn result_abi_types() -> impl Iterator<Item = &'static str> {
-    std::iter::once("unit")
-        .chain(SCALAR_ABI_TYPES.iter().copied())
-        .chain(POINTER_ABI_TYPES.iter().copied())
+    std::iter::once("unit").chain(parameter_abi_types())
 }
 
 /// Load all selected modules atomically. No partial environment escapes on error.
@@ -545,17 +585,15 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut parameter_types = Vec::with_capacity(decl.parameters.len());
     for parameter in &decl.parameters {
         let tokens = token_kinds(&parameter.type_source)?;
-        let matched = SCALAR_ABI_TYPES
-            .iter()
-            .chain(POINTER_ABI_TYPES.iter())
-            .find(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens));
+        let matched =
+            parameter_abi_types().find(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens));
         let Some(matched) = matched.filter(|_| parameter.usage.is_none()) else {
             return Err("unsupported parameter type or usage annotation".into());
         };
         // Card LOADER-ABI: the canonical table spelling, not the module's own
         // text, so a consumer comparing against a C declaration compares one
         // closed vocabulary rather than incidental whitespace.
-        parameter_types.push((*matched).to_owned());
+        parameter_types.push(matched.to_owned());
     }
     let parameter_text = decl
         .parameters

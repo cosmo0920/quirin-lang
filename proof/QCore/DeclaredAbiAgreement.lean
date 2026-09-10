@@ -49,14 +49,21 @@ apply that declaration here.
 
 namespace QCore.DeclaredAbiAgreement
 
-/-- The loader's closed ABI vocabulary: `SCALAR_ABI_TYPES`, `POINTER_ABI_TYPES`
-and the result-only `unit`. -/
+/-- The loader's closed ABI vocabulary: `SCALAR_ABI_TYPES`, `POINTER_ABI_TYPES`,
+`FUNCTION_POINTER_ABI_TYPE` and the result-only `unit`.
+
+`fnptr` was added by card **CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF**. It is
+deliberately not one of the three pointer spellings: the loader's custody gates
+key on the leading word `ptr`, so keeping it apart is what makes every custody
+mode on a function pointer a load-time rejection. `QCore.TypedefProjection`
+proves that half. -/
 inductive AbiType where
   | unit
   | bool
   | i8 | u8 | i16 | u16 | i32 | u32 | i64 | u64 | isize | usize
   | f32 | f64
   | ptrMut | ptrConst | ptrMutMut
+  | fnptr
   deriving DecidableEq, BEq, Repr
 
 /-- The C side of one type position, projected into that vocabulary.
