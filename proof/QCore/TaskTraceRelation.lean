@@ -38,6 +38,9 @@ namespace QCore.TaskTraceRelation
 -- Reducing the nested schedules/transpositions afresh at every use makes plain
 -- `decide` prohibitively expensive. `cbv` supplies a kernel-checked equality for
 -- that expansion; `decide +kernel` then checks the concrete result once.
+-- All four D3 measurements share a single expansion (`domain_three_measurements`
+-- below) rather than paying for one each; the public statements are unchanged
+-- and are projections out of that one conjunction.
 -- AuditAll still permits only the standard logical axioms. The domain,
 -- relation, theorem statements and pinned results remain unchanged.
 -- The bounded computations need more recursion/heartbeats than the defaults.
@@ -465,13 +468,31 @@ def domainThree : List (List Event) :=
 
 set_option cbv.maxSteps 4000000
 
+/-- Every D3 measurement, decided against **one** expansion of the domain.
+
+`domainThree` is 3,025 generated traces; expanding it costs the `cbv` step, the
+kernel's check of that expansion, and the sharing/compilation of the resulting
+literal. Proving the four D3 facts separately paid that cost four times. Here it
+is paid once — `pattern (occs := *)` rewrites every occurrence, so the four
+decidable propositions below are decided against the same shared literal — and
+each public theorem is a projection out of this conjunction. The statements, the
+domain, the relation and the pinned numbers are exactly as they were. -/
+private theorem domain_three_measurements :
+    domainThree.length = 3025
+      ∧ traceDigest domainThree = 9380586544780836206
+      ∧ verdictDigest concurrent domainThree = 15391469991380593011
+      ∧ admittedCount concurrent domainThree = 18 := by
+  conv => pattern (occs := *) domainThree; all_goals cbv
+  decide +kernel
+
 theorem domain_one_size : domainOne.length = 7 := by decide +kernel
 theorem domain_two_size : domainTwo.length = 55 := by decide +kernel
-theorem domain_three_size : domainThree.length = 3025 := by decide +kernel
+theorem domain_three_size : domainThree.length = 3025 := domain_three_measurements.1
 
 theorem domain_one_trace_digest : traceDigest domainOne = 1827949402977241471 := by decide +kernel
 theorem domain_two_trace_digest : traceDigest domainTwo = 7621727749705747350 := by decide +kernel
-theorem domain_three_trace_digest : traceDigest domainThree = 9380586544780836206 := by decide +kernel
+theorem domain_three_trace_digest : traceDigest domainThree = 9380586544780836206 :=
+  domain_three_measurements.2.1
 
 /-! ## Transcription agreement and the measured results -/
 
@@ -482,9 +503,8 @@ theorem domain_two_verdict_digest :
     verdictDigest concurrent domainTwo = 3851450914538809003 := by decide +kernel
 
 theorem domain_three_verdict_digest :
-    verdictDigest concurrent domainThree = 15391469991380593011 := by
-  conv => lhs; arg 2; cbv
-  decide +kernel
+    verdictDigest concurrent domainThree = 15391469991380593011 :=
+  domain_three_measurements.2.2.1
 
 /-! ## What the relation admits
 
@@ -514,9 +534,8 @@ theorem domain_two_admits_a_schedule_other_than_the_reference :
 admitted set is genuinely a partial order and not the reference total order
 under another name. -/
 theorem domain_three_admits_eighteen_perturbations :
-    admittedCount concurrent domainThree = 18 := by
-  conv => lhs; arg 2; cbv
-  decide +kernel
+    admittedCount concurrent domainThree = 18 :=
+  domain_three_measurements.2.2.2
 
 /-! ## Non-vacuity
 

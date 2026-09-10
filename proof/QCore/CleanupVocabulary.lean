@@ -213,39 +213,39 @@ def spellClause : Clause String → Option Ident
 form produced it. This is what makes the reader's longest-first search a prefix
 code decode rather than a heuristic. -/
 theorem the_prefixes_are_pairwise_incomparable :
-    prefixes.all (fun a => prefixes.all (fun b => a == b || !isPrefix a b)) := by decide
+    prefixes.all (fun a => prefixes.all (fun b => a == b || !isPrefix a b)) := by decide +kernel
 
 /-- The ten prefixes are distinct, so the table has no dead row. -/
-theorem the_prefixes_are_distinct : prefixes.eraseDups.length = 10 := by decide
+theorem the_prefixes_are_distinct : prefixes.eraseDups.length = 10 := by decide +kernel
 
 /-- Every prefix ends with the separator, so a payload always begins at a
 segment boundary. -/
 theorem every_prefix_ends_with_the_separator :
-    prefixes.all (fun p => isPrefix sep p.reverse) := by decide
+    prefixes.all (fun p => isPrefix sep p.reverse) := by decide +kernel
 
 /-- The scalar tokens are pairwise distinct, so decoding one is unambiguous. -/
 theorem the_scalar_tokens_are_pairwise_distinct :
-    (scalarTokens.map Prod.snd).eraseDups.length = 6 := by decide
+    (scalarTokens.map Prod.snd).eraseDups.length = 6 := by decide +kernel
 
 /-- …and so are the C spellings they decode to. -/
 theorem the_scalar_spellings_are_pairwise_distinct :
-    (scalarTokens.map Prod.fst).eraseDups.length = 6 := by decide
+    (scalarTokens.map Prod.fst).eraseDups.length = 6 := by decide +kernel
 
 /-- Every scalar token is separator-free, so `__` remains an unambiguous
 separator inside a field clause or a signature. -/
 theorem every_scalar_token_is_separator_free :
-    scalarTokens.all (fun p => !carriesSeparator p.2) := by decide
+    scalarTokens.all (fun p => !carriesSeparator p.2) := by decide +kernel
 
 /-- No scalar token can be confused with a record token. -/
 theorem no_scalar_token_looks_like_a_record :
-    scalarTokens.all (fun p => !isPrefix "struct_".toList p.2) := by decide
+    scalarTokens.all (fun p => !isPrefix "struct_".toList p.2) := by decide +kernel
 
 /-- Every reset and index token is separator-free too. -/
 theorem every_reset_and_index_token_is_separator_free :
     ([Reset.null, .integer 0, .integer (-1), .integer 9].all
         (fun r => (resetToken r).all (fun t => !carriesSeparator t)))
       ∧ ([0, 1, 2, 3, 9].all (fun i => (digitToken i).all (fun t => !carriesSeparator t))) := by
-  decide
+  decide +kernel
 
 /-- A field or argument name carrying the separator has no spelling at all: it
 is refused rather than split into pieces the reader would guess at. -/
@@ -253,36 +253,36 @@ theorem a_name_carrying_the_separator_has_no_spelling :
     spellClause (.field 0 "a__b" .int .null) = none
       ∧ spellClause (.argument 0 "a__b") = none
       ∧ spellClause (.presence "a__b") = none
-      ∧ spellClause (.mapping "a__b") = none := by decide
+      ∧ spellClause (.mapping "a__b") = none := by decide +kernel
 
 /-- A record tag carrying the separator likewise has no token, so a record
 pointer can never masquerade as two segments. -/
 theorem a_record_tag_carrying_the_separator_has_no_token :
-    typeToken (.record "cio__file") = none := by decide
+    typeToken (.record "cio__file") = none := by decide +kernel
 
 /-- A record tag starting with a digit is refused, so a token can never be read
 as an index. -/
 theorem a_record_tag_starting_with_a_digit_has_no_token :
-    typeToken (.record "0file") = none := by decide
+    typeToken (.record "0file") = none := by decide +kernel
 
 /-- An empty payload is refused, so a clause never degenerates to its bare
 prefix. -/
 theorem an_empty_payload_has_no_spelling :
     spellClause (.function "") = none ∧ spellClause (.syscall "") = none
       ∧ spellClause (.errno "") = none ∧ spellClause (.report "") = none
-      ∧ spellClause (.presence "") = none := by decide
+      ∧ spellClause (.presence "") = none := by decide +kernel
 
 /-- An index the model cannot spell as one digit is refused rather than
 truncated — the stated model bound, made fail-closed. -/
 theorem an_unspellable_index_is_refused :
     spellClause (.argument 10 "a") = none
-      ∧ spellClause (.field 10 "a" .int .null) = none := by decide
+      ∧ spellClause (.field 10 "a" .int .null) = none := by decide +kernel
 
 /-- Non-vacuity of the verbatim rule: the real errno helper, whose C name
 begins with the separator, is declarable exactly as the contract spells it. -/
 theorem the_errno_helper_spells_verbatim :
     spellClause (.errno "__errno_location")
-      = some "cleanup_errno_helper____errno_location".toList := by decide
+      = some "cleanup_errno_helper____errno_location".toList := by decide +kernel
 
 /-- Non-vacuity of the structured rules: the real field, signature and record
 clauses spell exactly as the pinned contracts write them. -/
@@ -299,7 +299,7 @@ theorem the_pinned_clauses_spell_as_the_contracts_write_them :
         = some "cleanup_root_type__struct_cio_file_ptr".toList
       ∧ spellClause (.argument 1 "alloc_size")
         = some "cleanup_argument_field__1__alloc_size".toList
-      ∧ spellClause (.mapping "map") = some "cleanup_mapping_field__map".toList := by decide
+      ∧ spellClause (.mapping "map") = some "cleanup_mapping_field__map".toList := by decide +kernel
 
 /-! ## The clause layer -/
 
@@ -492,30 +492,30 @@ theorem the_sample_domain_is_inhabited_and_varied :
       ∧ sampleShapes.any (fun s => s.mappingField.isSome)
       ∧ sampleShapes.any (fun s => s.mappingField.isNone)
       ∧ sampleShapes.any (fun s => s.fields.length = 2)
-      ∧ sampleShapes.any (fun s => s.argumentFields.length = 2) := by decide
+      ∧ sampleShapes.any (fun s => s.argumentFields.length = 2) := by decide +kernel
 
 /-- Bounded: over the enumerated domain, a declaration reads back to exactly
 the shape that spelled it. -/
 theorem spelling_round_trips_on_the_sample_domain :
-    sampleShapes.all (fun s => read (spell s) == some s) := by decide
+    sampleShapes.all (fun s => read (spell s) == some s) := by decide +kernel
 
 /-- Bounded: two different shapes never spell the same declaration, so no
 profile member is redundant. -/
 theorem spelling_is_injective_on_the_sample_domain :
     sampleShapes.all (fun a => sampleShapes.all (fun b =>
-      (spell a == spell b) == (a == b))) := by decide
+      (spell a == spell b) == (a == b))) := by decide +kernel
 
 /-- Bounded, and the sharpest consequence: one declaration binds one profile,
 so a producer cannot hand the checker any other. -/
 theorem one_declaration_binds_one_profile_on_the_sample_domain :
     sampleShapes.all (fun a => sampleShapes.all (fun b =>
-      bind (spell a) b == (a == b))) := by decide
+      bind (spell a) b == (a == b))) := by decide +kernel
 
 /-- Dropping the marker from a real declaration refuses it, over the whole
 domain. -/
 theorem dropping_the_marker_refuses_the_whole_domain :
     sampleShapes.all (fun s =>
-      read ((spell s).filter (fun c => c != Clause.marker)) == none) := by decide
+      read ((spell s).filter (fun c => c != Clause.marker)) == none) := by decide +kernel
 
 /-- Duplicating any field clause refuses the declaration, over the whole
 domain: a duplicated inventory entry is not silently collapsed. -/
@@ -523,7 +523,7 @@ theorem duplicating_a_field_clause_refuses_the_whole_domain :
     sampleShapes.all (fun s =>
       match (spell s).find? (fun c => match c with | .field .. => true | _ => false) with
       | some c => read (c :: spell s) == none
-      | none => false) := by decide
+      | none => false) := by decide +kernel
 
 /-- Removing the index-zero field clause refuses the declaration over the whole
 domain: the inventory may not have a gap, and may not be empty. -/
@@ -532,12 +532,12 @@ theorem an_inventory_gap_refuses_the_whole_domain :
       read ((spell s).filter (fun c =>
         match c with
         | .field i .. => i != 0
-        | _ => true)) == none) := by decide
+        | _ => true)) == none) := by decide +kernel
 
 /-- Two eligibility-field clauses are refused rather than one being preferred. -/
 theorem two_mapping_clauses_are_refused_on_the_whole_domain :
     sampleShapes.all (fun s =>
-      read (Clause.mapping Sym.a :: Clause.mapping Sym.b :: spell s) == none) := by decide
+      read (Clause.mapping Sym.a :: Clause.mapping Sym.b :: spell s) == none) := by decide +kernel
 
 /-! ### The load-bearing members of the real unmap policy -/
 
@@ -552,13 +552,13 @@ private def base : Shape String :=
     errnoHelper := "__errno_location", reportHelper := "cio_errno_print" }
 
 /-- The real unmap policy reads back to the profile the checker binds. -/
-theorem the_pinned_unmap_shape_reads_back : read (spell base) = some base := by decide
+theorem the_pinned_unmap_shape_reads_back : read (spell base) = some base := by decide +kernel
 
 /-- Argument *order* is load-bearing: swapping the two `munmap` arguments is a
 different declaration, which the original refuses. -/
 theorem swapping_the_syscall_arguments_is_refused :
     bind (spell base) { base with argumentFields := ["alloc_size", "map"] } = false := by
-  decide
+  decide +kernel
 
 /-- A reset value is load-bearing: what a successful syscall leaves behind
 cannot be changed without changing the declaration. -/
@@ -567,20 +567,20 @@ theorem changing_a_reset_value_is_refused :
       { base with fields := [⟨"map", .charPtr, .integer 0⟩,
                              ⟨"alloc_size", .unsignedLong, .integer 0⟩,
                              ⟨"map_truncated_warned", .int, .integer 0⟩] } = false := by
-  decide
+  decide +kernel
 
 /-- The inventory cannot be widened or narrowed under the same declaration. -/
 theorem resizing_the_inventory_is_refused :
     bind (spell base) { base with fields := base.fields ++ [⟨"extra", .int, .null⟩] } = false
       ∧ bind (spell base) { base with fields := [⟨"map", .charPtr, .null⟩] } = false := by
-  decide
+  decide +kernel
 
 /-- The guarded-delete eligibility field is declared exactly when it is
 present: the close/unmap policies cannot declare one and the delete policy
 cannot omit one. -/
 theorem the_mapping_field_is_declared_exactly_when_present :
     bind (spell base) { base with mappingField := some "map" } = false
-      ∧ bind (spell { base with mappingField := some "map" }) base = false := by decide
+      ∧ bind (spell { base with mappingField := some "map" }) base = false := by decide +kernel
 
 /-- A field type is load-bearing, so a declaration cannot retype what the
 source really holds. -/
@@ -589,7 +589,7 @@ theorem retyping_a_field_is_refused :
       { base with fields := [⟨"map", .voidPtr, .null⟩,
                              ⟨"alloc_size", .unsignedLong, .integer 0⟩,
                              ⟨"map_truncated_warned", .int, .integer 0⟩] } = false := by
-  decide
+  decide +kernel
 
 /-- Renaming the pinned function, the syscall, the record type, the eligibility
 field or either helper each changes the declaration. -/
@@ -601,17 +601,17 @@ theorem the_named_referents_are_load_bearing :
       ∧ bind (spell base) { base with rootType := .record "cio_chunk" } = false
       ∧ bind (spell base) { base with presenceField := "alloc_size" } = false
       ∧ bind (spell base) { base with signatureArguments := [.sizeT, .voidPtr] } = false := by
-  decide
+  decide +kernel
 
 /-- Every clause of the real unmap declaration has a spelling, so the shape is
 declarable at all — the totality side of total-or-reject. -/
 theorem the_pinned_unmap_declaration_is_spellable :
-    (spell base).all (fun c => (spellClause c).isSome) := by decide
+    (spell base).all (fun c => (spellClause c).isSome) := by decide +kernel
 
 /-- …and those spellings are pairwise distinct thirteen premises, so the
 declaration is not a shorter one with collisions. -/
 theorem the_pinned_unmap_spellings_are_distinct :
     ((spell base).filterMap spellClause).eraseDups.length = 13
-      ∧ ((spell base).filterMap spellClause).length = 13 := by decide
+      ∧ ((spell base).filterMap spellClause).length = 13 := by decide +kernel
 
 end QCore.CleanupVocabulary
