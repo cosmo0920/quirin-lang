@@ -12,6 +12,14 @@ pub const CONCURRENCY_MODULE: &str = "std.concurrency";
 /// conclusion drawn through it remains a declared assumption.
 pub const EXTERN_MODULE: &str = "std.extern";
 
+/// Card `UNSAFE-LINKAGE`: declaring an extern function that has **no** contract
+/// at all, so that an external library can be linked without one. It grants the
+/// *declaration* only; the call still needs [`EXTERN_MODULE`], so an
+/// unchecked-linkage file names both modules. Holding this module changes
+/// nothing about a contracted callee, and holding [`EXTERN_MODULE`] alone keeps
+/// an uncontracted callee refused.
+pub const UNCHECKED_EXTERN_MODULE: &str = "std.extern.unsafe";
+
 /// Card `STD-MODULES`: the rendering vocabulary shared by `std.io` and
 /// `std.logger`. It names how a scalar becomes the bytes of a line and nothing
 /// else — it opens no stream, so importing it alone produces no output.
@@ -30,6 +38,7 @@ pub const LOGGER_MODULE: &str = "std.logger";
 pub struct ModuleImports {
     concurrency: bool,
     extern_calls: bool,
+    unchecked_extern_calls: bool,
     fmt: bool,
     io: bool,
     logger: bool,
@@ -53,6 +62,7 @@ impl ModuleImports {
             match name {
                 CONCURRENCY_MODULE => imports.concurrency = true,
                 EXTERN_MODULE => imports.extern_calls = true,
+                UNCHECKED_EXTERN_MODULE => imports.unchecked_extern_calls = true,
                 FMT_MODULE => imports.fmt = true,
                 IO_MODULE => imports.io = true,
                 LOGGER_MODULE => imports.logger = true,
@@ -69,6 +79,12 @@ impl ModuleImports {
     /// Whether this file may call a declared extern function at all.
     pub fn extern_calls(self) -> bool {
         self.extern_calls
+    }
+
+    /// Whether this file may declare an extern function with no contract at
+    /// all (card `UNSAFE-LINKAGE`). Never granted by [`EXTERN_MODULE`].
+    pub fn unchecked_extern_calls(self) -> bool {
+        self.unchecked_extern_calls
     }
 
     /// Whether this file may name a rendering (`dec`, `hex`).

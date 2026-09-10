@@ -816,6 +816,55 @@ which object file supplies the symbol is the builder's premise. See
 [the error-arm release record](reports/remaining-extern-err-rel/README.md) and
 [the released/reallocated extension](reports/remaining-extern-modes/README.md).
 
+### G02d.1. Unchecked linkage
+
+Card `UNSAFE-LINKAGE`. An external library with **no contract at all** may be
+linked, under an explicit recorded waiver. This widens G02d's *declaration* form
+and nothing else: the statement grammar, the argument forms and every refusal
+above are unchanged, and without the waiver an uncontracted callee still refuses
+at `Q023`.
+
+```ebnf
+unsafe_module   = "import", "std.extern", ";",
+                  "import", "std.extern.unsafe", ";",
+                  { error_decl | extern_decl | unsafe_extern_decl | entry } ;
+unsafe_extern_decl = "unsafe", "extern", "fn", NAME,
+                     "(", [ param, { ",", param } ], ")",
+                     "->", SCALAR_ABI_TYPE, ";" ;
+SCALAR_ABI_TYPE = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
+                | "u8" | "u16" | "u32" | "u64" | "usize" | "unit" ;
+```
+
+Both imports are required and neither implies the other: `std.extern` is the
+call vocabulary and grants no waiver, `std.extern.unsafe` is the waiver and
+grants no call. The waiver import is required by the *declaration* (`Q032`),
+not by a call to it — declaring an uncontracted symbol is itself the trust act,
+so a file that links one and never calls it still names the module. `unsafe`
+was already a reserved source word (it introduces the `unsafe { … }` statement),
+so this form adds none.
+
+Parameters take `SCALAR_ABI_TYPE` minus `unit`, and the result takes it whole;
+**every pointer spelling is refused in every position** (`Q033`), including
+`ptr<const, u8>`, and so is any spelling outside the §G05 ABI table. The
+contract is waived; the ABI is not. The admitted signature therefore carries no
+custody in either direction, which is why an uncontracted call cannot change the
+caller's ledger whatever the callee does. A waiver may not sit beside a
+checkable declaration (`Q034`): not an inline `contract { … }` block, and not a
+name the selected contract environment also declares — there the contracted
+route wins whether or not the two signatures agree.
+
+The derived effect row of an uncontracted callee is `{io, alloc, mut}`
+unconditionally, because nothing is known about it, so an entry calling one
+declares the whole row. A module may mix contracted and uncontracted callees; a
+module all of whose callees are uncontracted needs no contract selection at all,
+which is what `qcorec check` and `qcorec emit` can compile today.
+
+Every certificate names each uncontracted callee, with its declared ABI, as an
+unchecked-linkage premise, on the same channel that carries a trusted declared
+contract; a published certificate missing one is refused (`Q035`). See
+`docs/design/UNSAFE_LINKAGE_V1.md` and
+[the unchecked-linkage record](reports/wave18-unsafe-linkage/README.md).
+
 ## G02e. Flat-epoch quantitative bound
 
 `source.epoch.bound.v1`. Selected before every other concurrent route by the

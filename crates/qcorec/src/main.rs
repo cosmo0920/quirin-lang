@@ -147,6 +147,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 "checked {} function(s); entry `{entry}`{profile}",
                 module.checked.function_count()
             );
+            print_declared_assumptions(&module);
         } else {
             println!(
                 "checked {:?} module: {} declaration(s), {} function body/bodies; no entry point",
@@ -166,6 +167,40 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// Print the declared premises a checked module's result holds relative to
+/// (card `UNSAFE-LINKAGE`).
+///
+/// A module that linked an uncontracted symbol is checked *under* that waiver,
+/// so this is the surface at which a reader sees it. Printing nothing when
+/// there is nothing to print keeps every existing route's output byte-identical.
+fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
+    use qcore_compiler::extern_call::ExternAssumption;
+
+    let assumptions = module.declared_assumptions();
+    if assumptions.is_empty() {
+        return;
+    }
+    println!("under {} declared assumption(s):", assumptions.len());
+    for assumption in assumptions {
+        let line = match assumption {
+            ExternAssumption::UncheckedLinkage { callee, signature } => format!(
+                "unchecked linkage: `{callee}` is linked as `{signature}` with no contract; nothing about its behavior is checked"
+            ),
+            ExternAssumption::DeclaredContract(callee) => {
+                format!("declared contract: `{callee}` behaves as its selected contract states")
+            }
+            ExternAssumption::NoExtentTransport => {
+                "no extent transport: no declaration says how many bytes a callee touches".into()
+            }
+            ExternAssumption::LinkageSuppliedByBuilder => {
+                "linkage: which object file supplies each symbol is the builder's premise".into()
+            }
+            other => format!("{other:?}"),
+        };
+        println!("  - {line}");
+    }
 }
 
 fn plugins_command(arguments: &[String]) -> Result<(), String> {

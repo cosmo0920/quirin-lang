@@ -187,12 +187,13 @@ theorem rendering_requires_the_fmt_module {names : List String} {imports : Impor
   refine admitted_rendering_requires_the_fmt_import resolved ?_
   simpa [admitsRendering] using admitted
 
-/-- The three capabilities cannot be obtained from each other, or from the two
-older modules: each row holds every module except the one it needs. -/
+/-- The three capabilities cannot be obtained from each other, or from the
+older modules — card `UNSAFE-LINKAGE`'s waiver included: each row holds every
+module except the one it needs. -/
 theorem no_module_substitutes_for_another :
-    admitsPrint ⟨true, true, true, false, true⟩ true = false
-      ∧ admitsLog ⟨true, true, true, true, false⟩ true = false
-      ∧ admitsRendering ⟨true, true, false, true, true⟩ true = false :=
+    admitsPrint ⟨true, true, true, true, false, true⟩ true = false
+      ∧ admitsLog ⟨true, true, true, true, true, false⟩ true = false
+      ∧ admitsRendering ⟨true, true, true, false, true, true⟩ true = false :=
   ⟨rfl, rfl, rfl⟩
 
 end QCore.StdIo

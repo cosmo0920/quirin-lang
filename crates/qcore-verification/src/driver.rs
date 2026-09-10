@@ -373,6 +373,24 @@ pub struct CompiledModule {
     pub extern_observation: Option<extern_c_emit::ExternObservation>,
 }
 
+impl CompiledModule {
+    /// The declared premises this module's result holds relative to, if its
+    /// route publishes any (card `UNSAFE-LINKAGE`).
+    ///
+    /// A consumer that does not know which route compiled a module still sees
+    /// its premises here, so a `Safe` obtained through a trusted declared
+    /// contract or through unchecked linkage is never handed on as a bare
+    /// `Safe`. Routes with no declared premise return the empty slice, which is
+    /// the honest answer for them and not a placeholder.
+    #[must_use]
+    pub fn declared_assumptions(&self) -> &[extern_call::ExternAssumption] {
+        match &self.checked {
+            CheckedSourceModule::ExternCalls(module) => &module.certificate.assumptions,
+            _ => &[],
+        }
+    }
+}
+
 #[derive(Debug)]
 struct DriverError(String);
 
@@ -1545,6 +1563,87 @@ fn compile_task_source(
     })
 }
 
+/// Card `UNSAFE-LINKAGE`. Admit one `unsafe extern fn` declaration, or refuse
+/// it with a diagnostic in the `UncheckedLinkage` band.
+///
+/// Three gates, in order. **`Q034` identity**: a waiver may not sit beside a
+/// checkable declaration — an inline `contract { … }` block is an unenforced
+/// contract next to a waiver, and a name the *selected environment* declares
+/// already has a real one, so the contracted route wins whether or not the two
+/// signatures agree. This is LOADER-ABI's rule applied to this surface: where a
+/// declaration is visible, it is compared. **`Q033` vocabulary**: every declared
+/// spelling must be in the closed §C04.1 ABI table — the *contract* is waived,
+/// the ABI is not. **`Q033` table**: the signature must carry no custody, which
+/// [`extern_call::unchecked_callee`] decides.
+fn admit_unchecked_callee(
+    declaration: &qcore_frontend::source_extern::SourceExternDeclaration,
+    contracts: Option<&qcore_schemas::contract::ResourceContracts>,
+    ranges: &[FileRange],
+    diagnostics: &mut Vec<FileDiagnostic>,
+) -> Option<extern_call::ExternCallee> {
+    let name = &declaration.name;
+    let mut refuse = |code: &'static str, message: String| {
+        diagnostics.push(map_raw_diagnostic(
+            code,
+            SemanticPass::UncheckedLinkage,
+            declaration.span,
+            message,
+            ranges,
+        ));
+    };
+    if declaration.has_inline_contract {
+        refuse(
+            "Q034",
+            format!(
+                "`{name}` is declared `unsafe extern fn` and also carries an inline `contract {{ … }}` block; a waiver and an unenforced contract cannot stand together"
+            ),
+        );
+        return None;
+    }
+    if contracts.is_some_and(|contracts| contracts.contract(name).is_some()) {
+        refuse(
+            "Q034",
+            format!(
+                "`{name}` is declared `unsafe extern fn` but the selected extern contract environment declares a contract for it; a contract that exists is not waivable"
+            ),
+        );
+        return None;
+    }
+    let mut parameters = Vec::with_capacity(declaration.parameter_types.len());
+    for (index, spelling) in declaration.parameter_types.iter().enumerate() {
+        let Some(abi) = extern_call::AbiType::parse(spelling) else {
+            refuse(
+                "Q033",
+                format!(
+                    "`{name}` declares parameter {index} as `{spelling}`, which is not a C ABI type this profile projects; the contract is waived, the ABI is not"
+                ),
+            );
+            return None;
+        };
+        parameters.push(abi);
+    }
+    let Some(result) = extern_call::AbiType::parse(&declaration.result_type) else {
+        refuse(
+            "Q033",
+            format!(
+                "`{name}` declares result `{}`, which is not a C ABI type this profile projects; the contract is waived, the ABI is not",
+                declaration.result_type
+            ),
+        );
+        return None;
+    };
+    match extern_call::unchecked_callee(name, &parameters, result) {
+        Ok(callee) => Some(callee),
+        Err(refusal) => {
+            refuse(
+                "Q033",
+                format!("`{name}` is not callable through unchecked linkage: {refusal}"),
+            );
+            None
+        }
+    }
+}
+
 /// Card `source.extern-call.v1`. Every step here fails closed: no contract
 /// selection, an absent name, an unadmitted mode, an unbridgeable type, a
 /// missing null adapter, a refused context or a declaration that disagrees
@@ -1577,57 +1676,108 @@ fn compile_extern_source(
         .copied()
         .next()
         .unwrap_or(Span { start: 0, end: 0 });
-    let Some(sources) = options.extern_contracts.as_ref() else {
-        return Err(vec![map_raw_diagnostic(
-            "Q023",
-            SemanticPass::ExternCall,
-            first_span,
-            "calling a declared extern function requires an explicit extern contract selection; there is no default environment".into(),
-            ranges,
-        )]);
-    };
-    let contracts = qcore_contract::contract_loader::load_resource_contract_sources(sources)
-        .map_err(|error| {
-            vec![map_raw_diagnostic(
-                "Q023",
-                SemanticPass::ExternCall,
-                first_span,
-                format!("the selected extern contract environment does not load: {error}"),
-                ranges,
-            )]
-        })?;
-    // The environment is reloaded from its own retained text before use, so a
-    // selection that no longer reproduces itself is refused rather than trusted.
-    qcore_contract::contract_loader::check_source_assumptions(&contracts).map_err(|error| {
-        vec![map_raw_diagnostic(
-            "Q027",
-            SemanticPass::ExternCall,
-            first_span,
-            format!("the selected extern contracts differ from their declared sources: {error}"),
-            ranges,
-        )]
-    })?;
-    let signatures =
-        qcore_contract::extern_bridge::declared_signatures(&contracts).map_err(|error| {
-            vec![map_raw_diagnostic(
-                "Q023",
-                SemanticPass::ExternCall,
-                first_span,
-                error,
-                ranges,
-            )]
-        })?;
-
     let declarations = source_extern::source_extern_declarations(parsed)
         .into_iter()
         .map(|declaration| (declaration.name.clone(), declaration))
         .collect::<BTreeMap<_, _>>();
+    // Card `UNSAFE-LINKAGE`. A contract environment is required for exactly the
+    // callees that need one. A module every one of whose callees is declared
+    // `unsafe extern fn` selects no environment and is not refused for having
+    // none; a module with one contracted callee is refused exactly as before.
+    let needs_contracts = called.keys().any(|name| {
+        declarations
+            .get(name)
+            .is_none_or(|declaration| !declaration.unchecked)
+    });
+    let (contracts, signatures) = if needs_contracts {
+        let Some(sources) = options.extern_contracts.as_ref() else {
+            return Err(vec![map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                first_span,
+                "calling a declared extern function requires an explicit extern contract selection; there is no default environment".into(),
+                ranges,
+            )]);
+        };
+        let contracts = qcore_contract::contract_loader::load_resource_contract_sources(sources)
+            .map_err(|error| {
+                vec![map_raw_diagnostic(
+                    "Q023",
+                    SemanticPass::ExternCall,
+                    first_span,
+                    format!("the selected extern contract environment does not load: {error}"),
+                    ranges,
+                )]
+            })?;
+        // The environment is reloaded from its own retained text before use, so
+        // a selection that no longer reproduces itself is refused rather than
+        // trusted.
+        qcore_contract::contract_loader::check_source_assumptions(&contracts).map_err(|error| {
+            vec![map_raw_diagnostic(
+                "Q027",
+                SemanticPass::ExternCall,
+                first_span,
+                format!(
+                    "the selected extern contracts differ from their declared sources: {error}"
+                ),
+                ranges,
+            )]
+        })?;
+        let signatures =
+            qcore_contract::extern_bridge::declared_signatures(&contracts).map_err(|error| {
+                vec![map_raw_diagnostic(
+                    "Q023",
+                    SemanticPass::ExternCall,
+                    first_span,
+                    error,
+                    ranges,
+                )]
+            })?;
+        (Some(contracts), signatures)
+    } else {
+        // An all-unchecked module needs no environment, but if one is selected
+        // it is still consulted: §5's identity gate refuses a waiver for a name
+        // the environment declares. A selection that does not load is refused
+        // rather than ignored — the gate would otherwise be silently skipped,
+        // and a broken contract module would be a way to hide that a callee has
+        // a contract.
+        let contracts = match options.extern_contracts.as_ref() {
+            None => None,
+            Some(sources) => Some(
+                qcore_contract::contract_loader::load_resource_contract_sources(sources).map_err(
+                    |error| {
+                        vec![map_raw_diagnostic(
+                            "Q023",
+                            SemanticPass::ExternCall,
+                            first_span,
+                            format!(
+                                "the selected extern contract environment does not load: {error}"
+                            ),
+                            ranges,
+                        )]
+                    },
+                )?,
+            ),
+        };
+        (contracts, BTreeMap::new())
+    };
     let mut diagnostics = Vec::new();
     let mut callees = BTreeMap::new();
     for (name, span) in &called {
         let Some(declaration) = declarations.get(name) else {
             continue;
         };
+        if declaration.unchecked {
+            if let Some(callee) =
+                admit_unchecked_callee(declaration, contracts.as_ref(), ranges, &mut diagnostics)
+            {
+                callees.insert(name.clone(), callee);
+            }
+            continue;
+        }
+        let contracts = contracts
+            .as_ref()
+            .expect("a contracted callee forced the environment to load above");
         if declaration.has_inline_contract {
             diagnostics.push(map_raw_diagnostic(
                 "Q027",
@@ -1741,6 +1891,21 @@ fn compile_extern_source(
             ranges,
         )]
     })?;
+    // Card `UNSAFE-LINKAGE`: the publication tripwire. A certificate that lost
+    // an unchecked-linkage premise between derivation and publication is
+    // refused rather than published. It cannot fail by construction — the
+    // premise is derived from the same callee inventory this compares against —
+    // and asserting it anyway is the point: the day it can fail, it is caught
+    // here rather than inside a `Safe` that stopped saying what it rests on.
+    if !extern_call::certificate_carries_unchecked_linkage(&lowered.program, &certificate) {
+        return Err(vec![map_raw_diagnostic(
+            "Q035",
+            SemanticPass::UncheckedLinkage,
+            lowered.scope_span,
+            "the published extern-call certificate does not carry an unchecked-linkage premise for every uncontracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
 
     let error_names = lowered.program.errors.clone();
     let sequential = qcore_frontend::whole_program::check_whole_program_with_externs(
