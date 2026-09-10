@@ -16,14 +16,14 @@ fn cli_windows_emission_recovers_from_second_creation_failure() {
     let directory = std::env::temp_dir().join(format!("qcore-cli-windows-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let c = directory.join("recovery.c");
-    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(fixture.join("case.qcore"))
         .output()
         .unwrap();
     assert!(checked.status.success(), "{checked:?}");
     assert!(String::from_utf8_lossy(&checked.stdout).contains("Linux/macOS/Windows threads"));
-    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(fixture.join("case.qcore"))
         .arg("-o")
@@ -54,7 +54,7 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
     std::fs::create_dir(&directory).unwrap();
     let c = directory.join("module.c");
     let executable = directory.join("module");
-    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&source)
         .output()
@@ -64,7 +64,7 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
         String::from_utf8_lossy(&checked.stdout)
             .contains("scoped owned-buffer tasks (Linux/macOS/Windows threads)")
     );
-    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(&source)
         .arg("-o")
@@ -95,7 +95,7 @@ fn core_cli_works_without_clang() {
     let input = directory.join("main.qcore");
     std::fs::write(&input, "fn main() -> i32 { return 17; }").unwrap();
     for operation in ["check", "emit"] {
-        let output = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        let output = Command::new(env!("CARGO_BIN_EXE_quirin"))
             .env("QCORE_CLANG", directory.join("missing-clang.exe"))
             .env("PATH", "")
             .arg(operation)
@@ -120,7 +120,7 @@ fn cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output()
     let output = directory.join("output.c");
     std::fs::write(&source, "module contract; extern fn f() -> unit;").unwrap();
     std::fs::write(&output, "keep existing output").unwrap();
-    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&source)
         .output()
@@ -131,7 +131,7 @@ fn cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output()
         String::from_utf8_lossy(&checked.stderr)
     );
     assert!(String::from_utf8_lossy(&checked.stdout).contains("no entry point"));
-    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(&source)
         .arg("-o")
@@ -151,7 +151,7 @@ fn plugin_discovery_errors_are_reported_without_builtin_fallback() {
     let missing =
         std::env::temp_dir().join(format!("qcore-absent-profiles-{}", std::process::id()));
     for value in [missing.as_os_str(), std::ffi::OsStr::new("")] {
-        let output = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        let output = Command::new(env!("CARGO_BIN_EXE_quirin"))
             .env("QCORE_PROFILES", value)
             .args(["plugins", "list"])
             .output()
@@ -187,7 +187,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
 "#,
     )
     .unwrap();
-    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&input)
         .output()
@@ -201,7 +201,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
         String::from_utf8_lossy(&checked.stdout)
             .contains("scoped copy tasks (Linux/macOS/Windows threads)")
     );
-    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(&input)
         .arg("-o")
@@ -231,7 +231,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
     // A source failure must not replace an existing emitted artifact.
     let original = std::fs::read(&c).unwrap();
     std::fs::write(&input, "import std.concurrency; concurrency checked; fn main() -> unit { thread scope s { let h = spawn s main()?; } return; }").unwrap();
-    let rejected = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let rejected = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(&input)
         .arg("-o")
@@ -254,7 +254,7 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
     let source = fixture.join("case.qcore");
     let c = directory.join("recovery.c");
     let exe = directory.join("recovery");
-    let checked = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&source)
         .output()
@@ -264,7 +264,7 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
         String::from_utf8_lossy(&checked.stdout)
             .contains("scoped copy tasks (Linux/macOS/Windows threads)")
     );
-    let emitted = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let emitted = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("emit")
         .arg(&source)
         .arg("-o")
@@ -325,7 +325,7 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
     let manifest = fixtures.join("native_library/unchecked_demo.qcorelib");
 
     // Without the flag: the bare premise, exactly as wave 18 printed it.
-    let bare = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let bare = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&source)
         .output()
@@ -342,7 +342,7 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
     assert!(!bare.contains("artifact"), "no build was named: {bare}");
 
     // With the flag: the same waiver, now naming the artifact and its hash.
-    let sharp = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let sharp = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg("--native-library")
         .arg(&manifest)
@@ -381,7 +381,7 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
             .replace("data_model lp64;", "data_model ilp32;"),
     )
     .unwrap();
-    let refused = Command::new(env!("CARGO_BIN_EXE_qcorec"))
+    let refused = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg("--native-library")
         .arg(&broken)

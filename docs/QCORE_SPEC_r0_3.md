@@ -1,4 +1,9 @@
-# QCore language specification — revision 0.3
+# Quirin language specification — revision 0.3
+
+> **Name.** The language is **Quirin**; its command is `quirin`. The `QCore`
+> spelling is retained for the core component — Rust namespaces, the emitted-C
+> surface, the diagnostics codes, the `.qcore` extension and this file's name —
+> and every such identifier in this document is unchanged by the branding.
 
 > Repository integration: 2026-09-07. Normative requirements are adopted from
 > the supplied review; implementation status is reconciled with main in the
@@ -49,8 +54,8 @@ For documentation, this revision names the current boundaries as follows. These 
 | Profile label | Entry point or implementation | Snapshot boundary |
 |---|---|---|
 | `source.structural` | `parse_source_program`, `elaborate_source` | Broad structural syntax; selected name, usage-grade, and quantitative-index checks. |
-| `source.exec12` | `compile_files`, `qcorec check`, `qcorec emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
-| `source.tasks.copy.v1` | `compile_files`, `qcorec check`, `qcorec emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
+| `source.exec12` | `compile_files`, `quirin check`, `quirin emit` | Flat artificial resource operations, literal returns, and restricted direct calls. |
+| `source.tasks.copy.v1` | `compile_files`, `quirin check`, `quirin emit` | Linux C11 threads or the emitted macOS/Windows compatibility subset; finite scalar-copy leaf workers, explicit joins, checked creation/error paths; no resources, loans or shared source memory. |
 | `source.extern-call.v1` | `compile_files` with an explicit `CompileOptions` extern contract selection | A flat sequential entry calling declared extern functions under admitted resource-contract v1 shapes; results are valid only relative to those declarations. No extents, no excluded C04 mode, no concurrent or error-region context. |
 | `source.nonexec` | The same driver with library/contract modes | Entry-free checking of declarations and supported bodies; no standalone C artifact. |
 | `index.closed` | `quant_index` | Closed, dimensioned natural expressions in credit/live types. |
@@ -99,7 +104,7 @@ Multiple files share one namespace. Executable mode wins if any file is executab
 
 In executable mode the driver honors an explicitly selected entry, otherwise selects `main` or its documented single-function fallback. The emitted entry MUST have no parameters. Unsupported or ambiguous entry selection is an error. All supported source function bodies, including uncalled definitions, are submitted to the source checks.
 
-The current command owner is the `qcorec` package:
+The installed command is `quirin`; its owning package keeps the `qcorec` name, so from a checkout the package spelling selects it:
 
 ```sh
 cargo run -p qcorec -- check path/to/module.qcore

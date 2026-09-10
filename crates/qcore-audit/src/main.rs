@@ -4,11 +4,11 @@ use std::process::ExitCode;
 fn main() -> ExitCode {
     let mut arguments = std::env::args_os().skip(1);
     let Some(path) = arguments.next() else {
-        eprintln!("usage: qcore-audit CONFIG.json");
+        eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     };
     if arguments.next().is_some() {
-        eprintln!("usage: qcore-audit CONFIG.json");
+        eprintln!("usage: quirin-audit CONFIG.json");
         return ExitCode::FAILURE;
     }
     match qcore_audit::run_config(&PathBuf::from(path)) {

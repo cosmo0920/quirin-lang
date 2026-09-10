@@ -532,7 +532,7 @@ facades and specialized reference-body matching remain. This advances task5's
 consolidation without claiming task2's complete provider extraction.
 
 [Configured process auditing](reports/w5-configured-process-audit/README.md)
-now connects `qcore-audit CONFIG.json` to pinned helper/main-source import and
+now connects `quirin-audit CONFIG.json` to pinned helper/main-source import and
 explicit process dispatch, without an application-specific Rust adapter. The
 second-codebase command records two checked function contracts and two Unknown
 functions while its resource unit remains Unknown. Missing selections reject;
@@ -618,7 +618,7 @@ audit example into a reusable, configured driver.
    `qcore-core` + `qcore-frontend`, drop the W0 compatibility re-exports, and
    verify the §3.1 dependency rules hold across the whole workspace
    (including the W0 CI guard extended to every layer). Add the Cycle 20D
-   lifecycle tooling: `qcorec plugins` package verification, enable/disable,
+   lifecycle tooling: `quirin plugins` package verification, enable/disable,
    and reproducible first-party provider packages.
 
 **Pluggability deliverable.** This *is* the pluggability workstream's

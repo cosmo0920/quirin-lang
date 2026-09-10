@@ -11,7 +11,7 @@ use qcore_compiler::{
     format_diagnostic, load_first_party_registry,
 };
 
-const USAGE: &str = "qcorec 0.1.0\n\nUsage:\n  qcorec check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  qcorec emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  qcorec plugins list [--config CONFIG]\n  qcorec plugins profile [--config CONFIG]\n  qcorec plugins inspect PLUGIN_ID [--config CONFIG]\n  qcorec plugins verify PACKAGE_DIR\n  qcorec plugins enable PACKAGE_DIR --config CONFIG\n  qcorec plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -33,7 +33,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     if arguments.len() == 1 && arguments[0] == "--version" {
-        println!("qcorec 0.1.0");
+        println!("quirin 0.1.0");
         return Ok(());
     }
     let command = arguments[0].as_str();
@@ -264,7 +264,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
             // a declaration.
             //
             // Unreachable through this binary today, and deliberately present
-            // anyway: `qcorec` selects no extern contract environment (follow-on
+            // anyway: `quirin` selects no extern contract environment (follow-on
             // `UNSAFE-LINKAGE-CLI`), so no contracted callee is admitted here at
             // all. Without the arm the premise would render through the
             // `{other:?}` fallback the moment that follow-on lands, which is how

@@ -239,7 +239,7 @@ callee in it, the derived assumption list contains that callee's record.
 
 `CompiledModule::declared_assumptions()` returns the certificate's assumption
 list for any compiled module, so a consumer that does not know the route still
-sees the premises. `qcorec check` prints them under an explicit
+sees the premises. `quirin check` prints them under an explicit
 `under N declared assumption(s):` heading, so a `Safe` obtained through
 unchecked linkage is never printed as a bare `Safe`.
 
@@ -455,7 +455,7 @@ constrains it.
   callable only with an integer literal, which is inherited, not introduced.
 * **`UNSAFE-LINKAGE-CTX`** — unchecked calls in task workers, `with lock`
   bodies and error regions, which keep every existing refusal.
-* **`UNSAFE-LINKAGE-CLI`** — a `qcorec` flag selecting a contract environment.
+* **`UNSAFE-LINKAGE-CLI`** — a `quirin` flag selecting a contract environment.
   The CLI selects none, so today an all-unchecked module is exactly what it can
   compile end to end.
 * **`UNSAFE-LINKAGE-ARTIFACT`** — **landed in wave 19.** A waived declaration

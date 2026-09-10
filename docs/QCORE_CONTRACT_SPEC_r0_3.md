@@ -1,4 +1,9 @@
-# QCore contract specification — revision 0.3
+# Quirin contract specification — revision 0.3
+
+> **Name.** The language is **Quirin**; its command is `quirin`. The `QCore`
+> spelling is retained for the core component — Rust namespaces, the emitted-C
+> surface, the diagnostics codes, the `.qcore` extension and this file's name —
+> and every such identifier in this document is unchanged by the branding.
 
 > Repository integration: 2026-09-07. Normative requirements are adopted from
 > the supplied review; implementation status is reconciled with main in the
@@ -31,7 +36,7 @@ The current repository shares one structural syntax among several consumers. The
 | Mechanism/lifecycle interpreters | Explicit adapters derive or supply lifecycle facts for an identified model or execution. | Acceptance within that model or observation, not proof of arbitrary source. |
 | Verifier host v1 | Resolved plugin manifest, request and response envelopes. | Transport, targeting and envelope checks only; no accepted v1 Safe certificate. |
 
-A caller MUST select the interpreter deliberately. The v1 marker is mandatory within the resource loader; it does not make the ordinary `qcorec check` command automatically dispatch every contract to that loader. Current verifier scopes enter bounded core derivation/dispatch; unsupported lifecycle source effects still leave obligations incomplete.
+A caller MUST select the interpreter deliberately. The v1 marker is mandatory within the resource loader; it does not make the ordinary `quirin check` command automatically dispatch every contract to that loader. Current verifier scopes enter bounded core derivation/dispatch; unsupported lifecycle source effects still leave obligations incomplete.
 
 A verification result MUST account for every clause relevant to the requested property. Clauses can be retained without interpretation by an editor or structural tool, but the output MUST NOT imply that retained clauses were discharged. A consumer MUST reject an unsupported semantic clause, return Unknown for its requested property, or explicitly limit its claim to a different covered property. Silently deleting a clause and publishing the original full-contract claim is forbidden.
 

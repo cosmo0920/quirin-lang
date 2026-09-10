@@ -7,6 +7,10 @@ checks pins/source identities, runs the C gateway and writes diagnostics plus
 an assumption sidecar. Its normal dependency graph contains no compiler or
 provider crate.
 
+The crate is `qcore-audit`; the command it installs is **`quirin-audit`**
+(`quirin-audit CONFIG.json`). From a checkout, the package spelling still
+selects it:
+
 ```sh
 cargo run -p qcore-audit -- /path/to/audit.json
 ```
@@ -95,7 +99,7 @@ For an executable current-revision CMetrics counter audit:
 
 ```sh
 python3 -B scripts/prepare_cmetrics_clang_audit.py
-# Run qcore-audit with the absolute cmetrics-audit.json.config path printed above.
+# Run quirin-audit with the absolute cmetrics-audit.json.config path printed above.
 ```
 
 Preparation defaults to local `HEAD`, accepts `--revision COMMIT_OR_TAG`, and
@@ -224,7 +228,7 @@ The CMetrics example consumes an unmodified Clang GNU17 CMake database:
 
 ```sh
 python3 -B scripts/prepare_cmetrics_clang_audit.py
-# Run qcore-audit with the generated configuration path printed by preparation.
+# Run quirin-audit with the generated configuration path printed by preparation.
 ```
 
 The script creates an independent source clone and a persistent build under

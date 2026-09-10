@@ -76,7 +76,7 @@ fn unchecked_premises(module: &qcore_compiler::CompiledModule) -> Vec<(String, S
 #[test]
 fn an_uncontracted_library_links_with_no_contract_selection() {
     // The point of the card: `extern_contracts: None`, three real C symbols,
-    // and a checked module. This is also exactly what `qcorec check` can do,
+    // and a checked module. This is also exactly what `quirin check` can do,
     // since the CLI selects no environment.
     let module = compile_with(ROUND_TRIP, None).unwrap();
     assert_eq!(

@@ -3,10 +3,13 @@ name = "qcorec"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-description = "QCore-C command-line driver over the qcore-compiler library."
+description = "Quirin command-line driver over the qcore-compiler library."
 
+# The package keeps the `qcorec` name: the core component of the language stays
+# seated as "qcore", and every `qcore_*` Rust namespace, emitted-C symbol and
+# diagnostics code is unchanged. Only the installed command is branded.
 [[bin]]
-name = "qcorec"
+name = "quirin"
 path = "src/main.rs"
 
 [dependencies]

@@ -1,8 +1,12 @@
-# QCore syntax highlighting for Emacs
+# Quirin syntax highlighting for Emacs
 
 `qcore-mode.el` is a standalone major mode for Emacs 27.1 or later. It selects
-QCore mode for `.qcore` and `.qc` files, uses standard theme faces, and supports
+QCore mode for `.qcore` files, uses standard theme faces, and supports
 Emacs comment commands (`M-;`, `comment-region`, `uncomment-region`).
+`.qcore` is the only source extension; the `.qc` alternative is retired and
+no longer selects this mode. The mode, its file and its function prefix keep
+the `qcore` spelling — that is the language's core component name, which the
+Quirin branding does not move.
 
 Add this to your Emacs initialization file, adjusting the checkout path:
 
@@ -67,7 +71,8 @@ emacs -Q --batch -L editors/emacs -l qcore-mode-tests.el -f ert-run-tests-batch-
 ```
 
 The regressions check face precedence, character/lifetime edits, escaped
-newlines, non-nesting comments, file selection, comment commands, and loading
+newlines, non-nesting comments, file selection (including the negative check
+that a `.qc` buffer does *not* select the mode), comment commands, and loading
 the existing contract, example and CT fixture corpus. The intrusive-list
 resource declaration has explicit face checks, with separate controls for
 resource members, ordinary bindings, nested fields and comments.

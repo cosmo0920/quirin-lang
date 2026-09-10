@@ -311,7 +311,7 @@ language documents are in [obsolete](obsolete/README.md); dated evidence remains
 in its original report packages.
 
 
-Configured process audit (2026-09-07): `qcore-audit CONFIG.json` now connects
+Configured process audit (2026-09-07): `quirin-audit CONFIG.json` now connects
 explicit source-contract package/policy selection to pinned source/compile-db
 imports and independent process-witness replay. Selected helper sources are
 checked against their Git blobs and imported bytes. The second-codebase command

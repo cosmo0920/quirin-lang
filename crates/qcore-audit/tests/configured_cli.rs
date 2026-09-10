@@ -108,7 +108,7 @@ impl Fixture {
     /// Run the audit from an explicit working directory. A unit's meaning must
     /// not depend on where the audit happens to be started.
     fn run_in(&self, directory: &std::path::Path) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_qcore-audit"))
+        Command::new(env!("CARGO_BIN_EXE_quirin-audit"))
             .current_dir(directory)
             .arg(self.0.join("audit.json"))
             .output()

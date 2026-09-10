@@ -49,7 +49,7 @@ impl Fixture {
         }
     }
     fn cli(&self, args: &[&str]) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_qcorec"))
+        Command::new(env!("CARGO_BIN_EXE_quirin"))
             .args(args)
             .output()
             .unwrap()
