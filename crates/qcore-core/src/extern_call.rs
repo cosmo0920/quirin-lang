@@ -37,6 +37,26 @@
 //!    calls that edge performs, and admission requires it to be exactly that
 //!    edge. The v1 abandonment refusal is narrowed to the undispositioned case
 //!    and keeps its code, its message subject and its named identity.
+//!
+//!    Card `EXTERN-MODES` adds two more modes and keeps one refusal on measured
+//!    grounds. `resource_released(p, nonnull)` is the mode the error arm was
+//!    describing all along: contract spec §C04.2 separates *discharging* an
+//!    obligation from *transferring* it, and the arm previously had only
+//!    transfer available. The caller-side ledger delta of the two is identical,
+//!    so nothing about leak accounting moves; what changes is that a release is
+//!    published as a release and premised by name
+//!    ([`ExternAssumption::DeclaredRelease`]), because §C04.2 warns that a
+//!    false release declaration invalidates a safety conclusion while a false
+//!    consumption declaration only relocates an obligation.
+//!    `resource_return_reallocated(p, nullable)` is the one departing mode
+//!    whose *failure* arm the declaration states (§C04.3: a null failure
+//!    preserves the incoming custody, a success replaces it exactly once), so
+//!    its subject stays live on the error arm and must be dispositioned there.
+//!    [`ExternDiagnostic::AdapterDepartingArgument`] refuses a consumption
+//!    beside an acquisition precisely because ordinary declarations are silent
+//!    on that arm; a reallocation is not silent, which is why it is admitted
+//!    without weakening that refusal. `resource_removed` stays refused: see
+//!    [`BridgeRefusal::RemovedParameter`] for the measured ground.
 //! 2. **Derivation** ([`derived_custody`], [`derived_effects`]). The custody
 //!    delta and effect row a call site imposes are a *function* of the admitted
 //!    callee, so a certificate consumer can repeat the derivation instead of
@@ -202,6 +222,23 @@ pub enum CallParameter {
     /// `EXTERN-F1`). The callee writes fresh custody through the slot; the
     /// caller's binding materializes only on the adapter's success arm.
     OutSlot,
+    /// `resource_released(p, nonnull)` on `ptr<mut, u8>` (card `EXTERN-MODES`).
+    /// The declared contract **discharges** the obligation rather than moving
+    /// it somewhere this profile stops looking. The caller-side ledger delta is
+    /// the same as a consumption; what differs is what the declaration claims,
+    /// and contract spec §C04.2 is explicit that "a false declaration here can
+    /// invalidate a safety conclusion" — so the claim is recorded by name as
+    /// [`ExternAssumption::DeclaredRelease`] rather than folded into the
+    /// consumption premise.
+    Released,
+    /// The subject of a `resource_return_reallocated(p, nullable)` declaration
+    /// (card `EXTERN-MODES`): a `resource_owned(p, nonnull)` parameter on
+    /// `ptr<mut, u8>` that the *result mode* designates. Contract spec §C04.3
+    /// fixes both arms — a null failure preserves the incoming custody, and a
+    /// successful replacement consumes the old resource exactly once and
+    /// establishes the result identity — so this is the one departing argument
+    /// whose status on the failure arm the declaration actually states.
+    ReallocSubject,
 }
 
 /// The admitted v1 bridging of the result (design §3.2).
@@ -212,6 +249,11 @@ pub enum CallResult {
     /// `resource_return_owned(nullable)`: fresh custody behind the mandatory
     /// null adapter of design §3.3.
     OwnedNullable,
+    /// `resource_return_reallocated(p, nullable)` (card `EXTERN-MODES`): the
+    /// identity at parameter `p` is replaced by the result identity on the
+    /// success arm and preserved untouched on the null arm. The same mandatory
+    /// adapter of design §3.3 branches it, so neither arm is unchecked.
+    ReallocatedNullable { parameter: usize },
 }
 
 /// One admitted callee. Only [`bridge_contract`] constructs this, so a value of
@@ -226,15 +268,22 @@ pub struct ExternCallee {
     /// callee has at most one acquisition source: an owned nullable return or
     /// one out slot, never both and never two slots.
     pub out_parameter: Option<usize>,
+    /// Index of the [`CallParameter::ReallocSubject`], if the result mode is
+    /// `resource_return_reallocated`. A reallocation is a third acquisition
+    /// source and, like the other two, is exclusive with them.
+    pub realloc_parameter: Option<usize>,
 }
 
 impl ExternCallee {
-    /// Whether a call to this callee establishes fresh custody, through either
+    /// Whether a call to this callee establishes fresh custody, through any
     /// admitted acquisition source. Exactly the callees for which the
     /// `succeeds BOOL else raise ERROR` adapter is mandatory.
     #[must_use]
     pub const fn acquires(&self) -> bool {
-        matches!(self.result, CallResult::OwnedNullable) || self.out_parameter.is_some()
+        matches!(
+            self.result,
+            CallResult::OwnedNullable | CallResult::ReallocatedNullable { .. }
+        ) || self.out_parameter.is_some()
     }
 }
 
@@ -251,9 +300,14 @@ pub enum BridgeRefusal {
     NullableOwnerParameter { parameter: usize },
     /// `resource_owned` in owner position on other than `ptr<mut, u8>`.
     UnsupportedOwnerPointer { parameter: usize },
-    /// `resource_released`: release through an extern call is the cleanup
-    /// relation territory contract spec §C10 reserves. Follow-on.
-    ReleasedParameter { parameter: usize },
+    /// `resource_released(p, nullable)` (card `EXTERN-MODES`): v1 releases
+    /// nonnull arguments only, exactly as it consumes nonnull arguments only.
+    /// A nullable release discharges nothing when the modeled value is null
+    /// (contract spec §C04.2), so admitting it would make the discharge
+    /// conditional on a value this profile does not model.
+    NullableReleasedParameter { parameter: usize },
+    /// `resource_released` on other than `ptr<mut, u8>`.
+    UnsupportedReleasedPointer { parameter: usize },
     /// `resource_out(p, nonnull)`: a trusted non-nullness assertion on the
     /// written slot, with no checked branch. Excluded for the same reason as
     /// `resource_return_owned(nonnull)`: every acquisition arm stays checked.
@@ -279,7 +333,16 @@ pub enum BridgeRefusal {
     /// mode is admitted with no owned return: custody leaves the checked world
     /// and nothing comes back in the same call.
     StoredWithAcquisition { parameter: usize },
-    /// `resource_removed`: owner-indexed custody. Follow-on.
+    /// `resource_removed`: owner-indexed custody flowing back *out* of a
+    /// declared owner. Card `EXTERN-MODES` measured this mode and deliberately
+    /// kept the refusal. A removal has to name a child this profile stopped
+    /// tracking when it was stored: `EXTERN-F1` records the residual beneath an
+    /// owner as the premise
+    /// [`ExternAssumption::StoredCustodyUnderDeclaredOwner`], not as a modeled
+    /// owner-to-child index, and a source body has no expression that reads one
+    /// back. Admitting removal would therefore mint a fresh caller identity out
+    /// of a premise, which is an unchecked acquisition. Follow-on
+    /// `EXTERN-MODES-REMOVED-INDEX`.
     RemovedParameter { parameter: usize },
     /// `resource_consumed(p, nullable)`: v1 admits the nonnull form only, so
     /// every consumed argument is a live identity.
@@ -295,8 +358,25 @@ pub enum BridgeRefusal {
     /// `resource_return_owned(nonnull)`: a trusted non-nullness assertion with
     /// no checked branch. Excluded to keep every acquisition arm checked.
     NonnullOwnedReturn,
-    /// `resource_return_reallocated`: identity replacement. Follow-on.
-    ReallocatedReturn,
+    /// `resource_return_reallocated(p, nonnull)`: a trusted non-nullness
+    /// assertion with no checked branch. Excluded for the same reason as
+    /// `resource_return_owned(nonnull)`; here it would additionally erase the
+    /// preserving failure arm contract spec §C04.3 defines.
+    NonnullReallocatedReturn,
+    /// `resource_return_reallocated(p, _)` whose `p` is not a parameter of this
+    /// declaration.
+    ReallocSubjectOutOfRange { parameter: usize },
+    /// `resource_return_reallocated(p, _)` whose `p` is not declared
+    /// `resource_owned`. Contract spec §C04.3 requires exactly that.
+    ReallocSubjectNotOwned { parameter: usize },
+    /// `resource_return_reallocated(p, _)` whose subject is `resource_owned(p,
+    /// nullable)`: a null incoming subject supplies no live custody, so there
+    /// is nothing for the success arm to replace exactly once.
+    NullableReallocSubject { parameter: usize },
+    /// A reallocation subject on other than `ptr<mut, u8>`.
+    UnsupportedReallocSubjectPointer { parameter: usize },
+    /// A reallocated result whose declared result type is not `ptr<mut, u8>`.
+    UnsupportedReallocatedResultType { result: AbiType },
     /// An owned result whose declared result type is not `ptr<mut, u8>`.
     UnsupportedOwnedResultType { result: AbiType },
     /// A `unit` parameter, which the loader's vocabulary never produces.
@@ -318,9 +398,13 @@ impl fmt::Display for BridgeRefusal {
                 f,
                 "parameter {parameter} is a declared store owner on other than `ptr<mut, u8>`"
             ),
-            Self::ReleasedParameter { parameter } => write!(
+            Self::NullableReleasedParameter { parameter } => write!(
                 f,
-                "parameter {parameter} declares `resource_released`; release through an extern call is reserved for the cleanup relation"
+                "parameter {parameter} declares `resource_released(_, nullable)`; v1 releases nonnull arguments only"
+            ),
+            Self::UnsupportedReleasedPointer { parameter } => write!(
+                f,
+                "parameter {parameter} releases other than `ptr<mut, u8>`"
             ),
             Self::NonnullOutParameter { parameter } => write!(
                 f,
@@ -376,9 +460,30 @@ impl fmt::Display for BridgeRefusal {
             Self::NonnullOwnedReturn => f.write_str(
                 "`resource_return_owned(nonnull)` asserts non-nullness with no checked branch",
             ),
-            Self::ReallocatedReturn => {
-                f.write_str("`resource_return_reallocated` is not callable in v1")
-            }
+            Self::NonnullReallocatedReturn => f.write_str(
+                "`resource_return_reallocated(_, nonnull)` asserts non-nullness with no checked branch, and erases the failure arm that preserves the incoming custody",
+            ),
+            Self::ReallocSubjectOutOfRange { parameter } => write!(
+                f,
+                "the reallocated result names parameter {parameter}, which this declaration does not have"
+            ),
+            Self::ReallocSubjectNotOwned { parameter } => write!(
+                f,
+                "the reallocated result names parameter {parameter}, which is not a `resource_owned` parameter of this contract"
+            ),
+            Self::NullableReallocSubject { parameter } => write!(
+                f,
+                "the reallocation subject at parameter {parameter} is `nullable`; an absent subject supplies no custody to replace"
+            ),
+            Self::UnsupportedReallocSubjectPointer { parameter } => write!(
+                f,
+                "the reallocation subject at parameter {parameter} is on other than `ptr<mut, u8>`"
+            ),
+            Self::UnsupportedReallocatedResultType { result } => write!(
+                f,
+                "a reallocated result requires `ptr<mut, u8>`, not `{}`",
+                result.c_spelling()
+            ),
             Self::UnsupportedOwnedResultType { result } => write!(
                 f,
                 "an owned result requires `ptr<mut, u8>`, not `{}`",
@@ -404,6 +509,23 @@ pub fn bridge_contract(
     // `resource_owned` is admitted exactly where some `resource_stored`
     // parameter designates it (contract spec §C04.2) and refused everywhere
     // else, so this pass runs before per-parameter admission.
+    //
+    // Card `EXTERN-MODES` adds the second such position: contract spec §C04.3
+    // requires a `resource_return_reallocated(p, _)` subject to be `Owned`, so
+    // the *result* mode also designates an owner. Reading it here keeps the
+    // per-parameter pass a single total match over one precomputed set.
+    let realloc_subject = match contract.result_mode {
+        ContractReturnMode::Reallocated { parameter, .. } => {
+            let Some((_, mode)) = contract.parameters.get(parameter) else {
+                return Err(BridgeRefusal::ReallocSubjectOutOfRange { parameter });
+            };
+            if !matches!(mode, ContractParameterMode::Owned { .. }) {
+                return Err(BridgeRefusal::ReallocSubjectNotOwned { parameter });
+            }
+            Some(parameter)
+        }
+        ContractReturnMode::None | ContractReturnMode::Owned { .. } => None,
+    };
     let designated_owners = contract
         .parameters
         .iter()
@@ -411,6 +533,7 @@ pub fn bridge_contract(
             ContractParameterMode::Stored { owner, .. } => Some(*owner),
             _ => None,
         })
+        .chain(realloc_subject)
         .collect::<BTreeSet<_>>();
     let mut parameters = Vec::with_capacity(contract.parameters.len());
     let mut out_parameter = None;
@@ -449,20 +572,42 @@ pub fn bridge_contract(
                 if !designated_owners.contains(&index) {
                     return Err(BridgeRefusal::OwnedParameter { parameter: index });
                 }
+                // A reallocation subject and a store owner are both `Owned`
+                // positions, but they are not the same position: the subject's
+                // custody is replaced by the result, the owner's is kept. The
+                // result mode decides which, and a parameter that is both is
+                // refused below as a store beside an acquisition.
+                if realloc_subject == Some(index) {
+                    if *nullable {
+                        return Err(BridgeRefusal::NullableReallocSubject { parameter: index });
+                    }
+                    if *abi != AbiType::PtrMutU8 {
+                        return Err(BridgeRefusal::UnsupportedReallocSubjectPointer {
+                            parameter: index,
+                        });
+                    }
+                    CallParameter::ReallocSubject
+                } else {
+                    if *nullable {
+                        return Err(BridgeRefusal::NullableOwnerParameter { parameter: index });
+                    }
+                    if *abi != AbiType::PtrMutU8 {
+                        return Err(BridgeRefusal::UnsupportedOwnerPointer { parameter: index });
+                    }
+                    CallParameter::Owner
+                }
+            }
+            ContractParameterMode::Released { nullable } => {
+                if !abi.is_pointer() {
+                    return Err(BridgeRefusal::ScalarCustody { parameter: index });
+                }
                 if *nullable {
-                    return Err(BridgeRefusal::NullableOwnerParameter { parameter: index });
+                    return Err(BridgeRefusal::NullableReleasedParameter { parameter: index });
                 }
                 if *abi != AbiType::PtrMutU8 {
-                    return Err(BridgeRefusal::UnsupportedOwnerPointer { parameter: index });
+                    return Err(BridgeRefusal::UnsupportedReleasedPointer { parameter: index });
                 }
-                CallParameter::Owner
-            }
-            ContractParameterMode::Released { .. } => {
-                return Err(if abi.is_pointer() {
-                    BridgeRefusal::ReleasedParameter { parameter: index }
-                } else {
-                    BridgeRefusal::ScalarCustody { parameter: index }
-                });
+                CallParameter::Released
             }
             ContractParameterMode::Out { nullable } => {
                 if !abi.is_pointer() {
@@ -527,13 +672,30 @@ pub fn bridge_contract(
             }
             CallResult::OwnedNullable
         }
-        ContractReturnMode::Reallocated { .. } => return Err(BridgeRefusal::ReallocatedReturn),
+        ContractReturnMode::Reallocated {
+            nullable: false, ..
+        } => return Err(BridgeRefusal::NonnullReallocatedReturn),
+        ContractReturnMode::Reallocated {
+            parameter,
+            nullable: true,
+        } => {
+            if contract.result != AbiType::PtrMutU8 {
+                return Err(BridgeRefusal::UnsupportedReallocatedResultType {
+                    result: contract.result,
+                });
+            }
+            CallResult::ReallocatedNullable { parameter }
+        }
     };
-    if result == CallResult::OwnedNullable && out_parameter.is_some() {
+    let acquires_by_result = matches!(
+        result,
+        CallResult::OwnedNullable | CallResult::ReallocatedNullable { .. }
+    );
+    if acquires_by_result && out_parameter.is_some() {
         return Err(BridgeRefusal::MultipleAcquisitions);
     }
     if let Some(parameter) = stored_parameter
-        && (result == CallResult::OwnedNullable || out_parameter.is_some())
+        && (acquires_by_result || out_parameter.is_some())
     {
         return Err(BridgeRefusal::StoredWithAcquisition { parameter });
     }
@@ -543,6 +705,7 @@ pub fn bridge_contract(
         result,
         result_abi: contract.result,
         out_parameter,
+        realloc_parameter: realloc_subject,
     })
 }
 
@@ -563,6 +726,15 @@ pub enum ExternCustody {
     /// A loan with a liveness precondition: the caller supplies live custody
     /// for a declared store owner and keeps the identity.
     Owner,
+    /// The declared contract discharges the obligation. The caller-side delta
+    /// is the same as [`Self::Consumed`]; the difference is what is claimed,
+    /// recorded as [`ExternAssumption::DeclaredRelease`].
+    Released,
+    /// The identity is replaced by the call's result on the success arm and
+    /// preserved on the failure arm (contract spec §C04.3). Unlike every other
+    /// departing mode, both arms are declared, which is why the adapter admits
+    /// it where it refuses a consumption beside an acquisition.
+    Reallocated,
 }
 
 /// Derived custody delta over the *resource-bearing arguments*, in declaration
@@ -581,6 +753,8 @@ pub fn derived_custody(callee: &ExternCallee) -> Vec<ExternCustody> {
             CallParameter::Consumed => Some(ExternCustody::Consumed),
             CallParameter::Stored { .. } => Some(ExternCustody::Stored),
             CallParameter::Owner => Some(ExternCustody::Owner),
+            CallParameter::Released => Some(ExternCustody::Released),
+            CallParameter::ReallocSubject => Some(ExternCustody::Reallocated),
         })
         .collect()
 }
@@ -601,7 +775,9 @@ pub fn derived_effects(callee: &ExternCallee) -> EffectRow {
         CallParameter::Consumed
         | CallParameter::Stored { .. }
         | CallParameter::Owner
-        | CallParameter::OutSlot => true,
+        | CallParameter::OutSlot
+        | CallParameter::Released
+        | CallParameter::ReallocSubject => true,
     }) {
         effects.insert(Effect::Mut);
     }
@@ -627,6 +803,15 @@ pub enum ExternArgument {
     /// The declared out slot. It carries no caller identity: the identity it
     /// establishes is the adapter's.
     OutSlot,
+    /// A live `own<Buffer>` the declared contract discharges. Spelled
+    /// `move NAME` in source, exactly like a consumption or a store: which of
+    /// the three it is comes from the declared mode, never from the call site,
+    /// so this profile adds no reserved word.
+    Release(ResourceId),
+    /// A live `own<Buffer>` supplied as the subject of a declared
+    /// reallocation. It survives the failure arm and is replaced on the
+    /// success arm.
+    Realloc(ResourceId),
 }
 
 /// One disposition on an adapter's error arm (card `EXTERN-ERR-REL`): a call
@@ -943,6 +1128,21 @@ pub enum ExternAssumption {
     /// permanently; that the declared owner keeps, and eventually releases, it
     /// is a declared premise and is discharged nowhere in this repository.
     StoredCustodyUnderDeclaredOwner(String),
+    /// The named callee declares `resource_released(_, nonnull)`. Contract spec
+    /// §C04.2: "the trusted call contract discharges the resource obligation. A
+    /// false declaration here can invalidate a safety conclusion." This profile
+    /// checks that the caller supplied a live identity and stopped using it; it
+    /// never checks that the C implementation destroys anything. Recorded
+    /// separately from [`Self::DeclaredContract`] so a reader can see which
+    /// callees a leak-freedom reading actually depends on.
+    DeclaredRelease(String),
+    /// The named callee declares `resource_return_reallocated(_, nullable)`.
+    /// Both arms of contract spec §C04.3 are premised: that a null result left
+    /// the incoming custody intact, and that a non-null result replaced it
+    /// exactly once. The emitted program compares the observed nullness against
+    /// the declared control, which refutes a disagreeing implementation for the
+    /// observed run and establishes nothing beyond it.
+    DeclaredReallocation(String),
 }
 
 /// Evidence a checked module publishes. Every field is re-derivable from the
@@ -960,6 +1160,16 @@ pub struct ExternCallCertificate {
     pub out_acquisitions: Vec<ResourceId>,
     /// Identities consumed by a call, in trace order.
     pub consumptions: Vec<ResourceId>,
+    /// Identities a declared `resource_released` parameter discharged, in trace
+    /// order. Kept apart from `consumptions` because the two declare different
+    /// things: a consumption moves an obligation, a release discharges it, and
+    /// contract spec §C04.2 warns that a false release invalidates a safety
+    /// conclusion. A reader that treats them as one loses that distinction.
+    pub releases: Vec<ResourceId>,
+    /// `(replaced, established)` identities of every successful declared
+    /// reallocation, in trace order. A reallocation that took its failure arm
+    /// contributes nothing here: the subject was preserved, not replaced.
+    pub reallocations: Vec<(ResourceId, ResourceId)>,
     /// `(child, owner)` identities whose custody left the caller's ledger
     /// beneath a declared owner, in trace order. The owner is still the
     /// caller's; what it does with the child is the premise recorded as
@@ -1051,6 +1261,7 @@ fn check_error_arm(
                     | (ExternArgument::Borrow(_), CallParameter::Borrowed(_))
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
                     | (ExternArgument::Owner(_), CallParameter::Owner)
+                    | (ExternArgument::Release(_), CallParameter::Released)
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ReleaseArgumentForm {
@@ -1062,7 +1273,14 @@ fn check_error_arm(
                 continue;
             }
             match argument {
-                ExternArgument::Consume(resource) => discharged.push(*resource),
+                // A disposition discharges by either departing mode the arm
+                // admits. `resource_released` is the mode that says what the
+                // cleanup edge means; `resource_consumed` remains admitted
+                // because the caller-side obligation is discharged either way,
+                // and the certificate records which one ran.
+                ExternArgument::Consume(resource) | ExternArgument::Release(resource) => {
+                    discharged.push(*resource);
+                }
                 // Every identity the arm merely reads must still be live there;
                 // the error arm is a path, not a place where a dead binding
                 // becomes readable again.
@@ -1075,7 +1293,10 @@ fn check_error_arm(
                         malformed = true;
                     }
                 }
-                ExternArgument::Data(_) | ExternArgument::Store(_) | ExternArgument::OutSlot => {}
+                ExternArgument::Data(_)
+                | ExternArgument::Store(_)
+                | ExternArgument::OutSlot
+                | ExternArgument::Realloc(_) => {}
             }
         }
         if malformed {
@@ -1128,6 +1349,8 @@ pub fn check_extern_program(
     let mut acquisitions = Vec::new();
     let mut out_acquisitions = Vec::new();
     let mut consumptions = Vec::new();
+    let mut releases = Vec::new();
+    let mut reallocations = Vec::new();
     let mut stored = Vec::new();
     let mut error_dispositions = Vec::new();
     // Acquisition order, because the established cleanup edge releases in
@@ -1156,7 +1379,9 @@ pub fn check_extern_program(
             continue;
         }
         let mut consumed_here = Vec::new();
+        let mut released_here = Vec::new();
         let mut stored_here = Vec::new();
+        let mut realloc_here = None;
         for (parameter, (argument, declared)) in
             call.arguments.iter().zip(&callee.parameters).enumerate()
         {
@@ -1168,6 +1393,8 @@ pub fn check_extern_program(
                     | (ExternArgument::Store(_), CallParameter::Stored { .. })
                     | (ExternArgument::Owner(_), CallParameter::Owner)
                     | (ExternArgument::OutSlot, CallParameter::OutSlot)
+                    | (ExternArgument::Release(_), CallParameter::Released)
+                    | (ExternArgument::Realloc(_), CallParameter::ReallocSubject)
             );
             if !admitted {
                 diagnostics.push(ExternDiagnostic::ArgumentForm {
@@ -1179,6 +1406,8 @@ pub fn check_extern_program(
             }
             match (argument, declared) {
                 (ExternArgument::Consume(resource), _) => consumed_here.push(*resource),
+                (ExternArgument::Release(resource), _) => released_here.push(*resource),
+                (ExternArgument::Realloc(resource), _) => realloc_here = Some(*resource),
                 (ExternArgument::Store(child), CallParameter::Stored { owner }) => {
                     // The declared owner is a position in the same call, so the
                     // owner identity is read from the argument the declaration
@@ -1227,9 +1456,19 @@ pub fn check_extern_program(
                 // (the callee may not have). That shape is refused by name
                 // rather than resolved by assumption; it was already refused in
                 // v1, as abandonment, and stays refused here.
+                //
+                // Card `EXTERN-MODES` names the one exception, and it is an
+                // exception because the declaration stops being silent: contract
+                // spec §C04.3 fixes both arms of a reallocation, so the subject
+                // is *known* to survive a null result. It therefore stays on the
+                // arm's live list and the arm must dispose of it like any other
+                // live identity — which is the same rule, not a relaxation of
+                // it. A released argument is not the exception: `resource_released`
+                // constrains the normal exit only, exactly as consumption does.
                 let departing = consumed_here
                     .iter()
                     .copied()
+                    .chain(released_here.iter().copied())
                     .chain(stored_here.iter().map(|(child, _)| *child))
                     .collect::<Vec<_>>();
                 let mut arm_live = live.clone();
@@ -1266,6 +1505,12 @@ pub fn check_extern_program(
             remove_live(&mut live, *resource);
             consumptions.push(*resource);
         }
+        // A released identity leaves the caller's ledger exactly as a consumed
+        // one does; the difference is the declaration, recorded separately.
+        for resource in &released_here {
+            remove_live(&mut live, *resource);
+            releases.push(*resource);
+        }
         // A stored identity leaves the caller's ledger exactly as a consumed
         // one does. What distinguishes it is where it went, which is recorded
         // and premised rather than checked.
@@ -1284,6 +1529,15 @@ pub fn check_extern_program(
             // trace keeps the static identity so the caller's passes still see
             // one binding, and the reference/native runs take the error arm.
             if adapter.succeeds {
+                // A successful reallocation replaces the subject exactly once
+                // (contract spec §C04.3): the old identity stops being live at
+                // the same step the new one starts. On the failure arm neither
+                // happens, which is why the subject was still on the arm's live
+                // list and had to be dispositioned there.
+                if let Some(subject) = realloc_here {
+                    remove_live(&mut live, subject);
+                    reallocations.push((subject, adapter.resource));
+                }
                 live.push(adapter.resource);
             }
         }
@@ -1307,6 +1561,16 @@ pub fn check_extern_program(
                 name.clone(),
             ));
         }
+        if callee
+            .parameters
+            .iter()
+            .any(|parameter| matches!(parameter, CallParameter::Released))
+        {
+            assumptions.push(ExternAssumption::DeclaredRelease(name.clone()));
+        }
+        if callee.realloc_parameter.is_some() {
+            assumptions.push(ExternAssumption::DeclaredReallocation(name.clone()));
+        }
     }
     assumptions.push(ExternAssumption::NoExtentTransport);
     assumptions.push(ExternAssumption::LinkageSuppliedByBuilder);
@@ -1317,6 +1581,8 @@ pub fn check_extern_program(
         acquisitions,
         out_acquisitions,
         consumptions,
+        releases,
+        reallocations,
         stored,
         error_dispositions,
         effects: EffectRow::new(effects),

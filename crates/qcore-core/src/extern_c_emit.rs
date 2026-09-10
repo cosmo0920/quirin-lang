@@ -73,6 +73,11 @@ fn argument_line(argument: &ExternArgument, out: ResourceId) -> String {
         ExternArgument::Store(resource) => format!("s:{}", resource_name(*resource)),
         ExternArgument::Owner(resource) => format!("w:{}", resource_name(*resource)),
         ExternArgument::OutSlot => format!("o:{}", resource_name(out)),
+        // `f` freed (discharged by a declared `resource_released`), `g` the
+        // subject a declared reallocation replaces. Both are distinct from
+        // `c:`, so an observation still records which custody rule ran.
+        ExternArgument::Release(resource) => format!("f:{}", resource_name(*resource)),
+        ExternArgument::Realloc(resource) => format!("g:{}", resource_name(*resource)),
     }
 }
 
@@ -94,7 +99,42 @@ fn out_prefix(callee: &ExternCallee, arguments: &[ExternArgument], resource: Res
     format!("out {}{}", callee.name, argument_lines(arguments, resource))
 }
 
-fn out_observation(
+/// A declared reallocation, without its outcome word. The subject appears among
+/// the arguments as `g:`, so the observation records both identities and which
+/// arm ran — the two facts a reader needs to tell a replacement from a
+/// preserved subject.
+fn realloc_prefix(
+    callee: &ExternCallee,
+    arguments: &[ExternArgument],
+    resource: ResourceId,
+) -> String {
+    format!(
+        "realloc {} {}{}",
+        callee.name,
+        resource_name(resource),
+        argument_lines(arguments, resource)
+    )
+}
+
+/// The prefix of whichever acquisition source this callee declares. An owned
+/// return names only the identity it binds; an out slot and a reallocation both
+/// name their arguments, because in both the identity's provenance is one of
+/// them.
+fn acquisition_prefix(
+    callee: &ExternCallee,
+    arguments: &[ExternArgument],
+    resource: ResourceId,
+) -> String {
+    if callee.out_parameter.is_some() {
+        out_prefix(callee, arguments, resource)
+    } else if callee.realloc_parameter.is_some() {
+        realloc_prefix(callee, arguments, resource)
+    } else {
+        format!("acquire {} {}", callee.name, resource_name(resource))
+    }
+}
+
+fn acquisition_observation(
     callee: &ExternCallee,
     arguments: &[ExternArgument],
     resource: ResourceId,
@@ -102,7 +142,7 @@ fn out_observation(
 ) -> String {
     format!(
         "{} {}",
-        out_prefix(callee, arguments, resource),
+        acquisition_prefix(callee, arguments, resource),
         if succeeds { "ok" } else { "null" }
     )
 }
@@ -128,21 +168,12 @@ pub fn interpret_extern_program(
                 })?;
                 match (&call.adapter, callee.acquires()) {
                     (Some(adapter), true) => {
-                        trace.push(if callee.out_parameter.is_some() {
-                            out_observation(
-                                callee,
-                                &call.arguments,
-                                adapter.resource,
-                                adapter.succeeds,
-                            )
-                        } else {
-                            format!(
-                                "acquire {} {} {}",
-                                callee.name,
-                                resource_name(adapter.resource),
-                                if adapter.succeeds { "ok" } else { "null" }
-                            )
-                        });
+                        trace.push(acquisition_observation(
+                            callee,
+                            &call.arguments,
+                            adapter.resource,
+                            adapter.succeeds,
+                        ));
                         if !adapter.succeeds {
                             // The error arm's dispositions are real calls and
                             // are observed exactly as plain calls are, in the
@@ -187,7 +218,9 @@ fn prototype(callee: &ExternCallee) -> String {
                     CallParameter::Data(abi) | CallParameter::Borrowed(abi) => *abi,
                     CallParameter::Consumed
                     | CallParameter::Stored { .. }
-                    | CallParameter::Owner => AbiType::PtrMutU8,
+                    | CallParameter::Owner
+                    | CallParameter::Released
+                    | CallParameter::ReallocSubject => AbiType::PtrMutU8,
                     CallParameter::OutSlot => AbiType::PtrMutPtrMutU8,
                 };
                 let spelling = abi.c_spelling();
@@ -216,7 +249,9 @@ fn argument_expression(argument: &ExternArgument, out: ResourceId) -> String {
         ExternArgument::Borrow(resource)
         | ExternArgument::Consume(resource)
         | ExternArgument::Store(resource)
-        | ExternArgument::Owner(resource) => resource_name(*resource),
+        | ExternArgument::Owner(resource)
+        | ExternArgument::Release(resource)
+        | ExternArgument::Realloc(resource) => resource_name(*resource),
         ExternArgument::OutSlot => format!("&{}", resource_name(out)),
     }
 }
@@ -229,7 +264,9 @@ const fn argument_identity(argument: &ExternArgument) -> Option<ResourceId> {
         ExternArgument::Borrow(resource)
         | ExternArgument::Consume(resource)
         | ExternArgument::Store(resource)
-        | ExternArgument::Owner(resource) => Some(*resource),
+        | ExternArgument::Owner(resource)
+        | ExternArgument::Release(resource)
+        | ExternArgument::Realloc(resource) => Some(*resource),
     }
 }
 
@@ -311,11 +348,8 @@ pub fn emit_extern_c11(
                             u8::from(adapter.succeeds),
                             callee.name
                         );
-                        let observed = if callee.out_parameter.is_some() {
-                            out_prefix(callee, &call.arguments, adapter.resource)
-                        } else {
-                            format!("acquire {} {binding}", callee.name)
-                        };
+                        let observed =
+                            acquisition_prefix(callee, &call.arguments, adapter.resource);
                         let _ = writeln!(
                             source,
                             "    printf(\"{observed} %s\\n\", {binding} != NULL ? \"ok\" : \"null\");"

@@ -1,0 +1,26 @@
+import std.extern;
+
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_free(buffer: ptr<mut, u8>) -> unit;
+
+// Card `EXTERN-MODES`. This is the round trip with one word changed in the
+// *contract*, not in the body: `qcore_extern_free` declares
+// `resource_released(buffer, nonnull)` where `qcore_extern_release` declares
+// `resource_consumed(buffer, nonnull)`. The call site is spelled `move b`
+// either way — which departing mode ran comes from the declaration, never from
+// the source, so admitting the mode adds no syntax and no reserved word.
+//
+// What differs is the published evidence. A consumption moves an obligation
+// somewhere this profile stops looking; a release discharges it, and contract
+// spec §C04.2 warns that a false release declaration can invalidate a safety
+// conclusion. The certificate therefore records the identity under `releases`
+// rather than `consumptions`, and names `DeclaredRelease` as its own premise.
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    qcore_extern_fill(b, 7);
+    qcore_extern_free(move b);
+    return;
+}

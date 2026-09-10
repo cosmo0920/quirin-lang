@@ -106,3 +106,36 @@ void qcore_extern_release_owner(uint8_t *owner)
     free(child);
     free(owner);
 }
+
+/* --- Card `EXTERN-MODES`: the released and reallocated callees. --- */
+
+/* `resource_released(buffer, nonnull)`. Unlike `qcore_extern_release`, whose
+ * declaration only moves the caller's obligation, this one declares that the
+ * obligation is discharged. This implementation discharges it; that agreement
+ * is the trusted premise the certificate records by name, and a leak checker
+ * can refute it for these fixtures without establishing it in general. */
+void qcore_extern_free(uint8_t *buffer)
+{
+    free(buffer);
+}
+
+/* `resource_return_reallocated(buffer, nullable)`. `realloc` is the C operation
+ * contract spec §C04.3 describes: a null result leaves the incoming block
+ * valid, and a non-null result has released the old block exactly once. The
+ * emitted caller compares the observed nullness against its declared control,
+ * so a run in which this stopped holding would be refuted rather than believed. */
+uint8_t *qcore_extern_grow(uint8_t *buffer, uintptr_t size)
+{
+    return (uint8_t *) realloc(buffer, (size_t) size);
+}
+
+/* The same declared shape, always refusing. It must leave `buffer` untouched:
+ * that is the half of §C04.3 the failure arm relies on, and it is what makes
+ * the checked disposition on that arm a real release rather than a double
+ * free — which ASan would report. */
+uint8_t *qcore_extern_grow_failing(uint8_t *buffer, uintptr_t size)
+{
+    (void) buffer;
+    (void) size;
+    return NULL;
+}

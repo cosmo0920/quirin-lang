@@ -201,7 +201,27 @@ declared consuming calls that edge would perform, and nothing wider: an
 error-region payload carrier is still absent, because the sequential lowering's
 error exit (`qcore_core::cleanup_lowering`, `ExecutionOutcome::Error`) carries
 no payload and extern calls in error-region contexts remain out of scope.
-Everything else in this section stays out of scope.
+
+**Landed since (2026-09-10).** Two more, at card `EXTERN-MODES`
+([`docs/reports/remaining-extern-modes/README.md`](../reports/remaining-extern-modes/README.md)).
+`resource_released(p, nonnull)` is callable: it is the mode the error arm above
+was already describing, since contract spec §C04.2 separates *discharging* an
+obligation from *transferring* it and the arm previously had only transfer
+available. `resource_return_reallocated(p, nullable)` over a
+`resource_owned(p, nonnull)` subject is callable, and is the one departing
+argument an acquiring call may carry: §C04.3 states both of its arms, so the
+subject stays live on the error arm rather than leaving custody's status
+undecided there.
+
+Two exclusions in this section are now measured rather than assumed.
+`resource_removed` stays refused because a removal names a child the profile
+stopped tracking when it was stored — `EXTERN-F1` records that residual as a
+premise, not as a modeled owner-to-child index (follow-on
+`EXTERN-MODES-REMOVED-INDEX`). The nullable form of `resource_released`, which
+is what §C04's own minimal `release` example declares, stays refused for the
+reason the nullable consumed mode does (follow-on
+`EXTERN-MODES-NULLABLE-RELEASE`). Everything else in this section stays out of
+scope.
 
 ## 8. Acceptance gate
 

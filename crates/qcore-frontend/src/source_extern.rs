@@ -354,6 +354,18 @@ fn declared_effect_row(
     Ok(EffectRow::new(effects))
 }
 
+/// One resolved argument list: the checked arguments, the caller identities the
+/// call reads in declaration order, and every `move NAME` argument with the mode
+/// it bridged to. Card `EXTERN-MODES` makes the third component's mode
+/// load-bearing: a reallocation subject is written `move` like the other three
+/// departing modes but leaves the ledger *after* the acquisition rather than
+/// before it, so the two can no longer be told apart by position alone.
+type ResolvedArguments = (
+    Vec<ExternArgument>,
+    Vec<ResourceId>,
+    Vec<(String, ResourceId, CallParameter)>,
+);
+
 struct Lowering<'a> {
     callees: &'a BTreeMap<String, ExternCallee>,
     globals: &'a BTreeMap<String, SymbolId>,
@@ -377,7 +389,7 @@ impl Lowering<'_> {
         span: Span,
         callee: &ExternCallee,
         consume: bool,
-    ) -> Option<(Vec<ExternArgument>, Vec<ResourceId>, Vec<String>)> {
+    ) -> Option<ResolvedArguments> {
         // Split on commas; nothing in this grammar nests, so a nested opener is
         // a refusal rather than something to descend into.
         let mut groups: Vec<Vec<&Token>> = vec![Vec::new()];
@@ -414,7 +426,7 @@ impl Lowering<'_> {
         }
         let mut arguments = Vec::new();
         let mut resources = Vec::new();
-        let mut consumed_names = Vec::new();
+        let mut moved = Vec::new();
         for (index, group) in groups.iter().enumerate() {
             let declared = callee.parameters[index];
             let argument = match (group.as_slice(), declared) {
@@ -476,9 +488,13 @@ impl Lowering<'_> {
                         ExternArgument::Borrow(resource)
                     }
                 }
-                ([keyword, token], CallParameter::Consumed | CallParameter::Stored { .. })
-                    if word(Some(keyword)) == Some("move") =>
-                {
+                (
+                    [keyword, token],
+                    CallParameter::Consumed
+                    | CallParameter::Stored { .. }
+                    | CallParameter::Released
+                    | CallParameter::ReallocSubject,
+                ) if word(Some(keyword)) == Some("move") => {
                     let Some(name) = word(Some(token)) else {
                         self.diagnostics.push(bridging(
                             span,
@@ -498,11 +514,15 @@ impl Lowering<'_> {
                         return None;
                     };
                     resources.push(resource);
-                    consumed_names.push(name.to_owned());
-                    if matches!(declared, CallParameter::Stored { .. }) {
-                        ExternArgument::Store(resource)
-                    } else {
-                        ExternArgument::Consume(resource)
+                    moved.push((name.to_owned(), resource, declared));
+                    // Which of the four departing modes this is comes from the
+                    // declaration, never from the call site, so admitting two
+                    // more of them adds no source syntax and no reserved word.
+                    match declared {
+                        CallParameter::Stored { .. } => ExternArgument::Store(resource),
+                        CallParameter::Released => ExternArgument::Release(resource),
+                        CallParameter::ReallocSubject => ExternArgument::Realloc(resource),
+                        _ => ExternArgument::Consume(resource),
                     }
                 }
                 ([token], CallParameter::OutSlot) if word(Some(token)) == Some("out") => {
@@ -520,7 +540,7 @@ impl Lowering<'_> {
             };
             arguments.push(argument);
         }
-        Some((arguments, resources, consumed_names))
+        Some((arguments, resources, moved))
     }
 }
 
@@ -722,7 +742,7 @@ pub fn lower_source_extern(
                         arm_refused = true;
                         continue;
                     }
-                    let Some((release_arguments, _, _)) =
+                    let Some((release_arguments, ..)) =
                         lowering.arguments(release_tokens, span, &released, false)
                     else {
                         arm_refused = true;
@@ -736,7 +756,7 @@ pub fn lower_source_extern(
                 if arm_refused {
                     continue;
                 }
-                let Some((arguments, argument_resources, consumed_names)) =
+                let Some((arguments, argument_resources, moved)) =
                     lowering.arguments(&parsed_call.arguments, span, &callee, true)
                 else {
                     continue;
@@ -745,15 +765,18 @@ pub fn lower_source_extern(
                 // departures are recorded before the acquisition, in the order
                 // the ledger sees them; the core checker still refuses the
                 // adapter's error arm while anything remains live.
-                let departing = argument_resources
-                    .iter()
-                    .zip(derived_custody(&callee))
-                    .filter(|(_, custody)| {
-                        matches!(custody, ExternCustody::Consumed | ExternCustody::Stored)
-                    })
-                    .map(|(resource, _)| *resource)
-                    .collect::<Vec<_>>();
-                for (resource, name) in departing.iter().zip(&consumed_names) {
+                //
+                // A reallocation subject is the exception, and it is recorded
+                // *after* the acquisition on purpose. `cleanup_lowering` gives a
+                // failed acquisition the cleanup edge over everything live at
+                // that point, and contract spec §C04.3 says the subject is
+                // exactly that: preserved on the null arm, replaced on the
+                // success arm. Dropping it before the acquire would tell the
+                // sequential passes it was gone on a path where it is not.
+                for (name, resource, declared) in &moved {
+                    if matches!(declared, CallParameter::ReallocSubject) {
+                        continue;
+                    }
                     ownership.push(OwnershipOp::TransferOut(name.clone()));
                     error_operations.push(ErrorOp::Drop(*resource));
                     source_operations.push(SourceOp::Drop(*resource));
@@ -788,6 +811,20 @@ pub fn lower_source_extern(
                 live += 1;
                 peak = peak.max(live);
                 total += 1;
+                // The replacement happens exactly once and only on the success
+                // path, which is precisely where a `SourceOp::Drop` placed after
+                // a `SourceOp::Acquire` sits: a failed acquisition diverts to
+                // the cleanup edge before reaching it. The declared peak is an
+                // upper bound, so counting the replaced and the established
+                // identity as briefly coexisting is conservative.
+                for (name, subject, declared) in &moved {
+                    if matches!(declared, CallParameter::ReallocSubject) {
+                        ownership.push(OwnershipOp::TransferOut(name.clone()));
+                        error_operations.push(ErrorOp::Drop(*subject));
+                        source_operations.push(SourceOp::Drop(*subject));
+                        live = live.saturating_sub(1);
+                    }
+                }
                 events.push(ExternEvent::Call(ExternCall {
                     callee: callee.name.clone(),
                     arguments,
@@ -830,7 +867,7 @@ pub fn lower_source_extern(
                     ));
                     continue;
                 }
-                let Some((arguments, argument_resources, consumed_names)) =
+                let Some((arguments, argument_resources, moved)) =
                     lowering.arguments(&parsed_call.arguments, span, &callee, true)
                 else {
                     continue;
@@ -840,15 +877,12 @@ pub fn lower_source_extern(
                 // that the callee destroys the resource (contract spec §C04.2).
                 // A stored argument has the same caller-side delta; where its
                 // custody went is declared, recorded and premised, not checked.
-                let consumed = argument_resources
-                    .iter()
-                    .zip(derived_custody(&callee))
-                    .filter(|(_, custody)| {
-                        matches!(custody, ExternCustody::Consumed | ExternCustody::Stored)
-                    })
-                    .map(|(resource, _)| *resource)
-                    .collect::<Vec<_>>();
-                for (resource, name) in consumed.iter().zip(&consumed_names) {
+                // A `resource_released` argument has the same delta again, and
+                // is the one of the three that does claim destruction — which is
+                // why it is premised separately rather than folded in here. A
+                // reallocation subject cannot occur on this statement form: its
+                // callee acquires, so it is refused above without an adapter.
+                for (name, resource, _) in &moved {
                     ownership.push(OwnershipOp::TransferOut(name.clone()));
                     error_operations.push(ErrorOp::Drop(*resource));
                     source_operations.push(SourceOp::Drop(*resource));
@@ -1004,7 +1038,15 @@ pub fn extern_summary(callee: &ExternCallee) -> FunctionSummary {
             // A declared store owner is a loan: the caller supplies live
             // custody and keeps the identity.
             ExternCustody::Borrowed | ExternCustody::Owner => ParameterOwnership::Borrowed,
-            ExternCustody::Consumed | ExternCustody::Stored => ParameterOwnership::Consumed,
+            // Every departing mode has the same *caller-side* delta, so the
+            // interprocedural summary the sequential passes consume is the same
+            // for all four. What differs between them is what the declaration
+            // claims about where the custody went, which is carried on the
+            // extern certificate's own fields and premises, not here.
+            ExternCustody::Consumed
+            | ExternCustody::Stored
+            | ExternCustody::Released
+            | ExternCustody::Reallocated => ParameterOwnership::Consumed,
         })
         .collect::<Vec<_>>();
     let consumed = parameters

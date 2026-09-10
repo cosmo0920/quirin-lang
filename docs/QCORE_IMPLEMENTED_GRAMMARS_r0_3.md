@@ -725,11 +725,18 @@ on `ptr<mut, u8>` or `ptr<const, u8>`, `resource_consumed(p, nonnull)` on
 `resource_return_owned(nullable)` returning `ptr<mut, u8>`, and — card
 `EXTERN-F1` — `resource_out(p, nullable)` on `ptr<mut, ptr<mut, u8>>` plus
 `resource_stored(p, owner, nonnull)` on `ptr<mut, u8>` beneath a distinct
-`resource_owned(owner, nonnull)` parameter on `ptr<mut, u8>`. Contract spec
-§C04.2 requires a stored parameter's owner to be a distinct `Owned` parameter,
-so `resource_owned` is callable in that position and nowhere else.
-`resource_released`, `resource_removed`, `resource_return_reallocated`, a
-nonnull owned return, a nonnull out slot, an out slot on any other ABI type, two
+`resource_owned(owner, nonnull)` parameter on `ptr<mut, u8>` — and, card
+`EXTERN-MODES`, `resource_released(p, nonnull)` on `ptr<mut, u8>` plus
+`resource_return_reallocated(p, nullable)` returning `ptr<mut, u8>` over a
+subject declared `resource_owned(p, nonnull)` on `ptr<mut, u8>`. Contract spec
+§C04.2 requires a stored parameter's owner to be a distinct `Owned` parameter
+and §C04.3 requires a reallocation subject to be `Owned`, so `resource_owned` is
+callable in exactly those two designated positions and nowhere else.
+`resource_removed`, a nonnull owned return, a nonnull reallocated return, a
+reallocation subject that is out of range, not `Owned`, nullable or on any other
+pointer, a reallocated result on any other type, a reallocation beside an out
+slot, a nullable released parameter, a release on any other pointer, a nonnull
+out slot, an out slot on any other ABI type, two
 out slots, an out slot beside an owned return, a store beside either, a nullable
 stored parameter, a store on a `const` pointer, a store beneath itself or
 beneath a non-`Owned` parameter, a nullable or `const`-pointer declared owner, a
@@ -737,12 +744,35 @@ beneath a non-`Owned` parameter, a nullable or `const`-pointer declared owner, a
 custody mode on a scalar, a borrowed `ptr<mut, ptr<mut, u8>>` and a consumed
 `ptr<const, u8>` are each refused by their own name (`Q024`).
 
+`resource_removed` is refused on a measured ground rather than by omission: a
+removal names a child this profile stopped tracking when it was stored, because
+`EXTERN-F1` records the residual beneath a declared owner as a premise and not
+as a modeled owner-to-child index, so admitting it would mint a caller identity
+out of a premise. `resource_released(p, nullable)` is refused for the reason the
+nullable consumed mode is: a nullable release discharges nothing when the
+modeled value is null (§C04.2), and this profile does not model that value.
+
 `out` marks the position of the declared out slot; it names a parameter
 position, never a binding, and is reserved. The `let` binder names the identity
 the callee writes into that slot. `move NAME` at a declared store removes the
 binding from the body exactly as a consumption does, so every later use is
 refused; where the custody went is declared by the contract, not by the call
-site, and is recorded on the certificate as a premise.
+site, and is recorded on the certificate as a premise. Card `EXTERN-MODES` adds
+no argument syntax and no reserved word: `move NAME` also spells a declared
+release and a declared reallocation subject, and which of the four departing
+modes ran comes from the declaration alone. The certificate keeps them apart —
+a release is published under `releases`, a replacement as one `(replaced,
+established)` pair — because contract spec §C04.2 warns that a false release
+declaration can invalidate a safety conclusion while a false consumption only
+relocates an obligation.
+
+A reallocation is the one departing argument an acquiring call may carry.
+Contract spec §C04.3 states both of its arms — a null failure preserves the
+incoming custody, a success replaces it exactly once — so the subject stays on
+the error arm's live list and must be dispositioned there like any other live
+identity. Every other departing mode beside an acquisition stays refused, for
+the reason that refusal exists: an ordinary declaration constrains only its
+normal exit.
 
 `succeeds BOOL` is the fixture's literal outcome control, exactly as in
 `qcore_acquire`/`qcore_check`: a controlled model operation, not a claim about
@@ -773,8 +803,8 @@ store reachable — it needs two simultaneously live identities, the child and i
 declared owner, which the second acquisition's arm now accounts for.
 
 The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
-fresh custody through either acquisition source and `mut` exactly when some
-parameter is a `mut` pointer; the entry's declared row must admit it, and an
+fresh custody through any of the three acquisition sources and `mut` exactly
+when some parameter is a `mut` pointer; the entry's declared row must admit it, and an
 absent row therefore admits no extern call at all. Length
 and extent are not transported, so no declaration here constrains how many bytes
 a callee touches. Custody liveness, leaks and resource flow are checked by the
@@ -782,8 +812,9 @@ established sequential passes over the same lowering, not by a second extern
 code. Emission declares each callee from the ABI table and calls it directly;
 which object file supplies the symbol is the builder's premise. See
 [the extern-call record](reports/extern-call-v1/README.md) and
-[the out/stored extension](reports/extern-call-f1/README.md) and
-[the error-arm release record](reports/remaining-extern-err-rel/README.md).
+[the out/stored extension](reports/extern-call-f1/README.md),
+[the error-arm release record](reports/remaining-extern-err-rel/README.md) and
+[the released/reallocated extension](reports/remaining-extern-modes/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

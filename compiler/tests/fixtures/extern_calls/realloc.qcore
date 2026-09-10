@@ -1,0 +1,23 @@
+import std.extern;
+
+error Failure { Failed; }
+
+extern fn qcore_extern_alloc(size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_grow(buffer: ptr<mut, u8>, size: usize) -> ptr<mut, u8>;
+extern fn qcore_extern_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn qcore_extern_free(buffer: ptr<mut, u8>) -> unit;
+
+// Card `EXTERN-MODES`, the success arm of a declared reallocation. Contract
+// spec §C04.3: a successful replacement consumes the old resource exactly once
+// and establishes the result identity, so `b` is gone after this statement and
+// `grown` is a distinct identity — using `b` again is refused exactly as using
+// a consumed binding is. The error arm is mandatory because the result is
+// `nullable`, and here it disposes of `b`, which the failure arm preserves.
+fn main() -> unit effects { io, alloc, mut } {
+    let b = qcore_extern_alloc(8) succeeds true else raise Failure;
+    let grown = qcore_extern_grow(move b, 32) succeeds true
+        else qcore_extern_free(move b) raise Failure;
+    qcore_extern_fill(grown, 3);
+    qcore_extern_free(move grown);
+    return;
+}
