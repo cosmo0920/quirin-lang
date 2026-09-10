@@ -2362,3 +2362,142 @@ fn a_reallocation_emits_a_replacement_and_the_reference_run_agrees() {
         ]
     );
 }
+
+// --- Card `EXTERN-SCALAR-OUTCOME` (trace half): observing the returned
+// number, and only where a declared outcome makes it well-defined. ---
+
+/// `qcore_extern_peek(r1, 0)` binding its `i32` result, with or without the
+/// site's declared outcome. Everything else about the trace is the shape the
+/// undeclared pin below fixes, so the two tests differ in exactly one field.
+fn peek(value: ValueId, outcome: Option<i32>) -> ExternEvent {
+    ExternEvent::Call(ExternCall {
+        binding: Some(ScalarBinding { value, outcome }),
+        callee: "qcore_extern_peek".into(),
+        arguments: vec![ExternArgument::Borrow(1), ExternArgument::Data(0)],
+        adapter: None,
+    })
+}
+
+/// **The undeclared line is byte-identical to what card `PIPE-SCALAR-RESULT`
+/// shipped.** Nothing in either model computes a number for this binding, so
+/// the observation names none — in the reference execution and in the emitted
+/// `printf` alike. This is the boundary the trace half deliberately did not
+/// cross, pinned as a literal rather than as a property.
+#[test]
+fn a_binding_without_a_declared_outcome_observes_no_number() {
+    let module = program(vec![
+        acquire(true),
+        peek(1, None),
+        release(),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "value qcore_extern_peek v1 b:r1 d:0",
+            "call qcore_extern_release c:r1",
+            "return",
+        ]
+    );
+    let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    assert!(
+        emitted
+            .source
+            .contains("    QCORE_IO_WRITE(stdout, \"value qcore_extern_peek v1 b:r1 d:0\\n\");\n"),
+        "{}",
+        emitted.source
+    );
+    // And no outcome comparison is emitted for *this* call: there is nothing to
+    // compare against, which is exactly why the number stays unobserved. (The
+    // acquisition above keeps its own `succeeds true` comparison — that control
+    // is over an arm, not over a number.)
+    assert!(
+        !emitted
+            .source
+            .contains("declared outcome violated: qcore_extern_peek")
+    );
+    assert!(!emitted.source.contains("if (v1 !="));
+}
+
+/// **A declared outcome is named, in both runs, in the same field.** The
+/// reference interpreter still cannot compute a C result; it prints the
+/// *declared* number, and the emitted program prints the same declared number
+/// after having compared it against the real one.
+#[test]
+fn a_declared_outcome_is_named_by_both_the_reference_and_the_emitted_run() {
+    let module = program(vec![
+        acquire(true),
+        peek(1, Some(42)),
+        release(),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert_eq!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate).unwrap(),
+        [
+            "acquire qcore_extern_alloc r1 ok",
+            "value qcore_extern_peek v1 b:r1 d:0 -> 42",
+            "call qcore_extern_release c:r1",
+            "return",
+        ]
+    );
+    let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    assert!(
+        emitted.source.contains(
+            "    QCORE_IO_WRITE(stdout, \"value qcore_extern_peek v1 b:r1 d:0 -> 42\\n\");\n"
+        ),
+        "{}",
+        emitted.source
+    );
+}
+
+/// **The comparison is emitted before the observation, and that order is what
+/// makes the observation honest.** A run whose callee returns something else
+/// exits 70 at the check and never reaches the write, so no run ever publishes
+/// a number it did not produce. Reordering these two statements would turn the
+/// declared number from an observation into a claim.
+#[test]
+fn the_outcome_check_precedes_the_observation_it_licenses() {
+    let module = program(vec![
+        acquire(true),
+        peek(1, Some(42)),
+        release(),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
+    let check = emitted
+        .source
+        .find("if (v1 != 42)")
+        .expect("the declared outcome is compared against the real result");
+    let observation = emitted
+        .source
+        .find("value qcore_extern_peek v1 b:r1 d:0 -> 42")
+        .expect("the declared outcome is observed");
+    assert!(
+        check < observation,
+        "the check must dominate the write:\n{}",
+        emitted.source
+    );
+    assert!(emitted.source.contains("return 70;"));
+}
+
+/// A negative outcome is spelled as it is written, not as an unsigned
+/// reinterpretation: the observation field is the declared `i32`.
+#[test]
+fn a_negative_declared_outcome_is_observed_as_written() {
+    let module = program(vec![
+        acquire(true),
+        peek(1, Some(-7)),
+        release(),
+        ExternEvent::Return,
+    ]);
+    let certificate = check_extern_program(&module).unwrap();
+    assert!(
+        crate::extern_c_emit::interpret_extern_program(&module, &certificate)
+            .unwrap()
+            .contains(&"value qcore_extern_peek v1 b:r1 d:0 -> -7".to_owned())
+    );
+}

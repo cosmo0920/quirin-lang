@@ -1172,3 +1172,51 @@ fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
         (out, err)
     }
 }
+
+// --- Card `EXTERN-SCALAR-OUTCOME` (trace half): the extended observation
+// crosses the desugaring like every other property of a stage. ---
+
+/// **A pipeline inherits the extended observation through the unchanged
+/// desugaring.** The pipe operator is a statement-sequence rewrite, so a
+/// declared outcome on a stage is a declared outcome on the call that stage
+/// becomes: the piped and hand-written forms emit the same C11 and observe the
+/// same lines, `-> N` fields included. Nothing in the desugaring was touched by
+/// the trace half, and this is the pin that says so.
+#[test]
+fn a_declared_outcome_on_a_stage_reaches_the_observation_through_the_desugaring() {
+    let piped = SCALAR_RESULT_PIPED.replace("\r\n", "\n").replace(
+        "    let scaled = b |> qcore_extern_sum(8) |> qcore_extern_scale(2);",
+        "    let scaled = b |> qcore_extern_sum(8) succeeds 56 \
+         |> qcore_extern_scale(2) succeeds 112;",
+    );
+    assert!(
+        piped.contains("succeeds 112"),
+        "both stages must be declared"
+    );
+    let unpiped = SCALAR_RESULT.replace("\r\n", "\n");
+    let unpiped = unpiped.replace(
+        "    let total = qcore_extern_sum(b, 8);",
+        "    let total = qcore_extern_sum(b, 8) succeeds 56;",
+    );
+    let unpiped = unpiped.replace(
+        "    let scaled = qcore_extern_scale(total, 2);",
+        "    let scaled = qcore_extern_scale(total, 2) succeeds 112;",
+    );
+
+    let piped = compile_with(&piped, selection()).expect("a declared stage checks");
+    let unpiped = compile_with(&unpiped, selection()).unwrap();
+    assert_eq!(
+        piped.c_source, unpiped.c_source,
+        "a declared stage emits what the hand-written statement emits"
+    );
+    assert_eq!(piped.extern_observation, unpiped.extern_observation);
+    assert_eq!(
+        piped.extern_observation.as_deref().unwrap()[2..4],
+        [
+            "value qcore_extern_sum v1 b:r1 d:8 -> 56".to_owned(),
+            "value qcore_extern_scale v2 v:v1 d:2 -> 112".to_owned(),
+        ]
+    );
+    // The hygienic temporary still names nothing in either artifact.
+    assert!(!piped.c_source.as_deref().unwrap().contains("qcore__pipe"));
+}

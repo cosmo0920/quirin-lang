@@ -852,9 +852,20 @@ custody fields and never inside them. A **scalar literal** binding
 follow-on `EXTERN-SCALAR-LITERAL`, and `STD-IO-COMPOSE` is the card that needs
 it. The emitted C declares the result at its ABI spelling, discards it to
 `void` so the translation unit stays warning-clean, and prints an observation
-that names the callee, the value and the arguments but **not** the number
-returned — a reference interpreter cannot compute a C function's result
-(follow-on `EXTERN-SCALAR-OUTCOME`).
+that names the callee, the value and the arguments —
+`value CALLEE vN ARG…`.
+
+Card `EXTERN-SCALAR-OUTCOME` (trace half) appends the number to that line, and
+only where a `succeeds INTEGER` outcome is declared: `value CALLEE vN ARG… -> N`.
+A reference interpreter still cannot compute a C function's result; what it
+prints is the *declared* number, and the emitted program compares the real
+result against that same number and exits 70 **before** reaching the
+observation write, so a run only ever publishes the line having established
+that the declared number is the returned one. A binding with no declared
+outcome keeps the card-`PIPE-SCALAR-RESULT` line byte for byte, because nothing
+in either model computes a number for it — that remainder is deliberate, not an
+omission. The ordering of the comparison and the write is load-bearing rather
+than incidental.
 
 The derived effect row is `{io}`, plus `alloc` exactly when the call establishes
 fresh custody through any of the three acquisition sources and `mut` exactly

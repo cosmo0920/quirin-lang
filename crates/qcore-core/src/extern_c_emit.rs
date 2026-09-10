@@ -25,12 +25,19 @@
 //! Card `PIPE-SCALAR-RESULT` adds one statement shape and one argument
 //! rendering, both in a namespace disjoint from the identities: a bound scalar
 //! is declared at its own ABI spelling under a `v` name beside the `r` names of
-//! resources. There is deliberately **no** runtime check of the *value* a bound
-//! call returned, and no observation of it: the reference interpreter cannot
-//! compute a C function's result, so printing it would make the two runs
-//! disagree by construction. What both runs establish is that the same call
-//! bound the same value in the same position of the same trace. Follow-on
-//! `EXTERN-SCALAR-OUTCOME`.
+//! resources.
+//!
+//! Card `EXTERN-SCALAR-OUTCOME` (trace half) then makes that binding's *number*
+//! observable — but only where a `succeeds INTEGER` outcome is declared, and
+//! only because of the check card `STD-IO-COMPOSE` already emits. The reference
+//! interpreter still cannot compute a C function's result; what it can do is
+//! print the **declared** number, and the emitted program compares the real
+//! result against that same declared number and exits 70 before reaching the
+//! observation write. So on every run that reaches the line, the declared
+//! number *is* the returned number, and the two observations agree by the
+//! run-time comparison rather than by assumption. A binding with no declared
+//! outcome keeps card `PIPE-SCALAR-RESULT`'s line byte for byte: nothing
+//! computes a number for it, so observing one would be publishing fiction.
 use std::fmt::Write;
 
 use crate::ResourceId;
@@ -128,23 +135,38 @@ fn call_observation(callee: &ExternCallee, arguments: &[ExternArgument]) -> Stri
     format!("call {}{}", callee.name, argument_lines(arguments, 0))
 }
 
-/// A call whose scalar result is bound (card `PIPE-SCALAR-RESULT`). The
-/// observation names the callee, the value the binding introduces and the
-/// arguments — but **not** the number the callee returned. The reference
-/// interpreter cannot compute a C function's result, so observing it would make
-/// the two runs disagree by construction; what both runs do establish is that
-/// the same call bound the same value in the same position of the same trace.
-/// Observing the number itself is follow-on `EXTERN-SCALAR-OUTCOME`.
+/// A call whose scalar result is bound (card `PIPE-SCALAR-RESULT`), with the
+/// declared outcome appended where the site declares one (card
+/// `EXTERN-SCALAR-OUTCOME`).
+///
+/// The observation names the callee, the value the binding introduces, the
+/// arguments and — only for a `succeeds INTEGER` binding — the number. The
+/// trailing `-> N` field is spelled with an arrow rather than as a bare token,
+/// so that the argument list stays exactly the space-separated `x:y` tokens it
+/// was and a reader cannot mistake a number for a positional argument; the
+/// arrow is this backend's own existing rendering of a call result, in the
+/// `declared outcome violated: NAME -> N` message.
+///
+/// **Why printing the declared number is an observation and not a claim.** The
+/// emitted program compares the real result against this same number and exits
+/// 70 before it reaches the write, so control arrives at the line only on a run
+/// where the two are equal. The reference interpreter prints the declared
+/// number; the native run prints the declared number having just proved it is
+/// the returned one. A binding with no declared outcome appends nothing — the
+/// card `PIPE-SCALAR-RESULT` line, byte for byte — because nothing in either
+/// model computes a number for it.
 fn value_observation(
     callee: &ExternCallee,
     arguments: &[ExternArgument],
     value: ValueId,
+    outcome: Option<i32>,
 ) -> String {
     format!(
-        "value {} {}{}",
+        "value {} {}{}{}",
         callee.name,
         value_name(value),
-        argument_lines(arguments, 0)
+        argument_lines(arguments, 0),
+        outcome.map_or_else(String::new, |outcome| format!(" -> {outcome}"))
     )
 }
 
@@ -270,7 +292,12 @@ pub fn trace_extern_events(
                     }
                     (None, false) => match call.binding {
                         Some(binding) => {
-                            trace.push(value_observation(callee, &call.arguments, binding.value));
+                            trace.push(value_observation(
+                                callee,
+                                &call.arguments,
+                                binding.value,
+                                binding.outcome,
+                            ));
                         }
                         None => trace.push(call_observation(callee, &call.arguments)),
                     },
@@ -573,8 +600,10 @@ pub fn emit_extern_statements(
                         // its own ABI spelling and immediately discarded to
                         // `void`, so the translation unit stays warning-clean
                         // under `-Wall -Wextra -Werror` whether or not a later
-                        // call reads the value. The number itself is never
-                        // printed — see `value_observation`.
+                        // call reads the value. The number is printed only
+                        // where a declared outcome makes it well-defined, and
+                        // only *after* the comparison below — see
+                        // `value_observation`.
                         Some(binding) => {
                             let value = binding.value;
                             let name = value_name(value);
@@ -590,6 +619,14 @@ pub fn emit_extern_statements(
                             // trusts a declared `succeeds` arm: it compares the
                             // real result and exits 70 rather than going on to
                             // render a number the run did not produce.
+                            //
+                            // Card `EXTERN-SCALAR-OUTCOME` makes this
+                            // comparison load-bearing for the observation as
+                            // well as for the rendering, so the order of these
+                            // two writes is not incidental: the check is
+                            // emitted **before** the observation, and a
+                            // disagreeing run therefore exits without writing
+                            // the line at all.
                             if let Some(outcome) = binding.outcome {
                                 let _ = writeln!(
                                     source,
@@ -602,7 +639,7 @@ pub fn emit_extern_statements(
                             let _ = writeln!(
                                 source,
                                 "    QCORE_IO_WRITE(stdout, \"{}\\n\");",
-                                value_observation(callee, &call.arguments, value)
+                                value_observation(callee, &call.arguments, value, binding.outcome)
                             );
                             bound_values.insert(value);
                         }
