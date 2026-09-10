@@ -1,0 +1,27 @@
+# Card `NATIVE-LIBRARY-CONTRACT-SLICE`: a `source.native-library.v1` manifest
+# whose entries are **contract slice** entries — level L2 of the linkage
+# spectrum, where a library's pointer symbols belong.
+#
+# Each entry names a symbol, the exported header declaration in the profile's
+# canonical stdint spellings, and the declared `.qcore` contract module the
+# symbol is to be read through. The contract machinery is unchanged: the
+# manifest selects and attributes, it states no modes and no effects of its own.
+#
+# The binding is total in both directions (design §4.1): every entry resolves to
+# a declared contract in the module it names, and every declaration of a module
+# in this slice is bound by an entry here.
+
+native_library manifest v1;
+library qcore_buffer_demo;
+version 0.2.0;
+artifact libqcore_buffer_demo.a;
+hash sha256:4d1f8a03be27c5901e6ab4772d05f3c81a9e6b40d7cc2318f5be0947aa6132ed;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+
+contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qcore;

@@ -364,6 +364,13 @@ fn a_manifest_that_does_not_load_refuses_rather_than_being_ignored() {
     for broken in [
         MANIFEST.replace("data_model lp64;", "data_model ilp32;"),
         MANIFEST.replace("library qcore_unchecked_demo;\n", ""),
+        // A `contract fn` with no `from MODULE` tail. Under card
+        // `UNSAFE-LINKAGE-ARTIFACT` this refused because a contracted entry was
+        // an entry kind the loader declined; under card
+        // `NATIVE-LIBRARY-CONTRACT-SLICE` it refuses because the two entry kinds
+        // are told apart by their **keyword** and a contract entry that names no
+        // contract module is malformed rather than demoted to a waiver. The
+        // reason moved, the refusal and its code did not.
         MANIFEST.replace(
             "unchecked fn k_unchecked_add",
             "contract fn k_unchecked_add",

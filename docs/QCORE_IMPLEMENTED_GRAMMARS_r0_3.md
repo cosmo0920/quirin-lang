@@ -921,12 +921,18 @@ contract; a published certificate missing one is refused (`Q035`). See
 
 ### G02d.2. The native-library manifest
 
-Card `UNSAFE-LINKAGE-ARTIFACT`. A **manifest** is not source: it is a separate
+Cards `UNSAFE-LINKAGE-ARTIFACT` and `NATIVE-LIBRARY-CONTRACT-SLICE`. A
+**manifest** is not source: it is a separate
 declarative file a builder selects (`qcorec --native-library MANIFEST`,
-`CompileOptions::native_libraries`), and it adds no form to G02d.1's source
-grammar and no reserved word. What it changes is the *premise* a G02d.1 waiver
-publishes — from "symbol X, unchecked" to "symbol X, unchecked, from artifact
-Y@hash under ABI premises Z".
+`CompileOptions::native_libraries`), and it adds no form to G02d's or G02d.1's
+source grammar and no reserved word. What it changes is the *premise* a call
+publishes: a G02d.1 waiver moves from "symbol X, unchecked" to "symbol X,
+unchecked, from artifact Y@hash under ABI premises Z", and — card
+`NATIVE-LIBRARY-CONTRACT-SLICE` — a G02d **contracted** call gains a second
+premise beside its declared-contract one, "contracted X per contract C, from
+artifact Y@hash under ABI premises Z". The second premise **stacks with** the
+declared-contract premise and never replaces it: one says what the code does,
+the other which code it is.
 
 ```ebnf
 manifest     = marker, { field | entry } ;
@@ -937,12 +943,20 @@ field        = ( "library" | "version" | "artifact" ), TOKEN, ";"
              | "unwinding", "abort", ";"
              | "allocator_custody", "closed", ";"
              | "thread_posture", "single_caller", ";" ;
-entry        = "unchecked", "fn", NAME,
+entry        = waived_entry | contract_entry ;
+waived_entry = "unchecked", "fn", NAME,
                "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
                "->", C_ABI_TYPE, ";" ;
+contract_entry
+             = "contract", "fn", NAME,                     (* card `NATIVE-LIBRARY-CONTRACT-SLICE` *)
+               "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
+               "->", C_ABI_TYPE, "from", MODULE_REF, ";" ;
 C_ABI_TYPE   = "_Bool" | "int8_t" | "int16_t" | "int32_t" | "int64_t"
              | "intptr_t" | "uint8_t" | "uint16_t" | "uint32_t"
-             | "uint64_t" | "uintptr_t" | "void" ;
+             | "uint64_t" | "uintptr_t" | "void"
+             | C_POINTER ;                                 (* a waived entry refuses C_POINTER *)
+C_POINTER    = "uint8_t *" | "const uint8_t *" | "uint8_t **" ;
+MODULE_REF   = TOKEN ;   (* the contract selection's own key, compared exactly *)
 ```
 
 `#` begins a comment; statements are `;`-terminated and may span lines. All
@@ -950,17 +964,37 @@ eight header fields are mandatory and each may be stated once. Entry types are
 the **C** spellings of the exported header declaration, not the QCore ones, so
 the agreement check compares a projection rather than a string. The pointer
 spellings `uint8_t *`, `const uint8_t *` and `uint8_t **` are recognised
-(the space before `*` optional) and then **refused** in a contract-less entry,
+(the space before `*` optional) and then **refused in a contract-less entry**,
 which is a rejection with its own name rather than an unreadable spelling: a
-library's pointer symbols belong in a contract slice entry, which this revision
-does not implement and refuses by name (`contract fn …`).
+library's pointer symbols belong in a **contract slice entry**, and card
+`NATIVE-LIBRARY-CONTRACT-SLICE` is where they now go. The two entry kinds are
+told apart by their keyword and never by their shape: a `contract fn` without
+its `from MODULE` tail, and an `unchecked fn` carrying one, are each a named
+rejection rather than a reading of the other.
+
+A `contract fn` entry binds its symbol to a declared contract **module
+reference** — the contract selection's own key, compared exactly and never
+normalised. The contract machinery is unchanged: the manifest selects and
+attributes, it states no mode and no effect of its own, and the contract is
+loaded, admitted and bridged by the unedited resource-contract v1 route.
+The binding is total in **both** directions (`Q047`): every entry must resolve to
+a declared contract in the module it names, and every declaration of a module the
+slice names must be bound by an entry. The slice is derived from the entries
+themselves rather than declared by a second statement, because a second spelling
+would be a second place the slice could be wrong.
 
 Loading is total or reject (`Q039`), the selection's binding must be a function
-(`Q040`), a declaration the manifest contradicts is refused (`Q041`), and a name
-the manifest declares contract-less may not also be reached through a declared
-contract (`Q042`). Selecting no manifest is the default and leaves every G02d.1
-program byte-identical. See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md` and
-[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md).
+(`Q040`), a **waived** declaration the manifest contradicts is refused (`Q041`),
+a name the manifest declares contract-less may not also be reached through a
+declared contract (`Q042`), a contract slice binding must resolve in both
+directions (`Q047`), a **contracted** declaration the manifest contradicts is
+**withdrawn for the unit** and its call sites fall to `Q023` (`Q048`), and a
+published certificate must carry both stacked premises of every manifest-bound
+contracted callee (`Q049`). Selecting no manifest is the default and leaves every
+G02d and G02d.1 program byte-identical. See
+`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
+[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md) and
+[the contract slice record](reports/wave20-native-library-contract-slice/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

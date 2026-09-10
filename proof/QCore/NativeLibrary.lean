@@ -92,6 +92,11 @@ from and the premises that build was produced under. -/
 structure Residence where
   identity : Identity
   premises : Premises
+  /-- The declared contract module a `contract fn` entry bound this symbol to
+  (card `NATIVE-LIBRARY-CONTRACT-SLICE`, level L3), and `none` for the
+  contract-less entry of this module. A contract-less residence therefore never
+  names a module, which is what keeps a level-L1 premise exactly what it was. -/
+  contract : Option String
   deriving DecidableEq, Repr
 
 /-- One contract-less entry: a symbol, its exported header declaration's ABI
@@ -110,7 +115,7 @@ structure Manifest where
   deriving DecidableEq, Repr
 
 /-- The residence every entry of a manifest inherits. -/
-def Manifest.residence (m : Manifest) : Residence := ⟨m.identity, m.premises⟩
+def Manifest.residence (m : Manifest) : Residence := ⟨m.identity, m.premises, none⟩
 
 /-- Resolve one symbol against a manifest. -/
 def Manifest.binding (m : Manifest) (symbol : String) : Option Entry :=
@@ -177,6 +182,14 @@ inductive Premise where
   | uncheckedLinkage (name signature : String)
   /-- No contract, from this build, under these stated ABI premises. -/
   | manifestUncheckedLinkage (name signature : String) (residence : Residence)
+  /-- Card `NATIVE-LIBRARY-CONTRACT-SLICE`, level L3: the callee **has** a
+  declared contract and a manifest binds its symbol to that contract and to a
+  named build. It is carried *beside* `declaredContract`, never in place of it —
+  the contract premise says what the code does, this one says which code it is,
+  and neither is derivable from the other. Modelled in the same inductive as the
+  three above so there is one premise vocabulary and not two that could
+  drift. -/
+  | manifestResidentContract (name contractModule : String) (residence : Residence)
   deriving DecidableEq, Repr
 
 /-- Which callee a premise waives, if it waives one. -/
@@ -184,6 +197,8 @@ def waives : Premise → Option String
   | .declaredContract _ => none
   | .uncheckedLinkage n _ => some n
   | .manifestUncheckedLinkage n _ _ => some n
+  -- A contracted callee waives nothing, manifest-bound or not.
+  | .manifestResidentContract _ _ _ => none
 
 /-- The premise one resident callee contributes: a **total match** on its trust
 and, within the waived arm, on whether a manifest named it. Three arms, and no
@@ -437,7 +452,7 @@ theorem the_manifest_route_admits_and_names_the_artifact
       .admitted ⟨{ name := "k", trust := .uncheckedLinkage,
                    parameters := [.data .scalar], resultAbi := .scalar,
                    acquires := false },
-                 some ⟨identity, premises⟩⟩ := by
+                 some ⟨identity, premises, none⟩⟩ := by
   simp [admit, unchecked, QCore.UncheckedLinkage.admitParamsFrom, isPointer,
         Manifest.binding, Manifest.residence, agrees]
 
