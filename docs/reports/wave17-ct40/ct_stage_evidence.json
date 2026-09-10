@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "card": "CT40-LANE",
+  "generated": "2026-09-10",
+  "report": "docs/reports/wave17-ct40/README.md",
+  "purpose": "Per-stage executed evidence for the one case the wave-17 CT lane mapped on the existing legacy_c route, written in the same shape as docs/reports/wave9-ctwin/ct_stage_evidence.json so scripts/ct_stage_summary.py merges it with the earlier per-card records.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control with its own source is executed on THAT artifact and is therefore not one of this case's observations; a control that varies only the declared contracts re-analyzes the case's own bytes and would be (card CT-CTWIN), and CT40 carries none of that kind.",
+  "route": "legacy_c (qcore_c_gateway::legacy_c::validate_unrestricted_c11 then analyze_unrestricted_c11, reached through the public qcore_compiler reexports). The gateway is unedited by this lane: `git diff` over crates/ and compiler/src/ is empty.",
+  "why_this_case_maps_now": "Card CT-CTWIN measured CT40 in wave 9 and left it unmapped because publish-then-free was Safe with no diagnostic: neither the verdict class the scenario demands nor a construct to attribute it to. Card CTWIN-PUBLISH (wave 16) reproduced that hazard and closed it at the general gateway site, refusing a store of a tracked identity into an object that outlives the call. Both halves of the wave-9 attribution rule now hold on this tree, re-measured on this lane's own fixture bytes before the manifest was edited.",
+  "what_the_mapping_does_not_claim": "The mapping rests on the construct CT40's `expected` text names — the lifetime/publication protocol — and explicitly not on the two things its title names. `_Atomic` is measured non-load-bearing (the plain_pointer.c control is byte-identical in verdict, reason, statuses and ordered diagnostics), and `prematurely freed` is not decided either (the no_release.c control publishes without any release and is still refused). Both are pinned as fixture controls so the bound is structural rather than a sentence in a report.",
+  "lean_is_not_applicable": "Judged not applicable on the same grounds cards T00-CT-SCHEMA, T08-SRC-CT, CT-CTWIN and the wave-11/wave-13 CT lanes recorded: this lane adds no checker rule, no diagnostic code, no lowering and no model. It adds one fixture, three manifest/harness pins and one derived-mechanism extension over an unedited gateway whose 30 publication theorems landed with card CTWIN-PUBLISH. `proof` stays `unassessed` for CT40; no theorem is bound to any CT fixture (T00.7 remains open).",
+  "no_native_or_sanitized_evidence_added": "The legacy_c route has no c_emission stage, so it has nothing to sanitize and nothing to run: native_execution and native_sanitized are structurally not_applicable, exactly as for CT43 and CT45. Harness-gated sanitized-native evidence stays at CT03/CT17/CT26/CT34 — 4 of 33 rather than 4 of 32 — and proof stays 0 of 33. The denominator grew by mapping, not by conformance.",
+  "inventory": {
+    "added_mapped_ids": ["CT40"],
+    "mapped_before": 32,
+    "mapped_after": 33,
+    "unmapped_after": 17,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "gateway_admissions": 1,
+    "gateway_analyses_of_case_artifacts": 1,
+    "gateway_analyses_of_control_artifacts": 3,
+    "accepted_controls": 1,
+    "invariance_controls_pinned_for_not_moving_the_verdict": 2,
+    "reference_executions": 0,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT40": {
+      "harness_verdict_mode": "legacy_c_twin",
+      "manifest_evidence_target": null,
+      "legacy_c_controls_executed": 3,
+      "measured_verdict": {
+        "unit": "unknown",
+        "reason": "resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)",
+        "function_status": {
+          "subject": "unknown"
+        },
+        "diagnostics": [
+          "subject:4:unknown-alias:p",
+          "subject:4:unsupported:publication of a tracked resource into the static-storage object `g_published` is outside the resource projection"
+        ]
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT40/case.c",
+          "observations": 1,
+          "note": "validate_unrestricted_c11 admits the twin as C11 in its own right, and the preprocessed unit is asserted to define the analyzed entry. A twin that only failed to analyze because Clang refused it would measure nothing."
+        },
+        "elaborate": {
+          "status": "not_applicable"
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "not_applicable"
+        },
+        "legacy_c_twin": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_legacy_c_twin",
+          "artifact": "compiler/tests/fixtures/ct/CT40/case.c",
+          "observations": 1,
+          "note": "Unknown, attributable to the publication: the store of a tracked identity into the file-scope `g_published` is refused, so the projection is withdrawn. The scenario's expectation is `Not certified; unsupported lifetime/publication protocol`. Three controls execute on their own artifacts and are therefore not counted here."
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT40/no_publication.c",
+          "role": "attribution",
+          "expectation": "safe",
+          "measured": "safe, {subject: safe}, no diagnostic",
+          "isolates": "exactly the publication statement; removing it moves the verdict, which is clause (b) of the wave-9 attribution rule"
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT40/plain_pointer.c",
+          "role": "invariance (pinned for NOT moving the verdict)",
+          "expectation": "unknown",
+          "measured": "byte-identical to the case: same unit result, same verbatim reason, same statuses, same ordered diagnostics",
+          "isolates": "`_Atomic`, which is measured non-load-bearing. The projection derives no atomicity or synchronization fact, so a qualifier on the destination cannot move one of its verdicts."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT40/no_release.c",
+          "role": "boundary (pinned for NOT moving the verdict class)",
+          "expectation": "unknown",
+          "measured": "unknown, reason `resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)`, one diagnostic (the publication)",
+          "isolates": "the release. Publishing without releasing is refused too, so the refusal is the publication rather than the `prematurely freed` half of the scenario title."
+        }
+      ]
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT41": {
+      "scenario": "`volatile` used as a completion flag",
+      "expected": "No synchronization proof",
+      "re_measured_on_this_tree": "Three shapes over the q_* surface: a `volatile int` completion flag beside an acquisition and release, the same body with a plain `int`, and the body with no flag at all. The first two are byte-identical — unknown, reason `resource projection unresolved: 1 unsupported operation(s), 1 unresolved alias(es), 0 custody summary conflict(s)`, `[subject:4:unknown-alias:p, subject:4:unsupported:unsupported assignment expression]` — and the third is safe with no diagnostic. The qualifier moves nothing; the store does.",
+      "why_still_unmapped": "The recorded blocker is accurate and is now a decision rather than a gap. Card CTWIN-PUBLISH §5 asserts the invariance as correct: C11 `volatile` is an access-ordering qualifier for the abstract machine, not a synchronization primitive (§5.1.2.4 gives happens-before to atomics, mutexes and thread creation/join only), so a projection that derives no synchronization fact MUST answer identically with and without it — answering differently would be the defect. No verdict of this gateway is therefore evidence about a synchronization proof, and a mapping would be vacuous under clause (b) of the wave-9 attribution rule.",
+      "follow_on": "CT-CTWIN-SYNC (decided by card CTWIN-PUBLISH §5, not open as a gap)"
+    },
+    "CT42": {
+      "scenario": "Two descriptors share an underlying logical state",
+      "expected": "Preserve shared protocol-cell identity",
+      "re_measured_on_this_tree": "The contract loader still refuses an int-typed owned result verbatim: `contracts.qcore: q_open_fd at byte 18: owned result requires a pointer return type`. The descriptor twin without such a contract is unknown on three uncontracted calls (`q_close_fd`, `q_dup_fd`, `q_open_fd`). The pointer-alias analogue — `void *b = a;` then two releases — is a provisional unsafe with one `double-release` diagnostic, which is a syntactic alias surviving, a different question from a preserved protocol-cell identity.",
+      "why_still_unmapped": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; its Unknown says only that the projection cannot express descriptors. Unchanged from card CT-CTWIN's measurement, re-verified rather than inherited.",
+      "follow_on": "CT-CTWIN-DESCRIPTOR"
+    }
+  },
+  "unmapped_reasons_provenance": "CT41 and CT42 keep the bucket card CT-CTWIN measured — `blocked-on-gateway-expressiveness (C-twin measured)` — so neither row declares a supersession: re-verification reaching the same label is the record saying the label still holds. Only the reasons move, and only for CT41, whose blocker CTWIN-PUBLISH converted from an open question into an asserted decision. Inventing a new bucket for that would be label churn without a measurement to justify it, and the tally shape would move for a case nothing about which moved. CT40's row is not repeated here: the case is mapped, so it has no blocker to publish, and the wave-9 record's row for it is retired below rather than deleted from that record.",
+  "unmapped_reasons": {
+    "CT41": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The resource projection has no synchronization model; the `volatile` invariance is asserted as correct by card CTWIN-PUBLISH §5 rather than open, so no verdict of this gateway is evidence about a synchronization proof and a mapping would be vacuous.",
+      "measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-measured over three shapes; the decision is card CTWIN-PUBLISH §5, follow-on CT-CTWIN-SYNC"
+    },
+    "CT42": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; an int-typed resource identity is still not expressible at all, the contract loader refusing `owned result requires a pointer return type`.",
+      "measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-verified against card CT-CTWIN's measurement; follow-on CT-CTWIN-DESCRIPTOR"
+    }
+  },
+  "retired_unmapped_reasons": {
+    "CT40": {
+      "retires": "docs/reports/wave9-ctwin/ct_stage_evidence.json",
+      "mapped_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane): CT40 is mapped on the legacy_c route, so it has no blocker to publish. The wave-9 record keeps its row and its bytes; this declaration is what retires it, so the history stays visible instead of being edited out of an archived record — the practice card CT-LABELS built the dual-publication mechanism to replace and card HYGIENE-16 reverted.",
+      "wave9_bucket_retired": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "wave9_reason_retired": "The verdict is invariant under removing the construct the scenario names, so no control can attribute it to the publication protocol; mapping it would record either a Safe against a case that demands non-certification, or an Unknown attributable to something else."
+    }
+  }
+}

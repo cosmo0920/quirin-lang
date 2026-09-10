@@ -1,0 +1,122 @@
+[
+ {
+  "mutation": "M01 diagnostic order swapped",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1782701) panicked at compiler/tests/ct_corpus.rs:3614:5:"
+ },
+ {
+  "mutation": "M02 pin a convenient subset of the diagnostics",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1786218) panicked at compiler/tests/ct_corpus.rs:3614:5:"
+ },
+ {
+  "mutation": "M03 claim the twin is provisionally unsafe",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1791681) panicked at compiler/tests/ct_corpus.rs:3576:5:"
+ },
+ {
+  "mutation": "M04 inflate the withdrawal reason's alias count",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1795793) panicked at compiler/tests/ct_corpus.rs:3580:5:"
+ },
+ {
+  "mutation": "M05 drop the accepted control, keep only the refusals",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1797607) panicked at compiler/tests/ct_corpus.rs:3343:5:"
+ },
+ {
+  "mutation": "M06 claim `_Atomic` is load-bearing (invariance control flipped to safe)",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1799487) panicked at compiler/tests/ct_corpus.rs:3576:5:"
+ },
+ {
+  "mutation": "M07 claim the pre-CTWIN-PUBLISH leak for the no-release control",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1801106) panicked at compiler/tests/ct_corpus.rs:3576:5:"
+ },
+ {
+  "mutation": "M08 case.c loses the publication (the case becomes its own control)",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1802556) panicked at compiler/tests/ct_corpus.rs:3576:5:"
+ },
+ {
+  "mutation": "M09 drop the whole per-function status map's only entry",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1804007) panicked at compiler/tests/ct_corpus.rs:3405:5:"
+ },
+ {
+  "mutation": "M10 legacy_c_twin observations 1 -> 2",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1805482) panicked at compiler/tests/ct_corpus.rs:2743:9:"
+ },
+ {
+  "mutation": "M11 drop the parse stage's tool_gate",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1807064) panicked at compiler/tests/ct_corpus.rs:1736:17:"
+ },
+ {
+  "mutation": "M12 promote native_sanitized to executed",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1811770) panicked at compiler/tests/ct_corpus.rs:2743:9:"
+ },
+ {
+  "mutation": "M13 declare the task route instead of legacy_c",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1817849) panicked at compiler/tests/ct_corpus.rs:1636:5:"
+ },
+ {
+  "mutation": "M14 credit the stage to CT43's artifact",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1823336) panicked at compiler/tests/ct_corpus.rs:1700:17:"
+ },
+ {
+  "mutation": "M15 record the reject verdict mode",
+  "refused": true,
+  "evidence": "thread 'ct_manifest_and_fixture_set_agree_and_mapped_cases_execute' (1830605) panicked at compiler/tests/ct_corpus.rs:1642:5:"
+ },
+ {
+  "mutation": "M16 back to unmapped while the fixture exists",
+  "refused": true,
+  "evidence": "thread 'ct_mapping_progress_is_pinned_and_counted' (1833240) panicked at compiler/tests/ct_corpus.rs:2260:5:"
+ },
+ {
+  "mutation": "M17 acceptance.json left at ct_mapped 32",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1838607) panicked at compiler/tests/ct_corpus.rs:2723:5:"
+ },
+ {
+  "mutation": "M18 acceptance.json bucket tally re-inflated by hand",
+  "refused": true,
+  "evidence": "DRIFT: acceptance.json `unmapped_bucket_counts` is not what the manifest derives"
+ },
+ {
+  "mutation": "M19 wave-17 record's own stage count inflated",
+  "refused": true,
+  "evidence": "DRIFT: CT40/legacy_c_twin: manifest counts 1 runs, docs/reports/wave17-ct40/ct_stage_evidence.json counts 2"
+ },
+ {
+  "mutation": "M20 the retirement is dropped (silence is not a retirement)",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1844598) panicked at compiler/tests/ct_corpus.rs:2561:17:"
+ },
+ {
+  "mutation": "M21 the retirement names the wrong record",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1848014) panicked at compiler/tests/ct_corpus.rs:2453:13:"
+ },
+ {
+  "mutation": "M22 a lane retires its own row",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1853593) panicked at compiler/tests/ct_corpus.rs:2458:13:"
+ },
+ {
+  "mutation": "M23 CT41's row claims a case the manifest maps",
+  "refused": true,
+  "evidence": "thread 'ct_acceptance_summary_is_derived_from_the_manifest' (1856795) panicked at compiler/tests/ct_corpus.rs:2561:17:"
+ },
+ {
+  "mutation": "M24 the wave-17 evidence record is removed from the Python file set",
+  "refused": true,
+  "evidence": "raise SystemExit("
+ }
+]

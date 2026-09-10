@@ -27,7 +27,9 @@
 //! CT26/CT27/CT28/CT29/CT30/CT31/CT32/CT33/CT34/CT48. The epoch route
 //! (`source.epoch.bound.v1` lowering onto the unedited `FlatEpochBoundV1`
 //! checker, cards T08-EPOCH-SRC and T08-SRC-CT) is CT35/CT36/CT38/CT39. The
-//! `legacy_c` route (card CT-CTWIN) is CT43/CT45: those two cases have no QCore
+//! `legacy_c` route (card CT-CTWIN, joined by CT40 in the wave-17 CT lane after
+//! card CTWIN-PUBLISH closed the hazard that kept it unmapped) is
+//! CT40/CT43/CT45: those three cases have no QCore
 //! source form at all — the constructs they name are C constructs — so their
 //! artifact is a C twin analyzed through the real unrestricted-C gateway
 //! (`validate_unrestricted_c11` then `analyze_unrestricted_c11`), which is why
@@ -82,17 +84,20 @@ use serde::Deserialize;
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
     "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35",
-    "CT36", "CT37", "CT38", "CT39", "CT43", "CT45", "CT48", "CT50",
+    "CT36", "CT37", "CT38", "CT39", "CT40", "CT43", "CT45", "CT48", "CT50",
 ];
-/// The `legacy_c` route (card CT-CTWIN). These two cases name C constructs that
+/// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
+/// three cases name C constructs that
 /// no QCore syntax expresses, so their artifact is a `.c` twin analyzed through
 /// the real unrestricted-C gateway. Each pins the whole verdict — the unit
 /// result, the complete per-function status map and the complete ordered
 /// diagnostic inventory — and carries at least one control that removes exactly
 /// the construct the scenario names, so the recorded `Unknown` is attributable
 /// to that construct rather than to "the projection cannot express this at
-/// all".
-const LEGACY_C_TWIN_CASES: &[&str] = &["CT43", "CT45"];
+/// all". CT40 additionally carries two controls pinned for *not* moving the
+/// verdict, which is what bounds its mapping to the publication protocol rather
+/// than to the atomicity its title names.
+const LEGACY_C_TWIN_CASES: &[&str] = &["CT40", "CT43", "CT45"];
 /// The `source.mutex.guard.v1` rejection cases (T03's lowering onto the unedited
 /// `CheckedMutexInvariantV1` checker, extended by T03-F's bounded task
 /// composition, `wait` announcement and guard-scoped facts, and by CT33-RANKS's
@@ -2220,9 +2225,10 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 32 of 50 CT cases are mapped
-/// as executed tests over their own fixture; 18 remain unmapped. Thirty of
-/// the thirty-two are source-level; CT43 and CT45 are C twins executed through
+/// The moving count is the W6 genericity metric: 33 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 17 remain unmapped. Thirty of
+/// the thirty-three are source-level; CT40, CT43 and CT45 are C twins executed
+/// through
 /// the unrestricted-C gateway, which is a different artifact and a different
 /// property, so they are counted here and separated in the report.
 /// CT13/CT15/CT26 and the
@@ -2233,8 +2239,9 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// accepted controls are multi-task modules this backend renders in no thread at
 /// all (published checked with `c_source: None`, card T03-F §3.5). CT34 now
 /// records a real compiled and sanitizer-run control (card `CT34-SANITIZED`), so
-/// harness-gated sanitized-native evidence is 4 of 32 — CT03, CT17, CT26 and
-/// CT34 — and proof stays 0 of 32. Mapping is not conformance.
+/// harness-gated sanitized-native evidence is 4 of 33 — CT03, CT17, CT26 and
+/// CT34 — and proof stays 0 of 33. Mapping is not conformance: the wave-17
+/// denominator grew by a C twin, which structurally contributes neither.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -2363,7 +2370,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 9] = [
+const EVIDENCE_FILES: [&str; 10] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -2373,10 +2380,95 @@ const EVIDENCE_FILES: [&str; 9] = [
     "docs/reports/wave11-ct33/ct_stage_evidence.json",
     "docs/reports/wave13-ct34/ct_stage_evidence.json",
     "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
+    "docs/reports/wave17-ct40/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
 const ARCHIVE_SOURCE: &str = "t00-archive";
+
+/// The declared retirements of earlier lanes' `unmapped_reasons` rows, keyed by
+/// case (wave-17 CT lane). See [`unmapped_labels`] for why this exists and what
+/// each condition refuses; this function checks them and returns
+/// `{case: retiring record}`.
+fn lane_row_retirements(
+    records: &[(&'static str, serde_json::Value)],
+    unmapped: &BTreeSet<&str>,
+) -> BTreeMap<String, String> {
+    // Which record most recently published a bucket for each case, regardless of
+    // whether that case is still unmapped. A retirement must name exactly this
+    // record, so it cannot name a row a later supersession already replaced.
+    let mut newest_row: BTreeMap<&str, &str> = BTreeMap::new();
+    for (relative, record) in records {
+        if let Some(rows) = record.get("unmapped_reasons") {
+            for case_id in rows
+                .as_object()
+                .expect("unmapped_reasons is an object")
+                .keys()
+            {
+                newest_row.insert(case_id.as_str(), relative);
+            }
+        }
+    }
+    let position = |wanted: &str| {
+        records
+            .iter()
+            .position(|(relative, _)| *relative == wanted)
+            .unwrap_or_else(|| panic!("`{wanted}` is not a CT stage-evidence record"))
+    };
+
+    let mut retirements: BTreeMap<String, String> = BTreeMap::new();
+    for (index, (relative, record)) in records.iter().enumerate() {
+        let Some(rows) = record.get("retired_unmapped_reasons") else {
+            continue;
+        };
+        for (case_id, row) in rows
+            .as_object()
+            .expect("retired_unmapped_reasons is an object")
+        {
+            assert!(
+                !unmapped.contains(case_id.as_str()),
+                "{case_id}: {relative} retires this case's bucket, but the manifest still \
+                 leaves the case unmapped — its label is live"
+            );
+            for field in ["retires", "mapped_by"] {
+                let value = row
+                    .get(field)
+                    .and_then(serde_json::Value::as_str)
+                    .unwrap_or("");
+                assert!(
+                    !value.trim().is_empty(),
+                    "{case_id}: {relative} carries no {field} for this retirement"
+                );
+            }
+            let retires = row["retires"].as_str().expect("retires");
+            let held = newest_row
+                .get(case_id.as_str())
+                .copied()
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{case_id}: {relative} retires a bucket, but no evidence record publishes \
+                     one for this case"
+                    )
+                });
+            assert_eq!(
+                retires, held,
+                "{case_id}: {relative} retires the bucket in {retires}, but the record holding \
+                 it is {held}"
+            );
+            assert!(
+                position(retires) < index,
+                "{case_id}: {relative} retires {retires}, which is not an earlier record"
+            );
+            assert!(
+                retirements
+                    .insert(case_id.clone(), (*relative).to_owned())
+                    .is_none(),
+                "{case_id}: two evidence records retire this case's bucket"
+            );
+        }
+    }
+    retirements
+}
 
 /// Each unmapped case's current bucket label beside the record that measured it
 /// (card CT-LABELS, finding `D02-BUCKETS-LABELS`).
@@ -2393,11 +2485,33 @@ const ARCHIVE_SOURCE: &str = "t00-archive";
 /// Total-or-reject, matching `scripts/ct_stage_summary.py` exactly:
 ///
 /// * a lane row naming a case the manifest currently maps is refused — a mapped
-///   case has no blocker to publish;
+///   case has no blocker to publish — unless a later record *retires* it, see
+///   below;
 /// * two lane records labelling one case differently with no supersession
 ///   declared is refused, and a supersession that is stale or vacuous is refused
 ///   with it;
 /// * a case with neither a lane row nor an archived row is a hole, not a zero.
+///
+/// **Retirement** (wave-17 CT lane). Mapping a case whose bucket an *earlier*
+/// lane recorded used to leave two bad options: refuse, or edit that lane's
+/// archived record — the in-place rewrite of a frozen archive that card
+/// `CT-LABELS` built this whole mechanism to replace and card `HYGIENE-16`
+/// reverted. The third option is the one `supersedes` already uses for labels:
+/// the mapping lane declares the retirement in *its own* record, under
+/// `retired_unmapped_reasons`, as `{CASE: {retires, mapped_by}}`, and the
+/// earlier record stays byte-identical. Total-or-reject in every direction that
+/// could hide something:
+///
+/// * a retirement naming a case the manifest still leaves **unmapped** is
+///   refused — that would silently drop a live label;
+/// * `retires` must name a record in [`EVIDENCE_FILES`] that really carries an
+///   `unmapped_reasons` row for that case, and must be the **newest** such
+///   record, so a retirement cannot go stale past a supersession;
+/// * the retiring record must land strictly **later** than the record it
+///   retires;
+/// * two records retiring one case is refused;
+/// * and a row for a mapped case with no retirement at all still fails closed,
+///   exactly as before — the mechanism admits a declaration, never silence.
 fn unmapped_labels(manifest: &Manifest) -> BTreeMap<String, (String, String)> {
     let unmapped: BTreeSet<&str> = manifest
         .cases
@@ -2427,20 +2541,30 @@ fn unmapped_labels(manifest: &Manifest) -> BTreeMap<String, (String, String)> {
         );
     }
 
+    let records: Vec<(&str, serde_json::Value)> = EVIDENCE_FILES
+        .iter()
+        .map(|relative| (*relative, read_json(&repo_root().join(relative))))
+        .collect();
+    let retirements = lane_row_retirements(&records, &unmapped);
+
     // The lanes' own measured labels, newest record winning.
     let mut lanes: BTreeMap<String, (String, String)> = BTreeMap::new();
-    for relative in &EVIDENCE_FILES {
-        let path = repo_root().join(relative);
-        let record: serde_json::Value = read_json(&path);
+    for (relative, record) in &records {
         let Some(rows) = record.get("unmapped_reasons") else {
             continue;
         };
         for (case_id, row) in rows.as_object().expect("unmapped_reasons is an object") {
-            assert!(
-                unmapped.contains(case_id.as_str()),
-                "{case_id}: {relative} records an unmapped-case bucket, but the manifest \
-                 maps this case"
-            );
+            if !unmapped.contains(case_id.as_str()) {
+                // The case is mapped now. A row for it is admissible only where
+                // a later record declares the retirement; the retirement's own
+                // conditions were checked above.
+                assert!(
+                    retirements.contains_key(case_id.as_str()),
+                    "{case_id}: {relative} records an unmapped-case bucket, but the manifest \
+                     maps this case"
+                );
+                continue;
+            }
             for field in ["bucket", "reason", "measured_by"] {
                 let value = row
                     .get(field)

@@ -1,0 +1,22 @@
+module contract;
+
+// The declared custody API this C twin is analyzed against — the same synthetic
+// `q_*` allocator surface CT43 and CT45 use. These are trusted test assumptions
+// about a synthetic API, not verified facts about any library.
+//
+// Nothing here says anything about publication: the case's refusal comes from
+// the gateway's own rule for a store into an object that outlives the call
+// (card CTWIN-PUBLISH), not from a contract that declares one.
+
+extern fn q_alloc() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn q_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
