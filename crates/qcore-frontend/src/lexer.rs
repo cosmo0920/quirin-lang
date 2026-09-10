@@ -50,6 +50,21 @@ pub enum Symbol {
     QuantOpen,
     /// `|]`, the readable closer aliasing `>` on quantitative index types.
     QuantClose,
+    /// `|>`, the pipe operator (card `PIPE-OPERATOR`). Desugared away before
+    /// parsing by [`crate::pipe::desugar_pipes`]; no later phase sees it in a
+    /// well-formed program.
+    PipeInto,
+    /// `|`, the logical-or operator. Card `PIPE-OPERATOR` claims the token so a
+    /// later wave inherits it without a collision; the short-circuit lowering
+    /// is named follow-on `OR-LOWERING` and every occurrence refuses at `Q034`
+    /// until it lands. A bare `|` was a lex error before that card; it is still
+    /// refused, one layer later and with an actionable message.
+    Pipe,
+    /// `&&`, the logical-and operator, claimed on the same terms as [`Self::Pipe`]
+    /// (follow-on `AND-LOWERING`, refusing at `Q034`). Single `&` stays
+    /// [`Self::Ampersand`] and is deliberately left for a future binary/bitwise
+    /// operation; this card gives it no new meaning.
+    AndAnd,
     Arrow,
     FatArrow,
     ColonColon,
@@ -197,6 +212,26 @@ impl Lexer<'_> {
         Err(self.error(start, "unterminated literal"))
     }
 
+    /// Two-byte spellings are tried before every one-byte spelling, so the
+    /// tokenization is longest-match at a fixed width of two. The four members
+    /// of the vertical-bar family are pairwise distinct byte pairs, so their
+    /// order inside this table is immaterial and the resolution is decided by
+    /// width alone:
+    ///
+    /// | Input | Lexes as | Note |
+    /// |---|---|---|
+    /// | `[\|` | `QuantOpen` | matched at `[`, so `[\|>` is `QuantOpen` then `Greater` |
+    /// | `\|]` | `QuantClose` | |
+    /// | `\|>` | `PipeInto` | the pipe wins over `Pipe` then `Greater` by width |
+    /// | `\|` | `Pipe` | logical or; refused at `Q034` until `OR-LOWERING` lands |
+    /// | `\|\|` | `Pipe` `Pipe` | refused at `Q034` naming the single-`\|` spelling |
+    /// | `&&` | `AndAnd` | logical and; refused at `Q034` until `AND-LOWERING` |
+    /// | `&` | `Ampersand` | reserved for a future binary/bitwise operation |
+    ///
+    /// The one genuine future ambiguity is `a |> b` against a hypothetical
+    /// `a | > b`: `|>` wins by longest match, so an or-operator followed by a
+    /// `>` comparison must be spaced or parenthesized. That constraint is
+    /// recorded now rather than discovered by the wave that implements `|`.
     fn symbol(&mut self, start: usize, first: char) -> Result<Symbol, LexError> {
         let pair = self
             .source
@@ -212,6 +247,8 @@ impl Lexer<'_> {
             Some(">=") => Some(Symbol::GreaterEqual),
             Some("[|") => Some(Symbol::QuantOpen),
             Some("|]") => Some(Symbol::QuantClose),
+            Some("|>") => Some(Symbol::PipeInto),
+            Some("&&") => Some(Symbol::AndAnd),
             _ => None,
         };
         if let Some(symbol) = two {
@@ -229,7 +266,11 @@ impl Lexer<'_> {
             '/' => Ok(Symbol::Slash),
             '%' => Ok(Symbol::Percent),
             '!' => Ok(Symbol::Bang),
+            // Unchanged by card `PIPE-OPERATOR`: nothing in the workspace
+            // consumes `Ampersand`, and it is deliberately left that way so a
+            // future binary/bitwise wave inherits a clean single `&`.
             '&' => Ok(Symbol::Ampersand),
+            '|' => Ok(Symbol::Pipe),
             '?' => Ok(Symbol::Question),
             '<' => Ok(Symbol::Less),
             '>' => Ok(Symbol::Greater),

@@ -13,6 +13,12 @@ use qcore_core::module_imports::{
 pub fn check_source_imports(
     program: &SourceProgram,
 ) -> Result<ModuleImports, Vec<SourceDiagnostic>> {
+    // Card `PIPE-OPERATOR`, first: a malformed pipeline and a claimed-but-
+    // unlowered logical operator are syntactic facts about this file that do
+    // not depend on what it imported. Running the operator gate before the
+    // module gates means `x |> flush;` reports the pipe refusal rather than a
+    // missing-import diagnostic for a capability the statement never reached.
+    crate::pipe::check_source_operators(program.pipe_refusals(), program.lexical_tokens())?;
     for import in program.imports() {
         ModuleImports::resolve([import.value.as_str()]).map_err(|error| {
             vec![SourceDiagnostic {

@@ -1,0 +1,22 @@
+import std.fmt;
+import std.io;
+import std.logger;
+
+// The piped twin of `fixtures/std_modules/lines.qcore` (card PIPE-OPERATOR).
+// Statement for statement it says the same thing; the desugaring is a pure
+// token permutation, so the two programs emit byte-identical C11 and produce
+// the same reference observation, per stream. Every piped value is a scalar:
+// `source.std-io.v1` has no operand form that could denote a resource, so
+// nothing here can be consumed, released or retained by a rendering.
+fn main() -> unit effects { io } {
+    let total = 42;
+    let mask = 255;
+    total |> print dec;
+    mask |> print hex;
+    total |> log info dec;
+    mask |> log warn hex;
+    -7 |> log fatal dec;
+    flush;
+    -7 |> print dec;
+    return;
+}

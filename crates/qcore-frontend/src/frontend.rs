@@ -260,6 +260,7 @@ pub struct SourceProgram {
     task_expressions: Vec<SourceTaskExpression>,
     result_matches: Vec<SourceResultMatch>,
     tokens: Vec<TokenKind>,
+    pipe_refusals: Vec<crate::pipe::PipeRefusal>,
     pub declarations: Vec<Located<SourceDeclaration>>,
 }
 
@@ -289,6 +290,13 @@ impl SourceProgram {
 
     pub fn lexical_tokens(&self) -> &[Token] {
         &self.lexical_tokens
+    }
+
+    /// Pipelines this file's parse refused to desugar (card `PIPE-OPERATOR`).
+    /// Raised as diagnostics by `crate::pipe::check_source_operators`, which
+    /// the driver runs per input file before name/type checking.
+    pub fn pipe_refusals(&self) -> &[crate::pipe::PipeRefusal] {
+        &self.pipe_refusals
     }
 
     pub fn verifier_scopes(&self) -> impl Iterator<Item = (&str, &VerifierScopeDeclaration)> {
@@ -363,12 +371,19 @@ struct SourceParser<'a> {
     source: &'a str,
     tokens: Vec<Token>,
     matching: BTreeMap<usize, usize>,
+    pipe_refusals: Vec<crate::pipe::PipeRefusal>,
 }
 
 impl<'a> SourceParser<'a> {
     fn new(source: &'a str) -> Result<Self, SourceParseError> {
         let mut tokens = lex(source)?;
         tokens.pop();
+        // Card `PIPE-OPERATOR`. The desugaring runs here — after lexing, before
+        // the delimiter map and before any parsing — so a synthesized `(`/`)`
+        // participates in matching exactly as a written one does, and every
+        // later phase sees an ordinary statement. It is total: an ill-formed
+        // pipeline is left untouched and refused by `check_source_operators`.
+        let (tokens, pipe_refusals) = crate::pipe::desugar_pipes(tokens);
         let mut stack = Vec::<(Symbol, usize)>::new();
         let mut matching = BTreeMap::new();
         for (index, token) in tokens.iter().enumerate() {
@@ -408,6 +423,7 @@ impl<'a> SourceParser<'a> {
             source,
             tokens,
             matching,
+            pipe_refusals,
         })
     }
 
@@ -476,6 +492,7 @@ impl<'a> SourceParser<'a> {
             source: self.source.to_owned(),
             lexical_tokens: self.tokens.clone(),
             tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
+            pipe_refusals: self.pipe_refusals.clone(),
             declarations,
         })
     }
@@ -1436,10 +1453,29 @@ impl<'a> SourceParser<'a> {
         (start..limit).find_map(|index| self.word_value(index).map(ToOwned::to_owned))
     }
 
+    /// The byte extent of a token range.
+    ///
+    /// Card `PIPE-OPERATOR` generalized this from `first.start .. last.end` to
+    /// the minimum start and maximum end over the range. For a range whose
+    /// tokens are in source order — every range in a program with no pipe —
+    /// the two agree exactly, byte for byte; the pinned goldens are unmoved.
+    /// For a desugared pipeline the tokens are a permutation of the statement's
+    /// source text, so only the min/max form still covers the operand the
+    /// reader wrote, which is what keeps the byte-span statement windows every
+    /// route uses over its own tokens correct.
     fn range_span(&self, start: usize, end: usize) -> Span {
+        let range = &self.tokens[start..end];
         Span {
-            start: self.tokens[start].span.start,
-            end: self.tokens[end - 1].span.end,
+            start: range
+                .iter()
+                .map(|token| token.span.start)
+                .min()
+                .unwrap_or_else(|| self.tokens[start].span.start),
+            end: range
+                .iter()
+                .map(|token| token.span.end)
+                .max()
+                .unwrap_or_else(|| self.tokens[end - 1].span.end),
         }
     }
 
@@ -1572,6 +1608,13 @@ pub enum SemanticPass {
     /// *declared* C symbols under selected contracts, while this one admits a
     /// closed set of statements with no callee and no contract at all.
     StandardIo,
+    /// Card `PIPE-OPERATOR`: admission of the pipe operator `|>` and of the
+    /// claimed logical-operator tokens `|` and `&&`. Owns `Q032`–`Q034`
+    /// (spec §L21). It is a separate pass because it runs *before* every other
+    /// one: a well-formed pipeline is desugared away at parse time and no
+    /// later pass can tell it was written, so this pass exists only to attribute
+    /// the refusals of the forms that are not desugared away.
+    Pipe,
     PluginVerification,
 }
 
@@ -2349,6 +2392,9 @@ pub fn source_diagnostic(
         // The generic presentation code of the standard-IO pass. The specific
         // conditions Q028-Q031 are issued at their own emission sites.
         SemanticPass::StandardIo => "Q030",
+        // The generic presentation code of the pipe pass. The specific
+        // conditions Q033-Q034 are issued at their own emission sites.
+        SemanticPass::Pipe => "Q032",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {
