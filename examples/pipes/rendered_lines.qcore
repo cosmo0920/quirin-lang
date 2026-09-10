@@ -1,0 +1,29 @@
+import std.fmt;
+import std.io;
+import std.logger;
+
+// The pipe operator at its smallest: a value on the left, a sink on the right.
+//
+//     total |> print dec;      is exactly      print dec total;
+//
+// "Exactly" is meant literally. The desugaring is a token permutation performed
+// before any checker runs, so this file and its unpiped twin
+// (`../stdio/renderings.qcore` plus `../stdio/severities.qcore`) emit the same
+// C11 and observe the same lines. The pipe adds no operation, no checker rule
+// and no IR node — nothing downstream can tell a `|>` was written.
+//
+// Which is why it is worth using where it reads better and not where it does
+// not. Reaching for it on a single stage buys you reading order; the value moves
+// to the front, where the eye starts.
+fn main() -> unit effects { io } {
+    let total = 42;
+    let mask = 255;
+    total |> print dec;
+    mask |> print hex;
+    total |> log info dec;
+    mask |> log warn hex;
+    -7 |> log fatal dec;
+    flush;
+    -7 |> print dec;
+    return;
+}

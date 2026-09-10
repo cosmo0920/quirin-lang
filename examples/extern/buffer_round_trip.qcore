@@ -1,0 +1,30 @@
+import std.extern;
+
+// Acquire a buffer from C, lend it twice, and give it back. This is the whole
+// life of one resource across a declared boundary.
+//
+// Two things a reader should take from it:
+//
+//   * `succeeds true else raise Failure` is not an assertion the checker
+//     believes. It is the caller *deciding both arms* of a declaration that says
+//     the result may be null, and the emitted C really compares the returned
+//     pointer against that decision.
+//   * `move b` at the release is where custody leaves this function. Use `b`
+//     after it and the module refuses; forget the release and it refuses too.
+//
+// Nothing here prints: `source.extern-call.v1` has no rendering. Composing this
+// with `std.io` so the total reaches a stream is `../stdio/pipeline.qcore`.
+error Failure { Failed; }
+
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit;
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = demo_alloc(8) succeeds true else raise Failure;
+    demo_fill(b, 7);
+    let total = demo_sum(b, 8) succeeds 56;
+    demo_release(move b);
+    return;
+}

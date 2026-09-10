@@ -1,0 +1,33 @@
+import std.extern;
+import std.extern.unsafe;
+
+// Calling C that has no contract, and saying so.
+//
+// `unsafe extern fn` is the surface for a symbol nothing describes. It declares
+// an ABI signature and **nothing else**: no modes, no custody, no effects, no
+// promise about what the callee does. Every such symbol becomes a named
+// unchecked-linkage premise in this module's certificate, and `quirin check`
+// prints those premises, because a `Safe` obtained through unchecked linkage is
+// never printed bare.
+//
+// The second import is not decoration. `std.extern` grants the declared-contract
+// surface; `std.extern.unsafe` grants the waiver, separately, so that a file's
+// import list says whether it waives anything at all.
+//
+// The surface is scalar-only on purpose. Every parameter and every result below
+// is a value: the caller hands over nothing it owes a cleanup for, and receives
+// nothing it now owes one for. That is what makes an unchecked call *sound to
+// surround* even though its body is entirely unknown — the caller's ledger is
+// untouched, so the checked accounting around it still holds.
+//
+// See `unchecked_demo.qcorelib` for the manifest half: which build was waived.
+unsafe extern fn demo_unchecked_add(a: i32, b: i32) -> i32;
+unsafe extern fn demo_hidden_effect(tag: u32) -> unit;
+unsafe extern fn demo_measure(count: u64) -> u64;
+
+fn main() -> unit effects { io, alloc, mut } {
+    demo_unchecked_add(2, 40);
+    demo_hidden_effect(7);
+    demo_measure(16);
+    return;
+}

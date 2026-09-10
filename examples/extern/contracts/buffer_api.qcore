@@ -1,0 +1,67 @@
+module contract;
+
+// The declared model of the tiny C buffer API in `buffer_api.c`.
+//
+// Loading this file asserts nothing about that C. It is a `ContractTrust::
+// Declared` assumption (contract spec §C06): the checker reads these clauses as
+// *given*, records `DeclaredContract("<name>")` in the certificate for every
+// callee it admitted through them, and `quirin` prints those premises so a
+// reader can see what a `Safe` result rests on. If a clause below is wrong about
+// the C, the result is wrong — which is the point of writing them down.
+//
+// No clause here says how many bytes any callee touches. C04 pointers are
+// extentless `u8` projections, and the certificate carries that as its own
+// standing premise (`NoExtentTransport`).
+
+// Acquisition. `resource_return_owned(nullable)` is what makes the caller write
+// `succeeds true else raise …`: the declaration says the result *may* be null,
+// so the caller must decide the failure arm rather than assume success.
+extern fn demo_alloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+// A borrow through a `mut` pointer: the callee may write inside the caller's
+// bytes and takes on no obligation. The derived effect row carries `Mut`.
+extern fn demo_fill(buffer: ptr<mut, u8>, value: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+// A borrow through a `const` pointer, returning a scalar. `resource_return_none`
+// beside an `i32` result is the shape that makes the result bindable: contract
+// spec §C04.1 — "a scalar may carry a descriptor number as data, but cannot
+// carry descriptor custody".
+extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(buffer);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+// Scalar in, scalar out: nothing in any position carries custody. This is the
+// stage a scalar result can feed, and therefore the stage a multi-stage pipe
+// chain is built from.
+extern fn demo_scale(value: i32, factor: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(factor);
+    ensures normal resource_return_none();
+};
+
+// Consumption. The clause says the caller's obligation moves to the callee, not
+// that the callee destroys anything; `buffer_api.c` does destroy it, which is
+// what lets a leak checker refute the clause for these runs.
+extern fn demo_release(buffer: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(buffer, nonnull);
+    ensures normal resource_return_none();
+};
