@@ -129,5 +129,6 @@ import QCore.BranchJoin
 import QCore.Connectives
 import QCore.Bitwise
 import QCore.SingleEmissionRoute
+import QCore.StdBuffer
 
 /-! The executable formal core of QCore-C revision 0.1. -/
