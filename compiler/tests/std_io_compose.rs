@@ -510,13 +510,13 @@ fn an_unknown_rendering_still_refuses() {
 
 #[test]
 fn printing_without_the_io_import_still_refuses_at_q015() {
-    let source = CHAIN.replace("import std.io;\n", "");
+    let source = CHAIN.replace("import std.io;", "");
     assert_eq!(codes(&source), ["Q015"]);
 }
 
 #[test]
 fn calling_without_the_extern_import_still_refuses_at_q022() {
-    let source = CHAIN.replace("import std.extern;\n", "");
+    let source = CHAIN.replace("import std.extern;", "");
     assert_eq!(codes(&source), ["Q022"]);
 }
 

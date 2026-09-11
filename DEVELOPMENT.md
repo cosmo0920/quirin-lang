@@ -405,6 +405,16 @@ intended `Q039` refusal newline-agnostic without changing the loader, accepted
 manifest surface, diagnostics or evidence. The exact formerly failing test
 and the complete 16-test `native_library` target pass on Windows.
 
+Windows workspace newline gate repair (2026-09-11): a complete
+`cargo test --workspace --no-fail-fast` sweep exposed four remaining failing
+targets. Manifest-header and composed-I/O fixture mutations now match semantic
+tokens instead of Unix newlines, README fenced-block extraction normalises
+checkout line endings, and the task/I/O emission comparison normalises both
+sides before comparing synthesized lines. Unix-only native-evidence imports
+are target-gated, removing the two Windows warning clusters found by the same
+sweep. No loader, source-language, emission or diagnostic semantics changed;
+all four repaired targets and the complete workspace sweep pass on Windows.
+
 Post-IF-ARMS gate repair (2026-09-11): the `bitwise_conditions` suite now pins
 the existing `Q044` refusal for an arm-local check-time constant binding on its
 concrete ground — the binding has no position after the join — rather than on

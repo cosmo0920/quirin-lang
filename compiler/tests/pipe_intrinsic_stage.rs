@@ -25,12 +25,14 @@
 //! slice** of each statement instead of reading the program's own
 //! post-desugaring token stream, so its two call-shaped intrinsics refused
 //! through a pipe while their hand-written twins were admitted. See §4.
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
     CompileOptions, CompiledModule, SourceExecutionProfile, SourceFile, compile_files,
     parse_source_program,
 };
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_with_source_lines,
 };

@@ -29,6 +29,7 @@ fn examples() -> PathBuf {
 
 /// The fenced block immediately following `<!-- MARKER -->` in a README.
 fn block(readme: &str, marker: &str) -> String {
+    let readme = readme.replace("\r\n", "\n");
     let tail = readme
         .split_once(&format!("<!-- {marker} -->\n"))
         .unwrap_or_else(|| panic!("the README no longer carries the marker `{marker}`"))

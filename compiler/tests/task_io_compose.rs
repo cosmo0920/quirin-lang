@@ -8,9 +8,11 @@
 use qcore_compiler::{
     CompileOptions, CompiledModule, SourceExecutionProfile, SourceFile, compile_files,
 };
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_with_source_lines,
 };
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::collections::BTreeMap;
 
 fn compile(source: &str) -> Result<CompiledModule, Vec<qcore_compiler::FileDiagnostic>> {
@@ -144,7 +146,7 @@ fn the_composed_emission_is_the_task_emission_with_lines_inserted() {
         .collect::<String>();
     assert_eq!(
         stripped,
-        *plain.c_source.as_ref().unwrap(),
+        plain.c_source.as_ref().unwrap().replace("\r\n", "\n"),
         "the composed emission moved a synthesized line"
     );
 }

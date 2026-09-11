@@ -414,7 +414,7 @@ fn a_manifest_naming_no_header_is_unaffected_by_supplied_texts() {
 #[test]
 fn the_two_header_fields_are_mandatory_together() {
     let without_hash = manifest_with(
-        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;\n",
+        "header_hash sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d;",
         "",
     );
     let refused = codes((MANIFEST_PATH, &without_hash), bound_header(HEADER));
