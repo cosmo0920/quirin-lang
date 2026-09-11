@@ -13,22 +13,25 @@
 > §4.2's type gate to a waived and to a contracted declaration. The pass
 > `NativeLibrary` owns the reserved band as **`Q039`–`Q042`** plus a second band
 > **`Q047`–`Q049`** (`Q043`–`Q046` having been allocated between the two cards).
-> Status is therefore **scoped only except for §4, which is landed but for the
-> header reader**:
+> Status is therefore **scoped only except for §4, which is landed**, the
+> header reader included as of card `NATIVE-LIBRARY-HEADER` (wave 22) for the
+> bounded subset that card's design note defines:
 >
 > | §4 piece | State |
 > |---|---|
 > | 4.1 symbol table, for **contract-less** entries | landed (wave 19) |
 > | 4.1 contract slice binding, in both directions | **landed** (wave 20): `contract fn NAME(TYPES) -> TYPE from MODULE`, resolved against the selected environment, total or reject (`Q047`) |
-> | 4.2 header agreement | landed **twice, with opposite dispositions on purpose**: a **refusal** for a contract-less entry (`Q041`, wave 19) and a **per-unit withdrawal** for a contracted one (`Q048`, wave 20) — see the wave-20 report §4 for the one rule that yields both. Reading a real `.h` is still follow-on `NATIVE-LIBRARY-HEADER` |
-> | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (wave-19 report §5); unchanged by wave 20 |
+> | 4.2 header agreement | landed **three times, with dispositions decided by one rule**: a **refusal** for a contract-less entry (`Q041`, wave 19), a **per-unit withdrawal** for a contracted one (`Q048`, wave 20), and — card `NATIVE-LIBRARY-HEADER`, wave 22 — a **refusal** when the manifest's transcription and the library's **real exported `.h`** disagree (`Q052`). The rule is "withdraw only where the weaker admissible reading refuses"; see the wave-20 report §4 and `NATIVE_LIBRARY_HEADER_V1.md` §6.2. Reading the real `.h` is landed for the subset that design names, with the census of what it covers on third-party headers |
+> | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (wave-19 report §5); unchanged by waves 20 and 22. Card `NATIVE-LIBRARY-HEADER` adds a **second, verified** identity beside it — the exported header's reference and digest, measured over the bytes the decision was taken on, because unlike the artifact the header **is read** |
 > | 4.4 ABI premises | landed as four mandatory closed-vocabulary fields carried onto the certificate, on both levels |
 > | 4.4 closed-allocator-custody structural check | **landed** (wave 20). It was vacuous while entries were contract-less (a waiver cannot acquire, `UNSAFE_LINKAGE_V1.md` §9.1 point 2); a contract slice entry *can* acquire, so the check became real and was implemented rather than inherited as vacuous. §4.4's "for the same resource shape" is vacuous in v1 — §C04 projects every resource to one shape — and that is recorded, not silently narrowed |
 > | §6 `std.buffer`, §12 stages (b)–(d) | untouched |
+> | The header level | its own design note, [`NATIVE_LIBRARY_HEADER_V1.md`](NATIVE_LIBRARY_HEADER_V1.md), and its own report |
 >
 > Evidence:
 > [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md),
-> [`docs/reports/wave20-native-library-contract-slice/README.md`](../reports/wave20-native-library-contract-slice/README.md).
+> [`docs/reports/wave20-native-library-contract-slice/README.md`](../reports/wave20-native-library-contract-slice/README.md),
+> [`docs/reports/wave22-native-library-header/README.md`](../reports/wave22-native-library-header/README.md).
 
 # Native-library linkage for bundled modules: `source.native-library.v1`
 

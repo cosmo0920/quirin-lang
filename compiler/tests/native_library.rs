@@ -49,6 +49,7 @@ fn compile_with(
             entry: None,
             extern_contracts: None,
             native_libraries,
+            native_library_headers: None,
         },
     )
 }
@@ -439,6 +440,7 @@ fn a_contract_may_not_be_asserted_about_a_manifest_declared_contract_less_symbol
                 CONTRACTS.to_owned(),
             )])),
             native_libraries: selection(&[(MANIFEST_PATH, manifest)]),
+            native_library_headers: None,
         },
     )
     .expect_err("a contract may not be asserted about a contract-less manifest symbol");
@@ -535,6 +537,7 @@ fn a_contracted_callee_never_names_an_artifact() {
                 CONTRACTS.to_owned(),
             )])),
             native_libraries: selection(&[(MANIFEST_PATH, MANIFEST.to_owned())]),
+            native_library_headers: None,
         },
     )
     .unwrap();

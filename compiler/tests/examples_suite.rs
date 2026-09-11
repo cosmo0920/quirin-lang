@@ -102,6 +102,7 @@ fn compile_named(
             entry: None,
             extern_contracts,
             native_libraries: None,
+            native_library_headers: None,
         },
     )
 }
@@ -1069,6 +1070,7 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
                 "examples/unsafe-linkage/unchecked_demo.qcorelib".to_owned(),
                 broken,
             )])),
+            native_library_headers: None,
         },
     )
     .map(|module| module.execution_profile)
@@ -1094,6 +1096,7 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
                 "examples/unsafe-linkage/unchecked_demo.qcorelib".to_owned(),
                 MANIFEST.to_owned(),
             )])),
+            native_library_headers: None,
         },
     )
     .expect("the published manifest loads");

@@ -8,9 +8,11 @@
 //! the premise names a build and nothing else; card
 //! `NATIVE-LIBRARY-CONTRACT-SLICE` built the contracted end (level **L3**),
 //! where a symbol resolves through the manifest to a declared `.qcore` contract
-//! and inherits the identity beside it. Reading a real exported `.h` instead of
-//! the manifest's transcription of one is still follow-on
-//! `NATIVE-LIBRARY-HEADER`, and the link step itself stays the builder's act.
+//! and inherits the identity beside it. Card `NATIVE-LIBRARY-HEADER` then made
+//! the entries' transcribed header declarations **checkable** against the
+//! library's real exported `.h` — see [`crate::native_library_header`], which
+//! owns the two optional fields [`NativeLibraryManifest::header`] carries. The
+//! link step itself stays the builder's act.
 //!
 //! # What a manifest is
 //!
@@ -101,6 +103,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::extern_call::AbiType;
+use crate::native_library_header::HeaderIdentity;
 
 /// The data model the artifact was built under (§4.4). v1 admits `lp64` only,
 /// which makes `LOADER-ABI-LP64` an explicit statement of the manifest instead
@@ -189,6 +192,17 @@ pub struct ManifestResidence {
     /// to a spelled input path, for the same reason: two spellings that
     /// normalise together are two different selections.
     pub contract: Option<String>,
+    /// The exported header this symbol's declaration was **checked against**
+    /// (card `NATIVE-LIBRARY-HEADER`), and `None` for a manifest that names no
+    /// header — which is every manifest written before that card.
+    ///
+    /// This field's trust status differs from every other field of this record,
+    /// and a reader of a premise must be able to tell: the library, version and
+    /// artifact hash are *declared* and nothing opens them, while this reference
+    /// names a text that **was read** and this digest was **measured over it**.
+    /// See [`crate::native_library_header`] for why the header can honestly be
+    /// verified where the artifact cannot.
+    pub header: Option<HeaderIdentity>,
 }
 
 /// The four ABI premise fields of §4.4, all mandatory, none checked beyond the
@@ -246,6 +260,17 @@ pub struct ContractedEntry {
 pub struct NativeLibraryManifest {
     pub identity: ArtifactIdentity,
     pub premises: AbiPremises,
+    /// The exported header this manifest binds, and its declared digest (card
+    /// `NATIVE-LIBRARY-HEADER`, `header` + `header_hash`).
+    ///
+    /// **Optional as a pair**: both fields or neither. `None` is the default and
+    /// is exactly the wave-19/wave-20 world — every manifest written before that
+    /// card loads byte-identically, admits the same symbols and publishes the
+    /// same premises. Opting in is per manifest and covers every symbol it
+    /// binds; there is no per-entry opt-out, because an entry that opted out
+    /// would be a transcription believed beside transcriptions checked with
+    /// nothing marking which was which.
+    pub header: Option<HeaderIdentity>,
     /// Contract-less entries by symbol. A symbol may be bound at most once.
     pub unchecked: BTreeMap<String, UncheckedEntry>,
     /// Contract slice entries by symbol (card `NATIVE-LIBRARY-CONTRACT-SLICE`).
@@ -419,7 +444,7 @@ impl std::error::Error for ManifestRefusal {}
 
 /// The v1 header fields, in the order [`ManifestRefusal::MissingField`] reports
 /// them absent.
-const HEADER_FIELDS: [&str; 8] = [
+const MANDATORY_FIELDS: [&str; 8] = [
     "library",
     "version",
     "artifact",
@@ -429,6 +454,13 @@ const HEADER_FIELDS: [&str; 8] = [
     "allocator_custody",
     "thread_posture",
 ];
+
+/// The v1 header-binding fields (card `NATIVE-LIBRARY-HEADER`). Optional **as a
+/// pair**: a `header` with no `header_hash`, or the reverse, is a
+/// [`ManifestRefusal::MissingField`] on the same ground as every mandatory
+/// field — an identity missing a field is not a weaker identity, it is an
+/// unusable one.
+const HEADER_BINDING_FIELDS: [&str; 2] = ["header", "header_hash"];
 
 /// The manifest's selector marker, which must be its first statement.
 const MARKER: &str = "native_library manifest v1";
@@ -738,7 +770,9 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
                 }
                 contracted.insert(entry.symbol.clone(), entry);
             }
-            field if HEADER_FIELDS.contains(&field) => {
+            field
+                if MANDATORY_FIELDS.contains(&field) || HEADER_BINDING_FIELDS.contains(&field) =>
+            {
                 if fields.contains_key(field) {
                     return Err(ManifestRefusal::RepeatedField {
                         field: field.to_owned(),
@@ -759,11 +793,35 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             }
         }
     }
-    for field in HEADER_FIELDS {
+    for field in MANDATORY_FIELDS {
         if !fields.contains_key(field) {
             return Err(ManifestRefusal::MissingField { field });
         }
     }
+    // Card `NATIVE-LIBRARY-HEADER`: the two header-binding fields are optional
+    // together and mandatory together. One without the other names a header
+    // whose identity is unstated, or an identity for a header the manifest does
+    // not name — neither is a weaker binding, both are unusable ones.
+    let header = match (fields.get("header"), fields.get("header_hash")) {
+        (None, None) => None,
+        (Some(reference), Some(digest)) => {
+            if !well_formed_hash(digest) {
+                return Err(ManifestRefusal::MalformedHash {
+                    hash: digest.clone(),
+                });
+            }
+            Some(HeaderIdentity {
+                reference: reference.clone(),
+                digest: digest.clone(),
+            })
+        }
+        (Some(_), None) => {
+            return Err(ManifestRefusal::MissingField {
+                field: "header_hash",
+            });
+        }
+        (None, Some(_)) => return Err(ManifestRefusal::MissingField { field: "header" }),
+    };
     let value = |field: &str| fields.get(field).expect("every field is present").clone();
     let hash = value("hash");
     if !well_formed_hash(&hash) {
@@ -812,6 +870,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             hash,
         },
         premises,
+        header,
         unchecked,
         contracted,
     })
@@ -863,6 +922,9 @@ pub struct ManifestBinding<'a> {
     pub module: &'a str,
     pub identity: &'a ArtifactIdentity,
     pub premises: &'a AbiPremises,
+    /// The exported header the manifest bound, if any (card
+    /// `NATIVE-LIBRARY-HEADER`).
+    pub header: Option<&'a HeaderIdentity>,
     pub entry: &'a UncheckedEntry,
 }
 
@@ -877,6 +939,7 @@ impl ManifestBinding<'_> {
             identity: self.identity.clone(),
             premises: *self.premises,
             contract: None,
+            header: self.header.cloned(),
         }
     }
 }
@@ -889,6 +952,9 @@ pub struct ContractedBinding<'a> {
     pub module: &'a str,
     pub identity: &'a ArtifactIdentity,
     pub premises: &'a AbiPremises,
+    /// The exported header the manifest bound, if any (card
+    /// `NATIVE-LIBRARY-HEADER`).
+    pub header: Option<&'a HeaderIdentity>,
     pub entry: &'a ContractedEntry,
 }
 
@@ -902,6 +968,7 @@ impl ContractedBinding<'_> {
             identity: self.identity.clone(),
             premises: *self.premises,
             contract: Some(self.entry.contract_module.clone()),
+            header: self.header.cloned(),
         }
     }
 }
@@ -963,6 +1030,7 @@ impl NativeLibraries {
             module,
             identity: &manifest.identity,
             premises: &manifest.premises,
+            header: manifest.header.as_ref(),
             entry,
         })
     }
@@ -979,8 +1047,20 @@ impl NativeLibraries {
             module,
             identity: &manifest.identity,
             premises: &manifest.premises,
+            header: manifest.header.as_ref(),
             entry,
         })
+    }
+
+    /// Every selected manifest, as `(module, manifest)`, in module order.
+    ///
+    /// The header level (card `NATIVE-LIBRARY-HEADER`) checks a binding **per
+    /// manifest**, because a header is one artifact's exported surface and a
+    /// header binding is one manifest's statement about it.
+    pub fn manifests(&self) -> impl Iterator<Item = (&str, &NativeLibraryManifest)> {
+        self.manifests
+            .iter()
+            .map(|(module, manifest)| (module.as_str(), manifest))
     }
 
     /// Every contract slice entry of the selection, as

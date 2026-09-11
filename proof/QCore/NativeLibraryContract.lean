@@ -44,7 +44,7 @@ true of the named artifact, or that the linker used it. Both stay premises. -/
 namespace QCore.NativeLibraryContract
 
 open QCore.ExternCall (AbiType isPointer)
-open QCore.NativeLibrary (Identity Premises Residence Premise waives)
+open QCore.NativeLibrary (Identity Premises Residence HeaderIdentity Premise waives)
 
 /-! ## The contract slice -/
 
@@ -65,6 +65,10 @@ structure Entry where
 structure Manifest where
   identity : Identity
   premises : Premises
+  /-- The exported header this manifest binds (card `NATIVE-LIBRARY-HEADER`).
+  `none` is this card's world, and `QCore.NativeLibraryHeader` is where a bound
+  one is decided. -/
+  header : Option HeaderIdentity
   entries : List Entry
   deriving DecidableEq, Repr
 
@@ -82,7 +86,7 @@ def Manifest.slice (m : Manifest) : List String :=
 module, which is what makes the published premise read *contracted, per this
 contract, from this build*. -/
 def Manifest.residence (m : Manifest) (e : Entry) : Residence :=
-  ⟨m.identity, m.premises, some e.contractModule⟩
+  ⟨m.identity, m.premises, some e.contractModule, m.header⟩
 
 /-- One declaration of the selected contract environment, projected to what the
 gate reads: the name, the module that declares it, and its ABI projection. -/
@@ -287,7 +291,7 @@ theorem the_weaker_reading_refuses_here_and_is_admitted_at_level_one
     (d : Declaration) (e : Entry) (identity : Identity) (ps : Premises) :
     premisesFor d (.withdrawn e) = [] ∧
       QCore.NativeLibrary.admit
-          (some ⟨identity, ps, [⟨"other", [.scalar], .scalar⟩]⟩) "k" [.scalar] .scalar =
+          (some ⟨identity, ps, none, [⟨"other", [.scalar], .scalar⟩]⟩) "k" [.scalar] .scalar =
         .admitted ⟨{ name := "k", trust := .uncheckedLinkage,
                      parameters := [.data .scalar], resultAbi := .scalar,
                      acquires := false }, none⟩ := by
@@ -300,21 +304,21 @@ theorem the_weaker_reading_refuses_here_and_is_admitted_at_level_one
 /-- An entry whose symbol the environment does not declare makes the slice
 non-total. -/
 theorem an_unresolved_entry_is_not_total (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
     sliceTotal [] m = false := by
   simp [sliceTotal, entryResolves]
 
 /-- An entry naming another module makes it non-total too: the reference is
 compared exactly, never resolved by bare symbol name. -/
 theorem an_entry_in_another_module_is_not_total (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
     sliceTotal [⟨"k_alloc", "elsewhere", [.scalar], .ptrMut⟩] m = false := by
   simp [sliceTotal, entryResolves]
 
 /-- And the reverse direction: a contract declared in a module of the slice that
 no entry binds. -/
 theorem an_unbound_contract_in_the_slice_is_not_total (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
     sliceTotal [⟨"k_alloc", "lib", [.scalar], .ptrMut⟩,
                 ⟨"k_free", "lib", [.ptrMut], .unit⟩] m = false := by
   simp [sliceTotal, entryResolves, Manifest.slice]
@@ -322,7 +326,7 @@ theorem an_unbound_contract_in_the_slice_is_not_total (identity : Identity) (ps 
 /-- A declaration **outside** the slice is not the manifest's business, so it is
 not demanded. The gate is total on the slice, not on the environment. -/
 theorem a_declaration_outside_the_slice_is_not_demanded (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
     sliceTotal [⟨"k_alloc", "lib", [.scalar], .ptrMut⟩,
                 ⟨"k_free", "elsewhere", [.ptrMut], .unit⟩] m = true := by
   simp [sliceTotal, entryResolves, Manifest.slice]
@@ -331,7 +335,7 @@ theorem a_declaration_outside_the_slice_is_not_demanded (identity : Identity) (p
 is total. -/
 theorem a_matching_slice_is_total (identity : Identity) (ps : Premises) :
     let m : Manifest :=
-      ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩,
+      ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩,
                       ⟨"k_free", [.ptrMut], .unit, "lib"⟩]⟩
     sliceTotal [⟨"k_alloc", "lib", [.scalar], .ptrMut⟩,
                 ⟨"k_free", "lib", [.ptrMut], .unit⟩] m = true := by
@@ -399,7 +403,7 @@ theorem an_admitted_slice_discharges_what_it_can_acquire (shape : String → Sha
 /-- A slice that acquires and never discharges is refused: such a library could
 only leak or lie. -/
 theorem an_open_custody_slice_is_refused (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩]⟩
     closedCustody (fun _ => ⟨true, false⟩) m = false := by
   simp [closedCustody]
 
@@ -407,14 +411,14 @@ theorem an_open_custody_slice_is_refused (identity : Identity) (ps : Premises) :
 acquisition closes it, and a slice that cannot acquire is closed anyway — which
 is the sense in which the contract-less level satisfied it by construction. -/
 theorem a_discharging_slice_is_closed (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩,
+    let m : Manifest := ⟨identity, ps, none, [⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩,
                                         ⟨"k_free", [.ptrMut], .unit, "lib"⟩]⟩
     closedCustody (fun s => if s == "k_free" then ⟨false, true⟩ else ⟨true, false⟩) m = true := by
   simp [closedCustody]
 
 theorem a_slice_that_cannot_acquire_is_closed (identity : Identity) (ps : Premises)
     (entries : List Entry) :
-    closedCustody (fun _ => ⟨false, false⟩) ⟨identity, ps, entries⟩ = true := by
+    closedCustody (fun _ => ⟨false, false⟩) ⟨identity, ps, none, entries⟩ = true := by
   simp [closedCustody]
 
 /-! ## Determinism and non-vacuity -/
@@ -431,7 +435,7 @@ the same spelling, and this route admits it and publishes both premises. -/
 theorem a_pointer_symbol_binds_here_and_never_as_a_waiver
     (identity : Identity) (ps : Premises) :
     let e : Entry := ⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩
-    let m : Manifest := ⟨identity, ps, [e]⟩
+    let m : Manifest := ⟨identity, ps, none, [e]⟩
     let d : Declaration := ⟨"k_alloc", "lib", [.scalar], .ptrMut⟩
     admit (some m) d = .resident e (m.residence e) ∧
       QCore.NativeLibrary.entryAdmissible ⟨"k_alloc", [.scalar], .ptrMut⟩ = false := by
@@ -442,16 +446,16 @@ theorem a_pointer_symbol_binds_here_and_never_as_a_waiver
 /-- A concrete agreeing binding, with the two premises it publishes. -/
 theorem the_contract_slice_route_admits_and_stacks (identity : Identity) (ps : Premises) :
     let e : Entry := ⟨"k_alloc", [.scalar], .ptrMut, "lib"⟩
-    let m : Manifest := ⟨identity, ps, [e]⟩
+    let m : Manifest := ⟨identity, ps, none, [e]⟩
     let d : Declaration := ⟨"k_alloc", "lib", [.scalar], .ptrMut⟩
     premisesFor d (admit (some m) d) =
       [.declaredContract "k_alloc",
-       .manifestResidentContract "k_alloc" "lib" ⟨identity, ps, some "lib"⟩] := by
+       .manifestResidentContract "k_alloc" "lib" ⟨identity, ps, some "lib", none⟩] := by
   simp [admit, Manifest.binding, agrees, premisesFor, Manifest.residence]
 
 /-- A symbol no manifest binds keeps the single contract premise beside it. -/
 theorem an_unbound_symbol_keeps_the_single_premise (identity : Identity) (ps : Premises) :
-    let m : Manifest := ⟨identity, ps, [⟨"other", [.scalar], .ptrMut, "lib"⟩]⟩
+    let m : Manifest := ⟨identity, ps, none, [⟨"other", [.scalar], .ptrMut, "lib"⟩]⟩
     let d : Declaration := ⟨"k_alloc", "lib", [.scalar], .ptrMut⟩
     premisesFor d (admit (some m) d) = [.declaredContract "k_alloc"] := by
   simp [admit, Manifest.binding, premisesFor]

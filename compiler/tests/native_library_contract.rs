@@ -74,6 +74,7 @@ fn compile(
             entry: None,
             extern_contracts,
             native_libraries,
+            native_library_headers: None,
         },
     )
 }
