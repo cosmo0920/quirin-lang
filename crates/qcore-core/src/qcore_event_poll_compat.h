@@ -26,8 +26,9 @@
  *
  *   - POSIX arms: `int`, from socketpair(AF_UNIX, SOCK_STREAM, 0).
  *   - Windows arm: `SOCKET` (an unsigned handle, not a CRT file descriptor),
- *     from a loopback TCP pair — Windows has no socketpair(2), and WSAPoll
- *     takes SOCKETs rather than fds.
+ *     from a pathname-backed AF_UNIX stream pair when the SDK and running
+ *     system support it, otherwise from a loopback TCP pair. Winsock has no
+ *     socketpair(2), and WSAPoll takes SOCKETs rather than fds.
  *
  * The **trace never carries either**. Every identity an emitted program prints
  * is the model identity the checker assigned, so the byte-for-byte observation
@@ -42,10 +43,11 @@
  *     premise EVENT-V1-LEVEL-TRIGGERED-READINESS produces a *failed run* if it
  *     is false rather than a differently-shaped trace.
  *   - No durability of any kind is claimed. Nothing here is an fsync.
- *   - The Windows pair is a loopback TCP connection rather than an AF_UNIX
- *     pair. It is still private to this process, connected, and two-ended, and
- *     the one-byte wake/drain semantics this shim uses are the same; its
- *     provenance is not, and that is stated rather than papered over.
+ *   - The Windows arm probes AF_UNIX at run time rather than inferring support
+ *     from the SDK. Only an unsupported family/type/protocol response selects
+ *     the loopback fallback; other probe failures and every failure after
+ *     AF_UNIX was found refuse pair creation rather than hiding a resource,
+ *     pathname or cleanup failure behind another transport.
  *   - WSAPoll's documented POLLOUT-on-connect defect is unreachable from an
  *     emitted v1 program: a write interest makes a module check-only, so
  *     QCORE_EVENT_POLLOUT is never emitted into a program that runs.
@@ -58,7 +60,21 @@
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <windows.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
+
+/* AF_UNIX is a Windows 10 addition and older SDKs have no sockaddr_un. Keep
+ * those SDKs building the measured loopback route; a newer header only makes
+ * the AF_UNIX candidate compilable and is not evidence that the running system
+ * supports it. */
+#if !defined(QCORE_EVENT_TEST_DISABLE_AF_UNIX) && defined(__has_include)
+#if __has_include(<afunix.h>)
+#include <afunix.h>
+#define QCORE_EVENT_WINDOWS_AF_UNIX 1
+#endif
+#endif
 
 /* Keep the emitted program self-contained on this arm too: without this the
  * caller would have to add `ws2_32.lib` to every build command, which the other
@@ -71,6 +87,130 @@ typedef SOCKET qcore_event_fd;
 typedef WSAPOLLFD qcore_event_pollfd;
 #define QCORE_EVENT_POLLIN POLLRDNORM
 #define QCORE_EVENT_POLLOUT POLLWRNORM
+
+#if defined(QCORE_EVENT_WINDOWS_AF_UNIX)
+struct qcore_event_afunix_pair {
+    SOCKET first;
+    SOCKET second;
+    WCHAR listener_path[MAX_PATH];
+    WCHAR connector_path[MAX_PATH];
+    struct qcore_event_afunix_pair *next;
+};
+
+static struct qcore_event_afunix_pair *qcore_event_afunix_pairs;
+static int qcore_event_afunix_cleanup_registered;
+static int qcore_event_afunix_capability = -1;
+
+/* Early primitive failure returns from main, so the C runtime's atexit path is
+ * the one place that can close a published pair and then remove its pathname.
+ * Normal explicit closes remove each record before this handler runs. */
+static void qcore_event_afunix_cleanup(void)
+{
+    struct qcore_event_afunix_pair *record = qcore_event_afunix_pairs;
+    while (record != NULL) {
+        struct qcore_event_afunix_pair *next = record->next;
+        if (record->first != INVALID_SOCKET) {
+            closesocket(record->first);
+        }
+        if (record->second != INVALID_SOCKET) {
+            closesocket(record->second);
+        }
+        DeleteFileW(record->listener_path);
+        DeleteFileW(record->connector_path);
+        HeapFree(GetProcessHeap(), 0, record);
+        record = next;
+    }
+    qcore_event_afunix_pairs = NULL;
+}
+
+static int qcore_event_afunix_remember(
+    SOCKET first, SOCKET second, const WCHAR listener_path[MAX_PATH],
+    const WCHAR connector_path[MAX_PATH])
+{
+    struct qcore_event_afunix_pair *record =
+        (struct qcore_event_afunix_pair *) HeapAlloc(
+            GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof *record);
+    if (record == NULL) {
+        return 1;
+    }
+    if (!qcore_event_afunix_cleanup_registered) {
+        if (atexit(qcore_event_afunix_cleanup) != 0) {
+            HeapFree(GetProcessHeap(), 0, record);
+            return 1;
+        }
+        qcore_event_afunix_cleanup_registered = 1;
+    }
+    record->first = first;
+    record->second = second;
+    memcpy(record->listener_path, listener_path, sizeof record->listener_path);
+    memcpy(record->connector_path, connector_path, sizeof record->connector_path);
+    record->next = qcore_event_afunix_pairs;
+    qcore_event_afunix_pairs = record;
+    return 0;
+}
+
+static int qcore_event_afunix_closed(SOCKET endpoint)
+{
+    struct qcore_event_afunix_pair **link = &qcore_event_afunix_pairs;
+    while (*link != NULL) {
+        struct qcore_event_afunix_pair *record = *link;
+        if (record->first == endpoint) {
+            record->first = INVALID_SOCKET;
+        } else if (record->second == endpoint) {
+            record->second = INVALID_SOCKET;
+        } else {
+            link = &record->next;
+            continue;
+        }
+        if (record->first == INVALID_SOCKET
+            && record->second == INVALID_SOCKET) {
+            int deletion_failed = 0;
+            if (!DeleteFileW(record->listener_path)
+                && GetLastError() != ERROR_FILE_NOT_FOUND) {
+                deletion_failed = 1;
+            }
+            if (!DeleteFileW(record->connector_path)
+                && GetLastError() != ERROR_FILE_NOT_FOUND) {
+                deletion_failed = 1;
+            }
+            if (deletion_failed) {
+                return 1;
+            }
+            *link = record->next;
+            HeapFree(GetProcessHeap(), 0, record);
+        }
+        return 0;
+    }
+    return 0;
+}
+
+/* One stable capability decision for this single-threaded event program.
+ * Unsupported family/type/protocol errors select compatibility; resource or
+ * provider failures refuse instead of silently changing transports. */
+static int qcore_event_windows_afunix_capability(void)
+{
+    SOCKET probe;
+    int error;
+    if (qcore_event_afunix_capability >= 0) {
+        return qcore_event_afunix_capability;
+    }
+    probe = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (probe == INVALID_SOCKET) {
+        error = WSAGetLastError();
+        if (error == WSAEAFNOSUPPORT || error == WSAESOCKTNOSUPPORT
+            || error == WSAEPROTONOSUPPORT) {
+            qcore_event_afunix_capability = 0;
+            return 0;
+        }
+        return -1;
+    }
+    if (closesocket(probe) != 0) {
+        return -1;
+    }
+    qcore_event_afunix_capability = 1;
+    return 1;
+}
+#endif
 
 /* --- Arm 2 of 3: Apple. -------------------------------------------------- */
 #elif defined(__APPLE__)
@@ -142,24 +282,168 @@ QCORE_EVENT_UNUSED static int qcore_event_close(qcore_event_fd endpoint)
 #if defined(QCORE_EVENT_POSIX)
     return close(endpoint) == 0 ? 0 : 1;
 #else
-    return closesocket(endpoint) == 0 ? 0 : 1;
+    if (closesocket(endpoint) != 0) {
+        return 1;
+    }
+#if defined(QCORE_EVENT_WINDOWS_AF_UNIX)
+    return qcore_event_afunix_closed(endpoint);
+#else
+    return 0;
+#endif
 #endif
 }
 
-/* One connected endpoint pair, both owned by this process. Zero on success. */
-QCORE_EVENT_UNUSED static int qcore_event_pair(qcore_event_fd *first, qcore_event_fd *second)
+#if defined(QCORE_EVENT_WINDOWS_AF_UNIX)
+/* A Windows pathname socket pair, following Libevent's runtime-selected
+ * evutil_socketpair route and additionally binding the connector so its
+ * accepted-peer identity is checkable. Two temporary ordinary files reserve
+ * fresh names; after deleting those owned files, bind creates the AF_UNIX
+ * reparse points. */
+QCORE_EVENT_UNUSED static int qcore_event_pair_afunix(qcore_event_fd *first,
+                                                       qcore_event_fd *second)
 {
-#if defined(QCORE_EVENT_POSIX)
-    int pair[2];
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) != 0) {
+    SOCKET listener = INVALID_SOCKET;
+    SOCKET connector = INVALID_SOCKET;
+    SOCKET acceptor = INVALID_SOCKET;
+    struct sockaddr_un listener_address;
+    struct sockaddr_un connector_address;
+    struct sockaddr_un accepted_address;
+    WCHAR temporary_directory[MAX_PATH];
+    WCHAR listener_path[MAX_PATH];
+    WCHAR connector_path[MAX_PATH];
+    DWORD directory_length;
+    int address_length;
+    int listener_bound = 0;
+    int connector_bound = 0;
+    int listener_temporary_created = 0;
+    int connector_temporary_created = 0;
+
+    memset(&listener_address, 0, sizeof listener_address);
+    memset(&connector_address, 0, sizeof connector_address);
+    memset(&accepted_address, 0, sizeof accepted_address);
+    memset(temporary_directory, 0, sizeof temporary_directory);
+    memset(listener_path, 0, sizeof listener_path);
+    memset(connector_path, 0, sizeof connector_path);
+
+    listener = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (listener == INVALID_SOCKET) {
         return 1;
     }
-    *first = pair[0];
-    *second = pair[1];
-    return 0;
+    directory_length = GetTempPathW(MAX_PATH, temporary_directory);
+    if (directory_length == 0 || directory_length >= MAX_PATH
+        || GetTempFileNameW(temporary_directory, L"qel", 0, listener_path) == 0) {
+        goto fail;
+    }
+    listener_temporary_created = 1;
+    if (!DeleteFileW(listener_path)) {
+        goto fail;
+    }
+    listener_temporary_created = 0;
+    listener_address.sun_family = AF_UNIX;
+    if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, listener_path, -1,
+                            listener_address.sun_path,
+                            (int) sizeof listener_address.sun_path,
+                            NULL, NULL) == 0) {
+        goto fail;
+    }
+    if (bind(listener, (struct sockaddr *) &listener_address,
+             (int) sizeof listener_address) != 0) {
+        goto fail;
+    }
+    listener_bound = 1;
+    if (listen(listener, 1) != 0) {
+        goto fail;
+    }
+
+    connector = socket(AF_UNIX, SOCK_STREAM, 0);
+    if (connector == INVALID_SOCKET) {
+        goto fail;
+    }
+    if (GetTempFileNameW(temporary_directory, L"qec", 0, connector_path) == 0) {
+        goto fail;
+    }
+    connector_temporary_created = 1;
+    if (!DeleteFileW(connector_path)) {
+        goto fail;
+    }
+    connector_temporary_created = 0;
+    connector_address.sun_family = AF_UNIX;
+    if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, connector_path, -1,
+                            connector_address.sun_path,
+                            (int) sizeof connector_address.sun_path,
+                            NULL, NULL) == 0
+        || bind(connector, (struct sockaddr *) &connector_address,
+                (int) sizeof connector_address) != 0) {
+        goto fail;
+    }
+    connector_bound = 1;
+    if (connect(connector, (struct sockaddr *) &listener_address,
+                (int) sizeof listener_address) != 0) {
+        goto fail;
+    }
+
+    address_length = (int) sizeof accepted_address;
+    acceptor = accept(listener, (struct sockaddr *) &accepted_address,
+                      &address_length);
+    if (acceptor == INVALID_SOCKET
+        || address_length != (int) sizeof accepted_address) {
+        goto fail;
+    }
+    memset(&connector_address, 0, sizeof connector_address);
+    address_length = (int) sizeof connector_address;
+    if (getsockname(connector, (struct sockaddr *) &connector_address,
+                    &address_length) != 0
+        || address_length <= (int) offsetof(struct sockaddr_un, sun_path)
+        || address_length > (int) sizeof connector_address
+        || memchr(connector_address.sun_path, '\0',
+                  (size_t) address_length
+                      - offsetof(struct sockaddr_un, sun_path)) == NULL
+        || accepted_address.sun_family != AF_UNIX
+        || connector_address.sun_family != AF_UNIX
+        || _stricmp(accepted_address.sun_path, connector_address.sun_path) != 0) {
+        goto fail;
+    }
+
+    if (closesocket(listener) != 0) {
+        goto fail;
+    }
+    listener = INVALID_SOCKET;
+    if (qcore_event_afunix_remember(connector, acceptor, listener_path,
+                                    connector_path) != 0) {
+        goto fail;
+    }
+    *first = connector;
+    *second = acceptor;
+#if defined(QCORE_EVENT_TEST_ABORT_AFTER_AF_UNIX_PAIR)
+    return 1;
 #else
-    /* Windows has no socketpair(2). A loopback listen/connect/accept gives the
-     * same private, connected, two-ended pair; see the header comment. */
+    return 0;
+#endif
+
+fail:
+    if (listener != INVALID_SOCKET) {
+        closesocket(listener);
+    }
+    if (connector != INVALID_SOCKET) {
+        closesocket(connector);
+    }
+    if (acceptor != INVALID_SOCKET) {
+        closesocket(acceptor);
+    }
+    if (listener_bound || listener_temporary_created) {
+        DeleteFileW(listener_path);
+    }
+    if (connector_bound || connector_temporary_created) {
+        DeleteFileW(connector_path);
+    }
+    return 1;
+}
+#endif
+
+#if defined(_WIN32)
+QCORE_EVENT_UNUSED static int qcore_event_pair_loopback(qcore_event_fd *first,
+                                                         qcore_event_fd *second)
+{
     SOCKET listener = INVALID_SOCKET;
     SOCKET client = INVALID_SOCKET;
     SOCKET server = INVALID_SOCKET;
@@ -199,6 +483,42 @@ QCORE_EVENT_UNUSED static int qcore_event_pair(qcore_event_fd *first, qcore_even
     *first = client;
     *second = server;
     return 0;
+}
+#endif
+
+/* One connected endpoint pair, both owned by this process. Zero on success. */
+QCORE_EVENT_UNUSED static int qcore_event_pair(qcore_event_fd *first, qcore_event_fd *second)
+{
+#if defined(QCORE_EVENT_POSIX)
+    int pair[2];
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) != 0) {
+        return 1;
+    }
+    *first = pair[0];
+    *second = pair[1];
+    return 0;
+#else
+#if !defined(QCORE_EVENT_WINDOWS_AF_UNIX)
+#if defined(QCORE_EVENT_TEST_REQUIRE_AF_UNIX)
+    return 1;
+#else
+    return qcore_event_pair_loopback(first, second);
+#endif
+#else
+#if defined(QCORE_EVENT_TEST_FORCE_LOOPBACK)
+    return qcore_event_pair_loopback(first, second);
+#else
+    int capability = qcore_event_windows_afunix_capability();
+    if (capability > 0) {
+        return qcore_event_pair_afunix(first, second);
+    }
+#if defined(QCORE_EVENT_TEST_REQUIRE_AF_UNIX)
+    return 1;
+#else
+    return capability == 0 ? qcore_event_pair_loopback(first, second) : 1;
+#endif
+#endif
+#endif
 #endif
 }
 

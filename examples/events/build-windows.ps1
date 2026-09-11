@@ -1,9 +1,10 @@
 # Run from Visual Studio Developer PowerShell with the C++ tools and SDK loaded.
 #
-# Card STD-EVENT. The Windows arm of the embedded readiness shim — WSAPoll and a
-# loopback endpoint pair — is the one this repository's standing gate does not
-# run (it runs the POSIX arm, sanitized and byte-compared, on Linux). This script
-# is that arm's runner, on the `examples/threads/build-windows.ps1` shape.
+# Card STD-EVENT. The Windows arm of the embedded readiness shim uses WSAPoll
+# and a runtime-selected AF_UNIX pathname pair, retaining the loopback endpoint
+# pair for older SDKs and systems. The Rust test target runs both paths through
+# the shared Windows harness; this script remains the direct example runner, on
+# the `examples/threads/build-windows.ps1` shape.
 #
 # `-Run` additionally compares the program's stdout with the transcript
 # examples/events/README.md publishes, which is the same comparison the Linux

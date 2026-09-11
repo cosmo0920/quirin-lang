@@ -127,8 +127,9 @@ Windows, from a Visual Studio Developer PowerShell:
 
 The emitted program is self-contained on every arm: the readiness primitives are
 embedded in the emitted C — POSIX `poll(2)` and `socketpair(2)` on Linux and
-macOS, `WSAPoll` and a loopback pair on Windows — so there is no QCore include
-path, no linked QCore artifact, and on Windows no extra library flag.
+macOS, `WSAPoll` and an AF_UNIX-first stream pair on Windows — so there is no
+QCore include path, no linked QCore artifact, and on Windows no extra library
+flag. An older Windows SDK or runtime selects the retained loopback pair.
 
 ### Verification status, arm by arm
 
@@ -136,12 +137,16 @@ path, no linked QCore artifact, and on Windows no extra library flag.
 |---|---|---|---|---|
 | Linux and other POSIX | `#else` | `poll(2)` / `socketpair(AF_UNIX, SOCK_STREAM, 0)` | `int` | **Runtime-verified** in the standing gate: compiled `-Werror -pedantic`, run under ASan/UBSan/LSan, stdout byte-compared with the reference. |
 | Apple | `__APPLE__` | the same POSIX pair, behind `_DARWIN_C_SOURCE` | `int` | Compile path designed in; the same workspace test runs it when the gate runs on macOS. **Not measured by this card** — residual `EVENT-V1-APPLE-RUN`. |
-| Windows | `_WIN32` | `WSAPoll` / loopback listen-connect-accept | `SOCKET` | Compile path designed in, `#pragma comment(lib, "ws2_32.lib")` so no build flag changes; `build-windows.ps1` above is the runner. **Not measured by this card** — residual `EVENT-V1-WINDOWS-RUN`. |
+| Windows | `_WIN32` | `WSAPoll` / AF_UNIX pathname listen-connect-accept, with loopback fallback | `SOCKET` | **Runtime-verified** by `compiler/tests/std_event.rs`: MSVC runs an AF_UNIX-required build, a forced runtime fallback, and a no-`afunix.h` build and byte-compares each with the reference. `#pragma comment(lib, "ws2_32.lib")` keeps them self-contained; `build-windows.ps1` remains the manual runner. |
 
 The Windows arm is the one whose *implementation* differs rather than only its
-declarations, because Windows has no `socketpair(2)` and `WSAPoll` takes
-`SOCKET`s rather than CRT file descriptors. Its pair is a private loopback TCP
-connection: still two-ended, still owned entirely by this process, and with the
-same one-byte wake/drain semantics — different provenance, stated rather than
-papered over. Nothing about that difference reaches an observation, because the
-trace carries model identities only.
+declarations, because Winsock has no `socketpair(2)` and `WSAPoll` takes
+`SOCKET`s rather than CRT file descriptors. With `<afunix.h>` available, the
+shim probes `socket(AF_UNIX, SOCK_STREAM, 0)` at run time and constructs a
+pathname-backed listener/connect/accept pair. Only an unsupported
+family/type/protocol probe result selects the private AF_INET loopback fallback;
+other probe failures and every later AF_UNIX construction failure refuse the
+pair instead of changing transports. Both have the same
+two-ended, process-owned, one-byte wake/drain semantics. Nothing about their
+provenance reaches an observation, because the trace carries model identities
+only.

@@ -17,10 +17,30 @@
 //! model-determined, so a trace carrying one could not be compared at all.
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qcore");
 const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qcore");
 const README: &str = include_str!("../../examples/events/README.md");
 const WINDOWS_RUNNER: &str = include_str!("../../examples/events/build-windows.ps1");
+
+#[cfg(target_os = "windows")]
+fn windows_afunix_paths() -> std::collections::BTreeSet<std::path::PathBuf> {
+    std::fs::read_dir(std::env::temp_dir())
+        .unwrap()
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| {
+                    (name.starts_with("qel") || name.starts_with("qec")) && name.ends_with(".tmp")
+                })
+        })
+        .collect()
+}
 
 fn compile(
     source: &str,
@@ -190,6 +210,29 @@ fn the_embedded_shim_carries_all_three_platform_arms() {
     assert!(source.contains("poll(set, (nfds_t) count, timeout_ms)"));
     assert!(source.contains("WSAPoll(set, (ULONG) count, timeout_ms)"));
     assert!(source.contains("socketpair(AF_UNIX, SOCK_STREAM, 0, pair)"));
+    // Windows has no socketpair call, but a new enough SDK and runtime can
+    // construct the same stream-pair shape through a pathname listener. Header
+    // presence only compiles the candidate; the socket probe selects it.
+    assert!(source.contains("#if __has_include(<afunix.h>)"));
+    assert!(source.contains("qcore_event_pair_afunix"));
+    assert!(source.contains("GetTempFileNameW"));
+    assert!(source.contains("atexit(qcore_event_afunix_cleanup)"));
+    assert!(source.contains("qcore_event_afunix_closed(endpoint)"));
+    assert!(source.contains("qcore_event_windows_afunix_capability"));
+    assert!(source.contains("WSAEAFNOSUPPORT"));
+    assert!(source.contains("bind(connector, (struct sockaddr *) &connector_address"));
+    assert!(source.contains("accepted_address.sun_family != AF_UNIX"));
+    assert!(source.contains("accepted_address.sun_path, connector_address.sun_path"));
+    assert!(source.contains("return qcore_event_pair_afunix(first, second)"));
+    // Older SDK/runtime support remains the existing private loopback route.
+    assert!(source.contains("qcore_event_pair_loopback"));
+    assert!(source.contains("return qcore_event_pair_loopback(first, second)"));
+    // Test-only compile controls let the Windows native run exercise both
+    // routes without changing the default runtime selection.
+    assert!(source.contains("QCORE_EVENT_TEST_REQUIRE_AF_UNIX"));
+    assert!(source.contains("QCORE_EVENT_TEST_FORCE_LOOPBACK"));
+    assert!(source.contains("QCORE_EVENT_TEST_DISABLE_AF_UNIX"));
+    assert!(source.contains("QCORE_EVENT_TEST_ABORT_AFTER_AF_UNIX_PAIR"));
     assert!(source.contains("accept(listener, NULL, NULL)"));
     // Deliberately absent: v1 reaches for neither kqueue nor epoll. poll(2) is
     // the portable deterministic subset, and a declared ready set of at most
@@ -262,7 +305,7 @@ fn the_two_absences_of_a_check_only_module_travel_together() {
 
 #[test]
 fn the_event_vocabulary_needs_its_own_file_local_import() {
-    let without = SELF_PIPE.replace("import std.event;\n", "");
+    let without = SELF_PIPE.replace("import std.event;", "");
     let codes = codes(&without);
     assert_eq!(codes, vec!["Q015".to_owned()]);
     assert!(
@@ -471,17 +514,12 @@ fn an_event_statement_outside_the_entry_is_refused() {
 /// Compile and run the emitted C under ASan/UBSan (plus LSan where the platform
 /// provides it) and compare its stdout with the reference observation.
 ///
-/// **Not run on Windows.** The emitted shim carries a Windows arm — a loopback
-/// endpoint pair and `WSAPoll` — and it is emitted into every program, but this
-/// card measured no Windows run of it. Recording that here rather than letting
-/// a green Linux gate imply a Windows one is the same discipline the LSan
-/// boundary follows: the Windows arm is a **follow-on to measure**, not a
-/// platform claim this card makes.
+/// On Windows the established native-C harness selects the installed MSVC
+/// toolchain and runs the AF_UNIX-first/loopback-fallback arm. The Unix arm
+/// retains the sanitizer instrumentation; MSVC execution is a native
+/// byte-comparison, not a sanitizer claim.
 #[test]
-#[cfg(not(target_os = "windows"))]
 fn the_emitted_program_reproduces_the_reference_observation() {
-    use std::process::Command;
-
     let module = compile(SELF_PIPE).unwrap();
     let source = module.c_source.as_deref().unwrap();
     let expected = module
@@ -492,68 +530,124 @@ fn the_emitted_program_reproduces_the_reference_observation() {
         .filter_map(|line| line.strip_prefix("out: ").map(ToOwned::to_owned))
         .collect::<Vec<_>>();
 
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-std-event-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
+    #[cfg(target_os = "windows")]
+    let runs = {
+        let paths_before_failure = windows_afunix_paths();
+        let early_failure = windows_c::run(
+            source,
+            None,
+            &[
+                "-DQCORE_EVENT_TEST_REQUIRE_AF_UNIX=1".to_owned(),
+                "-DQCORE_EVENT_TEST_ABORT_AFTER_AF_UNIX_PAIR=1".to_owned(),
+            ],
+        );
+        assert_eq!(early_failure.status.code(), Some(71));
+        assert_eq!(
+            windows_afunix_paths(),
+            paths_before_failure,
+            "the atexit rollback must remove the pathname after an early return"
+        );
+        [
+            (
+                "AF_UNIX",
+                windows_c::run(
+                    source,
+                    None,
+                    &["-DQCORE_EVENT_TEST_REQUIRE_AF_UNIX=1".to_owned()],
+                ),
+            ),
+            (
+                "loopback fallback",
+                windows_c::run(
+                    source,
+                    None,
+                    &["-DQCORE_EVENT_TEST_FORCE_LOOPBACK=1".to_owned()],
+                ),
+            ),
+            (
+                "no-AF_UNIX-header fallback",
+                windows_c::run(
+                    source,
+                    None,
+                    &["-DQCORE_EVENT_TEST_DISABLE_AF_UNIX=1".to_owned()],
+                ),
+            ),
+        ]
+    };
+
+    #[cfg(not(target_os = "windows"))]
+    let runs = [("POSIX", {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-std-event-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    // Apple's AddressSanitizer provides no LeakSanitizer, so
+                    // leak detection stays a Linux-only observation.
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        std::fs::remove_dir_all(directory).unwrap();
+        run
+    })];
+    for (route, run) in runs {
+        // A non-zero exit here is not only a sanitizer finding: it is also how
+        // the emitted program reports that the ready set `poll` returned
+        // disagreed with the declaration. Both are failures, deliberately so.
+        assert!(
+            run.status.success(),
+            "{route} emitted program failed with {}:\n{}",
+            run.status,
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = String::from_utf8(run.stdout)
             .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let generated = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&generated, source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&generated)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile.status.success(),
-        "C compiler rejected the emitted program:\n{}",
-        String::from_utf8_lossy(&compile.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                // Apple's AddressSanitizer provides no LeakSanitizer, so leak
-                // detection stays a Linux-only observation.
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
-    // A non-zero exit here is not only a sanitizer finding: it is also how the
-    // emitted program reports that the ready set `poll` returned disagreed with
-    // the declaration. Both are failures of this test, and deliberately so.
-    assert!(
-        run.status.success(),
-        "emitted program failed:\n{}",
-        String::from_utf8_lossy(&run.stderr)
-    );
-    let out = String::from_utf8(run.stdout)
-        .unwrap()
-        .lines()
-        .map(ToOwned::to_owned)
-        .collect::<Vec<_>>();
-    assert_eq!(out, expected, "the run must reproduce the reference trace");
-    std::fs::remove_dir_all(directory).unwrap();
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect::<Vec<_>>();
+        assert_eq!(
+            out, expected,
+            "the {route} run must reproduce the reference trace"
+        );
+    }
 }
