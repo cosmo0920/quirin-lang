@@ -317,9 +317,9 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
         }
     }
 
@@ -336,9 +336,9 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -352,9 +352,9 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -371,9 +371,9 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -387,9 +387,9 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -403,9 +403,9 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -419,9 +419,9 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -440,9 +440,9 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::ComposedTasks(_) => None,
-            Self::ComposedTasks(_) | Self::StandardBuffer(_) => None,
-            Self::ComposedTasks(_) | Self::Event(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -462,8 +462,9 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
-            Self::StandardBuffer(_) | Self::Composed(_) | Self::Event(_) => None,
+            | Self::Composed(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
     }
