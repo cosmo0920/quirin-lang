@@ -627,17 +627,26 @@ existing module travels the identical code path.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement |
-| `cargo test --workspace --no-fail-fast` | see `gate.txt` beside this report |
+| `cargo test --workspace --no-fail-fast` | **3,395 passed, 0 failed, 8 ignored** across 190 suites, doctests included; exit 0, from one complete run |
 | `cargo test -p qcore-compiler --test std_buffer` | **52 pass**, including both sanitized native runs |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean; one lint of this card's own (`needless_lifetimes`) was found and **fixed, not suppressed** |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
 | `python3 scripts/check_lean_audits.py` | **91/91**, one new audit file, no new axiom |
-| `python3 -m unittest discover -s scripts/tests` | see §10.6 |
+| `python3 -m unittest discover -s scripts/tests` | **193 tests, 1 failure** — the expected derived-value tripwire, see §10.6 |
 
-Measurement outputs are worktree-private under `measure/` (gitignored), never
-under `target/` and never in the shared scratchpad.
+Full command evidence is in `gate.txt` beside this report. Measurement outputs
+are worktree-private under `measure/` (gitignored), never under `target/` and
+never in the shared scratchpad.
+
+**Three workspace runs were started and killed by this card before completing**,
+and are recorded rather than hidden: each was invalidated by a source change
+landing under it — an unused-helper trim, the derived-effect claim correction,
+and the `Q029` → `Q057` reallocation, the last a real behaviour change. **No
+number above comes from any of them.** The closing run was taken from the
+settled tree at `b05687ad` after `fmt` and `clippy` were re-verified clean on
+it, and it is one complete run rather than a composition of halves.
 
 ### 10.6 For the integrator
 
@@ -674,9 +683,9 @@ Reconciliation list:
   provider file changed; no pinned expectation was edited; no `Unknown` became
   `Safe`.
 
-Standing constraint 16's four `P02-FLAKE` rows: see `gate.txt` for whether any
-tripped on the closing run and, if so, its isolated re-run. No assertion was
-weakened.
+**None of the four `P02-FLAKE` rows (standing constraint 16) tripped** on the
+closing run; no assertion was weakened and nothing was re-run in isolation to
+obtain a pass.
 
 ---
 
@@ -760,7 +769,8 @@ rather than a backlog item.
 > the program produces an observation it is the reference observation*. The
 > derived effect row carries `Alloc` and `Mut` — which the extern route derives
 > too, but from a *declared contract*'s projections, where here they follow from
-> an acquisition and a store the route discharges itself. **No buffer crosses the extern boundary**, and the
+> an acquisition and a store the route discharges itself. **No buffer crosses the
+> extern boundary**, and the
 > refusal is the extern route's own rather than one this card wrote: a C04 pointer
 > is an extentless `u8` projection, so the crossing would discard the extent and
 > replace it with a premise. **No string in v1** — a byte buffer is not a string,
@@ -774,7 +784,8 @@ rather than a backlog item.
 > reuse of `StandardIo`'s `Q029`, because §L21 forbids a second pass reusing a
 > code. 52 tests, one sanitized
 > ASan/UBSan/LSan run as a **positive** leak control, 38 audited Lean entries in
-> one new audit file, 91/91 audits, no new axiom. `STD-FMT-EXTENT` is **split
+> one new audit file, 91/91 audits, no new axiom. Gate: 3,395 workspace tests
+> pass (0 failed, 8 ignored), fmt and clippy clean, both probes exit 0. `STD-FMT-EXTENT` is **split
 > rather than retired**: a size is renderable today on this route with no
 > rendering change at all, and what the extern half now needs is the C04
 > vocabulary change `STD-BUFFER-ABI-EXTENT`. Corpus-neutral by construction.
