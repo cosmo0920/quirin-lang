@@ -845,7 +845,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // `libc/pthread_mutex.qcore`; 15 -> 16 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER's deliberate addition of
     // `msgpack/packer.qcore`, which that card measured at a payoff the earlier
-    // one measured at zero. This card's six declarations are asserted
-    // above by name, so the count moving does not weaken what it pins.
-    assert_eq!(contracts.source_assumptions().len(), 16);
+    // one measured at zero; 16 -> 17 by card
+    // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate addition of
+    // `fluent_bit/input_chunk_destroy.qcore`, a third declaration of a
+    // function this very unit defines, under the same
+    // declaration-beats-summary arrangement this card established. This card's
+    // six declarations are asserted above by name, so the count moving does
+    // not weaken what it pins.
+    assert_eq!(contracts.source_assumptions().len(), 17);
 }
