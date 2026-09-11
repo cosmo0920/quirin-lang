@@ -1,0 +1,11 @@
+{
+ "note": "Wave-24 close, 2026-09-12: the five merged cards (DOCS-COMPACT-2, QUIRIN-SOCKET-V1, STRING-SLICE-IO with the integration-time Imports composition repair, C-EMIT-MAIN-UNIFY, HTTP-QUIRIN-V1) reconciled onto one measured standing gate at the integration tip; 8 ignored. Provider 122 carried from the prior checkpoint - no provider source, manifest template or qcore-schemas version changed this wave (qcore-schemas stays 14.0.0), so constraint 18's rebuild-and-verify obligation is not engaged. Lean audits 99 -> 103 (+AuditStdSocket, +AuditStringSliceIo, +AuditCProgram, +AuditStdHttp). The corpus is untouched and unread all wave: no gateway, contract, audit or provider file appears in any of the five diffs, so leak stays 266, the contract corpus stays 73 modules, unit verdicts stay 2/42/137/4, the function histogram stays 150/84/4,600 and the baseline docs/reports/wave23-c-operations/artifacts/ is neither re-measured nor re-pinned. Nothing promoted. Evidence: docs/reports/docs-compact-2/README.md, docs/reports/quirin-socket-v1/README.md, docs/reports/string-slice-io/README.md, docs/reports/c-emit-main-unify/README.md, docs/reports/http-quirin-v1/README.md.",
+ "workspace_tests": 3950,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 193,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass"
+}

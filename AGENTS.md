@@ -65,11 +65,13 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-23 close. The **corpus baseline is still
-`docs/reports/wave23-c-operations/artifacts/`** — the wave's arbiter card
-deliberately did **not** re-pin it — and the leak row is read from the
+Headline numbers at the wave-24 close. The **corpus baseline is still
+`docs/reports/wave23-c-operations/artifacts/`** — wave 23's arbiter card
+deliberately did **not** re-pin it — and the leak row is still read from the
 attributed AFTER run in `docs/reports/aom-destroy-siblings/artifacts/`. Every
-preceding corpus archive stays frozen (constraint 21):
+corpus row below is wave 23's, unmoved and unread: wave 24 touched no gateway,
+contract, audit or provider file. Every preceding corpus archive stays frozen
+(constraint 21):
 
 | Measure | Value |
 |---|---|
@@ -77,7 +79,7 @@ preceding corpus archive stays frozen (constraint 21):
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **73 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,776 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **99 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave23-close/gate.json`, measured at the integration tip over the six merged cards; each card's own gate is in its report) |
+| Merged gate | 3,950 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **103 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave24-close/gate.json`, measured at the integration tip over the five merged cards; each card's own gate is in its report) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -379,6 +381,41 @@ pointer is the card that established it; read it before deviating.
     transports. Both routes stay native-tested and preserve `SOCKET`,
     `WSAPoll`, the abstract endpoint identities and the byte-identical trace.
     `windows-std-event-af-unix`.
+15e. **A rendered string's observation is the view's exact bytes, and the
+    emitted write is length-bounded.** `source.string.v1`'s text lines write no
+    escaping, no terminator and no newline beyond the framing every line already
+    carries, because a payload's `0` is an ordinary byte inside `len` and a
+    scan-to-terminator write and the model **disagree** on a value the route
+    admits. Do not render a string through any `printf` conversion: `%s` and
+    `%.*s` both stop at the first `0`. The write lives in `io_emit`'s second
+    prelude fragment, inserted only into a program that renders text — which is
+    what keeps every other emitted program byte-identical — and exempted from the
+    single-emission-route scan by whole-line identity exactly as the first is;
+    its `fwrite` result is **checked**, because nothing in the checker rules a
+    short write out. The stream, the `[LEVEL] ` prefix and the single newline are
+    `std_io::line_framing` for **both** line kinds, so a rendered scalar line is
+    the text line of its own digits (`rfl` in Lean); do not give either kind a
+    second framing. A string takes **no** rendering selector and one written in
+    front of a string refuses at `Q072`. `string-slice`, `string-slice-io`.
+15f. **An HTTP message's framing is constructed, and its `Content-Length` is
+    decided.** `source.http.v1` writes every CRLF itself — one after the start
+    line, one after each field, one to end the head — and **no admitted component
+    may carry a `CR` or an `LF`**. Do not relax that exclusion: it is what makes
+    "every CRLF in an admitted head is one the compiler wrote" true, and header
+    injection unexpressible rather than merely unintended. A declared
+    `Content-Length` must **equal** the literal content's byte count, decided at
+    check time because a literal's length is known there; do not turn that
+    equality into a premise, and do not admit a content whose length the route
+    cannot compute. The transport half is `source.socket.v1`'s **unedited**
+    checker over a program this route lowers to, and its refusals are
+    re-attributed at `Q095` carrying that checker's own error value — do not
+    re-implement a custody, transport-state or determinism rule here. The
+    composition's emission goes through `c_program::merge` plus one
+    `c_program::assemble`; do not fork a whole-program backend. `std.http` grants
+    **no** transport and **no** text: a quoted token at a message component is
+    this module's syntax and constructs no `string` value
+    (`STRING_SLICE_V1.md` §2), while a `let`-bound one does and takes
+    `std.string`'s gate. `http-quirin-v1`.
 
 **Providers, packages and limits**
 
@@ -525,6 +562,15 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
   `scripts/prepare_cycle19_clang_audit.py`,
   `scripts/prepare_cmetrics_clang_audit.py`,
   `scripts/prepare_libevent_core_audit.py`.
+- Published examples: `examples/README.md` indexes one directory per family —
+  `stdio`, `pipes`, `branching`, `extern`, `unsafe-linkage`, `threads`,
+  `events`, `strings` (text reaching a stream), `sockets` (checked TCP/UDP over
+  loopback) and `http` (an executed HTTP/1.1 subset, beside the same bytes
+  written by hand). Every program compiles through the real pipeline and is
+  byte-compared against its reference execution by a workspace test;
+  `examples/{strings,sockets,http}` are checked by their own card test files
+  rather than by `examples_suite.rs` (`STRING-SLICE-IO-EXAMPLE-SUITE`,
+  `HTTP-V1-EXAMPLE-SUITE`).
 - Native threading examples: `examples/threads/README.md` (`cl.exe`);
   `build-windows.ps1 -Run` emits, builds and runs the copied-worker,
   owned-buffer and shared-reader examples into `target/thread-examples/`.
@@ -553,8 +599,9 @@ this table is a summary of it, not a second allocation.
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
-| `Q068`–`Q073` | `StandardString` | `source.string.v1`: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row. Band relocated from `Q065`–`Q070` at integration |
+| `Q068`–`Q073`, `Q075`–`Q076` | `StandardString` | `source.string.v1` in two bands: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row (`Q068`–`Q073`, relocated from `Q065`–`Q070` at integration); its composition with the output modules — `print TEXT;` and `log LEVEL TEXT;` over a quoted literal, a bound string or one inline slice — where `Q075` is the text line's shape and `Q076` a text operand naming no string this entry bound (`Q075`–`Q076`, card `STRING-SLICE-IO`; `Q077`–`Q079` of that pre-assigned range unused and returned to the pool) |
 | `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card |
+| `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (whose signature condition is a declared `Content-Length` that is not the literal content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`) |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
