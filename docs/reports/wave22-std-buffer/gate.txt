@@ -20,13 +20,23 @@ Linux x86_64.  Measurement outputs are worktree-private under measure/.
        the whole run's, not a mid-run snapshot: they were recounted from the
        finished log and are identical to the first reading.
 
-       THE EXIT STATUS WAS NOT OBSERVED, and is deliberately not claimed.  The
-       shell wrapper that would have appended an "exit=" marker did not survive
-       to write one, and the cargo process was gone by the time that was
-       checked, so no exit code was ever read.  An earlier version of this file
-       asserted "Exit 0"; that assertion was unsupported and has been withdrawn
-       rather than left standing.  What is claimed is what the log shows: all
-       190 suites ran and all passed.
+       THE EXIT STATUS, and how it came to be evidence.  On this first run it
+       was NOT observed: the shell wrapper that would have appended an "exit="
+       marker did not survive to write one, and the cargo process was gone by
+       the time that was checked.  An interim version of this file asserted
+       "Exit 0" anyway; that assertion was unsupported and was withdrawn.
+       Rather than leave the gate resting on an unread exit code, the suite was
+       run a SECOND time, writing its status to its own file so no wrapper
+       could lose it:
+
+         measure/verify.sh  ->  cargo test --workspace --no-fail-fast --jobs 2
+                                measure/workspace-verify.log
+                                measure/workspace-verify.exitcode
+
+       Result: exit code 0, read from that file; 190 suites reporting
+       "test result: ok"; 3,395 passed, 0 failed, 8 ignored; zero lines
+       beginning "error".  IDENTICAL to the first run's figures in every
+       component, which is what makes the pair evidence rather than a retry.
 
        No result here is inferred from a truncated run: three earlier runs were
        deliberately killed by this card rather than reported, because source
