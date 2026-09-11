@@ -1,0 +1,222 @@
+function input_chunk_append_raw: status Unknown
+diagnostics: 67
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L20038  n139  NoOp                                     | int ret;
+L20039  n138  NoOp                                     | int total_records_start;
+L20040  n137  Clear set_down                           | int set_down = 0;
+L20041  n136  NoOp                                     | int min;
+L20042  n135  Clear new_chunk                          | int new_chunk = 0;
+L20043  n134  NoOp                                     | uint64_t ts;
+L20044  n133  NoOp                                     | char *name;
+L20045  n132  NoOp                                     | size_t dropped_chunks;
+L20046  n131  NoOp                                     | size_t dropped_bytes;
+L20047  n130  NoOp                                     | size_t content_size;
+L20048  n129  NoOp                                     | ssize_t real_diff;
+L20049  n128  NoOp                                     | ssize_t real_size;
+L20050  n127  NoOp                                     | ssize_t pre_real_size;
+L20051  n126  NoOp                                     | struct flb_input_chunk *ic;
+L20052  n125  NoOp                                     | struct flb_storage_input *si;
+L20053  n124  NoOp                                     | void *filtered_data_buffer;
+L20054  n123  NoOp                                     | size_t filtered_data_size;
+L20055  n122  NoOp                                     | void *final_data_buffer;
+L20056  n121  NoOp                                     | size_t final_data_size;
+L20057  n120  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (in->storage_type == 10) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20058  n119  Call flb_input_chunk_is_mem_overlimit(in) -> ret | ret = flb_input_chunk_is_mem_overlimit(in);
+L20059  n118  BranchOnNull ret true_is_null=false      | if (ret) {
+L20060  n117  Clear dropped_chunks                     | dropped_chunks = 0;
+L20061  n116  Clear dropped_bytes                      | dropped_bytes = 0;
+L20062  n115  Unknown: call to uncontracted function `memrb_input_chunk_release_space` | ret = memrb_input_chunk_release_space(in, buf_size,
+        !! unsupported: call to uncontracted function `memrb_input_chunk_release_space`
+L20064  n114  NoOp                                     | if (dropped_chunks > 0 || dropped_bytes > 0) {
+L20065  n113  Unknown: call to uncontracted function `cfl_time_now` | ts = cfl_time_now();
+        !! unsupported: call to uncontracted function `cfl_time_now`
+L20066  n112  Unknown: call to uncontracted function `flb_input_name` | name = (char *) flb_input_name(in);
+        !! unsupported: call to uncontracted function `flb_input_name`
+L20067  n111  Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_memrb_dropped_chunks, ts,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L20069  n110  Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_memrb_dropped_bytes, ts,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L20072  n109  BranchOnNull ret true_is_null=false      | if (ret != 0) {
+L20073  n108  NoOp                                     | return -1;
+L20077  n107  Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_paused(in) == 1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20078  n105  Unknown: nested call `flb_input_name` inside a modeled call is outside the resource projection | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] %s is paused, cannot append records", flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20078  n106  NoOp                                     | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] %s is paused, cannot append records", flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20079  n104  NoOp                                     | return -1;
+L20081  n103  BranchOnNull buf_size true_is_null=true  | if (buf_size == 0) {
+L20082  n101  Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] skip ingesting data with 0 bytes");
+L20082  n102  NoOp                                     | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] skip ingesting data with 0 bytes");
+L20083  n100  NoOp                                     | return -1;
+L20085  n99   BranchOnNull tag true_is_null=true       | if (!tag) {
+L20086  n98   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (in->tag && in->tag_len > 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20087  n95   Unknown: indirect memory access is outside the resource projection | tag = in->tag;
+        !! unsupported: indirect memory access is outside the resource projection
+L20088  n94   Unknown: indirect memory access is outside the resource projection | tag_len = in->tag_len;
+        !! unsupported: indirect memory access is outside the resource projection
+L20091  n97   Unknown: indirect memory access is outside the resource projection | tag = in->name;
+        !! unsupported: indirect memory access is outside the resource projection
+L20092  n96   Unknown: indirect memory access is outside the resource projection | tag_len = strlen(in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+L20095  n93   Unknown: call to uncontracted function `input_chunk_get` | ic = input_chunk_get(in, event_type, tag, tag_len, buf_size, &set_down);
+        !! unsupported: call to uncontracted function `input_chunk_get`
+L20096  n92   BranchOnNull ic true_is_null=true        | if (!ic) {
+L20097  n90   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] no available chunk");
+L20097  n91   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] no available chunk");
+L20098  n89   NoOp                                     | return -1;
+L20100  n88   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_get_size(ic) == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20101  n87   NoOp                                     | new_chunk = 1;
+L20103  n86   Unknown: call to uncontracted function `flb_input_chunk_is_up` | ret = flb_input_chunk_is_up(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_is_up`
+L20104  n85   BranchOnNull ret true_is_null=true       | if (ret == 0) {
+L20105  n84   Unknown: indirect memory access is outside the resource projection | ret = cio_chunk_up_force(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20106  n83   NoOp                                     | if (ret == -1) {
+L20107  n81   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] cannot retrieve temporary chunk");
+L20107  n82   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] cannot retrieve temporary chunk");
+L20108  n80   NoOp                                     | return -1;
+L20110  n79   NoOp                                     | set_down = 1;
+L20112  n78   NoOp                                     | if (new_chunk == 1) {
+L20113  n76   Clear pre_real_size                      | pre_real_size = 0;
+L20116  n77   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | pre_real_size = flb_input_chunk_get_real_size(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L20118  n75   NoOp                                     | if (event_type == 0 && n_records == 0) {
+L20119  n74   Unknown: call to uncontracted function `flb_mp_count_log_records` | n_records = flb_mp_count_log_records(buf, buf_size);
+        !! unsupported: call to uncontracted function `flb_mp_count_log_records`
+L20121  n73   Unknown: indirect memory access is outside the resource projection | total_records_start = ic->total_records;
+        !! unsupported: indirect memory access is outside the resource projection
+L20122  n72   AggregateStore ic->added_records         | ic->added_records = n_records;
+        !! unresolved resource identity `ic`
+L20123  n71   Unknown: unrecognized assignment destination | ic->total_records += n_records;
+        !! unsupported: unrecognized assignment destination
+L20124  n70   Unknown: call to uncontracted function `flb_chunk_trace_do_input` | flb_chunk_trace_do_input(ic);
+        !! unsupported: call to uncontracted function `flb_chunk_trace_do_input`
+L20125  n69   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->total_records > 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20126  n68   Unknown: call to uncontracted function `cfl_time_now` | ts = cfl_time_now();
+        !! unsupported: call to uncontracted function `cfl_time_now`
+L20127  n67   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_records, ts, ic->added_records,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L20129  n66   BranchOnNull event_type true_is_null=true | if (event_type == 0) {
+L20130  n65   Unknown: indirect memory access is outside the resource projection | update_logs_tag_records_metrics(in, ts, ic->added_records, tag, tag_len);
+        !! unsupported: indirect memory access is outside the resource projection
+L20132  n64   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(in->cmt_bytes, ts, buf_size,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L20134  n63   Unknown: indirect memory access is outside the resource projection | flb_input_rate_update(in, ts, ic->added_records, buf_size);
+        !! unsupported: indirect memory access is outside the resource projection
+L20135  n62   Unknown: indirect memory access is outside the resource projection | flb_metrics_sum(0, ic->added_records, in->metrics);
+        !! unsupported: indirect memory access is outside the resource projection
+L20136  n61   Unknown: indirect memory access is outside the resource projection | flb_metrics_sum(1, buf_size, in->metrics);
+        !! unsupported: indirect memory access is outside the resource projection
+L20138  n60   Clear filtered_data_buffer               | filtered_data_buffer = ((void*)0);
+L20139  n59   Unknown: unsupported assignment expression | final_data_buffer = (char *) buf;
+        !! unsupported: unsupported assignment expression
+L20140  n58   Alias final_data_size = buf_size         | final_data_size = buf_size;
+        !! unresolved resource identity `buf_size`
+L20141  n57   BranchOnNull event_type true_is_null=true | if (event_type == 0) {
+L20142  n56   Unknown: indirect memory access is outside the resource projection | flb_filter_do(ic,
+        !! unsupported: indirect memory access is outside the resource projection
+L20148  n55   Alias final_data_buffer = filtered_data_buffer | final_data_buffer = filtered_data_buffer;
+L20149  n54   Alias final_data_size = filtered_data_size | final_data_size = filtered_data_size;
+        !! unresolved resource identity `filtered_data_size`
+L20151  n53   NoOp                                     | if (final_data_size > 0){
+L20152  n51   Unknown: call to uncontracted function `flb_input_chunk_write` | ret = flb_input_chunk_write(ic,
+        !! unsupported: call to uncontracted function `flb_input_chunk_write`
+L20157  n52   Clear ret                                | ret = 0;
+L20159  n50   NoOp                                     | if (filtered_data_buffer != ((void*)0) &&
+L20161  n49   Call flb_free(filtered_data_buffer) -> _ | flb_free(filtered_data_buffer);
+        !! unresolved resource identity `filtered_data_buffer`
+L20163  n48   BranchOnNull ret true_is_null=false      | if (ret != 0) {
+        !! unresolved resource identity `ret`
+L20164  n47   AggregateStore ic->added_records         | ic->added_records = 0;
+        !! unresolved resource identity `ic`
+L20165  n46   AggregateStore ic->total_records         | ic->total_records = total_records_start;
+        !! unresolved resource identity `ic`
+L20167  n45   NoOp                                     | if (ret == -1) {
+L20168  n43   Unknown: nested call `flb_input_name` inside a modeled call is outside the resource projection | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error writing data from %s instance", flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20168  n44   NoOp                                     | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] error writing data from %s instance", flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20169  n42   Unknown: indirect memory access is outside the resource projection | cio_chunk_tx_rollback(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20170  n41   NoOp                                     | return -1;
+L20172  n40   Unknown: indirect memory access is outside the resource projection | content_size = cio_chunk_get_content_size(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20173  n39   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_get_size(ic) == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20174  n38   Clear real_diff                          | real_diff = 0;
+L20176  n37   NoOp                                     | if (content_size > 2048000) {
+L20177  n36   Unknown: indirect memory access is outside the resource projection | cio_chunk_lock(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20179  n35   BranchOnNull content_size true_is_null=true | if (content_size == 0) {
+L20180  n28   Call flb_input_chunk_destroy(ic, _) -> _ | flb_input_chunk_destroy(ic, 1);
+        !! unresolved resource identity `ic`
+L20181  n27   Unknown: call to uncontracted function `flb_input_chunk_set_limits` | flb_input_chunk_set_limits(in);
+        !! unsupported: call to uncontracted function `flb_input_chunk_set_limits`
+L20182  n26   NoOp                                     | return 0;
+L20184  n34   Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (in->config->stream_processor_ctx &&
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20186  n33   NoOp                                     | char *c_data;
+L20187  n32   NoOp                                     | size_t c_size;
+L20188  n31   Unknown: indirect memory access is outside the resource projection | cio_chunk_get_content(ic->chunk, &c_data, &c_size);
+        !! unsupported: indirect memory access is outside the resource projection
+L20189  n30   Unknown: indirect memory access is outside the resource projection | flb_sp_do(in->config->stream_processor_ctx,
+        !! unsupported: indirect memory access is outside the resource projection
+L20193  n29   Unknown: indirect memory access is outside the resource projection | ic->stream_off += (c_size - ic->stream_off);
+        !! unsupported: indirect memory access is outside the resource projection
+L20195  n25   NoOp                                     | if (set_down == 1) {
+L20196  n24   Unknown: indirect memory access is outside the resource projection | cio_chunk_down(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20198  n23   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (in->routable == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20199  n22   Call flb_input_chunk_destroy(ic, _) -> _ | flb_input_chunk_destroy(ic, 1);
+        !! unresolved resource identity `ic`
+L20200  n21   NoOp                                     | return 0;
+L20202  n20   Unknown: call to uncontracted function `flb_input_chunk_set_limits` | flb_input_chunk_set_limits(in);
+        !! unsupported: call to uncontracted function `flb_input_chunk_set_limits`
+L20203  n19   Unknown: indirect memory access is outside the resource projection | si = (struct flb_storage_input *) in->storage;
+        !! unsupported: indirect memory access is outside the resource projection
+L20204  n18   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_is_mem_overlimit(in) == 1 &&
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20206  n17   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (cio_chunk_is_up(ic->chunk) == !0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20207  n16   Unknown: indirect memory access is outside the resource projection | content_size = cio_chunk_get_content_size(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20208  n15   Unknown: unsupported assignment expression | min = (2048000 * 0.01);
+        !! unsupported: unsupported assignment expression
+L20209  n14   NoOp                                     | if (2048000 - content_size < min) {
+L20210  n13   Unknown: indirect memory access is outside the resource projection | cio_chunk_down(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L20214  n12   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | real_size = flb_input_chunk_get_real_size(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L20215  n11   NoOp                                     | if (real_size >= 0 && pre_real_size >= 0) {
+L20216  n9    NoOp                                     | real_diff = real_size - pre_real_size;
+L20219  n10   Clear real_diff                          | real_diff = 0;
+L20221  n8    BranchOnNull real_diff true_is_null=false | if (real_diff != 0) {
+        !! unresolved resource identity `real_diff`
+L20222  n6    Unknown: nested call `flb_input_name` inside a modeled call is outside the resource projection | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 3532, "[input chunk] update output instances with new chunk size diff=%zd, records=%zu, input=%s", real_diff, n_records, flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20222  n7    NoOp                                     | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 3532, "[input chunk] update output instances with new chunk size diff=%zd, records=%zu, input=%s", real_diff, n_records, flb_input_name(in));
+        !! unsupported: nested call `flb_input_name` inside a modeled call is outside the resource projection
+L20223  n5    Unknown: call to uncontracted function `flb_input_chunk_update_output_instances` | flb_input_chunk_update_output_instances(ic, real_diff);
+        !! unsupported: call to uncontracted function `flb_input_chunk_update_output_instances`
+L20225  n4    BranchOnNull ic->trace true_is_null=false | if (ic->trace) {
+L20226  n3    Unknown: indirect memory access is outside the resource projection | flb_chunk_trace_pre_output(ic->trace);
+        !! unsupported: indirect memory access is outside the resource projection
+L20228  n2    Unknown: call to uncontracted function `flb_input_chunk_protect` | flb_input_chunk_protect(in, final_data_size);
+        !! unsupported: call to uncontracted function `flb_input_chunk_protect`
+L20229  n1    NoOp                                     | return 0;
+exits:
+  L20229  node 1 custody Unknown sites []
+  L20200  node 21 custody Unknown sites []
+  L20182  node 26 custody Unknown sites []
+  L20170  node 41 custody Unknown sites []
+  L20108  node 80 custody Unknown sites []
+  L20098  node 89 custody Unknown sites []
+  L20083  node 100 custody Unknown sites []
+  L20079  node 104 custody Unknown sites []
+  L20073  node 108 custody Unknown sites []

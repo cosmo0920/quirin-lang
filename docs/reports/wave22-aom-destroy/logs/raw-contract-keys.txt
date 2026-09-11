@@ -1,0 +1,14 @@
+archived raw keys: 16
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/chunk_residency.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/hash_table_publication.qcore
+measured raw keys: 17
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a448cb40452261259/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/chunk_residency.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a448cb40452261259/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a448cb40452261259/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/hash_table_publication.qcore
+normalised added   : ['profiles/fluent-bit/../../qcore/fluent_bit/input_chunk_destroy.qcore']
+normalised removed : []
+normalised collision (before): False
+normalised collision (after) : False
+archived checkout roots: ['/home/cosmo/Documents/GitHub/qcore-c/compiler/../']
+measured checkout roots: ['/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a448cb40452261259/compiler/../']

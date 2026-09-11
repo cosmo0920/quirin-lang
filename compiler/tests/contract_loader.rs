@@ -37,8 +37,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF (`libc/pthread_mutex.qcore`; that card
     // deliberately did not land `msgpack/packer.qcore`, measured payoff zero);
     // 15 -> 16 by card ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired the
-    // blocker that measurement rested on and landed it.
-    assert_eq!(contracts.source_assumptions().len(), 16);
+    // blocker that measurement rested on and landed it; 16 -> 17 by card
+    // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
+    // (`fluent_bit/input_chunk_destroy.qcore`), which decides the leak leaf
+    // that card's corpus movement opened.
+    assert_eq!(contracts.source_assumptions().len(), 17);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -145,6 +148,19 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ResourceFunctionContract::new(vec![P::Borrowed; parameters], R::None),
         );
     }
+    // Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED adds the first production
+    // declaration of this family that is NOT all-borrowed, so it is listed
+    // here rather than in the loop above: `flb_input_chunk_destroy` RELEASES
+    // its first parameter. The pinned body (`src/flb_input_chunk.c:2704-2807`)
+    // has exactly one exit and reaches `flb_free(ic)` unconditionally on it,
+    // and its first statement dereferences `ic`, so `nonnull` — not the
+    // `nullable` that `flb_free`'s own declaration carries, since `free(NULL)`
+    // is defined and this is not that. `del` is an `int` by value, the only
+    // mode the loader admits on a scalar and also the true one.
+    old.insert_contract(
+        "flb_input_chunk_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: false }, P::Borrowed], R::None),
+    );
     old.insert_contract(
         "rd_realloc",
         ResourceFunctionContract::new(
@@ -414,8 +430,10 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     check_legacy_safety_certificate(&certificate).unwrap();
     // 6 -> 9 manifest-selected modules by card PROD-CONTRACTS; 9 -> 12 by card
     // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS; 14 -> 15 by card
-    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 16);
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF; 15 -> 16 by card
+    // ABI-TYPEDEF-ADDRESS-OF-MEMBER; 16 -> 17 by card
+    // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 17);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -551,7 +569,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // entirely v1 and manifest-selected — the declaration the previous card
     // wrote and measured at payoff zero, landed once the blocker that
     // measurement rested on was repaired.
-    assert_eq!(modules.len(), 71, "corpus module count");
+    // 71 -> 72: card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED adds
+    // `fluent_bit/input_chunk_destroy.qcore`, entirely v1 and
+    // manifest-selected — the declaration that decides the leak leaf the
+    // previous card's corpus movement opened.
+    assert_eq!(modules.len(), 72, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -615,12 +637,15 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // two mutex entry points); 15 -> 16 and 36 -> 37 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER (`msgpack/packer.qcore`'s
     // `msgpack_packer_init`, the declaration the previous card wrote and
-    // measured at payoff zero, landed once the blocker it named was repaired).
-    // The rejected count is unchanged in all six cases, because every added
+    // measured at payoff zero, landed once the blocker it named was repaired);
+    // 16 -> 17 and 37 -> 38 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
+    // (`fluent_bit/input_chunk_destroy.qcore`'s `flb_input_chunk_destroy`, the
+    // release the previous card's newly-bound summary exposed as uncontracted).
+    // The rejected count is unchanged in all seven cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (16, 37, 145)
+        (17, 38, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

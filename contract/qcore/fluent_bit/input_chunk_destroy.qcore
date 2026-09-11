@@ -1,0 +1,114 @@
+module contract;
+
+// Fluent Bit input-chunk destructor — resource-projection vocabulary version 1.
+//
+// Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED. This module declares ONE TRUSTED
+// ASSUMPTION about one C function. It verifies nothing: the C body is not
+// analyzed by this loader, and a declaration is a premise. Any verdict that
+// rests on this module is a verdict RELATIVE TO this declaration and is never
+// a proof of the C implementation.
+//
+// The body was read at Fluent Bit `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`,
+// `src/flb_input_chunk.c:2704-2807`, and is cited by line below. The C
+// declaration in force is `include/fluent-bit/flb_input_chunk.h:111`:
+//
+//     int flb_input_chunk_destroy(struct flb_input_chunk *ic, int del);
+//
+// ## Why this function is declared although the analysed unit defines it
+//
+// `flb_input_chunk_destroy` is defined in `src/flb_input_chunk.c`, which is
+// itself a unit of the pinned corpus, so this is the arrangement cards
+// PROD-CONTRACTS and NEIGHBOURS already established for
+// `flb_input_chunk_get_name`, `generate_chunk_name` and
+// `input_chunk_write_header`: a declared contract ALWAYS wins over a
+// W4-inferred summary, a disagreement is reported as a `SummaryConflict`
+// diagnostic and never silently resolved
+// (`crates/qcore-c-gateway/src/legacy_summary.rs`), and declaring a defined
+// function does not stop the unit analysing that function's own body — it only
+// fixes what its CALLERS may assume. `flb_input_chunk_destroy`'s own status is
+// whatever its body earns, and this module does not move it.
+//
+// ## The custody statement, read against the body
+//
+// The body has **exactly one exit**. There is no `return` anywhere between
+// `:2704` and the `return 0;` at `:2807`; every conditional in it is a
+// statement-level guard, never an early exit. So the following four statements
+// run on EVERY path through the function:
+//
+//     cio_chunk_close(ic->chunk, del);                        // :2796
+//     mk_list_del(&ic->_head);                                // :2797
+//     if (ic->routes_mask != NULL) { flb_free(ic->routes_mask); ... }  // :2799-2802
+//     flb_free(ic);                                           // :2804
+//
+// Those are exactly the three acquisitions card ABI-TYPEDEF-ADDRESS-OF-MEMBER
+// measured `flb_input_chunk_create` handing to its caller through the returned
+// `ic` — the `cio_chunk_open` result, the `flb_calloc` result and the
+// routes-mask allocation — released in the same order, and nothing the caller
+// still owns is left over. The caller's obligation on `ic` is discharged in
+// full and unconditionally, which is what `resource_released` says, and — over
+// the whole v1 parameter vocabulary — it is the only mode with that
+// caller-side effect. `resource_borrowed` would leave a discharged obligation
+// standing and `resource_stored` would consume it under another owner that
+// does not exist; both would be unfaithful, and an unfaithful declaration is
+// worse than `Unknown`.
+//
+// `nonnull`, and not `nullable`, is the faithful nullability. The FIRST
+// statement of the body is
+//
+//     if (flb_input_chunk_is_up(ic) == FLB_FALSE) { ... }      // :2712
+//
+// and `flb_input_chunk_is_up` (`:3128`) immediately evaluates `ic->chunk`.
+// A null `ic` is undefined behaviour before any guard could see it. Declaring
+// `nullable` here would be unfaithful in the PERMISSIVE direction: it would
+// discharge a caller's obligation at a site where the projection cannot prove
+// the pointer non-null, which is the opposite of fail-closed. `flb_free` is
+// declared `nullable` because `free(NULL)` is defined; this is not that.
+//
+// `del` is an `int` by value. `resource_borrowed` is the only mode the loader
+// admits on a scalar, and it is also the true one — the value selects whether
+// `cio_chunk_close` unlinks the backing file, and selects nothing about
+// custody. This is the same position `chunkio/resource_open_close.qcore` gives
+// `cio_chunk_close`'s own `delete`.
+//
+// The result is `int`, and it is the literal `0` on the one exit. It carries no
+// custody, so `resource_return_none()`.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **Nothing about the accounting loop** (`:2718-2740`). It walks
+//     `ic->in->config->outputs`, may call `flb_input_chunk_output_size_subtract`
+//     and logs; this declaration says nothing about `fs_chunks_size`, about
+//     whether the subtraction balances an earlier addition, or about the
+//     `ic->fs_counted` flag.
+//   * **Nothing about the hash-table removal** (`:2764-2789`). `flb_hash_table_del_ptr`
+//     is a "TRY" by upstream's own comment; whether the entry is present, and
+//     whether some other table still holds the pointer this call is about to
+//     free, is the unmodeled retention this corpus records as B03/R13 and is
+//     not decided here. In particular this module does NOT claim the release is
+//     safe — it claims it HAPPENS.
+//   * **Nothing about `cio_chunk_close` failing.** The body ignores its result,
+//     and `flb_free(ic)` runs regardless. The custody statement follows the
+//     body, not the wish.
+//   * **Nothing about `ic->trace`.** The pinned corpus is compiled with
+//     `-DFLB_HAVE_CHUNK_TRACE`, so `flb_chunk_trace_destroy(ic->trace)`
+//     (`:2790-2794`) IS in the analysed body. It releases a member, not the
+//     caller's `ic`; `flb_chunk_trace_destroy` stays undeclared and nothing
+//     here depends on it.
+//   * **Nothing about `mk_list_del(&ic->_head)`** beyond its running: whether
+//     `ic` was on a list at all is the same unmodeled retention as above.
+//   * **`flb_input_chunk_destroy_corrupted` (`:2623`) and
+//     `flb_input_chunk_destroy_direct_routes` (`:2483`) are DELIBERATELY LEFT
+//     UNDECLARED.** They are different functions with different bodies and
+//     different exits, and the second is the callee that
+//     `CONSTRUCTOR-RESIDUALS-LEAK-271` rests on. Declaring either on the
+//     strength of its neighbour's name would be exactly the
+//     unfaithful-declaration defect card P07 recorded, and this card withdraws
+//     neither finding. Named `AOM-DESTROY-SIBLINGS-UNDECLARED`.
+
+extern fn flb_input_chunk_destroy(ic: ptr<mut, u8>, del: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ic, nonnull);
+    ensures normal resource_borrowed(del);
+    ensures normal resource_return_none();
+};

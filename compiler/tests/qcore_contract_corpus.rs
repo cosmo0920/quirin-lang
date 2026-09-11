@@ -234,6 +234,21 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_hash_table_add",
         8,
     ),
+    // Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED: the corpus moves 71 -> 72
+    // modules with this file, and the resource-v1 declaration count 37 -> 38.
+    // Deliberate; see `docs/reports/wave22-aom-destroy/README.md`. The body has
+    // exactly one exit and `flb_free(ic)` is unconditional on it, so
+    // `resource_released` is the only v1 parameter mode with the caller-side
+    // effect the pinned body was read to have; `nonnull` because the first
+    // statement dereferences `ic`. Like the two NEIGHBOURS helpers below, the
+    // callee is defined inside `src/flb_input_chunk.c`, itself a corpus unit,
+    // so the declared contract wins over any W4-inferred summary and a
+    // disagreement is a `SummaryConflict` diagnostic, never a silent override.
+    (
+        "fluent_bit/input_chunk_destroy.qcore",
+        "flb_input_chunk_destroy",
+        4,
+    ),
     // Card NEIGHBOURS, continued. Both helpers are file-`static` definitions
     // inside `src/flb_input_chunk.c`, itself a corpus unit: a declared contract
     // always wins over a W4-inferred summary, and a disagreement is reported as
@@ -500,7 +515,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER, which repaired exactly that blocker and
     // then measured the declaration's payoff on the production constructor, so
     // `msgpack/packer.qcore` lands under the unchanged PROD-CONTRACTS rule.
-    assert_eq!(sources.len(), 71, "unexpected contract corpus size");
+    // 71 -> 72 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate
+    // addition of `fluent_bit/input_chunk_destroy.qcore`, the declaration that
+    // decides the leak leaf the previous card opened, landed on the same rule
+    // after its payoff was measured.
+    assert_eq!(sources.len(), 72, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

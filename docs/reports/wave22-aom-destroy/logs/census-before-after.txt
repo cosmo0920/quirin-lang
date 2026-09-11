@@ -1,0 +1,38 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 1
+  FUNCTION ('fluent-bit-chunk/flb_input_chunk.c', 'input_chunk_get'): Unsafe -> Unknown
+corpus diagnostic counts:
+  leak: 273 -> 272 (-1)
+  unknown_alias: 4403 -> 4408 (+5)
+  unsupported: 49825 -> 49821 (-4)
+units with diagnostic-count changes: 1
+  fluent-bit-chunk/flb_input_chunk.c: {'leak': -1, 'unknown_alias': 5, 'unsupported': -4}
+description inventory deltas:
+  leak / 'live obligation acquired at preprocessed line 19835': 9 -> 8 (-1)
+  unknown_alias / 'unresolved resource identity `ic`': 24 -> 28 (+4)
+  unknown_alias / 'unresolved resource identity `old_input_chunk`': 0 -> 1 (+1)
+  unsupported / 'call to uncontracted function `flb_input_chunk_destroy`': 5 -> 0 (-5)
+  unsupported / 'nullable resource `ic` used by a non-null contract': 2 -> 3 (+1)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    +1 flb_input_chunk_release_space L18149 unknown_alias: unresolved resource identity `old_input_chunk`
+    -1 flb_input_chunk_release_space L18149 unsupported: call to uncontracted function `flb_input_chunk_destroy`
+    +1 input_chunk_append_raw L20180 unknown_alias: unresolved resource identity `ic`
+    -1 input_chunk_append_raw L20180 unsupported: call to uncontracted function `flb_input_chunk_destroy`
+    +1 input_chunk_append_raw L20199 unknown_alias: unresolved resource identity `ic`
+    -1 input_chunk_append_raw L20199 unsupported: call to uncontracted function `flb_input_chunk_destroy`
+    +1 input_chunk_get L19847 unsupported: nullable resource `ic` used by a non-null contract
+    -1 input_chunk_get L19847 unsupported: call to uncontracted function `flb_input_chunk_destroy`
+    +1 input_chunk_get L19847 unknown_alias: unresolved resource identity `ic`
+    -1 input_chunk_get L19849 leak: live obligation acquired at preprocessed line 19835
+    +1 memrb_input_chunk_release_space L20014 unknown_alias: unresolved resource identity `ic`
+    -1 memrb_input_chunk_release_space L20014 unsupported: call to uncontracted function `flb_input_chunk_destroy`
+leaves added: 6; leaves removed: 6

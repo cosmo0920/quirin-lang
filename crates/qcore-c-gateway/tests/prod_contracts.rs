@@ -843,6 +843,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // this rule's own terms: the blocker it named — the address-of-a-member
     // actual refusing the statement before any contract is consulted — no
     // longer holds.
+    // 16 -> 17 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate
+    // addition of `fluent_bit/input_chunk_destroy.qcore`, again because the
+    // manifest grew and nothing measured here moved. That declaration is this
+    // rule's own terms once more: the blocker the previous card named — the
+    // release through an uncontracted callee that its newly-bound summary
+    // exposed — is what the module removes.
     assert!(LOGGING.contains("extern fn flb_errno_print("));
-    assert_eq!(contracts.source_assumptions().len(), 16);
+    assert_eq!(contracts.source_assumptions().len(), 17);
 }
