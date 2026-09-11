@@ -627,7 +627,7 @@ existing module travels the identical code path.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement |
-| `cargo test --workspace --no-fail-fast` | **3,395 passed, 0 failed, 8 ignored** across 190 suites, doctests included, from one complete run. The **exit status was not observed** and is not claimed — see §10.5.1 |
+| `cargo test --workspace --no-fail-fast` | **3,395 passed, 0 failed, 8 ignored** across 190 suites, doctests included. Run **twice**, independently; the second run reproduced every component and **exited 0** — see §10.5.1 |
 | `cargo test -p qcore-compiler --test std_buffer` | **52 pass**, including both sanitized native runs |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean; one lint of this card's own (`needless_lifetimes`) was found and **fixed, not suppressed** |
@@ -649,12 +649,19 @@ ends with that summary. It contains zero lines beginning `error`, zero
 identical to the first reading, so they are the whole run's rather than a
 mid-run snapshot.
 
-**The exit status was not observed, and is deliberately not claimed.** The shell
-wrapper that would have recorded it did not survive to write its marker, and the
-`cargo` process was gone by the time that was noticed, so no exit code was ever
-read. An earlier version of this report and of `gate.txt` asserted "exit 0";
-that assertion was unsupported and is **withdrawn rather than left standing**.
-What is claimed is what the log shows: all 190 suites ran and all passed.
+**The exit status, and how it came to be evidence.** On the first run it was
+*not* observed: the shell wrapper that would have recorded it did not survive to
+write its marker, and the `cargo` process was gone by the time that was noticed.
+An interim version of this report and of `gate.txt` asserted "exit 0" anyway.
+That assertion was unsupported, and rather than leave the gate resting on an
+unread exit code it was **withdrawn and then earned**: the suite was run a second
+time, writing its status to its own file (`measure/verify.sh` →
+`measure/workspace-verify.exitcode`) so no wrapper could lose it.
+
+The second run **exited 0** and reproduced the first in every component — 190
+suites reporting `test result: ok`, 3,395 passed, 0 failed, 8 ignored, zero
+`error` lines. That agreement is what makes the pair evidence rather than a
+retry, and it is the reason the figure above is stated without qualification.
 
 A related measurement hazard is recorded here because it cost real time and
 would cost the next card the same: the waiting loops used to block on this run
@@ -808,8 +815,8 @@ rather than a backlog item.
 > ASan/UBSan/LSan run as a **positive** leak control, 38 audited Lean entries in
 > one new audit file, 91/91 audits, no new axiom. Gate: 3,395 workspace tests
 > pass (0 failed, 8 ignored) across 190 suites, fmt and clippy clean, both probes
-> exit 0; the workspace run's own exit status was not observed and is not
-> claimed. `STD-FMT-EXTENT` is **split
+> exit 0; the workspace suite was run twice, the second run reproducing every
+> component and exiting 0. `STD-FMT-EXTENT` is **split
 > rather than retired**: a size is renderable today on this route with no
 > rendering change at all, and what the extern half now needs is the C04
 > vocabulary change `STD-BUFFER-ABI-EXTENT`. Corpus-neutral by construction.
