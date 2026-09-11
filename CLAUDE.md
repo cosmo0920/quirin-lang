@@ -58,6 +58,14 @@ guidance for working in this repository that is not in either of those.
 
 ## Platform records
 
+- **Cross-platform build (user-validated, 2026-09-11):** the codebase
+  builds on Linux, macOS and Windows with a small number of recorded
+  limitations (the per-platform residual lists in the reports below), and
+  **ARM64 Windows** starts the `quirin` compiler and compiles emitted C
+  sources. The ARM64 observation is the user's own environment report —
+  compiler runs and emitted C builds; no test-suite, sanitizer or
+  byte-comparison claim is made for that architecture (candidate residual
+  names: `QUIRIN-ARM64-GATE`, `QUIRIN-ARM64-RUN`).
 - **Windows:** native C11 thread subset and MSVC/Clang fixtures —
   `docs/reports/windows-c11-threads/README.md`,
   `docs/reports/windows-vs2026/README.md`,
