@@ -1306,15 +1306,38 @@ task_effect = "alloc" | "spawn" | "join" | "may_block"
             | "io" ;                   (* this route only *)
 ```
 
-**Placement.** A line stands in the **parent's** body. It may stand anywhere
-there — before any `spawn`, between two `join`s, inside a `match` arm on the
-creation or allocation outcome, or after every join — and the reason is a
-measurement of the emitted runtime rather than a convention: every write an
-emitted task program performs is performed by the parent's thread, because a
-worker's trace events are appended to that worker's private array and replayed
-by the parent at the join. A line inside a **worker** body is refused (`Q050`):
-it would be written by that worker's own thread, concurrently with the parent's
-writes and with its siblings', and nothing in this revision orders those.
+**Placement.** A line stands in the **parent's** body, or — since card
+`OBS-REORDERING` — in the body of a function this entry spawns as a worker.
+
+In the parent it may stand anywhere: before any `spawn`, between two `join`s,
+inside a `match` arm on the creation or allocation outcome, or after every join.
+The reason is a measurement of the emitted runtime rather than a convention:
+every *trace* write an emitted task program performs is performed by the
+parent's thread, because a worker's trace events are appended to that worker's
+private array and replayed by the parent at the join. So a parent line's
+position relative to every trace line is determined, and such a program's
+streams are compared **byte for byte**.
+
+In a **worker** it is performed by that worker's own thread, concurrently with
+the parent's writes and with its siblings'. Card `COMPOSE-CONCURRENCY` refused
+that and named its own repair — the comparison-up-to-an-admitted-reordering
+capability — and card `OBS-REORDERING` landed it
+(`qcore.obs-reordering.v1`, `docs/design/OBS_REORDERING_V1.md`). A worker line
+is admitted, and placing one is what **declares** the relation: that program's
+streams are compared window by window and emitter by emitter, where a window
+boundary is a point of the run at which no worker is live and an emitter is the
+thread that wrote the bytes. Two extra conditions come with it, both `Q050`:
+
+* the worker's **own** `effects { … }` row must admit `io` — the effect
+  discipline is per function, and a worker body is a function body;
+* a line in a function that is neither the entry nor a spawned worker is refused
+  outright: nothing in this profile makes such a function run, so its line has
+  no thread to attribute it to.
+
+A program that places **no** worker line declares nothing, and its comparison is
+unchanged: a relation whose windows each have one emitter admits exactly one
+stream, its own. All four published `examples/threads` programs are of that
+kind.
 
 **Operands.** A rendering operand is an integer literal or a name the *task*
 model bound to an `i32`:

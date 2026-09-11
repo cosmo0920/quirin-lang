@@ -128,12 +128,16 @@ struct Runtime<'a> {
     ledger: ScopedTaskLedger,
     observations: Vec<TaskObservation>,
     events: Vec<TaskEvent>,
-    /// The `source.std-io.v1` events placed in the entry's CFG by card
-    /// `COMPOSE-CONCURRENCY`. Empty on every task-route run, which is what makes
-    /// that route's observation byte-identical: the whole composed apparatus
-    /// below is guarded by `is_empty()`.
+    /// The `source.std-io.v1` events placed in this module's CFGs by card
+    /// `COMPOSE-CONCURRENCY` — in the entry's, and since card `OBS-REORDERING`
+    /// in a spawned worker's too. Empty on every task-route run, which is what
+    /// makes that route's observation byte-identical: the whole composed
+    /// apparatus below is guarded by `is_empty()`.
     io_sites: &'a [crate::composed_tasks::TaskIoSite],
-    io_lines: Vec<(usize, crate::std_io::ObservedLine)>,
+    io_lines: Vec<crate::composed_tasks::ComposedLine>,
+    /// `(event index, child)` at each point the parent's collect replay begins
+    /// (card `OBS-REORDERING`).
+    collects: Vec<(usize, u64)>,
 }
 fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<ScalarValue, String> {
     match operand {
@@ -183,13 +187,14 @@ fn take(
 }
 impl Runtime<'_> {
     /// Write the source lines standing immediately before position `index` of
-    /// `block`, if any.
+    /// `block` of `function`, if any.
     ///
-    /// Guarded three ways, and each guard is the model's own statement rather
-    /// than a convenience: sites exist only on the composed route, only the
-    /// parent (`task == 0`) writes, and only the entry function carries sites —
-    /// the refusal behind that last one is
-    /// [`crate::composed_tasks::ComposedTaskRule::SiteOutsideEntry`].
+    /// Guarded by the model's own statements rather than by convenience: sites
+    /// exist only on the composed route, and a site is performed only by the
+    /// function that carries it. Since card `OBS-REORDERING` that function may
+    /// be a spawned worker, in which case the writer is that worker's own task
+    /// — which is exactly the emitter recorded here, and exactly what makes the
+    /// declared reordering relation derivable.
     fn source_lines(
         &mut self,
         function: FunctionId,
@@ -198,13 +203,18 @@ impl Runtime<'_> {
         index: usize,
         slots: &BTreeMap<SlotId, Value>,
     ) -> Result<(), String> {
-        if self.io_sites.is_empty() || task != 0 || function != self.module.entry {
+        if self.io_sites.is_empty() {
             return Ok(());
         }
+        let emitter = if task == 0 {
+            crate::obs_reordering::Emitter::Parent
+        } else {
+            crate::obs_reordering::Emitter::Worker(task)
+        };
         let sites = self.io_sites;
         for site in sites
             .iter()
-            .filter(|site| site.block == block && site.index == index)
+            .filter(|site| site.function == function && site.block == block && site.index == index)
         {
             let value = match &site.event {
                 crate::std_io::StdIoEvent::Flush | crate::std_io::StdIoEvent::Return => continue,
@@ -233,7 +243,11 @@ impl Runtime<'_> {
             };
             if let Some(line) = crate::std_io::rendered_line(&site.event, value) {
                 let position = self.events.len();
-                self.io_lines.push((position, line));
+                self.io_lines.push(crate::composed_tasks::ComposedLine {
+                    position,
+                    emitter,
+                    line,
+                });
             }
         }
         Ok(())
@@ -430,6 +444,11 @@ impl Runtime<'_> {
                                 .join(task, actual)
                                 .map_err(|e| format!("{e:?}"))?;
                             slots.insert(*handle, Value::Consumed);
+                            // Card `OBS-REORDERING`: the point at which
+                            // `thrd_join` has returned and the child is no
+                            // longer a live writer. Recorded here, by the model
+                            // that performs the join.
+                            self.collects.push((self.events.len(), child));
                             self.events
                                 .extend(self.buffer_events.remove(&child).unwrap_or_default());
                             self.events.push(TaskEvent::Result {
@@ -781,6 +800,7 @@ pub fn execute_with_source_lines(
         events: vec![],
         io_sites,
         io_lines: vec![],
+        collects: vec![],
     };
     let root_outcome = runtime.execute(runtime.module.entry, 0, vec![])?;
     if runtime.decision < script.spawn_outcomes.len() {
@@ -844,6 +864,7 @@ pub fn execute_with_source_lines(
             events: runtime.events,
         },
         lines: runtime.io_lines,
+        collects: runtime.collects,
     })
 }
 

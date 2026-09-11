@@ -63,11 +63,17 @@ fn program(sites: Vec<TaskIoSite>, declares_io: bool) -> ComposedTaskProgram {
         tasks: tasks(),
         sites,
         declares_io,
+        worker_io: BTreeSet::new(),
     }
 }
 
 fn print_n(block: BlockId, index: usize) -> TaskIoSite {
+    print_n_in(0, block, index)
+}
+
+fn print_n_in(function: FunctionId, block: BlockId, index: usize) -> TaskIoSite {
     TaskIoSite {
+        function,
         block,
         index,
         event: StdIoEvent::Print {
@@ -118,7 +124,7 @@ fn the_probe_is_the_task_models_own_copy() {
     // Stated directly, so the argument in the module header is checkable: the
     // module the probe builds is the program with one `BindScalar` inserted,
     // and it is that module the task checker accepts or refuses.
-    let probe = readable_probe(&tasks(), 0, 1, 1, 9).unwrap();
+    let probe = readable_probe(&tasks(), 0, 0, 1, 1, 9).unwrap();
     assert_eq!(probe.functions[&0].blocks[&0].instructions.len(), 2);
     assert_eq!(
         probe.functions[&0].blocks[&0].instructions[1].kind,
@@ -128,18 +134,23 @@ fn the_probe_is_the_task_models_own_copy() {
         }
     );
     assert!(check_task_module(&probe).is_ok());
-    assert!(readable_probe(&tasks(), 0, 9, 1, 9).is_none());
-    assert!(readable_probe(&tasks(), 7, 0, 1, 9).is_none());
+    assert!(readable_probe(&tasks(), 0, 0, 9, 1, 9).is_none());
+    assert!(readable_probe(&tasks(), 0, 7, 0, 1, 9).is_none());
 }
 
 #[test]
-fn a_line_outside_the_entry_is_refused() {
-    // Unreachable from source — the lowering refuses a worker line first, with
-    // its own message. Kept, and pinned here, as the model's own fail-closed
-    // statement of the interleaving ground.
+fn a_line_in_a_function_this_program_never_runs_is_refused() {
+    // **The residue of `COMPOSE-CONCURRENCY`'s worker refusal after card
+    // `OBS-REORDERING` lifted the covered shapes.** A worker body is admitted
+    // (see the `worker_lines` tests below); a function neither the entry nor
+    // spawned has no thread to attribute a line to, and is refused.
     assert_eq!(
-        rules(&program(vec![print_n(7, 0)], true)),
-        vec![ComposedTaskRule::SiteOutsideEntry]
+        rules(&program(vec![print_n_in(0, 7, 0)], true)),
+        vec![ComposedTaskRule::SiteOutsideProgram]
+    );
+    assert_eq!(
+        rules(&program(vec![print_n_in(7, 0, 0)], true)),
+        vec![ComposedTaskRule::SiteOutsideProgram]
     );
 }
 
@@ -173,6 +184,7 @@ fn two_lines_ordered_against_the_program_are_refused() {
 #[test]
 fn a_borrowed_render_is_refused_on_this_route() {
     let site = TaskIoSite {
+        function: 0,
         block: 0,
         index: 1,
         event: StdIoEvent::Log {
@@ -209,6 +221,7 @@ fn writing_without_declaring_io_is_refused() {
     // program of only barriers still performs `Io`, and a program of nothing
     // does not.
     let flush = TaskIoSite {
+        function: 0,
         block: 0,
         index: 1,
         event: StdIoEvent::Flush,
@@ -226,6 +239,7 @@ fn writing_without_declaring_io_is_refused() {
 #[test]
 fn a_literal_operand_needs_no_slot_and_no_binding() {
     let site = TaskIoSite {
+        function: 0,
         block: 0,
         index: 0,
         event: StdIoEvent::Print {
@@ -256,6 +270,7 @@ fn the_certificate_names_the_surface_this_program_uses() {
     let sites = vec![
         print_n(0, 1),
         TaskIoSite {
+            function: 0,
             block: 0,
             index: 1,
             event: StdIoEvent::Log {
@@ -267,6 +282,7 @@ fn the_certificate_names_the_surface_this_program_uses() {
             span: SPAN,
         },
         TaskIoSite {
+            function: 0,
             block: 0,
             index: 1,
             event: StdIoEvent::Flush,
@@ -329,4 +345,238 @@ fn a_rendering_leaves_the_task_module_untouched() {
     let with = check_composed_task_program(&program(vec![print_n(0, 1)], true)).unwrap();
     let without = check_composed_task_program(&program(Vec::new(), false)).unwrap();
     assert_eq!(with.tasks(), without.tasks());
+}
+
+// ---------------------------------------------------------------------------
+// Card `OBS-REORDERING`: a line in a spawned worker's body.
+// ---------------------------------------------------------------------------
+
+/// `fn main() { let n = -42; spawn worker(n); join; }` with
+/// `fn worker(v: i32) -> i32 { return v; }`, as the task IR.
+fn spawning() -> TaskModule {
+    use crate::task_execution::ErrorOperand;
+    use TaskInstructionKind as I;
+    use TaskTerminatorKind as T;
+    let instruction = |kind| TaskInstruction { span: SPAN, kind };
+    let block = |instructions: Vec<TaskInstructionKind>, kind| TaskBlock {
+        instructions: instructions.into_iter().map(instruction).collect(),
+        terminator: TaskTerminator { span: SPAN, kind },
+    };
+    let main = TaskFunction {
+        name: "main".into(),
+        parameters: vec![],
+        result: ScalarType::I32,
+        errors: BTreeSet::from(["SpawnError".to_owned()]),
+        error_payloads: BTreeSet::new(),
+        declared_effects: TaskEffects {
+            alloc: false,
+            spawn: true,
+            join: true,
+            may_block: true,
+        },
+        entry: 0,
+        span: SPAN,
+        blocks: BTreeMap::from([
+            (
+                0,
+                block(
+                    vec![
+                        I::BindScalar {
+                            slot: 0,
+                            value: ScalarOperand::I32(-42),
+                        },
+                        I::EnterScope { scope: 1 },
+                    ],
+                    T::TrySpawn {
+                        scope: 1,
+                        worker: 1,
+                        arguments: vec![ScalarOperand::Slot(0)],
+                        handle_slot: 1,
+                        success: 1,
+                        spawn_error: 2,
+                    },
+                ),
+            ),
+            (
+                1,
+                block(
+                    vec![I::Join {
+                        handle: 1,
+                        outcome_slot: Some(2),
+                    }],
+                    T::TryOutcome {
+                        result_slot: 2,
+                        value_slot: 3,
+                        error_slot: 4,
+                        success: 3,
+                        error: 4,
+                    },
+                ),
+            ),
+            (
+                2,
+                block(
+                    vec![I::ExitScope { scope: 1 }],
+                    T::Raise {
+                        error: ErrorOperand::Tag("SpawnError".into()),
+                        payload: None,
+                    },
+                ),
+            ),
+            (
+                3,
+                block(
+                    vec![I::ExitScope { scope: 1 }],
+                    T::Return {
+                        value: ScalarOperand::Slot(3),
+                    },
+                ),
+            ),
+            (
+                4,
+                block(
+                    vec![I::ExitScope { scope: 1 }],
+                    T::Raise {
+                        error: ErrorOperand::Slot(4),
+                        payload: None,
+                    },
+                ),
+            ),
+        ]),
+    };
+    let worker = TaskFunction {
+        name: "worker".into(),
+        parameters: vec![(0, ScalarType::I32)],
+        result: ScalarType::I32,
+        errors: BTreeSet::new(),
+        error_payloads: BTreeSet::new(),
+        declared_effects: TaskEffects::default(),
+        entry: 0,
+        span: SPAN,
+        blocks: BTreeMap::from([(
+            0,
+            block(
+                vec![],
+                T::Return {
+                    value: ScalarOperand::Slot(0),
+                },
+            ),
+        )]),
+    };
+    TaskModule {
+        entry: 0,
+        functions: BTreeMap::from([(0, main), (1, worker)]),
+        source_len: 1,
+    }
+}
+
+fn spawning_program(sites: Vec<TaskIoSite>, worker_io: bool) -> ComposedTaskProgram {
+    ComposedTaskProgram {
+        tasks: spawning(),
+        sites,
+        declares_io: true,
+        worker_io: if worker_io {
+            BTreeSet::from([1])
+        } else {
+            BTreeSet::new()
+        },
+    }
+}
+
+fn rules_of(program: &ComposedTaskProgram) -> Vec<ComposedTaskRule> {
+    match check_composed_task_program(program) {
+        Ok(_) => Vec::new(),
+        Err(ComposedTaskRefusal::Join(errors)) => {
+            errors.into_iter().map(|error| error.rule).collect()
+        }
+        Err(ComposedTaskRefusal::Tasks(errors)) => {
+            panic!("the task half should check: {errors:?}")
+        }
+    }
+}
+
+/// A line rendering the worker's own parameter, in the worker's own body. This
+/// is what card `COMPOSE-CONCURRENCY` refused and card `OBS-REORDERING` admits.
+fn worker_line() -> TaskIoSite {
+    TaskIoSite {
+        function: 1,
+        block: 0,
+        index: 0,
+        event: StdIoEvent::Log {
+            level: Level::Info,
+            rendering: Rendering::Dec,
+            operand: StdIoOperand::Scalar("v".to_owned()),
+        },
+        operand: Some(0),
+        span: SPAN,
+    }
+}
+
+#[test]
+fn a_line_in_a_spawned_worker_is_admitted() {
+    assert_eq!(
+        rules_of(&spawning_program(vec![worker_line()], true)),
+        Vec::new()
+    );
+}
+
+/// **The declaration.** Placing a line in a worker body is what declares the
+/// admitted reordering relation, and the certificate says so. A program with no
+/// worker line declares nothing and keeps the strict comparison.
+#[test]
+fn a_worker_line_declares_the_reordering_relation() {
+    let with = check_composed_task_program(&spawning_program(vec![worker_line()], true)).unwrap();
+    assert!(with.certificate().admits_reordering);
+    let without = check_composed_task_program(&spawning_program(Vec::new(), true)).unwrap();
+    assert!(!without.certificate().admits_reordering);
+    // A **parent** line in the same spawning program declares nothing: `n` is
+    // bound at index 0 of block 0, so a line at index 1 reads it.
+    let mut parent_line = worker_line();
+    parent_line.function = 0;
+    parent_line.index = 1;
+    let parent_only =
+        check_composed_task_program(&spawning_program(vec![parent_line], true)).unwrap();
+    assert!(!parent_only.certificate().admits_reordering);
+}
+
+#[test]
+fn a_tampered_reordering_declaration_does_not_survive_rederivation() {
+    let program = spawning_program(vec![worker_line()], true);
+    let checked = check_composed_task_program(&program).unwrap();
+    let mut tampered = checked.certificate().clone();
+    tampered.admits_reordering = false;
+    assert_eq!(
+        recheck_composed_task_certificate(&program, &tampered),
+        Err(ComposedTaskRecheckFailure::Reordering)
+    );
+}
+
+/// A worker that writes must declare `io` in its **own** row: the effect
+/// discipline of this model is per function, and a worker body is a function
+/// body.
+#[test]
+fn a_worker_that_writes_without_declaring_io_is_refused() {
+    assert_eq!(
+        rules_of(&spawning_program(vec![worker_line()], false)),
+        vec![ComposedTaskRule::WorkerEffectNotDeclared]
+    );
+}
+
+/// The liveness question is still the task checker's, and it is asked of the
+/// **worker's** function: a line before the worker's parameter would be
+/// readable is refused there exactly as in the parent.
+#[test]
+fn a_worker_lines_operand_is_asked_of_the_task_checker() {
+    let mut site = worker_line();
+    site.operand = Some(9); // a slot the worker never binds
+    assert_eq!(
+        rules_of(&spawning_program(vec![site], true)),
+        vec![ComposedTaskRule::OperandNotReadable]
+    );
+}
+
+#[test]
+fn the_spawned_worker_set_is_read_off_the_modules_own_terminators() {
+    assert_eq!(spawned_workers(&spawning()), BTreeSet::from([1]));
+    assert_eq!(spawned_workers(&tasks()), BTreeSet::new());
 }

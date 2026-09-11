@@ -2702,6 +2702,7 @@ fn task_route(
                 tasks,
                 sites: Vec::new(),
                 declares_io: false,
+                worker_io: Default::default(),
             }
         })
     }
@@ -2736,6 +2737,7 @@ fn task_route(
             tasks: lowered.tasks.clone(),
             sites: lowered.sites.clone(),
             declares_io: lowered.declares_io,
+            worker_io: lowered.worker_io.clone(),
         };
         Some(
             composed_tasks::check_composed_task_program(&program).map_err(

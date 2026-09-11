@@ -19,8 +19,10 @@
 //! spellings of the attempt. That measurement is of the route split, and this
 //! card changes the split, so the pin is **moved by name** rather than deleted:
 //! [`a_threaded_module_carries_a_source_line_in_the_parent`] records what is now
-//! true, [`a_worker_body_cannot_carry_a_source_line`] records the refusal that
-//! replaced it and *why* it is a refusal, and
+//! true, [`a_worker_body_carries_a_source_line_when_that_worker_declares_io`]
+//! records **standing constraint 15a moved by name** by card `OBS-REORDERING`
+//! (that constraint's own condition for lifting was the comparison capability,
+//! and this is it landing), and
 //! [`a_spawning_module_that_does_not_compose_keeps_the_task_routes_refusals`]
 //! keeps the old measurement alive for the modules it still describes.
 //!
@@ -34,10 +36,12 @@
 //! Nothing about scheduling. The worker events these programs print are buffered
 //! and emitted after join, so their order does not reveal which worker the OS ran
 //! first — the same boundary `README.md` states and F02 records. That buffering
-//! is *also* the reason the source lines below are comparable at all: every write
-//! an emitted task program performs is performed by the parent's thread, so the
-//! parent's own line positions are determined. A line inside a worker body would
-//! not be, and is refused.
+//! is *also* the reason the source lines below are comparable **byte for byte**:
+//! every write these four programs perform is performed by the parent's thread,
+//! so their line positions are determined and their comparison is unchanged by
+//! card `OBS-REORDERING`. A line inside a worker body is not determined that way,
+//! and is compared up to the declared reordering relation instead — see
+//! `compiler/tests/obs_reordering.rs`. None of these four places one.
 #![cfg(any(target_os = "linux", target_os = "macos"))]
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
@@ -231,8 +235,8 @@ fn removing_the_source_lines_leaves_exactly_the_task_rendering() {
         let source_lines = observation
             .lines
             .iter()
-            .filter(|(_, line)| line.stream == qcore_core::std_io::Stream::Out)
-            .map(|(_, line)| line.text.clone())
+            .filter(|entry| entry.line.stream == qcore_core::std_io::Stream::Out)
+            .map(|entry| entry.line.text.clone())
             .collect::<Vec<_>>();
         let mut remaining = source_lines.clone();
         let stripped = out
@@ -327,13 +331,54 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
     );
 }
 
-/// The other half of the moved pin: what is refused *instead*, and on the
-/// ground that decides it. A worker's writes would be performed by that
-/// worker's own thread; nothing in this model orders them against the parent's
-/// or its siblings'.
+/// **Standing constraint 15a, moved by name (card `OBS-REORDERING`).**
+///
+/// That constraint refused a worker-body line and stated its own condition for
+/// lifting: *"admitting one requires the comparison-up-to-an-admitted-reordering
+/// capability (`COMPOSE-WORKER-LINES`), not a gate change."* This card lands
+/// that capability (`qcore_core::obs_reordering`), so this test — the pin
+/// `COMPOSE-CONCURRENCY` wrote as `a_worker_body_cannot_carry_a_source_line` —
+/// **failed and was rewritten, not deleted**, in the precedent's own spirit.
+///
+/// What is admitted now, and what is still refused, is here; the acceptance
+/// itself, with the native comparison over many sanitized runs, is
+/// `compiler/tests/obs_reordering.rs`.
 #[test]
-fn a_worker_body_cannot_carry_a_source_line() {
+fn a_worker_body_carries_a_source_line_when_that_worker_declares_io() {
     const IN_WORKER: &str = "import std.concurrency;
+import std.io;
+import std.fmt;
+concurrency checked;
+fn worker(value: i32) -> i32 effects { io } { value |> print dec; return value; }
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    let first_value = 42;
+    first_value |> print dec;
+    thread scope workers {
+        let first = spawn workers worker(copy first_value)?;
+        let first_result = join move first?;
+        return first_result;
+    }
+}
+";
+    let module = compile_files(
+        &[SourceFile::new("probe.qcore", IN_WORKER)],
+        &CompileOptions::default(),
+    )
+    .expect("the module constraint 15a refused now compiles");
+    let composed = module.checked.as_composed_tasks().unwrap();
+    assert!(
+        composed.certificate().admits_reordering,
+        "placing a line in a worker body is what declares the relation"
+    );
+}
+
+/// The other half of the moved pin: the same module **without** `io` on the
+/// worker is still refused at `Q050`, and the four published examples still
+/// declare nothing — so the parent-only rule survives for every shape the
+/// relation does not cover.
+#[test]
+fn a_worker_line_still_needs_its_own_io_effect_and_the_examples_declare_nothing() {
+    const IN_WORKER_NO_IO: &str = "import std.concurrency;
 import std.io;
 import std.fmt;
 concurrency checked;
@@ -349,16 +394,28 @@ fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
 }
 ";
     let errors = compile_files(
-        &[SourceFile::new("probe.qcore", IN_WORKER)],
+        &[SourceFile::new("probe.qcore", IN_WORKER_NO_IO)],
         &CompileOptions::default(),
     )
     .unwrap_err();
     assert_eq!(errors[0].code, "Q050");
     assert!(
-        errors[0].message.contains("parent's own body"),
-        "expected the interleaving ground, got {}",
+        errors[0].message.contains("admit `io`"),
+        "expected the per-function effect ground, got {}",
         errors[0].message
     );
+    for (name, source) in EXAMPLES {
+        let module = compile(name, source);
+        assert!(
+            !module
+                .checked
+                .as_composed_tasks()
+                .unwrap()
+                .certificate()
+                .admits_reordering,
+            "{name} places no worker line, so its streams keep the byte comparison"
+        );
+    }
 }
 
 /// And the third half: the modules the original measurement still describes.

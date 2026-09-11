@@ -71,8 +71,8 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
 }
 
 /// The C statements of the source lines standing immediately before position
-/// `index` of `block`, if this is the entry function (card
-/// `COMPOSE-CONCURRENCY`).
+/// `index` of `block` of `function` (cards `COMPOSE-CONCURRENCY` and
+/// `OBS-REORDERING`).
 ///
 /// The rendering itself — the conversion, the level tag, the stream, the
 /// `fflush` — is `std_io_c_emit::event_statement`'s, which is
@@ -80,19 +80,23 @@ pub fn emit_task_c11(checked: &CheckedTaskModule) -> TaskCEmission {
 /// only thing decided here is the *expression*: a composed rendering reads
 /// `s_N.value.scalar`, the object this backend already declared for that slot,
 /// never a fresh copy.
+///
+/// A site in a **worker** function emits inside that worker's own body, so the
+/// write is performed by that worker's thread. That is what card
+/// `OBS-REORDERING` admits, and it is why such a program's streams are compared
+/// up to the declared reordering relation rather than byte for byte. A whole
+/// line still arrives whole: one `QCORE_IO_WRITE` is one `fprintf`, performed
+/// under the stream's own C11 lock (premise `C11StreamLock`).
 fn source_lines(
     sites: &[crate::composed_tasks::TaskIoSite],
-    entry: bool,
+    function: usize,
     block: usize,
     index: usize,
 ) -> Vec<String> {
-    if !entry {
-        return Vec::new();
-    }
     let mut statements = Vec::new();
     for site in sites
         .iter()
-        .filter(|site| site.block == block && site.index == index)
+        .filter(|site| site.function == function && site.block == block && site.index == index)
     {
         let expressions = site
             .operand
@@ -265,11 +269,10 @@ pub fn emit_task_c11_with_source_lines(
             })
             .collect::<BTreeMap<_, _>>();
         writeln!(source, "    goto qcore_block_{};", function.entry).unwrap();
-        let entry_function = *id == module.entry;
         for (block_id, block) in &function.blocks {
             writeln!(source, "qcore_block_{block_id}: ;").unwrap();
             for (index, instruction) in block.instructions.iter().enumerate() {
-                for statement in source_lines(sites, entry_function, *block_id, index) {
+                for statement in source_lines(sites, *id, *block_id, index) {
                     writeln!(source, "    {statement}").unwrap();
                 }
                 let start = source.lines().count() + 1;
@@ -377,9 +380,7 @@ pub fn emit_task_c11_with_source_lines(
                     span: instruction.span,
                 });
             }
-            for statement in
-                source_lines(sites, entry_function, *block_id, block.instructions.len())
-            {
+            for statement in source_lines(sites, *id, *block_id, block.instructions.len()) {
                 writeln!(source, "    {statement}").unwrap();
             }
             let start = source.lines().count() + 1;

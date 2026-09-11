@@ -15,12 +15,13 @@
 //!
 //! # The v1 boundary, and the measurement behind it
 //!
-//! **A line may stand anywhere in the parent's body. A line inside a worker
-//! body is refused.**
+//! **A line may stand anywhere in the parent's body, and — since card
+//! `OBS-REORDERING` — in the body of a function this module's entry spawns as a
+//! worker. A line anywhere else is refused.**
 //!
-//! That split is not a guess about scheduling; it is read off the emitted
-//! runtime. In `crates/qcore-core/src/task_c_emit.rs` every write is performed
-//! by the thread whose context identity is `0` — the parent:
+//! The parent half is not a guess about scheduling; it is read off the emitted
+//! runtime. In `crates/qcore-core/src/task_c_emit.rs` every *trace* write is
+//! performed by the thread whose context identity is `0` — the parent:
 //!
 //! * `qcore_buffer_event` writes immediately only when `context->identity == 0`,
 //!   and otherwise appends to the worker's **private** event array;
@@ -30,22 +31,41 @@
 //!   called from the parent, and a worker never calls them because the source
 //!   lowering refuses a spawn inside a worker (leaf workers only).
 //!
-//! So each stream of an emitted task program is written by exactly one thread,
-//! in the parent's own statement order, and a source line placed at any point of
+//! So the trace of an emitted task program is written by exactly one thread, in
+//! the parent's own statement order, and a source line placed at any point of
 //! the parent body has a determined position relative to every trace line. The
 //! conservative reading — "before any spawn, between joins, after all joins" —
 //! is *subsumed* by that: every parent point is join-ordered, because a worker's
 //! output does not exist as bytes until its parent replays it at the join.
 //!
-//! A line inside a **worker** body would be written by that worker's own thread,
-//! concurrently with the parent's writes and with its siblings', and no model in
-//! this repository orders those. Admitting it would make the per-stream byte
-//! comparison every route here rests on compare against something that is not a
-//! function of the program. It is refused by name
-//! ([`ComposedTaskRule::SiteOutsideEntry`]), and buffering worker lines the way
-//! the trace events are buffered is the recorded future path — it needs the F02
-//! comparison-up-to-an-admitted-reordering treatment, or `STD-LOGGER-ASYNC`'s
-//! queue, neither of which is built here.
+//! # The worker half, and what it rests on (card `OBS-REORDERING`)
+//!
+//! A line inside a **worker** body is written by that worker's own thread,
+//! concurrently with the parent's writes and with its siblings'. Card
+//! `COMPOSE-CONCURRENCY` refused it because "no model in this repository orders
+//! those", and named the repair: F02's comparison-up-to-an-admitted-reordering
+//! treatment, extended to source lines.
+//!
+//! That repair is [`crate::obs_reordering`], and this route is its first
+//! consumer. A worker line is admitted, and the certificate then reports
+//! [`ComposedTaskCertificate::admits_reordering`]: the streams of such a program
+//! are compared **up to the declared relation** — window by window, emitter by
+//! emitter — rather than byte for byte. The relation itself is derived from this
+//! model's own spawn/join structure by
+//! [`ComposedTaskObservation::admitted_reordering`], never from a run.
+//!
+//! **A program that places no worker line declares nothing**, its certificate
+//! says so, and its streams keep the byte-for-byte comparison unchanged — which
+//! is the relation's own degenerate case (`AdmittedReordering::is_strict`), not a
+//! second code path. Every published example, every earlier route and every
+//! pinned trace byte is therefore untouched by this widening.
+//!
+//! A line in a function that is neither the entry nor a function the entry
+//! spawns is still refused by name ([`ComposedTaskRule::SiteOutsideProgram`]):
+//! nothing in this profile makes such a function run, so there is no emitter to
+//! attribute its line to. `STD-LOGGER-ASYNC`'s bounded queue is likewise still
+//! refused, and for the same reason it always was — no queue exists on this
+//! route, so no window boundary can be derived for one.
 //!
 //! # What a rendering may read
 //!
@@ -89,24 +109,35 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::obs_reordering::{
+    AdmittedReordering, DeclaredRecord, Emitter, ReorderingRefusal, ReorderingWitness,
+};
 use crate::std_io::{
     self, Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, StdIoProgram, Stream,
 };
 use crate::task_execution::{
-    BlockId, CheckedTaskModule, FunctionId, ScalarOperand, SlotId, TaskDiagnostic, TaskInstruction,
-    TaskInstructionKind, TaskModule, TaskSpan, TaskTerminatorKind, check_task_module,
+    BlockId, CheckedTaskModule, FunctionId, ScalarOperand, SlotId, TaskDiagnostic, TaskEvent,
+    TaskInstruction, TaskInstructionKind, TaskModule, TaskSpan, TaskTerminatorKind,
+    check_task_module,
 };
 use crate::typed_errors::{Effect, EffectRow};
 
-/// One `source.std-io.v1` event, placed in the entry function's CFG.
+/// One `source.std-io.v1` event, placed in one function's CFG.
 ///
-/// The position is "immediately before instruction `index` of block `block`",
-/// with `index == instructions.len()` meaning "immediately before that block's
-/// terminator". Two events written one after the other in the source therefore
-/// share a position and are ordered by their position in
-/// [`ComposedTaskProgram::sites`], which is source order.
+/// The position is "immediately before instruction `index` of block `block` of
+/// function `function`", with `index == instructions.len()` meaning
+/// "immediately before that block's terminator". Two events written one after
+/// the other in the source therefore share a position and are ordered by their
+/// position in [`ComposedTaskProgram::sites`], which is source order.
+///
+/// `function` was added by card `OBS-REORDERING`: before it every site stood in
+/// the entry, and the field made the refusal of everything else a structural
+/// fact rather than an assumption.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskIoSite {
+    /// The function whose body performs this line — the entry, or a function the
+    /// entry spawns as a worker.
+    pub function: FunctionId,
     pub block: BlockId,
     pub index: usize,
     pub event: StdIoEvent,
@@ -116,7 +147,7 @@ pub struct TaskIoSite {
     pub span: TaskSpan,
 }
 
-/// A task program and the `source.std-io.v1` events placed in its entry.
+/// A task program and the `source.std-io.v1` events placed in it.
 ///
 /// The two halves are carried side by side and never merged: `tasks` is exactly
 /// the module the task route would check, byte for byte, and a program with no
@@ -128,15 +159,25 @@ pub struct ComposedTaskProgram {
     pub sites: Vec<TaskIoSite>,
     /// Whether the entry's declared `effects { … }` row admits `io`.
     pub declares_io: bool,
+    /// The **non-entry** functions whose own declared `effects { … }` row admits
+    /// `io` (card `OBS-REORDERING`). A worker that writes must say so in its own
+    /// row: the effect discipline of this model is per function, and a worker
+    /// body is a function body.
+    pub worker_io: BTreeSet<FunctionId>,
 }
 
 /// The join rules this composition owns, and nothing else.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ComposedTaskRule {
-    /// A line placed outside the entry function — in a worker body. See the
-    /// module header: a worker's writes are performed by its own thread, and no
-    /// model here orders them against the parent's or its siblings'.
-    SiteOutsideEntry,
+    /// A line placed in a function that is neither the entry nor a function the
+    /// entry spawns as a worker (card `OBS-REORDERING`).
+    ///
+    /// Nothing in this profile makes such a function run, so its line has no
+    /// emitter: there is no thread to attribute it to and no window to place it
+    /// in. Before `OBS-REORDERING` this arm was `SiteOutsideEntry` and refused
+    /// every worker body too; it is the residue of that refusal after the
+    /// covered shapes were lifted.
+    SiteOutsideProgram,
     /// A position that is not a position of that block.
     SiteOutOfRange,
     /// Two lines in one block whose source order disagrees with their positions,
@@ -149,17 +190,21 @@ pub enum ComposedTaskRule {
     OperandNotReadable,
     /// The composed program writes but the entry does not declare `io`.
     EffectNotDeclared,
+    /// A worker body writes but that worker's own declared row does not admit
+    /// `io` (card `OBS-REORDERING`).
+    WorkerEffectNotDeclared,
 }
 
 impl ComposedTaskRule {
     pub fn describe(self) -> &'static str {
         match self {
-            Self::SiteOutsideEntry => "a line inside a worker body",
+            Self::SiteOutsideProgram => "a line in a function this program never runs",
             Self::SiteOutOfRange => "a line at a position its block does not have",
             Self::SiteOrder => "two lines whose source order is not the order performed",
             Self::UnrenderableOperand => "an operand this route does not render",
             Self::OperandNotReadable => "an operand the task model cannot read here",
             Self::EffectNotDeclared => "an undeclared `io` effect",
+            Self::WorkerEffectNotDeclared => "a worker that writes without declaring `io`",
         }
     }
 }
@@ -237,8 +282,20 @@ pub struct ComposedTaskCertificate {
     /// `source.std-io.v1`'s own [`std_io::derived_effects`], never recomputed
     /// here.
     pub effects: EffectRow,
-    /// Every placed event, in source order, with its position.
-    pub placements: Vec<(BlockId, usize, StdIoEvent)>,
+    /// Every placed event, in source order, with its position. The function is
+    /// part of the position since card `OBS-REORDERING`.
+    pub placements: Vec<(FunctionId, BlockId, usize, StdIoEvent)>,
+    /// **The declaration of card `OBS-REORDERING`'s relation.** `true` exactly
+    /// when some line stands in a worker body, so the program's streams are
+    /// written by more than one thread and must be compared up to the admitted
+    /// reordering relation rather than byte for byte.
+    ///
+    /// `false` — every published example, and every composed program before this
+    /// card — means the streams are single-writer and the strict comparison
+    /// stands unchanged. It is not a switch between two comparisons: a strict
+    /// relation is the reordering relation that admits nothing
+    /// ([`AdmittedReordering::is_strict`]).
+    pub admits_reordering: bool,
     /// The `std.fmt` surface this program actually uses.
     pub renderings: BTreeSet<Rendering>,
     /// The `std.logger` severities this program actually uses.
@@ -389,14 +446,15 @@ fn terminator_slots(kind: &TaskTerminatorKind) -> Vec<SlotId> {
 /// is refused. Nothing about liveness is decided in this file.
 pub fn readable_probe(
     module: &TaskModule,
+    function: FunctionId,
     block: BlockId,
     index: usize,
     slot: SlotId,
     fresh: SlotId,
 ) -> Option<TaskModule> {
     let mut probe = module.clone();
-    let entry = probe.functions.get_mut(&module.entry)?;
-    let target = entry.blocks.get_mut(&block)?;
+    let host = probe.functions.get_mut(&function)?;
+    let target = host.blocks.get_mut(&block)?;
     if index > target.instructions.len() {
         return None;
     }
@@ -443,29 +501,58 @@ pub fn check_composed_task_program(
     let tasks = check_task_module(&program.tasks).map_err(ComposedTaskRefusal::Tasks)?;
 
     let mut errors = Vec::new();
-    let entry_blocks = program.tasks.functions[&program.tasks.entry]
-        .blocks
+    // The functions a line may stand in: the entry, and every function the
+    // entry spawns as a worker. Read off the module's own terminators, so the
+    // admission is a structural fact about this program rather than a claim.
+    let workers = spawned_workers(&program.tasks);
+    let hosts = program
+        .tasks
+        .functions
         .iter()
-        .map(|(id, block)| (*id, block.instructions.len()))
+        .filter(|(id, _)| **id == program.tasks.entry || workers.contains(id))
+        .map(|(id, function)| {
+            (
+                *id,
+                function
+                    .blocks
+                    .iter()
+                    .map(|(block, body)| (*block, body.instructions.len()))
+                    .collect::<BTreeMap<_, _>>(),
+            )
+        })
         .collect::<BTreeMap<_, _>>();
     let fresh_base = max_slot(&program.tasks) + 1;
 
-    let mut previous: BTreeMap<BlockId, usize> = BTreeMap::new();
+    let mut previous: BTreeMap<(FunctionId, BlockId), usize> = BTreeMap::new();
     for (ordinal, site) in program.sites.iter().enumerate() {
-        let Some(&length) = entry_blocks.get(&site.block) else {
+        let Some(&length) = hosts
+            .get(&site.function)
+            .and_then(|blocks| blocks.get(&site.block))
+        else {
             refuse(
                 &mut errors,
-                ComposedTaskRule::SiteOutsideEntry,
+                ComposedTaskRule::SiteOutsideProgram,
                 ordinal,
                 site.span,
-                "`source.std-io-tasks.v1` writes a line only from the parent's own body: a \
-                 worker's writes would be performed by that worker's thread, concurrently with \
-                 the parent's and with its siblings', and no checked model here orders them, so \
-                 the per-stream comparison this route rests on would compare against something \
-                 that is not a function of the program",
+                "`source.std-io-tasks.v1` writes a line from the parent's own body or from the \
+                 body of a worker this entry spawns, and from nowhere else: a line in a function \
+                 this program never runs has no thread to attribute it to and no window to place \
+                 it in, so the comparison would have nothing to compare",
             );
             continue;
         };
+        if site.function != program.tasks.entry && !program.worker_io.contains(&site.function) {
+            refuse(
+                &mut errors,
+                ComposedTaskRule::WorkerEffectNotDeclared,
+                ordinal,
+                site.span,
+                "this worker writes a line but its own declared `effects { … }` row does not \
+                 admit `io`: the effect discipline of this model is per function, and a worker \
+                 body is a function body",
+            );
+            continue;
+        }
         if site.index > length {
             refuse(
                 &mut errors,
@@ -476,7 +563,7 @@ pub fn check_composed_task_program(
             );
             continue;
         }
-        if let Some(earlier) = previous.insert(site.block, site.index)
+        if let Some(earlier) = previous.insert((site.function, site.block), site.index)
             && earlier > site.index
         {
             refuse(
@@ -546,6 +633,7 @@ pub fn check_composed_task_program(
                 Some(slot) => {
                     let admitted = readable_probe(
                         &program.tasks,
+                        site.function,
                         site.block,
                         site.index,
                         slot,
@@ -620,8 +708,12 @@ pub fn check_composed_task_program(
             placements: program
                 .sites
                 .iter()
-                .map(|site| (site.block, site.index, site.event.clone()))
+                .map(|site| (site.function, site.block, site.index, site.event.clone()))
                 .collect(),
+            admits_reordering: program
+                .sites
+                .iter()
+                .any(|site| site.function != program.tasks.entry),
             renderings,
             levels,
             streams,
@@ -637,6 +729,7 @@ pub enum ComposedTaskRecheckFailure {
     Entry,
     Effects,
     Placements,
+    Reordering,
     Renderings,
     Levels,
     Streams,
@@ -650,6 +743,7 @@ impl fmt::Display for ComposedTaskRecheckFailure {
             Self::Entry => "the entry function",
             Self::Effects => "the derived effect row",
             Self::Placements => "the placed events and their positions",
+            Self::Reordering => "whether this program declares the admitted reordering relation",
             Self::Renderings => "the used renderings",
             Self::Levels => "the used severities",
             Self::Streams => "the written streams",
@@ -678,6 +772,9 @@ pub fn recheck_composed_task_certificate(
     if rederived.placements != certificate.placements {
         return Err(ComposedTaskRecheckFailure::Placements);
     }
+    if rederived.admits_reordering != certificate.admits_reordering {
+        return Err(ComposedTaskRecheckFailure::Reordering);
+    }
     if rederived.renderings != certificate.renderings {
         return Err(ComposedTaskRecheckFailure::Renderings);
     }
@@ -705,10 +802,59 @@ pub fn recheck_composed_task_certificate(
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ComposedTaskObservation {
     pub tasks: crate::task_execution::TaskExecutionObservation,
-    /// `(position, line)` — the line is written immediately before
-    /// `tasks.events[position]`, and `position == tasks.events.len()` means
-    /// after every event.
-    pub lines: Vec<(usize, ObservedLine)>,
+    /// The source lines, in the order the reference run performed them.
+    pub lines: Vec<ComposedLine>,
+    /// `(event index, child)` — the point at which the parent's
+    /// `qcore_task_collect` for `child` begins, which is the point at which
+    /// `thrd_join` has returned and `child` is no longer live (card
+    /// `OBS-REORDERING`).
+    ///
+    /// Recorded by the reference runtime at the moment its model performs the
+    /// join rather than recovered afterwards by scanning the rendered events: a
+    /// worker that emits no buffer event renders as `SPAWN k`, `RESULT k`,
+    /// `JOIN k`, and the `SPAWN` record carries `k` in exactly the field a
+    /// backwards scan would read.
+    pub collects: Vec<(usize, u64)>,
+}
+
+/// One source line of a composed reference run: where it stands, who wrote it,
+/// and what it said.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComposedLine {
+    /// The line is written immediately before `tasks.events[position]`, and
+    /// `position == tasks.events.len()` means after every event.
+    pub position: usize,
+    /// The thread of control that performs this write: the parent, or the
+    /// worker task whose body carries the site (card `OBS-REORDERING`).
+    pub emitter: Emitter,
+    pub line: ObservedLine,
+}
+
+/// Every function this module spawns as a worker, read off the module's own
+/// `TrySpawn` terminators.
+pub fn spawned_workers(module: &TaskModule) -> BTreeSet<FunctionId> {
+    module
+        .functions
+        .values()
+        .flat_map(|function| {
+            function
+                .blocks
+                .values()
+                .filter_map(|block| match block.terminator.kind {
+                    TaskTerminatorKind::TrySpawn { worker, .. } => Some(worker),
+                    _ => None,
+                })
+        })
+        .collect()
+}
+
+/// One record of a composed run's merged observation, before it is projected on
+/// to a stream: who wrote it, on which stream, and what it said.
+struct MergedRecord {
+    emitter: Emitter,
+    stream: Stream,
+    text: String,
+    window: usize,
 }
 
 impl ComposedTaskObservation {
@@ -716,25 +862,145 @@ impl ComposedTaskObservation {
     pub fn projections(&self) -> (String, String) {
         let mut out = String::new();
         let mut err = String::new();
-        let mut cursor = 0usize;
-        for (position, event) in self.tasks.events.iter().enumerate() {
-            while cursor < self.lines.len() && self.lines[cursor].0 <= position {
-                let line = &self.lines[cursor].1;
-                match line.stream {
-                    Stream::Out => out.push_str(&format!("{}\n", line.text)),
-                    Stream::Err => err.push_str(&format!("{}\n", line.text)),
+        for record in self.merged() {
+            match record.stream {
+                Stream::Out => {
+                    out.push_str(&record.text);
+                    out.push('\n');
                 }
-                cursor += 1;
-            }
-            out.push_str(&crate::task_execution::render_task_event(event));
-        }
-        for (_, line) in &self.lines[cursor..] {
-            match line.stream {
-                Stream::Out => out.push_str(&format!("{}\n", line.text)),
-                Stream::Err => err.push_str(&format!("{}\n", line.text)),
+                Stream::Err => {
+                    err.push_str(&record.text);
+                    err.push('\n');
+                }
             }
         }
         (out, err)
+    }
+
+    /// The merged record sequence, with card `OBS-REORDERING`'s window numbering
+    /// applied over **both** streams before either is projected.
+    ///
+    /// Numbering per stream would have merged two concurrency regions separated
+    /// by a quiescent point into one window, and admitted reorderings the
+    /// program does not perform: a barrier written on one stream still separates
+    /// two windows of the other.
+    fn merged(&self) -> Vec<MergedRecord> {
+        let mut records = Vec::new();
+        let mut cursor = 0usize;
+        let mut live: BTreeSet<u64> = BTreeSet::new();
+        let mut window = 0usize;
+        let push = |records: &mut Vec<MergedRecord>,
+                    window: &mut usize,
+                    live: &BTreeSet<u64>,
+                    emitter: Emitter,
+                    stream: Stream,
+                    text: String| {
+            // A record written while nothing is live is a barrier: the parent is
+            // the only thread of control, so it commutes with nothing and takes
+            // a window of its own.
+            if live.is_empty() {
+                *window += 1;
+                records.push(MergedRecord {
+                    emitter,
+                    stream,
+                    text,
+                    window: *window,
+                });
+                *window += 1;
+            } else {
+                records.push(MergedRecord {
+                    emitter,
+                    stream,
+                    text,
+                    window: *window,
+                });
+            }
+        };
+        for (position, event) in self.tasks.events.iter().enumerate() {
+            while cursor < self.lines.len() && self.lines[cursor].position <= position {
+                let entry = &self.lines[cursor];
+                push(
+                    &mut records,
+                    &mut window,
+                    &live,
+                    entry.emitter,
+                    entry.line.stream,
+                    entry.line.text.clone(),
+                );
+                cursor += 1;
+            }
+            // `thrd_join` has returned by the time the collect replay starts, so
+            // the child leaves the live set *before* the parent's replay records
+            // and *after* any line the parent wrote at that program point.
+            for &(at, child) in &self.collects {
+                if at == position {
+                    live.remove(&child);
+                }
+            }
+            let text = crate::task_execution::render_task_event(event);
+            push(
+                &mut records,
+                &mut window,
+                &live,
+                // Every trace line is written by the parent's thread — immediately
+                // for its own events, and at collect for a child's buffered ones.
+                // This is byte order, not causal order: F02 reads the same
+                // records as the child's.
+                Emitter::Parent,
+                Stream::Out,
+                text.trim_end_matches('\n').to_owned(),
+            );
+            if let TaskEvent::Spawn { task, .. } = event {
+                live.insert(*task);
+            }
+        }
+        for entry in &self.lines[cursor..] {
+            push(
+                &mut records,
+                &mut window,
+                &live,
+                entry.emitter,
+                entry.line.stream,
+                entry.line.text.clone(),
+            );
+        }
+        records
+    }
+
+    /// The declared records of one stream (card `OBS-REORDERING`).
+    pub fn stream_records(&self, stream: Stream) -> Vec<DeclaredRecord> {
+        self.merged()
+            .into_iter()
+            .filter(|record| record.stream == stream)
+            .map(|record| DeclaredRecord {
+                emitter: record.emitter,
+                window: record.window,
+                text: record.text,
+            })
+            .collect()
+    }
+
+    /// The reordering relation this run's stream declares.
+    ///
+    /// Derived from the model — the run's own spawn/collect structure and the
+    /// function each line stands in — and never from a native run. On a program
+    /// with no worker line every window has one emitter, so the result is
+    /// [`AdmittedReordering::is_strict`] and comparing against it is byte
+    /// equality.
+    pub fn admitted_reordering(
+        &self,
+        stream: Stream,
+    ) -> Result<AdmittedReordering, ReorderingRefusal> {
+        AdmittedReordering::declare(self.stream_records(stream))
+    }
+
+    /// Compare one stream of a native run with this run's declared relation.
+    pub fn compare_stream(
+        &self,
+        stream: Stream,
+        observed: &str,
+    ) -> Result<ReorderingWitness, ReorderingRefusal> {
+        self.admitted_reordering(stream)?.compare_text(observed)
     }
 }
 

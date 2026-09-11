@@ -626,6 +626,9 @@ pub struct LoweredComposedTaskModule {
     pub sites: Vec<TaskIoSite>,
     /// Whether the entry declared `io`.
     pub declares_io: bool,
+    /// The non-entry functions that declared `io` in their own row (card
+    /// `OBS-REORDERING`). A worker that writes must say so itself.
+    pub worker_io: std::collections::BTreeSet<usize>,
 }
 
 /// [`lower_source_tasks`] with the line-producing statements of `std.io`,
@@ -780,7 +783,7 @@ fn lower(
             next_temporary(resolved)?,
         );
         builder.composing = composing;
-        builder.is_entry = resolved.symbol == entry;
+        builder.function = resolved.symbol.0 as usize;
         if !builder.block(body, &resolved.statements)? {
             return Err(failure(
                 body.span,
@@ -827,13 +830,13 @@ fn lower(
                 })
         })
         .collect::<BTreeSet<_>>();
-    for worker in workers {
-        if functions[&worker]
+    for worker in &workers {
+        if functions[worker]
             .blocks
             .values()
             .any(|block| matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }))
         {
-            let span = functions[&worker].span;
+            let span = functions[worker].span;
             return Err(failure(
                 Span {
                     start: span.start,
@@ -844,8 +847,36 @@ fn lower(
             ));
         }
     }
+    // Card `OBS-REORDERING`. A line stands in the entry or in a function the
+    // entry spawns; a line anywhere else has no thread to attribute it to, so
+    // there is no emitter and no window and the comparison would have nothing to
+    // compare. The spawn set is only known here, after every terminator exists,
+    // which is why this is a pass rather than a guard inside the builder.
+    let admissible: BTreeSet<usize> = std::iter::once(entry.0 as usize)
+        .chain(workers.iter().copied())
+        .collect();
+    if let Some(site) = sites
+        .iter()
+        .find(|site| !admissible.contains(&site.function))
+    {
+        return Err(failure(
+            Span {
+                start: site.span.start,
+                end: site.span.end,
+            },
+            SemanticPass::ComposedTasks,
+            "`source.std-io-tasks.v1` writes a line from the parent's own body or from the body \
+             of a worker this entry spawns, and from nowhere else: a line in a function this \
+             program never runs has no thread to attribute it to and no window to place it in",
+        ));
+    }
     Ok(LoweredComposedTaskModule {
         declares_io: signatures[&entry].effects.io,
+        worker_io: signatures
+            .values()
+            .filter(|signature| signature.id != entry && signature.effects.io)
+            .map(|signature| signature.id.0 as usize)
+            .collect(),
         tasks: TaskModule {
             entry: entry.0 as usize,
             functions,
@@ -905,9 +936,12 @@ struct Builder<'a> {
     next_block: usize,
     next_temporary: usize,
     instructions: Vec<TaskInstruction>,
-    /// Card `COMPOSE-CONCURRENCY`, both `false` on the task route alone.
+    /// Card `COMPOSE-CONCURRENCY`; `false` on the task route alone.
     composing: bool,
-    is_entry: bool,
+    /// The function this builder is lowering, which is the function a line it
+    /// records stands in (card `OBS-REORDERING`). Before that card only the
+    /// entry could carry a line, and the flag was a Boolean.
+    function: usize,
     sites: Vec<TaskIoSite>,
 }
 
@@ -938,7 +972,7 @@ impl<'a> Builder<'a> {
             next_temporary,
             instructions: Vec::new(),
             composing: false,
-            is_entry: false,
+            function: 0,
             sites: Vec::new(),
         }
     }
@@ -957,17 +991,10 @@ impl<'a> Builder<'a> {
         event: qcore_core::std_io::StdIoEvent,
     ) -> Result<(), SourceDiagnostic> {
         use qcore_core::std_io::{StdIoEvent, StdIoOperand};
-        if !self.is_entry {
-            return Err(failure(
-                span,
-                SemanticPass::ComposedTasks,
-                "`source.std-io-tasks.v1` writes a line only from the parent's own body: a \
-                 worker's writes would be performed by that worker's thread, concurrently with \
-                 the parent's and with its siblings', and no checked model here orders them. The \
-                 parent's own points are all join-ordered, because a worker's trace events do not \
-                 exist as bytes until the parent replays them at the join",
-            ));
-        }
+        // Which function may carry a line is decided once, after every function
+        // is lowered, by `admissible_line_sites` below: it is the entry and the
+        // functions the entry spawns, and the spawn set is not known until the
+        // terminators exist. Card `OBS-REORDERING`.
         let operand = match &event {
             StdIoEvent::Flush | StdIoEvent::Return => None,
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => match operand {
@@ -1006,6 +1033,7 @@ impl<'a> Builder<'a> {
             },
         };
         self.sites.push(TaskIoSite {
+            function: self.function,
             block: self.current,
             index: self.instructions.len(),
             event,
