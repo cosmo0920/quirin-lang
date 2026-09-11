@@ -34,6 +34,20 @@ pub const IO_MODULE: &str = "std.io";
 /// capabilities; neither grants the other.
 pub const LOGGER_MODULE: &str = "std.logger";
 
+/// Card `STD-BUFFER`: a checked, owned, extent-carrying byte buffer
+/// (`source.buffer.v1`). It grants the acquisition, the indexed byte access,
+/// the extent read and the release, and nothing else — no rendering, so a
+/// module that both buffers and prints names this module *and* the standard-IO
+/// ones. A byte buffer is not a string: this module grants no text, no
+/// encoding and no literal, because none exists.
+///
+/// The **module** keeps the name `std.buffer` even though the constructor is
+/// spelled `bytes(N)`: a module name is a dotted path in an `import`
+/// declaration and never a reserved word, so the measured `buffer` collision
+/// (555 source-corpus occurrences, in binding position in shipped fixtures)
+/// does not reach it.
+pub const BUFFER_MODULE: &str = "std.buffer";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
@@ -42,6 +56,7 @@ pub struct ModuleImports {
     fmt: bool,
     io: bool,
     logger: bool,
+    buffer: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -66,6 +81,7 @@ impl ModuleImports {
                 FMT_MODULE => imports.fmt = true,
                 IO_MODULE => imports.io = true,
                 LOGGER_MODULE => imports.logger = true,
+                BUFFER_MODULE => imports.buffer = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -101,5 +117,12 @@ impl ModuleImports {
     /// hand the logger's stream to its sink with `flush`.
     pub fn logger(self) -> bool {
         self.logger
+    }
+
+    /// Whether this file may acquire, index, measure or release an owned byte
+    /// buffer. Granted by no other module: `std.io` never grants it and it
+    /// never grants `std.io`.
+    pub fn buffer(self) -> bool {
+        self.buffer
     }
 }

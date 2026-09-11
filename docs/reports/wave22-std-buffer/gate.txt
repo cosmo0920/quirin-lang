@@ -1,0 +1,82 @@
+STD-BUFFER (wave 22) — standing per-change gate
+Base: main ec5535a9.  Worktree tip at measurement: b05687ad.
+Linux x86_64.  Measurement outputs are worktree-private under measure/.
+
+  git submodule update --init --recursive
+    -> third_party/libevent checked out at d82464a277d0f42703702c4dfd9af6af38595a83
+       (release-2.2.2-alpha-11-gd82464a2).  The submodule was uninitialised in
+       this fresh worktree; the pin was NOT weakened, the gate's own documented
+       command fixed it, and the closing run below was taken after it.
+
+  cargo test --workspace --no-fail-fast
+    -> 3,395 passed, 0 failed, 8 ignored, across 190 suites reporting
+       "test result: ok" (doctests included).
+
+       COMPLETENESS, stated exactly.  The run reached and finished its final
+       phase -- the merged doctests -- and the log ends with that summary.  The
+       log contains zero lines beginning "error", zero "failures:" blocks, and
+       no "error: test failed" or "error: could not compile".  Every one of the
+       190 suites reported "test result: ok".  The figures above are therefore
+       the whole run's, not a mid-run snapshot: they were recounted from the
+       finished log and are identical to the first reading.
+
+       THE EXIT STATUS WAS NOT OBSERVED, and is deliberately not claimed.  The
+       shell wrapper that would have appended an "exit=" marker did not survive
+       to write one, and the cargo process was gone by the time that was
+       checked, so no exit code was ever read.  An earlier version of this file
+       asserted "Exit 0"; that assertion was unsupported and has been withdrawn
+       rather than left standing.  What is claimed is what the log shows: all
+       190 suites ran and all passed.
+
+       No result here is inferred from a truncated run: three earlier runs were
+       deliberately killed by this card rather than reported, because source
+       changed under them (see "Discarded runs").
+
+  cargo test -p qcore-compiler --test std_buffer
+    -> 52 passed, 0 failed, including both sanitized native runs.
+
+  cargo fmt --all -- --check
+    -> clean.
+
+  cargo clippy --all-targets -- -D warnings
+    -> clean.  One lint of this card's own (needless_lifetimes in
+       crates/qcore-frontend/src/source_std_buffer.rs) was found and FIXED,
+       not suppressed.
+
+  cargo run -p qcore-compiler --example reevaluation_probe
+    -> exit 0.  (measure/probe.log)
+
+  cargo run -p qcore-compiler --example reevaluation_followup
+    -> exit 0.  (measure/followup.log)
+
+  python3 scripts/check_lean_audits.py
+    -> Passed 91 Lean audits (90 -> 91: this card adds proof/AuditStdBuffer.lean).
+       No new axiom, no placeholder, no native_decide.  Every audited theorem
+       depends on nothing, or only on propext / Quot.sound.
+
+  python3 -m unittest discover -s scripts/tests
+    -> Ran 193 tests, 1 failure.
+       test_the_derived_facts_are_recomputed_rather_than_carried:
+         AssertionError: Lists differ: ['14.0.0', 90] != ['14.0.0', 91]
+       This is the derived-value tripwire working exactly as designed: the card
+       adds one Audit*.lean and docs/reviews/r0_3/acceptance_matrix.json carries
+       the pre-card count.  The card's brief forbids editing acceptance files,
+       so the matrix is deliberately left stale for the wave integrator to
+       regenerate — the same handling the two preceding standard-IO cards
+       received.  The delta is entirely this card's.
+
+STANDING CONSTRAINT 16 (the four P02-FLAKE rows)
+  None tripped on the closing run.  No assertion was weakened and nothing was
+  re-run in isolation to obtain a pass.
+
+DISCARDED RUNS (recorded rather than hidden)
+  Three workspace runs were started and then killed by this card before
+  completing, each because a source file changed under them and a figure taken
+  from such a run would not describe the tree it names:
+    1. killed after an unused-helper trim in std_buffer_c_emit.rs;
+    2. killed after the derived-effect claim correction (comment-only, but the
+       run predated it);
+    3. killed after the Q029 -> Q057 diagnostic reallocation, which is a real
+       behaviour change.
+  No number above comes from any of them.  The closing run was taken from the
+  settled tree at b05687ad, after fmt and clippy were re-verified clean on it.

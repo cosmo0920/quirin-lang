@@ -285,11 +285,16 @@ theorem rendering_requires_the_fmt_module {names : List String} {imports : Impor
 
 /-- The three capabilities cannot be obtained from each other, or from the
 older modules — card `UNSAFE-LINKAGE`'s waiver included: each row holds every
-module except the one it needs. -/
+module except the one it needs.
+
+Card `STD-BUFFER` grew the registry to seven, and each row grew with it: the
+new `std.buffer` column is `true` here, so the theorem still says what it says
+— *every* other module held, and still refused. Its name and meaning are
+unchanged and the claim is strictly stronger than before. -/
 theorem no_module_substitutes_for_another :
-    admitsPrint ⟨true, true, true, true, false, true⟩ true = false
-      ∧ admitsLog ⟨true, true, true, true, true, false⟩ true = false
-      ∧ admitsRendering ⟨true, true, true, false, true, true⟩ true = false :=
+    admitsPrint ⟨true, true, true, true, false, true, true⟩ true = false
+      ∧ admitsLog ⟨true, true, true, true, true, false, true⟩ true = false
+      ∧ admitsRendering ⟨true, true, true, false, true, true, true⟩ true = false :=
   ⟨rfl, rfl, rfl⟩
 
 end QCore.StdIo

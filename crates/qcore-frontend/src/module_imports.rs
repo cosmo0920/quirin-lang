@@ -5,8 +5,8 @@ use crate::frontend::{
 use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
-    CONCURRENCY_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE, LOGGER_MODULE, ModuleImports,
-    UNCHECKED_EXTERN_MODULE,
+    BUFFER_MODULE, CONCURRENCY_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE, LOGGER_MODULE,
+    ModuleImports, UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -101,6 +101,25 @@ pub fn check_source_imports(
         && let Some(span) = crate::source_std_io::rendering_span(program)
     {
         return Err(vec![missing_import(span, FMT_MODULE, "naming a rendering")]);
+    }
+    // Card `STD-BUFFER`, on exactly the same terms as the three above: acquiring
+    // an owned byte buffer, indexing into one, reading its extent or releasing
+    // one is gated by `std.buffer` and by no other module. `std.io` never grants
+    // it and it never grants `std.io`, so a module that both buffers and prints
+    // names both — measured, not assumed.
+    //
+    // `drop NAME;` is deliberately **not** a gated use. `drop` is an established
+    // statement of the language with an established meaning, and gating it here
+    // would make every existing sequential module that drops a resource depend
+    // on a module it never needed.
+    if !imports.buffer()
+        && let Some(span) = crate::source_std_buffer::buffer_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            BUFFER_MODULE,
+            "an owned byte buffer",
+        )]);
     }
     Ok(imports)
 }

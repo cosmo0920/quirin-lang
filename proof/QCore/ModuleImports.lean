@@ -25,10 +25,15 @@ structure Imports where
   /-- Card `STD-MODULES`: writing a level-tagged line to standard error, and
   the `flush` sink-handoff barrier. -/
   logger : Bool := false
+  /-- Card `STD-BUFFER`: acquiring, indexing, measuring or releasing an owned
+  byte buffer. A seventh independent file-local opt-in, granted by no other
+  module and granting none: `std.io` never grants it and it never grants
+  `std.io`. -/
+  buffer : Bool := false
   deriving DecidableEq, Repr
 
 /-- The empty selection: every capability withheld. -/
-def none : Imports := ⟨false, false, false, false, false, false⟩
+def none : Imports := ⟨false, false, false, false, false, false, false⟩
 
 /-- The field one module name sets. Total-or-reject: a name outside the
 registry has no setter, which is what makes `resolve` refuse it. -/
@@ -40,6 +45,7 @@ def setterFor (name : String) : Option (Imports → Imports) :=
   else if name = "std.fmt" then some (fun i => { i with fmt := true })
   else if name = "std.io" then some (fun i => { i with io := true })
   else if name = "std.logger" then some (fun i => { i with logger := true })
+  else if name = "std.buffer" then some (fun i => { i with buffer := true })
   else Option.none
 
 def resolve : List String → Option Imports
@@ -75,6 +81,11 @@ def admitsLog (imports : Imports) (logs : Bool) : Bool :=
 def admitsRendering (imports : Imports) (renders : Bool) : Bool :=
   !renders || imports.fmt
 
+/-- Card `STD-BUFFER`: holding an owned byte buffer is gated by `std.buffer`,
+never by another. -/
+def admitsBuffer (imports : Imports) (buffers : Bool) : Bool :=
+  !buffers || imports.buffer
+
 theorem empty_imports_grant_no_concurrency : resolve [] = some none := rfl
 
 theorem empty_imports_grant_no_extern_calls :
@@ -95,9 +106,10 @@ theorem unknown_module_rejects (name : String) (rest : List String)
     (unknownUncheckedExtern : name ≠ "std.extern.unsafe")
     (unknownFmt : name ≠ "std.fmt")
     (unknownIo : name ≠ "std.io")
-    (unknownLogger : name ≠ "std.logger") : resolve (name :: rest) = Option.none := by
+    (unknownLogger : name ≠ "std.logger")
+    (unknownBuffer : name ≠ "std.buffer") : resolve (name :: rest) = Option.none := by
   simp [resolve, setterFor, unknownConcurrency, unknownExtern,
-    unknownUncheckedExtern, unknownFmt, unknownIo, unknownLogger]
+    unknownUncheckedExtern, unknownFmt, unknownIo, unknownLogger, unknownBuffer]
 
 /-- **The capability-gating theorem.** If resolution enabled a capability, the
 module that owns it was named. Stated once over an arbitrary field and
@@ -137,7 +149,8 @@ private theorem setter_preserves_other_fields
       ∧ (field { i with uncheckedExternCalls := true } = field i ∨ module = "std.extern.unsafe")
       ∧ (field { i with fmt := true } = field i ∨ module = "std.fmt")
       ∧ (field { i with io := true } = field i ∨ module = "std.io")
-      ∧ (field { i with logger := true } = field i ∨ module = "std.logger")) :
+      ∧ (field { i with logger := true } = field i ∨ module = "std.logger")
+      ∧ (field { i with buffer := true } = field i ∨ module = "std.buffer")) :
     ∀ name set, setterFor name = some set → name ≠ module →
       ∀ i, field (set i) = field i := by
   intro name set setter named i
@@ -175,10 +188,16 @@ private theorem setter_preserves_other_fields
           · split at setter
             · next eq => subst eq
                          injection setter with setter; subst setter
-                         rcases (h i).2.2.2.2.2 with p | p
+                         rcases (h i).2.2.2.2.2.1 with p | p
                          · exact p
                          · exact absurd p.symm named
-            · simp at setter
+            · split at setter
+              · next eq => subst eq
+                           injection setter with setter; subst setter
+                           rcases (h i).2.2.2.2.2.2 with p | p
+                           · exact p
+                           · exact absurd p.symm named
+              · simp at setter
 
 theorem admitted_concurrency_requires_import {names : List String} {imports : Imports}
     (resolved : resolve names = some imports) (enabled : imports.concurrency = true) :
@@ -217,35 +236,36 @@ theorem admitted_logging_requires_the_logger_import {names : List String}
   admitted_capability_requires_its_module Imports.logger "std.logger" rfl
     (setter_preserves_other_fields _ _
       (by intro i
-          exact ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl⟩))
+          exact ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inr rfl,
+            Or.inl rfl⟩))
     resolved enabled
 
 theorem the_concurrency_import_alone_grants_no_extern_call :
-    admitsExternCall ⟨true, false, false, false, false, false⟩ true = false := rfl
+    admitsExternCall ⟨true, false, false, false, false, false, false⟩ true = false := rfl
 
 /-- Card `STD-MODULES`: the three new capabilities are mutually independent.
 Importing standard output does not grant the logger, and vice versa. -/
 theorem the_io_import_alone_grants_no_logging :
-    admitsLog ⟨false, false, false, true, true, false⟩ true = false := rfl
+    admitsLog ⟨false, false, false, true, true, false, false⟩ true = false := rfl
 
 theorem the_logger_import_alone_grants_no_output :
-    admitsPrint ⟨false, false, false, true, false, true⟩ true = false := rfl
+    admitsPrint ⟨false, false, false, true, false, true, false⟩ true = false := rfl
 
 /-- `std.fmt` opens no stream: holding it alone admits neither writer. -/
 theorem the_fmt_import_alone_grants_no_stream :
-    admitsPrint ⟨false, false, false, true, false, false⟩ true = false
-      ∧ admitsLog ⟨false, false, false, true, false, false⟩ true = false := ⟨rfl, rfl⟩
+    admitsPrint ⟨false, false, false, true, false, false, false⟩ true = false
+      ∧ admitsLog ⟨false, false, false, true, false, false, false⟩ true = false := ⟨rfl, rfl⟩
 
 /-- Neither writer's module grants the rendering vocabulary. -/
 theorem neither_writer_grants_the_rendering :
-    admitsRendering ⟨false, false, false, false, true, true⟩ true = false := rfl
+    admitsRendering ⟨false, false, false, false, true, true, false⟩ true = false := rfl
 
 /-- Concurrency grants none of the three, so a threaded module gets no free
 output channel. -/
 theorem concurrency_grants_no_output_capability :
-    admitsPrint ⟨true, false, false, false, false, false⟩ true = false
-      ∧ admitsLog ⟨true, false, false, false, false, false⟩ true = false
-      ∧ admitsRendering ⟨true, false, false, false, false, false⟩ true = false :=
+    admitsPrint ⟨true, false, false, false, false, false, false⟩ true = false
+      ∧ admitsLog ⟨true, false, false, false, false, false, false⟩ true = false
+      ∧ admitsRendering ⟨true, false, false, false, false, false, false⟩ true = false :=
   ⟨rfl, rfl, rfl⟩
 
 theorem sequential_code_needs_no_extern_import (imports : Imports) :
@@ -273,12 +293,12 @@ theorem duplicate_io_import_is_idempotent (names : List String) :
 
 theorem both_imports_are_independent :
     resolve ["std.concurrency", "std.extern"] =
-      some ⟨true, true, false, false, false, false⟩ := by
+      some ⟨true, true, false, false, false, false, false⟩ := by
   simp [resolve, setterFor, none]
 
 theorem the_three_std_modules_are_independent :
     resolve ["std.fmt", "std.io", "std.logger"] =
-      some ⟨false, false, false, true, true, true⟩ := by
+      some ⟨false, false, false, true, true, true, false⟩ := by
   simp [resolve, setterFor, none]
 
 /-- Card `UNSAFE-LINKAGE`. The waiver is granted by its own module and by no
@@ -298,16 +318,16 @@ theorem empty_imports_grant_no_unchecked_linkage :
     (resolve []).map Imports.uncheckedExternCalls = some false := rfl
 
 theorem the_extern_import_alone_grants_no_waiver :
-    admitsUncheckedExtern ⟨false, true, false, false, false, false⟩ true = false := rfl
+    admitsUncheckedExtern ⟨false, true, false, false, false, false, false⟩ true = false := rfl
 
 theorem the_waiver_alone_grants_no_extern_call :
-    admitsExternCall ⟨false, false, true, false, false, false⟩ true = false := rfl
+    admitsExternCall ⟨false, false, true, false, false, false, false⟩ true = false := rfl
 
 /-- An unchecked-linkage file names both modules, and naming both grants
 exactly both. -/
 theorem the_two_extern_modules_are_independent :
     resolve ["std.extern", "std.extern.unsafe"] =
-      some ⟨false, true, true, false, false, false⟩ := by
+      some ⟨false, true, true, false, false, false, false⟩ := by
   simp [resolve, setterFor, none]
 
 theorem code_that_waives_nothing_needs_no_waiver_import (imports : Imports) :
@@ -320,9 +340,72 @@ theorem a_near_miss_waiver_spelling_rejects :
   simp [resolve, setterFor]
 
 theorem missing_required_capability_rejects :
-    admits ⟨false, false, false, false, false, false⟩ true = false := rfl
+    admits ⟨false, false, false, false, false, false, false⟩ true = false := rfl
 
 theorem sequential_code_needs_no_concurrency (imports : Imports) :
     admits imports false = true := by simp [admits]
+
+/-! ## Card `STD-BUFFER`: the seventh module
+
+The byte-buffer capability is gated by **the same generic argument** every other
+module is gated by — `admitted_capability_requires_its_module`, instantiated
+once more — so it cannot drift from the six that precede it. -/
+
+theorem empty_imports_grant_no_buffer :
+    (resolve []).map Imports.buffer = some false := rfl
+
+theorem admitted_buffer_requires_its_module {names : List String}
+    {imports : Imports} (resolved : resolve names = some imports)
+    (enabled : imports.buffer = true) : "std.buffer" ∈ names :=
+  admitted_capability_requires_its_module Imports.buffer "std.buffer" rfl
+    (setter_preserves_other_fields _ _
+      (by intro i
+          exact ⟨Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl, Or.inl rfl,
+            Or.inr rfl⟩))
+    resolved enabled
+
+/-- `std.io` never grants the buffer, and `std.buffer` never grants a stream.
+The two capabilities are independent in **both** directions, which is what makes
+"a module that both buffers and prints names both modules" a fact rather than a
+convention. -/
+theorem the_io_import_alone_grants_no_buffer :
+    admitsBuffer ⟨false, false, false, true, true, true, false⟩ true = false := rfl
+
+theorem the_buffer_import_alone_grants_no_stream :
+    admitsPrint ⟨false, false, false, false, false, false, true⟩ true = false
+      ∧ admitsLog ⟨false, false, false, false, false, false, true⟩ true = false
+      ∧ admitsRendering ⟨false, false, false, false, false, false, true⟩ true = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Concurrency grants no buffer either, so a threaded module gets no free
+byte storage any more than it gets a free output channel. -/
+theorem concurrency_grants_no_buffer_capability :
+    admitsBuffer ⟨true, false, false, false, false, false, false⟩ true = false := rfl
+
+/-- The extern modules grant no buffer, which is the registry-level half of the
+route-level statement that a buffer does not cross the extern boundary. -/
+theorem neither_extern_module_grants_the_buffer :
+    admitsBuffer ⟨false, true, true, false, false, false, false⟩ true = false := rfl
+
+theorem code_that_buffers_nothing_needs_no_buffer_import (imports : Imports) :
+    admitsBuffer imports false = true := by simp [admitsBuffer]
+
+theorem duplicate_buffer_import_is_idempotent (names : List String) :
+    resolve ("std.buffer" :: "std.buffer" :: names) = resolve ("std.buffer" :: names) := by
+  simp only [resolve]
+  cases resolve names <;> rfl
+
+/-- Naming the buffer module beside the three output modules grants exactly
+those four, and nothing else. -/
+theorem the_buffer_module_is_independent_of_the_output_modules :
+    resolve ["std.buffer", "std.fmt", "std.io", "std.logger"] =
+      some ⟨false, false, false, true, true, true, true⟩ := by
+  simp [resolve, setterFor, none]
+
+/-- A near-miss spelling refuses: `std.buffer` is one registry entry, and the
+constructor's own spelling (`bytes`) is not a module name at all. -/
+theorem a_near_miss_buffer_spelling_rejects :
+    resolve ["std.buffers"] = Option.none ∧ resolve ["std.bytes"] = Option.none := by
+  constructor <;> simp [resolve, setterFor]
 
 end QCore.ModuleImports

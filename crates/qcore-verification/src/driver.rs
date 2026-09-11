@@ -18,7 +18,10 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
-use qcore_core::{composed_std_io, composed_std_io_c_emit, composed_tasks, std_io, std_io_c_emit};
+use qcore_core::{
+    composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit, std_io,
+    std_io_c_emit,
+};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -179,6 +182,29 @@ pub enum CheckedSourceModule {
     /// backend, the profile classification — reads exactly what the task route
     /// would have handed it.
     ComposedTasks(Box<composed_tasks::CheckedComposedTaskModule>),
+    /// One entry function checked under `source.buffer.v1` (card `STD-BUFFER`):
+    /// a module holding an owned, extent-carrying byte buffer. The certificate
+    /// is the evidence and the lowered program is retained beside it, so a
+    /// consumer can re-derive rather than believe it.
+    StandardBuffer(Box<CheckedBufferModule>),
+}
+
+/// A checked `source.buffer.v1` module (card `STD-BUFFER`).
+///
+/// Like [`CheckedStdIoModule`] this carries no *sequential* evidence, and the
+/// reason is different and worth stating: the entry does bind real resource
+/// identities, but their custody is discharged by
+/// [`qcore_core::ownership::check_ownership`] over the operation list
+/// [`qcore_core::std_buffer::custody_operations`] derives — the same cycle-3
+/// checker the sequential resource-flow bundle runs, reached directly rather
+/// than through a `FunctionSemantics` synthesis this flat route has no
+/// statements to fill. The obligations are therefore discharged, not skipped,
+/// and the certificate names every acquisition with its extent so a reader can
+/// see what was discharged.
+#[derive(Clone, Debug)]
+pub struct CheckedBufferModule {
+    pub lowered: qcore_frontend::source_std_buffer::LoweredBufferModule,
+    pub certificate: std_buffer::BufferCertificate,
 }
 
 /// A checked `source.std-io.v1` module.
@@ -269,7 +295,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
         }
     }
 
@@ -286,7 +313,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -300,7 +328,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -317,7 +346,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -331,7 +361,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -345,7 +376,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -359,7 +391,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -378,7 +411,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -398,8 +432,25 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
+            | Self::StandardBuffer(_)
             | Self::Composed(_) => None,
             Self::ComposedTasks(module) => Some(module),
+        }
+    }
+
+    /// The checked byte-buffer evidence (card `STD-BUFFER`).
+    pub fn as_standard_buffer(&self) -> Option<&CheckedBufferModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_)
+            | Self::Composed(_)
+            | Self::ComposedTasks(_) => None,
+            Self::StandardBuffer(module) => Some(module),
         }
     }
 
@@ -428,6 +479,9 @@ impl CheckedSourceModule {
             // A composed task module's workers *are* checked bodies, so the
             // count is the task module's, exactly as on the scoped-task route.
             Self::ComposedTasks(module) => module.tasks().module().functions.len(),
+            // And likewise for the byte buffer: one flat entry is lowered, and
+            // the profile admits no calls at all.
+            Self::StandardBuffer(_) => 1,
         }
     }
 }
@@ -472,6 +526,19 @@ pub enum SourceExecutionProfile {
     /// bundled modules (card `STD-MODULES`). The route's operand grammar admits
     /// no resource, so its derived effect row is exactly `{Io}`.
     StandardIoV1,
+    /// `source.buffer.v1`: a flat sequential entry holding an owned,
+    /// extent-carrying byte buffer behind the `std.buffer` bundled module (card
+    /// `STD-BUFFER`). Unlike `StandardIoV1` this route's grammar **does** admit
+    /// a resource, so its derived effect row carries `Alloc` and `Mut`. The
+    /// extern route derives those two as well, but from a **declared
+    /// contract**'s projections — `Alloc` when the contract says the callee
+    /// acquires — whereas here they follow from an acquisition and a store this
+    /// route checks and discharges itself. Every index is a
+    /// check-time constant, every custody refusal is
+    /// `qcore_core::ownership`'s, and the emitted C is self-contained
+    /// (`calloc`/`free` plus two bounds-checked accessors) with no boundary of
+    /// any kind.
+    StandardBufferV1,
     /// `source.std-io-extern.v1`: the checked composition of
     /// `source.extern-call.v1` and `source.std-io.v1` in one entry (card
     /// `STD-IO-COMPOSE`). Both models check their own half unmodified and the
@@ -748,6 +815,28 @@ pub fn compile_files_with_registry(
     // composition is no longer a refusal: card `STD-IO-COMPOSE` routes it above,
     // and reaching this line means the module uses this route's statements and
     // no extern call.
+    // Card `STD-BUFFER`, selected after the extern route above and before the
+    // standard-IO route below. Both neighbours are deliberate:
+    //
+    // * **After the extern route**, so a module that both allocates a buffer and
+    //   calls a declared extern function stays with the extern route and keeps
+    //   that route's existing refusal for the statements it does not model. That
+    //   is the answer to "does a buffer cross the extern boundary" — no, and the
+    //   refusal is an *existing* route's rather than a new one this card wrote.
+    //   A C04 pointer is an extentless `u8` projection, so admitting the
+    //   crossing would discard the extent this route carries and replace it with
+    //   a premise (`STD-BUFFER-EXTERN`).
+    // * **Before the standard-IO route**, so a module that both buffers and
+    //   prints reaches this route, which models both — its line-producing events
+    //   are `source.std-io.v1`'s own, read by that route's own reader and
+    //   rendered by that route's own emitter. A module that only prints fails
+    //   this conjunction and falls through byte for byte.
+    //
+    // Every concurrent route is selected above both, so a module that buffers
+    // and spawns never reaches here and keeps its `Q600`.
+    if qcore_frontend::source_std_buffer::has_source_buffer(&parsed) {
+        return compile_buffer_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -3912,6 +4001,111 @@ fn compile_std_io_source(
         // carried on `extern_observation` beside the extern route's own trace
         // rather than on the sequential cleanup field, which models something
         // else entirely.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.buffer.v1` module (card `STD-BUFFER`).
+///
+/// The route emits real, self-contained C and has a real reference execution,
+/// and the two are compared per stream. Its custody obligations are discharged
+/// by the **unedited** `qcore_core::ownership` checker inside
+/// `check_buffer_program`; see [`CheckedBufferModule`] for why that is a
+/// discharge rather than an omission.
+fn compile_buffer_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q051",
+            "entry-free `source.buffer.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_std_buffer::lower_source_buffer(parsed, typed, &entry)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let certificate = std_buffer::check_buffer_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardBuffer,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_buffer::recheck_buffer_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q056",
+            SemanticPass::StandardBuffer,
+            lowered.scope_span,
+            format!("the byte-buffer certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let reference_observation =
+        std_buffer_c_emit::interpret_buffer_program(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q051",
+                    format!("the byte-buffer reference execution refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+    let emission =
+        std_buffer_c_emit::emit_buffer_c11(&lowered.program, &certificate).map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q051",
+                format!("the byte-buffer backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        // The buffers this entry holds are released inside it — the inherited
+        // ownership checker refuses a normal exit that leaves any live — so no
+        // owned result crosses the entry boundary.
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardBuffer(Box::new(CheckedBufferModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::StandardBufferV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream line trace,
+        // carried on `extern_observation` beside the extern route's own trace
+        // rather than on the sequential cleanup field, exactly as
+        // `source.std-io.v1` carries its own.
         reference_observation: None,
         extern_observation: Some(reference_observation),
     })
