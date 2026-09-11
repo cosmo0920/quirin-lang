@@ -102,7 +102,7 @@
             "mtx_lock",
             "mtx_unlock",
             "mtx_destroy",
-            "QCORE_IO_WRITE(stdout, \"grow 1 1 2 0 4\\n\")",
+            "qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, 1, 2, INT64_C(4), \"grow 1 1 2 0 4\")",
             "free(r1)",
             "free(r2)"
           ],

@@ -7,6 +7,10 @@
 //! hand-unpiped twin, identical reference observations, identical refusals and
 //! identical diagnostic spans, and a real consuming call reached through a
 //! pipe whose linearity refusal is the pre-existing one.
+#[cfg(not(target_os = "windows"))]
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
@@ -991,6 +995,8 @@ fn the_native_run_of_a_multi_stage_pipeline_matches_its_reference() {
 
 #[cfg(not(target_os = "windows"))]
 fn run_native_with_callees(source: &str, label: &str) -> Vec<String> {
+    let instrumented = diagnostic_sink::instrument(source);
+    let source = instrumented.as_str();
     use std::process::Command;
     let directory = std::env::temp_dir().join(format!(
         "qcore-pipe-chain-{label}-{}-{}",

@@ -27,6 +27,9 @@ pub use qcore_frontend::check;
 pub mod chunk_contract;
 pub use qcore_core::chunk_lifecycle;
 pub use qcore_core::cleanup_lowering;
+/// Typed diagnostic adapters for native verification harnesses using this facade.
+pub use qcore_core::diagnostic_log_c_emit;
+pub use qcore_core::std_io;
 pub mod cleanup_outcome;
 pub use qcore_contract::contract_loader;
 pub use qcore_contract::contract_observation;

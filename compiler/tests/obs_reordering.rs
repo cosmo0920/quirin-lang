@@ -27,6 +27,9 @@
 //! on observing more than one.
 #![cfg(any(target_os = "linux", target_os = "macos"))]
 
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::composed_tasks::ComposedTaskObservation;
 use qcore_core::obs_reordering::Emitter;
@@ -168,7 +171,13 @@ fn build_sanitized(name: &str, module: &CompiledModule) -> Built {
     fs::create_dir(&directory).unwrap();
     let c = directory.join("fixture.c");
     let executable = directory.join("fixture");
-    fs::write(&c, module.c_source.as_ref().unwrap()).unwrap();
+    let generated = module.c_source.as_deref().unwrap();
+    let generated = if generated.contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE") {
+        generated.to_owned()
+    } else {
+        diagnostic_sink::instrument(generated)
+    };
+    fs::write(&c, generated).unwrap();
 
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));

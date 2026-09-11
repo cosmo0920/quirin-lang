@@ -407,11 +407,13 @@ pub fn emit_mutex_c11(
                         fill_byte(index)
                     )
                     .unwrap(),
+                    // The sum is computed by C; retain the declared endpoint
+                    // as metadata so a typed sink can recover the full range.
                     AccessKind::Read => writeln!(
                         source,
                         "    {{ unsigned long sum = 0;\n      \
                          for (unsigned i = {start}u; i < {end}u; i++) sum += r{resource}[i];\n      \
-                         qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_READ, {resource}, {start}, (int64_t)(sum % 65536UL), (const char *)0); }}"
+                         qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_READ, {resource}, {start}, (int64_t)(sum % 65536UL), \"{end}\"); }}"
                     )
                     .unwrap(),
                     _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
@@ -464,7 +466,9 @@ pub fn emit_mutex_c11(
                     *footprint,
                     *invariant,
                 )?;
-                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, {mutex}, {}, INT64_C({}), \"grow\");", footprint.resource, footprint.end)
+                // Keep the guard and interval start as well as the resource
+                // and endpoint: a sink must not lose part of the growth record.
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, {mutex}, {}, INT64_C({}), \"{}\");", footprint.resource, footprint.end, growth_line(mutex, *guard, *footprint))
                     .unwrap();
             }
             MutexInvariantEvent::DestroyMutex { mutex, .. } => writeln!(

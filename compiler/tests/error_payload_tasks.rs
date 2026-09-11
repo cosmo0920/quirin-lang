@@ -390,10 +390,12 @@ fn emission_moves_the_payload_and_clears_each_stale_copy() {
         1,
         "exactly one take consumes the bound error's payload:\n{source}"
     );
-    // The tagged completion is printed with its generation, distinctly from a
-    // payload-free error.
+    // The typed completion retains its generation and error name, distinctly
+    // from a payload-free error, even with the ordinary quiet sink.
     assert!(
-        source.contains("ERROR_BUFFER %s %\" PRIu64 \"\\n"),
+        source.contains(
+            "result.value.buffer->generation, result.error, qcore_task_error_name(result.error)"
+        ),
         "{source}"
     );
     assert!(

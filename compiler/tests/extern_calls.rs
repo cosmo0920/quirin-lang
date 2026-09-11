@@ -3,6 +3,9 @@
 //!
 //! Every contract fixture here lives under `tests/fixtures/`, never under
 //! `contract/qcore/`, so the pinned corpus counts are untouched by this card.
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
@@ -204,6 +207,12 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
         ("scalar-outcome", declared_outcomes()),
     ] {
         let module = compile_with(&source, selection()).unwrap();
+        let quiet = run_native_status(
+            module.c_source.as_deref().unwrap(),
+            &format!("{label}-quiet"),
+        );
+        assert_eq!(quiet.0, Some(0), "{quiet:?}");
+        assert!(quiet.1.is_empty() && quiet.2.is_empty(), "{quiet:?}");
         let reference = module.extern_observation.clone().unwrap();
         assert_eq!(
             run_native(module.c_source.as_deref().unwrap(), label),
@@ -215,6 +224,8 @@ fn accepted_fixtures_run_natively_against_a_linked_c_implementation() {
 
 #[cfg(not(target_os = "windows"))]
 fn run_native(source: &str, label: &str) -> Vec<String> {
+    let instrumented = diagnostic_sink::instrument(source);
+    let source = instrumented.as_str();
     use std::process::Command;
     let directory = std::env::temp_dir().join(format!(
         "qcore-extern-call-{label}-{}-{}",

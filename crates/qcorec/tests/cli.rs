@@ -4,6 +4,15 @@
 
 use std::process::Command;
 
+#[path = "../../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+fn instrument_file(path: &std::path::Path) {
+    let generated = std::fs::read_to_string(path).unwrap();
+    std::fs::write(path, diagnostic_sink::instrument(&generated)).unwrap();
+}
+
 #[cfg(target_os = "windows")]
 #[path = "../../../tests/support/windows_c.rs"]
 mod windows_c;
@@ -32,7 +41,7 @@ fn cli_windows_emission_recovers_from_second_creation_failure() {
         .unwrap();
     assert!(emitted.status.success(), "{emitted:?}");
     let output = windows_c::run(
-        &std::fs::read_to_string(&c).unwrap(),
+        &diagnostic_sink::instrument(&std::fs::read_to_string(&c).unwrap()),
         Some(&std::fs::read_to_string(fixture.join("create_failure.h")).unwrap()),
         &["-DQCORE_CT_FAIL_CREATE=2".to_owned()],
     );
@@ -72,6 +81,7 @@ fn cli_names_owned_profile_and_emits_real_buffer_transfer() {
         .output()
         .unwrap();
     assert!(emitted.status.success(), "{emitted:?}");
+    instrument_file(&c);
     let compiled = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()))
         .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
         .arg(&c)
@@ -213,6 +223,7 @@ fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block } {
         "{}",
         String::from_utf8_lossy(&emitted.stderr)
     );
+    instrument_file(&c);
     let compiled = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()))
         .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"])
         .arg(&c)
@@ -272,6 +283,7 @@ fn cli_recovery_joins_first_child_after_second_creation_fails() {
         .output()
         .unwrap();
     assert!(emitted.status.success(), "{emitted:?}");
+    instrument_file(&c);
     // An explicit invalid QCORE_CLANG must fail this test, never skip it.
     let mut compiler =
         Command::new(std::env::var_os("QCORE_CLANG").unwrap_or_else(|| "clang".into()));

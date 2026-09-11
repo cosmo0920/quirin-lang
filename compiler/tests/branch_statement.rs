@@ -17,6 +17,9 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 
+#[path = "../../tests/support/sequential_observation.rs"]
+mod sequential_observation;
+
 #[cfg(target_os = "windows")]
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
@@ -546,7 +549,8 @@ fn the_task_route_keeps_its_profile_refusal() {
 #[test]
 fn the_native_run_of_a_branch_matches_its_reference() {
     let module = compile(CONDITIONAL_RELEASE).unwrap();
-    let source = module.c_source.as_deref().unwrap();
+    let instrumented = sequential_observation::instrument(module.c_source.as_deref().unwrap());
+    let source = instrumented.as_str();
     let reference = module.reference_observation.as_ref().unwrap();
 
     #[cfg(target_os = "windows")]
@@ -614,8 +618,8 @@ fn the_native_run_of_a_branch_matches_its_reference() {
     // The fixture declares exactly one error type, so its ABI is that one
     // variant; the harness's output is parsed against it.
     let abi = qcore_compiler::ErrorAbi::new(["Failure".to_owned()]).unwrap();
-    let observed = qcore_compiler::parse_c_observation(&stdout, &abi)
-        .expect("the emitted harness prints a parseable observation");
+    let observed = sequential_observation::parse(&stdout, &abi)
+        .unwrap_or_else(|error| panic!("malformed native observation: {error:?}\n{stdout}"));
     assert_eq!(
         &observed, reference,
         "the compiled program must observe what the reference does"

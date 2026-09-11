@@ -1,6 +1,9 @@
 //! Actual source-to-native ownership transfer. Fault hooks affect only the
 //! requested allocation/thread boundary; they never manufacture checked IR.
 #![cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_core::prelude::concurrency::task_execution::{
     CheckedTaskModule, TaskExecutionScript, execute_task_module, render_task_observation,
@@ -30,7 +33,10 @@ static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
         let (module, output) = native(source, Some(&format!("{TRACK_BUFFER}\n{fault}")));
         matches_reference(&module, &output, vec![created], vec![true]);
         one_buffer_released(&output);
-        assert!(output.stdout.is_empty());
+        assert!(
+            !output.stdout.is_empty(),
+            "the example explicitly selects trace logging"
+        );
         // Card `COMPOSE-CONCURRENCY`: the example now logs on the arm it took,
         // and the rollback arm's marker is on the failed-creation run only.
         // Standard output is unchanged in both runs, which is the half this
@@ -50,6 +56,14 @@ static int fail_create(thrd_t *thread, thrd_start_t worker, void *argument) {
 }
 
 fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule, Output) {
+    native_with_sink(source, header, false)
+}
+
+fn native_with_sink(
+    source: &str,
+    header: Option<&str>,
+    diagnostics: bool,
+) -> (qcore_compiler::CompiledModule, Output) {
     let module = compile_files(
         &[SourceFile::new("owned-tasks.qcore", source)],
         &CompileOptions::default(),
@@ -64,7 +78,13 @@ fn native(source: &str, header: Option<&str>) -> (qcore_compiler::CompiledModule
     fs::create_dir(&directory).unwrap();
     let c = directory.join("module.c");
     let executable = directory.join("module");
-    fs::write(&c, module.c_source.as_ref().unwrap()).unwrap();
+    let generated = module.c_source.as_ref().unwrap();
+    let generated = if diagnostics {
+        diagnostic_sink::instrument(generated)
+    } else {
+        generated.clone()
+    };
+    fs::write(&c, generated).unwrap();
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror"]);
@@ -125,7 +145,19 @@ fn matches_reference(
     .unwrap();
     assert!(output.status.success(), "{output:?}");
     assert!(!render_task_observation(&reference).is_empty());
-    assert!(output.stdout.is_empty());
+    if module
+        .c_source
+        .as_ref()
+        .unwrap()
+        .contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE")
+    {
+        assert_eq!(
+            output.stdout,
+            render_task_observation(&reference).as_bytes()
+        );
+    } else {
+        assert!(output.stdout.is_empty());
+    }
 }
 
 const TRACK_BUFFER: &str = r#"
@@ -328,7 +360,7 @@ fn matches_worker_reference(
 
 #[test]
 fn worker_allocates_fresh_result_and_creator_joins_reads_and_drops_it() {
-    let (module, output) = native(FRESH_WORKER, Some(TRACK_BUFFER));
+    let (module, output) = native_with_sink(FRESH_WORKER, Some(TRACK_BUFFER), true);
     let reference = matches_worker_reference(&module, &output, [(1, vec![true])].into());
     assert_eq!(
         reference.tasks[1].outcome,
@@ -373,7 +405,7 @@ static void *worker_allocate(size_t size, uint64_t task, uint64_t attempt) {{
 #define QCORE_BUFFER_MALLOC_FOR_TASK worker_allocate
 "#
         );
-        let (module, output) = native(WORKER_SECOND_ALLOCATION, Some(&header));
+        let (module, output) = native_with_sink(WORKER_SECOND_ALLOCATION, Some(&header), true);
         let decisions = match failed {
             0 => vec![true, true],
             1 => vec![false],
@@ -471,7 +503,7 @@ static void *allocate_for_task(size_t size, uint64_t task, uint64_t attempt) {{
 "#,
             i32::from(fails)
         );
-        let (module, output) = native(&source, Some(&header));
+        let (module, output) = native_with_sink(&source, Some(&header), true);
         let reference = qcore_core::task_execution::execute_task_module_with_worker_allocations(
             module.checked.as_scoped_tasks().unwrap(),
             &TaskExecutionScript {
@@ -569,7 +601,7 @@ static int checked_create(thrd_t *thread, thrd_start_t worker, void *argument) {
 #define QCORE_BUFFER_MALLOC_FOR_TASK ordered_allocate
 #define QCORE_TASK_CREATE checked_create
 "#;
-    let (module, output) = native(PARALLEL_FRESH_WORKERS, Some(header));
+    let (module, output) = native_with_sink(PARALLEL_FRESH_WORKERS, Some(header), true);
     let reference =
         matches_worker_reference(&module, &output, [(1, vec![true]), (2, vec![true])].into());
     assert_eq!(output.stderr, b"ALLOC_TASK 2\nALLOC_TASK 1\n");

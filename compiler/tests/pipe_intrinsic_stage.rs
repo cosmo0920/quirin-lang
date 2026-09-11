@@ -26,6 +26,10 @@
 //! post-desugaring token stream, so its two call-shaped intrinsics refused
 //! through a pipe while their hand-written twins were admitted. See §4.
 #[cfg(any(target_os = "linux", target_os = "macos"))]
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
@@ -531,7 +535,11 @@ fn the_piped_composed_program_matches_the_reference_per_stream() {
     fs::create_dir(&directory).unwrap();
     let c = directory.join("module.c");
     let executable = directory.join("module");
-    fs::write(&c, module.c_source.as_ref().unwrap()).unwrap();
+    fs::write(
+        &c,
+        diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
+    )
+    .unwrap();
     let mut compiler =
         Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args([

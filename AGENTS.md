@@ -78,7 +78,7 @@ the preceding corpus archives stay frozen):
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **72 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,575 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **95 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave23-c-operations/`; corpus verdicts and leak count unchanged) |
+| Merged gate | 3,580 workspace tests covered (8 ignored; layering failure corrected and rerun) · 122 provider (carried; unchanged) · 193 Python · **95 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/native-observation-repair/`; frozen corpus checkpoint retained) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded

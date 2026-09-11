@@ -185,7 +185,7 @@ fn every_published_example_explicitly_selects_the_system_trace_adapter() {
         assert!(c.contains("QCORE_DIAG_TASK_RESULT"));
         assert!(source.contains("log_level trace;"));
         assert!(c.contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE"));
-        assert!(c.contains("QCORE_IO_WRITE(stdout,"));
+        assert!(c.contains("qcore_diagnostic_stdout(event_pointer)"));
         assert!(
             c.contains("QCORE_IO_WRITE(stderr,"),
             "{name} writes no source line through the shared route"
@@ -421,7 +421,9 @@ fn the_transcript_check_would_notice_a_changed_line() {
     // Otherwise the test above could pass on an empty or truncated extraction.
     let out = documented_transcript("stdout");
     let err = documented_transcript("stderr");
-    assert_eq!(out, "7\n");
+    assert_eq!(out.lines().count(), 8);
+    assert!(out.starts_with("QCORE_TASK_SPAWN 1 0\n"));
+    assert!(out.ends_with("7\nQCORE_TASK_RESULT 0 I32 7\n"));
     assert!(
         err.lines().count() >= 3,
         "extracted stderr transcript is implausibly short: {err:?}"

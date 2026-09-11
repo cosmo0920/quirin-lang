@@ -10,6 +10,10 @@
 //!    every pointer, in every position and every mode, refuses by name.
 //! 3. **Trust is carried.** Every certificate names each uncontracted callee and
 //!    its declared ABI, and no route to a published certificate omits it.
+#[cfg(not(target_os = "windows"))]
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use std::collections::BTreeMap;
 
 use qcore_compiler::{
@@ -591,7 +595,9 @@ fn the_emitted_program_calls_the_real_uncontracted_library() {
             ]
         );
         assert_eq!(
-            run_native(module.c_source.as_deref().unwrap()),
+            run_native(&diagnostic_sink::instrument(
+                module.c_source.as_deref().unwrap()
+            )),
             reference,
             "native and reference observations must agree line for line"
         );

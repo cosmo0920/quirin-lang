@@ -15,8 +15,8 @@
 //! 1. it **checks**, and takes the route its README says it takes;
 //! 2. its emitted C compiles under `-Wall -Wextra -Werror -pedantic` and runs
 //!    clean under ASan/UBSan (and LSan on Linux);
-//! 3. its native stdout and stderr equal, **per stream**, the reference
-//!    execution's projection of the same module; and
+//! 3. with diagnostic logging omitted, its native source-I/O streams equal the
+//!    reference projection; explicit diagnostic transcripts are checked below;
 //! 4. every transcript, refused program and quoted diagnostic in the README is
 //!    extracted from the file and compared with what really happens.
 //!
@@ -220,8 +220,18 @@ fn run_raw(label: &str, c: &str, extra: &[(&str, &str)]) -> (String, String) {
     (out, err)
 }
 
-/// The `out:`/`err:` projections of a route that publishes a two-stream
-/// observation.
+// The source stream observation excludes diagnostic records. Obtain the
+// independent structured extern trace from the checked extern projection.
+fn extern_trace(module: &CompiledModule) -> Vec<String> {
+    let checked = module.checked.as_composed().unwrap();
+    qcore_core::extern_c_emit::interpret_extern_program(
+        &checked.lowered.program.externs,
+        &checked.certificate.externs,
+    )
+    .unwrap()
+}
+
+/// The `out:`/`err:` projections of source-authored I/O.
 fn projections(module: &CompiledModule) -> (Vec<String>, Vec<String>) {
     let observation = module
         .extern_observation
@@ -350,6 +360,8 @@ fn every_stdio_example_prints_through_the_single_emission_route() {
 
 #[test]
 fn the_stdio_examples_match_their_reference_execution_per_stream() {
+    // The documented examples are also run verbatim by the transcript tests.
+    // This comparison selects their source-I/O projection without diagnostics.
     for (label, module, extra) in [
         (
             "renderings",
@@ -364,7 +376,10 @@ fn the_stdio_examples_match_their_reference_execution_per_stream() {
         ("barrier", plain("stdio/barrier.qcore", BARRIER), Vec::new()),
         (
             "pipeline",
-            contracted("stdio/pipeline.qcore", PIPELINE),
+            contracted(
+                "stdio/pipeline.qcore",
+                &PIPELINE.replace("log_level trace;", ""),
+            ),
             vec![("buffer_api.c", BUFFER_API_C)],
         ),
     ] {
@@ -510,7 +525,7 @@ fn the_composed_example_does_not_believe_its_declared_outcomes() {
     // The trace line and the rendering name the same number, which is the
     // `-> N` field's whole purpose.
     let observation = module.extern_observation.as_deref().unwrap();
-    assert!(observation.contains(&"out: value demo_sum v1 b:r1 d:8 -> 56".to_owned()));
+    assert!(extern_trace(&module).contains(&"value demo_sum v1 b:r1 d:8 -> 56".to_owned()));
     assert!(observation.contains(&"out: 56".to_owned()));
     assert!(observation.contains(&"err: [INFO] 112".to_owned()));
     // The hygienic temporary's name reaches neither the C nor the observation.
@@ -608,7 +623,7 @@ fn the_pipes_page_publishes_the_transcripts_its_programs_print() {
 #[test]
 fn an_undeclared_outcome_prints_no_arrow() {
     let stages = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
-    let observation = stages.extern_observation.as_deref().unwrap();
+    let observation = extern_trace(&stages);
     assert!(
         observation
             .iter()
@@ -621,10 +636,7 @@ fn an_undeclared_outcome_prints_no_arrow() {
     // And the neighbouring example that does declare one does print it.
     let declared = contracted("extern/scalar_results.qcore", SCALAR_RESULTS);
     assert!(
-        declared
-            .extern_observation
-            .as_deref()
-            .unwrap()
+        extern_trace(&declared)
             .iter()
             .any(|line| line.ends_with(" -> 56"))
     );
@@ -844,12 +856,12 @@ fn the_extern_examples_check_against_the_published_contract_module() {
         (
             "extern/buffer_round_trip.qcore",
             BUFFER_ROUND_TRIP,
-            SourceExecutionProfile::ExternCallsV1,
+            SourceExecutionProfile::ComposedStdIoExternV1,
         ),
         (
             "extern/scalar_results.qcore",
             SCALAR_RESULTS,
-            SourceExecutionProfile::ExternCallsV1,
+            SourceExecutionProfile::ComposedStdIoExternV1,
         ),
         (
             "extern/borrowed_render.qcore",
@@ -875,19 +887,21 @@ fn the_extern_examples_check_against_the_published_contract_module() {
 
 #[test]
 fn the_extern_examples_match_their_reference_execution() {
+    // Verbatim examples, including their explicit traces, are checked against
+    // the published transcripts below. Here compare their source-I/O streams.
     for (label, source, single_stream) in [
         ("buffer-round-trip", BUFFER_ROUND_TRIP, true),
         ("scalar-results", SCALAR_RESULTS, true),
         ("borrowed-render", BORROWED_RENDER, false),
     ] {
-        let module = contracted(label, source);
+        let module = contracted(label, &source.replace("log_level trace;", ""));
         let (out, err) = run(
             label,
             module.c_source.as_deref().unwrap(),
             &[("buffer_api.c", BUFFER_API_C)],
         );
         if single_stream {
-            assert!(!out.is_empty(), "{label}: explicit trace is missing");
+            assert!(out.is_empty(), "{label}: source has no stdout writes");
             assert!(err.is_empty(), "{label}");
         } else {
             let (expected_out, expected_err) = projections(&module);
@@ -970,7 +984,7 @@ fn a_borrowed_render_after_the_release_refuses() {
     // any byte of the object: `r1` is rendered as `1` and as `0x00000001`.
     let module = contracted("extern/borrowed_render.qcore", BORROWED_RENDER);
     let observation = module.extern_observation.as_deref().unwrap();
-    assert!(observation.contains(&"out: acquire demo_alloc r1 ok".to_owned()));
+    assert!(extern_trace(&module).contains(&"acquire demo_alloc r1 ok".to_owned()));
     assert!(observation.contains(&"out: 1".to_owned()));
     assert!(observation.contains(&"err: [WARN] 0x00000001".to_owned()));
     let checked = module.checked.as_composed().unwrap();

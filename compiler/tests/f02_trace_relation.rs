@@ -13,6 +13,9 @@
 //! replay is not general C refinement.
 #![cfg(target_os = "linux")]
 
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::task_execution::{TaskExecutionScript, execute_task_module};
 use qcore_core::task_trace_relation::{
@@ -37,9 +40,9 @@ const COMPILE_FLAGS: [&str; 7] = [
 ];
 
 /// Digests of the generated C11 for the two selected programs. A change to
-/// emission retires the recorded native evidence rather than silently
-/// reinterpreting it, so updating these is a deliberate act that must be
-/// recorded in `docs/reports/remaining-f02/README.md`.
+/// emission or the explicit diagnostic harness retires the recorded native
+/// evidence rather than silently reinterpreting it. Record each update beside
+/// the frozen reports in a new evidence package.
 // Deliberate pin update at integration (2026-09-08): F02 pinned the emission of
 // its branch point `c60fd91`; the merged tree's generated C additionally
 // carries the T05 write intrinsic surface, the T06 payload ABI and the macOS
@@ -58,8 +61,11 @@ const COMPILE_FLAGS: [&str; 7] = [
 // lines, and the relation was re-verified against fresh native runs in this
 // same commit. This is the third recorded move of these two pins; the record
 // is `docs/reports/wave19-trace-stdio/README.md`.
-const ROUND_TRIP_C_DIGEST: &str = "e33534d5c7da5c6c";
-const CONCURRENT_C_DIGEST: &str = "910e7f975a896ff1";
+// Quiet-emission repair (2026-09-11): these now bind the emitted C plus the
+// explicit typed stdout sink, the exact translation unit executed below.
+// Fresh native evidence: docs/reports/native-observation-repair/native-runs.json.
+const ROUND_TRIP_C_DIGEST: &str = "6524b41d0ccb910f";
+const CONCURRENT_C_DIGEST: &str = "0719a8dcb0192e7e";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
@@ -104,7 +110,7 @@ fn build_and_run(name: &str, source: &str) -> NativeRun {
     )
     .unwrap();
     assert!(module.checked.as_scoped_tasks().is_some());
-    let generated = module.c_source.as_ref().unwrap().clone();
+    let generated = diagnostic_sink::instrument(module.c_source.as_deref().unwrap());
     let directory = std::env::temp_dir().join(format!(
         "qcore-f02-{}-{}",
         std::process::id(),

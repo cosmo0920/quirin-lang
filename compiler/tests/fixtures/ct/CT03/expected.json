@@ -48,9 +48,23 @@
         ],
         "detect_leaks": true,
         "exit_code": 0,
-        "stdout_contains": [],
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_LOAN 2 1\n",
+          "QCORE_BUFFER_READ 1 1 42\n",
+          "QCORE_BUFFER_READ 2 1 42\n"
+        ],
         "stdout_absent": [],
-        "stdout_order": [],
+        "stdout_order": [
+          "QCORE_BUFFER_WRITE 0 1 42",
+          "QCORE_BUFFER_LOAN 1 1",
+          "QCORE_BUFFER_LOAN 2 1",
+          "QCORE_BUFFER_RETURN 1 1",
+          "QCORE_BUFFER_RETURN 2 1",
+          "QCORE_BUFFER_WRITE 0 1 7",
+          "QCORE_BUFFER_READ 0 1 7",
+          "QCORE_BUFFER_DROP 0 1"
+        ],
         "heap_allocations": 1,
         "heap_releases": 1
       },
@@ -67,8 +81,15 @@
         ],
         "detect_leaks": true,
         "exit_code": 0,
-        "stdout_contains": [],
-        "stdout_absent": [],
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_RETURN 1 1\n",
+          "QCORE_TASK_CREATE_FAILED 0\n"
+        ],
+        "stdout_absent": [
+          "QCORE_BUFFER_LOAN 2 1",
+          "QCORE_BUFFER_WRITE 0 1 7"
+        ],
         "stdout_order": [],
         "heap_allocations": 1,
         "heap_releases": 1
@@ -86,8 +107,15 @@
         ],
         "detect_leaks": false,
         "exit_code": 77,
-        "stdout_contains": [],
-        "stdout_absent": [],
+        "stdout_contains": [
+          "QCORE_BUFFER_LOAN 1 1\n",
+          "QCORE_BUFFER_LOAN 2 1\n"
+        ],
+        "stdout_absent": [
+          "QCORE_BUFFER_RETURN",
+          "QCORE_TASK_JOIN",
+          "QCORE_BUFFER_WRITE 0 1 7"
+        ],
         "stdout_order": [],
         "heap_allocations": 1,
         "heap_releases": 0

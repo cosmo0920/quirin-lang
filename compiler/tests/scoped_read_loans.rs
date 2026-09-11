@@ -200,14 +200,14 @@ fn native_read_loan_round_trip_agrees_with_the_reference_execution() {
             .c_source
             .as_ref()
             .unwrap()
-            .contains("QCORE_DIAG_TASK_LOAN")
+            .contains("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LOAN,")
     );
     assert!(
         module
             .c_source
             .as_ref()
             .unwrap()
-            .contains("QCORE_DIAG_TASK_RETURN")
+            .contains("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_RETURN,")
     );
 }
 
@@ -338,7 +338,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
             .c_source
             .as_ref()
             .unwrap()
-            .contains("QCORE_DIAG_TASK_LOAN"),
+            .contains("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LOAN,"),
         "a program that lends nothing announces no loan"
     );
 }

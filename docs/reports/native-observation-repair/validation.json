@@ -1,0 +1,34 @@
+{
+  "platform": "Linux x86_64",
+  "workspace_run": {
+    "command": "cargo test --workspace --no-fail-fast",
+    "exit_code": 101,
+    "passed": 3579,
+    "failed": 1,
+    "ignored": 8,
+    "failures": [
+      "workspace_dependencies_point_strictly_downward"
+    ],
+    "log": "workspace.log.gz"
+  },
+  "final_repairs": {
+    "workspace_dependencies_point_strictly_downward": "Removed the temporary direct CLI core dependency; reused the compiler facade. No dependency rule was changed."
+  },
+  "final_reruns": {
+    "bitwise_conditions": 31,
+    "workspace_layering": 11,
+    "f02_trace_relation": 4,
+    "qcorec_cli": 8,
+    "qcorec_examples_cli": 5
+  },
+  "distinct_workspace_tests_covered_after_repairs": 3580,
+  "unresolved_failures": [],
+  "cargo_fmt_exit_code": 0,
+  "cargo_clippy_exit_code": 0,
+  "reevaluation_probe_exit_code": 0,
+  "reevaluation_followup_exit_code": 0,
+  "python_tests_passed": 193,
+  "lean_audits_passed": 95,
+  "provider_tests": "122 carried from the unchanged package checkpoint; not rerun",
+  "corpus": "Frozen wave-23 checkpoint retained; no corpus re-pin performed"
+}

@@ -23,6 +23,9 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 
+#[path = "../../tests/support/sequential_observation.rs"]
+mod sequential_observation;
+
 #[cfg(target_os = "windows")]
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
@@ -622,7 +625,8 @@ fn the_other_routes_keep_their_refusals_for_the_widened_arms() {
 /// the program's own instrumentation output with the reference observation.
 fn sanitized_run_matches_reference(source: &str, label: &str) {
     let module = compile(source).unwrap_or_else(|errors| panic!("{label}: {errors:?}"));
-    let c_source = module.c_source.as_deref().unwrap();
+    let instrumented = sequential_observation::instrument(module.c_source.as_deref().unwrap());
+    let c_source = instrumented.as_str();
     let reference = module.reference_observation.as_ref().unwrap();
 
     #[cfg(target_os = "windows")]
@@ -688,8 +692,8 @@ fn sanitized_run_matches_reference(source: &str, label: &str) {
     );
     let stdout = String::from_utf8(run.stdout).unwrap();
     let abi = qcore_compiler::ErrorAbi::new(["Failure".to_owned()]).unwrap();
-    let observed = qcore_compiler::parse_c_observation(&stdout, &abi)
-        .expect("the emitted harness prints a parseable observation");
+    let observed = sequential_observation::parse(&stdout, &abi)
+        .unwrap_or_else(|error| panic!("malformed native observation: {error:?}\n{stdout}"));
     assert_eq!(
         &observed, reference,
         "{label}: the compiled program must observe what the reference does"

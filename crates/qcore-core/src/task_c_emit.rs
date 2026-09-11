@@ -379,8 +379,7 @@ pub fn emit_task_c11_with_source_lines(
                             let generation = format!("s_{lent_slot}.value.buffer->generation");
                             writeln!(
                                 source,
-                                "        {}",
-                                format!("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_RETURN, borrower, {generation}, INT64_C(0), (const char *)0);")
+                                "        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_RETURN, borrower, {generation}, INT64_C(0), (const char *)0);"
                             )
                             .unwrap();
                         }
@@ -429,8 +428,7 @@ pub fn emit_task_c11_with_source_lines(
                             let generation = format!("s_{slot}.value.buffer->generation");
                             writeln!(
                                 source,
-                                "        {}",
-                                format!("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LOAN, {borrower}, {generation}, INT64_C(0), (const char *)0);")
+                                "        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LOAN, {borrower}, {generation}, INT64_C(0), (const char *)0);"
                             )
                             .unwrap();
                         }

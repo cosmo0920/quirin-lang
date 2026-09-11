@@ -53,7 +53,7 @@ quirin check examples/unsafe-linkage/unchecked_calls.qcore
 
 <!-- cli: bare -->
 ```text
-checked 1 function(s); entry `main`
+checked 1 function(s); entry `main`; declared extern calls composed with rendered lines (both models checked)
 under 5 declared assumption(s):
   - unchecked linkage: `demo_hidden_effect` is linked as `(uint32_t) -> void` with no contract; nothing about its behavior is checked
   - unchecked linkage: `demo_measure` is linked as `(uint64_t) -> uint64_t` with no contract; nothing about its behavior is checked
@@ -81,7 +81,7 @@ quirin check --native-library examples/unsafe-linkage/unchecked_demo.qcorelib \
 
 <!-- cli: manifest -->
 ```text
-checked 1 function(s); entry `main`
+checked 1 function(s); entry `main`; declared extern calls composed with rendered lines (both models checked)
 under 5 declared assumption(s):
   - unchecked linkage: `demo_hidden_effect` is linked as `(uint32_t) -> void` with no contract, from artifact `libqcore_unchecked_demo.a` of library `qcore_unchecked_demo 0.1.0` at sha256:0000000000000000000000000000000000000000000000000000000000000000, under stated ABI premises (data model lp64, no unwinding across the boundary, closed allocator custody, single-threaded caller); the artifact identity is declared, not verified here, and nothing about the callee's behavior is checked
   - unchecked linkage: `demo_measure` is linked as `(uint64_t) -> uint64_t` with no contract, from artifact `libqcore_unchecked_demo.a` of library `qcore_unchecked_demo 0.1.0` at sha256:0000000000000000000000000000000000000000000000000000000000000000, under stated ABI premises (data model lp64, no unwinding across the boundary, closed allocator custody, single-threaded caller); the artifact identity is declared, not verified here, and nothing about the callee's behavior is checked

@@ -68,6 +68,12 @@
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
+
+#[path = "../../tests/support/mutex_observation.rs"]
+mod mutex_observation;
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -532,11 +538,12 @@ struct HeapScenario {
     /// LeakSanitizer. Disabled only where the retained allocation *is* the
     /// observation; at least one scenario per case must enable it.
     detect_leaks: bool,
-    /// Process exit code. Zero means the run completed, and exactly then its
-    /// stdout must equal the reference observation; a nonzero code is a trapped
-    /// abort whose stdout is a truncated prefix, so such a scenario states what
-    /// must be absent instead.
+    /// Process exit code, checked with both the quiet and diagnostic sinks.
+    /// Zero means the diagnostic run's stdout must equal the reference; a
+    /// nonzero code is a trapped abort with a truncated diagnostic observation.
     exit_code: i32,
+    /// These stdout constraints apply only to the explicit diagnostic sink.
+    /// The ordinary emitted program is separately required to remain quiet.
     stdout_contains: Vec<String>,
     stdout_absent: Vec<String>,
     /// Exact stdout lines that must appear in this relative order.
@@ -3007,7 +3014,7 @@ fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {
                     continue;
                 }
                 assert_eq!(
-                    control_sanitized_run(c, run),
+                    control_sanitized_run(&mutex_observation::instrument(c), run),
                     reference,
                     "{id} control {}: native and reference observations must agree line \
                      for line",
@@ -3850,8 +3857,20 @@ fn run_native_heap_scenarios(
                 )
             }),
         );
-        let output = sanitized_heap_run(
+        let quiet = sanitized_heap_run(
             module.c_source.as_deref().unwrap(),
+            directory,
+            native,
+            scenario,
+        );
+        assert_eq!(quiet.status.code(), Some(scenario.exit_code));
+        assert!(
+            quiet.stdout.is_empty(),
+            "{}: quiet emission wrote diagnostics",
+            expected.id
+        );
+        let output = sanitized_heap_run(
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
             directory,
             native,
             scenario,
@@ -4130,7 +4149,7 @@ fn run_checked_mutex_sanitized(
         );
     }
     assert_eq!(
-        mutex_sanitized_run(c, mutex),
+        mutex_sanitized_run(&mutex_observation::instrument(c), mutex),
         reference,
         "{}: native and reference observations must agree line for line",
         expected.id
@@ -4487,7 +4506,7 @@ fn run_native_create_recovery(
         assert_eq!(actual_children.len(), children);
         assert!(actual_children.iter().all(|task| task.joined));
         let run = native_fault_run(
-            module.c_source.as_deref().unwrap(),
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
             &directory.join(&native.header),
             &format!("-DQCORE_CT_FAIL_CREATE={failed_create}"),
         );
@@ -4553,7 +4572,7 @@ fn run_native_owned_transfer(
             assert!(reference.tasks[1].joined);
         }
         let output = native_fault_run(
-            module.c_source.as_deref().unwrap(),
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
             &directory.join(&native.header),
             if succeeds {
                 "-DQCORE_CT_FAIL_CREATE=0"
@@ -4688,7 +4707,7 @@ fn run_native_task_scenarios(
             continue;
         }
         let output = native_fault_run_defines(
-            module.c_source.as_deref().unwrap(),
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
             &directory.join(&native.header),
             &[
                 format!("-DQCORE_CT_ALLOC_TASK={}", scenario.allocation_task),
