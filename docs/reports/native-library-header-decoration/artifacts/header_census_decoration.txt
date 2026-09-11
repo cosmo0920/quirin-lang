@@ -1,0 +1,200 @@
+# Subset census of card NATIVE-LIBRARY-HEADER-DECORATION, measured by the
+# shipped reader over the pinned Libevent submodule (third_party/libevent,
+# d82464a). Rows and columns are card NATIVE-LIBRARY-HEADER's
+# (docs/reports/wave22-native-library-header/artifacts/header_census.txt):
+# `cand` is every identifier the text writes immediately before a `(`
+# (native_library_header::census_candidates), so the denominator is a
+# statement about the header rather than a curated list.
+#
+# Three blocks. The first is this card's own re-measurement of the wave-22
+# reading; it differs from that card's archived rows in exactly two cells
+# (event2/buffer.h cond 4 -> 2, absent 0 -> 2), because the erasure
+# vocabulary now applies to the unread conditional stream too and `printf`
+# inside `__attribute__((format(printf, 2, 3)))` is no longer counted a
+# conditional-only declaration. The archived wave-22 rows are NOT edited.
+#
+# The second block declares ONE text, event2/visibility.h, and nothing else
+# changes. The third declares event2/util.h as well, and is the fail-closed
+# boundary: util.h carries `#error`, so every header that includes it
+# refuses as a file rather than being read in part.
+#
+# `erasures derived` lists the names the reader concluded are erasable
+# declaration decorations from the declared texts' own `#define`s. No
+# manifest states any of them.
+
+== NO DECLARED INCLUDES (the wave-22 reading) ==
+event2/event.h	cand=70	read=0	unreadable=69	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    reason 69	EVENT2_EXPORT_SYMBOL
+    reason 6	evutil_socket_t
+    reason 4	fd
+    reason 3	event_base
+    reason 2	ev_uint32_t
+    reason 2	event
+    reason 2	event_callback_fn
+    reason 1	FILE
+event2/buffer.h	cand=56	read=0	unreadable=51	unspellable=0	internal=0	unspec=0	variadic=1	ambig=0	macro=0	cond=2	absent=2
+    reason 51	EVENT2_EXPORT_SYMBOL
+    reason 6	ev_off_t
+    reason 6	ev_ssize_t
+    reason 4	flags
+    reason 4	size_t
+    reason 3	evbuffer_ptr
+    reason 3	evutil_socket_t
+    reason 3	fd
+event2/bufferevent.h	cand=65	read=0	unreadable=64	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    reason 64	EVENT2_EXPORT_SYMBOL
+    reason 12	ev_ssize_t
+    reason 4	bufferevent
+    reason 4	evutil_socket_t
+    reason 3	fd
+    reason 2	bufferevent_data_cb
+    reason 2	decr
+    reason 2	ev_token_bucket_cfg
+event2/http.h	cand=122	read=0	unreadable=121	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    reason 121	EVENT2_EXPORT_SYMBOL
+    reason 11	cb
+    reason 9	evhttp_request
+    reason 7	evhttp_connection
+    reason 6	ev_uint16_t
+    reason 6	port
+    reason 5	ev_ssize_t
+    reason 4	evhttp_uri
+event2/dns.h	cand=42	read=0	unreadable=41	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    reason 41	EVENT2_EXPORT_SYMBOL
+    reason 4	evdns_request
+    reason 2	ev_socklen_t
+    reason 2	evdns_server_port
+    reason 2	len
+    reason 1	ev_uint16_t
+    reason 1	evdns_base
+    reason 1	evdns_getaddrinfo_request
+event2/rpc.h	cand=25	read=0	unreadable=25	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 25	EVENT2_EXPORT_SYMBOL
+    reason 7	evbuffer
+    reason 4	cb
+    reason 3	evrpc_status
+    reason 2	EVRPC_HOOK_TYPE
+    reason 2	evrpc_pool
+    reason 2	evrpc_req_generic
+    reason 2	hook_type
+event2/tag.h	cand=20	read=0	unreadable=20	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 20	EVENT2_EXPORT_SYMBOL
+    reason 20	ev_uint32_t
+    reason 6	tag
+    reason 5	need_tag
+    reason 3	ev_uint64_t
+    reason 3	ptag
+    reason 2	integer
+    reason 2	number
+event2/listener.h	cand=9	read=0	unreadable=9	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 9	EVENT2_EXPORT_SYMBOL
+    reason 2	evconnlistener
+    reason 2	evutil_socket_t
+    reason 1	event_base
+    reason 1	fd
+event2/thread.h	cand=9	read=0	unreadable=1	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=8	absent=0
+    reason 1	EVENT2_EXPORT_SYMBOL
+event2/watch.h	cand=5	read=0	unreadable=5	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 5	EVENT2_EXPORT_SYMBOL
+    reason 2	evwatch
+    reason 1	event_base
+event2/util.h	FILE-REFUSED	the header carries `#error`
+
+== visibility.h DECLARED (the derived route) ==
+event2/event.h	cand=70	read=53	unreadable=10	unspellable=6	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 6	evutil_socket_t
+    reason 4	fd
+    reason 2	ev_uint32_t
+    reason 1	FILE
+    reason 1	callback_out
+    reason 1	event_callback_fn
+    reason 1	fd_out
+    reason 1	output
+event2/buffer.h	cand=56	read=25	unreadable=21	unspellable=5	internal=0	unspec=0	variadic=1	ambig=0	macro=0	cond=2	absent=2
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 6	ev_off_t
+    reason 6	ev_ssize_t
+    reason 4	flags
+    reason 3	evbuffer_ptr
+    reason 3	evutil_socket_t
+    reason 3	fd
+    reason 3	length
+    reason 3	offset
+event2/bufferevent.h	cand=65	read=43	unreadable=20	unspellable=1	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 12	ev_ssize_t
+    reason 4	evutil_socket_t
+    reason 3	fd
+    reason 2	bufferevent_data_cb
+    reason 2	decr
+    reason 2	ev_uint64_t
+    reason 1	bufferevent_event_cb
+    reason 1	bufferevent_flush_mode
+event2/http.h	cand=122	read=88	unreadable=31	unspellable=2	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 11	cb
+    reason 8	evhttp_request
+    reason 6	ev_uint16_t
+    reason 6	port
+    reason 5	ev_ssize_t
+    reason 3	evutil_socket_t
+    reason 2	bufferevent
+    reason 2	event_base
+event2/dns.h	cand=42	read=28	unreadable=6	unspellable=7	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 2	ev_socklen_t
+    reason 2	len
+    reason 1	ev_uint16_t
+    reason 1	evdns_server_option
+    reason 1	evutil_socket_t
+    reason 1	filename
+    reason 1	option
+    reason 1	port
+event2/rpc.h	cand=25	read=17	unreadable=8	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 7	evbuffer
+    reason 4	cb
+    reason 3	evrpc_status
+    reason 2	EVRPC_HOOK_TYPE
+    reason 2	evrpc_req_generic
+    reason 2	hook_type
+    reason 2	req_marshal
+    reason 2	rpl_clear
+event2/tag.h	cand=20	read=2	unreadable=18	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 20	ev_uint32_t
+    reason 6	tag
+    reason 5	need_tag
+    reason 3	ev_uint64_t
+    reason 3	ptag
+    reason 2	integer
+    reason 2	number
+    reason 2	pinteger
+event2/listener.h	cand=9	read=4	unreadable=2	unspellable=3	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 2	evutil_socket_t
+    reason 1	fd
+event2/thread.h	cand=9	read=1	unreadable=0	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=8	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+event2/watch.h	cand=5	read=3	unreadable=0	unspellable=2	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+event2/util.h	FILE-REFUSED	the header carries `#error`
+
+== visibility.h + util.h DECLARED ==
+event2/event.h	FILE-REFUSED	the header carries `#error`
+event2/buffer.h	FILE-REFUSED	the header carries `#error`
+event2/bufferevent.h	FILE-REFUSED	the header carries `#error`
+event2/http.h	FILE-REFUSED	the header carries `#error`
+event2/dns.h	FILE-REFUSED	the header carries `#error`
+event2/rpc.h	FILE-REFUSED	the header carries `#error`
+event2/tag.h	FILE-REFUSED	the header carries `#error`
+event2/listener.h	cand=9	read=4	unreadable=2	unspellable=3	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+    reason 2	evutil_socket_t
+    reason 1	fd
+event2/thread.h	cand=9	read=1	unreadable=0	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=8	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+event2/watch.h	cand=5	read=3	unreadable=0	unspellable=2	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    erasures derived: EVENT2_EXPORT_SYMBOL
+event2/util.h	FILE-REFUSED	the header carries `#error`

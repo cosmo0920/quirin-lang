@@ -1833,6 +1833,12 @@ pub enum SemanticPass {
     /// not structurally impossible, because the binding premise is carried
     /// beside the callee premises rather than inside a record another gate
     /// already demands.
+    /// Card `NATIVE-LIBRARY-HEADER-DECORATION` extends `Q063` and allocates
+    /// **no new code**: a declared include text that is not supplied, whose
+    /// digest does not match or that nothing reaches, a text no manifest
+    /// declares, and a decoration macro the reader cannot derive are all the
+    /// same condition — the header binding does not load — reached by a new
+    /// route. Two names for one fact would be a claim a reader cannot check.
     ///
     /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
     /// whether a *signature* may cross a boundary nothing checks, and its

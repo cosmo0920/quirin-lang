@@ -158,10 +158,23 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 let Some(binding) = manifest.header else {
                     continue;
                 };
-                let resolved = path
+                let directory = path
                     .parent()
                     .unwrap_or_else(|| std::path::Path::new("."))
-                    .join(&binding.reference);
+                    .to_owned();
+                // Card `NATIVE-LIBRARY-HEADER-DECORATION`: the texts the header's
+                // own `#include`s are read from resolve the same way, against the
+                // manifest's own directory and with no search — one reference,
+                // one candidate path. They travel in the same map as the header,
+                // keyed by the same kind of reference, because they are the same
+                // kind of input: a text this level reads and identifies.
+                for include in &binding.includes {
+                    let resolved = directory.join(&include.reference);
+                    let text = fs::read_to_string(&resolved)
+                        .map_err(|error| format!("{}: {error}", resolved.display()))?;
+                    headers.insert(include.reference.clone(), text);
+                }
+                let resolved = directory.join(&binding.reference);
                 let header = fs::read_to_string(&resolved)
                     .map_err(|error| format!("{}: {error}", resolved.display()))?;
                 headers.insert(binding.reference, header);
@@ -428,10 +441,34 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
 fn header_clause(residence: &qcore_compiler::native_library::ManifestResidence) -> String {
     match residence.header.as_ref() {
         None => String::new(),
-        Some(header) => format!(
-            "; its exported header `{}` was read at {} and every bound declaration was compared against it — that digest is verified, not declared",
-            header.reference, header.digest
-        ),
+        Some(header) => {
+            // Card `NATIVE-LIBRARY-HEADER-DECORATION`: the spliced texts are
+            // named too, and for the same reason the header is. The reading of a
+            // decorated declaration is a function of *their* bytes as much as of
+            // the header's, so a certificate that named only the header would
+            // publish a statement a recheck could not reproduce.
+            if header.includes.is_empty() {
+                format!(
+                    "; its exported header `{}` was read at {} and every bound declaration was compared against it — that digest is verified, not declared",
+                    header.reference, header.digest
+                )
+            } else {
+                format!(
+                    "; its exported header `{}` was read at {}, reading {}, and every bound declaration was compared against it — those digests are verified, not declared",
+                    header.reference,
+                    header.digest,
+                    header
+                        .includes
+                        .iter()
+                        .map(|include| format!(
+                            "`{}` ({}) at {}",
+                            include.reference, include.spelling, include.digest
+                        ))
+                        .collect::<Vec<_>>()
+                        .join(" and ")
+                )
+            }
+        }
     }
 }
 

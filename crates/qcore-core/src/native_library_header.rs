@@ -42,8 +42,9 @@
 //! * every other conditional region is **not read**, and a bound symbol declared
 //!   only inside one refuses naming that reason rather than passing as
 //!   undeclared;
-//! * `#include` is never followed, so a type that depends on a name defined one
-//!   file away refuses rather than being guessed;
+//! * an `#include` the manifest does not **declare** is never followed, so a
+//!   type that depends on a name defined one file away refuses rather than being
+//!   guessed;
 //! * a directive outside `if`/`ifdef`/`ifndef`/`elif`/`else`/`endif`/`define`/
 //!   `undef`/`include` refuses the whole header.
 //!
@@ -99,6 +100,42 @@
 //! the digest where the bytes are read and this module owns the *rule*, the same
 //! split [`crate::native_library::CustodyShape`] uses. Recorded as
 //! **`HEADER-DIGEST-DRIVER-MEASURED`**.
+//!
+//! # The export decoration: derived, not declared
+//!
+//! Card `NATIVE-LIBRARY-HEADER`'s census measured **0 of 423** Libevent
+//! declarations inside the subset, for one reason: every exported declaration is
+//! written `EVENT2_EXPORT_SYMBOL struct event_base *event_base_new(void);`, and
+//! that macro's `#define` lives in a header the reader did not follow. The
+//! obvious repair — a manifest field listing the names to erase — was declined
+//! there, because it *converts a reader boundary into an unchecked premise about
+//! the header's own text*, which is precisely what this level exists to remove.
+//!
+//! Card `NATIVE-LIBRARY-HEADER-DECORATION` takes the derived route instead, and
+//! the split is exact:
+//!
+//! * a manifest declares **which texts** may be read — each by an `#include`
+//!   spelling, a reference and a digest, identified exactly as the header is
+//!   ([`IncludeIdentity`]). A manifest never says what a text contains;
+//! * the reader **derives from those texts' own `#define`s** which names are
+//!   erasable declaration decorations ([`derive_erasures`]), evaluating no
+//!   condition: a name qualifies only when every one of its definitions is
+//!   object-like and has an erasable body, it is never `#undef`ed, and it is
+//!   defined on **every path** through the conditional structure preceding its
+//!   first use. Whichever arm a consumer's configuration selects, the name is
+//!   defined and its expansion is a decoration;
+//! * the **vocabulary** of erasable bodies is the reader's own, fixed and
+//!   auditable ([`ERASABLE_ATTRIBUTES`]), and admits only decorations that
+//!   change neither the declared type, the parameter vector nor the linkage
+//!   name. A body outside it — `__attribute__((mode(DI)))`, `alias`, `ms_abi` —
+//!   is **not** erased, and the declaration keeps the refusal it already had.
+//!
+//! So no statement of a manifest is believed about a header's contents: the
+//! manifest selects hash-identified texts, and every erasure is a reading of
+//! those texts under a vocabulary this repository publishes. The one premise
+//! that remains is the one card `NATIVE-LIBRARY-HEADER` already carried —
+//! that the supplied bytes are the text the reference names — and it is
+//! discharged the same way, by digest.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -114,6 +151,34 @@ use crate::native_library::{NativeLibraries, NativeLibraryManifest};
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HeaderIdentity {
     /// The header reference, as the manifest spells it.
+    pub reference: String,
+    /// `sha256:` followed by 64 lowercase hex digits, as the manifest spells it.
+    pub digest: String,
+    /// The further texts this header's own `#include` lines are read from (card
+    /// `NATIVE-LIBRARY-HEADER-DECORATION`), each identified exactly as the header
+    /// is.
+    ///
+    /// Empty is the wave-22 world and the default: no `#include` is followed,
+    /// and every name one file away stays unreadable. The set is **closed** —
+    /// an `#include` this manifest does not declare is not followed either — so
+    /// the texts a decision rests on are exactly the texts the certificate
+    /// names.
+    pub includes: Vec<IncludeIdentity>,
+}
+
+/// The identity of one text a header's `#include` is read from.
+///
+/// Three parts, and the separation is the point. The **spelling** is the operand
+/// of the `#include` line as the header writes it, delimiters and all, because
+/// that is the token the reader matches on; the **reference** is where the text
+/// was resolved from, in the same namespace as [`HeaderIdentity::reference`];
+/// the **digest** is measured over the bytes, like the header's and unlike the
+/// artifact's.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct IncludeIdentity {
+    /// `<event2/visibility.h>` or `"local.h"` — the `#include` operand, exactly.
+    pub spelling: String,
+    /// The reference the text is resolved from and supplied under.
     pub reference: String,
     /// `sha256:` followed by 64 lowercase hex digits, as the manifest spells it.
     pub digest: String,
@@ -189,6 +254,36 @@ pub enum HeaderRefusal {
         declared: String,
         measured: String,
     },
+    /// The manifest declares an include text and no text was supplied for that
+    /// reference (card `NATIVE-LIBRARY-HEADER-DECORATION`).
+    IncludeNotSupplied {
+        manifest: String,
+        spelling: String,
+        reference: String,
+    },
+    /// The digest measured over a declared include text is not the digest the
+    /// manifest declares. Decided **before** the text is read, exactly as the
+    /// header's own digest is: a substituted text that would have been read the
+    /// same way is still refused, because the decision must be rederivable from
+    /// the identities a certificate names.
+    IncludeDigestMismatch {
+        manifest: String,
+        spelling: String,
+        reference: String,
+        declared: String,
+        measured: String,
+    },
+    /// A declared include text is never reached: no `#include` of that spelling
+    /// occurs in the header or in any text reached from it. A declared text
+    /// nothing reads is a statement with no effect, and this level's whole
+    /// content is that its statements have effects.
+    IncludeNotReached { manifest: String, spelling: String },
+    /// A text was supplied for a reference no selected manifest declares, while
+    /// the selection binds at least one header. The texts a decision rests on
+    /// are exactly the declared ones, so an undeclared text is refused rather
+    /// than silently ignored — a reader who believed the transport carried only
+    /// declared texts would otherwise be wrong without being told.
+    SourceNotDeclared { reference: String },
     /// The header carries a preprocessing directive v1 does not admit.
     UnsupportedDirective {
         manifest: String,
@@ -303,6 +398,32 @@ impl fmt::Display for HeaderRefusal {
             } => write!(
                 f,
                 "the manifest `{manifest}` declares the exported header `{reference}` at `{declared}`, and the supplied text measures `{measured}`"
+            ),
+            Self::IncludeNotSupplied {
+                manifest,
+                spelling,
+                reference,
+            } => write!(
+                f,
+                "the manifest `{manifest}` declares the include text `{spelling}` at `{reference}`, for which no text was supplied"
+            ),
+            Self::IncludeDigestMismatch {
+                manifest,
+                spelling,
+                reference,
+                declared,
+                measured,
+            } => write!(
+                f,
+                "the manifest `{manifest}` declares the include text `{spelling}` at `{reference}` with digest `{declared}`, and the supplied text measures `{measured}`"
+            ),
+            Self::IncludeNotReached { manifest, spelling } => write!(
+                f,
+                "the manifest `{manifest}` declares the include text `{spelling}`, which no `#include` of the exported header or of a text reached from it names"
+            ),
+            Self::SourceNotDeclared { reference } => write!(
+                f,
+                "a text was supplied for `{reference}`, which no selected manifest declares as its exported header or as one of that header's include texts"
             ),
             Self::UnsupportedDirective {
                 manifest,
@@ -562,7 +683,50 @@ pub fn read_header(
     text: &str,
     symbols: &BTreeSet<&str>,
 ) -> Result<BTreeMap<String, HeaderReading>, HeaderTextRefusal> {
-    let scan = scan_header(text)?;
+    read_header_with_includes(text, &BTreeMap::new(), symbols).map(|readout| readout.readings)
+}
+
+/// What one reading of a header and its declared include texts produced.
+///
+/// The two fields beside the readings are what card
+/// `NATIVE-LIBRARY-HEADER-DECORATION` makes checkable rather than believed:
+/// which declared texts were actually reached, and which names the reader
+/// **derived** to be erasable declaration decorations from those texts' own
+/// `#define`s.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct HeaderReadout {
+    /// What the reader found for each named symbol.
+    pub readings: BTreeMap<String, HeaderReading>,
+    /// The include spellings actually followed, in the order they are declared.
+    pub followed: BTreeSet<String>,
+    /// The names derived to be erasable declaration decorations (§the derivation
+    /// in the module documentation). Every one of them was *read* out of a
+    /// supplied, hash-identified text; none is declared by a manifest.
+    pub erasures: BTreeSet<String>,
+}
+
+/// Read one header, following `#include`s of exactly the supplied spellings.
+///
+/// `included` maps an `#include` operand as the header writes it
+/// (`<event2/visibility.h>`, `"local.h"`) to that text. A spelling not in the map
+/// is **not followed**, exactly as in card `NATIVE-LIBRARY-HEADER`, so a name one
+/// file away stays unreadable rather than guessed. An empty map is that card's
+/// behaviour byte for byte.
+///
+/// # Errors
+///
+/// As [`read_header`]: a directive outside the v1 subset or conditional regions
+/// this reader cannot bracket, in the header **or in any text spliced into it**,
+/// refuse the whole reading — the spliced texts are part of the one text the
+/// reader is reading.
+pub fn read_header_with_includes(
+    text: &str,
+    included: &BTreeMap<String, &str>,
+    symbols: &BTreeSet<&str>,
+) -> Result<HeaderReadout, HeaderTextRefusal> {
+    let scan = scan_header(text, included)?;
+    let followed = scan.followed.clone();
+    let erasures = scan.erasures.clone();
     let texts = scan.tokens.iter().map(String::as_str).collect::<Vec<_>>();
     let typedefs = read_typedefs(&texts);
     let mut readings: BTreeMap<String, HeaderReading> = BTreeMap::new();
@@ -609,7 +773,11 @@ pub fn read_header(
             *entry = HeaderReading::Macro;
         }
     }
-    Ok(readings)
+    Ok(HeaderReadout {
+        readings,
+        followed,
+        erasures,
+    })
 }
 
 /// Every identifier the header text writes immediately before a `(`, at any
@@ -686,6 +854,36 @@ pub fn check_header_bindings(
     libraries: &NativeLibraries,
     sources: &BTreeMap<String, HeaderSource<'_>>,
 ) -> Result<(), HeaderFailure> {
+    // Transport totality (card `NATIVE-LIBRARY-HEADER-DECORATION`). Once the
+    // selection binds a header, the texts this level reads are exactly the
+    // declared ones, and a text supplied for a reference nobody declared is
+    // refused rather than dropped on the floor. The check is gated on a header
+    // being bound so that a selection naming no header stays byte-identical to
+    // card `NATIVE-LIBRARY-HEADER`'s — where supplying an unread text is, and
+    // remains, harmless.
+    let mut declared: BTreeSet<&str> = BTreeSet::new();
+    for (_, manifest) in libraries.manifests() {
+        if let Some(header) = manifest.header.as_ref() {
+            declared.insert(header.reference.as_str());
+            declared.extend(
+                header
+                    .includes
+                    .iter()
+                    .map(|include| include.reference.as_str()),
+            );
+        }
+    }
+    if !declared.is_empty()
+        && let Some(reference) = sources
+            .keys()
+            .find(|reference| !declared.contains(reference.as_str()))
+    {
+        return Err(HeaderFailure::Unreadable(
+            HeaderRefusal::SourceNotDeclared {
+                reference: reference.clone(),
+            },
+        ));
+    }
     for (module, manifest) in libraries.manifests() {
         check_manifest_header(module, manifest, sources)?;
     }
@@ -720,24 +918,62 @@ pub fn check_manifest_header(
             measured: source.measured_digest.to_owned(),
         }));
     }
+    // Card `NATIVE-LIBRARY-HEADER-DECORATION`: each declared include text is
+    // resolved and its digest verified **before** it is read, on the same ground
+    // the header's own digest is — a decision that rests on a text must name
+    // that text by content or it cannot be rederived.
+    let mut included: BTreeMap<String, &str> = BTreeMap::new();
+    for include in &header.includes {
+        let Some(supplied) = sources.get(&include.reference) else {
+            return Err(unreadable(HeaderRefusal::IncludeNotSupplied {
+                manifest: module.to_owned(),
+                spelling: include.spelling.clone(),
+                reference: include.reference.clone(),
+            }));
+        };
+        if supplied.measured_digest != include.digest {
+            return Err(unreadable(HeaderRefusal::IncludeDigestMismatch {
+                manifest: module.to_owned(),
+                spelling: include.spelling.clone(),
+                reference: include.reference.clone(),
+                declared: include.digest.clone(),
+                measured: supplied.measured_digest.to_owned(),
+            }));
+        }
+        included.insert(include.spelling.clone(), supplied.text);
+    }
     let mut symbols: BTreeSet<&str> = BTreeSet::new();
     symbols.extend(manifest.unchecked.keys().map(String::as_str));
     symbols.extend(manifest.contracted.keys().map(String::as_str));
-    let readings = read_header(source.text, &symbols).map_err(|refusal| {
-        unreadable(match refusal {
-            HeaderTextRefusal::UnsupportedDirective { directive } => {
-                HeaderRefusal::UnsupportedDirective {
+    let readout =
+        read_header_with_includes(source.text, &included, &symbols).map_err(|refusal| {
+            unreadable(match refusal {
+                HeaderTextRefusal::UnsupportedDirective { directive } => {
+                    HeaderRefusal::UnsupportedDirective {
+                        manifest: module.to_owned(),
+                        reference: header.reference.clone(),
+                        directive,
+                    }
+                }
+                HeaderTextRefusal::UnbalancedConditional => HeaderRefusal::UnbalancedConditional {
                     manifest: module.to_owned(),
                     reference: header.reference.clone(),
-                    directive,
-                }
-            }
-            HeaderTextRefusal::UnbalancedConditional => HeaderRefusal::UnbalancedConditional {
+                },
+            })
+        })?;
+    // A declared text no `#include` reaches is a statement with no effect, and
+    // this level's content is that its statements have effects. Refusing it is
+    // the same totality argument the contract slice's unresolved binding rests
+    // on (`Q047`), applied to the reader's own inputs.
+    for include in &header.includes {
+        if !readout.followed.contains(&include.spelling) {
+            return Err(unreadable(HeaderRefusal::IncludeNotReached {
                 manifest: module.to_owned(),
-                reference: header.reference.clone(),
-            },
-        })
-    })?;
+                spelling: include.spelling.clone(),
+            }));
+        }
+    }
+    let readings = readout.readings;
     // Both entry kinds are compared identically: what a manifest transcribes is
     // an exported header declaration whichever keyword introduced it, and only
     // the *disposition* of a disagreement ever depended on the kind. Here it
@@ -920,6 +1156,10 @@ fn compare_reading(
 struct HeaderScan {
     /// Tokens of the depth-zero region, in order.
     tokens: Vec<String>,
+    /// The include spellings actually followed.
+    followed: BTreeSet<String>,
+    /// The names derived to be erasable declaration decorations.
+    erasures: BTreeSet<String>,
     /// Identifiers standing immediately before a `(` inside a conditional
     /// region this reader does not read. Only their *presence* is used, and
     /// only to tell a conditional-only declaration from an absent one.
@@ -1086,6 +1326,19 @@ fn directive_of(line: &str) -> Option<(String, String)> {
 /// *feature* conditional that happens to be shaped like a guard: a region with
 /// C tokens outside it is a region, and its contents stay unread.
 fn include_guard(lines: &[&str]) -> Option<String> {
+    include_guard_span(lines).map(|(name, _, _, _)| name)
+}
+
+/// The include guard's name and the three line indices it occupies: the
+/// `#ifndef`, the `#define` and the closing `#endif`.
+///
+/// Splicing a text into another needs the indices, not only the name: the
+/// guarded body *is* the file on this reader's one-pass reading, so a spliced
+/// text contributes its body at the depth of the `#include` that named it rather
+/// than one level deeper — which would put every declaration of every real
+/// third-party header inside an unread conditional region.
+#[allow(clippy::type_complexity)]
+fn include_guard_span(lines: &[&str]) -> Option<(String, usize, usize, usize)> {
     let directives: Vec<(usize, String, String)> = lines
         .iter()
         .enumerate()
@@ -1097,7 +1350,7 @@ fn include_guard(lines: &[&str]) -> Option<String> {
     if first != "ifndef" || name.is_empty() {
         return None;
     }
-    let (_, second, defined) = directives.get(1)?;
+    let (define_line, second, defined) = directives.get(1)?;
     if second != "define"
         || !defined
             .split_whitespace()
@@ -1131,16 +1384,445 @@ fn include_guard(lines: &[&str]) -> Option<String> {
         .enumerate()
         .filter(|(index, _)| *index < *open_line || *index > close_line)
         .all(|(_, line)| line.trim().is_empty());
-    outside_is_empty.then(|| name.clone())
+    outside_is_empty.then(|| (name.clone(), *open_line, *define_line, close_line))
+}
+
+// ---------------------------------------------------------------------------
+// Card `NATIVE-LIBRARY-HEADER-DECORATION`: splicing declared texts, and deriving
+// which names are erasable declaration decorations from what those texts say.
+// ---------------------------------------------------------------------------
+
+/// One text, normalised and with its whole-file include guard removed.
+///
+/// Removing the guard is not an interpretation of a condition: card
+/// `NATIVE-LIBRARY-HEADER` already established that a conditional wrapping an
+/// entire file is true on the reading this reader performs, because it reads the
+/// file once. What is new here is only *where* the body lands — at the depth of
+/// the `#include` that named the text, which is what makes a spliced text's
+/// declarations as readable as the including header's own.
+fn guard_stripped(text: &str) -> Vec<String> {
+    let normalized = normalize(text);
+    let lines: Vec<&str> = normalized.lines().collect();
+    let Some((_, open, define, close)) = include_guard_span(&lines) else {
+        return lines.iter().map(|line| (*line).to_owned()).collect();
+    };
+    lines
+        .iter()
+        .enumerate()
+        .filter(|(index, _)| *index != open && *index != define && *index != close)
+        .map(|(_, line)| (*line).to_owned())
+        .collect()
+}
+
+/// The guard names of a text, so a guard's own `#define` is not read as a macro
+/// definition. Card `NATIVE-LIBRARY-HEADER` excluded the one guard; a spliced
+/// reading has one per text.
+fn guard_name(text: &str) -> Option<String> {
+    let normalized = normalize(text);
+    let lines: Vec<&str> = normalized.lines().collect();
+    include_guard(&lines)
+}
+
+/// How deep a chain of declared `#include`s may nest. Each declared text is
+/// spliced **at most once** — which is what an include guard does, and what
+/// keeps a cycle finite — so this limit is a second, redundant bound.
+const INCLUDE_DEPTH_LIMIT: usize = 16;
+
+/// Splice the declared `#include`s of `text`, and of the texts they reach, into
+/// one line stream.
+///
+/// A spelling in `included` is followed the **first** time it is named and is a
+/// no-op afterwards, which is exactly what the include guard of a real header
+/// does. A spelling the manifest does not declare is **not followed** — the card
+/// `NATIVE-LIBRARY-HEADER` behaviour, unchanged — so every name it would have
+/// supplied stays unreadable.
+fn splice(
+    text: &str,
+    included: &BTreeMap<String, &str>,
+    followed: &mut BTreeSet<String>,
+    guards: &mut BTreeSet<String>,
+    depth: usize,
+) -> Vec<String> {
+    if let Some(name) = guard_name(text) {
+        guards.insert(name);
+    }
+    let mut out = Vec::new();
+    for line in guard_stripped(text) {
+        let spliced = directive_of(&line).and_then(|(keyword, rest)| {
+            (keyword == "include" && depth < INCLUDE_DEPTH_LIMIT)
+                .then(|| included.get_key_value(rest.trim()))
+                .flatten()
+        });
+        match spliced {
+            Some((spelling, inner)) => {
+                let first_time = followed.insert(spelling.clone());
+                if first_time {
+                    out.extend(splice(inner, included, followed, guards, depth + 1));
+                }
+            }
+            None => out.push(line),
+        }
+    }
+    out
+}
+
+/// Attribute names this reader will erase, with the one property that admits
+/// them: **none of them changes the declared type, the parameter vector or the
+/// linkage name** of the declaration it decorates.
+///
+/// This list is the reader's own — auditable, fixed, and in this repository —
+/// and it is the *only* thing a manifest does not supply. What a manifest
+/// supplies is which hash-identified texts to read; which names those texts bind
+/// to this vocabulary is **derived from their own `#define`s**. That split is the
+/// whole argument of card `NATIVE-LIBRARY-HEADER-DECORATION`: an erasure list in
+/// a manifest would be an author's claim about a header's text, and this is a
+/// reading of it.
+///
+/// Everything else refuses by staying in the token stream, where it makes the
+/// declaration unreadable under card `NATIVE-LIBRARY-HEADER`'s existing refusal.
+/// The names deliberately **absent** are the ones that would make erasure a lie:
+/// `mode`, `aligned`, `packed`, `vector_size` and `transparent_union` change the
+/// type; `ms_abi`, `sysv_abi`, `regparm`, `stdcall`, `cdecl` and `fastcall`
+/// change the calling convention; `alias`, `weak`, `weakref`, `constructor` and
+/// `destructor` change what the artifact exports under this name.
+const ERASABLE_ATTRIBUTES: &[&str] = &[
+    "visibility",
+    "dllexport",
+    "dllimport",
+    "deprecated",
+    "unused",
+    "used",
+    "warn_unused_result",
+    "malloc",
+    "nonnull",
+    "format",
+    "always_inline",
+    "noinline",
+    "noreturn",
+    "nothrow",
+    "hot",
+    "cold",
+];
+
+/// The introducers whose parenthesised payload is an attribute list, with the
+/// nesting depth at which that list's **names** stand.
+///
+/// `__attribute__` is written `((…))` and `__declspec` `(…)`, so the names sit
+/// one level deeper in the first. Anything nested deeper than the name level is
+/// an *argument* of an attribute this reader has already committed to
+/// (`format(printf, 2, 3)`), not a second attribute name.
+const ATTRIBUTE_INTRODUCERS: &[(&str, usize)] =
+    &[("__attribute__", 2), ("__attribute", 2), ("__declspec", 1)];
+
+/// A bare decoration keyword that carries no payload and no type.
+const ERASABLE_KEYWORDS: &[&str] = &["__global"];
+
+/// If an erasable decoration starts at `index`, the index just past it.
+///
+/// Returns `None` for anything this reader does not commit to — including an
+/// attribute list carrying a name outside [`ERASABLE_ATTRIBUTES`], which is how
+/// a type-changing attribute refuses instead of being erased.
+fn erasable_decoration_end(tokens: &[&str], index: usize) -> Option<usize> {
+    let head = *tokens.get(index)?;
+    if ERASABLE_KEYWORDS.contains(&head) {
+        return Some(index + 1);
+    }
+    let (_, name_depth) = ATTRIBUTE_INTRODUCERS
+        .iter()
+        .find(|(introducer, _)| *introducer == head)?;
+    if tokens.get(index + 1) != Some(&"(") {
+        return None;
+    }
+    let close = matching_close(tokens, index + 1)?;
+    let mut depth = 0usize;
+    for position in index + 1..close {
+        match tokens[position] {
+            "(" => depth += 1,
+            ")" => depth = depth.saturating_sub(1),
+            token
+                if depth == *name_depth
+                    && is_c_identifier(token)
+                    && matches!(tokens[position - 1], "(" | ",")
+                    && !ERASABLE_ATTRIBUTES.contains(&token) =>
+            {
+                return None;
+            }
+            _ => {}
+        }
+    }
+    Some(close + 1)
+}
+
+/// Whether a `#define` body is a token sequence this reader erases.
+///
+/// `established` carries the names already derived erasable, so a definition
+/// whose body is another such name (`#define A B`) is erasable too. The empty
+/// body is the common case and the base case at once.
+fn erasable_body(tokens: &[String], established: &BTreeSet<String>) -> bool {
+    let borrowed = tokens.iter().map(String::as_str).collect::<Vec<_>>();
+    let mut index = 0usize;
+    while index < borrowed.len() {
+        if established.contains(borrowed[index]) {
+            index += 1;
+            continue;
+        }
+        match erasable_decoration_end(&borrowed, index) {
+            Some(next) => index = next,
+            None => return false,
+        }
+    }
+    true
+}
+
+/// One `#define` of one name, as the derivation needs it.
+struct MacroDefinition {
+    line: usize,
+    /// A function-like macro is never erased: its expansion depends on the
+    /// arguments at each use site, and this reader evaluates no expansion.
+    function_like: bool,
+    body: Vec<String>,
+}
+
+/// Every `#define` and `#undef` of every name in a spliced line stream, plus the
+/// first line on which each name is *used* outside a directive.
+#[derive(Default)]
+struct MacroFacts {
+    defined: BTreeMap<String, Vec<MacroDefinition>>,
+    undefined: BTreeSet<String>,
+    first_use: BTreeMap<String, usize>,
+}
+
+fn macro_facts(lines: &[String], guards: &BTreeSet<String>) -> MacroFacts {
+    let mut facts = MacroFacts::default();
+    for (index, line) in lines.iter().enumerate() {
+        if let Some((keyword, rest)) = directive_of(line) {
+            match keyword.as_str() {
+                "define" => {
+                    let mut tokens = Vec::new();
+                    tokenize_line(&rest, &mut tokens);
+                    let Some(name) = tokens.first().cloned() else {
+                        continue;
+                    };
+                    if guards.contains(&name) || !is_c_identifier(&name) {
+                        continue;
+                    }
+                    // `#define NAME(x)` is function-like only when the `(`
+                    // abuts the name; `#define NAME (x)` defines an object-like
+                    // macro whose body is a parenthesised expression.
+                    let function_like = rest[name.len()..].starts_with('(');
+                    facts
+                        .defined
+                        .entry(name)
+                        .or_default()
+                        .push(MacroDefinition {
+                            line: index,
+                            function_like,
+                            body: tokens[1..].to_vec(),
+                        });
+                }
+                "undef" => {
+                    let mut tokens = Vec::new();
+                    tokenize_line(&rest, &mut tokens);
+                    if let Some(name) = tokens.first() {
+                        facts.undefined.insert(name.clone());
+                    }
+                }
+                _ => {}
+            }
+            continue;
+        }
+        let mut tokens = Vec::new();
+        tokenize_line(line, &mut tokens);
+        for token in tokens {
+            facts.first_use.entry(token).or_insert(index);
+        }
+    }
+    facts
+}
+
+/// Whether `name` is defined on **every path** through `lines[..end]`.
+///
+/// No condition is evaluated and none is guessed. The predicate is structural:
+/// a conditional group establishes definedness only when it has an `#else` — so
+/// that no implicit empty arm escapes — and every one of its arms establishes
+/// it. That is what makes the derivation a reading of the text rather than an
+/// assumption about the build that will consume it: whichever arm a consumer's
+/// configuration selects, the name is defined and its definition is erasable.
+fn defined_on_every_path(lines: &[String], name: &str, end: usize) -> bool {
+    fn region(lines: &[String], name: &str, mut index: usize, end: usize) -> (bool, usize) {
+        let mut defines = false;
+        while index < end {
+            let Some((keyword, rest)) = directive_of(&lines[index]) else {
+                index += 1;
+                continue;
+            };
+            match keyword.as_str() {
+                "if" | "ifdef" | "ifndef" => {
+                    let (group_defines, next) = group(lines, name, index, end);
+                    defines = defines || group_defines;
+                    index = next;
+                }
+                "else" | "elif" | "endif" => break,
+                "define" => {
+                    if rest
+                        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                        .find(|word| !word.is_empty())
+                        == Some(name)
+                    {
+                        defines = true;
+                    }
+                    index += 1;
+                }
+                _ => index += 1,
+            }
+        }
+        (defines, index)
+    }
+
+    fn group(lines: &[String], name: &str, open: usize, end: usize) -> (bool, usize) {
+        let mut index = open + 1;
+        let mut every_arm = true;
+        let mut has_else = false;
+        let mut closed = false;
+        loop {
+            let (arm_defines, next) = region(lines, name, index, end);
+            every_arm = every_arm && arm_defines;
+            index = next;
+            if index >= end {
+                break;
+            }
+            match directive_of(&lines[index])
+                .map(|(keyword, _)| keyword)
+                .unwrap_or_default()
+                .as_str()
+            {
+                "elif" => index += 1,
+                "else" => {
+                    has_else = true;
+                    index += 1;
+                }
+                "endif" => {
+                    closed = true;
+                    index += 1;
+                    break;
+                }
+                _ => break,
+            }
+        }
+        (closed && has_else && every_arm, index)
+    }
+
+    region(lines, name, 0, end).0
+}
+
+/// Derive the erasable declaration decorations of a spliced line stream.
+///
+/// A name qualifies when **all four** hold, and every one of them is read out of
+/// the supplied texts:
+///
+/// 1. every `#define` of it is **object-like** — a function-like macro's
+///    expansion depends on its arguments, which this reader does not evaluate;
+/// 2. every one of those definitions' bodies is in the erasure vocabulary
+///    ([`erasable_body`]);
+/// 3. it is never `#undef`ed, anywhere in the stream;
+/// 4. it is defined on **every path** through the text preceding its first use
+///    ([`defined_on_every_path`]), so no configuration reaches that use with the
+///    name unexpanded.
+///
+/// Under those four, deleting the name from the token stream is *equal to*
+/// expanding it and then deleting the decoration the expansion produced — which
+/// is what [`erase_decorations`] does to a decoration written out in full, and
+/// what the Lean model states.
+///
+/// The rule is a least fixed point so that `#define A B` may stand on a `B`
+/// already derived; the iteration is bounded by the number of names.
+fn derive_erasures(lines: &[String], guards: &BTreeSet<String>) -> BTreeSet<String> {
+    let facts = macro_facts(lines, guards);
+    let mut erasures: BTreeSet<String> = BTreeSet::new();
+    loop {
+        let mut grown = false;
+        for (name, definitions) in &facts.defined {
+            if erasures.contains(name) || facts.undefined.contains(name) {
+                continue;
+            }
+            if definitions
+                .iter()
+                .any(|definition| definition.function_like)
+            {
+                continue;
+            }
+            if !definitions
+                .iter()
+                .all(|definition| erasable_body(&definition.body, &erasures))
+            {
+                continue;
+            }
+            let first_use = facts.first_use.get(name).copied().unwrap_or(lines.len());
+            // A definition after the first use cannot reach it, so the
+            // definedness question is about the prefix only.
+            if definitions
+                .iter()
+                .all(|definition| definition.line >= first_use)
+                || !defined_on_every_path(lines, name, first_use)
+            {
+                continue;
+            }
+            erasures.insert(name.clone());
+            grown = true;
+        }
+        if !grown {
+            return erasures;
+        }
+    }
+}
+
+/// Delete every erasable decoration from a token stream, whether it arrived as a
+/// derived macro name or was written out in full.
+///
+/// Both directions are deleted by the **one** vocabulary, which is what makes
+/// the derived erasure a claim this reader can be held to: a header writing
+/// `__attribute__((visibility("default"))) int f(void);` and a header writing
+/// `EXPORT int f(void);` with an `EXPORT` derived from a declared text read to
+/// exactly the same declaration.
+fn erase_decorations(tokens: &mut Vec<String>, erasures: &BTreeSet<String>) {
+    // One left-to-right pass over one borrowed view. A decoration's extent is a
+    // function of the tokens from its introducer onwards, so removing earlier
+    // ones cannot change where a later one ends — which is what lets the whole
+    // stream be scanned once rather than re-borrowed at every index.
+    let borrowed = tokens.iter().map(String::as_str).collect::<Vec<_>>();
+    let mut kept: Vec<String> = Vec::with_capacity(borrowed.len());
+    let mut index = 0usize;
+    while index < borrowed.len() {
+        if erasures.contains(borrowed[index]) {
+            index += 1;
+            continue;
+        }
+        match erasable_decoration_end(&borrowed, index) {
+            Some(end) => index = end,
+            None => {
+                kept.push(borrowed[index].to_owned());
+                index += 1;
+            }
+        }
+    }
+    *tokens = kept;
 }
 
 /// Read one header's text into the depth-zero token stream plus the two sets
 /// that let a symbol's absence be attributed.
-fn scan_header(text: &str) -> Result<HeaderScan, HeaderTextRefusal> {
-    let normalized = normalize(text);
-    let lines: Vec<&str> = normalized.lines().collect();
-    let guard = include_guard(&lines);
-    let readable_depth = usize::from(guard.is_some());
+fn scan_header(
+    text: &str,
+    included: &BTreeMap<String, &str>,
+) -> Result<HeaderScan, HeaderTextRefusal> {
+    let mut followed: BTreeSet<String> = BTreeSet::new();
+    let mut guards: BTreeSet<String> = BTreeSet::new();
+    // The whole-file include guard of every text — the header's and each spliced
+    // one's — is removed rather than counted as a region, so the readable depth
+    // is zero throughout. Card `NATIVE-LIBRARY-HEADER` obtained the same reading
+    // for the one text by admitting depth one; the argument is that card's,
+    // unchanged, and only the arithmetic moved.
+    let lines = splice(text, included, &mut followed, &mut guards, 0);
+    let erasures = derive_erasures(&lines, &guards);
     let mut depth = 0usize;
     let mut tokens: Vec<String> = Vec::new();
     let mut conditional: Vec<String> = Vec::new();
@@ -1161,7 +1843,7 @@ fn scan_header(text: &str) -> Result<HeaderScan, HeaderTextRefusal> {
                     if let Some(name) = rest
                         .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
                         .find(|w| !w.is_empty())
-                        && guard.as_deref() != Some(name)
+                        && !guards.contains(name)
                     {
                         macros.insert(name.to_owned());
                     }
@@ -1170,7 +1852,7 @@ fn scan_header(text: &str) -> Result<HeaderScan, HeaderTextRefusal> {
             }
             continue;
         }
-        if depth <= readable_depth {
+        if depth == 0 {
             tokenize_line(line, &mut tokens);
         } else {
             tokenize_line(line, &mut conditional);
@@ -1179,6 +1861,8 @@ fn scan_header(text: &str) -> Result<HeaderScan, HeaderTextRefusal> {
     if depth != 0 {
         return Err(HeaderTextRefusal::UnbalancedConditional);
     }
+    erase_decorations(&mut tokens, &erasures);
+    erase_decorations(&mut conditional, &erasures);
     let mut conditional_symbols = BTreeSet::new();
     for index in 0..conditional.len() {
         if conditional.get(index + 1).map(String::as_str) == Some("(")
@@ -1189,6 +1873,8 @@ fn scan_header(text: &str) -> Result<HeaderScan, HeaderTextRefusal> {
     }
     Ok(HeaderScan {
         tokens,
+        followed,
+        erasures,
         conditional_symbols,
         macros,
     })
@@ -1244,7 +1930,18 @@ const QUALIFIERS: &[&str] = &[
 ];
 
 /// Declaration suffixes this reader steps over: they carry no type.
-const SUFFIX_INTRODUCERS: &[&str] = &["__attribute__", "__attribute", "__asm__", "asm", "__asm"];
+///
+/// `__attribute__` and `__attribute` **left this list** in card
+/// `NATIVE-LIBRARY-HEADER-DECORATION`, and that is a strengthening rather than a
+/// loss: they are now erased by the one whitelisted decoration vocabulary
+/// ([`ERASABLE_ATTRIBUTES`]) in *either* position, so a suffix
+/// `__attribute__((mode(DI)))` — which changes the declared type — no longer
+/// steps silently over. What stays here is the asm-label form, which is stepped
+/// over unread and whose residual is recorded as `HEADER-ASM-LABEL-UNREAD`: an
+/// asm label renames the exported symbol, so a manifest binding the source name
+/// would be naming a symbol the artifact does not export. Tightening it is
+/// follow-on `NATIVE-LIBRARY-HEADER-ASM-LABEL`.
+const SUFFIX_INTRODUCERS: &[&str] = &["__asm__", "asm", "__asm"];
 
 /// Identifiers that are reserved words and can never be a type specifier or a
 /// typedef name, so meeting one ends the specifier prefix.
@@ -1521,7 +2218,24 @@ fn read_declaration(
         return None;
     }
     let internal = prefix.contains(&"static");
-    let result = project_declarator(prefix, typedefs, true).ok_or_else(|| prefix.join(" "));
+    // A decoration this reader does not erase stands **immediately before** the
+    // specifier prefix and ends in `)`, which is where the backward walk above
+    // stops. Card `NATIVE-LIBRARY-HEADER-DECORATION` found that it stopped there
+    // *silently*, so `__attribute__((mode(__DI__))) uint8_t *f(…)` was read as
+    // `uint8_t *` — an attribute that changes the declared type, ignored. The
+    // erasable vocabulary is deleted from the token stream before this point, so
+    // anything still standing here is a decoration this reader does not commit
+    // to, and it makes the **result** unreadable by name.
+    //
+    // The result rather than the whole record, deliberately: a fabricated
+    // parameter list would be compared for arity first — the order
+    // [`compare_reading`] uses, which is `check_manifest_agreement`'s — and would
+    // report a *disagreement*, a claim that the header contradicts the manifest,
+    // where the truth is that this reader could not read the declaration.
+    let result = match undecided_decoration(texts, start) {
+        Some(decoration) => Err(decoration),
+        None => project_declarator(prefix, typedefs, true).ok_or_else(|| prefix.join(" ")),
+    };
     let parameters = &texts[index + 2..close];
     if parameters.is_empty() {
         return Some(HeaderDeclaration {
@@ -1578,6 +2292,25 @@ fn read_declaration(
         unspecified: false,
         internal,
     })
+}
+
+/// A decoration ending just before `start` that this reader does not erase.
+///
+/// Returns its spelling so the refusal names the token, exactly as an unreadable
+/// type does. Only the attribute introducers are looked for: a bare identifier
+/// this reader does not know is already walked into the specifier prefix, where
+/// it refuses as an unresolvable typedef name.
+fn undecided_decoration(texts: &[&str], start: usize) -> Option<String> {
+    let close = start.checked_sub(1)?;
+    if *texts.get(close)? != ")" {
+        return None;
+    }
+    let open = matching_open(texts, close)?;
+    let introducer = *texts.get(open.checked_sub(1)?)?;
+    ATTRIBUTE_INTRODUCERS
+        .iter()
+        .any(|(candidate, _)| *candidate == introducer)
+        .then(|| texts[open - 1..=close].join(" "))
 }
 
 fn project_parameter(

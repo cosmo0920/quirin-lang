@@ -100,6 +100,7 @@ import QCore.NativeLibrary
 import QCore.NativeLibraryContract
 import QCore.NativeLibraryHeader
 import QCore.NativeLibrarySourceBinding
+import QCore.NativeLibraryHeaderDecoration
 import QCore.ReasonCategory
 import QCore.ReasonCarrier
 import QCore.SourceRootAdmission

@@ -103,7 +103,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::extern_call::AbiType;
-use crate::native_library_header::HeaderIdentity;
+use crate::native_library_header::{HeaderIdentity, IncludeIdentity};
 
 /// The data model the artifact was built under (§4.4). v1 admits `lp64` only,
 /// which makes `LOADER-ABI-LP64` an explicit statement of the manifest instead
@@ -360,6 +360,25 @@ pub enum ManifestRefusal {
     /// An entry's parameter is declared `unit`, which the ABI vocabulary admits
     /// as a result type only.
     UnitParameterInEntry { symbol: String, parameter: usize },
+    /// An `include` statement is not
+    /// `include SPELLING from REFERENCE HASH` (card
+    /// `NATIVE-LIBRARY-HEADER-DECORATION`).
+    MalformedIncludeBinding { statement: String },
+    /// An `include` statement's spelling is not `<…>` or `"…"` around a
+    /// non-empty whitespace-free body. The spelling is matched against the
+    /// header's own `#include` operand **exactly**, so a spelling that cannot be
+    /// one is refused rather than repaired into shape — constraint 11's
+    /// discipline, applied to a fourth kind of spelled name.
+    MalformedIncludeSpelling { spelling: String },
+    /// Two `include` statements declare the same spelling. The spelling is the
+    /// key a `#include` line is matched on, so two texts for one spelling have
+    /// no defined meaning.
+    IncludeBoundTwice { spelling: String },
+    /// A manifest declares an `include` text and names no `header`. The declared
+    /// texts exist only to be read *into* the exported header, so one without a
+    /// header names a text nothing reads — a statement with no effect, refused
+    /// rather than ignored.
+    IncludeWithoutHeader { spelling: String },
     /// Two entries bind the same symbol.
     SymbolBoundTwice { symbol: String },
     /// The manifest binds no symbol at all. An artifact identity that names
@@ -432,6 +451,21 @@ impl fmt::Display for ManifestRefusal {
                 f,
                 "entry `{symbol}` declares parameter {parameter} as `void`"
             ),
+            Self::MalformedIncludeBinding { statement } => write!(
+                f,
+                "the statement `{statement}` is not `include SPELLING from REFERENCE HASH`; a declared include text names the `#include` operand it stands for, the reference it is read from, and its digest"
+            ),
+            Self::MalformedIncludeSpelling { spelling } => write!(
+                f,
+                "the include spelling `{spelling}` is not `<…>` or `\"…\"` around a non-empty reference without whitespace"
+            ),
+            Self::IncludeBoundTwice { spelling } => {
+                write!(f, "two include statements declare `{spelling}`")
+            }
+            Self::IncludeWithoutHeader { spelling } => write!(
+                f,
+                "the manifest declares the include text `{spelling}` and names no `header`, so nothing would read it"
+            ),
             Self::SymbolBoundTwice { symbol } => {
                 write!(f, "the symbol `{symbol}` is bound by two entries")
             }
@@ -461,6 +495,64 @@ const MANDATORY_FIELDS: [&str; 8] = [
 /// field — an identity missing a field is not a weaker identity, it is an
 /// unusable one.
 const HEADER_BINDING_FIELDS: [&str; 2] = ["header", "header_hash"];
+
+/// Read one `include SPELLING from REFERENCE HASH` statement's body (card
+/// `NATIVE-LIBRARY-HEADER-DECORATION`).
+///
+/// The `from` tail is the contract slice entry's keyword, reused for the same
+/// reason: a statement that names two references names which is which rather
+/// than relying on position. The **spelling** is the operand of the header's own
+/// `#include` line, delimiters and all (`<event2/visibility.h>`), because that is
+/// the token a reader matches against; the **reference** is where the text is
+/// resolved from, in the same namespace as `header`. Keeping them apart is what
+/// stops a manifest from having to restate a library's include layout, and what
+/// lets a certificate name the text by the path it was read from.
+fn parse_include_binding(rest: &str, statement: &str) -> Result<IncludeIdentity, ManifestRefusal> {
+    let malformed = || ManifestRefusal::MalformedIncludeBinding {
+        statement: statement.to_owned(),
+    };
+    let (spelling, tail) = rest.split_once(char::is_whitespace).ok_or_else(malformed)?;
+    let tail = tail.trim();
+    let body = tail.strip_prefix("from ").ok_or_else(malformed)?;
+    let (reference, digest) = body
+        .trim()
+        .split_once(char::is_whitespace)
+        .ok_or_else(malformed)?;
+    let digest = digest.trim();
+    if !well_formed_include_spelling(spelling) {
+        return Err(ManifestRefusal::MalformedIncludeSpelling {
+            spelling: spelling.to_owned(),
+        });
+    }
+    if !well_formed_value(reference) {
+        return Err(ManifestRefusal::MalformedValue {
+            field: "include".to_owned(),
+            value: reference.to_owned(),
+        });
+    }
+    if !well_formed_hash(digest) {
+        return Err(ManifestRefusal::MalformedHash {
+            hash: digest.to_owned(),
+        });
+    }
+    Ok(IncludeIdentity {
+        spelling: spelling.to_owned(),
+        reference: reference.to_owned(),
+        digest: digest.to_owned(),
+    })
+}
+
+/// Whether an include spelling is `<…>` or `"…"` around a non-empty body with no
+/// whitespace. The delimiters are part of the spelling because the header writes
+/// them, and `<x.h>` and `"x.h"` are two different `#include` lines.
+fn well_formed_include_spelling(spelling: &str) -> bool {
+    let body = match (spelling.strip_prefix('<'), spelling.strip_prefix('"')) {
+        (Some(rest), None) => rest.strip_suffix('>'),
+        (None, Some(rest)) => rest.strip_suffix('"'),
+        _ => None,
+    };
+    body.is_some_and(well_formed_value)
+}
 
 /// The manifest's selector marker, which must be its first statement.
 const MARKER: &str = "native_library manifest v1";
@@ -725,6 +817,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
     let mut fields: BTreeMap<String, String> = BTreeMap::new();
     let mut unchecked: BTreeMap<String, UncheckedEntry> = BTreeMap::new();
     let mut contracted: BTreeMap<String, ContractedEntry> = BTreeMap::new();
+    let mut includes: BTreeMap<String, IncludeIdentity> = BTreeMap::new();
     for statement in iterator {
         if statement.is_empty() {
             continue;
@@ -770,6 +863,20 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
                 }
                 contracted.insert(entry.symbol.clone(), entry);
             }
+            // Card `NATIVE-LIBRARY-HEADER-DECORATION`: the texts the exported
+            // header's own `#include` lines may be read from. Each is
+            // hash-identified exactly as the header is, and the set is closed —
+            // an `#include` this manifest does not declare is not followed, and
+            // stays exactly as unreadable as it was before this card.
+            "include" => {
+                let binding = parse_include_binding(rest, statement)?;
+                if includes.contains_key(&binding.spelling) {
+                    return Err(ManifestRefusal::IncludeBoundTwice {
+                        spelling: binding.spelling,
+                    });
+                }
+                includes.insert(binding.spelling.clone(), binding);
+            }
             field
                 if MANDATORY_FIELDS.contains(&field) || HEADER_BINDING_FIELDS.contains(&field) =>
             {
@@ -813,6 +920,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             Some(HeaderIdentity {
                 reference: reference.clone(),
                 digest: digest.clone(),
+                includes: includes.values().cloned().collect(),
             })
         }
         (Some(_), None) => {
@@ -822,6 +930,16 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
         }
         (None, Some(_)) => return Err(ManifestRefusal::MissingField { field: "header" }),
     };
+    // A declared include text is read *into* the exported header. Declaring one
+    // without a header would name a text nothing opens, and a manifest statement
+    // with no effect is a statement a reader would be entitled to believe.
+    if header.is_none()
+        && let Some((spelling, _)) = includes.iter().next()
+    {
+        return Err(ManifestRefusal::IncludeWithoutHeader {
+            spelling: spelling.clone(),
+        });
+    }
     let value = |field: &str| fields.get(field).expect("every field is present").clone();
     let hash = value("hash");
     if !well_formed_hash(&hash) {
