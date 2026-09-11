@@ -395,3 +395,106 @@ fn the_cli_prints_the_artifact_a_waiver_was_waived_from() {
     );
     std::fs::remove_file(&broken).unwrap();
 }
+
+/// Card `NATIVE-LIBRARY-HEADER`. A manifest may name its **exported header**,
+/// and the CLI resolves that reference against the manifest's own directory —
+/// one candidate path, no search, no fallback (`HEADER-CLI-RELATIVE`). The
+/// manifest is the only anchor this binary has for a reference the manifest
+/// itself spelled, and a search would make two byte-identical manifests mean
+/// different things depending on where they were invoked from.
+///
+/// Three rows: the level reachable through the shipped binary and printing a
+/// **verified** identity beside the declared ones; a header that contradicts
+/// the manifest refusing rather than withdrawing; and a named header nobody can
+/// open reported as the `open` failure it is rather than as a binding this
+/// driver silently dropped.
+#[test]
+fn the_cli_reads_the_exported_header_a_manifest_names() {
+    let fixtures =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
+    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
+    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qcorelib"))
+        .expect("the wave-19 fixture manifest is readable");
+
+    let directory = std::env::temp_dir().join(format!("qcore-header-cli-{}", std::process::id()));
+    std::fs::create_dir_all(directory.join("include")).unwrap();
+    let manifest = directory.join("demo.qcorelib");
+    let header = directory.join("include/demo.h");
+
+    let declarations = "#ifndef DEMO_H\n\
+                        #define DEMO_H\n\
+                        #include <stdint.h>\n\
+                        int32_t k_unchecked_add(int32_t left, int32_t right);\n\
+                        void k_unchecked_side_effect(uint32_t value);\n\
+                        uint64_t k_unchecked_measure(uint64_t value);\n\
+                        #endif\n";
+    let write = |text: &str| {
+        std::fs::write(&header, text).unwrap();
+        // The digest the manifest states is measured over exactly the bytes the
+        // decision is taken on, which is why it can honestly be *verified*
+        // where the artifact hash beside it is only pinned.
+        let digest = qcore_compiler::digest::sha256_hex(text.as_bytes());
+        std::fs::write(
+            &manifest,
+            base.replace(
+                "thread_posture single_caller;",
+                &format!(
+                    "thread_posture single_caller;\nheader include/demo.h;\nheader_hash sha256:{digest};"
+                ),
+            ),
+        )
+        .unwrap();
+    };
+    let check = || {
+        Command::new(env!("CARGO_BIN_EXE_quirin"))
+            .arg("check")
+            .arg("--native-library")
+            .arg(&manifest)
+            .arg(&source)
+            .output()
+            .unwrap()
+    };
+
+    // 1. The header agrees: accepted, and the premise names it as read.
+    write(declarations);
+    let agreed = check();
+    assert!(agreed.status.success(), "{agreed:?}");
+    let agreed = String::from_utf8_lossy(&agreed.stdout).into_owned();
+    assert!(
+        agreed.contains("its exported header `include/demo.h` was read at sha256:"),
+        "{agreed}"
+    );
+    assert!(
+        agreed.contains("that digest is verified, not declared"),
+        "the two kinds of identity in one premise must be distinguishable: {agreed}"
+    );
+    // And the artifact identity beside it says what it is, unchanged.
+    assert!(
+        agreed.contains("the artifact identity is declared, not verified here"),
+        "{agreed}"
+    );
+
+    // 2. One projection moved in the header: refused, not withdrawn.
+    write(&declarations.replace(
+        "int32_t k_unchecked_add(int32_t left, int32_t right);",
+        "int64_t k_unchecked_add(int32_t left, int32_t right);",
+    ));
+    let refused = check();
+    assert!(!refused.status.success(), "{refused:?}");
+    let refused = String::from_utf8_lossy(&refused.stderr).into_owned();
+    assert!(refused.contains("Q052"), "{refused}");
+    assert!(refused.contains("k_unchecked_add"), "{refused}");
+
+    // 3. A named header nobody can open is the `open` failure, reported as
+    //    itself rather than as a binding this driver silently dropped.
+    write(declarations);
+    std::fs::remove_file(&header).unwrap();
+    let missing = check();
+    assert!(!missing.status.success(), "{missing:?}");
+    assert!(
+        String::from_utf8_lossy(&missing.stderr).contains("include/demo.h"),
+        "{missing:?}"
+    );
+
+    std::fs::remove_dir_all(&directory).unwrap();
+}

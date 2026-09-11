@@ -48,7 +48,7 @@ honest here and would not have been for the artifact.
 | Diagnostics | a **third band** for `NativeLibrary`, `Q051`–`Q052`, and a deliberately unallocated third code |
 | New reserved words | **none.** A manifest is not source and neither is a header (§9) |
 | `qcore-schemas` | **untouched at 14.0.0** — no provider rebuild |
-| Evidence | 66 new Rust tests (49 core unit, 17 route) and **31 audited Lean theorems** in a new `QCore.NativeLibraryHeader`, no new axiom |
+| Evidence | 67 new Rust tests (49 core unit, 17 route, 1 CLI process) and **31 audited Lean theorems** in a new `QCore.NativeLibraryHeader`, no new axiom |
 | Census | §6: **0 of 423** Libevent candidates inside the subset, for one named reason; **13 of 15** in ChunkIO's `chunkio.h`, for the absence of that reason |
 
 **Nothing is promoted.** The header level can only refuse: it admits no symbol
@@ -465,8 +465,11 @@ Two smaller recorded decisions:
   reference the manifest itself spelled, and a search would make two
   byte-identical manifests mean different things depending on where they were
   invoked from. Without this the level would be unreachable through the shipped
-  binary; with it, `quirin --native-library` uses it. (The L3 *contract* premise
-  is still unreachable there — `UNSAFE-LINKAGE-CLI` is unchanged.)
+  binary; with it, `quirin --native-library` uses it, and a CLI process test
+  pins all three outcomes — accepted with the verified identity printed, a
+  contradicting header refused at `Q052`, and a named header nobody can open
+  reported as the `open` failure it is. (The L3 *contract* premise is still
+  unreachable there — `UNSAFE-LINKAGE-CLI` is unchanged.)
 * **`HEADER-FIXTURE-EOL-NORMALISED`.** The fixture manifest pins the fixture
   header's SHA-256, and a checkout that translated line endings would hand the
   test different bytes for the same file. The test normalises before supplying
@@ -583,10 +586,11 @@ level.
 
 | Check | Result |
 |---|---|
-| `cargo test` over all ten workspace members | **3,409 passed, 8 ignored**, one failure: the recorded constraint-16 load flake, re-verified green in isolation (§13.1) |
+| `cargo test` over all ten workspace members | **3,410 passed, 8 ignored**, one failure: the recorded constraint-16 load flake, re-verified green in isolation (§13.1) |
 | `crates/qcore-core` unit `native_library_header` (new) | 49 passed |
 | `crates/qcore-core` unit `native_library` (waves 19–20) | 46 passed, unchanged |
 | `compiler/tests/native_library_header.rs` (new) | 17 passed |
+| `crates/qcorec/tests/cli.rs::the_cli_reads_the_exported_header_a_manifest_names` (new) | 1 passed |
 | `compiler/tests/native_library_contract.rs` (wave 20) | 15 passed, unchanged |
 | `compiler/tests/native_library.rs` (wave 19) | 16 passed, unchanged |
 | `compiler/tests/unsafe_linkage.rs` (wave 18) | 28 passed, unchanged |
@@ -605,7 +609,7 @@ exceeds the harness's foreground budget under the load of five sibling
 worktrees, so the suite was run in four package groups —
 `qcore-core`/`-schemas`/`-frontend`/`-contract` (1,151),
 `qcore-c-gateway`/`-audit`/`-verification` (1,265),
-`qcore-compiler`/`qcorec` (881), `qcore-verifier-host` (112) — whose union is
+`qcore-compiler`/`qcorec` (882), `qcore-verifier-host` (112) — whose union is
 exactly the ten workspace members. No test was skipped, filtered or weakened;
 only the process boundaries differ, and the ignored count (8) matches the
 standing ledger and is unchanged by this card.
