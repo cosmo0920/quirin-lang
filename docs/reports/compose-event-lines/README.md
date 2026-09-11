@@ -365,13 +365,55 @@ comparable with a quiet run.
 
 | Step | Result |
 |---|---|
-| `cargo test --workspace` | GATE_WORKSPACE |
+| `git submodule update --init --recursive` | run in this fresh worktree — see §12.2 |
+| `cargo test --workspace --no-fail-fast` | **3,613 passed, 0 failed, 8 ignored** across 196 result lines, exit **0** |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | GATE_PROBE |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | GATE_FOLLOWUP |
-| `python3 scripts/check_lean_audits.py` | GATE_LEAN |
-| `python3 -m unittest discover -s scripts/tests` | GATE_PYTHON |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
+| `python3 scripts/check_lean_audits.py` | **96/96 audits passed** (95 → 96: `AuditComposeEventLines.lean`), no project axiom |
+| `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 expected failure** — see §12.3 |
+
+**The count is 3,613 against main's 3,580, and the difference is exactly this
+card's.** 11 new model tests in `crates/qcore-core/tests/unit/std_event.rs`
+(21 → 32) plus 22 new end-to-end tests in
+`compiler/tests/compose_event_lines.rs` is 33, and 3,580 + 33 = 3,613. The
+rewritten pin in `compiler/tests/std_event.rs` is one test before and after.
+
+**No `P02-FLAKE` row tripped** (standing constraint 16). Three of the five rows
+are in this workspace suite and each passed on the first attempt:
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` and
+`memory_growth_beyond_the_declared_limit_is_bounded`. The other two — the
+`RLIMIT_NPROC` conformance row and
+`real_packages_preserve_unknown_and_reject_mutations` — live in the separate
+`providers/` workspace, which this card neither touches nor ran: no provider,
+schema, package template or protocol changed, so constraint 18's rebuild is not
+owed and the 122-test provider checkpoint is **carried, not rerun**. Nothing
+here rests on a re-run and no assertion was weakened. That is worth recording because the machine carried five
+sibling agents throughout, with load average between 40 and 100; the
+`--no-fail-fast` run took roughly an hour of wall clock under that load and is
+not comparable with a quiet one.
+
+### 12.2 The first run stopped at the submodule pin
+
+`libevent_submodule_matches_the_audited_revision` failed on the first
+`cargo test --workspace` of this fresh worktree, reporting the worktree's own
+HEAD where it expected `d82464a2…`. That is invariant 5's pin doing its job on
+an **environment gap** rather than a code failure — the same thing card
+`STD-EVENT` recorded in its own fresh worktree — and the gate's own first line
+(`git submodule update --init --recursive`) is the repair. The submodule was
+checked out, the test passes on its own, and the whole-workspace run above was
+then redone from scratch. The numbers reported are that second, complete run;
+the truncated first one is kept in `measure/workspace.log`.
+
+### 12.3 One expected Python failure, left for the integrator
+
+`test_the_derived_facts_are_recomputed_rather_than_carried` reports
+`lean_audits: 95 != 96`. That is the derived-value tripwire working as designed:
+this card adds one audited Lean module, and
+`docs/reviews/r0_3/acceptance_matrix.json` — which this card may not edit —
+carries the pre-card count. §12.1 item 3. The other 192 Python tests pass.
 
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad.
