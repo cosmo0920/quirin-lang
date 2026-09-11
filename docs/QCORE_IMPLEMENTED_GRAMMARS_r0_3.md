@@ -1672,6 +1672,77 @@ answers. See
 [the arm record](reports/wave20-if-arms/README.md) and
 [the design note](design/SOURCE_BRANCH_V1.md).
 
+## G02k. The checked event surface
+
+Card `STD-EVENT`. Design record: [`design/STD_EVENT_V1.md`](design/STD_EVENT_V1.md).
+Example page: [`../examples/events/README.md`](../examples/events/README.md).
+
+```ebnf
+module    = { import }, entry ;
+import    = "import", "std.event", ";" ;
+entry     = "fn", NAME, "(", ")", "->", "i32",
+            [ "effects", "{", effect, { ",", effect }, "}" ], "{", { stmt }, "}" ;
+stmt      = "event", "open", ";"
+          | "event", "close", ";"
+          | "endpoints", NAME, NAME, ";"
+          | "watch", NAME, NAME, interest, ";"
+          | "unwatch", NAME, ";"
+          | "wake", NAME, ";"
+          | "dispatch", "ready", NAME, ";"
+          | "dispatch", "idle", ";"
+          | "close", NAME, ";"
+          | "return", [ "-" ], INTEGER, ";" ;
+interest  = "read" | "write" ;
+effect    = "io" | "alloc" | "mut" ;
+```
+
+There is deliberately **no `let`** and no scalar operand: this grammar has no
+value vocabulary at all, so every name it resolves denotes an endpoint or a
+registration — a custody name. That is why the derived effect row is exactly
+`{Io}` for any program that opens a context and why `Alloc` and `Mut` are
+unreachable here by construction rather than by a rule.
+
+Eight reserved words are added — `event`, `endpoints`, `watch`, `unwatch`,
+`wake`, `dispatch`, `ready`, `idle` — and four existing ones are reused rather
+than respelled: `open`, `close`, `read`, `write`. The context pair is spelled
+`event open;` / `event close;` for exactly that reason. The standing constraint
+14 census over every `.qcore`/`.qc` fixture and every inline source string found
+no collision: the corpus occurrences of `event` are ghost-field names inside
+`contract { … }` clauses, never a statement head and never a binding.
+
+**The custody half is the existing model.** Each statement projects onto
+`qcore_core::event_reactor::EventOperation`s and the projection is handed to
+that model's own checker unmodified; a refusal at `Q053` carries its `L00`–`L12`
+diagnostic verbatim. This card is what made that model reachable from source at
+all.
+
+| Statement | Projection |
+|---|---|
+| `event open;` / `event close;` | `CreateBase` / `FreeBase` |
+| `endpoints A B;` | `CreateSocketPair` (success branch) |
+| `watch E D INTEREST;` | `Assign` naming the descriptor, then `Add` — the custody edge |
+| `unwatch E;` | `Delete` then `FreeEvent`, retiring the registration's cookie |
+| `wake D;` | *(none — the reactor models no byte flow)* |
+| `dispatch ready E;` | `BeginDispatch`, `Activate`, `CallbackEnter`, `CallbackExit`, `EndDispatch` |
+| `dispatch idle;` | `BeginDispatch`, `EndDispatch` |
+| `close D;` | `CloseSocket` (success branch) |
+
+**The determinism boundary is this route's own.** A certificate compares one
+observation, so v1 waits only on readiness the program itself induced with
+`wake D;`, and each turn declares what it reports — a declaration the emitted
+program verifies against what `poll(2)`/`WSAPoll` really reported, exiting
+non-zero on disagreement. A turn at which two or more registrations are ready is
+refused **by name** at `Q054`: `poll(2)` reports a set, and the callback order
+within one ready set is the implementation's rather than one the program
+induced. Every registration carries priority `0` so that a priority order is not
+smuggled in as an undeclared ordering premise. A `write` interest is accepted
+and checked and makes the module emit no C at all, on the `accept_check_only`
+precedent.
+
+Diagnostics: `Q051` shape, `Q052` an unbound custody name, `Q053` the reactor
+model's own refusal, `Q054` the determinism boundary, `Q055` the effect row, and
+`Q015` for a missing `import std.event;`.
+
 ## G03. Source parameter usage grades
 
 ```ebnf

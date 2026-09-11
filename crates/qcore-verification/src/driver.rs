@@ -18,7 +18,10 @@ use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
-use qcore_core::{composed_std_io, composed_std_io_c_emit, composed_tasks, std_io, std_io_c_emit};
+use qcore_core::{
+    composed_std_io, composed_std_io_c_emit, composed_tasks, std_event, std_event_c_emit, std_io,
+    std_io_c_emit,
+};
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
@@ -179,6 +182,28 @@ pub enum CheckedSourceModule {
     /// backend, the profile classification — reads exactly what the task route
     /// would have handed it.
     ComposedTasks(Box<composed_tasks::CheckedComposedTaskModule>),
+    /// One entry function checked under `source.event.v1` (card `STD-EVENT`).
+    ///
+    /// The custody evidence inside the certificate is the **reactor model's
+    /// own**: `qcore_core::event_reactor::check_event_program` checked the
+    /// projection unmodified, and this route added the determinism decision on
+    /// top of it. The lowered program is retained beside the certificate so a
+    /// consumer can re-derive both rather than believe either.
+    ///
+    /// There is no sequential evidence beside it, and that is a stated boundary
+    /// rather than an omission: the route's grammar has no value vocabulary at
+    /// all, so the entry binds no ordinary identity for the custody, flow and
+    /// cleanup passes to check. The custody that *does* exist — endpoints and
+    /// registrations — is checked by the reactor model, which is the model that
+    /// defines it.
+    Event(Box<CheckedEventModule>),
+}
+
+/// A checked `source.event.v1` module (card `STD-EVENT`).
+#[derive(Clone, Debug)]
+pub struct CheckedEventModule {
+    pub lowered: qcore_frontend::source_event::LoweredEventModule,
+    pub certificate: std_event::StdEventCertificate,
 }
 
 /// A checked `source.std-io.v1` module.
@@ -269,7 +294,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
         }
     }
 
@@ -286,7 +312,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -300,7 +327,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -317,7 +345,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -331,7 +360,8 @@ impl CheckedSourceModule {
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -345,7 +375,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::StandardIo(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -359,7 +390,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::Composed(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -378,7 +410,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::ComposedTasks(_) => None,
+            | Self::ComposedTasks(_)
+            | Self::Event(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -398,7 +431,8 @@ impl CheckedSourceModule {
             | Self::ComposedEpochTasks(_)
             | Self::ExternCalls(_)
             | Self::StandardIo(_)
-            | Self::Composed(_) => None,
+            | Self::Composed(_)
+            | Self::Event(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
     }
@@ -428,6 +462,9 @@ impl CheckedSourceModule {
             // A composed task module's workers *are* checked bodies, so the
             // count is the task module's, exactly as on the scoped-task route.
             Self::ComposedTasks(module) => module.tasks().module().functions.len(),
+            // And likewise for the event route: one entry is lowered, and the
+            // profile admits no calls at all.
+            Self::Event(_) => 1,
         }
     }
 }
@@ -486,6 +523,18 @@ pub enum SourceExecutionProfile {
     /// determined because every write of an emitted task program is performed by
     /// the parent's thread. A line in a worker body is refused.
     ComposedStdIoTasksV1,
+    /// `source.event.v1`: a flat sequential entry that opens one event context,
+    /// registers interest on descriptors it created itself, dispatches declared
+    /// turns and tears the context down (card `STD-EVENT`).
+    ///
+    /// The custody half is the **existing** `event_reactor`/`os_endpoint`
+    /// models, which this route made reachable from source for the first time;
+    /// the route's own contribution is the determinism decision that gives each
+    /// dispatch turn one well-defined observation
+    /// (`docs/design/STD_EVENT_V1.md` §3). A module containing a `write`
+    /// interest is accepted and checked but **not executed**: it publishes no
+    /// C and no reference observation.
+    EventV1,
 }
 
 #[derive(Clone, Debug)]
@@ -739,6 +788,17 @@ pub fn compile_files_with_registry(
     // task worker is a separate checked model (design §3.4).
     if qcore_frontend::source_extern::has_source_extern(&parsed) {
         return compile_extern_source(&parsed, &typed, mode, options, &ranges);
+    }
+    // Card `STD-EVENT`. Selected after every concurrent route and after the
+    // extern route, and **before** the standard-IO route, on the same principle
+    // those two state: a module that both dispatches and prints stays with the
+    // more specific model, which keeps its existing refusal for the statements
+    // it does not model. Composing an event context with source lines is a
+    // follow-on, not this card — and it is a real one, because a `print` in a
+    // dispatch turn is exactly the shape a reordering-aware comparison would
+    // have to cover.
+    if qcore_frontend::source_event::has_source_event(&parsed) {
+        return compile_event_source(&parsed, &typed, mode, options, &ranges);
     }
     // Selected last among the special routes, on the same principle as the
     // extern route above: a module that both prints and spawns stays with the
@@ -3912,6 +3972,128 @@ fn compile_std_io_source(
         // else entirely.
         reference_observation: None,
         extern_observation: Some(reference_observation),
+    })
+}
+
+/// `source.event.v1` (card `STD-EVENT`).
+///
+/// The shape of this function is deliberately the same as
+/// [`compile_std_io_source`]'s — lower, check, **recheck**, interpret, emit —
+/// because the route's guarantees are meant to be read the same way. What
+/// differs is where the custody answer comes from: `check_event_source_program`
+/// hands the projection to the *existing*
+/// `qcore_core::event_reactor::check_event_program` unmodified, so a refusal a
+/// reader sees at `Q053` is that model's own and not a second opinion about it.
+///
+/// A module the certificate reports as **not executable** — one containing a
+/// `write` interest — is accepted with no `c_source` and no reference
+/// observation, on the `accept_check_only` precedent. That is not a downgrade
+/// of the check: the checking is complete and identical. It is the honest
+/// statement that v1 cannot induce that registration's readiness and therefore
+/// has nothing to compare a run against.
+fn compile_event_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q051",
+            "entry-free `source.event.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_event::lower_source_event(parsed, typed, &entry).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    let span_of = |statement: usize| {
+        lowered
+            .statement_spans
+            .get(statement)
+            .copied()
+            .unwrap_or(lowered.scope_span)
+    };
+    let certificate =
+        std_event::check_event_source_program(&lowered.program).map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::Event,
+                        span_of(error.statement()),
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_event::recheck_event_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q051",
+            SemanticPass::Event,
+            lowered.scope_span,
+            format!("the event certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    // The check-only arm. Both are absent together or present together: a
+    // module that emits C without a reference observation, or the reverse,
+    // would publish an unchecked comparison.
+    let (c_source, observation) = if certificate.executable {
+        let observation = std_event_c_emit::interpret_event_program(&lowered.program, &certificate)
+            .map_err(|refusal| {
+                vec![plain_diagnostic(
+                    "Q051",
+                    format!("the event reference execution refused this trace: {refusal:?}"),
+                )]
+            })?;
+        let emission = std_event_c_emit::emit_event_c11(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q051",
+                    format!("the event backend refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+        (Some(emission.source), Some(observation))
+    } else {
+        (None, None)
+    };
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::I32)]),
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::Event(Box::new(CheckedEventModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::EventV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source,
+        source_map: Vec::new(),
+        // The reference observation of this route is the event trace, carried
+        // on `extern_observation` beside the standard-IO route's own line trace
+        // rather than on the sequential cleanup field, which models something
+        // else entirely.
+        reference_observation: None,
+        extern_observation: observation,
     })
 }
 

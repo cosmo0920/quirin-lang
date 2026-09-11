@@ -237,6 +237,21 @@ pub enum StatementKind {
         guard: String,
         body: SourceBlock,
     },
+    /// A `source.event.v1` statement (card `STD-EVENT`).
+    ///
+    /// The parser records only the names the statement **binds**, because that
+    /// is the one thing name resolution cannot recover from the token window:
+    /// `endpoints a b;` introduces two endpoint names and `watch e a read;`
+    /// introduces one registration name while *referencing* an endpoint. Every
+    /// other word in the statement is either a reserved profile keyword or a
+    /// reference, and both are handled by the existing machinery.
+    ///
+    /// The statement's meaning is not decided here. It is read out of the token
+    /// window by `crate::source_event`, exactly as every other route reads its
+    /// own statements — this variant exists for scoping, not for semantics.
+    Event {
+        bindings: Vec<String>,
+    },
 }
 
 impl StatementKind {
@@ -1265,6 +1280,8 @@ impl<'a> SourceParser<'a> {
             StatementKind::Footprint {
                 name: self.identifier(start + 1)?.to_owned(),
             }
+        } else if let Some(bindings) = self.event_statement_bindings(start) {
+            StatementKind::Event { bindings }
         } else if let Some(equal) = self.top_level_symbol(start, semicolon, Symbol::Equal) {
             StatementKind::Assignment {
                 place: self.root_name(start, equal),
@@ -1273,6 +1290,31 @@ impl<'a> SourceParser<'a> {
             StatementKind::Expression
         };
         Ok(self.located_statement(start, next, kind))
+    }
+
+    /// The names a `source.event.v1` statement binds, or `None` when this is not
+    /// one of that route's statement heads (card `STD-EVENT`).
+    ///
+    /// `close D;` is deliberately **absent**: `close` is an existing reserved
+    /// word the checked mutex-guard profile already uses at a statement head,
+    /// and it binds nothing here anyway, so it stays an ordinary expression
+    /// statement whose one word resolves as a reference like any other.
+    fn event_statement_bindings(&self, start: usize) -> Option<Vec<String>> {
+        match self.word_value(start)? {
+            // `endpoints A B;` introduces both names of one pair.
+            "endpoints" => Some(
+                [self.word_value(start + 1)?, self.word_value(start + 2)?]
+                    .into_iter()
+                    .map(ToOwned::to_owned)
+                    .collect(),
+            ),
+            // `watch E D INTEREST;` introduces the registration and references
+            // the endpoint.
+            "watch" => Some(vec![self.word_value(start + 1)?.to_owned()]),
+            // The rest bind nothing: every name they carry is a reference.
+            "event" | "unwatch" | "wake" | "dispatch" => Some(Vec::new()),
+            _ => None,
+        }
     }
 
     fn if_statement(
@@ -1747,6 +1789,22 @@ pub enum SemanticPass {
     /// task route's `Q600` or the standard-IO route's `Q028`–`Q031`, at that
     /// route's own site.
     ComposedTasks,
+    /// Card `STD-EVENT`: admission of the `std.event` statements
+    /// (`source.event.v1`). Owns `Q051`–`Q055` (spec §L21).
+    ///
+    /// A separate pass from `Concurrency` on purpose. That pass owns the
+    /// checked *task* and *mutex* profiles, whose subject is a thread; this one
+    /// admits a single-threaded reactor context and the custody edge a
+    /// registration puts on a descriptor, and it decides a *determinism*
+    /// question — whether a dispatch turn has one well-defined observation —
+    /// that no concurrency profile asks.
+    ///
+    /// The band is `Q051`–`Q055` because `Q050` was the highest code allocated
+    /// on the base this card was cut from. A collision discovered at
+    /// integration relocates this **unshipped** band, per the wave-3 `T07`/`T09`
+    /// precedent that `PIPE-OPERATOR` and `NATIVE-LIBRARY-CONTRACT-SLICE` both
+    /// followed; the code-to-condition mapping is stable under such a shift.
+    Event,
     PluginVerification,
 }
 
@@ -2139,7 +2197,16 @@ fn elaborate_block(
         let task_expressions =
             tasks::resolve_tasks(statement.span, scopes, globals, context, diagnostics);
         let mut binding_symbol = None;
-        if let Some(binding) = binding {
+        // Card `STD-EVENT`: an endpoint pair introduces **two** names in one
+        // statement, which the single-binding tuple above cannot carry. The
+        // list is read off the variant rather than added to that tuple, so
+        // every existing statement form travels the identical code path with a
+        // one-element list.
+        let introduced: Vec<&str> = match &statement.value {
+            StatementKind::Event { bindings } => bindings.iter().map(String::as_str).collect(),
+            _ => binding.into_iter().collect(),
+        };
+        for binding in introduced {
             let scope = scopes.last_mut().expect("block scope exists");
             if scope.contains_key(binding) {
                 diagnostics.push(SourceDiagnostic {
@@ -2151,7 +2218,7 @@ fn elaborate_block(
             } else {
                 let symbol = SymbolId(*next_symbol);
                 scope.insert(binding.to_owned(), symbol);
-                binding_symbol = Some(symbol);
+                binding_symbol = binding_symbol.or(Some(symbol));
                 *next_symbol += 1;
             }
         }
@@ -2292,6 +2359,12 @@ fn lexical_references(
         // Skip the binder token only: `with lock m as m` still resolves the
         // mutex expression against the enclosing scope.
         let body_binder = match &statement.value {
+            // Card `STD-EVENT`: the names an event statement introduces are
+            // definitions in this scope, not references to an outer one. They
+            // are skipped **by name** rather than by position, because the two
+            // binding forms put them at different positions and a binder name
+            // is never also a reference within one statement of that grammar.
+            StatementKind::Event { bindings } => bindings.iter().any(|name| name == word),
             StatementKind::ThreadScope { .. } => index == 2,
             StatementKind::WithLock { .. } => matches!(
                 previous.map(|token| &token.kind),
@@ -2468,6 +2541,29 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "info"
             | "warn"
             | "fatal"
+            // Card `STD-EVENT`: the `std.event` statement keywords
+            // (`source.event.v1`). Reserved for the same reason as every
+            // profile keyword above: they are clause words in a statement,
+            // never references to a binding, and without this the statements
+            // collect `dispatch`/`ready`/`idle`/… as referenced names and
+            // refuse with `Q013`.
+            //
+            // `open`, `close`, `read` and `write` are already reserved and are
+            // reused rather than respelled, which is why the context pair is
+            // spelled `event open;` / `event close;` — two fewer words than a
+            // dedicated pair would have cost. The constraint-14 census over
+            // every `.qcore`/`.qc` fixture and every inline source string found
+            // no collision: the corpus occurrences of `event` are ghost-field
+            // names inside `contract { … }` clauses and prose comments, never a
+            // statement head and never a binding.
+            | "event"
+            | "endpoints"
+            | "watch"
+            | "unwatch"
+            | "wake"
+            | "dispatch"
+            | "ready"
+            | "idle"
     )
 }
 
@@ -2499,6 +2595,10 @@ fn statement_metadata(statement: &StatementKind) -> (Option<&str>, Option<&str>,
         StatementKind::ThreadScope { .. }
         | StatementKind::Footprint { .. }
         | StatementKind::WithLock { .. } => (None, None, SemanticPass::Concurrency),
+        // The bindings are introduced by `elaborate_block`, which reads them
+        // off the variant: this tuple carries at most one, and an endpoint pair
+        // introduces two.
+        StatementKind::Event { .. } => (None, None, SemanticPass::Event),
     }
 }
 
@@ -2552,6 +2652,12 @@ pub fn source_diagnostic(
         // composed task module's other refusals are the task route's and the
         // standard-IO route's own.
         SemanticPass::ComposedTasks => "Q050",
+        // The generic presentation code of the event pass, and the code of
+        // every shape refusal in it. The specific conditions Q052 (a name that
+        // is not a live endpoint or registration), Q053 (the reactor model's
+        // own refusal), Q054 (the determinism boundary) and Q055 (the effect
+        // row) are issued at their own emission sites.
+        SemanticPass::Event => "Q051",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

@@ -16,6 +16,7 @@ pub mod source_composed;
 pub mod source_composed_tasks;
 pub mod source_epoch;
 pub mod source_epoch_tasks;
+pub mod source_event;
 pub mod source_extern;
 pub mod source_mutex;
 pub mod source_std_io;
