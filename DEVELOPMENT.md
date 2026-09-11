@@ -381,6 +381,13 @@ observation, connective semantics, diagnostics and fixtures are unchanged.
 The exact formerly failing test and the complete 25-test target pass on
 Windows.
 
+Windows native-library fixture repair (2026-09-11): the two malformed-manifest
+rows that remove the library or manifest declaration now use the existing
+checked token mutation instead of matching a Unix newline. This makes the
+intended `Q039` refusal newline-agnostic without changing the loader, accepted
+manifest surface, diagnostics or evidence. The exact formerly failing test
+and the complete 16-test `native_library` target pass on Windows.
+
 Post-IF-ARMS gate repair (2026-09-11): the `bitwise_conditions` suite now pins
 the existing `Q044` refusal for an arm-local check-time constant binding on its
 concrete ground — the binding has no position after the join — rather than on
