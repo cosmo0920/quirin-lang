@@ -15,7 +15,7 @@ one value form — `let NAME = dispatch ready E;`, the byte that turn's callback
 drained off the endpoint. `wake D BYTE;` declares which byte it delivers. One
 new diagnostic code, **`Q065`**, the `Event` pass's second band. One new
 published example, `examples/events/wake_payload.qcore`, whose every line is a
-`|>` pipeline. 29 audited Lean theorems and definitions in a new
+`|>` pipeline. **28** audited Lean theorems and definitions in a new
 `QCore.ComposeEventLines`.
 
 **The determinism boundary is untouched, and that is stated as a theorem rather
@@ -350,7 +350,7 @@ measurement rather than the argument.
 | Observation, relation and emission | `crates/qcore-core/src/std_event_c_emit.rs` (`observe_event_program`, `EventObservation`, `concurrent_emitters`) |
 | Shim | `crates/qcore-core/src/qcore_event_poll_compat.h` (`qcore_event_wake` payload, `qcore_event_drain` out-parameter) |
 | Source lowering | `crates/qcore-frontend/src/source_event.rs` (`binding_statement`, the line heads) |
-| Lean | `proof/QCore/ComposeEventLines.lean`, `proof/AuditComposeEventLines.lean` (29 entries) |
+| Lean | `proof/QCore/ComposeEventLines.lean`, `proof/AuditComposeEventLines.lean` (**28** entries: 19 theorems and 9 definitions) |
 | Model tests | `crates/qcore-core/tests/unit/std_event.rs` (21 → **32**) |
 | End-to-end tests | `compiler/tests/compose_event_lines.rs` (**22**, one of them the sanitized native run) |
 | Rewritten pin | `compiler/tests/std_event.rs::a_module_that_both_dispatches_and_prints_stays_with_this_route_and_is_now_admitted` |
@@ -375,6 +375,64 @@ comparable with a quiet run.
 
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad.
+
+## 12.1 Integrator reconciliation list
+
+This card may not edit `AGENTS.md`, `DEVELOPMENT.md` or
+`docs/reviews/r0_3/acceptance_matrix.json`. Four things are the integrator's:
+
+1. **One new diagnostic code.** `AGENTS.md`'s diagnostics-namespace table needs
+   a row — the authority is spec §L21, which this card updated:
+
+   > `Q065` | `Event` | second band of the same pass: the composition of
+   > `source.event.v1` with the source line vocabulary (`print`, `log`, `flush`)
+   > and its one value form, `let NAME = dispatch ready E;`
+
+   The band assumption is the `NativeLibrary` precedent — `Q063`–`Q064` were
+   allocated between the two event cards, so the pass owns two ranges. A
+   collision discovered at integration relocates this unshipped code per the
+   wave-3 `T07`/`T09` precedent; the code-to-condition mapping is stable under
+   such a shift, and `SemanticPass::Event`'s doc comment says so at the
+   definition site.
+
+2. **A proposed standing constraint**, offered because it is exactly the kind of
+   rule the "when touching X, do not Y" inventory exists for:
+
+   > **15c. An event program's streams are compared byte for byte, and that is a
+   > measurement about the reactor profile rather than a convention.**
+   > `source.event.v1`'s one accepted profile is single-threaded and the reactor
+   > refuses a cross-thread activation under it (`L04`), so the thread running a
+   > callback is the entry's own, every record of the derived
+   > `qcore.obs-reordering.v1` relation is a **barrier**, and the relation is
+   > strict — the degenerate case `strict_iff_byte_equality` names. The window
+   > structure is derived by `observe_event_program`'s live-set walk over this
+   > model's regions (a dispatch turn), and the emitters a region makes live are
+   > read from `ReactorProfile::threading_enabled`. A route that runs a callback
+   > on another thread, or gives a callback a source-level body, **supplies its
+   > emitters there** rather than declaring strictness or a reordering by hand.
+   > Do not weaken the two premises the composition rests on: a source line is
+   > program output and writes no trace record, and a `wake`'s payload is a value
+   > and never a reactor fact — which together are why every transcript this
+   > route published before the card is byte-identical after it.
+   > `wave22-std-event`, `wave22-obs-reordering`, `compose-event-lines`.
+
+3. **The derived `lean_audits` count moves 95 → 96** for this card's one new
+   `Audit*.lean`, so `scripts/tests`'s derived-value tripwire reports the stale
+   matrix count until the derived section is regenerated. That is the same
+   one-line reconciliation every wave's new audit file receives (constraint 25's
+   `section_ownership` discipline), and base `52e3889c` was self-consistent, so
+   the delta is entirely this card's.
+
+4. **Public API changes in `qcore-core`**, all in `std_event` / `std_event_c_emit`:
+   `EventStatement::Wake` gains `byte`, `EventStatement::DispatchReady` gains
+   `binding`, `EventStatement::Line` is new; `StdEventCertificate` gains
+   `payloads`, `scalars`, `lines`, `flushes`, `renderings`; `EventRecheckFailure`
+   gains five variants; `EventSourceError` gains three; `DrainedByte`,
+   `STREAM_BYTE_ORDER`, `STREAM_BYTE_ORDER_TEXT`, `DEFAULT_WAKE_BYTE`,
+   `STATUS_PAYLOAD`, `EventRecord`, `EventObservation` and
+   `observe_event_program` are new. `interpret_event_program` keeps its
+   signature and now returns the observation's labelled records.
+   `qcore_event_wake` takes a payload and `qcore_event_drain` an out-parameter.
 
 ## 13. Named follow-ons
 
@@ -431,7 +489,7 @@ under `target/` and never in the shared scratchpad.
 > **two compositions and not one**: an owned buffer still does not cross into an
 > event module, measured and pinned, because one entry would then carry two
 > custody models (`EVENT-BUFFER-PAYLOAD`). One new published example,
-> `wake_payload.qcore`, sanitized-native with **both** streams compared. 29
-> audited Lean theorems in a new `QCore.ComposeEventLines`, no new axiom.
+> `wake_payload.qcore`, sanitized-native with **both** streams compared. **28**
+> audited Lean entries in a new `QCore.ComposeEventLines`, no new axiom.
 > Corpus-neutral by construction. Evidence:
 > `docs/reports/compose-event-lines/README.md`.

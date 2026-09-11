@@ -193,8 +193,11 @@ So this is refused, at `Q061`, with that ground in the message:
 
 ## Premises (printed, not discharged)
 
-An executable module on this route rests on exactly one named platform premise,
-and `quirin check` is not where you find it — the certificate carries it:
+An executable module on this route rests on at most **two** named platform
+premises, and `quirin check` is not where you find either — the certificate
+carries them. A program that performs a wait carries the first; a program that
+*names* a drained byte carries `EVENT-V1-STREAM-BYTE-ORDER` above as well, and
+one that does neither carries none:
 
 > `EVENT-V1-LEVEL-TRIGGERED-READINESS` — a `poll(2)`/`WSAPoll` wait on a
 > socket-pair endpoint with `POLLIN` requested reports `POLLIN` when, and only
@@ -212,7 +215,12 @@ the explicitly selected diagnostic log:
 
 ```sh
 cargo test -p qcore-compiler --test std_event
+cargo test -p qcore-compiler --test compose_event_lines
 ```
+
+The first target runs `self_pipe.qcore`; the second runs `wake_payload.qcore`
+and compares **both** streams — the selected system trace on stdout and the two
+source-authored lines on stderr — against the reference observation.
 
 Windows, from a Visual Studio Developer PowerShell:
 
