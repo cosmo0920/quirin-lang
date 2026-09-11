@@ -6,7 +6,7 @@ use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
     BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE,
-    LOGGER_MODULE, ModuleImports, UNCHECKED_EXTERN_MODULE,
+    LOGGER_MODULE, ModuleImports, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -125,6 +125,29 @@ pub fn check_source_imports(
             span,
             BUFFER_MODULE,
             "an owned byte buffer",
+        )]);
+    }
+    // Card `STRING-SLICE`, on exactly the same terms as the buffer gate above:
+    // constructing a string view, reading its byte length or slicing it is gated
+    // by `std.string` and by no other module. `std.buffer` never grants it and
+    // it never grants `std.buffer` — a buffer is owned and mutable and a string
+    // is an immutable view of storage it does not own — and neither output
+    // module grants it, because this amendment does not make `std.io` or
+    // `std.logger` accept text (`STRING-SLICE-IO`, amendment §7). A module that
+    // slices and prints a length therefore names both, measured and not assumed.
+    //
+    // The detector reads **function-body statements only**, which is what keeps
+    // amendment §2's quoted-metadata requirement true by construction: a
+    // `verify scope { plugin … version "0.1" profile "…" }` declaration's quoted
+    // tokens are not statements and cannot reach it, so recognizing them
+    // acquires no import requirement.
+    if !imports.string()
+        && let Some(span) = crate::source_std_string::string_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            STRING_MODULE,
+            "an immutable UTF-8 string view",
         )]);
     }
     // Card `STD-EVENT`. The same file-local opt-in discipline as concurrency:

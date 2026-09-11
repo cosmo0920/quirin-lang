@@ -1,8 +1,23 @@
 # Quirin string views via `std.string` — revision 0.3 amendment
 
-> **Status: proposed.** This amendment specifies a future source-language
-> facility. It does not claim parser, checker, reference-execution, C-emission,
-> ABI, or conformance support in the current implementation.
+> **Status: partly implemented (card `STRING-SLICE`, 2026-09-11).** §§1–4, §7 and
+> §8 are implemented as the checked source profile `source.string.v1`: the
+> `std.string` module is registered and file-locally gated, a string literal is
+> lexed and decoded to a well-formed UTF-8 payload, the `{ptr, len}` view is
+> modelled and reference-executed, `len(s)` and `s[low:high]` are checked and
+> lowered to §6's C11 aggregate, and the §8 evidence list is met at
+> `docs/reports/string-slice/README.md`. The implementation decides every §2
+> admission condition **statically** — the first of the two arms §2 permits —
+> because every bound in v1 is a check-time constant; it therefore introduces no
+> run-time failure arm, and a bound it cannot decide is refused by name.
+>
+> Still **proposed and unimplemented**: §5's buffer borrow and freeze
+> (`STRING-SLICE-BUFFER-BORROW`), §6's extern/native-library **crossing**, which
+> stays refused (`STRING-SLICE-ABI`), §7's output composition
+> (`STRING-SLICE-IO`), §3.7's equality/ordering/hashing/search operations, and
+> the separate mutable byte slice (`BYTE-SLICE-CAP`). No conformance claim is
+> made: this is one bounded source profile, not revision-0.3 source-language
+> conformance.
 
 ## 1. Decision
 
@@ -60,8 +75,31 @@ index          = INTEGER | NAME ;
 
 The `string` type name and the string form of `len` are supplied by the module;
 the spellings above do not establish universally available built-in names.
-The current compiler does not register `std.string`; the import and grammar
-above are proposed requirements, not an executable example for this snapshot.
+
+**Implemented (card `STRING-SLICE`), and the census decided how.** The compiler
+registers `std.string` and exposes this grammar, and it **reserves no word**, as
+this section requires:
+
+- `len` is a **contextual** clause word, skipped by name resolution only where it
+  is immediately followed by `(`. A global reservation was measured unsafe: `len`
+  occurs in the pinned contract corpus as a *reference* inside
+  `ensures normal resource_borrowed(len);`
+  (`contract/qcore/fluent_bit/resource_memory.qcore`,
+  `contract/qcore/librdkafka/memory.qcore`). The `len(` shape occurs zero times
+  in QCore source anywhere in the repository, so the narrow rule collides with
+  nothing.
+- `string` needs no rule at all: it appears only in a `let NAME : string = …;`
+  ascription, and the reference collector already drains every token up to a
+  `let`'s `=`. It occurs three times in `.qcore` fixtures, all in comments.
+- `string_expr`'s single-index form is **not** implemented and has no meaning in
+  v1: a byte of UTF-8 text is not a character, so the only indexing form is the
+  two-bound slice. `NAME` alone denotes a view, as the grammar says.
+
+The `STRING-TOKEN` and `NAME` productions are read from the existing lexer; the
+implementation adds no token. The defined escapes are `\\`, `\"`, `\n`, `\t`,
+`\r`, `\0` and `\xHH`; any other escape, and any payload whose decoded bytes are
+not well-formed UTF-8, is refused rather than passed through. A payload is at
+most 4096 bytes, refused rather than truncated above that.
 
 `string` is a sequence of bytes known to be well-formed UTF-8. `len` and slice
 indices count bytes, not Unicode scalar values or grapheme clusters. A slice is
@@ -167,13 +205,28 @@ may become `Safe` merely because a token now parses as a string value.
 
 ## 9. Named implementation follow-ons
 
-- `STRING-SLICE-LEX-TYPE`: `std.string` registration and per-file capability
-  gating, literal decoding, type checking, keyword census, and diagnostic
-  allocation.
-- `STRING-SLICE-EXEC-C11`: reference semantics, `{ptr,len}` C11 emission, and
-  zero-allocation evidence.
+- ~~`STRING-SLICE-LEX-TYPE`~~: **landed** by card `STRING-SLICE`. `std.string`
+  registration and per-file capability gating, literal decoding, type checking,
+  keyword census (which reserved nothing) and diagnostic allocation — allocated
+  as `Q065`–`Q070` and **relocated to `Q068`–`Q073` at integration** when
+  `NATIVE-LIBRARY-SOURCE-BINDING` merged first and took `Q065`–`Q067`; a pure
+  renumber, spec §L21.
+- ~~`STRING-SLICE-EXEC-C11`~~: **landed** by the same card. Reference semantics,
+  `{ptr, len}` C11 emission, and zero-allocation evidence — a certificate whose
+  slice records carry the §4 arithmetic, and an emitted-program tripwire that
+  finds no allocator, copier or scanner call.
 - `STRING-SLICE-BUFFER-BORROW`: checked UTF-8 borrowing/freezing from
-  `std.buffer` with custody and mutation exclusion.
+  `std.buffer` with custody and mutation exclusion. Until it lands, a module that
+  does both stays on the buffer route and keeps that route's refusal.
+- `STRING-SLICE-VARYING-INDEX`: a slice bound that is not a check-time constant.
+  v1 decides every bound statically and refuses anything else by name (`Q069`);
+  admitting a varying bound needs a relational domain over indices and a checked
+  failure arm, which is the second of the two arms §2 permits.
+- `STRING-SLICE-NOTASCALAR-REACH`: a recorded, unrepaired measurement rather than
+  a gap to close. `Q069`'s "not a check-time constant" arm cannot be reached from
+  a single source module — name resolution refuses an unbound name at `Q013`
+  first — so the guard is checked through the library instead. Kept rather than
+  deleted, on the `EXTERN-F1-STORE-REACH` precedent.
 - `STRING-SLICE-IO`: explicit composition with formatting and output modules.
 - `STRING-SLICE-ABI`: extent- and lifetime-carrying extern/native-library ABI.
 - `BYTE-SLICE-CAP`: a separate mutable `{ptr,len,cap}` byte-slice profile; it

@@ -60,6 +60,23 @@ pub const LOGGER_MODULE: &str = "std.logger";
 /// does not reach it.
 pub const BUFFER_MODULE: &str = "std.buffer";
 
+/// Card `STRING-SLICE`: immutable UTF-8 **string views**
+/// (`source.string.v1`, `docs/design/STRING_SLICE_V1.md`). It grants the string
+/// literal, the byte-length query and the checked slice, and nothing else.
+///
+/// A ninth independent file-local opt-in. It is granted by no other module and
+/// grants none in return — in particular it is **not** `std.buffer`: a buffer is
+/// an owned, mutable, explicitly released `{identity, extent, custody}` and a
+/// string is an immutable, custody-free `{ptr, len}` view of storage it does not
+/// own. Neither is implicitly convertible to the other, and the conversion
+/// itself is the named follow-on `STRING-SLICE-BUFFER-BORROW`.
+///
+/// It grants no **output**: `std.io` and `std.logger` still accept a rendered
+/// *scalar* only, and making them accept text is the named follow-on
+/// `STRING-SLICE-IO` (amendment §7). A module that slices and prints a length
+/// therefore names this module *and* the output modules.
+pub const STRING_MODULE: &str = "std.string";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
@@ -70,6 +87,7 @@ pub struct ModuleImports {
     logger: bool,
     buffer: bool,
     event: bool,
+    string: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -96,6 +114,7 @@ impl ModuleImports {
                 LOGGER_MODULE => imports.logger = true,
                 BUFFER_MODULE => imports.buffer = true,
                 EVENT_MODULE => imports.event = true,
+                STRING_MODULE => imports.string = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -144,5 +163,12 @@ impl ModuleImports {
     /// descriptor (card `STD-EVENT`).
     pub fn event(self) -> bool {
         self.event
+    }
+
+    /// Whether this file may construct a string view, query its byte length or
+    /// slice it (card `STRING-SLICE`). Granted by no other module: `std.buffer`
+    /// never grants it and it never grants `std.buffer`.
+    pub fn string(self) -> bool {
+        self.string
     }
 }

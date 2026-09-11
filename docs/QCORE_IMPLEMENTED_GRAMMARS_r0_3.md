@@ -2151,13 +2151,49 @@ Only `requires` and `ensures normal` envelopes are admitted by this consumer, wi
 
 That target grammar is neither a parser generator input already used by the compiler nor the grammar of every policy consumer. In particular, retained policy token expressions and resource predicate calls are defined at their consumer boundary above; their structural acceptance is not a new general-purpose contract proof rule. Future implementation work MUST keep the profile grammars, type rules, lowering coverage and negative tests synchronized instead of conflating the target with today's supported syntax.
 
-The proposed revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md)
-requires an explicit, file-local `import std.string;` for string capabilities.
-That module is not currently registered and the amendment does not widen any
-grammar in this document. `STRING-TOKEN` remains structural
-only: no current source profile constructs a string value, evaluates `len` or
-string slicing, renders text, converts `std.buffer`, or transports a string at
-an extern/native-library ABI. Each remains a named follow-on in that amendment.
+## G07.9. Immutable UTF-8 string views v1 (`source.string.v1`)
+
+The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
+explicit, file-local `import std.string;` for string capabilities. Card
+`STRING-SLICE` registers that module and implements this consumer grammar
+(diagnostics `Q068`–`Q073`, spec §L21):
+
+```ebnf
+module    = { import }, { error-decl | entry } ;
+import    = "import", ( "std.string" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+entry     = "fn", NAME, "(", ")", "->", "unit",
+            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ], "{", { stmt }, "}" ;
+stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
+          | "let", NAME, "=", [ "-" ], INTEGER, ";"
+          | "let", NAME, "=", "len", "(", NAME, ")", ";"
+          | "let", NAME, [ ":", "string" ], "=", NAME, "[", OPERAND, ":", OPERAND, "]", ";"
+          | "print", RENDERING, OPERAND, ";"
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "log_level", LEVEL, ";"
+          | "flush", ";"
+          | "return", ";" ;
+OPERAND   = [ "-" ], INTEGER | NAME ;
+EFFECT    = "io" | "alloc" | "mut" ;
+```
+
+`STRING-TOKEN` is the existing lexer's retained string token; this grammar adds
+no token and **reserves no word**. `len` is contextual — the word is a clause
+word only where it is immediately followed by `(` — and `string` appears only in
+a type ascription. A quoted token in *declaration metadata*, such as a
+`verify scope` entry's plugin version or profile, is not a statement and
+acquires no import requirement.
+
+A bound is a check-time constant, so `0 <= low <= high <= len(s)` and both UTF-8
+code-point boundaries are decided before emission and this profile has no
+run-time failure arm. The line-producing statements are `source.std-io.v1`'s
+own, read by its reader, and take **scalars only**: rendering a string is not in
+this grammar, because the amendment does not make the output modules accept text.
+
+What remains outside every grammar in this document, each a named follow-on:
+converting a `std.buffer` value to a string, rendering text, transporting a
+string at an extern/native-library ABI, comparing or searching strings, a
+single-index access into a string, and the separate mutable `{ptr, len, cap}`
+byte slice.
 
 ## G08. Source-contract service configuration v1
 

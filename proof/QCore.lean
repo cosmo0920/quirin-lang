@@ -135,5 +135,6 @@ import QCore.Bitwise
 import QCore.SingleEmissionRoute
 import QCore.ObsReordering
 import QCore.StdBuffer
+import QCore.StdString
 
 /-! The executable formal core of QCore-C revision 0.1. -/
