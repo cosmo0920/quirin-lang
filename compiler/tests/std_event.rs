@@ -134,8 +134,8 @@ fn the_emitted_program_carries_the_embedded_shim_and_the_explicit_logger_adapter
 #[test]
 fn an_event_module_without_log_level_keeps_the_null_sink_and_needs_no_stdio() {
     let quiet = SELF_PIPE
-        .replace("import std.logger;\n", "")
-        .replace("    log_level trace;\n", "");
+        .replace("import std.logger;", "")
+        .replace("    log_level trace;", "");
     let module = compile(&quiet).unwrap();
     let source = module.c_source.as_deref().unwrap();
     assert!(!source.contains("#include <stdio.h>"));
