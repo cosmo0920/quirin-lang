@@ -281,15 +281,25 @@ pointer is the card that established it; read it before deviating.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
-15a. **Source lines in a composed task module are parent-body-only.** The
-    `source.std-io-tasks.v1` admission rests on a measurement, not a
-    preference: every write an emitted task program performs is performed by
-    the parent's thread (workers buffer events privately; the parent replays
-    them at collect), so any parent-body point is join-ordered and the
-    per-stream byte comparison stays well-defined. A worker-body line refuses
-    at `Q050`; admitting one requires the comparison-up-to-an-admitted-
-    reordering capability (`COMPOSE-WORKER-LINES`), not a gate change.
-    `wave21-compose-concurrency`.
+15a. **A source line in a composed task module stands in the parent's body
+    or in a spawned worker's, and the two are compared differently.** A
+    parent line's position is determined because every *trace* write an
+    emitted task program performs is performed by the parent's thread
+    (workers buffer events privately; the parent replays them at collect),
+    so a parent-only program's streams are compared **byte for byte** and
+    every published `examples/threads` program is of that kind. A
+    **worker**-body line is written by that worker's own thread, and placing
+    one **declares** `qcore.obs-reordering.v1`: that program's streams are
+    then compared window by window and emitter by emitter, where a window
+    boundary is a point at which no worker is live and an emitter is the
+    thread that wrote the bytes — the opposite of F02's causal attribution,
+    and right for the opposite reason. The strict comparison is that
+    relation's own degenerate case (`strict_iff_byte_equality`), so nothing
+    was replaced. Do **not** weaken the two premises the declaration rests
+    on: two emitters of one window may not share a line's bytes
+    (`AmbiguousAlphabet` refuses the declaration, never a multiset
+    comparison), and a worker that writes declares `io` in its **own**
+    effect row. `wave21-compose-concurrency`, `wave22-obs-reordering`.
 
 **Providers, packages and limits**
 
