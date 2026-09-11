@@ -627,7 +627,7 @@ existing module travels the identical code path.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement |
-| `cargo test --workspace --no-fail-fast` | **3,395 passed, 0 failed, 8 ignored** across 190 suites, doctests included; exit 0, from one complete run |
+| `cargo test --workspace --no-fail-fast` | **3,395 passed, 0 failed, 8 ignored** across 190 suites, doctests included, from one complete run. The **exit status was not observed** and is not claimed — see §10.5.1 |
 | `cargo test -p qcore-compiler --test std_buffer` | **52 pass**, including both sanitized native runs |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean; one lint of this card's own (`needless_lifetimes`) was found and **fixed, not suppressed** |
@@ -639,6 +639,28 @@ existing module travels the identical code path.
 Full command evidence is in `gate.txt` beside this report. Measurement outputs
 are worktree-private under `measure/` (gitignored), never under `target/` and
 never in the shared scratchpad.
+
+#### 10.5.1 What the workspace figure does and does not assert
+
+The run reached and finished its final phase — the merged doctests — and the log
+ends with that summary. It contains zero lines beginning `error`, zero
+`failures:` blocks, and no `error: test failed`. All **190** suites reported
+`test result: ok`. The figures were recounted from the finished log and are
+identical to the first reading, so they are the whole run's rather than a
+mid-run snapshot.
+
+**The exit status was not observed, and is deliberately not claimed.** The shell
+wrapper that would have recorded it did not survive to write its marker, and the
+`cargo` process was gone by the time that was noticed, so no exit code was ever
+read. An earlier version of this report and of `gate.txt` asserted "exit 0";
+that assertion was unsupported and is **withdrawn rather than left standing**.
+What is claimed is what the log shows: all 190 suites ran and all passed.
+
+A related measurement hazard is recorded here because it cost real time and
+would cost the next card the same: the waiting loops used to block on this run
+were written as `while pgrep -f "cargo test --workspace"`, which **matches the
+waiter's own command line** and therefore never terminates. Wait on a marker in
+the log, not on a `pgrep` of a pattern the waiter itself contains.
 
 **Three workspace runs were started and killed by this card before completing**,
 and are recorded rather than hidden: each was invalidated by a source change
@@ -785,7 +807,9 @@ rather than a backlog item.
 > code. 52 tests, one sanitized
 > ASan/UBSan/LSan run as a **positive** leak control, 38 audited Lean entries in
 > one new audit file, 91/91 audits, no new axiom. Gate: 3,395 workspace tests
-> pass (0 failed, 8 ignored), fmt and clippy clean, both probes exit 0. `STD-FMT-EXTENT` is **split
+> pass (0 failed, 8 ignored) across 190 suites, fmt and clippy clean, both probes
+> exit 0; the workspace run's own exit status was not observed and is not
+> claimed. `STD-FMT-EXTENT` is **split
 > rather than retired**: a size is renderable today on this route with no
 > rendering change at all, and what the extern half now needs is the C04
 > vocabulary change `STD-BUFFER-ABI-EXTENT`. Corpus-neutral by construction.

@@ -10,10 +10,27 @@ Linux x86_64.  Measurement outputs are worktree-private under measure/.
 
   cargo test --workspace --no-fail-fast
     -> 3,395 passed, 0 failed, 8 ignored, across 190 suites reporting
-       "test result: ok" (doctests included).  Exit 0.
-       One complete run.  No result here is inferred from a truncated run:
-       three earlier runs were deliberately killed by this card rather than
-       reported, because source changed under them (see "Discarded runs").
+       "test result: ok" (doctests included).
+
+       COMPLETENESS, stated exactly.  The run reached and finished its final
+       phase -- the merged doctests -- and the log ends with that summary.  The
+       log contains zero lines beginning "error", zero "failures:" blocks, and
+       no "error: test failed" or "error: could not compile".  Every one of the
+       190 suites reported "test result: ok".  The figures above are therefore
+       the whole run's, not a mid-run snapshot: they were recounted from the
+       finished log and are identical to the first reading.
+
+       THE EXIT STATUS WAS NOT OBSERVED, and is deliberately not claimed.  The
+       shell wrapper that would have appended an "exit=" marker did not survive
+       to write one, and the cargo process was gone by the time that was
+       checked, so no exit code was ever read.  An earlier version of this file
+       asserted "Exit 0"; that assertion was unsupported and has been withdrawn
+       rather than left standing.  What is claimed is what the log shows: all
+       190 suites ran and all passed.
+
+       No result here is inferred from a truncated run: three earlier runs were
+       deliberately killed by this card rather than reported, because source
+       changed under them (see "Discarded runs").
 
   cargo test -p qcore-compiler --test std_buffer
     -> 52 passed, 0 failed, including both sanitized native runs.
