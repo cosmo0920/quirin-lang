@@ -561,7 +561,7 @@ layer — splicing, guard removal, tokenising — is a Rust boundary tested ther
 
 | Check | Result |
 |---|---|
-| `cargo test` over all ten workspace members | GATE_TOTAL |
+| `cargo test` over all ten workspace members | **3,625 passed, 0 failed, 8 ignored** (1,227 + 1,271 + 1,015 + 112) |
 | `crates/qcore-core` unit `native_library_header` | **71 passed** (49 wave-22, unchanged; 22 new) |
 | `compiler/tests/native_library_header_decoration.rs` (new) | **22 passed** |
 | `crates/qcorec/tests/cli.rs` | 9 passed (8 + `the_cli_reads_the_include_texts_a_manifest_declares`) |
@@ -586,26 +586,33 @@ the suite was run in four package groups —
 `-verification`, `qcore-compiler`/`qcorec`, and `qcore-verifier-host` — whose
 union is exactly the ten workspace members. No test was skipped, filtered or
 weakened; only the process boundaries differ, and the ignored count (8) matches
-the standing ledger and is unchanged by this card.
+the standing ledger and is unchanged by this card. The four groups above are
+**one sequential pass over the final tree** (`measure/final_gate.sh`, run at
+`d0636bed`), not a union of runs taken at different commits.
 
-### 13.1 One recorded load flake, verified in isolation
+The ledger's 3,580 plus this card's 45 new rows (22 core unit, 22 route, 1 CLI)
+is 3,625, which is the number above.
 
-`qcore-verifier-host::confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths`
-failed in the first two `qcore-verifier-host` runs with `Io(Broken pipe)`. That
-is **P02-FLAKE row three** (`AGENTS.md` constraint 16: "the confined-fixture
-write test (`Io(Broken pipe)` under load)") and the documented condition held —
-sibling agent worktrees building on the same host, load average above 20 and free
-memory down to 1 GB. Re-run in isolation on the same binary, **unweakened**:
+### 13.1 One recorded load flake, seen earlier and verified in isolation
+
+The final pass above is clean. Earlier in the card's development, two
+`qcore-verifier-host` runs failed at
+`confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths`
+with `Io(Broken pipe)`. That is **P02-FLAKE row three** (`AGENTS.md`
+constraint 16: "the confined-fixture write test (`Io(Broken pipe)` under load)")
+and the documented condition held — sibling agent worktrees building on the same
+host, load average above 20 and free memory down to 1 GB. It was re-run in
+isolation on the same binary, **unweakened**:
 
 ```
 $ cargo test -p qcore-verifier-host --test confined_process_execution -- --test-threads=1
 test result: ok. 12 passed; 0 failed; 0 ignored
 ```
 
-and the package then re-ran fully green (112 passed) on a later pass. No
-assertion was touched, and this card's production diff contains no file under
-`crates/qcore-verifier-host/`. The other four constraint-16 rows passed in the
-package runs themselves.
+No assertion was touched, and this card's production diff contains no file under
+`crates/qcore-verifier-host/`. The other four constraint-16 rows passed in every
+run. Recorded here rather than omitted, because a flake seen and not reported is
+indistinguishable from one that was not seen.
 
 ### 13.2 One expected acceptance-matrix drift, left for the integrator
 
