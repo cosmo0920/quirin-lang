@@ -41,6 +41,8 @@ pub mod research_closure;
 pub mod resource_flow;
 pub mod std_buffer;
 pub mod std_buffer_c_emit;
+pub mod std_event;
+pub mod std_event_c_emit;
 pub mod std_io;
 pub mod std_io_c_emit;
 pub mod translation_validation;

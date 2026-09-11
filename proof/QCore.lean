@@ -93,6 +93,7 @@ import QCore.ExternCall
 import QCore.StdIo
 import QCore.ComposedStdIo
 import QCore.ComposedTasks
+import QCore.StdEvent
 import QCore.UncheckedLinkage
 import QCore.NativeLibrary
 import QCore.NativeLibraryContract

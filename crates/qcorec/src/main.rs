@@ -181,6 +181,19 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                     "; scoped tasks composed with rendered lines in the parent and in \
                      spawned workers (Linux/macOS/Windows threads)"
                 }
+                qcore_compiler::SourceExecutionProfile::EventV1 => {
+                    if module.c_source.is_some() {
+                        "; one checked event context over program-induced readiness \
+                         (poll(2)/WSAPoll)"
+                    } else {
+                        // The `accept_check_only` arm. Saying so here rather
+                        // than silently emitting nothing is the point: a reader
+                        // sees that the module was checked in full and that its
+                        // execution is outside v1's determinism boundary.
+                        "; one checked event context (checked only: a write \
+                         registration's readiness is not program-induced, so no C is emitted)"
+                    }
+                }
                 _ => "",
             };
             println!(

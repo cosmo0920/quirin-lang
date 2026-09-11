@@ -5,8 +5,8 @@ use crate::frontend::{
 use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
-    BUFFER_MODULE, CONCURRENCY_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE, LOGGER_MODULE,
-    ModuleImports, UNCHECKED_EXTERN_MODULE,
+    BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE,
+    LOGGER_MODULE, ModuleImports, UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -119,6 +119,20 @@ pub fn check_source_imports(
             span,
             BUFFER_MODULE,
             "an owned byte buffer",
+        )]);
+    }
+    // Card `STD-EVENT`. The same file-local opt-in discipline as concurrency:
+    // the event context is unavailable by default and importing another
+    // compilation input never grants this file the vocabulary. One detector
+    // serves this gate and route selection, so a file can never be routed to
+    // `source.event.v1` without having needed the import.
+    if !imports.event()
+        && let Some(span) = crate::source_event::source_event_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            EVENT_MODULE,
+            "the checked event vocabulary",
         )]);
     }
     Ok(imports)

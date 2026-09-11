@@ -15,6 +15,7 @@ here can drift from what its programs do.
 | [extern/](extern/) | Declared extern calls, `succeeds`, `borrow NAME` | `source.extern-call.v1` |
 | [unsafe-linkage/](unsafe-linkage/) | `unsafe extern fn` and native-library manifests | `source.extern-call.v1` |
 | [threads/](threads/) | Scoped tasks, owned buffers, read shares | the checked task profiles |
+| [events/](events/) | One event context, a registration on a descriptor, declared dispatch turns | `source.event.v1` |
 
 Run everything the first five directories claim:
 
@@ -27,6 +28,12 @@ and the threading examples:
 
 ```sh
 cargo test -p qcore-compiler --test thread_examples
+```
+
+and the event examples:
+
+```sh
+cargo test -p qcore-compiler --test std_event
 ```
 
 Two things worth knowing before reading any of them:

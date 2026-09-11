@@ -1,0 +1,19 @@
+import std.event;
+
+// A write registration. The model expresses it and the reactor checks it in
+// full — the custody edge, the teardown order, the endpoint releases — but its
+// readiness is a function of the kernel's send-buffer free space, which no
+// statement of this route induces. So this module is accepted, checked, and
+// **not executed**: it publishes no C and no reference observation
+// (docs/design/STD_EVENT_V1.md §3, the `accept_check_only` precedent).
+fn main() -> i32 effects { io } {
+    event open;
+    endpoints a b;
+    watch writer a write;
+    dispatch idle;
+    unwatch writer;
+    close a;
+    close b;
+    event close;
+    return 0;
+}

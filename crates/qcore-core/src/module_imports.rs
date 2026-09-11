@@ -28,6 +28,18 @@ pub const FMT_MODULE: &str = "std.fmt";
 /// Card `STD-MODULES`: writing a rendered line to the standard output stream.
 pub const IO_MODULE: &str = "std.io";
 
+/// Card `STD-EVENT`: the checked event vocabulary — one reactor context, a
+/// registration on a program-created endpoint, a declared dispatch turn and
+/// teardown — over the existing `event_reactor`/`os_endpoint` models
+/// (`source.event.v1`, `docs/design/STD_EVENT_V1.md`).
+///
+/// A file-local opt-in exactly like `std.concurrency`: the context is
+/// unavailable by default and importing another compilation input never grants
+/// this file the vocabulary. The module grants no threading — v1's reactor
+/// profile is single-threaded and a cross-thread activation is refused by the
+/// reactor model itself.
+pub const EVENT_MODULE: &str = "std.event";
+
 /// Card `STD-MODULES`: writing a level-tagged rendered line to the standard
 /// error stream, plus the `flush` sink-handoff barrier. Separate from
 /// `std.io` because a diagnostic stream and a data stream are different
@@ -57,6 +69,7 @@ pub struct ModuleImports {
     io: bool,
     logger: bool,
     buffer: bool,
+    event: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -82,6 +95,7 @@ impl ModuleImports {
                 IO_MODULE => imports.io = true,
                 LOGGER_MODULE => imports.logger = true,
                 BUFFER_MODULE => imports.buffer = true,
+                EVENT_MODULE => imports.event = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -124,5 +138,11 @@ impl ModuleImports {
     /// never grants `std.io`.
     pub fn buffer(self) -> bool {
         self.buffer
+    }
+
+    /// Whether this file may open an event context and register interest on a
+    /// descriptor (card `STD-EVENT`).
+    pub fn event(self) -> bool {
+        self.event
     }
 }
