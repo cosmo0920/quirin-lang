@@ -1948,7 +1948,22 @@ pub enum SemanticPass {
     Event,
     /// Card `STRING-SLICE`: admission of `source.string.v1` — the `std.string`
     /// bundled module's immutable UTF-8 `{ptr, len}` **string view**
-    /// (`docs/design/STRING_SLICE_V1.md`). Owns `Q068`–`Q073` (spec §L21).
+    /// (`docs/design/STRING_SLICE_V1.md`). Owns `Q068`–`Q073` and, since card
+    /// `STRING-SLICE-IO` composed the route with the output modules, the second
+    /// band `Q075`–`Q076` (spec §L21).
+    ///
+    /// The second band is not contiguous with the first because `Q074` was
+    /// allocated to `Event` between the two cards — the honest record of the
+    /// order they merged in, on the `NativeLibrary` and `Event` precedents, and
+    /// no shipped code was moved to make it look tidier. It carries the
+    /// composition's **own** two conditions and nothing else: `Q075` the shape
+    /// of a rendered-text line, `Q076` a text operand naming something this
+    /// entry bound no string for. Every other refusal a rendered string can
+    /// receive is an existing one at its existing code — `Q070` for a literal
+    /// that does not decode, `Q071` for an inline slice out of range or off a
+    /// code-point boundary, `Q072` for a selector applied to a string, `Q073`
+    /// for an undeclared derived effect — because the composition added no new
+    /// way for any of those to fail.
     ///
     /// A separate pass from `StandardBuffer` on purpose, and the separation is
     /// the amendment's own §5: that pass admits an **owned, mutable, explicitly
@@ -2892,8 +2907,10 @@ pub fn source_diagnostic(
         // Q070 (a quoted token that does not decode to a well-formed UTF-8
         // payload), Q071 (a slice outside `0 <= low <= high <= len` or off a
         // code-point boundary), Q072 (a string at a position it may not cross)
-        // and Q073 (an undeclared derived effect) are issued at their own
-        // emission sites, and Q068 is also the code of this route's failed
+        // Q073 (an undeclared derived effect) and the second band's Q075 (the
+        // shape of a rendered-text line) and Q076 (a text operand naming no
+        // string this entry bound, card `STRING-SLICE-IO`) are issued at their
+        // own emission sites, and Q068 is also the code of this route's failed
         // certificate rederivation.
         SemanticPass::StandardString => "Q068",
         SemanticPass::PluginVerification => "Q700",

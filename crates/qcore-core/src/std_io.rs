@@ -463,6 +463,39 @@ pub fn rendered_line(event: &StdIoEvent, value: i32) -> Option<ObservedLine> {
     }
 }
 
+/// The stream a line goes to, and the framing that precedes its body.
+///
+/// `None` is `print` and `Some(level)` is `log LEVEL`, exactly as they are in
+/// [`rendered_line`]. Published as one function so the composing routes cannot
+/// invent a second framing: the `[TAG] ` prefix, the choice of stream and the
+/// one trailing newline are decided here for **every** line this repository
+/// writes, whether its body is a rendered scalar or a view's own bytes.
+#[must_use]
+pub fn line_framing(level: Option<Level>) -> (Stream, String) {
+    match level {
+        Option::None => (Stream::Out, String::new()),
+        Some(level) => (Stream::Err, format!("[{}] ", level.tag())),
+    }
+}
+
+/// One line whose body is **text supplied by the caller** rather than a rendered
+/// scalar (card `STRING-SLICE-IO`).
+///
+/// The body is written verbatim: no re-encoding, no escaping, no terminator, and
+/// no newline beyond the one the framing already defines. That is the whole
+/// rendering rule for a string, and it is stated here rather than in the string
+/// route so that the two line kinds provably share one framing —
+/// [`rendered_line`] is this function applied to a rendered number, which
+/// `a_rendered_scalar_line_is_a_text_line_of_its_digits` pins.
+#[must_use]
+pub fn rendered_text_line(level: Option<Level>, body: &str) -> ObservedLine {
+    let (stream, prefix) = line_framing(level);
+    ObservedLine {
+        stream,
+        text: format!("{prefix}{body}"),
+    }
+}
+
 fn operand_value(
     program: &StdIoProgram,
     index: usize,

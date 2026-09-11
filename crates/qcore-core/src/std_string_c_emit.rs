@@ -35,10 +35,12 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE};
-use crate::std_io::StdIoEvent;
+use crate::io_emit::{self, IO_PRELUDE, TEXT_PRELUDE};
+use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
-use crate::std_string::{StringCertificate, StringEvent, StringOperand, StringProgram};
+use crate::std_string::{
+    StringCertificate, StringEvent, StringOperand, StringProgram, TextOperand, text_slice_name,
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StringEmissionRefusal {
@@ -141,6 +143,7 @@ pub fn interpret_string_program(
             matches!(
                 event,
                 StringEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
+                    | StringEvent::Text { .. }
             )
         })
         .count();
@@ -202,6 +205,16 @@ pub fn emit_string_c11(
 
     let mut source = String::from(INCLUDES);
     source.push_str(IO_PRELUDE);
+    // Inserted only when the program renders text (card `STRING-SLICE-IO`), so
+    // every program this backend wrote before that card — and every program on
+    // any other route — is byte-identical.
+    if program
+        .events
+        .iter()
+        .any(|event| matches!(event, StringEvent::Text { .. }))
+    {
+        source.push_str(TEXT_PRELUDE);
+    }
     source.push_str(STRING_PRELUDE_HEADER);
     source.push_str(STRING_PRELUDE);
     source.push('\n');
@@ -238,6 +251,24 @@ pub fn emit_string_c11(
                     consumed.insert(scalar.clone(), true);
                 }
             }
+            // A rendered view is a consumed view, and a rendered inline slice
+            // consumes both its source view and any name bounding it. Without
+            // this the emitter would discard a binding the program reads and
+            // the C compiler would then see a use of a `(void)`-discarded value.
+            StringEvent::Text { operand, .. } => match operand {
+                TextOperand::Literal(_) => {}
+                TextOperand::Name(name) => {
+                    consumed.insert(name.clone(), true);
+                }
+                TextOperand::Slice { name, low, high } => {
+                    consumed.insert(name.clone(), true);
+                    for operand in [low, high] {
+                        if let StringOperand::Scalar(scalar) = operand {
+                            consumed.insert(scalar.clone(), true);
+                        }
+                    }
+                }
+            },
             StringEvent::Bind { .. }
             | StringEvent::Literal { .. }
             | StringEvent::Line(_)
@@ -326,6 +357,55 @@ pub fn emit_string_c11(
                         return Err(StringEmissionRefusal::Unbound { event: index, name });
                     }
                 }
+            }
+            // Card `STRING-SLICE-IO`. The stream, the `[TAG] ` framing and the
+            // single trailing newline are `source.std-io.v1`'s `line_framing`
+            // and nowhere else; the body is the view's own bytes, written by a
+            // length-bounded `fwrite` so an embedded NUL is an ordinary byte of
+            // the text rather than the end of it.
+            StringEvent::Text { level, operand } => {
+                let (stream, prefix) = line_framing(*level);
+                let (pointer, length) = match operand {
+                    TextOperand::Literal(literal) => {
+                        let Some(payload) = program.literals.get(*literal) else {
+                            return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                        };
+                        (
+                            literal_name(*literal),
+                            format!("(size_t) {}u", payload.len()),
+                        )
+                    }
+                    TextOperand::Name(name) => {
+                        let Some(view) = views.get(name).cloned() else {
+                            return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                        };
+                        (format!("{view}.ptr"), format!("{view}.len"))
+                    }
+                    TextOperand::Slice { name, low, high } => {
+                        let Some(from) = views.get(name).cloned() else {
+                            return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                        };
+                        let low = operand_expression(&scalars, index, low)?;
+                        let high = operand_expression(&scalars, index, high)?;
+                        // The same helper a bound slice calls, so the emitted
+                        // arithmetic of an inline slice is not a second
+                        // implementation of §4. The temporary is named for the
+                        // event, which is also the name the certificate
+                        // publishes the derived view under.
+                        let emitted = text_slice_name(index);
+                        let _ = writeln!(
+                            source,
+                            "    qcore_string_view {emitted} = qcore_string_slice({from}, (size_t) \
+                             ({low}), (size_t) ({high}));"
+                        );
+                        (format!("{emitted}.ptr"), format!("{emitted}.len"))
+                    }
+                };
+                let _ = writeln!(
+                    source,
+                    "    {}",
+                    io_emit::write_text_bytes(stream, &prefix, &pointer, &length)
+                );
             }
             StringEvent::Return => {}
         }

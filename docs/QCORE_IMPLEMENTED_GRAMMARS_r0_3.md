@@ -1615,8 +1615,8 @@ and emit byte-identical C11.
 stmt       = [ "let", NAME, "=" ], OPERAND, ( "|>", STAGE )+, ";" ;
 OPERAND    = token, { token } ;            (* verbatim: `x`, `-7`, `move b` *)
 STAGE      = [ "move" ], STAGE_BODY ;
-STAGE_BODY = "print", RENDERING            (* a G02g rendering sink *)
-           | "log", LEVEL, RENDERING       (* a G02g rendering sink *)
+STAGE_BODY = "print", [ RENDERING ]        (* a G02g sink; no selector renders text *)
+           | "log", LEVEL, [ RENDERING ]   (* a G02g sink; no selector renders text *)
            | "drop"                        (* the ownership IR's own release *)
            | NAME, [ "(", [ arg, { ",", arg } ], ")" ], [ ADAPTER ] ;  (* a G02d call *)
 ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
@@ -1626,6 +1626,8 @@ ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
 |---|---|
 | `total \|> print dec;` | `print dec total;` |
 | `total \|> log fatal dec;` | `log fatal dec total;` |
+| `s \|> print;` | `print s;` (card `STRING-SLICE-IO`) |
+| `s[0:4] \|> log info;` | `log info s[0:4];` (card `STRING-SLICE-IO`) |
 | `b \|> drop;` | `drop b;` |
 | `x \|> f;` and `x \|> f();` | `f(x);` |
 | `b \|> f(7);` | `f(b, 7);` |
@@ -1696,6 +1698,17 @@ the ordinary double release. Every other keyword-shaped head keeps the refusal i
 had, on a criterion stated in `crates/qcore-frontend/src/pipe.rs`'s stage table:
 an entry earns its place only when the statement form is `HEAD SELECTOR* OPERAND`
 with closed selectors **and** some stage can feed it a value no reader can name.
+
+Card `STRING-SLICE-IO` made each entry's selector count an **inclusive range**
+rather than a number — `print` takes 0 or 1, `log` takes 1 or 2 — because a
+rendered string names no `std.fmt` rendering (§G07.9). The pipe decides nothing
+about which arity a route admits: it emits the head, the selector words the
+reader wrote and then the operand, and the route's own reader refuses a shape it
+does not model at its own code and span. `x |> print;` on `source.std-io.v1`
+therefore refuses at `Q030` naming the missing `dec`/`hex` rather than at `Q036`
+naming the pipe — a refusal moved from the pipe to the route, never an
+acceptance, and every pipeline this table accepted before that card desugars to
+the same tokens because every one of them wrote the maximum.
 
 The same card makes "no later pass can tell a pipe was written" true of **every**
 route. The sequential route recovered each statement's tokens by re-lexing its
@@ -2220,7 +2233,9 @@ That target grammar is neither a parser generator input already used by the comp
 The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
 explicit, file-local `import std.string;` for string capabilities. Card
 `STRING-SLICE` registers that module and implements this consumer grammar
-(diagnostics `Q068`–`Q073`, spec §L21):
+(diagnostics `Q068`–`Q073`, spec §L21), and card `STRING-SLICE-IO` adds the two
+rendered-text statements marked below (`Q075`–`Q076`, the same pass's second
+band):
 
 ```ebnf
 module    = { import }, { error-decl | entry } ;
@@ -2233,10 +2248,13 @@ stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
           | "let", NAME, [ ":", "string" ], "=", NAME, "[", OPERAND, ":", OPERAND, "]", ";"
           | "print", RENDERING, OPERAND, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "print", TEXT, ";"                      (* STRING-SLICE-IO *)
+          | "log", LEVEL, TEXT, ";"                 (* STRING-SLICE-IO *)
           | "log_level", LEVEL, ";"
           | "flush", ";"
           | "return", ";" ;
 OPERAND   = [ "-" ], INTEGER | NAME ;
+TEXT      = STRING-TOKEN | NAME | NAME, "[", OPERAND, ":", OPERAND, "]" ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
@@ -2249,15 +2267,33 @@ acquires no import requirement.
 
 A bound is a check-time constant, so `0 <= low <= high <= len(s)` and both UTF-8
 code-point boundaries are decided before emission and this profile has no
-run-time failure arm. The line-producing statements are `source.std-io.v1`'s
-own, read by its reader, and take **scalars only**: rendering a string is not in
-this grammar, because the amendment does not make the output modules accept text.
+run-time failure arm. That is as true of an inline `TEXT` slice as of a bound
+one: both are decided by one predicate, so a slice cannot be admitted at a
+rendering operand where the same slice written as a `let` would be refused.
+
+The two statement families above are separated by a **closed word set** and not
+by a lookahead: `RENDERING` is `dec` or `hex`, so a statement naming one renders
+a scalar and a statement naming neither renders text. A string therefore takes
+**no** selector — `dec` and `hex` are total functions from an `i32` to digits
+and a `string` is already the bytes — and a selector written in front of one
+refuses at `Q072`, where it refused before the composition existed. What reaches
+the stream is the view's exact UTF-8 payload, framed by the sink's own line
+discipline: no re-encoding, no escaping, no terminator, no newline beyond the
+one every line carries, and an embedded `0` written as the ordinary byte it is.
+
+Both pipe spellings are the same statements (§G02h): `s |> print;` is
+`print s;` and `s[0:4] |> log info;` is `log info s[0:4];`.
+
+**Route selection is unmoved by the text forms.** A *constructed* string at an
+operand — a quoted literal or an inline slice — selects this route; a bare `NAME`
+does not, so `print bogus;` in a `source.std-io.v1` module keeps that route's own
+refusal, and a bare name is admitted as text only inside a module already on
+this route.
 
 What remains outside every grammar in this document, each a named follow-on:
-converting a `std.buffer` value to a string, rendering text, transporting a
-string at an extern/native-library ABI, comparing or searching strings, a
-single-index access into a string, and the separate mutable `{ptr, len, cap}`
-byte slice.
+converting a `std.buffer` value to a string, transporting a string at an
+extern/native-library ABI, comparing or searching strings, a single-index access
+into a string, and the separate mutable `{ptr, len, cap}` byte slice.
 
 ## G08. Source-contract service configuration v1
 

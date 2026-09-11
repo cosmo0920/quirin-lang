@@ -66,7 +66,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
+use crate::std_io::{
+    Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
+};
 use crate::typed_errors::{Effect, EffectRow};
 
 /// The largest literal payload this route admits, in bytes.
@@ -94,6 +96,45 @@ pub enum StringOperand {
     Scalar(String),
 }
 
+/// What a **rendered text** operand may be (card `STRING-SLICE-IO`).
+///
+/// Three forms, and every one of them denotes a string view of this program's
+/// own static storage. There is deliberately no constructor for a scalar and
+/// none for a borrowed custody identity: a text line renders the bytes of a
+/// view, and a position that cannot hold a view cannot be written here at all.
+/// The symmetry with [`StringOperand`] is exact and intentional — that enum
+/// cannot denote a string and this one cannot denote anything else.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TextOperand {
+    /// `print "…";` — a quoted literal written at the rendering site. The index
+    /// is into [`StringProgram::literals`], the same pool a `let` literal view
+    /// interns into.
+    Literal(usize),
+    /// `print s;` — a string this entry bound.
+    Name(String),
+    /// `print s[LOW:HIGH];` — one slice of a string this entry bound, written
+    /// inline. It is the **same** checked slice `let t = s[LOW:HIGH];` is: the
+    /// §4 arithmetic is recorded in the certificate's own [`SliceRecord`] list
+    /// and the bounds are decided by the same rule, so an inline slice cannot be
+    /// admitted where a bound one would be refused.
+    Slice {
+        name: String,
+        low: StringOperand,
+        high: StringOperand,
+    },
+}
+
+/// The certificate-side name of the view an **inline** text slice derives.
+///
+/// An inline slice binds no source name, but the evidence a reader checks is
+/// per-view, so it gets one here rather than being left out of the provenance
+/// record. The spelling cannot collide with a source binding's emitted name: a
+/// source binding is emitted as `v_NAME` or `s_NAME` and this is neither.
+#[must_use]
+pub fn text_slice_name(event: usize) -> String {
+    format!("qcore_text_{event}")
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StringEvent {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
@@ -116,6 +157,23 @@ pub enum StringEvent {
     /// A `source.std-io.v1` line-producing statement, reused unchanged. The
     /// bytes of the line are decided by [`rendered_line`] and nowhere else.
     Line(StdIoEvent),
+    /// `print TEXT;` / `log LEVEL TEXT;` — render a view's **exact UTF-8 bytes**
+    /// to a stream (card `STRING-SLICE-IO`).
+    ///
+    /// `level` is `None` for `print` (standard output) and `Some(level)` for
+    /// `log LEVEL` (the logger's stream), exactly as
+    /// [`crate::std_io::line_framing`] reads it — so a text line and a rendered
+    /// scalar line are framed by one function and cannot drift apart.
+    ///
+    /// There is **no rendering selector**: `dec` and `hex` are `std.fmt`'s two
+    /// total functions from `i32` to digits, and there is nothing for either to
+    /// do to a byte sequence that is already the text. A selector written in
+    /// front of a string therefore keeps refusing at `Q072`, where it refused
+    /// before this card.
+    Text {
+        level: Option<Level>,
+        operand: TextOperand,
+    },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -357,6 +415,17 @@ pub enum StringError {
     CrossesBoundary { event: usize, name: String },
     /// `Q073`: the declared `effects { … }` row does not admit a derived effect.
     EffectNotDeclared { event: usize, effect: Effect },
+    /// `Q076`: a text-line operand naming something this entry bound no string
+    /// for (card `STRING-SLICE-IO`).
+    ///
+    /// Deliberately **this composition's own code** rather than the base route's
+    /// `Q069`. The two conditions read the same from a distance and are not the
+    /// same: `Q069` is a *view position* inside the string vocabulary — a
+    /// slice's source, a `len`'s argument — whereas this is the output
+    /// vocabulary's operand position, where a reader who wrote `print x;` for an
+    /// integer `x` wants to be told to name a rendering rather than to be told
+    /// that `x` is not a string.
+    NotRenderableText { event: usize, name: String },
 }
 
 impl StringError {
@@ -368,6 +437,7 @@ impl StringError {
             Self::OutOfRange { .. } | Self::NotABoundary { .. } => "Q071",
             Self::CrossesBoundary { .. } => "Q072",
             Self::EffectNotDeclared { .. } => "Q073",
+            Self::NotRenderableText { .. } => "Q076",
         }
     }
 
@@ -380,7 +450,8 @@ impl StringError {
             | Self::OutOfRange { event, .. }
             | Self::NotABoundary { event, .. }
             | Self::CrossesBoundary { event, .. }
-            | Self::EffectNotDeclared { event, .. } => *event,
+            | Self::EffectNotDeclared { event, .. }
+            | Self::NotRenderableText { event, .. } => *event,
         }
     }
 }
@@ -436,6 +507,12 @@ impl fmt::Display for StringError {
                 "this entry performs `{effect:?}` but its declared `effects {{ … }}` row does not \
                  admit it"
             ),
+            Self::NotRenderableText { name, .. } => write!(
+                f,
+                "`{name}` is not a string this entry bound, and a bare rendering operand renders a \
+                 string's own bytes; name a `std.fmt` rendering (`print dec {name};`) to render a \
+                 scalar, or bind `{name}` to a string literal or a slice"
+            ),
         }
     }
 }
@@ -456,7 +533,13 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 | StdIoEvent::Print { .. }
                 | StdIoEvent::Log { .. }
                 | StdIoEvent::Flush,
-            ) => {
+            )
+            // A rendered text line is a line: it derives `Io` and nothing
+            // else, exactly as a rendered scalar line does. Rendering a view
+            // reads static bytes and writes them; it allocates nothing and
+            // mutates nothing, so amendment §7's "no `Alloc` or `Mut`" survives
+            // the composition unchanged.
+            | StringEvent::Text { .. } => {
                 effects.insert(Effect::Io);
             }
             StringEvent::Bind { .. }
@@ -509,6 +592,150 @@ impl Evaluation<'_> {
     fn bytes(&self, view: StringViewRecord) -> &[u8] {
         let payload = &self.literals[view.literal];
         &payload[view.offset as usize..(view.offset + view.len) as usize]
+    }
+}
+
+/// §2's admission condition for one slice, whole and in order, returning the
+/// source view, the derived view and the two decided bounds.
+///
+/// **The one place a slice is decided**, so a slice written inline at a
+/// rendering operand (card `STRING-SLICE-IO`) cannot be admitted where the same
+/// slice written as a `let` binding would be refused, or refused where it would
+/// be admitted. Every refusal it can return is one of the base route's, at the
+/// base route's own code: composing the route added no new way for a slice to
+/// fail.
+fn admit_slice(
+    evaluation: &Evaluation<'_>,
+    event: usize,
+    name: &str,
+    low: &StringOperand,
+    high: &StringOperand,
+) -> Result<(StringViewRecord, StringViewRecord, u32, u32), Vec<StringError>> {
+    let Some(source) = evaluation.views.get(name).copied() else {
+        return Err(vec![StringError::NotAString {
+            event,
+            name: name.to_owned(),
+        }]);
+    };
+    let low = evaluation.operand(event, low);
+    let high = evaluation.operand(event, high);
+    let (low, high) = match (low, high) {
+        (Ok(low), Ok(high)) => (low, high),
+        (low, high) => {
+            let mut refusals = Vec::new();
+            refusals.extend(low.err());
+            refusals.extend(high.err());
+            return Err(refusals);
+        }
+    };
+    // Both halves are checked before either is used as an offset, so no
+    // arithmetic below can be out of range. `source.len` is at most
+    // `MAX_STRING_BYTES`, so the conversion is exact and the comparison is the
+    // one §2 writes.
+    let length = i32::try_from(source.len).expect("a length is bounded by 4096");
+    if low < 0 || high < low || high > length {
+        return Err(vec![StringError::OutOfRange {
+            event,
+            name: name.to_owned(),
+            low,
+            high,
+            len: source.len,
+        }]);
+    }
+    let bytes = evaluation.bytes(source);
+    let low = low as u32;
+    let high = high as u32;
+    let mut refusals = Vec::new();
+    for at in [low, high] {
+        if !is_code_point_boundary(bytes, at as usize) {
+            refusals.push(StringError::NotABoundary {
+                event,
+                name: name.to_owned(),
+                at,
+                len: source.len,
+            });
+        }
+    }
+    if !refusals.is_empty() {
+        return Err(refusals);
+    }
+    // §4, verbatim: `{ ptr = p + low, len = high - low }`. The literal index is
+    // carried through unchanged, which is the statement that the derived view
+    // addresses the *same* storage.
+    let derived = StringViewRecord {
+        literal: source.literal,
+        offset: source.offset + low,
+        len: high - low,
+    };
+    Ok((source, derived, low, high))
+}
+
+/// Resolve a text-line operand to the view whose bytes the line writes (card
+/// `STRING-SLICE-IO`).
+///
+/// An inline slice records its arithmetic in `slices` and its provenance in
+/// `views`, exactly as a bound one does, so the certificate's zero-copy evidence
+/// covers a rendering operand as completely as it covers a binding. It binds no
+/// name in the evaluation: the view exists for the duration of the line and a
+/// later statement cannot name it.
+fn text_view(
+    evaluation: &Evaluation<'_>,
+    event: usize,
+    operand: &TextOperand,
+    slices: &mut Vec<SliceRecord>,
+    views: &mut Vec<(String, StringViewRecord)>,
+) -> Result<StringViewRecord, StringError> {
+    match operand {
+        TextOperand::Literal(literal) => {
+            let Some(payload) = evaluation.literals.get(*literal) else {
+                return Err(StringError::Shape {
+                    event,
+                    reason: "this rendered literal names no stored payload".to_owned(),
+                });
+            };
+            let record = StringViewRecord {
+                literal: *literal,
+                offset: 0,
+                // `as` is exact: the payload was bounded at decoding.
+                len: payload.len() as u32,
+            };
+            views.push((text_slice_name(event), record));
+            Ok(record)
+        }
+        TextOperand::Name(name) => match evaluation.views.get(name).copied() {
+            Some(view) => Ok(view),
+            // The reader wrote a bare operand, which is the *text* form, so the
+            // refusal is this composition's own and names the two repairs.
+            Option::None => Err(StringError::NotRenderableText {
+                event,
+                name: name.clone(),
+            }),
+        },
+        TextOperand::Slice { name, low, high } => {
+            match admit_slice(evaluation, event, name, low, high) {
+                Ok((from, derived, low, high)) => {
+                    let binding = text_slice_name(event);
+                    views.push((binding.clone(), derived));
+                    slices.push(SliceRecord {
+                        event,
+                        source: name.clone(),
+                        binding,
+                        from,
+                        low,
+                        high,
+                        derived,
+                    });
+                    Ok(derived)
+                }
+                // `admit_slice` reports every refusal of a slice; a text line
+                // adds none, so the first is the one to raise. The others are
+                // the same statement's and would name the same span.
+                Err(refusals) => Err(refusals
+                    .into_iter()
+                    .next()
+                    .expect("a refused slice reports at least one refusal")),
+            }
+        }
     }
 }
 
@@ -601,65 +828,14 @@ pub fn check_string_program(
                 low,
                 high,
             } => {
-                let Some(source) = evaluation.views.get(name).copied() else {
-                    errors.push(StringError::NotAString {
-                        event: index,
-                        name: name.clone(),
-                    });
-                    continue;
-                };
-                let low = evaluation.operand(index, low);
-                let high = evaluation.operand(index, high);
-                let (low, high) = match (low, high) {
-                    (Ok(low), Ok(high)) => (low, high),
-                    (low, high) => {
-                        errors.extend(low.err());
-                        errors.extend(high.err());
-                        continue;
-                    }
-                };
-                // §2's admission condition, whole and in order. Both halves are
-                // checked before either is used as an offset, so no arithmetic
-                // in this function can be out of range.
-                // `source.len` is at most `MAX_STRING_BYTES`, so the conversion
-                // is exact and the comparison is the one §2 writes.
-                let length = i32::try_from(source.len).expect("a length is bounded by 4096");
-                if low < 0 || high < low || high > length {
-                    errors.push(StringError::OutOfRange {
-                        event: index,
-                        name: name.clone(),
-                        low,
-                        high,
-                        len: source.len,
-                    });
-                    continue;
-                }
-                let bytes = evaluation.bytes(source);
-                let low = low as u32;
-                let high = high as u32;
-                let mut boundary_refused = false;
-                for at in [low, high] {
-                    if !is_code_point_boundary(bytes, at as usize) {
-                        errors.push(StringError::NotABoundary {
-                            event: index,
-                            name: name.clone(),
-                            at,
-                            len: source.len,
-                        });
-                        boundary_refused = true;
-                    }
-                }
-                if boundary_refused {
-                    continue;
-                }
-                // §4, verbatim: `{ ptr = p + low, len = high - low }`. The
-                // literal index is carried through unchanged, which is the
-                // statement that the derived view addresses the *same* storage.
-                let derived = StringViewRecord {
-                    literal: source.literal,
-                    offset: source.offset + low,
-                    len: high - low,
-                };
+                let (source, derived, low, high) =
+                    match admit_slice(&evaluation, index, name, low, high) {
+                        Ok(admitted) => admitted,
+                        Err(refusals) => {
+                            errors.extend(refusals);
+                            continue;
+                        }
+                    };
                 evaluation.views.insert(binding.clone(), derived);
                 views.push((binding.clone(), derived));
                 slices.push(SliceRecord {
@@ -706,6 +882,33 @@ pub fn check_string_program(
                     reason: "a return is this route's own event, not a standard-IO one".to_owned(),
                 }),
             },
+            // Card `STRING-SLICE-IO`. The view is resolved by the same rules
+            // every other view position uses, the §4 arithmetic of an inline
+            // slice is recorded in the same list a bound slice's is, and the
+            // line's bytes are decided by `source.std-io.v1`'s own framing.
+            StringEvent::Text { level, operand } => {
+                match text_view(&evaluation, index, operand, &mut slices, &mut views) {
+                    Ok(view) => {
+                        let bytes = evaluation.bytes(view);
+                        match std::str::from_utf8(bytes) {
+                            Ok(text) => lines.push(rendered_text_line(*level, text)),
+                            // Unreachable for a view this evaluation holds: a
+                            // payload is validated at decoding and every
+                            // admitted bound is a code-point boundary. Checked
+                            // rather than asserted, because the alternative is
+                            // publishing an observation whose bytes no rule
+                            // covered.
+                            Err(error) => errors.push(StringError::Literal {
+                                event: index,
+                                refusal: LiteralRefusal::NotUtf8 {
+                                    at: error.valid_up_to(),
+                                },
+                            }),
+                        }
+                    }
+                    Err(error) => errors.push(error),
+                }
+            }
             StringEvent::Return => returned = true,
         }
     }

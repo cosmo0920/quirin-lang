@@ -16,6 +16,7 @@ here can drift from what its programs do.
 | [unsafe-linkage/](unsafe-linkage/) | `unsafe extern fn` and native-library manifests | `source.extern-call.v1` |
 | [threads/](threads/) | Scoped tasks, owned buffers, read shares | the checked task profiles |
 | [events/](events/) | One event context, a registration on a descriptor, declared dispatch turns | `source.event.v1` |
+| [strings/](strings/) | Immutable UTF-8 views, slices, and text reaching a stream | `source.string.v1` |
 
 Run everything the first five directories claim:
 
@@ -34,6 +35,12 @@ and the event examples:
 
 ```sh
 cargo test -p qcore-compiler --test std_event
+```
+
+and the string example:
+
+```sh
+cargo test -p qcore-compiler --test string_slice_io
 ```
 
 Two things worth knowing before reading any of them:

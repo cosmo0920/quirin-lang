@@ -1,0 +1,56 @@
+// Card `STRING-SLICE-IO`: the accepted composition of `std.string` with the
+// output modules — a string view rendered to a stream.
+//
+// Every form of the composition appears here once: a literal rendered where it
+// is written, a bound view, a bound slice, a slice written inline at the
+// operand, both streams, a multibyte payload, a payload with an embedded NUL,
+// and the empty string. The scalar line vocabulary is unchanged and appears
+// beside it, which is the point: one entry renders text and numbers with one
+// framing.
+//
+// `std.fmt` is imported because this module renders a *scalar* on its last
+// line. A module that rendered only text would not need it: a rendering
+// selector is `std.fmt`'s and a string needs none.
+import std.string;
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io } {
+    // The HTTP/1.1 status line, spelled as one literal. Its character set —
+    // letters, digits, `/`, `.`, spaces — survives lexing, decoding, the
+    // certificate, the emitted static array and the run byte for byte.
+    print "HTTP/1.1 200 OK";
+    "Content-Type: text/plain" |> print;
+
+    let body = "hello, world";
+    print body;
+
+    // A bound slice and an inline one, of the same view. Both are the same
+    // checked slice: `{ ptr = p + low, len = high - low }`, no allocation and
+    // no copy, and both record their arithmetic in the certificate.
+    let greeting = body[0:5];
+    print greeting;
+    body[7:12] |> log info;
+
+    // Four bytes, two code points. The rendered bytes are the view's own, so
+    // what reaches the stream is `\xc3\xa9o!` and not an escape of it.
+    let accented = "\xc3\xa9o!";
+    print accented;
+    accented[2:4] |> log info;
+
+    // An embedded NUL is an ordinary byte of the text, inside the length. A
+    // `%s` render would stop at it; this line writes five bytes.
+    log warn "ab\0cd";
+
+    // The empty string renders an empty line, not nothing: the framing's
+    // newline is the framing's.
+    print "";
+
+    // The scalar vocabulary, unmoved, in the same entry.
+    let n = len(body);
+    print dec n;
+    flush;
+
+    return;
+}

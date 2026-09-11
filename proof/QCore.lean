@@ -137,6 +137,7 @@ import QCore.SingleEmissionRoute
 import QCore.ObsReordering
 import QCore.StdBuffer
 import QCore.StdString
+import QCore.StringSliceIo
 import QCore.ComposeEventLines
 
 /-! The executable formal core of QCore-C revision 0.1. -/
