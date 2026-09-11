@@ -134,6 +134,7 @@ import QCore.BranchJoin
 import QCore.Connectives
 import QCore.Bitwise
 import QCore.SingleEmissionRoute
+import QCore.CProgram
 import QCore.ObsReordering
 import QCore.StdBuffer
 import QCore.StdString

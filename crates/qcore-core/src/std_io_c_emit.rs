@@ -14,7 +14,8 @@
 
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE};
+use crate::c_program::{self, Fragment, Section};
+use crate::io_emit;
 use crate::std_io::{StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, Stream};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -191,17 +192,13 @@ pub fn emit_std_io_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_std_io_program(program, certificate)?;
 
-    // `source.std-io.v1` and every synthesized trace line now share one C-level
-    // emission route (card `TRACE-STDIO`): this route's `print`/`log`/`flush`
-    // expand to the same `QCORE_IO_*` spelling the four trace backends use.
-    let mut source = String::from(INCLUDES);
-    source.push_str(IO_PRELUDE);
-    source.push_str(PRELUDE);
-    source.push_str("\nint main(void)\n{\n");
-
+    // Every scalar this route binds is a literal known before the first event,
+    // so the whole set is declared in the entry's prologue.
+    let mut prologue = String::new();
     for (name, value) in &program.scalars {
-        let _ = writeln!(source, "    int32_t s_{name} = INT32_C({value});");
+        let _ = writeln!(prologue, "    int32_t s_{name} = INT32_C({value});");
     }
+    let mut source = String::new();
 
     // Each name denotes this route's own declared copy of the literal it was
     // bound to. The rendering itself is `event_statement`'s, which the composed
@@ -232,6 +229,28 @@ pub fn emit_std_io_c11(
         }
     }
 
-    source.push_str("    return 0;\n}\n");
-    Ok(StdIoCEmission { source })
+    Ok(StdIoCEmission {
+        source: c_program::assemble(
+            &preamble(),
+            &c_program::Entry {
+                prologue,
+                ..c_program::Entry::source_route(source)
+            },
+        ),
+    })
+}
+
+/// The file-scope text `source.std-io.v1` contributes to a program it is part
+/// of, whether alone or composed (card `C-EMIT-MAIN-UNIFY`).
+///
+/// The IO prelude is named through `io_emit`'s own constructor rather than
+/// spelled here, so a program that also takes another printing route installs
+/// exactly one copy.
+#[must_use]
+pub fn preamble() -> Vec<Fragment> {
+    vec![
+        Fragment::new(Section::Includes, "std_io.includes", INCLUDES),
+        crate::io_emit::io_prelude_fragment(),
+        Fragment::new(Section::Prelude, "std_io.prelude", PRELUDE),
+    ]
 }

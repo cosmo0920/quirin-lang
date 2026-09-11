@@ -42,7 +42,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-use crate::diagnostic_log_c_emit::DIAGNOSTIC_LOG_PRELUDE;
+use crate::c_program::{self, Fragment, Section};
 use crate::mutex_invariant::{
     AccessFootprint, AccessKind, AdmittedProtectionGrowth, ConcurrencyProfile, GuardId,
     InvariantId, MutexId, MutexInvariantCertificate, MutexInvariantEvent, MutexInvariantProgram,
@@ -334,11 +334,7 @@ pub fn emit_mutex_c11(
         return Err(MutexEmissionRefusal::UncheckedProfile);
     }
     let extents = resource_extents(program)?;
-    let mut source = String::from(include_str!("c11_threads_compat.h"));
-    source.push_str(INCLUDES);
-    source.push_str(DIAGNOSTIC_LOG_PRELUDE);
-    source.push_str(PRELUDE);
-    source.push_str("int main(void) {\n    int qcore_exit = 0;\n");
+    let mut source = String::new();
     for (resource, end) in &extents {
         writeln!(
             source,
@@ -488,11 +484,37 @@ pub fn emit_mutex_c11(
     for resource in extents.keys() {
         writeln!(source, "    free(r{resource});").unwrap();
     }
-    source.push_str("    return qcore_exit;\n}\n");
     Ok(MutexCEmission {
-        source,
+        source: c_program::assemble(
+            &preamble(),
+            &c_program::Entry {
+                lead: String::new(),
+                brace: c_program::BraceStyle::KAndR,
+                // The exit status a typed-error exit set, carried across the
+                // releases the epilogue performs.
+                prologue: "    int qcore_exit = 0;\n".to_owned(),
+                body: source,
+                epilogue: "    return qcore_exit;\n}\n".to_owned(),
+            },
+        ),
         resource_bytes: extents,
     })
+}
+
+/// The file-scope text `CheckedMutexInvariantV1` contributes to a program it is
+/// part of (card `C-EMIT-MAIN-UNIFY`).
+#[must_use]
+pub fn preamble() -> Vec<Fragment> {
+    vec![
+        Fragment::new(
+            Section::Compat,
+            "c11_threads.compat",
+            include_str!("c11_threads_compat.h"),
+        ),
+        Fragment::new(Section::Includes, "mutex.includes", INCLUDES),
+        crate::diagnostic_log_c_emit::diagnostic_log_fragment(),
+        Fragment::new(Section::Prelude, "mutex.prelude", PRELUDE),
+    ]
 }
 
 /// The mutex generation whose critical section `guard` names, found by walking

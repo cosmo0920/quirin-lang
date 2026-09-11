@@ -52,7 +52,8 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE};
+use crate::c_program::{self, Fragment, Section};
+use crate::io_emit;
 use crate::obs_reordering::{
     AdmittedReordering, DeclaredRecord, Emitter, ReorderingRefusal, ReorderingWitness,
 };
@@ -312,18 +313,16 @@ pub fn emit_socket_c11(
         .map(|receipt| (receipt.event, receipt))
         .collect();
 
-    // The compatibility header first: its POSIX arms define `_POSIX_C_SOURCE` /
-    // `_DARWIN_C_SOURCE`, which must precede every libc include in this
-    // translation unit.
-    let mut source = String::from(SOCKET_COMPAT);
-    source.push_str(INCLUDES);
-    source.push_str(IO_PRELUDE);
-    source.push_str("\nint main(void)\n{\n");
+    // Starting the platform's socket layer is the entry's prologue: it runs
+    // before this route's first statement and before any other route's, which
+    // is what the prologue slot means.
+    let mut prologue = String::new();
     let _ = writeln!(
-        source,
+        prologue,
         "    if (qcore_socket_startup() != 0) {{\n        return {STATUS_STARTUP};\n    }}"
     );
 
+    let mut source = String::new();
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
 
     for (index, statement) in program.statements.iter().enumerate() {
@@ -500,8 +499,32 @@ pub fn emit_socket_c11(
         }
     }
 
-    source.push_str("    return 0;\n}\n");
-    Ok(SocketCEmission { source })
+    Ok(SocketCEmission {
+        source: c_program::assemble(
+            &preamble(),
+            &c_program::Entry {
+                prologue,
+                ..c_program::Entry::source_route(source)
+            },
+        ),
+    })
+}
+
+/// The file-scope text `source.socket.v1` contributes to a program it is part
+/// of (card `C-EMIT-MAIN-UNIFY`).
+///
+/// The compatibility header sits in [`Section::Compat`] rather than merely
+/// first: its POSIX arms define `_POSIX_C_SOURCE` / `_DARWIN_C_SOURCE`, which
+/// must precede every libc include in the unit — so a composition that merges
+/// this route with another keeps the header above *both* routes' includes
+/// rather than above only this one's.
+#[must_use]
+pub fn preamble() -> Vec<Fragment> {
+    vec![
+        Fragment::new(Section::Compat, "socket.compat", SOCKET_COMPAT),
+        Fragment::new(Section::Includes, "socket.includes", INCLUDES),
+        io_emit::io_prelude_fragment(),
+    ]
 }
 
 /// The single-emission-route check, applied to this backend: an emitted program

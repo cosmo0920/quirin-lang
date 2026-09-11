@@ -4,15 +4,13 @@ use std::collections::BTreeSet;
 use std::fmt::{self, Write as _};
 
 use crate::ResourceId;
+use crate::c_program::{self, Fragment, Section};
 use crate::cfg::{
     BasicBlock, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ExecutionObservation,
     ExecutionOutcome, TraceEvent, TypedCfg,
 };
 use crate::cleanup_lowering::{BranchCondition, IntExpr};
-use crate::diagnostic_log_c_emit::{
-    DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
-    diagnostic_stdout_adapter_declaration,
-};
+use crate::diagnostic_log_c_emit;
 
 /// Emit a standalone, strictly conforming C11 translation unit.
 ///
@@ -29,19 +27,10 @@ pub fn emit_c11_with_log_level(
     log_level: Option<crate::std_io::Level>,
 ) -> Result<String, CEmitError> {
     validate_c_symbols(cfg)?;
-    let mut output = String::new();
-    writeln!(output, "#include <inttypes.h>").unwrap();
-    writeln!(output, "#include <stdbool.h>").unwrap();
-    writeln!(output, "#include <stdint.h>").unwrap();
-    writeln!(output, "#include <stdlib.h>").unwrap();
-    if let Some(level) = log_level {
-        output.push_str(&diagnostic_stdout_adapter_declaration(level));
-    }
-    output.push_str(DIAGNOSTIC_LOG_PRELUDE);
-    if log_level.is_some() {
-        output.push_str(DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION);
-    }
-    output.push('\n');
+    let fragments = preamble(log_level);
+    // The error ABI, the result structure, the runtime helpers and every
+    // emitted function body: one file-scope fragment, built here.
+    let mut output = String::from("\n");
 
     writeln!(output, "enum qcore_error_tag {{").unwrap();
     writeln!(output, "    QERR_NONE = 0,").unwrap();
@@ -161,24 +150,64 @@ static void q_release(void **slot, uint64_t identity)
     }
     writeln!(output, "}}\n").unwrap();
 
-    output.push_str("int main(void)\n{\n");
+    let mut body = String::new();
     writeln!(
-        output,
+        body,
         "    struct qcore_result q_result = qcore_fn_{}();",
         cfg.function()
     )
     .unwrap();
-    writeln!(output, "    (void) q_result.value;").unwrap();
-    writeln!(output, "    (void) q_result.error;").unwrap();
-    writeln!(output, "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, UINT64_C(0), UINT64_C(0), q_result.ok ? (int64_t)q_result.value : (int64_t)q_result.error.tag, q_result.ok ? \"ok\" : \"error\");").unwrap();
+    writeln!(body, "    (void) q_result.value;").unwrap();
+    writeln!(body, "    (void) q_result.error;").unwrap();
+    writeln!(body, "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, UINT64_C(0), UINT64_C(0), q_result.ok ? (int64_t)q_result.value : (int64_t)q_result.error.tag, q_result.ok ? \"ok\" : \"error\");").unwrap();
     for resource in cfg.resources() {
-        writeln!(output, "    if (q_result.owned_{resource} != NULL) {{").unwrap();
-        writeln!(output, "        free(q_result.owned_{resource});").unwrap();
-        writeln!(output, "        q_result.owned_{resource} = NULL;").unwrap();
-        writeln!(output, "    }}").unwrap();
+        writeln!(body, "    if (q_result.owned_{resource} != NULL) {{").unwrap();
+        writeln!(body, "        free(q_result.owned_{resource});").unwrap();
+        writeln!(body, "        q_result.owned_{resource} = NULL;").unwrap();
+        writeln!(body, "    }}").unwrap();
     }
-    output.push_str("    return 0;\n}\n");
-    Ok(output)
+
+    let mut definitions = fragments;
+    definitions.push(Fragment::new(
+        Section::FileScope,
+        "sequential.definitions",
+        output,
+    ));
+    Ok(c_program::assemble(
+        &definitions,
+        &c_program::Entry {
+            // No leading blank line: this route's file-scope text already ends
+            // in one, from the blank line after the entry function's body.
+            lead: String::new(),
+            brace: c_program::BraceStyle::Allman,
+            prologue: String::new(),
+            body,
+            epilogue: "    return 0;\n}\n".to_owned(),
+        },
+    ))
+}
+
+/// The file-scope text the sequential route contributes to a program it is part
+/// of (card `C-EMIT-MAIN-UNIFY`).
+///
+/// The hosted stdout adapter's declaration and definition are contributed only
+/// for a module that selected one, exactly as before: ordinary emission selects
+/// the null sink and needs no stdio.
+#[must_use]
+pub fn preamble(log_level: Option<crate::std_io::Level>) -> Vec<Fragment> {
+    let mut fragments = vec![Fragment::new(
+        Section::Includes,
+        "sequential.includes",
+        "#include <inttypes.h>\n#include <stdbool.h>\n#include <stdint.h>\n#include <stdlib.h>\n",
+    )];
+    if let Some(level) = log_level {
+        fragments.push(diagnostic_log_c_emit::adapter_declaration_fragment(level));
+    }
+    fragments.push(diagnostic_log_c_emit::diagnostic_log_fragment());
+    if log_level.is_some() {
+        fragments.push(diagnostic_log_c_emit::adapter_definition_fragment());
+    }
+    fragments
 }
 
 fn emit_terminator(
