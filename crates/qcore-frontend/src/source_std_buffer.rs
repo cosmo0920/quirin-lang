@@ -179,16 +179,51 @@ fn buffer_use(window: &[&Token]) -> Option<BufferUse> {
         return match word(window, 3) {
             Some(BYTES_KEYWORD) => Some(BufferUse::Acquire),
             Some(EXTENT_KEYWORD) => Some(BufferUse::Extent),
-            // `let NAME = NAME [ … ]`
-            Some(_) if symbol(window, 4, Symbol::LeftBracket) => Some(BufferUse::Load),
+            // `let NAME = NAME [ … ]`, where the bracket holds no `:`.
+            Some(_)
+                if symbol(window, 4, Symbol::LeftBracket) && !bracket_holds_a_colon(window, 4) =>
+            {
+                Some(BufferUse::Load)
+            }
             _ => None,
         };
     }
     // `NAME [ … ] = …`
-    if word(window, 0).is_some() && symbol(window, 1, Symbol::LeftBracket) {
+    if word(window, 0).is_some()
+        && symbol(window, 1, Symbol::LeftBracket)
+        && !bracket_holds_a_colon(window, 1)
+    {
         return Some(BufferUse::Store);
     }
     None
+}
+
+/// Whether the bracket opened at `cursor` contains a `:` before its `]`.
+///
+/// Card `STRING-SLICE`, and the **only** change this card made to the buffer
+/// route. `source.string.v1`'s slice `let t = s[0:3];` shares its head with this
+/// route's byte read `let x = b[0];` — a `let`, a name, a `[` — so before the
+/// colon test this classifier claimed both, and a slice written with no imports
+/// at all reported a missing `std.buffer` import for a buffer it never named.
+///
+/// The colon decides it, in the one place this route says what its statements
+/// are, so the two routes cannot disagree about which owns a statement. A byte
+/// access of this route never contains a colon: its index is
+/// `["-"] INTEGER | NAME` and neither form can hold one. No shipped fixture
+/// contains one either, so this route's accepted set and its emitted C are
+/// unchanged.
+fn bracket_holds_a_colon(window: &[&Token], cursor: usize) -> bool {
+    let mut at = cursor + 1;
+    while at < window.len() {
+        if symbol(window, at, Symbol::RightBracket) {
+            return false;
+        }
+        if symbol(window, at, Symbol::Colon) {
+            return true;
+        }
+        at += 1;
+    }
+    false
 }
 
 /// Every use of this card's vocabulary in the program, with the span of the

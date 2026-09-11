@@ -1841,6 +1841,29 @@ pub enum SemanticPass {
     /// precedent that `PIPE-OPERATOR` and `NATIVE-LIBRARY-CONTRACT-SLICE` both
     /// followed; the code-to-condition mapping is stable under such a shift.
     Event,
+    /// Card `STRING-SLICE`: admission of `source.string.v1` — the `std.string`
+    /// bundled module's immutable UTF-8 `{ptr, len}` **string view**
+    /// (`docs/design/STRING_SLICE_V1.md`). Owns `Q065`–`Q070` (spec §L21).
+    ///
+    /// A separate pass from `StandardBuffer` on purpose, and the separation is
+    /// the amendment's own §5: that pass admits an **owned, mutable, explicitly
+    /// released** `{identity, extent, custody}` and every one of its refusals is
+    /// either a custody rule or a rule about writing a byte, while this pass
+    /// admits an **immutable, custody-free view of storage it does not own**,
+    /// builds no ownership operation list at all, and decides two questions no
+    /// buffer rule can state: whether a quoted token decodes to well-formed
+    /// UTF-8, and whether a slice bound falls on a code-point boundary. Sharing
+    /// a band would make the range stop describing what either pass decides.
+    ///
+    /// It is likewise separate from `StandardIo`, whose `Q029` this pass does
+    /// not reuse for its own `Q070` effect refusal, on §L21's rule that a code
+    /// may not be reused by a second semantic pass.
+    ///
+    /// The band is `Q065`–`Q070` because `Q064` was the highest code allocated
+    /// on the base this card was cut from. A collision discovered at
+    /// integration relocates this **unshipped** band, per the wave-3 `T07`/`T09`
+    /// precedent; the code-to-condition mapping is stable under such a shift.
+    StandardString,
     PluginVerification,
 }
 
@@ -2408,7 +2431,21 @@ fn lexical_references(
             ),
             _ => false,
         };
+        // Card `STRING-SLICE`: `len` is a **contextual** clause word, skipped
+        // only where it is immediately followed by `(`. It is deliberately not
+        // in `is_reserved_source_word`: the constraint-14 census found `len` as
+        // a *reference* inside the pinned contract corpus
+        // (`ensures normal resource_borrowed(len);` in
+        // `contract/qcore/fluent_bit/resource_memory.qcore` and
+        // `contract/qcore/librdkafka/memory.qcore`), so a global reservation
+        // would change how a corpus this card may not touch resolves a name.
+        // The `len(` shape occurs zero times in QCore source anywhere in the
+        // repository, so the narrower rule collides with nothing — the same
+        // "rename or narrow rather than edit the pinned surface" discipline that
+        // gave `bytes` its spelling and `effort` its name.
+        let length_query = crate::source_std_string::is_length_query(word, next.map(|t| &t.kind));
         if body_binder
+            || length_query
             || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),
@@ -2737,6 +2774,16 @@ pub fn source_diagnostic(
         // own refusal), Q061 (the determinism boundary) and Q062 (the effect
         // row) are issued at their own emission sites.
         SemanticPass::Event => "Q058",
+        // The generic presentation code of the string pass, and the code of
+        // every shape refusal in it. The specific conditions Q066 (a bound that
+        // is not a check-time constant, or a view position naming no string),
+        // Q067 (a quoted token that does not decode to a well-formed UTF-8
+        // payload), Q068 (a slice outside `0 <= low <= high <= len` or off a
+        // code-point boundary), Q069 (a string at a position it may not cross)
+        // and Q070 (an undeclared derived effect) are issued at their own
+        // emission sites, and Q065 is also the code of this route's failed
+        // certificate rederivation.
+        SemanticPass::StandardString => "Q065",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

@@ -1,0 +1,90 @@
+=== string ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+3
+-- .qcore/.qc fixtures: files touched --
+3
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+250
+=== len ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+6
+-- .qcore/.qc fixtures: files touched --
+2
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+2
+-- tracked .rs/.md whole-word occurrences --
+1780
+=== slice ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+3
+-- .qcore/.qc fixtures: files touched --
+1
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+394
+=== text ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+8
+-- .qcore/.qc fixtures: files touched --
+8
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+1
+-- tracked .rs/.md whole-word occurrences --
+2212
+=== utf8 ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+0
+-- .qcore/.qc fixtures: files touched --
+0
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+1
+=== str ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+11
+-- .qcore/.qc fixtures: files touched --
+4
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+5
+-- tracked .rs/.md whole-word occurrences --
+3941
+=== chars ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+0
+-- .qcore/.qc fixtures: files touched --
+0
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+37
+=== bytes ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+18
+-- .qcore/.qc fixtures: files touched --
+12
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+1386
+=== extent ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+7
+-- .qcore/.qc fixtures: files touched --
+4
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+307
+=== view ===
+-- .qcore/.qc fixtures: whole-word occurrences --
+0
+-- .qcore/.qc fixtures: files touched --
+0
+-- .qcore/.qc fixtures: BINDING position (let/drop/param) --
+0
+-- tracked .rs/.md whole-word occurrences --
+125

@@ -20,7 +20,7 @@ use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
 use qcore_core::{
     composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit,
-    std_event, std_event_c_emit, std_io, std_io_c_emit,
+    std_event, std_event_c_emit, std_io, std_io_c_emit, std_string, std_string_c_emit,
 };
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
@@ -220,6 +220,12 @@ pub enum CheckedSourceModule {
     /// registrations — is checked by the reactor model, which is the model that
     /// defines it.
     Event(Box<CheckedEventModule>),
+    /// One entry function checked under `source.string.v1` (card
+    /// `STRING-SLICE`): a module holding immutable UTF-8 `{ptr, len}` views of
+    /// its own static literal storage. The certificate is the evidence and the
+    /// lowered program is retained beside it, so a consumer can re-derive rather
+    /// than believe it.
+    StandardString(Box<CheckedStringModule>),
 }
 
 /// A checked `source.buffer.v1` module (card `STD-BUFFER`).
@@ -238,6 +244,28 @@ pub enum CheckedSourceModule {
 pub struct CheckedBufferModule {
     pub lowered: qcore_frontend::source_std_buffer::LoweredBufferModule,
     pub certificate: std_buffer::BufferCertificate,
+}
+
+/// A checked `source.string.v1` module (card `STRING-SLICE`).
+///
+/// Unlike [`CheckedBufferModule`] this carries **no custody evidence at all**,
+/// and that is a modelled fact rather than a gap. A string view is not a
+/// resource: amendment §4 says slicing "is not ownership splitting", §3.6 says
+/// creating a view "neither creates nor discharges" custody, and the only
+/// storage v1 can name is a string literal with static storage duration. There
+/// is therefore no obligation for the cycle-3 checker to discharge, and running
+/// it over an empty operation list would be a ceremony rather than a check.
+///
+/// What the certificate publishes in its place is **storage provenance**: every
+/// view names the literal it addresses and its offset and length within it, so
+/// §3.6 — a derived view cannot outlive the storage it came from — is a field a
+/// reader checks rather than a sentence they believe. The card that introduces a
+/// view over storage that *can* end, `STRING-SLICE-BUFFER-BORROW`, owns the
+/// lifetime rule that becomes necessary then.
+#[derive(Clone, Debug)]
+pub struct CheckedStringModule {
+    pub lowered: qcore_frontend::source_std_string::LoweredStringModule,
+    pub certificate: std_string::StringCertificate,
 }
 
 /// A checked `source.event.v1` module (card `STD-EVENT`).
@@ -337,6 +365,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
         }
     }
@@ -356,6 +385,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
@@ -372,6 +402,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
@@ -391,6 +422,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
@@ -407,6 +439,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
@@ -423,6 +456,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
@@ -439,6 +473,7 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::StandardIo(module) => Some(module),
         }
@@ -460,6 +495,7 @@ impl CheckedSourceModule {
             | Self::StandardIo(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::Composed(module) => Some(module),
         }
@@ -482,6 +518,7 @@ impl CheckedSourceModule {
             | Self::StandardIo(_)
             | Self::Composed(_)
             | Self::StandardBuffer(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
@@ -499,8 +536,27 @@ impl CheckedSourceModule {
             | Self::StandardIo(_)
             | Self::Composed(_)
             | Self::ComposedTasks(_)
+            | Self::StandardString(_)
             | Self::Event(_) => None,
             Self::StandardBuffer(module) => Some(module),
+        }
+    }
+
+    /// The checked string-view evidence (card `STRING-SLICE`).
+    pub fn as_standard_string(&self) -> Option<&CheckedStringModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_)
+            | Self::Composed(_)
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::Event(_) => None,
+            Self::StandardString(module) => Some(module),
         }
     }
 
@@ -532,6 +588,9 @@ impl CheckedSourceModule {
             // And likewise for the byte buffer: one flat entry is lowered, and
             // the profile admits no calls at all.
             Self::StandardBuffer(_) => 1,
+            // And likewise for the string view: one flat entry is lowered, and
+            // the profile admits no calls at all.
+            Self::StandardString(_) => 1,
             // And likewise for the event route: one entry is lowered, and the
             // profile admits no calls at all.
             Self::Event(_) => 1,
@@ -592,6 +651,22 @@ pub enum SourceExecutionProfile {
     /// (`calloc`/`free` plus two bounds-checked accessors) with no boundary of
     /// any kind.
     StandardBufferV1,
+    /// `source.string.v1`: a flat sequential entry holding immutable UTF-8
+    /// `{ptr, len}` **string views** of its own static literal storage, behind
+    /// the `std.string` bundled module (card `STRING-SLICE`, normative statement
+    /// `docs/design/STRING_SLICE_V1.md`).
+    ///
+    /// The opposite of `StandardBufferV1` in exactly the way amendment §5 says:
+    /// that route's value is owned, mutable and explicitly released, and this
+    /// route's is immutable, unowned and never released. Its derived effect row
+    /// therefore carries **neither `Alloc` nor `Mut`** — literal construction,
+    /// `len` and a successful slice have no effect at all (§7) — and `{Io}` only
+    /// where the entry also writes a line. Every slice bound is a check-time
+    /// constant, so `0 <= low <= high <= len` and both UTF-8 code-point
+    /// boundaries are decided before emission and the route needs no run-time
+    /// failure arm. The emitted C is self-contained, allocates nothing, copies
+    /// nothing and calls `strlen` nowhere.
+    StandardStringV1,
     /// `source.std-io-extern.v1`: the checked composition of
     /// `source.extern-call.v1` and `source.std-io.v1` in one entry (card
     /// `STD-IO-COMPOSE`). Both models check their own half unmodified and the
@@ -912,6 +987,34 @@ pub fn compile_files_with_registry(
     // and spawns never reaches here and keeps its `Q600`.
     if qcore_frontend::source_std_buffer::has_source_buffer(&parsed) {
         return compile_buffer_source(&parsed, &typed, mode, options, &ranges);
+    }
+    // Card `STRING-SLICE`, selected after the buffer route above and before the
+    // standard-IO route below. Both neighbours are deliberate, on exactly the
+    // principle its two siblings state about each other:
+    //
+    // * **After the buffer route**, so a module that both holds an owned buffer
+    //   and constructs a string view stays with the buffer route and keeps that
+    //   route's existing refusal for the statements it does not model. That is
+    //   the v1 answer to amendment §5 — `std.buffer` is not implicitly
+    //   convertible to `string` — and the refusal is an *existing* route's
+    //   rather than a new one this card wrote. Admitting the composition needs a
+    //   checked UTF-8 borrow or freeze with mutation exclusion, which is the
+    //   named follow-on `STRING-SLICE-BUFFER-BORROW`.
+    // * **Before the standard-IO route**, so a module that both slices and
+    //   prints reaches this route, which models both — its line-producing events
+    //   are `source.std-io.v1`'s own, read by that route's own reader and
+    //   rendered by that route's own emitter, over **scalars only**. A module
+    //   that only prints fails this conjunction and falls through byte for byte.
+    //
+    // The extern route is selected above both, so a module that constructs a
+    // string and calls a declared extern function never reaches here and keeps
+    // that route's existing refusal. That is amendment §6's crossing boundary,
+    // measured rather than asserted: no C04 pointer contract transports this
+    // aggregate or its extent, and supplying one is `STRING-SLICE-ABI`. Every
+    // concurrent route is selected above all three, so a module that strings and
+    // spawns keeps its `Q600`.
+    if qcore_frontend::source_std_string::has_source_string(&parsed) {
+        return compile_string_source(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
@@ -4325,6 +4428,111 @@ fn compile_buffer_source(
         // carried on `extern_observation` beside the extern route's own trace
         // rather than on the sequential cleanup field, exactly as
         // `source.std-io.v1` carries its own.
+        reference_observation: None,
+        extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.string.v1` module (card `STRING-SLICE`).
+///
+/// The shape is deliberately [`compile_buffer_source`]'s — lower, check,
+/// **recheck**, interpret, emit — so the two routes' guarantees read the same
+/// way. What differs is that there is no custody step to inherit: a view is not
+/// a resource, so this route builds no ownership operation list (see
+/// [`CheckedStringModule`]), and the evidence it publishes instead is the
+/// storage provenance of every view plus the §4 arithmetic of every slice.
+fn compile_string_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q065",
+            "entry-free `source.string.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_std_string::lower_source_string(parsed, typed, &entry)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let certificate = std_string::check_string_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardString,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_string::recheck_string_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q065",
+            SemanticPass::StandardString,
+            lowered.scope_span,
+            format!("the string-view certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let reference_observation =
+        std_string_c_emit::interpret_string_program(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q065",
+                    format!("the string-view reference execution refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+    let emission =
+        std_string_c_emit::emit_string_c11(&lowered.program, &certificate).map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q065",
+                format!("the string-view backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        // A view owns nothing, so nothing owned crosses the entry boundary —
+        // here because there is no custody at all, not because the route
+        // discharged some.
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardString(Box::new(CheckedStringModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::StandardStringV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream line trace,
+        // carried on `extern_observation` exactly as `source.buffer.v1` and
+        // `source.std-io.v1` carry theirs.
         reference_observation: None,
         extern_observation: Some(reference_observation),
     })

@@ -47,6 +47,8 @@ pub mod std_event;
 pub mod std_event_c_emit;
 pub mod std_io;
 pub mod std_io_c_emit;
+pub mod std_string;
+pub mod std_string_c_emit;
 pub mod translation_validation;
 pub mod typed_errors;
 pub mod usage;

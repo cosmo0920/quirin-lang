@@ -1,0 +1,56 @@
+// Card `STRING-SLICE`: the accepted `source.string.v1` module.
+//
+// Every string capability of the amendment appears here once: a literal view, a
+// byte length, a slice, a slice of a slice, the empty slice at `n:n`, a
+// multibyte payload sliced at code-point boundaries, and a payload with an
+// embedded NUL whose length is exact anyway.
+//
+// The observation is scalar-only and deliberately so: amendment §7 defers
+// rendering text to `STRING-SLICE-IO`, so what is printed is the *length* of
+// each view, which is exactly the number this route claims to know in O(1).
+import std.string;
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io } {
+    // Five ASCII bytes.
+    let greeting = "hello";
+    let n = len(greeting);
+    print dec n;
+
+    // `{ ptr = p + 1, len = 4 - 1 }`. No allocation, no copy.
+    let ell = greeting[1:4];
+    let m = len(ell);
+    print dec m;
+
+    // A slice of a slice: the derived view addresses the same static storage at
+    // a further offset, which is what makes the operation composable at all.
+    let inner = ell[1:2];
+    let k = len(inner);
+    print dec k;
+
+    // The empty slice at `n:n` is valid, and no operation dereferences it.
+    let empty = greeting[5:5];
+    let zero = len(empty);
+    print dec zero;
+
+    // Four bytes, two code points: `é` is C3 A9 and `o` is 6F, so the only
+    // admissible interior boundaries are 0, 2, 3 and 4.
+    let accented = "\xc3\xa9o!";
+    let accented_len = len(accented);
+    print dec accented_len;
+
+    let tail = accented[2:4];
+    let tail_len = len(tail);
+    print dec tail_len;
+
+    // An embedded NUL is an ordinary byte of the text. `strlen` would report 2
+    // here; `len` reports 5, because the length is a field and never a scan.
+    let with_nul = "ab\0cd";
+    let nul_len = len(with_nul);
+    log warn dec nul_len;
+    flush;
+
+    return;
+}

@@ -21,6 +21,7 @@ pub mod source_extern;
 pub mod source_mutex;
 pub mod source_std_buffer;
 pub mod source_std_io;
+pub mod source_std_string;
 pub mod source_tasks;
 
 pub use parser::parse_program;
