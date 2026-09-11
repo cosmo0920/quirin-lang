@@ -1,0 +1,45 @@
+{
+  "card": "AOM-DESTROY-SIBLINGS",
+  "base_commit": "52e3889c",
+  "prediction_commit": "38ec8e0c",
+  "prediction_addendum_commit": "b31d038b",
+  "entry_tree": "clean",
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "pin": "FRESH, prepared by scripts/prepare_cycle19_clang_audit.py into build/cycle19/clang-pin; no developer-spelled database reused",
+  "source_root": "build/cycle19/clang-pin/fluent-bit-clang-source",
+  "monkey_database": "build/cycle19/clang-pin/monkey/monkey-build/compile_commands.json",
+  "provider_package": "build/cycle19/provider-packages-siblings/qcore.chunkio",
+  "source_input": "HistoricalStdin",
+  "clang": "/usr/bin/clang (Ubuntu clang version 21.1.8)",
+  "binary": "cargo build -p qcore-compiler --example cycle19_fluent_bit_libraries_audit, copied to measure/bin/",
+  "binary_sha256": "746ab7603d22775c2163a35248ff515e35e584d633b1bc3ec17228ea8d0aae85",
+  "binary_identical_before_after": true,
+  "binary_identical_note": "This card changes no Rust, so the BEFORE and AFTER audits executed the same file. The only input difference is the contract manifest and the module it selects.",
+  "archive_reference": "docs/reports/wave23-c-operations/artifacts",
+  "before_reproduces_archive_byte_for_byte": {
+    "diagnostics.json": true,
+    "chunk-contracts.json": true
+  },
+  "input_sha256": {
+    "build/cycle19/clang-pin/fluent-bit-clang-source/build/compile_commands.json": "050439951c65867f2bd597f17e2c49518086f662e887de99427634101a0b1a8c",
+    "build/cycle19/clang-pin/fluent-bit-clang-production/compile_commands.json": "050439951c65867f2bd597f17e2c49518086f662e887de99427634101a0b1a8c",
+    "build/cycle19/clang-pin/monkey/monkey-build/compile_commands.json": "2c55b0c06e8fe56c6beda9810bce11f96b7a0da9f959c2e2847503177ea5b11d",
+    "build/cycle19/clang-pin/fluent-bit-clang-source/src/flb_input_chunk.c": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e"
+  },
+  "compile_database_entries": 1415,
+  "hygiene_note": "The BEFORE run was taken on the working tree. Three new report scripts and the new, UNSELECTED .qcore module were written while it ran; neither is an audit input, and resource-diagnostics.contracts.json is written at process start and records the 17-module manifest. The comment block of the manifest-selected fluent_bit/input_chunk_destroy.qcore was edited mid-run, reverted immediately, and re-applied only after the run completed.",
+  "movement": {
+    "leak": [272, 266],
+    "unknown_alias": [4408, 4421],
+    "unsupported": [49794, 49781],
+    "unit_status_moves": 0,
+    "function_status_moves": 0,
+    "units_changed": 1,
+    "leaves_added": 13,
+    "leaves_removed": 19,
+    "contract_modules": [72, 73],
+    "manifest_selected": [17, 18],
+    "v1_declarations": [38, 39],
+    "rejected_declarations": [145, 145]
+  }
+}

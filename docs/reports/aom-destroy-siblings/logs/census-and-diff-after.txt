@@ -1,0 +1,119 @@
+=== audit tail
+monkey-libevent: 29 unit(s), 359 source function(s), 346 projected; 0 data-only, 1 Safe, 11 Unsafe, 17 Unknown, 0 gateway failure(s)
+Resource diagnostics: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/measure/runs/after/resource-diagnostics.json
+AUDIT_EXIT=0
+=== headline: AFTER run
+== measure/runs/after
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+   diagnostics         : {'leak': 266, 'unknown_alias': 4421, 'unsupported': 49781}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
+=== census BEFORE -> AFTER
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 272 -> 266 (-6)
+  unknown_alias: 4408 -> 4421 (+13)
+  unsupported: 49794 -> 49781 (-13)
+units with diagnostic-count changes: 1
+  fluent-bit-chunk/flb_input_chunk.c: {'leak': -6, 'unknown_alias': 13, 'unsupported': -13}
+description inventory deltas:
+  leak / 'live obligation acquired at preprocessed line 19357': 7 -> 1 (-6)
+  unknown_alias / 'unresolved resource identity `direct_routes`': 1 -> 2 (+1)
+  unknown_alias / 'unresolved resource identity `result`': 183 -> 195 (+12)
+  unsupported / 'call to uncontracted function `flb_input_chunk_destroy_direct_routes`': 13 -> 0 (-13)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    +1 flb_input_chunk_get_direct_routes L19383 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19383 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19384 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19391 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19391 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19392 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19398 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19398 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19399 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19405 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19405 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_get_direct_routes L19433 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19433 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19434 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19452 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19452 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_get_direct_routes L19460 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19460 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19488 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_get_direct_routes L19488 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19489 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19494 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19494 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_get_direct_routes L19504 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19504 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_get_direct_routes L19505 leak: live obligation acquired at preprocessed line 19357
+    +1 flb_input_chunk_get_direct_routes L19516 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19516 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_get_direct_routes L19523 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19523 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    -1 flb_input_chunk_map L18929 unsupported: call to uncontracted function `flb_input_chunk_destroy_direct_routes`
+    +1 flb_input_chunk_map L18929 unknown_alias: unresolved resource identity `direct_routes`
+leaves added: 13; leaves removed: 19
+=== byte identity of AFTER against the frozen wave-23 archive
+diagnostics      raw differs   canonical differs   8dc339e4a8d9aeec / fdbce36b4a815c67
+source           raw differs   canonical differs   72aaad6dbe795555 / 20f73714f1541867
+chunk-contracts  raw IDENTICAL   canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+source-effects   raw differs   canonical differs   9557d243e5cc2524 / a626488f4bc5a896
+contracts        raw differs   canonical differs   d1f7934f85ea8a8e / 0197a660bf2bc444
+=== diff_artifacts BEFORE -> AFTER
+schema_version: 2
+archived: docs/reports/wave23-c-operations/artifacts
+measured: measure/runs/after
+--- chunk-contracts
+    results: 96 -> 96 (+0 -0 ~0)
+    backend_teardown: 21 -> 21 (+0 -0 ~0)
+--- contracts
+    sources: 17 -> 18 (+1 -0 ~1)
+    manifest.modules: 17 -> 18 (+1 -0 ~0)
+    audit_selection.libraries: 5 -> 5 (+0 -0 ~0)
+    sources.added: ['qcore/fluent_bit/input_chunk_destroy_direct_routes.qcore']
+    sources.changed: ['qcore/fluent_bit/input_chunk_destroy.qcore']
+--- diagnostics
+    units: 185 -> 185 (+0 -0 ~1)
+    envelope: {"diagnostic_counts": {"after": "{'leak': 266, 'unknown_alias': 4421, 'unsupported': 49781}", "before": "{'leak': 272, 'unknown_alias': 4408, 'unsupported': 49794}"}}
+--- source
+    envelope: {"compile_entry": {"after": "{'command': '/usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK_HAVE_MEMMEM -DMK_HAVE_MEMRCHR -DMK_HAVE_STAT_H -DMK_HAVE_SYS_UIO_H -DMK_HAVE_TIMERFD_CREATE -DMK_HAVE_UNISTD_H -DMK_HAVE_VALGRIND -DMK_THREADS_POSIX -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/build/cycle19/clang-pin/mon
+--- source-effects
+    results: 96 -> 96 (+0 -0 ~3)
+=== constraint 22: raw contract keys
+archived raw keys: 17
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/chunk_residency.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/hash_table_publication.qcore
+measured raw keys: 18
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/chunk_residency.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/compiler/../contract/profiles/fluent-bit/../../qcore/chunkio/resource_open_close.qcore
+    /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/compiler/../contract/profiles/fluent-bit/../../qcore/fluent_bit/hash_table_publication.qcore
+normalised added   : ['profiles/fluent-bit/../../qcore/fluent_bit/input_chunk_destroy_direct_routes.qcore']
+normalised removed : []
+normalised collision (before): False
+normalised collision (after) : False
+archived checkout roots: ['/home/cosmo/Documents/GitHub/qcore-c/compiler/../']
+measured checkout roots: ['/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/compiler/../']
+=== summary conflicts, both runs
+measure/logs/audit-before.txt:136
+measure/logs/audit-after.txt:136
+    136 0 custody summary conflict
+=== gateway failures
+6

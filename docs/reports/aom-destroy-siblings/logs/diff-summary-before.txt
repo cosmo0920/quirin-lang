@@ -1,0 +1,33 @@
+=== audit tail
+Resource diagnostics: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/measure/runs/before/resource-diagnostics.json
+AUDIT_EXIT=0
+EXIT=0
+=== headline: frozen wave-23 archive
+== docs/reports/wave23-c-operations/artifacts/diagnostics.json.gz
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+   diagnostics         : {'leak': 272, 'unknown_alias': 4408, 'unsupported': 49794}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
+=== headline: BEFORE run
+== measure/runs/before
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+   diagnostics         : {'leak': 272, 'unknown_alias': 4408, 'unsupported': 49794}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
+=== byte identity of the diagnostics artifact
+diagnostics      raw IDENTICAL   canonical IDENTICAL   8dc339e4a8d9aeec / 8dc339e4a8d9aeec
+source           raw differs   canonical differs   72aaad6dbe795555 / 20f73714f1541867
+chunk-contracts  raw IDENTICAL   canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+source-effects   raw differs   canonical differs   9557d243e5cc2524 / a626488f4bc5a896
+contracts        raw differs   canonical differs   d1f7934f85ea8a8e / 7fc02c650058430f
+=== diff_artifacts against the frozen wave-23 archive

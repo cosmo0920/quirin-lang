@@ -1,0 +1,28 @@
+   Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/compiler)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.78s
+     Running tests/contract_loader.rs (target/debug/deps/contract_loader-581340a133f86ec3)
+
+running 10 tests
+test invalid_parameter_bindings_and_types_are_rejected ... ok
+test all_parameter_modes_are_explicit_and_indexed_by_declared_names ... ok
+test duplicate_functions_and_inputs_are_rejected_even_when_identical ... ok
+test manifest_selection_rejects_unknown_schema_missing_inputs_and_traversal ... ok
+test unsupported_or_incomplete_contracts_fail_atomically ... ok
+test every_abi_scalar_is_a_borrowed_only_projection ... ok
+test production_contracts_preserve_the_previous_resource_modes ... ok
+test every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped ... ok
+test certificates_replay_exact_assumptions_and_reject_table_mutation ... ok
+test loaded_contract_changes_drive_custody_verdicts ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.93s
+
+     Running tests/qcore_contract_corpus.rs (target/debug/deps/qcore_contract_corpus-f3c6aacae931678f)
+
+running 3 tests
+test the_closesocket_error_arm_states_an_unresolved_endpoint ... ok
+test contract_surface_is_pinned_as_structured_clauses ... ok
+test every_qcore_contract_source_parses_round_trips_and_compiles ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+EXIT=0

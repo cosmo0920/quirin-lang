@@ -40,8 +40,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // blocker that measurement rested on and landed it; 16 -> 17 by card
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
     // (`fluent_bit/input_chunk_destroy.qcore`), which decides the leak leaf
-    // that card's corpus movement opened.
-    assert_eq!(contracts.source_assumptions().len(), 17);
+    // that card's corpus movement opened; 17 -> 18 by card AOM-DESTROY-SIBLINGS
+    // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`), which decides one
+    // of the two siblings that card deliberately left undeclared.
+    assert_eq!(contracts.source_assumptions().len(), 18);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -160,6 +162,18 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     old.insert_contract(
         "flb_input_chunk_destroy",
         ResourceFunctionContract::new([P::Released { nullable: false }, P::Borrowed], R::None),
+    );
+    // Card AOM-DESTROY-SIBLINGS adds the second non-all-borrowed production
+    // declaration, and it is listed beside its neighbour deliberately, because
+    // the two DISAGREE on the conjunct that decides every call site. This body
+    // (`src/flb_input_chunk.c:2483-2504`) guards its own null argument —
+    // `if (!routes) { return; }` at `:2490` — so the release is `nullable`,
+    // the position `flb_free` holds and for the same reason. Copying the
+    // neighbour's `nonnull` would assert a precondition this body does not
+    // have. `route_count` is an `int` by value, and the result is `void`.
+    old.insert_contract(
+        "flb_input_chunk_destroy_direct_routes",
+        ResourceFunctionContract::new([P::Released { nullable: true }, P::Borrowed], R::None),
     );
     old.insert_contract(
         "rd_realloc",
@@ -432,8 +446,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // NEIGHBOURS; 12 -> 14 by card CONSTRUCTOR-RESIDUALS; 14 -> 15 by card
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF; 15 -> 16 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER; 16 -> 17 by card
-    // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 17);
+    // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED; 17 -> 18 by card
+    // AOM-DESTROY-SIBLINGS.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 18);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -573,7 +588,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `fluent_bit/input_chunk_destroy.qcore`, entirely v1 and
     // manifest-selected — the declaration that decides the leak leaf the
     // previous card's corpus movement opened.
-    assert_eq!(modules.len(), 72, "corpus module count");
+    // 72 -> 73: card AOM-DESTROY-SIBLINGS adds
+    // `fluent_bit/input_chunk_destroy_direct_routes.qcore`, entirely v1 and
+    // manifest-selected — one of the two siblings that card deliberately left
+    // undeclared, read on its own terms and landed with a `nullable` release
+    // where its neighbour carries `nonnull`. The other sibling,
+    // `flb_input_chunk_destroy_corrupted`, was read too and deliberately NOT
+    // landed at measured payoff zero.
+    assert_eq!(modules.len(), 73, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -641,11 +663,15 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 16 -> 17 and 37 -> 38 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED
     // (`fluent_bit/input_chunk_destroy.qcore`'s `flb_input_chunk_destroy`, the
     // release the previous card's newly-bound summary exposed as uncontracted).
-    // The rejected count is unchanged in all seven cases, because every added
+    // 17 -> 18 and 38 -> 39 by card AOM-DESTROY-SIBLINGS
+    // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`'s
+    // `flb_input_chunk_destroy_direct_routes`, the sibling release the previous
+    // card deliberately left undeclared, read on its own terms).
+    // The rejected count is unchanged in all eight cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (17, 38, 145)
+        (18, 39, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

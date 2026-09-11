@@ -1,0 +1,24 @@
+{
+  "card": "AOM-DESTROY-SIBLINGS",
+  "note": "Wave-23 sibling destructor declarations, 2026-09-11. Full standing gate run in one pass on the card's tip, after both corpus audits finished; no partition, no retry, no constraint-16 row under load. Provider 122 carried from the prior checkpoint (packages unchanged, built only for the audit route). Corpus leak pin moves 272 -> 266, deliberately; unit and function verdicts unchanged and nothing promoted. Evidence: docs/reports/aom-destroy-siblings/README.md.",
+  "workspace_tests": 3580,
+  "workspace_tests_ignored": 8,
+  "workspace_tests_failed": 0,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 193,
+  "lean_audits": 95,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "corpus_audits": {
+    "before_exit": 0,
+    "after_exit": 0,
+    "units": 185,
+    "scopes": 6,
+    "gateway_failures": 0,
+    "reporting_units": 136,
+    "custody_summary_conflicts": 0
+  }
+}

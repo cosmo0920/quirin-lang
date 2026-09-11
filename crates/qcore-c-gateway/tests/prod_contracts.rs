@@ -850,5 +850,9 @@ fn the_modules_under_test_are_the_production_ones() {
     // release through an uncontracted callee that its newly-bound summary
     // exposed — is what the module removes.
     assert!(LOGGING.contains("extern fn flb_errno_print("));
-    assert_eq!(contracts.source_assumptions().len(), 17);
+    // 17 -> 18 by card AOM-DESTROY-SIBLINGS, which adds
+    // `fluent_bit/input_chunk_destroy_direct_routes.qcore` — the sibling
+    // release the previous card deliberately left undeclared, read on its own
+    // terms and landed with a `nullable` release.
+    assert_eq!(contracts.source_assumptions().len(), 18);
 }

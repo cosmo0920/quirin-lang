@@ -1,0 +1,89 @@
+{
+  "card": "AOM-DESTROY-SIBLINGS",
+  "baseline": "docs/reports/wave23-c-operations/artifacts",
+  "note": "BEFORE and AFTER runs of the pinned 185-unit route, taken with a FRESH Clang pin and the SAME binary (no Rust changed). `artifacts-before/` is the BEFORE run, `artifacts/` the AFTER. The prior archives are untouched.",
+  "files": {
+    "artifacts-before/chunk-contracts.json.gz": {
+      "compressed_sha256": "7d33929f8eb16238f845246e7c5bb90a632567261ca11cd98f3a5fbc9c0c27b3",
+      "compressed_bytes": 281926,
+      "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "uncompressed_bytes": 4186178,
+      "matches_wave23_archive_uncompressed": true
+    },
+    "artifacts-before/contracts.json.gz": {
+      "compressed_sha256": "5edf35c058f8debf80063749289eb2dbba0dda0484bc943db6b02e6c1b0cdfd2",
+      "compressed_bytes": 19879,
+      "uncompressed_sha256": "7fc02c650058430f7cd9da6ee4d94ff311beb6d1bfeb2f28f37129fd3f2b97f7",
+      "uncompressed_bytes": 73200,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts-before/diagnostics.json.gz": {
+      "compressed_sha256": "d8253a55d49abfafc396e6599d960c5de1e4c215f1582af346cdcc0c6679a45f",
+      "compressed_bytes": 387196,
+      "uncompressed_sha256": "8dc339e4a8d9aeece75da9b14c924007b5fe4841725d5c8498f25749d86d226c",
+      "uncompressed_bytes": 11117350,
+      "matches_wave23_archive_uncompressed": true
+    },
+    "artifacts-before/source-effects.json.gz": {
+      "compressed_sha256": "046997eaa12d7f6079dadfba36e09412196b09dee4c360af252e2265af2e4c3f",
+      "compressed_bytes": 16753,
+      "uncompressed_sha256": "a626488f4bc5a89675cda7b8dd06761160f8b9173e01a6c3e6b59b48c7453070",
+      "uncompressed_bytes": 118505,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts-before/source.json.gz": {
+      "compressed_sha256": "ada922d06e95ce667115638680a790dc2e2a06798ee578f0b0002d8aa0a66e76",
+      "compressed_bytes": 41693,
+      "uncompressed_sha256": "20f73714f154186780f7003b66c2e9708cab3d643ff07c78e767233752ddc4bd",
+      "uncompressed_bytes": 1664660,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts/chunk-contracts.json.gz": {
+      "compressed_sha256": "7d33929f8eb16238f845246e7c5bb90a632567261ca11cd98f3a5fbc9c0c27b3",
+      "compressed_bytes": 281926,
+      "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "uncompressed_bytes": 4186178,
+      "matches_wave23_archive_uncompressed": true
+    },
+    "artifacts/contracts.json.gz": {
+      "compressed_sha256": "1fa84b894c6adfbfe403ab56583eb466ba29486893fdbe450f4b4d30987556fd",
+      "compressed_bytes": 21680,
+      "uncompressed_sha256": "0197a660bf2bc444e456fb60d95a6d78c3cfff96775b2c3fd9a0145fa9cd0a60",
+      "uncompressed_bytes": 81433,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts/diagnostics.json.gz": {
+      "compressed_sha256": "80b5a95837d942f98a7c648529a1451b3991e22f2a092ca6028e5ff190a7f5b3",
+      "compressed_bytes": 387185,
+      "uncompressed_sha256": "fdbce36b4a815c6721b1b206067da42bdc08432214f5c2709d31fcf33f5cd9de",
+      "uncompressed_bytes": 11115916,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts/diff-wave23-to-after.json.gz": {
+      "compressed_sha256": "82ce1088d94ed0403b134329dc1796464a740fc672b5d912f286d8f9af7d9d6f",
+      "compressed_bytes": 109867,
+      "uncompressed_sha256": "bdf853a232e50769d5b5cd262cd145c3a4c4fb5d18e228d5311b2ee2bc01386d",
+      "uncompressed_bytes": 3173862
+    },
+    "artifacts/diff-wave23-to-before.json.gz": {
+      "compressed_sha256": "c6370d7502d2166447d68c79ffd6b394028539a09a0d73a8c3ced41bef85417d",
+      "compressed_bytes": 96754,
+      "uncompressed_sha256": "2bd794ff94ea47918a500be5bf39cfc56a8da7d4aa32fbab95e8323cbd0bc252",
+      "uncompressed_bytes": 2733385
+    },
+    "artifacts/source-effects.json.gz": {
+      "compressed_sha256": "046997eaa12d7f6079dadfba36e09412196b09dee4c360af252e2265af2e4c3f",
+      "compressed_bytes": 16753,
+      "uncompressed_sha256": "a626488f4bc5a89675cda7b8dd06761160f8b9173e01a6c3e6b59b48c7453070",
+      "uncompressed_bytes": 118505,
+      "matches_wave23_archive_uncompressed": false
+    },
+    "artifacts/source.json.gz": {
+      "compressed_sha256": "ada922d06e95ce667115638680a790dc2e2a06798ee578f0b0002d8aa0a66e76",
+      "compressed_bytes": 41693,
+      "uncompressed_sha256": "20f73714f154186780f7003b66c2e9708cab3d643ff07c78e767233752ddc4bd",
+      "uncompressed_bytes": 1664660,
+      "matches_wave23_archive_uncompressed": false
+    }
+  }
+}

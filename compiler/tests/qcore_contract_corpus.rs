@@ -249,6 +249,23 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_destroy",
         4,
     ),
+    // Card AOM-DESTROY-SIBLINGS: the corpus moves 72 -> 73 modules with this
+    // file, and the resource-v1 declaration count 38 -> 39. Deliberate; see
+    // `docs/reports/aom-destroy-siblings/README.md`. It decides one half of the
+    // previous card's `AOM-DESTROY-SIBLINGS-UNDECLARED`, and it decides it
+    // DIFFERENTLY from its neighbour above: this body's third statement is
+    // `if (!routes) { return; }`, so the release is `nullable`, not the
+    // `nonnull` the sibling carries. The other half,
+    // `flb_input_chunk_destroy_corrupted`, was read against its body too and
+    // deliberately NOT landed — measured payoff zero, because its single
+    // in-corpus call site is refused as an indirect memory access before the
+    // call rule is reached — which is the disposition card
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF gave `msgpack/packer.qcore`.
+    (
+        "fluent_bit/input_chunk_destroy_direct_routes.qcore",
+        "flb_input_chunk_destroy_direct_routes",
+        4,
+    ),
     // Card NEIGHBOURS, continued. Both helpers are file-`static` definitions
     // inside `src/flb_input_chunk.c`, itself a corpus unit: a declared contract
     // always wins over a W4-inferred summary, and a disagreement is reported as
@@ -518,8 +535,12 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 71 -> 72 by card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED's deliberate
     // addition of `fluent_bit/input_chunk_destroy.qcore`, the declaration that
     // decides the leak leaf the previous card opened, landed on the same rule
-    // after its payoff was measured.
-    assert_eq!(sources.len(), 72, "unexpected contract corpus size");
+    // after its payoff was measured. 72 -> 73 by card AOM-DESTROY-SIBLINGS'
+    // deliberate addition of
+    // `fluent_bit/input_chunk_destroy_direct_routes.qcore`, which decides one
+    // of the two siblings that card left undeclared and declines the other at
+    // measured payoff zero.
+    assert_eq!(sources.len(), 73, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");
