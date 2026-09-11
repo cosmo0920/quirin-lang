@@ -1,5 +1,7 @@
 //! Windows-native observations; these do not substitute for Unix sanitizer runs.
 #![cfg(target_os = "windows")]
+#[path = "../../tests/support/diagnostic_sink.rs"]
+mod diagnostic_sink;
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
@@ -19,23 +21,19 @@ fn winpthreads_subset_preserves_results_failures_and_mutex_exclusion() {
 #[test]
 fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins() {
     use qcore_core::task_trace_relation::{AdmittedCausalOrder, parse_observed_trace, relate};
-    // Deliberate pin update (card `TRACE-STDIO`, 2026-09-10), matching
-    // `f02_trace_relation.rs`: the synthesized trace instrumentation moved onto
-    // the shared `qcore_core::io_emit` route, so the generated C moved while
-    // the printed bytes did not. Measured on Linux from the same emission this
-    // target compiles; **not re-measured on Windows here** — no MSVC host was
-    // available to this card, and the emission is host-independent apart from
-    // the embedded compatibility header, which this card did not touch.
+    // Keep these pins paired with `f02_trace_relation.rs`: they bind the emitted
+    // C plus the explicit typed stdout sink, which is the exact translation unit
+    // executed below. Production emission itself remains quiet.
     for (name, source, pin) in [
         (
             "round-trip",
             include_str!("fixtures/ct/CT01/case.qcore"),
-            "e33534d5c7da5c6c",
+            "6524b41d0ccb910f",
         ),
         (
             "concurrent",
             include_str!("fixtures/f02/concurrent_round_trip.qcore"),
-            "910e7f975a896ff1",
+            "0719a8dcb0192e7e",
         ),
     ] {
         let module = compile_files(
@@ -43,7 +41,7 @@ fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins(
             &CompileOptions::default(),
         )
         .unwrap();
-        let c = module.c_source.as_ref().unwrap();
+        let c = diagnostic_sink::instrument(module.c_source.as_deref().unwrap());
         // Reproduce the LF checkout used by the Linux evidence pins.
         let digest = c
             .replace("\r\n", "\n")
@@ -58,7 +56,7 @@ fn windows_f02_renderings_satisfy_the_incoming_trace_relation_and_emission_pins(
         )
         .unwrap();
         let order = AdmittedCausalOrder::derive(&reference).unwrap();
-        let output = windows_c::run(c, None, &[]);
+        let output = windows_c::run(&c, None, &[]);
         assert!(output.status.success(), "{output:?}");
         let mut events = parse_observed_trace(&String::from_utf8(output.stdout).unwrap()).unwrap();
         assert!(relate(&order, &events).unwrap().is_reference_order());
@@ -87,7 +85,7 @@ fn windows_worker_failure_returns_and_releases_the_owned_error_payload() {
         )
         .unwrap();
         let output = windows_c::run(
-            module.c_source.as_ref().unwrap(),
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
             Some(include_str!("fixtures/ct/CT17/track.h")),
             &[
                 "-DPAYLOAD_FAIL_TASK=1".to_owned(),
@@ -137,7 +135,11 @@ fn windows_read_loan_shares_and_owned_error_match_reference() {
     ] {
         let module = compile_files(&[SourceFile::new("windows.qcore", source)], &CompileOptions::default()).unwrap();
         let reference = execute_task_module(module.checked.as_scoped_tasks().unwrap(), &TaskExecutionScript::default()).unwrap();
-        let output = windows_c::run(module.c_source.as_ref().unwrap(), None, &[]);
+        let output = windows_c::run(
+            &diagnostic_sink::instrument(module.c_source.as_deref().unwrap()),
+            None,
+            &[],
+        );
         assert!(output.status.success(), "{output:?}");
         assert_eq!(output.stdout, render_task_observation(&reference).as_bytes());
     }
