@@ -18,12 +18,17 @@ fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, sp
                 match spawn workers worker(move first) {
                     Result::Ok { value: handle } => {
                         // The parent can use second while the child owns first.
-                        let local = qcore_buffer_read(second);
-                        local |> log info dec;
-                        drop second;
+                        // The read and the rendering are one chain: the buffer
+                        // read is a call-shaped model intrinsic, so it is an
+                        // ordinary pipeline stage (card PIPE-INTRINSIC-STAGE).
+                        second |> qcore_buffer_read |> log info dec;
+                        second |> drop;
                         let returned = join move handle?;
                         // Post-join, the parent owns the buffer again: this
                         // renders the number the model computed out of it.
+                        // Here the read keeps its own binding rather than
+                        // becoming a stage, because the number is used twice --
+                        // rendered and returned -- and a pipeline is linear.
                         let value = qcore_buffer_read(returned);
                         value |> log info dec;
                         drop returned;
