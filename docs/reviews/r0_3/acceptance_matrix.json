@@ -5676,7 +5676,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 71,
+  "contract_modules": 72,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
