@@ -50,9 +50,11 @@ fn transcript(readme: &str, marker: &str) -> String {
 
 fn run(name: &str, source: &str, with_contracts: bool) -> (String, String) {
     let module = compile(name, source, with_contracts);
-    let extras = with_contracts
-        .then_some(&[("buffer_api.c", BUFFER_API_C)][..])
-        .unwrap_or(&[]);
+    let extras = if with_contracts {
+        &[("buffer_api.c", BUFFER_API_C)][..]
+    } else {
+        &[]
+    };
     let output = windows_c::run_with_sources(
         module.c_source.as_deref().expect("executable example"),
         None,
