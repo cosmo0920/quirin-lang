@@ -363,11 +363,11 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
             // who saw only the callee lines would not know the file had said
             // anything at all.
             //
-            // Unreachable through this binary today for the same reason the
-            // contracted arm above is — `quirin` selects no manifests
-            // (`UNSAFE-LINKAGE-CLI`) — and present for the same reason: without
-            // it the premise would render through the `{other:?}` fallback the
-            // moment that follow-on lands.
+            // **Reachable through this binary**, unlike the contracted arm
+            // above: `quirin` selects no extern *contract* environment
+            // (`UNSAFE-LINKAGE-CLI`) but it does select manifests, one per
+            // `--native-library`, so a file that binds one and declares waived
+            // callees prints this line here.
             ExternAssumption::SourceBoundLibrary(binding) => {
                 let identity = &binding.identity;
                 let premises = &binding.premises;
@@ -379,18 +379,20 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     identity.library,
                     identity.version,
                     identity.hash,
+                    // The **same prose** the two arms above render, not the
+                    // manifest's own spellings: a reader of one premise list
+                    // must not be shown two vocabularies for one vocabulary.
                     match premises.data_model {
-                        qcore_compiler::native_library::DataModel::Lp64 => "lp64",
+                        DataModel::Lp64 => "data model lp64",
                     },
                     match premises.unwinding {
-                        qcore_compiler::native_library::UnwindingPosture::Abort => "abort",
+                        UnwindingPosture::Abort => "no unwinding across the boundary",
                     },
                     match premises.allocator_custody {
-                        qcore_compiler::native_library::AllocatorCustody::Closed => "closed",
+                        AllocatorCustody::Closed => "closed allocator custody",
                     },
                     match premises.thread_posture {
-                        qcore_compiler::native_library::ThreadPosture::SingleCaller =>
-                            "single_caller",
+                        ThreadPosture::SingleCaller => "single-threaded caller",
                     },
                     match binding.header.as_ref() {
                         None => String::new(),

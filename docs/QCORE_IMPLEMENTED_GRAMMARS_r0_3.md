@@ -1085,6 +1085,13 @@ itself the trust act. A binding in another compilation input grants a file
 nothing and takes nothing away, which is constraint 13's discipline applied to a
 binding.
 
+A binding is resolved **wherever it is written**, before route selection, so a
+module carrying one and no extern surface is refused if it does not resolve
+rather than carrying a declaration nothing looked at. The check is guarded on the
+file having written a binding: a module that writes none never causes the
+selection to be loaded, so a manifest that does not load cannot refuse a module
+that never mentioned one.
+
 The premise a bound module publishes names the spelling the file wrote, the
 manifest that declared it, and that manifest's artifact identity — `library@hash`
 — beside the four ABI premise fields. It **stacks** with every callee premise and

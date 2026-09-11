@@ -769,6 +769,21 @@ pub fn compile_files_with_registry(
         )]
     })?;
     parsed.mode = mode;
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`. A binding is checked **wherever it
+    // is written**, not only where a route happens to read it. Without this a
+    // module that declares `extern library NAME;` and is routed somewhere with
+    // no extern surface would carry a declaration nothing ever looked at, and an
+    // unresolvable one would be silently ignorable.
+    //
+    // Guarded on the file having written one, and deliberately: loading the
+    // selection unconditionally would let a broken manifest refuse a module that
+    // never mentioned one, which would move programs written before this card.
+    // A module that declares a binding is a new program by construction, so
+    // nothing existing travels this branch.
+    if let Some(first) = parsed.library_bindings().first() {
+        let libraries = load_native_libraries(options, first.span, &ranges)?;
+        bind_source_libraries(&parsed, &libraries, &ranges)?;
+    }
     let scopes = registry.resolve_source_scopes(&parsed).map_err(|errors| {
         errors
             .into_iter()

@@ -55,8 +55,8 @@ candidate. It was considered and **rejected**, on three grounds:
    them would mean that importing `std.buffer` for `source.buffer.v1` — a route
    with no extern boundary at all (card `STD-BUFFER`) — silently attached a
    linkage premise the file never asked for.
-2. **The registry is closed and the language owns it.** It holds ten names
-   today; a third-party library cannot mint one. A registry-name binding could
+2. **The registry is closed and the language owns it.** It holds eight names
+   today (`qcore_core::module_imports`); a third-party library cannot mint one. A registry-name binding could
    therefore only ever bind libraries *the language ships*, which is the
    opposite of what the manifest exists for — design §1's "a bundled capability
    module … implemented by a native compiled library" is about the builder's
@@ -112,9 +112,12 @@ at a position this form claims.
 
 The finding is not in the spelling but in the **`NAME`**, which is a
 builder-chosen library name and therefore an arbitrary identifier appearing in
-the token stream. Twenty-one call sites read `SourceProgram::lexical_tokens`;
-nineteen of them window to a *statement span inside a function body* and are
-structurally blind to a file-scope binding. **Two scan the whole stream**:
+the token stream. Twenty-two call sites read `SourceProgram::lexical_tokens`.
+Most window to a *statement span inside a function body* (or take a span
+argument) and are structurally blind to a file-scope binding;
+`pipe::check_source_operators` scans the whole stream but reads only operator
+symbols, of which the form has none but `;`. **Two scan the whole stream for a
+single bare word**, and those are the exposure:
 
 | Reader | Matches on | Exposure |
 |---|---|---|
@@ -185,7 +188,23 @@ evidence, and the two absences are different — one is a symbol nothing claims,
 the other a symbol something claims and this file did not bind. Only the second
 is a contradiction. Pinned by `a_symbol_no_selected_manifest_binds_is_not_foreign`.
 
-### 4.4 File-scope isolation
+### 4.4 A binding is checked wherever it is written
+
+A binding is resolved **before route selection**, not only where the extern
+route reads it. Without that, a module carrying `extern library NAME;` and no
+extern surface would hold a declaration nothing ever looked at, and an
+unresolvable one would be silently ignorable — which is the shape this
+repository refuses everywhere else.
+
+The check is **guarded on the file having written a binding**, deliberately:
+loading the selection unconditionally would let a manifest that does not load
+refuse a module that never mentioned one, which would move programs written
+before this card. A module that declares a binding is a new program by
+construction, so nothing existing travels that branch. Both halves are pinned —
+`a_binding_in_a_module_with_no_extern_surface_is_still_resolved` and
+`a_module_that_writes_no_binding_never_loads_the_selection`.
+
+### 4.5 File-scope isolation
 
 Resolution is **per input file**, and the *declaring* file's binding decides a
 declaration — card `UNSAFE-LINKAGE`'s own rule that declaring a symbol is itself
@@ -204,7 +223,7 @@ Both directions are pinned:
 
 This is constraint 13's discipline applied to a binding.
 
-### 4.5 The premise
+### 4.6 The premise
 
 `ExternAssumption::SourceBoundLibrary(SourceLibraryBinding)`, one per resolved
 binding, carrying the spelled name, the manifest key, the artifact identity and
@@ -248,7 +267,7 @@ the §L21 process and contiguous with the third (`Q063`–`Q064`).
 | `crates/qcore-core/src/extern_call.rs` | `ExternProgram::libraries`, `ExternAssumption::SourceBoundLibrary`, `required_source_binding_assumptions`, `certificate_carries_source_bindings` |
 | `crates/qcore-frontend/src/source_extern.rs` | the bindings travel into the lowered program |
 | `crates/qcore-frontend/src/source_composed.rs` | the same for the composed route |
-| `crates/qcore-verification/src/driver.rs` | `bind_source_libraries`, `file_index`, `AdmittedExternSurface`, the `Q065`/`Q066`/`Q067` emission sites, per-file resolution at every manifest lookup |
+| `crates/qcore-verification/src/driver.rs` | `bind_source_libraries`, `file_index`, `AdmittedExternSurface`, the `Q065`/`Q066`/`Q067` emission sites, per-file resolution at every manifest lookup, and the pre-route-selection binding check of §4.4 |
 | `crates/qcorec/src/main.rs` | the premise's own rendered line |
 | `proof/QCore/NativeLibrarySourceBinding.lean`, `proof/AuditNativeLibrarySourceBinding.lean`, `proof/QCore.lean` | the Lean model and its audit |
 | Spec, grammars, `NATIVE_LIBRARY_LINKAGE_V1.md`, `AGENTS.md` | §L14.5, the §L21 row, §G02d.3, the "landed since" row, the diagnostics table and constraint 14 |
@@ -262,7 +281,7 @@ manifest, `DEVELOPMENT.md`, `docs/reviews/r0_3/acceptance_matrix.json`, and the
 
 ## 7. Tests
 
-### 7.1 `compiler/tests/native_library_source_binding.rs` — 18 tests
+### 7.1 `compiler/tests/native_library_source_binding.rs` — 20 tests
 
 *A bound file resolves through its binding:*
 `a_bound_file_resolves_its_declared_extern_surface_through_the_named_library`,
@@ -281,6 +300,10 @@ manifest, `DEVELOPMENT.md`, `docs/reviews/r0_3/acceptance_matrix.json`, and the
 `a_waived_symbol_of_a_manifest_this_file_did_not_bind_refuses`,
 `a_contracted_symbol_of_a_manifest_this_file_did_not_bind_refuses`,
 `a_symbol_no_selected_manifest_binds_is_not_foreign`.
+
+*A binding is checked wherever it is written:*
+`a_binding_in_a_module_with_no_extern_surface_is_still_resolved`,
+`a_module_that_writes_no_binding_never_loads_the_selection`.
 
 *File-scope isolation, both ways:*
 `one_file_s_binding_does_not_reach_a_sibling_file_s_declaration`,
@@ -371,12 +394,29 @@ fails.
 
 | Step | Result |
 |---|---|
-| `cargo test --workspace` | see the run recorded below |
+| `cargo test --workspace --no-fail-fast` | **3,611 passed, 0 failed, 8 ignored** across 198 test binaries; process exit 0 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
 | `python3 scripts/check_lean_audits.py` | **96/96 audits passed** (95 → 96: `AuditNativeLibrarySourceBinding.lean`) |
+
+The workspace run was measured under **heavy machine load** — other worktrees'
+audit runs, load average 40–57 throughout — and constraint 16's five
+load-sensitive rows all passed anyway, so none needed the isolated re-run that
+rule provides for. Exit 0 is the honest figure; nothing was retried.
+
+The `--no-fail-fast` flag is on the run because the first attempt stopped at
+`libevent_submodule_matches_the_audited_revision`: the worktree's submodule was
+not initialised. `git submodule update --init --recursive` fixed it, and the
+recorded run is after that, on the pinned revision
+`d82464a277d0f42703702c4dfd9af6af38595a83`. That was a checkout-setup finding,
+not a change of this card's.
+
+**Measured, not asserted:** the `quirin` premise line of §6 was run end to end —
+`quirin check --native-library MANIFEST FILE` on a file that binds a library and
+declares a waived callee prints the binding premise beside the waiver's, in the
+same prose vocabulary the two existing arms use.
 
 ## 11. Named follow-ons
 
@@ -385,7 +425,7 @@ fails.
 | `SOURCE-BINDING-HASH-PIN` | letting the source spell `NAME@HASH` and refusing a resolution to a different build. Deliberately not v1: it would be a second place the identity could be wrong, and the value is only in *pinning against drift*, which needs a story for how a source file is updated when a library is rebuilt |
 | `SOURCE-BINDING-REQUIRED` | a mode in which an unbound file is refused rather than resolved selection-wide. It would make the card's guarantee total instead of opt-in, and it would break every program written before it; it needs a migration argument this card does not have |
 | `SOURCE-BINDING-UNUSED` | refusing a binding no declaration of the file resolves through — the analogue of `ManifestRefusal::NoSymbols`. Declined here because a binding that resolves nothing still records a true statement (this file was checked against this build), and refusing it would punish a file for a declaration it has not written yet |
-| `SOURCE-BINDING-CLI` | `quirin` selects no manifests at all (`UNSAFE-LINKAGE-CLI`), so the rendered premise line added to `crates/qcorec/src/main.rs` is unreachable through that binary today. Present deliberately, on card `NATIVE-LIBRARY-CONTRACT-SLICE`'s ground: without the arm the premise would render through the `{other:?}` fallback the moment the CLI selects one |
+| `SOURCE-BINDING-CLI-EXAMPLE` | the premise line added to `crates/qcorec/src/main.rs` **is** reachable through `quirin` — the CLI selects manifests (`--native-library`), only the extern *contract* environment is missing (`UNSAFE-LINKAGE-CLI`) — so a `quirin check` of a file binding a library and declaring waived callees prints it. What is open is a *published example* of that invocation, held to `EXAMPLES-SUITE`'s standard; this card ships the rendering and the fixtures, not an example |
 | `L21-DUPLICATE-ROWS` | **found, not caused, and not repaired here.** `docs/QCORE_SPEC_r0_3.md` §L21 carries the `Q050` row twice and the `Q063`–`Q064` row twice, an integration artifact predating this card. The table is integrator surface and the duplication is byte-identical in each pair, so nothing is ambiguous; it should be deduplicated by whoever owns the next §L21 reconciliation |
 
 The `std.http` follow-ons (`STD-HTTP-LIBRARY-SELECTION`,

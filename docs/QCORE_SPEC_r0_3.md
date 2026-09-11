@@ -737,6 +737,12 @@ declaration — declaring a symbol is itself the trust act (§L14.1). A binding 
 another compilation input grants a file nothing and takes nothing away, which is
 §L12's file-local import discipline applied to a binding.
 
+A binding MUST be resolved **wherever it is written**, not only where a route
+reads it: a module carrying a binding and no extern surface at all is refused if
+that binding does not resolve. The converse MUST also hold — a module that writes
+no binding MUST NOT cause the manifest selection to be loaded at all, so that a
+selection which does not load cannot refuse a module that never mentioned one.
+
 The premise a bound module publishes names the spelling the file wrote, the
 manifest that declared it, and that manifest's artifact identity beside its ABI
 premise fields. It **stacks** with every callee premise and replaces none: the

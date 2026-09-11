@@ -454,6 +454,30 @@ fn moving_the_sibling_declaration_into_the_bound_file_refuses() {
     assert_eq!(refused, ["Q066"]);
 }
 
+// --- A binding is checked wherever it is written ---
+
+#[test]
+fn a_binding_in_a_module_with_no_extern_surface_is_still_resolved() {
+    // Without this the declaration would be one nothing ever looked at: a module
+    // routed somewhere with no extern surface would carry an unresolvable
+    // binding silently. The check runs before route selection, guarded on the
+    // file having written a binding at all.
+    let source =
+        "extern library qcore_absent_demo;\n\nfn main() -> unit effects { } {\n    return;\n}\n";
+    assert_eq!(codes(source, None, manifest_selection()), ["Q065"]);
+}
+
+#[test]
+fn a_module_that_writes_no_binding_never_loads_the_selection() {
+    // The guard's other half. A module with no binding and no extern surface
+    // compiles with a deliberately unloadable manifest selected, exactly as it
+    // did before this card: loading unconditionally would let a broken manifest
+    // refuse a module that never mentioned one.
+    let broken = map(&[("broken.qcorelib", "not a manifest at all\n")]);
+    let source = "fn main() -> unit effects { } {\n    return;\n}\n";
+    compile(source, None, broken).expect("a module that mentions no manifest is unmoved");
+}
+
 // --- The constraint-14 census outcome ---
 
 #[test]
