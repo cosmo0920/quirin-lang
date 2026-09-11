@@ -25,13 +25,15 @@
 > | 4.3 artifact identity | landed as a **stated pin**: well-formedness checked, nothing hashed, nothing read from disk (wave-19 report §5); unchanged by waves 20 and 22. Card `NATIVE-LIBRARY-HEADER` adds a **second, verified** identity beside it — the exported header's reference and digest, measured over the bytes the decision was taken on, because unlike the artifact the header **is read** |
 > | 4.4 ABI premises | landed as four mandatory closed-vocabulary fields carried onto the certificate, on both levels |
 > | 4.4 closed-allocator-custody structural check | **landed** (wave 20). It was vacuous while entries were contract-less (a waiver cannot acquire, `UNSAFE_LINKAGE_V1.md` §9.1 point 2); a contract slice entry *can* acquire, so the check became real and was implemented rather than inherited as vacuous. §4.4's "for the same resource shape" is vacuous in v1 — §C04 projects every resource to one shape — and that is recorded, not silently narrowed |
-> | §6 `std.buffer`, §12 stages (b)–(d) | untouched |
+> | 4.1 **which manifest a source file resolves against** | **landed** (card `NATIVE-LIBRARY-SOURCE-BINDING`, wave 23): `extern library NAME;`, an import-adjacent file-scope form minting no reserved word. Before it, resolution was by symbol name across the whole selection and no source file said which build it meant. Opt-in — a file declaring none resolves selection-wide byte for byte — and fail-closed: an unknown, ambiguous or repeated name refuses (`Q065`), a symbol of a manifest this file did **not** bind refuses rather than falling back to the weaker premise (`Q066`), and a certificate that lost a binding premise is refused rather than published (`Q067`). Spec §L14.5, grammars §G02d.3 |
+| §6 `std.buffer`, §12 stages (b)–(d) | untouched. §6's `std.http` staging now has its own decision record, [`STD_HTTP_BINDING_V1.md`](STD_HTTP_BINDING_V1.md) — a **design-only** recommendation for the contracted-native-library strategy, with the prerequisite inventory and the remaining named gaps |
 > | The header level | its own design note, [`NATIVE_LIBRARY_HEADER_V1.md`](NATIVE_LIBRARY_HEADER_V1.md), and its own report |
 >
 > Evidence:
 > [`docs/reports/wave19-unsafe-linkage-artifact/README.md`](../reports/wave19-unsafe-linkage-artifact/README.md),
 > [`docs/reports/wave20-native-library-contract-slice/README.md`](../reports/wave20-native-library-contract-slice/README.md),
-> [`docs/reports/wave22-native-library-header/README.md`](../reports/wave22-native-library-header/README.md).
+> [`docs/reports/wave22-native-library-header/README.md`](../reports/wave22-native-library-header/README.md),
+> [`docs/reports/native-library-source-binding/README.md`](../reports/native-library-source-binding/README.md).
 
 # Native-library linkage for bundled modules: `source.native-library.v1`
 

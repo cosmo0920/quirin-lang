@@ -287,7 +287,16 @@ pointer is the card that established it; read it before deviating.
     set. EXTERN-MODES deliberately added **none**:
     `move NAME` spells all four departing modes and the declaration decides
     which ran. `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
-    `wave17-std-modules`, `remaining-extern-modes`.
+    `wave17-std-modules`, `remaining-extern-modes`. `NATIVE-LIBRARY-SOURCE-BINDING`
+    also added **none**: `extern library NAME;` reuses `extern` (a declaration
+    keyword since `source.extern-call.v1`) and `library` (a source word since
+    `module library;`), and claims only the two-word sequence at declaration
+    position, which was a `Q000` parse failure before. Its census found the two
+    whole-token-stream route selectors — `module_imports::concurrency_span` and
+    `source_tasks::has_source_tasks` — and **excluded binding spans from both**,
+    so a library named `spawn`, `join`, `qcore_buffer_new`, `qcore_buffer_read`,
+    `qcore_buffer_write` or `qcore_error_payload` cannot select a route from its
+    own spelling. Do not remove that exclusion. `native-library-source-binding`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -504,6 +513,7 @@ this table is a summary of it, not a second allocation.
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062` | `Event` | `source.event.v1`: the checked event vocabulary over the reactor/descriptor custody models; `Q061` the determinism boundary |
 | `Q063`–`Q064` | `NativeLibrary` | third band of the same pass: exported-header reading and manifest/header disagreement |
+| `Q065`–`Q067` | `NativeLibrary` | fourth band of the same pass: the source file's own `extern library NAME;` binding — resolution refusals, a foreign manifest's symbol, and the publication tripwire |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |

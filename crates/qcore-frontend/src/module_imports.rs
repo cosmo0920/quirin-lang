@@ -206,6 +206,14 @@ fn concurrency_span(program: &SourceProgram) -> Option<Span> {
     }
     let tokens = program.lexical_tokens();
     for (index, token) in tokens.iter().enumerate() {
+        // Card `NATIVE-LIBRARY-SOURCE-BINDING`, constraint 14: an
+        // `extern library NAME;` declaration's tokens are a *binding*, never a
+        // use, so a library whose name happens to be `spawn` or
+        // `qcore_buffer_new` must not select the concurrency route from its own
+        // spelling. Same exclusion, same reason as the contract-span skip below.
+        if program.in_library_binding(token.span) {
+            continue;
+        }
         if program.declarations.iter().any(|declaration| {
             declaration
                 .value

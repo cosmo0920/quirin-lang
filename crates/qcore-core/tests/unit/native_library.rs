@@ -863,6 +863,192 @@ fn a_shape_this_check_cannot_read_supplies_no_discharge() {
     ));
 }
 
+// --- The source file's own library binding (card
+// `NATIVE-LIBRARY-SOURCE-BINDING`) ---
+
+/// A manifest whose `library` field is the given name rather than the fixed
+/// `demo` of [`manifest_text`], so a selection can carry two distinguishable
+/// names.
+fn named_manifest_text(library: &str, body: &str) -> String {
+    manifest_text(body).replace("library demo;", &format!("library {library};"))
+}
+
+fn named_selection(entries: &[(&str, &str, &str)]) -> NativeLibraries {
+    let sources = entries
+        .iter()
+        .map(|(module, library, body)| ((*module).to_owned(), named_manifest_text(library, body)))
+        .collect();
+    NativeLibraries::load(&sources).expect("this fixture selection loads")
+}
+
+fn two_libraries() -> NativeLibraries {
+    named_selection(&[
+        (
+            "a.qcorelib",
+            "libA",
+            "unchecked fn k_a(int32_t) -> int32_t;",
+        ),
+        (
+            "b.qcorelib",
+            "libB",
+            "unchecked fn k_b(int32_t) -> int32_t;",
+        ),
+    ])
+}
+
+#[test]
+fn an_empty_binding_list_is_the_unbound_selection_wide_view() {
+    // The opt-in property every pre-card program rests on.
+    let libraries = two_libraries();
+    let view = libraries.bind_source(&[]).unwrap();
+    assert!(!view.is_bound());
+    assert!(view.bindings().is_empty());
+    assert!(view.unchecked_binding("k_a").is_some());
+    assert!(view.unchecked_binding("k_b").is_some());
+    assert!(view.foreign_symbol("k_a").is_none());
+    assert!(view.foreign_symbol("k_b").is_none());
+}
+
+#[test]
+fn a_binding_resolves_its_own_manifest_and_narrows_away_the_other() {
+    let libraries = two_libraries();
+    let view = libraries.bind_source(&["libA".to_owned()]).unwrap();
+    assert!(view.is_bound());
+    assert_eq!(view.bindings().len(), 1);
+    assert_eq!(view.bindings()[0].named, "libA");
+    assert_eq!(view.bindings()[0].manifest, "a.qcorelib");
+    assert_eq!(view.bindings()[0].identity.library, "libA");
+    assert!(view.unchecked_binding("k_a").is_some());
+    assert!(view.unchecked_binding("k_b").is_none());
+}
+
+#[test]
+fn a_symbol_narrowed_away_is_refused_rather_than_silently_unresident() {
+    // The load-bearing direction: where a binding removes a resolution, the file
+    // is owed a refusal. Falling through to the weaker premise would let a file
+    // stop its certificate naming a build by binding something else.
+    let libraries = two_libraries();
+    let view = libraries.bind_source(&["libA".to_owned()]).unwrap();
+    assert!(matches!(
+        view.foreign_symbol("k_b"),
+        Some(BindingRefusal::ForeignSymbol { .. })
+    ));
+    assert!(view.foreign_symbol("k_a").is_none());
+}
+
+#[test]
+fn a_symbol_no_selected_manifest_binds_is_foreign_to_nobody() {
+    // Absence of evidence is not evidence, and the two absences differ.
+    let libraries = two_libraries();
+    let view = libraries.bind_source(&["libA".to_owned()]).unwrap();
+    assert!(view.foreign_symbol("k_unclaimed").is_none());
+    assert!(view.unchecked_binding("k_unclaimed").is_none());
+}
+
+#[test]
+fn a_library_name_no_selected_manifest_declares_refuses_and_names_the_selection() {
+    let libraries = two_libraries();
+    match libraries.bind_source(&["libC".to_owned()]) {
+        Err(BindingRefusal::UnknownLibrary { named, available }) => {
+            assert_eq!(named, "libC");
+            assert_eq!(available, vec!["libA".to_owned(), "libB".to_owned()]);
+        }
+        other => panic!("an unknown library must refuse by name: {other:?}"),
+    }
+}
+
+#[test]
+fn a_binding_against_an_empty_selection_refuses() {
+    let libraries = NativeLibraries::default();
+    assert!(matches!(
+        libraries.bind_source(&["libA".to_owned()]),
+        Err(BindingRefusal::UnknownLibrary { .. })
+    ));
+}
+
+#[test]
+fn two_manifests_declaring_one_library_name_refuse_as_ambiguous() {
+    // The ground `SelectionRefusal::SymbolBoundTwice` refuses its own ambiguity
+    // on: a binding that is not a function has no defined premise.
+    let libraries = named_selection(&[
+        (
+            "a.qcorelib",
+            "libA",
+            "unchecked fn k_a(int32_t) -> int32_t;",
+        ),
+        (
+            "b.qcorelib",
+            "libA",
+            "unchecked fn k_b(int32_t) -> int32_t;",
+        ),
+    ]);
+    match libraries.bind_source(&["libA".to_owned()]) {
+        Err(BindingRefusal::AmbiguousLibrary { named, manifests }) => {
+            assert_eq!(named, "libA");
+            assert_eq!(
+                manifests,
+                vec!["a.qcorelib".to_owned(), "b.qcorelib".to_owned()]
+            );
+        }
+        other => panic!("an ambiguous library must refuse: {other:?}"),
+    }
+}
+
+#[test]
+fn a_repeated_binding_of_one_name_refuses() {
+    let libraries = two_libraries();
+    assert!(matches!(
+        libraries.bind_source(&["libA".to_owned(), "libA".to_owned()]),
+        Err(BindingRefusal::RepeatedBinding { .. })
+    ));
+}
+
+#[test]
+fn two_bindings_resolve_both_manifests_and_leave_nothing_foreign() {
+    // Binding is not one-per-file: a file may bind two libraries, and then
+    // neither is foreign to it.
+    let libraries = two_libraries();
+    let view = libraries
+        .bind_source(&["libA".to_owned(), "libB".to_owned()])
+        .unwrap();
+    assert_eq!(view.bindings().len(), 2);
+    assert!(view.unchecked_binding("k_a").is_some());
+    assert!(view.unchecked_binding("k_b").is_some());
+    assert!(view.foreign_symbol("k_b").is_none());
+}
+
+#[test]
+fn a_binding_only_ever_narrows() {
+    // Hard invariant 1's direction, over the whole selection: every symbol a
+    // bound view resolves, the unbound view resolved too.
+    let libraries = two_libraries();
+    let unbound = libraries.bind_source(&[]).unwrap();
+    let view = libraries.bind_source(&["libA".to_owned()]).unwrap();
+    for symbol in ["k_a", "k_b", "k_unclaimed"] {
+        if view.unchecked_binding(symbol).is_some() {
+            assert!(
+                unbound.unchecked_binding(symbol).is_some(),
+                "a binding may not add a resolution"
+            );
+        }
+    }
+}
+
+#[test]
+fn the_binding_carries_the_manifests_premises_and_header() {
+    let libraries = two_libraries();
+    let view = libraries.bind_source(&["libA".to_owned()]).unwrap();
+    let binding = &view.bindings()[0];
+    assert_eq!(binding.premises.data_model, DataModel::Lp64);
+    assert_eq!(binding.premises.unwinding, UnwindingPosture::Abort);
+    assert_eq!(binding.premises.allocator_custody, AllocatorCustody::Closed);
+    assert_eq!(binding.premises.thread_posture, ThreadPosture::SingleCaller);
+    assert_eq!(binding.identity.hash, DIGEST);
+    // The fixture manifests name no header, which is every manifest written
+    // before card `NATIVE-LIBRARY-HEADER`.
+    assert!(binding.header.is_none());
+}
+
 #[test]
 fn the_custody_check_is_per_manifest_and_not_across_a_selection() {
     // Two libraries do not close each other's custody: the premise

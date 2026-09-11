@@ -18,7 +18,12 @@ pub fn has_source_tasks(source: &SourceProgram) -> bool {
                 || s.value.nested_blocks().iter().any(|b| has_scope(b))
         })
     }
-    source.lexical_tokens().iter().any(|token| matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read" || word == "qcore_buffer_write"))
+    // The `in_library_binding` exclusion is card
+    // `NATIVE-LIBRARY-SOURCE-BINDING`'s constraint-14 census outcome: this is
+    // one of the two whole-token-stream route selectors, so a library named
+    // `qcore_buffer_new` would otherwise select the task route from its own
+    // spelling in an `extern library NAME;` declaration.
+    source.lexical_tokens().iter().any(|token| !source.in_library_binding(token.span) && matches!(&token.kind, TokenKind::Word(word) if word == "qcore_buffer_new" || word == "qcore_buffer_read" || word == "qcore_buffer_write"))
         || !source.task_expressions().is_empty()
         || source
             .declarations

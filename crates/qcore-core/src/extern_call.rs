@@ -1294,6 +1294,21 @@ pub struct ExternProgram {
     pub events: Vec<ExternEvent>,
     /// Error names this module declares. The adapter must name one.
     pub errors: BTreeSet<String>,
+    /// The `extern library NAME;` declarations this module's source file made,
+    /// resolved against the manifest selection (card
+    /// `NATIVE-LIBRARY-SOURCE-BINDING`), in the order the file declared them.
+    ///
+    /// Empty is the pre-card world and every existing program's state: an
+    /// unbound module publishes no binding premise and its certificate is
+    /// byte-identical.
+    ///
+    /// It is a field of the **program** rather than a derived fact about the
+    /// callees because it is not one: a file binds a build whether or not it
+    /// calls anything that build exports, and that act is what a reader of the
+    /// certificate has to be able to see. Keeping it here is also what makes it
+    /// rederivable — [`recheck_extern_certificate`] re-derives from the program
+    /// alone.
+    pub libraries: Vec<native_library::SourceLibraryBinding>,
 }
 
 /// Refusals this checker owns. Custody liveness, leaks, resource flow and the
@@ -1657,6 +1672,26 @@ pub enum ExternAssumption {
         contract_module: String,
         residence: native_library::ManifestResidence,
     },
+    /// Card `NATIVE-LIBRARY-SOURCE-BINDING`. The source file itself declared
+    /// `extern library NAME;`, and the premise names what that resolved to: the
+    /// name the author wrote, the manifest that declared it, and the artifact
+    /// identity beside the ABI premises of that build.
+    ///
+    /// It is a premise about **selection**, not about behaviour, and it stacks
+    /// with every callee premise rather than replacing any of them: the callee
+    /// premises say what each symbol was read as, and this one says which build
+    /// this *file* declared its extern surface to come from. A module that binds
+    /// a library and calls nothing it exports still carries this premise, which
+    /// is the point — the binding is a trust act whether or not a call site
+    /// consumed it, and a certificate that dropped it would be silent about a
+    /// statement the source made.
+    ///
+    /// As at every other level, the identity is a **stated pin**: the resolution
+    /// is from a name to a declaration, and nothing is hashed, opened or
+    /// searched for. What it buys is that a later selection resolving the same
+    /// name to a different build is a *visible* difference in the published
+    /// evidence.
+    SourceBoundLibrary(native_library::SourceLibraryBinding),
     /// C04 pointers are extentless `u8` projections, so no declaration in this
     /// profile promises how many bytes a callee touches.
     NoExtentTransport,
@@ -2266,6 +2301,13 @@ pub fn check_extern_program(
             assumptions.push(ExternAssumption::DeclaredReallocation(name.clone()));
         }
     }
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`: one premise per resolved
+    // `extern library` declaration. It is derived from the program's own binding
+    // list and from nothing else, so a recheck reproduces it; an unbound module
+    // contributes none and its certificate is unchanged.
+    for binding in &program.libraries {
+        assumptions.push(ExternAssumption::SourceBoundLibrary(binding.clone()));
+    }
     assumptions.push(ExternAssumption::NoExtentTransport);
     assumptions.push(ExternAssumption::LinkageSuppliedByBuilder);
     assumptions.sort();
@@ -2360,6 +2402,40 @@ pub fn certificate_carries_residence_premises(
                 .assumptions
                 .contains(&ExternAssumption::DeclaredContract(callee.name.clone()))
     })
+}
+
+/// Every **source-binding** premise the program's own binding list demands,
+/// derived from the program alone (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// Separate from the two inventories above for the same reason they are separate
+/// from each other: a certificate could carry every callee premise and still have
+/// lost the statement of which build this *file* declared its extern surface to
+/// come from. An unbound module demands nothing here.
+#[must_use]
+pub fn required_source_binding_assumptions(program: &ExternProgram) -> Vec<ExternAssumption> {
+    program
+        .libraries
+        .iter()
+        .cloned()
+        .map(ExternAssumption::SourceBoundLibrary)
+        .collect()
+}
+
+/// Whether a published certificate carries a source-binding premise for every
+/// `extern library` declaration its own program records.
+///
+/// True by construction of [`check_extern_program`], and asserted anyway at the
+/// driver's publication boundary, on the [`certificate_carries_unchecked_linkage`]
+/// model: the day it can fail, it is caught here rather than inside a `Safe`
+/// that stopped saying which build it was resolved against.
+#[must_use]
+pub fn certificate_carries_source_bindings(
+    program: &ExternProgram,
+    certificate: &ExternCallCertificate,
+) -> bool {
+    required_source_binding_assumptions(program)
+        .iter()
+        .all(|required| certificate.assumptions.contains(required))
 }
 
 /// Why an independent recheck refused a published certificate.
