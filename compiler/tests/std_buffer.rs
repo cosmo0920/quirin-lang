@@ -115,9 +115,10 @@ fn the_derived_effect_row_carries_alloc_and_mut() {
     use qcore_core::typed_errors::Effect;
     let module = compile(BYTES).unwrap();
     let checked = module.checked.as_standard_buffer().unwrap();
-    // The first source route in the tree whose derived row is not `{Io}` or
-    // empty. `source.std-io.v1`'s operand grammar admits no resource, so it can
-    // never allocate or mutate one; this route's does.
+    // `source.std-io.v1`'s operand grammar admits no resource, so it can never
+    // allocate or mutate one; this route's does. The extern route derives these
+    // two as well, but from a *declared contract*'s projections; here they
+    // follow from an acquisition and a store this route discharges itself.
     assert!(checked.certificate.effects.contains(&Effect::Alloc));
     assert!(checked.certificate.effects.contains(&Effect::Mut));
     assert!(checked.certificate.effects.contains(&Effect::Io));

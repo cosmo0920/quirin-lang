@@ -32,8 +32,9 @@ import QCore.StdBuffer
 #print axioms QCore.StdBuffer.an_acquisition_adds_exactly_its_extent
 #print axioms QCore.StdBuffer.two_live_buffers_hold_the_sum
 
--- The effect discipline: the first source route whose derived row is neither
--- `{io}` nor empty.
+-- The effect discipline. `source.extern-call.v1` derives `alloc` and `mut` too,
+-- from a declared contract's projections; here they follow from an acquisition
+-- and a store the route checks itself.
 #print axioms QCore.StdBuffer.an_acquisition_derives_alloc
 #print axioms QCore.StdBuffer.a_store_derives_mut
 #print axioms QCore.StdBuffer.a_read_derives_nothing

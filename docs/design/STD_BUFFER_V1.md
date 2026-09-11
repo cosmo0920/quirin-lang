@@ -1,8 +1,8 @@
 # A checked owned byte buffer: `source.buffer.v1` / `std.buffer`
 
 > **Status: landed** by card `STD-BUFFER` (wave 22). This document is the
-> design note the card wrote first; §11 records where the implementation
-> deviated from it, because measurement moved two decisions.
+> design note the card wrote first; §11 records the eight places where the
+> implementation deviated from it, because measurement moved them.
 
 Card brief: *"QCore has NO string type, zero string literals, and its one
 buffer model carries a single `i32` payload with no extent. The std.http
@@ -20,8 +20,10 @@ before emission and the reference interpreter can predict the program's exact
 observation. Custody is not reimplemented: the route lowers to
 `qcore_core::ownership`'s **unedited** cycle-3 IR, so the leak, double-release
 and use-after-release refusals are that checker's, not this card's. Emission is
-self-contained C11 — `malloc`/`free` plus a bounds-checked accessor macro —
-with no extern boundary and no library.
+self-contained C11 — `calloc`/`free` plus two bounds-checked accessor functions
+— with no extern boundary and no library. (`calloc` rather than the `malloc`
+this note first wrote: the model's buffer is zero at acquisition, so a read
+before a write must have a defined answer.)
 
 **A byte buffer is not a string.** v1 has no encoding, no literal, no
 concatenation and no text rendering; §9 names those as follow-ons rather than
@@ -106,6 +108,7 @@ events in one entry function, exactly as `source.std-io.v1` is.
 
 ```rust
 pub enum BufferEvent {
+    Bind    { binding: String, value: i32 },
     Acquire { name: String, extent: u32 },
     Store   { name: String, index: BufferOperand, value: BufferOperand },
     Load    { binding: String, name: String, index: BufferOperand },
@@ -406,7 +409,7 @@ inherited, and saying which half moved is more useful than claiming the name.
 
 ## 11. Deviations found by measurement
 
-Seven, each recorded in full with its evidence in
+Eight, each recorded in full with its evidence in
 [`docs/reports/wave22-std-buffer/README.md`](../reports/wave22-std-buffer/README.md)
 §7. In brief:
 
@@ -427,7 +430,11 @@ Seven, each recorded in full with its evidence in
 6. **The emitted prelude had to become selective**: emitting an unused accessor
    fails `-Werror=unused-function`, which is a real constraint of the flags the
    emitted C is built under.
-7. **The Lean `Imports` literals grew a field**, and
+7. **The "first route to derive `Alloc`" claim was false**, and is replaced by
+   the true one: the extern route derives those effects too, but off a
+   *declared contract*'s projections, where this route derives them from an
+   acquisition and a store it discharges itself.
+8. **The Lean `Imports` literals grew a field**, and
    `QCore.StdIo.no_module_substitutes_for_another` is now strictly stronger —
    the same deliberate widening `STD-MODULES` recorded. The spec's §L04 registry
    sentence was also found stale at "five names" (it predates this card:

@@ -1292,11 +1292,13 @@ access is a refusal and not a run-time trap. `Q055` refuses a buffer at a
 position it may not cross: a rendering operand (bare or `borrow`), an index, or a
 stored byte.
 
-The derived effect row carries `Alloc` and `Mut` — the first source profile in
-this document for which that is true, `source.std-io.v1`'s being exactly `{Io}`
-because its operand grammar admits no resource. An acquisition and a release
-derive `Alloc`, a store derives `Mut`, a read derives nothing, and the declared
-`effects { … }` row must admit each (`Q029`).
+The derived effect row carries `Alloc` and `Mut`, where `source.std-io.v1`'s is
+exactly `{Io}` because its operand grammar admits no resource. §G02d derives
+those two as well, but from a **declared contract**'s projections — `Alloc` when
+the contract says the callee acquires — whereas here they follow from an
+acquisition and a store this profile checks and discharges itself. An
+acquisition and a release derive `Alloc`, a store derives `Mut`, a read derives
+nothing, and the declared `effects { … }` row must admit each (`Q029`).
 
 **Two words are newly reserved: `bytes` and `extent`.** The release is the
 **existing** `drop` — the operation is the ownership IR's own drop, so a new

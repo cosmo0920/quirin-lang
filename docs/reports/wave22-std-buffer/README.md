@@ -18,8 +18,8 @@ self-contained C11 — `calloc`, `free` and two bounds-checked accessors defined
 in the emitted file, no library and no boundary of any kind — compared against
 the reference execution per stream under ASan/UBSan/LSan with a **positive** leak
 control. **Two reserved words**, `bytes` and `extent`; a new semantic pass
-`StandardBuffer` owning **`Q051`–`Q056`**. 52 tests, 43 audited Lean theorems in
-one new audit file, no new axiom.
+`StandardBuffer` owning **`Q051`–`Q056`**. 52 tests, 38 audited Lean
+entries in one new audit file, no new axiom.
 
 **The headline is the census result (§1), and it is not what the brief
 expected.** The extent capability the tree lacked was never a missing data
@@ -127,7 +127,7 @@ is already a literal, so there is no declared outcome to compare against
 reality. The pattern's real subject on this route is allocation *failure*, which
 §4.2 handles differently and states as a boundary.
 
-### 2.2 Effects: the first route that is not `{Io}` or empty
+### 2.2 Effects: derived, not premised
 
 | Event | Derives |
 |---|---|
@@ -141,6 +141,18 @@ structurally admits no resource. This route's does admit one, so its row carries
 `Alloc` and `Mut` — pinned by `the_derived_effect_row_carries_alloc_and_mut`, and
 its negative counterpart `a_silent_buffer_module_derives_no_io_and_needs_no_output_module`
 pins that a program which never renders needs no output module at all.
+
+**A correction made during the card, because the obvious claim is false.** An
+earlier draft called this the first source route whose derived row is neither
+`{Io}` nor empty. It is not: `source.extern-call.v1` derives `Alloc` and `Mut`
+too (`crates/qcore-core/src/extern_call.rs:1146-1166`) — `Alloc` when
+`callee.acquires()`, `Mut` when a parameter is a mutable pointer or a custody
+position. What is actually different is **where the facts come from**. There they
+are read off a *declared contract*'s projections, so they are consequences of a
+premise in the `ContractTrust::Declared` sense; here they follow from an
+acquisition and a store this route checks and discharges itself. That is the
+true statement, and it is the one now carried in the spec, the grammars, the
+model's doc comment and the test.
 
 ---
 
@@ -317,7 +329,8 @@ sequence *says*).
 
 ## 7. Deviations found by measurement
 
-Seven, each a place the implementation disagreed with the design note.
+Eight, each a place the implementation disagreed with the design note or with a
+claim an earlier draft of this report made.
 
 1. **`buffer` collides, and the constructor was renamed.** The natural spelling
    occurs **555 times** across the source-side corpus. Parameter-name
@@ -380,7 +393,17 @@ Seven, each a place the implementation disagreed with the design note.
    MSVC), recorded in the prelude's own comment so a later card does not
    reintroduce the unconditional form.
 
-7. **The Lean registry's structure literals grew a field, and one theorem's
+7. **The "first route to derive `Alloc`" claim was false and was corrected.**
+   An earlier draft of this report, of the spec row, of the grammar section, of
+   the model's doc comment and of a test comment all called this the first
+   source route whose derived effect row is neither `{Io}` nor empty.
+   `source.extern-call.v1` derives both
+   (`crates/qcore-core/src/extern_call.rs:1146-1166`), so the claim was simply
+   wrong. It is replaced everywhere by the true and more useful one: those
+   effects are read off a **declared contract**'s projections there, and follow
+   from an acquisition and a store **this route discharges itself** here. §2.2.
+
+8. **The Lean registry's structure literals grew a field, and one theorem's
    meaning is now stronger.** `Imports` went from six fields to seven; sixteen
    anonymous literals grew with it. `QCore.StdIo.no_module_substitutes_for_another`
    says "each row holds every module except the one it needs", so its new
@@ -494,7 +517,8 @@ decision rather than a stated one.
 ### 10.3 Lean
 
 `proof/QCore/StdBuffer.lean` (new) and `proof/AuditStdBuffer.lean` (new) —
-**43 audited theorems**, plus ten new rows in `proof/QCore/ModuleImports.lean`.
+**38 audited entries** — 28 theorems of the new module plus the ten new rows
+`proof/QCore/ModuleImports.lean` gained.
 `QCore.lean` imports `QCore.StdBuffer`, so `AuditAll.lean` includes it in the
 whole-project axiom closure. **No new axiom, no placeholder, no `native_decide`**
 — every audited theorem depends on nothing, or only on the allowed `propext` and
@@ -711,8 +735,9 @@ rather than a backlog item.
 > index is a constant already proved in range, so if one ever fired that would be
 > a defect in the checker — which makes every claim here partial-correctness, *if
 > the program produces an observation it is the reference observation*. The
-> derived effect row carries `Alloc` and `Mut`, the first source route in the tree
-> for which that is true. **No buffer crosses the extern boundary**, and the
+> derived effect row carries `Alloc` and `Mut` — which the extern route derives
+> too, but from a *declared contract*'s projections, where here they follow from
+> an acquisition and a store the route discharges itself. **No buffer crosses the extern boundary**, and the
 > refusal is the extern route's own rather than one this card wrote: a C04 pointer
 > is an extentless `u8` projection, so the crossing would discard the extent and
 > replace it with a premise. **No string in v1** — a byte buffer is not a string,
@@ -723,7 +748,7 @@ rather than a backlog item.
 > release is the existing `drop` and the accessors the existing `[`/`]`, so the
 > card adds **two** reserved words and no parser change. `Q051`–`Q056` under a new
 > `StandardBuffer` pass through the §L21 process. 52 tests, one sanitized
-> ASan/UBSan/LSan run as a **positive** leak control, 43 audited Lean theorems in
+> ASan/UBSan/LSan run as a **positive** leak control, 38 audited Lean entries in
 > one new audit file, 91/91 audits, no new axiom. `STD-FMT-EXTENT` is **split
 > rather than retired**: a size is renderable today on this route with no
 > rendering change at all, and what the extern half now needs is the C04

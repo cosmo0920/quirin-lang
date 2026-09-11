@@ -331,9 +331,15 @@ impl fmt::Display for BufferError {
 
 /// The derived effect row.
 ///
-/// The first row in the tree that is neither `{Io}` nor empty: an acquisition
-/// and a release are `Alloc`, a store is `Mut`, and a line is `Io`. A read
-/// derives nothing — it observes.
+/// An acquisition and a release are `Alloc`, a store is `Mut`, and a line is
+/// `Io`. A read derives nothing — it observes.
+///
+/// `source.extern-call.v1` derives `Alloc` and `Mut` too, so this row is not the
+/// first of its shape; what differs is **where the facts come from**. There they
+/// follow from a *declared contract*'s projections — `Alloc` when the contract
+/// says the callee acquires — and are therefore consequences of a premise. Here
+/// they follow from an acquisition and a store this route checks and discharges
+/// itself.
 pub fn derived_effects(program: &BufferProgram) -> EffectRow {
     let mut effects = BTreeSet::new();
     for event in &program.events {

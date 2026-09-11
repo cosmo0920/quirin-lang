@@ -529,8 +529,11 @@ pub enum SourceExecutionProfile {
     /// `source.buffer.v1`: a flat sequential entry holding an owned,
     /// extent-carrying byte buffer behind the `std.buffer` bundled module (card
     /// `STD-BUFFER`). Unlike `StandardIoV1` this route's grammar **does** admit
-    /// a resource, so its derived effect row carries `Alloc` and `Mut` — the
-    /// first source route in the tree for which that is true. Every index is a
+    /// a resource, so its derived effect row carries `Alloc` and `Mut`. The
+    /// extern route derives those two as well, but from a **declared
+    /// contract**'s projections — `Alloc` when the contract says the callee
+    /// acquires — whereas here they follow from an acquisition and a store this
+    /// route checks and discharges itself. Every index is a
     /// check-time constant, every custody refusal is
     /// `qcore_core::ownership`'s, and the emitted C is self-contained
     /// (`calloc`/`free` plus two bounds-checked accessors) with no boundary of
