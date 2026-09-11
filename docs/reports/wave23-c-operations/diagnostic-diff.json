@@ -1,0 +1,252 @@
+{
+  "before": "measure/wave23-c-operations/before/diagnostics.json",
+  "after": "measure/wave23-c-operations/after/diagnostics.json",
+  "removed": [
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_get_direct_routes",
+      "line": 19362,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    },
+    {
+      "library": "fluent-bit-chunk",
+      "file": "flb_input_chunk.c",
+      "function": "flb_input_chunk_write_header_v2",
+      "line": 19150,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_NbCommonBytes",
+      "line": 450,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "lz4.c",
+      "function": "LZ4_NbCommonBytes",
+      "line": 456,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1082,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1084,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1086,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1088,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1110,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1115,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1117,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1119,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_decode.c",
+      "function": "pb_dec_varint",
+      "line": 1121,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 870,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 872,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 874,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 876,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 885,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 887,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 889,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "pb_enc_varint",
+      "line": 891,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "nanopb/pb_encode.c",
+      "function": "safe_read_bool",
+      "line": 394,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in for-loop condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdbuf.c",
+      "function": "do_unittest_write_read_payload_correctness",
+      "line": 4158,
+      "category": "unsupported",
+      "description": "unmodeled call, aggregate or indirect access in branch condition",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_consumer_group_metadata_read",
+      "line": 24685,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    },
+    {
+      "library": "librdkafka",
+      "file": "rdkafka_cgrp.c",
+      "function": "rd_kafka_consumer_group_metadata_write",
+      "line": 24642,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_net.c",
+      "function": "mk_net_conn_create",
+      "line": 5973,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    },
+    {
+      "library": "monkey-libevent",
+      "file": "mk_server/mk_net.c",
+      "function": "mk_net_conn_write",
+      "line": 6038,
+      "category": "unsupported",
+      "description": "C operator `sizeof` requires type/operand analysis",
+      "count": 1
+    }
+  ],
+  "added": [],
+  "functions": [],
+  "units": []
+}

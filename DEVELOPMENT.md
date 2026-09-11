@@ -349,6 +349,23 @@ full suite.
 
 ## Increment records
 
+Wave 23 fixed scalar C queries (2026-09-11): the existing-C gateway admits
+typed scalar `sizeof`/`_Alignof` queries in six expression positions and scalar
+assignments/initializers. Operand markers never determine values or CFG edges;
+assignments forget old scalar facts, and sibling mutations, VLA/opaque operands
+and resource accesses retain their refusals. Six new regression tests and nine
+Lean theorems cover admission, erasure and scalar-fact forgetting. The pinned
+185-unit BEFORE/AFTER comparison removes 27 unsupported diagnostics across
+seven units, with no verdict changes, no added diagnostics, and leaks unchanged
+at 272; the other four artifacts are byte-identical. The closing gate passes
+3,575 workspace tests (8 ignored), 193 Python tests, 95 Lean audits, both probes,
+fmt and clippy; 122 provider tests are carried from the unchanged prior package
+checkpoint. The shared branch's `1a7846dd` includes the implementation; the
+closing evidence records the recovered workspace gate and measured baseline.
+This is a bounded first gateway slice, with fixed objects, scalar RHS/mutation
+lowering and the other gateway families still named follow-ons. Evidence and
+boundaries: `docs/reports/wave23-c-operations/README.md`.
+
 Windows native-event increment (2026-09-11): `EVENT-V1-WINDOWS-AFUNIX`
 replaces `std.event`'s unconditional Windows loopback construction with the
 pinned Libevent 2.2.2-alpha shape: compile-time `<afunix.h>` detection,

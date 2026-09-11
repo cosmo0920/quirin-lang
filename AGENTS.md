@@ -68,9 +68,9 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-22 checkpoint (`docs/reports/wave22-corpus/`, the
-current re-pinned baseline; the wave-17 and wave-20 archives stay frozen
-beneath it):
+Headline numbers at the wave-23 fixed-scalar-query checkpoint
+(`docs/reports/wave23-c-operations/artifacts/`, the current measured baseline;
+the preceding corpus archives stay frozen):
 
 | Measure | Value |
 |---|---|
@@ -78,7 +78,7 @@ beneath it):
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **72 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,569 workspace tests (8 ignored) · 122 provider · 193 Python · **95 Lean audits** · both probes exit 0 · fmt/clippy clean (wave-22 close: OBS-REORDERING, STD-BUFFER, STD-EVENT, PIPE-INTRINSIC-STAGE, NATIVE-LIBRARY-HEADER, AOM-DESTROY + five Windows batches; corpus re-pinned to `docs/reports/wave22-corpus/`) |
+| Merged gate | 3,575 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **95 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave23-c-operations/`; corpus verdicts and leak count unchanged) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -94,7 +94,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" (every wave and card
 paragraph, in order, each keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-27 entries) plus each report's own follow-on list; per-card evidence in
+35 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
@@ -170,6 +170,10 @@ pointer is the card that established it; read it before deviating.
    function never binds to a resource identity — exists because dropping it
    turned a read through a released pointer into `Safe`. The fail-closed pin
    caught it and **was not weakened**; keep it that way. `remaining-c02`.
+5a. A fixed C `sizeof`/`_Alignof` query's operand-class marker is **never a
+    computed value**. Do not use normalized query tokens to construct a CFG or
+    refine nullness. Scalar assignments forget old scalar facts; expression
+    mutations need modeled writes rather than a `NoOp`. `wave23-c-operations`.
 6. **C02-P-ALIAS-LEAK-ORDER:** `report_leaks` on intermediate iterates is
    scheduling-sensitive; a pre-pass keeps it scheduling-neutral with
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it

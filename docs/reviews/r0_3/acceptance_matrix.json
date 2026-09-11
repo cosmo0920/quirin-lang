@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 34
+  "named_followups": 35
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -5698,7 +5698,7 @@
   },
   "libevent_submodule_pin": "d82464a277d0f42703702c4dfd9af6af38595a83",
   "cycle19_raw_units": {
-   "note": "unchanged and unpromoted. Re-measured and deliberately re-pinned at the wave-17 consolidation through the canonical pinned route on a freshly prepared pinned clone (Fluent Bit 66910c10, explicit Clang, all five provider packages rebuilt at schemas 14.0.0 / ChunkIO 0.13.0): zero unit status moves, zero function status moves across 4,834 projected functions, zero unit reason_code moves and no newly surfaced provisional Unsafe. ONE number moves deliberately: leak 271 -> 272, at flb_input_chunk_get_direct_routes L19399 in fluent-bit-chunk/flb_input_chunk.c. That is a movement in the ACCUSING direction on a function and a unit that were already Unsafe -- the seventh instance of a claim the same function already published six times, surfaced because a neighbouring refusal that hid it was admitted -- and never a promotion; it stays provisional in the documented sense (the claim rests on an uncontracted callee that plausibly releases) and is recorded as CONSTRUCTOR-RESIDUALS-LEAK-271. The diagnostics diff is 12 added / 60 removed across 21 units and the composed diagnostics.json is byte-identical to card CONSTRUCTOR-RESIDUALS' archived AFTER, so every leaf is attributed by identity; the other two gateway cards of the wave measured zero corpus reach and both claims hold on the composed tree.",
+   "note": "Wave-23 fixed scalar C queries, fresh pinned BEFORE/AFTER: 27 unsupported diagnostics removed, zero additions, zero unit or function verdict changes. 150 Safe / 84 provisional Unsafe / 4600 Unknown projected functions; leak 272 and unknown_alias 4408 unchanged; unsupported 49821 -> 49794. BEFORE diagnostics reproduce the wave22-aom-destroy archive byte-for-byte. Source-path envelope differences from that archive predate this change and are itemized separately; all four non-diagnostic artifacts are byte-identical BEFORE/AFTER. No raw unit promoted; violation claims remain provisional.",
    "units": 185,
    "safe": 2,
    "provisional_unsafe": 42,
@@ -5707,8 +5707,8 @@
    "projected_functions": 4834,
    "leak_diagnostics": 272,
    "process_sidecar": "3 checked function contracts / 93 Unknown",
-   "baseline": "docs/reports/wave17-corpus/artifacts/",
-   "source": "docs/reports/wave17-corpus/README.md"
+   "baseline": "docs/reports/wave23-c-operations/artifacts/",
+   "source": "docs/reports/wave23-c-operations/README.md"
   },
   "configured_cmetrics_audit": {
    "checked_function_contracts": 1,
@@ -5764,8 +5764,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "wave-22 close merged gate (OBS-REORDERING, STD-BUFFER, STD-EVENT, PIPE-INTRINSIC-STAGE, NATIVE-LIBRARY-HEADER, AOM-DESTROY + five Windows batches; corpus re-pinned to docs/reports/wave22-corpus, leak 272), 2026-09-11",
-  "workspace_tests": 3569,
+  "note": "Wave-23 fixed scalar C queries, 2026-09-11: measured workspace gate completed by disjoint crate partitions plus all doctests after shared-target interruption; 8 ignored. Provider 122 carried from prior checkpoint (packages unchanged). Evidence: docs/reports/wave23-c-operations/README.md; corpus verdicts and leak 272 unchanged.",
+  "workspace_tests": 3575,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
   "lean_audits": 95,
@@ -5872,7 +5872,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-wave-19-hatch-opening-4f24e4/887d0878-db9e-48ed-9d07-ca374209ab1b/scratchpad/gate-w22close.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave23-c-operations/gate.json)"
  },
  "named_followups": [
   {
@@ -6078,6 +6078,12 @@
    "title": "Five example families shipped with README-extracted checks; residuals named",
    "why": "Wave 21 shipped examples/{stdio,pipes,branching,extern,unsafe-linkage} — 14 programs, 32 tests, every runnable example compiled through the real pipeline, built under -Werror-class flags, run sanitized where supported and per-stream byte-compared against reference execution; refused programs and quoted diagnostics are EXTRACTED from the READMEs and compiled/compared, so no documented refusal can drift. examples/threads stayed COMPOSE-CONCURRENCY's and gained source logging there. Two claims corrected by measurement (the borrowed-render refusal isolates at Q043 only past the second rendering; the manifest digest is an all-zeros documented placeholder because identity is a pin, not a probe). One integration seam: the rename-proof driver constant failed to compile once only quirin existed (env! resolves in a dead match arm); the constant now names the final binary. Residuals: EXAMPLES-SUITE-WINDOWS (suite is Unix-only, the thread_examples boundary), EXAMPLES-CONTRACT-SLICE, EXAMPLES-ERROR-REGION; UNSAFE-LINKAGE-CLI carried (5 of 14 examples are library-API-only until it lands, boundary pinned both ways); EXAMPLES-QC-EXTENSION retired at integration — QUIRIN-RENAME had already renamed examples/cycle12.qc with the constraint-11 __FILE__ argument.",
    "source": "docs/reports/wave21-examples-suite/README.md"
+  },
+  {
+   "id": "C-TYPE-QUERY-O",
+   "title": "Fixed scalar C queries admitted; object extents and expression writes remain bounded follow-ons",
+   "why": "Wave 23 admits typed scalar sizeof/_Alignof in six expression positions and scalar assignments, with scalar-fact forgetting and certificate replay. Measured 27 diagnostic removals across seven units, no verdict moves and leak 272 unchanged. Fixed arrays/complete records require typed extent evidence and a VLA boundary; C-QUERY-SCALAR-RHS keeps assignment RHS equality/nested writes conservative. Standalone query statements and statement-call arguments remain outside the new rule; scalar expression mutations require modeled writes, never a NoOp. Other aggregate, destructor-declaration, joined-provenance and indirect-call follow-ons remain independent.",
+   "source": "docs/reports/wave23-c-operations/README.md"
   }
  ],
  "updated": "2026-09-10 (wave 16 complete: the agent-facing docs compacted onto DEVELOPMENT.md's increment records with 25 standing subsystem constraints carried; three tally-neutral ledger and tooling follow-ons closed; the last shared fixture/production blocker admitted as a declared variadic data tail; the twelve identity residuals measured to have no aliasing cause and eight of them cleared by a third, store-only member class; the declared/C ABI fail-open closed with eight unfaithful declarations corrected; the publication hazard closed by refusal after the proposed escape was measured to promote; and the fourth composition module moved through the process boundary. The corpus re-pins to docs/reports/wave16-corpus/ with four attributed diagnostics units, the diff triangulated in both directions against the two gateway cards, and zero unit or function status moves; schemas 13.0.0; nothing promoted)"

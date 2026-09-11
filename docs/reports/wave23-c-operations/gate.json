@@ -1,0 +1,11 @@
+{
+  "note": "Wave-23 fixed scalar C queries, 2026-09-11: measured workspace gate completed by disjoint crate partitions plus all doctests after shared-target interruption; 8 ignored. Provider 122 carried from prior checkpoint (packages unchanged). Evidence: docs/reports/wave23-c-operations/README.md; corpus verdicts and leak 272 unchanged.",
+  "workspace_tests": 3575,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 193,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass"
+}

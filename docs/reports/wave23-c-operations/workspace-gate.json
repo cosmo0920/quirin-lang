@@ -1,0 +1,26 @@
+{
+  "first_seven_crates": {
+    "passed": 3151,
+    "failed": 0,
+    "ignored": 8,
+    "suites": 137
+  },
+  "remaining_three_crates": {
+    "passed": 393,
+    "failed": 0,
+    "ignored": 0,
+    "suites": 46
+  },
+  "all_workspace_doctests": {
+    "passed": 31,
+    "failed": 0,
+    "ignored": 0,
+    "suites": 11
+  },
+  "total": {
+    "passed": 3575,
+    "failed": 0,
+    "ignored": 8,
+    "suites": 194
+  }
+}
