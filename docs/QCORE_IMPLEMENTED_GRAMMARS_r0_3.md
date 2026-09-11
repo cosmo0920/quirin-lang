@@ -1030,11 +1030,34 @@ disposition, not `Q048`'s, because the weaker admissible reading here is this
 same manifest without a header and that is accepted. Declarations the manifest
 does not name are ignored: a header is the library's whole exported surface.
 
+An `include SPELLING from REFERENCE HASH` statement declares one text that
+header's own `#include` lines may be read from (card
+`NATIVE-LIBRARY-HEADER-DECORATION`, spec §L14.4.1). The statement is repeatable,
+requires a `header` to read the texts into, and names three things: the
+`#include` operand exactly as the header writes it (`<event2/visibility.h>` or
+`"local.h"`, delimiters included), the reference the text is resolved and
+supplied under — the same namespace as `header`, and `quirin` resolves it against
+the manifest's own directory — and its `sha256` digest. Declaring none is the
+default and is the wave-22 behaviour byte for byte.
+
+What the statement does **not** say is the point of the card. It says nothing
+about what the text contains, and in particular it does not declare that any name
+may be erased. The reader **derives** from the declared texts' own `#define`s
+that an export-decoration macro is erasable — every definition object-like, every
+body in the reader's own published vocabulary of type-neutral decorations, never
+`#undef`ed, and defined on every path through the conditional structure, which no
+condition is evaluated to establish. A name that is not derivable is not erased
+and its declaration keeps the `Q063` refusal it already had. An `#include` the
+manifest does not declare is not followed; a declared text that is not supplied,
+whose digest does not match, or that nothing reaches refuses at `Q063`, as does a
+supplied text no manifest declares once a header is bound.
+
 See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
 `docs/design/NATIVE_LIBRARY_HEADER_V1.md`,
 [the manifest record](reports/wave19-unsafe-linkage-artifact/README.md),
 [the contract slice record](reports/wave20-native-library-contract-slice/README.md)
-and [the header record](reports/wave22-native-library-header/README.md).
+[the header record](reports/wave22-native-library-header/README.md)
+and [the decoration record](reports/native-library-header-decoration/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

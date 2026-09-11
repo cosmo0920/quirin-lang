@@ -510,3 +510,109 @@ fn the_cli_reads_the_exported_header_a_manifest_names() {
 
     std::fs::remove_dir_all(&directory).unwrap();
 }
+
+#[test]
+fn the_cli_reads_the_include_texts_a_manifest_declares() {
+    // Card `NATIVE-LIBRARY-HEADER-DECORATION` through the shipped binary. The
+    // header below is decorated the way every real third-party header is, and
+    // card `NATIVE-LIBRARY-HEADER` refuses it by name; the one `include`
+    // statement — which says which text, never what it means — is the delta.
+    //
+    // `HEADER-CLI-RELATIVE` covers the declared texts too: one candidate path
+    // under the manifest's own directory, no search and no fallback, because two
+    // byte-identical manifests must not mean different things depending on where
+    // they were invoked from.
+    let fixtures =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../compiler/tests/fixtures");
+    let source = fixtures.join("unsafe_linkage/round_trip.qcore");
+    let base = std::fs::read_to_string(fixtures.join("native_library/unchecked_demo.qcorelib"))
+        .expect("the wave-19 fixture manifest is readable");
+
+    let directory =
+        std::env::temp_dir().join(format!("qcore-decoration-cli-{}", std::process::id()));
+    std::fs::create_dir_all(directory.join("include")).unwrap();
+    let manifest = directory.join("demo.qcorelib");
+    let header = directory.join("include/demo.h");
+    let visibility = directory.join("include/demo_visibility.h");
+
+    let declarations = "#ifndef DEMO_H\n\
+                        #define DEMO_H\n\
+                        #include <stdint.h>\n\
+                        #include \"demo_visibility.h\"\n\
+                        DEMO_EXPORT int32_t k_unchecked_add(int32_t left, int32_t right);\n\
+                        DEMO_EXPORT void k_unchecked_side_effect(uint32_t value);\n\
+                        DEMO_EXPORT uint64_t k_unchecked_measure(uint64_t value);\n\
+                        #endif\n";
+    let write = |visibility_text: &str| {
+        std::fs::write(&header, declarations).unwrap();
+        std::fs::write(&visibility, visibility_text).unwrap();
+        let header_digest = qcore_compiler::digest::sha256_hex(declarations.as_bytes());
+        let visibility_digest = qcore_compiler::digest::sha256_hex(visibility_text.as_bytes());
+        std::fs::write(
+            &manifest,
+            base.replace(
+                "thread_posture single_caller;",
+                &format!(
+                    "thread_posture single_caller;\n\
+                     header include/demo.h;\n\
+                     header_hash sha256:{header_digest};\n\
+                     include \"demo_visibility.h\" from include/demo_visibility.h sha256:{visibility_digest};"
+                ),
+            ),
+        )
+        .unwrap();
+    };
+    let check = || {
+        Command::new(env!("CARGO_BIN_EXE_quirin"))
+            .arg("check")
+            .arg("--native-library")
+            .arg(&manifest)
+            .arg(&source)
+            .output()
+            .unwrap()
+    };
+
+    // 1. Every arm of the visibility text defines the name and every body is a
+    //    decoration this reader erases: the header is read and the premise names
+    //    *both* texts, because the reading rested on both.
+    write(
+        "#ifndef DEMO_VISIBILITY_H\n\
+         #define DEMO_VISIBILITY_H\n\
+         #if defined(DEMO_SHARED)\n\
+         # define DEMO_EXPORT __attribute__((visibility(\"default\")))\n\
+         #else\n\
+         # define DEMO_EXPORT\n\
+         #endif\n\
+         #endif\n",
+    );
+    let agreed = check();
+    assert!(agreed.status.success(), "{agreed:?}");
+    let agreed = String::from_utf8_lossy(&agreed.stdout).into_owned();
+    assert!(
+        agreed.contains("reading `include/demo_visibility.h` (\"demo_visibility.h\") at sha256:"),
+        "the spliced text is named in the premise: {agreed}"
+    );
+    assert!(
+        agreed.contains("those digests are verified, not declared"),
+        "{agreed}"
+    );
+
+    // 2. One arm left undefined: the derivation withdraws and the decorated
+    //    declaration keeps card `NATIVE-LIBRARY-HEADER`'s refusal, naming the
+    //    token.
+    write(
+        "#ifndef DEMO_VISIBILITY_H\n\
+         #define DEMO_VISIBILITY_H\n\
+         #if defined(DEMO_SHARED)\n\
+         # define DEMO_EXPORT __attribute__((visibility(\"default\")))\n\
+         #endif\n\
+         #endif\n",
+    );
+    let refused = check();
+    assert!(!refused.status.success(), "{refused:?}");
+    let refused = String::from_utf8_lossy(&refused.stderr).into_owned();
+    assert!(refused.contains("Q063"), "{refused}");
+    assert!(refused.contains("DEMO_EXPORT"), "{refused}");
+
+    std::fs::remove_dir_all(&directory).unwrap();
+}

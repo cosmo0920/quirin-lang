@@ -99,6 +99,7 @@ import QCore.UncheckedLinkage
 import QCore.NativeLibrary
 import QCore.NativeLibraryContract
 import QCore.NativeLibraryHeader
+import QCore.NativeLibraryHeaderDecoration
 import QCore.ReasonCategory
 import QCore.ReasonCarrier
 import QCore.SourceRootAdmission

@@ -948,6 +948,9 @@ fn the_two_header_fields_are_optional_together_and_mandatory_together() {
         Some(HeaderIdentity {
             reference: "include/demo.h".to_owned(),
             digest: HEADER_DIGEST.to_owned(),
+            // Card `NATIVE-LIBRARY-HEADER-DECORATION` adds a third, repeatable
+            // part; declaring none is the wave-22 binding unchanged.
+            includes: Vec::new(),
         })
     );
     let with_neither = load_native_library_manifest(&headerless_text(
@@ -980,6 +983,612 @@ fn a_header_digest_outside_the_admitted_algorithm_rejects_the_manifest() {
         load_native_library_manifest(&text),
         Err(crate::native_library::ManifestRefusal::MalformedHash {
             hash: "md5:0123456789abcdef0123456789abcdef".to_owned(),
+        })
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Card `NATIVE-LIBRARY-HEADER-DECORATION`: declared include texts, and the
+// derivation of erasable declaration decorations from what those texts say.
+//
+// Every row here is about the *derivation*, not about a manifest: which names
+// the reader concludes are erasable from a text it was given, and which it
+// refuses to conclude anything about. A manifest's only contribution is which
+// hash-identified texts may be read, and the rows that pin *that* are the
+// manifest-grammar ones at the end.
+// ---------------------------------------------------------------------------
+
+const DECORATION_DIGEST: &str =
+    "sha256:3333333333333333333333333333333333333333333333333333333333333333";
+
+/// A visibility text in the shape Libevent's `event2/visibility.h` has: one
+/// name, five `#define`s across a nested conditional structure, and an `#else`
+/// on every group.
+fn visibility(bodies: [&str; 5]) -> String {
+    let [sun, gnu, msvc, unknown, static_build] = bodies;
+    format!(
+        "#ifndef DEMO_VISIBILITY_H\n\
+         #define DEMO_VISIBILITY_H\n\
+         #if defined(DEMO_SHARED)\n\
+         # if defined(__SUNPRO_C)\n\
+         #  define DEMO_EXPORT {sun}\n\
+         # elif defined(__GNUC__)\n\
+         #  define DEMO_EXPORT {gnu}\n\
+         # elif defined(_MSC_VER)\n\
+         #  define DEMO_EXPORT {msvc}\n\
+         # else\n\
+         #  define DEMO_EXPORT {unknown}\n\
+         # endif\n\
+         #else\n\
+         # define DEMO_EXPORT {static_build}\n\
+         #endif\n\
+         #endif /* DEMO_VISIBILITY_H */\n"
+    )
+}
+
+/// The real shape: `__global`, a visibility attribute, a `__declspec`, and two
+/// empty bodies.
+fn real_visibility() -> String {
+    visibility([
+        "__global",
+        "__attribute__((visibility(\"default\")))",
+        "__declspec(dllexport)",
+        "",
+        "",
+    ])
+}
+
+/// A decorated header declaring `demo_alloc`, including the text named.
+fn decorated(include: &str) -> String {
+    guarded(&format!(
+        "#include {include}\n\
+         DEMO_EXPORT\n\
+         uint8_t *demo_alloc(uintptr_t size);\n"
+    ))
+}
+
+fn read_decorated(visibility_text: &str) -> HeaderReadout {
+    let included = BTreeMap::from([("\"demo_visibility.h\"".to_owned(), visibility_text)]);
+    read_header_with_includes(
+        &decorated("\"demo_visibility.h\""),
+        &included,
+        &BTreeSet::from(["demo_alloc"]),
+    )
+    .expect("the texts are inside the directive subset")
+}
+
+#[test]
+fn the_decoration_is_derived_from_the_declared_texts_own_defines() {
+    let readout = read_decorated(&real_visibility());
+    assert_eq!(
+        readout.erasures.iter().cloned().collect::<Vec<_>>(),
+        ["DEMO_EXPORT"],
+        "one name, read out of the text rather than declared beside it"
+    );
+    assert_eq!(
+        readout.followed,
+        BTreeSet::from(["\"demo_visibility.h\"".to_owned()])
+    );
+    let HeaderReading::Declared(declaration) = &readout.readings["demo_alloc"] else {
+        panic!("the decorated declaration is read: {:?}", readout.readings);
+    };
+    assert_eq!(
+        declaration.result,
+        Ok(HeaderProjection::Spellings(BTreeSet::from([
+            AbiType::PtrMutU8
+        ])))
+    );
+}
+
+#[test]
+fn without_the_declared_text_the_decoration_refuses_by_name() {
+    // The wave-22 reading of the same header: the `#include` is not declared,
+    // so it is not followed and the token is a type this reader does not commit
+    // to. This is the row every other row in this group is a departure from.
+    let readings = read_header(
+        &decorated("\"demo_visibility.h\""),
+        &BTreeSet::from(["demo_alloc"]),
+    )
+    .expect("the header itself is inside the subset");
+    let HeaderReading::Declared(declaration) = &readings["demo_alloc"] else {
+        panic!("the declaration is found");
+    };
+    let Err(spelling) = &declaration.result else {
+        panic!("an undeclared decoration must refuse: {declaration:?}");
+    };
+    assert!(spelling.contains("DEMO_EXPORT"), "{spelling}");
+}
+
+#[test]
+fn erasing_the_derived_name_equals_expanding_it() {
+    // The justification of the whole derivation, as an equality of readings:
+    // each of the bodies the text contains, written where the macro stood, reads
+    // exactly as the macro form does. One vocabulary erases both, which is what
+    // makes the claim checkable rather than asserted.
+    let through_the_macro = read_decorated(&real_visibility()).readings;
+    for expansion in [
+        "",
+        "__global",
+        "__attribute__((visibility(\"default\")))",
+        "__declspec(dllexport)",
+    ] {
+        let expanded = guarded(&format!(
+            "{expansion}\nuint8_t *demo_alloc(uintptr_t size);\n"
+        ));
+        let readings = read_header(&expanded, &BTreeSet::from(["demo_alloc"]))
+            .unwrap_or_else(|refusal| panic!("`{expansion}`: {refusal}"));
+        assert_eq!(readings, through_the_macro, "expansion `{expansion}`");
+    }
+}
+
+#[test]
+fn every_body_must_be_erasable_for_the_name_to_be() {
+    // The reader decides no condition, so it cannot know which arm is taken.
+    // Each row below poisons exactly one arm with a decoration that changes the
+    // declared type, the calling convention or the exported symbol name.
+    for poison in [
+        "__attribute__((mode(__DI__)))",
+        "__attribute__((aligned(16)))",
+        "__attribute__((vector_size(16)))",
+        "__attribute__((ms_abi))",
+        "__attribute__((alias(\"other\")))",
+        "__declspec(align(16))",
+        "int",
+    ] {
+        for arm in 0..5usize {
+            let mut bodies = ["", "", "", "", ""];
+            bodies[arm] = poison;
+            assert!(
+                read_decorated(&visibility(bodies)).erasures.is_empty(),
+                "`{poison}` in arm {arm} must withdraw the derivation"
+            );
+        }
+    }
+}
+
+#[test]
+fn the_erasable_attribute_vocabulary_is_closed_and_pinned() {
+    // The positive direction of the row above: exactly these names are erased,
+    // and each of them changes neither the declared type, the parameter vector
+    // nor the linkage name.
+    for attribute in [
+        "visibility(\"default\")",
+        "deprecated",
+        "unused",
+        "used",
+        "warn_unused_result",
+        "malloc",
+        "nonnull",
+        "format(printf, 1, 2)",
+        "always_inline",
+        "noinline",
+        "noreturn",
+        "nothrow",
+        "hot",
+        "cold",
+    ] {
+        let body = format!("__attribute__(({attribute}))");
+        assert_eq!(
+            read_decorated(&visibility(["", &body, "", "", ""]))
+                .erasures
+                .len(),
+            1,
+            "`{attribute}` is in the vocabulary"
+        );
+    }
+}
+
+#[test]
+fn a_group_with_no_else_leaves_a_path_undefined() {
+    // The all-paths condition. The text below defines the name in every arm it
+    // writes; what it does not have is an arm for the case where no condition
+    // holds, and the reader will not supply one from a configuration it cannot
+    // see.
+    let text = "#ifndef DEMO_VISIBILITY_H\n\
+                #define DEMO_VISIBILITY_H\n\
+                #if defined(DEMO_SHARED)\n\
+                # define DEMO_EXPORT\n\
+                #elif defined(DEMO_STATIC)\n\
+                # define DEMO_EXPORT\n\
+                #endif\n\
+                #endif\n";
+    assert!(read_decorated(text).erasures.is_empty());
+}
+
+#[test]
+fn a_definition_that_cannot_reach_the_use_is_not_derived() {
+    // Definedness is a question about the text *preceding* the first use. A
+    // definition after it reaches nothing.
+    let header = guarded(
+        "DEMO_EXPORT\n\
+         uint8_t *demo_alloc(uintptr_t size);\n\
+         #define DEMO_EXPORT\n",
+    );
+    let readout = read_header_with_includes(&header, &BTreeMap::new(), &BTreeSet::new())
+        .expect("the header is inside the subset");
+    assert!(readout.erasures.is_empty());
+}
+
+#[test]
+fn a_function_like_or_undefined_decoration_is_not_derived() {
+    for text in [
+        // A function-like macro's expansion depends on its arguments at each
+        // use site, and this reader evaluates no expansion.
+        "#ifndef V_H\n#define V_H\n#define DEMO_EXPORT(x) x\n#endif\n",
+        // `#undef` anywhere withdraws it: this reader tracks no scope for a
+        // macro, and the conservative reading is the refusing one.
+        "#ifndef V_H\n#define V_H\n#define DEMO_EXPORT\n#undef DEMO_EXPORT\n#endif\n",
+    ] {
+        assert!(read_decorated(text).erasures.is_empty(), "{text}");
+    }
+}
+
+#[test]
+fn a_chained_definition_stands_on_a_name_already_derived() {
+    // `#define A B` is erasable when `B` is, which is how a real library's
+    // second export macro is written. The least fixed point is what reads it.
+    let text = "#ifndef V_H\n\
+                #define V_H\n\
+                #define DEMO_BASE __attribute__((visibility(\"default\")))\n\
+                #define DEMO_EXPORT DEMO_BASE\n\
+                #endif\n";
+    assert_eq!(
+        read_decorated(text).erasures,
+        BTreeSet::from(["DEMO_BASE".to_owned(), "DEMO_EXPORT".to_owned()])
+    );
+}
+
+#[test]
+fn a_declared_text_is_spliced_at_most_once() {
+    // Which is what an include guard does, and what keeps a cycle finite. The
+    // text below includes itself.
+    let text = "#ifndef V_H\n\
+                #define V_H\n\
+                #include \"demo_visibility.h\"\n\
+                #define DEMO_EXPORT\n\
+                #endif\n";
+    assert_eq!(
+        read_decorated(text).erasures,
+        BTreeSet::from(["DEMO_EXPORT".to_owned()])
+    );
+}
+
+#[test]
+fn a_spliced_texts_typedefs_are_read_as_the_headers_own() {
+    // Splicing is not a macro table: the text becomes part of the one text the
+    // reader reads, so a `typedef` one file away stops being unreadable.
+    let text = "#ifndef V_H\n#define V_H\ntypedef uint32_t demo_size_t;\n#endif\n";
+    let included = BTreeMap::from([("\"demo_visibility.h\"".to_owned(), text)]);
+    let header = guarded(
+        "#include \"demo_visibility.h\"\n\
+         int32_t demo_sum(demo_size_t count);\n",
+    );
+    let readout = read_header_with_includes(&header, &included, &BTreeSet::from(["demo_sum"]))
+        .expect("the texts are inside the subset");
+    let HeaderReading::Declared(declaration) = &readout.readings["demo_sum"] else {
+        panic!("the declaration is read: {:?}", readout.readings);
+    };
+    assert_eq!(
+        declaration.parameters,
+        [Ok(HeaderProjection::Spellings(BTreeSet::from([
+            AbiType::U32
+        ])))]
+    );
+}
+
+#[test]
+fn a_spliced_text_is_read_under_the_same_directive_subset() {
+    // A spliced text is part of the one text being read, so its own directives
+    // are read under the same rules and its `#error` refuses the whole reading
+    // rather than half of it.
+    let included = BTreeMap::from([(
+        "\"demo_visibility.h\"".to_owned(),
+        "#ifndef V_H\n#define V_H\n#error unsupported\n#endif\n",
+    )]);
+    let refusal = read_header_with_includes(
+        &decorated("\"demo_visibility.h\""),
+        &included,
+        &BTreeSet::new(),
+    )
+    .expect_err("a spliced `#error` is outside the subset");
+    assert_eq!(
+        refusal,
+        HeaderTextRefusal::UnsupportedDirective {
+            directive: "error".to_owned()
+        }
+    );
+}
+
+#[test]
+fn an_undeclared_include_is_not_followed_and_nothing_about_that_changed() {
+    // The set is closed in both directions, and the undeclared direction is
+    // *quiet*: refusing on every undeclared `#include` would make the level
+    // unusable on any header that includes `<stdint.h>`.
+    let readout = read_header_with_includes(
+        &guarded("#include <stdint.h>\nuint8_t *demo_alloc(uintptr_t size);\n"),
+        &BTreeMap::new(),
+        &BTreeSet::from(["demo_alloc"]),
+    )
+    .expect("the header is inside the subset");
+    assert!(readout.followed.is_empty());
+    assert!(matches!(
+        readout.readings["demo_alloc"],
+        HeaderReading::Declared(_)
+    ));
+}
+
+#[test]
+fn a_prefix_decoration_outside_the_vocabulary_no_longer_passes_unread() {
+    // A finding of this card, repaired in it. The specifier prefix is read by
+    // walking backwards from the declarator name, and a decoration ending in
+    // `)` stopped that walk *silently* — so `__attribute__((mode(__DI__)))`,
+    // which changes the declared type, was ignored rather than refused. The
+    // erasable vocabulary is deleted from the stream before this point, so
+    // anything still standing here is a decoration this reader does not commit
+    // to.
+    let header = guarded("__attribute__((mode(__DI__))) uint8_t *demo_alloc(uintptr_t size);");
+    let readings =
+        read_header(&header, &BTreeSet::from(["demo_alloc"])).expect("the file is in the subset");
+    let HeaderReading::Declared(declaration) = &readings["demo_alloc"] else {
+        panic!("the declaration is found");
+    };
+    let Err(spelling) = &declaration.result else {
+        panic!("a type-changing prefix decoration must refuse: {declaration:?}");
+    };
+    assert!(spelling.contains("mode"), "{spelling}");
+}
+
+// --- The manifest's side: which texts, and nothing about what they say ---
+
+const DECORATED_ENTRY: &str =
+    "contract fn demo_alloc(uintptr_t) -> uint8_t * from contracts/demo.qcore;";
+
+/// A manifest naming one exported header and one declared include text.
+fn decorated_manifest() -> String {
+    format!(
+        "{}\ninclude \"demo_visibility.h\" from include/demo_visibility.h {DECORATION_DIGEST};\n{DECORATED_ENTRY}\n",
+        manifest_text("").trim_end()
+    )
+}
+
+fn check_decorated(
+    manifest: &str,
+    header: &str,
+    include_text: &str,
+    include_digest: &str,
+) -> Result<(), HeaderFailure> {
+    let libraries = libraries(manifest);
+    let sources = BTreeMap::from([
+        (
+            "include/demo.h".to_owned(),
+            HeaderSource {
+                reference: "include/demo.h",
+                text: header,
+                measured_digest: HEADER_DIGEST,
+            },
+        ),
+        (
+            "include/demo_visibility.h".to_owned(),
+            HeaderSource {
+                reference: "include/demo_visibility.h",
+                text: include_text,
+                measured_digest: include_digest,
+            },
+        ),
+    ]);
+    check_header_bindings(&libraries, &sources)
+}
+
+#[test]
+fn a_manifest_declaring_the_visibility_text_reads_the_decorated_header() {
+    assert_eq!(
+        check_decorated(
+            &decorated_manifest(),
+            &decorated("\"demo_visibility.h\""),
+            &real_visibility(),
+            DECORATION_DIGEST,
+        ),
+        Ok(())
+    );
+}
+
+#[test]
+fn the_include_identity_is_published_with_the_header_identity() {
+    let manifest = load_native_library_manifest(&decorated_manifest()).expect("the manifest loads");
+    assert_eq!(
+        manifest.header.expect("a header is bound").includes,
+        vec![IncludeIdentity {
+            spelling: "\"demo_visibility.h\"".to_owned(),
+            reference: "include/demo_visibility.h".to_owned(),
+            digest: DECORATION_DIGEST.to_owned(),
+        }],
+        "the texts a decision rests on are named by the record a certificate carries"
+    );
+}
+
+#[test]
+fn a_declared_include_texts_digest_decides_before_it_is_read() {
+    // Exactly as the header's own digest does, and for the same reason: a
+    // decision that rests on a text must name that text by content or it cannot
+    // be rederived.
+    assert_eq!(
+        refusal(
+            check_decorated(
+                &decorated_manifest(),
+                &decorated("\"demo_visibility.h\""),
+                &real_visibility(),
+                OTHER_DIGEST,
+            )
+            .expect_err("a substituted include text refuses"),
+        ),
+        HeaderRefusal::IncludeDigestMismatch {
+            manifest: "demo.qcorelib".to_owned(),
+            spelling: "\"demo_visibility.h\"".to_owned(),
+            reference: "include/demo_visibility.h".to_owned(),
+            declared: DECORATION_DIGEST.to_owned(),
+            measured: OTHER_DIGEST.to_owned(),
+        }
+    );
+}
+
+#[test]
+fn a_declared_include_text_that_is_not_supplied_refuses_by_name() {
+    let libraries = libraries(&decorated_manifest());
+    let header = decorated("\"demo_visibility.h\"");
+    let sources = BTreeMap::from([(
+        "include/demo.h".to_owned(),
+        HeaderSource {
+            reference: "include/demo.h",
+            text: &header,
+            measured_digest: HEADER_DIGEST,
+        },
+    )]);
+    assert_eq!(
+        refusal(check_header_bindings(&libraries, &sources).expect_err("the text is missing")),
+        HeaderRefusal::IncludeNotSupplied {
+            manifest: "demo.qcorelib".to_owned(),
+            spelling: "\"demo_visibility.h\"".to_owned(),
+            reference: "include/demo_visibility.h".to_owned(),
+        }
+    );
+}
+
+#[test]
+fn a_declared_include_text_nothing_reaches_refuses_by_name() {
+    // A declared text nothing reads is a statement with no effect, and this
+    // level's content is that its statements have effects — the same totality
+    // argument the contract slice's unresolved binding rests on.
+    assert_eq!(
+        refusal(
+            check_decorated(
+                &decorated_manifest(),
+                // The header includes something else entirely.
+                &decorated("<stdint.h>"),
+                &real_visibility(),
+                DECORATION_DIGEST,
+            )
+            .expect_err("an unreached declared text refuses"),
+        ),
+        HeaderRefusal::IncludeNotReached {
+            manifest: "demo.qcorelib".to_owned(),
+            spelling: "\"demo_visibility.h\"".to_owned(),
+        }
+    );
+}
+
+#[test]
+fn a_text_supplied_for_a_reference_nobody_declares_refuses_by_name() {
+    let libraries = libraries(&decorated_manifest());
+    let header = decorated("\"demo_visibility.h\"");
+    let visibility_text = real_visibility();
+    let sources = BTreeMap::from([
+        (
+            "include/demo.h".to_owned(),
+            HeaderSource {
+                reference: "include/demo.h",
+                text: &header,
+                measured_digest: HEADER_DIGEST,
+            },
+        ),
+        (
+            "include/demo_visibility.h".to_owned(),
+            HeaderSource {
+                reference: "include/demo_visibility.h",
+                text: &visibility_text,
+                measured_digest: DECORATION_DIGEST,
+            },
+        ),
+        (
+            "include/undeclared.h".to_owned(),
+            HeaderSource {
+                reference: "include/undeclared.h",
+                text: "",
+                measured_digest: OTHER_DIGEST,
+            },
+        ),
+    ]);
+    assert_eq!(
+        refusal(check_header_bindings(&libraries, &sources).expect_err("an extra text refuses")),
+        HeaderRefusal::SourceNotDeclared {
+            reference: "include/undeclared.h".to_owned(),
+        }
+    );
+}
+
+#[test]
+fn a_manifest_naming_no_header_is_still_unaffected_by_supplied_texts() {
+    // The transport totality above is gated on a header being bound, so the
+    // wave-22 row it could have broken is re-asserted here rather than assumed:
+    // a selection naming no header is byte-identical to what that card
+    // published, whatever texts are supplied.
+    let text = headerless_text(DECORATED_ENTRY);
+    let libraries = libraries(&text);
+    let sources = BTreeMap::from([(
+        "include/anything.h".to_owned(),
+        HeaderSource {
+            reference: "include/anything.h",
+            text: "int demo_alloc(void);",
+            measured_digest: OTHER_DIGEST,
+        },
+    )]);
+    assert_eq!(check_header_bindings(&libraries, &sources), Ok(()));
+}
+
+#[test]
+fn the_include_statements_grammar_refuses_by_name() {
+    use crate::native_library::ManifestRefusal;
+
+    assert!(load_native_library_manifest(&decorated_manifest()).is_ok());
+    for (statement, expected) in [
+        (
+            "include \"demo_visibility.h\" include/demo_visibility.h;".to_owned(),
+            ManifestRefusal::MalformedIncludeBinding {
+                statement: "include \"demo_visibility.h\" include/demo_visibility.h".to_owned(),
+            },
+        ),
+        (
+            format!(
+                "include demo_visibility.h from include/demo_visibility.h {DECORATION_DIGEST};"
+            ),
+            ManifestRefusal::MalformedIncludeSpelling {
+                spelling: "demo_visibility.h".to_owned(),
+            },
+        ),
+        (
+            "include \"demo_visibility.h\" from include/demo_visibility.h md5:00;".to_owned(),
+            ManifestRefusal::MalformedHash {
+                hash: "md5:00".to_owned(),
+            },
+        ),
+    ] {
+        let text = format!(
+            "{}\n{statement}\n{DECORATED_ENTRY}\n",
+            manifest_text("").trim_end()
+        );
+        assert_eq!(load_native_library_manifest(&text), Err(expected));
+    }
+    // The same spelling twice has no defined meaning.
+    let repeated = format!(
+        "{}\ninclude \"demo_visibility.h\" from include/a.h {DECORATION_DIGEST};\n\
+         include \"demo_visibility.h\" from include/b.h {DECORATION_DIGEST};\n{DECORATED_ENTRY}\n",
+        manifest_text("").trim_end()
+    );
+    assert_eq!(
+        load_native_library_manifest(&repeated),
+        Err(ManifestRefusal::IncludeBoundTwice {
+            spelling: "\"demo_visibility.h\"".to_owned(),
+        })
+    );
+    // And a declared text with no header to read it into names a text nothing
+    // opens.
+    let orphan = format!(
+        "{}\ninclude \"demo_visibility.h\" from include/demo_visibility.h {DECORATION_DIGEST};\n{DECORATED_ENTRY}\n",
+        headerless_text("").trim_end()
+    );
+    assert_eq!(
+        load_native_library_manifest(&orphan),
+        Err(ManifestRefusal::IncludeWithoutHeader {
+            spelling: "\"demo_visibility.h\"".to_owned(),
         })
     );
 }

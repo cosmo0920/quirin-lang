@@ -1,0 +1,41 @@
+# Card `NATIVE-LIBRARY-HEADER-DECORATION`: `buffer_lib_header.qcorelib` with a
+# **decorated** exported header, and the text that decoration is derived from.
+#
+# The header this binds, `include/qcore_buffer_demo_decorated.h`, declares the
+# same four symbols as `include/qcore_buffer_demo.h` and writes
+# `QCORE_BUFFER_DEMO_EXPORT` before each of them — the shape card
+# `NATIVE-LIBRARY-HEADER`'s census measured across the whole of Libevent's
+# `event2/` surface, and the reason **0 of 423** of its candidates were inside
+# that card's subset.
+#
+# The one statement added below is an `include`. Read what it does *not* say:
+# it does not say that `QCORE_BUFFER_DEMO_EXPORT` may be erased, nor what it
+# expands to, nor that it is a decoration at all. It says only *which text* the
+# header's own `#include "qcore_buffer_demo_visibility.h"` line may be read
+# from, and what that text's digest is. Everything else is derived by reading
+# it: that every `#define` of the name is object-like, that every body is a
+# decoration this reader's own published vocabulary admits, and that no arm of
+# the conditional structure leaves the name undefined before its first use.
+#
+# A manifest-declared *erasure list* would have been the easy version of this
+# card and was declined by card `NATIVE-LIBRARY-HEADER` §11 for a reason that
+# still holds: it converts a reader boundary into an unchecked premise about the
+# header's own text, which is exactly what this level exists to remove.
+
+native_library manifest v1;
+library qcore_buffer_demo;
+version 0.2.0;
+artifact libqcore_buffer_demo.a;
+hash sha256:4d1f8a03be27c5901e6ab4772d05f3c81a9e6b40d7cc2318f5be0947aa6132ed;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+header include/qcore_buffer_demo_decorated.h;
+header_hash sha256:0cc1b130d36c0682abe8a33bbbcae9fea08f35508e75539f54798513c479b019;
+include "qcore_buffer_demo_visibility.h" from include/qcore_buffer_demo_visibility.h sha256:8fce29e5cac9277ea8ebbb8ed70ad4b7a58c8ba7d469a76af03e9da9bf611c0b;
+
+contract fn qcore_extern_alloc(uintptr_t) -> uint8_t * from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_fill(uint8_t *, uint32_t) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_sum(const uint8_t *, uint32_t) -> int32_t from fixtures/native_library/contracts/buffer_lib.qcore;
+contract fn qcore_extern_release(uint8_t *) -> void from fixtures/native_library/contracts/buffer_lib.qcore;
