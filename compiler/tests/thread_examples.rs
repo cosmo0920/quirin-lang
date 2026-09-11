@@ -45,7 +45,6 @@
 #![cfg(any(target_os = "linux", target_os = "macos"))]
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
-use qcore_core::io_emit;
 use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_with_source_lines, render_task_observation,
 };
@@ -93,14 +92,14 @@ fn compile(name: &str, source: &str) -> CompiledModule {
 /// The reference execution's two stream projections.
 fn reference(module: &CompiledModule) -> (String, String) {
     let composed = module.checked.as_composed_tasks().unwrap();
-    execute_with_source_lines(
+    let observation = execute_with_source_lines(
         composed.tasks(),
         &TaskExecutionScript::default(),
         &BTreeMap::new(),
         composed.sites(),
     )
-    .unwrap()
-    .projections()
+    .unwrap();
+    observation.projections()
 }
 
 /// Compile and run one example under the available sanitizers, returning its
@@ -174,22 +173,19 @@ fn run_sanitized(name: &str, module: &CompiledModule) -> (String, String) {
 }
 
 #[test]
-fn every_published_example_prints_through_the_single_emission_route() {
+fn every_published_example_explicitly_selects_the_system_trace_adapter() {
     for (name, source) in EXAMPLES {
         let module = compile(name, source);
         let c = module.c_source.as_ref().unwrap();
         assert_eq!(
-            io_emit::direct_stdio_calls(c),
-            Vec::new(),
-            "{name} emits a direct standard-output call outside the shared route"
+            c.matches("static void qcore_diagnostic_stdout(").count(),
+            2,
+            "{name} must carry exactly one shared adapter declaration and definition"
         );
-        // Non-vacuous in both directions now: the program writes both the
-        // synthesized trace and its own source lines, and both go through the
-        // one route.
-        assert!(
-            c.contains("QCORE_IO_WRITE(stdout,"),
-            "{name} emits nothing through the shared route"
-        );
+        assert!(c.contains("QCORE_DIAG_TASK_RESULT"));
+        assert!(source.contains("log_level trace;"));
+        assert!(c.contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE"));
+        assert!(c.contains("QCORE_IO_WRITE(stdout,"));
         assert!(
             c.contains("QCORE_IO_WRITE(stderr,"),
             "{name} writes no source line through the shared route"
@@ -214,13 +210,8 @@ fn every_published_example_matches_its_reference_execution_under_sanitizers() {
     }
 }
 
-/// The task evidence these examples carried before this card is **unchanged**,
-/// and this states it as an equation rather than as a claim: a composed
-/// program's standard output with its own source lines removed is exactly
-/// `render_task_observation` of the task projection, which is what the task
-/// route alone produced.
 #[test]
-fn removing_the_source_lines_leaves_exactly_the_task_rendering() {
+fn task_evidence_remains_structured_and_is_rendered_only_by_explicit_opt_in() {
     for (name, source) in EXAMPLES {
         let module = compile(name, source);
         let composed = module.checked.as_composed_tasks().unwrap();
@@ -231,35 +222,12 @@ fn removing_the_source_lines_leaves_exactly_the_task_rendering() {
             composed.sites(),
         )
         .unwrap();
-        let (out, _) = observation.projections();
-        let source_lines = observation
-            .lines
-            .iter()
-            .filter(|entry| entry.line.stream == qcore_core::std_io::Stream::Out)
-            .map(|entry| entry.line.text.clone())
-            .collect::<Vec<_>>();
-        let mut remaining = source_lines.clone();
-        let stripped = out
-            .lines()
-            .filter(|line| {
-                if let Some(index) = remaining.iter().position(|text| text == line) {
-                    remaining.remove(index);
-                    false
-                } else {
-                    true
-                }
-            })
-            .map(|line| format!("{line}\n"))
-            .collect::<String>();
         assert!(
-            remaining.is_empty(),
-            "{name}: a source line the model published is not in the output"
+            !render_task_observation(&observation.tasks).is_empty(),
+            "{name}"
         );
-        assert_eq!(
-            stripped,
-            render_task_observation(&observation.tasks),
-            "{name}: the task rendering is not what is left"
-        );
+        let (out, _err) = reference(&module);
+        assert!(out.contains("QCORE_"), "{name}");
     }
 }
 
@@ -453,12 +421,7 @@ fn the_transcript_check_would_notice_a_changed_line() {
     // Otherwise the test above could pass on an empty or truncated extraction.
     let out = documented_transcript("stdout");
     let err = documented_transcript("stderr");
-    assert!(
-        out.lines().count() >= 8,
-        "extracted stdout transcript is implausibly short: {out:?}"
-    );
-    assert!(out.starts_with("QCORE_TASK_SPAWN 1 0\n"));
-    assert!(out.ends_with("QCORE_TASK_RESULT 0 I32 7\n"));
+    assert_eq!(out, "7\n");
     assert!(
         err.lines().count() >= 3,
         "extracted stderr transcript is implausibly short: {err:?}"

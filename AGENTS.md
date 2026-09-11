@@ -278,11 +278,13 @@ pointer is the card that established it; read it before deviating.
 14. New keywords are a recorded compatibility hazard and must be checked
     against every fixture: T03-F added five reserved words, T08-EPOCH-SRC eight
     (with `work` renamed `effort` rather than editing the pinned golden
-    surface), `source.extern-call.v1` added `succeeds`, and STD-MODULES added
-    eight (`print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`) —
-    `error` was measured to collide with the reserved error-type keyword, so
-    the severity is spelled `fatal` on the `work` → `effort` precedent rather
-    than by moving the pinned surface. EXTERN-MODES deliberately added **none**:
+    surface), `source.extern-call.v1` added `succeeds`, STD-MODULES added eight
+    (`print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`), and the
+    quiet-emission amendment added `trace`, `debug`, and the explicit
+    system-trace `log_level` declaration after a full fixture
+    census. The already-reserved `error` keyword is accepted contextually as a
+    logger level only after `log`; it was not removed from the global keyword
+    set. EXTERN-MODES deliberately added **none**:
     `move NAME` spells all four departing modes and the declaration decides
     which ran. `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`.

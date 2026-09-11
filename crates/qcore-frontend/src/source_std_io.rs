@@ -9,18 +9,18 @@
 //! stmt      ::= "let" NAME "=" ["-"] INTEGER ";"
 //!             | "print" RENDERING OPERAND ";"          -- std.io  + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"      -- std.logger + std.fmt
+//!             | "log_level" LEVEL ";"                  -- std.logger
 //!             | "flush" ";"                            -- std.logger
 //!             | "return" ";"
 //! RENDERING ::= "dec" | "hex"
-//! LEVEL     ::= "info" | "warn" | "fatal"
+//! LEVEL     ::= "trace" | "debug" | "info" | "warn" | "error" | "fatal"
 //! OPERAND   ::= ["-"] INTEGER | NAME | "borrow" NAME
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
 //!
-//! `fatal` is spelled that way because `error` is already the reserved
-//! error-type declaration keyword; renaming this card's syntax rather than the
-//! pinned declaration surface follows card T08-EPOCH-SRC's `work` → `effort`
-//! resolution.
+//! `error` is contextual after `log`; elsewhere the same token remains the
+//! error-type declaration keyword. Logger levels are labels, not an implicit
+//! filtering policy for source-authored records.
 //!
 //! # The operand rule is the effect discipline
 //!
@@ -76,6 +76,7 @@ pub struct LoweredStdIoModule {
 /// statement head is a `source.std-io.v1` module.
 pub const PRINT_KEYWORD: &str = "print";
 pub const LOG_KEYWORD: &str = "log";
+pub const LOG_LEVEL_KEYWORD: &str = "log_level";
 pub const FLUSH_KEYWORD: &str = "flush";
 
 /// The operand marker of a borrowed render (card `STD-FMT-BORROW`).
@@ -94,6 +95,8 @@ pub enum StdIoUse {
     Print,
     /// `log …` — needs `std.logger` and, for its rendering, `std.fmt`.
     Log,
+    /// `log_level …` — needs `std.logger` only.
+    LogLevel,
     /// `flush;` — needs `std.logger` only. It names no rendering.
     Flush,
 }
@@ -130,6 +133,7 @@ pub fn std_io_uses(program: &SourceProgram) -> BTreeMap<StdIoUse, Span> {
                 let use_kind = match head {
                     PRINT_KEYWORD => Some(StdIoUse::Print),
                     LOG_KEYWORD => Some(StdIoUse::Log),
+                    LOG_LEVEL_KEYWORD => Some(StdIoUse::LogLevel),
                     FLUSH_KEYWORD => Some(StdIoUse::Flush),
                     _ => None,
                 };
@@ -157,7 +161,35 @@ pub fn std_io_uses(program: &SourceProgram) -> BTreeMap<StdIoUse, Span> {
 /// Whether this module is a `source.std-io.v1` module.
 #[must_use]
 pub fn has_source_std_io(program: &SourceProgram) -> bool {
-    !std_io_uses(program).is_empty()
+    std_io_uses(program)
+        .keys()
+        .any(|kind| *kind != StdIoUse::LogLevel)
+}
+
+/// Whether this file explicitly selects rendering of system diagnostic events.
+#[must_use]
+pub fn has_source_log_level(program: &SourceProgram) -> bool {
+    std_io_uses(program).contains_key(&StdIoUse::LogLevel)
+}
+
+/// The validated direct `log_level` declaration of `entry`, if present.
+#[must_use]
+pub fn entry_log_level(program: &SourceProgram, entry: &str) -> Option<Level> {
+    let declaration = program.declarations.iter().find(|declaration| {
+        declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
+    })?;
+    declaration
+        .value
+        .body
+        .as_ref()?
+        .statements
+        .iter()
+        .find_map(
+            |statement| match std_io_statement(program, statement.span) {
+                Some(Ok(StdIoEvent::LogLevel { level })) => Some(level),
+                _ => None,
+            },
+        )
 }
 
 /// Every `print`/`log` statement in the entry whose operand is a **name**, with
@@ -291,7 +323,7 @@ fn operand(window: &[&Token], cursor: usize) -> Option<(StdIoOperand, usize)> {
 }
 
 /// The **one** grammar of a line-producing statement: `print RENDERING OPERAND;`,
-/// `log LEVEL RENDERING OPERAND;`, `flush;`.
+/// `log LEVEL RENDERING OPERAND;`, `log_level LEVEL;`, `flush;`.
 ///
 /// `None` when the head is not one of the three keywords. Every route that
 /// admits these statements reads them here — the lowering below, and the
@@ -316,8 +348,7 @@ fn std_io_event(window: &[&Token], head: &str) -> Option<Result<StdIoEvent, &'st
         LOG_KEYWORD => Some({
             let Some(level) = word(window, 1).and_then(Level::parse) else {
                 return Some(Err(
-                    "`log` names a level: `info`, `warn` or `fatal` (`error` is the reserved \
-                     error-type declaration keyword)",
+                    "`log` names a level: `trace`, `debug`, `info`, `warn`, `error` or `fatal`",
                 ));
             };
             let Some(rendering) = word(window, 2).and_then(Rendering::parse) else {
@@ -335,6 +366,18 @@ fn std_io_event(window: &[&Token], head: &str) -> Option<Result<StdIoEvent, &'st
                     "`log LEVEL RENDERING OPERAND;` takes one integer literal, one bound \
                      integer name, or `borrow NAME` for the identity of a live resource",
                 ),
+            }
+        }),
+        LOG_LEVEL_KEYWORD => Some({
+            let Some(level) = word(window, 1).and_then(Level::parse) else {
+                return Some(Err(
+                    "`log_level` names one of `trace`, `debug`, `info`, `warn`, `error` or `fatal`",
+                ));
+            };
+            if ends_with_semicolon(window, 2) {
+                Ok(StdIoEvent::LogLevel { level })
+            } else {
+                Err("`log_level LEVEL;` takes exactly one logger level")
             }
         }),
         FLUSH_KEYWORD => Some(if ends_with_semicolon(window, 1) {
@@ -516,6 +559,9 @@ pub fn lower_source_std_io_skipping(
                             LOG_KEYWORD => {
                                 found.entry(StdIoUse::Log).or_insert(statement.span);
                             }
+                            LOG_LEVEL_KEYWORD => {
+                                found.entry(StdIoUse::LogLevel).or_insert(statement.span);
+                            }
                             FLUSH_KEYWORD => {
                                 found.entry(StdIoUse::Flush).or_insert(statement.span);
                             }
@@ -613,7 +659,7 @@ pub fn lower_source_std_io_skipping(
                     )),
                 }
             }
-            PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
+            PRINT_KEYWORD | LOG_KEYWORD | LOG_LEVEL_KEYWORD | FLUSH_KEYWORD => {
                 match std_io_event(&window, head)
                     .expect("the three line-producing heads are matched above")
                 {
@@ -650,7 +696,7 @@ pub fn lower_source_std_io_skipping(
     for (index, event) in events.iter().enumerate() {
         let operand = match event {
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => operand,
-            StdIoEvent::Flush | StdIoEvent::Return => continue,
+            StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return => continue,
         };
         let span = event_spans.get(index).copied().unwrap_or(scope_span);
         match operand {

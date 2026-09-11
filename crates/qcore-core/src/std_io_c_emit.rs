@@ -71,6 +71,7 @@ pub fn interpret_std_io_program(
     let mut observation = Vec::new();
     for (index, event) in program.events.iter().enumerate() {
         match event {
+            StdIoEvent::LogLevel { .. } => {}
             StdIoEvent::Print { rendering, operand } => {
                 let value = operand_value(program, index, operand)?;
                 observation.push(format!(
@@ -150,6 +151,7 @@ pub fn event_statement(
         }
     };
     match event {
+        StdIoEvent::LogLevel { .. } => Ok(None),
         StdIoEvent::Print { rendering, operand } => Ok(Some(io_emit::write_line(
             Stream::Out,
             rendering.c_conversion(),
@@ -213,6 +215,7 @@ pub fn emit_std_io_c11(
         // Rechecked here so the backend never renders a name the program does
         // not bind.
         match event {
+            StdIoEvent::LogLevel { .. } => {}
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => {
                 let _ = operand_value(program, index, operand)?;
             }

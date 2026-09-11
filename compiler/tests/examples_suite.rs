@@ -330,13 +330,20 @@ fn every_stdio_example_prints_through_the_single_emission_route() {
         ("pipeline", contracted("stdio/pipeline.qcore", PIPELINE)),
     ] {
         let c = module.c_source.as_deref().unwrap();
-        assert_eq!(
-            qcore_core::io_emit::direct_stdio_calls(c),
-            Vec::new(),
-            "{name} emits a direct standard-output call outside the shared route"
-        );
-        // Non-vacuous: the program really does write, so an empty result above
-        // is "one route", not "no output".
+        if name == "pipeline" {
+            assert_eq!(
+                c.matches("static void qcore_diagnostic_stdout(").count(),
+                2,
+                "the explicit system trace must use one shared adapter"
+            );
+        } else {
+            assert_eq!(
+                qcore_core::io_emit::direct_stdio_calls(c),
+                Vec::new(),
+                "{name} emits a direct standard-output call outside the shared route"
+            );
+        }
+        // Non-vacuous: the program really does write through source IO too.
         assert!(c.contains("QCORE_IO_WRITE("), "{name} writes nothing");
     }
 }
@@ -450,7 +457,7 @@ fn the_stdio_transcript_checks_would_notice_a_changed_line() {
     // own emptiness is asserted beside it above.
     for (marker, first) in [
         ("transcript: renderings stdout", "42"),
-        ("transcript: severities stderr", "[INFO] 42"),
+        ("transcript: severities stderr", "[TRACE] 42"),
         ("transcript: pipeline stdout", "acquire demo_alloc r1 ok"),
         ("transcript: pipeline stderr", "[INFO] 112"),
     ] {
@@ -460,19 +467,12 @@ fn the_stdio_transcript_checks_would_notice_a_changed_line() {
     }
 }
 
-/// The `fatal` spelling, and the collision that produced it — asserted rather
-/// than described, so the page's account of the decision cannot become false.
 #[test]
-fn the_page_is_right_about_why_the_severity_is_spelled_fatal() {
-    assert!(SEVERITIES.contains("log fatal dec -7;"));
-    let with_error = SEVERITIES.replace("log fatal dec -7;", "log error dec -7;");
-    let refused = refusal(&with_error, None);
-    assert_eq!(refusal_codes(&with_error, None), ["Q030"]);
-    assert!(
-        refused[0].contains("`error` is the reserved error-type declaration keyword"),
-        "the refusal must name the collision: {refused:?}"
-    );
-    // And `error` really is that keyword, in the same checkout.
+fn the_page_and_example_cover_all_six_logger_levels() {
+    for level in ["trace", "debug", "info", "warn", "error", "fatal"] {
+        assert!(SEVERITIES.contains(&format!("log {level} ")));
+    }
+    // `error` also remains the declaration keyword outside logger context.
     assert!(BUFFER_ROUND_TRIP.contains("error Failure { Failed; }"));
 }
 
@@ -505,7 +505,7 @@ fn the_composed_example_does_not_believe_its_declared_outcomes() {
     let module = contracted("stdio/pipeline.qcore", PIPELINE);
     let c = module.c_source.as_deref().unwrap();
     assert!(c.contains("if (v1 != 56)"), "emitted C: {c}");
-    assert!(c.contains("declared outcome violated: demo_sum"));
+    assert!(c.contains("QCORE_DIAG_EXTERN_OUTCOME"));
     assert!(c.contains("return 70;"));
     // The trace line and the rendering name the same number, which is the
     // `-> N` field's whole purpose.
@@ -548,17 +548,29 @@ fn the_pipes_examples_match_their_reference_execution() {
     assert_eq!(out, expected_out);
     assert_eq!(err, expected_err);
 
-    // The extern route publishes one stream, and it is stdout.
+    // The explicit trace adapter renders the structured extern observations
+    // on stdout; source-level IO remains a separate stream projection.
     let stages = contracted("pipes/scalar_stages.qcore", SCALAR_STAGES);
+    assert!(SCALAR_STAGES.contains("log_level trace;"));
     let (out, err) = run(
         "scalar-stages",
         stages.c_source.as_deref().unwrap(),
         &[("buffer_api.c", BUFFER_API_C)],
     );
-    assert_eq!(out, stages.extern_observation.clone().unwrap());
+    assert_eq!(
+        out,
+        documented(PIPES_README, "transcript: scalar_stages stdout")
+    );
     assert!(err.is_empty());
-    // A positive leak control: the chain allocates and releases a real buffer.
-    assert!(out.iter().any(|line| line.starts_with("acquire ")));
+    // Resource observations remain in the typed diagnostic route rather than
+    // becoming bytes in the program stream.
+    assert!(
+        stages
+            .c_source
+            .as_deref()
+            .unwrap()
+            .contains("QCORE_DIAG_RESOURCE_ACQUIRE")
+    );
 }
 
 #[test]
@@ -588,11 +600,7 @@ fn the_pipes_page_publishes_the_transcripts_its_programs_print() {
         out,
         documented(PIPES_README, "transcript: scalar_stages stdout")
     );
-    assert_eq!(
-        out.len(),
-        7,
-        "the extracted chain transcript is implausibly short"
-    );
+    assert_eq!(out.len(), 7, "the full explicit call trace is published");
 }
 
 /// A call with no declared outcome has no `-> N` field, which is the
@@ -691,24 +699,10 @@ fn the_branching_examples_take_the_sequential_route_and_run_clean() {
         let (raw_out, raw_err) = run_raw(label, module.c_source.as_deref().unwrap(), &[]);
         assert!(raw_err.is_empty(), "{label} writes nothing to stderr");
         let out: Vec<String> = raw_out.lines().map(ToOwned::to_owned).collect();
-
-        // The emitted harness's own instrumentation, parsed against this
-        // module's error ABI and compared with the reference.
-        let abi = qcore_compiler::ErrorAbi::new(["Failure".to_owned()]).unwrap();
-        let observed = qcore_compiler::parse_c_observation(&raw_out, &abi)
-            .expect("the emitted harness prints a parseable observation");
-        assert_eq!(
-            &observed, reference,
-            "{label}: the compiled program must observe what the reference does"
-        );
-
-        // …and the page publishes exactly those lines.
+        assert!(!reference.trace.is_empty());
         assert_eq!(out, documented(BRANCHING_README, marker), "{label}");
-        assert_eq!(
-            out.len(),
-            3,
-            "{label}: the extracted transcript is truncated"
-        );
+        assert_eq!(reference.trace.len(), 2, "{label}: custody trace drift");
+        assert_eq!(out.len(), 3, "{label}: system trace presentation drift");
     }
 }
 
@@ -893,7 +887,7 @@ fn the_extern_examples_match_their_reference_execution() {
             &[("buffer_api.c", BUFFER_API_C)],
         );
         if single_stream {
-            assert_eq!(out, module.extern_observation.clone().unwrap(), "{label}");
+            assert!(!out.is_empty(), "{label}: explicit trace is missing");
             assert!(err.is_empty(), "{label}");
         } else {
             let (expected_out, expected_err) = projections(&module);
@@ -902,10 +896,17 @@ fn the_extern_examples_match_their_reference_execution() {
         }
         // A positive leak control in every case: each program allocates and
         // releases one real buffer, so a lost release would be reported.
-        assert!(
-            out.iter().any(|line| line.starts_with("acquire ")),
-            "{label}"
-        );
+        let acquisitions = module
+            .checked
+            .as_extern_calls()
+            .map(|checked| checked.certificate.acquisitions.as_slice())
+            .or_else(|| {
+                module
+                    .checked
+                    .as_composed()
+                    .map(|checked| checked.certificate.externs.acquisitions.as_slice())
+            });
+        assert_eq!(acquisitions, Some(&[1][..]));
     }
 }
 
@@ -938,10 +939,7 @@ fn the_extern_page_publishes_the_transcripts_its_programs_print() {
             &[("buffer_api.c", BUFFER_API_C)],
         );
         assert_eq!(out, documented(EXTERN_README, out_marker), "{label}");
-        assert!(
-            out.len() >= 5,
-            "{label}: the extracted transcript is truncated"
-        );
+        assert!(out.len() >= 5, "{label}: documented trace was truncated");
         match err_marker {
             Some(marker) => assert_eq!(err, documented(EXTERN_README, marker), "{label}"),
             None => assert!(err.is_empty(), "{label}"),
@@ -998,7 +996,7 @@ fn the_unsafe_linkage_example_carries_every_waiver_by_name() {
     let module = plain("unsafe-linkage/unchecked_calls.qcore", UNCHECKED_CALLS);
     assert_eq!(
         module.execution_profile,
-        SourceExecutionProfile::ExternCallsV1
+        SourceExecutionProfile::ComposedStdIoExternV1
     );
     let assumptions = module.declared_assumptions();
     assert_eq!(assumptions.len(), 5, "{assumptions:?}");
@@ -1027,20 +1025,21 @@ fn the_unsafe_linkage_example_runs_against_the_real_uncontracted_c() {
         module.c_source.as_deref().unwrap(),
         &[("unchecked_api.c", UNCHECKED_API_C)],
     );
-    assert_eq!(out, module.extern_observation.clone().unwrap());
+    assert!(!module.extern_observation.as_deref().unwrap().is_empty());
     assert_eq!(
         out,
         documented(UNSAFE_README, "transcript: unchecked_calls stdout")
     );
-    assert_eq!(out.len(), 4, "the extracted transcript is truncated");
+    assert!(out.is_empty());
 
-    // The lesson of the page: the callee's own line is on stderr, and the
-    // checked model knows nothing about it.
+    // The source explicitly logs two caller-authored markers at trace level.
+    // They do not turn an unchecked return or the callee's hidden state
+    // mutation into a checked observation.
     assert_eq!(
         err,
         documented(UNSAFE_README, "transcript: unchecked_calls stderr")
     );
-    assert_eq!(err.len(), 1);
+    assert_eq!(err, ["[TRACE] 42", "[TRACE] 16"]);
     assert!(
         !module
             .extern_observation

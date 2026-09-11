@@ -50,7 +50,9 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Token, TokenKind};
 use crate::source_extern::{self, LoweredExternModule};
-use crate::source_std_io::{self, FLUSH_KEYWORD, LOG_KEYWORD, LoweredStdIoModule, PRINT_KEYWORD};
+use crate::source_std_io::{
+    self, FLUSH_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, LoweredStdIoModule, PRINT_KEYWORD,
+};
 use qcore_core::composed_std_io::{ComposedProgram, ComposedStep, RENDERABLE_ABI};
 use qcore_core::extern_call::ExternCallee;
 
@@ -83,7 +85,9 @@ pub struct LoweredComposedModule {
 /// module can never be composed without both routes agreeing it is theirs.
 #[must_use]
 pub fn has_source_composed(program: &SourceProgram) -> bool {
-    source_extern::has_source_extern(program) && source_std_io::has_source_std_io(program)
+    source_extern::has_source_extern(program)
+        && (source_std_io::has_source_std_io(program)
+            || source_std_io::has_source_log_level(program))
 }
 
 fn diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -117,7 +121,7 @@ fn statement_head(tokens: &[Token], span: Span) -> Option<&str> {
 
 const fn owner_of(head: &str) -> Owner {
     match head.as_bytes() {
-        b"print" | b"log" | b"flush" => Owner::Io,
+        b"print" | b"log" | b"log_level" | b"flush" => Owner::Io,
         b"return" => Owner::Both,
         _ => Owner::Extern,
     }
@@ -131,8 +135,8 @@ pub fn lower_source_composed(
     callees: &BTreeMap<String, ExternCallee>,
 ) -> Result<LoweredComposedModule, Vec<SourceDiagnostic>> {
     debug_assert_eq!(
-        (PRINT_KEYWORD, LOG_KEYWORD, FLUSH_KEYWORD),
-        ("print", "log", "flush"),
+        (PRINT_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, FLUSH_KEYWORD),
+        ("print", "log", "log_level", "flush"),
         "the statement heads this router splits on are the standard-IO route's own"
     );
     let tokens = parsed.lexical_tokens();

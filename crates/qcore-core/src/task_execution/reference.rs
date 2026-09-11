@@ -217,7 +217,9 @@ impl Runtime<'_> {
             .filter(|site| site.function == function && site.block == block && site.index == index)
         {
             let value = match &site.event {
-                crate::std_io::StdIoEvent::Flush | crate::std_io::StdIoEvent::Return => continue,
+                crate::std_io::StdIoEvent::LogLevel { .. }
+                | crate::std_io::StdIoEvent::Flush
+                | crate::std_io::StdIoEvent::Return => continue,
                 crate::std_io::StdIoEvent::Print { operand, .. }
                 | crate::std_io::StdIoEvent::Log { operand, .. } => match operand {
                     crate::std_io::StdIoOperand::Literal(value) => *value,

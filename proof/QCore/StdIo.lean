@@ -32,12 +32,16 @@ inductive Rendering where
   | hex
   deriving DecidableEq, Repr
 
-/-- The `std.logger` severity. Spelled `fatal` rather than `error`, because
-`error` is the reserved error-type declaration keyword. A level is a label: it
-selects no stream and filters nothing. -/
+/-- The complete ordered `std.logger` severity vocabulary. `error` remains the
+error-type declaration keyword globally and is recognized contextually after
+`log`. A source `log` level labels a line and filters nothing; `log_level` is a
+separate system-trace configuration event. -/
 inductive Level where
+  | trace
+  | debug
   | info
   | warn
+  | error
   | fatal
   deriving DecidableEq, Repr
 
@@ -45,6 +49,36 @@ inductive Stream where
   | out
   | err
   deriving DecidableEq, Repr
+
+/-- Source-authored I/O as two independently ordered projections. There is no
+cross-stream ordering field to accidentally claim. -/
+structure Streams where
+  out : List String
+  err : List String
+  deriving DecidableEq, Repr
+
+def Streams.empty : Streams := ⟨[], []⟩
+
+/-- Pointwise ordered concatenation, matching Rust `Streams::compose`. -/
+def Streams.compose (left right : Streams) : Streams :=
+  ⟨left.out ++ right.out, left.err ++ right.err⟩
+
+theorem streams_left_identity (streams : Streams) :
+    Streams.empty.compose streams = streams := by
+  cases streams
+  rfl
+
+theorem streams_right_identity (streams : Streams) :
+    streams.compose Streams.empty = streams := by
+  cases streams
+  simp [Streams.compose, Streams.empty]
+
+theorem streams_compose_associative (a b c : Streams) :
+    (a.compose b).compose c = a.compose (b.compose c) := by
+  cases a
+  cases b
+  cases c
+  simp [Streams.compose, List.append_assoc]
 
 /-- **The effect discipline, as a type.** The two bare constructors cannot
 denote a resource at all; the third denotes one only through an identity a
@@ -59,6 +93,9 @@ inductive Operand where
   deriving DecidableEq, Repr
 
 inductive Event where
+  /-- Entry-level system-trace threshold. It carries `io` but contributes no
+  source-authored line to either stream. -/
+  | logLevel (l : Level)
   | print (r : Rendering) (o : Operand)
   | log (l : Level) (r : Rendering) (o : Operand)
   | flush
@@ -75,6 +112,7 @@ inductive Effect where
 
 /-- Whether an event writes anything at all. -/
 def writes : Event → Bool
+  | .logLevel _ => true
   | .print _ _ => true
   | .log _ _ _ => true
   | .flush => true
@@ -87,6 +125,7 @@ def derivedEffects (events : List Event) : List Effect :=
 /-- How many lines an event contributes to a stream. `flush` contributes none:
 it is a barrier, not a record. -/
 def linesOn (s : Stream) : Event → Nat
+  | .logLevel _ => 0
   | .print _ _ => if s = Stream.out then 1 else 0
   | .log _ _ _ => if s = Stream.err then 1 else 0
   | .flush => 0
@@ -131,6 +170,14 @@ theorem silent_program_derives_nothing {events : List Event}
 /-- A bare `return` is silent. -/
 theorem a_bare_return_is_silent : derivedEffects [Event.ret] = [] := rfl
 
+/-- Selecting a system-trace adapter is an explicit IO effect even though the
+configuration record itself contributes no source-authored line. -/
+theorem log_level_carries_io_without_a_source_line (level : Level) :
+    derivedEffects [Event.logLevel level, Event.ret] = [Effect.io]
+      ∧ lineCount Stream.out [Event.logLevel level, Event.ret] = 0
+      ∧ lineCount Stream.err [Event.logLevel level, Event.ret] = 0 := by
+  cases level <;> decide
+
 /-! ## Stream separation
 
 The two streams are counted separately and nothing relates their orders. These
@@ -147,10 +194,13 @@ theorem log_never_writes_stdout (l : Level) (r : Rendering) (o : Operand) :
 
 /-- Every level writes to the same stream: a level is a label, not a selector. -/
 theorem every_level_uses_one_stream (r : Rendering) (o : Operand) :
-    linesOn Stream.err (Event.log Level.info r o) = 1
+    linesOn Stream.err (Event.log Level.trace r o) = 1
+      ∧ linesOn Stream.err (Event.log Level.debug r o) = 1
+      ∧ linesOn Stream.err (Event.log Level.info r o) = 1
       ∧ linesOn Stream.err (Event.log Level.warn r o) = 1
+      ∧ linesOn Stream.err (Event.log Level.error r o) = 1
       ∧ linesOn Stream.err (Event.log Level.fatal r o) = 1 :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- **The barrier moves no observation.** Inserting `flush` anywhere leaves both
 streams' line counts unchanged. This is what makes `flush` comparable against a

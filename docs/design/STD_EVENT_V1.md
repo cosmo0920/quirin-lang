@@ -172,11 +172,12 @@ the tier where bytes are modelled.
 
 ```text
 module ::= import* entry
-import ::= "import" "std.event" ";"
+import ::= "import" ("std.event" | "std.logger") ";"
 entry  ::= "fn" NAME "(" ")" "->" "i32"
            ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 
 stmt   ::= "event" "open" ";"
+         | "log_level" LEVEL ";"
          | "event" "close" ";"
          | "endpoints" NAME NAME ";"
          | "watch" NAME NAME INTEREST ";"
@@ -188,6 +189,7 @@ stmt   ::= "event" "open" ";"
          | "return" ["-"] INTEGER ";"
 
 INTEREST ::= "read" | "write"
+LEVEL    ::= "trace" | "debug" | "info" | "warn" | "error" | "fatal"
 EFFECT   ::= "io" | "alloc" | "mut"
 ```
 
@@ -199,6 +201,7 @@ print one composes with `source.std-io.v1` (§8.3).
 
 | Statement | Reactor projection | v1 rule |
 |---|---|---|
+| `log_level trace;` | *(none)* | optional, at most once; explicitly installs the hosted system-trace stdout adapter and selects its minimum level |
 | `event open;` | `CreateBase { base: 0, profile: SingleThreadedPollV1 }` | at most one context per entry; before every other event statement |
 | `event close;` | `FreeBase { base: 0 }` | last event statement; the reactor's own `L11` refuses a non-quiescent teardown |
 | `endpoints a b;` | `CreateSocketPair { descriptors: Some((fd_a, fd_b)) }` | binds two names to the two owned endpoints; both must be `close`d |
@@ -240,8 +243,9 @@ modules. No new import diagnostic code is minted.
 
 ## 7. Reserved words — the constraint-14 census
 
-Eight new reserved words: `event`, `endpoints`, `watch`, `unwatch`, `wake`,
-`dispatch`, `ready`, `idle`. Four existing ones are reused rather than
+The original eight reserved words are `event`, `endpoints`, `watch`, `unwatch`,
+`wake`, `dispatch`, `ready`, and `idle`. The quiet-emission amendment adds
+`log_level`. Four existing ones are reused rather than
 respelled: `open`, `close`, `read`, `write` (all already reserved — `open` and
 `close` by the guard profile, `read`/`write` by the loan vocabulary).
 
@@ -250,7 +254,8 @@ source string in the Rust tests, found **no collision**: the four occurrences of
 `event` in the contract corpus are a ghost-field name inside `contract { … }`
 clauses (`ensures normal event == registered_event;`) and prose comments, never
 a statement head and never a binding; `ready`, `endpoints` and `turn` occur only
-in comments. Report §7 carries the counts.
+in comments. The amendment's fresh census likewise found no maintained binding
+named `log_level`; its report records that additive decision.
 
 The word choice is constrained by that census in one visible place: the context
 pair is spelled `event open;` / `event close;` rather than `event context;` /

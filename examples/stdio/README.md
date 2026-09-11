@@ -61,24 +61,16 @@ Nothing a `print` touches can be consumed, released or retained.
 
 and writes nothing to stderr.
 
-## Severities, and why the third one is called `fatal`
+## Logger levels
 
-There are three severities: `info`, `warn`, `fatal`. Each renders its operand
-through the same `std.fmt` word and prefixes `[INFO]`, `[WARN]` or `[FATAL]`.
-
-The severity a C or Rust reader expects to be spelled `error` is spelled
-`fatal`. This is a recorded decision, not an oversight. `error` is already the
-reserved keyword that declares an error type —
+There are six ordered levels: `trace`, `debug`, `info`, `warn`, `error`, and
+`fatal`. Each renders its operand through the same `std.fmt` word and prefixes
+the corresponding uppercase tag. The word `error` is interpreted contextually
+after `log`; it remains the keyword that declares an error type elsewhere —
 
 ```qcore
 error Failure { Failed; }
 ```
-
-— and taking it for a log level would have required moving a pinned language
-surface for the sake of a word. `log error dec 1;` therefore refuses at `Q030`,
-and the repository keeps a test whose whole job is to pin that refusal so the
-decision cannot quietly become an omission. It follows the earlier `work` →
-`effort` precedent: when a new keyword collides, the new word moves.
 
 `fatal` is a tag on a line. It does not exit, abort or raise.
 
@@ -86,8 +78,11 @@ decision cannot quietly become an omission. It follows the earlier `work` →
 
 <!-- transcript: severities stderr -->
 ```text
+[TRACE] 42
+[DEBUG] 0x000000FF
 [INFO] 42
 [WARN] 0x000000FF
+[ERROR] -7
 [FATAL] -7
 ```
 
@@ -144,9 +139,9 @@ exits `70` rather than carrying on with a number nobody computed. That is what
 makes a rendered line worth reading — the number in it is the number the run
 produced, or the run stopped.
 
-Where an outcome is declared, the emitted program's own call trace prints it
-after a `-> ` arrow, so the trace line and the rendered line name the same
-number on adjacent lines. `pipeline.qcore` writes to **stdout**:
+The declared outcome is retained in the structured diagnostic trace.
+`pipeline.qcore` explicitly selects `log_level trace;`, so that trace is
+rendered together with its source-authored stdout lines:
 
 <!-- transcript: pipeline stdout -->
 ```text

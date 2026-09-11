@@ -37,6 +37,7 @@ extern fn demo_scale(value: i32, factor: i32) -> i32;
 extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
 
 fn main() -> unit effects { io, alloc, mut } {
+    log_level trace;
     let b = demo_alloc(8) succeeds true else raise Failure;
     demo_fill(b, 7);
     let total = demo_sum(b, 8) succeeds 56;

@@ -6,13 +6,11 @@
  * surface, and its certificate carries each of them by name as an
  * unchecked-linkage premise the driver prints rather than discharges.
  *
- * `demo_hidden_effect` deliberately mutates a private global and writes to a
- * stream, so a reader can see that "nothing about its behavior is checked" is
- * not a formality: this callee really does things its caller cannot see, and no
- * part of the toolchain notices.
+ * `demo_hidden_effect` deliberately mutates a private global, so "nothing
+ * about its behavior is checked" is not a formality: this callee really does
+ * something its caller cannot see, and no part of the toolchain notices.
  */
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 static int32_t demo_hidden_state = 0;
@@ -25,12 +23,11 @@ int32_t demo_unchecked_add(int32_t a, int32_t b)
     return a + b;
 }
 
-/* A `void` result. The caller binds nothing — and cannot see the state this
- * changes or the line it writes. */
+/* A `void` result. The caller binds nothing and cannot see the state this
+ * changes. */
 void demo_hidden_effect(uint32_t tag)
 {
     demo_hidden_state += (int32_t) tag;
-    fprintf(stderr, "demo_hidden_effect: hidden state now %d\n", demo_hidden_state);
 }
 
 /* Allocates and frees behind the caller's back. The caller's ledger is

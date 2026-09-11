@@ -10,6 +10,7 @@ fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
 }
 
 fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    log_level trace;
     let first = qcore_buffer_new(42)?;
     match qcore_buffer_new(7) {
         Result::Ok { value: second } => {

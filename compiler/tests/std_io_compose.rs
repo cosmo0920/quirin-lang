@@ -255,7 +255,7 @@ fn the_emitted_program_does_not_believe_its_declared_outcome() {
     // real result is compared and the program exits 70 rather than rendering a
     // number the run did not produce.
     assert!(c.contains("if (v1 != 56)"), "emitted C: {c}");
-    assert!(c.contains("declared outcome violated: qcore_extern_sum"));
+    assert!(c.contains("QCORE_DIAG_EXTERN_OUTCOME"));
     assert!(c.contains("return 70;"));
 }
 
@@ -742,23 +742,9 @@ fn a_raised_error_ends_the_composed_run_and_its_later_renderings() {
     // the failure arm, so publishing that later line would be an observation the
     // program never writes, and the per-stream comparison below would be a
     // comparison against fiction.
-    assert_eq!(
-        observation,
-        [
-            "out: 1",
-            "out: acquire qcore_extern_alloc_failing r1 null",
-            "out: raise Failure",
-        ]
-    );
+    assert_eq!(observation, ["out: 1"]);
     let (out, err) = run_native(compiled.c_source.as_deref().unwrap(), "raise");
-    assert_eq!(
-        out,
-        [
-            "1",
-            "acquire qcore_extern_alloc_failing r1 null",
-            "raise Failure"
-        ]
-    );
+    assert_eq!(out, ["1"]);
     assert!(err.is_empty());
 }
 
@@ -1023,10 +1009,6 @@ fn the_borrowed_render_program_matches_the_reference_per_stream() {
     // borrowed render moved, duplicated or discharged custody, LSan or the
     // double-free detector would say so rather than this test passing.
     assert!(
-        expected_out.iter().any(|line| line.starts_with("acquire ")),
-        "the run must have performed a real acquisition"
-    );
-    assert!(
         expected_out.contains(&"1".to_owned()),
         "the identity line is one the native run actually wrote"
     );
@@ -1052,9 +1034,15 @@ fn the_composed_program_matches_the_reference_per_stream() {
     // This fixture allocates, lends and releases one real buffer, so the leak
     // check is a **positive** control: if composing had lost the release, LSan
     // would report it.
-    assert!(
-        expected_out.iter().any(|line| line.starts_with("acquire ")),
-        "the run must have performed a real acquisition"
+    assert_eq!(
+        compiled
+            .checked
+            .as_composed()
+            .unwrap()
+            .certificate
+            .externs
+            .acquisitions,
+        [1]
     );
 }
 
@@ -1188,17 +1176,10 @@ fn the_composed_extern_trace_names_the_numbers_its_renderings_render() {
     assert_eq!(
         compiled.extern_observation.as_deref().unwrap(),
         [
-            "out: acquire qcore_extern_alloc r1 ok",
-            "out: call qcore_extern_fill b:r1 d:7",
-            "out: value qcore_extern_sum v1 b:r1 d:8 -> 56",
             "out: 56",
-            "out: value qcore_extern_scale v2 v:v1 d:2 -> 112",
             "err: [INFO] 112",
-            "out: value qcore_extern_scale v4 v:v3 d:2 -> 84",
             "err: [WARN] 0x00000054",
-            "out: call qcore_extern_release c:r1",
             "out: -7",
-            "out: return",
         ]
     );
     // The literal binding is still observed as nothing: `let value = 42;` calls
@@ -1222,7 +1203,7 @@ fn the_composed_emission_observes_through_the_same_single_route() {
     let c = compiled.c_source.as_deref().unwrap();
     let check = c.find("if (v1 != 56)").expect("emitted C compares v1");
     let observed = c
-        .find("value qcore_extern_sum v1 b:r1 d:8 -> 56")
-        .expect("emitted C observes v1");
+        .rfind("qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, 1")
+        .expect("emitted C logs v1");
     assert!(check < observed, "emitted C: {c}");
 }

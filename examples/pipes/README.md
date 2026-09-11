@@ -70,7 +70,8 @@ That comparison is the argument for the piped spelling: `stage0` says nothing,
 and inventing better names for values that live for one statement is work that
 buys a reader nothing.
 
-`scalar_stages.qcore` writes to **stdout**:
+Because `scalar_stages.qcore` explicitly says `log_level trace;`, it renders
+the retained system events to **stdout**:
 
 <!-- transcript: scalar_stages stdout -->
 ```text
@@ -82,6 +83,10 @@ value demo_scale v3 v:v2 d:3
 call demo_release c:r1
 return
 ```
+
+The compiler retains those calls and custody transitions as structured trace
+events regardless of presentation. Removing the declaration restores the
+default null sink and therefore removes these lines from program output.
 
 Note what is *not* on those `value` lines: no `-> N`. None of these calls
 declares a `succeeds` outcome, so there is no declared number for the emitted

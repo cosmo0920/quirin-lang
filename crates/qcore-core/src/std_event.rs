@@ -173,6 +173,9 @@ impl Interest {
 /// in [`project`] below, which is the authority.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventStatement {
+    /// `log_level LEVEL;` — explicitly enable the diagnostic logger for this
+    /// executable event example or program.
+    LogLevel { level: crate::std_io::Level },
     /// `event open;` — create the one reactor context.
     ContextOpen,
     /// `event close;` — tear it down. The reactor's own `L11` refuses a
@@ -215,7 +218,8 @@ pub struct EventSourceProgram {
 
 /// The derived effect row.
 ///
-/// Exactly `{Io}` for any program that opens a context, and empty otherwise.
+/// Exactly `{Io}` for any program that opens a context or explicitly installs
+/// the diagnostic stream adapter, and empty otherwise.
 /// `Alloc` and `Mut` are unreachable on this route by construction: there is no
 /// operand form here that allocates or mutates anything — the grammar has no
 /// value vocabulary at all (`docs/design/STD_EVENT_V1.md` §5).
@@ -283,6 +287,8 @@ pub struct StdEventCertificate {
     /// The named platform premises this result is relative to. Empty for a
     /// check-only module, which performs no wait and therefore rests on none.
     pub premises: Vec<&'static str>,
+    /// Explicit diagnostic threshold. `None` keeps the ordinary null sink.
+    pub log_level: Option<crate::std_io::Level>,
     /// The entry's exit status.
     pub status: i32,
 }
@@ -390,6 +396,7 @@ const GENERATION: u32 = 1;
 /// so the three cannot disagree about what a program does.
 #[derive(Default)]
 struct Walk {
+    log_level: Option<crate::std_io::Level>,
     context: Option<bool>,
     /// name → (id, peer id, live)
     endpoints: BTreeMap<String, (EndpointId, EndpointId, bool)>,
@@ -480,7 +487,9 @@ fn resolve(
         // the message names the source rule; the reactor would say `L01`.
         let needs_context = !matches!(
             statement,
-            EventStatement::ContextOpen | EventStatement::Return { .. }
+            EventStatement::LogLevel { .. }
+                | EventStatement::ContextOpen
+                | EventStatement::Return { .. }
         );
         if needs_context && walk.context != Some(true) {
             errors.push(EventSourceError::Shape {
@@ -493,6 +502,16 @@ fn resolve(
             continue;
         }
         match statement {
+            EventStatement::LogLevel { level } => {
+                if walk.log_level.replace(*level).is_some() {
+                    errors.push(EventSourceError::Shape {
+                        statement: index,
+                        reason:
+                            "`source.event.v1` accepts at most one `log_level LEVEL;` declaration"
+                                .to_owned(),
+                    });
+                }
+            }
             EventStatement::ContextOpen => {
                 if walk.context.is_some() {
                     errors.push(EventSourceError::Shape {
@@ -932,6 +951,7 @@ pub fn check_event_source_program(
             // Saying so is more useful than always naming it.
             Vec::new()
         },
+        log_level: walk.log_level,
         status: walk.returned.unwrap_or_default(),
     })
 }
@@ -965,6 +985,7 @@ pub enum EventRecheckFailure {
     Reactor,
     Executable,
     Premises,
+    LogLevel,
     Status,
     Refused,
 }
@@ -980,6 +1001,7 @@ impl fmt::Display for EventRecheckFailure {
             Self::Reactor => "the reactor model's own certificate",
             Self::Executable => "whether this program is executable",
             Self::Premises => "the named platform premises",
+            Self::LogLevel => "the explicit diagnostic logger threshold",
             Self::Status => "the exit status",
             Self::Refused => "the program itself, which the recheck refuses",
         };
@@ -1025,6 +1047,9 @@ pub fn recheck_event_certificate(
     }
     if rederived.premises != certificate.premises {
         return Err(EventRecheckFailure::Premises);
+    }
+    if rederived.log_level != certificate.log_level {
+        return Err(EventRecheckFailure::LogLevel);
     }
     if rederived.status != certificate.status {
         return Err(EventRecheckFailure::Status);

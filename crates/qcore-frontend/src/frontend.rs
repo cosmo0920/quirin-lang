@@ -2563,17 +2563,19 @@ fn is_reserved_source_word(word: &str) -> bool {
             // statement collects `print`/`log`/`dec`/… as referenced names and
             // refuses with `Q013`.
             //
-            // The severity spelled `fatal` is deliberately not `error`, which
-            // is already reserved above as the error-type declaration keyword
-            // (34 occurrences across the source corpus at this card's census).
-            // The syntax was renamed rather than the pinned declaration
-            // surface edited, exactly as card T08-EPOCH-SRC renamed `work` to
-            // `effort`.
+            // `error` is already reserved as the error-type declaration word
+            // and is interpreted contextually as a level after `log`. The
+            // amendment census found no maintained source binding named
+            // `trace` or `debug`; reserve them for the current resolver until
+            // statement-clause words become contextual throughout.
             | "print"
             | "log"
+            | "log_level"
             | "flush"
             | "dec"
             | "hex"
+            | "trace"
+            | "debug"
             | "info"
             | "warn"
             | "fatal"

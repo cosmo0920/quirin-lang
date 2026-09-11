@@ -1,4 +1,5 @@
 import std.extern;
+import std.logger;
 
 // Acquire a buffer from C, lend it twice, and give it back. This is the whole
 // life of one resource across a declared boundary.
@@ -22,6 +23,7 @@ extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
 extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
 
 fn main() -> unit effects { io, alloc, mut } {
+    log_level trace;
     let b = demo_alloc(8) succeeds true else raise Failure;
     demo_fill(b, 7);
     let total = demo_sum(b, 8) succeeds 56;

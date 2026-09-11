@@ -46,11 +46,15 @@ import QCore.StdIo
 #print axioms QCore.StdIo.writing_derives_io
 #print axioms QCore.StdIo.silent_program_derives_nothing
 #print axioms QCore.StdIo.a_bare_return_is_silent
+#print axioms QCore.StdIo.log_level_carries_io_without_a_source_line
 
 -- Stream separation, and the barrier that moves no observation.
 #print axioms QCore.StdIo.print_never_writes_stderr
 #print axioms QCore.StdIo.log_never_writes_stdout
 #print axioms QCore.StdIo.every_level_uses_one_stream
+#print axioms QCore.StdIo.streams_left_identity
+#print axioms QCore.StdIo.streams_right_identity
+#print axioms QCore.StdIo.streams_compose_associative
 #print axioms QCore.StdIo.flush_changes_no_line_count
 #print axioms QCore.StdIo.repeated_flush_changes_no_line_count
 #print axioms QCore.StdIo.a_bare_barrier_writes_nothing

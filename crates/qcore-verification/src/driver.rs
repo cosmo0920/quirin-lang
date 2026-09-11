@@ -17,7 +17,7 @@ use qcore_core::prelude::concurrency::{
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
-use qcore_core::{ExecutionObservation, emit_c11, extern_c_emit, extern_call};
+use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
 use qcore_core::{
     composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit,
     std_event, std_event_c_emit, std_io, std_io_c_emit,
@@ -1002,7 +1002,8 @@ pub fn compile_files_with_registry(
             &ranges,
         )]
     })?;
-    let raw_c = emit_c11(&function.cfg).map_err(|error| {
+    let log_level = qcore_frontend::source_std_io::entry_log_level(&parsed, &entry);
+    let raw_c = emit_c11_with_log_level(&function.cfg, log_level).map_err(|error| {
         vec![map_raw_diagnostic(
             "Q500",
             SemanticPass::CEmission,
@@ -1169,6 +1170,7 @@ fn synthesize_function(
         resources: Vec::new(),
         owners: BTreeMap::new(),
         constants: BTreeMap::new(),
+        diagnostic_log_level: None,
         usage_declarations,
         local_usage_names: BTreeMap::new(),
         calls: Vec::new(),
@@ -1316,6 +1318,7 @@ struct FunctionLowering<'a> {
     /// construction: nothing moves a name between the two, and the tier that
     /// reads this map has no constructor that could denote an identity.
     constants: BTreeMap<String, i32>,
+    diagnostic_log_level: Option<qcore_core::std_io::Level>,
     usage_declarations: BTreeMap<String, Usage>,
     local_usage_names: BTreeMap<String, String>,
     calls: Vec<CallSite>,
@@ -1396,6 +1399,38 @@ impl FunctionLowering<'_> {
                 return self.lower_sequence(rest, output, position);
             }
             let tokens = statement_tokens(self.parsed, statement.span)?;
+            if matches!(tokens.first().map(|token| &token.kind), Some(TokenKind::Word(word)) if word == "log_level")
+            {
+                if position != ArmPosition::TopLevel {
+                    return Err(diagnostic(
+                        SemanticPass::StandardIo,
+                        statement.span,
+                        "`log_level LEVEL;` is an entry-level diagnostic adapter declaration",
+                    ));
+                }
+                let level = match qcore_frontend::source_std_io::std_io_statement(
+                    self.parsed,
+                    statement.span,
+                ) {
+                    Some(Ok(qcore_core::std_io::StdIoEvent::LogLevel { level })) => level,
+                    Some(Err(message)) => {
+                        return Err(diagnostic(
+                            SemanticPass::StandardIo,
+                            statement.span,
+                            message.to_owned(),
+                        ));
+                    }
+                    _ => unreachable!("log_level is owned by the standard logger grammar"),
+                };
+                if self.diagnostic_log_level.replace(level).is_some() {
+                    return Err(diagnostic(
+                        SemanticPass::StandardIo,
+                        statement.span,
+                        "an entry accepts at most one `log_level LEVEL;` declaration",
+                    ));
+                }
+                continue;
+            }
             match &statement.value {
                 StatementKind::Let {
                     binding: Some(binding),

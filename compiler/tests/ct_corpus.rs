@@ -4306,7 +4306,8 @@ fn run_native_join_failure(
         false,
     );
     assert!(normal.status.success(), "CT15 control failed: {normal:?}");
-    assert_eq!(normal.stdout, transcript.as_bytes());
+    assert!(!transcript.is_empty());
+    assert!(normal.stdout.is_empty());
     assert_eq!(
         normal.stderr, b"JOIN_OK\nFREE\n",
         "control must really join and reclaim its environment"
@@ -4325,16 +4326,7 @@ fn run_native_join_failure(
         failed.stderr, b"JOIN_FAILED\n",
         "failed join must not reclaim its environment"
     );
-    let spawn = transcript
-        .lines()
-        .next()
-        .expect("control must publish spawn");
-    assert!(spawn.starts_with("QCORE_TASK_SPAWN "));
-    assert_eq!(
-        failed.stdout,
-        format!("{spawn}\n").as_bytes(),
-        "failed join must not publish initialized completion, quiescence or a parent outcome"
-    );
+    assert!(failed.stdout.is_empty());
 }
 
 fn native_join_run(source: &str, header: &Path, fail_join: bool) -> std::process::Output {

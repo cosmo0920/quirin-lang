@@ -996,7 +996,7 @@ impl<'a> Builder<'a> {
         // functions the entry spawns, and the spawn set is not known until the
         // terminators exist. Card `OBS-REORDERING`.
         let operand = match &event {
-            StdIoEvent::Flush | StdIoEvent::Return => None,
+            StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return => None,
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => match operand {
                 StdIoOperand::Literal(_) => None,
                 StdIoOperand::Borrowed(name) => {

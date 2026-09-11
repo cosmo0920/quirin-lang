@@ -421,7 +421,7 @@ pub fn check_composed_program(
     for (index, event) in program.io.events.iter().enumerate() {
         let operand = match event {
             StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => operand,
-            StdIoEvent::Flush | StdIoEvent::Return => continue,
+            StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return => continue,
         };
         // Card `STD-FMT-BORROW`. The three rules below are the whole custody
         // argument in code: the name must be a resource this module binds, the

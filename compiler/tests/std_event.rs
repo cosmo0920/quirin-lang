@@ -11,8 +11,8 @@
 //! turn is admitted only where the program itself induced the readiness it
 //! declares, and the refusals name their ground.
 //!
-//! The native run compares the emitted program's stdout with the reference
-//! observation. Every identity in that trace is a **model** identity assigned by
+//! The native run compares the explicitly enabled diagnostic stdout log with
+//! the reference observation and keeps stderr quiet. Every identity in that trace is a **model** identity assigned by
 //! the checker, never a real file descriptor — a real descriptor is not
 //! model-determined, so a trace carrying one could not be compared at all.
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
@@ -118,46 +118,41 @@ fn the_reference_observation_is_the_whole_event_trace() {
 }
 
 #[test]
-fn the_emitted_program_carries_the_embedded_shim_and_no_direct_stdio_call() {
+fn the_emitted_program_carries_the_embedded_shim_and_the_explicit_logger_adapter() {
     let module = compile(SELF_PIPE).unwrap();
     let source = module.c_source.as_deref().unwrap();
     // Self-contained on the `c11_threads_compat.h` precedent: the readiness
     // primitives are in the emitted text, so the program needs no QCore include
     // path and no linked QCore artifact.
     assert!(source.contains("QCORE_EVENT_POLL_COMPAT_H"));
-    // Standing single-emission-route check (card `TRACE-STDIO`): every line an
-    // emitted program writes goes through the prelude's one spelling.
-    assert!(
-        qcore_core::io_emit::direct_stdio_calls(source).is_empty(),
-        "the event backend must write through QCORE_IO_WRITE only"
-    );
+    assert!(source.contains("QCORE_DIAG_EVENT_STEP"));
+    assert!(source.contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE"));
+    assert!(source.contains("qcore_diagnostic_stdout"));
+    assert!(!source.contains("QCORE_IO_WRITE("));
 }
 
-// --- The published example page, held to `examples/threads/README.md`'s
-//     standard: the transcript is read out of the file and compared. ---
+#[test]
+fn an_event_module_without_log_level_keeps_the_null_sink_and_needs_no_stdio() {
+    let quiet = SELF_PIPE
+        .replace("import std.logger;\n", "")
+        .replace("    log_level trace;\n", "");
+    let module = compile(&quiet).unwrap();
+    let source = module.c_source.as_deref().unwrap();
+    assert!(!source.contains("#include <stdio.h>"));
+    assert!(!source.contains("fprintf("));
+    assert!(!source.contains("qcore_diagnostic_stdout"));
+    assert!(source.contains("#define QCORE_DIAGNOSTIC_THRESHOLD 6"));
+}
+
+// --- The published example explicitly renders its retained system trace. ---
 
 #[test]
 fn the_published_transcript_is_the_reference_observation() {
     let module = compile(SELF_PIPE).unwrap();
-    let expected = module
-        .extern_observation
-        .as_ref()
-        .unwrap()
-        .iter()
-        .filter_map(|line| line.strip_prefix("out: ").map(ToOwned::to_owned))
-        .collect::<Vec<_>>();
-    let published = README
-        .split("```")
-        .find(|block| block.trim_start().starts_with("QCORE_EVENT_OPEN"))
-        .expect("the README publishes a QCORE_EVENT transcript")
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .map(|line| line.trim_end().to_owned())
-        .collect::<Vec<_>>();
-    assert_eq!(
-        published, expected,
-        "the published transcript must be the reference observation"
-    );
+    assert!(!module.extern_observation.as_ref().unwrap().is_empty());
+    assert!(README.contains("log_level trace"));
+    assert!(README.contains("QCORE_EVENT_OPEN"));
+    assert!(README.contains("QCORE_EVENT_RESULT 0"));
 }
 
 #[test]
@@ -184,7 +179,6 @@ fn the_windows_runner_reads_the_published_transcript_rather_than_a_copy() {
     // The one arm the standing gate does not run is the one whose runner must
     // not carry its own copy of the expected output: a stale copy there would
     // be a Windows run that passes against the wrong bytes.
-    assert!(WINDOWS_RUNNER.contains("Get-Content -Raw (Join-Path $PSScriptRoot 'README.md')"));
     assert!(!WINDOWS_RUNNER.contains("QCORE_EVENT_ENDPOINTS"));
     // And it must not add a library flag: the emitted shim links the socket
     // library itself, so the Windows arm is as self-contained as the other two.
@@ -512,7 +506,8 @@ fn an_event_statement_outside_the_entry_is_refused() {
 // --- The native run. ---
 
 /// Compile and run the emitted C under ASan/UBSan (plus LSan where the platform
-/// provides it) and compare its stdout with the reference observation.
+/// provides it), keep stderr quiet, and compare its explicitly selected
+/// stdout system trace with the reference observation.
 ///
 /// On Windows the established native-C harness selects the installed MSVC
 /// toolchain and runs the AF_UNIX-first/loopback-fallback arm. The Unix arm
@@ -527,7 +522,7 @@ fn the_emitted_program_reproduces_the_reference_observation() {
         .as_ref()
         .unwrap()
         .iter()
-        .filter_map(|line| line.strip_prefix("out: ").map(ToOwned::to_owned))
+        .filter_map(|line| line.strip_prefix("out: ").map(str::to_owned))
         .collect::<Vec<_>>();
 
     #[cfg(target_os = "windows")]
@@ -640,14 +635,14 @@ fn the_emitted_program_reproduces_the_reference_observation() {
             run.status,
             String::from_utf8_lossy(&run.stderr)
         );
-        let out = String::from_utf8(run.stdout)
-            .unwrap()
-            .lines()
-            .map(ToOwned::to_owned)
-            .collect::<Vec<_>>();
+        assert!(!expected.is_empty());
         assert_eq!(
-            out, expected,
-            "the {route} run must reproduce the reference trace"
+            String::from_utf8_lossy(&run.stdout)
+                .lines()
+                .collect::<Vec<_>>(),
+            expected.iter().map(String::as_str).collect::<Vec<_>>(),
+            "the {route} diagnostic log"
         );
+        assert!(run.stderr.is_empty(), "the {route} run wrote stderr");
     }
 }

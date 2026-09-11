@@ -1,30 +1,17 @@
-//! `qcore_io` — the one printing route in an emitted QCore program
-//! (card `TRACE-STDIO`).
+//! `qcore_io` — the source-authored I/O route in an emitted QCore program.
 //!
 //! # What this module is
 //!
-//! Before this card every C backend synthesized its own `printf`/`fprintf`
-//! calls. There were therefore two unrelated printing mechanisms in emitted
-//! programs: the one `source.std-io.v1` lowers a source `print`/`log`/`flush`
-//! onto, and four backends' ad-hoc trace instrumentation. This module is the
-//! single route both now travel:
+//! This module is exclusively the lowering target for source
+//! `print`/`log`/`flush` statements. Compiler observations use the typed
+//! diagnostic logger and cannot become program-stream bytes through here.
 //!
-//! * [`IO_PRELUDE`] is the C fragment every emitting backend inserts after its
-//!   `<stdio.h>` include. It defines `QCORE_IO_WRITE` and `QCORE_IO_FLUSH`.
+//! * [`IO_PRELUDE`] is inserted only when source-authored I/O exists. It
+//!   defines `QCORE_IO_WRITE` and `QCORE_IO_FLUSH`.
 //! * [`write_line`], [`write_text`] and [`flush`] are the Rust-side
 //!   constructors for the sites a backend builds programmatically.
-//! * [`direct_stdio_calls`] is the structural check that the route is single:
-//!   an emitted program must contain no standard-output call outside the
-//!   prelude's own definitions.
-//!
-//! # What did not change
-//!
-//! **The bytes on the wire.** Every trace line an emitted program writes is
-//! byte-identical to the line it wrote before this card; the mechanism moved
-//! and the rendering did not. Where a reader pins those bytes — the F02 trace
-//! relation's observer, `parse_c_observation`, the mutex and extern reference
-//! comparisons, `examples/threads/README.md` — the pin is unchanged. What did
-//! move is the *emitted C text*, and therefore the digests taken over it.
+//! * [`direct_stdio_calls`] checks that no direct standard-output call bypasses
+//!   this source route.
 //!
 //! # Why a macro and not a variadic function
 //!
@@ -62,9 +49,9 @@ use crate::std_io::Stream;
 /// It is self-contained: it declares no object, allocates nothing, and needs
 /// no header beyond `<stdio.h>`.
 pub const IO_PRELUDE: &str = r#"
-/* qcore_io (card TRACE-STDIO): the one printing route in this program.
-   `std.io`'s `print`, `std.logger`'s `log` and every checked trace line the
-   compiler synthesizes expand to QCORE_IO_WRITE, so the only `fprintf`
+/* qcore_io: the source-authored I/O route in this program.
+   `std.io`'s `print` and `std.logger`'s `log` expand to QCORE_IO_WRITE;
+   compiler diagnostic events use a separate typed sink. The only `fprintf`
    spelling in this file is the one below. A macro rather than a variadic
    wrapper, so each call site keeps its -Wformat / C4477 checking under
    `-Wall -Wextra -Werror` and `/W4 /WX`. QCORE_IO_FLUSH is sink handoff, not

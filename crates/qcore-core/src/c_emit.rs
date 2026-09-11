@@ -9,21 +9,38 @@ use crate::cfg::{
     ExecutionOutcome, TraceEvent, TypedCfg,
 };
 use crate::cleanup_lowering::{BranchCondition, IntExpr};
-use crate::io_emit::{self, IO_PRELUDE};
-use crate::std_io::{Rendering, Stream};
+use crate::diagnostic_log_c_emit::{
+    DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
+    diagnostic_stdout_adapter_declaration,
+};
 
-/// Emit a standalone, strictly conforming C11 translation unit.  The small
-/// harness prints the observable result and resource trace, allowing compiled
-/// C to be compared directly with the reference interpreter.
+/// Emit a standalone, strictly conforming C11 translation unit.
+///
+/// The generated program is quiet unless the source program explicitly uses a
+/// standard-output module.  Runtime custody bookkeeping is not a user-visible
+/// logging facility and therefore never writes a synthesized trace.
 pub fn emit_c11(cfg: &TypedCfg) -> Result<String, CEmitError> {
+    emit_c11_with_log_level(cfg, None)
+}
+
+/// Emit C11 with an explicitly selected hosted system-event adapter.
+pub fn emit_c11_with_log_level(
+    cfg: &TypedCfg,
+    log_level: Option<crate::std_io::Level>,
+) -> Result<String, CEmitError> {
     validate_c_symbols(cfg)?;
     let mut output = String::new();
     writeln!(output, "#include <inttypes.h>").unwrap();
     writeln!(output, "#include <stdbool.h>").unwrap();
     writeln!(output, "#include <stdint.h>").unwrap();
-    writeln!(output, "#include <stdio.h>").unwrap();
     writeln!(output, "#include <stdlib.h>").unwrap();
-    output.push_str(IO_PRELUDE);
+    if let Some(level) = log_level {
+        output.push_str(&diagnostic_stdout_adapter_declaration(level));
+    }
+    output.push_str(DIAGNOSTIC_LOG_PRELUDE);
+    if log_level.is_some() {
+        output.push_str(DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION);
+    }
     output.push('\n');
 
     writeln!(output, "enum qcore_error_tag {{").unwrap();
@@ -58,35 +75,31 @@ pub fn emit_c11(cfg: &TypedCfg) -> Result<String, CEmitError> {
     }
     writeln!(output, "}};\n").unwrap();
 
-    let trace_capacity = trace_capacity(cfg);
-    writeln!(output, "struct qcore_trace_event {{").unwrap();
-    writeln!(output, "    char kind;").unwrap();
-    writeln!(output, "    uint64_t identity;").unwrap();
-    writeln!(output, "}};").unwrap();
-    writeln!(
-        output,
-        "static struct qcore_trace_event q_trace_events[{trace_capacity}];"
-    )
-    .unwrap();
-    writeln!(output, "static size_t q_trace_length = 0;\n").unwrap();
     output.push_str(
         r"static void q_trace(char kind, uint64_t identity)
 {
-    if (q_trace_length >= (sizeof q_trace_events / sizeof q_trace_events[0])) {
-        abort();
+    enum qcore_diagnostic_kind diagnostic_kind;
+    switch (kind) {
+    case 'A': diagnostic_kind = QCORE_DIAG_RESOURCE_ACQUIRE; break;
+    case 'R': diagnostic_kind = QCORE_DIAG_RESOURCE_RELEASE; break;
+    case 'M': diagnostic_kind = QCORE_DIAG_RESOURCE_MOVE; break;
+    default: abort();
     }
-    q_trace_events[q_trace_length].kind = kind;
-    q_trace_events[q_trace_length].identity = identity;
-    q_trace_length += 1;
+    qcore_diagnostic_log(QCORE_LOG_TRACE, diagnostic_kind, identity,
+        UINT64_C(0), INT64_C(0), (const char *)0);
 }
 
 static bool q_acquire(void **slot, bool succeeds, uint64_t identity)
 {
     if (!succeeds) {
+        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_ACQUIRE_FAILED,
+            identity, UINT64_C(0), INT64_C(0), (const char *)0);
         return false;
     }
     *slot = malloc(1);
     if (*slot == NULL) {
+        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_ACQUIRE_FAILED,
+            identity, UINT64_C(0), INT64_C(0), (const char *)0);
         return false;
     }
     q_trace('A', identity);
@@ -155,62 +168,11 @@ static void q_release(void **slot, uint64_t identity)
         cfg.function()
     )
     .unwrap();
-    // The outcome word renders an `i32` in decimal, which is exactly
-    // `std.fmt`'s `dec`; the conversion comes from that vocabulary rather than
-    // being written again here. The remaining conversions (`PRIu32`, `PRIu64`,
-    // `%c`) have no `std.fmt` counterpart, and none was added: `Rendering` is
-    // the source-visible `std.fmt` grammar, so widening it to serve a backend
-    // would be a language change, not a refactor.
-    writeln!(output, "    if (q_result.ok) {{").unwrap();
-    writeln!(
-        output,
-        "        {}",
-        io_emit::write_line(
-            Stream::Out,
-            &format!("OK {}", Rendering::Dec.c_conversion()),
-            &["q_result.value"],
-        )
-    )
-    .unwrap();
-    writeln!(output, "    }} else {{").unwrap();
-    writeln!(
-        output,
-        "        {}",
-        io_emit::write_line(
-            Stream::Out,
-            "ERR %\" PRIu32 \"",
-            &["(uint32_t)q_result.error.tag"],
-        )
-    )
-    .unwrap();
-    writeln!(output, "    }}").unwrap();
-    writeln!(
-        output,
-        "    for (size_t index = 0; index < q_trace_length; index += 1) {{"
-    )
-    .unwrap();
-    writeln!(
-        output,
-        "        {}",
-        io_emit::write_line(
-            Stream::Out,
-            "%c %\" PRIu64 \"",
-            &[
-                "q_trace_events[index].kind",
-                "q_trace_events[index].identity",
-            ],
-        )
-    )
-    .unwrap();
-    writeln!(output, "    }}").unwrap();
+    writeln!(output, "    (void) q_result.value;").unwrap();
+    writeln!(output, "    (void) q_result.error;").unwrap();
+    writeln!(output, "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, UINT64_C(0), UINT64_C(0), q_result.ok ? (int64_t)q_result.value : (int64_t)q_result.error.tag, q_result.ok ? \"ok\" : \"error\");").unwrap();
     for resource in cfg.resources() {
         writeln!(output, "    if (q_result.owned_{resource} != NULL) {{").unwrap();
-        writeln!(
-            output,
-            "        {}",
-            io_emit::write_text(Stream::Out, &format!("P {resource}"))
-        )
-        .unwrap();
         writeln!(output, "        free(q_result.owned_{resource});").unwrap();
         writeln!(output, "        q_result.owned_{resource} = NULL;").unwrap();
         writeln!(output, "    }}").unwrap();
@@ -312,18 +274,6 @@ fn block_label(block: &BasicBlock) -> String {
     } else {
         format!("q_bb_{}", block.id())
     }
-}
-
-fn trace_capacity(cfg: &TypedCfg) -> usize {
-    let instructions = cfg
-        .blocks()
-        .map(|block| block.instructions().len())
-        .sum::<usize>();
-    let acquisitions = cfg
-        .blocks()
-        .filter(|block| matches!(block.terminator(), CfgTerminator::TryAcquire { .. }))
-        .count();
-    instructions.saturating_add(acquisitions).saturating_add(8)
 }
 
 fn validate_c_symbols(cfg: &TypedCfg) -> Result<(), CEmitError> {

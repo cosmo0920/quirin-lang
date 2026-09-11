@@ -42,7 +42,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-use crate::io_emit::IO_PRELUDE;
+use crate::diagnostic_log_c_emit::DIAGNOSTIC_LOG_PRELUDE;
 use crate::mutex_invariant::{
     AccessFootprint, AccessKind, AdmittedProtectionGrowth, ConcurrencyProfile, GuardId,
     InvariantId, MutexId, MutexInvariantCertificate, MutexInvariantEvent, MutexInvariantProgram,
@@ -311,7 +311,7 @@ pub fn interpret_mutex_program(
     Ok(trace)
 }
 
-const INCLUDES: &str = "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n";
+const INCLUDES: &str = "#include <stdint.h>\n#include <stdlib.h>\n#include <string.h>\n";
 
 const PRELUDE: &str = r#"
 
@@ -319,7 +319,8 @@ const PRELUDE: &str = r#"
    CheckedMutexInvariantV1 trace. One thread, real mtx_t generations, real
    heap footprints. Emitted only for a trace the core already checked. */
 static void qcore_fail(const char *what) {
-    QCORE_IO_WRITE(stderr, "qcore mutex runtime failure: %s\n", what);
+    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME,
+        UINT64_C(0), UINT64_C(0), INT64_C(1), what);
     abort();
 }
 "#;
@@ -334,10 +335,8 @@ pub fn emit_mutex_c11(
     }
     let extents = resource_extents(program)?;
     let mut source = String::from(include_str!("c11_threads_compat.h"));
-    // The single printing route is installed after `<stdio.h>` and before
-    // `qcore_fail`, which is itself one of this program's writers.
     source.push_str(INCLUDES);
-    source.push_str(IO_PRELUDE);
+    source.push_str(DIAGNOSTIC_LOG_PRELUDE);
     source.push_str(PRELUDE);
     source.push_str("int main(void) {\n    int qcore_exit = 0;\n");
     for (resource, end) in &extents {
@@ -346,7 +345,7 @@ pub fn emit_mutex_c11(
             "    unsigned char *r{resource} = malloc({end});\n    \
              if (r{resource} == NULL) qcore_fail(\"allocation\");\n    \
              memset(r{resource}, 0, {end});\n    \
-             QCORE_IO_WRITE(stdout, \"resource {resource} {end}\\n\");"
+             qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_ACQUIRE, {resource}, {end}, INT64_C(0), (const char *)0);"
         )
         .unwrap();
     }
@@ -356,13 +355,13 @@ pub fn emit_mutex_c11(
                 source,
                 "    mtx_t m{mutex};\n    \
                  if (mtx_init(&m{mutex}, mtx_plain) != thrd_success) qcore_fail(\"mtx_init\");\n    \
-                 QCORE_IO_WRITE(stdout, \"create {mutex}\\n\");"
+                 qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_MUTEX_CREATE, {mutex}, UINT64_C(0), INT64_C(0), (const char *)0);"
             )
             .unwrap(),
             MutexInvariantEvent::Lock { mutex, guard, .. } => writeln!(
                 source,
                 "    if (mtx_lock(&m{mutex}) != thrd_success) qcore_fail(\"mtx_lock\");\n    \
-                 QCORE_IO_WRITE(stdout, \"lock {mutex} {guard}\\n\");"
+                 qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_MUTEX_LOCK, {mutex}, {guard}, INT64_C(0), (const char *)0);"
             )
             .unwrap(),
             MutexInvariantEvent::Unlock { guard, .. } => {
@@ -370,7 +369,7 @@ pub fn emit_mutex_c11(
                 writeln!(
                     source,
                     "    if (mtx_unlock(&m{mutex}) != thrd_success) qcore_fail(\"mtx_unlock\");\n    \
-                     QCORE_IO_WRITE(stdout, \"unlock {guard}\\n\");"
+                     qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_MUTEX_UNLOCK, {guard}, UINT64_C(0), INT64_C(0), (const char *)0);"
                 )
                 .unwrap();
             }
@@ -382,7 +381,7 @@ pub fn emit_mutex_c11(
                     source,
                     "    qcore_exit = {exit};\n    \
                      if (mtx_unlock(&m{mutex}) != thrd_success) qcore_fail(\"mtx_unlock\");\n    \
-                     QCORE_IO_WRITE(stdout, \"error-exit {guard} {exit}\\n\");"
+                     qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, {guard}, UINT64_C(0), {exit}, \"error-exit\");"
                 )
                 .unwrap();
             }
@@ -390,10 +389,10 @@ pub fn emit_mutex_c11(
             // static bookkeeping the core already checked. They are traced so
             // the native and reference observations stay comparable.
             MutexInvariantEvent::OpenInvariant { guard, .. } => {
-                writeln!(source, "    QCORE_IO_WRITE(stdout, \"open {guard}\\n\");").unwrap();
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_OPEN, {guard}, UINT64_C(0), INT64_C(0), (const char *)0);").unwrap();
             }
             MutexInvariantEvent::CloseInvariant { guard, .. } => {
-                writeln!(source, "    QCORE_IO_WRITE(stdout, \"close {guard}\\n\");").unwrap();
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_CLOSE, {guard}, UINT64_C(0), INT64_C(0), (const char *)0);").unwrap();
             }
             MutexInvariantEvent::Access {
                 footprint, kind, ..
@@ -404,7 +403,7 @@ pub fn emit_mutex_c11(
                         source,
                         "    for (unsigned i = {start}u; i < {end}u; i++) \
                          r{resource}[i] = (unsigned char){};\n    \
-                         QCORE_IO_WRITE(stdout, \"write {resource} {start} {end}\\n\");",
+                         qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_WRITE, {resource}, {start}, {end}, (const char *)0);",
                         fill_byte(index)
                     )
                     .unwrap(),
@@ -412,33 +411,34 @@ pub fn emit_mutex_c11(
                         source,
                         "    {{ unsigned long sum = 0;\n      \
                          for (unsigned i = {start}u; i < {end}u; i++) sum += r{resource}[i];\n      \
-                         QCORE_IO_WRITE(stdout, \"read {resource} {start} {end} %lu\\n\", sum % 65536UL); }}"
+                         qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_READ, {resource}, {start}, (int64_t)(sum % 65536UL), (const char *)0); }}"
                     )
                     .unwrap(),
                     _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
                 }
             }
             MutexInvariantEvent::AssertFact { fact, .. } => {
-                writeln!(source, "    QCORE_IO_WRITE(stdout, \"assert {fact}\\n\");").unwrap();
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, {fact}, UINT64_C(0), INT64_C(1), \"assert\");").unwrap();
             }
             MutexInvariantEvent::UseFact { fact, .. } => {
-                writeln!(source, "    QCORE_IO_WRITE(stdout, \"use-fact {fact}\\n\");").unwrap();
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, {fact}, UINT64_C(0), INT64_C(2), \"use\");").unwrap();
             }
             MutexInvariantEvent::BorrowUnderGuard {
                 footprint, borrow, ..
             } => writeln!(
                 source,
-                "    unsigned char *b{borrow} = &r{}[{}];\n    \
+                "    unsigned char *b{borrow} = &r{resource}[{start}];\n    \
                  if (b{borrow} == NULL) qcore_fail(\"borrow\");\n    \
-                 QCORE_IO_WRITE(stdout, \"borrow {borrow}\\n\");",
-                footprint.resource, footprint.start
+                 qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_READ, {borrow}, {resource}, {start}, \"borrow\");",
+                resource = footprint.resource,
+                start = footprint.start
             )
             .unwrap(),
             MutexInvariantEvent::EndBorrow { borrow, .. } => writeln!(
                 source,
                 "    b{borrow} = NULL;\n    \
                  if (b{borrow} != NULL) qcore_fail(\"borrow\");\n    \
-                 QCORE_IO_WRITE(stdout, \"end-borrow {borrow}\\n\");"
+                 qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_READ, {borrow}, UINT64_C(0), INT64_C(0), \"end-borrow\");"
             )
             .unwrap(),
             // Protection growth emits **no** `mtx_t` operation: the profile's
@@ -464,18 +464,18 @@ pub fn emit_mutex_c11(
                     *footprint,
                     *invariant,
                 )?;
-                writeln!(source, "    QCORE_IO_WRITE(stdout, \"{}\\n\");", growth_line(mutex, *guard, *footprint))
+                writeln!(source, "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_INVARIANT_FACT, {mutex}, {}, INT64_C({}), \"grow\");", footprint.resource, footprint.end)
                     .unwrap();
             }
             MutexInvariantEvent::DestroyMutex { mutex, .. } => writeln!(
                 source,
-                "    mtx_destroy(&m{mutex});\n    QCORE_IO_WRITE(stdout, \"destroy-mutex {mutex}\\n\");"
+                "    mtx_destroy(&m{mutex});\n    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_MUTEX_DESTROY, {mutex}, UINT64_C(0), INT64_C(0), (const char *)0);"
             )
             .unwrap(),
             MutexInvariantEvent::Destroy { resource, .. } => writeln!(
                 source,
                 "    free(r{resource});\n    r{resource} = NULL;\n    \
-                 QCORE_IO_WRITE(stdout, \"destroy {resource}\\n\");"
+                 qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_RELEASE, {resource}, UINT64_C(0), INT64_C(0), (const char *)0);"
             )
             .unwrap(),
             _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),

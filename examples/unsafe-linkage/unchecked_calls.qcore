@@ -1,5 +1,7 @@
 import std.extern;
 import std.extern.unsafe;
+import std.fmt;
+import std.logger;
 
 // Calling C that has no contract, and saying so.
 //
@@ -27,7 +29,11 @@ unsafe extern fn demo_measure(count: u64) -> u64;
 
 fn main() -> unit effects { io, alloc, mut } {
     demo_unchecked_add(2, 40);
+    // An unsafe result has no declared semantic value. If this boundary needs
+    // an operational marker, the caller must author that marker explicitly.
+    log trace dec 42;
     demo_hidden_effect(7);
     demo_measure(16);
+    log trace dec 16;
     return;
 }

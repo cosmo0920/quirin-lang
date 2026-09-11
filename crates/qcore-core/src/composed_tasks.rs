@@ -576,7 +576,7 @@ pub fn check_composed_task_program(
             );
         }
         match (&site.event, site.operand) {
-            (StdIoEvent::Flush | StdIoEvent::Return, _) => {}
+            (StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return, _) => {}
             (
                 StdIoEvent::Print {
                     operand: StdIoOperand::Literal(_),
@@ -685,6 +685,9 @@ pub fn check_composed_task_program(
     let mut flushes = 0;
     for site in &program.sites {
         match &site.event {
+            StdIoEvent::LogLevel { level } => {
+                levels.insert(*level);
+            }
             StdIoEvent::Print { rendering, .. } => {
                 renderings.insert(*rendering);
                 streams.insert(Stream::Out);

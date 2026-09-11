@@ -358,7 +358,10 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 effects.insert(Effect::Mut);
             }
             BufferEvent::Line(
-                StdIoEvent::Print { .. } | StdIoEvent::Log { .. } | StdIoEvent::Flush,
+                StdIoEvent::LogLevel { .. }
+                | StdIoEvent::Print { .. }
+                | StdIoEvent::Log { .. }
+                | StdIoEvent::Flush,
             ) => {
                 effects.insert(Effect::Io);
             }
@@ -667,6 +670,7 @@ pub fn check_buffer_program(
                 }
             }
             BufferEvent::Line(line) => match line {
+                StdIoEvent::LogLevel { .. } => {}
                 StdIoEvent::Print { rendering, operand }
                 | StdIoEvent::Log {
                     rendering, operand, ..

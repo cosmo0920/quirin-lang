@@ -11,6 +11,12 @@
 > are historical observations, not a claim that later merged repairs are absent.
 > Full revision-0.3 conformance is not claimed.
 
+> **Normative amendment (2026-09-11).** Generated programs are quiet unless
+> source code explicitly performs I/O; stream observations compose pointwise;
+> and `std.logger` provides `trace`, `debug`, `info`, `warn`, `error`, and
+> `fatal`. The complete requirements and migration gates are in
+> [Quiet C11 Emission, Composable Streams, and Logger Levels](design/QUIET_EMISSION_STREAMS_AMENDMENT.md).
+
 **Revision date:** 2026-09-07, Asia/Tokyo.  
 **Status:** Source-reviewed specification and implementation requirements. This is not a declaration of full compiler conformance.  
 **Reviewed input:** `qcore-c.tar.gz`, SHA-256 `fd3e844ec975c74e47c7113037c334dd7a4f78fbb8a7e1543a5e59f58da5760b`.
@@ -164,6 +170,18 @@ another, and `std.concurrency` grants none of them: a threaded module has no
 free output channel. `flush` names no rendering, so a file that logs only a
 barrier needs no `std.fmt`.
 
+The logger levels, in increasing order, are `trace`, `debug`, `info`, `warn`,
+`error`, and `fatal`; their canonical tags are the corresponding uppercase
+words in brackets. `error` is contextual after `log` and remains the error-type
+declaration keyword elsewhere. Source-authored logger events are not filtered.
+Compiler observations use the separate, default-null diagnostic logger defined
+by the Quiet C11 Emission amendment and are not program output by default. An
+entry may explicitly select `log_level LEVEL;` after importing `std.logger`;
+maintained hosted profiles then render admitted system events at or above that
+threshold on stdout. The declaration carries `Io`, is recorded and rechecked,
+occurs at most once per entry, and changes no custody or control-flow judgment.
+Source-authored `log` records remain unfiltered on stderr.
+
 `std.buffer` (card `STD-BUFFER`) grants an **owned, extent-carrying byte
 buffer** — `let b = bytes(8);`, `b[0] = 65;`, `let x = b[0];`,
 `let n = extent(b);`, `drop b;` — and nothing else. It opens no stream, so a
@@ -174,7 +192,7 @@ no encoding and no literal, because none exists in the language (follow-ons
 `STD-BUFFER-STRING-LITERAL` and `STD-BUFFER-RENDER`). The acquisition is spelled
 `bytes` rather than `buffer` because `buffer` was measured to occur in binding
 position in shipped fixtures, so the syntax was renamed rather than the pinned
-surface edited — the `work` → `effort` and `error` → `fatal` precedent; the
+surface edited — the `work` → `effort` precedent; the
 *module* keeps the name `std.buffer`, a module name being a dotted import path
 and never a reserved word. The release is the **existing** reserved `drop`,
 because the operation is the ownership IR's own drop.
@@ -816,6 +834,17 @@ Ownership is allocated by *semantic pass*, not by crate: a pass owns a code rang
 | `Q7xx` | `PluginVerification` | `qcore-verification` | Core verifier-scope configuration and dispatch: `Q700` scope resolution failure, `Q701` obligations undischarged, `Q702` conflicting provider evidence or assumptions, `Q703` a provider allegation the core cannot validate. |
 | `QP***` | Provider host | `qcore-verifier-host`, `qcore-verification` | Core provider-host, protocol, and evidence-firewall diagnostics (`QP001`–`QP016`). |
 | `<plugin-id>.<local-code>` | — | Providers | Provider-owned diagnostics; exact selected plugin ID and one 1–128-byte ASCII local component (letters, digits, `_`, `-`). |
+
+The quiet-emission amendment refines the `Q058` event-shape row above without
+allocating or moving a code. An event entry may contain at most one
+`log_level LEVEL;`, before, inside, or after its live event context. It requires
+`std.logger`, derives `Io`, is recorded and independently rechecked, projects
+to no reactor operation, and selects only the hosted system-trace stdout
+adapter. Consequently “opened before every other event statement” and “closed
+after all of them” apply to reactor statements, not to this entry-level logger
+configuration. The same declaration is admitted by the maintained sequential,
+standard-I/O, extern-composed, and task-composed hosted profiles under their
+existing shape/import/effect codes.
 
 Reserving all four of `Q700`–`Q703` corrects a documentation drift, not a code change: `Q702` and `Q703` have existed in `crates/qcore-verification/src/verify_dispatch.rs` since the W3 dispatch increment, and the code is the authority. An earlier revision of this row named only `Q700` and `Q701`, which was narrower than the implementation; `AGENTS.md` was already accurate.
 

@@ -676,7 +676,8 @@ fn out_slot_emission_takes_the_slots_address_and_the_reference_run_agrees() {
         "int32_t qcore_extern_open(uint8_t **p0, uintptr_t p1);",
         "uint8_t *r1 = NULL;",
         "(void) qcore_extern_open(&r1, 8);",
-        "declared outcome violated: qcore_extern_open",
+        "if ((r1 != NULL) != 1)",
+        "QCORE_DIAG_EXTERN_OUTCOME",
         "qcore_extern_release(r1);",
     ] {
         assert!(c.contains(expected), "emitted C is missing `{expected}`");
@@ -1713,10 +1714,9 @@ fn the_emitted_check_dominates_the_observation_it_licenses() {
     let c = module.c_source.as_deref().unwrap();
     let check = c.find("if (v1 != 56)").expect("emitted C compares v1");
     let observed = c
-        .find("value qcore_extern_sum v1 b:r1 d:8 -> 56")
-        .expect("emitted C observes v1");
+        .rfind("qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, 1")
+        .expect("emitted C submits the checked value to the logger");
     assert!(check < observed, "emitted C: {c}");
-    assert!(c.contains("declared outcome violated: qcore_extern_sum"));
     assert!(c.contains("return 70;"));
 }
 
@@ -1753,13 +1753,7 @@ fn a_wrong_declared_outcome_exits_70_and_observes_nothing() {
         "a disagreeing run must publish no observation for that call: {:?}",
         run.1
     );
-    assert!(
-        run.2
-            .iter()
-            .any(|line| line == "declared outcome violated: qcore_extern_scale -> 42"),
-        "{:?}",
-        run.2
-    );
+    assert!(run.2.is_empty(), "{:?}", run.2);
 
     // The positive control: the same program with the number the linked
     // implementation actually returns runs to completion and publishes the
@@ -1769,11 +1763,11 @@ fn a_wrong_declared_outcome_exits_70_and_observes_nothing() {
     let module = compile_with(&right, selection()).unwrap();
     let run = run_native_status(module.c_source.as_deref().unwrap(), "right-outcome");
     assert_eq!(run.0, Some(0), "stderr was:\n{:?}", run.2);
+    assert!(run.1.is_empty());
     assert_eq!(
-        run.1,
+        module.extern_observation.as_deref().unwrap(),
         ["value qcore_extern_scale v1 d:21 d:2 -> 42", "return"]
     );
-    assert_eq!(module.extern_observation.as_deref().unwrap(), run.1);
 }
 
 /// Compile and run the emitted C against the real callees, returning

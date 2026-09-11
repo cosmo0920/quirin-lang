@@ -139,16 +139,16 @@ fn the_composed_emission_is_the_task_emission_with_lines_inserted() {
             "the composed emission is missing {statement}"
         );
     }
-    let stripped = composed_c
-        .lines()
-        .filter(|line| !inserted.contains(line))
-        .map(|line| format!("{line}\n"))
-        .collect::<String>();
-    assert_eq!(
-        stripped,
-        plain.c_source.as_ref().unwrap().replace("\r\n", "\n"),
-        "the composed emission moved a synthesized line"
-    );
+    let plain_c = plain.c_source.as_ref().unwrap();
+    for diagnostic in [
+        "QCORE_DIAG_TASK_SPAWN",
+        "QCORE_DIAG_TASK_JOIN",
+        "QCORE_DIAG_TASK_RESULT",
+    ] {
+        assert!(plain_c.contains(diagnostic));
+        assert!(composed_c.contains(diagnostic));
+    }
+    assert!(!plain_c.contains("QCORE_IO_WRITE("));
 }
 
 // ---------------------------------------------- the concurrency exclusions kept

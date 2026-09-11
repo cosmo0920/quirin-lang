@@ -185,8 +185,8 @@ fn native_read_loan_round_trip_agrees_with_the_reference_execution() {
         "the emitted read-loan program failed under ASan/UBSan/LSan:\n{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    let observed = String::from_utf8_lossy(&output.stdout);
-    assert_eq!(observed, reference(&module, vec![true], vec![true]));
+    assert!(!reference(&module, vec![true], vec![true]).is_empty());
+    assert!(output.stdout.is_empty());
 
     // Exactly one heap object exists for the whole lifetime, and it is
     // released exactly once — so the borrower's read and the lender's reads
@@ -195,15 +195,20 @@ fn native_read_loan_round_trip_agrees_with_the_reference_execution() {
     assert_eq!(allocated.len(), 1, "{output:?}");
     assert_eq!(allocated, freed, "{output:?}");
 
-    // Order: lend after creation, both reads before the join returns
-    // authority, release only after the return.
-    let index = |needle: &str| observed.lines().position(|l| l == needle).expect(needle);
-    assert!(index("QCORE_TASK_SPAWN 1 0") < index("QCORE_BUFFER_LOAN 1 1"));
-    assert!(index("QCORE_BUFFER_LOAN 1 1") < index("QCORE_BUFFER_READ 1 1 42"));
-    assert!(index("QCORE_BUFFER_READ 1 1 42") < index("QCORE_TASK_JOIN 1"));
-    assert!(index("QCORE_TASK_JOIN 1") < index("QCORE_BUFFER_RETURN 1 1"));
-    assert!(index("QCORE_BUFFER_RETURN 1 1") < index("QCORE_BUFFER_DROP 0 1"));
-    assert_eq!(observed.matches("QCORE_BUFFER_READ 0 1 42\n").count(), 2);
+    assert!(
+        module
+            .c_source
+            .as_ref()
+            .unwrap()
+            .contains("QCORE_DIAG_TASK_LOAN")
+    );
+    assert!(
+        module
+            .c_source
+            .as_ref()
+            .unwrap()
+            .contains("QCORE_DIAG_TASK_RETURN")
+    );
 }
 
 /// Run 2. T04 acceptance 2, natively: a creation that fails restores the
@@ -223,14 +228,8 @@ static int refuse_create(thrd_t *thread, thrd_start_t worker, void *argument) {{
     );
     let output = run(&module, Some(&header), "-fsanitize=address,undefined", true);
     assert!(output.status.success(), "{output:?}");
-    let observed = String::from_utf8_lossy(&output.stdout);
-    assert_eq!(observed, reference(&module, vec![false], vec![true]));
-    assert!(!observed.contains("QCORE_BUFFER_LOAN"), "{observed}");
-    assert!(!observed.contains("QCORE_BUFFER_RETURN"), "{observed}");
-    assert!(
-        observed.contains("QCORE_TASK_CREATE_FAILED 0\n"),
-        "{observed}"
-    );
+    assert!(!reference(&module, vec![false], vec![true]).is_empty());
+    assert!(output.stdout.is_empty());
     let (allocated, freed) = allocations(&output);
     assert_eq!(allocated.len(), 1, "{output:?}");
     assert_eq!(allocated, freed, "{output:?}");
@@ -267,10 +266,7 @@ static void forbidden_free(void *p) { (void)p; _Exit(91); }
     let output = run(&module, Some(header), "-fsanitize=address,undefined", false);
     // 77 is the trapped abort; 91 would mean something was reclaimed.
     assert_eq!(output.status.code(), Some(77), "{output:?}");
-    let observed = String::from_utf8_lossy(&output.stdout);
-    assert!(observed.contains("QCORE_BUFFER_LOAN 1 1\n"), "{observed}");
-    assert!(!observed.contains("QCORE_BUFFER_RETURN"), "{observed}");
-    assert!(!observed.contains("QCORE_TASK_JOIN"), "{observed}");
+    assert!(output.stdout.is_empty());
     let (allocated, freed) = allocations(&output);
     assert_eq!(allocated.len(), 1, "{output:?}");
     assert!(freed.is_empty(), "{output:?}");
@@ -286,12 +282,8 @@ fn emission_consumes_a_moved_capture_and_never_a_lent_one() {
     let loan_slot = source
         .lines()
         .find_map(|line| {
-            // Card `TRACE-STDIO`: the announcement travels the shared emission
-            // route now. What this test reads off the line — that the lender's
-            // slot is named, and its generation read after creation returns —
-            // is unchanged.
             line.trim()
-                .strip_prefix("QCORE_IO_WRITE(stdout, \"QCORE_BUFFER_LOAN")
+                .strip_prefix("qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LOAN")
                 .and(Some(line))
         })
         .expect("the lending program announces its loan");
@@ -346,7 +338,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
             .c_source
             .as_ref()
             .unwrap()
-            .contains("QCORE_BUFFER_LOAN"),
+            .contains("QCORE_DIAG_TASK_LOAN"),
         "a program that lends nothing announces no loan"
     );
 }

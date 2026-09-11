@@ -10,6 +10,7 @@ fn worker(value: i32) -> i32 {
 }
 
 fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    log_level trace;
     let first_value = 42;
     let second_value = 7;
     thread scope workers {

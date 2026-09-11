@@ -1,4 +1,5 @@
 import std.extern;
+import std.logger;
 
 // `scalar_stages.qcore` with every pipeline written out as the statements it
 // desugars to. This file exists to be *compared*: a test asserts that the two
@@ -17,6 +18,7 @@ extern fn demo_scale(value: i32, factor: i32) -> i32;
 extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
 
 fn main() -> unit effects { io, alloc, mut } {
+    log_level trace;
     let b = demo_alloc(8) succeeds true else raise Failure;
     demo_fill(b, 7);
     let stage0 = demo_sum(b, 8);

@@ -4,15 +4,15 @@ Calling C that nothing describes, and saying so out loud.
 
 | File | What it is |
 |---|---|
-| [unchecked_calls.qcore](unchecked_calls.qcore) | Three `unsafe extern fn` declarations and three calls |
+| [unchecked_calls.qcore](unchecked_calls.qcore) | Three `unsafe extern fn` declarations and three calls, with explicit caller-authored trace markers |
 | [unchecked_api.c](unchecked_api.c) | The C behind them — no contract, and there never will be one |
 | [unchecked_demo.qcorelib](unchecked_demo.qcorelib) | A `source.native-library.v1` manifest: *which build* was waived |
 
 Checked by [`compiler/tests/examples_suite.rs`](../../compiler/tests/examples_suite.rs)
 (compilation, emission, sanitized native run) and by
 [`crates/qcorec/tests/examples_cli.rs`](../../crates/qcorec/tests/examples_cli.rs),
-which runs the driver and compares the premise output below with what it really
-printed:
+which runs the driver and compares the premise output below with what the
+compiler process really printed:
 
 ```sh
 cargo test -p qcore-compiler --test examples_suite
@@ -34,10 +34,13 @@ a cleanup for and receives nothing it now owes one for, so its ledger is
 untouched and the checked accounting *around* the call still holds even though
 the call's body is completely unknown.
 
-`unchecked_api.c` is written to make that unknown-ness visible.
-`demo_hidden_effect` mutates a private global and writes a line to stderr;
-`demo_measure` allocates and frees behind the caller's back. Neither appears in
-the checked model, and neither should — the point is that nothing notices.
+`unchecked_api.c` is written to make that unknown-ness concrete.
+`demo_hidden_effect` mutates a private global; `demo_measure` allocates and
+frees behind the caller's back. Neither appears in
+the checked model, and neither should. The Quirin caller adds two
+source-authored `log trace` markers. They are deliberately source literals: an
+unsafe return has no declared semantic value, so neither marker proves what a
+callee returned or observes the hidden mutation.
 
 ## The premises are printed, never discharged
 
@@ -129,28 +132,27 @@ cc -std=c11 -Wall -Wextra -Werror -pedantic \
 Unlike the contracted examples in [../extern/](../extern/), these run through the
 CLI end to end — there is no contract environment to select.
 
-The program's own trace goes to **stdout**:
+The program writes nothing to **stdout**. Compiler observations remain
+structured and use the default-null diagnostic sink:
 
 <!-- transcript: unchecked_calls stdout -->
 ```text
-call demo_unchecked_add d:2 d:40
-call demo_hidden_effect d:7
-call demo_measure d:16
-return
 ```
 
-and the callee's own line goes to **stderr**:
+The caller itself writes two explicit markers to **stderr** at trace level:
 
 <!-- transcript: unchecked_calls stderr -->
 ```text
-demo_hidden_effect: hidden state now 7
+[TRACE] 42
+[TRACE] 16
 ```
 
-Those two blocks are the lesson. The first is the checked model reporting the
-calls it made, with the arguments it passed. The second is a line the checked
-model knows nothing about, written by a callee that also changed state the
-caller cannot see — and neither the checker nor the emitted program has any
-opinion about it.
+Those two blocks are the lesson: crossing an unsafe linkage boundary does not
+make compiler-internal call traces into program output. If the program wants
+operational visibility, it emits its own `std.logger` records at a chosen
+level. Here those records are caller-authored expectations, not observations
+of an unchecked return. The private state mutation remains unobservable and
+the emitted program makes no claim about it.
 
 A sanitized run establishes exactly one thing: the emitted program performed
 these calls across a real link boundary, in the checked order, and left nothing

@@ -10,6 +10,7 @@ fn worker(buffer: own<Buffer> use one) -> own<Buffer> {
 }
 
 fn main() -> i32 effects { io, alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    log_level trace;
     let buffer = qcore_buffer_new(42)?;
     thread scope context {
         match spawn context worker(move buffer) {

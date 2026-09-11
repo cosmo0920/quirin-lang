@@ -229,8 +229,12 @@ fn exhaustive_emitted_c_corpus_passes_available_native_sanitizers() {
                     status = output.status,
                     stderr = String::from_utf8_lossy(&output.stderr)
                 );
-                validate_translation(&source, &cfg, std::str::from_utf8(&output.stdout).unwrap())
-                    .unwrap();
+                assert_eq!(
+                    interpret_cfg(&cfg).unwrap(),
+                    interpret_source(&source).unwrap()
+                );
+                assert!(output.stdout.is_empty(), "quiet emission wrote stdout");
+                assert!(output.stderr.is_empty(), "quiet emission wrote stderr");
             }
         }
     }

@@ -201,7 +201,8 @@ symbol the language already has:
   and quantity annotations — never in a statement body. `b[0] = 65;` therefore
   parses as `StatementKind::Assignment { place: "b" }` and `let x = b[0];` as an
   ordinary `Let`, with no parser change at all.
-* `print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal` are
+* `print`, `log`, `flush`, `dec`, `hex`, `trace`, `debug`, `info`, `warn`,
+  `error`, `fatal` are
   `STD-MODULES`'s and are reused unchanged.
 
 Both new words are **load-bearing in the measured sense** `grow` and `rank`
@@ -216,8 +217,8 @@ because it is followed by `:` — it occurs in **binding position** in shipped,
 pinned fixtures: `let buffer = qcore_buffer_new(1)?;` and `drop buffer;` in
 `examples/threads/shared_readers.qcore`, and `fn worker(buffer: own<Buffer>…)`
 in `examples/threads/owned_buffer.qcore`. Reserving it would refuse those files
-at `Q013`. Per the `work` → `effort` (T08-EPOCH-SRC) and `error` → `fatal`
-(STD-MODULES) precedent, **this card's syntax is renamed rather than the pinned
+at `Q013`. Per the `work` → `effort` (T08-EPOCH-SRC)
+precedent, **this card's syntax is renamed rather than the pinned
 surface edited**, and the refusal is pinned as a test so the decision is
 recorded in executable form rather than only in prose.
 

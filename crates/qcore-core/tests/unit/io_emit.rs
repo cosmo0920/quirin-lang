@@ -31,11 +31,10 @@ fn several_conversions_keep_their_argument_order() {
     assert_eq!(
         write_line(
             Stream::Out,
-            "QCORE_BUFFER_RETURN %\" PRIu64 \" %\" PRIu64 \"",
-            &["borrower", "s_2.value.buffer->generation"],
+            "pair %\" PRIu64 \" %\" PRIu64 \"",
+            &["left", "right"],
         ),
-        "QCORE_IO_WRITE(stdout, \"QCORE_BUFFER_RETURN %\" PRIu64 \" %\" PRIu64 \"\\n\", \
-         borrower, s_2.value.buffer->generation);"
+        "QCORE_IO_WRITE(stdout, \"pair %\" PRIu64 \" %\" PRIu64 \"\\n\", left, right);"
     );
 }
 

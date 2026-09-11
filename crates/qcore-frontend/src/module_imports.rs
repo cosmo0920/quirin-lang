@@ -89,13 +89,19 @@ pub fn check_source_imports(
     if !imports.logger()
         && let Some(span) = uses
             .get(&StdIoUse::Log)
+            .or_else(|| uses.get(&StdIoUse::LogLevel))
             .or_else(|| uses.get(&StdIoUse::Flush))
     {
         return Err(vec![missing_import(
             *span,
             LOGGER_MODULE,
-            "`log` and `flush`",
+            "`log`, `log_level`, and `flush`",
         )]);
+    }
+    if !imports.logger()
+        && let Some(span) = crate::source_event::event_log_level_span(program)
+    {
+        return Err(vec![missing_import(span, LOGGER_MODULE, "`log_level`")]);
     }
     if !imports.fmt()
         && let Some(span) = crate::source_std_io::rendering_span(program)
@@ -125,7 +131,8 @@ pub fn check_source_imports(
     // the event context is unavailable by default and importing another
     // compilation input never grants this file the vocabulary. One detector
     // serves this gate and route selection, so a file can never be routed to
-    // `source.event.v1` without having needed the import.
+    // `source.event.v1` without having needed the import. `log_level` selects
+    // this route but also passes the independent logger gate above.
     if !imports.event()
         && let Some(span) = crate::source_event::source_event_span(program)
     {

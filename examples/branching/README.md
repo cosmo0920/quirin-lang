@@ -61,19 +61,19 @@ emitted as real basic blocks, and the emitted C computes `3 < 5` and
 `(mask | 3) == 14` **itself**. So the agreement between the Rust evaluator and a
 C compiler is a real cross-check rather than a tautology.
 
-The emitted programs print their own instrumentation — the result, then the
-acquisition and release trace — which is what the test parses and compares.
+The emitted programs retain result, acquisition, and release events in the
+typed diagnostic route. Each example explicitly selects its hosted stdout
+adapter with `log_level trace;`; without that declaration the same route uses
+the null sink and the program streams stay quiet.
 `conditional_release.qcore` writes:
 
 <!-- transcript: conditional_release stdout -->
 ```text
-OK 0
 A 1
 R 1
+OK 0
 ```
 
-`OK 0` is the entry's result, `A 1` the acquisition of resource `1`, `R 1` its
-release. One acquisition, one release, whichever arm ran.
 
 ## The condition tier
 
@@ -103,9 +103,9 @@ Its transcript is the same one-acquisition, one-release shape:
 
 <!-- transcript: condition_tier stdout -->
 ```text
-OK 0
 A 1
 R 1
+OK 0
 ```
 
 ### The parentheses are load-bearing
@@ -178,9 +178,9 @@ The entry returns `1`, and the transcript shows it:
 
 <!-- transcript: early_return stdout -->
 ```text
-OK 1
 A 1
 R 1
+OK 1
 ```
 
 ## Building and running

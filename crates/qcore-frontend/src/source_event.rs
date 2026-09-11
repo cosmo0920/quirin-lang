@@ -3,10 +3,11 @@
 //!
 //! ```text
 //! module    ::= import* entry
-//! import    ::= "import" "std.event" ";"
+//! import    ::= "import" ("std.event" | "std.logger") ";"
 //! entry     ::= "fn" NAME "(" ")" "->" "i32"
 //!               ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 //! stmt      ::= "event" "open" ";"
+//!             | "log_level" LEVEL ";"
 //!             | "event" "close" ";"
 //!             | "endpoints" NAME NAME ";"
 //!             | "watch" NAME NAME INTEREST ";"
@@ -17,6 +18,7 @@
 //!             | "close" NAME ";"
 //!             | "return" ["-"] INTEGER ";"
 //! INTEREST  ::= "read" | "write"
+//! LEVEL     ::= "trace" | "debug" | "info" | "warn" | "error" | "fatal"
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
 //!
@@ -39,8 +41,9 @@
 //!
 //! # Reserved words (standing constraint 14)
 //!
-//! Eight are added: `event`, `endpoints`, `watch`, `unwatch`, `wake`,
-//! `dispatch`, `ready`, `idle`. Four existing ones are reused rather than
+//! The original eight are `event`, `endpoints`, `watch`, `unwatch`, `wake`,
+//! `dispatch`, `ready`, `idle`; the quiet-emission amendment adds `log_level`.
+//! Four existing ones are reused rather than
 //! respelled — `open`, `close`, `read`, `write` — which is why the context pair
 //! is spelled `event open;` / `event close;` rather than with two words of its
 //! own. The census over every `.qcore`/`.qc` fixture and every inline source
@@ -51,6 +54,7 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::std_event::{EventSourceProgram, EventStatement, Interest};
+use qcore_core::std_io::Level;
 use qcore_core::typed_errors::{Effect, EffectRow};
 
 /// The statement keywords this route owns. A file containing any of them at a
@@ -159,6 +163,37 @@ pub fn has_source_event(program: &SourceProgram) -> bool {
     source_event_span(program).is_some()
 }
 
+/// The first event-profile diagnostic logger declaration in this file.
+///
+/// Kept separate from [`source_event_span`] because `log_level` selects the
+/// event route **and** consumes the independently imported `std.logger`
+/// capability.
+#[must_use]
+pub fn event_log_level_span(program: &SourceProgram) -> Option<Span> {
+    let tokens = program.lexical_tokens();
+
+    fn scan(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+        for statement in &block.statements {
+            if statement_head(tokens, statement.span) == Some("log_level") {
+                return Some(statement.span);
+            }
+            for nested in statement.value.nested_blocks() {
+                if let Some(span) = scan(nested, tokens) {
+                    return Some(span);
+                }
+            }
+        }
+        None
+    }
+
+    program
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.kind == DeclarationKind::Function)
+        .filter_map(|declaration| declaration.value.body.as_ref())
+        .find_map(|body| scan(body, tokens))
+}
+
 fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {
     SourceDiagnostic {
         code,
@@ -191,6 +226,13 @@ fn integer(window: &[&Token], cursor: usize) -> Option<(i32, usize)> {
 /// the head is one but the rest of the statement is not the form it introduces.
 fn event_statement(window: &[&Token], head: &str) -> Option<Result<EventStatement, String>> {
     match head {
+        "log_level" => Some(match word(window, 1).and_then(Level::parse) {
+            Some(level) if ends_with_semicolon(window, 2) => Ok(EventStatement::LogLevel { level }),
+            _ => Err(
+                "`log_level LEVEL;` selects one of trace, debug, info, warn, error, or fatal"
+                    .to_owned(),
+            ),
+        }),
         "event" => Some(match word(window, 1) {
             Some("open") if ends_with_semicolon(window, 2) => Ok(EventStatement::ContextOpen),
             Some("close") if ends_with_semicolon(window, 2) => Ok(EventStatement::ContextClose),

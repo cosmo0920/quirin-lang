@@ -122,26 +122,27 @@ impl Rendering {
     }
 }
 
-/// The `std.logger` severity tag. A level is a label on a line; it selects no
-/// stream, filters nothing and is not a configuration model. Whether a
-/// consumer acts on it is outside this route.
+/// The ordered `std.logger` severity vocabulary. On a source-authored `log`
+/// event it is a tag and filters nothing; on the distinct entry-level
+/// `log_level` event it is the hosted system-trace threshold.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Level {
+    Trace,
+    Debug,
     Info,
     Warn,
-    /// Spelled `fatal`, **not** `error`. `error` is already the reserved
-    /// error-type declaration keyword (34 occurrences across the source corpus
-    /// at this card's census), so the level was renamed rather than the pinned
-    /// declaration surface edited — the same resolution card T08-EPOCH-SRC
-    /// applied when `work` became `effort`.
+    Error,
     Fatal,
 }
 
 impl Level {
     pub fn parse(text: &str) -> Option<Self> {
         match text {
+            "trace" => Some(Self::Trace),
+            "debug" => Some(Self::Debug),
             "info" => Some(Self::Info),
             "warn" => Some(Self::Warn),
+            "error" => Some(Self::Error),
             "fatal" => Some(Self::Fatal),
             _ => None,
         }
@@ -149,16 +150,22 @@ impl Level {
 
     pub fn keyword(self) -> &'static str {
         match self {
+            Self::Trace => "trace",
+            Self::Debug => "debug",
             Self::Info => "info",
             Self::Warn => "warn",
+            Self::Error => "error",
             Self::Fatal => "fatal",
         }
     }
 
     pub fn tag(self) -> &'static str {
         match self {
+            Self::Trace => "TRACE",
+            Self::Debug => "DEBUG",
             Self::Info => "INFO",
             Self::Warn => "WARN",
+            Self::Error => "ERROR",
             Self::Fatal => "FATAL",
         }
     }
@@ -190,6 +197,56 @@ impl Stream {
     }
 }
 
+/// The composable observable value of source-authored I/O.
+///
+/// Each stream retains its own order. Composition concatenates each projection
+/// independently and deliberately states no order between distinct streams.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Streams {
+    lines: BTreeMap<Stream, Vec<String>>,
+}
+
+impl Streams {
+    #[must_use]
+    pub fn empty() -> Self {
+        Self::default()
+    }
+
+    #[must_use]
+    pub fn singleton(stream: Stream, line: impl Into<String>) -> Self {
+        let mut streams = Self::empty();
+        streams.push(stream, line);
+        streams
+    }
+
+    pub fn push(&mut self, stream: Stream, line: impl Into<String>) {
+        self.lines.entry(stream).or_default().push(line.into());
+    }
+
+    /// Pointwise ordered concatenation.
+    #[must_use]
+    pub fn compose(mut self, other: Self) -> Self {
+        for (stream, mut lines) in other.lines {
+            self.lines.entry(stream).or_default().append(&mut lines);
+        }
+        self
+    }
+
+    #[must_use]
+    pub fn project(&self, stream: Stream) -> &[String] {
+        self.lines.get(&stream).map_or(&[], Vec::as_slice)
+    }
+
+    #[must_use]
+    pub fn from_lines(lines: &[ObservedLine]) -> Self {
+        let mut streams = Self::empty();
+        for line in lines {
+            streams.push(line.stream, line.text.clone());
+        }
+        streams
+    }
+}
+
 /// What a rendering may be applied to.
 ///
 /// **This enum is the v1 effect discipline.** Two of its three constructors
@@ -216,6 +273,9 @@ pub enum StdIoOperand {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StdIoEvent {
+    /// `log_level LEVEL;` — explicitly install the enclosing profile's
+    /// system-event adapter at this minimum level. It emits no line itself.
+    LogLevel { level: Level },
     /// `print RENDERING OPERAND;` — one line on [`Stream::Out`].
     Print {
         rendering: Rendering,
@@ -261,7 +321,10 @@ pub fn derived_effects(program: &StdIoProgram) -> EffectRow {
     let writes = program.events.iter().any(|event| {
         matches!(
             event,
-            StdIoEvent::Print { .. } | StdIoEvent::Log { .. } | StdIoEvent::Flush
+            StdIoEvent::LogLevel { .. }
+                | StdIoEvent::Print { .. }
+                | StdIoEvent::Log { .. }
+                | StdIoEvent::Flush
         )
     });
     if writes {
@@ -300,6 +363,16 @@ pub struct StdIoCertificate {
     /// custody identity: a reader can see at a glance which lines are about a
     /// resource and which are data.
     pub borrowed_renders: Vec<(String, i32)>,
+    /// Explicit system-event threshold, absent for the ordinary null sink.
+    pub log_level: Option<Level>,
+}
+
+impl StdIoCertificate {
+    /// The source-authored output as independently ordered stream projections.
+    #[must_use]
+    pub fn streams(&self) -> Streams {
+        Streams::from_lines(&self.lines)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -386,7 +459,7 @@ pub fn rendered_line(event: &StdIoEvent, value: i32) -> Option<ObservedLine> {
             stream: Stream::Err,
             text: format!("[{}] {}", level.tag(), rendering.render(value)),
         }),
-        StdIoEvent::Flush | StdIoEvent::Return => None,
+        StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return => None,
     }
 }
 
@@ -439,6 +512,7 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
     let mut flushes = 0;
     let mut renderings = BTreeSet::new();
     let mut borrowed_renders = Vec::new();
+    let mut log_level = None;
     let mut returned = false;
 
     for (index, event) in program.events.iter().enumerate() {
@@ -451,6 +525,14 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             break;
         }
         match event {
+            StdIoEvent::LogLevel { level } => {
+                if log_level.replace(*level).is_some() {
+                    errors.push(StdIoError::Shape {
+                        event: index,
+                        reason: "`source.std-io.v1` accepts at most one `log_level LEVEL;` declaration",
+                    });
+                }
+            }
             StdIoEvent::Print { rendering, operand }
             | StdIoEvent::Log {
                 rendering, operand, ..
@@ -497,6 +579,7 @@ pub fn check_std_io_program(program: &StdIoProgram) -> Result<StdIoCertificate, 
             flushes,
             renderings,
             borrowed_renders,
+            log_level,
         })
     } else {
         Err(errors)
@@ -511,6 +594,7 @@ pub enum StdIoRecheckFailure {
     Flushes,
     Renderings,
     BorrowedRenders,
+    LogLevel,
     Refused,
 }
 
@@ -523,6 +607,7 @@ impl fmt::Display for StdIoRecheckFailure {
             Self::Flushes => "the barrier count",
             Self::Renderings => "the used renderings",
             Self::BorrowedRenders => "the borrowed renders and the identities they name",
+            Self::LogLevel => "the explicit system-event logger threshold",
             Self::Refused => "the program itself, which the recheck refuses",
         };
         write!(f, "{what} does not survive an independent rederivation")
@@ -554,5 +639,12 @@ pub fn recheck_std_io_certificate(
     if rederived.borrowed_renders != certificate.borrowed_renders {
         return Err(StdIoRecheckFailure::BorrowedRenders);
     }
+    if rederived.log_level != certificate.log_level {
+        return Err(StdIoRecheckFailure::LogLevel);
+    }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/std_io.rs"]
+mod tests;

@@ -1,3 +1,5 @@
+import std.logger;
+
 error Failure { Failed; }
 
 // The shape the branch feature exists for: a resource that must be discharged
@@ -15,6 +17,7 @@ error Failure { Failed; }
 // the emitted C computes `3 < 5` itself — so agreement between the Rust
 // evaluator and a C compiler is a real cross-check rather than a tautology.
 fn main() -> i32 {
+    log_level trace;
     let a = qcore_acquire(1, true, Failure);
     if (3 < 5) {
         drop a;

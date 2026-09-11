@@ -62,12 +62,8 @@
         ],
         "detect_leaks": true,
         "exit_code": 0,
-        "stdout_contains": [
-          "QCORE_TASK_RESULT 1 I32 42\n"
-        ],
-        "stdout_absent": [
-          "ERROR_BUFFER"
-        ],
+        "stdout_contains": [],
+        "stdout_absent": [],
         "stdout_order": [],
         "heap_allocations": 3,
         "heap_releases": 3
@@ -92,15 +88,9 @@
         },
         "detect_leaks": true,
         "exit_code": 0,
-        "stdout_contains": [
-          "QCORE_TASK_RESULT 1 ERROR_BUFFER Recovery::Failed 1\n"
-        ],
+        "stdout_contains": [],
         "stdout_absent": [],
-        "stdout_order": [
-          "QCORE_TASK_JOIN 1",
-          "QCORE_BUFFER_READ 0 1 42",
-          "QCORE_BUFFER_DROP 0 1"
-        ],
+        "stdout_order": [],
         "heap_allocations": 1,
         "heap_releases": 1
       },
@@ -126,14 +116,8 @@
         "detect_leaks": true,
         "exit_code": 0,
         "stdout_contains": [],
-        "stdout_absent": [
-          "QCORE_BUFFER_DROP 1 1\n"
-        ],
-        "stdout_order": [
-          "QCORE_BUFFER_ALLOC 1 4294967297 7",
-          "QCORE_BUFFER_DROP 1 4294967297",
-          "QCORE_TASK_RESULT 1 ERROR_BUFFER Recovery::Failed 1"
-        ],
+        "stdout_absent": [],
+        "stdout_order": [],
         "heap_allocations": 2,
         "heap_releases": 2
       },
@@ -149,13 +133,8 @@
         ],
         "detect_leaks": true,
         "exit_code": 0,
-        "stdout_contains": [
-          "QCORE_TASK_CREATE_FAILED 1\n",
-          "QCORE_BUFFER_DROP 0 1\n"
-        ],
-        "stdout_absent": [
-          "ERROR_BUFFER"
-        ],
+        "stdout_contains": [],
+        "stdout_absent": [],
         "stdout_order": [],
         "heap_allocations": 1,
         "heap_releases": 1
@@ -177,14 +156,8 @@
         },
         "detect_leaks": false,
         "exit_code": 77,
-        "stdout_contains": [
-          "QCORE_TASK_SPAWN 1 1\n"
-        ],
-        "stdout_absent": [
-          "QCORE_TASK_JOIN",
-          "ERROR_BUFFER",
-          "QCORE_BUFFER_READ 0 1"
-        ],
+        "stdout_contains": [],
+        "stdout_absent": [],
         "stdout_order": [],
         "heap_allocations": 1,
         "heap_releases": 0

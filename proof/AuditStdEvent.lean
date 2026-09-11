@@ -6,6 +6,11 @@ import QCore.StdEvent
 -- The custody model's rules are `QCore.DescriptorCustody`'s and are not
 -- reconstructed.
 
+-- The quiet default and explicit six-level threshold used by event examples.
+#print axioms QCore.StdEvent.diagnosticEnabled
+#print axioms QCore.StdEvent.an_absent_log_level_is_quiet
+#print axioms QCore.StdEvent.trace_log_level_admits_every_level
+
 -- The determinism boundary. A ready set with two members admits **no**
 -- declaration: not either registration's, and not the idle one. That is the
 -- by-name refusal the card rests on, and the reason it does not need
@@ -53,6 +58,7 @@ import QCore.StdEvent
 #print axioms QCore.StdEvent.no_program_carries_alloc_or_mut
 #print axioms QCore.StdEvent.a_program_of_returns_carries_nothing
 #print axioms QCore.StdEvent.opening_a_context_carries_io
+#print axioms QCore.StdEvent.log_level_carries_io_and_projects_no_reactor_operation
 
 -- The canonical program the Rust route compiles, runs and byte-compares, stated
 -- here as an executable check so that the fixture and this module cannot drift

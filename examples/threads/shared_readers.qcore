@@ -13,6 +13,7 @@ fn reader(payload: borrow<Buffer>) -> i32 {
 }
 
 fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+    log_level trace;
     let buffer = qcore_buffer_new(1)?;
     let prepared = qcore_buffer_write(buffer, 42);
     thread scope workers {

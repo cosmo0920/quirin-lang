@@ -1,4 +1,5 @@
 import std.event;
+import std.logger;
 
 // One event context, one endpoint pair the program created itself, one read
 // registration on it, one readiness the program induced, one dispatch turn that
@@ -8,6 +9,7 @@ import std.event;
 // makes "the" observation well-defined, and it is the whole determinism
 // argument of `source.event.v1` v1 (docs/design/STD_EVENT_V1.md §3).
 fn main() -> i32 effects { io } {
+    log_level trace;
     event open;
     endpoints a b;
     watch reader a read;

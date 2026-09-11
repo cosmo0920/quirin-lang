@@ -1,3 +1,5 @@
+import std.logger;
+
 error Failure { Failed; }
 
 // Everything an `if` condition can say, in one entry.
@@ -36,6 +38,7 @@ error Failure { Failed; }
 //   `(mask & 8) == 8`       1100 & 1000 = 1000 = 8, so **true**, and the second
 //                           arm is the one that runs.
 fn main() -> i32 {
+    log_level trace;
     let mask = 12;
     let a = qcore_acquire(1, true, Failure);
     if ((mask | 3) == 14 && (mask & 4) == 4) {

@@ -116,20 +116,15 @@ but not for building these executables.
 
 ## Reading the output
 
-Each program writes two kinds of line, and it is worth telling them apart before
-reading a transcript.
+Each program's system observations remain structured events submitted to the
+typed diagnostic logger at `trace` or `debug`; its ordinary sink is null. The
+published programs explicitly select `log_level trace;`, so their system trace
+is rendered on stdout for teaching and debugging.
 
-**The `QCORE_…` lines on standard output are trace instrumentation the compiler
-synthesizes.** No source statement asks for them; they exist so the emitted C can
-be compared with the reference execution. Since card `TRACE-STDIO` they and
-`std.io`'s own `print`/`log` travel one shared C-level emission route
-(`QCORE_IO_WRITE`), so an emitted program has a single printing mechanism rather
-than two.
-
-**Everything else is a source statement.** Since card `COMPOSE-CONCURRENCY` a
+Since card `COMPOSE-CONCURRENCY` a
 module may both spawn and print, on the composed route
 `source.std-io-tasks.v1` — so `first_result |> log info dec;` is a line the
-program asks for, on the same emission route as the trace beside it. Before that
+program asks for. Before that
 card it was measured impossible: a module that both spawned and printed stayed
 with the task route, which refused the `io` effect (`Q020`) and the statement
 (`Q500`).
@@ -145,12 +140,11 @@ and with its siblings', and nothing in the checked model orders those; it is
 refused at `Q050`. `shared_readers.qcore`'s worker carries a comment where such
 a line would go.
 
-Both transcripts below are not prose: `thread_examples.rs` reads them out of this
-file and compares them with a real sanitized run, so they cannot drift. That test
-also builds and runs all four examples under ASan/UBSan (and LSan on Linux) and
-compares each one's stdout and stderr **per stream** with the reference
-execution, and checks that removing the source lines from standard output leaves
-exactly the task rendering those examples produced before they said anything:
+Both transcripts below are not prose: `thread_examples.rs` reads them out of
+this file and compares them with a real sanitized run, so they cannot drift.
+That test also builds and runs all four examples under ASan/UBSan (and LSan on
+Linux), compares source-authored stdout and stderr per stream, and separately
+checks that the structured task observation remains non-empty:
 
 ```sh
 cargo test -p qcore-compiler --test thread_examples
@@ -187,14 +181,13 @@ then both joined results. The relative order of the two streams is **not**
 modeled and is not asserted anywhere — C gives no order between two separately
 buffered streams — but each stream's own order is checked.
 
-Task `0` is the parent. The last `QCORE_TASK_RESULT` line contains the QCore main
-result; successful execution exits with process status `0`, even when that result
-is `7` or `42`. Worker events are buffered and printed after join, so their
-printed order does not reveal which worker the OS scheduled first or prove
-simultaneous execution.
+Task lifecycle and buffer events remain in the structured diagnostic route at
+`debug` and `trace` respectively. They become process output here only because
+the example opts in. Successful execution exits with process status `0`, even
+when the QCore main result is `7` or `42`.
 
-The buffer examples also print allocation, access, transfer and release events.
-They explicitly handle allocation or creation refusals so previously acquired
+The buffer examples retain allocation, access, transfer and release diagnostic
+events without printing them. They explicitly handle allocation or creation refusals so previously acquired
 buffers and started siblings can be discharged. A native join failure remains
 fatal in the emitted runtime, preserving storage that a worker might still use.
 

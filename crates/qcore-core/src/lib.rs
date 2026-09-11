@@ -19,6 +19,7 @@ pub mod composed_std_io;
 pub mod composed_std_io_c_emit;
 pub mod composed_tasks;
 pub mod concurrency;
+pub mod diagnostic_log_c_emit;
 pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
@@ -56,7 +57,7 @@ pub use advanced_control::{
     AdvancedResourceId, AdvancedTraceEvent, Capture, CaptureMode, DestructorId, DestructorOutcome,
     DestructorSpec, HandlerId, HandlerKind, HandlerSpec, PrimaryFailure, run_advanced,
 };
-pub use c_emit::{CEmitError, emit_c11, parse_c_observation};
+pub use c_emit::{CEmitError, emit_c11, emit_c11_with_log_level, parse_c_observation};
 pub use cfg::{
     BasicBlock, BlockId, CfgError, CfgInstruction, CfgTerminator, ErrorAbi, ErrorTag, ErrorVariant,
     ExecutionObservation, ExecutionOutcome, TraceEvent, TypedCfg, interpret_cfg,

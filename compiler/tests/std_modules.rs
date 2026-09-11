@@ -105,6 +105,43 @@ fn the_published_certificate_is_independently_rederivable() {
 }
 
 #[test]
+fn log_level_is_import_gated_unique_and_rechecked() {
+    let source = "import std.logger;\n\
+                  fn main() -> unit effects { io } {\n\
+                      log_level debug;\n\
+                      flush;\n\
+                      return;\n\
+                  }\n";
+    let module = compile(source).unwrap();
+    let checked = module.checked.as_standard_io().unwrap();
+    assert_eq!(
+        checked.certificate.log_level,
+        Some(qcore_core::std_io::Level::Debug)
+    );
+    // This profile has no system events of its own, so the emitter may erase
+    // the otherwise unused adapter after retaining the checked selection.
+    assert!(
+        !module
+            .c_source
+            .as_deref()
+            .unwrap()
+            .contains("qcore_diagnostic_stdout")
+    );
+
+    let missing_import = source.replace("import std.logger;\n", "");
+    assert_eq!(codes(&missing_import), ["Q015"]);
+    let duplicate = source.replace("log_level debug;", "log_level debug;\n    log_level trace;");
+    assert_eq!(codes(&duplicate), ["Q030"]);
+
+    let mut tampered = checked.certificate.clone();
+    tampered.log_level = Some(qcore_core::std_io::Level::Fatal);
+    assert_eq!(
+        qcore_core::std_io::recheck_std_io_certificate(&checked.lowered.program, &tampered),
+        Err(qcore_core::std_io::StdIoRecheckFailure::LogLevel)
+    );
+}
+
+#[test]
 fn the_reference_observation_separates_the_two_streams() {
     let module = compile(LINES).unwrap();
     assert_eq!(
@@ -395,7 +432,7 @@ fn an_unknown_rendering_refuses() {
 
 #[test]
 fn an_unknown_level_refuses() {
-    let source = LINES.replace("log info dec total;", "log trace dec total;");
+    let source = LINES.replace("log info dec total;", "log verbose dec total;");
     assert_eq!(codes(&source), ["Q013"]);
 }
 
@@ -410,11 +447,13 @@ fn a_reserved_word_in_a_rendering_position_reaches_this_routes_refusal() {
 }
 
 #[test]
-fn the_error_level_spelling_refuses_because_error_is_reserved() {
-    // Recorded deliberately: `error` is the error-type declaration keyword, so
-    // this card's severity is spelled `fatal`. The refusal is the record.
+fn all_six_logger_levels_are_contextually_admitted() {
     let source = LINES.replace("log fatal dec -7;", "log error dec -7;");
-    assert_eq!(codes(&source), ["Q030"]);
+    assert!(compile(&source).is_ok());
+    for level in ["trace", "debug", "info", "warn", "error", "fatal"] {
+        let source = LINES.replace("log info dec total;", &format!("log {level} dec total;"));
+        assert!(compile(&source).is_ok(), "level `{level}` must be admitted");
+    }
 }
 
 #[test]

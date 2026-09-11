@@ -5,9 +5,9 @@
 //!
 //! [`interpret_event_program`] derives the reference observation from the
 //! checked program alone. [`emit_event_c11`] emits a self-contained C11 program
-//! whose trace must reproduce it line for line. Nothing is assumed equal: the
-//! comparison is what the route's tests perform, exactly as
-//! `source.std-io.v1`'s is.
+//! that submits the same typed events to the diagnostic logger. Ordinary
+//! emission uses its null sink. An explicit `log_level LEVEL;` installs the
+//! hosted stdout adapter and selects its threshold.
 //!
 //! # Every identity in the trace is a model identity
 //!
@@ -38,7 +38,10 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE};
+use crate::diagnostic_log_c_emit::{
+    DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
+    diagnostic_stdout_adapter_declaration,
+};
 use crate::std_event::{
     EndpointId, EventSourceProgram, EventStatement, Interest, RegistrationId, StdEventCertificate,
 };
@@ -102,6 +105,7 @@ pub fn trace_line(
     registrations: &RegistrationIdentities,
 ) -> Option<String> {
     match statement {
+        EventStatement::LogLevel { .. } => None,
         EventStatement::ContextOpen => Some("QCORE_EVENT_OPEN".to_owned()),
         EventStatement::ContextClose => Some("QCORE_EVENT_TEARDOWN".to_owned()),
         EventStatement::Endpoints { first, second } => Some(format!(
@@ -160,11 +164,15 @@ fn identities(certificate: &StdEventCertificate) -> (EndpointIdentities, Registr
     (endpoints, registrations)
 }
 
-/// The reference observation, as `"out: <line>"` records in program order.
+/// The structured reference observation, as `"out: <line>"` records in program
+/// order.
 ///
 /// The prefix is `source.std-io.v1`'s own convention, so a consumer that
 /// already projects one stream out of that route's observation projects this
-/// one with the same code. This route writes one stream only.
+/// one with the same code. These records do not assert that the emitted program
+/// writes stdout. They describe the retained trace-event route; `log_level`
+/// may independently make the diagnostic adapter render those events on
+/// stderr.
 ///
 /// # Errors
 ///
@@ -184,6 +192,9 @@ pub fn interpret_event_program(
     let (endpoints, registrations) = identities(certificate);
     let mut observation = Vec::new();
     for statement in &program.statements {
+        if matches!(statement, EventStatement::LogLevel { .. }) {
+            continue;
+        }
         let line = trace_line(statement, &endpoints, &registrations)
             .ok_or(EventEmissionRefusal::CertificateDisagrees)?;
         observation.push(format!("{}: {line}", Stream::Out.label()));
@@ -194,7 +205,6 @@ pub fn interpret_event_program(
 const INCLUDES: &str = "\
 #include <inttypes.h>\n\
 #include <stdint.h>\n\
-#include <stdio.h>\n\
 #include <string.h>\n";
 
 const PRELUDE: &str = "\
@@ -231,7 +241,13 @@ pub fn emit_event_c11(
 
     let mut source = String::from(POLL_COMPAT);
     source.push_str(INCLUDES);
-    source.push_str(IO_PRELUDE);
+    if let Some(level) = certificate.log_level {
+        source.push_str(&diagnostic_stdout_adapter_declaration(level));
+    }
+    source.push_str(DIAGNOSTIC_LOG_PRELUDE);
+    if certificate.log_level.is_some() {
+        source.push_str(DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION);
+    }
     source.push_str(PRELUDE);
     source.push_str("\nint main(void)\n{\n");
 
@@ -268,8 +284,9 @@ pub fn emit_event_c11(
     // straight-line and fully determined, so no run-time bookkeeping is needed.
     let mut watched = Vec::<(RegistrationId, EndpointId, Interest)>::new();
 
-    for statement in &program.statements {
+    for (statement_index, statement) in program.statements.iter().enumerate() {
         match statement {
+            EventStatement::LogLevel { .. } => continue,
             EventStatement::ContextOpen => {
                 let _ = writeln!(
                     source,
@@ -393,11 +410,13 @@ pub fn emit_event_c11(
             }
             EventStatement::ContextClose | EventStatement::Return { .. } => {}
         }
-        if let Some(line) = trace_line(statement, &endpoints, &registrations) {
-            let _ = writeln!(source, "    {}", io_emit::write_text(Stream::Out, &line));
-        } else {
-            return Err(EventEmissionRefusal::CertificateDisagrees);
-        }
+        let line = trace_line(statement, &endpoints, &registrations)
+            .ok_or(EventEmissionRefusal::CertificateDisagrees)?;
+        let _ = writeln!(
+            source,
+            "    qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_EVENT_STEP, (uint64_t){statement_index}, UINT64_C(0), INT64_C(0), {});",
+            c_string(&line)
+        );
         if let EventStatement::Return { status } = statement {
             let _ = writeln!(source, "    return {status};");
         }
@@ -409,8 +428,18 @@ pub fn emit_event_c11(
     // `trace_line`, so this is a structural equality rather than a comparison
     // of two implementations. Rechecking the count here still catches a
     // statement that emitted no line at all.
-    if observation.len() != program.statements.len() {
+    if observation.len()
+        != program
+            .statements
+            .iter()
+            .filter(|statement| !matches!(statement, EventStatement::LogLevel { .. }))
+            .count()
+    {
         return Err(EventEmissionRefusal::CertificateDisagrees);
     }
     Ok(EventCEmission { source })
+}
+
+fn c_string(text: &str) -> String {
+    format!("\"{}\"", text.replace('\\', "\\\\").replace('"', "\\\""))
 }

@@ -37,6 +37,7 @@ use crate::frontend::SourceProgram;
 #[must_use]
 pub fn has_source_composed_tasks(program: &SourceProgram) -> bool {
     crate::source_tasks::has_source_tasks(program)
-        && crate::source_std_io::has_source_std_io(program)
+        && (crate::source_std_io::has_source_std_io(program)
+            || crate::source_std_io::has_source_log_level(program))
         && !crate::source_extern::has_source_extern(program)
 }

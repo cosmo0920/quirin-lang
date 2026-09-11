@@ -319,9 +319,9 @@ rule's own loan check is a redundant backstop.
 
 Native emission passes the same pointer for a move and for a loan and differs
 only in what the caller keeps: a moved capture is consumed, a lent one is not.
-`QCORE_BUFFER_LOAN borrower generation` is announced only after a creation that
-actually returned a child, and `QCORE_BUFFER_RETURN borrower generation` only
-after a collection that actually returned. Concurrent reads by lender and
+The typed `TaskLoan` diagnostic event is submitted only after a creation that
+actually returned a child, and `TaskReturn` only after a collection that
+actually returned. Concurrent reads by lender and
 borrower are admitted because nothing may write a loaned resource; that is a
 checker rule, not a dynamic measurement — no race detector covers this backend,
 because ThreadSanitizer does not intercept C11 `thrd_create`.
@@ -400,8 +400,8 @@ nothing.
 Two borrowers of one allocation are two holders of one identity. The backend
 hands both the same pointer, so the allocation's live bytes are counted once,
 and lending never consumes the lender's binding — only its release does.
-`QCORE_BUFFER_WRITE task generation value` is announced by an admitted write;
-the loan and return trace lines are unchanged from G02bb.
+The typed `ResourceWrite` diagnostic event is submitted by an admitted write;
+the loan and return event meanings are unchanged from G02bb.
 
 Disjoint slicing, write shares, more than two simultaneous readers, several
 lent resources at once, nested workers and targets other than Linux, macOS and Windows remain
@@ -492,9 +492,9 @@ re-raising a bound error that still holds its payload. Both are checked on
 mutated IR so that widening the surface later cannot silently admit them.
 
 Native emission carries the payload in the result value alongside the error tag
-and clears every stale copy as it moves, printing
-`QCORE_TASK_RESULT task ERROR_BUFFER tag generation` distinctly from a
-payload-free `ERROR tag`.
+and clears every stale copy as it moves, submitting a typed `TaskResult` event
+whose error tag and optional payload generation distinguish a payload-bearing
+result from a payload-free error.
 
 Several payloads, recursive owned graphs, arbitrary error ABIs, payloads on
 nested workers, loans inside payloads and targets other than Linux, macOS and Windows remain
@@ -1168,10 +1168,11 @@ entry     = "fn", NAME, "(", ")", "->", "unit",
 stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
           | "print", RENDERING, OPERAND, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "log_level", LEVEL, ";"
           | "flush", ";"
           | "return", ";" ;
 RENDERING = "dec" | "hex" ;
-LEVEL     = "info" | "warn" | "fatal" ;
+LEVEL     = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
 OPERAND   = [ "-" ], INTEGER | NAME | "borrow", NAME ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
@@ -1239,8 +1240,11 @@ the stderr projection. **No order between the two streams is modeled or
 claimed.** `flush` emits `fflush` and produces no line — sink handoff, not
 durability: no `fsync` is performed and no crash survival is claimed. There is
 no format-string language, no string or character value, no file or descriptor,
-and no logger configuration model. A `print` inside a `thread scope` or beside
-an extern call stays with the more specific route and keeps its refusal. See
+and no per-record source logger filter. `log_level LEVEL;` is the separate,
+at-most-once system-trace adapter selection described by the quiet-emission
+amendment; it derives `Io`, requires `std.logger`, and does not filter
+source-authored `log` records. A `print` inside a `thread scope` or beside an
+extern call stays with the more specific route and keeps its refusal. See
 [the module record](reports/wave17-std-modules/README.md).
 
 ## G02k. An owned byte buffer: `std.buffer`
@@ -1335,8 +1339,8 @@ is spelled `bytes` and **not** `buffer`: `buffer` was measured at 555
 occurrences across the source-side corpus, in *binding* position in shipped
 fixtures (`let buffer = qcore_buffer_new(1)?;` in
 `examples/threads/shared_readers.qcore`), so reserving it would refuse them and
-this card renamed its own syntax instead — the `work` → `effort` (§G02e) and
-`error` → `fatal` (§G02g) precedent. The *module* keeps the name `std.buffer`.
+this card renamed its own syntax instead — the `work` → `effort` (§G02e)
+precedent. The *module* keeps the name `std.buffer`.
 
 The route emits **self-contained** C11 — `calloc`, `free` and two bounds-checked
 accessors defined in the emitted file, with no extern declaration, no library
@@ -1876,10 +1880,11 @@ Example page: [`../examples/events/README.md`](../examples/events/README.md).
 
 ```ebnf
 module    = { import }, entry ;
-import    = "import", "std.event", ";" ;
+import    = "import", ( "std.event" | "std.logger" ), ";" ;
 entry     = "fn", NAME, "(", ")", "->", "i32",
             [ "effects", "{", effect, { ",", effect }, "}" ], "{", { stmt }, "}" ;
 stmt      = "event", "open", ";"
+          | "log_level", level, ";"
           | "event", "close", ";"
           | "endpoints", NAME, NAME, ";"
           | "watch", NAME, NAME, interest, ";"
@@ -1890,6 +1895,7 @@ stmt      = "event", "open", ";"
           | "close", NAME, ";"
           | "return", [ "-" ], INTEGER, ";" ;
 interest  = "read" | "write" ;
+level     = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
 effect    = "io" | "alloc" | "mut" ;
 ```
 
@@ -1899,13 +1905,20 @@ registration — a custody name. That is why the derived effect row is exactly
 `{Io}` for any program that opens a context and why `Alloc` and `Mut` are
 unreachable here by construction rather than by a rule.
 
-Eight reserved words are added — `event`, `endpoints`, `watch`, `unwatch`,
-`wake`, `dispatch`, `ready`, `idle` — and four existing ones are reused rather
+The original eight reserved words are `event`, `endpoints`, `watch`, `unwatch`,
+`wake`, `dispatch`, `ready`, and `idle`; the quiet-emission amendment adds
+`log_level`. Four existing ones are reused rather
 than respelled: `open`, `close`, `read`, `write`. The context pair is spelled
 `event open;` / `event close;` for exactly that reason. The standing constraint
 14 census over every `.qcore`/`.qc` fixture and every inline source string found
 no collision: the corpus occurrences of `event` are ghost-field names inside
 `contract { … }` clauses, never a statement head and never a binding.
+
+`log_level LEVEL;` may occur once, with or without a live event context. It
+sets the typed diagnostic sink threshold for this emitted event program. If it
+is absent the sink is null; if present, admitted event records at or above the
+level are rendered on stdout by the hosted system-trace adapter. It projects to no reactor operation and changes
+no custody or readiness judgment.
 
 **The custody half is the existing model.** Each statement projects onto
 `qcore_core::event_reactor::EventOperation`s and the projection is handed to

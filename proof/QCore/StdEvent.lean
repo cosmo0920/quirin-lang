@@ -46,6 +46,41 @@ lowering's, and is covered by its own tests. -/
 
 namespace QCore.StdEvent
 
+/-! ## Explicit diagnostic logging
+
+The event trace remains a structured observation. `log_level` is the separate,
+source-selected adapter which may render that observation on stdout. Absence is
+the null sink; a selected threshold admits its level and every more severe
+level. -/
+
+inductive DiagnosticLevel where
+  | trace
+  | debug
+  | info
+  | warn
+  | error
+  | fatal
+  deriving DecidableEq, BEq, Repr
+
+def DiagnosticLevel.rank : DiagnosticLevel → Nat
+  | .trace => 0
+  | .debug => 1
+  | .info => 2
+  | .warn => 3
+  | .error => 4
+  | .fatal => 5
+
+def diagnosticEnabled : Option DiagnosticLevel → DiagnosticLevel → Bool
+  | none, _ => false
+  | some threshold, level => threshold.rank ≤ level.rank
+
+theorem an_absent_log_level_is_quiet (level : DiagnosticLevel) :
+    diagnosticEnabled none level = false := rfl
+
+theorem trace_log_level_admits_every_level (level : DiagnosticLevel) :
+    diagnosticEnabled (some .trace) level = true := by
+  cases level <;> decide
+
 /-- What a registration watches for. `read` is the executable arm: its readiness
 is induced by the program itself. `write` is check-only — see
 `a_write_registration_is_never_ready`. -/
@@ -62,6 +97,7 @@ structure Registration where
 
 /-- One statement of an entry, after name resolution. -/
 inductive Statement where
+  | logLevel (level : DiagnosticLevel)
   | contextOpen
   | contextClose
   | endpoints (first second : Nat)
@@ -259,6 +295,7 @@ inductive Operation where
 
 /-- The surface table of `docs/design/STD_EVENT_V1.md` §5, as code. -/
 def project : Statement → List Operation
+  | .logLevel _ => []
   | .contextOpen => [.createBase]
   | .contextClose => [.freeBase]
   | .endpoints a b => [.createPair a b]
@@ -365,6 +402,7 @@ inductive Effect where
   deriving DecidableEq, Repr
 
 def touchesTheOs : Statement → Bool
+  | .logLevel _ => true
   | .ret _ => false
   | _ => true
 
@@ -386,6 +424,14 @@ theorem a_program_of_returns_carries_nothing (status : Int) :
 theorem opening_a_context_carries_io :
     derivedEffects [.contextOpen, .contextClose, .ret 0] = [Effect.io] := by
   simp [derivedEffects, touchesTheOs]
+
+/-- Logger selection is an explicit IO effect but remains outside the reactor
+projection, so it cannot create or discharge custody. -/
+theorem log_level_carries_io_and_projects_no_reactor_operation
+    (level : DiagnosticLevel) :
+    derivedEffects [.logLevel level, .ret 0] = [Effect.io]
+      ∧ project (.logLevel level) = [] := by
+  cases level <;> decide
 
 /-! ## The canonical program
 

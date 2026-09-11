@@ -68,7 +68,8 @@ C really compares the returned pointer against the declared outcome.
 `move b` at the release is where custody leaves the function. Use `b` after it
 and the module refuses; forget the release and it refuses too.
 
-`buffer_round_trip.qcore` writes:
+`buffer_round_trip.qcore` explicitly selects `log_level trace;`, rendering its
+typed resource and call observations on stdout:
 
 <!-- transcript: buffer_round_trip stdout -->
 ```text
@@ -94,9 +95,9 @@ entering it, and dropping one on the floor leaks nothing.
 `succeeds 56` on such a call is a **declared outcome** and is optional: a call
 without one binds whatever the callee returned. Where it is written, the emitted
 C compares the real result and exits `70` rather than continuing with a number
-nobody computed, and the trace line grows a `-> N` field.
+nobody computed; the structured outcome event records that value.
 
-`scalar_results.qcore` writes:
+`scalar_results.qcore` also specifies `log_level trace;`, so it writes:
 
 <!-- transcript: scalar_results stdout -->
 ```text
@@ -129,7 +130,8 @@ stands twice over; only one of the two refusals is this feature's own.)
 
 It needs both halves of the import list — `std.fmt` for the renderings,
 `std.io`/`std.logger` for the sinks — which puts it on the composed route
-`source.std-io-extern.v1`. Its **stdout** is:
+`source.std-io-extern.v1`. Its explicit `log_level trace;` renders the system
+events alongside the source-authored borrowed render. Its **stdout** is:
 
 <!-- transcript: borrowed_render stdout -->
 ```text

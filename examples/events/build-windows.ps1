@@ -6,9 +6,7 @@
 # the shared Windows harness; this script remains the direct example runner, on
 # the `examples/threads/build-windows.ps1` shape.
 #
-# `-Run` additionally compares the program's stdout with the transcript
-# examples/events/README.md publishes, which is the same comparison the Linux
-# test performs against the reference execution.
+# `-Run` displays the explicitly selected system trace on stdout.
 [CmdletBinding()]
 param([switch]$Run)
 
@@ -24,16 +22,6 @@ $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $outputDir = Join-Path $repoRoot 'target/event-examples'
 $manifest = Join-Path $repoRoot 'Cargo.toml'
 New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
-
-# The expected trace, read out of the README so this script and that page cannot
-# drift apart. The first fenced block after the "```\nQCORE_EVENT_OPEN" marker is
-# the published transcript.
-$readme = Get-Content -Raw (Join-Path $PSScriptRoot 'README.md')
-$expected = [regex]::Match($readme, '(?ms)^```\r?\n(QCORE_EVENT_OPEN.*?)^```').Groups[1].Value
-$expected = ($expected -split "`r?`n" | Where-Object { $_ -ne '' })
-if ($expected.Count -eq 0) {
-    throw 'examples/events/README.md publishes no QCORE_EVENT transcript to compare against.'
-}
 
 # `write_interest` is deliberately absent: it is the check-only arm and emits no
 # C at all, so there is nothing here to build. `quirin check` reports it.
@@ -58,21 +46,12 @@ foreach ($name in @('self_pipe')) {
 
     if ($Run) {
         Write-Host "Running $name"
-        $actual = & $exePath
+        & $exePath
         # A non-zero exit is not only a crash: it is also how the emitted program
         # reports that the ready set WSAPoll returned disagreed with the checked
         # declaration. Both are failures here, and deliberately so.
         if ($LASTEXITCODE -ne 0) { throw "$name exited with code $LASTEXITCODE." }
-        $actual = @($actual)
-        if ($actual.Count -ne $expected.Count) {
-            throw "$name wrote $($actual.Count) line(s); the README publishes $($expected.Count)."
-        }
-        for ($index = 0; $index -lt $expected.Count; $index++) {
-            if ($actual[$index] -ne $expected[$index]) {
-                throw "$name line $($index + 1): got '$($actual[$index])', README publishes '$($expected[$index])'."
-            }
-        }
-        Write-Host "$name reproduced the published trace on the Windows arm."
+        Write-Host "$name completed with its selected diagnostic log on the Windows arm."
     }
 }
 

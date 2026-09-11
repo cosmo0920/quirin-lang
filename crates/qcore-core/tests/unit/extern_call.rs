@@ -625,19 +625,17 @@ fn the_reference_execution_records_both_adapter_arms() {
     );
 }
 
-/// Card `TRACE-STDIO`: this backend's observations and its declared-outcome
-/// violation diagnostic both travel the shared emission route.
 #[test]
-fn the_emitted_program_writes_only_through_the_shared_route() {
+fn the_emitted_program_routes_events_to_the_typed_diagnostic_logger() {
     let module = program(vec![acquire(true), release(), ExternEvent::Return]);
     let certificate = check_extern_program(&module).unwrap();
     let emission = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
-    assert_eq!(
-        crate::io_emit::direct_stdio_calls(&emission.source),
-        Vec::new()
+    assert!(
+        emission
+            .source
+            .contains("qcore_diagnostic_log(QCORE_LOG_DEBUG")
     );
-    assert!(emission.source.contains("QCORE_IO_WRITE(stdout,"));
-    assert!(emission.source.contains("QCORE_IO_WRITE(stderr,"));
+    assert!(!emission.source.contains("QCORE_IO_WRITE("));
 }
 
 #[test]
@@ -662,7 +660,8 @@ fn emission_declares_every_callee_and_calls_it_directly() {
     );
     assert!(emission.source.contains("qcore_extern_release(r1);"));
     // The declared literal outcome control is checked, never assumed.
-    assert!(emission.source.contains("declared outcome violated"));
+    assert!(emission.source.contains("if ((r1 != NULL) != 1)"));
+    assert!(emission.source.contains("QCORE_DIAG_EXTERN_OUTCOME"));
 }
 
 #[test]
@@ -1361,12 +1360,8 @@ fn emission_takes_the_address_of_the_declared_out_slot() {
         // arm and refuted by the declared-outcome check rather than believed.
         "uint8_t *r1 = NULL;",
         "(void) qcore_extern_open(&r1, 8);",
-        "declared outcome violated",
-        // Card `TRACE-STDIO`: the spelling moved onto the single emission
-        // route; the rendered line, and the fact that the *observed* nullness
-        // rather than the declared one is what reaches it, are unchanged.
-        "QCORE_IO_WRITE(stdout, \"out qcore_extern_open o:r1 d:8 %s\\n\", \
-         r1 != NULL ? \"ok\" : \"null\");",
+        "if ((r1 != NULL) != 1)",
+        "qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, 1",
     ] {
         assert!(
             emission.source.contains(expected),
@@ -2379,9 +2374,9 @@ fn peek(value: ValueId, outcome: Option<i32>) -> ExternEvent {
 }
 
 /// **The undeclared line is byte-identical to what card `PIPE-SCALAR-RESULT`
-/// shipped.** Nothing in either model computes a number for this binding, so
-/// the observation names none — in the reference execution and in the emitted
-/// `printf` alike. This is the boundary the trace half deliberately did not
+/// shipped.** Nothing in the reference model computes a number for this
+/// binding, while the emitted program submits the real value as typed
+/// diagnostic data rather than program output. This is the boundary the trace half did not
 /// cross, pinned as a literal rather than as a property.
 #[test]
 fn a_binding_without_a_declared_outcome_observes_no_number() {
@@ -2402,22 +2397,13 @@ fn a_binding_without_a_declared_outcome_observes_no_number() {
         ]
     );
     let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
-    assert!(
-        emitted
-            .source
-            .contains("    QCORE_IO_WRITE(stdout, \"value qcore_extern_peek v1 b:r1 d:0\\n\");\n"),
-        "{}",
-        emitted.source
-    );
+    assert!(emitted.source.contains("QCORE_DIAG_EXTERN_OUTCOME"));
+    assert!(!emitted.source.contains("QCORE_IO_WRITE("));
     // And no outcome comparison is emitted for *this* call: there is nothing to
     // compare against, which is exactly why the number stays unobserved. (The
     // acquisition above keeps its own `succeeds true` comparison — that control
     // is over an arm, not over a number.)
-    assert!(
-        !emitted
-            .source
-            .contains("declared outcome violated: qcore_extern_peek")
-    );
+    assert!(!emitted.source.contains("if (v1 !="));
     assert!(!emitted.source.contains("if (v1 !="));
 }
 
@@ -2444,13 +2430,8 @@ fn a_declared_outcome_is_named_by_both_the_reference_and_the_emitted_run() {
         ]
     );
     let emitted = crate::extern_c_emit::emit_extern_c11(&module, &certificate).unwrap();
-    assert!(
-        emitted.source.contains(
-            "    QCORE_IO_WRITE(stdout, \"value qcore_extern_peek v1 b:r1 d:0 -> 42\\n\");\n"
-        ),
-        "{}",
-        emitted.source
-    );
+    assert!(emitted.source.contains("(int64_t)v1"));
+    assert!(!emitted.source.contains("QCORE_IO_WRITE("));
 }
 
 /// **The comparison is emitted before the observation, and that order is what
@@ -2474,8 +2455,8 @@ fn the_outcome_check_precedes_the_observation_it_licenses() {
         .expect("the declared outcome is compared against the real result");
     let observation = emitted
         .source
-        .find("value qcore_extern_peek v1 b:r1 d:0 -> 42")
-        .expect("the declared outcome is observed");
+        .rfind("qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, 1")
+        .expect("the checked outcome reaches the diagnostic logger");
     assert!(
         check < observation,
         "the check must dominate the write:\n{}",

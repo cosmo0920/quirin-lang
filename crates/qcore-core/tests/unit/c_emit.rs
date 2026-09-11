@@ -91,15 +91,13 @@ fn emitted_c_is_readable_and_has_tagged_abi_and_cleanup_labels() {
     assert!(c.contains("q_release(&q_res_1"));
 }
 
-/// Card `TRACE-STDIO`: the sequential harness's four writes — outcome, trace
-/// events and retained payloads — all travel the shared emission route.
 #[test]
-fn the_emitted_program_writes_only_through_the_shared_route() {
+fn the_emitted_program_routes_trace_events_only_to_the_diagnostic_logger() {
     for source in corpus() {
         let cfg = lower_cleanup_cfg(&source).unwrap();
         let c = emit_c11(&cfg).unwrap();
-        assert_eq!(crate::io_emit::direct_stdio_calls(&c), Vec::new());
-        assert!(c.contains("QCORE_IO_WRITE(stdout,"));
+        assert!(c.contains("qcore_diagnostic_log(QCORE_LOG_TRACE"));
+        assert!(!c.contains("QCORE_IO_WRITE("));
     }
 }
 
@@ -111,18 +109,10 @@ fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
     // the runtime helpers and main's report block flush left. The emitted unit
     // is meant to be readable, so each nesting level stays four-space indented.
     for expected in [
-        "    q_trace_events[q_trace_length].kind = kind;",
+        "    enum qcore_diagnostic_kind diagnostic_kind;",
         "        abort();",
         "    q_trace('A', identity);",
-        // Card `TRACE-STDIO` moved these two lines onto the single emission
-        // route: the spelling is `QCORE_IO_WRITE`, the *printed bytes* are
-        // unchanged, and the load-bearing half of this pin — the four-space
-        // indentation these lines sit at — is what is still asserted. The
-        // trace line is no longer wrapped, because the route builds it as one
-        // call rather than a hand-written continuation.
-        "        QCORE_IO_WRITE(stdout, \"OK %\" PRId32 \"\\n\", q_result.value);",
-        "        QCORE_IO_WRITE(stdout, \"%c %\" PRIu64 \"\\n\", q_trace_events[index].kind, \
-         q_trace_events[index].identity);",
+        "        QCORE_DIAGNOSTIC_SINK(&event);",
     ] {
         assert!(
             c.lines().any(|line| line == expected),
@@ -157,17 +147,16 @@ fn emitted_c_keeps_helper_bodies_and_report_block_indented() {
 }
 
 #[test]
-fn compiled_instrumented_c_matches_source_and_cfg() {
+fn compiled_quiet_c_matches_source_and_cfg_and_emits_no_stream_bytes() {
     for source in corpus() {
         let cfg = lower_cleanup_cfg(&source).unwrap();
         let reference = interpret_source(&source).unwrap();
         assert_eq!(interpret_cfg(&cfg).unwrap(), reference);
-        let c_observation = compile_and_run(&cfg);
-        assert_eq!(c_observation, reference);
+        compile_and_run(&cfg);
     }
 }
 
-fn compile_and_run(cfg: &TypedCfg) -> ExecutionObservation {
+fn compile_and_run(cfg: &TypedCfg) {
     let sequence = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
     let timestamp = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -256,10 +245,9 @@ fn compile_and_run(cfg: &TypedCfg) -> ExecutionObservation {
         "generated code failed under runtime instrumentation:\n{}",
         String::from_utf8_lossy(&run.stderr)
     );
-    let observation =
-        parse_c_observation(std::str::from_utf8(&run.stdout).unwrap(), cfg.error_abi()).unwrap();
+    assert!(run.stdout.is_empty(), "quiet emission wrote stdout");
+    assert!(run.stderr.is_empty(), "quiet emission wrote stderr");
     fs::remove_dir_all(directory).unwrap();
-    observation
 }
 
 fn rust_host_target() -> String {

@@ -26,6 +26,7 @@ extern fn demo_sum(buffer: ptr<const, u8>, count: u32) -> i32;
 extern fn demo_release(buffer: ptr<mut, u8>) -> unit;
 
 fn main() -> unit effects { io, alloc, mut } {
+    log_level trace;
     let b = demo_alloc(8) succeeds true else raise Failure;
     print dec borrow b;
     demo_fill(b, 7);

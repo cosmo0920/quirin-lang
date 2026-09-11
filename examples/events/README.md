@@ -23,8 +23,10 @@ Design record: [`docs/design/STD_EVENT_V1.md`](../../docs/design/STD_EVENT_V1.md
 
 ```qcore
 import std.event;
+import std.logger;
 
 fn main() -> i32 effects { io } {
+    log_level trace;
     event open;
     endpoints a b;
     watch reader a read;
@@ -39,7 +41,10 @@ fn main() -> i32 effects { io } {
 }
 ```
 
-```
+This example explicitly selects `log_level trace`, so the diagnostic logger
+renders the retained event observation on standard output:
+
+```text
 QCORE_EVENT_OPEN
 QCORE_EVENT_ENDPOINTS 0 1
 QCORE_EVENT_WATCH 0 0 READ
@@ -53,7 +58,12 @@ QCORE_EVENT_TEARDOWN
 QCORE_EVENT_RESULT 0
 ```
 
-Every number in that trace is a **model** identity the checker assigned, never a
+Standard error is empty. Without `log_level`, the same structured event
+sequence is retained by the checker and the null diagnostic sink writes
+nothing. The selected level is an explicit source decision; it is not an
+unconditional compiler-synthesized program transcript.
+Every identity in that trace is a **model**
+identity the checker assigned, never a
 real file descriptor. A real descriptor is not model-determined — the same
 program run twice may get different numbers — so a trace carrying one could not
 be compared against a reference at all. This is the discipline card
@@ -112,8 +122,8 @@ program checks it: a false premise produces a failed run, never a wrong verdict.
 ## Building and running
 
 Linux and macOS, through the workspace test that compiles the emitted C under
-`-Wall -Wextra -Werror -pedantic` and the sanitizers and compares its stdout with
-the reference execution:
+`-Wall -Wextra -Werror -pedantic` and the sanitizers and checks empty stdout plus
+the explicitly selected diagnostic log:
 
 ```sh
 cargo test -p qcore-compiler --test std_event
@@ -135,9 +145,9 @@ flag. An older Windows SDK or runtime selects the retained loopback pair.
 
 | Arm | Selected by | Wait / pair | Descriptor | Verification |
 |---|---|---|---|---|
-| Linux and other POSIX | `#else` | `poll(2)` / `socketpair(AF_UNIX, SOCK_STREAM, 0)` | `int` | **Runtime-verified** in the standing gate: compiled `-Werror -pedantic`, run under ASan/UBSan/LSan, stdout byte-compared with the reference. |
+| Linux and other POSIX | `#else` | `poll(2)` / `socketpair(AF_UNIX, SOCK_STREAM, 0)` | `int` | **Runtime-verified** in the standing gate: compiled `-Werror -pedantic`, run under ASan/UBSan/LSan, with the selected system trace pinned on stdout and stderr quiet. |
 | Apple | `__APPLE__` | the same POSIX pair, behind `_DARWIN_C_SOURCE` | `int` | Compile path designed in; the same workspace test runs it when the gate runs on macOS. **Not measured by this card** — residual `EVENT-V1-APPLE-RUN`. |
-| Windows | `_WIN32` | `WSAPoll` / AF_UNIX pathname listen-connect-accept, with loopback fallback | `SOCKET` | **Runtime-verified** by `compiler/tests/std_event.rs`: MSVC runs an AF_UNIX-required build, a forced runtime fallback, and a no-`afunix.h` build and byte-compares each with the reference. `#pragma comment(lib, "ws2_32.lib")` keeps them self-contained; `build-windows.ps1` remains the manual runner. |
+| Windows | `_WIN32` | `WSAPoll` / AF_UNIX pathname listen-connect-accept, with loopback fallback | `SOCKET` | **Runtime-verified** by `compiler/tests/std_event.rs`: MSVC runs an AF_UNIX-required build, a forced runtime fallback, and a no-`afunix.h` build, pinning the selected system trace on stdout and keeping stderr quiet. `#pragma comment(lib, "ws2_32.lib")` keeps them self-contained; `build-windows.ps1` remains the manual runner. |
 
 The Windows arm is the one whose *implementation* differs rather than only its
 declarations, because Winsock has no `socketpair(2)` and `WSAPoll` takes

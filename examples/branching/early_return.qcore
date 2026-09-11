@@ -1,3 +1,5 @@
+import std.logger;
+
 error Failure { Failed; }
 
 // A branch arm that returns.
@@ -16,6 +18,7 @@ error Failure { Failed; }
 // Remove either `drop a;` and this refuses — but at that *exit*, not at the
 // join. A conditional leak through an early return is still a conditional leak.
 fn main() -> i32 {
+    log_level trace;
     let a = qcore_acquire(1, true, Failure);
     if (3 < 5) {
         drop a;
