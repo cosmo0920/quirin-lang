@@ -77,6 +77,31 @@ pub const BUFFER_MODULE: &str = "std.buffer";
 /// therefore names this module *and* the output modules.
 pub const STRING_MODULE: &str = "std.string";
 
+/// Card `QUIRIN-SOCKET-V1`: the checked TCP and UDP socket vocabulary
+/// (`source.socket.v1`). It grants socket creation, bind, listen, connect,
+/// accept, send, receive and close over the **loopback interface**, and nothing
+/// else.
+///
+/// A tenth independent file-local opt-in, on exactly the terms
+/// `std.concurrency` and `std.event` state: the vocabulary is unavailable by
+/// default and importing another compilation input never grants this file the
+/// capability.
+///
+/// The name is `std.socket` and deliberately **not** `std.net`. Both words
+/// census clean (card report §4), so the choice is argued: a module name in this
+/// language claims exactly what it grants, and what this one grants is the BSD
+/// socket vocabulary. `std.net` would name a capability space — addressing, name
+/// resolution, interfaces, TLS — of which v1 implements none, and it stays
+/// available for whichever card supplies one.
+///
+/// It grants no **output**: `std.io` and `std.logger` still own every line, so a
+/// module that receives a byte and prints it names this module *and* the output
+/// ones. It grants no **buffer**: a payload is a bracketed list of check-time
+/// byte constants, and sending the contents of a `std.buffer` acquisition is the
+/// named follow-on `SOCKET-BUFFER-PAYLOAD`. It grants no **reactor**:
+/// registering a socket with `source.event.v1` is `SOCKET-EVENT-COMPOSE`.
+pub const SOCKET_MODULE: &str = "std.socket";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
@@ -88,6 +113,7 @@ pub struct ModuleImports {
     buffer: bool,
     event: bool,
     string: bool,
+    socket: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -115,6 +141,7 @@ impl ModuleImports {
                 BUFFER_MODULE => imports.buffer = true,
                 EVENT_MODULE => imports.event = true,
                 STRING_MODULE => imports.string = true,
+                SOCKET_MODULE => imports.socket = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -170,5 +197,12 @@ impl ModuleImports {
     /// never grants it and it never grants `std.buffer`.
     pub fn string(self) -> bool {
         self.string
+    }
+
+    /// Whether this file may create, bind, listen, connect, accept, send on,
+    /// receive from or close a socket (card `QUIRIN-SOCKET-V1`). Granted by no
+    /// other module, and granting none in return.
+    pub fn socket(self) -> bool {
+        self.socket
     }
 }

@@ -1974,6 +1974,27 @@ pub enum SemanticPass {
     /// meanings — which is what the precedent's "the code-to-condition mapping
     /// is stable under such a shift" is for.
     StandardString,
+    /// Card `QUIRIN-SOCKET-V1`: admission of `source.socket.v1` — the
+    /// `std.socket` bundled module's checked TCP and UDP surface. Owns
+    /// `Q080`–`Q089` (spec §L21), a band assigned by the integrator before the
+    /// card started, with `Q075`–`Q079` reserved for a sibling card of the same
+    /// wave and never touched here.
+    ///
+    /// A separate pass from `Event` on purpose. That pass admits a **reactor**:
+    /// its subject is readiness, a registration's custody edge on a descriptor,
+    /// and whether a dispatch turn has one well-defined observation. This one
+    /// admits a **transport**: its subject is the socket's own state machine
+    /// (created, bound, listening, connected), the bytes committed between two
+    /// sockets of this same program, and whether a receive is satisfied by that
+    /// program's own history. Neither range can state the other's conditions,
+    /// and the two routes are not composed in v1 (`SOCKET-EVENT-COMPOSE`).
+    ///
+    /// It is likewise separate from `StandardBuffer`, whose `Q054` custody code
+    /// and `Q057` effect code this pass does not reuse for its own `Q083` and
+    /// `Q087`, on §L21's rule that a code may not be reused by a second
+    /// semantic pass — even where the inherited refusal is literally the same
+    /// ownership checker's.
+    StandardSocket,
     PluginVerification,
 }
 
@@ -2776,6 +2797,33 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "dispatch"
             | "ready"
             | "idle"
+            // Card `QUIRIN-SOCKET-V1`: the `std.socket` statement keywords
+            // (`source.socket.v1`). Reserved for the same reason as every
+            // profile keyword above: they are clause words in a statement or in
+            // a `let` initialiser, never references to a binding, and without
+            // this `let s = tcp;` and `bind s;` collect `tcp`/`bind` as
+            // referenced names and refuse with `Q013`.
+            //
+            // `let`, `close`, `return` and the standard-IO line words are
+            // already reserved and are reused rather than respelled, which is
+            // why the release is spelled `close NAME;`. The constraint-14
+            // census ran over every `.qcore`/`.qc` fixture in the tree (412
+            // files) and every Rust string literal (41,529): none of the ten
+            // occurs in any QCore source position, the only occurrences at all
+            // being `send` and `bind` inside `//` comments of the contract
+            // corpus and Rust-side diagnostic text. `stream` was rejected as a
+            // candidate spelling by that same census, occurring as a contract
+            // `extern fn` parameter name.
+            | "tcp"
+            | "udp"
+            | "bind"
+            | "listen"
+            | "connect"
+            | "accept"
+            | "send"
+            | "recv"
+            | "sendto"
+            | "recvfrom"
     )
 }
 
@@ -2896,6 +2944,17 @@ pub fn source_diagnostic(
         // emission sites, and Q068 is also the code of this route's failed
         // certificate rederivation.
         SemanticPass::StandardString => "Q068",
+        // The generic presentation code of the socket pass, and the code of
+        // every shape refusal in it. The specific conditions Q081 (an operand
+        // that is not a check-time constant, or a custody position naming no
+        // socket), Q082 (the transport state machine's own refusal), Q083 (a
+        // refusal the inherited ownership checker reported), Q084 (a byte,
+        // payload length or receive count out of range), Q085 (the determinism
+        // boundary — a statement this program's own committed history does not
+        // satisfy), Q086 (a socket at a position it may not cross), Q087 (an
+        // undeclared derived effect), Q088 (a failed certificate rederivation)
+        // and Q089 (a backend refusal) are issued at their own emission sites.
+        SemanticPass::StandardSocket => "Q080",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

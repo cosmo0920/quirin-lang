@@ -312,6 +312,16 @@ pointer is the card that established it; read it before deviating.
     so a library named `spawn`, `join`, `qcore_buffer_new`, `qcore_buffer_read`,
     `qcore_buffer_write` or `qcore_error_payload` cannot select a route from its
     own spelling. Do not remove that exclusion. `native-library-source-binding`.
+    `QUIRIN-SOCKET-V1` added **ten** — `tcp`, `udp`, `bind`, `listen`, `connect`,
+    `accept`, `send`, `recv`, `sendto`, `recvfrom` — each a clause word in a
+    statement and never a reference, each measured load-bearing, and all ten
+    census-clean across every `.qcore`/`.qc` fixture (412 files) and every Rust
+    string literal (41,529). `let`, `close` and `return` are reused rather than
+    respelled, which is why the release is `close NAME;`. Two candidate spellings
+    were **rejected by the census** and must stay rejected: `stream` occurs as a
+    contract `extern fn` parameter name (shielded only by the following `:`), and
+    `socket` would name a transport the route deliberately makes explicit at
+    creation. `quirin-socket-v1`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -544,6 +554,7 @@ this table is a summary of it, not a second allocation.
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
 | `Q068`–`Q073` | `StandardString` | `source.string.v1`: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row. Band relocated from `Q065`–`Q070` at integration |
+| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |

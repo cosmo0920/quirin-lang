@@ -1,0 +1,44 @@
+// A checked UDP loopback echo, in pure QCore source (card QUIRIN-SOCKET-V1).
+//
+// The datagram half of `source.socket.v1`. It differs from the stream half in
+// one way that is modelled rather than hidden: **a datagram is taken whole.**
+// `recvfrom NAME COUNT;` refuses at `Q084` when COUNT is not the length of the
+// datagram at the head of the queue, and the one-byte value form
+// `let NAME = recvfrom NAME;` therefore only accepts a one-byte datagram. There
+// is no reassembly and no truncation, because neither is what a datagram is.
+//
+// The emitted program checks more than the payload here: a UDP socket is bound
+// but never connected, so the shim reads the source address `recvfrom` reports
+// and compares it with the bound address of the socket the model says sent the
+// datagram. A stray datagram delivered to the same ephemeral port fails the run
+// rather than being read as this one.
+import std.socket;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    // Two bound datagram sockets, each at a port the kernel picks. Neither
+    // listens and neither connects: `listen` on a udp socket is refused at
+    // `Q082`, and so is `connect`.
+    let client = udp;
+    bind client;
+    let server = udp;
+    bind server;
+
+    // "QCore" as one five-byte datagram, taken whole.
+    sendto client server [81, 67, 111, 114, 101];
+    recvfrom server 5;
+
+    // The reply is one byte, so the value form can bind it.
+    sendto server client [101];
+    let echoed = recvfrom client;
+
+    print dec echoed;
+    print hex echoed;
+
+    // Closing a datagram socket with queued datagrams is admitted — the queue is
+    // discarded locally and no packet is emitted — but there are none here.
+    close server;
+    close client;
+    return;
+}
