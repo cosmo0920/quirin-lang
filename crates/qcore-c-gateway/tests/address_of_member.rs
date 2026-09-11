@@ -448,8 +448,8 @@ fn a_certificate_resting_on_the_borrowed_position_is_refused_when_the_mode_chang
     }
     let certificate = certified(&borrowing_body("&hold->lock"), "w");
     let mutated_source = CONTRACTS.replacen(
-        "extern fn a_borrow(p: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(p);",
-        "extern fn a_borrow(p: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_consumed(p, nonnull);",
+        "    ensures normal resource_borrowed(p);",
+        "    ensures normal resource_consumed(p, nonnull);",
         1,
     );
     assert_ne!(mutated_source, CONTRACTS, "the mode anchor was found");
