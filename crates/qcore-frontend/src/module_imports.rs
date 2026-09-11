@@ -6,7 +6,7 @@ use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
     BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE,
-    LOGGER_MODULE, ModuleImports, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
+    LOGGER_MODULE, ModuleImports, SOCKET_MODULE, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -163,6 +163,26 @@ pub fn check_source_imports(
             span,
             EVENT_MODULE,
             "the checked event vocabulary",
+        )]);
+    }
+    // Card `QUIRIN-SOCKET-V1`. The same file-local opt-in discipline as
+    // concurrency and the event vocabulary: a socket is unavailable by default
+    // and importing another compilation input never grants this file the
+    // capability. One detector serves this gate and route selection, so a file
+    // can never be routed to `source.socket.v1` without having needed the
+    // import, or need the import without being routed there.
+    //
+    // `close NAME;` is deliberately **not** a gated use: `close` is an
+    // established statement head of two other profiles, and gating it here would
+    // make an existing module that closes a mutex guard depend on a module it
+    // never needed. That is the exclusion `STD-BUFFER` made for `drop`.
+    if !imports.socket()
+        && let Some(span) = crate::source_socket::socket_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            SOCKET_MODULE,
+            "the checked socket vocabulary",
         )]);
     }
     Ok(imports)

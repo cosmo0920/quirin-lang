@@ -138,5 +138,6 @@ import QCore.ObsReordering
 import QCore.StdBuffer
 import QCore.StdString
 import QCore.ComposeEventLines
+import QCore.StdSocket
 
 /-! The executable formal core of QCore-C revision 0.1. -/

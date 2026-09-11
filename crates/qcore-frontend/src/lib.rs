@@ -19,6 +19,7 @@ pub mod source_epoch_tasks;
 pub mod source_event;
 pub mod source_extern;
 pub mod source_mutex;
+pub mod source_socket;
 pub mod source_std_buffer;
 pub mod source_std_io;
 pub mod source_std_string;

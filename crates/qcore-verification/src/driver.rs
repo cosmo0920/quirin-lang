@@ -20,7 +20,8 @@ use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
 use qcore_core::{
     composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit,
-    std_event, std_event_c_emit, std_io, std_io_c_emit, std_string, std_string_c_emit,
+    std_event, std_event_c_emit, std_io, std_io_c_emit, std_socket, std_socket_c_emit, std_string,
+    std_string_c_emit,
 };
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
@@ -226,6 +227,12 @@ pub enum CheckedSourceModule {
     /// lowered program is retained beside it, so a consumer can re-derive rather
     /// than believe it.
     StandardString(Box<CheckedStringModule>),
+    /// One entry function checked under `source.socket.v1` (card
+    /// `QUIRIN-SOCKET-V1`): a module holding owned TCP and UDP sockets whose
+    /// every peer is another socket of the same module. The certificate is the
+    /// evidence and the lowered program is retained beside it, so a consumer can
+    /// re-derive rather than believe it.
+    StandardSocket(Box<CheckedSocketModule>),
 }
 
 /// A checked `source.buffer.v1` module (card `STD-BUFFER`).
@@ -266,6 +273,28 @@ pub struct CheckedBufferModule {
 pub struct CheckedStringModule {
     pub lowered: qcore_frontend::source_std_string::LoweredStringModule,
     pub certificate: std_string::StringCertificate,
+}
+
+/// A checked `source.socket.v1` module (card `QUIRIN-SOCKET-V1`).
+///
+/// Like [`CheckedBufferModule`] this carries no *sequential* evidence, and for
+/// the same reason: the entry binds real resource identities, but their custody
+/// is discharged by [`qcore_core::ownership::check_ownership`] over the
+/// operation list [`qcore_core::std_socket::custody_operations`] derives — the
+/// same cycle-3 checker the sequential resource-flow bundle runs, reached
+/// directly rather than through a `FunctionSemantics` synthesis this flat route
+/// has no statements to fill. The obligations are discharged, not skipped, and
+/// the certificate names every acquisition and every close so a reader can see
+/// what was discharged.
+///
+/// Beside that it publishes two things no other route has: the exact bytes every
+/// receive takes (which the emitted program **verifies**), and what
+/// [`qcore_core::os_endpoint::close_poststate`] answers for each close on both
+/// of its branches — which is why the emitted shim never retries a failed one.
+#[derive(Clone, Debug)]
+pub struct CheckedSocketModule {
+    pub lowered: qcore_frontend::source_socket::LoweredSocketModule,
+    pub certificate: std_socket::SocketCertificate,
 }
 
 /// A checked `source.event.v1` module (card `STD-EVENT`).
@@ -366,7 +395,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
         }
     }
 
@@ -386,7 +416,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -403,7 +434,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -423,7 +455,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -440,7 +473,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -457,7 +491,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -474,7 +509,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -496,7 +532,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -519,7 +556,8 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
     }
@@ -537,7 +575,8 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::StandardBuffer(module) => Some(module),
         }
     }
@@ -555,8 +594,28 @@ impl CheckedSourceModule {
             | Self::Composed(_)
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardSocket(_) => None,
             Self::StandardString(module) => Some(module),
+        }
+    }
+
+    /// The checked socket evidence (card `QUIRIN-SOCKET-V1`).
+    pub fn as_standard_socket(&self) -> Option<&CheckedSocketModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_)
+            | Self::Composed(_)
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::StandardString(_)
+            | Self::Event(_) => None,
+            Self::StandardSocket(module) => Some(module),
         }
     }
 
@@ -594,6 +653,9 @@ impl CheckedSourceModule {
             // And likewise for the event route: one entry is lowered, and the
             // profile admits no calls at all.
             Self::Event(_) => 1,
+            // And likewise for the socket route: one flat entry is lowered, and
+            // the profile admits no calls at all.
+            Self::StandardSocket(_) => 1,
         }
     }
 }
@@ -693,6 +755,21 @@ pub enum SourceExecutionProfile {
     /// interest is accepted and checked but **not executed**: it publishes no
     /// C and no reference observation.
     EventV1,
+    /// `source.socket.v1`: a flat sequential entry that creates owned TCP and
+    /// UDP sockets, binds them to the loopback interface on kernel-chosen ports,
+    /// connects and accepts **within the same module**, exchanges declared byte
+    /// sequences and closes them (card `QUIRIN-SOCKET-V1`).
+    ///
+    /// Its derived effect row carries `Alloc` and `Io` — never `Mut`, because the
+    /// route mutates no object of the program. Every custody refusal is
+    /// `qcore_core::ownership`'s, unedited, exactly as on `StandardBufferV1`.
+    /// What is new is a **determinism** decision no other route makes: the model
+    /// carries the bytes every send commits, so a receive the program's own
+    /// history does not satisfy is refused at check time rather than blocking,
+    /// and the bytes each receive takes are published and **verified by the
+    /// emitted program**. The emitted C is self-contained on all three platform
+    /// arms; it links no library and names Winsock from inside the emitted file.
+    StandardSocketV1,
 }
 
 #[derive(Clone, Debug)]
@@ -1036,6 +1113,35 @@ pub fn compile_files_with_registry(
     // spawns keeps its `Q600`.
     if qcore_frontend::source_std_string::has_source_string(&parsed) {
         return compile_string_source(&parsed, &typed, mode, options, &ranges);
+    }
+    // Card `QUIRIN-SOCKET-V1`, selected after the buffer and string routes above
+    // and before the standard-IO route below. All three neighbours are
+    // deliberate, on exactly the principle the two siblings state about each
+    // other:
+    //
+    // * **After the buffer route**, so a module that both holds an owned buffer
+    //   and opens a socket stays with the buffer route and keeps that route's
+    //   existing refusal for the statements it does not model. That is the v1
+    //   answer to "can a send carry a buffer" — no, and the refusal is an
+    //   *existing* route's rather than a new one this card wrote. Admitting it
+    //   needs a payload that is a borrowed extent rather than a list of
+    //   check-time constants, which is the named follow-on
+    //   `SOCKET-BUFFER-PAYLOAD`.
+    // * **After the string route**, for the same reason and with the same
+    //   follow-on name for text (`SOCKET-STRING-PAYLOAD`).
+    // * **Before the standard-IO route**, so a module that both receives a byte
+    //   and prints it reaches this route, which models both — its line-producing
+    //   statements are `source.std-io.v1`'s own, read by that route's own reader
+    //   and rendered by that route's own emitter, over **scalars only**. A module
+    //   that only prints fails this conjunction and falls through byte for byte.
+    //
+    // The event route is selected above this one, so a module that dispatches and
+    // sockets stays with `source.event.v1` and keeps its refusal; composing the
+    // two is the named follow-on `SOCKET-EVENT-COMPOSE`. The extern route is
+    // selected above all four, and every concurrent route above that, so a module
+    // that sockets and spawns keeps its `Q600`.
+    if qcore_frontend::source_socket::has_source_socket(&parsed) {
+        return compile_socket_source(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
@@ -4611,6 +4717,109 @@ fn compile_buffer_source(
         // `source.std-io.v1` carries its own.
         reference_observation: None,
         extern_observation: Some(reference_observation),
+    })
+}
+
+/// Compile one `source.socket.v1` module (card `QUIRIN-SOCKET-V1`).
+///
+/// The shape is deliberately [`compile_buffer_source`]'s — lower, check,
+/// **recheck**, interpret, emit — so the two routes' guarantees read the same
+/// way. What differs is what the interpretation step produces: a
+/// [`std_socket_c_emit::SocketObservation`] whose declared
+/// `qcore.obs-reordering.v1` relation is *strict by derivation* (this route has
+/// one thread of control and creates none), rather than a bare line list.
+fn compile_socket_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q080",
+            "entry-free `source.socket.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_socket::lower_source_socket(parsed, typed, &entry)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
+    let certificate = std_socket::check_socket_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardSocket,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_socket::recheck_socket_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q088",
+            SemanticPass::StandardSocket,
+            lowered.scope_span,
+            format!("the socket certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let observation = std_socket_c_emit::interpret_socket_program(&lowered.program, &certificate)
+        .map_err(|refusal| {
+        vec![plain_diagnostic(
+            "Q089",
+            format!("the socket reference execution refused this trace: {refusal:?}"),
+        )]
+    })?;
+    let emission =
+        std_socket_c_emit::emit_socket_c11(&lowered.program, &certificate).map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q089",
+                format!("the socket backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        // Every socket this entry opens is closed inside it — the inherited
+        // ownership checker refuses a normal exit that leaves any live — so no
+        // owned descriptor crosses the entry boundary.
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardSocket(Box::new(CheckedSocketModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::StandardSocketV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
+        // The reference observation of this route is the per-stream line trace,
+        // carried on `extern_observation` beside the extern route's own trace
+        // exactly as `source.buffer.v1` and `source.std-io.v1` carry theirs.
+        reference_observation: None,
+        extern_observation: Some(observation.labelled()),
     })
 }
 

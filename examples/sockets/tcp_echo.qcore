@@ -1,0 +1,54 @@
+// A checked TCP loopback echo, in pure QCore source (card QUIRIN-SOCKET-V1).
+//
+// Both ends of the connection are sockets of this same program. That is the
+// whole of v1's determinism story: there is no remote peer, so there is no
+// event this program does not itself cause, and every `recv` below is proved at
+// check time to be satisfied by bytes an earlier `send` already committed. A
+// receive the history does not satisfy is refused at `Q085` rather than
+// blocking at run time.
+//
+// Nothing that is not model-determined reaches the output: the port is chosen
+// by the kernel (every bind is to port 0) and never spelled, the descriptor
+// numbers are never printed, and the only lines are the two `print` statements
+// at the end. Two concurrent runs of this program therefore write the same
+// bytes.
+import std.socket;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    // A listening socket on the loopback interface, at a port the kernel picks.
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    // The client connects to that same listening socket, by name and not by
+    // address. `accept` then takes the connection the connect above queued —
+    // the model knows one is waiting, so this cannot block.
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    // "QCore", as five declared bytes. The server takes all five; the checker
+    // already knows they are there.
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+
+    // The echo, reversed, so the byte the client binds is not the byte it sent.
+    send server [101, 114, 111, 67, 81];
+
+    // The one-byte value form binds what it took; the bulk form drains the rest.
+    // A stream close with unread bytes would be refused at `Q085`.
+    let first = recv client;
+    recv client 4;
+
+    print dec first;
+    print hex first;
+
+    // Every socket is released. A leak here is refused by the unedited
+    // ownership checker at `Q083`, and so is a double close.
+    close server;
+    close client;
+    close listener;
+    return;
+}

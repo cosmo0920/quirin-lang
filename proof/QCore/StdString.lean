@@ -367,10 +367,10 @@ theorem the_string_capability_needs_its_module {names : List String}
 
 theorem the_string_module_grants_no_stream :
     QCore.ModuleImports.admitsPrint
-      ⟨false, false, false, false, false, false, false, true⟩ true = false := rfl
+      ⟨false, false, false, false, false, false, false, true, false⟩ true = false := rfl
 
 theorem the_string_module_grants_no_buffer :
     QCore.ModuleImports.admitsBuffer
-      ⟨false, false, false, false, false, false, false, true⟩ true = false := rfl
+      ⟨false, false, false, false, false, false, false, true, false⟩ true = false := rfl
 
 end QCore.StdString
