@@ -41,7 +41,7 @@
 //! The line-producing statements are `source.std-io.v1`'s own, read by that
 //! route's own reader and rendered by that route's own emitter, on the
 //! `source.buffer.v1` precedent. A custody name is still not an operand: a
-//! `borrow NAME` refuses at `Q065`, because this route publishes no live
+//! `borrow NAME` refuses at `Q074`, because this route publishes no live
 //! identity for a render (card `STD-FMT-DESCRIPTOR`).
 //!
 //! # This lowering decides nothing about custody
@@ -573,7 +573,7 @@ pub fn lower_source_event(
                         statements.push(lowered);
                         statement_spans.push(span);
                     }
-                    Err(message) => diagnostics.push(diagnostic("Q065", span, message)),
+                    Err(message) => diagnostics.push(diagnostic("Q074", span, message)),
                 }
                 continue;
             }
@@ -583,9 +583,9 @@ pub fn lower_source_event(
                         statements.push(EventStatement::Line(event));
                         statement_spans.push(span);
                     }
-                    Some(Err(message)) => diagnostics.push(diagnostic("Q065", span, message)),
+                    Some(Err(message)) => diagnostics.push(diagnostic("Q074", span, message)),
                     None => diagnostics.push(diagnostic(
-                        "Q065",
+                        "Q074",
                         span,
                         "this line-producing statement is not one `source.std-io.v1` models",
                     )),

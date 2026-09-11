@@ -439,7 +439,7 @@ fn rendering_a_custody_name_refuses_at_this_passes_own_code() {
     event close;
     return 0;",
     );
-    assert!(codes(&source).contains(&"Q065".to_owned()), "{source}");
+    assert!(codes(&source).contains(&"Q074".to_owned()), "{source}");
     assert!(
         message(&source).contains("is not a value this entry bound"),
         "{}",
@@ -494,7 +494,7 @@ fn a_borrowed_render_refuses_and_names_what_it_would_need() {
     event close;
     return 0;",
     );
-    assert!(codes(&source).contains(&"Q065".to_owned()));
+    assert!(codes(&source).contains(&"Q074".to_owned()));
     assert!(
         message(&source).contains("renders the model identity of a live resource"),
         "{}",
@@ -505,7 +505,7 @@ fn a_borrowed_render_refuses_and_names_what_it_would_need() {
 #[test]
 fn a_binding_that_shadows_an_endpoint_refuses_before_this_route_sees_it() {
     // Also measured rather than assumed. The model has its own collision gate
-    // (`Q065`, exercised directly in `crates/qcore-core/tests/unit/std_event.rs`),
+    // (`Q074`, exercised directly in `crates/qcore-core/tests/unit/std_event.rs`),
     // but no source program reaches it: a `let` is an ordinary binding to the
     // general resolver, and an endpoint name is an ordinary binding too, so the
     // duplicate is refused at `Q012` first. The model gate is kept for the same
@@ -542,7 +542,7 @@ fn an_idle_turn_binds_nothing_and_no_other_let_has_a_spelling() {
         let source = with_body(&format!(
             "    event open;\n{body}\n    event close;\n    return 0;"
         ));
-        assert!(codes(&source).contains(&"Q065".to_owned()), "{body}");
+        assert!(codes(&source).contains(&"Q074".to_owned()), "{body}");
         assert!(
             message(&source).contains("is the one binding `source.event.v1` models"),
             "{body}: {}",

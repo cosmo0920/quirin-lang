@@ -695,7 +695,7 @@ fn a_rendering_operand_this_entry_bound_no_value_for_refuses() {
         EventStatement::Return { status: 0 },
     ]);
     let errors = check_event_source_program(&program).expect_err("an unbound operand");
-    assert!(errors.iter().any(|error| error.code() == "Q065"));
+    assert!(errors.iter().any(|error| error.code() == "Q074"));
 }
 
 #[test]
@@ -708,7 +708,7 @@ fn a_borrowed_render_refuses_because_this_route_publishes_no_identity() {
         EventStatement::Return { status: 0 },
     ]);
     let errors = check_event_source_program(&program).expect_err("a borrowed render");
-    assert!(errors.iter().any(|error| error.code() == "Q065"));
+    assert!(errors.iter().any(|error| error.code() == "Q074"));
     assert!(
         errors
             .iter()
@@ -744,7 +744,7 @@ fn a_binding_that_collides_with_a_custody_name_refuses_at_the_model() {
         EventStatement::Return { status: 0 },
     ]);
     let errors = check_event_source_program(&program).expect_err("a colliding binding");
-    assert!(errors.iter().any(|error| error.code() == "Q065"));
+    assert!(errors.iter().any(|error| error.code() == "Q074"));
     assert!(
         errors
             .iter()

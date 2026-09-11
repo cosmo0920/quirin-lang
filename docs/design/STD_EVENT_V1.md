@@ -308,7 +308,7 @@ as declined for v1 with the grounds in §1.
 
 Card `COMPOSE-EVENT-LINES` (wave 23) refines this record in three places, and in
 no other. Evidence: `docs/reports/compose-event-lines/README.md`; spec §L21 row
-`Q065`; grammar §G02k.
+`Q074`; grammar §G02k.
 
 1. **§5's "no `let` and no scalar operand" is superseded by exactly one form.**
    `let NAME = dispatch ready E;` is the same dispatch turn `dispatch ready E;`

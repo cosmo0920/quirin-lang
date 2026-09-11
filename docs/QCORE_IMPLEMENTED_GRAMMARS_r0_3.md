@@ -1912,7 +1912,7 @@ name it resolved denoted an endpoint or a registration, a custody name. It now
 has `let NAME = dispatch ready E;` and nothing else — the byte that turn's
 callback drained off the endpoint, which is the byte this program's own `wake`
 delivered. A custody name is still not an operand: rendering one refuses at
-`Q065`, and `borrow NAME` refuses there too, because this route publishes no
+`Q074`, and `borrow NAME` refuses there too, because this route publishes no
 live custody identity for a render (`STD-FMT-DESCRIPTOR`). The derived effect
 row is still exactly `{Io}`, and `Alloc` and `Mut` are still unreachable — now
 because the one value form binds a byte rather than because there is no value
@@ -1977,8 +1977,8 @@ precedent.
 
 Diagnostics: `Q058` shape, `Q059` an unbound custody name, `Q060` the reactor
 model's own refusal, `Q061` the determinism boundary, `Q062` the effect row,
-`Q065` the composed line and value vocabulary's own refusals (second band of the
-same pass, card `COMPOSE-EVENT-LINES`), and `Q015` for a missing
+`Q074` the composed line and value vocabulary's own refusals (second band of the
+same pass, card `COMPOSE-EVENT-LINES`, relocated at integration from `Q065`), and `Q015` for a missing
 `import std.event;` or a line-producing statement's own module.
 
 **The composition moves none of the five codes above.** A line erases to no

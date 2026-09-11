@@ -13,7 +13,8 @@ card `OBS-REORDERING` (`docs/reports/wave22-obs-reordering/README.md`).
 **What landed.** An event entry may now carry `print`, `log` and `flush`, and
 one value form — `let NAME = dispatch ready E;`, the byte that turn's callback
 drained off the endpoint. `wake D BYTE;` declares which byte it delivers. One
-new diagnostic code, **`Q065`**, the `Event` pass's second band. One new
+new diagnostic code, **`Q074`**, the `Event` pass's second band — **relocated at
+integration from the `Q065` this card was written against** (§6.1). One new
 published example, `examples/events/wake_payload.qcore`, whose every line is a
 `|>` pipeline. **28** audited Lean theorems and definitions in a new
 `QCore.ComposeEventLines`.
@@ -85,11 +86,11 @@ additions, and nothing else:
 **The value vocabulary is exactly one form.** Before this card the route had
 none at all: every name it resolved was a custody name. It now has this one, and
 a second `let` initialiser has no spelling — `let v = 7;` and
-`let v = dispatch idle;` both refuse at `Q065`
+`let v = dispatch idle;` both refuse at `Q074`
 (`an_idle_turn_binds_nothing_and_no_other_let_has_a_spelling`).
 
 **The custody/value wall stands.** An endpoint or registration name at a
-rendering operand is refused at `Q065` rather than rendered as a number
+rendering operand is refused at `Q074` rather than rendered as a number
 (`rendering_a_custody_name_refuses_at_this_passes_own_code`), and a
 `borrow NAME` is refused with the reason: this route publishes no live custody
 identity for a render, which is card `STD-FMT-DESCRIPTOR`'s subject and not this
@@ -220,10 +221,10 @@ rather than as design, because that is what they are.
 
 | Shape | Code | Where decided |
 |---|---|---|
-| a rendering operand that is a custody name | `Q065` | this route |
-| `borrow NAME` at a rendering | `Q065` | this route, naming `STD-FMT-DESCRIPTOR` |
-| a `let` that is not the one binding form | `Q065` | this route |
-| a line-producing statement `source.std-io.v1` refuses | `Q065` | its reader's message, this pass's code |
+| a rendering operand that is a custody name | `Q074` | this route |
+| `borrow NAME` at a rendering | `Q074` | this route, naming `STD-FMT-DESCRIPTOR` |
+| a `let` that is not the one binding form | `Q074` | this route |
+| a line-producing statement `source.std-io.v1` refuses | `Q074` | its reader's message, this pass's code |
 | `wake D 256;` | `Q058` | this route — refused, never truncated |
 | a line in a function this route never lowers | `Q058` | this route (see below) |
 | two ready registrations, with or without a line | `Q061` | unchanged |
@@ -252,6 +253,35 @@ because the whole route refused `print`; admitting lines without extending the
 helper scan would have made it neither emitted nor refused. That is the one
 fail-closed hole the composition could have opened, and it is closed
 (`a_line_in_a_function_this_route_never_lowers_is_refused`).
+
+### 6.1 The band was relocated at integration, from `Q065` to `Q074`
+
+Recorded explicitly, because a diagnostic code is a stable published identity
+and a change to one is never silent (standing constraint 1).
+
+This card allocated `Q065` — the next free code on its base, main `52e3889c`,
+where `Q063`–`Q064` were the highest allocated — and said in its own §L21 row and
+at `SemanticPass::Event`'s definition site that **a collision discovered at
+integration relocates the unshipped band per the wave-3 `T07`/`T09` precedent**.
+That is what happened. Two cards of this wave merged ahead of it and hold the
+range:
+
+| Code range | Pass | Card |
+|---|---|---|
+| `Q065`–`Q067` | `NativeLibrary` (fourth range) | `NATIVE-LIBRARY-SOURCE-BINDING` |
+| `Q068`–`Q073` | `StandardString` | `STRING-SLICE` |
+| **`Q074`** | `Event` (second band) | **this card** |
+
+Nothing else moved. The relocation is a renumbering of one code across the
+implementation, the tests that pin it, the §L21 row, the grammar page, the
+design record's amendment and this report — **34 occurrences, one number**. The
+code-to-condition mapping is exactly the one §6 lists above and was stable under
+the shift by construction, which is the whole point of stating the band
+assumption before shipping: `Q074` refuses what `Q065` would have refused, at
+the same spans, with the same messages, and every other code of this pass
+(`Q058`–`Q062`) is untouched. The `Event` pass now owns two ranges, and the gap
+between them is the honest record of the order three cards merged in — the same
+record the `NativeLibrary` pass keeps of its own four.
 
 ## 7. The native half
 
@@ -346,7 +376,7 @@ measurement rather than the argument.
 
 | Artefact | Where |
 |---|---|
-| Checked model | `crates/qcore-core/src/std_event.rs` (payload queue, value namespace, lines, `Q065`) |
+| Checked model | `crates/qcore-core/src/std_event.rs` (payload queue, value namespace, lines, `Q074`) |
 | Observation, relation and emission | `crates/qcore-core/src/std_event_c_emit.rs` (`observe_event_program`, `EventObservation`, `concurrent_emitters`) |
 | Shim | `crates/qcore-core/src/qcore_event_poll_compat.h` (`qcore_event_wake` payload, `qcore_event_drain` out-parameter) |
 | Source lowering | `crates/qcore-frontend/src/source_event.rs` (`binding_statement`, the line heads) |
@@ -355,7 +385,7 @@ measurement rather than the argument.
 | End-to-end tests | `compiler/tests/compose_event_lines.rs` (**22**, one of them the sanitized native run) |
 | Rewritten pin | `compiler/tests/std_event.rs::a_module_that_both_dispatches_and_prints_stays_with_this_route_and_is_now_admitted` |
 | Example | `examples/events/wake_payload.qcore` and its section of `examples/events/README.md` |
-| Spec | `docs/QCORE_SPEC_r0_3.md` §L21 row `Q065`; `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md` §G02k |
+| Spec | `docs/QCORE_SPEC_r0_3.md` §L21 row `Q074`; `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md` §G02k |
 
 ## 12. Gate
 
@@ -426,16 +456,19 @@ This card may not edit `AGENTS.md`, `DEVELOPMENT.md` or
 1. **One new diagnostic code.** `AGENTS.md`'s diagnostics-namespace table needs
    a row — the authority is spec §L21, which this card updated:
 
-   > `Q065` | `Event` | second band of the same pass: the composition of
+   > `Q074` | `Event` | second band of the same pass: the composition of
    > `source.event.v1` with the source line vocabulary (`print`, `log`, `flush`)
    > and its one value form, `let NAME = dispatch ready E;`
 
    The band assumption is the `NativeLibrary` precedent — `Q063`–`Q064` were
-   allocated between the two event cards, so the pass owns two ranges. A
-   collision discovered at integration relocates this unshipped code per the
-   wave-3 `T07`/`T09` precedent; the code-to-condition mapping is stable under
-   such a shift, and `SemanticPass::Event`'s doc comment says so at the
-   definition site.
+   allocated between the two event cards, so the pass owns two ranges. **The
+   code is `Q074` because the band was relocated at integration** from the
+   `Q065` this card allocated on `52e3889c`, after
+   `NATIVE-LIBRARY-SOURCE-BINDING` merged holding `Q065`–`Q067` and
+   `STRING-SLICE` relocated its own band to `Q068`–`Q073` (§6.1). That is the
+   wave-3 `T07`/`T09` precedent the card's own §L21 row anticipated; the
+   code-to-condition mapping was stable under the shift, and
+   `SemanticPass::Event`'s doc comment records it at the definition site.
 
 2. **A proposed standing constraint**, offered because it is exactly the kind of
    rule the "when touching X, do not Y" inventory exists for:
@@ -519,7 +552,7 @@ This card may not edit `AGENTS.md`, `DEVELOPMENT.md` or
 > is written by the entry's own thread, every window is a barrier and the
 > declared relation is strict — the degenerate case `strict_iff_byte_equality`
 > names, so the existing byte comparison is not replaced but shown to be the
-> right one. One new code, `Q065`, the `Event` pass's second band, for the
+> right one. One new code, `Q074`, the `Event` pass's second band, for the
 > composition's own refusals: a custody name at a rendering operand, a `borrow`
 > render (`STD-FMT-DESCRIPTOR`), a `let` that is not the one binding form, and a
 > line shape `source.std-io.v1` refuses. **No reserved word was added.** The

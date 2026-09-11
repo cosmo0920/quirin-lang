@@ -391,9 +391,11 @@ pub struct StdEventCertificate {
 /// Why a `source.event.v1` entry was refused.
 ///
 /// The codes are the `Event` pass's bands: `Q058`–`Q062`
-/// (`docs/design/STD_EVENT_V1.md` §6) and the second band `Q065`, the composed
+/// (`docs/design/STD_EVENT_V1.md` §6) and the second band `Q074`, the composed
 /// line and value vocabulary's own refusals (card `COMPOSE-EVENT-LINES`, spec
-/// §L21). The band assumption and the relocation rule are recorded there.
+/// §L21). The second band was relocated at integration from `Q065`, which
+/// `NATIVE-LIBRARY-SOURCE-BINDING` holds; the band assumption and the
+/// relocation rule are recorded in §L21.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventSourceError {
     /// `Q058`: the flat entry shape this profile models is violated.
@@ -413,15 +415,15 @@ pub enum EventSourceError {
     Determinism { statement: usize, reason: String },
     /// `Q062`: the declared effect row does not admit the derived one.
     EffectNotDeclared { statement: usize, effect: Effect },
-    /// `Q065`: a rendering operand that is not a value this entry bound. The
+    /// `Q074`: a rendering operand that is not a value this entry bound. The
     /// composed line vocabulary's own refusal — the second band of this pass
     /// (card `COMPOSE-EVENT-LINES`).
     OperandNotBound { statement: usize, name: String },
-    /// `Q065`: a `borrow NAME` rendering. `source.event.v1` publishes no live
+    /// `Q074`: a `borrow NAME` rendering. `source.event.v1` publishes no live
     /// custody identity for a render, so the operand has nothing to resolve
     /// against — the named follow-on is `STD-FMT-DESCRIPTOR`.
     BorrowNotPublished { statement: usize, name: String },
-    /// `Q065`: a `let NAME = dispatch ready E;` whose name this entry already
+    /// `Q074`: a `let NAME = dispatch ready E;` whose name this entry already
     /// binds — to a value, an endpoint or a registration. The three namespaces
     /// are disjoint by construction and a collision is refused rather than
     /// shadowed.
@@ -439,7 +441,7 @@ impl EventSourceError {
             Self::EffectNotDeclared { .. } => "Q062",
             Self::OperandNotBound { .. }
             | Self::BorrowNotPublished { .. }
-            | Self::NameAlreadyBound { .. } => "Q065",
+            | Self::NameAlreadyBound { .. } => "Q074",
         }
     }
 
