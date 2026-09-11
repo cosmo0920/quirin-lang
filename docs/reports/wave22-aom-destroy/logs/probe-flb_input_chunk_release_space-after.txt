@@ -1,0 +1,165 @@
+function flb_input_chunk_release_space: status Unknown
+diagnostics: 51
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L18031  n90   NoOp                                     | int pass;
+L18032  n89   NoOp                                     | int pass_limit;
+L18033  n88   NoOp                                     | struct mk_list *input_chunk_iterator_tmp;
+L18034  n87   NoOp                                     | struct mk_list *input_chunk_iterator;
+L18035  n86   NoOp                                     | struct flb_router *router;
+L18036  n85   NoOp                                     | ssize_t dropped_record_count;
+L18037  n84   NoOp                                     | ssize_t dropped_byte_count;
+L18038  n83   NoOp                                     | int chunk_destroy_flag;
+L18039  n82   NoOp                                     | struct flb_input_chunk *old_input_chunk;
+L18040  n81   NoOp                                     | ssize_t released_space;
+L18041  n80   NoOp                                     | int chunk_released;
+L18042  n79   NoOp                                     | ssize_t chunk_size;
+L18043  n78   NoOp                                     | int task_id;
+L18044  n77   Clear released_space                     | released_space = 0;
+L18045  n76   Unknown: unsupported assignment expression | pass_limit = 1;
+        !! unsupported: unsupported assignment expression
+L18046  n75   BranchOnNull release_scope true_is_null=true | if (release_scope == 0) {
+L18047  n74   Unknown: unsupported assignment expression | pass_limit = 2;
+        !! unsupported: unsupported assignment expression
+L18049  n3    NoOp                                     | for (pass = 0; pass < pass_limit; pass++) {
+L18049  n4    NoOp                                     | for (pass = 0; pass < pass_limit; pass++) {
+L18049  n73   Clear pass                               | for (pass = 0; pass < pass_limit; pass++) {
+L18050  n7    Unknown: unmodeled call, aggregate or indirect access in for-loop condition | for (input_chunk_iterator = (&input_plugin->chunks)->next, input_chunk_iterator_tmp = input_chunk_iterator->next; input_chunk_iterator != (&input_plugin->chunks); input_chunk_iterator = input_chunk_iterator_tmp, input_chunk_iterator_tmp = input_chunk_iterator->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L18050  n8    Unknown: indirect memory access is outside the resource projection | for (input_chunk_iterator = (&input_plugin->chunks)->next, input_chunk_iterator_tmp = input_chunk_iterator->next; input_chunk_iterator != (&input_plugin->chunks); input_chunk_iterator = input_chunk_iterator_tmp, input_chunk_iterator_tmp = input_chunk_iterator->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L18050  n72   Unknown: indirect memory access is outside the resource projection | for (input_chunk_iterator = (&input_plugin->chunks)->next, input_chunk_iterator_tmp = input_chunk_iterator->next; input_chunk_iterator != (&input_plugin->chunks); input_chunk_iterator = input_chunk_iterator_tmp, input_chunk_iterator_tmp = input_chunk_iterator->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L18051  n71   Unknown: braced initializer, expression, or declaration is not modeled | old_input_chunk = ({ const typeof( ((struct flb_input_chunk *)0)->_head ) *__mptr = (input_chunk_iterator); (struct flb_input_chunk *)( (char *)__mptr - __builtin_offsetof(struct flb_input_chunk, _head) );});
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18052  n70   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (!flb_routes_mask_get_bit(old_input_chunk->routes_mask,
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18055  n69   NoOp                                     | continue;
+L18057  n68   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_safe_delete(new_input_chunk,
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18060  n67   NoOp                                     | continue;
+L18062  n66   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (pass == 0 &&
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18066  n65   NoOp                                     | continue;
+L18068  n64   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | chunk_size = flb_input_chunk_get_real_size(old_input_chunk);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L18069  n63   NoOp                                     | if (chunk_size < 0) {
+L18070  n61   Call flb_log_print(_, _, _, __qcore_literal__) -> _ | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] could not retrieve chunk real size");
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18070  n62   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] could not retrieve chunk real size");
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18071  n60   NoOp                                     | continue;
+L18073  n59   Clear chunk_released                     | chunk_released = 0;
+L18074  n58   Clear chunk_destroy_flag                 | chunk_destroy_flag = 0;
+L18075  n57   Unknown: unsupported assignment expression | task_id = -1;
+        !! unsupported: unsupported assignment expression
+L18076  n56   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (old_input_chunk->task != ((void*)0)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18077  n55   Unknown: indirect memory access is outside the resource projection | task_id = old_input_chunk->task->id;
+        !! unsupported: indirect memory access is outside the resource projection
+L18079  n54   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_drop_task_route(old_input_chunk->task,
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18083  n53   NoOp                                     | continue;
+L18085  n52   BranchOnNull release_scope true_is_null=true | if (release_scope == 0) {
+L18086  n49   Unknown: indirect memory access is outside the resource projection | flb_routes_mask_clear_bit(old_input_chunk->routes_mask,
+        !! unsupported: indirect memory access is outside the resource projection
+L18089  n46   NoOp                                     | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 619, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 619, output_plugin->name, output_plugin->fs_chunks_size, chunk_size, flb_input_chunk_get_name(old_input_chunk));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18089  n47   Unknown: indirect memory access is outside the resource projection | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 619, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 619, output_plugin->name, output_plugin->fs_chunks_size, chunk_size, flb_input_chunk_get_name(old_input_chunk));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18089  n48   Unknown: unmodeled call, aggregate or indirect access in branch condition | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 619, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 619, output_plugin->name, output_plugin->fs_chunks_size, chunk_size, flb_input_chunk_get_name(old_input_chunk));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18090  n45   Unknown: call to uncontracted function `flb_input_chunk_output_size_subtract` | flb_input_chunk_output_size_subtract(output_plugin, (size_t) chunk_size);
+        !! unsupported: call to uncontracted function `flb_input_chunk_output_size_subtract`
+L18091  n44   Unknown: indirect memory access is outside the resource projection | chunk_destroy_flag = flb_routes_mask_is_empty(
+        !! unsupported: indirect memory access is outside the resource projection
+L18094  n43   Unknown: unsupported assignment expression | chunk_released = 1;
+        !! unsupported: unsupported assignment expression
+L18096  n51   NoOp                                     | else if (release_scope == 1) {
+L18097  n50   Unknown: unsupported assignment expression | chunk_destroy_flag = 1;
+        !! unsupported: unsupported assignment expression
+L18099  n42   NoOp                                     | if (task_id >= 0) {
+L18100  n38   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] chunk '%s' evicted from output queue to make room " "under storage.total_limit_size: task_id=%d, input=%s > output=%s " "(out_id=%d), bytes=%zd, limit=%zu", flb_input_chunk_get_name(old_input_chunk), task_id, get_input_chunk_source_name(old_input_chunk), flb_output_name(output_plugin), output_plugin->id, chunk_size, output_plugin->total_limit_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18100  n39   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] chunk '%s' evicted from output queue to make room " "under storage.total_limit_size: task_id=%d, input=%s > output=%s " "(out_id=%d), bytes=%zd, limit=%zu", flb_input_chunk_get_name(old_input_chunk), task_id, get_input_chunk_source_name(old_input_chunk), flb_output_name(output_plugin), output_plugin->id, chunk_size, output_plugin->total_limit_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18103  n40   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] chunk '%s' evicted from output queue to make room " "under storage.total_limit_size: input=%s > output=%s " "(out_id=%d), bytes=%zd, limit=%zu", flb_input_chunk_get_name(old_input_chunk), get_input_chunk_source_name(old_input_chunk), flb_output_name(output_plugin), output_plugin->id, chunk_size, output_plugin->total_limit_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18103  n41   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(2)) flb_log_print(2, ((void*)0), 0, "[input chunk] chunk '%s' evicted from output queue to make room " "under storage.total_limit_size: input=%s > output=%s " "(out_id=%d), bytes=%zd, limit=%zu", flb_input_chunk_get_name(old_input_chunk), get_input_chunk_source_name(old_input_chunk), flb_output_name(output_plugin), output_plugin->id, chunk_size, output_plugin->total_limit_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18105  n37   NoOp                                     | if (dropped_record_count < 0) {
+L18106  n36   Unknown: call to uncontracted function `get_input_chunk_record_count` | dropped_record_count = get_input_chunk_record_count(old_input_chunk);
+        !! unsupported: call to uncontracted function `get_input_chunk_record_count`
+L18108  n35   NoOp                                     | if (dropped_byte_count < 0) {
+L18109  n34   Alias dropped_byte_count = chunk_size    | dropped_byte_count = chunk_size;
+        !! unresolved resource identity `chunk_size`
+L18111  n33   NoOp                                     | if (dropped_record_count == -1) {
+L18112  n24   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[task] error getting chunk record count : %s", old_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18112  n25   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[task] error getting chunk record count : %s", old_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18114  n32   NoOp                                     | else if (dropped_record_count > 0) {
+L18115  n31   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(output_plugin->cmt_dropped_records,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18119  n30   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (input_plugin->config && input_plugin->config->router &&
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18121  n29   Unknown: indirect memory access is outside the resource projection | router = input_plugin->config->router;
+        !! unsupported: indirect memory access is outside the resource projection
+L18122  n28   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(router->logs_drop_records_total,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18128  n27   Unknown: braced initializer, expression, or declaration is not modeled | cmt_counter_add(router->logs_drop_bytes_total,
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L18135  n26   Unknown: indirect memory access is outside the resource projection | flb_metrics_sum(15,
+        !! unsupported: indirect memory access is outside the resource projection
+L18139  n23   BranchOnNull chunk_destroy_flag true_is_null=false | if (chunk_destroy_flag) {
+        !! unresolved resource identity `chunk_destroy_flag`
+L18140  n22   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (old_input_chunk->task != ((void*)0)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18141  n17   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (old_input_chunk->task->users == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18142  n15   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[task] drop task_id %d with no active route from input plugin %s", old_input_chunk->task->id, new_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18142  n16   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[task] drop task_id %d with no active route from input plugin %s", old_input_chunk->task->id, new_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18143  n14   Unknown: indirect memory access is outside the resource projection | flb_task_destroy(old_input_chunk->task, 1);
+        !! unsupported: indirect memory access is outside the resource projection
+L18144  n13   Unknown: unsupported assignment expression | chunk_released = 1;
+        !! unsupported: unsupported assignment expression
+L18148  n20   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] drop chunk %s with no output route from input plugin %s", flb_input_chunk_get_name(old_input_chunk), new_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18148  n21   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] drop chunk %s with no output route from input plugin %s", flb_input_chunk_get_name(old_input_chunk), new_input_chunk->in->name);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18149  n19   Call flb_input_chunk_destroy(old_input_chunk, _) -> _ | flb_input_chunk_destroy(old_input_chunk, 1);
+        !! unresolved resource identity `old_input_chunk`
+L18150  n18   Unknown: unsupported assignment expression | chunk_released = 1;
+        !! unsupported: unsupported assignment expression
+L18153  n12   BranchOnNull chunk_released true_is_null=false | if (chunk_released) {
+        !! unresolved resource identity `chunk_released`
+L18154  n11   Unknown: unrecognized assignment destination | released_space += chunk_size;
+        !! unsupported: unrecognized assignment destination
+L18156  n10   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (released_space >= *required_space) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18157  n9    NoOp                                     | break;
+L18160  n6    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (released_space >= *required_space) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L18161  n5    NoOp                                     | break;
+L18164  n2    Unknown: unrecognized assignment destination | *required_space -= released_space;
+        !! unsupported: unrecognized assignment destination
+L18165  n1    NoOp                                     | return 0;
+exits:
+  L18165  node 1 custody Unknown sites []

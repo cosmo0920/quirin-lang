@@ -1,0 +1,44 @@
+{
+ "chunk-contracts": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/chunk-contracts.json.gz",
+  "produced_file": "resource-diagnostics.chunk-contracts.json",
+  "uncompressed_bytes": 4186178,
+  "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+ },
+ "contracts": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/contracts.json.gz",
+  "produced_file": "resource-diagnostics.contracts.json",
+  "uncompressed_bytes": 73200,
+  "uncompressed_sha256": "d81e61e13e5212ffd059a32d83938ff46560d276d39a82fba72138ffe0393e83"
+ },
+ "diagnostics": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/diagnostics.json.gz",
+  "produced_file": "resource-diagnostics.json",
+  "uncompressed_bytes": 11122499,
+  "uncompressed_sha256": "d60b95b11ac0190101673e58b0f54916df88e39fb0a74c741f027445ad402d11"
+ },
+ "diff-wave20-to-after": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/diff-wave20-to-after.json.gz",
+  "produced_file": "diff-wave20-to-after.json",
+  "uncompressed_bytes": 3175750,
+  "uncompressed_sha256": "13780710295d8733fe2f64d994e1106d0dbb6c19ed8c3b14a22858c1b0d7ec1a"
+ },
+ "diff-wave20-to-before": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/diff-wave20-to-before.json.gz",
+  "produced_file": "diff-wave20-to-before.json",
+  "uncompressed_bytes": 2733379,
+  "uncompressed_sha256": "f647b8d558982b9244ccc6280be09fe9def1f39fa5c001c219547e1780d84bef"
+ },
+ "source": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/source.json.gz",
+  "produced_file": "monkey-source.json",
+  "uncompressed_bytes": 1664660,
+  "uncompressed_sha256": "efc3d4e3d0466196f3d7664cb63fc59290df4bb87919aea00a3f303708eca4e3"
+ },
+ "source-effects": {
+  "archived_path": "docs/reports/wave22-aom-destroy/artifacts/source-effects.json.gz",
+  "produced_file": "resource-diagnostics.source-effects.json",
+  "uncompressed_bytes": 118505,
+  "uncompressed_sha256": "8e376cd06121c81abc8acea19c7c92ad764cafdad73f13af2f8d89ddb38ed97d"
+ }
+}

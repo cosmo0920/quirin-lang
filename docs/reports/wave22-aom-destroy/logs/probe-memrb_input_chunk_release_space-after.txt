@@ -1,0 +1,58 @@
+function memrb_input_chunk_release_space: status Unknown
+diagnostics: 15
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L19991  n33   NoOp                                     | int ret;
+L19992  n32   NoOp                                     | int released;
+L19993  n31   Clear removed_chunks                     | size_t removed_chunks = 0;
+L19994  n30   NoOp                                     | ssize_t chunk_size;
+L19995  n29   Clear released_space                     | ssize_t released_space = 0;
+L19996  n28   NoOp                                     | struct mk_list *tmp;
+L19997  n27   NoOp                                     | struct mk_list *head;
+L19998  n26   NoOp                                     | struct flb_input_chunk *ic;
+L19999  n6    Unknown: unmodeled call, aggregate or indirect access in for-loop condition | for (head = (&ins->chunks)->next, tmp = head->next; head != (&ins->chunks); head = tmp, tmp = head->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L19999  n7    Unknown: indirect memory access is outside the resource projection | for (head = (&ins->chunks)->next, tmp = head->next; head != (&ins->chunks); head = tmp, tmp = head->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L19999  n25   Unknown: indirect memory access is outside the resource projection | for (head = (&ins->chunks)->next, tmp = head->next; head != (&ins->chunks); head = tmp, tmp = head->next) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L20000  n24   Unknown: braced initializer, expression, or declaration is not modeled | ic = ({ const typeof( ((struct flb_input_chunk *)0)->_head ) *__mptr = (head); (struct flb_input_chunk *)( (char *)__mptr - __builtin_offsetof(struct flb_input_chunk, _head) );});
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L20001  n23   Unknown: indirect memory access is outside the resource projection | ret = flb_input_chunk_is_task_safe_delete(ic->task);
+        !! unsupported: indirect memory access is outside the resource projection
+L20002  n22   BranchOnNull ret true_is_null=true       | if (ret == 0) {
+L20003  n21   NoOp                                     | continue;
+L20005  n20   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | chunk_size = flb_input_chunk_get_real_size(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L20006  n19   Clear released                           | released = 0;
+L20007  n18   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->task != ((void*)0)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20008  n15   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->task->users == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L20009  n14   Unknown: indirect memory access is outside the resource projection | flb_task_destroy(ic->task, 1);
+        !! unsupported: indirect memory access is outside the resource projection
+L20010  n13   Unknown: unsupported assignment expression | released = 1;
+        !! unsupported: unsupported assignment expression
+L20014  n17   Call flb_input_chunk_destroy(ic, _) -> _ | flb_input_chunk_destroy(ic, 1);
+        !! unresolved resource identity `ic`
+L20015  n16   Unknown: unsupported assignment expression | released = 1;
+        !! unsupported: unsupported assignment expression
+L20017  n12   BranchOnNull released true_is_null=false | if (released) {
+        !! unresolved resource identity `released`
+L20018  n11   Unknown: unrecognized assignment destination | released_space += chunk_size;
+        !! unsupported: unrecognized assignment destination
+L20019  n10   NoOp                                     | removed_chunks++;
+L20021  n9    NoOp                                     | if (released_space >= required_space) {
+L20022  n8    NoOp                                     | break;
+L20025  n5    Alias *dropped_bytes = released_space    | *dropped_bytes = released_space;
+        !! unsupported: store through `*dropped_bytes` without an out-parameter contract
+L20026  n4    Alias *dropped_chunks = removed_chunks   | *dropped_chunks = removed_chunks;
+        !! unsupported: store through `*dropped_chunks` without an out-parameter contract
+L20027  n3    NoOp                                     | if (released_space >= required_space) {
+L20028  n2    NoOp                                     | return 0;
+L20030  n1    NoOp                                     | return -1;
+exits:
+  L20030  node 1 custody Unknown sites []
+  L20028  node 2 custody Unknown sites []

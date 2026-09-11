@@ -1,0 +1,113 @@
+function flb_input_chunk_destroy: status Unknown
+diagnostics: 39
+L0      n0    NoOp                                     | typedef long unsigned int size_t;
+L19709  n55   NoOp                                     | int tag_len;
+L19710  n54   NoOp                                     | int ret;
+L19711  n53   NoOp                                     | ssize_t bytes;
+L19712  n52   Clear tag_buf                            | const char *tag_buf = ((void*)0);
+L19713  n51   NoOp                                     | struct mk_list *head;
+L19714  n50   NoOp                                     | struct flb_output_instance *o_ins;
+L19715  n49   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_input_chunk_is_up(ic) == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19716  n48   Unknown: call to uncontracted function `flb_input_chunk_set_up` | flb_input_chunk_set_up(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_set_up`
+L19718  n31   Unknown: unmodeled call, aggregate or indirect access in for-loop condition | for( head = (&ic->in->config->outputs)->next; head != (&ic->in->config->outputs); head = head->next ) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L19718  n32   Unknown: indirect memory access is outside the resource projection | for( head = (&ic->in->config->outputs)->next; head != (&ic->in->config->outputs); head = head->next ) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L19718  n47   Unknown: indirect memory access is outside the resource projection | for( head = (&ic->in->config->outputs)->next; head != (&ic->in->config->outputs); head = head->next ) {
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+L19719  n46   Unknown: braced initializer, expression, or declaration is not modeled | o_ins = ({ const typeof( ((struct flb_output_instance *)0)->_head ) *__mptr = (head); (struct flb_output_instance *)( (char *)__mptr - __builtin_offsetof(struct flb_output_instance, _head) );});
+        !! unsupported: braced initializer, expression, or declaration is not modeled
+L19720  n45   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (o_ins->total_limit_size == -1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19721  n44   NoOp                                     | continue;
+L19723  n43   Unknown: call to uncontracted function `flb_input_chunk_get_real_size` | bytes = flb_input_chunk_get_real_size(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+L19724  n42   NoOp                                     | if (bytes == -1) {
+L19725  n41   NoOp                                     | continue;
+L19727  n40   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_routes_mask_get_bit(ic->routes_mask,
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19730  n39   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->fs_counted == 1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19731  n36   NoOp                                     | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2734, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 2734, o_ins->name, o_ins->fs_chunks_size, -bytes, flb_input_chunk_get_name(ic));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19731  n37   Unknown: indirect memory access is outside the resource projection | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2734, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 2734, o_ins->name, o_ins->fs_chunks_size, -bytes, flb_input_chunk_get_name(ic));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19731  n38   Unknown: unmodeled call, aggregate or indirect access in branch condition | {if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2734, "[%d] %s -> fs_chunks_size = %zu mod=%zd chunk=%s", 2734, o_ins->name, o_ins->fs_chunks_size, -bytes, flb_input_chunk_get_name(ic));};
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19732  n35   Unknown: call to uncontracted function `flb_input_chunk_output_size_subtract` | flb_input_chunk_output_size_subtract(o_ins, (size_t) bytes);
+        !! unsupported: call to uncontracted function `flb_input_chunk_output_size_subtract`
+L19733  n33   Unknown: indirect memory access is outside the resource projection | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] remove chunk %s with %ld bytes from plugin %s, " "the updated fs_chunks_size is %ld bytes", flb_input_chunk_get_name(ic), bytes, o_ins->name, o_ins->fs_chunks_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19733  n34   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(4)) flb_log_print(4, ((void*)0), 0, "[input chunk] remove chunk %s with %ld bytes from plugin %s, " "the updated fs_chunks_size is %ld bytes", flb_input_chunk_get_name(ic), bytes, o_ins->name, o_ins->fs_chunks_size);
+        !! unsupported: indirect memory access is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19737  n30   Unknown: call to uncontracted function `flb_input_chunk_is_up` | ret = flb_input_chunk_is_up(ic);
+        !! unsupported: call to uncontracted function `flb_input_chunk_is_up`
+L19738  n29   BranchOnNull ret true_is_null=true       | if (ret == 0) {
+L19739  n28   Unknown: indirect memory access is outside the resource projection | ret = cio_chunk_up_force(ic->chunk);
+        !! unsupported: indirect memory access is outside the resource projection
+L19740  n27   NoOp                                     | if (ret == -1) {
+L19741  n25   Unknown: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] cannot load chunk: %s", flb_input_chunk_get_name(ic));
+        !! unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19741  n26   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(1)) flb_log_print(1, ((void*)0), 0, "[input chunk] cannot load chunk: %s", flb_input_chunk_get_name(ic));
+        !! unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19744  n24   Unknown: call to uncontracted function `flb_input_chunk_get_tag` | ret = flb_input_chunk_get_tag(ic, &tag_buf, &tag_len);
+        !! unsupported: call to uncontracted function `flb_input_chunk_get_tag`
+L19745  n23   NoOp                                     | if (ret == -1) {
+L19746  n21   Unknown: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2761, "[input chunk] could not retrieve chunk tag: %s", flb_input_chunk_get_name(ic));
+        !! unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19746  n22   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (flb_log_check(5)) flb_log_print(5, "<stdin>", 2761, "[input chunk] could not retrieve chunk tag: %s", flb_input_chunk_get_name(ic));
+        !! unsupported: nested call `flb_input_chunk_get_name` inside a modeled call is outside the resource projection
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19748  n20   NoOp                                     | if (del == !0 && tag_buf) {
+L19749  n19   Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->event_type == 0) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19750  n10   Unknown: indirect memory access is outside the resource projection | flb_hash_table_del_ptr(ic->in->ht_log_chunks,
+        !! unsupported: indirect memory access is outside the resource projection
+L19753  n18   Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (ic->event_type == 1) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19754  n13   Unknown: indirect memory access is outside the resource projection | pthread_mutex_lock(&ic->in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19755  n12   Unknown: indirect memory access is outside the resource projection | flb_hash_table_del_ptr(ic->in->ht_metric_chunks,
+        !! unsupported: indirect memory access is outside the resource projection
+L19757  n11   Unknown: indirect memory access is outside the resource projection | pthread_mutex_unlock(&ic->in->metrics_chunk_lock);
+        !! unsupported: indirect memory access is outside the resource projection
+L19759  n17   Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (ic->event_type == 2) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19760  n14   Unknown: indirect memory access is outside the resource projection | flb_hash_table_del_ptr(ic->in->ht_trace_chunks,
+        !! unsupported: indirect memory access is outside the resource projection
+L19763  n16   Unknown: unmodeled call, aggregate or indirect access in branch condition | else if (ic->event_type == 4) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19764  n15   Unknown: indirect memory access is outside the resource projection | flb_hash_table_del_ptr(ic->in->ht_profile_chunks,
+        !! unsupported: indirect memory access is outside the resource projection
+L19768  n9    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->trace != ((void*)0)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19769  n8    Unknown: indirect memory access is outside the resource projection | flb_chunk_trace_destroy(ic->trace);
+        !! unsupported: indirect memory access is outside the resource projection
+L19771  n7    Unknown: indirect memory access is outside the resource projection | cio_chunk_close(ic->chunk, del);
+        !! unsupported: indirect memory access is outside the resource projection
+L19772  n6    Unknown: indirect memory access is outside the resource projection | mk_list_del(&ic->_head);
+        !! unsupported: indirect memory access is outside the resource projection
+L19773  n5    Unknown: unmodeled call, aggregate or indirect access in branch condition | if (ic->routes_mask != ((void*)0)) {
+        !! unsupported: unmodeled call, aggregate or indirect access in branch condition
+L19774  n4    Unknown: indirect memory access is outside the resource projection | flb_free(ic->routes_mask);
+        !! unsupported: indirect memory access is outside the resource projection
+L19775  n3    Unknown: indirect memory access is outside the resource projection | ic->routes_mask = ((void*)0);
+        !! unsupported: indirect memory access is outside the resource projection
+L19777  n2    Call flb_free(ic) -> _                   | flb_free(ic);
+        !! unresolved resource identity `ic`
+L19778  n1    NoOp                                     | return 0;
+exits:
+  L19778  node 1 custody Unknown sites []

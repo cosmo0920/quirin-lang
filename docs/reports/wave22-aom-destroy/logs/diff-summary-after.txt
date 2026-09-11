@@ -1,0 +1,17 @@
+archived: docs/reports/wave20-corpus/artifacts
+measured: measure/runs/after
+--- chunk-contracts
+    counts:   {"backend_teardown": {"added": 0, "after": 21, "before": 21, "changed": 0, "removed": 0}, "results": {"added": 0, "after": 96, "before": 96, "changed": 0, "removed": 0}}
+--- contracts
+    counts:   {"audit_selection": {"added": 0, "after": 5, "before": 5, "changed": 0, "removed": 0}, "manifest": {"added": 1, "after": 17, "before": 16, "changed": 0, "removed": 0}, "sources": {"added": 1, "after": 17, "before": 16, "changed": 0, "removed": 0}}
+    keys: {}
+    sources.added: [{"bytes": 6444, "key": "qcore/fluent_bit/input_chunk_destroy.qcore", "sha256": "2898bec519cbc30522c108571352c348493fa95d61c43acc4ee00030dbaeb3b6"}]
+    manifest.added: [{"key": "qcore/fluent_bit/input_chunk_destroy.qcore", "value": "qcore/fluent_bit/input_chunk_destroy.qcore"}]
+--- diagnostics
+    envelope: {"diagnostic_counts": {"after": "{'leak': 272, 'unknown_alias': 4408, 'unsupported': 49821}", "before": "{'leak': 273, 'unknown_alias': 4403, 'unsupported': 49825}"}}
+    counts:   {"units": {"added": 0, "after": 185, "before": 185, "changed": 1, "removed": 0}}
+--- source
+    envelope: {"compile_entry": {"after": "{'command': '/usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK_HAVE_MEMMEM -DMK_HAVE_MEMRCHR -DMK_HAVE_STAT_H -DMK_HAVE_SYS_UIO_H -DMK_HAVE_TIMERFD_CREATE -DMK_HAVE_UNISTD_H -DMK_HAVE_VALGRIND -DMK_THREADS_POSIX -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a448cb40452261259/build/cycle19/clang-pin/monkey/monkey-source/mk_core/../", "before": "{'command': '/usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK_HAVE_MEMMEM -DMK_HAVE_MEMRCHR -DMK_HAVE_STA
+    counts:   {"callbacks": {"added": 0, "after": 3, "before": 3, "changed": 0, "removed": 0}, "wrappers": {"added": 0, "after": 15, "before": 15, "changed": 4, "removed": 0}}
+--- source-effects
+    counts:   {"results": {"added": 0, "after": 96, "before": 96, "changed": 3, "removed": 0}}

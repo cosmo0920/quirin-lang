@@ -2,7 +2,7 @@
 """Constraint 22: read the `contracts.json` module keys RAW as well as
 normalised, so a normalisation collision cannot merge two modules into one row.
 
-Prints the raw key sets of the frozen wave-17 archive and of a produced run, the
+Prints the raw key sets of the frozen wave-20 archive and of a produced run, the
 normalised difference between them, whether normalisation collides on either
 side, and the checkout roots the raw keys embed.
 
@@ -16,7 +16,7 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-ARCHIVED = ROOT / "docs/reports/wave17-corpus/artifacts/contracts.json.gz"
+ARCHIVED = ROOT / "docs/reports/wave20-corpus/artifacts/contracts.json.gz"
 
 
 def main() -> int:
