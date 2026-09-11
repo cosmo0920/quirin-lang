@@ -349,6 +349,30 @@ full suite.
 
 ## Increment records
 
+Windows native-event increment (2026-09-11): `EVENT-V1-WINDOWS-AFUNIX`
+replaces `std.event`'s unconditional Windows loopback construction with the
+pinned Libevent 2.2.2-alpha shape: compile-time `<afunix.h>` detection,
+run-time `AF_UNIX`/`SOCK_STREAM` probing, a UTF-8 pathname-backed
+listen/connect/accept pair whose connector is separately bound for peer
+validation, attempted rollback on every pre-publication failure, and the
+existing AF_INET loopback route only for an unsupported family/type/protocol
+probe. Other probe failures refuse. The source surface, reactor/custody models, certificate,
+diagnostics, model identities and observation bytes are unchanged. The
+26-test `std_event` target now runs on Windows through the shared native-C
+harness and forces AF_UNIX, explicit loopback and no-header fallback builds;
+all three reproduce the reference trace, while an intentional early failure
+checks ordinary-exit pathname cleanup. The same harness repairs
+`bitwise_conditions`' Windows native cross-check, which previously tried to
+launch an absent Unix `cc`, and the two CRLF-sensitive fixture mutations are
+newline-agnostic. Evidence: `docs/reports/windows-std-event-af-unix/README.md`.
+
+Windows branch-arm gate repair (2026-09-11): the three native observation
+comparisons in `branch_arms` now use the established MSVC harness on Windows
+instead of trying to launch the absent Unix `cc`; non-Windows hosts retain the
+existing ASan/UBSan/LSan route. The emitted programs, reference observations,
+branch semantics, diagnostics and fixtures are unchanged. The three exact
+formerly failing tests and the complete 35-test target pass on Windows.
+
 Post-IF-ARMS gate repair (2026-09-11): the `bitwise_conditions` suite now pins
 the existing `Q044` refusal for an arm-local check-time constant binding on its
 concrete ground — the binding has no position after the join — rather than on

@@ -23,6 +23,10 @@ use std::collections::BTreeMap;
 
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const EARLY_RETURN: &str = include_str!("fixtures/branch_arms/early_return.qcore");
 const CALL_THEN_ARM: &str = include_str!("fixtures/branch_arms/call_then_arm.qcore");
 const CALL_ELSE_ARM: &str = include_str!("fixtures/branch_arms/call_else_arm.qcore");
@@ -613,65 +617,73 @@ fn the_other_routes_keep_their_refusals_for_the_widened_arms() {
 // 7. Sanitized native runs — both condition polarities
 // ---------------------------------------------------------------------------
 
-/// Compile and run the emitted C under ASan/UBSan (plus LSan where the platform
-/// provides it) and compare the program's own instrumentation output with the
-/// reference observation.
+/// Compile and run the emitted C with the Windows native harness or, elsewhere,
+/// under ASan/UBSan (plus LSan where the platform provides it), then compare
+/// the program's own instrumentation output with the reference observation.
 fn sanitized_run_matches_reference(source: &str, label: &str) {
-    use std::process::Command;
     let module = compile(source).unwrap_or_else(|errors| panic!("{label}: {errors:?}"));
     let c_source = module.c_source.as_deref().unwrap();
     let reference = module.reference_observation.as_ref().unwrap();
 
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-branch-arms-{label}-{}-{}",
-        std::process::id(),
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
-            .as_nanos()
-    ));
-    std::fs::create_dir(&directory).unwrap();
-    let generated = directory.join("generated.c");
-    let binary = directory.join("generated");
-    std::fs::write(&generated, c_source).unwrap();
-    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-    let compile_status = Command::new(&compiler)
-        .args([
-            "-std=c11",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-pedantic",
-            "-g",
-            "-O0",
-            "-fsanitize=address,undefined",
-            "-fno-omit-frame-pointer",
-        ])
-        .arg(&generated)
-        .arg("-o")
-        .arg(&binary)
-        .output()
-        .unwrap();
-    assert!(
-        compile_status.status.success(),
-        "{label}: C compiler rejected the emitted program:\n{}",
-        String::from_utf8_lossy(&compile_status.stderr)
-    );
-    let run = Command::new(&binary)
-        .env(
-            "ASAN_OPTIONS",
-            if cfg!(target_os = "macos") {
-                "detect_leaks=0:halt_on_error=1"
-            } else {
-                "detect_leaks=1:halt_on_error=1"
-            },
-        )
-        .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-        .output()
-        .unwrap();
+    #[cfg(target_os = "windows")]
+    let run = windows_c::run(c_source, None, &[]);
+
+    #[cfg(not(target_os = "windows"))]
+    let run = {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-branch-arms-{label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, c_source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile_status = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile_status.status.success(),
+            "{label}: C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile_status.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        let _ = std::fs::remove_dir_all(&directory);
+        run
+    };
     assert!(
         run.status.success(),
-        "{label}: the emitted program failed under ASan/UBSan/LSan:\n{}",
+        "{label}: the emitted program failed its native checks:\n{}",
         String::from_utf8_lossy(&run.stderr)
     );
     let stdout = String::from_utf8(run.stdout).unwrap();
@@ -682,7 +694,6 @@ fn sanitized_run_matches_reference(source: &str, label: &str) {
         &observed, reference,
         "{label}: the compiled program must observe what the reference does"
     );
-    let _ = std::fs::remove_dir_all(&directory);
 }
 
 /// The early return, run for real: the program exits through the **arm's** own
