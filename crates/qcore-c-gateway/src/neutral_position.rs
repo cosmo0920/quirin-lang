@@ -240,6 +240,21 @@ fn neutral(
     if depth > CALL_NESTING_LIMIT {
         return false;
     }
+    // Query operands are replaced only for this custody predicate. The caller
+    // still builds/refines control flow from the original expression bytes.
+    let queries = crate::type_query::scalar_operands(texts, model, types);
+    if queries.is_some()
+        && (contains_assignment(texts)
+            || texts
+                .windows(2)
+                .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"])))
+    {
+        // This position emits NoOp, so it has no place to forget the stale
+        // scalar facts a mutation would invalidate. Statement assignments use
+        // OpaqueValue instead; expression mutations need their own lowering.
+        return false;
+    }
+    let texts = queries.as_deref().unwrap_or(texts);
     let mut spans: Vec<(usize, usize)> = Vec::new();
     let mut index = 0usize;
     while index + 1 < texts.len() {
@@ -751,9 +766,16 @@ mod tests {
     }
 
     #[test]
-    fn sizeof_is_never_an_admitted_call() {
+    fn scalar_sizeof_is_admitted_without_borrowing_a_callee_contract() {
         let env = environment(vec![("sizeof", neutral_contract(1))]);
-        assert!(!admits(NO_UNIT, SCALAR_BODY, "sizeof ( n )", &env));
+        assert!(admits(NO_UNIT, SCALAR_BODY, "sizeof ( n )", &env));
+        assert!(admits(
+            NO_UNIT,
+            SCALAR_BODY,
+            "sizeof ( n )",
+            &environment(vec![])
+        ));
+        assert!(!admits(NO_UNIT, SCALAR_BODY, "sizeof ( n [ 2 ] )", &env));
     }
 
     #[test]

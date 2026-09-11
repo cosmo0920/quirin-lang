@@ -3184,6 +3184,32 @@ impl Parser<'_> {
                 description: "local declaration may shadow a formal resource identity".into(),
             };
         }
+        // Fixed scalar queries are data, but their numerical result is not
+        // modeled. Overwrite any old scalar/null fact with OpaqueValue rather
+        // than leaving it stale or binding the predicate's marker as a value.
+        if let Some(equal) = assignment
+            && let Some(destination) = direct_assignment_destination(&texts[..equal])
+            && let Some(right) = crate::type_query::scalar_operands(
+                &texts[equal + 1..],
+                &self.typed_model,
+                &self.typed_types,
+            )
+            && !right.contains(&"=")
+            && !right
+                .windows(2)
+                .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
+            && crate::typed_field_access::is_scalar_initializer(
+                &destination,
+                &right,
+                &self.typed_model,
+                &self.typed_types,
+            )
+        {
+            return LegacyInstruction::OpaqueValue {
+                destination,
+                alias_read: None,
+            };
+        }
         // One typed exception to the lexical indirect-access gate below: a
         // direct scalar-field access whose declared types make it
         // custody-neutral is a no-op for this projection. The whitelist is
@@ -3857,8 +3883,9 @@ fn find_call<'a>(tokens: &'a [&'a str]) -> Option<(usize, &'a str)> {
     })
 }
 
-/// The C type operators, which take a type or an unevaluated operand and can
-/// therefore never acquire, release or transfer a resource identity.
+/// C type-operator tokens, distinguished lexically from ordinary callees.
+/// This list alone proves no operand unevaluated: sizeof can evaluate VLA
+/// bounds. The fixed scalar query rule establishes its narrower typed premise.
 pub(crate) const TYPE_OPERATORS: [&str; 6] = [
     "sizeof",
     "_Alignof",

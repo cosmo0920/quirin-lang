@@ -1,3 +1,4 @@
+import QCore.FixedScalarQuery
 import QCore.BucketTally
 import QCore.CtReasons
 import QCore.ProcessQuotaPlan

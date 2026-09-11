@@ -1,0 +1,10 @@
+import QCore.FixedScalarQuery
+#print axioms QCore.FixedScalarQuery.erasure_preserves_effects
+#print axioms QCore.FixedScalarQuery.variable_array_refuses
+#print axioms QCore.FixedScalarQuery.opaque_operand_refuses
+#print axioms QCore.FixedScalarQuery.alignof_local_refuses
+#print axioms QCore.FixedScalarQuery.scalar_queries_preserve_a_sibling_call
+#print axioms QCore.FixedScalarQuery.query_assignment_preserves_custody
+#print axioms QCore.FixedScalarQuery.query_assignment_forgets_old_value
+#print axioms QCore.FixedScalarQuery.other_scalar_facts_survive
+#print axioms QCore.FixedScalarQuery.query_assignment_keeps_both_branches

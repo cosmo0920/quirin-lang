@@ -25,6 +25,7 @@ mod neutral_position;
 mod publication;
 pub mod source_call_use;
 pub mod teardown_source;
+mod type_query;
 pub mod typed_c_ast;
 mod typed_field_access;
 pub mod typed_source;

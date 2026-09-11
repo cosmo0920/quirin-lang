@@ -281,8 +281,16 @@ fn braced_declarations_retain_following_cleanup_without_certifying_their_effects
 }
 
 #[test]
-fn c_type_operators_remain_unknown_without_being_reported_as_missing_contracts() {
-    for operator in ["sizeof", "_Alignof", "typeof", "__typeof__"] {
+fn only_fixed_scalar_c_queries_leave_the_type_operand_refusal() {
+    // Wave 23 deliberately replaces the sizeof/_Alignof scalar pins. GNU
+    // type operators and the evaluated VLA case keep their original refusal.
+    for operator in ["sizeof", "_Alignof"] {
+        let summary = analyze(&format!(
+            "void subject(void) {{ int x = {operator}(int); }}"
+        ));
+        assert_eq!(summary.status, AnalysisStatus::Safe);
+    }
+    for operator in ["typeof", "__typeof__"] {
         let source = format!("void subject(void) {{ int x = {operator}(int); }}");
         let summary = analyze(&source);
         assert_eq!(summary.status, AnalysisStatus::Unknown);

@@ -1,0 +1,22 @@
+{
+  "base_commit": "0a7e3660",
+  "entry_dirty_files": [
+    "AGENTS.md",
+    "DEVELOPMENT.md",
+    "docs/reviews/r0_3/acceptance_matrix.json"
+  ],
+  "source_revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "source_root": "build/cycle19/wave20-pin/fluent-bit-clang-source",
+  "monkey_database": "build/cycle19/wave20-pin/monkey/monkey-build/compile_commands.json",
+  "provider_package": "build/cycle19/provider-packages-wave20/qcore.chunkio",
+  "source_input": "HistoricalStdin",
+  "before_binary": "cargo build -p qcore-compiler --example cycle19_fluent_bit_libraries_audit, before source edits",
+  "after_binary": "same build after source edits",
+  "archive_reference": "docs/reports/wave22-aom-destroy/artifacts",
+  "note": "Existing wave-22 ledger edits were preserved. No raw unit promotion is inferred from fixture acceptance.",
+  "input_sha256": {
+    "build/cycle19/wave20-pin/fluent-bit-clang-source/build/compile_commands.json": "6eff049dc5846a1e4e9cd47b2a811a877246377dd4be869ab30a5bec28dff261",
+    "build/cycle19/wave20-pin/monkey/monkey-build/compile_commands.json": "0c37f4350ab58fb822990c513fcf0cfaf9419a56ce9b69b803a2717bc76203b0",
+    "build/cycle19/wave20-pin/fluent-bit-clang-source/src/flb_input_chunk.c": "a537fe347ec1be6c2af7971b55579284e0402f351334f3cfcf0c2c800fe0977e"
+  }
+}

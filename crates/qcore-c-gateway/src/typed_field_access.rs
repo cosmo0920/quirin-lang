@@ -839,6 +839,17 @@ impl TypedAccessModel {
         }
     }
 
+    /// A scalar type name with no declarator or expression syntax. Used by
+    /// the fixed type-query rule; an array typedef remains opaque here.
+    pub(crate) fn scalar_type_name(&self, specifiers: &[&str]) -> bool {
+        !specifiers.is_empty()
+            && specifiers.iter().all(|text| {
+                text.chars()
+                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '_')
+            })
+            && self.classify_specifiers(specifiers, 0) == DeclaredType::Scalar
+    }
+
     fn declared_type(&self, specifiers: &[&str], stars: usize, array: bool) -> DeclaredType {
         if array {
             return DeclaredType::Opaque;

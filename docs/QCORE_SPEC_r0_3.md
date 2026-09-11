@@ -702,6 +702,16 @@ The unrestricted-C gateway first invokes Clang with a declared dialect, include 
 
 Unsupported control flow, unresolved alias identities, missing contracts, and incomplete function projection preserve Unknown. An analysis of main-source definitions differs from an analysis of every preprocessed definition; that scope choice MUST travel with the result. A library-specific source importer may support a different subset from the generic gateway and must report its own coverage.
 
+The fixed scalar type-query rule admits `sizeof` and `_Alignof` of a readable
+scalar type name, and `sizeof` of one declared scalar variable, as unevaluated
+data in the generic gateway's six expression positions and scalar assignments.
+Its operand-class marker MUST NOT become a numerical size, alignment or branch
+fact. A modeled assignment forgets the destination's old scalar value;
+expression-position mutations beside a query remain unsupported by this rule.
+Variable-length arrays, opaque types and compound operands are outside this
+admission. The same token-derived decision governs summary validation and
+certificate rechecking. See [the bounded implementation record](reports/wave23-c-operations/README.md).
+
 External resource declarations are assumptions. W4 may infer an internal summary, but a candidate is published only after body re-analysis validates its entry assumptions, every modeled exit, formal disposition, result custody, and absence of unmodeled escape. The certificate checker re-derives summaries instead of trusting serialized labels.
 
 The current W4 implementation supports bounded direct Out, Stored, Removed,

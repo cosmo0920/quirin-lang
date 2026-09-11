@@ -454,18 +454,16 @@ fn a_member_call_in_a_return_expression_stays_unknown() {
     assert_eq!(run.status("selected"), AnalysisStatus::Unknown);
 }
 
-/// `sizeof` is call-shaped to the lexical scan and is never a declared callee.
+/// Wave 23 supplies the fixed scalar query premise this earlier pin lacked.
 #[test]
-fn a_sizeof_in_a_return_expression_keeps_its_existing_answer() {
+fn a_fixed_scalar_sizeof_in_a_return_expression_is_now_admitted() {
     if !clang_available() {
         return;
     }
     let run = run("unsigned long sized(void) {
             return sizeof(unsigned long);
         }");
-    // The existing lexical predicate already refuses it; this pins that the new
-    // rule does not admit it either.
-    assert_eq!(run.status("sized"), AnalysisStatus::Unknown);
+    assert_eq!(run.status("sized"), AnalysisStatus::Safe);
 }
 
 // ---------------------------------------------------------------------------
@@ -782,4 +780,103 @@ fn a_for_condition_admits_a_neutral_call_from_its_original_spelling() {
         "unsupported: {:?}",
         run.unsupported("subject")
     );
+}
+
+// Wave 23: fixed scalar type queries, through the production importer and
+// certificate replay. Sizes/alignments are never interpreted as numeric facts.
+#[test]
+fn fixed_scalar_queries_cover_all_six_expression_positions() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("unsigned long queries(unsigned int n) {
+        if (sizeof(unsigned int) == 4) { n = 0; }
+        while (sizeof(unsigned int) < 1) { break; }
+        for (; _Alignof(unsigned long) < 1;) { break; }
+        do { n = 1; } while (sizeof n < 1);
+        switch (sizeof(n)) { case 4: break; default: break; }
+        return sizeof(unsigned long) + _Alignof(unsigned int);
+    }");
+    assert_eq!(run.status("queries"), AnalysisStatus::Safe);
+}
+
+#[test]
+fn scalar_query_assignment_forgets_old_zero_without_inventing_a_size() {
+    if !clang_available() {
+        return;
+    }
+    for rhs in ["sizeof(unsigned long)", "_Alignof(unsigned long)"] {
+        let run = run(&format!(
+            "void subject(void) {{
+            unsigned long n; n = 0; n = {rhs};
+            if (n) {{ void *p; p = q_alloc(); }}
+        }}"
+        ));
+        assert_ne!(run.status("subject"), AnalysisStatus::Safe, "{rhs}");
+        assert!(run.leaks("subject") > 0, "{rhs}");
+    }
+}
+
+#[test]
+fn scalar_query_initializers_and_typedefs_are_replayed() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("typedef unsigned long count_t;
+        void subject(void) {
+            count_t n = sizeof(count_t) + _Alignof(unsigned int);
+            n = sizeof n;
+        }");
+    assert_eq!(run.status("subject"), AnalysisStatus::Safe);
+    assert!(run.certificate.is_some());
+}
+
+#[test]
+fn type_queries_do_not_hide_evaluated_calls_or_pointer_results() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "return sizeof(unsigned int) + (q_alloc() != 0);",
+        "return sizeof(int[(q_free(p), 3)]);",
+        "return sizeof(q_alloc());",
+        "return sizeof(*p);",
+        "return sizeof(void *);",
+    ] {
+        let run = run(&format!("unsigned long queries(int *p) {{ {body} }}"));
+        assert_eq!(run.status("queries"), AnalysisStatus::Unknown, "{body}");
+    }
+}
+
+#[test]
+fn a_vla_typedef_never_becomes_a_fixed_scalar_query() {
+    if !clang_available() {
+        return;
+    }
+    let run = run("unsigned long queries(unsigned int n) {
+        typedef int vector[n]; return sizeof(vector);
+    }");
+    assert_eq!(run.status("queries"), AnalysisStatus::Unknown);
+}
+
+#[test]
+fn expression_queries_do_not_erase_scalar_mutations() {
+    if !clang_available() {
+        return;
+    }
+    for condition in ["(n = sizeof(int))", "sizeof(int) + n++"] {
+        let run = run(&format!(
+            "void subject(void) {{
+            unsigned long n; n = 0;
+            if ({condition}) {{ }}
+            if (n) {{ void *p; p = q_alloc(); }}
+        }}"
+        ));
+        assert_ne!(run.status("subject"), AnalysisStatus::Safe, "{condition}");
+        assert!(
+            run.unsupported("subject")
+                .iter()
+                .any(|text| text.contains("branch condition"))
+        );
+    }
 }
