@@ -1295,9 +1295,11 @@ route byte for byte.
 
 The grammar adds **no statement and no reserved word**. The three line-producing
 statements are §G02g's, read by that route's own parser; the scoped-task forms
-are §G02c's, lowered by that route's own lowering. One thing is widened: the
-task entry's `effects { … }` row admits `io`, and *only* on this route — off it,
-`io` is still the unsupported task effect that refuses at `Q020`.
+are §G02c's, lowered by that route's own lowering. One thing is widened: a task
+function's `effects { … }` row admits `io`, and *only* on this route — off it,
+`io` is still the unsupported task effect that refuses at `Q020`. The entry must
+declare it whenever the composed program writes at all, and since card
+`OBS-REORDERING` a **worker** that writes must declare it in its own row too.
 
 ```ebnf
 task_stmt   = ... | io_stmt ;          (* §G02c plus §G02g's three, verbatim *)
@@ -1358,8 +1360,10 @@ refused on this route entirely (§G02i is where a borrowed render is admitted,
 over a model that publishes a ledger the join can read).
 
 The composed observation is per stream, exactly as elsewhere: standard output
-carries this route's `print` lines *and* the synthesized task trace, in one real
-order on that one stream, and no order between stdout and stderr is modeled.
+carries this route's `print` lines *and* the synthesized task trace, on that one
+stream, and no order between stdout and stderr is modeled. That stream's order
+is one real order when every line on it is the parent's — which it is unless a
+worker `print`s — and otherwise is the declared reordering relation's.
 Removing this route's own lines from standard output leaves exactly the task
 route's rendering of the same module, which is checked over the four published
 `examples/threads` programs and proved in general as

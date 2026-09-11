@@ -276,7 +276,7 @@ The derived `stderr` relation, asserted in
 | Window | Size | Records |
 |---|---|---|
 | barrier | 1 | parent `[INFO] 0` |
-| concurrent | 15 | worker 1's six, worker 2's six, parent's three — three emitters, so `15!/(6!·6!·3!)` = 168,168 admitted streams |
+| concurrent | 15 | worker 1's six, worker 2's six, parent's three — three emitters, so `15!/(6!·6!·3!)` = 420,420 admitted streams |
 | barrier | 1 | parent `[INFO] 42` |
 
 The derived `stdout` relation has **one** emitter and admits exactly one stream,
@@ -445,7 +445,7 @@ name inside an `effects { … }` row and was already read there by
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement |
-| `cargo test --workspace --no-fail-fast` | see §10.1 |
+| `cargo test --workspace --no-fail-fast` | **3,384 passed, 0 failed, 8 ignored**, exit **0** — see §10.1 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
@@ -460,7 +460,22 @@ under `target/` and never in the shared scratchpad.
 
 ### 10.1 The workspace run
 
-*(filled in below at the closing measurement.)*
+One run, no retries, doctests included: **3,384 passed, 0 failed, 8 ignored**
+across 192 targets, exit **0**. **None of the four `P02-FLAKE` rows (standing
+constraint 16) tripped** — the `RLIMIT_NPROC` conformance test, the
+process-lifecycle budget test, the confined-fixture write test and
+`real_packages_preserve_unknown_and_reject_mutations` all passed on the first
+attempt, so nothing here rests on a re-run and no assertion was weakened.
+
+For the integrator: five sibling worktrees were building and testing on the same
+machine throughout (load average 20–44), so wall-clock timings here are not
+comparable with a quiet run — including §6's, which is why that section gives
+both a quiet and a loaded number. None of the results depends on them.
+
+The count is 3,384 against the 3,296 `COMPOSE-CONCURRENCY` published at its own
+checkpoint. This card's share of the difference is **40** (§10.2); the rest is
+whatever landed on main between that checkpoint and `ec5535a9`, which this card
+did not measure and does not claim.
 
 ### 10.2 Tests added
 

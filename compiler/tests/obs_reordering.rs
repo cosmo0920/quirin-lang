@@ -314,7 +314,7 @@ fn the_derived_relation_is_the_spawn_join_structure() {
         "the pre-spawn line and the post-join line are ordered against everything"
     );
     assert!(!err.is_strict(), "the middle window has three emitters");
-    // Three emitters with 6, 6 and 3 lines: 15!/(6!·6!·3!) = 168,168 admitted
+    // Three emitters with 6, 6 and 3 lines: 15!/(6!·6!·3!) = 420,420 admitted
     // streams, which is what asking for a bound of 4,096 refuses to enumerate.
     assert_eq!(err.admitted_streams(4096), None);
 }
