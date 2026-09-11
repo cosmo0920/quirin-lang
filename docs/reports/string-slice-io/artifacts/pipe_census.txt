@@ -1,0 +1,31 @@
+# Card STRING-SLICE-IO, report §5: the measurement behind widening the pipe's
+# closed sink-stage table from selector counts to selector ranges.
+#
+# Every complete piped sink statement on the card's base, main cb2905f0:
+#
+#   git grep -hoE '\|>[[:space:]]*(print|log)[^;]*;' cb2905f0 \
+#     -- '*.qcore' '*.qc' '*.rs' | sort | uniq -c | sort -rn
+#
+# 126 occurrences in 12 shapes. Every one names its head's maximum selector
+# count (print 1, log 2) or more, so widening each entry to a range leaves
+# every one of them desugaring to exactly the same tokens. The two that are
+# not at the maximum exactly are refusal fixtures: `print nope` is one
+# selector -- at the maximum, refused at Q013 because `nope` is an unbound
+# name -- and `print dec hex` is two, above it, refused at Q036 before this
+# card and after it.
+#
+# No `|> print;` and no `|> log LEVEL;` occurs on the base at all. Every one
+# in the tree after this card is this card's own.
+#
+     48 |> log info dec;
+     45 |> print dec;
+      7 |> log warn hex;
+      6 |> log warn dec;
+      5 |> log fatal dec;
+      4 |> print hex;
+      4 |> print dec |> log info dec;
+      3 |> log info hex;
+      1 |> print nope;
+      1 |> print dec hex;
+      1 |> log info dec |> log warn dec;
+      1 |> log fatal hex;

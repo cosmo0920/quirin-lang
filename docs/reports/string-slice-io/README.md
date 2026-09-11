@@ -322,16 +322,15 @@ span. So:
 * **Every pipeline written before this card desugars to the same tokens**,
   because every one of them wrote the maximum. Measured rather than assumed: a
   census of every complete `|> print …;` and `|> log …;` statement in every
-  `.qcore`, `.qc` and `.rs` file on the base found **123 occurrences in 12
+  `.qcore`, `.qc` and `.rs` file on the base found **126 occurrences in 12
   distinct shapes**, and every one of them names the maximum selector count or
   more. The only two that are not exactly at the maximum are refusal fixtures —
   `total |> print nope;` (one selector, at the maximum, refused at `Q013`
   because `nope` is an unbound name) and `total |> print dec hex;` (two, above
-  it, refused at `Q036`) — and both keep the code they had. Archived as
-  `measure/pipe_census.txt`; the census is reproduced by
-  `git grep -hoE '\|>[[:space:]]*(print|log)[^;]*;' cb2905f0 -- '*.qcore' '*.qc' '*.rs'`.
-  Every `|> print;` and `|> log LEVEL;` in the tree after this card is this
-  card's own.
+  it, refused at `Q036`) — and both keep the code they had. **No `|> print;` and
+  no `|> log LEVEL;` occurs on the base at all**; every one in the tree after
+  this card is this card's own. Archived with its reproduction command at
+  `artifacts/pipe_census.txt`.
 * **One refusal moves**, from the pipe to the route: `x |> print;` on
   `source.std-io.v1` refused at `Q036` naming the pipe and now refuses at `Q030`
   naming the missing `dec`/`hex`. Refusal to refusal, and the second names the
@@ -450,6 +449,7 @@ later.
 | Spec | `docs/QCORE_SPEC_r0_3.md` §L21 row `Q075`–`Q076`, and the §G07.9 requirement block |
 | Grammar | `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md` §G07.9 and §G02h |
 | Amendment | `docs/design/STRING_SLICE_V1.md` §7 (the four observation rules) and §9 |
+| Artifacts | `artifacts/pipe_census.txt` (§5's measurement, with its reproduction command), `artifacts/text.c` (the emitted C11 for the accepted fixture) |
 
 ### 8.1 What the Lean proves, and what it does not
 
