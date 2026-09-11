@@ -1,6 +1,7 @@
 # Quirin string views via `std.string` — revision 0.3 amendment
 
-> **Status: partly implemented (card `STRING-SLICE`, 2026-09-11).** §§1–4, §7 and
+> **Status: partly implemented (cards `STRING-SLICE`, 2026-09-11, and
+> `STRING-SLICE-IO`, 2026-09-12).** §§1–4, §7 and
 > §8 are implemented as the checked source profile `source.string.v1`: the
 > `std.string` module is registered and file-locally gated, a string literal is
 > lexed and decoded to a well-formed UTF-8 payload, the `{ptr, len}` view is
@@ -11,13 +12,23 @@
 > because every bound in v1 is a check-time constant; it therefore introduces no
 > run-time failure arm, and a bound it cannot decide is refused by name.
 >
+> §7's **output composition is implemented** by card `STRING-SLICE-IO`
+> (`Q075`–`Q076`, the same pass's second band): a module naming `std.string` and
+> an output module may write `print TEXT;` and `log LEVEL TEXT;`, where `TEXT` is
+> a quoted literal, a bound string or one slice of one, and the observation is
+> the view's **exact UTF-8 bytes** — no re-encoding, no escaping, no terminator,
+> and no newline beyond the framing every line already carries. A string takes
+> **no** rendering selector, and one written in front of a string still refuses
+> at `Q072`. Neither output module accepts text on its own: what changed is that
+> a file naming **both** can render it, which is what §7 asked for. Evidence:
+> `docs/reports/string-slice-io/README.md`.
+>
 > Still **proposed and unimplemented**: §5's buffer borrow and freeze
 > (`STRING-SLICE-BUFFER-BORROW`), §6's extern/native-library **crossing**, which
-> stays refused (`STRING-SLICE-ABI`), §7's output composition
-> (`STRING-SLICE-IO`), §3.7's equality/ordering/hashing/search operations, and
-> the separate mutable byte slice (`BYTE-SLICE-CAP`). No conformance claim is
-> made: this is one bounded source profile, not revision-0.3 source-language
-> conformance.
+> stays refused (`STRING-SLICE-ABI`), §3.7's equality/ordering/hashing/search
+> operations, and the separate mutable byte slice (`BYTE-SLICE-CAP`). No
+> conformance claim is made: this is one bounded source profile, not
+> revision-0.3 source-language conformance.
 
 ## 1. Decision
 
@@ -190,6 +201,35 @@ hidden as traps or optimistic assumptions. Output modules may render a string
 only after their own capability and observation rules are extended; this
 amendment does not make `std.io` or `std.logger` accept text.
 
+**Implemented (card `STRING-SLICE-IO`), and the extension is stated here.** An
+output module's capability rule is unchanged — `std.io` alone still grants no
+string and `std.string` alone still opens no stream — and what a rendering
+module must now name is **both**. The observation rule is extended as follows,
+and an implementation claiming this amendment must meet it exactly:
+
+1. **The rendered observation of a string is the view's own bytes**, verbatim.
+   No re-encoding, no escaping, no terminator, and no newline beyond the one the
+   sink's line discipline already writes for every line — including the
+   `[LEVEL] ` prefix a logged line carries, which is the same prefix a rendered
+   scalar gets. A rendered scalar line and a rendered text line with the same
+   body bytes MUST be the same line.
+2. **A byte equal to `0` is an ordinary byte of the text**, inside `len`, and
+   MUST be written. An implementation MUST NOT render a string through any
+   operation that stops at a terminator; the write MUST be bounded by `len`, and
+   a short write MUST fail the run rather than truncate the line.
+3. **A string takes no rendering selector.** Selectors belong to the formatting
+   module and are total functions from a scalar to text; a string is already the
+   text. A selector applied to a string MUST be refused, and a module that
+   renders only text MUST NOT be required to import the formatting module.
+4. **Rendering carries the output effect and no other.** It allocates nothing
+   and mutates nothing, and it neither creates nor discharges custody: a view is
+   not a resource and publishes no identity, so a borrowed render of one has no
+   meaning and MUST be refused.
+
+Rendering text does **not** create a view of storage that can end, so §3.6 is
+discharged exactly as before: every rendered view names the static literal it
+addresses.
+
 ## 8. Required implementation evidence
 
 An implementation claiming this amendment must provide positive and negative
@@ -227,8 +267,20 @@ may become `Safe` merely because a token now parses as a string value.
   a single source module — name resolution refuses an unbound name at `Q013`
   first — so the guard is checked through the library instead. Kept rather than
   deleted, on the `EXTERN-F1-STORE-REACH` precedent.
-- `STRING-SLICE-IO`: explicit composition with formatting and output modules.
+- ~~`STRING-SLICE-IO`~~: **landed** by the card of the same name. Explicit
+  composition with the output modules, `Q075`–`Q076`, with the four observation
+  rules of §7 above. What it did **not** do, each recorded rather than implied:
+  it supplies no formatting of a string (there is nothing to format), no
+  conversion between a string and a scalar in either direction, and no way to
+  build a string at run time — a rendered payload is a literal or a slice of
+  one, so a program can render text it wrote and not text it computed
+  (`STRING-SLICE-CONCAT`).
 - `STRING-SLICE-ABI`: extent- and lifetime-carrying extern/native-library ABI.
+- `STRING-SLICE-CONCAT`: a string a program **computes** rather than writes.
+  Every payload v1 can render is a literal or a slice of one, which is enough
+  for a fixed protocol head and not enough for a header whose value is a number.
+  It needs a building operation, which needs storage a program owns, which is
+  `STRING-SLICE-BUFFER-BORROW`'s question first.
 - `BYTE-SLICE-CAP`: a separate mutable `{ptr,len,cap}` byte-slice profile; it
   must not retroactively add `cap` to immutable strings without ABI evidence.
 

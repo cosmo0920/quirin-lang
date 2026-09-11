@@ -265,12 +265,56 @@ fn rendered_operands(program: &SourceProgram, entry: &str) -> Vec<(Span, StdIoOp
 /// The span of the first statement naming a rendering, i.e. the first place
 /// this file needs `std.fmt`. `flush` names none, so a logger-only file that
 /// never renders needs no `std.fmt` import — measured, and pinned by a test.
+///
+/// Card `STRING-SLICE-IO` narrowed this from the statement *head* to the
+/// **selector word**, for the same reason `flush` was excluded when the gate was
+/// written: a statement that names no rendering needs no `std.fmt`. A rendered
+/// string names none — a `string` is already the bytes, so `dec` and `hex` have
+/// nothing to do to one — and `print "HTTP/1.1 200 OK";` therefore needs
+/// `std.io` and `std.string` and not the formatting module. The narrowing also
+/// reaches a `print` that names no rendering **word** at all, which used to ask
+/// for `std.fmt` and now refuses at `Q030` naming the missing `dec`/`hex`: both
+/// are refusals, and the second names the actual fault.
 #[must_use]
 pub fn rendering_span(program: &SourceProgram) -> Option<Span> {
-    let uses = std_io_uses(program);
-    uses.get(&StdIoUse::Print)
-        .or_else(|| uses.get(&StdIoUse::Log))
-        .copied()
+    let tokens = program.lexical_tokens();
+    let mut found: Option<Span> = None;
+
+    fn scan(block: &SourceBlock, tokens: &[Token], found: &mut Option<Span>) {
+        for statement in &block.statements {
+            let window = window(tokens, statement.span);
+            // The selector position of each head, read with the same grammar
+            // the lowering reads it with.
+            let selector = match word(&window, 0) {
+                Some(PRINT_KEYWORD) => 1,
+                Some(LOG_KEYWORD) => 2,
+                _ => {
+                    for nested in statement.value.nested_blocks() {
+                        scan(nested, tokens, found);
+                    }
+                    continue;
+                }
+            };
+            if word(&window, selector).and_then(Rendering::parse).is_some()
+                && found.is_none_or(|span| statement.span.start < span.start)
+            {
+                *found = Some(statement.span);
+            }
+            for nested in statement.value.nested_blocks() {
+                scan(nested, tokens, found);
+            }
+        }
+    }
+
+    for declaration in &program.declarations {
+        if declaration.value.kind != DeclarationKind::Function {
+            continue;
+        }
+        if let Some(body) = &declaration.value.body {
+            scan(body, tokens, &mut found);
+        }
+    }
+    found
 }
 
 fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {

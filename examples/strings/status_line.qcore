@@ -1,0 +1,35 @@
+// Rendering text: an HTTP/1.1 response head, spelled in Quirin source and
+// written to standard output (card `STRING-SLICE-IO`).
+//
+// Nothing here is an HTTP implementation. It is the smallest program that shows
+// the one thing the composition adds — a `string` view reaching a stream — on
+// a payload whose character set is the one a protocol head actually uses.
+//
+// Two imports and no more: `std.string` supplies the view, `std.io` supplies
+// the stream. `std.fmt` is deliberately absent, because a rendered string names
+// no rendering: `dec` and `hex` turn an `i32` into digits, and a `string` is
+// already the bytes.
+import std.string;
+import std.io;
+
+fn main() -> unit effects { io } {
+    print "HTTP/1.1 200 OK";
+    print "Content-Type: text/plain; charset=utf-8";
+    print "Content-Length: 13";
+
+    // The empty line that ends a head is the empty string, rendered. It writes
+    // one newline and no bytes: the framing's newline is the framing's, and the
+    // body of this line is a zero-length view that nothing dereferences.
+    print "";
+
+    // The body, and one slice of it. A slice is `{ ptr = p + low, len = high -
+    // low }` — pointer addition and length subtraction into the same static
+    // storage, with no allocation and no copy — so the second line below
+    // renders five of the twelve bytes above without a second array anywhere in
+    // the emitted C.
+    let body = "hello, world";
+    body |> print;
+    body[7:12] |> print;
+
+    return;
+}

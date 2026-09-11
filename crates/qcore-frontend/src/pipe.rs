@@ -265,10 +265,29 @@ enum StatementRole {
 ///   bound pipeline (`let NAME = … ;`) binds exactly it. A `return` entry would
 ///   be a control-flow entry — a third kind — bought for a spelling the
 ///   language already has.
-const SINK_STAGES: &[(&str, usize, StatementRole)] = &[
-    ("print", 1, StatementRole::Renders),
-    ("log", 2, StatementRole::Renders),
-    ("drop", 0, StatementRole::Releases),
+///
+/// # Why the selector count is a range (card `STRING-SLICE-IO`)
+///
+/// Each entry carries the **inclusive range** of closed selector words its head
+/// may take, because a sink's selector set is the sink's own grammar and one of
+/// them now has two arities: `source.string.v1` renders a string's bytes with no
+/// `std.fmt` rendering at all, so `s |> print;` is `print s;` and
+/// `s |> log info;` is `log info s;`, beside the existing `n |> print dec;` and
+/// `n |> log info dec;`.
+///
+/// The pipe decides **nothing** about which arity a route admits. It emits the
+/// head, the selector words the reader wrote and then the operand, and the
+/// route's own reader refuses a shape it does not model at the route's own code
+/// and span — `x |> print;` on `source.std-io.v1` refuses at `Q030` naming the
+/// missing `dec`/`hex` rather than at `Q036` naming the pipe, which is the
+/// refusal a reader of that module needs. Widening a range therefore moves a
+/// refusal from the pipe to the route and never turns one into an acceptance;
+/// every pipeline this table accepted before this card desugars to exactly the
+/// same tokens, because every one of them wrote the maximum.
+const SINK_STAGES: &[(&str, usize, usize, StatementRole)] = &[
+    ("print", 0, 1, StatementRole::Renders),
+    ("log", 1, 2, StatementRole::Renders),
+    ("drop", 0, 0, StatementRole::Releases),
 ];
 
 /// Statement heads that take no operand at all. Piping into one is refused
@@ -722,7 +741,7 @@ fn classify(stage: &Stage<'_>) -> Result<StageKind, PipeRefusal> {
             format!("`{name}` takes no operand, so nothing can be piped into it"),
         ));
     }
-    if let Some((_, selectors, role)) = SINK_STAGES.iter().find(|(head, _, _)| *head == name) {
+    if let Some((_, least, most, role)) = SINK_STAGES.iter().find(|(head, _, _, _)| *head == name) {
         if let Some(token) = stage.consumes {
             return Err(refusal(
                 "Q036",
@@ -740,15 +759,19 @@ fn classify(stage: &Stage<'_>) -> Result<StageKind, PipeRefusal> {
                 },
             ));
         }
-        if stage.tokens.len() != 1 + selectors {
+        let selectors = stage.tokens.len() - 1;
+        if selectors < *least || selectors > *most {
             return Err(refusal(
                 "Q036",
                 head.span,
                 match role {
+                    StatementRole::Renders if least == most => format!(
+                        "`{name}` names {least} selector word(s) before its operand; this \
+                         stage names {selectors}"
+                    ),
                     StatementRole::Renders => format!(
-                        "`{name}` names {selectors} selector word(s) before its operand; this \
-                         stage names {}",
-                        stage.tokens.len() - 1
+                        "`{name}` names {least} or {most} selector word(s) before its operand; \
+                         this stage names {selectors}"
                     ),
                     StatementRole::Releases => format!(
                         "`{name}` takes the value piped into it and nothing else; this stage \
@@ -759,7 +782,9 @@ fn classify(stage: &Stage<'_>) -> Result<StageKind, PipeRefusal> {
             ));
         }
         return Ok(StageKind::Sink {
-            selectors: *selectors,
+            // The count the reader wrote, not a table constant: the operand
+            // follows every selector word this stage actually names.
+            selectors,
             role: *role,
         });
     }

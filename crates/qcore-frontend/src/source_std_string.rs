@@ -13,11 +13,35 @@
 //!             | "let" NAME [":" "string"] "=" NAME "[" OPERAND ":" OPERAND "]" ";"
 //!             | "print" RENDERING OPERAND ";"                   -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"               -- std.logger + std.fmt
+//!             | "print" TEXT ";"                                -- std.io, card STRING-SLICE-IO
+//!             | "log" LEVEL TEXT ";"                            -- std.logger, same card
 //!             | "flush" ";"                                     -- std.logger
 //!             | "return" ";"
 //! OPERAND   ::= ["-"] INTEGER | NAME
+//! TEXT      ::= STRING | NAME | NAME "[" OPERAND ":" OPERAND "]"
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
+//!
+//! # Rendering text (card `STRING-SLICE-IO`)
+//!
+//! Amendment §7 said what this composition had to be before it existed: "Output
+//! modules may render a string only after their own capability and observation
+//! rules are extended; this amendment does not make `std.io` or `std.logger`
+//! accept text." The capability rule is unchanged — neither output module grants
+//! the string and the string module opens no stream — and what a rendering
+//! module names is **both**.
+//!
+//! The two statement families are separated by a **closed word set**, not by a
+//! lookahead: `dec` and `hex` are `std.fmt`'s renderings, so a statement naming
+//! one renders a scalar and a statement naming neither renders text. A string
+//! therefore takes **no** selector, because there is nothing for one to do to a
+//! byte sequence that is already the text, and a selector in front of a string
+//! keeps refusing at `Q072` where it refused before this card.
+//!
+//! What reaches the stream is the view's exact UTF-8 payload: no re-encoding, no
+//! escaping, no terminator, and no newline beyond the one
+//! [`qcore_core::std_io::line_framing`] writes for every line. An embedded `0`
+//! is an ordinary byte of the text and is written as one.
 //!
 //! # This card reserves no word, and that is a measurement
 //!
@@ -75,9 +99,12 @@
 //! # What this lowering does not establish
 //!
 //! No mutation, no concatenation, no comparison, no search, no conversion from
-//! `std.buffer`, no rendering of text and no crossing of the extern or
-//! native-library boundary. Each is a named follow-on in
-//! `docs/design/STRING_SLICE_V1.md` §9 with its missing capability stated.
+//! `std.buffer` and no crossing of the extern or native-library boundary. Each
+//! is a named follow-on in `docs/design/STRING_SLICE_V1.md` §9 with its missing
+//! capability stated. Rendering text no longer belongs to that list, but its own
+//! boundary does: every payload this route can render is a literal or a slice of
+//! one, so a program renders text it **wrote** and never text it computed
+//! (`STRING-SLICE-CONCAT`).
 
 use std::collections::BTreeMap;
 
@@ -85,9 +112,10 @@ use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, TypedSourceProgram,
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
-use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use crate::source_std_io::{BORROW_KEYWORD, FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use qcore_core::std_io::{Level, Rendering};
 use qcore_core::std_string::{
-    LiteralRefusal, StringEvent, StringOperand, StringProgram, decode_string_literal,
+    LiteralRefusal, StringEvent, StringOperand, StringProgram, TextOperand, decode_string_literal,
 };
 use qcore_core::typed_errors::{Effect, EffectRow};
 
@@ -216,6 +244,34 @@ pub enum StringUse {
     Length,
     /// `let NAME [: string] = NAME[LOW:HIGH];`
     Slice,
+    /// `print "…";`, `log LEVEL "…";`, `print NAME[LOW:HIGH];` — a string
+    /// **constructed at a rendering operand** (card `STRING-SLICE-IO`).
+    ///
+    /// Deliberately only the two *constructing* forms, and **not** the bare
+    /// `print NAME;`. A bare name at a rendering operand is what a
+    /// `source.std-io.v1` module writes when it misspells a rendering, and
+    /// claiming it here would pull a module that never mentions a string onto
+    /// this route: `print bogus;` must keep refusing at `Q030` naming the
+    /// missing `dec`/`hex`, which is the refusal a reader of *that* module
+    /// needs. A bare name is therefore admitted as text only inside a module
+    /// this rule already selected, which is the same shape the route's other
+    /// composition rules have — a text render is a capability of a string
+    /// module, not a way to become one.
+    Render,
+}
+
+/// Whether a text operand at `cursor` **constructs** a string, which is what
+/// selects this route (see [`StringUse::Render`]).
+///
+/// A quoted token and an inline slice both do; a bare name does not, and an
+/// integer, a `borrow` marker or anything else is not a text operand at all.
+fn constructs_a_rendered_string(window: &[&Token], cursor: usize) -> bool {
+    if literal_text(window, cursor).is_some() {
+        return true;
+    }
+    word(window, cursor).is_some()
+        && symbol(window, cursor + 1, Symbol::LeftBracket)
+        && bracket_holds_a_colon(window, cursor + 1)
 }
 
 /// Classify one statement's token window as a string construct.
@@ -223,8 +279,25 @@ pub enum StringUse {
 /// The **one** place that decides whether a statement is this route's, so route
 /// selection, the import gate and the lowering below cannot disagree about it.
 fn string_use(window: &[&Token]) -> Option<StringUse> {
-    if word(window, 0) != Some("let") {
-        return None;
+    match word(window, 0) {
+        // `print TEXT;` — the operand position is 1, and a `dec`/`hex` there is
+        // the scalar rendering this card does not touch.
+        Some(PRINT_KEYWORD) => {
+            return (word(window, 1).and_then(Rendering::parse).is_none()
+                && constructs_a_rendered_string(window, 1))
+            .then_some(StringUse::Render);
+        }
+        // `log LEVEL TEXT;` — the level is `source.std-io.v1`'s and is read by
+        // its vocabulary, so a `log` whose second word is not a level is that
+        // route's refusal and not this one's.
+        Some(LOG_KEYWORD) => {
+            return (word(window, 1).and_then(Level::parse).is_some()
+                && word(window, 2).and_then(Rendering::parse).is_none()
+                && constructs_a_rendered_string(window, 2))
+            .then_some(StringUse::Render);
+        }
+        Some("let") => {}
+        _ => return None,
     }
     let (_, _, equal) = let_head(window)?;
     if !symbol(window, equal, Symbol::Equal) {
@@ -403,6 +476,165 @@ impl Literals {
         self.payloads.push(payload);
         self.payloads.len() - 1
     }
+}
+
+/// What a line-producing statement turned out to be (card `STRING-SLICE-IO`).
+enum LineForm {
+    /// A rendered-text line, lowered.
+    Text(StringEvent),
+    /// Not a text line: `source.std-io.v1`'s own reader decides it, including
+    /// every refusal it already had. `flush s;` lands here and keeps that
+    /// route's "takes no operand" refusal rather than acquiring one of this
+    /// composition's.
+    Scalar,
+    /// A text line this route refuses. The diagnostic is already recorded.
+    Refused,
+}
+
+/// Read `print TEXT;` / `log LEVEL TEXT;` — the composition of `std.string`
+/// with the output modules (card `STRING-SLICE-IO`).
+///
+/// **The selector is the discriminator, and it is a closed word set.** `dec` and
+/// `hex` are `std.fmt`'s two renderings; a statement naming one is the scalar
+/// line this card does not touch, and a statement naming neither renders text.
+/// There is no rendering for a string because there is nothing for one to do: a
+/// `string` is already the bytes, so the observation is the view's exact UTF-8
+/// payload — no re-encoding, no escaping, no terminator, and no newline beyond
+/// the one the sink's own framing writes for every line.
+fn text_line(
+    window: &[&Token],
+    span: Span,
+    literals: &mut Literals,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> LineForm {
+    let (level, cursor) = match word(window, 0) {
+        Some(PRINT_KEYWORD) => {
+            if word(window, 1).and_then(Rendering::parse).is_some() {
+                return LineForm::Scalar;
+            }
+            (Option::None, 1)
+        }
+        Some(LOG_KEYWORD) => {
+            let Some(level) = word(window, 1).and_then(Level::parse) else {
+                return LineForm::Scalar;
+            };
+            if word(window, 2).and_then(Rendering::parse).is_some() {
+                return LineForm::Scalar;
+            }
+            (Some(level), 2)
+        }
+        _ => return LineForm::Scalar,
+    };
+
+    // `print "…";` — a literal rendered where it is written. It interns into the
+    // same pool a `let` literal view does, so two spellings of one payload are
+    // one static array and one view of it.
+    if let Some(raw) = literal_text(window, cursor) {
+        if !ends_with_semicolon(window, cursor + 1) {
+            diagnostics.push(diagnostic(
+                "Q075",
+                span,
+                "a rendered literal is one quoted token and nothing else",
+            ));
+            return LineForm::Refused;
+        }
+        let payload = match decode_string_literal(raw) {
+            Ok(payload) => payload,
+            Err(refusal) => {
+                // Decoding is the base route's rule and keeps the base route's
+                // code: a token that does not decode has no payload wherever it
+                // was written.
+                diagnostics.push(diagnostic("Q070", span, refusal.to_string()));
+                return LineForm::Refused;
+            }
+        };
+        return LineForm::Text(StringEvent::Text {
+            level,
+            operand: TextOperand::Literal(literals.intern(payload)),
+        });
+    }
+
+    let Some(name) = word(window, cursor) else {
+        diagnostics.push(diagnostic(
+            "Q075",
+            span,
+            "a rendering operand is a `std.fmt` rendering and a scalar (`print dec n;`), or a \
+             string this entry bound, a quoted literal, or one slice of a string",
+        ));
+        return LineForm::Refused;
+    };
+    if name == BORROW_KEYWORD {
+        diagnostics.push(diagnostic(
+            "Q075",
+            span,
+            "`borrow NAME` renders the model identity of a live resource, and a string view is not \
+             a resource: it owns nothing, it publishes no identity, and creating one neither \
+             creates nor discharges custody. Render the view itself (`print NAME;`)",
+        ));
+        return LineForm::Refused;
+    }
+
+    // `print NAME;` — the bare form. It renders a string and only a string; a
+    // scalar at this position is refused by the model at `Q076`, naming the
+    // rendering that would have rendered it.
+    if ends_with_semicolon(window, cursor + 1) {
+        return LineForm::Text(StringEvent::Text {
+            level,
+            operand: TextOperand::Name(name.to_owned()),
+        });
+    }
+
+    // `print NAME[LOW:HIGH];` — the slice written where it is rendered. It is
+    // the same checked slice a `let` binds; the bounds are decided by the same
+    // rule and the arithmetic is recorded in the same certificate list.
+    if symbol(window, cursor + 1, Symbol::LeftBracket) {
+        let Some((low, next)) = operand(window, cursor + 2) else {
+            diagnostics.push(diagnostic(
+                "Q075",
+                span,
+                "a slice bounds with one integer literal or one bound integer name",
+            ));
+            return LineForm::Refused;
+        };
+        if !symbol(window, next, Symbol::Colon) {
+            diagnostics.push(diagnostic(
+                "Q075",
+                span,
+                "`source.string.v1` slices with `NAME[LOW:HIGH]`; a single-index access into a \
+                 string is not a construct this route models, because a byte of UTF-8 text is not \
+                 a character",
+            ));
+            return LineForm::Refused;
+        }
+        let Some((high, next)) = operand(window, next + 1) else {
+            diagnostics.push(diagnostic(
+                "Q075",
+                span,
+                "a slice bounds with one integer literal or one bound integer name",
+            ));
+            return LineForm::Refused;
+        };
+        if !symbol(window, next, Symbol::RightBracket) || !ends_with_semicolon(window, next + 1) {
+            diagnostics.push(diagnostic("Q075", span, "this slice is not closed"));
+            return LineForm::Refused;
+        }
+        return LineForm::Text(StringEvent::Text {
+            level,
+            operand: TextOperand::Slice {
+                name: name.to_owned(),
+                low,
+                high,
+            },
+        });
+    }
+
+    diagnostics.push(diagnostic(
+        "Q075",
+        span,
+        "a rendered string is one operand and nothing else: a string this entry bound, a quoted \
+         literal, or one slice of a string",
+    ));
+    LineForm::Refused
 }
 
 /// Lower one `let` statement.
@@ -664,9 +896,22 @@ pub fn lower_source_string(
             // are this route's whole observation, because they are the
             // formatted-I/O owners rather than compiler observations.
             PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
-                // The line grammar is `source.std-io.v1`'s, read by its own
-                // reader, so a shape one route accepts and another refuses is
-                // not expressible.
+                // Card `STRING-SLICE-IO` first: a line whose operand renders
+                // **text** is this composition's, and a line naming a `std.fmt`
+                // rendering is `source.std-io.v1`'s, unchanged. The two are
+                // separated by a closed word set, so no statement is both.
+                match text_line(&window, span, &mut literals, &mut diagnostics) {
+                    LineForm::Text(event) => {
+                        events.push(event);
+                        event_spans.push(span);
+                        continue;
+                    }
+                    LineForm::Refused => continue,
+                    LineForm::Scalar => {}
+                }
+                // The scalar line grammar is `source.std-io.v1`'s, read by its
+                // own reader, so a shape one route accepts and another refuses
+                // is not expressible.
                 match crate::source_std_io::std_io_statement(parsed, span) {
                     Some(Ok(event)) => Some(StringEvent::Line(event)),
                     Some(Err(message)) => {

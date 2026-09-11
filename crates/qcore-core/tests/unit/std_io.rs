@@ -47,3 +47,54 @@ fn streams_composition_is_associative() {
         a.compose(b.compose(c))
     );
 }
+
+/// **The two line kinds share one framing** (card `STRING-SLICE-IO`).
+///
+/// A rendered scalar line is the text line of its own digits: same stream, same
+/// `[LEVEL] ` prefix, same single newline. Stated as an equation so the two
+/// cannot drift — a change to either function that did not change the other
+/// fails here.
+#[test]
+fn a_rendered_scalar_line_is_a_text_line_of_its_digits() {
+    for rendering in [Rendering::Dec, Rendering::Hex] {
+        for value in [0, 1, -7, i32::MIN, i32::MAX] {
+            let printed = StdIoEvent::Print {
+                rendering,
+                operand: StdIoOperand::Literal(value),
+            };
+            assert_eq!(
+                rendered_line(&printed, value),
+                Some(rendered_text_line(None, &rendering.render(value)))
+            );
+            for level in [Level::Trace, Level::Info, Level::Fatal] {
+                let logged = StdIoEvent::Log {
+                    level,
+                    rendering,
+                    operand: StdIoOperand::Literal(value),
+                };
+                assert_eq!(
+                    rendered_line(&logged, value),
+                    Some(rendered_text_line(Some(level), &rendering.render(value)))
+                );
+            }
+        }
+    }
+}
+
+/// The text framing writes its body verbatim: no escaping, no terminator, no
+/// newline of its own, and an embedded NUL survives as a byte.
+#[test]
+fn a_text_line_carries_its_body_byte_for_byte() {
+    assert_eq!(
+        rendered_text_line(None, "HTTP/1.1 200 OK"),
+        ObservedLine {
+            stream: Stream::Out,
+            text: "HTTP/1.1 200 OK".to_owned(),
+        }
+    );
+    assert_eq!(rendered_text_line(None, "").text, "");
+    let with_nul = rendered_text_line(Some(Level::Warn), "ab\0cd");
+    assert_eq!(with_nul.stream, Stream::Err);
+    assert_eq!(with_nul.text.as_bytes(), b"[WARN] ab\x00cd");
+    assert!(!with_nul.text.contains('\n'));
+}
