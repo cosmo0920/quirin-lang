@@ -937,6 +937,168 @@ theorem a_rewritten_chain_contains_no_pipe :
       (written Kind.semi 40) 0).all (fun out => !hasPipe out) = true := by
   rfl
 
+/-! ### 5.5 The intrinsic stage (card `PIPE-INTRINSIC-STAGE`)
+
+Card `COMPOSE-CONCURRENCY` recorded that the brief's literal
+`buffer |> read |> render |> log` "needs a pipeline stage for a task intrinsic,
+which is a pipe-grammar change". The census this card starts from measures that
+it is not: the source language's model intrinsics fall into two shapes, and the
+grammar already decides both.
+
+* A **call-shaped** intrinsic is spelled `NAME(ARGS)` and already has a
+  statement form — `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`
+  and `qcore_error_payload` on the task routes, `qcore_acquire` and `qcore_check`
+  on the sequential route. It is not in the closed sink table and it is not
+  operandless, so it is a **call stage** by `producesResult`'s own definition,
+  and `rewriteStage` produces exactly the `let ⟨t⟩ = NAME(…);` statement the
+  route already lowers. Nothing is added to the stage table, no keyword is
+  reserved and no code is allocated.
+* A **keyword-shaped** intrinsic — `spawn S W(ARGS)?`, `join move H?`,
+  `share N`, `drop N` — is a statement whose operands are not a parenthesized
+  argument list. A call stage can only produce `HEAD ( … )`, so no pipeline
+  rewrites to one; the shapes below exhibit that as an inequality rather than
+  leaving it to the closed table's silence. -/
+
+/-- The census's call-shaped intrinsics, in one list so a future intrinsic has
+to be added here rather than acquire a stage silently. -/
+def callShapedIntrinsics : List String :=
+  ["qcore_buffer_new", "qcore_buffer_read", "qcore_buffer_write",
+   "qcore_error_payload", "qcore_acquire", "qcore_check"]
+
+/-- The keyword-shaped ones, which the closed statement table deliberately does
+not name and no call stage can produce. -/
+def keywordShapedIntrinsics : List String :=
+  ["spawn", "join", "share", "read", "write", "drop", "grow", "open", "close"]
+
+/-- **The census's structural fact.** No intrinsic is in the closed sink table
+and none is operandless, so every one of them is a call stage — which is why the
+pipe needed no new entry to carry it. -/
+theorem no_intrinsic_is_a_sink_or_operandless :
+    callShapedIntrinsics.all (fun n => (sinkSelectors n).isNone && !operandless n) = true ∧
+    keywordShapedIntrinsics.all (fun n => (sinkSelectors n).isNone && !operandless n) = true := by
+  refine ⟨by decide, by decide⟩
+
+/-- And therefore every call-shaped intrinsic may stand in a **non-final**
+position: `producesResult` is `true` for each. Whether the route can bind that
+particular result is the route's own question, reported at that stage's span. -/
+theorem every_call_shaped_intrinsic_produces_a_result :
+    callShapedIntrinsics.all
+      (fun n => producesResult ⟨[written (Kind.atom n) 0], false, 0⟩) = true := by
+  decide
+
+/-- **The payoff, token for token.** `buffer |> qcore_buffer_read |> log info dec;`
+is the statement sequence `let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;`
+— the intrinsic keeps its own bytes, the operand keeps its own, and only the
+binder, the delimiters and the temporary are invented. -/
+theorem the_buffer_read_chain_is_its_hand_written_sequence :
+    chainRewrite [written (Kind.atom "buffer") 0]
+      [⟨[written (Kind.atom "qcore_buffer_read") 10], false, 7⟩,
+       ⟨[written (Kind.atom "log") 31, written (Kind.atom "info") 35,
+         written (Kind.atom "dec") 40], false, 28⟩]
+      (written Kind.semi 43) 0
+      = some
+        ([synth (Kind.atom "let") 7, synth (Kind.atom "qcore__pipe0") 7,
+          synth (Kind.atom "=") 7,
+          written (Kind.atom "qcore_buffer_read") 10, synth Kind.lparen 7,
+          written (Kind.atom "buffer") 0, synth Kind.rparen 7, synth Kind.semi 28]
+         ++
+         [written (Kind.atom "log") 31, written (Kind.atom "info") 35,
+          written (Kind.atom "dec") 40, synth (Kind.atom "qcore__pipe0") 30,
+          written Kind.semi 43]) := by
+  rfl
+
+/-- An intrinsic that takes a second operand puts the piped one **first**:
+`buffer |> qcore_buffer_write(7);` is `qcore_buffer_write(buffer, 7);`, which is
+the same first-argument insertion rule an ordinary callee gets. -/
+theorem an_intrinsic_takes_the_piped_value_as_its_first_argument :
+    rewriteStage [written (Kind.atom "buffer") 0]
+      [written (Kind.atom "qcore_buffer_write") 10, written Kind.lparen 28,
+       written (Kind.atom "7") 29, written Kind.rparen 30]
+      (written Kind.semi 31) 7
+      = some [written (Kind.atom "qcore_buffer_write") 10, synth Kind.lparen 7,
+              written (Kind.atom "buffer") 0, synth Kind.comma 7,
+              written (Kind.atom "7") 29, synth Kind.rparen 7,
+              written Kind.semi 31] := by
+  rfl
+
+/-- An intrinsic carrying an adapter tail keeps it: `7 |> qcore_buffer_new?;` is
+`qcore_buffer_new(7)?;`, the `?` passed through verbatim after the argument
+list. This is the same tail mechanism the acquisition adapter uses. -/
+theorem an_allocating_intrinsic_keeps_its_adapter_tail :
+    rewriteStage [written (Kind.atom "7") 0]
+      [written (Kind.atom "qcore_buffer_new") 5, written (Kind.atom "?") 21]
+      (written Kind.semi 22) 2
+      = some [written (Kind.atom "qcore_buffer_new") 5, synth Kind.lparen 2,
+              written (Kind.atom "7") 0, synth Kind.rparen 2,
+              written (Kind.atom "?") 21, written Kind.semi 22] := by
+  rfl
+
+/-- **A keyword-shaped intrinsic is unreachable.** A call stage always emits
+`HEAD ( incoming )`, so the rewrite of a stage named `join` is `join(h)` — never
+the `join move h?` the route lowers. The inequality is what makes "the pipe
+cannot produce this form" a statement rather than an omission. -/
+theorem a_keyword_shaped_intrinsic_is_not_reachable :
+    rewriteStage [written (Kind.atom "h") 0] [written (Kind.atom "join") 5]
+      (written Kind.semi 9) 2
+      ≠ some [written (Kind.atom "join") 5, written (Kind.atom "move") 10,
+              written (Kind.atom "h") 0, written (Kind.atom "?") 12,
+              written Kind.semi 9] := by
+  decide
+
+/-! ### 5.6 The two statement readers
+
+The one place a later phase could still tell a `|>` had been written. A route
+recovers a statement's tokens either from the program's own post-desugaring
+stream — every token whose span lies inside the statement's, synthesized ones
+included — or by re-lexing the statement's source bytes, which recovers only the
+tokens the reader wrote and recovers them in the order the *bytes* have them.
+On a pipe-free statement the two agree; on a desugared one they do not, and the
+second hands the lowering the pipeline instead of the statement. -/
+
+/-- The stream reader keeps every token; the byte reader keeps the written ones.
+`writtenOnly` is that byte reader's *best case*: even ignoring order, it has
+already lost the synthesized delimiters. -/
+theorem the_two_readers_agree_on_a_pipe_free_statement (ts : List Token)
+    (h : ts.all (fun t => !t.synthesized) = true) : writtenOnly ts = ts := by
+  simpa [writtenOnly, List.filter_eq_self] using
+    (List.all_eq_true.mp h)
+
+/-- On a desugared statement they do not agree, and the loss is exactly the
+delimiters and the temporary the route needs to read the statement at all. -/
+theorem the_byte_reader_loses_the_desugared_statement :
+    writtenOnly
+      [synth (Kind.atom "let") 7, synth (Kind.atom "qcore__pipe0") 7,
+       synth (Kind.atom "=") 7,
+       written (Kind.atom "qcore_buffer_read") 10, synth Kind.lparen 7,
+       written (Kind.atom "buffer") 0, synth Kind.rparen 7, synth Kind.semi 28]
+      ≠ [synth (Kind.atom "let") 7, synth (Kind.atom "qcore__pipe0") 7,
+         synth (Kind.atom "=") 7,
+         written (Kind.atom "qcore_buffer_read") 10, synth Kind.lparen 7,
+         written (Kind.atom "buffer") 0, synth Kind.rparen 7, synth Kind.semi 28] := by
+  decide
+
+/-- And the written tokens a desugared call statement carries are in the order
+the **statement** has them, callee first, not the order the reader's bytes have
+them, operand first. That permutation is why a byte reader keyed on
+`NAME ( … )` — the sequential route's `qcore_acquire` reader — saw the operand
+where it wanted the callee name and refused the very form the reader wrote. -/
+theorem the_byte_order_and_the_statement_order_differ :
+    writtenOnly
+      [synth (Kind.atom "let") 7, synth (Kind.atom "qcore__pipe0") 7,
+       synth (Kind.atom "=") 7,
+       written (Kind.atom "qcore_acquire") 10, synth Kind.lparen 7,
+       written (Kind.atom "1") 0, synth Kind.rparen 7, written Kind.semi 28]
+      = [written (Kind.atom "qcore_acquire") 10, written (Kind.atom "1") 0,
+         written Kind.semi 28] ∧
+    (writtenOnly
+      [synth (Kind.atom "let") 7, synth (Kind.atom "qcore__pipe0") 7,
+       synth (Kind.atom "=") 7,
+       written (Kind.atom "qcore_acquire") 10, synth Kind.lparen 7,
+       written (Kind.atom "1") 0, synth Kind.rparen 7, written Kind.semi 28]).map
+      (fun t => t.origin)
+      ≠ [0, 10, 28] := by
+  refine ⟨rfl, by decide⟩
+
 /-! ## 6. The operator gate
 
 **Retabled by card `OR-AND-LOWERING`, superseding card `PIPE-OPERATOR`'s

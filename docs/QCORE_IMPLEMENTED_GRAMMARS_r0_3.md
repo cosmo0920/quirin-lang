@@ -1562,6 +1562,38 @@ expressible, which card `PIPE-CHAIN` measured as the first of the two boundaries
 under the brief's `value |> render |> log`; the second, a module that both calls
 an extern function and prints, is unchanged and remains `STD-IO-COMPOSE`.
 
+**A model intrinsic is a call stage** (card `PIPE-INTRINSIC-STAGE`). Card
+`COMPOSE-CONCURRENCY` filed the brief's literal `buffer |> read |> render |> log`
+as needing "a pipeline stage for a task intrinsic, which is a pipe-grammar
+change". It is not, and the census is the reason: the source language's model
+intrinsics fall into two shapes, and this grammar already decides both.
+
+| Shape | Intrinsics | Where | As a stage |
+|---|---|---|---|
+| **call-shaped**, `NAME(ARGS)` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload` | §G02b task routes and every route that composes them (`ComposedStdIoTasksV1`, `ComposedEpochTasksV1`) | **admitted** by the `NAME [ "(" … ")" ] [ ADAPTER ]` alternative above, with no table entry of its own |
+| **call-shaped**, `NAME(ARGS)` | `qcore_acquire`, `qcore_check` | the sequential route | **admitted**, likewise |
+| **keyword-shaped** | `spawn S W(ARGS)?`, `join move H?`, `share N`, `read N`, `write N`, `drop N`, `grow`, `open`, `close`, `bound`, `overhead` | their own routes | **refused**: their operands are not a parenthesized argument list, so no call stage produces them, and the closed sink table deliberately does not name them |
+
+So `buffer |> qcore_buffer_read |> log info dec;` is the statement sequence
+`let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;` under the ordinary
+chain rule, emitting byte-identical C against that hand-written pair. An
+intrinsic whose result the surrounding statement discards, or whose result the
+next stage's route cannot bind, refuses at **that route's** own code and span —
+`qcore_buffer_write` returns `unit` and refuses mid-chain at `Q050`, not at
+`Q037` — which is the rule §G02d already states for a `unit`-returning callee.
+A chain whose intermediate stage *allocates* binds an owned resource to a
+temporary no reader can name and therefore cannot drop; that leaks and refuses
+at the route's pre-existing leak diagnostic (follow-on `PIPE-DROP-STAGE`).
+
+The same card makes "no later pass can tell a pipe was written" true of **every**
+route. The sequential route recovered each statement's tokens by re-lexing its
+source bytes rather than reading the program's own post-desugaring stream, which
+for a pipeline recovers the pipeline: the operand sits left of the callee in the
+bytes and right of it in the statement, so that route's own `qcore_acquire`
+reader saw the operand where it wanted the callee name. Reading the parsed
+stream is identical on every pipe-free file — it is the lex of that same source —
+and it is what admits the two sequential intrinsics above.
+
 **Two spellings name the value a previous stage produced**, because a hygienic
 temporary has no name a reader could write: `|> move STAGE` consumes it,
 mirroring `move OPERAND |> STAGE` for the first stage (where `move` on the stage
