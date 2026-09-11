@@ -4069,14 +4069,13 @@ fn compile_buffer_source(
                 )]
             },
         )?;
-    let emission = std_buffer_c_emit::emit_buffer_c11(&lowered.program, &certificate).map_err(
-        |refusal| {
+    let emission =
+        std_buffer_c_emit::emit_buffer_c11(&lowered.program, &certificate).map_err(|refusal| {
             vec![plain_diagnostic(
                 "Q051",
                 format!("the byte-buffer backend refused this trace: {refusal:?}"),
             )]
-        },
-    )?;
+        })?;
 
     let result_profile = SourceResultProfile {
         scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),

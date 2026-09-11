@@ -375,7 +375,10 @@ rather than a backlog item.
 | `STD-BUFFER-TASKS` | a buffer crossing a task boundary. Blocked on the same measured wall `STD-MODULES` §8 recorded: the task ledger has no post-creation transfer operation |
 | `STD-BUFFER-GROW` | reallocation. Needs a custody shape the ownership IR does not have — an acquisition that replaces a live one — which is `Reallocated` on the extern side and has no source spelling |
 | `STD-BUFFER-SLICE` | a borrowed sub-range. Needs the ownership IR's borrow nodes to carry a footprint *fraction*, which they do not |
-| `STD-FMT-EXTENT` | *(retired in part — see §10)* |
+| `STD-BUFFER-COPY` | a bulk copy between two buffers. Needs no new custody shape, but needs the loop or bulk operation this flat route has no statement for |
+| `STD-BUFFER-BORROW-RENDER` | a borrowed render on this route. Needs the route to publish a custody identity and a liveness ledger a join can read |
+| `STD-BUFFER-EXAMPLE` | a **published** `examples/buffer/` family with a README, held to `EXAMPLES-SUITE`'s transcript-extraction standard. This card ships test fixtures with that evidence; a published example with its README is a different deliverable |
+| `STD-FMT-EXTENT` | *(split, not retired — see §10)* |
 
 ## 10. What this card does to `STD-FMT-EXTENT`
 
@@ -403,8 +406,32 @@ inherited, and saying which half moved is more useful than claiming the name.
 
 ## 11. Deviations found by measurement
 
-*(Filled in by the implementation; see
-`docs/reports/wave22-std-buffer/README.md` §7 for the full list with evidence.)*
+Seven, each recorded in full with its evidence in
+[`docs/reports/wave22-std-buffer/README.md`](../reports/wave22-std-buffer/README.md)
+§7. In brief:
+
+1. **`buffer` collides and the constructor was renamed** to `bytes` — 555
+   source-corpus occurrences, in *binding* position in shipped thread fixtures.
+   §5.1 above was written after this measurement and already records it.
+2. **`alloc` is a worse collision than `buffer`** and was never a candidate: it
+   is a live effect-set member as well as an extern-fn and `quant axis` name.
+3. **An index naming nothing refuses in two different places.** A byte *write*
+   is an `Assignment`, whose tokens before the `=` name resolution drains, so
+   its index never reaches `Q013` and this route's `Q052` catches it; a byte
+   *read* sits after a `let`'s `=` and refuses at `Q013`. Both halves pinned.
+4. **Declaring an extern function is not being an extern module** — route
+   selection asks whether a file *calls* one, so a declaration-only file is
+   still a buffer module. Correct, and pinned in both directions.
+5. **A refused extent must still bind its name**, or every later statement about
+   it cascades into a second, misleading refusal.
+6. **The emitted prelude had to become selective**: emitting an unused accessor
+   fails `-Werror=unused-function`, which is a real constraint of the flags the
+   emitted C is built under.
+7. **The Lean `Imports` literals grew a field**, and
+   `QCore.StdIo.no_module_substitutes_for_another` is now strictly stronger —
+   the same deliberate widening `STD-MODULES` recorded. The spec's §L04 registry
+   sentence was also found stale at "five names" (it predates this card:
+   `std.extern.unsafe` was missing) and corrected to seven.
 
 ## 12. Lean obligations
 

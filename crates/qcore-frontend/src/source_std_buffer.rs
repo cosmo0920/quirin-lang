@@ -97,7 +97,7 @@ pub struct LoweredBufferModule {
     pub scope_span: Span,
 }
 
-fn window<'a>(tokens: &'a [Token], span: Span) -> Vec<&'a Token> {
+fn window(tokens: &[Token], span: Span) -> Vec<&Token> {
     tokens
         .iter()
         .filter(|token| span.start <= token.span.start && token.span.end <= span.end)

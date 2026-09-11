@@ -234,10 +234,7 @@ pub enum BufferError {
     /// name, or a rebound live name. This variant carries that checker's own
     /// error value rather than a re-worded copy of it, so the report can show
     /// the refusal arriving from the checker it was inherited from.
-    Custody {
-        event: usize,
-        error: OwnershipError,
-    },
+    Custody { event: usize, error: OwnershipError },
     /// `Q055`: a buffer at a position this route refuses to let it cross —
     /// today, a rendering operand.
     CrossesBoundary { event: usize, name: String },
@@ -411,9 +408,7 @@ pub fn custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
             BufferEvent::Store { name, .. } if names(name) => {
                 operations.push(OwnershipOp::Write(name.clone()));
             }
-            BufferEvent::Load { name, .. } | BufferEvent::Extent { name, .. }
-                if names(name) =>
-            {
+            BufferEvent::Load { name, .. } | BufferEvent::Extent { name, .. } if names(name) => {
                 operations.push(OwnershipOp::Read(name.clone()));
             }
             BufferEvent::Release { name } if names(name) => {
@@ -439,11 +434,7 @@ struct Evaluation {
 }
 
 impl Evaluation {
-    fn operand(
-        &self,
-        event: usize,
-        operand: &BufferOperand,
-    ) -> Result<i32, BufferError> {
+    fn operand(&self, event: usize, operand: &BufferOperand) -> Result<i32, BufferError> {
         match operand {
             BufferOperand::Literal(value) => Ok(*value),
             BufferOperand::Scalar(name) => {
@@ -584,7 +575,11 @@ pub fn check_buffer_program(
                     .insert(name.clone(), vec![0u8; *extent as usize]);
                 acquisitions.push((name.clone(), *extent));
             }
-            BufferEvent::Store { name, index: at, value } => {
+            BufferEvent::Store {
+                name,
+                index: at,
+                value,
+            } => {
                 let place = evaluation.place(index, name, at);
                 let value = evaluation.operand(index, value);
                 match (place, value) {
@@ -624,9 +619,7 @@ pub fn check_buffer_program(
                         .get(name)
                         .and_then(|bytes| bytes.get(at).copied())
                         .unwrap_or(0);
-                    evaluation
-                        .scalars
-                        .insert(binding.clone(), i32::from(byte));
+                    evaluation.scalars.insert(binding.clone(), i32::from(byte));
                     accesses.push(BufferAccess {
                         event: index,
                         name: name.clone(),
@@ -642,9 +635,7 @@ pub fn check_buffer_program(
                     // The extent read back out of the acquisition. `i32` is
                     // total here because `MAX_EXTENT` is far inside it.
                     Some(extent) => {
-                        evaluation
-                            .scalars
-                            .insert(binding.clone(), extent as i32);
+                        evaluation.scalars.insert(binding.clone(), extent as i32);
                     }
                     None => errors.push(BufferError::NotABuffer {
                         event: index,

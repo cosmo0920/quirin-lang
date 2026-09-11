@@ -256,7 +256,10 @@ fn a_leak_refuses_and_the_refusal_comes_from_the_unedited_ownership_checker() {
 
 #[test]
 fn a_double_release_refuses() {
-    let doubled = module("alloc", &["let b = bytes(4);", "drop b;", "drop b;", "return;"]);
+    let doubled = module(
+        "alloc",
+        &["let b = bytes(4);", "drop b;", "drop b;", "return;"],
+    );
     assert_eq!(codes(&doubled), ["Q054"]);
 }
 
@@ -321,7 +324,12 @@ fn two_buffers_are_both_accounted_for() {
 fn releasing_only_one_of_two_still_refuses() {
     let half = module(
         "alloc",
-        &["let a = bytes(2);", "let b = bytes(3);", "drop a;", "return;"],
+        &[
+            "let a = bytes(2);",
+            "let b = bytes(3);",
+            "drop a;",
+            "return;",
+        ],
     );
     assert_eq!(codes(&half), ["Q054"]);
 }
@@ -491,7 +499,12 @@ fn an_index_naming_nothing_refuses_at_the_route_in_a_write_and_earlier_in_a_read
     // direction says so rather than passing silently.
     let read = module(
         "alloc",
-        &["let b = bytes(4);", "let x = b[nope];", "drop b;", "return;"],
+        &[
+            "let b = bytes(4);",
+            "let x = b[nope];",
+            "drop b;",
+            "return;",
+        ],
     );
     assert_eq!(codes(&read), ["Q013"]);
 }

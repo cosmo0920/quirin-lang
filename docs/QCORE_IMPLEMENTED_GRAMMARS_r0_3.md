@@ -1219,6 +1219,116 @@ and no logger configuration model. A `print` inside a `thread scope` or beside
 an extern call stays with the more specific route and keeps its refusal. See
 [the module record](reports/wave17-std-modules/README.md).
 
+## G02k. An owned byte buffer: `std.buffer`
+
+`source.buffer.v1` (card `STD-BUFFER`) is the whole implemented surface of the
+byte-buffer module. A file selects it by using one of its four constructs. It is
+the **source-level** tier of the two `std.buffer` tiers
+[`STD_BUFFER_V1.md`](design/STD_BUFFER_V1.md) §1 distinguishes; the
+native-library-backed tier of `NATIVE_LIBRARY_LINKAGE_V1.md` §6 is untouched by
+it and neither retires the other.
+
+```ebnf
+module    = { import }, { error_decl | entry } ;
+import    = "import",
+            ( "std.buffer" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+entry     = "fn", NAME, "(", ")", "->", "unit",
+            [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+            "{", { stmt }, "}" ;
+stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
+          | "let", NAME, "=", "bytes", "(", INTEGER, ")", ";"
+          | "let", NAME, "=", "extent", "(", NAME, ")", ";"
+          | "let", NAME, "=", NAME, "[", OPERAND, "]", ";"
+          | NAME, "[", OPERAND, "]", "=", OPERAND, ";"
+          | "drop", NAME, ";"
+          | "print", RENDERING, OPERAND, ";"
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "flush", ";"
+          | "return", ";" ;
+OPERAND   = [ "-" ], INTEGER | NAME ;
+EFFECT    = "io" | "alloc" | "mut" ;
+```
+
+```qcore
+import std.buffer;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(8);           // acquire eight zeroed bytes; the obligation opens
+    b[0] = 65;                  // write one byte at a checked index
+    let n = extent(b);          // the declared length, as an ordinary integer
+    let first = b[0];           // read one byte
+    print dec n;                // stdout: 8
+    print dec first;            // stdout: 65
+    drop b;                     // release; the obligation closes
+    return;
+}
+```
+
+**The extent is transported.** `bytes(N)` lowers to an ownership acquisition
+whose footprint is `N` on a byte axis, so the declared length lives in the
+custody model's own ledger for the resource's whole lifetime and `extent(b)`
+reads it back out of there rather than out of a side table. This is the
+capability `ExternAssumption::NoExtentTransport` names as missing, supplied **on
+the source side only**: a declared C04 contract still cannot say how many bytes
+a callee touches, and this profile does not change that.
+
+**Custody is inherited, not reimplemented.** The lowering hands the event
+sequence to the unedited cycle-3 ownership checker, which owns every custody
+refusal at `Q054`: a leak at the normal exit, a double release, an access after
+release, a rebound live name. This profile adds only the rules about *indices*,
+because nothing in the language had ever indexed anything.
+
+**Every index, length and stored byte is a check-time constant** — an integer
+literal or a name bound to one, which includes a name bound by `extent(…)` or by
+a byte read. A non-constant operand refuses at `Q052`. The rule is load-bearing
+rather than conservative: this route's evidence is a byte comparison between a
+reference execution and a native run, and a value the reference interpreter
+cannot compute is one it cannot predict a line for. `Q053` is the bounds and
+range rule — an index outside `[0, extent)`, a stored byte outside `0..=255`, an
+extent outside `1..=4096` — decided **before emission**, so an out-of-range
+access is a refusal and not a run-time trap. `Q055` refuses a buffer at a
+position it may not cross: a rendering operand (bare or `borrow`), an index, or a
+stored byte.
+
+The derived effect row carries `Alloc` and `Mut` — the first source profile in
+this document for which that is true, `source.std-io.v1`'s being exactly `{Io}`
+because its operand grammar admits no resource. An acquisition and a release
+derive `Alloc`, a store derives `Mut`, a read derives nothing, and the declared
+`effects { … }` row must admit each (`Q029`).
+
+**Two words are newly reserved: `bytes` and `extent`.** The release is the
+**existing** `drop` — the operation is the ownership IR's own drop, so a new
+word would have been a synonym — and the byte accessors are the **existing** `[`
+and `]`, consumed elsewhere only in usage-interval positions (§G04) and never in
+a statement body, so `b[0] = 65;` needs no parser change at all. The acquisition
+is spelled `bytes` and **not** `buffer`: `buffer` was measured at 555
+occurrences across the source-side corpus, in *binding* position in shipped
+fixtures (`let buffer = qcore_buffer_new(1)?;` in
+`examples/threads/shared_readers.qcore`), so reserving it would refuse them and
+this card renamed its own syntax instead — the `work` → `effort` (§G02e) and
+`error` → `fatal` (§G02g) precedent. The *module* keeps the name `std.buffer`.
+
+The route emits **self-contained** C11 — `calloc`, `free` and two bounds-checked
+accessors defined in the emitted file, with no extern declaration, no library
+and no boundary — and has a reference execution, compared per stream exactly as
+§G02g's is. `calloc` rather than `malloc` so a read before a write has a defined
+answer. The emitted bounds comparison and allocation check **abort**, and both
+are *witnesses*: every index is a constant the checker already proved in range,
+so the comparison is provably never taken, and if one ever fired that would be a
+defect in the checker. Every claim on this route is therefore
+**partial-correctness**: if the emitted program produces an observation at all,
+it is the reference observation; an aborting run produces none.
+
+**No string, and no crossing.** There is no text, no encoding, no literal and no
+concatenation — a byte buffer is not a string (follow-ons
+`STD-BUFFER-STRING-LITERAL`, `STD-BUFFER-RENDER`). A module that buffers *and*
+extern-calls stays with §G02d and keeps that route's refusal; one that buffers
+*and* spawns stays with the concurrent route and keeps its `Q600`; one that
+buffers and prints reaches this route, whose line statements are §G02g's own.
+See [the module record](reports/wave22-std-buffer/README.md).
+
 ## G02i. Composed extern calls and rendered lines
 
 `source.std-io-extern.v1` (card `STD-IO-COMPOSE`). Selected when a module both
