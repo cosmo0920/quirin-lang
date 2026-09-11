@@ -4450,7 +4450,7 @@ fn compile_string_source(
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
-            "Q065",
+            "Q068",
             "entry-free `source.string.v1` modules require additional source lowering",
         )]);
     }
@@ -4485,7 +4485,7 @@ fn compile_string_source(
     // re-derive from the same lowered program.
     std_string::recheck_string_certificate(&lowered.program, &certificate).map_err(|failure| {
         vec![map_raw_diagnostic(
-            "Q065",
+            "Q068",
             SemanticPass::StandardString,
             lowered.scope_span,
             format!("the string-view certificate failed its independent recheck: {failure}"),
@@ -4497,7 +4497,7 @@ fn compile_string_source(
         std_string_c_emit::interpret_string_program(&lowered.program, &certificate).map_err(
             |refusal| {
                 vec![plain_diagnostic(
-                    "Q065",
+                    "Q068",
                     format!("the string-view reference execution refused this trace: {refusal:?}"),
                 )]
             },
@@ -4505,7 +4505,7 @@ fn compile_string_source(
     let emission =
         std_string_c_emit::emit_string_c11(&lowered.program, &certificate).map_err(|refusal| {
             vec![plain_diagnostic(
-                "Q065",
+                "Q068",
                 format!("the string-view backend refused this trace: {refusal:?}"),
             )]
         })?;

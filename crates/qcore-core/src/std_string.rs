@@ -43,7 +43,7 @@
 //! totally. Because every bound is a check-time constant, there is no residual
 //! case for a checked failure to represent, so v1 introduces no trap, no error
 //! value and no failure arm — a bound the checker cannot decide is refused by
-//! name at `Q066` and the missing capability is the named follow-on
+//! name at `Q069` and the missing capability is the named follow-on
 //! `STRING-SLICE-VARYING-INDEX`. That is the same discipline, and the same
 //! ground, as `source.buffer.v1`'s: this route's evidence is a byte comparison
 //! between a reference execution and a native run, and a value the reference
@@ -58,7 +58,7 @@
 //!   route selection places it *after* the extern route, so a module that does
 //!   both keeps that route's existing refusal — measured, not assumed.
 //! * **No rendering of text** (§7). A rendering operand is a scalar; a string at
-//!   one refuses at `Q069`.
+//!   one refuses at `Q072`.
 //! * **No `cap`.** The `{ptr, len, cap}` shape is reserved for the mutable
 //!   byte slice of `BYTE-SLICE-CAP` and putting capacity in an immutable string
 //!   would grow its value and ABI size without enabling an operation.
@@ -323,19 +323,19 @@ pub fn is_code_point_boundary(bytes: &[u8], at: usize) -> bool {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StringError {
-    /// `Q065`: the flat entry shape this profile models is violated.
+    /// `Q068`: the flat entry shape this profile models is violated.
     Shape { event: usize, reason: String },
-    /// `Q066`: a bound that is not a check-time constant this entry bound, or a
+    /// `Q069`: a bound that is not a check-time constant this entry bound, or a
     /// view position naming something this entry bound no string for.
     NotAScalar { event: usize, name: String },
-    /// `Q066`: a view position naming something this entry bound no string for.
+    /// `Q069`: a view position naming something this entry bound no string for.
     NotAString { event: usize, name: String },
-    /// `Q067`: a quoted token this route cannot decode into a payload.
+    /// `Q070`: a quoted token this route cannot decode into a payload.
     Literal {
         event: usize,
         refusal: LiteralRefusal,
     },
-    /// `Q068`: `0 <= low <= high <= len(s)` is violated.
+    /// `Q071`: `0 <= low <= high <= len(s)` is violated.
     OutOfRange {
         event: usize,
         name: String,
@@ -343,7 +343,7 @@ pub enum StringError {
         high: i32,
         len: u32,
     },
-    /// `Q068`: a bound that is in range but is not a UTF-8 code-point boundary.
+    /// `Q071`: a bound that is in range but is not a UTF-8 code-point boundary.
     /// Refused, **never rounded** — amendment §2 forbids silently moving an
     /// index — and never allowed to produce ill-formed text.
     NotABoundary {
@@ -352,22 +352,22 @@ pub enum StringError {
         at: u32,
         len: u32,
     },
-    /// `Q069`: a string at a position this route refuses to let it cross —
+    /// `Q072`: a string at a position this route refuses to let it cross —
     /// today, a rendering operand.
     CrossesBoundary { event: usize, name: String },
-    /// `Q070`: the declared `effects { … }` row does not admit a derived effect.
+    /// `Q073`: the declared `effects { … }` row does not admit a derived effect.
     EffectNotDeclared { event: usize, effect: Effect },
 }
 
 impl StringError {
     pub fn code(&self) -> &'static str {
         match self {
-            Self::Shape { .. } => "Q065",
-            Self::NotAScalar { .. } | Self::NotAString { .. } => "Q066",
-            Self::Literal { .. } => "Q067",
-            Self::OutOfRange { .. } | Self::NotABoundary { .. } => "Q068",
-            Self::CrossesBoundary { .. } => "Q069",
-            Self::EffectNotDeclared { .. } => "Q070",
+            Self::Shape { .. } => "Q068",
+            Self::NotAScalar { .. } | Self::NotAString { .. } => "Q069",
+            Self::Literal { .. } => "Q070",
+            Self::OutOfRange { .. } | Self::NotABoundary { .. } => "Q071",
+            Self::CrossesBoundary { .. } => "Q072",
+            Self::EffectNotDeclared { .. } => "Q073",
         }
     }
 

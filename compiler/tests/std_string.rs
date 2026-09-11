@@ -404,13 +404,13 @@ fn every_defined_escape_decodes_to_exactly_its_byte() {
 #[test]
 fn an_undefined_escape_refuses_rather_than_passing_the_bytes_through() {
     let source = module("io", &["let s = \"a\\qb\";", "return;"]);
-    assert_eq!(codes(&source), ["Q067"]);
+    assert_eq!(codes(&source), ["Q070"]);
 }
 
 #[test]
 fn a_truncated_hex_escape_refuses() {
     let source = module("io", &["let s = \"\\x4\";", "return;"]);
-    assert_eq!(codes(&source), ["Q067"]);
+    assert_eq!(codes(&source), ["Q070"]);
 }
 
 #[test]
@@ -419,20 +419,20 @@ fn a_hex_escape_that_would_make_ill_formed_utf8_refuses() {
     // well-formedness for the whole lifetime of the view, so the payload is
     // refused at construction and the ill-formed value never exists.
     let source = module("io", &["let s = \"\\xff\";", "return;"]);
-    assert_eq!(codes(&source), ["Q067"]);
+    assert_eq!(codes(&source), ["Q070"]);
 }
 
 #[test]
 fn a_lone_continuation_byte_refuses() {
     let source = module("io", &["let s = \"a\\x80b\";", "return;"]);
-    assert_eq!(codes(&source), ["Q067"]);
+    assert_eq!(codes(&source), ["Q070"]);
 }
 
 #[test]
 fn a_truncated_multibyte_sequence_refuses() {
     // The lead byte of a two-byte sequence with no continuation after it.
     let source = module("io", &["let s = \"\\xc3\";", "return;"]);
-    assert_eq!(codes(&source), ["Q067"]);
+    assert_eq!(codes(&source), ["Q070"]);
 }
 
 // --- §8: bounds checks and the UTF-8 boundary rule. ---
@@ -441,13 +441,13 @@ fn a_truncated_multibyte_sequence_refuses() {
 fn the_whole_admission_condition_is_checked_in_both_directions() {
     // `0 <= low <= high <= len(s)`, one violation at a time.
     let negative = module("io", &["let s = \"hello\";", "let t = s[-1:2];", "return;"]);
-    assert_eq!(codes(&negative), ["Q068"]);
+    assert_eq!(codes(&negative), ["Q071"]);
 
     let inverted = module("io", &["let s = \"hello\";", "let t = s[3:1];", "return;"]);
-    assert_eq!(codes(&inverted), ["Q068"]);
+    assert_eq!(codes(&inverted), ["Q071"]);
 
     let past_the_end = module("io", &["let s = \"hello\";", "let t = s[0:6];", "return;"]);
-    assert_eq!(codes(&past_the_end), ["Q068"]);
+    assert_eq!(codes(&past_the_end), ["Q071"]);
 }
 
 #[test]
@@ -483,13 +483,13 @@ fn a_bound_inside_a_code_point_refuses_and_is_never_rounded() {
         "io",
         &["let s = \"\\xc3\\xa9o\";", "let t = s[1:3];", "return;"],
     );
-    assert_eq!(codes(&low), ["Q068"]);
+    assert_eq!(codes(&low), ["Q071"]);
 
     let high = module(
         "io",
         &["let s = \"\\xc3\\xa9o\";", "let t = s[0:1];", "return;"],
     );
-    assert_eq!(codes(&high), ["Q068"]);
+    assert_eq!(codes(&high), ["Q071"]);
 }
 
 #[test]
@@ -524,9 +524,9 @@ fn a_bound_this_entry_did_not_bind_is_refused_before_this_route_sees_it() {
     //
     // **Measured, and the measurement is a residual worth naming**
     // (`STRING-SLICE-NOTASCALAR-REACH`). The route's own refusal for a bound
-    // that is not a check-time constant is `Q066`, but from a single source
+    // that is not a check-time constant is `Q069`, but from a single source
     // module that refusal cannot be reached: this route's only forms bind a
-    // scalar, a view, or nothing, a view at a bound position is `Q069`, and any
+    // scalar, a view, or nothing, a view at a bound position is `Q072`, and any
     // remaining spelling is a name the file never bound — which name resolution
     // refuses at `Q013` first, whether it is never bound or bound later. The
     // model's guard is still checked (see the test below, which reaches it
@@ -551,7 +551,7 @@ fn a_bound_this_entry_did_not_bind_is_refused_before_this_route_sees_it() {
 
 #[test]
 fn the_models_own_guard_refuses_a_bound_it_cannot_evaluate() {
-    // `Q066`'s unreachable-from-source arm, reached through the library so the
+    // `Q069`'s unreachable-from-source arm, reached through the library so the
     // guard the route relies on is checked rather than merely present.
     use qcore_core::std_string::{StringEvent, StringOperand, StringProgram, check_string_program};
     let program = StringProgram {
@@ -573,7 +573,7 @@ fn the_models_own_guard_refuses_a_bound_it_cannot_evaluate() {
         ],
     };
     let errors = check_string_program(&program).expect_err("an unevaluable bound is refused");
-    assert_eq!(errors[0].code(), "Q066");
+    assert_eq!(errors[0].code(), "Q069");
 }
 
 #[test]
@@ -599,13 +599,13 @@ fn a_bound_bound_to_a_length_is_a_check_time_constant() {
 #[test]
 fn slicing_something_that_is_not_a_string_refuses() {
     let source = module("io", &["let n = 3;", "let t = n[0:1];", "return;"]);
-    assert_eq!(codes(&source), ["Q066"]);
+    assert_eq!(codes(&source), ["Q069"]);
 }
 
 #[test]
 fn a_length_of_something_that_is_not_a_string_refuses() {
     let source = module("io", &["let n = 3;", "let m = len(n);", "return;"]);
-    assert_eq!(codes(&source), ["Q066"]);
+    assert_eq!(codes(&source), ["Q069"]);
 }
 
 // --- §8: zero-allocation, zero-copy slicing, with evidence. ---
@@ -778,7 +778,7 @@ fn a_view_is_not_a_scalar_and_cannot_be_rendered() {
     // capability and observation rules are extended; this amendment does not
     // make `std.io` or `std.logger` accept text." (`STRING-SLICE-IO`.)
     let source = module("io", &["let s = \"hello\";", "print dec s;", "return;"]);
-    assert_eq!(codes(&source), ["Q069"]);
+    assert_eq!(codes(&source), ["Q072"]);
 }
 
 #[test]
@@ -787,13 +787,13 @@ fn a_borrowed_rendering_of_a_view_refuses() {
         "io",
         &["let s = \"hello\";", "print dec borrow s;", "return;"],
     );
-    assert_eq!(codes(&source), ["Q069"]);
+    assert_eq!(codes(&source), ["Q072"]);
 }
 
 #[test]
 fn a_view_cannot_be_a_slice_bound() {
     let source = module("io", &["let s = \"hello\";", "let t = s[0:s];", "return;"]);
-    assert_eq!(codes(&source), ["Q069"]);
+    assert_eq!(codes(&source), ["Q072"]);
 }
 
 // --- §8: refusal at the unsupported C boundaries. ---
@@ -808,7 +808,7 @@ fn a_module_that_strings_and_extern_calls_keeps_the_extern_route_refusal() {
     // The refusal needs no code on this route and has none: route selection
     // places the string route *after* the extern route, so such a module stays
     // there and keeps a refusal that existed before this card. Measured here
-    // rather than assumed, and the absence of a `Q065`–`Q070` code in the result
+    // rather than assumed, and the absence of a `Q068`–`Q073` code in the result
     // is the measurement.
     let source = source_lines(&[
         "import std.string;",
@@ -827,7 +827,7 @@ fn a_module_that_strings_and_extern_calls_keeps_the_extern_route_refusal() {
     assert!(
         !codes
             .iter()
-            .any(|code| ("Q065".."Q071").contains(&code.as_str())),
+            .any(|code| ("Q068".."Q074").contains(&code.as_str())),
         "the crossing is refused by the extern route this card did not touch: {codes:?}"
     );
 }
@@ -873,7 +873,7 @@ fn a_module_that_strings_and_spawns_keeps_its_concurrency_refusal() {
     assert!(
         !codes
             .iter()
-            .any(|code| ("Q065".."Q071").contains(&code.as_str())),
+            .any(|code| ("Q068".."Q074").contains(&code.as_str())),
         "a spawning module never reaches this route: {codes:?}"
     );
 }
@@ -939,7 +939,7 @@ fn writing_a_line_still_requires_the_io_effect_to_be_declared() {
         "    return;",
         "}",
     ]);
-    assert_eq!(codes(&source), ["Q070"]);
+    assert_eq!(codes(&source), ["Q073"]);
 }
 
 #[test]
@@ -957,7 +957,7 @@ fn a_string_construct_outside_the_entry_refuses() {
         "    return;",
         "}",
     ]);
-    assert_eq!(codes(&source), ["Q065"]);
+    assert_eq!(codes(&source), ["Q068"]);
 }
 
 #[test]
@@ -973,7 +973,7 @@ fn a_system_trace_threshold_declaration_refuses_rather_than_being_ignored() {
     // observations, so this route produces real stream bytes with no threshold
     // declaration anywhere.
     let source = module("io", &["log_level trace;", "let s = \"hello\";", "return;"]);
-    assert_eq!(codes(&source), ["Q065"]);
+    assert_eq!(codes(&source), ["Q068"]);
 }
 
 #[test]
@@ -1007,19 +1007,19 @@ fn a_type_ascription_names_the_modules_own_type_and_nothing_else() {
     );
 
     let bad = module("io", &["let s: text = \"hello\";", "return;"]);
-    assert_eq!(codes(&bad), ["Q065"]);
+    assert_eq!(codes(&bad), ["Q068"]);
 }
 
 #[test]
 fn a_statement_this_route_does_not_model_refuses() {
     let source = module("io", &["let s = \"hello\";", "drop s;", "return;"]);
-    assert_eq!(codes(&source), ["Q065"]);
+    assert_eq!(codes(&source), ["Q068"]);
 }
 
 #[test]
 fn an_entry_that_never_returns_refuses() {
     let source = module("io", &["let s = \"hello\";"]);
-    assert_eq!(codes(&source), ["Q065"]);
+    assert_eq!(codes(&source), ["Q068"]);
 }
 
 #[test]

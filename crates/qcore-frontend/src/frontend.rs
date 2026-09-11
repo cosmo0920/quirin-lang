@@ -1843,7 +1843,7 @@ pub enum SemanticPass {
     Event,
     /// Card `STRING-SLICE`: admission of `source.string.v1` — the `std.string`
     /// bundled module's immutable UTF-8 `{ptr, len}` **string view**
-    /// (`docs/design/STRING_SLICE_V1.md`). Owns `Q065`–`Q070` (spec §L21).
+    /// (`docs/design/STRING_SLICE_V1.md`). Owns `Q068`–`Q073` (spec §L21).
     ///
     /// A separate pass from `StandardBuffer` on purpose, and the separation is
     /// the amendment's own §5: that pass admits an **owned, mutable, explicitly
@@ -1856,13 +1856,18 @@ pub enum SemanticPass {
     /// a band would make the range stop describing what either pass decides.
     ///
     /// It is likewise separate from `StandardIo`, whose `Q029` this pass does
-    /// not reuse for its own `Q070` effect refusal, on §L21's rule that a code
+    /// not reuse for its own `Q073` effect refusal, on §L21's rule that a code
     /// may not be reused by a second semantic pass.
     ///
-    /// The band is `Q065`–`Q070` because `Q064` was the highest code allocated
-    /// on the base this card was cut from. A collision discovered at
-    /// integration relocates this **unshipped** band, per the wave-3 `T07`/`T09`
-    /// precedent; the code-to-condition mapping is stable under such a shift.
+    /// The band was **allocated as `Q065`–`Q070`** on the base this card was cut
+    /// from, where `Q064` was the highest code, and was **relocated to
+    /// `Q068`–`Q073` at integration** after card `NATIVE-LIBRARY-SOURCE-BINDING`
+    /// merged first and took `Q065`–`Q067` as `NativeLibrary`'s fourth range.
+    /// That is the wave-3 `T07`/`T09` precedent applied exactly as it reads: the
+    /// band was still unshipped, so it moved rather than the shipped one. The
+    /// relocation is a pure renumber — same order, same six conditions, same
+    /// meanings — which is what the precedent's "the code-to-condition mapping
+    /// is stable under such a shift" is for.
     StandardString,
     PluginVerification,
 }
@@ -2775,15 +2780,15 @@ pub fn source_diagnostic(
         // row) are issued at their own emission sites.
         SemanticPass::Event => "Q058",
         // The generic presentation code of the string pass, and the code of
-        // every shape refusal in it. The specific conditions Q066 (a bound that
+        // every shape refusal in it. The specific conditions Q069 (a bound that
         // is not a check-time constant, or a view position naming no string),
-        // Q067 (a quoted token that does not decode to a well-formed UTF-8
-        // payload), Q068 (a slice outside `0 <= low <= high <= len` or off a
-        // code-point boundary), Q069 (a string at a position it may not cross)
-        // and Q070 (an undeclared derived effect) are issued at their own
-        // emission sites, and Q065 is also the code of this route's failed
+        // Q070 (a quoted token that does not decode to a well-formed UTF-8
+        // payload), Q071 (a slice outside `0 <= low <= high <= len` or off a
+        // code-point boundary), Q072 (a string at a position it may not cross)
+        // and Q073 (an undeclared derived effect) are issued at their own
+        // emission sites, and Q068 is also the code of this route's failed
         // certificate rederivation.
-        SemanticPass::StandardString => "Q065",
+        SemanticPass::StandardString => "Q068",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

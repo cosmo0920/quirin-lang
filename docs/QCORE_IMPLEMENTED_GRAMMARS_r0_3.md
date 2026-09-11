@@ -2071,7 +2071,7 @@ That target grammar is neither a parser generator input already used by the comp
 The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
 explicit, file-local `import std.string;` for string capabilities. Card
 `STRING-SLICE` registers that module and implements this consumer grammar
-(diagnostics `Q065`–`Q070`, spec §L21):
+(diagnostics `Q068`–`Q073`, spec §L21):
 
 ```ebnf
 module    = { import }, { error-decl | entry } ;

@@ -207,8 +207,10 @@ may become `Safe` merely because a token now parses as a string value.
 
 - ~~`STRING-SLICE-LEX-TYPE`~~: **landed** by card `STRING-SLICE`. `std.string`
   registration and per-file capability gating, literal decoding, type checking,
-  keyword census (which reserved nothing) and diagnostic allocation
-  (`Q065`–`Q070`, spec §L21).
+  keyword census (which reserved nothing) and diagnostic allocation — allocated
+  as `Q065`–`Q070` and **relocated to `Q068`–`Q073` at integration** when
+  `NATIVE-LIBRARY-SOURCE-BINDING` merged first and took `Q065`–`Q067`; a pure
+  renumber, spec §L21.
 - ~~`STRING-SLICE-EXEC-C11`~~: **landed** by the same card. Reference semantics,
   `{ptr, len}` C11 emission, and zero-allocation evidence — a certificate whose
   slice records carry the §4 arithmetic, and an emitted-program tripwire that
@@ -217,11 +219,11 @@ may become `Safe` merely because a token now parses as a string value.
   `std.buffer` with custody and mutation exclusion. Until it lands, a module that
   does both stays on the buffer route and keeps that route's refusal.
 - `STRING-SLICE-VARYING-INDEX`: a slice bound that is not a check-time constant.
-  v1 decides every bound statically and refuses anything else by name (`Q066`);
+  v1 decides every bound statically and refuses anything else by name (`Q069`);
   admitting a varying bound needs a relational domain over indices and a checked
   failure arm, which is the second of the two arms §2 permits.
 - `STRING-SLICE-NOTASCALAR-REACH`: a recorded, unrepaired measurement rather than
-  a gap to close. `Q066`'s "not a check-time constant" arm cannot be reached from
+  a gap to close. `Q069`'s "not a check-time constant" arm cannot be reached from
   a single source module — name resolution refuses an unbound name at `Q013`
   first — so the guard is checked through the library instead. Kept rather than
   deleted, on the `EXTERN-F1-STORE-REACH` precedent.

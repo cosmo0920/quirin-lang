@@ -37,25 +37,50 @@ ASan/UBSan/LSan.
 | Lean model and audit | `proof/QCore/StdString.lean`, `proof/AuditStdString.lean` |
 | Registry widening | `proof/QCore/ModuleImports.lean` (seven fields → eight) |
 
-## 2. Diagnostic band allocated: `Q065`–`Q070`, pass `StandardString`
+## 2. Diagnostic band: `Q068`–`Q073`, pass `StandardString` — **relocated at integration**
 
-`Q064` was the highest code allocated on this card's base, so the band starts at
-`Q065`. **Other wave-23 cards may also be allocating; the integrator relocates on
-collision per the wave-3 `T07`/`T09` precedent, and the code-to-condition mapping
-below is stable under such a shift.** The §L21 row is added at
-`docs/QCORE_SPEC_r0_3.md`; the `AGENTS.md` namespace-table row is integrator
-business and was deliberately not written here.
+**Band relocated at integration after collision with shipped `Q065`–`Q067`.**
+
+This card originally allocated `Q065`–`Q070`, `Q064` being the highest code on
+its base, and flagged the band as relocatable on collision. The collision
+happened: card `NATIVE-LIBRARY-SOURCE-BINDING` merged first and holds
+`Q065`–`Q067` as `NativeLibrary`'s **fourth** range. On the integrator's
+instruction the band moved to `Q068`–`Q073`, per the wave-3 `T07`/`T09`
+precedent — the still-unshipped band moves, never the shipped one.
+
+The relocation is a **pure renumber**: same order, same six conditions, same
+meanings, same emission sites. That is exactly the property the original
+allocation promised ("the code-to-condition mapping is stable under such a
+shift"), so it is recorded here rather than silently absorbed:
+
+| Allocated | Shipped as |
+|---|---|
+| `Q065` | `Q068` |
+| `Q066` | `Q069` |
+| `Q067` | `Q070` |
+| `Q068` | `Q071` |
+| `Q069` | `Q072` |
+| `Q070` | `Q073` |
+
+126 substitutions across nine files, applied as one simultaneous pass
+(`measure/relocate_band.py`) rather than six sequential ones, because a
+sequential rewrite would have caught its own output — `Q065` → `Q068` and then
+that same token again under `Q068` → `Q071`. No code in the band's *old* range
+survives anywhere in this card's files, checked by the script.
+
+The §L21 row is at `docs/QCORE_SPEC_r0_3.md`; the `AGENTS.md` namespace-table row
+is integrator business and was deliberately not written here.
 
 | Code | Condition |
 |---|---|
-| `Q065` | The flat entry shape is violated — a statement outside the grammar, a nested block, a construct outside the entry, a parameterised entry, a malformed literal/`len(…)`/slice, a type ascription naming something other than `string`, a missing or repeated return, a malformed `effects` row. Also the pass's generic presentation code, an entry-free module, and a failed certificate rederivation. |
-| `Q066` | A slice bound that is not a check-time constant this entry bound, or a view position naming no string. |
-| `Q067` | A quoted token that does not decode — an undefined escape, a truncated `\x`, a trailing backslash, decoded bytes that are not well-formed UTF-8, or a payload over 4096 bytes. |
-| `Q068` | A slice outside `0 <= low <= high <= len(s)`, or a bound in range but not on a UTF-8 code-point boundary. |
-| `Q069` | A string at a position it may not cross — a rendering operand (bare or `borrow`) or a slice bound. |
-| `Q070` | The declared `effects { … }` row does not admit a derived effect. |
+| `Q068` | The flat entry shape is violated — a statement outside the grammar, a nested block, a construct outside the entry, a parameterised entry, a malformed literal/`len(…)`/slice, a type ascription naming something other than `string`, a missing or repeated return, a malformed `effects` row. Also the pass's generic presentation code, an entry-free module, and a failed certificate rederivation. |
+| `Q069` | A slice bound that is not a check-time constant this entry bound, or a view position naming no string. |
+| `Q070` | A quoted token that does not decode — an undefined escape, a truncated `\x`, a trailing backslash, decoded bytes that are not well-formed UTF-8, or a payload over 4096 bytes. |
+| `Q071` | A slice outside `0 <= low <= high <= len(s)`, or a bound in range but not on a UTF-8 code-point boundary. |
+| `Q072` | A string at a position it may not cross — a rendering operand (bare or `borrow`) or a slice bound. |
+| `Q073` | The declared `effects { … }` row does not admit a derived effect. |
 
-`Q070` is deliberately this pass's own rather than a reuse of `StandardIo`'s
+`Q073` is deliberately this pass's own rather than a reuse of `StandardIo`'s
 `Q029`, on §L21's rule that a code may not be reused by a second pass.
 
 ## 3. Keyword census (constraint 14): **this card reserves no word**
@@ -206,7 +231,7 @@ Archived at `artifacts/slices.c`.
 ### 6.3 Decoding and the boundary rule
 
 Defined escapes: `\\`, `\"`, `\n`, `\t`, `\r`, `\0`, `\xHH`. Anything else
-refuses at `Q067` rather than passing bytes through. Decoded bytes must be
+refuses at `Q070` rather than passing bytes through. Decoded bytes must be
 well-formed UTF-8, checked at the one point bytes enter the model, so an
 ill-formed payload is refused **at construction** and the value never exists —
 which is how §3.4's "for the whole lifetime of the view" is discharged.
@@ -216,8 +241,8 @@ which is how §3.4's "for the whole lifetime of the view" is discharged.
   field and writes each literal array byte-wise rather than as a C string literal.
 - `""` has `len` 0, a canonical non-null address, and is never dereferenced.
 - `"\xc3\xa9o!"` has `len` 4 and exactly the boundaries {0, 2, 3, 4}. `s[0:1]`
-  and `s[1:3]` refuse at `Q068`; `s[0:2]` and `s[2:4]` are admitted.
-- `"\xff"`, `"a\x80b"` and `"\xc3"` all refuse at `Q067`.
+  and `s[1:3]` refuse at `Q071`; `s[0:2]` and `s[2:4]` are admitted.
+- `"\xff"`, `"a\x80b"` and `"\xc3"` all refuse at `Q070`.
 - A boundary violation is **refused, never rounded**: rounding would silently
   slice a different string and not rounding would produce ill-formed text, and §2
   forbids both.
@@ -255,13 +280,13 @@ out-of-bounds read.
   new code: route selection places this route after the extern route, so a module
   that strings and extern-calls keeps that route's refusal. Same construction for
   `std.buffer` (after the buffer route, which keeps `Q051`) and for concurrency.
-- **No text output.** A rendering operand is a scalar; `Q069` refuses a string at
+- **No text output.** A rendering operand is a scalar; `Q072` refuses a string at
   one. The observable evidence in this card is therefore scalar-only — lengths
   piped to the existing renderers — exactly as the card scope requires. On the
   quiet-emission landscape: this route's observation comes from source-authored
   `print`/`log`, which are the **formatted-I/O owners** rather than compiler
   observations, so it produces real stream bytes with no threshold declaration.
-  The quiet-emission `log_level LEVEL;` declaration is **refused** at `Q065`
+  The quiet-emission `log_level LEVEL;` declaration is **refused** at `Q068`
   rather than accepted and ignored, because it installs the shared system-trace
   adapter at emission time through `emit_c11_with_log_level`, which this route's
   backend does not call — the same disposition `source.buffer.v1` gives it.
@@ -281,7 +306,7 @@ out-of-bounds read.
 | `STRING-SLICE-ABI` | An extent- and lifetime-carrying extern/native-library ABI. Amendment §6; the crossing stays refused. |
 | `STRING-SLICE-IO` | Rendering text. Amendment §7; `std.io`/`std.logger` still accept scalars only. |
 | `STRING-SLICE-VARYING-INDEX` | A slice bound that is not a check-time constant: a relational domain over indices plus §2's checked-failure arm. |
-| `STRING-SLICE-NOTASCALAR-REACH` | **Recorded, not repaired.** `Q066`'s "not a check-time constant" arm cannot be reached from a single source module — name resolution refuses an unbound name at `Q013` first, whether it is never bound or bound later. The guard is checked through the library (`the_models_own_guard_refuses_a_bound_it_cannot_evaluate`) and kept rather than deleted, on the `EXTERN-F1-STORE-REACH` precedent. |
+| `STRING-SLICE-NOTASCALAR-REACH` | **Recorded, not repaired.** `Q069`'s "not a check-time constant" arm cannot be reached from a single source module — name resolution refuses an unbound name at `Q013` first, whether it is never bound or bound later. The guard is checked through the library (`the_models_own_guard_refuses_a_bound_it_cannot_evaluate`) and kept rather than deleted, on the `EXTERN-F1-STORE-REACH` precedent. |
 | `BYTE-SLICE-CAP` | A separate mutable `{ptr, len, cap}` byte-slice profile. |
 
 Amendment §3.7's operations (equality, ordering, hashing, search) remain
@@ -329,6 +354,26 @@ Run on this worktree at the card's final state.
 | `python3 scripts/check_lean_audits.py` | **96 Lean audits passed** (was 95), exit 0 |
 | `compiler/tests/std_string.rs` | **62 passed, 0 failed** |
 | `compiler/tests/std_buffer.rs` | **52 passed, 0 failed** (untouched) |
+
+### 10.3 Re-run after the band relocation (§2)
+
+The relocation is a pure renumber, so the suites that *pin the codes* were
+re-run rather than the whole workspace, on the integrator's instruction — the
+merge gate covers the rest.
+
+| Suite | Why it is in this list | Result |
+|---|---|---|
+| `compiler/tests/std_string.rs` | pins all six relocated codes | **62 passed, 0 failed** |
+| `compiler/tests/std_buffer.rs` | the neighbour route this card narrowed | **52 passed, 0 failed** |
+| `compiler/tests/std_event.rs` | names `Q058`–`Q062`, the band below | **27 passed, 0 failed** |
+| `compiler/tests/native_library_header.rs` | names `Q063`–`Q064`, the band the collision came from | **17 passed, 0 failed** |
+| `crates/qcorec/tests/cli.rs` | names a code in this range | **8 passed, 0 failed** |
+| `qcore-core --lib` (incl. `tests/unit/std_event.rs`) | names codes in this range | **857 passed, 0 failed** |
+| `cargo fmt --all -- --check` | | exit **0** |
+| `cargo clippy` over the three touched crates | | exit **0** |
+
+The suite list is not a guess: it is every test file in the repository matching
+`Q05[89]`, `Q06[0-9]` or `Q07[0-3]`.
 
 ### 10.1 The workspace run, and the load it was measured under
 

@@ -193,7 +193,7 @@ fn operand(window: &[&Token], cursor: usize) -> Option<(StringOperand, usize)> {
 /// The ascribed word is read here but **not validated** here, deliberately. A
 /// statement whose initialiser is a string construct is this route's statement
 /// whatever type it ascribes, so `let s: text = "hello";` reaches
-/// [`lower_source_string`] and is refused at `Q065` naming the type — rather
+/// [`lower_source_string`] and is refused at `Q068` naming the type — rather
 /// than failing this classifier, falling through to the sequential route and
 /// being refused for the unrelated reason that the reduced C11 CFG cannot encode
 /// a quoted token. The refusal a reader gets should name what is wrong with the
@@ -338,7 +338,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
         Some(TokenKind::Symbol(Symbol::LeftBrace))
     ) {
         return Err(diagnostic(
-            "Q065",
+            "Q068",
             span,
             "an `effects` row requires a block",
         ));
@@ -355,7 +355,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
                     "mut" => Effect::Mut,
                     other => {
                         return Err(diagnostic(
-                            "Q065",
+                            "Q068",
                             span,
                             format!(
                                 "`{other}` is not an effect `source.string.v1` models; use io, \
@@ -371,7 +371,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
                 }
             }
             _ => {
-                return Err(diagnostic("Q065", span, "this `effects` row is not closed"));
+                return Err(diagnostic("Q068", span, "this `effects` row is not closed"));
             }
         }
     }
@@ -413,7 +413,7 @@ fn lower_let(
     diagnostics: &mut Vec<SourceDiagnostic>,
 ) -> Option<StringEvent> {
     let Some((binding, ascribed, equal)) = let_head(window) else {
-        diagnostics.push(diagnostic("Q065", span, "this `let` binds no name"));
+        diagnostics.push(diagnostic("Q068", span, "this `let` binds no name"));
         return None;
     };
     // The one place `string` is spelled, and the one place the spelling is
@@ -423,7 +423,7 @@ fn lower_let(
         && ascribed != STRING_TYPE
     {
         diagnostics.push(diagnostic(
-            "Q065",
+            "Q068",
             span,
             format!(
                 "`{ascribed}` is not a type `source.string.v1` models; the only type name \
@@ -434,7 +434,7 @@ fn lower_let(
     }
     if !symbol(window, equal, Symbol::Equal) {
         diagnostics.push(diagnostic(
-            "Q065",
+            "Q068",
             span,
             "`source.string.v1` binds `let NAME = …;` only",
         ));
@@ -446,7 +446,7 @@ fn lower_let(
     if let Some(raw) = literal_text(window, value) {
         if !ends_with_semicolon(window, value + 1) {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "a literal view binds one quoted token and nothing else",
             ));
@@ -458,7 +458,7 @@ fn lower_let(
         let payload = match decode_string_literal(raw) {
             Ok(payload) => payload,
             Err(refusal) => {
-                diagnostics.push(diagnostic("Q067", span, refusal.to_string()));
+                diagnostics.push(diagnostic("Q070", span, refusal.to_string()));
                 // A `TooLong` payload would still be usable as bytes, but this
                 // route refuses rather than truncating it (`LiteralRefusal`'s
                 // own rule), so nothing is registered for it.
@@ -478,7 +478,7 @@ fn lower_let(
     {
         let Some(name) = word(window, value + 2) else {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "`len(NAME)` names the string whose byte length it binds",
             ));
@@ -486,7 +486,7 @@ fn lower_let(
         };
         if !symbol(window, value + 3, Symbol::RightParen) || !ends_with_semicolon(window, value + 4)
         {
-            diagnostics.push(diagnostic("Q065", span, "this `len(…)` is not closed"));
+            diagnostics.push(diagnostic("Q068", span, "this `len(…)` is not closed"));
             return None;
         }
         return Some(StringEvent::Len {
@@ -501,7 +501,7 @@ fn lower_let(
     {
         let Some((low, next)) = operand(window, value + 2) else {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "a slice bounds with one integer literal or one bound integer name",
             ));
@@ -509,7 +509,7 @@ fn lower_let(
         };
         if !symbol(window, next, Symbol::Colon) {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "`source.string.v1` slices with `NAME[LOW:HIGH]`; a single-index access into a \
                  string is not a construct this route models, because a byte of UTF-8 text is not \
@@ -519,14 +519,14 @@ fn lower_let(
         }
         let Some((high, next)) = operand(window, next + 1) else {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "a slice bounds with one integer literal or one bound integer name",
             ));
             return None;
         };
         if !symbol(window, next, Symbol::RightBracket) || !ends_with_semicolon(window, next + 1) {
-            diagnostics.push(diagnostic("Q065", span, "this slice is not closed"));
+            diagnostics.push(diagnostic("Q068", span, "this slice is not closed"));
             return None;
         }
         return Some(StringEvent::Slice {
@@ -545,7 +545,7 @@ fn lower_let(
         }),
         _ => {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "`source.string.v1` binds an integer literal, a quoted literal, `len(NAME)` or one \
                  slice; nothing else",
@@ -570,7 +570,7 @@ pub fn lower_source_string(
         declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
     }) else {
         return Err(vec![diagnostic(
-            "Q065",
+            "Q068",
             Span { start: 0, end: 0 },
             format!("`{entry}` is not a function declaration in this module"),
         )]);
@@ -599,7 +599,7 @@ pub fn lower_source_string(
             scan(body, tokens, &mut found);
             if let Some(span) = found.values().next() {
                 diagnostics.push(diagnostic(
-                    "Q065",
+                    "Q068",
                     *span,
                     format!(
                         "`source.string.v1` models the entry only; `{}` is not the entry `{entry}`",
@@ -612,7 +612,7 @@ pub fn lower_source_string(
 
     if !declaration.value.parameters.is_empty() {
         diagnostics.push(diagnostic(
-            "Q065",
+            "Q068",
             scope_span,
             "`source.string.v1` models an entry with no parameters",
         ));
@@ -627,7 +627,7 @@ pub fn lower_source_string(
     };
 
     let Some(body) = &declaration.value.body else {
-        diagnostics.push(diagnostic("Q065", scope_span, "this entry has no body"));
+        diagnostics.push(diagnostic("Q068", scope_span, "this entry has no body"));
         return Err(diagnostics);
     };
 
@@ -641,7 +641,7 @@ pub fn lower_source_string(
         let span = statement.span;
         if !statement.value.nested_blocks().is_empty() {
             diagnostics.push(diagnostic(
-                "Q065",
+                "Q068",
                 span,
                 "`source.string.v1` models one flat statement sequence; this statement opens a \
                  nested block",
@@ -653,7 +653,7 @@ pub fn lower_source_string(
         let event = match head {
             "let" => lower_let(&window, span, &mut literals, &mut diagnostics),
             // `log_level LEVEL;` is deliberately **absent** from this list, so
-            // it reaches the `other` arm below and refuses at `Q065` — the same
+            // it reaches the `other` arm below and refuses at `Q068` — the same
             // disposition `source.buffer.v1` gives it, and fail-closed rather
             // than accept-and-ignore. The quiet-emission amendment's
             // declaration installs the shared system-trace adapter at
@@ -670,12 +670,12 @@ pub fn lower_source_string(
                 match crate::source_std_io::std_io_statement(parsed, span) {
                     Some(Ok(event)) => Some(StringEvent::Line(event)),
                     Some(Err(message)) => {
-                        diagnostics.push(diagnostic("Q065", span, message));
+                        diagnostics.push(diagnostic("Q068", span, message));
                         None
                     }
                     None => {
                         diagnostics.push(diagnostic(
-                            "Q065",
+                            "Q068",
                             span,
                             "this line-producing statement is not one `source.std-io.v1` models",
                         ));
@@ -688,7 +688,7 @@ pub fn lower_source_string(
                     Some(StringEvent::Return)
                 } else {
                     diagnostics.push(diagnostic(
-                        "Q065",
+                        "Q068",
                         span,
                         "`source.string.v1` models `return;` from a `unit` entry",
                     ));
@@ -697,7 +697,7 @@ pub fn lower_source_string(
             }
             other => {
                 diagnostics.push(diagnostic(
-                    "Q065",
+                    "Q068",
                     span,
                     format!("`{other}` is not a statement `source.string.v1` models"),
                 ));
