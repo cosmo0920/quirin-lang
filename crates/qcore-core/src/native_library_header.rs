@@ -1785,20 +1785,27 @@ fn derive_erasures(lines: &[String], guards: &BTreeSet<String>) -> BTreeSet<Stri
 /// `EXPORT int f(void);` with an `EXPORT` derived from a declared text read to
 /// exactly the same declaration.
 fn erase_decorations(tokens: &mut Vec<String>, erasures: &BTreeSet<String>) {
+    // One left-to-right pass over one borrowed view. A decoration's extent is a
+    // function of the tokens from its introducer onwards, so removing earlier
+    // ones cannot change where a later one ends — which is what lets the whole
+    // stream be scanned once rather than re-borrowed at every index.
+    let borrowed = tokens.iter().map(String::as_str).collect::<Vec<_>>();
+    let mut kept: Vec<String> = Vec::with_capacity(borrowed.len());
     let mut index = 0usize;
-    while index < tokens.len() {
-        if erasures.contains(&tokens[index]) {
-            tokens.remove(index);
+    while index < borrowed.len() {
+        if erasures.contains(borrowed[index]) {
+            index += 1;
             continue;
         }
-        let borrowed = tokens.iter().map(String::as_str).collect::<Vec<_>>();
         match erasable_decoration_end(&borrowed, index) {
-            Some(end) => {
-                tokens.drain(index..end);
+            Some(end) => index = end,
+            None => {
+                kept.push(borrowed[index].to_owned());
+                index += 1;
             }
-            None => index += 1,
         }
     }
+    *tokens = kept;
 }
 
 /// Read one header's text into the depth-zero token stream plus the two sets
