@@ -373,6 +373,21 @@ existing ASan/UBSan/LSan route. The emitted programs, reference observations,
 branch semantics, diagnostics and fixtures are unchanged. The three exact
 formerly failing tests and the complete 35-test target pass on Windows.
 
+Windows logical-connective gate repair (2026-09-11): the native observation
+comparison in `logical_connectives` now uses the established MSVC harness on
+Windows instead of trying to launch the absent Unix `cc`; non-Windows hosts
+retain the existing ASan/UBSan/LSan route. The emitted program, reference
+observation, connective semantics, diagnostics and fixtures are unchanged.
+The exact formerly failing test and the complete 25-test target pass on
+Windows.
+
+Windows native-library fixture repair (2026-09-11): the two malformed-manifest
+rows that remove the library or manifest declaration now use the existing
+checked token mutation instead of matching a Unix newline. This makes the
+intended `Q039` refusal newline-agnostic without changing the loader, accepted
+manifest surface, diagnostics or evidence. The exact formerly failing test
+and the complete 16-test `native_library` target pass on Windows.
+
 Post-IF-ARMS gate repair (2026-09-11): the `bitwise_conditions` suite now pins
 the existing `Q044` refusal for an arm-local check-time constant binding on its
 concrete ground — the binding has no position after the join — rather than on

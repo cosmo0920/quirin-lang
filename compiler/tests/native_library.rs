@@ -364,7 +364,7 @@ fn a_manifest_that_does_not_load_refuses_rather_than_being_ignored() {
     // stop a certificate saying which build it rests on.
     for broken in [
         MANIFEST.replace("data_model lp64;", "data_model ilp32;"),
-        MANIFEST.replace("library qcore_unchecked_demo;\n", ""),
+        manifest_with("library qcore_unchecked_demo;", ""),
         // A `contract fn` with no `from MODULE` tail. Under card
         // `UNSAFE-LINKAGE-ARTIFACT` this refused because a contracted entry was
         // an entry kind the loader declined; under card
@@ -376,7 +376,7 @@ fn a_manifest_that_does_not_load_refuses_rather_than_being_ignored() {
             "unchecked fn k_unchecked_add",
             "contract fn k_unchecked_add",
         ),
-        MANIFEST.replace("native_library manifest v1;\n", ""),
+        manifest_with("native_library manifest v1;", ""),
         MANIFEST.replace("hash sha256:9f2c", "hash sha256:zzzz"),
     ] {
         assert_eq!(
