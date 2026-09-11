@@ -2218,17 +2218,17 @@ fn read_declaration(
     // `uint8_t *` — an attribute that changes the declared type, ignored. The
     // erasable vocabulary is deleted from the token stream before this point, so
     // anything still standing here is a decoration this reader does not commit
-    // to, and it makes the declaration unreadable by name.
-    if let Some(decoration) = undecided_decoration(texts, start) {
-        return Some(HeaderDeclaration {
-            result: Err(decoration),
-            parameters: Vec::new(),
-            variadic: false,
-            unspecified: false,
-            internal,
-        });
-    }
-    let result = project_declarator(prefix, typedefs, true).ok_or_else(|| prefix.join(" "));
+    // to, and it makes the **result** unreadable by name.
+    //
+    // The result rather than the whole record, deliberately: a fabricated
+    // parameter list would be compared for arity first — the order
+    // [`compare_reading`] uses, which is `check_manifest_agreement`'s — and would
+    // report a *disagreement*, a claim that the header contradicts the manifest,
+    // where the truth is that this reader could not read the declaration.
+    let result = match undecided_decoration(texts, start) {
+        Some(decoration) => Err(decoration),
+        None => project_declarator(prefix, typedefs, true).ok_or_else(|| prefix.join(" ")),
+    };
     let parameters = &texts[index + 2..close];
     if parameters.is_empty() {
         return Some(HeaderDeclaration {

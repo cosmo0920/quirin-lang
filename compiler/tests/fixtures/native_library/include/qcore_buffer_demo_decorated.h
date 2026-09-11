@@ -7,8 +7,17 @@
  * `event2/` surface, reproduced here so the refusal it produces is pinned in
  * this repository rather than only in a submodule. The declaration is not
  * *wrong*; it is outside the v1 subset, and the refusal names the token that
- * puts it there. Widening to it is follow-on
- * `NATIVE-LIBRARY-HEADER-DECORATION`.
+ * puts it there.
+ *
+ * Card `NATIVE-LIBRARY-HEADER-DECORATION` landed the widening, and this one
+ * file now serves both directions. Read with no `include` declared — the
+ * wave-22 transport — it still refuses at `Q063` naming
+ * `QCORE_BUFFER_DEMO_EXPORT`. Read through
+ * `buffer_lib_decorated.qcorelib`, which declares
+ * `"qcore_buffer_demo_visibility.h"` and its digest and says nothing at all
+ * about what that text contains, the reader derives the erasure from that
+ * text's own `#define`s and the four declarations below read exactly as
+ * `qcore_buffer_demo.h`'s undecorated ones do.
  */
 #ifndef QCORE_BUFFER_DEMO_H
 #define QCORE_BUFFER_DEMO_H

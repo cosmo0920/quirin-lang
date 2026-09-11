@@ -64,7 +64,7 @@ language conformance stays false.
 
 ```text
 header include/qcore_buffer_demo_decorated.h;
-header_hash sha256:0cc1b130…b019;
+header_hash sha256:88d5ce10…8f6e;
 include "qcore_buffer_demo_visibility.h" from include/qcore_buffer_demo_visibility.h sha256:8fce29e5…1c0b;
 ```
 
@@ -379,7 +379,7 @@ the record it already carried:
 > **— and —** it is read through the declared contract `…/buffer_lib.qcore`,
 > from artifact `libqcore_buffer_demo.a` … under stated ABI premises
 > **— and —** its exported header `include/qcore_buffer_demo_decorated.h` was
-> **read** at `sha256:0cc1…b019`, **reading**
+> **read** at `sha256:88d5…8f6e`, **reading**
 > `include/qcore_buffer_demo_visibility.h` (`"qcore_buffer_demo_visibility.h"`)
 > at `sha256:8fce…1c0b`, and every bound declaration was compared against it —
 > those digests are verified, not declared.
@@ -454,7 +454,10 @@ corpus re-measurement beside it.
 * **Waves 18–22 pass unchanged**: `compiler/tests/native_library.rs` (16),
   `native_library_contract.rs` (15), `unsafe_linkage.rs` (28) and
   `native_library_header.rs` (17) are untouched, and the 49 wave-22 core unit
-  rows are untouched.
+  rows are untouched. One wave-22 **fixture** changed: the comment block of
+  `include/qcore_buffer_demo_decorated.h`, whose forward reference to this card
+  is now a record that it landed. No declaration in it moved, and the wave-22
+  row that reads it measures its digest at run time, so nothing pinned shifted.
 * **New reserved words: none** (constraint 14). `include` and `from` are manifest
   statement keywords; a manifest shares no lexer with source, which is why its
   grammar lives in §G02d.2 and not §G02d. A header is C, read by a reader of its
@@ -568,16 +571,45 @@ layer — splicing, guard removal, tokenising — is a Rust boundary tested ther
 | `compiler/tests/unsafe_linkage.rs` (wave 18) | 28 passed, unchanged |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `reevaluation_probe` | GATE_PROBE |
-| `reevaluation_followup` | GATE_FOLLOWUP |
+| `reevaluation_probe` | exit 0 |
+| `reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | **Passed 96 Lean audits** (95 at base + `AuditNativeLibraryHeaderDecoration`) |
-| `python3 -m unittest discover -s scripts/tests` | GATE_SCRIPTS |
+| `python3 -m unittest discover -s scripts/tests` | 193 run, **1 failure**: the expected acceptance-matrix drift (§13.2) |
 
 `third_party/libevent` was initialised in this fresh worktree before the run
 (`git submodule update --init --recursive`), and this card's census reads it.
 
 **How the run was executed.** A single `cargo test --workspace` invocation
 exceeds the harness's foreground budget under the load of sibling worktrees, so
-the suite was run in package groups whose union is exactly the ten workspace
-members. No test was skipped, filtered or weakened; only the process boundaries
-differ.
+the suite was run in four package groups —
+`qcore-core`/`-schemas`/`-frontend`/`-contract`, `qcore-c-gateway`/`-audit`/
+`-verification`, `qcore-compiler`/`qcorec`, and `qcore-verifier-host` — whose
+union is exactly the ten workspace members. No test was skipped, filtered or
+weakened; only the process boundaries differ, and the ignored count (8) matches
+the standing ledger and is unchanged by this card.
+
+### 13.1 One recorded load flake, verified in isolation
+
+`qcore-verifier-host::confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths`
+failed in the first two `qcore-verifier-host` runs with `Io(Broken pipe)`. That
+is **P02-FLAKE row three** (`AGENTS.md` constraint 16: "the confined-fixture
+write test (`Io(Broken pipe)` under load)") and the documented condition held —
+sibling agent worktrees building on the same host, load average above 20 and free
+memory down to 1 GB. Re-run in isolation on the same binary, **unweakened**:
+
+```
+$ cargo test -p qcore-verifier-host --test confined_process_execution -- --test-threads=1
+test result: ok. 12 passed; 0 failed; 0 ignored
+```
+
+and the package then re-ran fully green (112 passed) on a later pass. No
+assertion was touched, and this card's production diff contains no file under
+`crates/qcore-verifier-host/`. The other four constraint-16 rows passed in the
+package runs themselves.
+
+### 13.2 One expected acceptance-matrix drift, left for the integrator
+
+`scripts/tests` asserts the acceptance matrix's derived `lean_audits` row, which
+must grow **95 → 96** now that this card registers an audit file. Acceptance
+files are integrator surface and are not this card's to edit; reported here
+rather than worked around, exactly as waves 18–22 did for the same row.

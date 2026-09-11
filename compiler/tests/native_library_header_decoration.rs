@@ -274,6 +274,41 @@ fn a_decoration_that_changes_the_type_is_not_erased() {
         spelling.contains("mode"),
         "and the refusal names the token that caused it: {spelling}"
     );
+    // And it reaches the *route* as `Q063`, not as `Q064`. The distinction is
+    // the whole difference between "this reader could not read the declaration"
+    // and "the header contradicts the manifest", and the second is a claim about
+    // the library that this case does not license. The first implementation of
+    // this refusal reported an empty parameter list, which `compare_reading`
+    // compares for arity before it reaches the result — so it produced exactly
+    // that false disagreement.
+    let wave22 = include_str!("fixtures/native_library/buffer_lib_header.qcorelib");
+    let rehashed = wave22.replace(
+        "sha256:a302b5f7bd2365f2a12f5894a8ee9c9f731f2608650baa9f4804e7e6e780779d",
+        &format!(
+            "sha256:{}",
+            qcore_compiler::digest::sha256_hex(text(&decorated).as_bytes())
+        ),
+    );
+    let refusals = codes(
+        (
+            "fixtures/native_library/buffer_lib_header.qcorelib",
+            &rehashed,
+        ),
+        supplied(&[("include/qcore_buffer_demo.h", &decorated)]),
+    );
+    assert_eq!(
+        refusals
+            .iter()
+            .map(|(code, _)| code.clone())
+            .collect::<Vec<_>>(),
+        ["Q063"],
+        "an unreadable declaration is not a disagreement: {refusals:?}"
+    );
+    assert!(
+        refusals[0].1.contains("mode"),
+        "and it names the token rather than a digest or an arity: {}",
+        refusals[0].1
+    );
 }
 
 // --- 3. Every step of the derivation refuses when it does not hold ---
@@ -574,7 +609,7 @@ fn an_include_statement_without_a_header_is_refused_at_load() {
     let edited = MANIFEST
         .replace("header include/qcore_buffer_demo_decorated.h;\n", "")
         .replace(
-            "header_hash sha256:0cc1b130d36c0682abe8a33bbbcae9fea08f35508e75539f54798513c479b019;\n",
+            "header_hash sha256:88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e;\n",
             "",
         );
     let refusals = codes((MANIFEST_PATH, &edited), both_texts());
