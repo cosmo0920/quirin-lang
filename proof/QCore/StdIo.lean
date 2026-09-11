@@ -343,9 +343,9 @@ and each row grew with them: the new `std.buffer` and `std.string` columns are
 and still refused. Its name and meaning are unchanged and the claim is strictly
 stronger than before each widening. -/
 theorem no_module_substitutes_for_another :
-    admitsPrint ⟨true, true, true, true, false, true, true, true, false⟩ true = false
-      ∧ admitsLog ⟨true, true, true, true, true, false, true, true, false⟩ true = false
-      ∧ admitsRendering ⟨true, true, true, false, true, true, true, true, false⟩ true = false :=
+    admitsPrint ⟨true, true, true, true, false, true, true, true, false, false⟩ true = false
+      ∧ admitsLog ⟨true, true, true, true, true, false, true, true, false, false⟩ true = false
+      ∧ admitsRendering ⟨true, true, true, false, true, true, true, true, false, false⟩ true = false :=
   ⟨rfl, rfl, rfl⟩
 
 end QCore.StdIo

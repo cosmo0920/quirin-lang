@@ -1,13 +1,69 @@
 # How `std.http` should exist — revision 0.3 decision record
 
-> **Status: proposed — strategy recommendation recorded; final choice reserved
-> to the user.** This document decides *nothing* about the implementation. It
-> claims no parser, checker, reference-execution, C-emission, ABI, contract or
-> conformance support for any HTTP surface, and it names no library as chosen.
-> It records two candidate strategies, the integrator's standing recommendation
-> between them, the prerequisites that have actually landed, and the named gaps
-> that remain. Authored by card `NATIVE-LIBRARY-SOURCE-BINDING` (wave 23) as its
-> second, design-only deliverable.
+> **Status: the choice reserved to the user was exercised, and it was
+> strategy (a).** §1 below recommended (b), a contracted native-library binding.
+> The user directed the opposite for the first wave, in two statements recorded
+> verbatim in §0: *"The first wave of HTTP implementation should implement
+> HTTP/1.1 spec so it can achieve with only quirin qcore sources and the latter
+> C11 emitter"* and *"HTTP quirin v1 should be executed instead of HTTP quoted
+> something."* Card `HTTP-QUIRIN-V1` (wave 24) implemented that route.
+> Everything below §1 is **unedited**: the recommendation, its grounds and its
+> counter-argument stand as the record of what was argued before the decision,
+> because a decision record that rewrote its own reasoning after the fact would
+> be worthless. §0 is the only addition.
+>
+> Authored by card `NATIVE-LIBRARY-SOURCE-BINDING` (wave 23) as its second,
+> design-only deliverable; §0 added by card `HTTP-QUIRIN-V1`.
+
+## 0. The decision, and what it changed about §2(a)
+
+**Decided: strategy (a), for the first wave.** `std.http` exists as a checked
+source surface in Quirin, lowered to self-contained C11 by the existing backend,
+linking no library and declaring no extern function. Evidence:
+`docs/reports/http-quirin-v1/README.md`; the published programs are under
+`examples/http/`, and both **run** sanitized with their output byte-compared
+against the compiler's own reference execution.
+
+**§2(a)'s objection list was right about the capabilities and wrong about what
+they gate.** That list — a string tier, loops over buffers, bulk operations,
+growth, recoverable allocation failure, sub-ranges, concurrency at the boundary —
+is the prerequisite list for *parsing arbitrary HTTP*. It is not the prerequisite
+list for *constructing and checking* HTTP messages, and the distinction is what
+made the first wave possible:
+
+* a **parser** needs a varying-index tier, because it reads bytes whose values
+  it does not know. `HTTP-QUIRIN-V1` has none and claims none: received bytes are
+  **verified against a declared expectation**, and reading a message out of
+  unknown input is the named follow-on `HTTP-V1-PARSE`. §2(a)'s first four
+  bullets gate exactly that follow-on and nothing this card shipped.
+* a **builder** needs only literals — and it turns out to buy something strategy
+  (b) cannot offer at all. Because every component is a literal, its byte length
+  is known at check time, so a declared `Content-Length` that is not the
+  content's length is a **compile-time refusal**. A contracted binding to a C
+  library could not state that: the library computes the length at run time, and
+  the contract's only available posture toward it is a premise.
+* the **string tier** §2(a) called missing landed for its own reasons while this
+  document sat (`STRING_SLICE_V1.md` §§1–4, §7, cards `STRING-SLICE` and
+  `STRING-SLICE-IO`), and `QUIRIN-SOCKET-V1` supplied the transport the same
+  wave. §4's prerequisite table was current when written and was overtaken.
+
+**What §3's grounds look like after the fact.** Ground 3 — "it is honest about
+what is proved" — was the strongest argument for (b) and it survives inverted:
+under (a) the verified fraction is *small but exactly stated*, and the card's
+claim vocabulary is "an executed HTTP/1.1 subset with the boundary named", never
+"HTTP/1.1 conformance". Ground 4's failure mode is likewise better rather than
+worse: there is no substituted artifact to violate a premise about, because there
+is no artifact. Ground 1 is unaffected — the L3 apparatus stays available and
+unused by this route — and grounds 2 and 5 describe work a later `std.http`
+increment may still want.
+
+**What is still true of (b).** Everything §5 lists remains missing, and a
+production HTTP client or server is not reachable from (a) alone: no chunked
+coding, no persistent connections, no external peer, no TLS. §8's follow-ons are
+therefore **not retired**; `STD-HTTP-NATIVE-ALTERNATIVE` is the one that inverts,
+since strategy (a) is now the implemented route and a contracted binding is the
+open alternative. The comparison should be re-run rather than assumed settled —
+which is what that follow-on already said, in the other direction.
 
 ## 1. Decision
 

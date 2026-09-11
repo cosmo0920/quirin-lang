@@ -1,0 +1,87 @@
+// A checked HTTP/1.1 exchange over loopback, in pure QCore source
+// (card HTTP-QUIRIN-V1).
+//
+// One entry holds both ends. The client sends a request this file declares; the
+// server verifies the bytes it receives against that same declaration; the
+// server sends a response; the client verifies it; both close. Nothing outside
+// this program is contacted, and no library is linked: the transport is
+// `source.socket.v1`'s embedded shim and the messages are byte sequences the
+// compiler built.
+//
+// WHAT THE COMPILER DECIDES BEFORE ANY OF THIS RUNS, and refuses by name:
+//
+//   * the version literal is exactly `HTTP/1.1` (Q091);
+//   * `GET` is a token, and a lower-case `get` would be a different method
+//     RFC 9110 §9.1 says no server implements (Q091);
+//   * `/index.html` is an origin-form target (Q091);
+//   * the request carries exactly one `Host` field, which RFC 9112 §3.2
+//     requires of every HTTP/1.1 request (Q092);
+//   * no component carries a CR or an LF, so the CRLFs framing this message are
+//     the compiler's own and header injection is not expressible (Q092);
+//   * `Content-Length: 6` equals the six bytes of "hello\n" — change either and
+//     the program refuses (Q093);
+//   * `recv server rq;` is proved *satisfiable* by the bytes `send client rq;`
+//     already committed, so it cannot block, and the bytes it takes are proved
+//     to be exactly the request's (Q085/Q084, the transport's own codes).
+//
+// WHAT THIS IS NOT: not HTTP/1.1 conformance. It is an executed HTTP/1.1
+// subset with the boundary named — see examples/http/README.md.
+import std.http;
+import std.socket;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    // The request. Every component is a literal, which is what makes the
+    // conformance facts above decidable at compile time.
+    let rq = request "GET" "/index.html" "HTTP/1.1";
+    header rq "Host" "127.0.0.1";
+    header rq "User-Agent" "quirin/0.4";
+    header rq "Accept" "text/plain";
+    header rq "Connection" "close";
+
+    // The response. `Content-Length` is written down and checked against the
+    // content's own byte count; it is not computed, because v1 has no computed
+    // text (STRING-SLICE-CONCAT).
+    let rs = response "HTTP/1.1" 200 "OK";
+    header rs "Content-Type" "text/plain; charset=utf-8";
+    header rs "Content-Length" "6";
+    header rs "Connection" "close";
+    content rs "hello\n";
+
+    // Both ends of the connection, in one program, on the loopback interface at
+    // a port the kernel picks. `connect` names the listening socket by name and
+    // not by address, which is what removes the external nondeterminism.
+    let listener = tcp;
+    bind listener;
+    listen listener;
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    // The exchange. A `recv` naming a message is a *verified* receive: the
+    // checker proves the bytes that arrive are that message's, and the emitted
+    // program compares them again at run time and exits 88 if they differ.
+    send client rq;
+    recv server rq;
+    send server rs;
+    recv client rs;
+
+    // The transcript. v1 renders **scalars**: a rendered text line would need
+    // `source.string.v1`'s own text emission inside this route's transport
+    // body, which is the named follow-on HTTP-V1-TEXT-TRANSCRIPT. These two
+    // lines are what the reference execution predicts and what the sanitized
+    // native run is compared against, byte for byte.
+    let status = 200;
+    let length = 6;
+    print dec status;
+    print dec length;
+
+    // Every socket is released. A leak, a double close or a use after close is
+    // refused at Q095 by the *unedited* ownership checker the transport route
+    // inherits.
+    close server;
+    close client;
+    close listener;
+    return;
+}

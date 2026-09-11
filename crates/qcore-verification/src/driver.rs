@@ -20,8 +20,8 @@ use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
 use qcore_core::{
     composed_std_io, composed_std_io_c_emit, composed_tasks, std_buffer, std_buffer_c_emit,
-    std_event, std_event_c_emit, std_io, std_io_c_emit, std_socket, std_socket_c_emit, std_string,
-    std_string_c_emit,
+    std_event, std_event_c_emit, std_http, std_http_c_emit, std_io, std_io_c_emit, std_socket,
+    std_socket_c_emit, std_string, std_string_c_emit,
 };
 use qcore_frontend::frontend::{
     DeclarationKind, ExecutableResultType, Located, SemanticPass, SourceBlock, SourceDeclaration,
@@ -233,6 +233,13 @@ pub enum CheckedSourceModule {
     /// evidence and the lowered program is retained beside it, so a consumer can
     /// re-derive rather than believe it.
     StandardSocket(Box<CheckedSocketModule>),
+    /// One entry function checked under `source.http.v1` (card
+    /// `HTTP-QUIRIN-V1`): a module that declares HTTP/1.1 messages, has their
+    /// wire bytes constructed and checked against RFC 9112 at compile time, and
+    /// moves them over `source.socket.v1`'s own loopback transport. The
+    /// certificate carries the transport's certificate inside it, so the
+    /// evidence of the composition is the evidence of both halves.
+    StandardHttp(Box<CheckedHttpModule>),
 }
 
 /// A checked `source.buffer.v1` module (card `STD-BUFFER`).
@@ -295,6 +302,18 @@ pub struct CheckedStringModule {
 pub struct CheckedSocketModule {
     pub lowered: qcore_frontend::source_socket::LoweredSocketModule,
     pub certificate: std_socket::SocketCertificate,
+}
+
+/// A checked `source.http.v1` module (card `HTTP-QUIRIN-V1`).
+///
+/// The certificate carries the transport's own certificate, derived by the
+/// **unedited** `source.socket.v1` checker over the program this route lowered
+/// to, so a consumer reading it sees both halves of the composition rather than
+/// a summary of one.
+#[derive(Clone, Debug)]
+pub struct CheckedHttpModule {
+    pub lowered: qcore_frontend::source_http::LoweredHttpModule,
+    pub certificate: std_http::HttpCertificate,
 }
 
 /// A checked `source.event.v1` module (card `STD-EVENT`).
@@ -396,7 +415,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
         }
     }
 
@@ -417,7 +437,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -435,7 +456,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -456,7 +478,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -474,7 +497,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -492,7 +516,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -510,7 +535,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -533,7 +559,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -557,7 +584,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
     }
@@ -576,7 +604,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::StandardBuffer(module) => Some(module),
         }
     }
@@ -595,7 +624,8 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::Event(_)
-            | Self::StandardSocket(_) => None,
+            | Self::StandardSocket(_)
+            | Self::StandardHttp(_) => None,
             Self::StandardString(module) => Some(module),
         }
     }
@@ -614,8 +644,29 @@ impl CheckedSourceModule {
             | Self::ComposedTasks(_)
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::StandardHttp(_) => None,
             Self::StandardSocket(module) => Some(module),
+        }
+    }
+
+    /// The checked HTTP evidence (card `HTTP-QUIRIN-V1`).
+    pub fn as_standard_http(&self) -> Option<&CheckedHttpModule> {
+        match self {
+            Self::Sequential(_)
+            | Self::ScopedTasks(_)
+            | Self::CheckedMutexGuards(_)
+            | Self::CheckedEpochBound(_)
+            | Self::ComposedEpochTasks(_)
+            | Self::ExternCalls(_)
+            | Self::StandardIo(_)
+            | Self::Composed(_)
+            | Self::ComposedTasks(_)
+            | Self::StandardBuffer(_)
+            | Self::StandardString(_)
+            | Self::StandardSocket(_)
+            | Self::Event(_) => None,
+            Self::StandardHttp(module) => Some(module),
         }
     }
 
@@ -656,6 +707,9 @@ impl CheckedSourceModule {
             // And likewise for the socket route: one flat entry is lowered, and
             // the profile admits no calls at all.
             Self::StandardSocket(_) => 1,
+            // And likewise for the HTTP route, which composes that one with a
+            // message vocabulary in the same single entry.
+            Self::StandardHttp(_) => 1,
         }
     }
 }
@@ -770,6 +824,23 @@ pub enum SourceExecutionProfile {
     /// emitted program**. The emitted C is self-contained on all three platform
     /// arms; it links no library and names Winsock from inside the emitted file.
     StandardSocketV1,
+    /// `source.http.v1`: a flat sequential entry that declares HTTP/1.1 messages
+    /// and moves them over `source.socket.v1`'s loopback transport (card
+    /// `HTTP-QUIRIN-V1`).
+    ///
+    /// **An executed HTTP/1.1 subset with the boundary named**, never "HTTP/1.1
+    /// conformance". Every component of every message is a literal, so a family
+    /// of RFC 9112 facts is decided *statically* and by name: the version is
+    /// exactly `HTTP/1.1`, a method and a field name are `token`s, a target is
+    /// origin-form, a request carries exactly one `Host`, no component may carry
+    /// `CR` or `LF` (which is what makes the constructed framing unforgeable),
+    /// and a declared `Content-Length` **must equal the literal content's byte
+    /// count**. The transport half is the socket route's, unedited, so the
+    /// determinism argument, the custody discipline and the byte-compared
+    /// observation are all inherited rather than restated. What is *not* here:
+    /// no computed text, no parsing of unknown input, no chunked coding, no
+    /// persistent connection, no external peer, no TLS.
+    StandardHttpV1,
 }
 
 #[derive(Clone, Debug)]
@@ -1111,6 +1182,35 @@ pub fn compile_files_with_registry(
     // aggregate or its extent, and supplying one is `STRING-SLICE-ABI`. Every
     // concurrent route is selected above all three, so a module that strings and
     // spawns keeps its `Q600`.
+    // Card `HTTP-QUIRIN-V1`, selected after the buffer route above and **before**
+    // both routes it composes. All three neighbours are deliberate, on exactly
+    // the principle every sibling states about the others:
+    //
+    // * **After the buffer route**, so a module that holds an owned buffer and
+    //   declares an HTTP message stays with the buffer route and keeps that
+    //   route's existing refusal. A message body that is a buffer's extent
+    //   rather than a literal is the named follow-on `HTTP-V1-BUFFER-CONTENT`.
+    // * **Before the string route**, so a module that declares a message and
+    //   binds a payload with `let s = "…";` reaches this route, which models
+    //   both — its bound views are `source.string.v1`'s own literal
+    //   constructions, decoded by that route's own decoder. A module that only
+    //   slices falls through byte for byte, and a module that *slices* while
+    //   doing HTTP is refused here by name (`HTTP-V1-STRING-COMPOSE`): this
+    //   route models no `len`, no slice and no rendered text.
+    // * **Before the socket route**, so a module that declares a message and
+    //   sends it reaches this route, which models both — its transport
+    //   statements are `source.socket.v1`'s own, read by **that route's own
+    //   reader** (`source_socket::socket_statement`) and checked by that route's
+    //   own unedited checker. A module that only sockets fails this conjunction
+    //   and falls through byte for byte.
+    //
+    // The event route is selected above this one, so a module that dispatches and
+    // does HTTP stays with `source.event.v1` (`HTTP-V1-EVENT-COMPOSE`); the
+    // extern route is above all of them, and every concurrent route above that,
+    // so a module that does HTTP and spawns keeps its `Q600`.
+    if qcore_frontend::source_http::has_source_http(&parsed) {
+        return compile_http_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_std_string::has_source_string(&parsed) {
         return compile_string_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -4818,6 +4918,108 @@ fn compile_socket_source(
         // The reference observation of this route is the per-stream line trace,
         // carried on `extern_observation` beside the extern route's own trace
         // exactly as `source.buffer.v1` and `source.std-io.v1` carry theirs.
+        reference_observation: None,
+        extern_observation: Some(observation.labelled()),
+    })
+}
+
+/// Compile one `source.http.v1` module (card `HTTP-QUIRIN-V1`).
+///
+/// The shape is deliberately [`compile_socket_source`]'s — lower, check,
+/// **recheck**, interpret, emit — so the two routes' guarantees read the same
+/// way. What differs is that the check and the emission are *compositions*: the
+/// checker validates every message against RFC 9112 and then hands the
+/// transport program it built to the **unedited** socket checker, and the
+/// backend merges this route's fragments with the socket backend's through
+/// `c_program::merge` into the one entry `c_program::assemble` writes.
+fn compile_http_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q090",
+            "entry-free `source.http.v1` modules require additional source lowering",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let lowered = qcore_frontend::source_http::lower_source_http(parsed, typed, &entry).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        },
+    )?;
+    let certificate = std_http::check_http_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .event_spans
+                    .get(error.event())
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(
+                    error.code(),
+                    SemanticPass::StandardHttp,
+                    span,
+                    error.to_string(),
+                    ranges,
+                )
+            })
+            .collect::<Vec<_>>()
+    })?;
+    // The driver never publishes a certificate it did not independently
+    // re-derive from the same lowered program.
+    std_http::recheck_http_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q090",
+            SemanticPass::StandardHttp,
+            lowered.scope_span,
+            format!("the HTTP certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+
+    let observation = std_http_c_emit::interpret_http_program(&lowered.program, &certificate)
+        .map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q090",
+                format!("the HTTP reference execution refused this trace: {refusal:?}"),
+            )]
+        })?;
+    let emission =
+        std_http_c_emit::emit_http_c11(&lowered.program, &certificate).map_err(|refusal| {
+            vec![plain_diagnostic(
+                "Q090",
+                format!("the HTTP backend refused this trace: {refusal:?}"),
+            )]
+        })?;
+
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        // Every socket this entry opens is closed inside it — the inherited
+        // ownership checker refuses a normal exit that leaves any live — and a
+        // message is a value that owns nothing.
+        owned_buffer_results: std::collections::BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::NoResourcePayloads,
+    };
+    Ok(CompiledModule {
+        checked: CheckedSourceModule::StandardHttp(Box::new(CheckedHttpModule {
+            lowered,
+            certificate,
+        })),
+        execution_profile: SourceExecutionProfile::StandardHttpV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(emission.source),
+        source_map: Vec::new(),
         reference_observation: None,
         extern_observation: Some(observation.labelled()),
     })

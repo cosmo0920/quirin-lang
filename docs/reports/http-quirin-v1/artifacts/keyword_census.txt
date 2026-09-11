@@ -1,0 +1,23 @@
+qcore/qc fixtures: 416
+rust sources:      572
+rust string literals: 43239
+
+word         qcore-raw qcore-src rust-str
+request             0        0       43
+response            1        0        7
+header              8        0       93
+body               93        8      306
+http                0        0        0
+message             2        2       57
+method              0        0        0
+status              9        0       72
+version            19        0       76
+reason              4        0      228
+field              24        5      321
+via                 1        0        1
+head               19        6       60
+content             3        0        5
+payload            56       49      114
+entity              0        0        3
+trailer             0        0        0
+target              3        0      131

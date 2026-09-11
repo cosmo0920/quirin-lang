@@ -95,8 +95,10 @@ use crate::frontend::{
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
 use qcore_core::std_socket::{
-    MAX_PAYLOAD, SocketKind, SocketOperand, SocketProgram, SocketStatement,
+    MAX_PAYLOAD, SocketKind, SocketOperand, SocketPayload, SocketProgram, SocketStatement,
+    TextPayload,
 };
+use qcore_core::std_string::decode_string_literal;
 use qcore_core::typed_errors::{Effect, EffectRow};
 
 /// The TCP creation keyword.
@@ -185,6 +187,14 @@ fn integer(window: &[&Token], cursor: usize) -> Option<(i32, usize)> {
     }
 }
 
+/// The raw content of a quoted token at `cursor`, if there is one.
+fn literal_text<'a>(window: &'a [&Token], cursor: usize) -> Option<&'a str> {
+    match window.get(cursor).map(|token| &token.kind) {
+        Some(TokenKind::StringLiteral(text)) => Some(text.as_str()),
+        _ => None,
+    }
+}
+
 fn operand(window: &[&Token], cursor: usize) -> Option<(SocketOperand, usize)> {
     if let Some((value, next)) = integer(window, cursor) {
         return Some((SocketOperand::Literal(value), next));
@@ -238,6 +248,16 @@ pub enum SocketUse {
     Accept,
     /// `send`, `recv`, `sendto`, `recvfrom`
     Transfer,
+    /// A transfer whose payload is a **quoted literal** rather than a bracketed
+    /// byte list — `send C "…";`, `recv S "…";` and the datagram pair (card
+    /// `HTTP-QUIRIN-V1`, the socket card's named follow-on
+    /// `SOCKET-STRING-PAYLOAD`).
+    ///
+    /// A separate use from [`SocketUse::Transfer`] because it is gated by a
+    /// **second** module: the payload is a string view's own bytes, which is
+    /// `std.string`'s value and not `std.socket`'s, exactly as a rendered text
+    /// line needs both `std.string` and an output module (`STRING-SLICE-IO`).
+    TextPayload,
 }
 
 /// Classify one statement's token window as a socket construct.
@@ -266,6 +286,19 @@ fn socket_use(window: &[&Token]) -> Option<SocketUse> {
     }
 }
 
+/// Whether this statement's payload position holds a **quoted literal**.
+///
+/// The one place that decides it, so the `std.string` import gate and the
+/// lowering below cannot disagree about which statements need the text module.
+fn carries_text_payload(window: &[&Token]) -> bool {
+    let cursor = match word(window, 0) {
+        Some(SEND_KEYWORD | RECV_KEYWORD | RECVFROM_KEYWORD) => 2,
+        Some(SENDTO_KEYWORD) => 3,
+        _ => return false,
+    };
+    literal_text(window, cursor).is_some()
+}
+
 /// Every use of this card's vocabulary in the program, with the span of the
 /// first occurrence of each kind.
 #[must_use]
@@ -289,6 +322,11 @@ fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<SocketUse, S
         if let Some(kind) = socket_use(&window) {
             found.entry(kind).or_insert(statement.span);
         }
+        if carries_text_payload(&window) {
+            found
+                .entry(SocketUse::TextPayload)
+                .or_insert(statement.span);
+        }
         for nested in statement.value.nested_blocks() {
             scan(nested, tokens, found);
         }
@@ -302,9 +340,24 @@ pub fn has_source_socket(program: &SourceProgram) -> bool {
 }
 
 /// The span of the first statement needing `import std.socket;`.
+///
+/// A text payload is deliberately **excluded**: it is not a socket capability
+/// and it is gated separately (see [`text_payload_span`]). A statement that
+/// carries one is a `send`/`recv`, so the transfer's own use is already in the
+/// map and the socket gate still sees it.
 #[must_use]
 pub fn socket_span(program: &SourceProgram) -> Option<Span> {
-    socket_uses(program).values().next().copied()
+    socket_uses(program)
+        .into_iter()
+        .find(|(kind, _)| *kind != SocketUse::TextPayload)
+        .map(|(_, span)| span)
+}
+
+/// The span of the first transfer whose payload is a string view, which is what
+/// needs `import std.string;` **in addition to** `import std.socket;`.
+#[must_use]
+pub fn text_payload_span(program: &SourceProgram) -> Option<Span> {
+    socket_uses(program).get(&SocketUse::TextPayload).copied()
 }
 
 fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -370,33 +423,52 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
     Ok(EffectRow::new(effects))
 }
 
+/// One refusal a statement reader produces: the code it belongs to and what it
+/// says. The **span** is the caller's, and so is the pass: a composing route
+/// re-attributes these to its own band exactly as the socket route
+/// re-attributes `source.std-io.v1`'s line messages to `Q080`.
+pub type Refusals = Vec<(&'static str, String)>;
+
+fn refuse(refusals: &mut Refusals, code: &'static str, message: impl Into<String>) {
+    refusals.push((code, message.into()));
+}
+
+/// What one statement reader decided about a token window.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SocketLowering {
+    /// A statement of this route.
+    Lowered(Box<SocketStatement>),
+    /// A statement of this route, spelled wrongly.
+    Refused(Refusals),
+    /// Not a statement this route spells at all. The **caller** decides what
+    /// that means: the socket route refuses it, and a composing route tries its
+    /// own vocabulary first and refuses only if neither claims it.
+    Unknown,
+}
+
 /// Lower one `let` statement. Five shapes share the head, so they are
 /// distinguished here and in one place.
-fn lower_let(
-    window: &[&Token],
-    span: Span,
-    diagnostics: &mut Vec<SourceDiagnostic>,
-) -> Option<SocketStatement> {
+fn lower_let(window: &[&Token], refusals: &mut Refusals) -> Option<SocketStatement> {
     let Some(binding) = word(window, 1) else {
-        diagnostics.push(diagnostic("Q080", span, "this `let` binds no name"));
+        refuse(refusals, "Q080", "this `let` binds no name");
         return None;
     };
     if !symbol(window, 2, Symbol::Equal) {
-        diagnostics.push(diagnostic(
+        refuse(
+            refusals,
             "Q080",
-            span,
             "`source.socket.v1` binds `let NAME = …;` only",
-        ));
+        );
         return None;
     }
     // `let NAME = tcp ;` / `let NAME = udp ;`
     if let Some(head @ (TCP_KEYWORD | UDP_KEYWORD)) = word(window, 3) {
         if !ends_with_semicolon(window, 4) {
-            diagnostics.push(diagnostic(
+            refuse(
+                refusals,
                 "Q080",
-                span,
                 format!("`source.socket.v1` creates a socket with `let NAME = {head};`"),
-            ));
+            );
             return None;
         }
         return Some(SocketStatement::Create {
@@ -411,15 +483,15 @@ fn lower_let(
     // `let NAME = accept NAME ;`
     if word(window, 3) == Some(ACCEPT_KEYWORD) {
         let Some(listener) = word(window, 4) else {
-            diagnostics.push(diagnostic(
+            refuse(
+                refusals,
                 "Q080",
-                span,
                 "`accept NAME` names the listening socket it takes a connection from",
-            ));
+            );
             return None;
         };
         if !ends_with_semicolon(window, 5) {
-            diagnostics.push(diagnostic("Q080", span, "this `accept` is not closed"));
+            refuse(refusals, "Q080", "this `accept` is not closed");
             return None;
         }
         return Some(SocketStatement::Accept {
@@ -430,22 +502,22 @@ fn lower_let(
     // `let NAME = recv NAME ;` / `let NAME = recvfrom NAME ;`
     if let Some(head @ (RECV_KEYWORD | RECVFROM_KEYWORD)) = word(window, 3) {
         let Some(name) = word(window, 4) else {
-            diagnostics.push(diagnostic(
+            refuse(
+                refusals,
                 "Q080",
-                span,
                 format!("`{head} NAME` names the socket it receives from"),
-            ));
+            );
             return None;
         };
         if !ends_with_semicolon(window, 5) {
-            diagnostics.push(diagnostic(
+            refuse(
+                refusals,
                 "Q080",
-                span,
                 format!(
                     "the value form of `{head}` takes exactly one byte and binds it; a count \
                      belongs on the statement form `{head} NAME COUNT;`"
                 ),
-            ));
+            );
             return None;
         }
         let binding = Some(binding.to_owned());
@@ -455,12 +527,14 @@ fn lower_let(
                 binding,
                 name,
                 count: 1,
+                expect: None,
             }
         } else {
             SocketStatement::RecvFrom {
                 binding,
                 name,
                 count: 1,
+                expect: None,
             }
         });
     }
@@ -471,63 +545,136 @@ fn lower_let(
             value,
         }),
         _ => {
-            diagnostics.push(diagnostic(
+            refuse(
+                refusals,
                 "Q080",
-                span,
                 "`source.socket.v1` binds an integer literal, `tcp`, `udp`, `accept NAME`, \
                  `recv NAME` or `recvfrom NAME`; nothing else",
-            ));
+            );
             None
         }
     }
 }
 
-/// Read a receive count: `recv NAME COUNT;`.
+/// Decode a quoted payload at `cursor`, or report why it is not one.
+///
+/// The decoder is `source.string.v1`'s own ([`decode_string_literal`]) and not a
+/// second one: a payload is a string view's bytes, so the escapes it admits, the
+/// UTF-8 well-formedness it requires and the length it bounds are that route's
+/// rules, read here rather than restated. `\r` is one of those escapes, which is
+/// what makes a CRLF spellable in a payload at all.
+///
+/// The refusal is reported at **this** route's `Q084` rather than at the string
+/// route's `Q070`: §L21 forbids a second pass reusing a code, and the condition a
+/// reader of a socket module meets is "these bytes are not a payload this
+/// transfer can carry".
+fn lower_text_payload(
+    window: &[&Token],
+    cursor: usize,
+    refusals: &mut Refusals,
+) -> Option<(TextPayload, usize)> {
+    let raw = literal_text(window, cursor)?;
+    match decode_string_literal(raw) {
+        Ok(bytes) => Some((TextPayload::inline(bytes), cursor + 1)),
+        Err(refusal) => {
+            refuse(refusals, "Q084", refusal.to_string());
+            None
+        }
+    }
+}
+
+/// Read a receive count: `recv NAME COUNT;`, or a declared payload:
+/// `recv NAME "…";`.
 fn lower_receive(
     window: &[&Token],
-    span: Span,
     head: &str,
-    diagnostics: &mut Vec<SourceDiagnostic>,
+    refusals: &mut Refusals,
 ) -> Option<SocketStatement> {
+    // The declared-payload form, card `HTTP-QUIRIN-V1`. The count is the
+    // declaration's own length, so the two can never disagree: there is one
+    // number and it is read from the bytes.
+    if literal_text(window, 2).is_some() {
+        let Some(name) = word(window, 1) else {
+            refuse(
+                refusals,
+                "Q080",
+                format!("`{head} NAME \"…\";` names the socket it receives from"),
+            );
+            return None;
+        };
+        let (expect, next) = lower_text_payload(window, 2, refusals)?;
+        if !ends_with_semicolon(window, next) {
+            refuse(
+                refusals,
+                "Q080",
+                format!(
+                    "`{head} NAME \"…\";` declares the bytes it takes as one quoted token and \
+                     nothing else"
+                ),
+            );
+            return None;
+        }
+        let Ok(count) = u32::try_from(expect.bytes.len()) else {
+            refuse(
+                refusals,
+                "Q084",
+                "this declared payload is longer than any receive `source.socket.v1` models",
+            );
+            return None;
+        };
+        let name = name.to_owned();
+        let expect = Some(expect);
+        return Some(if head == RECV_KEYWORD {
+            SocketStatement::Recv {
+                binding: None,
+                name,
+                count,
+                expect,
+            }
+        } else {
+            SocketStatement::RecvFrom {
+                binding: None,
+                name,
+                count,
+                expect,
+            }
+        });
+    }
     let Some(name) = word(window, 1) else {
-        diagnostics.push(diagnostic(
+        refuse(
+            refusals,
             "Q080",
-            span,
             format!("`{head} NAME COUNT;` names the socket it receives from"),
-        ));
+        );
         return None;
     };
     let Some((count, next)) = integer(window, 2) else {
-        diagnostics.push(diagnostic(
+        refuse(
+            refusals,
             "Q080",
-            span,
             format!(
                 "`{head} NAME COUNT;` takes one integer literal count; a computed count is not a \
                  check-time constant and `source.socket.v1` decides every received byte before \
                  emission"
             ),
-        ));
+        );
         return None;
     };
     if !ends_with_semicolon(window, next) {
-        diagnostics.push(diagnostic(
-            "Q080",
-            span,
-            format!("this `{head}` is not closed"),
-        ));
+        refuse(refusals, "Q080", format!("this `{head}` is not closed"));
         return None;
     }
     let Ok(count) = u32::try_from(count) else {
         // The range refusal itself is the core checker's (`Q084`); this is the
         // narrower question of whether the literal is a count at all.
-        diagnostics.push(diagnostic(
+        refuse(
+            refusals,
             "Q084",
-            span,
             format!(
                 "{count} is not a receive count `source.socket.v1` models; a receive takes 1 to \
                  {MAX_PAYLOAD} bytes"
             ),
-        ));
+        );
         return None;
     };
     let binding = None;
@@ -537,14 +684,219 @@ fn lower_receive(
             binding,
             name,
             count,
+            expect: None,
         }
     } else {
         SocketStatement::RecvFrom {
             binding,
             name,
             count,
+            expect: None,
         }
     })
+}
+
+/// Read one statement window as a `source.socket.v1` statement.
+///
+/// **The one place this route's statement grammar lives**, published so a
+/// *composing* route reads a socket statement with this reader rather than with
+/// a second one that might disagree — the discipline
+/// `source.std-io.v1::std_io_statement` established and this route has followed
+/// for its own line statements since card `QUIRIN-SOCKET-V1`.
+///
+/// The refusals it returns carry their own **codes** and no span and no pass: the
+/// caller owns attribution, so a composed route re-attributes them to its own
+/// band without this route's grammar having to know who is reading it.
+#[must_use]
+pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -> SocketLowering {
+    let mut refusals: Refusals = Vec::new();
+    let head = word(window, 0).unwrap_or_default();
+    let lowered = match head {
+        "let" => lower_let(window, &mut refusals),
+        BIND_KEYWORD | LISTEN_KEYWORD | CLOSE_KEYWORD => {
+            let Some(name) = word(window, 1) else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    format!("`{head} NAME;` names one socket"),
+                );
+                return SocketLowering::Refused(refusals);
+            };
+            if !ends_with_semicolon(window, 2) {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    format!("`source.socket.v1` spells this statement `{head} NAME;`"),
+                );
+                return SocketLowering::Refused(refusals);
+            }
+            let name = name.to_owned();
+            Some(match head {
+                BIND_KEYWORD => SocketStatement::Bind { name },
+                LISTEN_KEYWORD => SocketStatement::Listen { name },
+                _ => SocketStatement::Close { name },
+            })
+        }
+        CONNECT_KEYWORD => match (word(window, 1), word(window, 2)) {
+            (Some(client), Some(listener)) if ends_with_semicolon(window, 3) => {
+                Some(SocketStatement::Connect {
+                    client: client.to_owned(),
+                    listener: listener.to_owned(),
+                })
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`connect NAME NAME;` names the connecting socket and a listening \
+                     socket of this same program; `source.socket.v1` has no spelled \
+                     address, which is what makes the connection's completion decidable \
+                     (`SOCKET-EXTERNAL-PEER`)",
+                );
+                None
+            }
+        },
+        ACCEPT_KEYWORD => {
+            refuse(
+                &mut refusals,
+                "Q080",
+                "`accept` acquires a socket and so must bind it: `let NAME = accept NAME;`",
+            );
+            None
+        }
+        SEND_KEYWORD => {
+            let Some(name) = word(window, 1) else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`send NAME [BYTE, …];` names the connected socket it sends from",
+                );
+                return SocketLowering::Refused(refusals);
+            };
+            if literal_text(window, 2).is_some() {
+                let Some((text, next)) = lower_text_payload(window, 2, &mut refusals) else {
+                    return SocketLowering::Refused(refusals);
+                };
+                if !ends_with_semicolon(window, next) {
+                    refuse(
+                        &mut refusals,
+                        "Q080",
+                        "`send NAME \"…\";` carries one quoted token and nothing else",
+                    );
+                    return SocketLowering::Refused(refusals);
+                }
+                Some(SocketStatement::Send {
+                    name: name.to_owned(),
+                    payload: SocketPayload::Text(text),
+                })
+            } else {
+                match payload(window, 2) {
+                    Some((bytes, next)) if ends_with_semicolon(window, next) => {
+                        Some(SocketStatement::Send {
+                            name: name.to_owned(),
+                            payload: SocketPayload::Bytes(bytes),
+                        })
+                    }
+                    _ => {
+                        refuse(
+                            &mut refusals,
+                            "Q080",
+                            "`send NAME [BYTE, …];` carries a bracketed list of integer \
+                             literals or bound integer names, or `send NAME \"…\";` one \
+                             quoted payload",
+                        );
+                        None
+                    }
+                }
+            }
+        }
+        SENDTO_KEYWORD => match (word(window, 1), word(window, 2)) {
+            (Some(name), Some(target)) if literal_text(window, 3).is_some() => {
+                let Some((text, next)) = lower_text_payload(window, 3, &mut refusals) else {
+                    return SocketLowering::Refused(refusals);
+                };
+                if !ends_with_semicolon(window, next) {
+                    refuse(
+                        &mut refusals,
+                        "Q080",
+                        "`sendto NAME NAME \"…\";` carries one quoted token and nothing else",
+                    );
+                    return SocketLowering::Refused(refusals);
+                }
+                Some(SocketStatement::SendTo {
+                    name: name.to_owned(),
+                    target: target.to_owned(),
+                    payload: SocketPayload::Text(text),
+                })
+            }
+            (Some(name), Some(target)) => match payload(window, 3) {
+                Some((bytes, next)) if ends_with_semicolon(window, next) => {
+                    Some(SocketStatement::SendTo {
+                        name: name.to_owned(),
+                        target: target.to_owned(),
+                        payload: SocketPayload::Bytes(bytes),
+                    })
+                }
+                _ => {
+                    refuse(
+                        &mut refusals,
+                        "Q080",
+                        "`sendto NAME NAME [BYTE, …];` carries a bracketed list of \
+                         integer literals or bound integer names, or \
+                         `sendto NAME NAME \"…\";` one quoted payload",
+                    );
+                    None
+                }
+            },
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`sendto NAME NAME [BYTE, …];` names the sending socket and a bound \
+                     udp socket of this same program",
+                );
+                None
+            }
+        },
+        RECV_KEYWORD | RECVFROM_KEYWORD => lower_receive(window, head, &mut refusals),
+        PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
+            // The line grammar is `source.std-io.v1`'s, read by its own
+            // reader, so a shape one route accepts and another refuses is
+            // not expressible.
+            match crate::source_std_io::std_io_statement(parsed, span) {
+                Some(Ok(event)) => Some(SocketStatement::Line(event)),
+                Some(Err(message)) => {
+                    refuse(&mut refusals, "Q080", message);
+                    None
+                }
+                None => {
+                    refuse(
+                        &mut refusals,
+                        "Q080",
+                        "this line-producing statement is not one `source.std-io.v1` models",
+                    );
+                    None
+                }
+            }
+        }
+        "return" => {
+            if ends_with_semicolon(window, 1) {
+                Some(SocketStatement::Return)
+            } else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`source.socket.v1` models `return;` from a `unit` entry",
+                );
+                None
+            }
+        }
+        _ => return SocketLowering::Unknown,
+    };
+    match lowered {
+        Some(lowered) => SocketLowering::Lowered(Box::new(lowered)),
+        None => SocketLowering::Refused(refusals),
+    }
 }
 
 /// Lower one entry into a [`SocketProgram`]. The module is either entirely
@@ -631,161 +983,24 @@ pub fn lower_source_socket(
             continue;
         }
         let window = window(tokens, span);
-        let head = word(&window, 0).unwrap_or_default();
-        let lowered = match head {
-            "let" => lower_let(&window, span, &mut diagnostics),
-            BIND_KEYWORD | LISTEN_KEYWORD | CLOSE_KEYWORD => {
-                let Some(name) = word(&window, 1) else {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        format!("`{head} NAME;` names one socket"),
-                    ));
-                    continue;
-                };
-                if !ends_with_semicolon(&window, 2) {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        format!("`source.socket.v1` spells this statement `{head} NAME;`"),
-                    ));
-                    continue;
-                }
-                let name = name.to_owned();
-                Some(match head {
-                    BIND_KEYWORD => SocketStatement::Bind { name },
-                    LISTEN_KEYWORD => SocketStatement::Listen { name },
-                    _ => SocketStatement::Close { name },
-                })
+        match socket_statement(parsed, &window, span) {
+            SocketLowering::Lowered(lowered) => {
+                statements.push(*lowered);
+                event_spans.push(span);
             }
-            CONNECT_KEYWORD => match (word(&window, 1), word(&window, 2)) {
-                (Some(client), Some(listener)) if ends_with_semicolon(&window, 3) => {
-                    Some(SocketStatement::Connect {
-                        client: client.to_owned(),
-                        listener: listener.to_owned(),
-                    })
-                }
-                _ => {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        "`connect NAME NAME;` names the connecting socket and a listening \
-                             socket of this same program; `source.socket.v1` has no spelled \
-                             address, which is what makes the connection's completion decidable \
-                             (`SOCKET-EXTERNAL-PEER`)",
-                    ));
-                    None
-                }
-            },
-            ACCEPT_KEYWORD => {
-                diagnostics.push(diagnostic(
-                    "Q080",
-                    span,
-                    "`accept` acquires a socket and so must bind it: `let NAME = accept NAME;`",
-                ));
-                None
-            }
-            SEND_KEYWORD => {
-                let Some(name) = word(&window, 1) else {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        "`send NAME [BYTE, …];` names the connected socket it sends from",
-                    ));
-                    continue;
-                };
-                match payload(&window, 2) {
-                    Some((bytes, next)) if ends_with_semicolon(&window, next) => {
-                        Some(SocketStatement::Send {
-                            name: name.to_owned(),
-                            payload: bytes,
-                        })
-                    }
-                    _ => {
-                        diagnostics.push(diagnostic(
-                            "Q080",
-                            span,
-                            "`send NAME [BYTE, …];` carries a bracketed list of integer literals \
-                             or bound integer names",
-                        ));
-                        None
-                    }
-                }
-            }
-            SENDTO_KEYWORD => match (word(&window, 1), word(&window, 2)) {
-                (Some(name), Some(target)) => match payload(&window, 3) {
-                    Some((bytes, next)) if ends_with_semicolon(&window, next) => {
-                        Some(SocketStatement::SendTo {
-                            name: name.to_owned(),
-                            target: target.to_owned(),
-                            payload: bytes,
-                        })
-                    }
-                    _ => {
-                        diagnostics.push(diagnostic(
-                            "Q080",
-                            span,
-                            "`sendto NAME NAME [BYTE, …];` carries a bracketed list of \
-                                 integer literals or bound integer names",
-                        ));
-                        None
-                    }
-                },
-                _ => {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        "`sendto NAME NAME [BYTE, …];` names the sending socket and a bound \
-                             udp socket of this same program",
-                    ));
-                    None
-                }
-            },
-            RECV_KEYWORD | RECVFROM_KEYWORD => lower_receive(&window, span, head, &mut diagnostics),
-            PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
-                // The line grammar is `source.std-io.v1`'s, read by its own
-                // reader, so a shape one route accepts and another refuses is
-                // not expressible.
-                match crate::source_std_io::std_io_statement(parsed, span) {
-                    Some(Ok(event)) => Some(SocketStatement::Line(event)),
-                    Some(Err(message)) => {
-                        diagnostics.push(diagnostic("Q080", span, message));
-                        None
-                    }
-                    None => {
-                        diagnostics.push(diagnostic(
-                            "Q080",
-                            span,
-                            "this line-producing statement is not one `source.std-io.v1` models",
-                        ));
-                        None
-                    }
-                }
-            }
-            "return" => {
-                if ends_with_semicolon(&window, 1) {
-                    Some(SocketStatement::Return)
-                } else {
-                    diagnostics.push(diagnostic(
-                        "Q080",
-                        span,
-                        "`source.socket.v1` models `return;` from a `unit` entry",
-                    ));
-                    None
-                }
-            }
-            other => {
-                diagnostics.push(diagnostic(
-                    "Q080",
-                    span,
-                    format!("`{other}` is not a statement `source.socket.v1` models"),
-                ));
-                None
-            }
-        };
-        if let Some(lowered) = lowered {
-            statements.push(lowered);
-            event_spans.push(span);
+            SocketLowering::Refused(refusals) => diagnostics.extend(
+                refusals
+                    .into_iter()
+                    .map(|(code, message)| diagnostic(code, span, message)),
+            ),
+            SocketLowering::Unknown => diagnostics.push(diagnostic(
+                "Q080",
+                span,
+                format!(
+                    "`{}` is not a statement `source.socket.v1` models",
+                    word(&window, 0).unwrap_or_default()
+                ),
+            )),
         }
     }
 

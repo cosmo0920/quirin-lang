@@ -379,6 +379,6 @@ theorem the_buffer_capability_needs_its_module {names : List String}
 
 theorem the_buffer_module_grants_no_stream :
     QCore.ModuleImports.admitsPrint
-      ⟨false, false, false, false, false, false, true, false, false⟩ true = false := rfl
+      ⟨false, false, false, false, false, false, true, false, false, false⟩ true = false := rfl
 
 end QCore.StdBuffer
