@@ -1,0 +1,11 @@
+{
+ "note": "Wave-23 close, 2026-09-11: the six merged cards (NATIVE-LIBRARY-SOURCE-BINDING, PIPE-DROP-STAGE with PIPE-INTRINSIC-EXAMPLE, STRING-SLICE, COMPOSE-EVENT-LINES, NATIVE-LIBRARY-HEADER-DECORATION, AOM-DESTROY-SIBLINGS) reconciled onto one measured standing gate at the integration tip; 8 ignored. Provider 122 carried from the prior checkpoint - no provider source, manifest template or qcore-schemas version changed this wave (qcore-schemas stays 14.0.0), so constraint 18's rebuild-and-verify obligation is not engaged. Lean audits 95 -> 99 (+AuditNativeLibrarySourceBinding, +AuditStdString, +AuditComposeEventLines, +AuditNativeLibraryHeaderDecoration). Corpus leak pin 272 -> 266 by AOM-DESTROY-SIBLINGS, deliberate and attributed; unit and function verdicts unchanged and nothing promoted; the corpus baseline docs/reports/wave23-c-operations/artifacts/ is deliberately NOT re-pinned. Evidence: docs/reports/aom-destroy-siblings/README.md and the five sibling card reports.",
+ "workspace_tests": 3776,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 193,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass"
+}

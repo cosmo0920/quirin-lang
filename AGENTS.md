@@ -53,7 +53,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**72 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**73 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -68,17 +68,20 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-23 fixed-scalar-query checkpoint
-(`docs/reports/wave23-c-operations/artifacts/`, the current measured baseline;
-the preceding corpus archives stay frozen):
+Headline numbers at the wave-23 close (`docs/reports/aom-destroy-siblings/`).
+The **corpus baseline is still `docs/reports/wave23-c-operations/artifacts/`**:
+the wave's arbiter card deliberately did **not** re-pin it, and its own
+artifacts under `docs/reports/aom-destroy-siblings/artifacts/` carry the
+attributed AFTER run the leak row below is read from. Every preceding corpus
+archive stays frozen (constraint 21):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **272** (271 → 272 → 273 → 272, each deliberate; see constraint 7) |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7) |
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
-| Contract corpus | **72 modules** |
+| Contract corpus | **73 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,580 workspace tests covered (8 ignored; layering failure corrected and rerun) · 122 provider (carried; unchanged) · 193 Python · **95 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/native-observation-repair/`; frozen corpus checkpoint retained) |
+| Merged gate | 3,776 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **99 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave23-close/gate.json`, measured at the integration tip over the six merged cards; each card's own gate is in its report) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -179,10 +182,10 @@ pointer is the card that established it; read it before deviating.
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it
    incidentally. `remaining-c02-p-alias`, `remaining-borrow-liveness`,
    `remaining-hygiene-14`.
-7. Leak diagnostics are **272** across the pinned 185-unit corpus. A change
+7. Leak diagnostics are **266** across the pinned 185-unit corpus. A change
    that moves that number is a finding to attribute in the re-pin, not to
-   absorb. It has moved exactly twice, deliberately, each in the *accusing*
-   direction or by deciding one: 271 → 272 at the wave-17 re-pin
+   absorb. It has moved exactly four times, deliberately, each in the
+   *accusing* direction or by deciding one: 271 → 272 at the wave-17 re-pin
    (`flb_input_chunk_get_direct_routes` L19399, accusing, on a function and
    a unit already `Unsafe`; provisional as `CONSTRUCTOR-RESIDUALS-LEAK-271`
    — deciding it would *withdraw* six standing claims), 272 → 273 at the
@@ -193,10 +196,31 @@ pointer is the card that established it; read it before deviating.
    contract — a **withdrawal**, not a discharge: the release refuses at the
    call on joined provenance, the leak retires, and `input_chunk_get`
    returns provisional `Unsafe` → `Unknown`; residual
-   `AOM-DESTROY-JOINED-PROVENANCE`). `remaining-o04-b08`, `corpus-repin`,
+   `AOM-DESTROY-JOINED-PROVENANCE`). A **fourth** deliberate move, and the
+   first of more than one, is 272 → **266** at the wave-23
+   `aom-destroy-siblings` card: the faithful **`nullable`**
+   `flb_input_chunk_destroy_direct_routes` contract — `nullable` where its
+   already-declared neighbour carries `nonnull`, because that body's third
+   statement is `if (!routes) { return; }` — retires **six** leaves of
+   `flb_input_chunk_get_direct_routes` (L19384, L19392, L19399, L19434,
+   L19489, L19505), again by **withdrawal-by-refusal** and not by discharge:
+   at each preceding call site the projection cannot resolve the actual it is
+   handed, so the site is marked through the unresolved-effect mechanism and
+   `report_leaks` skips it. The cause is that every refused statement poisons
+   every pointer binding in the state, so an acquisition's binding does not
+   survive to its release — residual `AOM-SIBLINGS-BINDING-POISON`, and
+   repairing it moves those sites toward the *discharging* arm, a direction
+   invariant 1 constrains. `CONSTRUCTOR-RESIDUALS-LEAK-271` is thereby
+   **DECIDED — withdrawn**, at a measured cost of **five** standing claims
+   withdrawn, not the six wave 17 recorded: the sixth leaf, L19544, is on the
+   success path where no destroy call runs, so it **stands**, the function
+   keeps a leak and keeps its provisional `Unsafe`, and the pin reads 266
+   rather than 265. Nothing is promoted: zero unit status moves, zero function
+   status moves, and the baseline was deliberately not re-pinned.
+   `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
-   `wave22-corpus`.
+   `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1.
 8. **A declared contract must agree with the C the unit declares.** A contract
    whose parameter or result ABI projections the analysed translation unit's
    own C declaration contradicts is **withdrawn for that unit** — every call
@@ -327,7 +351,24 @@ pointer is the card that established it; read it before deviating.
     while naming the hand-written form; it now uses the same span filter the
     extern, std-io and task readers have used since their own cards.
     `wave22-pipe-intrinsic-stage`.
-15b. **Windows `std.event` selects AF_UNIX by capability, not by compilation.**
+15c. **An event program's streams are compared byte for byte, and that is a
+    measurement about the reactor profile rather than a convention.**
+    `source.event.v1`'s one accepted profile is single-threaded and the reactor
+    refuses a cross-thread activation under it (`L04`), so the thread running a
+    callback is the entry's own, every record of the derived
+    `qcore.obs-reordering.v1` relation is a **barrier**, and the relation is
+    strict — the degenerate case `strict_iff_byte_equality` names. The window
+    structure is derived by `observe_event_program`'s live-set walk over this
+    model's regions (a dispatch turn), and the emitters a region makes live are
+    read from `ReactorProfile::threading_enabled`. A route that runs a callback
+    on another thread, or gives a callback a source-level body, **supplies its
+    emitters there** rather than declaring strictness or a reordering by hand.
+    Do not weaken the two premises the composition rests on: a source line is
+    program output and writes no trace record, and a `wake`'s payload is a value
+    and never a reactor fact — which together are why every transcript this
+    route published before the card is byte-identical after it.
+    `wave22-std-event`, `wave22-obs-reordering`, `compose-event-lines`.
+15d. **Windows `std.event` selects AF_UNIX by capability, not by compilation.**
     A usable `<afunix.h>` only exposes the candidate; the emitted shim probes
     `socket(AF_UNIX, SOCK_STREAM, 0)` on the running system. Only an explicit
     unsupported-family/type/protocol result from that probe selects the
@@ -514,6 +555,8 @@ this table is a summary of it, not a second allocation.
 | `Q058`–`Q062` | `Event` | `source.event.v1`: the checked event vocabulary over the reactor/descriptor custody models; `Q061` the determinism boundary |
 | `Q063`–`Q064` | `NativeLibrary` | third band of the same pass: exported-header reading and manifest/header disagreement |
 | `Q065`–`Q067` | `NativeLibrary` | fourth band of the same pass: the source file's own `extern library NAME;` binding — resolution refusals, a foreign manifest's symbol, and the publication tripwire |
+| `Q068`–`Q073` | `StandardString` | `source.string.v1`: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row. Band relocated from `Q065`–`Q070` at integration |
+| `Q074` | `Event` | second band of the same pass: the composition of `source.event.v1` with the source line vocabulary (`print`, `log`, `flush`) and its one value form, `let NAME = dispatch ready E;`. Relocated from `Q065` at integration |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
