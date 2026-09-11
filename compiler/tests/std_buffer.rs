@@ -937,12 +937,16 @@ fn a_buffer_construct_outside_the_entry_refuses() {
 
 #[test]
 fn an_undeclared_effect_refuses() {
-    // The program mutates and the row admits only `alloc`.
+    // The program mutates and the row admits only `alloc`. The code is this
+    // route's own `Q057` and deliberately **not** `StandardIo`'s `Q029`: §L21
+    // forbids a second semantic pass reusing a code, and the conditions differ
+    // besides — `Q029` reports an undeclared `Io` on a route that derives
+    // nothing else, while this one reports an undeclared `Alloc` or `Mut` too.
     let undeclared = module(
         "alloc",
         &["let b = bytes(4);", "b[0] = 1;", "drop b;", "return;"],
     );
-    assert_eq!(codes(&undeclared), ["Q029"]);
+    assert_eq!(codes(&undeclared), ["Q057"]);
 }
 
 #[test]

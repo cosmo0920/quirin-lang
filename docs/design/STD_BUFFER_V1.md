@@ -343,7 +343,7 @@ buffer crossing a pipe stage.
 
 ## 8. Diagnostics
 
-A new semantic pass `StandardBuffer` owning **`Q051`–`Q056`**, allocated through
+A new semantic pass `StandardBuffer` owning **`Q051`–`Q057`**, allocated through
 the §L21 process in the same change as the implementation. The census confirmed
 `Q051`–`Q099` entirely unallocated; `Q050` is `ComposedTasks`'s single code and
 is the last taken.
@@ -356,6 +356,7 @@ is the last taken.
 | `Q054` | a custody refusal reported by the inherited ownership checker (leak, double release, use after release, unbound name) |
 | `Q055` | a buffer at a position this route refuses to let it cross (an extern argument, a rendering operand) |
 | `Q056` | the published certificate failed its independent rederivation |
+| `Q057` | the entry performs a derived effect its declared `effects { … }` row does not admit. Deliberately **this pass's own code and not a reuse of `StandardIo`'s `Q029`**: §L21 forbids a second semantic pass reusing a code, and this row can carry an undeclared `Alloc` or `Mut`, which `Q029` never reports |
 
 No existing code changes meaning. `Q020`/`Q021` stay separate (constraint 2).
 A collision discovered at integration relocates this **unshipped** band, per the
@@ -409,7 +410,7 @@ inherited, and saying which half moved is more useful than claiming the name.
 
 ## 11. Deviations found by measurement
 
-Eight, each recorded in full with its evidence in
+Nine, each recorded in full with its evidence in
 [`docs/reports/wave22-std-buffer/README.md`](../reports/wave22-std-buffer/README.md)
 §7. In brief:
 
@@ -434,7 +435,10 @@ Eight, each recorded in full with its evidence in
    the true one: the extern route derives those effects too, but off a
    *declared contract*'s projections, where this route derives them from an
    acquisition and a store it discharges itself.
-8. **The Lean `Imports` literals grew a field**, and
+8. **The undeclared-effect refusal was emitting `StandardIo`'s `Q029`**, which
+   §L21 forbids a second semantic pass from doing. It now has this pass's own
+   `Q057`, and the band is `Q051`–`Q057`.
+9. **The Lean `Imports` literals grew a field**, and
    `QCore.StdIo.no_module_substitutes_for_another` is now strictly stronger —
    the same deliberate widening `STD-MODULES` recorded. The spec's §L04 registry
    sentence was also found stale at "five names" (it predates this card:

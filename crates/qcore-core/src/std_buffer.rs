@@ -238,8 +238,15 @@ pub enum BufferError {
     /// `Q055`: a buffer at a position this route refuses to let it cross —
     /// today, a rendering operand.
     CrossesBoundary { event: usize, name: String },
-    /// `Q029`'s rule on this route's own code: the declared effect row does not
-    /// admit a derived effect.
+    /// `Q057`: the declared `effects { … }` row does not admit a derived
+    /// effect.
+    ///
+    /// Deliberately **this pass's own code and not `StandardIo`'s `Q029`**,
+    /// even though the two rules read alike. §L21's allocation rule is that a
+    /// code may not be reused by a second semantic pass, and this is a second
+    /// pass; the conditions differ besides, because `Q029` reports an
+    /// undeclared `Io` on a route that can derive nothing else, while this one
+    /// reports an undeclared `Alloc` or `Mut` as well.
     EffectNotDeclared { event: usize, effect: Effect },
 }
 
@@ -253,7 +260,7 @@ impl BufferError {
             | Self::ExtentOutOfRange { .. } => "Q053",
             Self::Custody { .. } => "Q054",
             Self::CrossesBoundary { .. } => "Q055",
-            Self::EffectNotDeclared { .. } => "Q029",
+            Self::EffectNotDeclared { .. } => "Q057",
         }
     }
 

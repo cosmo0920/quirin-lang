@@ -1298,7 +1298,9 @@ those two as well, but from a **declared contract**'s projections — `Alloc` wh
 the contract says the callee acquires — whereas here they follow from an
 acquisition and a store this profile checks and discharges itself. An
 acquisition and a release derive `Alloc`, a store derives `Mut`, a read derives
-nothing, and the declared `effects { … }` row must admit each (`Q029`).
+nothing, and the declared `effects { … }` row must admit each (`Q057` — this
+profile's own code, not a reuse of §G02g's `Q029`, because §L21 forbids a second
+semantic pass reusing one and this row can carry effects `Q029` never reports).
 
 **Two words are newly reserved: `bytes` and `extent`.** The release is the
 **existing** `drop` — the operation is the ownership IR's own drop, so a new

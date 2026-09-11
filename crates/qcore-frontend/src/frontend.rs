@@ -1748,7 +1748,7 @@ pub enum SemanticPass {
     /// route's own site.
     ComposedTasks,
     /// Card `STD-BUFFER`: admission of `source.buffer.v1` — the `std.buffer`
-    /// bundled module's owned, extent-carrying byte buffer. Owns `Q051`–`Q056`
+    /// bundled module's owned, extent-carrying byte buffer. Owns `Q051`–`Q057`
     /// (spec §L21), the first free band above `ComposedTasks`'s `Q050`.
     ///
     /// A separate pass from `StandardIo` on purpose: that pass admits a closed
@@ -2607,8 +2607,14 @@ pub fn source_diagnostic(
         // that is not a check-time constant), Q053 (a bounds, byte-range or
         // extent-range violation), Q054 (a refusal the inherited ownership
         // checker reported), Q055 (a buffer at a position it may not cross) and
-        // Q056 (a failed certificate rederivation) are issued at their own
-        // emission sites.
+        // Q056 (a failed certificate rederivation) and Q057 (an undeclared
+        // derived effect) are issued at their own emission sites.
+
+        // `Q057` is deliberately this pass's own rather than a reuse of
+        // `StandardIo`'s `Q029`: §L21 forbids a second pass reusing a code, and
+        // the conditions differ besides — `Q029` reports an undeclared `Io` on a
+        // route that derives nothing else, while `Q057` reports an undeclared
+        // `Alloc` or `Mut` too.
         SemanticPass::StandardBuffer => "Q051",
         SemanticPass::PluginVerification => "Q700",
     };

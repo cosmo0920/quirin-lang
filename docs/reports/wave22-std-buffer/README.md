@@ -18,7 +18,7 @@ self-contained C11 — `calloc`, `free` and two bounds-checked accessors defined
 in the emitted file, no library and no boundary of any kind — compared against
 the reference execution per stream under ASan/UBSan/LSan with a **positive** leak
 control. **Two reserved words**, `bytes` and `extent`; a new semantic pass
-`StandardBuffer` owning **`Q051`–`Q056`**. 52 tests, 38 audited Lean
+`StandardBuffer` owning **`Q051`–`Q057`**. 52 tests, 38 audited Lean
 entries in one new audit file, no new axiom.
 
 **The headline is the census result (§1), and it is not what the brief
@@ -329,8 +329,9 @@ sequence *says*).
 
 ## 7. Deviations found by measurement
 
-Eight, each a place the implementation disagreed with the design note or with a
-claim an earlier draft of this report made.
+Nine, each a place the implementation disagreed with the design note, with a
+claim an earlier draft of this report made, or with a standing rule it had to be
+checked against.
 
 1. **`buffer` collides, and the constructor was renamed.** The natural spelling
    occurs **555 times** across the source-side corpus. Parameter-name
@@ -403,7 +404,18 @@ claim an earlier draft of this report made.
    effects are read off a **declared contract**'s projections there, and follow
    from an acquisition and a store **this route discharges itself** here. §2.2.
 
-8. **The Lean registry's structure literals grew a field, and one theorem's
+8. **The undeclared-effect refusal was emitting another pass's code.** An
+   earlier version reported `StandardIo`'s **`Q029`**, on the same
+   reuse-rather-than-duplicate reasoning that correctly governs `Q015`. It is a
+   §L21 violation: that rule permits reuse *within* an owning pass — the import
+   gate runs as `NameResolution` and emits from its range — but forbids a
+   **second semantic pass** taking a code, and `StandardBuffer` is one. The
+   conditions differ besides: `Q029` reports an undeclared `Io` on a route that
+   derives nothing else, while this one can report an undeclared `Alloc` or
+   `Mut`. The refusal now has this pass's own `Q057` and the band is
+   `Q051`–`Q057`.
+
+9. **The Lean registry's structure literals grew a field, and one theorem's
    meaning is now stronger.** `Imports` went from six fields to seven; sixteen
    anonymous literals grew with it. `QCore.StdIo.no_module_substitutes_for_another`
    says "each row holds every module except the one it needs", so its new
@@ -443,7 +455,7 @@ happening to these two.
 
 ## 9. Diagnostics
 
-A new semantic pass `StandardBuffer` owning **`Q051`–`Q056`**, allocated through
+A new semantic pass `StandardBuffer` owning **`Q051`–`Q057`**, allocated through
 the §L21 process in the same change as the implementation. The census confirmed
 `Q051`–`Q099` entirely unallocated; `Q050` (`ComposedTasks`) was the last taken.
 
@@ -455,12 +467,23 @@ the §L21 process in the same change as the implementation. The census confirmed
 | `Q054` | a refusal reported by the **inherited** ownership checker |
 | `Q055` | a buffer at a position it may not cross |
 | `Q056` | the published certificate failed its independent rederivation |
-| `Q029` | reused, not duplicated: "the declared row does not admit a derived effect" is exactly what it already means, and the message names the effect |
-| `Q015` | reused, not duplicated: "this file used a capability it did not import" |
+| `Q057` | the entry performs a derived effect its declared `effects { … }` row does not admit |
+| `Q015` | **reused**, not duplicated: "this file used a capability it did not import" is exactly what it already means, and the message names the missing module |
 
 **No existing code changed meaning.** `Q020`/`Q021` stay separate (standing
-constraint 2). `Q029` and `Q015` are reused on the `STD-MODULES` principle — a
-new code meaning the same thing would be a second allocation for one condition.
+constraint 2). `Q015` is reused on the `STD-MODULES` principle — a new code
+meaning the same thing would be a second allocation for one condition — and that
+reuse is *within* its owning pass, because the import gate runs as
+`NameResolution` and emits from `NameResolution`'s range.
+
+**`Q057` is the one place that principle does not apply, and the card initially
+got it wrong** (§7.9). An earlier version emitted `StandardIo`'s **`Q029`** for
+the undeclared-effect refusal, on the same reuse-rather-than-duplicate reasoning.
+That is a §L21 violation: the rule is that a code may not be reused by a *second
+semantic pass*, and `StandardBuffer` is one. The conditions differ besides —
+`Q029` reports an undeclared `Io` on a route that can derive nothing else, while
+this row can carry an undeclared `Alloc` or `Mut`. The refusal now has this
+pass's own code.
 
 A separate pass from `StandardIo` on purpose: that pass admits a closed set of
 statements with no resource and no custody at all, while this one admits a
@@ -628,11 +651,11 @@ card's.
 
 Reconciliation list:
 
-* **`Q051`–`Q056` allocated** to a new `StandardBuffer` pass. `Q057`+ are free
+* **`Q051`–`Q057` allocated** to a new `StandardBuffer` pass. `Q058`+ are free
   as far as this card is concerned. A collision with a concurrent wave-22 card
   relocates this unshipped band per the `T07`/`T09` precedent;
 * `AGENTS.md`'s diagnostics-namespace summary table needs one row for
-  `Q051`–`Q056` → `StandardBuffer`, and its ledger needs the Lean-audit count
+  `Q051`–`Q057` → `StandardBuffer`, and its ledger needs the Lean-audit count
   moved. **Neither was edited** — `AGENTS.md` is integrator surface and this
   card's brief forbids it;
 * `docs/QCORE_SPEC_r0_3.md` §L21 gained one row; §L04's registry sentence was
@@ -746,8 +769,10 @@ rather than a backlog item.
 > fixtures, so the constructor is spelled `bytes` on the `work` → `effort` and
 > `error` → `fatal` precedent while the module keeps the name `std.buffer`; the
 > release is the existing `drop` and the accessors the existing `[`/`]`, so the
-> card adds **two** reserved words and no parser change. `Q051`–`Q056` under a new
-> `StandardBuffer` pass through the §L21 process. 52 tests, one sanitized
+> card adds **two** reserved words and no parser change. `Q051`–`Q057` under a new
+> `StandardBuffer` pass through the §L21 process, `Q057` among them rather than a
+> reuse of `StandardIo`'s `Q029`, because §L21 forbids a second pass reusing a
+> code. 52 tests, one sanitized
 > ASan/UBSan/LSan run as a **positive** leak control, 38 audited Lean entries in
 > one new audit file, 91/91 audits, no new axiom. `STD-FMT-EXTENT` is **split
 > rather than retired**: a size is renderable today on this route with no
