@@ -478,6 +478,7 @@ The rule is stated at the registry in Lean too — `admitsHttp` beside
 | `HTTP-V1-REDECLARE-REACH` | `Q090`'s redeclaration arm is unreachable from a single source module — name resolution refuses a duplicate binding at `Q012` first. Kept as a fail-closed guard on the model, on the `EXTERN-F1-STORE-REACH` precedent, and pinned by `a_message_declared_twice_refuses` |
 | `STD-FMT-DIAGNOSTIC` | *(unchanged, another card's)* an operand naming **nothing** refuses generically at `Q013` before this route runs. Correct; only its specificity is the gap. Both directions pinned (`an_operand_naming_nothing_at_all_keeps_the_generic_refusal`) |
 | `SOCKET-TEXT-BINDING` | on the **bare** socket route a text payload must be a literal written at the site; a `let`-bound view there is claimed by the string route. The HTTP route models the bound form, so the gap is the socket route's alone |
+| `HTTP-V1-EXAMPLE-SUITE` | `examples/http/` is verified by this card's own test file rather than by `compiler/tests/examples_suite.rs`, whose list is explicit rather than a directory scan. The same gap `examples/sockets/` and `examples/strings/` have (`STRING-SLICE-IO-EXAMPLE-SUITE`); folding all three in is mechanical and was kept out of this card's blast radius |
 | `HTTP-V1-WINDOWS-RUN`, `HTTP-V1-APPLE-RUN` | a native run, sanitizer or byte-comparison claim for those arms (§8) |
 | `SOCKET-STRING-PAYLOAD` | **retired by this card** |
 | `C-EMIT-COMPOSED-VIA-MERGE` | *not* retired: this card is `merge`'s first consumer, but `composed_std_io_c_emit` still spells its own list inline and converting it still moves bytes |
@@ -557,12 +558,13 @@ Run at the card tip, Linux, with `$HOME/.elan/bin` on `PATH`.
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree — see §14.1 |
-| `cargo test --workspace --no-fail-fast` | see §14.2 |
-| `cargo fmt --all -- --check` | **clean** |
-| `cargo clippy --all-targets -- -D warnings` | **clean** |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | see §14.2 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | see §14.2 |
-| `python3 scripts/check_lean_audits.py` | see §14.2 |
+| `cargo test --workspace --no-fail-fast` | **3,950 passed, 0 failed, 8 ignored** across 203 result lines, exit **0** |
+| `cargo fmt --all -- --check` | exit **0** |
+| `cargo clippy --all-targets -- -D warnings` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
+| `python3 scripts/check_lean_audits.py` | **"Passed 103 Lean audits"** (102 → 103: `AuditStdHttp.lean`), no project axiom |
+| `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 pre-existing failure** — §15 item 3 |
 
 ### 14.1 The first run stopped at the submodule pin
 
@@ -575,9 +577,23 @@ failure — the same thing cards `STD-EVENT`, `COMPOSE-EVENT-LINES` and
 first line is the repair. The submodule was checked out at
 `d82464a277d0f42703702c4dfd9af6af38595a83` and the whole-workspace run redone.
 
-### 14.2 Gate numbers
+### 14.2 The count, and what it is made of
 
-Filled from the final complete run; see the integrator note below.
+**3,950 against the base's 3,883** (card `C-EMIT-MAIN-UNIFY` §8's measured
+number), and the difference is exactly this card's **67** new end-to-end tests in
+`compiler/tests/std_http.rs`: 3,883 + 67 = 3,950. **No existing test was
+deleted, rewritten or weakened**, which matters here because this card changed
+two enums the socket route's own tests read.
+
+**No `P02-FLAKE` row tripped** (standing constraint 16). Three of the five rows
+are in this workspace suite and each passed on the first attempt of the complete
+run: `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` and
+`memory_growth_beyond_the_declared_limit_is_bounded`. Nothing needed isolated
+re-verification. The other two live in the separate `providers/` workspace, which
+this card neither touches nor ran: no provider, schema, package template or
+protocol changed, so constraint 18's rebuild is not owed and the 122-test
+provider checkpoint is **carried, not rerun**.
 
 The Lean leg is read from the **text** line rather than the exit code, per the
 script's own behaviour: `scripts/check_lean_audits.py` reports a missing `lake`
