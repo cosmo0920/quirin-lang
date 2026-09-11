@@ -18,7 +18,9 @@
 //!   `grow`, `open`, `close`, `bound`, `overhead`. These are statements whose
 //!   operands are not a parenthesized argument list, so a call stage cannot
 //!   produce them and the closed sink table deliberately does not name them.
-//!   Each is refused, and each refusal is pinned below by name.
+//!   Each is refused, and each refusal is pinned below by name. (`drop` was the
+//!   one this card withheld rather than settled; card `PIPE-DROP-STAGE` named
+//!   it in the table, and the pin here moved by name with it.)
 //!
 //! One route could tell a `|>` had been written, and that is what this card
 //! lands in production code: the sequential route re-lexed the **raw source
@@ -430,16 +432,35 @@ fn the_keyword_shaped_intrinsics_are_not_stages() {
     );
 }
 
+/// **This card's withheld decision, taken — the pin moved by name.**
+///
+/// `PIPE-INTRINSIC-STAGE` refused `returned |> drop;` and said why: adding
+/// `drop` to the closed sink table "would make a custody-releasing statement
+/// pipeable, which is a decision of its own and not this card's". Card
+/// `PIPE-DROP-STAGE` took that decision, so the pin it left behind **failed and
+/// was rewritten rather than deleted** — the `TRACE-STDIO` precedent, and the
+/// mechanism working as intended.
+///
+/// What is asserted here is only that the census row changed. The admission
+/// itself, its byte-equality against the hand-written statement and every
+/// refusal around it are `compiler/tests/pipe_drop_stage.rs`.
 #[test]
-fn drop_is_not_a_pipe_stage_on_the_task_route() {
-    // `drop NAME;` is keyword-shaped: adding it to the closed sink table would
-    // make a custody-releasing statement pipeable, which is a decision of its
-    // own and not this card's. Follow-on `PIPE-DROP-STAGE`.
-    let source = tasks(
-        "                let value = qcore_buffer_read(returned);\n                returned |> drop;",
+fn drop_is_now_a_pipe_stage_on_the_task_route() {
+    // §3.4's allocating chain, now spellable end to end: the temporary this
+    // card measured as unreleasable is released by the pipeline that invented
+    // it. Written at the entry, where nothing else is live.
+    compile(&tasks_allocating(
+        "    7 |> qcore_buffer_new? |> drop;\n    let first = qcore_buffer_new(42)?;",
+    ))
+    .expect("card `PIPE-DROP-STAGE` admitted the releasing stage");
+    // The rest of the census is unmoved: `drop` was the only keyword-shaped
+    // head admitted, and its terminality is the sink rule it inherits.
+    assert_eq!(
+        codes(&tasks(
+            "                let value = qcore_buffer_read(returned);\n                returned |> drop |> drop;"
+        )),
+        vec!["Q037"]
     );
-    assert_eq!(codes(&source), vec!["Q500"]);
-    assert!(message(&source).contains("buffer drop requires one exact name"));
 }
 
 #[test]

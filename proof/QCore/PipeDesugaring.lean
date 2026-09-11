@@ -77,12 +77,18 @@ def written (k : Kind) (at_ : Nat) : Token := ⟨k, at_, false⟩
 /-- A delimiter the desugarer invented, anchored at the pipe's own byte. -/
 def synth (k : Kind) (pipe : Nat) : Token := ⟨k, pipe, true⟩
 
-/-- The closed sink-stage table: a statement head and the number of selector
-words it names before its operand. Closed on purpose — a statement form does not
-become pipeable by accident. -/
+/-- The closed statement-stage table: a statement head and the number of
+selector words it names before its operand. Closed on purpose — a statement form
+does not become pipeable by accident.
+
+Card `PIPE-DROP-STAGE` added `drop`, the one **releasing** entry, and no other
+head; §5.7 carries the criterion and the census it was applied to. A releasing
+entry emits by this same rule and produces no result by the same
+`producesResult`, so it is last-stage-only without a rule of its own. -/
 def sinkSelectors : String → Option Nat
   | "print" => some 1
   | "log" => some 2
+  | "drop" => some 0
   | _ => none
 
 /-- Statement heads that take no operand. Piping into one refuses rather than
@@ -965,10 +971,16 @@ def callShapedIntrinsics : List String :=
   ["qcore_buffer_new", "qcore_buffer_read", "qcore_buffer_write",
    "qcore_error_payload", "qcore_acquire", "qcore_check"]
 
-/-- The keyword-shaped ones, which the closed statement table deliberately does
-not name and no call stage can produce. -/
+/-- The keyword-shaped ones, which the closed statement table does not name and
+no call stage can produce.
+
+**Card `PIPE-DROP-STAGE` removed `drop` from this list**, which is the pin this
+card moved rather than slipped past: `PIPE-INTRINSIC-STAGE` withheld that entry
+explicitly ("a releasing table entry is a different kind of entry from a
+rendering one") and the later card took the decision. Everything else here is
+unmoved, and §5.7 states the criterion that keeps it so. -/
 def keywordShapedIntrinsics : List String :=
-  ["spawn", "join", "share", "read", "write", "drop", "grow", "open", "close"]
+  ["spawn", "join", "share", "read", "write", "grow", "open", "close"]
 
 /-- **The census's structural fact.** No intrinsic is in the closed sink table
 and none is operandless, so every one of them is a call stage — which is why the
@@ -1098,6 +1110,174 @@ theorem the_byte_order_and_the_statement_order_differ :
       (fun t => t.origin)
       ≠ [0, 10, 28] := by
   refine ⟨rfl, by decide⟩
+
+/-! ### 5.7 The releasing stage (card `PIPE-DROP-STAGE`)
+
+`PIPE-INTRINSIC-STAGE` closed its census with one entry deliberately withheld:
+`drop` "takes a single operand exactly as `print` does, but it *releases
+custody*, and a releasing table entry is a different kind of entry from a
+rendering one". This section takes that decision and states what the difference
+is and is not.
+
+**What it is not.** It is not a difference in the desugaring. A releasing stage
+and a rendering stage are both `HEAD SELECTOR* OPERAND ";"`, both are a pure
+permutation of the reader's own tokens, and both bind no result. So a released
+value cannot feed a later stage **for the same reason a rendered one cannot** —
+there is no value to feed — and the terminality this card needs is the theorem
+`a_non_final_stage_that_produces_nothing_refuses` already proved, instantiated
+rather than extended (`a_releasing_stage_in_a_non_final_position_refuses`). What
+a *later statement* does with a released binding is the checker's business,
+unchanged: the desugaring hands it the ordinary double release.
+
+**What it is.** It is a difference in the argument for admitting the entry, and
+that argument is what keeps the table closed. Two conditions:
+
+1. the head's statement form is `HEAD SELECTOR* OPERAND ";"` with every selector
+   a word from a closed, route-independent set; and
+2. some stage can actually *feed* it a value no reader can name — i.e. the
+   routes it belongs to have a call-shaped intrinsic producing what it takes.
+
+`drop` passes both, and the second is the payoff: `PIPE-INTRINSIC-STAGE` §3.4
+measured an allocating intermediate leaking because its hygienic temporary was
+an owned buffer no reader could name and therefore could not release. With this
+entry the pipeline that invented the temporary releases it. Every other
+keyword-shaped head fails one condition or the other — `spawn`/`join` fail (1);
+the mutex heads (`read`, `write`, `open`, `close`, `wait`, `use`) and the epoch
+plan clauses fail (2), their routes having no call-shaped intrinsic and no
+non-constant operand respectively; `move` is refused on a third ground, that it
+already spells this grammar's own consume prefix; and `return` fails the second
+half of (2), a chain's result being nameable by a bound pipeline already. -/
+
+/-- The statement-stage heads that **release** custody rather than rendering.
+One entry, and the theorems below are what keep it one. -/
+def releasingStages : List String := ["drop"]
+
+/-- **The whole table, exhibited**, so a widening has to change this theorem
+rather than slip past it. Three heads are in it; every other statement head the
+census names is out, including the ones whose *shape* would fit. -/
+theorem the_statement_stage_table_is_exactly_three_heads :
+    sinkSelectors "print" = some 1 ∧ sinkSelectors "log" = some 2 ∧
+    sinkSelectors "drop" = some 0 ∧
+    (["spawn", "join", "share", "read", "write", "grow", "open", "close",
+      "move", "return", "wait", "use", "assert", "bound", "overhead", "peak",
+      "effort", "credit", "retained"].all
+      (fun n => (sinkSelectors n).isNone)) = true := by
+  refine ⟨rfl, rfl, rfl, by decide⟩
+
+/-- **The desugaring identity.** `b |> drop;` is the statement `drop b;` a
+reader would have written, token for token — which is why custody flows through
+the *unedited* checkers and linearity is inherited rather than re-implemented. -/
+theorem release_pipeline_is_its_hand_written_statement
+    (operand : List Token) (semi : Token) (pipe o : Nat) (hop : operand ≠ []) :
+    rewrite operand [written (Kind.atom "drop") o] semi pipe
+      = handWritten operand [written (Kind.atom "drop") o] semi pipe := by
+  cases operand with
+  | nil => exact absurd rfl hop
+  | cons a as => rfl
+
+/-- The concrete instance the fixtures pin. -/
+theorem the_drop_pipeline_is_the_drop_statement :
+    rewrite [written (Kind.atom "b") 4] [written (Kind.atom "drop") 13]
+        (written Kind.semi 17) 10
+      = some [written (Kind.atom "drop") 13, written (Kind.atom "b") 4,
+              written Kind.semi 17] := by
+  rfl
+
+/-- A releasing stage **synthesizes nothing at all**: like every statement
+stage, it is a pure permutation of the reader's own tokens, so no diagnostic
+inside it can land on an invented position. -/
+theorem a_release_pipeline_synthesizes_nothing
+    (operand : List Token) (semi : Token) (pipe o : Nat) (out : List Token)
+    (hop : operand.all (fun t => !t.synthesized) = true)
+    (hsemi : semi.synthesized = false)
+    (h : rewrite operand [written (Kind.atom "drop") o] semi pipe = some out) :
+    out.all (fun t => !t.synthesized) = true := by
+  cases operand with
+  | nil => simp [rewrite] at h
+  | cons a as =>
+    simp [rewrite, headText, written, sinkSelectors, operandless] at h
+    subst h
+    simp_all [List.all_append]
+
+/-- A releasing head binds no result — by the *same* `producesResult` that says
+so of a rendering head, with no releasing case of its own. -/
+theorem every_releasing_head_binds_no_result :
+    releasingStages.all
+      (fun n => !producesResult ⟨[written (Kind.atom n) 0], false, 0⟩) = true := by
+  decide
+
+/-- **Terminality is inherited, not added.** A releasing stage in a non-final
+position refuses by the theorem card `PIPE-CHAIN` proved for a stage that binds
+no result, applied rather than restated. The pipe needs no notion of custody to
+forbid a released value from feeding a later stage: there is no value to feed. -/
+theorem a_releasing_stage_in_a_non_final_position_refuses
+    (operand : List Token) (rest : List Stage) (semi : Token) (index pipe o : Nat)
+    (hrest : rest ≠ []) :
+    chainRewrite operand
+      (⟨[written (Kind.atom "drop") o], false, pipe⟩ :: rest) semi index = none :=
+  a_non_final_stage_that_produces_nothing_refuses operand
+    ⟨[written (Kind.atom "drop") o], false, pipe⟩ rest semi index hrest
+    (by simp) rfl
+
+/-- Exhibited on the two shapes a reader will write: a release feeding a sink,
+and a release feeding a release. -/
+theorem a_release_is_last_stage_only :
+    chainRewrite [written (Kind.atom "b") 0]
+      [⟨[written (Kind.atom "drop") 5], false, 2⟩,
+       ⟨[written (Kind.atom "log") 13, written (Kind.atom "info") 17,
+         written (Kind.atom "dec") 22], false, 10⟩]
+      (written Kind.semi 26) 0 = none ∧
+    chainRewrite [written (Kind.atom "b") 0]
+      [⟨[written (Kind.atom "drop") 5], false, 2⟩,
+       ⟨[written (Kind.atom "drop") 13], false, 10⟩]
+      (written Kind.semi 18) 0 = none := by
+  refine ⟨rfl, rfl⟩
+
+/-- **The payoff, token for token.** `7 |> qcore_buffer_new? |> drop;` is the
+statement pair `let ⟨t0⟩ = qcore_buffer_new(7)?; drop ⟨t0⟩;` — the allocating
+chain `PIPE-INTRINSIC-STAGE` §3.4 measured as unspellable, because the temporary
+it binds is an owned buffer no reader can name and therefore could not release.
+The pipeline that invented it releases it. -/
+theorem the_allocating_chain_is_its_hand_written_sequence :
+    chainRewrite [written (Kind.atom "7") 0]
+      [⟨[written (Kind.atom "qcore_buffer_new") 5,
+         written (Kind.atom "?") 21], false, 2⟩,
+       ⟨[written (Kind.atom "drop") 27], false, 24⟩]
+      (written Kind.semi 31) 0
+      = some
+        ([synth (Kind.atom "let") 2, synth (Kind.atom "qcore__pipe0") 2,
+          synth (Kind.atom "=") 2,
+          written (Kind.atom "qcore_buffer_new") 5, synth Kind.lparen 2,
+          written (Kind.atom "7") 0, synth Kind.rparen 2,
+          written (Kind.atom "?") 21, synth Kind.semi 24]
+         ++
+         [written (Kind.atom "drop") 27, synth (Kind.atom "qcore__pipe0") 26,
+          written Kind.semi 31]) := by
+  rfl
+
+/-- **A releasing entry and a rendering entry emit by one rule.** Stated as an
+equality between the two rewrites with their heads and selector counts abstracted
+away, so the claim is the mechanism's rather than an instance's: what differs
+between `print dec x;` and `drop x;` is the table row, not the emission. -/
+theorem a_release_and_a_render_emit_by_the_same_rule
+    (operand : List Token) (semi r : Token) (anchor o : Nat) (hop : operand ≠ []) :
+    rewriteStage operand [written (Kind.atom "drop") o] semi anchor
+      = some ([written (Kind.atom "drop") o] ++ operand ++ [semi]) ∧
+    rewriteStage operand [written (Kind.atom "print") o, r] semi anchor
+      = some ([written (Kind.atom "print") o, r] ++ operand ++ [semi]) := by
+  cases operand with
+  | nil => exact absurd rfl hop
+  | cons a as => exact ⟨rfl, rfl⟩
+
+/-- **And nothing else joined.** The rest of `PIPE-INTRINSIC-STAGE`'s
+keyword-shaped census is still outside the table, and the releasing list is
+inside it — the two halves of "one entry was added" as one theorem. -/
+theorem the_release_is_the_only_keyword_shaped_head_in_the_table :
+    keywordShapedIntrinsics.all
+      (fun n => (sinkSelectors n).isNone && !operandless n) = true ∧
+    releasingStages.all (fun n => (sinkSelectors n).isSome) = true ∧
+    releasingStages.length = 1 := by
+  refine ⟨by decide, by decide, rfl⟩
 
 /-! ## 6. The operator gate
 

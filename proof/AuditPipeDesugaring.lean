@@ -102,6 +102,25 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.the_byte_reader_loses_the_desugared_statement
 #print axioms QCore.PipeDesugaring.the_byte_order_and_the_statement_order_differ
 
+-- 5.7 The releasing stage (card `PIPE-DROP-STAGE`): `drop` joins the closed
+-- statement table and nothing else does. A releasing entry emits by the same
+-- rule as a rendering one and binds no result by the same predicate, so its
+-- terminality is `a_non_final_stage_that_produces_nothing_refuses` applied
+-- rather than a rule of its own — and the allocating chain
+-- `PIPE-INTRINSIC-STAGE` §3.4 measured as unreleasable becomes spellable end to
+-- end. `keywordShapedIntrinsics` lost `drop` in the same change, which is the
+-- §5.5 census pin moved by name rather than slipped past.
+#print axioms QCore.PipeDesugaring.the_statement_stage_table_is_exactly_three_heads
+#print axioms QCore.PipeDesugaring.release_pipeline_is_its_hand_written_statement
+#print axioms QCore.PipeDesugaring.the_drop_pipeline_is_the_drop_statement
+#print axioms QCore.PipeDesugaring.a_release_pipeline_synthesizes_nothing
+#print axioms QCore.PipeDesugaring.every_releasing_head_binds_no_result
+#print axioms QCore.PipeDesugaring.a_releasing_stage_in_a_non_final_position_refuses
+#print axioms QCore.PipeDesugaring.a_release_is_last_stage_only
+#print axioms QCore.PipeDesugaring.the_allocating_chain_is_its_hand_written_sequence
+#print axioms QCore.PipeDesugaring.a_release_and_a_render_emit_by_the_same_rule
+#print axioms QCore.PipeDesugaring.the_release_is_the_only_keyword_shaped_head_in_the_table
+
 -- 6. The operator gate, as retabled by card `OR-AND-LOWERING`: the three
 -- single-byte characters are reserved and refuse everywhere, the two
 -- connectives are admitted in an `if` condition and refused outside one, and

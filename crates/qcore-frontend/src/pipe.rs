@@ -19,6 +19,7 @@
 //! STAGE     ::= [ "move" ] STAGE_BODY
 //! STAGE_BODY::= "print" WORD                 -- a `source.std-io.v1` sink
 //!             | "log" WORD WORD              -- a `source.std-io.v1` sink
+//!             | "drop"                       -- the ownership IR's own release
 //!             | NAME [ "(" [arg {"," arg}] ")" ] [ ADAPTER ]   -- a G02d call
 //! ADAPTER   ::= "succeeds" BOOL "else" {disposition} "raise" NAME
 //! ```
@@ -27,6 +28,7 @@
 //! |---|---|
 //! | `total \|> print dec;` | `print dec total;` |
 //! | `total \|> log fatal dec;` | `log fatal dec total;` |
+//! | `b \|> drop;` | `drop b;` |
 //! | `x \|> f;` | `f(x);` |
 //! | `x \|> f(a, b);` | `f(x, a, b);` |
 //! | `move b \|> release;` | `release(move b);` |
@@ -82,12 +84,25 @@
 //!   temporary. `buffer |> qcore_buffer_read |> log info dec;` is
 //!   `let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;`.
 //! * A **keyword-shaped** intrinsic — `spawn S W(ARGS)?`, `join move H?`,
-//!   `share N`, `drop N`, and the mutex and epoch clause words — is a statement
-//!   whose operands are not a parenthesized argument list. A call stage only
-//!   ever emits `HEAD ( … )`, so none of them is reachable, and the closed sink
-//!   table deliberately does not name them. Adding `drop` in particular would
-//!   make a *custody-releasing* statement pipeable, which is a decision of its
-//!   own: follow-on `PIPE-DROP-STAGE`.
+//!   `share N`, and the mutex and epoch clause words — is a statement whose
+//!   operands are not a parenthesized argument list. A call stage only ever
+//!   emits `HEAD ( … )`, so none of them is reachable by *that* route, and a
+//!   keyword-shaped head reaches the pipe only by being named in the closed
+//!   statement table.
+//!
+//! # The releasing stage (card `PIPE-DROP-STAGE`)
+//!
+//! `drop` is the one keyword-shaped head that card added, and it is the only
+//! one: see [`SINK_STAGES`] for the census and the criterion. What makes it a
+//! *different kind of entry* from `print` and `log` is the argument for
+//! admitting it, not the desugaring — both are `HEAD SELECTOR* OPERAND ";"`,
+//! and both produce no result, so a release is last-stage-only by exactly the
+//! rule that makes a sink last-stage-only. That coincidence is load-bearing and
+//! is stated rather than relied on: a released value cannot feed a later stage
+//! **because there is no value to feed**, and the pipe needs no rule about
+//! custody to say so. What a *later statement* does with a released binding is
+//! the checker's business, unchanged: `b |> drop; b |> drop;` is the ordinary
+//! double release, refused where it always was.
 //!
 //! Whether the route can bind a particular intrinsic's result stays the route's
 //! question, reported at that stage's span — `qcore_buffer_write` returns `unit`
@@ -136,8 +151,8 @@
 //!
 //! # What this profile does not do, and why
 //!
-//! * **A sink cannot feed a later stage.** `print`, `log` and `flush` are
-//!   last-stage-only and refuse at `Q037` naming the stage.
+//! * **A sink cannot feed a later stage.** `print`, `log`, `drop` and `flush`
+//!   are last-stage-only and refuse at `Q037` naming the stage.
 //! * **An assignment pipeline** — `x = y |> f;` — refuses at `Q036`; follow-on
 //!   `PIPE-ASSIGN`.
 //! * **A chain still cannot cross a route.** Card `PIPE-SCALAR-RESULT` closes
@@ -186,20 +201,75 @@ pub struct PipeRefusal {
     pub message: String,
 }
 
-/// The statement heads that are sink stages, with the number of closed
+/// What a statement-stage entry does with the value piped into it.
+///
+/// Both roles **emit identically** — the head, its closed selector words, then
+/// the operand — and neither produces a result, so both are last-stage-only by
+/// one rule. The role decides only what a refusal *says*, and records which
+/// argument admitted the entry.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum StatementRole {
+    /// Renders the value and leaves custody exactly as it found it.
+    Renders,
+    /// Releases the value's custody (card `PIPE-DROP-STAGE`).
+    Releases,
+}
+
+/// The statement heads that are **statement stages**, with the number of closed
 /// selector words each takes before its operand. Anything not in this table is
 /// a call stage or a refusal; the table is closed on purpose, so a new
 /// statement form does not become pipeable by accident.
 ///
-/// Card `PIPE-INTRINSIC-STAGE` measured what that exclusion covers and left it
-/// unchanged: every keyword-shaped model intrinsic (`spawn`, `join`, `share`,
-/// `drop`, `grow`, `open`, `close`, and the epoch plan clauses) is outside it,
-/// and a call-shaped one (`qcore_buffer_read` and its five siblings) does not
-/// need to be inside it, being a call stage already. `drop` is the entry a
-/// reader will reach for first and the one deliberately withheld: it takes a
-/// single operand exactly as `print` does, but it *releases custody*, and a
-/// releasing table entry is a different kind of entry from a rendering one.
-const SINK_STAGES: &[(&str, usize)] = &[("print", 1), ("log", 2)];
+/// # Which keyword-shaped heads are in it, and why the rest are not
+///
+/// Card `PIPE-INTRINSIC-STAGE` measured that a *call*-shaped model intrinsic
+/// needs no entry — it is a call stage already — and deliberately withheld
+/// `drop`, the entry a reader reaches for first, because a releasing entry is a
+/// different kind of entry from a rendering one. Card `PIPE-DROP-STAGE` took
+/// that decision, admitted `drop` and **no other head**, on one criterion
+/// applied to the whole keyword-shaped census:
+///
+/// 1. its statement form is exactly `HEAD SELECTOR* OPERAND ";"`, where every
+///    selector is a word from a closed, route-independent set; and
+/// 2. a stage can actually *feed* it something no reader can name — that is,
+///    the route it belongs to has a call-shaped intrinsic whose result is the
+///    kind of thing the head takes. Otherwise the entry buys nothing but a
+///    second spelling of a statement over a name the reader already wrote.
+///
+/// `drop` passes both: it is `drop NAME ";"` with no selectors, and the task
+/// routes' `qcore_buffer_new` and `qcore_error_payload` — and, measured by this
+/// card, `source.buffer.v1`'s own `bytes(N)` — bind owned resources to hygienic
+/// temporaries that had, until this entry, no release at all
+/// (`PIPE-INTRINSIC-STAGE` §3.4). One entry reaches every route that releases,
+/// because they all spell their release with the same reserved `drop`: that word
+/// is [`qcore_core::ownership::OwnershipOp::Drop`] itself, not a per-route
+/// synonym. The rest of the census fails one condition or the other, each for a
+/// reason of its own:
+///
+/// * `spawn S W(ARGS)?` and `join move H?` fail (1): their operands are neither
+///   a parenthesized argument list nor a bare name.
+/// * `move NAME;` passes (1) and is refused anyway: `move` is already this
+///   grammar's own stage prefix for consuming an incoming temporary, so an
+///   entry would give one spelling two meanings.
+/// * `read N;`, `write N;`, `wait N;`, `use N;`, `open N;`, `close N;` pass (1)
+///   and fail (2): they belong to `source.mutex.guard.v1`, whose model has **no
+///   call-shaped intrinsic at all**, so a stage can never produce their
+///   operand. Their in-section forms — `read N with G;`, `close N unchanged;`,
+///   `grow N guards M;` — also fail (1), since a guard name is an open name
+///   rather than a closed selector word.
+/// * The epoch plan clauses (`bound`, `overhead`, `peak`, `effort`, `credit`,
+///   `retained`) fail (2) twice over: their operands must be check-time
+///   constants, which no stage result is.
+/// * `return` passes (1) and fails (2) by the *second* half of its condition:
+///   the value a chain produces is already nameable by the reader, because a
+///   bound pipeline (`let NAME = … ;`) binds exactly it. A `return` entry would
+///   be a control-flow entry — a third kind — bought for a spelling the
+///   language already has.
+const SINK_STAGES: &[(&str, usize, StatementRole)] = &[
+    ("print", 1, StatementRole::Renders),
+    ("log", 2, StatementRole::Renders),
+    ("drop", 0, StatementRole::Releases),
+];
 
 /// Statement heads that take no operand at all. Piping into one is refused
 /// rather than silently dropping the value.
@@ -390,9 +460,12 @@ impl Stage<'_> {
     ///
     /// Decided syntactically, with no contract knowledge — which is what keeps
     /// the pipe a pure token pass — but by **stage kind** rather than by the
-    /// acquisition keyword. A call stage produces a value; a sink (`print`,
-    /// `log`) and an operandless statement (`flush`) do not, and that is a
-    /// property of the closed statement table, not of any declaration.
+    /// acquisition keyword. A call stage produces a value; a statement stage
+    /// (`print`, `log`, `drop`) and an operandless statement (`flush`) do not,
+    /// and that is a property of the closed statement table, not of any
+    /// declaration. Card `PIPE-DROP-STAGE`'s releasing entry inherits its
+    /// terminality here rather than adding a rule: a released value cannot feed
+    /// a later stage because there is no value to feed.
     ///
     /// Card `PIPE-CHAIN` decided it by the presence of `succeeds`, because at
     /// that time the acquisition adapter was the only `let`-with-call the source
@@ -512,17 +585,29 @@ fn rewrite(
 
     let last = stages.len() - 1;
     for (index, stage) in stages.iter().enumerate() {
-        classify(stage)?;
+        let kind = classify(stage)?;
         if index != last && !stage.produces_a_result() {
             let name = word(&stage.tokens[0]).unwrap_or("this stage");
-            return Err(refusal(
-                "Q037",
-                stage.tokens[0].span,
+            // A releasing stage is terminal for the same *reason* a rendering
+            // one is — it binds no result — and the message says the thing a
+            // reader needs to act on, which is not the same sentence.
+            let message = if let StageKind::Sink {
+                role: StatementRole::Releases,
+                ..
+            } = kind
+            {
+                format!(
+                    "`{name}` releases the value piped into it and binds nothing, so it cannot \
+                     feed a later stage: a released value is gone. Make it the pipeline's last \
+                     stage"
+                )
+            } else {
                 format!(
                     "`{name}` produces no value, so it cannot feed a later stage: it is a sink, \
                      and only a call stage binds a result. Make it the pipeline's last stage"
-                ),
-            ));
+                )
+            };
+            return Err(refusal("Q037", stage.tokens[0].span, message));
         }
     }
     if binder.is_some() && !stages[last].produces_a_result() {
@@ -611,8 +696,11 @@ fn temporary(index: usize) -> String {
 /// stage table.
 enum StageKind {
     /// A statement head with `selectors` closed selector words before its
-    /// operand.
-    Sink { selectors: usize },
+    /// operand, and the role that admitted it to [`SINK_STAGES`].
+    Sink {
+        selectors: usize,
+        role: StatementRole,
+    },
     /// A callee name, an optional parenthesized argument list ending at
     /// `arguments_end`, and an optional adapter tail after it.
     Call { arguments_end: Option<usize> },
@@ -634,27 +722,45 @@ fn classify(stage: &Stage<'_>) -> Result<StageKind, PipeRefusal> {
             format!("`{name}` takes no operand, so nothing can be piped into it"),
         ));
     }
-    if let Some((_, selectors)) = SINK_STAGES.iter().find(|(head, _)| *head == name) {
+    if let Some((_, selectors, role)) = SINK_STAGES.iter().find(|(head, _, _)| *head == name) {
         if let Some(token) = stage.consumes {
             return Err(refusal(
                 "Q036",
                 token.span,
-                format!("`{name}` renders a scalar; it takes no `move`"),
+                match role {
+                    StatementRole::Renders => {
+                        format!("`{name}` renders a scalar; it takes no `move`")
+                    }
+                    // The release *is* the consumption, and `drop NAME;` is how
+                    // the language spells it. One spelling per meaning.
+                    StatementRole::Releases => format!(
+                        "`{name}` releases the value piped into it, which is what consuming it \
+                         means here; it takes no `move`"
+                    ),
+                },
             ));
         }
         if stage.tokens.len() != 1 + selectors {
             return Err(refusal(
                 "Q036",
                 head.span,
-                format!(
-                    "`{name}` names {selectors} selector word(s) before its operand; this stage \
-                     names {}",
-                    stage.tokens.len() - 1
-                ),
+                match role {
+                    StatementRole::Renders => format!(
+                        "`{name}` names {selectors} selector word(s) before its operand; this \
+                         stage names {}",
+                        stage.tokens.len() - 1
+                    ),
+                    StatementRole::Releases => format!(
+                        "`{name}` takes the value piped into it and nothing else; this stage \
+                         names {} further word(s)",
+                        stage.tokens.len() - 1
+                    ),
+                },
             ));
         }
         return Ok(StageKind::Sink {
             selectors: *selectors,
+            role: *role,
         });
     }
     if stage.tokens.len() == 1 {
@@ -700,7 +806,7 @@ fn emit_stage(
     anchor: usize,
 ) -> Result<(), PipeRefusal> {
     match classify(stage)? {
-        StageKind::Sink { selectors } => {
+        StageKind::Sink { selectors, .. } => {
             // A statement stage: the head and its closed selector words are not
             // arguments, so the operand follows them. Arity beyond the selector
             // count is left to the route's own grammar, which already refuses a

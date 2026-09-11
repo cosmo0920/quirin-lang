@@ -1526,8 +1526,9 @@ and emit byte-identical C11.
 stmt       = [ "let", NAME, "=" ], OPERAND, ( "|>", STAGE )+, ";" ;
 OPERAND    = token, { token } ;            (* verbatim: `x`, `-7`, `move b` *)
 STAGE      = [ "move" ], STAGE_BODY ;
-STAGE_BODY = "print", RENDERING            (* a G02g sink *)
-           | "log", LEVEL, RENDERING       (* a G02g sink *)
+STAGE_BODY = "print", RENDERING            (* a G02g rendering sink *)
+           | "log", LEVEL, RENDERING       (* a G02g rendering sink *)
+           | "drop"                        (* the ownership IR's own release *)
            | NAME, [ "(", [ arg, { ",", arg } ], ")" ], [ ADAPTER ] ;  (* a G02d call *)
 ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
 ```
@@ -1536,6 +1537,7 @@ ADAPTER    = "succeeds", BOOL, "else", { disposition }, "raise", NAME ;
 |---|---|
 | `total \|> print dec;` | `print dec total;` |
 | `total \|> log fatal dec;` | `log fatal dec total;` |
+| `b \|> drop;` | `drop b;` |
 | `x \|> f;` and `x \|> f();` | `f(x);` |
 | `b \|> f(7);` | `f(b, 7);` |
 | `move b \|> release;` | `release(move b);` |
@@ -1552,8 +1554,9 @@ at the pre-existing `Q202`, and a value consumed mid-chain cannot be used after
 the pipeline.
 
 **"Produces a value" is decided by stage kind**, syntactically and with no
-contract knowledge in the desugaring: a call stage produces a value, and a sink
-(`print`, `log`) or an operandless statement (`flush`) does not. Card
+contract knowledge in the desugaring: a call stage produces a value, and a
+statement stage (`print`, `log`, `drop`) or an operandless statement (`flush`)
+does not. Card
 `PIPE-CHAIN` decided it by the presence of `succeeds`, because the acquisition
 adapter was then the only `let`-with-call the language admitted; card
 `PIPE-SCALAR-RESULT` adds the other one — a non-acquiring call's scalar result
@@ -1576,7 +1579,8 @@ intrinsics fall into two shapes, and this grammar already decides both.
 |---|---|---|---|
 | **call-shaped**, `NAME(ARGS)` | `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write`, `qcore_error_payload` | §G02b task routes and every route that composes them (`ComposedStdIoTasksV1`, `ComposedEpochTasksV1`) | **admitted** by the `NAME [ "(" … ")" ] [ ADAPTER ]` alternative above, with no table entry of its own |
 | **call-shaped**, `NAME(ARGS)` | `qcore_acquire`, `qcore_check` | the sequential route | **admitted**, likewise |
-| **keyword-shaped** | `spawn S W(ARGS)?`, `join move H?`, `share N`, `read N`, `write N`, `drop N`, `grow`, `open`, `close`, `bound`, `overhead` | their own routes | **refused**: their operands are not a parenthesized argument list, so no call stage produces them, and the closed sink table deliberately does not name them |
+| **keyword-shaped** | `spawn S W(ARGS)?`, `join move H?`, `share N`, `read N`, `write N`, `grow`, `open`, `close`, `bound`, `overhead` | their own routes | **refused**: their operands are not a parenthesized argument list, so no call stage produces them, and the closed statement table does not name them |
+| **keyword-shaped** | `drop N` | every route with custody | **admitted** by the `"drop"` alternative above (card `PIPE-DROP-STAGE`), and it is the only keyword-shaped head that is |
 
 So `buffer |> qcore_buffer_read |> log info dec;` is the statement sequence
 `let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;` under the ordinary
@@ -1586,8 +1590,23 @@ next stage's route cannot bind, refuses at **that route's** own code and span �
 `qcore_buffer_write` returns `unit` and refuses mid-chain at `Q050`, not at
 `Q037` — which is the rule §G02d already states for a `unit`-returning callee.
 A chain whose intermediate stage *allocates* binds an owned resource to a
-temporary no reader can name and therefore cannot drop; that leaks and refuses
-at the route's pre-existing leak diagnostic (follow-on `PIPE-DROP-STAGE`).
+temporary no reader can name; unless the chain **ends in a release** it leaks and
+refuses at the route's pre-existing leak diagnostic.
+
+**One keyword-shaped head is a stage: the release** (card `PIPE-DROP-STAGE`).
+`drop` names the statement table's third entry and its only *releasing* one, so
+`b |> drop;` is `drop b;` and `7 |> qcore_buffer_new? |> drop;` is the pair
+`let ⟨t0⟩ = qcore_buffer_new(7)?; drop ⟨t0⟩;` — the allocating chain above,
+spellable end to end, with the pipeline releasing the temporary it invented. A
+releasing entry emits by the same rule as a rendering one and binds no result by
+the same rule, so it is **last-stage-only** without a rule of its own: a released
+value cannot feed a later stage because there is no value to feed (`Q037`), and a
+bound pipeline cannot end in one (`Q036`). What a *later statement* does with a
+released binding is the checker's unchanged business — `b |> drop; b |> drop;` is
+the ordinary double release. Every other keyword-shaped head keeps the refusal it
+had, on a criterion stated in `crates/qcore-frontend/src/pipe.rs`'s stage table:
+an entry earns its place only when the statement form is `HEAD SELECTOR* OPERAND`
+with closed selectors **and** some stage can feed it a value no reader can name.
 
 The same card makes "no later pass can tell a pipe was written" true of **every**
 route. The sequential route recovered each statement's tokens by re-lexing its
