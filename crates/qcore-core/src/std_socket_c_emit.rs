@@ -60,7 +60,8 @@ use crate::obs_reordering::{
 use crate::std_io::{StdIoEvent, Stream};
 use crate::std_io_c_emit;
 use crate::std_socket::{
-    MAX_PAYLOAD, SocketCertificate, SocketKind, SocketOperand, SocketProgram, SocketStatement,
+    MAX_PAYLOAD, SocketCertificate, SocketKind, SocketOperand, SocketPayload, SocketProgram,
+    SocketStatement, TextPayload,
 };
 
 /// The compatibility header, embedded so an emitted program needs no QCore
@@ -293,6 +294,59 @@ fn byte_array(bytes: &[u8]) -> String {
         .join(", ")
 }
 
+/// The C11 statements for one transfer whose payload is a **string view's
+/// bytes** (card `HTTP-QUIRIN-V1`).
+///
+/// Two shapes, decided by whether a composing route published the bytes at file
+/// scope:
+///
+/// * `symbol: None` — the bare `source.socket.v1` form. The bytes are an inline
+///   `const unsigned char` array in the statement's own block, exactly as a
+///   bracketed byte list is, so a program on this route alone needs no file-scope
+///   fragment at all and its emitted bytes stay this backend's.
+/// * `symbol: Some(name)` — the composed form. The array is a fragment the
+///   composing route contributed once, and every transfer of those bytes names
+///   it. That is what makes "one end sends this message and the other verifies
+///   it" a statement about **one object** in the emitted C rather than two arrays
+///   a reader has to compare by eye.
+fn text_payload_reference(text: &TextPayload) -> (String, String) {
+    match &text.symbol {
+        Some(symbol) => (String::new(), symbol.clone()),
+        Option::None => (
+            format!(
+                "        const unsigned char payload[] = {{ {} }};\n",
+                byte_array(&text.bytes)
+            ),
+            "payload".to_owned(),
+        ),
+    }
+}
+
+/// The block-local declaration (possibly empty) and the expression one transfer
+/// names for its payload.
+fn payload_reference(
+    scalars: &BTreeMap<String, String>,
+    event: usize,
+    payload: &SocketPayload,
+) -> Result<(String, String), SocketEmissionRefusal> {
+    match payload {
+        SocketPayload::Bytes(operands) => {
+            let bytes = operands
+                .iter()
+                .map(|operand| operand_expression(scalars, event, operand))
+                .collect::<Result<Vec<_>, _>>()?;
+            Ok((
+                format!(
+                    "        const unsigned char payload[] = {{ {} }};\n",
+                    bytes.join(", ")
+                ),
+                "payload".to_owned(),
+            ))
+        }
+        SocketPayload::Text(text) => Ok(text_payload_reference(text)),
+    }
+}
+
 /// Emit C11 for a checked program. The emitted lines must reproduce the
 /// reference observation exactly, per stream.
 ///
@@ -304,6 +358,37 @@ pub fn emit_socket_c11(
     program: &SocketProgram,
     certificate: &SocketCertificate,
 ) -> Result<SocketCEmission, SocketEmissionRefusal> {
+    let (prologue, body) = entry_parts(program, certificate)?;
+    Ok(SocketCEmission {
+        source: c_program::assemble(
+            &preamble(),
+            &c_program::Entry {
+                prologue,
+                ..c_program::Entry::source_route(body)
+            },
+        ),
+    })
+}
+
+/// The entry's prologue and body for a checked program, **without** assembling a
+/// translation unit around them (card `C-EMIT-MAIN-UNIFY`'s split, used for the
+/// first time by card `HTTP-QUIRIN-V1`).
+///
+/// Published so a **composing** route can put this route's statements into the
+/// one entry its own [`c_program::assemble`] call writes, rather than writing a
+/// second whole-program backend with a second `main`. That is exactly the reuse
+/// `C-EMIT-MAIN-UNIFY` exists to make possible: the composition merges fragment
+/// lists and interleaves bodies, and there is no call that produces two entry
+/// points.
+///
+/// # Errors
+///
+/// [`SocketEmissionRefusal`] when the certificate is not this program's, or
+/// names something the backend cannot place.
+pub fn entry_parts(
+    program: &SocketProgram,
+    certificate: &SocketCertificate,
+) -> Result<(String, String), SocketEmissionRefusal> {
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_socket_program(program, certificate)?;
 
@@ -381,16 +466,12 @@ pub fn emit_socket_c11(
                 );
             }
             SocketStatement::Send { name, payload } => {
-                let bytes = payload
-                    .iter()
-                    .map(|operand| operand_expression(&scalars, index, operand))
-                    .collect::<Result<Vec<_>, _>>()?;
+                let (declaration, reference) = payload_reference(&scalars, index, payload)?;
                 let _ = writeln!(
                     source,
-                    "    {{\n        const unsigned char payload[] = {{ {} }};\n        \
-                     if (qcore_socket_send({}, payload, sizeof payload) != 0) {{\n            \
+                    "    {{\n{declaration}        \
+                     if (qcore_socket_send({}, {reference}, sizeof {reference}) != 0) {{\n            \
                      return {STATUS_SEND};\n        }}\n    }}",
-                    bytes.join(", "),
                     socket_name(name)
                 );
             }
@@ -399,16 +480,12 @@ pub fn emit_socket_c11(
                 target,
                 payload,
             } => {
-                let bytes = payload
-                    .iter()
-                    .map(|operand| operand_expression(&scalars, index, operand))
-                    .collect::<Result<Vec<_>, _>>()?;
+                let (declaration, reference) = payload_reference(&scalars, index, payload)?;
                 let _ = writeln!(
                     source,
-                    "    {{\n        const unsigned char payload[] = {{ {} }};\n        \
-                     if (qcore_socket_sendto({}, {}, payload, sizeof payload) != 0) {{\n            \
-                     return {STATUS_SEND};\n        }}\n    }}",
-                    bytes.join(", "),
+                    "    {{\n{declaration}        \
+                     if (qcore_socket_sendto({}, {}, {reference}, sizeof {reference}) != 0) \
+                     {{\n            return {STATUS_SEND};\n        }}\n    }}",
                     socket_name(name),
                     socket_name(target)
                 );
@@ -417,11 +494,13 @@ pub fn emit_socket_c11(
                 binding,
                 name,
                 count,
+                expect,
             }
             | SocketStatement::RecvFrom {
                 binding,
                 name,
                 count,
+                expect,
             } => {
                 let datagram = matches!(statement, SocketStatement::RecvFrom { .. });
                 let Some(receipt) = receipts.get(&index) else {
@@ -430,6 +509,23 @@ pub fn emit_socket_c11(
                 let expected = receipt.bytes.as_slice();
                 debug_assert_eq!(expected.len(), *count as usize);
                 debug_assert!(expected.len() <= MAX_PAYLOAD);
+                // The checked model already proved the declared payload and the
+                // committed history agree, so a named declaration and the
+                // receipt address the same bytes; the composing route's
+                // file-scope object is named rather than a second copy emitted.
+                let (declaration, reference) = match expect {
+                    Some(text) if text.symbol.is_some() => {
+                        debug_assert_eq!(text.bytes.as_slice(), expected);
+                        (String::new(), text.symbol.clone().expect("checked above"))
+                    }
+                    _ => (
+                        format!(
+                            "        const unsigned char expected[] = {{ {} }};\n",
+                            byte_array(expected)
+                        ),
+                        "expected".to_owned(),
+                    ),
+                };
                 // A datagram receive additionally names the socket the model
                 // says sent it, so the shim can compare the source address
                 // `recvfrom` reports against that socket's own bound address. A
@@ -437,23 +533,22 @@ pub fn emit_socket_c11(
                 // decides who the bytes came from.
                 let call = if datagram {
                     format!(
-                        "qcore_socket_recvfrom({}, {}, expected, sizeof expected)",
+                        "qcore_socket_recvfrom({}, {}, {reference}, sizeof {reference})",
                         socket_name(name),
                         socket_name(&receipt.from)
                     )
                 } else {
                     format!(
-                        "qcore_socket_recv({}, expected, sizeof expected)",
+                        "qcore_socket_recv({}, {reference}, sizeof {reference})",
                         socket_name(name)
                     )
                 };
                 let _ = writeln!(
                     source,
-                    "    {{\n        const unsigned char expected[] = {{ {} }};\n        \
+                    "    {{\n{declaration}        \
                      int outcome = {call};\n        \
                      if (outcome == 2) {{\n            return {STATUS_PAYLOAD};\n        }}\n        \
-                     if (outcome != 0) {{\n            return {STATUS_RECV};\n        }}\n    }}",
-                    byte_array(expected)
+                     if (outcome != 0) {{\n            return {STATUS_RECV};\n        }}\n    }}"
                 );
                 if let Some(binding) = binding {
                     // The byte is a number the checker determined out of the
@@ -499,15 +594,7 @@ pub fn emit_socket_c11(
         }
     }
 
-    Ok(SocketCEmission {
-        source: c_program::assemble(
-            &preamble(),
-            &c_program::Entry {
-                prologue,
-                ..c_program::Entry::source_route(source)
-            },
-        ),
-    })
+    Ok((prologue, source))
 }
 
 /// The file-scope text `source.socket.v1` contributes to a program it is part

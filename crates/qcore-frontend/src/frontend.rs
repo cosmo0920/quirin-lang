@@ -2010,6 +2010,29 @@ pub enum SemanticPass {
     /// semantic pass — even where the inherited refusal is literally the same
     /// ownership checker's.
     StandardSocket,
+    /// Card `HTTP-QUIRIN-V1`: admission of `source.http.v1` — the `std.http`
+    /// bundled module's checked HTTP/1.1 message subset. Owns `Q090`–`Q096`
+    /// (spec §L21), a band assigned by the integrator before the card started.
+    /// `Q097`–`Q099` of that band are **unused and returned to the pool**, and
+    /// `Q077`–`Q079`, returned by `STRING-SLICE-IO`, were deliberately not
+    /// reused: this band is contiguous from `Q090`, which keeps the band story
+    /// readable.
+    ///
+    /// A separate pass from `StandardSocket` on purpose. That pass admits a
+    /// **transport**: its subject is a socket's state machine, the bytes
+    /// committed between two sockets of one program, and whether a receive is
+    /// satisfied by that program's own history. This one admits a **message**:
+    /// its subject is RFC 9112's own grammar — whether a method is a token,
+    /// whether a version is `HTTP/1.1`, whether a request names its `Host`,
+    /// whether a declared `Content-Length` is the content's byte count — and not
+    /// one of those conditions is expressible in the transport's range. The two
+    /// compose rather than overlap: every `Q095` this pass issues carries the
+    /// socket checker's own error value, unedited.
+    ///
+    /// It is likewise separate from `StandardString`, whose `Q070` this pass does
+    /// not reuse for a quoted token that fails to decode, on §L21's rule that a
+    /// code may not be reused by a second semantic pass.
+    StandardHttp,
     PluginVerification,
 }
 
@@ -2839,6 +2862,34 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "recv"
             | "sendto"
             | "recvfrom"
+            // Card `HTTP-QUIRIN-V1`: the `std.http` statement keywords
+            // (`source.http.v1`). Reserved for the same reason as every profile
+            // keyword above: they are clause words at a statement head or in a
+            // `let` initialiser, never references to a binding, and without this
+            // `let r = request "GET" "/" "HTTP/1.1";` and `header r "Host" "x";`
+            // collect `request`/`header` as referenced names and refuse at
+            // `Q013`.
+            //
+            // `send`, `recv`, `let`, `close` and the standard-IO line words are
+            // already reserved and are reused rather than respelled: a message
+            // goes on a wire through the socket vocabulary that already exists,
+            // so this card adds **four** words and not six.
+            //
+            // The constraint-14 census ran over 416 `.qcore`/`.qc` fixtures and
+            // 43,239 Rust string literals. `request`, `response`, `header` and
+            // `content` occur **zero** times in any QCore source position.
+            // `body` — the obvious word for a message body — was **rejected**:
+            // it occurs 8 times in source position as a *binding name* in two
+            // shipped fixtures, referenced by `print body;` and `len(body)`, so
+            // reserving it would refuse programs that ship today. RFC 9110 §6.4
+            // renamed that concept **content**, so the word the census admits is
+            // also the specification's current one. `message` was rejected the
+            // same way (a contract `extern fn` parameter, referenced in an
+            // `ensures` clause) and `payload` at 49 occurrences.
+            | "request"
+            | "response"
+            | "header"
+            | "content"
     )
 }
 
@@ -2972,6 +3023,18 @@ pub fn source_diagnostic(
         // undeclared derived effect), Q088 (a failed certificate rederivation)
         // and Q089 (a backend refusal) are issued at their own emission sites.
         SemanticPass::StandardSocket => "Q080",
+        // The generic presentation code of the HTTP pass, and the code of every
+        // shape refusal in it — including a statement spelling neither this
+        // route nor its transport models, and a quoted token that does not
+        // decode. The specific conditions Q091 (a start-line component RFC 9112
+        // does not admit), Q092 (a header field, including the required `Host`
+        // and the connection options v1 honours), Q093 (the framing rule of
+        // RFC 9112 §6, of which the `Content-Length`/content-length equality is
+        // the card's signature check), Q094 (a name at a message position that
+        // is not one), Q095 (a refusal the inherited, unedited
+        // `source.socket.v1` checker reported) and Q096 (an undeclared derived
+        // effect) are issued at their own emission sites.
+        SemanticPass::StandardHttp => "Q090",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

@@ -375,8 +375,8 @@ theorem the_socket_capability_needs_its_module {names : List String}
 /-- And it grants no stream in return: a module that receives a byte and prints
 it names every module it uses. -/
 theorem the_socket_module_grants_no_stream :
-    admitsPrint ⟨false, false, false, false, false, false, false, false, true⟩ true = false
-      ∧ admitsLog ⟨false, false, false, false, false, false, false, false, true⟩ true = false :=
+    admitsPrint ⟨false, false, false, false, false, false, false, false, true, false⟩ true = false
+      ∧ admitsLog ⟨false, false, false, false, false, false, false, false, true, false⟩ true = false :=
   ⟨rfl, rfl⟩
 
 end QCore.StdSocket

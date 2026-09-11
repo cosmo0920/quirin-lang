@@ -5,8 +5,8 @@ use crate::frontend::{
 use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
-    BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, IO_MODULE,
-    LOGGER_MODULE, ModuleImports, SOCKET_MODULE, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
+    BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, HTTP_MODULE,
+    IO_MODULE, LOGGER_MODULE, ModuleImports, SOCKET_MODULE, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -183,6 +183,58 @@ pub fn check_source_imports(
             span,
             SOCKET_MODULE,
             "the checked socket vocabulary",
+        )]);
+    }
+    // Card `HTTP-QUIRIN-V1`, landing `SOCKET-STRING-PAYLOAD`. A transfer whose
+    // payload is a quoted literal carries a **string view's own bytes**, which
+    // is `std.string`'s value and not `std.socket`'s, so it needs both modules —
+    // exactly as a rendered text line needs both `std.string` and an output
+    // module (`STRING-SLICE-IO`, amendment §7). The socket module alone still
+    // carries a bracketed byte list and nothing else; the string module alone
+    // still opens no socket.
+    if !imports.string()
+        && let Some(span) = crate::source_socket::text_payload_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            STRING_MODULE,
+            "a string view as a transfer payload",
+        )]);
+    }
+    // Card `HTTP-QUIRIN-V1`. The same file-local opt-in discipline again:
+    // declaring an HTTP message is unavailable by default and importing another
+    // compilation input never grants this file the vocabulary. One detector
+    // serves this gate and route selection.
+    //
+    // The composition rule is the argued part, and it is two separate
+    // statements:
+    //
+    // * `std.http` grants **no transport**. A message is a value; a program that
+    //   actually speaks HTTP names `std.socket` too, and the socket gate above
+    //   is what says so. Neither module grants the other.
+    // * `std.http` grants **no text**. A quoted token at a method, a target, a
+    //   field name, a field value or a content position is *this module's own
+    //   syntax* and constructs no `string` value: nothing can bind it, slice it,
+    //   measure it or render it. `STRING_SLICE_V1.md` §2 excludes exactly that
+    //   case in as many words, so a pure HTTP program needs no `std.string`. A
+    //   program that **binds** a payload with `let s = "…";` does construct one,
+    //   and the gate below asks for the module then.
+    if !imports.http()
+        && let Some(span) = crate::source_http::http_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            HTTP_MODULE,
+            "the checked HTTP/1.1 message vocabulary",
+        )]);
+    }
+    if !imports.string()
+        && let Some(span) = crate::source_http::text_binding_span(program)
+    {
+        return Err(vec![missing_import(
+            span,
+            STRING_MODULE,
+            "a bound string view",
         )]);
     }
     Ok(imports)

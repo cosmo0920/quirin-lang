@@ -102,6 +102,33 @@ pub const STRING_MODULE: &str = "std.string";
 /// registering a socket with `source.event.v1` is `SOCKET-EVENT-COMPOSE`.
 pub const SOCKET_MODULE: &str = "std.socket";
 
+/// Card `HTTP-QUIRIN-V1`: the checked HTTP/1.1 message vocabulary
+/// (`source.http.v1`) — a request line or a status line, header fields, CRLF
+/// framing and a fixed literal content, all constructed and checked at compile
+/// time against RFC 9112.
+///
+/// An eleventh independent file-local opt-in, and the composition rule it states
+/// is the point rather than a detail:
+///
+/// * **It grants no transport.** A message is a value; putting one on a wire is
+///   `std.socket`'s `send`/`recv`, so a program that actually speaks HTTP names
+///   **both** modules. That is `STRING-SLICE-IO`'s rule ("what changed is that a
+///   file naming both can render text") applied to a protocol.
+/// * **It grants no text.** A quoted token at a method, a target, a field name,
+///   a field value or a content position is *this module's own syntax* and never
+///   a `string` value: nothing can bind it, slice it, measure it or render it.
+///   `STRING_SLICE_V1.md` §2 says so in as many words — "recognizing quoted
+///   tokens for structural syntax … does not construct a string value and MUST
+///   NOT acquire this new import requirement" — so a pure HTTP program needs no
+///   `std.string`. A program that *binds* a payload with `let s = "…";` does
+///   construct one, and then it names `std.string` too.
+/// * **It grants no output.** A transcript line is `std.io`'s or
+///   `std.logger`'s.
+///
+/// The name is `std.http` and claims exactly what it grants: an HTTP/1.1 message
+/// subset. It is not `std.net` and not `std.web`.
+pub const HTTP_MODULE: &str = "std.http";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
@@ -114,6 +141,7 @@ pub struct ModuleImports {
     event: bool,
     string: bool,
     socket: bool,
+    http: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -142,6 +170,7 @@ impl ModuleImports {
                 EVENT_MODULE => imports.event = true,
                 STRING_MODULE => imports.string = true,
                 SOCKET_MODULE => imports.socket = true,
+                HTTP_MODULE => imports.http = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -204,5 +233,13 @@ impl ModuleImports {
     /// other module, and granting none in return.
     pub fn socket(self) -> bool {
         self.socket
+    }
+
+    /// Whether this file may declare an HTTP/1.1 request or response, add a
+    /// header field to one or set its content (card `HTTP-QUIRIN-V1`). Granted
+    /// by no other module, and granting none in return — in particular it opens
+    /// no socket and constructs no `string`.
+    pub fn http(self) -> bool {
+        self.http
     }
 }

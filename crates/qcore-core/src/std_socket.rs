@@ -193,6 +193,75 @@ pub enum SocketOperand {
     Scalar(String),
 }
 
+/// A payload that is **a string view's own bytes**, read at the transfer site
+/// (card `HTTP-QUIRIN-V1`, landing the socket card's named follow-on
+/// `SOCKET-STRING-PAYLOAD`).
+///
+/// # Why this is structural rather than a second operand form
+///
+/// A [`SocketOperand`] denotes one byte. A view denotes an **extent** — a
+/// `{ptr, len}` pair of `source.string.v1`'s own model — and the whole point of
+/// the string amendment is that the length is carried rather than recovered by
+/// scanning. So the payload is the extent, read at the site, and the bytes below
+/// are the view's exact decoded UTF-8 payload: no terminator, no re-encoding, no
+/// escaping. That is amendment §7's observation rule applied to a wire instead
+/// of to a stream, and it is why a `0` byte inside a payload is an ordinary byte
+/// here exactly as it is in a rendered line.
+///
+/// **No custody crosses.** A string is a custody-free view of storage it does
+/// not own (§3.6: "creating a view neither creates nor discharges that
+/// custody"), so a text payload adds no ownership operation, no acquisition and
+/// no release. The socket keeps every custody rule it had; the view contributes
+/// none of its own because it has none.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TextPayload {
+    /// The file-scope symbol a **composing** route defined for these bytes, if
+    /// any.
+    ///
+    /// `None` is the bare `source.socket.v1` form — a quoted literal written at
+    /// the transfer site, emitted as an inline array in the statement's own
+    /// block. `Some(symbol)` is what a route that owns a fragment contributes:
+    /// the bytes live once at file scope under that name and every transfer of
+    /// them names it, which is what lets one HTTP message be sent by one end and
+    /// verified by the other against **the same object**.
+    pub symbol: Option<String>,
+    /// The view's exact bytes.
+    pub bytes: Vec<u8>,
+}
+
+impl TextPayload {
+    /// A payload emitted inline at its transfer site.
+    #[must_use]
+    pub fn inline(bytes: Vec<u8>) -> Self {
+        Self {
+            symbol: None,
+            bytes,
+        }
+    }
+
+    /// A payload whose bytes a composing route published at file scope.
+    #[must_use]
+    pub fn named(symbol: impl Into<String>, bytes: Vec<u8>) -> Self {
+        Self {
+            symbol: Some(symbol.into()),
+            bytes,
+        }
+    }
+}
+
+/// What one `send` or `sendto` puts on the wire.
+///
+/// Both arms are decided **before emission**, which is the invariant this route's
+/// whole evidence story rests on: the checker can predict what each receive takes
+/// only because nothing here is computed at run time.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SocketPayload {
+    /// `send NAME [BYTE, …];` — a bracketed list of check-time byte constants.
+    Bytes(Vec<SocketOperand>),
+    /// `send NAME "…";` — a string view's own bytes (card `HTTP-QUIRIN-V1`).
+    Text(TextPayload),
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SocketStatement {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
@@ -215,32 +284,43 @@ pub enum SocketStatement {
     /// `let NAME = accept NAME;` — take the pending connection off a listener,
     /// acquiring a second owned socket.
     Accept { binding: String, listener: String },
-    /// `send NAME [OPERAND, …];` — commit declared bytes to a connected TCP
-    /// socket's peer.
+    /// `send NAME [OPERAND, …];` or `send NAME "…";` — commit declared bytes to
+    /// a connected TCP socket's peer.
     Send {
         name: String,
-        payload: Vec<SocketOperand>,
+        payload: SocketPayload,
     },
-    /// `recv NAME COUNT;`, or `let NAME = recv NAME;` with an implied count of
-    /// one. Takes exactly `count` bytes off the socket's committed stream.
+    /// `recv NAME COUNT;`, `let NAME = recv NAME;` with an implied count of one,
+    /// or `recv NAME "…";` — take exactly `count` bytes off the socket's
+    /// committed stream.
+    ///
+    /// `expect` is the **declared** payload of the third form: the bytes the
+    /// reader says arrive. The model already knows which bytes the receive takes
+    /// (they are the bytes an earlier send of this same program committed), so
+    /// the declaration is compared against that answer **at check time** and a
+    /// disagreement is a refusal, never a run-time surprise. `count` is that
+    /// declaration's own length.
     Recv {
         binding: Option<String>,
         name: String,
         count: u32,
+        expect: Option<TextPayload>,
     },
     /// `sendto NAME NAME [OPERAND, …];` — one datagram from the first socket to
     /// the second, which must be a **bound UDP socket of this same program**.
     SendTo {
         name: String,
         target: String,
-        payload: Vec<SocketOperand>,
+        payload: SocketPayload,
     },
-    /// `recvfrom NAME COUNT;`, or `let NAME = recvfrom NAME;` with an implied
-    /// count of one. Takes exactly one datagram, whose length must be `count`.
+    /// `recvfrom NAME COUNT;`, `let NAME = recvfrom NAME;` with an implied count
+    /// of one, or `recvfrom NAME "…";`. Takes exactly one datagram, whose length
+    /// must be `count`.
     RecvFrom {
         binding: Option<String>,
         name: String,
         count: u32,
+        expect: Option<TextPayload>,
     },
     /// `close NAME;` — release. Deliberately the **existing** reserved word,
     /// which `std.event` and the checked mutex-guard profile already use at a
@@ -383,6 +463,22 @@ pub enum SocketError {
         length: usize,
         expected: Option<usize>,
     },
+    /// `Q084`: a receive that **declares** the bytes it takes, where the bytes
+    /// this program's own committed history delivers are different ones (card
+    /// `HTTP-QUIRIN-V1`).
+    ///
+    /// The same code as the length disagreement above, on purpose: both are the
+    /// one condition "the payload written down is not the payload", and §L21
+    /// allocates a code to a condition rather than to a field. A length that
+    /// disagrees and a content that disagrees are the same fault seen at two
+    /// granularities, and separating them would claim a distinction this route
+    /// does not make.
+    PayloadDisagrees {
+        event: usize,
+        name: String,
+        expected: Vec<u8>,
+        actual: Vec<u8>,
+    },
     /// `Q085`: **the determinism boundary.** A statement whose completion is not
     /// determined by this program's own committed history.
     WouldBlock { event: usize, reason: String },
@@ -405,7 +501,9 @@ impl SocketError {
             Self::NotAScalar { .. } | Self::NotASocket { .. } => "Q081",
             Self::Protocol { .. } => "Q082",
             Self::Custody { .. } => "Q083",
-            Self::ByteOutOfRange { .. } | Self::PayloadOutOfRange { .. } => "Q084",
+            Self::ByteOutOfRange { .. }
+            | Self::PayloadOutOfRange { .. }
+            | Self::PayloadDisagrees { .. } => "Q084",
             Self::WouldBlock { .. } => "Q085",
             Self::CrossesBoundary { .. } => "Q086",
             Self::EffectNotDeclared { .. } => "Q087",
@@ -422,6 +520,7 @@ impl SocketError {
             | Self::Custody { event, .. }
             | Self::ByteOutOfRange { event, .. }
             | Self::PayloadOutOfRange { event, .. }
+            | Self::PayloadDisagrees { event, .. }
             | Self::WouldBlock { event, .. }
             | Self::CrossesBoundary { event, .. }
             | Self::EffectNotDeclared { event, .. } => *event,
@@ -472,6 +571,21 @@ impl fmt::Display for SocketError {
                 "this receive declares {length} bytes but the datagram at the head of the queue \
                  is {expected}; a datagram is taken whole, so `source.socket.v1` refuses rather \
                  than truncating one"
+            ),
+            Self::PayloadDisagrees {
+                name,
+                expected,
+                actual,
+                ..
+            } => write!(
+                f,
+                "this receive declares {} byte(s) of payload from `{name}`, but the bytes an \
+                 earlier send of this program committed are different ones; \
+                 `source.socket.v1` decides a declared payload at check time, so the two must \
+                 agree here rather than at run time (declared {}, committed {})",
+                expected.len(),
+                summarize_bytes(expected),
+                summarize_bytes(actual)
             ),
             Self::WouldBlock { reason, .. } => f.write_str(reason),
             Self::CrossesBoundary { name, .. } => write!(
@@ -733,6 +847,33 @@ impl Evaluation {
         }
     }
 
+    /// The bytes one transfer commits, from either payload form.
+    ///
+    /// The **length rule is one rule**: a payload carries 1 to [`MAX_PAYLOAD`]
+    /// bytes whether it was written as a bracketed byte list or as a string
+    /// view, because the bound exists for the transport reason stated at
+    /// [`LOOPBACK_BUFFERED_SEND`] and a view does not change what the kernel
+    /// buffers.
+    fn transfer_bytes(
+        &self,
+        event: usize,
+        payload: &SocketPayload,
+    ) -> Result<Vec<u8>, Vec<SocketError>> {
+        match payload {
+            SocketPayload::Bytes(operands) => self.payload(event, operands),
+            SocketPayload::Text(text) => {
+                if text.bytes.is_empty() || text.bytes.len() > MAX_PAYLOAD {
+                    return Err(vec![SocketError::PayloadOutOfRange {
+                        event,
+                        length: text.bytes.len(),
+                        expected: None,
+                    }]);
+                }
+                Ok(text.bytes.clone())
+            }
+        }
+    }
+
     fn payload(
         &self,
         event: usize,
@@ -781,6 +922,34 @@ impl Evaluation {
         }
         Ok(state)
     }
+}
+
+/// A byte sequence, rendered for a diagnostic: printable ASCII verbatim, `\r`,
+/// `\n` and `\t` by name, everything else as `\xHH`, and a long payload
+/// truncated with its full length stated.
+///
+/// Bounded so a refusal naming a 1024-byte payload stays readable. The length is
+/// always printed, so the truncation never hides how much there was.
+fn summarize_bytes(bytes: &[u8]) -> String {
+    const SHOWN: usize = 64;
+    let mut text = String::with_capacity(SHOWN + 16);
+    text.push('"');
+    for byte in bytes.iter().take(SHOWN) {
+        match byte {
+            b'\r' => text.push_str("\\r"),
+            b'\n' => text.push_str("\\n"),
+            b'\t' => text.push_str("\\t"),
+            b'"' => text.push_str("\\\""),
+            b'\\' => text.push_str("\\\\"),
+            0x20..=0x7e => text.push(*byte as char),
+            other => text.push_str(&format!("\\x{other:02x}")),
+        }
+    }
+    text.push('"');
+    if bytes.len() > SHOWN {
+        text.push('…');
+    }
+    format!("{text} ({} bytes)", bytes.len())
 }
 
 fn protocol(event: usize, reason: impl Into<String>) -> SocketError {
@@ -1029,7 +1198,7 @@ pub fn check_socket_program(
                 }
             }
             SocketStatement::Send { name, payload } => {
-                let bytes = match evaluation.payload(index, payload) {
+                let bytes = match evaluation.transfer_bytes(index, payload) {
                     Ok(bytes) => bytes,
                     Err(mut found) => {
                         errors.append(&mut found);
@@ -1100,6 +1269,7 @@ pub fn check_socket_program(
                 binding,
                 name,
                 count,
+                expect,
             } => {
                 let count = *count as usize;
                 match evaluation.open(index, name) {
@@ -1137,6 +1307,27 @@ pub fn check_socket_program(
                             ));
                             continue;
                         }
+                        // A **declared** payload is decided here, against the
+                        // committed history, and not at run time. The bytes are
+                        // compared before they are drained, so a refused receive
+                        // leaves the model's history exactly as it found it. The
+                        // emitted program still compares what it actually read
+                        // against the certificate's receipt, so the declaration
+                        // is checked twice by two different means and neither is
+                        // trusted.
+                        if let Some(expect) = expect {
+                            let taking: Vec<u8> =
+                                state.inbound.iter().take(count).copied().collect();
+                            if expect.bytes != taking {
+                                errors.push(SocketError::PayloadDisagrees {
+                                    event: index,
+                                    name: name.clone(),
+                                    expected: expect.bytes.clone(),
+                                    actual: taking,
+                                });
+                                continue;
+                            }
+                        }
                         let peer = state.peer.clone().expect("checked just above");
                         let state = evaluation.sockets.get_mut(name).expect("resolved above");
                         let bytes: Vec<u8> = state.inbound.drain(..count).collect();
@@ -1161,7 +1352,7 @@ pub fn check_socket_program(
                 target,
                 payload,
             } => {
-                let bytes = match evaluation.payload(index, payload) {
+                let bytes = match evaluation.transfer_bytes(index, payload) {
                     Ok(bytes) => bytes,
                     Err(mut found) => {
                         errors.append(&mut found);
@@ -1220,6 +1411,7 @@ pub fn check_socket_program(
                 binding,
                 name,
                 count,
+                expect,
             } => {
                 let count = *count as usize;
                 match evaluation.open(index, name) {
@@ -1255,6 +1447,17 @@ pub fn check_socket_program(
                                 event: index,
                                 length: count,
                                 expected: Some(head.1.len()),
+                            });
+                            continue;
+                        }
+                        if let Some(expect) = expect
+                            && expect.bytes != head.1
+                        {
+                            errors.push(SocketError::PayloadDisagrees {
+                                event: index,
+                                name: name.clone(),
+                                expected: expect.bytes.clone(),
+                                actual: head.1.clone(),
                             });
                             continue;
                         }

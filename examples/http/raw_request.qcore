@@ -1,0 +1,53 @@
+// The same bytes, written by hand: a string view as a socket payload
+// (card HTTP-QUIRIN-V1, landing the socket card's follow-on
+// SOCKET-STRING-PAYLOAD).
+//
+// This file uses NO HTTP vocabulary. It is a plain `source.socket.v1` module
+// that happens to put the bytes of an HTTP request on a wire, spelled as one
+// string literal with its CRLFs written out. `\r` is one of the escapes
+// `source.string.v1` defines, so a CRLF is spellable — which is exactly why the
+// checked route next door exists.
+//
+// WHAT THE COMPILER CHECKS HERE: that the receive is satisfiable and that the
+// bytes it takes are the bytes declared (Q084/Q085). Nothing else. The compiler
+// does not know this payload is HTTP, so it does not know the Host field is
+// required, does not know `Content-Length` must equal the content's length, and
+// would not notice a `\r\n` in the wrong place or a missing final empty line.
+//
+// Compare with exchange.qcore, where every one of those is a compile-time
+// refusal with its own diagnostic. That contrast is the card's whole point: a
+// payload a program *writes* is bytes, and a message a program *declares* is
+// checked.
+import std.socket;
+import std.string;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    let listener = tcp;
+    bind listener;
+    listen listener;
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    // A string view as a payload, read at the send site. No custody crosses:
+    // a view owns nothing, so the socket keeps every custody rule it had.
+    send client "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
+
+    // A string-comparable receive: the declared bytes are compared against the
+    // ones this program's own history committed, at **check time**, and again
+    // by the emitted program at run time.
+    recv server "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n";
+
+    send server "HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n";
+    recv client "HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n";
+
+    let status = 204;
+    print dec status;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

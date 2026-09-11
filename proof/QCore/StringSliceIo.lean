@@ -328,7 +328,7 @@ scalar still needs `std.fmt`, and a module holding `std.io` and `std.string`
 without it is refused. -/
 theorem a_scalar_line_still_needs_the_formatting_module (digits : Payload) :
     QCore.ModuleImports.admitsRendering
-      ⟨false, false, false, false, true, false, false, true, false⟩
+      ⟨false, false, false, false, true, false, false, true, false, false⟩
       (namesARendering (.scalar digits)) = false := rfl
 
 /-- **A rendered string needs both modules, and neither grants the other.**
@@ -358,13 +358,13 @@ text — it made a module that names **both** able to. That is amendment §7's
 sentence, as a registry fact. -/
 theorem the_output_imports_alone_still_grant_no_string :
     QCore.ModuleImports.admitsString
-      ⟨false, false, false, true, true, true, false, false, false⟩ true = false := rfl
+      ⟨false, false, false, true, true, true, false, false, false, false⟩ true = false := rfl
 
 theorem the_string_import_alone_still_grants_no_stream :
     QCore.ModuleImports.admitsPrint
-      ⟨false, false, false, false, false, false, false, true, false⟩ true = false
+      ⟨false, false, false, false, false, false, false, true, false, false⟩ true = false
       ∧ QCore.ModuleImports.admitsLog
-        ⟨false, false, false, false, false, false, false, true, false⟩ true = false :=
+        ⟨false, false, false, false, false, false, false, true, false, false⟩ true = false :=
   ⟨rfl, rfl⟩
 
 end QCore.StringSliceIo
