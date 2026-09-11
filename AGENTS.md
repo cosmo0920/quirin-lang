@@ -7,7 +7,9 @@
 
 Compressed project state for LLM agents; this file is the source of truth for
 agents. Humans should read [README.md](README.md) for the summary and
-[DEVELOPMENT.md](DEVELOPMENT.md) for implementation and status detail.
+[DEVELOPMENT.md](DEVELOPMENT.md) for implementation and status detail —
+repository layout, cycle records, per-increment evidence narratives and the
+full build/validation instructions.
 
 **Sync rule (steady state since card DOCS-COMPACT, 2026-09-10).** Status
 *history* lives in `DEVELOPMENT.md`'s "Increment records" — one paragraph per
@@ -17,7 +19,8 @@ entry points. A new increment therefore adds **one** paragraph to
 `DEVELOPMENT.md`, updates this file's headline numbers (and, if it lands a
 standing "when touching X, do not Y" rule, adds it to the constraints section
 below), and leaves `README.md` alone. Do not reintroduce per-increment
-chronicles here or in `CLAUDE.md`.
+chronicles here or in `CLAUDE.md`. A recurring compaction pass over these three
+files runs every 2–3 waves; the cadence rule is in `CLAUDE.md`.
 
 ## What this project is
 
@@ -40,17 +43,12 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
 | `crates/qcore-schemas/` | L0 published schema surface (Rust API **14.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
-| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization |
-| `crates/qcore-c-gateway/src/legacy_c.rs` | Generic unrestricted-C checker (Clang gateway, CFG, resource abstract interpretation, certificate recheck); contracts enter via `ResourceContracts` |
-| `crates/qcore-c-gateway/src/legacy_summary.rs` | W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence |
-| `crates/qcore-c-gateway/src/typed_source.rs` | Opaque typed C path import and source def/use |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its three load-bearing modules: `crates/qcore-c-gateway/src/legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `crates/qcore-c-gateway/src/legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `crates/qcore-c-gateway/src/typed_source.rs` (opaque typed C path import and source def/use) |
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
 | `crates/qcorec/` | CLI binary `quirin` (crate `qcorec`) plus its process-level tests |
-| `compiler/src/verifier_plugin.rs` | Compatibility facade for the host and first-party adapters |
-| `compiler/src/verifier_plugins/{libevent,chunkio}/` | In-process first-party providers (Libevent/Monkey, ChunkIO) |
-| `compiler/src/external_{integration,source}.rs` | Compatibility facades and Monkey-specific composition |
+| `compiler/src/` facades | `compiler/src/verifier_plugin.rs` is the compatibility facade for the host and first-party adapters; `compiler/src/verifier_plugins/{libevent,chunkio}/` are the in-process first-party providers (Libevent/Monkey, ChunkIO); `compiler/src/external_{integration,source}.rs` are compatibility facades plus Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
 | `contract/qcore/` | Declarative `.qcore` contract corpus (**73 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
@@ -58,7 +56,6 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
 | `docs/reevaluation/` | Raw audit logs, probe JSON, `ct_manifest.json` (CT01–CT50 tracking, schema 2) |
-| `DEVELOPMENT.md` | Human-facing implementation and status detail: repository layout, cycle records, per-increment evidence narratives, full build/validation instructions |
 | `third_party/libevent` | Submodule pinned to the audited revision; a test fails if absent or moved |
 
 ## Status ledger (do not overstate)
@@ -68,12 +65,11 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-23 close (`docs/reports/aom-destroy-siblings/`).
-The **corpus baseline is still `docs/reports/wave23-c-operations/artifacts/`**:
-the wave's arbiter card deliberately did **not** re-pin it, and its own
-artifacts under `docs/reports/aom-destroy-siblings/artifacts/` carry the
-attributed AFTER run the leak row below is read from. Every preceding corpus
-archive stays frozen (constraint 21):
+Headline numbers at the wave-23 close. The **corpus baseline is still
+`docs/reports/wave23-c-operations/artifacts/`** — the wave's arbiter card
+deliberately did **not** re-pin it — and the leak row is read from the
+attributed AFTER run in `docs/reports/aom-destroy-siblings/artifacts/`. Every
+preceding corpus archive stays frozen (constraint 21):
 
 | Measure | Value |
 |---|---|
@@ -100,7 +96,9 @@ follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
 35 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
-`docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table.
+`docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table; trust/verdict rules and
+audit history in `docs/REEVALUATION_SPEC.md` and `docs/REEVALUATION_FOLLOWUP.md`;
+the architecture boundary and open gates in `docs/cycles/CYCLE_20.md`.
 
 ## Hard invariants (violating these is a defect, not a style issue)
 
@@ -184,64 +182,56 @@ pointer is the card that established it; read it before deviating.
    `remaining-hygiene-14`.
 7. Leak diagnostics are **266** across the pinned 185-unit corpus. A change
    that moves that number is a finding to attribute in the re-pin, not to
-   absorb. It has moved exactly four times, deliberately, each in the
-   *accusing* direction or by deciding one: 271 → 272 at the wave-17 re-pin
-   (`flb_input_chunk_get_direct_routes` L19399, accusing, on a function and
-   a unit already `Unsafe`; provisional as `CONSTRUCTOR-RESIDUALS-LEAK-271`
-   — deciding it would *withdraw* six standing claims), 272 → 273 at the
-   wave-20 re-pin (`input_chunk_get` L19849, accusing: modelling the
-   constructor exposed a release through the then-uncontracted
-   `flb_input_chunk_destroy`), and 273 → 272 at the wave-22 re-pin
-   (the same leaf DECIDED by the faithful `flb_input_chunk_destroy`
-   contract — a **withdrawal**, not a discharge: the release refuses at the
-   call on joined provenance, the leak retires, and `input_chunk_get`
-   returns provisional `Unsafe` → `Unknown`; residual
-   `AOM-DESTROY-JOINED-PROVENANCE`). A **fourth** deliberate move, and the
-   first of more than one, is 272 → **266** at the wave-23
-   `aom-destroy-siblings` card: the faithful **`nullable`**
-   `flb_input_chunk_destroy_direct_routes` contract — `nullable` where its
+   absorb. It has moved exactly four times, each deliberately and each either
+   in the *accusing* direction or by **deciding** a leaf.
+   271 → 272 (wave 17): `flb_input_chunk_get_direct_routes` L19399,
+   accusing, on a function and a unit already `Unsafe`, held provisional as
+   `CONSTRUCTOR-RESIDUALS-LEAK-271`. 272 → 273 (wave 20): `input_chunk_get`
+   L19849, accusing — modelling the constructor exposed a release through the
+   then-uncontracted `flb_input_chunk_destroy`. 273 → 272 (wave 22): that same
+   leaf decided by the faithful `flb_input_chunk_destroy` contract — a
+   **withdrawal**, not a discharge, since the release refuses at the call on
+   joined provenance and `input_chunk_get` goes provisional `Unsafe` →
+   `Unknown`; residual `AOM-DESTROY-JOINED-PROVENANCE`. 272 → **266**
+   (wave 23): the faithful **`nullable`**
+   `flb_input_chunk_destroy_direct_routes` contract (`nullable` where its
    already-declared neighbour carries `nonnull`, because that body's third
-   statement is `if (!routes) { return; }` — retires **six** leaves of
-   `flb_input_chunk_get_direct_routes` (L19384, L19392, L19399, L19434,
-   L19489, L19505), again by **withdrawal-by-refusal** and not by discharge:
-   at each preceding call site the projection cannot resolve the actual it is
-   handed, so the site is marked through the unresolved-effect mechanism and
-   `report_leaks` skips it. The cause is that every refused statement poisons
-   every pointer binding in the state, so an acquisition's binding does not
-   survive to its release — residual `AOM-SIBLINGS-BINDING-POISON`, and
-   repairing it moves those sites toward the *discharging* arm, a direction
-   invariant 1 constrains. `CONSTRUCTOR-RESIDUALS-LEAK-271` is thereby
-   **DECIDED — withdrawn**, at a measured cost of **five** standing claims
-   withdrawn, not the six wave 17 recorded: the sixth leaf, L19544, is on the
-   success path where no destroy call runs, so it **stands**, the function
-   keeps a leak and keeps its provisional `Unsafe`, and the pin reads 266
-   rather than 265. Nothing is promoted: zero unit status moves, zero function
-   status moves, and the baseline was deliberately not re-pinned.
-   `remaining-o04-b08`, `corpus-repin`,
+   statement is `if (!routes) { return; }`) retires six leaves of
+   `flb_input_chunk_get_direct_routes` — L19384, L19392, L19399, L19434,
+   L19489, L19505 — again by **withdrawal-by-refusal**: at each preceding call
+   site the projection cannot resolve the actual it is handed, so the site is
+   marked through the unresolved-effect mechanism and `report_leaks` skips it.
+   The cause is that every refused statement poisons every pointer binding in
+   the state, so an acquisition's binding does not survive to its release —
+   residual `AOM-SIBLINGS-BINDING-POISON`, whose repair moves those sites
+   toward the *discharging* arm, a direction invariant 1 constrains. That move
+   **DECIDES — withdraws** `CONSTRUCTOR-RESIDUALS-LEAK-271` at a measured cost
+   of **five** standing claims, not the six wave 17 recorded: the sixth leaf,
+   L19544, is on the success path where no destroy call runs, so it **stands**,
+   the function keeps its leak and its provisional `Unsafe`, and the pin reads
+   266 rather than 265. Nothing is promoted by any of the four: zero unit status
+   moves, zero function status moves. `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
    `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1.
-8. **A declared contract must agree with the C the unit declares.** A contract
-   whose parameter or result ABI projections the analysed translation unit's
-   own C declaration contradicts is **withdrawn for that unit** — every call
-   site rewritten to a marked uncontracted callee, and the name removed from
-   the environment the derivation seeds. Both sides are read from what a
+8. **A declared contract must agree with the C the unit declares** — in types
+   and in modes. A contract whose parameter or result ABI projections the
+   analysed translation unit's own C declaration contradicts, or whose custody
+   *duty* the validated W4 summary of that callee's body in this unit
+   contradicts, is **withdrawn for that unit**: every call site is rewritten to
+   a marked uncontracted callee (`mode-parameter-contradiction` /
+   `mode-result-contradiction` for the mode arm) and the name is removed from
+   the environment the derivation seeds. Both ABI sides are read from what a
    certificate already holds (the preprocessed token stream; the environment's
    retained texts), never from the typed Clang AST, so W4 derivation, W4
    validation and certificate rechecking reproduce the decision — do not move
    either reader. A withdrawal is monotone in the refusing direction but **can
    turn a `Safe` unit into a provisional `Unsafe`** when the withdrawn
-   declaration was discharging an acquisition; that is `Unknown`-class
-   evidence about the declaration, never an upstream defect claim (invariant
-   2). The scalar projection assumes the LP64 model of the audited targets and
-   the reader has no target (`LOADER-ABI-LP64`). `remaining-loader-abi`.
-   **The same rule now covers modes, not only types.** A declared contract
-   whose custody *duty* the validated W4 summary of that callee's body in the
-   analysed unit contradicts is withdrawn for that unit too, refusing at every
-   call site with `mode-parameter-contradiction` or
-   `mode-result-contradiction`. The derived summary is **never installed in the
-   declaration's place** — an inferred summary can be weaker than the
-   declaration it convicts. The gate takes the *duty* inequality
+   declaration was discharging an acquisition; that is `Unknown`-class evidence
+   about the declaration, never an upstream defect claim (invariant 2). The
+   derived summary is **never installed in the declaration's place** — an
+   inferred summary can be weaker than the declaration it convicts. The mode
+   gate takes the *duty* inequality
    (`Retained`/`Transferred`/`Delivered`/`Restored`; `Absent`/`Produced`) and
    deliberately does **not** withdraw on a refinement inside one duty:
    nullability, a `Stored`/`Removed` owner index and a `Reallocated` replaced
@@ -250,7 +240,9 @@ pointer is the card that established it; read it before deviating.
    withdrawing on inequality would withdraw a release contract in every unit
    including `rd_free`/`mk_mem_free`/`flb_free`'s headers. Absence of evidence
    is not evidence: nothing is withdrawn on a body this unit does not define or
-   W4 derives no summary for. `remaining-loader-abi-modes`.
+   W4 derives no summary for. The scalar projection assumes the LP64 model of
+   the audited targets and the reader has no target (`LOADER-ABI-LP64`).
+   `remaining-loader-abi`, `remaining-loader-abi-modes`.
 9. **A fixture prelude is not a production declaration.** A fixture result is
    a result *for that fixture's declarations*: card O04-B08's flagship
    aggregate store was measured never to reach production, because the real
@@ -264,19 +256,19 @@ pointer is the card that established it; read it before deviating.
     unresolved-effect mechanism. The escape model was measured to **promote**
     the publish-without-release body from `Unsafe` to `Safe`, which invariant 1
     forbids; do not reintroduce it. A null store and a scalar store stay
-    admitted on stated grounds, and the decision reads no per-site status.
-    **The borrowed and `Out` admissions are withdrawn** (wave 17): a body
-    publishing a *borrowed* formal no longer certifies, because `Borrowed`
-    asserts the caller's obligations are unchanged and a publication falsifies
-    exactly that — the launder it enabled crossed the **summary** boundary, so
-    W4 published `Borrowed` for the helper and the helper's caller certified
-    too. A declared `Out` slot naming such a destination is refused before the
-    call's effects apply, being the `Acquire` arm seen from the callee's side.
-    The rule reads no provenance; one exclusion, a declared *scalar* source,
-    was added by measurement. The indirect (pointer-base) shape carried no
-    false `Safe`, so its residual *violation* claim is withdrawn rather than
-    strengthened, each statement keeping the refusal it already had.
-    `remaining-ctwin-publish`, `remaining-ctwin-residuals`.
+    admitted on stated grounds, and the decision reads no per-site status and no
+    provenance (one exclusion, a declared *scalar* source, was added by
+    measurement). **The borrowed and `Out` admissions are withdrawn** (wave 17):
+    a body publishing a *borrowed* formal no longer certifies, because
+    `Borrowed` asserts the caller's obligations are unchanged and a publication
+    falsifies exactly that — the launder it enabled crossed the **summary**
+    boundary, so W4 published `Borrowed` for the helper and the helper's caller
+    certified too. A declared `Out` slot naming such a destination is refused
+    before the call's effects apply, being the `Acquire` arm seen from the
+    callee's side. The indirect (pointer-base) shape carried no false `Safe`, so
+    its residual *violation* claim is withdrawn rather than strengthened, each
+    statement keeping the refusal it already had. `remaining-ctwin-publish`,
+    `remaining-ctwin-residuals`.
 
 **Compile-task identity and source transport**
 
@@ -312,11 +304,10 @@ pointer is the card that established it; read it before deviating.
     `move NAME` spells all four departing modes and the declaration decides
     which ran. `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`. `NATIVE-LIBRARY-SOURCE-BINDING`
-    also added **none**: `extern library NAME;` reuses `extern` (a declaration
-    keyword since `source.extern-call.v1`) and `library` (a source word since
-    `module library;`), and claims only the two-word sequence at declaration
-    position, which was a `Q000` parse failure before. Its census found the two
-    whole-token-stream route selectors — `module_imports::concurrency_span` and
+    also added **none**: `extern library NAME;` reuses `extern` and `library`,
+    claiming only the two-word sequence at declaration position, which was a
+    `Q000` parse failure before. Its census found the two whole-token-stream
+    route selectors — `module_imports::concurrency_span` and
     `source_tasks::has_source_tasks` — and **excluded binding spans from both**,
     so a library named `spawn`, `join`, `qcore_buffer_new`, `qcore_buffer_read`,
     `qcore_buffer_write` or `qcore_error_payload` cannot select a route from its
@@ -356,11 +347,11 @@ pointer is the card that established it; read it before deviating.
     `source.event.v1`'s one accepted profile is single-threaded and the reactor
     refuses a cross-thread activation under it (`L04`), so the thread running a
     callback is the entry's own, every record of the derived
-    `qcore.obs-reordering.v1` relation is a **barrier**, and the relation is
-    strict — the degenerate case `strict_iff_byte_equality` names. The window
-    structure is derived by `observe_event_program`'s live-set walk over this
-    model's regions (a dispatch turn), and the emitters a region makes live are
-    read from `ReactorProfile::threading_enabled`. A route that runs a callback
+    `qcore.obs-reordering.v1` relation (constraint 15a) is a **barrier**, and
+    the relation is strict. `observe_event_program`'s live-set walk over this
+    model's regions (a dispatch turn) derives the window structure, and the
+    emitters a region makes live are read from
+    `ReactorProfile::threading_enabled`. A route that runs a callback
     on another thread, or gives a callback a source-level body, **supplies its
     emitters there** rather than declaring strictness or a reordering by hand.
     Do not weaken the two premises the composition rests on: a source line is
@@ -381,18 +372,18 @@ pointer is the card that established it; read it before deviating.
 
 **Providers, packages and limits**
 
-16. **P02-FLAKE:** four provider/host rows are load- or parallelism-sensitive
+16. **P02-FLAKE:** five provider/host rows are load- or parallelism-sensitive
     and are verified in isolation, never weakened: the `RLIMIT_NPROC`
     conformance test (it counts every process of the real UID, and keeps a
     deterministic companion), `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
     (wall-clock, measured failing at load 50 and passing at load 37 on the same
     binary), the confined-fixture write test (`Io(Broken pipe)` under load),
     `real_packages_preserve_unknown_and_reject_mutations` (`ExecutableFileBusy`:
-    a sibling test in the same binary executes the file it mutates), and —
-    fifth, wave 20 — `enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded`
-    (the same `Io(Broken pipe)` shape as its sibling row, at load ~40).
-    `remaining-p03` §9.1, `remaining-p03-f`, `wave17-gen-ctreasons` §4.1,
-    `wave17-corpus`.
+    a sibling test in the same binary executes the file it mutates), and
+    `enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded`
+    (added wave 20; the same `Io(Broken pipe)` shape as its sibling row, at
+    load ~40). `remaining-p03` §9.1, `remaining-p03-f`,
+    `wave17-gen-ctreasons` §4.1, `wave17-corpus`.
 17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
     acquisition and was deliberately not weakened, which is why
     `resource_stored` is checked but unreachable from a single source module.
@@ -454,7 +445,7 @@ pointer is the card that established it; read it before deviating.
     from a **frozen** archive rather than from disk
     (`corpus.contract_modules_per_directory`, `corpus.contract_clause_pin`, both
     from card B00's ledger) and therefore describe the 59-module checkpoint
-    beside a live 69 — recorded as `D02-B00-LEDGER-SNAPSHOT`, to be repaired by
+    beside a live 73 — recorded as `D02-B00-LEDGER-SNAPSHOT`, to be repaired by
     publishing provenance beside them, never by editing the archive.
     `wave9-gen-reason`, `wave17-gen-ctreasons`, `wave17-corpus`.
 
@@ -499,15 +490,15 @@ need `providers/package.py` build + verify (constraint 18).
 ## Lean CI hygiene
 
 CI builds `proof/lean-toolchain` with Lean and runs every `Audit*.lean` via
-`scripts/check_lean_audits.py`. `AuditAll.lean` checks the compiled QCore axiom
-closure, allowing only `propext`, `Classical.choice` and `Quot.sound`; stale
-audit names and warnings fail the gate. Both reevaluation examples run in
-Linux and Clang-enabled Windows CI. The runner builds from the pinned proof
-directory, reports progress, enforces finite time limits and cleans up workers
-on timeout or cancellation. Generic Lean names carry historical aliases
+`scripts/check_lean_audits.py`, which builds from the pinned proof directory
+under finite time limits and cleans up workers on timeout or cancellation.
+`AuditAll.lean` checks the compiled QCore axiom closure, allowing only
+`propext`, `Classical.choice` and `Quot.sound`; stale audit names and warnings
+fail the gate. Both reevaluation examples run in Linux and Clang-enabled
+Windows CI. Generic Lean names keep historical aliases
 (`QCore.DescriptorCustody`, `EventComposition` / `checkEventComposition`,
-`busy_effect_preserves_lock`); the old Monkey module, composition accessors and
-ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
+`busy_effect_preserves_lock`), so the old Monkey module, composition accessors
+and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 `docs/reports/w7-generic-lean-names/README.md`,
 `docs/reports/lean-build-performance/README.md`.
 
@@ -546,17 +537,13 @@ this table is a summary of it, not a second allocation.
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
 | `Q036`–`Q038` | `Pipe` | `\|>` pipeline desugaring shapes; `Q038` an operator token used where this revision gives it no meaning (`\|`, `&`, `^` reserved for bitwise) |
-| `Q039`–`Q042` | `NativeLibrary` | `source.native-library.v1` manifest load, binding and agreement; manifest-resident waivers |
+| `Q039`–`Q042`, `Q047`–`Q049`, `Q063`–`Q067` | `NativeLibrary` | `source.native-library.v1` in four bands: manifest load, binding and agreement plus manifest-resident waivers (`Q039`–`Q042`); manifest-bound contract slices, identity stacking, withdrawal (`Q047`–`Q049`); exported-header reading and manifest/header disagreement (`Q063`–`Q064`); the source file's own `extern library NAME;` binding — resolution refusals, a foreign manifest's symbol, the publication tripwire (`Q065`–`Q067`) |
 | `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
 | `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape and arm subset, decidable condition tier (connectives, `!`, bitwise, constant bindings), custody join over survivors |
-| `Q047`–`Q049` | `NativeLibrary` | second band of the same pass: manifest-bound contract slices, identity stacking, withdrawal |
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
-| `Q058`–`Q062` | `Event` | `source.event.v1`: the checked event vocabulary over the reactor/descriptor custody models; `Q061` the determinism boundary |
-| `Q063`–`Q064` | `NativeLibrary` | third band of the same pass: exported-header reading and manifest/header disagreement |
-| `Q065`–`Q067` | `NativeLibrary` | fourth band of the same pass: the source file's own `extern library NAME;` binding — resolution refusals, a foreign manifest's symbol, and the publication tripwire |
+| `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
 | `Q068`–`Q073` | `StandardString` | `source.string.v1`: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row. Band relocated from `Q065`–`Q070` at integration |
-| `Q074` | `Event` | second band of the same pass: the composition of `source.event.v1` with the source line vocabulary (`print`, `log`, `flush`) and its one value form, `let NAME = dispatch ready E;`. Relocated from `Q065` at integration |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
@@ -573,12 +560,8 @@ this table is a summary of it, not a second allocation.
 
 ## Where to read more
 
-Direction and tasks: `docs/GENERALIZATION_PLAN.md`. Architecture boundary and
-open gates: `docs/cycles/CYCLE_20.md`. Trust/verdict rules and audit history:
-`docs/REEVALUATION_SPEC.md`, `docs/REEVALUATION_FOLLOWUP.md`. Language:
-`docs/QCORE_SPEC_r0_3.md`, `docs/QCORE_CONTRACT_SPEC_r0_3.md`,
-`docs/QCORE_MODULE_MODES.md`, `docs/QTT_ALIGNMENT.md`. Contract corpus
-conventions: `contract/qcore/README.md`. Persistent audit setup:
-`docs/CYCLE19_BUILD_INPUTS.md`. Design notes:
-`docs/design/`. Implementation, status detail and the full increment history
-for humans and agents alike: `DEVELOPMENT.md`.
+Beyond the pointers in the ledger above: `docs/QCORE_MODULE_MODES.md` and
+`docs/QTT_ALIGNMENT.md` for the language surface, `contract/qcore/README.md`
+for contract corpus conventions, `docs/CYCLE19_BUILD_INPUTS.md` for the
+persistent audit setup (it replaces ephemeral `/tmp` build paths), and
+`docs/design/` for design notes.

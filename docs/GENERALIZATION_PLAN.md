@@ -732,12 +732,15 @@ Small, continuous, do-with-adjacent-work:
 - CI: add the Lean job the reevaluation flagged (EV01) if still absent, and
   the layering guard from W0 (no upward dependencies; `qcore-schemas`
   dependency-free within the workspace).
-- Documentation split (done 2026-09-06, keep in sync): `AGENTS.md` is the
-  compressed agent briefing (status ledger, invariants, per-change gate) and
-  the source of truth for agents, imported by `CLAUDE.md`; `README.md` is the
-  decompressed human document. A workstream that changes project status
-  (verdict counts, gate closures, crate layout) updates `AGENTS.md` and
-  `README.md` in the same change.
+- Documentation split (done 2026-09-06; superseded in detail by the sync rule
+  in `AGENTS.md` since card DOCS-COMPACT, 2026-09-10): `AGENTS.md` is the
+  compressed agent briefing (status ledger, invariants, standing constraints,
+  per-change gate) and the source of truth for agents, imported by `CLAUDE.md`;
+  `README.md` is the decompressed human document. A workstream that changes
+  project status (verdict counts, gate closures, crate layout) adds one
+  paragraph to `DEVELOPMENT.md`'s "Increment records" and updates `AGENTS.md`'s
+  headline numbers in the same change; `README.md` is refreshed by the
+  recurring documentation-compaction card rather than per increment.
 
 ## 5. Sequencing summary
 
