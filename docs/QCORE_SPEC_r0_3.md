@@ -90,6 +90,33 @@ An implementation MUST NOT discharge one domain by changing another. Spending cr
 
 The current lexer recognizes ASCII identifiers beginning with a letter or underscore, decimal integer literals, decimal fractional literals, strings, character literals, and its enumerated punctuation. It skips whitespace, `//` comments, and non-nested `/* ... */` comments. Byte spans are half-open UTF-8 byte ranges. Recognition of a float or string does not imply that `source.exec12` evaluates it. See `crates/qcore-frontend/src/lexer.rs:1–282`.
 
+### L04.1. Proposed string-view amendment
+
+String capabilities are provided by the opt-in bundled module `std.string`.
+Each source file MUST declare `import std.string;` before its string type,
+literal values, length queries, or slicing may be admitted. The import applies
+to the whole file; it grants no buffer, output, formatting, or concurrency
+capability and cannot be supplied by another file's imports. Quoted tokens in
+existing declaration metadata remain structural and need no string import.
+These string capabilities MUST NOT be implicitly available as built-ins.
+
+The revision-0.3 design adopts immutable UTF-8 string views with semantic
+representation `{ ptr, len }`: literals denote static bytes, `len(s)` is O(1),
+and `s[low:high]` is a checked, allocation-free view derivation. Indices count
+bytes and must fall on UTF-8 code-point boundaries. A view carries no ownership
+by itself and cannot outlive or permit mutation of its backing storage. It is
+not null-terminated, and no implementation may use `strlen` to recover its
+length. The `{ ptr, len, cap }` shape is reserved for a future mutable byte
+slice, whose append capacity has no semantic place in an immutable string.
+
+This is a **Proposed** requirement, not part of any implemented source profile.
+`std.string` is not registered in the current compiler.
+It does not make the lexer's retained string token executable, does not convert
+`std.buffer` into text, and does not permit strings across C04 or output-module
+boundaries. The complete amendment, including storage, slicing, UTF-8,
+ownership, C11 lowering, ABI refusal, and evidence requirements, is
+[STRING_SLICE_V1](design/STRING_SLICE_V1.md).
+
 A module header is optional, unique, and precedes declarations:
 
 ```qcore
@@ -834,5 +861,11 @@ Before claiming revision-0.3 conformance, the acceptance ledger requires regress
 ## L23. Change record
 
 Revision 0.3 adds explicit capability/evidence levels, documents the actual source-to-C subset, specifies separate interpreter grammars, clarifies module composition and closed indices, restores the full flow tuple including entry requirements, separates exact and bounded loop counts, and formalizes residual custody on cleanup failure. It narrows concurrency claims to the implemented event model, records new review gaps, preserves permanent v1 Safe refusal, and gives diagnostics one owner.
+
+The 2026-09-11 string-view amendment adds a proposed immutable UTF-8
+`{ ptr, len }` representation and allocation-free slicing rule. It deliberately
+does not widen an implemented profile; mutable `{ ptr, len, cap }` byte slices,
+buffer conversion, output composition, and external ABI transport remain named
+follow-ons.
 
 The supplied review changed documentation only. This repository integration also tracks separately tested implementation repairs in the acceptance ledger. The supplied five files did not include the advertised probes or validation bundle; no execution of missing artifacts is claimed. Historical evidence is preserved.

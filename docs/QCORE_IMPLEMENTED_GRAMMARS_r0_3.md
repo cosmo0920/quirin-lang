@@ -2053,6 +2053,14 @@ Only `requires` and `ensures normal` envelopes are admitted by this consumer, wi
 
 That target grammar is neither a parser generator input already used by the compiler nor the grammar of every policy consumer. In particular, retained policy token expressions and resource predicate calls are defined at their consumer boundary above; their structural acceptance is not a new general-purpose contract proof rule. Future implementation work MUST keep the profile grammars, type rules, lowering coverage and negative tests synchronized instead of conflating the target with today's supported syntax.
 
+The proposed revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md)
+requires an explicit, file-local `import std.string;` for string capabilities.
+That module is not currently registered and the amendment does not widen any
+grammar in this document. `STRING-TOKEN` remains structural
+only: no current source profile constructs a string value, evaluates `len` or
+string slicing, renders text, converts `std.buffer`, or transports a string at
+an extern/native-library ABI. Each remains a named follow-on in that amendment.
+
 ## G08. Source-contract service configuration v1
 
 This JSON format configures the audit service; it adds no QCore source syntax.
