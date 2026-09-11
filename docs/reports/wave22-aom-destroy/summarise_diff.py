@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Print the five-artifact summary of a `diff_artifacts.py` document.
 
-Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. Read-only; the wave-19 card's script,
-reused. Constraint 22: the `contracts` section is read in BOTH its normalised
-and its raw keying.
+Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED. Read-only; card
+ABI-TYPEDEF-ADDRESS-OF-MEMBER's script (itself the wave-19 card's), reused.
+Constraint 22: the `contracts` section is read in BOTH its normalised and its
+raw keying.
 """
 
 import json

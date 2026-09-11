@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Exhaustive before/after census of the 185-unit artifacts for card
-CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF.
+ADDRESS-OF-MEMBER-DESTROY-UNDECLARED.
 
 Card ALIAS-AGGREGATE's census, reused byte-for-byte apart from this header and
-its example paths (card CONSTRUCTOR-RESIDUALS reused it the same way),
+its example paths (cards CONSTRUCTOR-RESIDUALS, CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF
+and ABI-TYPEDEF-ADDRESS-OF-MEMBER reused it the same way),
 which was itself card NEIGHBOURS', card PROD-CONTRACTS' and
 card O04-TRACE's census extended with a LEAF-LEVEL diff: for every unit whose
 diagnostics moved, each individual (function, line, category, description) leaf
