@@ -45,7 +45,7 @@ use std::fmt::Write as _;
 
 use crate::io_emit::{self, IO_PRELUDE};
 use crate::std_buffer::{BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT};
-use crate::std_io::{StdIoEvent, StdIoOperand, Stream};
+use crate::std_io::StdIoEvent;
 use crate::std_io_c_emit;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -331,44 +331,6 @@ pub fn emit_buffer_c11(
 
     source.push_str("    return 0;\n}\n");
     Ok(BufferCEmission { source })
-}
-
-/// Every operand name a line-producing event renders, so a caller can check the
-/// backend named nothing it did not declare. Published for tests rather than
-/// used by the emitter, which resolves names through its own map.
-#[must_use]
-pub fn rendered_names(program: &BufferProgram) -> Vec<String> {
-    program
-        .events
-        .iter()
-        .filter_map(|event| match event {
-            BufferEvent::Line(
-                StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. },
-            ) => match operand {
-                StdIoOperand::Scalar(name) | StdIoOperand::Borrowed(name) => Some(name.clone()),
-                StdIoOperand::Literal(_) => None,
-            },
-            _ => None,
-        })
-        .collect()
-}
-
-/// The streams this route can write, for a consumer that needs the pair without
-/// depending on `std_io`'s enum directly.
-#[must_use]
-pub fn streams() -> [Stream; 2] {
-    [Stream::Out, Stream::Err]
-}
-
-/// A convenience for a caller that wants only one stream's projection of the
-/// reference observation.
-#[must_use]
-pub fn project(observation: &[String], stream: Stream) -> Vec<String> {
-    let prefix = format!("{}: ", stream.label());
-    observation
-        .iter()
-        .filter_map(|line| line.strip_prefix(&prefix).map(ToOwned::to_owned))
-        .collect()
 }
 
 /// The single-emission-route check, applied to this backend: an emitted program
