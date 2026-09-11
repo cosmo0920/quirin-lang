@@ -35,7 +35,8 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE, TEXT_PRELUDE};
+use crate::c_program::{self, Fragment, Section};
+use crate::io_emit;
 use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
 use crate::std_string::{
@@ -203,25 +204,8 @@ pub fn emit_string_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_string_program(program, certificate)?;
 
-    let mut source = String::from(INCLUDES);
-    source.push_str(IO_PRELUDE);
-    // Inserted only when the program renders text (card `STRING-SLICE-IO`), so
-    // every program this backend wrote before that card — and every program on
-    // any other route — is byte-identical.
-    if program
-        .events
-        .iter()
-        .any(|event| matches!(event, StringEvent::Text { .. }))
-    {
-        source.push_str(TEXT_PRELUDE);
-    }
-    source.push_str(STRING_PRELUDE_HEADER);
-    source.push_str(STRING_PRELUDE);
-    source.push('\n');
-    for (index, payload) in program.literals.iter().enumerate() {
-        source.push_str(&literal_definition(index, payload));
-    }
-    source.push_str("\nint main(void)\n{\n");
+    let fragments = preamble(program);
+    let mut source = String::new();
 
     // Which bindings a later event actually consumes. A binding nothing
     // consumes is still emitted — the program said to bind it — and then
@@ -411,8 +395,51 @@ pub fn emit_string_c11(
         }
     }
 
-    source.push_str("    return 0;\n}\n");
+    let source = c_program::assemble(&fragments, &c_program::Entry::source_route(source));
     Ok(StringCEmission { source })
+}
+
+/// The file-scope text `source.string.v1` contributes to a program it is part
+/// of (card `C-EMIT-MAIN-UNIFY`).
+///
+/// The text prelude is contributed **only** for a program that renders text,
+/// exactly as before: `STRING-SLICE-IO`'s byte-identity claim — a program that
+/// renders none is unchanged by that card — is a property of this conditional,
+/// and moving the condition into the assembler would have replaced a measured
+/// fact with an unconditional fragment the assembler then had to remove again.
+#[must_use]
+pub fn preamble(program: &StringProgram) -> Vec<Fragment> {
+    let mut fragments = vec![
+        Fragment::new(Section::Includes, "string.includes", INCLUDES),
+        io_emit::io_prelude_fragment(),
+    ];
+    if program
+        .events
+        .iter()
+        .any(|event| matches!(event, StringEvent::Text { .. }))
+    {
+        fragments.push(io_emit::text_prelude_fragment());
+    }
+    fragments.push(Fragment::new(
+        Section::Prelude,
+        "string.prelude_header",
+        STRING_PRELUDE_HEADER,
+    ));
+    fragments.push(Fragment::new(
+        Section::Prelude,
+        "string.prelude",
+        STRING_PRELUDE,
+    ));
+    let mut literals = String::from("\n");
+    for (index, payload) in program.literals.iter().enumerate() {
+        literals.push_str(&literal_definition(index, payload));
+    }
+    fragments.push(Fragment::new(
+        Section::FileScope,
+        "string.literals",
+        literals,
+    ));
+    fragments
 }
 
 /// The single-emission-route check, applied to this backend: an emitted program

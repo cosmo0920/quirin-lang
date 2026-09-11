@@ -38,12 +38,10 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::diagnostic_log_c_emit::{
-    DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
-    diagnostic_stdout_adapter_declaration,
-};
+use crate::c_program::{self, Fragment, Section};
+use crate::diagnostic_log_c_emit;
 use crate::event_reactor::ReactorProfile;
-use crate::io_emit::IO_PRELUDE;
+use crate::io_emit;
 use crate::obs_reordering::{
     AdmittedReordering, DeclaredRecord, Emitter, ReorderingRefusal, ReorderingWitness,
 };
@@ -507,27 +505,8 @@ pub fn emit_event_c11(
         .iter()
         .any(|statement| matches!(statement, EventStatement::Line(_)));
 
-    let mut source = String::from(POLL_COMPAT);
-    source.push_str(INCLUDES);
-    if let Some(level) = certificate.log_level {
-        source.push_str(&diagnostic_stdout_adapter_declaration(level));
-    }
-    // Source-authored output and compiler observations stay two routes: the
-    // lines below expand to `source.std-io.v1`'s own `QCORE_IO_WRITE`, and the
-    // trace events to the typed diagnostic logger. A module writing no line
-    // includes neither this prelude nor `<stdio.h>` through it.
-    if writes_lines {
-        if certificate.log_level.is_none() {
-            source.push_str("#include <stdio.h>\n");
-        }
-        source.push_str(IO_PRELUDE);
-    }
-    source.push_str(DIAGNOSTIC_LOG_PRELUDE);
-    if certificate.log_level.is_some() {
-        source.push_str(DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION);
-    }
-    source.push_str(PRELUDE);
-    source.push_str("\nint main(void)\n{\n");
+    let fragments = preamble(certificate, writes_lines);
+    let mut source = String::new();
 
     let endpoint_count = certificate.endpoints.len();
     let registration_count = certificate.registrations.len();
@@ -757,7 +736,16 @@ pub fn emit_event_c11(
         }
     }
 
-    source.push_str("}\n");
+    let source = c_program::assemble(
+        &fragments,
+        &c_program::Entry {
+            // This route's entry returns through an emitted `return STATUS;`
+            // per exit rather than a single trailing `return 0;`, so its
+            // epilogue is the closing brace alone.
+            epilogue: "}\n".to_owned(),
+            ..c_program::Entry::source_route(source)
+        },
+    );
 
     // The emitted trace and the reference observation are built from the same
     // `trace_line` and the same certificate lines, so this is a structural
@@ -778,6 +766,42 @@ pub fn emit_event_c11(
         return Err(EventEmissionRefusal::CertificateDisagrees);
     }
     Ok(EventCEmission { source })
+}
+
+/// The file-scope text `source.event.v1` contributes to a program it is part of
+/// (card `C-EMIT-MAIN-UNIFY`).
+///
+/// Two conditionals are the contributor's rather than the assembler's, and both
+/// were load-bearing before this card: a module writing no line installs neither
+/// the IO prelude nor `<stdio.h>` through it, and the hosted stdout adapter's
+/// declaration and definition are installed only for a module that selected one.
+/// `writes_lines` is the caller's already-computed answer to the first, passed
+/// in rather than recomputed so the two cannot drift.
+///
+/// The `<stdio.h>` include is contributed only when the adapter is absent,
+/// because the adapter's own declaration already includes it — the two are
+/// mutually exclusive, which is why the include never appears twice.
+#[must_use]
+pub fn preamble(certificate: &StdEventCertificate, writes_lines: bool) -> Vec<Fragment> {
+    let mut fragments = vec![
+        Fragment::new(Section::Compat, "event.compat", POLL_COMPAT),
+        Fragment::new(Section::Includes, "event.includes", INCLUDES),
+    ];
+    if let Some(level) = certificate.log_level {
+        fragments.push(diagnostic_log_c_emit::adapter_declaration_fragment(level));
+    }
+    if writes_lines {
+        if certificate.log_level.is_none() {
+            fragments.push(io_emit::stdio_include_fragment());
+        }
+        fragments.push(io_emit::io_prelude_fragment());
+    }
+    fragments.push(diagnostic_log_c_emit::diagnostic_log_fragment());
+    if certificate.log_level.is_some() {
+        fragments.push(diagnostic_log_c_emit::adapter_definition_fragment());
+    }
+    fragments.push(Fragment::new(Section::Prelude, "event.prelude", PRELUDE));
+    fragments
 }
 
 /// The C name of a value binding. Prefixed for the same reason

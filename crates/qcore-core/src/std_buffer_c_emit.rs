@@ -43,7 +43,8 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use crate::io_emit::{self, IO_PRELUDE};
+use crate::c_program::{self, Fragment, Section};
+use crate::io_emit;
 use crate::std_buffer::{BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT};
 use crate::std_io::StdIoEvent;
 use crate::std_io_c_emit;
@@ -226,10 +227,8 @@ pub fn emit_buffer_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_buffer_program(program, certificate)?;
 
-    let mut source = String::from(INCLUDES);
-    source.push_str(IO_PRELUDE);
-    source.push_str(&buffer_prelude(program));
-    source.push_str("\nint main(void)\n{\n");
+    let fragments = preamble(program);
+    let mut source = String::new();
 
     // Every binding is declared at its own statement, in program order: unlike
     // `source.std-io.v1`, whose scalars are all literals known before the first
@@ -329,8 +328,23 @@ pub fn emit_buffer_c11(
         }
     }
 
-    source.push_str("    return 0;\n}\n");
-    Ok(BufferCEmission { source })
+    Ok(BufferCEmission {
+        source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
+    })
+}
+
+/// The file-scope text `source.buffer.v1` contributes to a program it is part
+/// of (card `C-EMIT-MAIN-UNIFY`).
+///
+/// The buffer prelude is program-dependent — it declares only the helpers this
+/// program's events reach — so it is built here rather than being a constant.
+#[must_use]
+pub fn preamble(program: &BufferProgram) -> Vec<Fragment> {
+    vec![
+        Fragment::new(Section::Includes, "buffer.includes", INCLUDES),
+        io_emit::io_prelude_fragment(),
+        Fragment::new(Section::Prelude, "buffer.prelude", buffer_prelude(program)),
+    ]
 }
 
 /// The single-emission-route check, applied to this backend: an emitted program

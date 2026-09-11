@@ -59,7 +59,47 @@
 //!   responsible for the line it asks this module to write; this module
 //!   decides only how the line reaches a stream.
 
+use crate::c_program::{Fragment, Section};
 use crate::std_io::Stream;
+
+/// The deduplication key of [`IO_PRELUDE`] in an assembled translation unit.
+pub const IO_PRELUDE_KEY: &str = "qcore_io.prelude";
+
+/// The deduplication key of [`TEXT_PRELUDE`].
+pub const TEXT_PRELUDE_KEY: &str = "qcore_io.text_prelude";
+
+/// The deduplication key of the `<stdio.h>` include this route needs.
+pub const STDIO_INCLUDE_KEY: &str = "include.stdio";
+
+/// [`IO_PRELUDE`] as an assembler fragment (card `C-EMIT-MAIN-UNIFY`).
+///
+/// Every backend that installs the route names it through this constructor, so
+/// two routes composed into one program contribute the same key with the same
+/// text and the assembler gives the program one copy. That is the mechanical
+/// form of what `TRACE-STDIO` stated in prose: the prelude is installed **once
+/// per emitted program**.
+#[must_use]
+pub fn io_prelude_fragment() -> Fragment {
+    Fragment::new(Section::Prelude, IO_PRELUDE_KEY, IO_PRELUDE)
+}
+
+/// [`TEXT_PRELUDE`] as an assembler fragment.
+///
+/// A backend contributes this **only** for a program that renders text, which
+/// is what keeps every program that renders none byte-identical to what it was
+/// before card `STRING-SLICE-IO`. The conditional stays the contributor's: the
+/// assembler emits what it is handed.
+#[must_use]
+pub fn text_prelude_fragment() -> Fragment {
+    Fragment::new(Section::Prelude, TEXT_PRELUDE_KEY, TEXT_PRELUDE)
+}
+
+/// The `<stdio.h>` include, for a backend whose own include block omits it and
+/// adds it only when the program writes.
+#[must_use]
+pub fn stdio_include_fragment() -> Fragment {
+    Fragment::new(Section::Includes, STDIO_INCLUDE_KEY, "#include <stdio.h>\n")
+}
 
 /// The C fragment defining the single emission route. A backend inserts this
 /// after its `<stdio.h>` include and before any code that writes.

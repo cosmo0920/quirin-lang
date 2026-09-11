@@ -5,11 +5,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
-use crate::diagnostic_log_c_emit::{
-    DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
-    diagnostic_stdout_adapter_declaration,
-};
-use crate::io_emit::IO_PRELUDE;
+use crate::c_program::{self, Fragment, Section};
+use crate::diagnostic_log_c_emit;
+use crate::io_emit;
 use crate::task_execution::{
     CheckedTaskModule, ErrorOperand, ScalarOperand, ScalarType,
     TaskInstructionKind as InstructionKind, TaskSpan, TaskTerminatorKind as TerminatorKind,
@@ -168,29 +166,15 @@ pub fn emit_task_c11_with_source_lines(
         .max()
         .unwrap_or(1)
         .max(1);
-    let mut source = format!(
-        "#define QCORE_TASK_ARGUMENT_CAPACITY {capacity}\n#define QCORE_BUFFER_EVENT_CAPACITY {event_capacity}\n"
-    );
-    source.push_str(include_str!("c11_threads_compat.h"));
-    // The single printing route is installed after this runtime's own
-    // `<stdio.h>` and before any code that writes.
-    source.push_str(RUNTIME_INCLUDES);
     let log_level = sites.iter().find_map(|site| match site.event {
         crate::std_io::StdIoEvent::LogLevel { level } => Some(level),
         _ => None,
     });
-    if let Some(level) = log_level {
-        source.push_str(&diagnostic_stdout_adapter_declaration(level));
-    }
-    source.push_str(DIAGNOSTIC_LOG_PRELUDE);
-    if log_level.is_some() {
-        source.push_str(DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION);
-    }
-    if !sites.is_empty() {
-        source.push_str("#include <stdio.h>\n");
-        source.push_str(IO_PRELUDE);
-    }
-    source.push_str(RUNTIME);
+    let fragments = preamble(capacity, event_capacity, log_level, !sites.is_empty());
+
+    // The runtime's own helpers and this module's function bodies, built into
+    // one file-scope fragment below.
+    let mut source = String::new();
     source.push_str("static const char *qcore_task_error_name(int tag) {\n    switch (tag) {\n");
     for (name, tag) in &errors {
         writeln!(source, "    case {tag}: return {};", c_string(name)).unwrap();
@@ -510,12 +494,95 @@ pub fn emit_task_c11_with_source_lines(
             span: function.span,
         });
     }
-    source.push_str("int main(void) {\n    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_drop;\n");
-    for id in module.functions.keys() {
-        writeln!(source, "    (void)&qcore_task_fn_{id};").unwrap();
+    // The generated lines this module's mappings name are counted from the top
+    // of the emitted file, and the preamble is no longer spliced into the same
+    // `String` they were measured against. Shifting them by the preamble's line
+    // count once, here, reproduces exactly the numbers the old splice produced —
+    // every fragment ends in a newline, so no line is spliced at the boundary.
+    let offset = c_program::preamble_text(&fragments).lines().count();
+    for mapping in &mut source_map {
+        mapping.generated_start_line += offset;
+        mapping.generated_end_line += offset;
     }
-    writeln!(source, "    struct qcore_task_context context = {{0}}; context.next_task = 1; context.next_buffer = 1;\n    struct qcore_task_result result = qcore_task_fn_{}(NULL, &context);\n    qcore_task_log_result(0, result);\n    return 0;\n}}", module.entry).unwrap();
+
+    let mut prologue = String::from(
+        "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_drop;\n",
+    );
+    for id in module.functions.keys() {
+        writeln!(prologue, "    (void)&qcore_task_fn_{id};").unwrap();
+    }
+    let mut definitions = fragments;
+    definitions.push(Fragment::new(
+        Section::FileScope,
+        "task.definitions",
+        source,
+    ));
+    let source = c_program::assemble(
+        &definitions,
+        &c_program::Entry {
+            lead: String::new(),
+            brace: c_program::BraceStyle::KAndR,
+            prologue,
+            body: String::new(),
+            epilogue: format!(
+                "    struct qcore_task_context context = {{0}}; context.next_task = 1; context.next_buffer = 1;\n    struct qcore_task_result result = qcore_task_fn_{}(NULL, &context);\n    qcore_task_log_result(0, result);\n    return 0;\n}}\n",
+                module.entry
+            ),
+        },
+    );
     TaskCEmission { source, source_map }
+}
+
+/// The file-scope text the checked task route contributes to a program it is
+/// part of (card `C-EMIT-MAIN-UNIFY`).
+///
+/// `capacity` and `event_capacity` are read by the compatibility header and the
+/// runtime below it, so they sit in [`Section::Config`] — ahead even of the
+/// compatibility header, which is the only section whose reason is that a later
+/// header reads it.
+///
+/// The `<stdio.h>` include is placed among this route's preludes rather than
+/// beside its other includes. That is this repository's one section inversion,
+/// and it is reproduced rather than repaired: lifting the include above
+/// `DIAGNOSTIC_LOG_PRELUDE` is inert in C — the logger prelude uses no stdio —
+/// but it is still a byte move in a program the two F02 emission digests pin,
+/// and this card moves no pinned byte. `c_program::out_of_order_fragments`
+/// reports it, and a test pins that it is the only one.
+#[must_use]
+pub fn preamble(
+    capacity: usize,
+    event_capacity: usize,
+    log_level: Option<crate::std_io::Level>,
+    writes_lines: bool,
+) -> Vec<Fragment> {
+    let mut fragments = vec![
+        Fragment::new(
+            Section::Config,
+            "task.capacities",
+            format!(
+                "#define QCORE_TASK_ARGUMENT_CAPACITY {capacity}\n#define QCORE_BUFFER_EVENT_CAPACITY {event_capacity}\n"
+            ),
+        ),
+        Fragment::new(
+            Section::Compat,
+            "c11_threads.compat",
+            include_str!("c11_threads_compat.h"),
+        ),
+        Fragment::new(Section::Includes, "task.includes", RUNTIME_INCLUDES),
+    ];
+    if let Some(level) = log_level {
+        fragments.push(diagnostic_log_c_emit::adapter_declaration_fragment(level));
+    }
+    fragments.push(diagnostic_log_c_emit::diagnostic_log_fragment());
+    if log_level.is_some() {
+        fragments.push(diagnostic_log_c_emit::adapter_definition_fragment());
+    }
+    if writes_lines {
+        fragments.push(io_emit::stdio_include_fragment());
+        fragments.push(io_emit::io_prelude_fragment());
+    }
+    fragments.push(Fragment::new(Section::Prelude, "task.runtime", RUNTIME));
+    fragments
 }
 
 /// The runtime's headers, kept separate from [`RUNTIME`] so the single printing

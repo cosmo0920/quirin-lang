@@ -6,6 +6,47 @@
 //! `QCORE_DIAGNOSTIC_SINK` to the name of a typed event consumer supplied by
 //! its harness.
 
+use crate::c_program::{Fragment, Section};
+
+/// The deduplication key of [`DIAGNOSTIC_LOG_PRELUDE`] in an assembled unit.
+pub const DIAGNOSTIC_LOG_KEY: &str = "qcore.diagnostic_log";
+
+/// The deduplication key of the hosted stdout adapter's declaration.
+pub const ADAPTER_DECLARATION_KEY: &str = "qcore.diagnostic_stdout.declaration";
+
+/// The deduplication key of the hosted stdout adapter's definition.
+pub const ADAPTER_DEFINITION_KEY: &str = "qcore.diagnostic_stdout.definition";
+
+/// [`DIAGNOSTIC_LOG_PRELUDE`] as an assembler fragment (card
+/// `C-EMIT-MAIN-UNIFY`). Every backend that installs the typed logger names it
+/// through this constructor, so a composed program defines it once.
+#[must_use]
+pub fn diagnostic_log_fragment() -> Fragment {
+    Fragment::new(Section::Prelude, DIAGNOSTIC_LOG_KEY, DIAGNOSTIC_LOG_PRELUDE)
+}
+
+/// The hosted stdout adapter's declaration as a fragment. A declaration, so it
+/// sits in [`Section::Declarations`] — ahead of the prelude that defines the
+/// event structure it names.
+#[must_use]
+pub fn adapter_declaration_fragment(level: crate::std_io::Level) -> Fragment {
+    Fragment::new(
+        Section::Declarations,
+        ADAPTER_DECLARATION_KEY,
+        diagnostic_stdout_adapter_declaration(level),
+    )
+}
+
+/// The hosted stdout adapter's definition as a fragment.
+#[must_use]
+pub fn adapter_definition_fragment() -> Fragment {
+    Fragment::new(
+        Section::Prelude,
+        ADAPTER_DEFINITION_KEY,
+        DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
+    )
+}
+
 /// C11 definitions for the typed diagnostic logger.
 pub const DIAGNOSTIC_LOG_PRELUDE: &str = r#"
 #include <stdint.h>

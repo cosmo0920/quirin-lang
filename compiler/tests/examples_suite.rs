@@ -333,6 +333,80 @@ fn the_stdio_examples_take_the_routes_their_page_says_they_take() {
 }
 
 #[test]
+fn every_published_example_defines_exactly_one_entry_point() {
+    // Card `C-EMIT-MAIN-UNIFY`. Before that card ten backends each wrote their
+    // own `int main(` and the driver's mutually exclusive route dispatch was
+    // what kept a program down to one; now the assembler writes it, and the
+    // crate spells the signature in exactly one place. This is the whole-program
+    // half of that claim, measured on the published examples rather than
+    // asserted: the assembler guarantees it writes one entry point, not that no
+    // fragment carries another.
+    for (name, module) in [
+        (
+            "stdio/renderings",
+            plain("stdio/renderings.qcore", RENDERINGS),
+        ),
+        (
+            "stdio/severities",
+            plain("stdio/severities.qcore", SEVERITIES),
+        ),
+        ("stdio/barrier", plain("stdio/barrier.qcore", BARRIER)),
+        (
+            "stdio/pipeline",
+            contracted("stdio/pipeline.qcore", PIPELINE),
+        ),
+        (
+            "pipes/rendered_lines",
+            plain("pipes/rendered_lines.qcore", RENDERED_LINES),
+        ),
+        (
+            "branching/conditional_release",
+            plain("branching/conditional_release.qcore", CONDITIONAL_RELEASE),
+        ),
+        (
+            "branching/condition_tier",
+            plain("branching/condition_tier.qcore", CONDITION_TIER),
+        ),
+        (
+            "branching/early_return",
+            plain("branching/early_return.qcore", EARLY_RETURN),
+        ),
+        (
+            "extern/buffer_round_trip",
+            contracted("extern/buffer_round_trip.qcore", BUFFER_ROUND_TRIP),
+        ),
+        (
+            "extern/scalar_results",
+            contracted("extern/scalar_results.qcore", SCALAR_RESULTS),
+        ),
+        (
+            "extern/borrowed_render",
+            contracted("extern/borrowed_render.qcore", BORROWED_RENDER),
+        ),
+        (
+            "unsafe-linkage/unchecked_calls",
+            plain("unsafe-linkage/unchecked_calls.qcore", UNCHECKED_CALLS),
+        ),
+    ] {
+        let c = module
+            .c_source
+            .as_deref()
+            .unwrap_or_else(|| panic!("examples/{name} emits no C"));
+        assert_eq!(
+            qcore_core::c_program::entry_definitions(c).len(),
+            1,
+            "examples/{name} does not define exactly one entry point"
+        );
+        // Non-vacuous, and the signature is the injected one rather than some
+        // other spelling the scan happens to match.
+        assert!(
+            c.contains(qcore_core::c_program::ENTRY_SIGNATURE),
+            "examples/{name} does not carry the injected entry signature"
+        );
+    }
+}
+
+#[test]
 fn every_stdio_example_prints_through_the_single_emission_route() {
     for (name, module) in [
         ("renderings", plain("stdio/renderings.qcore", RENDERINGS)),
