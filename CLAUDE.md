@@ -82,6 +82,12 @@ requirements that are part of the gate.
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.
   Configured-audit inputs compare canonical existing paths so the
   `/var` → `/private/var` alias cannot invalidate a pinned task.
+  **`EVENT-V1-APPLE-RUN` is discharged (user-validated, 2026-09-12):** the
+  `std_event` suite, including its `cfg(not(windows))` native comparison,
+  ran green on the user's macOS environment — the exact run that residual
+  named as its discharge. Scope: Apple ASan/UBSan and byte comparison; no
+  LSan claim. `SOCKET-V1-APPLE-RUN` remains open until a macOS run at or
+  after the socket card (`47712702`) covers `std_socket`'s native tests.
 - **Linux:** the sanitizer, mapping (`MAP_FIXED_NOREPLACE`) and OS-endpoint
   observations are Linux-only by scope, not by omission.
 
