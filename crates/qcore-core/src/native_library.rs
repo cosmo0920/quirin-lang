@@ -1052,6 +1052,97 @@ impl NativeLibraries {
         })
     }
 
+    /// The selection key of the manifest that binds `symbol`, of either entry
+    /// kind, or `None` when no selected manifest binds it.
+    ///
+    /// Card `NATIVE-LIBRARY-SOURCE-BINDING` reads this to tell a symbol *no
+    /// manifest claims* — which stays unresident, exactly as before — from one a
+    /// manifest this file did not bind claims, which refuses. Absence of
+    /// evidence is not evidence, and the two are different absences.
+    #[must_use]
+    pub fn binding_module(&self, symbol: &str) -> Option<&str> {
+        self.symbols.get(symbol).map(String::as_str)
+    }
+
+    /// Every library name the selection declares, in sorted order and without
+    /// repeats. This is the vocabulary an `extern library NAME;` declaration
+    /// draws from, and it is what a refusal names so the repair is visible.
+    #[must_use]
+    pub fn library_names(&self) -> BTreeSet<&str> {
+        self.manifests
+            .values()
+            .map(|manifest| manifest.identity.library.as_str())
+            .collect()
+    }
+
+    /// Resolve one source file's `extern library` declarations against this
+    /// selection, total or reject (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+    ///
+    /// `named` is the file's binding list **in the order it declared them**,
+    /// spelled exactly as written. The result is a function of the two inputs
+    /// and reads nothing else, so a certificate consumer repeats it rather than
+    /// believing it — the same property that makes the manifest load and the
+    /// slice totality check rederivable.
+    ///
+    /// An empty list yields the **unbound** view, which resolves selection-wide:
+    /// this card is opt-in, and a file that says nothing is unchanged.
+    pub fn bind_source(&self, named: &[String]) -> Result<BoundSelection<'_>, BindingRefusal> {
+        if named.is_empty() {
+            return Ok(BoundSelection::unbound(self));
+        }
+        let mut bindings = Vec::with_capacity(named.len());
+        let mut modules = BTreeSet::new();
+        let mut seen: BTreeSet<&str> = BTreeSet::new();
+        for name in named {
+            if !seen.insert(name.as_str()) {
+                return Err(BindingRefusal::RepeatedBinding {
+                    named: name.clone(),
+                });
+            }
+            let matching = self
+                .manifests
+                .iter()
+                .filter(|(_, manifest)| manifest.identity.library == *name)
+                .collect::<Vec<_>>();
+            match matching.as_slice() {
+                [] => {
+                    return Err(BindingRefusal::UnknownLibrary {
+                        named: name.clone(),
+                        available: self
+                            .library_names()
+                            .into_iter()
+                            .map(ToOwned::to_owned)
+                            .collect(),
+                    });
+                }
+                [(module, manifest)] => {
+                    bindings.push(SourceLibraryBinding {
+                        named: name.clone(),
+                        manifest: (*module).clone(),
+                        identity: manifest.identity.clone(),
+                        premises: manifest.premises,
+                        header: manifest.header.clone(),
+                    });
+                    modules.insert((*module).clone());
+                }
+                _ => {
+                    return Err(BindingRefusal::AmbiguousLibrary {
+                        named: name.clone(),
+                        manifests: matching
+                            .iter()
+                            .map(|(module, _)| (*module).clone())
+                            .collect(),
+                    });
+                }
+            }
+        }
+        Ok(BoundSelection {
+            libraries: self,
+            modules: Some(modules),
+            bindings,
+        })
+    }
+
     /// Every selected manifest, as `(module, manifest)`, in module order.
     ///
     /// The header level (card `NATIVE-LIBRARY-HEADER`) checks a binding **per
@@ -1111,6 +1202,236 @@ impl NativeLibraries {
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.symbols.is_empty()
+    }
+}
+
+/// One resolved `extern library NAME;` declaration: what a source file bound,
+/// and which build that turned out to be (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// This record is what makes the binding say something a certificate can carry.
+/// The source file spells a *name*; the selection supplies the *identity*, and
+/// publishing both together is the point — a reader of the premise sees the
+/// name the author wrote and the `library@hash` it resolved to on the run that
+/// produced the certificate, so a later selection that resolves the same name to
+/// a different build is a visible difference rather than an invisible one.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct SourceLibraryBinding {
+    /// The library name as the source file spelled it, compared to a manifest's
+    /// own `library` field **exactly** and never normalised (constraint 11's
+    /// rule: two spellings that normalise together are two different
+    /// selections).
+    pub named: String,
+    /// The selection key of the manifest that declared that name.
+    pub manifest: String,
+    /// The artifact identity the binding resolved to. Still a stated pin: this
+    /// card resolves a name to a declaration, it opens no file.
+    pub identity: ArtifactIdentity,
+    /// The ABI premises stated beside that identity.
+    pub premises: AbiPremises,
+    /// The exported header that manifest bound, if any.
+    pub header: Option<HeaderIdentity>,
+}
+
+/// Why a source file's `extern library` declarations do not resolve against the
+/// selection (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// Every arm refuses; nothing resolves implicitly and nothing falls back. The
+/// direction is the one card `UNSAFE-LINKAGE-ARTIFACT` fixed for `Q041`: where
+/// the only weaker admissible reading would be *silence about the build*, the
+/// disagreement refuses outright rather than buying that silence.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum BindingRefusal {
+    /// The file binds the same library name twice. A second binding of one name
+    /// adds nothing and means nothing; resolving it by taking the first would
+    /// make a repeated line silently ignorable.
+    RepeatedBinding { named: String },
+    /// No selected manifest declares that library name. The refusal names what
+    /// *is* selected, because the actionable repair is either the spelling or
+    /// the selection and a reader cannot tell which without seeing both.
+    UnknownLibrary {
+        named: String,
+        available: Vec<String>,
+    },
+    /// Two or more selected manifests declare the same library name, so the
+    /// binding would not be a function. Refused on exactly the ground
+    /// [`SelectionRefusal::SymbolBoundTwice`] refuses its own ambiguity:
+    /// choosing one by selection order would make the premise depend on the
+    /// order the builder listed its manifests.
+    AmbiguousLibrary {
+        named: String,
+        manifests: Vec<String>,
+    },
+    /// This file declares an extern symbol that a selected manifest binds — but
+    /// not one **this file** bound.
+    ///
+    /// A refusal, not a fallback to the bare premise. Falling back would mean a
+    /// file could stop its certificate naming a build simply by binding a
+    /// different library, which is the `Q041` shape: a contradiction rewarded
+    /// with a premise that says less. The repair is to bind the library that
+    /// declares the symbol, or to declare neither.
+    ForeignSymbol {
+        symbol: String,
+        manifest: String,
+        bound: Vec<String>,
+    },
+}
+
+impl fmt::Display for BindingRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::RepeatedBinding { named } => write!(
+                f,
+                "this file binds the library `{named}` more than once; a binding is a statement, not a repeatable request"
+            ),
+            Self::UnknownLibrary { named, available } => {
+                if available.is_empty() {
+                    write!(
+                        f,
+                        "this file binds the library `{named}`, but no native-library manifest is selected at all"
+                    )
+                } else {
+                    write!(
+                        f,
+                        "this file binds the library `{named}`, which no selected manifest declares; the selection declares {}",
+                        available
+                            .iter()
+                            .map(|name| format!("`{name}`"))
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    )
+                }
+            }
+            Self::AmbiguousLibrary { named, manifests } => write!(
+                f,
+                "this file binds the library `{named}`, which {} both declare; a source binding must be a function",
+                manifests
+                    .iter()
+                    .map(|module| format!("`{module}`"))
+                    .collect::<Vec<_>>()
+                    .join(" and ")
+            ),
+            Self::ForeignSymbol {
+                symbol,
+                manifest,
+                bound,
+            } => write!(
+                f,
+                "`{symbol}` is declared here and bound by the manifest `{manifest}`, which this file did not bind; this file bound {}. Bind that library or declare neither — a foreign symbol is not silently unresident",
+                if bound.is_empty() {
+                    "no library".to_owned()
+                } else {
+                    bound
+                        .iter()
+                        .map(|name| format!("`{name}`"))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                }
+            ),
+        }
+    }
+}
+
+impl std::error::Error for BindingRefusal {}
+
+/// One source file's view of a manifest selection (card
+/// `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// Two states, and the difference between them is the whole card:
+///
+/// * **unbound** — the file declares no `extern library`. Resolution is
+///   selection-wide, exactly as it was before this card: every accepted program
+///   written against waves 19–22 travels this state and its certificate is
+///   byte-identical.
+/// * **bound** — the file declared one or more `extern library NAME;`. Only the
+///   named manifests resolve for it, and a symbol some *other* selected manifest
+///   binds is a [`BindingRefusal::ForeignSymbol`] rather than a symbol that
+///   quietly stops being manifest-resident.
+///
+/// The view is per file by construction: it is built from one file's own
+/// binding list and holds no cross-file state, which is the constraint-13
+/// discipline (importing another compilation input grants this file nothing)
+/// applied to a binding.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BoundSelection<'a> {
+    libraries: &'a NativeLibraries,
+    /// The manifest modules this file bound, or `None` for an unbound file.
+    /// `None` and `Some(empty)` are deliberately different: the first is "this
+    /// file made no statement", the second cannot arise, because a file that
+    /// declared a binding at all resolved at least one.
+    modules: Option<BTreeSet<String>>,
+    bindings: Vec<SourceLibraryBinding>,
+}
+
+impl<'a> BoundSelection<'a> {
+    /// The unbound view: resolution is selection-wide, byte for byte as before
+    /// this card.
+    #[must_use]
+    pub fn unbound(libraries: &'a NativeLibraries) -> Self {
+        Self {
+            libraries,
+            modules: None,
+            bindings: Vec::new(),
+        }
+    }
+
+    /// Whether this file declared a binding at all.
+    #[must_use]
+    pub fn is_bound(&self) -> bool {
+        self.modules.is_some()
+    }
+
+    /// The resolved bindings, in the order the file declared them. Empty for an
+    /// unbound file.
+    #[must_use]
+    pub fn bindings(&self) -> &[SourceLibraryBinding] {
+        &self.bindings
+    }
+
+    /// Whether `module` is one this file resolves against.
+    fn visible(&self, module: &str) -> bool {
+        match &self.modules {
+            None => true,
+            Some(modules) => modules.contains(module),
+        }
+    }
+
+    /// Resolve one symbol as a contract-less entry **within this file's
+    /// binding**, or `None`.
+    #[must_use]
+    pub fn unchecked_binding(&self, symbol: &str) -> Option<ManifestBinding<'a>> {
+        let binding = self.libraries.unchecked_binding(symbol)?;
+        self.visible(binding.module).then_some(binding)
+    }
+
+    /// Resolve one symbol as a contract slice entry **within this file's
+    /// binding**, or `None`.
+    #[must_use]
+    pub fn contracted_binding(&self, symbol: &str) -> Option<ContractedBinding<'a>> {
+        let binding = self.libraries.contracted_binding(symbol)?;
+        self.visible(binding.module).then_some(binding)
+    }
+
+    /// The refusal owed for a symbol some selected manifest binds and this file
+    /// did not bind, or `None` when there is nothing foreign about it.
+    ///
+    /// An unbound file is never owed one: it made no statement to contradict,
+    /// and that is what keeps every pre-card program unmoved.
+    #[must_use]
+    pub fn foreign_symbol(&self, symbol: &str) -> Option<BindingRefusal> {
+        let modules = self.modules.as_ref()?;
+        let module = self.libraries.binding_module(symbol)?;
+        if modules.contains(module) {
+            return None;
+        }
+        Some(BindingRefusal::ForeignSymbol {
+            symbol: symbol.to_owned(),
+            manifest: module.to_owned(),
+            bound: self
+                .bindings
+                .iter()
+                .map(|binding| binding.named.clone())
+                .collect(),
+        })
     }
 }
 

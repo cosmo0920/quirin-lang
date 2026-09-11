@@ -85,6 +85,7 @@ use qcore_core::extern_call::{
     ExternEvent, ExternProgram, ScalarBinding, ScalarLiteral, ValueId, binds_scalar,
     derived_custody, derived_effects,
 };
+use qcore_core::native_library::SourceLibraryBinding;
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorLedger, ErrorOp};
@@ -704,8 +705,9 @@ pub fn lower_source_extern(
     typed: &TypedSourceProgram,
     entry: &str,
     callees: &BTreeMap<String, ExternCallee>,
+    libraries: &[SourceLibraryBinding],
 ) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
-    lower_source_extern_skipping(parsed, typed, entry, callees, &[])
+    lower_source_extern_skipping(parsed, typed, entry, callees, libraries, &[])
 }
 
 /// [`lower_source_extern`] with a set of entry-body statement spans left to
@@ -728,6 +730,7 @@ pub fn lower_source_extern_skipping(
     typed: &TypedSourceProgram,
     entry: &str,
     callees: &BTreeMap<String, ExternCallee>,
+    libraries: &[SourceLibraryBinding],
     skip: &[Span],
 ) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
     let mut diagnostics = Vec::new();
@@ -1165,6 +1168,11 @@ pub fn lower_source_extern_skipping(
         callees: callees.clone(),
         events,
         errors: errors.clone(),
+        // Card `NATIVE-LIBRARY-SOURCE-BINDING`: the driver resolved the file's
+        // `extern library` declarations against the selection before admitting a
+        // single callee, so what travels here is already a decision, not a
+        // request.
+        libraries: libraries.to_vec(),
     };
     if let Err(errors) = qcore_core::extern_call::check_extern_program(&program) {
         return Err(errors

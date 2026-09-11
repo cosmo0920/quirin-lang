@@ -283,6 +283,7 @@ pub struct SourceProgram {
     pub mode: SourceModuleMode,
     pub mode_span: Option<Span>,
     imports: Vec<Located<String>>,
+    library_bindings: Vec<Located<String>>,
     source: String,
     lexical_tokens: Vec<Token>,
     task_expressions: Vec<SourceTaskExpression>,
@@ -296,6 +297,42 @@ impl SourceProgram {
     /// Explicit, file-local bundled module imports with their full source spans.
     pub fn imports(&self) -> &[Located<String>] {
         &self.imports
+    }
+
+    /// Explicit, file-local `extern library NAME;` declarations with their full
+    /// source spans (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+    ///
+    /// The value is the library name **as this file spelled it**, never
+    /// normalised: it is matched against a selected manifest's own `library`
+    /// field exactly, on constraint 11's ground — two spellings that normalise
+    /// together are two different selections.
+    ///
+    /// Import-adjacent rather than a declaration: the form is read here, like an
+    /// import, precisely because it grants nothing and declares nothing nameable.
+    /// It states which *build* this file's extern surface is resolved against, so
+    /// it belongs beside the other file-local trust acts and not among the
+    /// declarations name resolution walks.
+    pub fn library_bindings(&self) -> &[Located<String>] {
+        &self.library_bindings
+    }
+
+    /// Whether `span` lies inside one of this file's `extern library NAME;`
+    /// declarations.
+    ///
+    /// Card `NATIVE-LIBRARY-SOURCE-BINDING`'s constraint-14 census outcome. Two
+    /// route-selection readers scan the **whole** token stream rather than
+    /// statement spans inside a function body — `concurrency_span` and
+    /// `source_tasks::has_source_tasks` — and a library named `spawn`, `join`,
+    /// `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write` or
+    /// `qcore_error_payload` would otherwise select a route from its own name.
+    /// A binding's tokens are not a use of anything, so they are excluded, the
+    /// same treatment `concurrency_span` already gives a ghost field inside a
+    /// declared contract.
+    #[must_use]
+    pub fn in_library_binding(&self, span: Span) -> bool {
+        self.library_bindings
+            .iter()
+            .any(|binding| binding.span.start <= span.start && span.end <= binding.span.end)
     }
 
     /// Full match syntax with optional exact builtin Result-pattern recognition.
@@ -458,6 +495,7 @@ impl<'a> SourceParser<'a> {
     fn parse(self) -> Result<SourceProgram, SourceParseError> {
         let mut declarations = Vec::new();
         let mut imports = Vec::new();
+        let mut library_bindings = Vec::new();
         let mut cursor = 0;
         let mut mode = SourceModuleMode::Executable;
         let mut mode_span = None;
@@ -505,6 +543,41 @@ impl<'a> SourceParser<'a> {
                 });
                 continue;
             }
+            // Card `NATIVE-LIBRARY-SOURCE-BINDING`: `extern library NAME;`, the
+            // file-scoped selection of the manifest-bound library this file's
+            // declared extern surface resolves against.
+            //
+            // **No new reserved word** (constraint 14). `extern` has introduced
+            // a declaration since `source.extern-call.v1`, and `library` has
+            // been a source word since `module library;`; what is new is the
+            // two-word sequence `extern library` at declaration position, which
+            // was a hard parse error before this card ("expected a QCore
+            // declaration", since `extern` admitted only `fn` after it). The
+            // spelling is the `unsafe extern fn` precedent exactly: an existing
+            // word in front of an existing form. `library` stays an ordinary
+            // identifier in every other position.
+            //
+            // Read here rather than in `declaration` because it declares no
+            // name: it is a file-local trust act, like an import, and putting it
+            // among the declarations would put a manifest identity into the
+            // namespace name resolution walks.
+            if self.words(cursor, &["extern", "library"]) {
+                let start = cursor;
+                cursor += 2;
+                let name = self.identifier(cursor)?.to_owned();
+                cursor += 1;
+                if self.tokens.get(cursor).map(|token| &token.kind)
+                    != Some(&TokenKind::Symbol(Symbol::Semicolon))
+                {
+                    return Err(self.error(cursor, "expected semicolon after library binding"));
+                }
+                cursor += 1;
+                library_bindings.push(Located {
+                    span: self.range_span(start, cursor),
+                    value: name,
+                });
+                continue;
+            }
             let (declaration, next) = self.declaration(cursor)?;
             declarations.push(declaration);
             cursor = next;
@@ -513,6 +586,7 @@ impl<'a> SourceParser<'a> {
         let result_matches = result_match::parse_inventory(&self, &declarations)?;
         Ok(SourceProgram {
             imports,
+            library_bindings,
             task_expressions,
             result_matches,
             mode,
@@ -1744,6 +1818,21 @@ pub enum SemanticPass {
     /// publication tripwire on the `Q049` model was considered and not
     /// allocated: the header identity is a field of the residence record `Q049`
     /// already requires, so the code would be unreachable.
+    ///
+    /// Card `NATIVE-LIBRARY-SOURCE-BINDING` adds a **fourth band**,
+    /// `Q065`–`Q067`, for the **source file's own** `extern library NAME;`
+    /// binding, which stops manifest resolution being by symbol name across the
+    /// whole selection. This band *is* contiguous with the third; the pass now
+    /// owns four ranges. `Q065` is "this file's binding list does not resolve"
+    /// (unknown name, ambiguous name, repeated binding, nothing selected);
+    /// `Q066` is "this file declares a symbol a manifest it did not bind binds",
+    /// a **refusal** on `Q041`'s ground read from the other side — falling back
+    /// to the weaker premise would let a file stop its certificate naming a
+    /// build by binding a different library; `Q067` is the publication tripwire
+    /// on the `Q049`/`Q035` model, which unlike `Q063`–`Q064`'s declined one is
+    /// not structurally impossible, because the binding premise is carried
+    /// beside the callee premises rather than inside a record another gate
+    /// already demands.
     ///
     /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
     /// whether a *signature* may cross a boundary nothing checks, and its

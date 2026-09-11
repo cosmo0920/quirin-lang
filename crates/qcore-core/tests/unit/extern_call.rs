@@ -71,6 +71,7 @@ fn program(events: Vec<ExternEvent>) -> ExternProgram {
             .collect::<BTreeMap<_, _>>(),
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
+        libraries: Vec::new(),
     }
 }
 
@@ -734,6 +735,7 @@ fn f1_program(events: Vec<ExternEvent>) -> ExternProgram {
             .collect::<BTreeMap<_, _>>(),
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
+        libraries: Vec::new(),
     }
 }
 
@@ -1911,6 +1913,7 @@ fn modes_program(events: Vec<ExternEvent>) -> ExternProgram {
         .collect::<BTreeMap<_, _>>(),
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
+        libraries: Vec::new(),
     }
 }
 

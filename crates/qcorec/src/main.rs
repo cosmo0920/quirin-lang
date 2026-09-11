@@ -356,6 +356,53 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     header_clause(residence),
                 )
             }
+            // Card `NATIVE-LIBRARY-SOURCE-BINDING`. The file's own binding act,
+            // printed beside the callee premises and never in place of one: a
+            // reader who saw only this line would know which build the file
+            // named without knowing what any symbol was read as, and a reader
+            // who saw only the callee lines would not know the file had said
+            // anything at all.
+            //
+            // **Reachable through this binary**, unlike the contracted arm
+            // above: `quirin` selects no extern *contract* environment
+            // (`UNSAFE-LINKAGE-CLI`) but it does select manifests, one per
+            // `--native-library`, so a file that binds one and declares waived
+            // callees prints this line here.
+            ExternAssumption::SourceBoundLibrary(binding) => {
+                let identity = &binding.identity;
+                let premises = &binding.premises;
+                format!(
+                    "source library binding: this file declared `extern library {}`, which resolved through the manifest `{}` to artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here, and this premise says which build the file's extern surface was resolved against — not what any symbol does{}",
+                    binding.named,
+                    binding.manifest,
+                    identity.artifact,
+                    identity.library,
+                    identity.version,
+                    identity.hash,
+                    // The **same prose** the two arms above render, not the
+                    // manifest's own spellings: a reader of one premise list
+                    // must not be shown two vocabularies for one vocabulary.
+                    match premises.data_model {
+                        DataModel::Lp64 => "data model lp64",
+                    },
+                    match premises.unwinding {
+                        UnwindingPosture::Abort => "no unwinding across the boundary",
+                    },
+                    match premises.allocator_custody {
+                        AllocatorCustody::Closed => "closed allocator custody",
+                    },
+                    match premises.thread_posture {
+                        ThreadPosture::SingleCaller => "single-threaded caller",
+                    },
+                    match binding.header.as_ref() {
+                        None => String::new(),
+                        Some(header) => format!(
+                            "; its exported header `{}` was read at {} — that digest is verified, not declared",
+                            header.reference, header.digest
+                        ),
+                    },
+                )
+            }
             ExternAssumption::NoExtentTransport => {
                 "no extent transport: no declaration says how many bytes a callee touches".into()
             }

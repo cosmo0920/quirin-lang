@@ -769,6 +769,21 @@ pub fn compile_files_with_registry(
         )]
     })?;
     parsed.mode = mode;
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`. A binding is checked **wherever it
+    // is written**, not only where a route happens to read it. Without this a
+    // module that declares `extern library NAME;` and is routed somewhere with
+    // no extern surface would carry a declaration nothing ever looked at, and an
+    // unresolvable one would be silently ignorable.
+    //
+    // Guarded on the file having written one, and deliberately: loading the
+    // selection unconditionally would let a broken manifest refuse a module that
+    // never mentioned one, which would move programs written before this card.
+    // A module that declares a binding is a new program by construction, so
+    // nothing existing travels this branch.
+    if let Some(first) = parsed.library_bindings().first() {
+        let libraries = load_native_libraries(options, first.span, &ranges)?;
+        bind_source_libraries(&parsed, &libraries, &ranges)?;
+    }
     let scopes = registry.resolve_source_scopes(&parsed).map_err(|errors| {
         errors
             .into_iter()
@@ -3150,7 +3165,7 @@ fn task_route(
 fn admit_unchecked_callee(
     declaration: &qcore_frontend::source_extern::SourceExternDeclaration,
     contracts: Option<&qcore_schemas::contract::ResourceContracts>,
-    libraries: &qcore_core::native_library::NativeLibraries,
+    libraries: &qcore_core::native_library::BoundSelection<'_>,
     ranges: &[FileRange],
     diagnostics: &mut Vec<FileDiagnostic>,
 ) -> Option<extern_call::ExternCallee> {
@@ -3231,6 +3246,23 @@ fn admit_unchecked_callee(
             return None;
         }
     };
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`. A file that bound a library and
+    // declares a symbol some *other* selected manifest binds is refused, not
+    // quietly handed the bare premise: the fallback would let a file stop its
+    // certificate naming a build by binding a different library, which is
+    // `Q041`'s shape — a contradiction rewarded with a premise that says less.
+    // An unbound file is never owed this refusal, which is what keeps every
+    // pre-card program unmoved.
+    if let Some(refusal) = libraries.foreign_symbol(name) {
+        diagnostics.push(map_raw_diagnostic(
+            "Q066",
+            SemanticPass::NativeLibrary,
+            declaration.span,
+            refusal.to_string(),
+            ranges,
+        ));
+        return None;
+    }
     let Some(binding) = libraries.unchecked_binding(name) else {
         // No selected manifest names this symbol, so the waiver keeps the bare
         // premise card `UNSAFE-LINKAGE` published, byte for byte. The absence
@@ -3413,6 +3445,73 @@ fn check_native_library_headers(
     })
 }
 
+/// What [`admit_extern_callees`] decided: the admitted callees, and the
+/// `extern library` bindings the module's source files resolved (card
+/// `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// The two travel together because they are one decision: a callee's manifest
+/// residence was resolved *through* its own file's binding, and the binding list
+/// is what the certificate publishes as the statement that resolution rested on.
+struct AdmittedExternSurface {
+    callees: BTreeMap<String, extern_call::ExternCallee>,
+    libraries: Vec<qcore_core::native_library::SourceLibraryBinding>,
+}
+
+/// Resolve each input file's `extern library NAME;` declarations against the
+/// manifest selection (card `NATIVE-LIBRARY-SOURCE-BINDING`).
+///
+/// **Per file, by construction.** The driver checks and compiles a *combined*
+/// source, so file identity survives only as `ranges`; a binding's own span
+/// decides which file made it, and a declaration's span decides which file's
+/// view resolves it. That is constraint 13's discipline — importing another
+/// compilation input grants this file nothing — applied to a binding: a bound
+/// file resolves against what it bound, and a sibling that bound nothing keeps
+/// the selection-wide resolution it had before this card, byte for byte.
+fn bind_source_libraries<'a>(
+    parsed: &SourceProgram,
+    libraries: &'a qcore_core::native_library::NativeLibraries,
+    ranges: &[FileRange],
+) -> Result<Vec<qcore_core::native_library::BoundSelection<'a>>, Vec<FileDiagnostic>> {
+    let mut named: Vec<Vec<String>> = vec![Vec::new(); ranges.len().max(1)];
+    let mut spans: Vec<Span> = vec![Span { start: 0, end: 0 }; ranges.len().max(1)];
+    for binding in parsed.library_bindings() {
+        let index = file_index(binding.span, ranges);
+        named[index].push(binding.value.clone());
+        if spans[index] == (Span { start: 0, end: 0 }) {
+            spans[index] = binding.span;
+        }
+    }
+    named
+        .iter()
+        .zip(&spans)
+        .map(|(names, span)| {
+            libraries.bind_source(names).map_err(|refusal| {
+                vec![map_raw_diagnostic(
+                    "Q065",
+                    SemanticPass::NativeLibrary,
+                    *span,
+                    format!("this file's library binding does not resolve: {refusal}"),
+                    ranges,
+                )]
+            })
+        })
+        .collect()
+}
+
+/// Which input file a combined-source span came from.
+///
+/// The last range whose start is at or before the span's start: `combine_files`
+/// lays the inputs out end to end, so that is the file containing it. A span
+/// before every range (the zero span of a module that declares nothing) belongs
+/// to the first file, which is where a driver-level diagnostic is attributed
+/// already.
+fn file_index(span: Span, ranges: &[FileRange]) -> usize {
+    ranges
+        .iter()
+        .rposition(|range| range.start <= span.start)
+        .unwrap_or(0)
+}
+
 /// Admit every declared extern callee this module calls, or refuse by name.
 ///
 /// The whole contract-selection, manifest, signature-agreement and bridging
@@ -3425,7 +3524,7 @@ fn admit_extern_callees(
     parsed: &SourceProgram,
     options: &CompileOptions,
     ranges: &[FileRange],
-) -> Result<BTreeMap<String, extern_call::ExternCallee>, Vec<FileDiagnostic>> {
+) -> Result<AdmittedExternSurface, Vec<FileDiagnostic>> {
     use qcore_frontend::source_extern;
 
     let called = source_extern::called_extern_names(parsed);
@@ -3597,22 +3696,45 @@ fn admit_extern_callees(
             },
         )?;
     }
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`. Every input file's `extern library`
+    // declarations are resolved against the selection **before** any callee is
+    // admitted, and a file whose binding does not resolve refuses the module
+    // rather than resolving partially — the same total-or-reject discipline the
+    // manifest load, the header binding and the contract slice already follow.
+    let bound = bind_source_libraries(parsed, &libraries, ranges)?;
     let mut diagnostics = Vec::new();
     let mut callees = BTreeMap::new();
     for (name, span) in &called {
         let Some(declaration) = declarations.get(name) else {
             continue;
         };
+        // The declaration's own file decides which manifests resolve for it.
+        let file_libraries = &bound[file_index(declaration.span, ranges)];
         if declaration.unchecked {
             if let Some(callee) = admit_unchecked_callee(
                 declaration,
                 contracts.as_ref(),
-                &libraries,
+                file_libraries,
                 ranges,
                 &mut diagnostics,
             ) {
                 callees.insert(name.clone(), callee);
             }
+            continue;
+        }
+        // The contracted mirror of the foreign-symbol refusal in
+        // `admit_unchecked_callee`, on exactly the same ground and placed before
+        // the `Q042` gate it guards: a contracted declaration whose symbol a
+        // manifest this file did not bind declares must not resolve *past* that
+        // manifest into an unresident contract.
+        if let Some(refusal) = file_libraries.foreign_symbol(name) {
+            diagnostics.push(map_raw_diagnostic(
+                "Q066",
+                SemanticPass::NativeLibrary,
+                declaration.span,
+                refusal.to_string(),
+                ranges,
+            ));
             continue;
         }
         // Card `UNSAFE-LINKAGE-ARTIFACT`, the mirror of `Q034`. `Q034` refuses a
@@ -3623,7 +3745,7 @@ fn admit_extern_callees(
         // and effects about an artifact whose own manifest states none. Where
         // two declarations are visible they are compared, and the refusing
         // direction wins.
-        if let Some(binding) = libraries.unchecked_binding(name) {
+        if let Some(binding) = file_libraries.unchecked_binding(name) {
             diagnostics.push(map_raw_diagnostic(
                 "Q042",
                 SemanticPass::NativeLibrary,
@@ -3716,7 +3838,7 @@ fn admit_extern_callees(
         // — and the withdrawal itself is reported rather than performed
         // silently. Monotone in the refusing direction: this can only turn an
         // admission into a refusal.
-        let residence = match libraries.contracted_binding(name) {
+        let residence = match file_libraries.contracted_binding(name) {
             None => None,
             Some(binding) => {
                 let manifest_view = binding.entry;
@@ -3774,7 +3896,22 @@ fn admit_extern_callees(
     if !diagnostics.is_empty() {
         return Err(diagnostics);
     }
-    Ok(callees)
+    // The published binding list is the union over the input files, in file
+    // order then declaration order. Two files binding the same library
+    // contribute two entries that compare equal and collapse in the sorted
+    // premise inventory — one statement, told once.
+    let mut resolved = Vec::new();
+    for selection in &bound {
+        for binding in selection.bindings() {
+            if !resolved.contains(binding) {
+                resolved.push(binding.clone());
+            }
+        }
+    }
+    Ok(AdmittedExternSurface {
+        callees,
+        libraries: resolved,
+    })
 }
 /// Card `source.extern-call.v1`. Every step here fails closed: no contract
 /// selection, an absent name, an unadmitted mode, an unbridgeable type, a
@@ -3802,15 +3939,17 @@ fn compile_extern_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let callees = admit_extern_callees(parsed, options, ranges)?;
+    let admitted = admit_extern_callees(parsed, options, ranges)?;
+    let callees = admitted.callees;
 
     let lowered =
-        source_extern::lower_source_extern(parsed, typed, &entry, &callees).map_err(|errors| {
-            errors
-                .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
-                .collect::<Vec<_>>()
-        })?;
+        source_extern::lower_source_extern(parsed, typed, &entry, &callees, &admitted.libraries)
+            .map_err(|errors| {
+                errors
+                    .into_iter()
+                    .map(|error| map_diagnostic(error, ranges))
+                    .collect::<Vec<_>>()
+            })?;
     let certificate = extern_call::check_extern_program(&lowered.program).map_err(|errors| {
         errors
             .into_iter()
@@ -3866,6 +4005,19 @@ fn compile_extern_source(
             SemanticPass::NativeLibrary,
             lowered.scope_span,
             "the published extern-call certificate does not carry both the declared-contract and the artifact premise of every manifest-bound contracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`: the same tripwire for the file's own
+    // binding act. A certificate that lost it would be silent about which build
+    // the module declared its extern surface to be resolved against — a weaker
+    // statement published by accident.
+    if !extern_call::certificate_carries_source_bindings(&lowered.program, &certificate) {
+        return Err(vec![map_raw_diagnostic(
+            "Q067",
+            SemanticPass::NativeLibrary,
+            lowered.scope_span,
+            "the published extern-call certificate does not carry a source-binding premise for every `extern library` this module declares".into(),
             ranges,
         )]);
     }
@@ -3951,15 +4103,21 @@ fn compile_composed_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let callees = admit_extern_callees(parsed, options, ranges)?;
-    let lowered = source_composed::lower_source_composed(parsed, typed, &entry, &callees).map_err(
-        |errors| {
-            errors
-                .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
-                .collect::<Vec<_>>()
-        },
-    )?;
+    let admitted = admit_extern_callees(parsed, options, ranges)?;
+    let callees = admitted.callees;
+    let lowered = source_composed::lower_source_composed(
+        parsed,
+        typed,
+        &entry,
+        &callees,
+        &admitted.libraries,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
     // Both projections are checked by their own checkers first, so a composed
     // module receives each route's own diagnostics under each route's own code.
     // The composed checker runs them again inside its own derivation; running
@@ -4065,6 +4223,23 @@ fn compile_composed_source(
             SemanticPass::NativeLibrary,
             lowered.scope_span,
             "the published composed certificate does not carry both the declared-contract and the artifact premise of every manifest-bound contracted callee this module declares".into(),
+            ranges,
+        )]);
+    }
+    // Card `NATIVE-LIBRARY-SOURCE-BINDING`'s tripwire, likewise unweakened by
+    // composing.
+    if !extern_call::certificate_carries_source_bindings(
+        &lowered.program.externs,
+        &extern_certificate,
+    ) || !extern_call::certificate_carries_source_bindings(
+        &lowered.program.externs,
+        &certificate.externs,
+    ) {
+        return Err(vec![map_raw_diagnostic(
+            "Q067",
+            SemanticPass::NativeLibrary,
+            lowered.scope_span,
+            "the published composed certificate does not carry a source-binding premise for every `extern library` this module declares".into(),
             ranges,
         )]);
     }

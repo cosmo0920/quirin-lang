@@ -133,6 +133,7 @@ pub fn lower_source_composed(
     typed: &TypedSourceProgram,
     entry: &str,
     callees: &BTreeMap<String, ExternCallee>,
+    libraries: &[qcore_core::native_library::SourceLibraryBinding],
 ) -> Result<LoweredComposedModule, Vec<SourceDiagnostic>> {
     debug_assert_eq!(
         (PRINT_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, FLUSH_KEYWORD),
@@ -178,6 +179,7 @@ pub fn lower_source_composed(
         typed,
         entry,
         callees,
+        libraries,
         &skip_for_extern,
     )?;
 

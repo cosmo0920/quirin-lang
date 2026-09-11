@@ -1036,6 +1036,72 @@ See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
 [the contract slice record](reports/wave20-native-library-contract-slice/README.md)
 and [the header record](reports/wave22-native-library-header/README.md).
 
+### G02d.3. The source library binding
+
+Card `NATIVE-LIBRARY-SOURCE-BINDING`. §G02d.2's manifest is selected by the
+*builder*; until this card, resolution was by **symbol name across the whole
+selection**, so whichever selected manifest happened to name a symbol supplied
+that symbol's premise and no source file said so. This adds the one form a
+source file needs to say it:
+
+```ebnf
+library_binding = "extern", "library", NAME, ";" ;
+```
+
+It is **import-adjacent**: it stands at file scope beside the `import` lines, it
+declares no name, and it grants no capability — it states which manifest-bound
+library *this file's* declared extern surface is resolved against. It mints **no
+reserved word** (constraint 14): `extern` has introduced a declaration since
+§G02d and `library` has been a source word since `module library;`; what is new
+is the two-word sequence `extern library` at declaration position, which was a
+parse error before this card. `library` stays an ordinary identifier everywhere
+else.
+
+`NAME` is a selected manifest's own `library` field, compared **exactly** and
+never normalised — two spellings that normalise together are two different
+selections.
+
+The binding is **opt-in**. A file that declares none keeps the selection-wide
+resolution byte for byte, which is every program written against §G02d.2 before
+this card. A file that declares one or more resolves only against the manifests
+it named, and:
+
+* a name no selected manifest declares, a name two of them declare, a repeated
+  binding, or a binding with nothing selected each refuse the module (`Q065`) —
+  nothing resolves implicitly and nothing falls back;
+* a symbol this file declares that a selected manifest it did **not** bind
+  binds refuses (`Q066`). It is not silently handed the weaker premise: that
+  would let a file stop its certificate naming a build by binding a different
+  library, which is `Q041`'s disposition read from the other side;
+* a symbol **no** selected manifest binds is unaffected and keeps exactly the
+  premise it had — absence of evidence is not evidence, and the two absences are
+  different;
+* a published certificate must carry a source-binding premise for every
+  `extern library` the module declares (`Q067`).
+
+Resolution is **per input file**: the *declaring* file's binding decides a
+declaration, on card `UNSAFE-LINKAGE`'s own ground that declaring a symbol is
+itself the trust act. A binding in another compilation input grants a file
+nothing and takes nothing away, which is constraint 13's discipline applied to a
+binding.
+
+A binding is resolved **wherever it is written**, before route selection, so a
+module carrying one and no extern surface is refused if it does not resolve
+rather than carrying a declaration nothing looked at. The check is guarded on the
+file having written a binding: a module that writes none never causes the
+selection to be loaded, so a manifest that does not load cannot refuse a module
+that never mentioned one.
+
+The premise a bound module publishes names the spelling the file wrote, the
+manifest that declared it, and that manifest's artifact identity — `library@hash`
+— beside the four ABI premise fields. It **stacks** with every callee premise and
+replaces none: the callee premises say what each symbol was read as, and this one
+says which build this file declared its extern surface to come from. A module that
+binds a library and calls nothing it exports still carries it, because the binding
+is a trust act whether or not a call site consumed it.
+
+See [the source binding record](reports/native-library-source-binding/README.md).
+
 ## G02e. Flat-epoch quantitative bound
 
 `source.epoch.bound.v1`. Selected before every other concurrent route by the
