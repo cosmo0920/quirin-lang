@@ -303,3 +303,33 @@ as declined for v1 with the grounds in §1.
   vocabulary at the source level; the model half already exists and is proved.
 * **`Finalize` / `Nonblocking` delete**, which need deletion from inside a
   callback.
+
+## 9. Amendment — the composed line and value vocabulary
+
+Card `COMPOSE-EVENT-LINES` (wave 23) refines this record in three places, and in
+no other. Evidence: `docs/reports/compose-event-lines/README.md`; spec §L21 row
+`Q074`; grammar §G02k.
+
+1. **§5's "no `let` and no scalar operand" is superseded by exactly one form.**
+   `let NAME = dispatch ready E;` is the same dispatch turn `dispatch ready E;`
+   is — same projection, same determinism decision, same trace record — naming
+   the byte that turn's callback drained. An entry may also carry
+   `source.std-io.v1`'s `print`, `log` and `flush`. Neither decides anything
+   this record decides: a line erases to no reactor operation and no ledger
+   transition, proved in `QCore.ComposeEventLines`, so §3's determinism boundary
+   is exactly the boundary a composed program gets.
+2. **§3's premise list gains a second entry, on the same terms.**
+   `EVENT-V1-STREAM-BYTE-ORDER` — a connected stream endpoint pair delivers the
+   bytes written into one end in the order they were written — is carried only
+   by a program that *names* a drained byte, and the emitted program compares
+   the byte it read against the one the model predicted, exiting non-zero on
+   disagreement. `wake D BYTE;` declares the byte; `wake D;` delivers the
+   route's own, so every transcript published under this record is
+   byte-identical.
+3. **§8.3's "a buffer payload" is unchanged and still `STD-BUFFER`'s tier.** An
+   owned buffer does not cross into an event module; the byte a turn binds is a
+   scalar and carries no extent (`EVENT-BUFFER-PAYLOAD`).
+
+The trace is unchanged: a payload is a value and not a reactor fact, and a
+source line is program output and not a compiler observation, so neither appears
+in it.

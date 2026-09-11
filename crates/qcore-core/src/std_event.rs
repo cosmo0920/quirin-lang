@@ -60,14 +60,33 @@
 //! * A registration's callback is not a source-level body in v1. It drains one
 //!   byte and does nothing else, so the reactor's payload-authority and
 //!   conflicting-access rules are checked over an empty authority.
+//!
+//! # The composed line and value vocabulary (card `COMPOSE-EVENT-LINES`)
+//!
+//! An entry may carry [`EventStatement::Line`] — `source.std-io.v1`'s own
+//! `print`/`log`/`flush`, whose bytes are decided by
+//! [`crate::std_io::rendered_line`] and nowhere else — and one value form,
+//! [`EventStatement::DispatchReady`] with a binding, which names the byte that
+//! turn's callback drained.
+//!
+//! **Neither decides anything this module decided before.** A line projects to
+//! no reactor operation and performs no ledger transition, which is stated as a
+//! theorem in `QCore.ComposeEventLines`
+//! (`erasing_the_lines_leaves_the_reactor_projection`,
+//! `…_leaves_the_run_unchanged`) rather than left as a convention; the
+//! determinism boundary above is therefore exactly the boundary a composed
+//! program gets. What the composition adds is [`STREAM_BYTE_ORDER`], carried
+//! only where a program names a drained byte and checked by the emitted program
+//! rather than trusted.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 
 use crate::event_reactor::{
     ActivationReason, ArgumentMode, CallbackSummary, DeleteMode, DescriptorId, EventDiagnostic,
     EventFlags, EventKey, EventOperation, EventProgram, ReactorProfile, check_event_program,
 };
+use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
 use crate::typed_errors::{Effect, EffectRow};
 
 /// The named platform premise every executable program on this route rests on.
@@ -81,6 +100,26 @@ pub const LEVEL_TRIGGERED_READINESS: &str = "EVENT-V1-LEVEL-TRIGGERED-READINESS"
 pub const LEVEL_TRIGGERED_READINESS_TEXT: &str = "a poll(2)/WSAPoll wait on a socket-pair endpoint with POLLIN requested reports POLLIN when, \
      and only when, a byte written into its peer has not yet been read, given that this process \
      is the sole holder of both endpoints and no other thread touches them";
+
+/// The second named platform premise, carried **only** by a program that binds
+/// a drained byte at the source level (card `COMPOSE-EVENT-LINES`).
+///
+/// A program that drains without naming the byte rests on nothing about its
+/// value, so it carries this premise no more than a program without a wait
+/// carries [`LEVEL_TRIGGERED_READINESS`].
+pub const STREAM_BYTE_ORDER: &str = "EVENT-V1-STREAM-BYTE-ORDER";
+
+/// The prose of [`STREAM_BYTE_ORDER`].
+pub const STREAM_BYTE_ORDER_TEXT: &str = "a connected stream endpoint pair delivers the bytes written into one end to a reader of the \
+     other end in the order they were written, none lost and none invented, given that this \
+     process is the sole holder of both endpoints and no other thread touches them";
+
+/// The byte `wake D;` delivers when the statement declares none.
+///
+/// `'q'`, which is what the embedded shim has always written. A statement that
+/// declares no payload therefore keeps every byte of every published transcript
+/// it ever had.
+pub const DEFAULT_WAKE_BYTE: u8 = b'q';
 
 /// The single reactor profile v1 selects: one dispatching thread, no
 /// cross-thread activation.
@@ -193,15 +232,37 @@ pub enum EventStatement {
     },
     /// `unwatch E;` — deregister and free, retiring the registration's cookie.
     Unwatch { registration: String },
-    /// `wake D;` — write one byte into `D`'s peer, so a read registration on
-    /// `D` becomes ready. Projects to **no** reactor operation.
-    Wake { endpoint: String },
+    /// `wake D;` / `wake D BYTE;` — write one byte into `D`'s peer, so a read
+    /// registration on `D` becomes ready. Projects to **no** reactor operation.
+    ///
+    /// The payload is [`DEFAULT_WAKE_BYTE`] where the statement declares none.
+    /// It is **not** part of the trace: a `wake` projects to no reactor
+    /// operation at all, so its payload is not a reactor fact, and the byte
+    /// reaches an observation only where a source line renders it.
+    Wake { endpoint: String, byte: u8 },
     /// `dispatch ready E;` — one turn declared to report exactly `E`.
-    DispatchReady { registration: String },
+    ///
+    /// `let NAME = dispatch ready E;` is the same turn, binding the byte the
+    /// callback drained (card `COMPOSE-EVENT-LINES`). The turn's projection,
+    /// its determinism decision and its trace line are identical either way:
+    /// the binding names a value the drain already produced.
+    DispatchReady {
+        registration: String,
+        binding: Option<String>,
+    },
     /// `dispatch idle;` — one turn declared to report nothing.
     DispatchIdle,
     /// `close D;` — release an endpoint, success branch.
     Close { endpoint: String },
+    /// A `source.std-io.v1` line-producing statement, reused unchanged
+    /// (card `COMPOSE-EVENT-LINES`).
+    ///
+    /// The bytes of the line are decided by [`rendered_line`] and nowhere else,
+    /// so "this route's lines are the standard-IO route's lines" is a statement
+    /// about code rather than about two implementations that agree. A line
+    /// projects to **no** reactor operation and writes **no** trace record: it
+    /// is program output, not a compiler observation.
+    Line(StdIoEvent),
     /// `return INTEGER;` — the entry's exit. Exactly one, last.
     Return { status: i32 },
 }
@@ -256,6 +317,24 @@ pub struct DispatchTurn {
     pub endpoint: Option<EndpointId>,
 }
 
+/// One byte a dispatch turn's callback drained, as the certificate records it
+/// (card `COMPOSE-EVENT-LINES`).
+///
+/// Published even where the turn binds no name, because the byte is a thing the
+/// emitted program **verifies** at run time against the model's own prediction:
+/// a reader can see which byte each turn was checked to deliver.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DrainedByte {
+    /// Index into [`EventSourceProgram::statements`].
+    pub statement: usize,
+    pub registration: RegistrationId,
+    pub endpoint: EndpointId,
+    /// The byte the wake that induced this readiness delivered.
+    pub byte: u8,
+    /// The scalar name the turn bound it to, if any.
+    pub binding: Option<String>,
+}
+
 /// One registration, as the certificate records it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Registration {
@@ -277,6 +356,22 @@ pub struct StdEventCertificate {
     pub registrations: Vec<Registration>,
     /// Every dispatch turn and what it was checked to report.
     pub turns: Vec<DispatchTurn>,
+    /// Every byte a turn's callback drained, in program order
+    /// (card `COMPOSE-EVENT-LINES`).
+    pub payloads: Vec<DrainedByte>,
+    /// The final scalar environment: what each name a rendering may read
+    /// denotes. Filled only by `let NAME = dispatch ready E;`, so a name here is
+    /// always a byte this program's own wake delivered.
+    pub scalars: BTreeMap<String, i32>,
+    /// Every **source-authored** line this program writes, in program order
+    /// across both streams. The retained event trace is not here: it is a
+    /// compiler observation, and reaches a stream only through `log_level`.
+    pub lines: Vec<ObservedLine>,
+    /// How many `flush` barriers the program performs.
+    pub flushes: usize,
+    /// The renderings actually used, so a certificate names its own `std.fmt`
+    /// surface rather than the whole vocabulary.
+    pub renderings: BTreeSet<Rendering>,
     /// The reactor's own certificate over the projected program. This is the
     /// custody evidence, and it is the reactor's, not this module's.
     pub reactor: crate::event_reactor::EventCertificate,
@@ -295,9 +390,12 @@ pub struct StdEventCertificate {
 
 /// Why a `source.event.v1` entry was refused.
 ///
-/// The codes are the `Event` pass's band, `Q058`–`Q062`
-/// (`docs/design/STD_EVENT_V1.md` §6). The band assumption and the relocation
-/// rule are recorded there.
+/// The codes are the `Event` pass's bands: `Q058`–`Q062`
+/// (`docs/design/STD_EVENT_V1.md` §6) and the second band `Q074`, the composed
+/// line and value vocabulary's own refusals (card `COMPOSE-EVENT-LINES`, spec
+/// §L21). The second band was relocated at integration from `Q065`, which
+/// `NATIVE-LIBRARY-SOURCE-BINDING` holds; the band assumption and the
+/// relocation rule are recorded in §L21.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventSourceError {
     /// `Q058`: the flat entry shape this profile models is violated.
@@ -317,6 +415,19 @@ pub enum EventSourceError {
     Determinism { statement: usize, reason: String },
     /// `Q062`: the declared effect row does not admit the derived one.
     EffectNotDeclared { statement: usize, effect: Effect },
+    /// `Q074`: a rendering operand that is not a value this entry bound. The
+    /// composed line vocabulary's own refusal — the second band of this pass
+    /// (card `COMPOSE-EVENT-LINES`).
+    OperandNotBound { statement: usize, name: String },
+    /// `Q074`: a `borrow NAME` rendering. `source.event.v1` publishes no live
+    /// custody identity for a render, so the operand has nothing to resolve
+    /// against — the named follow-on is `STD-FMT-DESCRIPTOR`.
+    BorrowNotPublished { statement: usize, name: String },
+    /// `Q074`: a `let NAME = dispatch ready E;` whose name this entry already
+    /// binds — to a value, an endpoint or a registration. The three namespaces
+    /// are disjoint by construction and a collision is refused rather than
+    /// shadowed.
+    NameAlreadyBound { statement: usize, name: String },
 }
 
 impl EventSourceError {
@@ -328,6 +439,9 @@ impl EventSourceError {
             Self::Reactor { .. } => "Q060",
             Self::Determinism { .. } => "Q061",
             Self::EffectNotDeclared { .. } => "Q062",
+            Self::OperandNotBound { .. }
+            | Self::BorrowNotPublished { .. }
+            | Self::NameAlreadyBound { .. } => "Q074",
         }
     }
 
@@ -338,7 +452,10 @@ impl EventSourceError {
             | Self::Unbound { statement, .. }
             | Self::Reactor { statement, .. }
             | Self::Determinism { statement, .. }
-            | Self::EffectNotDeclared { statement, .. } => *statement,
+            | Self::EffectNotDeclared { statement, .. }
+            | Self::OperandNotBound { statement, .. }
+            | Self::BorrowNotPublished { statement, .. }
+            | Self::NameAlreadyBound { statement, .. } => *statement,
         }
     }
 }
@@ -357,6 +474,24 @@ impl fmt::Display for EventSourceError {
                 formatter,
                 "this entry performs `{effect:?}` but its declared `effects {{ … }}` row does not \
                  admit it"
+            ),
+            Self::OperandNotBound { name, .. } => write!(
+                formatter,
+                "`{name}` is not a value this entry bound; a rendering on `source.event.v1` reads \
+                 an integer literal or a name bound by `let NAME = dispatch ready E;`, which is \
+                 the one value this route's model produces"
+            ),
+            Self::BorrowNotPublished { name, .. } => write!(
+                formatter,
+                "`borrow {name}` renders the model identity of a live resource, and \
+                 `source.event.v1` publishes none: an endpoint and a registration are custody \
+                 names of the reactor model, and rendering one needs that model to publish a live \
+                 identity at this statement (card `STD-FMT-DESCRIPTOR`)"
+            ),
+            Self::NameAlreadyBound { name, .. } => write!(
+                formatter,
+                "`{name}` is already a name of this entry; `source.event.v1` has no rebinding \
+                 form, and its value, endpoint and registration namespaces are disjoint"
             ),
         }
     }
@@ -404,10 +539,21 @@ struct Walk {
     /// name → registration, and whether it is still watched
     registrations: BTreeMap<String, (Registration, bool)>,
     registration_order: Vec<Registration>,
-    /// Per endpoint id: bytes written into it and not yet drained. The
-    /// **readiness ledger**: it models what this program did to itself, never
-    /// what the kernel did.
-    pending: BTreeMap<EndpointId, usize>,
+    /// Per endpoint id: the bytes written into it and not yet drained, in the
+    /// order they were written. The **readiness ledger**: it models what this
+    /// program did to itself, never what the kernel did. The byte values are a
+    /// model of the same kind — the premise that a stream pair delivers them in
+    /// that order is [`STREAM_BYTE_ORDER`], and the emitted program checks it
+    /// rather than trusting it.
+    pending: BTreeMap<EndpointId, VecDeque<u8>>,
+    /// The value namespace: names bound by `let NAME = dispatch ready E;`.
+    /// Disjoint from the endpoint and registration namespaces by construction —
+    /// a collision is [`EventSourceError::NameAlreadyBound`].
+    scalars: BTreeMap<String, i32>,
+    lines: Vec<ObservedLine>,
+    flushes: usize,
+    renderings: BTreeSet<Rendering>,
+    payloads: Vec<DrainedByte>,
     turns: Vec<DispatchTurn>,
     operations: Vec<EventOperation<EventProfile>>,
     origins: Vec<usize>,
@@ -454,12 +600,40 @@ fn ready_set(walk: &Walk) -> Vec<(RegistrationId, EndpointId)> {
                 && walk
                     .pending
                     .get(&registration.endpoint)
-                    .copied()
-                    .unwrap_or(0)
-                    > 0
+                    .is_some_and(|bytes| !bytes.is_empty())
         })
         .map(|registration| (registration.id, registration.endpoint))
         .collect()
+}
+
+/// Resolve a rendering operand against this route's **value** namespace.
+///
+/// Three constructors, three answers, and the third is the one worth stating: a
+/// `borrow NAME` has nothing to resolve against here, because this route
+/// publishes no live custody identity for a render. That is a refusal on the
+/// route's own terms rather than a silent absence, exactly as
+/// `source.buffer.v1` refuses the same operand for its own reason.
+fn operand_value(
+    walk: &Walk,
+    statement: usize,
+    operand: &StdIoOperand,
+) -> Result<i32, EventSourceError> {
+    match operand {
+        StdIoOperand::Literal(value) => Ok(*value),
+        StdIoOperand::Scalar(name) => {
+            walk.scalars
+                .get(name)
+                .copied()
+                .ok_or_else(|| EventSourceError::OperandNotBound {
+                    statement,
+                    name: name.clone(),
+                })
+        }
+        StdIoOperand::Borrowed(name) => Err(EventSourceError::BorrowNotPublished {
+            statement,
+            name: name.clone(),
+        }),
+    }
 }
 
 #[allow(clippy::too_many_lines)]
@@ -489,6 +663,7 @@ fn resolve(
             statement,
             EventStatement::LogLevel { .. }
                 | EventStatement::ContextOpen
+                | EventStatement::Line(_)
                 | EventStatement::Return { .. }
         );
         if needs_context && walk.context != Some(true) {
@@ -650,7 +825,7 @@ fn resolve(
                     .push(EventOperation::FreeEvent { event: key });
                 walk.origins.push(index);
             }
-            EventStatement::Wake { endpoint } => {
+            EventStatement::Wake { endpoint, byte } => {
                 let Some((_, peer, true)) = walk.endpoints.get(endpoint).copied() else {
                     errors.push(EventSourceError::Unbound {
                         statement: index,
@@ -668,12 +843,27 @@ fn resolve(
                 // one beside it.
                 let _ = peer;
                 let readable = walk.endpoints[endpoint].0;
-                *walk.pending.entry(readable).or_insert(0) += 1;
+                walk.pending.entry(readable).or_default().push_back(*byte);
             }
             EventStatement::DispatchIdle | EventStatement::DispatchReady { .. } => {
                 let ready = ready_set(&walk);
+                let binding = match statement {
+                    EventStatement::DispatchReady { binding, .. } => binding.clone(),
+                    _ => None,
+                };
+                if let Some(name) = &binding
+                    && (walk.scalars.contains_key(name)
+                        || walk.endpoints.contains_key(name)
+                        || walk.registrations.contains_key(name))
+                {
+                    errors.push(EventSourceError::NameAlreadyBound {
+                        statement: index,
+                        name: name.clone(),
+                    });
+                    continue;
+                }
                 let declared = match statement {
-                    EventStatement::DispatchReady { registration } => {
+                    EventStatement::DispatchReady { registration, .. } => {
                         match walk.registrations.get(registration) {
                             Some((record, true)) => Some(record.clone()),
                             Some((_, false)) => {
@@ -791,8 +981,33 @@ fn resolve(
                         walk.origins.push(index);
                         // The callback drains exactly one byte. That is the
                         // whole body: v1 has no source-level callback.
-                        let drained = walk.pending.entry(record.endpoint).or_insert(0);
-                        *drained = drained.saturating_sub(1);
+                        //
+                        // Which byte is decided by the ledger's own order: the
+                        // oldest undrained one. A `let` binding names it; the
+                        // certificate publishes it either way, because the
+                        // emitted program verifies it at run time.
+                        // The queue is non-empty on this arm: a read
+                        // registration is in the ready set only while its
+                        // endpoint has an undrained byte. The default is the
+                        // byte a `wake` writes when it declares none, so an
+                        // unreachable branch cannot invent a value no statement
+                        // of this program could have delivered.
+                        let byte = walk
+                            .pending
+                            .entry(record.endpoint)
+                            .or_default()
+                            .pop_front()
+                            .unwrap_or(DEFAULT_WAKE_BYTE);
+                        if let Some(name) = &binding {
+                            walk.scalars.insert(name.clone(), i32::from(byte));
+                        }
+                        walk.payloads.push(DrainedByte {
+                            statement: index,
+                            registration: record.id,
+                            endpoint: record.endpoint,
+                            byte,
+                            binding: binding.clone(),
+                        });
                         walk.operations
                             .push(EventOperation::CallbackExit { event: key });
                         walk.origins.push(index);
@@ -832,6 +1047,34 @@ fn resolve(
                 });
                 walk.origins.push(index);
             }
+            EventStatement::Line(line) => match line {
+                StdIoEvent::Print { rendering, operand }
+                | StdIoEvent::Log {
+                    rendering, operand, ..
+                } => {
+                    walk.renderings.insert(*rendering);
+                    match operand_value(&walk, index, operand) {
+                        Ok(value) => walk.lines.push(
+                            rendered_line(line, value)
+                                .expect("a print and a log each produce exactly one line"),
+                        ),
+                        Err(error) => errors.push(error),
+                    }
+                }
+                StdIoEvent::Flush => walk.flushes += 1,
+                // Neither reaches this arm: `log_level` is this route's own
+                // statement and a `return` is the route's own exit, so the
+                // lowering never wraps one in a line. Refusing rather than
+                // ignoring keeps that a statement rather than a convention.
+                StdIoEvent::LogLevel { .. } | StdIoEvent::Return => {
+                    errors.push(EventSourceError::Shape {
+                        statement: index,
+                        reason: "`log_level LEVEL;` and `return` are `source.event.v1`'s own \
+                                 statements and are not line-producing events"
+                            .to_owned(),
+                    });
+                }
+            },
             EventStatement::Return { status } => {
                 walk.returned = Some(*status);
             }
@@ -942,14 +1185,30 @@ pub fn check_event_source_program(
         endpoints: walk.endpoint_order.clone(),
         registrations: walk.registration_order.clone(),
         turns: walk.turns.clone(),
+        payloads: walk.payloads.clone(),
+        scalars: walk.scalars.clone(),
+        lines: walk.lines.clone(),
+        flushes: walk.flushes,
+        renderings: walk.renderings.clone(),
         reactor,
         executable: walk.executable,
-        premises: if walk.executable && !walk.turns.is_empty() {
-            vec![LEVEL_TRIGGERED_READINESS]
-        } else {
-            // A program that performs no wait rests on no readiness premise.
-            // Saying so is more useful than always naming it.
-            Vec::new()
+        premises: {
+            let mut premises = Vec::new();
+            if walk.executable && !walk.turns.is_empty() {
+                premises.push(LEVEL_TRIGGERED_READINESS);
+            }
+            // A program that drains without naming the byte rests on nothing
+            // about its value; one that renders it rests on the delivery order.
+            // Saying which is more useful than always naming both.
+            if walk.executable
+                && walk
+                    .payloads
+                    .iter()
+                    .any(|payload| payload.binding.is_some())
+            {
+                premises.push(STREAM_BYTE_ORDER);
+            }
+            premises
         },
         log_level: walk.log_level,
         status: walk.returned.unwrap_or_default(),
@@ -982,6 +1241,11 @@ pub enum EventRecheckFailure {
     Endpoints,
     Registrations,
     Turns,
+    Payloads,
+    Scalars,
+    Lines,
+    Flushes,
+    Renderings,
     Reactor,
     Executable,
     Premises,
@@ -998,6 +1262,11 @@ impl fmt::Display for EventRecheckFailure {
             Self::Endpoints => "the endpoint pairs",
             Self::Registrations => "the registrations",
             Self::Turns => "the dispatch turns and what each reports",
+            Self::Payloads => "the bytes the dispatch turns drained",
+            Self::Scalars => "the value environment a rendering reads",
+            Self::Lines => "the source-authored lines",
+            Self::Flushes => "the barrier count",
+            Self::Renderings => "the used renderings",
             Self::Reactor => "the reactor model's own certificate",
             Self::Executable => "whether this program is executable",
             Self::Premises => "the named platform premises",
@@ -1038,6 +1307,21 @@ pub fn recheck_event_certificate(
     }
     if rederived.turns != certificate.turns {
         return Err(EventRecheckFailure::Turns);
+    }
+    if rederived.payloads != certificate.payloads {
+        return Err(EventRecheckFailure::Payloads);
+    }
+    if rederived.scalars != certificate.scalars {
+        return Err(EventRecheckFailure::Scalars);
+    }
+    if rederived.lines != certificate.lines {
+        return Err(EventRecheckFailure::Lines);
+    }
+    if rederived.flushes != certificate.flushes {
+        return Err(EventRecheckFailure::Flushes);
+    }
+    if rederived.renderings != certificate.renderings {
+        return Err(EventRecheckFailure::Renderings);
     }
     if rederived.reactor != certificate.reactor {
         return Err(EventRecheckFailure::Reactor);
