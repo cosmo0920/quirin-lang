@@ -86,6 +86,24 @@ pub struct CompileOptions {
     /// checked against, and whichever build the builder names, the certificate
     /// prints it.
     pub native_libraries: Option<BTreeMap<String, String>>,
+    /// Explicit selection of exported header texts, as an immutable
+    /// reference → source-text map (card `NATIVE-LIBRARY-HEADER`,
+    /// [`qcore_core::native_library_header`]).
+    ///
+    /// The key is the reference a manifest's `header` field spells, compared
+    /// exactly and never normalised. `None` selects nothing, which matters only
+    /// for a manifest that *names* a header: such a manifest then refuses at
+    /// `Q063`, because a header binding this driver cannot apply is a binding it
+    /// must not silently drop. A manifest naming no header is unaffected by
+    /// anything supplied here — pinned in both directions, since a level that
+    /// could reach a manifest which never opted into it would be a level that
+    /// changes what a builder already had.
+    ///
+    /// The text is supplied rather than read from a path for the reason every
+    /// other selection here is: this driver performs no filesystem search, and
+    /// the digest a certificate carries is measured over exactly the bytes the
+    /// decision was taken on.
+    pub native_library_headers: Option<BTreeMap<String, String>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -3259,6 +3277,84 @@ fn load_native_libraries(
     })
 }
 
+/// Card `NATIVE-LIBRARY-HEADER`. Check every selected manifest's exported-header
+/// binding against the header texts the builder supplied, or refuse the module.
+///
+/// **Where the digest is measured, and why here.** `qcore-core` has no
+/// dependencies at all — that is what makes the manifest rederivable in the
+/// kernel — so it implements no SHA-256. The digest of each supplied header text
+/// is measured here, where the bytes are, and the *rule* (it must equal the
+/// digest the manifest declares) is the kernel's. That is the same split card
+/// `NATIVE-LIBRARY-CONTRACT-SLICE` used for `CustodyShape`, and it is recorded
+/// as `HEADER-DIGEST-DRIVER-MEASURED`.
+///
+/// Unlike the artifact identity — a **pin**, never opened, never hashed,
+/// because whether the linker used it is the builder's act — the header is
+/// **read**, and its text decides admission. Verifying its digest is therefore
+/// available and honest, and it is what makes the decision rederivable: a
+/// recheck whose `header` reference resolved to different bytes would otherwise
+/// silently decide differently.
+fn check_native_library_headers(
+    libraries: &qcore_core::native_library::NativeLibraries,
+    options: &CompileOptions,
+    span: Span,
+    ranges: &[FileRange],
+) -> Result<(), Vec<FileDiagnostic>> {
+    use qcore_core::native_library_header::{HeaderFailure, HeaderSource, check_header_bindings};
+
+    let empty = BTreeMap::new();
+    let supplied = options.native_library_headers.as_ref().unwrap_or(&empty);
+    let digests = supplied
+        .iter()
+        .map(|(reference, text)| {
+            (
+                reference.clone(),
+                format!(
+                    "sha256:{}",
+                    qcore_schemas::digest::sha256_hex(text.as_bytes())
+                ),
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    let sources = supplied
+        .iter()
+        .map(|(reference, text)| {
+            (
+                reference.clone(),
+                HeaderSource {
+                    reference,
+                    text,
+                    measured_digest: &digests[reference],
+                },
+            )
+        })
+        .collect::<BTreeMap<_, _>>();
+    check_header_bindings(libraries, &sources).map_err(|failure| {
+        // Two codes, two conditions. `Q063` is "this level could not be
+        // applied"; `Q064` is "it was applied and the manifest lost". A
+        // disagreement **refuses** — the weaker admissible reading below a
+        // withdrawn header binding is the manifest *without* a header, which is
+        // accepted, so withdrawing to it would reward a contradiction with a
+        // premise that says less about the build. That is `Q041`'s disposition
+        // and deliberately the opposite of `Q048`'s, from the one rule both
+        // rest on.
+        let (code, message) = match &failure {
+            HeaderFailure::Unreadable(_) => (
+                "Q063",
+                format!("the selected manifest header binding does not load: {failure}"),
+            ),
+            HeaderFailure::Disagreement { .. } => ("Q064", format!("{failure}")),
+        };
+        vec![map_raw_diagnostic(
+            code,
+            SemanticPass::NativeLibrary,
+            span,
+            message,
+            ranges,
+        )]
+    })
+}
+
 /// Admit every declared extern callee this module calls, or refuse by name.
 ///
 /// The whole contract-selection, manifest, signature-agreement and bridging
@@ -3366,6 +3462,13 @@ fn admit_extern_callees(
         (contracts, BTreeMap::new())
     };
     let libraries = load_native_libraries(options, first_span, ranges)?;
+    // Card `NATIVE-LIBRARY-HEADER`. A manifest that names its exported header is
+    // checked against that header's own text **before** any callee is admitted:
+    // both sides of the comparison are load inputs, so there is no per-unit
+    // reading to withdraw and nothing that could hold for one unit and not
+    // another. A manifest that names no header is untouched, which is every
+    // manifest written before this card.
+    check_native_library_headers(&libraries, options, first_span, ranges)?;
     // Card `NATIVE-LIBRARY-CONTRACT-SLICE`. A selection that binds contracts is
     // resolved against the selected environment **before** any callee is
     // admitted, in both directions of design §4.1, and a selection that does
@@ -4135,7 +4238,7 @@ fn compile_buffer_source(
     let emission =
         std_buffer_c_emit::emit_buffer_c11(&lowered.program, &certificate).map_err(|refusal| {
             vec![plain_diagnostic(
-                "Q051",
+                "Q063",
                 format!("the byte-buffer backend refused this trace: {refusal:?}"),
             )]
         })?;

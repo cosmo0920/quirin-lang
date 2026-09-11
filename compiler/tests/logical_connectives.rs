@@ -47,6 +47,7 @@ fn compile_with(
             entry: None,
             extern_contracts: contracts,
             native_libraries: None,
+            native_library_headers: None,
         },
     )
 }

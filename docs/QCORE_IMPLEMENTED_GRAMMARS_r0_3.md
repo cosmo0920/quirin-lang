@@ -937,8 +937,8 @@ contract; a published certificate missing one is refused (`Q035`). See
 
 ### G02d.2. The native-library manifest
 
-Cards `UNSAFE-LINKAGE-ARTIFACT` and `NATIVE-LIBRARY-CONTRACT-SLICE`. A
-**manifest** is not source: it is a separate
+Cards `UNSAFE-LINKAGE-ARTIFACT`, `NATIVE-LIBRARY-CONTRACT-SLICE` and
+`NATIVE-LIBRARY-HEADER`. A **manifest** is not source: it is a separate
 declarative file a builder selects (`quirin --native-library MANIFEST`,
 `CompileOptions::native_libraries`), and it adds no form to G02d's or G02d.1's
 source grammar and no reserved word. What it changes is the *premise* a call
@@ -958,7 +958,9 @@ field        = ( "library" | "version" | "artifact" ), TOKEN, ";"
              | "data_model", "lp64", ";"
              | "unwinding", "abort", ";"
              | "allocator_custody", "closed", ";"
-             | "thread_posture", "single_caller", ";" ;
+             | "thread_posture", "single_caller", ";"
+             | "header", TOKEN, ";"                        (* card `NATIVE-LIBRARY-HEADER` *)
+             | "header_hash", "sha256:", 64 * LOWER_HEX, ";" ;
 entry        = waived_entry | contract_entry ;
 waived_entry = "unchecked", "fn", NAME,
                "(", [ C_ABI_TYPE, { ",", C_ABI_TYPE } ], ")",
@@ -975,8 +977,14 @@ C_POINTER    = "uint8_t *" | "const uint8_t *" | "uint8_t **" ;
 MODULE_REF   = TOKEN ;   (* the contract selection's own key, compared exactly *)
 ```
 
-`#` begins a comment; statements are `;`-terminated and may span lines. All
-eight header fields are mandatory and each may be stated once. Entry types are
+`#` begins a comment; statements are `;`-terminated and may span lines. The
+eight identity and ABI-premise fields are mandatory and each may be stated once.
+The two **header-binding** fields (card `NATIVE-LIBRARY-HEADER`) are optional
+**as a pair**: both, or neither. One without the other is a `Q039` missing-field
+rejection, on the same ground as every mandatory field — an identity missing a
+field is not a weaker identity but an unusable one — and naming neither is the
+default, which leaves every manifest written before that card byte-valid and
+byte-unchanged. Entry types are
 the **C** spellings of the exported header declaration, not the QCore ones, so
 the agreement check compares a projection rather than a string. The pointer
 spellings `uint8_t *`, `const uint8_t *` and `uint8_t **` are recognised
@@ -1007,10 +1015,26 @@ directions (`Q047`), a **contracted** declaration the manifest contradicts is
 **withdrawn for the unit** and its call sites fall to `Q023` (`Q048`), and a
 published certificate must carry both stacked premises of every manifest-bound
 contracted callee (`Q049`). Selecting no manifest is the default and leaves every
-G02d and G02d.1 program byte-identical. See
-`docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
-[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md) and
-[the contract slice record](reports/wave20-native-library-contract-slice/README.md).
+G02d and G02d.1 program byte-identical.
+
+A `header` field binds the library's **exported header** and `header_hash` its
+digest (card `NATIVE-LIBRARY-HEADER`, spec §L14.4). Where they are present, every
+entry's transcribed declaration above is read out of that header's own text and
+compared against it, for both entry kinds alike, rather than believed: the
+header's text is supplied to the checker (`CompileOptions::native_library_headers`;
+`quirin` resolves the reference against the manifest's own directory), its digest
+is measured over exactly those bytes and **verified** against `header_hash`, and
+a declaration outside the bounded reader subset refuses the manifest by name
+(`Q063`). A transcription the header contradicts refuses (`Q064`) — the `Q041`
+disposition, not `Q048`'s, because the weaker admissible reading here is this
+same manifest without a header and that is accepted. Declarations the manifest
+does not name are ignored: a header is the library's whole exported surface.
+
+See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
+`docs/design/NATIVE_LIBRARY_HEADER_V1.md`,
+[the manifest record](reports/wave19-unsafe-linkage-artifact/README.md),
+[the contract slice record](reports/wave20-native-library-contract-slice/README.md)
+and [the header record](reports/wave22-native-library-header/README.md).
 
 ## G02e. Flat-epoch quantitative bound
 

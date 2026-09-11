@@ -1,0 +1,74 @@
+# Subset census of card NATIVE-LIBRARY-HEADER, measured by the shipped reader.
+#
+# Rows are one per header. `cand` is every identifier the text writes
+# immediately before a `(` (`native_library_header::census_candidates`), so the
+# denominator is a statement about the header rather than a curated list;
+# `absent` is therefore a real row — a call inside a macro body is a candidate
+# too. `reason` lines tally the offending token of each unreadable position.
+#
+# Libevent rows are the pinned submodule (third_party/libevent, d82464a).
+# msgpack/chunkio/monkey rows are pinned Cycle 19 build inputs read from
+# build/cycle19/wave20-pin/fluent-bit-clang-source/ (docs/CYCLE19_BUILD_INPUTS.md);
+# those files are not of this repository, so their counts are reported here and
+# their *shapes* are pinned as fixture rows instead. The Libevent rows are pinned
+# in CI by compiler/tests/native_library_header.rs.
+
+event2/event.h	cand=70	read=0	unreadable=69	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    reason 69	EVENT2_EXPORT_SYMBOL
+    reason 5	evutil_socket_t
+    reason 1	FILE
+    reason 1	ev_uint32_t
+    reason 1	event_callback_fn
+event2/buffer.h	cand=56	read=0	unreadable=51	unspellable=0	internal=0	unspec=0	variadic=1	ambig=0	macro=0	cond=4	absent=0
+    reason 51	EVENT2_EXPORT_SYMBOL
+    reason 6	ev_off_t
+    reason 4	ev_ssize_t
+    reason 3	evutil_socket_t
+    reason 2	ev_uint32_t
+event2/thread.h	cand=9	read=0	unreadable=1	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=8	absent=0
+    reason 1	EVENT2_EXPORT_SYMBOL
+event2/util.h	FILE-REFUSED	the header carries `#error`
+event2/bufferevent.h	cand=65	read=0	unreadable=64	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    reason 64	EVENT2_EXPORT_SYMBOL
+    reason 4	ev_ssize_t
+    reason 3	evutil_socket_t
+    reason 2	bufferevent_data_cb
+    reason 2	ev_uint64_t
+event2/listener.h	cand=9	read=0	unreadable=9	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 9	EVENT2_EXPORT_SYMBOL
+    reason 1	evutil_socket_t
+event2/dns.h	cand=42	read=0	unreadable=41	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    reason 41	EVENT2_EXPORT_SYMBOL
+    reason 2	ev_socklen_t
+    reason 1	*
+    reason 1	ev_uint16_t
+    reason 1	evdns_server_option
+event2/http.h	cand=122	read=0	unreadable=121	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=1
+    reason 121	EVENT2_EXPORT_SYMBOL
+    reason 11	(
+    reason 6	ev_uint16_t
+    reason 5	ev_ssize_t
+    reason 3	*
+event2/tag.h	cand=20	read=0	unreadable=20	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 20	EVENT2_EXPORT_SYMBOL
+    reason 20	ev_uint32_t
+    reason 3	ev_uint64_t
+event2/rpc.h	cand=25	read=0	unreadable=25	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 25	EVENT2_EXPORT_SYMBOL
+    reason 17	(
+    reason 2	*
+    reason 2	EVRPC_HOOK_TYPE
+    reason 1	EVRPC_HOOK_RESULT
+event2/visibility.h	cand=0	read=0	unreadable=0	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+event2/watch.h	cand=5	read=0	unreadable=5	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 5	EVENT2_EXPORT_SYMBOL
+msgpack/pack.h	cand=52	read=0	unreadable=1	unspellable=0	internal=43	unspec=0	variadic=0	ambig=6	macro=0	cond=0	absent=2
+    reason 1	MSGPACK_DLLEXPORT
+    reason 1	msgpack_object
+msgpack/object.h	cand=3	read=0	unreadable=2	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=1	absent=0
+    reason 3	msgpack_object
+    reason 2	MSGPACK_DLLEXPORT
+msgpack/sbuffer.h	cand=13	read=0	unreadable=0	unspellable=0	internal=7	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=6
+chunkio/chunkio.h	cand=15	read=13	unreadable=2	unspellable=0	internal=0	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0
+    reason 2	(
+monkey/mk_core/mk_list.h	cand=16	read=0	unreadable=0	unspellable=0	internal=16	unspec=0	variadic=0	ambig=0	macro=0	cond=0	absent=0

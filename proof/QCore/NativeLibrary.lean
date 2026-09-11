@@ -69,6 +69,19 @@ inductive ThreadPosture where
   | singleCaller
   deriving DecidableEq, Repr
 
+/-- The identity of one **exported header**: the reference a manifest spells and
+the digest of the text that reference resolves to (card
+`NATIVE-LIBRARY-HEADER`).
+
+Unlike `Identity` below, this one is *verified* rather than declared: the header
+is read at check time and its text decides admission, so measuring it is both
+possible and honest. Whether the linker used the artifact stays the builder's
+act, and stays a pin. -/
+structure HeaderIdentity where
+  reference : String
+  digest : String
+  deriving DecidableEq, Repr
+
 /-- The stated identity of one library artifact. Every field is declared text:
 nothing here is probed, hashed or read from a filesystem. -/
 structure Identity where
@@ -97,6 +110,15 @@ structure Residence where
   contract-less entry of this module. A contract-less residence therefore never
   names a module, which is what keeps a level-L1 premise exactly what it was. -/
   contract : Option String
+  /-- The exported header this symbol's declaration was **checked against**
+  (card `NATIVE-LIBRARY-HEADER`), and `none` for a manifest that names no
+  header — which is every manifest of the two cards below this one.
+
+  Its trust status differs from every other field here, and a reader of a
+  premise must be able to tell: `identity` is *declared* and nothing opens it,
+  while this reference names a text that was read and this digest was measured
+  over it. -/
+  header : Option HeaderIdentity
   deriving DecidableEq, Repr
 
 /-- One contract-less entry: a symbol, its exported header declaration's ABI
@@ -111,11 +133,15 @@ structure Entry where
 structure Manifest where
   identity : Identity
   premises : Premises
+  /-- The exported header this manifest binds, and its declared digest (card
+  `NATIVE-LIBRARY-HEADER`). `none` is the default and is exactly the world of
+  this module and of `QCore.NativeLibraryContract`. -/
+  header : Option HeaderIdentity
   entries : List Entry
   deriving DecidableEq, Repr
 
 /-- The residence every entry of a manifest inherits. -/
-def Manifest.residence (m : Manifest) : Residence := ⟨m.identity, m.premises, none⟩
+def Manifest.residence (m : Manifest) : Residence := ⟨m.identity, m.premises, none, m.header⟩
 
 /-- Resolve one symbol against a manifest. -/
 def Manifest.binding (m : Manifest) (symbol : String) : Option Entry :=
@@ -447,12 +473,12 @@ admits, and what it admits carries the sharpened premise. -/
 theorem the_manifest_route_admits_and_names_the_artifact
     (identity : Identity) (premises : Premises) :
     let m : Manifest :=
-      ⟨identity, premises, [⟨"k", [.scalar], .scalar⟩]⟩
+      ⟨identity, premises, none, [⟨"k", [.scalar], .scalar⟩]⟩
     admit (some m) "k" [.scalar] .scalar =
       .admitted ⟨{ name := "k", trust := .uncheckedLinkage,
                    parameters := [.data .scalar], resultAbi := .scalar,
                    acquires := false },
-                 some ⟨identity, premises, none⟩⟩ := by
+                 some ⟨identity, premises, none, none⟩⟩ := by
   simp [admit, unchecked, QCore.UncheckedLinkage.admitParamsFrom, isPointer,
         Manifest.binding, Manifest.residence, agrees]
 
@@ -460,7 +486,7 @@ theorem the_manifest_route_admits_and_names_the_artifact
 theorem an_unnamed_symbol_is_admitted_bare
     (identity : Identity) (premises : Premises) :
     let m : Manifest :=
-      ⟨identity, premises, [⟨"other", [.scalar], .scalar⟩]⟩
+      ⟨identity, premises, none, [⟨"other", [.scalar], .scalar⟩]⟩
     admit (some m) "k" [.scalar] .scalar =
       .admitted ⟨{ name := "k", trust := .uncheckedLinkage,
                    parameters := [.data .scalar], resultAbi := .scalar,

@@ -97,7 +97,7 @@ fn an_unterminated_statement_rejects() {
 
 #[test]
 fn every_mandatory_field_is_mandatory() {
-    for field in HEADER_FIELDS {
+    for field in MANDATORY_FIELDS {
         let text = manifest_text("unchecked fn k(int32_t) -> int32_t;")
             .lines()
             .filter(|line| !line.starts_with(&format!("{field} ")))
@@ -393,6 +393,7 @@ fn residence() -> ManifestResidence {
         identity: manifest.identity,
         premises: manifest.premises,
         contract: None,
+        header: None,
     }
 }
 

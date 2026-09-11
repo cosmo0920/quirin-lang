@@ -1732,6 +1732,19 @@ pub enum SemanticPass {
     /// at integration relocates the *unshipped* band, per the wave-3 `T07`/`T09`
     /// precedent; the code-to-condition mapping is stable under such a shift.
     ///
+    /// Card `NATIVE-LIBRARY-HEADER` adds a **third band**, `Q063`–`Q064`, for
+    /// the manifest's **exported header** binding — reading the library's real
+    /// `.h` instead of believing the manifest's transcription of one. Not
+    /// contiguous with either earlier band, for the same reason: `Q050` was
+    /// taken between the cards (`COMPOSE-CONCURRENCY`). `Q063` is "the header
+    /// binding does not load"; `Q064` is "the manifest and the header
+    /// disagree", a **refusal**, deliberately the `Q041` disposition rather than
+    /// `Q048`'s, because the weaker admissible reading below a withdrawn header
+    /// binding is the manifest *without* a header and that is accepted. A
+    /// publication tripwire on the `Q049` model was considered and not
+    /// allocated: the header identity is a field of the residence record `Q049`
+    /// already requires, so the code would be unreachable.
+    ///
     /// A separate pass from `UncheckedLinkage` on purpose: that pass decides
     /// whether a *signature* may cross a boundary nothing checks, and its
     /// decision is unchanged here. This one decides whether the **library

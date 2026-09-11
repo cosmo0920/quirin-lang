@@ -129,10 +129,51 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         }
         Some(selected)
     };
+    // Card `NATIVE-LIBRARY-HEADER`. A manifest that names an exported header
+    // needs that header's text, and the CLI is the layer that performs I/O. The
+    // reference is resolved against the **manifest's own directory** — one
+    // candidate path, no search, no fallback — because the manifest is the only
+    // anchor this binary has for a reference the manifest itself spelled, and a
+    // search would make two byte-identical manifests mean different things
+    // depending on where they were invoked from (`HEADER-CLI-RELATIVE`).
+    //
+    // A manifest naming no header supplies nothing here and is unchanged. A
+    // header that cannot be read is an error rather than an omission: the driver
+    // would refuse at `Q063` anyway, and reporting the `open` failure names the
+    // real cause.
+    let native_library_headers = match native_libraries.as_ref() {
+        None => None,
+        Some(_) => {
+            let mut headers = std::collections::BTreeMap::new();
+            for path in &manifests {
+                let text = fs::read_to_string(path)
+                    .map_err(|error| format!("{}: {error}", path.display()))?;
+                let Ok(manifest) =
+                    qcore_compiler::native_library::load_native_library_manifest(&text)
+                else {
+                    // A manifest that does not load is refused by the driver,
+                    // with its own named refusal. Nothing is guessed here.
+                    continue;
+                };
+                let Some(binding) = manifest.header else {
+                    continue;
+                };
+                let resolved = path
+                    .parent()
+                    .unwrap_or_else(|| std::path::Path::new("."))
+                    .join(&binding.reference);
+                let header = fs::read_to_string(&resolved)
+                    .map_err(|error| format!("{}: {error}", resolved.display()))?;
+                headers.insert(binding.reference, header);
+            }
+            (!headers.is_empty()).then_some(headers)
+        }
+    };
     let options = CompileOptions {
         entry,
         extern_contracts: None,
         native_libraries,
+        native_library_headers,
     };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
@@ -252,7 +293,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                 let identity = &residence.identity;
                 let premises = &residence.premises;
                 format!(
-                    "unchecked linkage: `{callee}` is linked as `{signature}` with no contract, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here, and nothing about the callee's behavior is checked",
+                    "unchecked linkage: `{callee}` is linked as `{signature}` with no contract, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here, and nothing about the callee's behavior is checked{}",
                     identity.artifact,
                     identity.library,
                     identity.version,
@@ -269,6 +310,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     match premises.thread_posture {
                         ThreadPosture::SingleCaller => "single-threaded caller",
                     },
+                    header_clause(residence),
                 )
             }
             ExternAssumption::DeclaredContract(callee) => {
@@ -294,7 +336,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                 let identity = &residence.identity;
                 let premises = &residence.premises;
                 format!(
-                    "contracted linkage: `{callee}` is read through the declared contract `{contract_module}`, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here",
+                    "contracted linkage: `{callee}` is read through the declared contract `{contract_module}`, from artifact `{}` of library `{} {}` at {}, under stated ABI premises ({}, {}, {}, {}); the artifact identity is declared, not verified here{}",
                     identity.artifact,
                     identity.library,
                     identity.version,
@@ -311,6 +353,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     match premises.thread_posture {
                         ThreadPosture::SingleCaller => "single-threaded caller",
                     },
+                    header_clause(residence),
                 )
             }
             ExternAssumption::NoExtentTransport => {
@@ -322,6 +365,26 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
             other => format!("{other:?}"),
         };
         println!("  - {line}");
+    }
+}
+
+/// Card `NATIVE-LIBRARY-HEADER`. The clause a manifest-resident premise gains
+/// when its manifest bound an exported header, and the empty string when it did
+/// not — which keeps every premise printed before this card byte-identical.
+///
+/// The wording says **verified**, and it must: this is the one identity in the
+/// record whose text was read and whose digest was measured over exactly the
+/// bytes the decision was taken on. The library, version and artifact hash
+/// beside it are declared and nothing opens them. A reader who could not tell
+/// the two apart would have been handed a stronger-looking statement than the
+/// one that was checked.
+fn header_clause(residence: &qcore_compiler::native_library::ManifestResidence) -> String {
+    match residence.header.as_ref() {
+        None => String::new(),
+        Some(header) => format!(
+            "; its exported header `{}` was read at {} and every bound declaration was compared against it — that digest is verified, not declared",
+            header.reference, header.digest
+        ),
     }
 }
 

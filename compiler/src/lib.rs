@@ -199,7 +199,12 @@ pub use parser::{ParseError, parse_program};
 /// backend and its reference execution.
 pub use qcore_core::{
     composed_std_io, composed_std_io_c_emit, extern_c_emit, extern_call, native_library,
+    native_library_header,
 };
+/// Card `NATIVE-LIBRARY-HEADER`: the canonical digest a manifest's exported
+/// header binding is measured with, re-exported so a consumer of this facade
+/// measures with the same function the driver does rather than a second one.
+pub use qcore_schemas::digest;
 pub use research_closure::{
     OPEN_RESEARCH_QUESTIONS, OpenResearchQuestion, PROMOTED_RESEARCH_QUESTIONS, Progress,
     ResearchClosureCertificate, ResearchClosureError, ResearchProgram, ResourceSafetyCertificate,

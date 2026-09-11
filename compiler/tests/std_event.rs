@@ -31,6 +31,7 @@ fn compile(
             entry: None,
             extern_contracts: None,
             native_libraries: None,
+            native_library_headers: None,
         },
     )
 }
