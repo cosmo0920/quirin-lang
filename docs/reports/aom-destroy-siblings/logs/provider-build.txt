@@ -1,0 +1,61 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.3
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling serde_derive v1.0.229
+   Compiling qcore-schemas v14.0.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/crates/qcore-schemas)
+   Compiling qcore-provider-chunkio v0.5.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/providers/qcore-provider-chunkio)
+   Compiling qcore-provider-ctraces v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/providers/qcore-provider-ctraces)
+   Compiling qcore-provider-librdkafka v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/providers/qcore-provider-librdkafka)
+   Compiling qcore-provider-libevent v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/providers/qcore-provider-libevent)
+   Compiling qcore-provider-cmetrics v0.2.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-af4bc3dafe16187d1/providers/qcore-provider-cmetrics)
+    Finished `release` profile [optimized] target(s) in 1m 12s
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "evidence_versions": [
+    1,
+    2
+  ],
+  "semantic_profile": "per_package_declared_profiles",
+  "artifacts": [
+    {
+      "plugin_id": "qcore.chunkio",
+      "executable_sha256": "bd2120b61f4fa6648278650073aa0978f27c0b4f3aa078b8f635fee169dc1a77",
+      "manifest_sha256": "c170a83917451ba82959a79f9672edce04ef022953524988de4ac8e6ddfb55b5",
+      "archive_sha256": "0b738978466e6263deb97070bcdfdc76ed225db87be285c0b7afd25d21aa70d8"
+    },
+    {
+      "plugin_id": "qcore.cmetrics",
+      "executable_sha256": "a8f288ef0432c9d2036da455d4091c738284d370d90718918142db4d6a7c3c6e",
+      "manifest_sha256": "2568d67e44dfd7b0dcdb231840ac446fdcc3c9bb9a98ad8f1f67089e49d69709",
+      "archive_sha256": "295159a9cb9b98c197598addce2c3cd913dffd759458c5485c5b408590b98a75"
+    },
+    {
+      "plugin_id": "qcore.ctraces",
+      "executable_sha256": "ae7f142629a27d3aa22ed4766decb217cea1e590a6d4b024b3803b025e9a7d41",
+      "manifest_sha256": "a1ce3b46f8cc813bde0782144ccfab73cf6b225210284616de483d7a9043a004",
+      "archive_sha256": "ead0673e7a4f90d622cdc727858d4d383de75dba8468c8473edf6188874c4a8d"
+    },
+    {
+      "plugin_id": "qcore.libevent",
+      "executable_sha256": "00099ab913b5ff8006e42e46dcd729e407ad8c0e5b26a8f97c4ba7503c55db4a",
+      "manifest_sha256": "820e33f2c4516e0f2564ced0c7ef685cb995d2781b13b6c279c1cb23005d6600",
+      "archive_sha256": "6cbd82eaed393b14ee966e964e08d46a4e2f82e5db8279f4e50c6d99925d48bc"
+    },
+    {
+      "plugin_id": "qcore.librdkafka",
+      "executable_sha256": "0428fbf961b45d3a9595999c5ad6ce35d7be15fc7f691332ea40c960beec6066",
+      "manifest_sha256": "1fc79ada4902ef24f14a29c1ad68f805619005c960d4e010e1f215c1154b6b13",
+      "archive_sha256": "925af448451bea8d7db3df54e247dcf054209a8cdf082d1ec452340b02c5753b"
+    }
+  ],
+  "rustc": "rustc 1.98.0 (88d9e12ae 2026-08-18)\nbinary: rustc\ncommit-hash: 88d9e12ae178fab0fb5cc050a94da85685d449ea\ncommit-date: 2026-08-18\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.0\nLLVM version: 22.1.8\n",
+  "lock_sha256": "3217bd0e8a111dcd223e5dedf302d28c115cf2a4615403e5b268b46d75511eb4"
+}

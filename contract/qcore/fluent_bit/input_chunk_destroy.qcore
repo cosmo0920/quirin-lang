@@ -104,6 +104,20 @@ module contract;
 //     strength of its neighbour's name would be exactly the
 //     unfaithful-declaration defect card P07 recorded, and this card withdraws
 //     neither finding. Named `AOM-DESTROY-SIBLINGS-UNDECLARED`.
+//
+//     **Card AOM-DESTROY-SIBLINGS decided that follow-on, and the warning above
+//     was justified by the outcome.** Reading each body on its own terms gave
+//     the two functions DIFFERENT answers.
+//     `flb_input_chunk_destroy_direct_routes` is now declared in
+//     `fluent_bit/input_chunk_destroy_direct_routes.qcore` — with a
+//     **`nullable`** release, not this module's `nonnull`, because that body's
+//     third statement is `if (!routes) { return; }`. Copying this module's
+//     nullability onto it would have been unfaithful.
+//     `flb_input_chunk_destroy_corrupted` **remains undeclared**: its reading
+//     is written out in that card's report, and its measured payoff is zero,
+//     because its single in-corpus call site (`input_chunk_get`, `:2866`;
+//     preprocessed L19823) is refused as an indirect memory access before the
+//     call rule is reached. Named `AOM-DESTROY-CORRUPTED-UNPAID-PREMISE`.
 
 extern fn flb_input_chunk_destroy(ic: ptr<mut, u8>, del: i32) -> i32
 contract {

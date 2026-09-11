@@ -1,0 +1,124 @@
+module contract;
+
+// Fluent Bit direct-route array destructor — resource-projection vocabulary
+// version 1.
+//
+// Card AOM-DESTROY-SIBLINGS. This module declares ONE TRUSTED ASSUMPTION about
+// one C function. It verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on this module
+// is a verdict RELATIVE TO this declaration and is never a proof of the C
+// implementation.
+//
+// The body was read at Fluent Bit `66910c10a4d7eafa810b84229cf2dcf7b0f26f97`,
+// `src/flb_input_chunk.c:2483-2504`, and is cited by line below. The C
+// declaration in force is `include/fluent-bit/flb_input_chunk.h:162`:
+//
+//     void flb_input_chunk_destroy_direct_routes(struct flb_chunk_direct_route *routes,
+//                                                int route_count);
+//
+// ## Read on its own terms, not on its neighbour's name
+//
+// Card ADDRESS-OF-MEMBER-DESTROY-UNDECLARED declared the sibling
+// `flb_input_chunk_destroy` and deliberately left this function undeclared,
+// naming `AOM-DESTROY-SIBLINGS-UNDECLARED` and warning that declaring either
+// sibling on the strength of the other's shape would be the unfaithful
+// declaration defect card P07 recorded. That warning is load-bearing here: the
+// two contracts DISAGREE on the one conjunct that decides the outcome.
+// `flb_input_chunk_destroy` is `nonnull`, because its first statement
+// dereferences `ic`. THIS body's third statement is
+//
+//     if (!routes) {                                          // :2490
+//         return;                                             // :2491
+//     }
+//
+// so a null argument is defined behaviour here, and `nullable` is the faithful
+// nullability — the same position `flb_free` holds, and for the same reason.
+// Copying the sibling's `nonnull` would have been unfaithful in the
+// RESTRICTIVE direction: it asserts a precondition the body does not have, and
+// it would refuse every call site the projection cannot prove non-null while
+// claiming the callee demanded that proof.
+//
+// ## Why this function is declared although the analysed unit defines it
+//
+// `flb_input_chunk_destroy_direct_routes` is defined in
+// `src/flb_input_chunk.c`, itself a unit of the pinned corpus, so this is the
+// arrangement cards PROD-CONTRACTS, NEIGHBOURS and
+// ADDRESS-OF-MEMBER-DESTROY-UNDECLARED already established: a declared contract
+// ALWAYS wins over a W4-inferred summary, a disagreement is reported as a
+// `SummaryConflict` diagnostic and never silently resolved
+// (`crates/qcore-c-gateway/src/legacy_summary.rs`), and declaring a defined
+// function does not stop the unit analysing that function's own body — it only
+// fixes what its CALLERS may assume. This function's own status is whatever its
+// body earns, and this module does not move it.
+//
+// ## The custody statement, read against the body
+//
+// The body has exactly two exits, and `routes` is discharged on both.
+//
+//   * The guarded exit at `:2491` is reached only when `routes` is null. A null
+//     pointer carries no caller obligation, so there is nothing to discharge
+//     and nothing is leaked; `nullable` is exactly the mode that says so.
+//   * On every other path control reaches
+//
+//         flb_free(routes);                                   // :2503
+//
+//     UNCONDITIONALLY. The only construct between `:2490` and `:2503` is one
+//     `for` loop (`:2494-2501`) containing two `if` statements; the loop body
+//     has no `break`, no `return` and no `goto`, and a non-positive
+//     `route_count` simply skips it. There is no early exit anywhere in this
+//     function other than the null guard.
+//
+// So the caller's obligation on `routes` is discharged in full on every path,
+// which is what `resource_released` says. Over the whole v1 parameter
+// vocabulary it is the only mode with that caller-side effect:
+// `resource_borrowed` would leave a discharged obligation standing (which is
+// precisely the leak family this declaration decides) and `resource_stored`
+// would consume it under an owner that does not exist. An unfaithful
+// declaration is worse than `Unknown`.
+//
+// `route_count` is an `int` by value. `resource_borrowed` is the only mode the
+// loader admits on a scalar, and it is also the true one — the value bounds the
+// member-release loop and selects nothing about the custody of `routes` itself.
+//
+// The result is `void`, so `resource_return_none()`.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **Nothing about the member releases** (`:2495-2500`). The loop frees
+//     `routes[index].label` only when it is non-null AND
+//     `routes[index].label_length > 0`, and `routes[index].plugin_name` only
+//     when it is non-null. A non-null `label` recorded with a zero
+//     `label_length` would therefore NOT be freed. In the producer this corpus
+//     contains (`flb_input_chunk_get_direct_routes`) the two fields are written
+//     together and cannot disagree, but that is a property of the producer, not
+//     of this callee, and this declaration asserts nothing about either field.
+//     The members are not the caller's `routes` obligation and this module does
+//     not name them.
+//   * **Nothing about `route_count` agreeing with the allocated extent.** If
+//     `route_count` exceeds the number of elements `routes` was allocated for,
+//     the loop reads out of bounds before the release. This module claims the
+//     release HAPPENS; it does NOT claim it is SAFE. That is the same boundary
+//     `fluent_bit/input_chunk_destroy.qcore` records for its own body.
+//   * **Nothing about retention.** Whether any other object still holds
+//     `routes`, or holds one of the member pointers this body frees, is the
+//     unmodeled retention this corpus records as B03/R13 and is not decided
+//     here.
+//   * **`flb_input_chunk_destroy_corrupted` (`:2623-2701`) remains
+//     DELIBERATELY UNDECLARED.** Card AOM-DESTROY-SIBLINGS read that body too
+//     and wrote out the contract it would carry, and then measured its payoff
+//     at ZERO: the pinned 185-unit corpus contains no
+//     `call to uncontracted function \`flb_input_chunk_destroy_corrupted\``
+//     leaf at all, because its single in-corpus call site
+//     (`input_chunk_get`, `:2866`) is refused by the indirect-access rule
+//     before the call rule is ever reached. Landing it would add an unpaid
+//     premise. That is the same disposition, on the same rule, that card
+//     CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF gave `msgpack/packer.qcore`. Named
+//     `AOM-DESTROY-CORRUPTED-UNPAID-PREMISE`.
+
+extern fn flb_input_chunk_destroy_direct_routes(routes: ptr<mut, u8>, route_count: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(routes, nullable);
+    ensures normal resource_borrowed(route_count);
+    ensures normal resource_return_none();
+};
