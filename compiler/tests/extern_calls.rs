@@ -3,6 +3,7 @@
 //!
 //! Every contract fixture here lives under `tests/fixtures/`, never under
 //! `contract/qcore/`, so the pinned corpus counts are untouched by this card.
+#[cfg(not(target_os = "windows"))]
 #[path = "../../tests/support/diagnostic_sink.rs"]
 mod diagnostic_sink;
 
