@@ -111,8 +111,9 @@ fn codes(
 }
 
 fn manifest_with(original: &str, replacement: &str) -> String {
-    let edited = MANIFEST.replace(original, replacement);
-    assert_ne!(edited, MANIFEST, "the manifest edit must have applied");
+    let manifest = text(MANIFEST);
+    let edited = manifest.replace(original, replacement);
+    assert_ne!(edited, manifest, "the manifest edit must have applied");
     edited
 }
 
@@ -431,8 +432,9 @@ fn an_include_the_manifest_does_not_declare_is_not_followed() {
 /// A visibility text with one line rewritten, so each derivation condition can
 /// be broken in isolation while everything else stays as the accepted fixture.
 fn visibility_with(original: &str, replacement: &str) -> String {
-    let edited = VISIBILITY.replace(original, replacement);
-    assert_ne!(edited, VISIBILITY, "the visibility edit must have applied");
+    let visibility = text(VISIBILITY);
+    let edited = visibility.replace(original, replacement);
+    assert_ne!(edited, visibility, "the visibility edit must have applied");
     edited
 }
 
@@ -606,12 +608,16 @@ fn a_manifest_declaring_no_include_is_the_wave_22_binding() {
 fn an_include_statement_without_a_header_is_refused_at_load() {
     // The declared texts exist only to be read *into* the exported header, so
     // one without a header names a text nothing opens.
-    let edited = MANIFEST
+    let edited = text(MANIFEST)
         .replace("header include/qcore_buffer_demo_decorated.h;\n", "")
         .replace(
             "header_hash sha256:88d5ce105a191a68908600cf43d98efe36b7f89d817a202821da50e720a08f6e;\n",
             "",
         );
+    assert!(
+        !edited.contains("header include/") && !edited.contains("header_hash sha256:"),
+        "both halves of the header binding must have been removed"
+    );
     let refusals = codes((MANIFEST_PATH, &edited), both_texts());
     assert_eq!(
         refusals

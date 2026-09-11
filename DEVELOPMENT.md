@@ -349,6 +349,8 @@ full suite.
 
 ## Increment records
 
+Native-library decoration Windows fixture repair (2026-09-12): the manifest and visibility-header mutation helpers now normalize checkout line endings before applying LF-spelled edits, so the four negative rows exercise their intended malformed include and non-derivable decoration cases under CRLF rather than either failing at the test guard or silently compiling the unedited manifest. The header-removal row also asserts that both binding statements were actually removed. The focused `native_library_header_decoration` suite passes all 22 tests; the full workspace test gate, formatting, Clippy, both reevaluation probes and all 99 Lean audits pass. Production reader semantics, verdicts, provider packages and frozen corpus artifacts are unchanged.
+
 Wave 23 close (2026-09-11): six cards merged one at a time under the
 failure-gated chain, each under its own green gate. `NATIVE-LIBRARY-SOURCE-BINDING`
 gave a source file its own manifest selection — `extern library NAME;` resolves
