@@ -1,28 +1,23 @@
 # Claude Code project notes
 
-> **Current work status:** The 49-card remaining-work plan of 2026-09-07 is
-> fully dispositioned. Current work follows the named follow-ons recorded in
-> `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`) and per-report
-> follow-on lists. The overall generalization goal is not yet complete.
-
 @AGENTS.md
 
-`AGENTS.md` is the source of truth: the compact status ledger, the six hard
-invariants, the **standing subsystem constraints** (the "when touching X, do
-not Y" inventory — read that section before editing the C gateway, the
-compile-task transport, the diagnostics tables, the concurrency routes or the
-provider host), the per-change gate, the entry points and the diagnostics
-namespaces all live there. Per-increment status history lives in
-`DEVELOPMENT.md`'s "Increment records". This file carries only the operational
-guidance for working in this repository that is not in either of those.
+`AGENTS.md` is the source of truth and carries the current work status, the
+compact ledger, the six hard invariants, the **standing subsystem constraints**
+(the "when touching X, do not Y" inventory — read that section before editing
+the C gateway, the compile-task transport, the diagnostics tables, the
+concurrency routes or the provider host), the per-change gate, the entry points,
+the Lean CI hygiene rules and the diagnostics namespaces. Per-increment status
+history lives in `DEVELOPMENT.md`'s "Increment records". This file carries only
+the operational guidance that is in neither of those.
 
 ## Working rules
 
 - **Never weaken a fail-closed gate, delete a pinned expectation, or downgrade
   a diagnostic to make a test pass.** If a pinned table (contract corpus
   counts, submodule revision, archived report, CT manifest) conflicts with your
-  change, the change must update the pin *deliberately* and say so in the
-  commit message and report.
+  change, update the pin *deliberately* and say so in the commit message and
+  report.
 - **Status language matters.** Keep the Safe/Unsafe/Unknown verdict vocabulary
   and the "unpromoted" phrasing exactly as defined in `AGENTS.md` when editing
   docs, reports or commit messages. A provisional `Unsafe` is never an upstream
@@ -37,9 +32,17 @@ guidance for working in this repository that is not in either of those.
 - **Close a card with Rust plus audited Lean.** A card closes only with a Rust
   implementation and matching audited Lean modules registered in an
   `Audit*.lean`; Python artifacts are supplementary evidence, never the close.
-- **New status text goes in one place.** Add one paragraph to `DEVELOPMENT.md`'s
-  "Increment records" and update `AGENTS.md`'s headline numbers only. Do not
-  re-grow a per-increment chronicle in `AGENTS.md` or here.
+- **New status text goes in one place** — one paragraph in `DEVELOPMENT.md`'s
+  "Increment records", plus `AGENTS.md`'s headline numbers. That is the sync
+  rule stated in `AGENTS.md`; do not re-grow a per-increment chronicle here.
+- **Compact these three files every 2–3 waves.** `AGENTS.md`, `CLAUDE.md` and
+  `README.md` accrete: constraints restate their card reports, sections drift
+  apart, README falls behind the ledger. A recurring compaction card (precedent:
+  DOCS-COMPACT 2026-09-10, DOCS-COMPACT-2 2026-09-11) re-reads every headline
+  number from its source, inventories the standing constraints before and after,
+  and merges redundancy. Compaction is **not** deletion: no constraint, hard
+  invariant or evidence pointer may be dropped, and a fact that lives only in
+  these files moves to `DEVELOPMENT.md` verbatim rather than disappearing.
 
 ## Worktree and measurement hygiene
 
@@ -58,21 +61,22 @@ guidance for working in this repository that is not in either of those.
 
 ## Platform records
 
-- **Cross-platform build (user-validated, 2026-09-11):** the codebase
-  builds on Linux, macOS and Windows with a small number of recorded
-  limitations (the per-platform residual lists in the reports below), and
-  **ARM64 Windows** starts the `quirin` compiler and compiles emitted C
-  sources. The ARM64 observation is the user's own environment report —
-  compiler runs and emitted C builds; no test-suite, sanitizer or
-  byte-comparison claim is made for that architecture (candidate residual
-  names: `QUIRIN-ARM64-GATE`, `QUIRIN-ARM64-RUN`).
+This is the home for per-platform observations; `AGENTS.md` keeps the toolchain
+requirements that are part of the gate.
+
+- **Cross-platform build (user-validated, 2026-09-11):** the codebase builds on
+  Linux, macOS and Windows with a small number of recorded limitations (the
+  per-platform residual lists in the reports below), and **ARM64 Windows**
+  starts the `quirin` compiler and compiles emitted C sources. The ARM64
+  observation is the user's own environment report — compiler runs and emitted C
+  builds; no test-suite, sanitizer or byte-comparison claim is made for that
+  architecture (candidate residual names: `QUIRIN-ARM64-GATE`,
+  `QUIRIN-ARM64-RUN`).
 - **Windows:** native C11 thread subset and MSVC/Clang fixtures —
   `docs/reports/windows-c11-threads/README.md`,
   `docs/reports/windows-vs2026/README.md`,
   `docs/reports/windows-clang-fixtures/README.md`. Visual Studio Clang
-  discovery orders vswhere newest first with VS 2026/2022 fallbacks;
-  `QCORE_CLANG` overrides it and an invalid value is an error, never a silent
-  fallback.
+  discovery orders vswhere newest first with VS 2026/2022 fallbacks.
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
   Linux-only, so leak detection stays a Linux observation), and Apple Clang
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.
@@ -80,18 +84,10 @@ guidance for working in this repository that is not in either of those.
   `/var` → `/private/var` alias cannot invalidate a pinned task.
 - **Linux:** the sanitizer, mapping (`MAP_FIXED_NOREPLACE`) and OS-endpoint
   observations are Linux-only by scope, not by omission.
-- Native threading examples: `examples/threads/README.md` explains `cl.exe`
-  compilation; `build-windows.ps1 -Run` emits, builds and runs the
-  copied-worker, owned-buffer and shared-reader examples into
-  `target/thread-examples/`.
 
-## Pointers
+## Pointer
 
-- Persistent audit setup: `docs/CYCLE19_BUILD_INPUTS.md` (replaces ephemeral
-  `/tmp` build paths).
-- Current normative specification: `docs/QCORE_SPEC_r0_3.md` and its contract
-  companion; follow `docs/reviews/r0_3/acceptance.json` for repair status. Any
-  supplied archive review is older than the merged W2–W5 implementations.
-- Emacs source/contract highlighting: `editors/emacs/qcore-mode.el`, with
-  installation and ERT checks in `editors/emacs/README.md`. This is lexical
-  editor support, not a change to language conformance or verification.
+Any supplied archive review is older than the merged W2–W5 implementations;
+read `docs/reviews/r0_3/acceptance.json` for current repair status. Every other
+pointer an agent needs — spec, audit setup, entry points, editor support — is in
+`AGENTS.md`.
