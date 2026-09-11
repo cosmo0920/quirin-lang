@@ -64,6 +64,36 @@
 //! `unit`-returning callee in a non-final position still refuses, at `Q024`
 //! naming its result rather than at `Q037` naming the pipe.
 //!
+//! # Model intrinsics as stages (card `PIPE-INTRINSIC-STAGE`)
+//!
+//! Card `COMPOSE-CONCURRENCY` filed a follow-on saying the brief's literal
+//! `buffer |> read |> render |> log` needed "a pipeline stage for a task
+//! intrinsic, which is a pipe-grammar change". The census measured for that card
+//! says it does not, and the reason is worth stating here so a later card does
+//! not add a table entry for it:
+//!
+//! * A **call-shaped** model intrinsic is spelled `NAME(ARGS)` and its statement
+//!   form is `let NAME = INTRINSIC(ARGS);` — `qcore_buffer_new`,
+//!   `qcore_buffer_read`, `qcore_buffer_write` and `qcore_error_payload` on the
+//!   task routes, `qcore_acquire` and `qcore_check` on the sequential one. None
+//!   is in [`SINK_STAGES`] or [`OPERANDLESS_STAGES`], so each is a **call
+//!   stage** by the classification below and each therefore already desugars
+//!   onto the statement form its route already lowers, with the hygienic
+//!   temporary. `buffer |> qcore_buffer_read |> log info dec;` is
+//!   `let ⟨t0⟩ = qcore_buffer_read(buffer); log info dec ⟨t0⟩;`.
+//! * A **keyword-shaped** intrinsic — `spawn S W(ARGS)?`, `join move H?`,
+//!   `share N`, `drop N`, and the mutex and epoch clause words — is a statement
+//!   whose operands are not a parenthesized argument list. A call stage only
+//!   ever emits `HEAD ( … )`, so none of them is reachable, and the closed sink
+//!   table deliberately does not name them. Adding `drop` in particular would
+//!   make a *custody-releasing* statement pipeable, which is a decision of its
+//!   own: follow-on `PIPE-DROP-STAGE`.
+//!
+//! Whether the route can bind a particular intrinsic's result stays the route's
+//! question, reported at that stage's span — `qcore_buffer_write` returns `unit`
+//! and refuses mid-chain at `Q050`, not at `Q037` — which is exactly the rule
+//! card `PIPE-SCALAR-RESULT` set for a `unit`-returning extern callee.
+//!
 //! Two spellings exist for the value a previous stage produced, because a
 //! hygienic temporary has no name a reader could write:
 //!
@@ -160,6 +190,15 @@ pub struct PipeRefusal {
 /// selector words each takes before its operand. Anything not in this table is
 /// a call stage or a refusal; the table is closed on purpose, so a new
 /// statement form does not become pipeable by accident.
+///
+/// Card `PIPE-INTRINSIC-STAGE` measured what that exclusion covers and left it
+/// unchanged: every keyword-shaped model intrinsic (`spawn`, `join`, `share`,
+/// `drop`, `grow`, `open`, `close`, and the epoch plan clauses) is outside it,
+/// and a call-shaped one (`qcore_buffer_read` and its five siblings) does not
+/// need to be inside it, being a call stage already. `drop` is the entry a
+/// reader will reach for first and the one deliberately withheld: it takes a
+/// single operand exactly as `print` does, but it *releases custody*, and a
+/// releasing table entry is a different kind of entry from a rendering one.
 const SINK_STAGES: &[(&str, usize)] = &[("print", 1), ("log", 2)];
 
 /// Statement heads that take no operand at all. Piping into one is refused

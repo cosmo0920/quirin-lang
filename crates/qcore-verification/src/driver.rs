@@ -24,7 +24,7 @@ use qcore_frontend::frontend::{
     SourceDiagnostic, SourceModuleMode, SourceProgram, StatementKind, TypedSourceDeclaration,
     TypedSourceProgram, elaborate_source, parse_source_program,
 };
-use qcore_frontend::lexer::{Span, Symbol, Token, TokenKind, lex};
+use qcore_frontend::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_frontend::whole_program::{
     CallSite, CheckedProgram, FunctionSemantics, FunctionSummary, ParameterOwnership,
     check_whole_program,
@@ -1230,7 +1230,7 @@ impl FunctionLowering<'_> {
                 // did before card `IF-ARMS`.
                 return self.lower_sequence(rest, output, position);
             }
-            let tokens = statement_tokens(self.parsed.source(), statement.span)?;
+            let tokens = statement_tokens(self.parsed, statement.span)?;
             match &statement.value {
                 StatementKind::Let {
                     binding: Some(binding),
@@ -1624,7 +1624,7 @@ impl FunctionLowering<'_> {
                 "an `if` requires a condition",
             ));
         };
-        let condition_tokens = statement_tokens(self.parsed.source(), *condition_span)?;
+        let condition_tokens = statement_tokens(self.parsed, *condition_span)?;
         let context = ConditionContext {
             constants: &self.constants,
             owners: &self.owners,
@@ -2442,12 +2442,35 @@ fn validate_emittable_calls(
     visit(entry, calls, checked, &mut BTreeSet::new())
 }
 
-fn statement_tokens(source: &str, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
-    let slice = &source[span.start..span.end];
-    let mut tokens =
-        lex(slice).map_err(|error| diagnostic(SemanticPass::CEmission, span, error.to_string()))?;
-    tokens.pop();
-    Ok(tokens)
+/// The tokens of one statement (or one `if` condition), read from the program's
+/// own **post-desugaring** token stream.
+///
+/// Card `PIPE-INTRINSIC-STAGE`. Until this card the sequential route re-lexed
+/// the raw source slice, which is the one place in the compiler where a later
+/// phase could still tell a `|>` had been written: `source.pipe.v1` rewrites the
+/// *token stream* before parsing, so a re-lex of the original bytes hands the
+/// lowering the reader's pipeline instead of the statement it desugared to. The
+/// observable consequence was that this route's own two call-shaped intrinsics
+/// — `qcore_acquire` and `qcore_check` — refused through a pipe while their
+/// hand-written twins were admitted, with a message naming the hand form the
+/// reader had in fact written.
+///
+/// Reading the parsed program's stream instead is **byte-for-byte identical on
+/// every pipe-free file**, because `SourceProgram::lexical_tokens` is the lex of
+/// that same source and a statement's tokens are exactly those whose spans lie
+/// inside it. What it adds is the synthesized delimiters and hygienic
+/// temporaries a desugared pipeline contributes, each anchored zero-width inside
+/// the statement's own span (card `PIPE-CHAIN`), in the desugared order. No
+/// consumer of this function reads a returned token's span — every diagnostic
+/// here is attributed to the statement or condition span — so the change from
+/// slice-relative offsets to absolute ones is not observable.
+fn statement_tokens(program: &SourceProgram, span: Span) -> Result<Vec<Token>, SourceDiagnostic> {
+    Ok(program
+        .lexical_tokens()
+        .iter()
+        .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
+        .cloned()
+        .collect())
 }
 
 fn parse_acquire(tokens: &[Token]) -> Option<(ResourceId, bool, String)> {

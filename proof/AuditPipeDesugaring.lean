@@ -84,6 +84,24 @@ import QCore.PipeDesugaring
 #print axioms QCore.PipeDesugaring.a_chain_preserves_every_written_origin
 #print axioms QCore.PipeDesugaring.a_rewritten_chain_contains_no_pipe
 
+-- 5.5 The intrinsic stage (card `PIPE-INTRINSIC-STAGE`): a call-shaped model
+-- intrinsic is a call stage by the existing definition, so the payoff chain is
+-- the statement sequence the route already lowers, and a keyword-shaped one is
+-- unreachable.
+#print axioms QCore.PipeDesugaring.no_intrinsic_is_a_sink_or_operandless
+#print axioms QCore.PipeDesugaring.every_call_shaped_intrinsic_produces_a_result
+#print axioms QCore.PipeDesugaring.the_buffer_read_chain_is_its_hand_written_sequence
+#print axioms QCore.PipeDesugaring.an_intrinsic_takes_the_piped_value_as_its_first_argument
+#print axioms QCore.PipeDesugaring.an_allocating_intrinsic_keeps_its_adapter_tail
+#print axioms QCore.PipeDesugaring.a_keyword_shaped_intrinsic_is_not_reachable
+
+-- 5.6 The two statement readers: they agree on a pipe-free statement and do
+-- not on a desugared one, which is why the sequential route now reads the
+-- program's own stream rather than re-lexing the source bytes.
+#print axioms QCore.PipeDesugaring.the_two_readers_agree_on_a_pipe_free_statement
+#print axioms QCore.PipeDesugaring.the_byte_reader_loses_the_desugared_statement
+#print axioms QCore.PipeDesugaring.the_byte_order_and_the_statement_order_differ
+
 -- 6. The operator gate, as retabled by card `OR-AND-LOWERING`: the three
 -- single-byte characters are reserved and refuse everywhere, the two
 -- connectives are admitted in an `if` condition and refused outside one, and
