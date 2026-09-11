@@ -25,7 +25,12 @@ New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
 # `write_interest` is deliberately absent: it is the check-only arm and emits no
 # C at all, so there is nothing here to build. `quirin check` reports it.
-foreach ($name in @('self_pipe')) {
+#
+# `wake_payload` is the composed program of card COMPOSE-EVENT-LINES: it writes
+# its two source-authored lines on stderr beside the selected system trace on
+# stdout, and its emitted C verifies the byte each turn drained against the one
+# the checker predicted (a mismatch exits 76).
+foreach ($name in @('self_pipe', 'wake_payload')) {
     $sourcePath = Join-Path $PSScriptRoot "$name.qcore"
     $cPath = Join-Path $outputDir "$name.c"
     $objectPath = Join-Path $outputDir "$name.obj"
@@ -52,6 +57,10 @@ foreach ($name in @('self_pipe')) {
         # declaration. Both are failures here, and deliberately so.
         if ($LASTEXITCODE -ne 0) { throw "$name exited with code $LASTEXITCODE." }
         Write-Host "$name completed with its selected diagnostic log on the Windows arm."
+        # Both streams are this program's: stdout carries the system trace it
+        # selected and stderr its own `log` lines. The transcripts published in
+        # README.md are the comparison; this runner checks the exit code, which
+        # is residual TRACE-STDIO-WIN-RUN's shape on this page too.
     }
 }
 

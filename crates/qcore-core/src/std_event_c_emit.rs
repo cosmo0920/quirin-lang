@@ -42,10 +42,17 @@ use crate::diagnostic_log_c_emit::{
     DIAGNOSTIC_LOG_PRELUDE, DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION,
     diagnostic_stdout_adapter_declaration,
 };
-use crate::std_event::{
-    EndpointId, EventSourceProgram, EventStatement, Interest, RegistrationId, StdEventCertificate,
+use crate::event_reactor::ReactorProfile;
+use crate::io_emit::IO_PRELUDE;
+use crate::obs_reordering::{
+    AdmittedReordering, DeclaredRecord, Emitter, ReorderingRefusal, ReorderingWitness,
 };
-use crate::std_io::Stream;
+use crate::std_event::{
+    EndpointId, EventProfile, EventSourceProgram, EventStatement, Interest, RegistrationId,
+    StdEventCertificate,
+};
+use crate::std_io::{StdIoEvent, Stream};
+use crate::std_io_c_emit;
 
 /// The compatibility header, embedded so an emitted program needs no QCore
 /// include path and no linked artifact.
@@ -60,6 +67,14 @@ pub const STATUS_WAKE: i32 = 72;
 pub const STATUS_DISPATCH: i32 = 73;
 pub const STATUS_DRAIN: i32 = 74;
 pub const STATUS_CLOSE: i32 = 75;
+/// The byte a turn's callback actually drained is not the byte the checked
+/// model says its wake delivered (card `COMPOSE-EVENT-LINES`).
+///
+/// The same discipline `STATUS_DISPATCH` applies to the readiness declaration:
+/// the named premise [`crate::std_event::STREAM_BYTE_ORDER`] is **checked** by
+/// the emitted program rather than trusted, so a false premise is a failed run
+/// and never a rendered line no model computed.
+pub const STATUS_PAYLOAD: i32 = 76;
 
 /// How long an emitted program waits on a turn that declared a ready
 /// registration, in milliseconds.
@@ -106,6 +121,10 @@ pub fn trace_line(
 ) -> Option<String> {
     match statement {
         EventStatement::LogLevel { .. } => None,
+        // A source line is **program output**, not a compiler observation, so
+        // it contributes no trace record at all: the quiet-emission amendment's
+        // §2.1/§2.2 boundary, in one arm.
+        EventStatement::Line(_) => None,
         EventStatement::ContextOpen => Some("QCORE_EVENT_OPEN".to_owned()),
         EventStatement::ContextClose => Some("QCORE_EVENT_TEARDOWN".to_owned()),
         EventStatement::Endpoints { first, second } => Some(format!(
@@ -128,10 +147,15 @@ pub fn trace_line(
             let (id, _, _) = registrations.get(registration)?;
             Some(format!("QCORE_EVENT_UNWATCH {id}"))
         }
-        EventStatement::Wake { endpoint } => {
+        // The payload byte is deliberately **absent** from the trace. A `wake`
+        // projects to no reactor operation, so its payload is not a reactor
+        // fact; it is a value, and a value reaches an observation only where a
+        // source line renders it. That is also why every transcript published
+        // before card `COMPOSE-EVENT-LINES` is byte-identical after it.
+        EventStatement::Wake { endpoint, .. } => {
             Some(format!("QCORE_EVENT_WAKE {}", endpoints.get(endpoint)?))
         }
-        EventStatement::DispatchReady { registration } => {
+        EventStatement::DispatchReady { registration, .. } => {
             let (id, _, _) = registrations.get(registration)?;
             Some(format!("QCORE_EVENT_DISPATCH {id}"))
         }
@@ -164,15 +188,271 @@ fn identities(certificate: &StdEventCertificate) -> (EndpointIdentities, Registr
     (endpoints, registrations)
 }
 
-/// The structured reference observation, as `"out: <line>"` records in program
-/// order.
+/// One record of a run's observation: who wrote it, on which stream, in which
+/// concurrency window, and what it said (card `COMPOSE-EVENT-LINES`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct EventRecord {
+    pub emitter: Emitter,
+    pub stream: Stream,
+    pub window: usize,
+    pub text: String,
+    /// Whether this record is a retained **compiler observation** rendered by
+    /// the explicitly selected diagnostic adapter, as opposed to a
+    /// source-authored line. Both reach stdout when `log_level` is selected;
+    /// only the second is program output in the amendment's sense.
+    pub system_trace: bool,
+}
+
+/// What one run of an executable module writes, in program order.
+///
+/// This is the reference observation, and it is derived from the checked
+/// program and its certificate alone — never from a native run.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct EventObservation {
+    records: Vec<EventRecord>,
+}
+
+impl EventObservation {
+    pub fn records(&self) -> &[EventRecord] {
+        &self.records
+    }
+
+    /// The declared records of one stream, in card `OBS-REORDERING`'s own
+    /// vocabulary.
+    pub fn stream_records(&self, stream: Stream) -> Vec<DeclaredRecord> {
+        self.records
+            .iter()
+            .filter(|record| record.stream == stream)
+            .map(|record| DeclaredRecord {
+                emitter: record.emitter,
+                window: record.window,
+                text: record.text.clone(),
+            })
+            .collect()
+    }
+
+    /// The reordering relation this run's stream declares
+    /// (`qcore.obs-reordering.v1`).
+    ///
+    /// **It is strict, and that is a measurement about the reactor profile
+    /// rather than an assumption.** See [`observe_event_program`]: the window
+    /// structure is card `OBS-REORDERING` §1.2's live-set walk over this
+    /// model's own regions — a dispatch turn — and the set of emitters a turn
+    /// makes live is read off the profile, which for
+    /// [`crate::std_event::EventProfile::SingleThreadedPollV1`] is empty. Every
+    /// record is therefore a barrier, the relation admits nothing but itself,
+    /// and comparing against it **is** byte equality
+    /// (`strict_iff_byte_equality`). Nothing here declares a reordering the
+    /// route does not need.
+    ///
+    /// # Errors
+    ///
+    /// [`ReorderingRefusal`] from the declaration's own premises.
+    pub fn admitted_reordering(
+        &self,
+        stream: Stream,
+    ) -> Result<AdmittedReordering, ReorderingRefusal> {
+        AdmittedReordering::declare(self.stream_records(stream))
+    }
+
+    /// Compare one stream of a native run with this run's declared relation.
+    ///
+    /// # Errors
+    ///
+    /// [`ReorderingRefusal`] naming the first conjunct the observed stream
+    /// violates.
+    pub fn compare_stream(
+        &self,
+        stream: Stream,
+        observed: &str,
+    ) -> Result<ReorderingWitness, ReorderingRefusal> {
+        self.admitted_reordering(stream)?.compare_text(observed)
+    }
+
+    /// One stream's bytes, newline-terminated.
+    pub fn projection(&self, stream: Stream) -> String {
+        let mut text = String::new();
+        for record in self.records.iter().filter(|record| record.stream == stream) {
+            text.push_str(&record.text);
+            text.push('\n');
+        }
+        text
+    }
+
+    /// The observation as `"<stream>: <line>"` records in program order — the
+    /// shape every other route publishes.
+    pub fn labelled(&self) -> Vec<String> {
+        self.records
+            .iter()
+            .map(|record| format!("{}: {}", record.stream.label(), record.text))
+            .collect()
+    }
+}
+
+/// Derive the reference observation of an executable module.
+///
+/// # What decides a record's window, and why it is a barrier here
+///
+/// Card `OBS-REORDERING` §1.2 derives windows from a **live set**: a record
+/// written while no other thread of control is live is a barrier, alone in its
+/// window and commuting with nothing. That walk is model-independent, and this
+/// is the same walk over this model's own regions. The region of the event
+/// model is a **dispatch turn**, the thread of control a turn makes live is the
+/// one running its callback, and which emitter that is is decided by the
+/// reactor profile: v1 selects
+/// [`crate::std_event::EventProfile::SingleThreadedPollV1`], whose
+/// `threading_enabled()` is `false` and under which the reactor refuses a
+/// cross-thread activation at `L04`. The live set is therefore empty at every
+/// point of every v1 program, every record is a barrier, and the declared
+/// relation is strict.
+///
+/// **No reordering is declared, because none is needed.** A route that later
+/// runs a callback on another thread — or gives a callback a source-level body
+/// at all — supplies a non-empty live set here and the same walk produces the
+/// windows for it.
+///
+/// # Errors
+///
+/// [`EventEmissionRefusal::NotExecutable`] for a check-only module, and
+/// [`EventEmissionRefusal::CertificateDisagrees`] for a certificate whose
+/// identities are not this program's.
+pub fn observe_event_program(
+    program: &EventSourceProgram,
+    certificate: &StdEventCertificate,
+) -> Result<EventObservation, EventEmissionRefusal> {
+    if !certificate.executable {
+        return Err(EventEmissionRefusal::NotExecutable);
+    }
+    if certificate.entry != program.entry {
+        return Err(EventEmissionRefusal::CertificateDisagrees);
+    }
+    let (endpoints, registrations) = identities(certificate);
+    let mut records: Vec<EventRecord> = Vec::new();
+    let mut window = 0usize;
+    // The emitters other than the entry's own thread that are in flight. See
+    // the function header: on this profile the walk never puts one here, and
+    // the emptiness is what makes every record a barrier.
+    let mut live: Vec<Emitter> = Vec::new();
+    let push = |records: &mut Vec<EventRecord>,
+                window: &mut usize,
+                live: &[Emitter],
+                stream: Stream,
+                text: String,
+                system_trace: bool| {
+        if live.is_empty() {
+            *window += 1;
+            records.push(EventRecord {
+                emitter: Emitter::Parent,
+                stream,
+                window: *window,
+                text,
+                system_trace,
+            });
+            *window += 1;
+        } else {
+            records.push(EventRecord {
+                emitter: Emitter::Parent,
+                stream,
+                window: *window,
+                text,
+                system_trace,
+            });
+        }
+    };
+    let mut line_cursor = 0usize;
+    for statement in &program.statements {
+        match statement {
+            EventStatement::LogLevel { .. } => {}
+            EventStatement::Line(line) => match line {
+                StdIoEvent::Print { .. } | StdIoEvent::Log { .. } => {
+                    // The bytes are the certificate's: the checker already
+                    // resolved the operand and rendered the line, so deriving
+                    // them again here would be a second implementation of the
+                    // same rendering rather than a check of the first.
+                    let Some(rendered) = certificate.lines.get(line_cursor) else {
+                        return Err(EventEmissionRefusal::CertificateDisagrees);
+                    };
+                    line_cursor += 1;
+                    push(
+                        &mut records,
+                        &mut window,
+                        &live,
+                        rendered.stream,
+                        rendered.text.clone(),
+                        false,
+                    );
+                }
+                StdIoEvent::Flush => {}
+                StdIoEvent::LogLevel { .. } | StdIoEvent::Return => {
+                    return Err(EventEmissionRefusal::CertificateDisagrees);
+                }
+            },
+            _ => {
+                let text = trace_line(statement, &endpoints, &registrations)
+                    .ok_or(EventEmissionRefusal::CertificateDisagrees)?;
+                // A dispatch turn is this model's concurrency region. Opening
+                // it makes the thread running the callback live — on this
+                // profile that is the entry's own thread, so the set stays
+                // empty and anything written inside the turn is still a
+                // barrier. v1 has no source-level callback body, so nothing is
+                // written inside one at all; the region is walked rather than
+                // assumed away so that a route which gives a callback a body
+                // inherits the structure instead of inventing one.
+                if matches!(statement, EventStatement::DispatchReady { .. }) {
+                    live.extend(concurrent_emitters(PROFILE));
+                    // … a callback body's records would be pushed here …
+                    live.clear();
+                }
+                // The retained trace reaches a stream only through the
+                // explicitly selected adapter, and after the turn it reports.
+                // Without `log_level` the null sink writes nothing, and the
+                // observation says so rather than claiming bytes the program
+                // does not write.
+                if certificate.log_level.is_some() {
+                    push(&mut records, &mut window, &live, Stream::Out, text, true);
+                }
+            }
+        }
+    }
+    if line_cursor != certificate.lines.len() {
+        return Err(EventEmissionRefusal::CertificateDisagrees);
+    }
+    Ok(EventObservation { records })
+}
+
+/// The one profile `source.event.v1` selects, read here so the emitter
+/// question below is asked of the profile rather than of a constant.
+const PROFILE: EventProfile = EventProfile::SingleThreadedPollV1;
+
+/// The emitters a dispatch turn makes live beside the entry's own thread.
+///
+/// Empty for v1, and **derived rather than asserted**: the answer is read off
+/// `ReactorProfile::threading_enabled`, which
+/// [`EventProfile::SingleThreadedPollV1`] declares `false` and under which the
+/// reactor refuses a cross-thread activation at `L04`. A profile that admitted
+/// one would put its dispatching thread here, and the walk above would place a
+/// callback's records in a window shared with the entry's.
+fn concurrent_emitters(profile: EventProfile) -> Vec<Emitter> {
+    if profile.threading_enabled() {
+        vec![Emitter::Worker(0)]
+    } else {
+        Vec::new()
+    }
+}
+
+/// The structured reference observation, as `"<stream>: <line>"` records in
+/// program order.
 ///
 /// The prefix is `source.std-io.v1`'s own convention, so a consumer that
 /// already projects one stream out of that route's observation projects this
-/// one with the same code. These records do not assert that the emitted program
-/// writes stdout. They describe the retained trace-event route; `log_level`
-/// may independently make the diagnostic adapter render those events on
-/// stderr.
+/// one with the same code.
+///
+/// **These are the bytes the emitted program writes**, per stream: the
+/// source-authored lines always, and the retained event trace exactly when the
+/// module selects `log_level` and the diagnostic adapter therefore renders it.
+/// The trace events themselves are retained either way — they are structured
+/// evidence in the certificate, not stream bytes (the quiet-emission
+/// amendment, §2.2 and §7).
 ///
 /// # Errors
 ///
@@ -183,23 +463,7 @@ pub fn interpret_event_program(
     program: &EventSourceProgram,
     certificate: &StdEventCertificate,
 ) -> Result<Vec<String>, EventEmissionRefusal> {
-    if !certificate.executable {
-        return Err(EventEmissionRefusal::NotExecutable);
-    }
-    if certificate.entry != program.entry {
-        return Err(EventEmissionRefusal::CertificateDisagrees);
-    }
-    let (endpoints, registrations) = identities(certificate);
-    let mut observation = Vec::new();
-    for statement in &program.statements {
-        if matches!(statement, EventStatement::LogLevel { .. }) {
-            continue;
-        }
-        let line = trace_line(statement, &endpoints, &registrations)
-            .ok_or(EventEmissionRefusal::CertificateDisagrees)?;
-        observation.push(format!("{}: {line}", Stream::Out.label()));
-    }
-    Ok(observation)
+    Ok(observe_event_program(program, certificate)?.labelled())
 }
 
 const INCLUDES: &str = "\
@@ -236,13 +500,27 @@ pub fn emit_event_c11(
 ) -> Result<EventCEmission, EventEmissionRefusal> {
     // Refuse before emitting anything if the certificate is not this program's,
     // or if the module is outside the executable subset.
-    let observation = interpret_event_program(program, certificate)?;
+    let observation = observe_event_program(program, certificate)?;
     let (endpoints, registrations) = identities(certificate);
+    let writes_lines = program
+        .statements
+        .iter()
+        .any(|statement| matches!(statement, EventStatement::Line(_)));
 
     let mut source = String::from(POLL_COMPAT);
     source.push_str(INCLUDES);
     if let Some(level) = certificate.log_level {
         source.push_str(&diagnostic_stdout_adapter_declaration(level));
+    }
+    // Source-authored output and compiler observations stay two routes: the
+    // lines below expand to `source.std-io.v1`'s own `QCORE_IO_WRITE`, and the
+    // trace events to the typed diagnostic logger. A module writing no line
+    // includes neither this prelude nor `<stdio.h>` through it.
+    if writes_lines {
+        if certificate.log_level.is_none() {
+            source.push_str("#include <stdio.h>\n");
+        }
+        source.push_str(IO_PRELUDE);
     }
     source.push_str(DIAGNOSTIC_LOG_PRELUDE);
     if certificate.log_level.is_some() {
@@ -265,6 +543,12 @@ pub fn emit_event_c11(
             "    qcore_event_pollfd qcore_watch[{registration_count}];"
         );
     }
+    if !certificate.payloads.is_empty() {
+        // One slot for the byte each callback drains. Declared once: the
+        // program is straight-line, and a turn's byte is consumed by the
+        // statements that follow it before the next turn runs.
+        let _ = writeln!(source, "    unsigned char qcore_payload;");
+    }
 
     // The peer of each endpoint, so `wake D;` can write into it. Read off the
     // pair structure the checker built rather than recomputed here.
@@ -283,6 +567,11 @@ pub fn emit_event_c11(
     // dispatch turn's poll set be filled statically: the whole program is
     // straight-line and fully determined, so no run-time bookkeeping is needed.
     let mut watched = Vec::<(RegistrationId, EndpointId, Interest)>::new();
+
+    // The C expression behind each value name a rendering may read. Filled at
+    // the statement that binds it, because a drained byte has no value until
+    // its turn runs — the `source.buffer.v1` shape, for the same reason.
+    let mut scalars = BTreeMap::<String, String>::new();
 
     for (statement_index, statement) in program.statements.iter().enumerate() {
         match statement {
@@ -317,7 +606,7 @@ pub fn emit_event_c11(
                 };
                 watched.retain(|(watching, _, _)| watching != id);
             }
-            EventStatement::Wake { endpoint } => {
+            EventStatement::Wake { endpoint, byte } => {
                 let Some(identity) = endpoints.get(endpoint) else {
                     return Err(EventEmissionRefusal::CertificateDisagrees);
                 };
@@ -329,13 +618,14 @@ pub fn emit_event_c11(
                 // content of the statement.
                 let _ = writeln!(
                     source,
-                    "    if (qcore_event_wake({}) != 0) {{ return {STATUS_WAKE}; }}",
+                    "    if (qcore_event_wake({}, (unsigned char) {byte}u) != 0) \
+                     {{ return {STATUS_WAKE}; }}",
                     endpoint_slot(*other)
                 );
             }
             EventStatement::DispatchReady { .. } | EventStatement::DispatchIdle => {
                 let declared = match statement {
-                    EventStatement::DispatchReady { registration } => {
+                    EventStatement::DispatchReady { registration, .. } => {
                         let Some((id, _, _)) = registrations.get(registration) else {
                             return Err(EventEmissionRefusal::CertificateDisagrees);
                         };
@@ -393,9 +683,34 @@ pub fn emit_event_c11(
                     // v1, so there is nothing else to emit here.
                     let _ = writeln!(
                         source,
-                        "    if (qcore_event_drain({}) != 0) {{ return {STATUS_DRAIN}; }}",
+                        "    if (qcore_event_drain({}, &qcore_payload) != 0) \
+                         {{ return {STATUS_DRAIN}; }}",
                         endpoint_slot(endpoint)
                     );
+                    // The byte is **verified, not trusted**, exactly as the
+                    // ready set is: the checked model says which byte this
+                    // turn's wake delivered, and a disagreement is a failed run
+                    // rather than a line no model computed.
+                    let Some(payload) = certificate
+                        .payloads
+                        .iter()
+                        .find(|payload| payload.statement == statement_index)
+                    else {
+                        return Err(EventEmissionRefusal::CertificateDisagrees);
+                    };
+                    let _ = writeln!(
+                        source,
+                        "    if (qcore_payload != (unsigned char) {}u) {{ return {STATUS_PAYLOAD}; }}",
+                        payload.byte
+                    );
+                    if let Some(binding) = &payload.binding {
+                        let _ = writeln!(
+                            source,
+                            "    int32_t {} = (int32_t) qcore_payload;",
+                            scalar_name(binding)
+                        );
+                        scalars.insert(binding.clone(), scalar_name(binding));
+                    }
                 }
             }
             EventStatement::Close { endpoint } => {
@@ -407,6 +722,26 @@ pub fn emit_event_c11(
                     "    if (qcore_event_close({}) != 0) {{ return {STATUS_CLOSE}; }}",
                     endpoint_slot(*identity)
                 );
+            }
+            EventStatement::Line(line) => {
+                // The rendering itself — the conversion, the level tag, the
+                // stream, the `fflush` — is decided by `source.std-io.v1`'s own
+                // emitter and nowhere else, so this route renders one way with
+                // it rather than in a way that happens to agree.
+                //
+                // `identities` is empty and stays empty: this route publishes
+                // no live custody identity for a render, which is why a
+                // `borrow NAME` is refused by the checker before emission is
+                // reached at all.
+                let identities = BTreeMap::new();
+                match std_io_c_emit::event_statement(line, &scalars, &identities) {
+                    Ok(Some(statement)) => {
+                        let _ = writeln!(source, "    {statement}");
+                    }
+                    Ok(None) => {}
+                    Err(_) => return Err(EventEmissionRefusal::CertificateDisagrees),
+                }
+                continue;
             }
             EventStatement::ContextClose | EventStatement::Return { .. } => {}
         }
@@ -425,19 +760,31 @@ pub fn emit_event_c11(
     source.push_str("}\n");
 
     // The emitted trace and the reference observation are built from the same
-    // `trace_line`, so this is a structural equality rather than a comparison
-    // of two implementations. Rechecking the count here still catches a
-    // statement that emitted no line at all.
-    if observation.len()
-        != program
-            .statements
-            .iter()
-            .filter(|statement| !matches!(statement, EventStatement::LogLevel { .. }))
-            .count()
-    {
+    // `trace_line` and the same certificate lines, so this is a structural
+    // equality rather than a comparison of two implementations. Rechecking the
+    // count here still catches a statement that emitted no record at all.
+    let expected_records = program
+        .statements
+        .iter()
+        .filter(|statement| match statement {
+            EventStatement::LogLevel { .. } => false,
+            EventStatement::Line(line) => {
+                matches!(line, StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
+            }
+            _ => certificate.log_level.is_some(),
+        })
+        .count();
+    if observation.records().len() != expected_records {
         return Err(EventEmissionRefusal::CertificateDisagrees);
     }
     Ok(EventCEmission { source })
+}
+
+/// The C name of a value binding. Prefixed for the same reason
+/// `source.buffer.v1` prefixes its own: a source name and a generated one can
+/// never collide.
+fn scalar_name(name: &str) -> String {
+    format!("s_{name}")
 }
 
 fn c_string(text: &str) -> String {

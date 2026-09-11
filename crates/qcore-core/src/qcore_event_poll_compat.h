@@ -525,18 +525,30 @@ QCORE_EVENT_UNUSED static int qcore_event_pair(qcore_event_fd *first, qcore_even
 /* Write one byte into `peer`, so a read registration on the *other* endpoint of
  * the pair becomes ready. `send`/`recv` rather than `write`/`read` because the
  * Windows arm's endpoints are SOCKETs and not CRT file descriptors; both are
- * POSIX on the other two arms. */
-QCORE_EVENT_UNUSED static int qcore_event_wake(qcore_event_fd peer)
+ * POSIX on the other two arms.
+ *
+ * The payload is the byte the source statement declared, or 'q' where it
+ * declared none. It is not part of the trace: a `wake` projects to no reactor
+ * operation, so its payload is a value rather than a reactor fact, and it
+ * reaches an observation only where a source line renders it. */
+QCORE_EVENT_UNUSED static int qcore_event_wake(qcore_event_fd peer, unsigned char payload)
 {
-    const char byte = 'q';
+    const char byte = (char) payload;
     return send(peer, &byte, 1, 0) == 1 ? 0 : 1;
 }
 
-/* Read one byte from `endpoint`. This is the whole body of a v1 callback. */
-QCORE_EVENT_UNUSED static int qcore_event_drain(qcore_event_fd endpoint)
+/* Read one byte from `endpoint` into `*payload`. This is the whole body of a v1
+ * callback. The caller compares the byte with the one the checked model says
+ * this turn's wake delivered and exits non-zero on disagreement, so the named
+ * premise EVENT-V1-STREAM-BYTE-ORDER is checked here rather than trusted. */
+QCORE_EVENT_UNUSED static int qcore_event_drain(qcore_event_fd endpoint, unsigned char *payload)
 {
     char byte = 0;
-    return recv(endpoint, &byte, 1, 0) == 1 ? 0 : 1;
+    if (recv(endpoint, &byte, 1, 0) != 1) {
+        return 1;
+    }
+    *payload = (unsigned char) byte;
+    return 0;
 }
 
 /* One dispatch turn, verified against the declaration.

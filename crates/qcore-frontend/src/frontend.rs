@@ -1826,7 +1826,12 @@ pub enum SemanticPass {
     /// under such a shift.
     StandardBuffer,
     /// Card `STD-EVENT`: admission of the `std.event` statements
-    /// (`source.event.v1`). Owns `Q058`–`Q062` (spec §L21).
+    /// (`source.event.v1`). Owns `Q058`–`Q062` and, since card
+    /// `COMPOSE-EVENT-LINES`, the **second band** `Q065` (spec §L21): the
+    /// composition with the source line vocabulary and the one value form this
+    /// route has. The two bands are not contiguous because `Q063`–`Q064` were
+    /// allocated between the cards — the same honest record the `NativeLibrary`
+    /// pass keeps of its own three.
     ///
     /// A separate pass from `Concurrency` on purpose. That pass owns the
     /// checked *task* and *mutex* profiles, whose subject is a thread; this one
@@ -2734,8 +2739,10 @@ pub fn source_diagnostic(
         // The generic presentation code of the event pass, and the code of
         // every shape refusal in it. The specific conditions Q059 (a name that
         // is not a live endpoint or registration), Q060 (the reactor model's
-        // own refusal), Q061 (the determinism boundary) and Q062 (the effect
-        // row) are issued at their own emission sites.
+        // own refusal), Q061 (the determinism boundary), Q062 (the effect
+        // row) and Q065 (the composed line and value vocabulary's own
+        // refusals, card `COMPOSE-EVENT-LINES`) are issued at their own
+        // emission sites.
         SemanticPass::Event => "Q058",
         SemanticPass::PluginVerification => "Q700",
     };

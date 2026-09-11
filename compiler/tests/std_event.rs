@@ -451,21 +451,36 @@ fn a_registration_on_an_endpoint_this_entry_did_not_bind_is_refused() {
 }
 
 #[test]
-fn a_module_that_both_dispatches_and_prints_stays_with_this_route() {
-    // Route selection puts this module here, and this route keeps its refusal
-    // for the statements it does not model — the same principle the extern and
-    // standard-IO routes state about each other. Composing an event context
-    // with source lines is a named follow-on, and a real one: a `print` inside
-    // a dispatch turn is exactly the shape a reordering-aware comparison would
-    // have to cover.
+fn a_module_that_both_dispatches_and_prints_stays_with_this_route_and_is_now_admitted() {
+    // Route selection puts this module here, and until card
+    // `COMPOSE-EVENT-LINES` this route kept its refusal for the statements it
+    // did not model. It models them now: the line grammar is
+    // `source.std-io.v1`'s, read by that route's own reader.
+    //
+    // **This test carried the old pin and was rewritten rather than deleted**,
+    // the precedent `COMPOSE-CONCURRENCY` set when it moved `TRACE-STDIO`'s.
+    // What survives of it is the half that is still true: route selection is
+    // unmoved, so the module is still an event module and still publishes this
+    // profile.
     let source = "import std.event;\nimport std.io;\nimport std.fmt;\n\n\
                   fn main() -> i32 effects { io } {\n    event open;\n    print dec 1;\n    \
                   event close;\n    return 0;\n}\n";
-    assert!(codes(source).contains(&"Q058".to_owned()));
+    let module = compile(source).expect("a composed event module compiles");
+    assert_eq!(module.execution_profile, SourceExecutionProfile::EventV1);
+    assert_eq!(
+        module.extern_observation.as_deref(),
+        Some(["out: 1".to_owned()].as_slice())
+    );
+    // And the refusal that is still a refusal: a statement head neither route
+    // models is still not one `source.event.v1` models.
+    let unmodelled = "import std.event;\n\nfn main() -> i32 effects { io } {\n    event open;\n    \
+                      endpoints a b;\n    drop a;\n    close a;\n    close b;\n    \
+                      event close;\n    return 0;\n}\n";
+    assert!(codes(unmodelled).contains(&"Q058".to_owned()));
     assert!(
-        message(source).contains("is not a statement `source.event.v1` models"),
+        message(unmodelled).contains("is not a statement `source.event.v1` models"),
         "{}",
-        message(source)
+        message(unmodelled)
     );
 }
 

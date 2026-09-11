@@ -873,13 +873,19 @@ pub fn compile_files_with_registry(
         return compile_extern_source(&parsed, &typed, mode, options, &ranges);
     }
     // Card `STD-EVENT`. Selected after every concurrent route and after the
-    // extern route, and **before** the standard-IO route, on the same principle
-    // those two state: a module that both dispatches and prints stays with the
-    // more specific model, which keeps its existing refusal for the statements
-    // it does not model. Composing an event context with source lines is a
-    // follow-on, not this card — and it is a real one, because a `print` in a
-    // dispatch turn is exactly the shape a reordering-aware comparison would
-    // have to cover.
+    // extern route, and **before** the standard-IO and buffer routes, on the
+    // same principle those state: a module that both dispatches and prints
+    // stays with the more specific model.
+    //
+    // Since card `COMPOSE-EVENT-LINES` that model admits the lines rather than
+    // refusing them: `print`, `log` and `flush` are checked here through
+    // `source.std-io.v1`'s own reader and rendered through its own emitter, and
+    // one value form (`let NAME = dispatch ready E;`) names the byte a turn
+    // drained. Selection itself is unmoved, and the refusal a module that
+    // *buffers* and dispatches receives is unmoved with it — that composition
+    // would put two custody models in one entry and is a card of its own
+    // (`EVENT-BUFFER-PAYLOAD`). A `print` inside a dispatch turn is still not
+    // spellable, because v1 has no source-level callback body.
     if qcore_frontend::source_event::has_source_event(&parsed) {
         return compile_event_source(&parsed, &typed, mode, options, &ranges);
     }

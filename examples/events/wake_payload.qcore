@@ -1,0 +1,36 @@
+import std.event;
+import std.logger;
+import std.fmt;
+
+// A value that came off an endpoint.
+//
+// `wake a 72;` delivers one byte into the peer of `a`, and the turn that
+// reports `reader` drains it. `let first = dispatch ready reader;` is that same
+// turn, naming the byte — so `first` is a number this program itself put on the
+// wire, and the emitted program compares the byte it actually read against the
+// one the checker predicted before it renders anything.
+//
+// The two wakes are 72 and 105, which spell "Hi". They arrive in the order they
+// were written, which is the named premise `EVENT-V1-STREAM-BYTE-ORDER`; a
+// false premise is a failed run, never a wrong line.
+//
+// Every line here is spelled as a pipeline: the value flows left to right into
+// the sink that renders it.
+fn main() -> i32 effects { io } {
+    log_level trace;
+    event open;
+    endpoints a b;
+    watch reader a read;
+    wake a 72;
+    wake a 105;
+    let first = dispatch ready reader;
+    first |> log info dec;
+    let second = dispatch ready reader;
+    second |> log info hex;
+    dispatch idle;
+    unwatch reader;
+    close a;
+    close b;
+    event close;
+    return 0;
+}

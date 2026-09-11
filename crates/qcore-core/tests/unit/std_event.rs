@@ -35,9 +35,11 @@ fn canonical() -> EventSourceProgram {
         },
         EventStatement::Wake {
             endpoint: "a".to_owned(),
+            byte: DEFAULT_WAKE_BYTE,
         },
         EventStatement::DispatchReady {
             registration: "e".to_owned(),
+            binding: None,
         },
         EventStatement::DispatchIdle,
         EventStatement::Unwatch {
@@ -163,12 +165,15 @@ fn two_ready_registrations_in_one_turn_are_refused_by_name() {
         },
         EventStatement::Wake {
             endpoint: "a".to_owned(),
+            byte: DEFAULT_WAKE_BYTE,
         },
         EventStatement::Wake {
             endpoint: "c".to_owned(),
+            byte: DEFAULT_WAKE_BYTE,
         },
         EventStatement::DispatchReady {
             registration: "e".to_owned(),
+            binding: None,
         },
         EventStatement::Return { status: 0 },
     ]);
@@ -202,6 +207,7 @@ fn a_turn_declaring_readiness_the_program_did_not_induce_is_refused() {
         // program, which has no well-defined observation.
         EventStatement::DispatchReady {
             registration: "e".to_owned(),
+            binding: None,
         },
         EventStatement::Return { status: 0 },
     ]);
@@ -224,6 +230,7 @@ fn an_idle_turn_with_an_outstanding_wake_is_refused() {
         },
         EventStatement::Wake {
             endpoint: "a".to_owned(),
+            byte: DEFAULT_WAKE_BYTE,
         },
         EventStatement::DispatchIdle,
         EventStatement::Return { status: 0 },
@@ -457,4 +464,343 @@ fn only_the_one_accepted_profile_is_admitted() {
     // v1 names exactly one, and it is the single-threaded one.
     assert_eq!(ACCEPTED_PROFILES.len(), 1);
     assert!(!ACCEPTED_PROFILES[0].threading_enabled());
+}
+
+// --- The composed line vocabulary (card `COMPOSE-EVENT-LINES`). ---
+
+use crate::obs_reordering::Emitter;
+use crate::std_event_c_emit::observe_event_program;
+use crate::std_io::{Level, Rendering, StdIoEvent, StdIoOperand, Stream};
+
+/// The canonical program with two declared payloads, a binding for each and a
+/// piped line rendering each. This is `examples/events/wake_payload.qcore`.
+fn composed() -> EventSourceProgram {
+    entry(vec![
+        EventStatement::LogLevel {
+            level: Level::Trace,
+        },
+        EventStatement::ContextOpen,
+        EventStatement::Endpoints {
+            first: "a".to_owned(),
+            second: "b".to_owned(),
+        },
+        EventStatement::Watch {
+            registration: "e".to_owned(),
+            endpoint: "a".to_owned(),
+            interest: Interest::Read,
+        },
+        EventStatement::Wake {
+            endpoint: "a".to_owned(),
+            byte: 72,
+        },
+        EventStatement::Wake {
+            endpoint: "a".to_owned(),
+            byte: 105,
+        },
+        EventStatement::DispatchReady {
+            registration: "e".to_owned(),
+            binding: Some("first".to_owned()),
+        },
+        EventStatement::Line(StdIoEvent::Log {
+            level: Level::Info,
+            rendering: Rendering::Dec,
+            operand: StdIoOperand::Scalar("first".to_owned()),
+        }),
+        EventStatement::DispatchReady {
+            registration: "e".to_owned(),
+            binding: Some("second".to_owned()),
+        },
+        EventStatement::Line(StdIoEvent::Log {
+            level: Level::Info,
+            rendering: Rendering::Hex,
+            operand: StdIoOperand::Scalar("second".to_owned()),
+        }),
+        EventStatement::DispatchIdle,
+        EventStatement::Unwatch {
+            registration: "e".to_owned(),
+        },
+        EventStatement::Close {
+            endpoint: "a".to_owned(),
+        },
+        EventStatement::Close {
+            endpoint: "b".to_owned(),
+        },
+        EventStatement::ContextClose,
+        EventStatement::Return { status: 0 },
+    ])
+}
+
+#[test]
+fn a_drained_byte_is_the_byte_its_own_wake_delivered_in_order() {
+    let certificate = check_event_source_program(&composed()).expect("the composed program");
+    let bytes = certificate
+        .payloads
+        .iter()
+        .map(|payload| (payload.byte, payload.binding.clone()))
+        .collect::<Vec<_>>();
+    // First in, first out: the ledger is a queue, not a count. Which is also
+    // the whole content of the second named premise.
+    assert_eq!(
+        bytes,
+        vec![
+            (72, Some("first".to_owned())),
+            (105, Some("second".to_owned()))
+        ]
+    );
+    assert_eq!(certificate.scalars["first"], 72);
+    assert_eq!(certificate.scalars["second"], 105);
+    recheck_event_certificate(&composed(), &certificate).expect("the recheck");
+}
+
+#[test]
+fn the_byte_order_premise_is_carried_only_where_a_byte_is_named() {
+    let bound = check_event_source_program(&composed()).expect("the composed program");
+    assert_eq!(
+        bound.premises,
+        vec![LEVEL_TRIGGERED_READINESS, STREAM_BYTE_ORDER]
+    );
+    // The canonical program drains a byte too — every ready turn does — but
+    // names none, so it rests on nothing about the value.
+    let unnamed = check_event_source_program(&canonical()).expect("the canonical program");
+    assert_eq!(unnamed.premises, vec![LEVEL_TRIGGERED_READINESS]);
+    assert_eq!(unnamed.payloads.len(), 1);
+    assert_eq!(unnamed.payloads[0].byte, DEFAULT_WAKE_BYTE);
+    assert!(unnamed.payloads[0].binding.is_none());
+}
+
+#[test]
+fn the_lines_are_the_standard_io_routes_own_lines() {
+    let certificate = check_event_source_program(&composed()).expect("the composed program");
+    assert_eq!(certificate.lines.len(), 2);
+    assert_eq!(certificate.lines[0].stream, Stream::Err);
+    assert_eq!(certificate.lines[0].text, "[INFO] 72");
+    assert_eq!(certificate.lines[1].text, "[INFO] 0x00000069");
+    assert_eq!(
+        certificate.renderings,
+        [Rendering::Dec, Rendering::Hex].into_iter().collect()
+    );
+}
+
+#[test]
+fn erasing_every_line_leaves_the_reactor_projection_unchanged() {
+    // The strong form of "composing lines decides no custody question", in the
+    // shape card `STD-EVENT` used for `wake`: whatever the reactor concludes
+    // about this program, it concludes about the same program with every line
+    // removed.
+    let with_lines = project(&composed()).expect("the composed program projects");
+    let without = entry(
+        composed()
+            .statements
+            .into_iter()
+            .filter(|statement| !matches!(statement, EventStatement::Line(_)))
+            .collect(),
+    );
+    let without = project(&without).expect("the same program without its lines");
+    assert_eq!(with_lines.program, without.program);
+}
+
+#[test]
+fn every_record_of_an_event_program_is_written_by_the_entrys_own_thread() {
+    // The premise under the strict comparison, asserted rather than assumed.
+    // v1's one profile is single-threaded and the reactor refuses a
+    // cross-thread activation under it, so a callback runs on the dispatching
+    // thread and there is no second emitter to order against.
+    let certificate = check_event_source_program(&composed()).expect("the composed program");
+    let observation =
+        observe_event_program(&composed(), &certificate).expect("the composed observation");
+    assert!(
+        observation
+            .records()
+            .iter()
+            .all(|record| record.emitter == Emitter::Parent)
+    );
+    assert!(observation.records().len() > 10);
+}
+
+#[test]
+fn the_declared_relation_is_strict_on_both_streams() {
+    // Card `OBS-REORDERING`'s §1.2 live-set walk, over this model's own
+    // regions: every record is a barrier, so the relation admits exactly one
+    // stream — its own — and comparing a native run against it **is** byte
+    // equality (`strict_iff_byte_equality`). No reordering is declared, because
+    // this route needs none.
+    let certificate = check_event_source_program(&composed()).expect("the composed program");
+    let observation =
+        observe_event_program(&composed(), &certificate).expect("the composed observation");
+    for stream in [Stream::Out, Stream::Err] {
+        let relation = observation
+            .admitted_reordering(stream)
+            .expect("the declaration");
+        assert!(relation.is_strict(), "{stream:?}");
+        assert_eq!(relation.barriers().len(), relation.records().len());
+        assert_eq!(relation.declared_text(), observation.projection(stream));
+        // The degenerate case in both directions: the declared stream is
+        // admitted, and a transposition of two of its records is not.
+        let mut lines = relation
+            .records()
+            .iter()
+            .map(|record| record.text.clone())
+            .collect::<Vec<_>>();
+        assert!(
+            relation
+                .compare(&lines.iter().map(String::as_str).collect::<Vec<_>>())
+                .is_ok()
+        );
+        lines.swap(0, 1);
+        assert!(
+            relation
+                .compare(&lines.iter().map(String::as_str).collect::<Vec<_>>())
+                .is_err()
+        );
+    }
+}
+
+#[test]
+fn a_quiet_program_observes_its_lines_and_not_its_retained_trace() {
+    // The quiet-emission boundary as a property of the observation: the trace
+    // events are retained either way — they are in the reactor certificate and
+    // in the emitted program's typed logger calls — but they are stream bytes
+    // only where `log_level` installs the adapter.
+    let quiet = entry(
+        composed()
+            .statements
+            .into_iter()
+            .filter(|statement| !matches!(statement, EventStatement::LogLevel { .. }))
+            .collect(),
+    );
+    let certificate = check_event_source_program(&quiet).expect("the quiet program");
+    let observation = observe_event_program(&quiet, &certificate).expect("the observation");
+    assert_eq!(
+        observation.labelled(),
+        vec![
+            "err: [INFO] 72".to_owned(),
+            "err: [INFO] 0x00000069".to_owned()
+        ]
+    );
+    assert!(
+        observation
+            .records()
+            .iter()
+            .all(|record| !record.system_trace)
+    );
+}
+
+#[test]
+fn a_rendering_operand_this_entry_bound_no_value_for_refuses() {
+    let program = entry(vec![
+        EventStatement::Line(StdIoEvent::Print {
+            rendering: Rendering::Dec,
+            operand: StdIoOperand::Scalar("absent".to_owned()),
+        }),
+        EventStatement::Return { status: 0 },
+    ]);
+    let errors = check_event_source_program(&program).expect_err("an unbound operand");
+    assert!(errors.iter().any(|error| error.code() == "Q065"));
+}
+
+#[test]
+fn a_borrowed_render_refuses_because_this_route_publishes_no_identity() {
+    let program = entry(vec![
+        EventStatement::Line(StdIoEvent::Print {
+            rendering: Rendering::Dec,
+            operand: StdIoOperand::Borrowed("a".to_owned()),
+        }),
+        EventStatement::Return { status: 0 },
+    ]);
+    let errors = check_event_source_program(&program).expect_err("a borrowed render");
+    assert!(errors.iter().any(|error| error.code() == "Q065"));
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.to_string().contains("STD-FMT-DESCRIPTOR"))
+    );
+}
+
+#[test]
+fn a_binding_that_collides_with_a_custody_name_refuses_at_the_model() {
+    // Unreachable from source — name resolution refuses the duplicate binding
+    // at `Q012` first, which `compiler/tests/compose_event_lines.rs` pins — and
+    // kept for the reason `EXTERN-F1`'s `resource_stored` gate is kept: this is
+    // a public model API, and a composing route could drive it directly.
+    let program = entry(vec![
+        EventStatement::ContextOpen,
+        EventStatement::Endpoints {
+            first: "a".to_owned(),
+            second: "b".to_owned(),
+        },
+        EventStatement::Watch {
+            registration: "e".to_owned(),
+            endpoint: "a".to_owned(),
+            interest: Interest::Read,
+        },
+        EventStatement::Wake {
+            endpoint: "a".to_owned(),
+            byte: DEFAULT_WAKE_BYTE,
+        },
+        EventStatement::DispatchReady {
+            registration: "e".to_owned(),
+            binding: Some("a".to_owned()),
+        },
+        EventStatement::Return { status: 0 },
+    ]);
+    let errors = check_event_source_program(&program).expect_err("a colliding binding");
+    assert!(errors.iter().any(|error| error.code() == "Q065"));
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.to_string().contains("no rebinding form"))
+    );
+}
+
+#[test]
+fn the_determinism_boundary_is_unmoved_by_a_line() {
+    // Two ready registrations admit no turn, with a line in the program or
+    // without one. `Q061` is about the ledger's state and nothing else.
+    let statements = |lines: bool| {
+        let mut statements = vec![
+            EventStatement::ContextOpen,
+            EventStatement::Endpoints {
+                first: "a".to_owned(),
+                second: "b".to_owned(),
+            },
+            EventStatement::Endpoints {
+                first: "c".to_owned(),
+                second: "d".to_owned(),
+            },
+            EventStatement::Watch {
+                registration: "e".to_owned(),
+                endpoint: "a".to_owned(),
+                interest: Interest::Read,
+            },
+            EventStatement::Watch {
+                registration: "f".to_owned(),
+                endpoint: "c".to_owned(),
+                interest: Interest::Read,
+            },
+            EventStatement::Wake {
+                endpoint: "a".to_owned(),
+                byte: 1,
+            },
+            EventStatement::Wake {
+                endpoint: "c".to_owned(),
+                byte: 2,
+            },
+        ];
+        if lines {
+            statements.push(EventStatement::Line(StdIoEvent::Print {
+                rendering: Rendering::Dec,
+                operand: StdIoOperand::Literal(0),
+            }));
+        }
+        statements.push(EventStatement::DispatchReady {
+            registration: "e".to_owned(),
+            binding: Some("value".to_owned()),
+        });
+        statements.push(EventStatement::Return { status: 0 });
+        entry(statements)
+    };
+    for lines in [false, true] {
+        let errors = check_event_source_program(&statements(lines)).expect_err("two ready");
+        assert!(errors.iter().any(|error| error.code() == "Q061"), "{lines}");
+    }
 }

@@ -3,7 +3,7 @@
 //!
 //! ```text
 //! module    ::= import* entry
-//! import    ::= "import" ("std.event" | "std.logger") ";"
+//! import    ::= "import" ("std.event" | "std.logger" | "std.io" | "std.fmt") ";"
 //! entry     ::= "fn" NAME "(" ")" "->" "i32"
 //!               ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 //! stmt      ::= "event" "open" ";"
@@ -12,23 +12,37 @@
 //!             | "endpoints" NAME NAME ";"
 //!             | "watch" NAME NAME INTEREST ";"
 //!             | "unwatch" NAME ";"
-//!             | "wake" NAME ";"
+//!             | "wake" NAME [BYTE] ";"
 //!             | "dispatch" "ready" NAME ";"
+//!             | "let" NAME "=" "dispatch" "ready" NAME ";"
 //!             | "dispatch" "idle" ";"
 //!             | "close" NAME ";"
+//!             | "print" RENDERING OPERAND ";"        -- std.io + std.fmt
+//!             | "log" LEVEL RENDERING OPERAND ";"    -- std.logger + std.fmt
+//!             | "flush" ";"                          -- std.logger
 //!             | "return" ["-"] INTEGER ";"
 //! INTEREST  ::= "read" | "write"
+//! BYTE      ::= INTEGER in 0..=255
 //! LEVEL     ::= "trace" | "debug" | "info" | "warn" | "error" | "fatal"
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
 //!
-//! # There is no value vocabulary here, and that is the point
+//! # The value vocabulary is exactly one thing (card `COMPOSE-EVENT-LINES`)
 //!
-//! The grammar has no `let`, no scalar operand and no expression. Every name it
-//! resolves denotes an **endpoint** or a **registration** — a custody name — so
-//! no statement of this route can compute, carry or render a value. A route
-//! that needs to print one composes with `source.std-io.v1`, which is a
-//! follow-on and not this card.
+//! Until this card the grammar had no `let`, no scalar operand and no
+//! expression: every name it resolved denoted an **endpoint** or a
+//! **registration**, a custody name. It now has one value form and one only —
+//! `let NAME = dispatch ready E;`, the byte that turn's callback drained off
+//! the endpoint. That is not an arbitrary widening: the byte is the one this
+//! program's own `wake` delivered, so it is model-determined exactly as the
+//! readiness it stands for is, and the emitted program **verifies** it rather
+//! than trusting it.
+//!
+//! The line-producing statements are `source.std-io.v1`'s own, read by that
+//! route's own reader and rendered by that route's own emitter, on the
+//! `source.buffer.v1` precedent. A custody name is still not an operand: a
+//! `borrow NAME` refuses at `Q065`, because this route publishes no live
+//! identity for a render (card `STD-FMT-DESCRIPTOR`).
 //!
 //! # This lowering decides nothing about custody
 //!
@@ -43,6 +57,9 @@
 //!
 //! The original eight are `event`, `endpoints`, `watch`, `unwatch`, `wake`,
 //! `dispatch`, `ready`, `idle`; the quiet-emission amendment adds `log_level`.
+//! Card `COMPOSE-EVENT-LINES` adds **none**: `let` is the language's own
+//! binding word, and `print`, `log`, `flush`, `dec`, `hex` and the six levels
+//! were all reserved by `STD-MODULES` and the amendment.
 //! Four existing ones are reused rather than
 //! respelled — `open`, `close`, `read`, `write` — which is why the context pair
 //! is spelled `event open;` / `event close;` rather than with two words of its
@@ -53,7 +70,8 @@ use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, TypedSourceProgram,
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
-use qcore_core::std_event::{EventSourceProgram, EventStatement, Interest};
+use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use qcore_core::std_event::{DEFAULT_WAKE_BYTE, EventSourceProgram, EventStatement, Interest};
 use qcore_core::std_io::Level;
 use qcore_core::typed_errors::{Effect, EffectRow};
 
@@ -220,6 +238,36 @@ fn integer(window: &[&Token], cursor: usize) -> Option<(i32, usize)> {
     }
 }
 
+/// The one value-binding form: `let NAME = dispatch ready E;`
+/// (card `COMPOSE-EVENT-LINES`).
+///
+/// It is the same dispatch turn `dispatch ready E;` is — same projection, same
+/// determinism decision, same trace record — naming the byte the callback
+/// drained. There is deliberately no second `let` initialiser: a value this
+/// route did not compute has no form here.
+fn binding_statement(window: &[&Token]) -> Result<EventStatement, String> {
+    const SHAPE: &str = "`let NAME = dispatch ready E;` is the one binding `source.event.v1` \
+                         models: it names the byte that turn's callback drained off the endpoint";
+    let Some(binding) = word(window, 1) else {
+        return Err(SHAPE.to_owned());
+    };
+    if !matches!(
+        window.get(2).map(|token| &token.kind),
+        Some(TokenKind::Symbol(Symbol::Equal))
+    ) {
+        return Err(SHAPE.to_owned());
+    }
+    match (word(window, 3), word(window, 4), word(window, 5)) {
+        (Some("dispatch"), Some("ready"), Some(registration)) if ends_with_semicolon(window, 6) => {
+            Ok(EventStatement::DispatchReady {
+                registration: registration.to_owned(),
+                binding: Some(binding.to_owned()),
+            })
+        }
+        _ => Err(SHAPE.to_owned()),
+    }
+}
+
 /// The **one** grammar of a `source.event.v1` statement.
 ///
 /// `None` when the head is not one this route owns; `Some(Err(message))` when
@@ -289,7 +337,26 @@ fn event_statement(window: &[&Token], head: &str) -> Option<Result<EventStatemen
         "wake" => Some(match word(window, 1) {
             Some(endpoint) if ends_with_semicolon(window, 2) => Ok(EventStatement::Wake {
                 endpoint: endpoint.to_owned(),
+                byte: DEFAULT_WAKE_BYTE,
             }),
+            // `wake D BYTE;` declares the payload. A value outside `0..=255` is
+            // refused rather than truncated, the discipline `source.buffer.v1`
+            // applies to a stored byte.
+            Some(endpoint) => match integer(window, 2) {
+                Some((value, next))
+                    if ends_with_semicolon(window, next) && (0..=255).contains(&value) =>
+                {
+                    Ok(EventStatement::Wake {
+                        endpoint: endpoint.to_owned(),
+                        byte: u8::try_from(value).unwrap_or(DEFAULT_WAKE_BYTE),
+                    })
+                }
+                _ => Err(
+                    "`wake D BYTE;` delivers one byte, 0 through 255; `wake D;` delivers the \
+                     route's own"
+                        .to_owned(),
+                ),
+            },
             _ => Err(
                 "`wake D;` writes one byte into the peer of a live endpoint pair, so that a read \
                  registration on `D` becomes ready"
@@ -302,6 +369,7 @@ fn event_statement(window: &[&Token], head: &str) -> Option<Result<EventStatemen
                 Some(registration) if ends_with_semicolon(window, 3) => {
                     Ok(EventStatement::DispatchReady {
                         registration: registration.to_owned(),
+                        binding: None,
                     })
                 }
                 _ => Err(
@@ -426,8 +494,13 @@ pub fn lower_source_event(
         if let Some(body) = &other.value.body {
             fn scan(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
                 for statement in &block.statements {
+                    // A line-producing statement counts here too: the route
+                    // models the entry, and a `print` in a function this route
+                    // never lowers would otherwise be neither emitted nor
+                    // refused (card `COMPOSE-EVENT-LINES`).
                     if let Some(head) = statement_head(tokens, statement.span)
-                        && SELECTING_KEYWORDS.contains(&head)
+                        && (SELECTING_KEYWORDS.contains(&head)
+                            || matches!(head, PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD))
                     {
                         return Some(statement.span);
                     }
@@ -489,6 +562,38 @@ pub fn lower_source_event(
         }
         let window = window(tokens, span);
         let head = word(&window, 0).unwrap_or_default();
+        // The value and line vocabulary of card `COMPOSE-EVENT-LINES`, refused
+        // under this pass's second band. The line grammar itself is
+        // `source.std-io.v1`'s, read by its own reader, so a shape one route
+        // accepts and another refuses is not expressible.
+        match head {
+            "let" => {
+                match binding_statement(&window) {
+                    Ok(lowered) => {
+                        statements.push(lowered);
+                        statement_spans.push(span);
+                    }
+                    Err(message) => diagnostics.push(diagnostic("Q065", span, message)),
+                }
+                continue;
+            }
+            PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
+                match crate::source_std_io::std_io_statement(parsed, span) {
+                    Some(Ok(event)) => {
+                        statements.push(EventStatement::Line(event));
+                        statement_spans.push(span);
+                    }
+                    Some(Err(message)) => diagnostics.push(diagnostic("Q065", span, message)),
+                    None => diagnostics.push(diagnostic(
+                        "Q065",
+                        span,
+                        "this line-producing statement is not one `source.std-io.v1` models",
+                    )),
+                }
+                continue;
+            }
+            _ => {}
+        }
         match event_statement(&window, head) {
             Some(Ok(lowered)) => {
                 statements.push(lowered);

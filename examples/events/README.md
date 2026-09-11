@@ -17,7 +17,13 @@ Design record: [`docs/design/STD_EVENT_V1.md`](../../docs/design/STD_EVENT_V1.md
 | Program | What it shows |
 |---|---|
 | [`self_pipe.qcore`](self_pipe.qcore) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
+| [`wake_payload.qcore`](wake_payload.qcore) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
 | [`write_interest.qcore`](write_interest.qcore) | The check-only arm: a write registration is checked in full and emits no C. |
+
+**Every line in these programs is spelled as a pipeline.** `value |> log info dec;`
+is the form, and the statement form it desugars to emits the same C byte for
+byte — so this is a rule about how the examples read, not a restriction on the
+route.
 
 ## `self_pipe.qcore`
 
@@ -69,6 +75,85 @@ program run twice may get different numbers — so a trace carrying one could no
 be compared against a reference at all. This is the discipline card
 `STD-FMT-BORROW` fixed for a borrowed render, applied to the same problem, and
 it is also why the trace above is identical on all three platform arms.
+
+## `wake_payload.qcore` — the byte a wake delivered
+
+```qcore
+import std.event;
+import std.logger;
+import std.fmt;
+
+fn main() -> i32 effects { io } {
+    log_level trace;
+    event open;
+    endpoints a b;
+    watch reader a read;
+    wake a 72;
+    wake a 105;
+    let first = dispatch ready reader;
+    first |> log info dec;
+    let second = dispatch ready reader;
+    second |> log info hex;
+    dispatch idle;
+    unwatch reader;
+    close a;
+    close b;
+    event close;
+    return 0;
+}
+```
+
+`wake D BYTE;` delivers one declared byte; `wake D;` delivers the route's own.
+`let NAME = dispatch ready E;` is the **same turn** `dispatch ready E;` is —
+same projection, same determinism decision, same trace record — naming the byte
+that turn's callback drained. It is the one value form this route has, and the
+value is one the program itself put on the wire.
+
+Two streams, and no order is claimed between them. Standard output carries the
+explicitly selected system trace:
+
+```text
+QCORE_EVENT_OPEN
+QCORE_EVENT_ENDPOINTS 0 1
+QCORE_EVENT_WATCH 0 0 READ
+QCORE_EVENT_WAKE 0
+QCORE_EVENT_WAKE 0
+QCORE_EVENT_DISPATCH 0
+QCORE_EVENT_DISPATCH 0
+QCORE_EVENT_DISPATCH IDLE
+QCORE_EVENT_UNWATCH 0
+QCORE_EVENT_CLOSE 0
+QCORE_EVENT_CLOSE 1
+QCORE_EVENT_TEARDOWN
+QCORE_EVENT_RESULT 0
+```
+
+and standard error carries the two source-authored lines:
+
+```text
+[INFO] 72
+[INFO] 0x00000069
+```
+
+The payload is **not** in the trace. A `wake` projects to no reactor operation
+at all, so its byte is not a reactor fact; it is a value, and it reaches an
+observation only where a source line renders it. That is why every transcript
+on this page published before this program is byte-identical after it. Without
+`log_level trace;` the same program writes the two `[INFO]` lines and nothing
+else: the retained trace reaches the null sink.
+
+The byte is **verified, not trusted**, exactly as the ready set is. The emitted
+program compares what it actually read against the byte the checker predicted
+and exits non-zero on disagreement, so the second named premise —
+
+> `EVENT-V1-STREAM-BYTE-ORDER` — a connected stream endpoint pair delivers the
+> bytes written into one end to a reader of the other end in the order they were
+> written, none lost and none invented, given that this process is the sole
+> holder of both endpoints and no other thread touches them.
+
+— produces a failed run if it is false, never a line no model computed. A
+program that drains without naming a byte carries this premise no more than a
+program with no wait carries the readiness one.
 
 ## The determinism boundary
 

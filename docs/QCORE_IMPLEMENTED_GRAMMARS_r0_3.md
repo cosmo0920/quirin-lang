@@ -1880,7 +1880,7 @@ Example page: [`../examples/events/README.md`](../examples/events/README.md).
 
 ```ebnf
 module    = { import }, entry ;
-import    = "import", ( "std.event" | "std.logger" ), ";" ;
+import    = "import", ( "std.event" | "std.logger" | "std.io" | "std.fmt" ), ";" ;
 entry     = "fn", NAME, "(", ")", "->", "i32",
             [ "effects", "{", effect, { ",", effect }, "}" ], "{", { stmt }, "}" ;
 stmt      = "event", "open", ";"
@@ -1889,25 +1889,49 @@ stmt      = "event", "open", ";"
           | "endpoints", NAME, NAME, ";"
           | "watch", NAME, NAME, interest, ";"
           | "unwatch", NAME, ";"
-          | "wake", NAME, ";"
+          | "wake", NAME, [ byte ], ";"
           | "dispatch", "ready", NAME, ";"
+          | "let", NAME, "=", "dispatch", "ready", NAME, ";"
           | "dispatch", "idle", ";"
           | "close", NAME, ";"
+          | "print", rendering, operand, ";"
+          | "log", level, rendering, operand, ";"
+          | "flush", ";"
           | "return", [ "-" ], INTEGER, ";" ;
 interest  = "read" | "write" ;
+byte      = INTEGER (* 0 through 255, refused rather than truncated *) ;
+rendering = "dec" | "hex" ;
+operand   = INTEGER | NAME ;
 level     = "trace" | "debug" | "info" | "warn" | "error" | "fatal" ;
 effect    = "io" | "alloc" | "mut" ;
 ```
 
-There is deliberately **no `let`** and no scalar operand: this grammar has no
-value vocabulary at all, so every name it resolves denotes an endpoint or a
-registration — a custody name. That is why the derived effect row is exactly
-`{Io}` for any program that opens a context and why `Alloc` and `Mut` are
-unreachable here by construction rather than by a rule.
+**The value vocabulary is exactly one form** (card `COMPOSE-EVENT-LINES`).
+Until that card this grammar had no `let` and no scalar operand at all: every
+name it resolved denoted an endpoint or a registration, a custody name. It now
+has `let NAME = dispatch ready E;` and nothing else — the byte that turn's
+callback drained off the endpoint, which is the byte this program's own `wake`
+delivered. A custody name is still not an operand: rendering one refuses at
+`Q065`, and `borrow NAME` refuses there too, because this route publishes no
+live custody identity for a render (`STD-FMT-DESCRIPTOR`). The derived effect
+row is still exactly `{Io}`, and `Alloc` and `Mut` are still unreachable — now
+because the one value form binds a byte rather than because there is no value
+form.
+
+The line-producing statements are `source.std-io.v1`'s own, read by that route's
+own reader and rendered by that route's own emitter, on the `source.buffer.v1`
+precedent; each is gated by its own module (`print` by `std.io`, `log` and
+`flush` by `std.logger`, a rendering by `std.fmt`) exactly as it is there. Every
+line in `examples/events` is spelled as a `|>` pipeline — `value |> log info dec;`
+— which desugars to the statement form and emits the same C byte for byte, so
+that is a rule about how the examples read rather than a restriction on the
+route.
 
 The original eight reserved words are `event`, `endpoints`, `watch`, `unwatch`,
 `wake`, `dispatch`, `ready`, and `idle`; the quiet-emission amendment adds
-`log_level`. Four existing ones are reused rather
+`log_level`; card `COMPOSE-EVENT-LINES` adds **none** — `let` is the language's
+own binding word, and `print`, `log`, `flush`, `dec`, `hex` and the six levels
+were reserved by `STD-MODULES` and by the amendment. Four existing ones are reused rather
 than respelled: `open`, `close`, `read`, `write`. The context pair is spelled
 `event open;` / `event close;` for exactly that reason. The standing constraint
 14 census over every `.qcore`/`.qc` fixture and every inline source string found
@@ -1932,7 +1956,9 @@ all.
 | `endpoints A B;` | `CreateSocketPair` (success branch) |
 | `watch E D INTEREST;` | `Assign` naming the descriptor, then `Add` — the custody edge |
 | `unwatch E;` | `Delete` then `FreeEvent`, retiring the registration's cookie |
-| `wake D;` | *(none — the reactor models no byte flow)* |
+| `wake D;` / `wake D BYTE;` | *(none — the reactor models no byte flow; the payload is a value and never a trace record)* |
+| `let V = dispatch ready E;` | the same five operations `dispatch ready E;` projects to; the binding names the drained byte |
+| `print` / `log` / `flush` | *(none — a source line is program output, not a compiler observation)* |
 | `dispatch ready E;` | `BeginDispatch`, `Activate`, `CallbackEnter`, `CallbackExit`, `EndDispatch` |
 | `dispatch idle;` | `BeginDispatch`, `EndDispatch` |
 | `close D;` | `CloseSocket` (success branch) |
@@ -1950,8 +1976,23 @@ and checked and makes the module emit no C at all, on the `accept_check_only`
 precedent.
 
 Diagnostics: `Q058` shape, `Q059` an unbound custody name, `Q060` the reactor
-model's own refusal, `Q061` the determinism boundary, `Q062` the effect row, and
-`Q015` for a missing `import std.event;`.
+model's own refusal, `Q061` the determinism boundary, `Q062` the effect row,
+`Q065` the composed line and value vocabulary's own refusals (second band of the
+same pass, card `COMPOSE-EVENT-LINES`), and `Q015` for a missing
+`import std.event;` or a line-producing statement's own module.
+
+**The composition moves none of the five codes above.** A line erases to no
+reactor operation and no ledger transition —
+`QCore.ComposeEventLines.erasing_the_lines_leaves_the_reactor_projection` and
+`…_leaves_the_run_unchanged` — so `Q061`'s two-member refusal, the
+declared-readiness rule and the `write`-interest check-only arm answer exactly as
+they did. A program that names a drained byte carries a second named platform
+premise, `EVENT-V1-STREAM-BYTE-ORDER`, and the emitted program checks it: a byte
+that is not the one the model predicted exits non-zero rather than rendering a
+line no model computed. Both streams of an executable module are compared byte
+for byte, which is this route's own measurement — one accepted profile, one
+thread, so every record of the derived `qcore.obs-reordering.v1` relation is a
+barrier and the relation is strict.
 
 ## G03. Source parameter usage grades
 
