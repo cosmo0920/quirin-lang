@@ -1,0 +1,30 @@
+import std.buffer;
+import std.fmt;
+import std.io;
+
+// CT07's bounds control, the loan's own index: the case program (case.qcore)
+// with one store's index moved from 1 to 4 — `right` is a lend of [4, 8), so
+// its own extent is 4 bytes and index 4 is one past it. Both halves of the
+// one law refuse: the extended ownership IR's rebased containment check
+// (AccessOutsideLendRange, arriving through the inherited Q054) and the
+// route's own bound (Q053, reported in the loan's own coordinates), each in
+// the layer that owns it — decided at check time, not a run-time trap.
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(8);
+    let left = lend(store, 0, 4);
+    let right = lend(store, 4, 8);
+    left[0] = 11;
+    right[0] = 55;
+    left[1] = 22;
+    right[4] = 66;
+    let b = right[1];
+    let a = left[1];
+    let x = store[0];
+    let y = store[4];
+    print dec a;
+    print dec b;
+    print dec x;
+    print dec y;
+    drop store;
+    return;
+}

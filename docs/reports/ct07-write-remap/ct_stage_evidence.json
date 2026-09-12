@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "card": "CT07-WRITE-REMAP",
+  "generated": "2026-09-13",
+  "report": "docs/reports/ct07-write-remap/README.md",
+  "purpose": "The wave-30 CT lane's remap of CT07's evidence onto the write-lend scenario card SLICE-PERMISSIONS-WRITE-LEND made expressible. CT07 was already mapped (wave 28, CT-WIRE-LANE-2) and stays mapped: this record supersedes that record's CT07 entry only, without editing its bytes (constraint 21), and moves no count - mapped stays 42/50, harness-gated sanitized-native stays 7 of 42, proof rows are untouched. This card is evidence quality, not coverage.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. CT07's stage statuses, executors and observation counts are unchanged from the wave-28 record it supersedes - the same sequential_sanitized verdict mode, the same run_sequential_sanitized runner, one binary built from the case's own emitted C and run once - because what this card changes is WHICH program is the case's artifact and therefore what the mapping honestly claims, not how it is executed. A control with its own source is executed on THAT artifact and is therefore not one of this case's observations.",
+  "route": "The `sequential` route, unchanged. The case's artifact is now compiler/tests/fixtures/ct/CT07/case.qcore = card SLICE-PERMISSIONS-WRITE-LEND's published disjoint_write_halves.qcore, moved byte-identically (comment header aside) from compiler/tests/fixtures/write_lend/ with compiler/tests/write_lend.rs repointed at it - the CT23/epoch_credit_error_path.rs precedent. The module takes StandardBufferV1 (source.buffer.v1 with the lend-extended cycle-3 ownership IR), where the wave-28 case took StandardStringV1.",
+  "what_changed_and_what_did_not": {
+    "semantic_profile_before": "Two immutable read loans of disjoint ranges live at once while the owner writes between them - one of the two disjoint permissions a READ loan, the other the owner's retained write authority; the write lend recorded as unlanded residual SLICE-PERMISSIONS-WRITE-LEND.",
+    "semantic_profile_after": "Two WRITE authorities over disjoint ranges of one buffer - lend(store, 0, 4) and lend(store, 4, 8) of one eight-byte buffer, both held by one sequential entry's bindings, both live across four interleaved stores, each store admitted because it goes through the loan that owns its byte, the bytes read back through the loans and then by the owner after both windows close. The authority genuinely moves: the borrow node carries the footprint fraction, the exclusivity between two lends and the owner's exclusion inside a lent range are the custody model's own decisions.",
+    "remaining_boundary": "Both write authorities are bindings of ONE SEQUENTIAL entry - disjoint write authority, interleaved statements, NOT two threads. The task-crossing half is residual WRITE-LEND-TASKS (docs/reports/slice-permissions-write-lend/README.md section 13), where the interval moves onto the disjoint-footprint checker's derived footprints.",
+    "counts_that_do_not_move": "mapped 42 / unmapped 8 (a remap is not a mapping); sanitized-native 7 of 42 (the same one gated run, now of the write program); proof untouched (1 of 42, CT01 only; this record carries no proof row change and PROOF_GATED_CASES is unedited)."
+  },
+  "fixture_inventory_change": "compiler/tests/fixtures/ct/CT07/ now holds: case.qcore (the write-lend disjoint-halves program), overlapping_lends.qcore (reject, [Q054] - the disjointness control), out_of_extent_lend.qcore (reject, [Q053] - the lend's own range moved one byte past the extent), loan_index_out_of_extent.qcore (reject, [Q054, Q053] - a store through the [4, 8) loan at its own index 4), read_loan.qcore (accept, StandardStringV1 - the wave-28 mapping's own case, kept as the accept control so the weaker read-loan configuration is measured to stay admitted beside the stronger one), expected.json. The wave-28 reject controls are dropped rather than carried: overlapping.qcore was CT08's own case shape and CT08 still measures it as its case, and out_of_extent.qcore's Q077 string-route bound belonged to the read program's surface - the new case's bounds proof is the lend surface's own Q053, in both of its layers.",
+  "lean_is_not_applicable": "This lane adds no checker rule, no diagnostic code, no lowering and no model. The capability card the remap points at carries its own audited Lean (QCore.WriteLend / AuditWriteLend.lean, 25 declarations audited by name, in the 118-audit gate); this lane moves fixtures, rewrites CT07's expected.json and manifest row, and publishes this record. `proof` stays `unassessed` for CT07; no theorem is bound to any CT fixture by this card.",
+  "mapped_case_stage_matrix": {
+    "CT07": {
+      "supersedes": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+      "harness_verdict_mode": "sequential_sanitized",
+      "manifest_evidence_target": "linux",
+      "measured_observation": {
+        "stdout": ["22", "66", "11", "55"],
+        "stderr": []
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
+        },
+        "sequential_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1,
+          "host_gate": ["linux", "macos"],
+          "note": "The route's reference product is the per-stream extern observation, computed from the checked model and never from the emitted C; the runner compares its projections exactly against the pinned rendering (22, 66, 11, 55 on stdout - the loans' read-backs, then the owner's, after both windows close)."
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1,
+          "host_gate": ["linux", "macos", "windows"]
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1,
+          "host_gate": ["linux", "macos"]
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1,
+          "host_gate": ["linux", "macos"],
+          "note": "The one binary is built with -fsanitize=address,undefined, so the native execution IS the sanitized one. ASan is the load-bearing sanitizer and now traps the write direction: a write lend emits a displaced const pointer and every store through it is a real memory write at owner + low + i, so an off-by-one in the displacement, the length or the rebasing would be an out-of-bounds WRITE - the construct's worst failure mode. LeakSanitizer is enabled on Linux (a positive control: the program allocates) and off on macOS, where Apple's ASan ships no leak detector."
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+          "role": "disjointness",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q054], the message naming that two write lends of `store` would share a byte",
+          "isolates": "the decided disjointness between two WRITE authorities: one bound moved from 4 to 3 - one shared byte, everything else identical - refuses by the exclusivity rule the extended ownership IR decides, so the case's admission is a decision about ranges in the custody model rather than a route that admits second lends anywhere."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+          "role": "bounds (the lend's range)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q053], `lend(store, 4, 9)` is not a range of `store`, whose declared extent is 8 bytes - a check-time refusal, not a run-time trap",
+          "isolates": "the bounds half of the case's expected text at the lend itself: a range one byte past the extent never becomes a loan."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+          "role": "bounds (the loan's own index)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q054, Q053]: the IR's rebased containment refusal (an access through lend `right` lies outside the range it was lent) beside the route's own bound (index 4 is outside `right`, a lend of 4 bytes)",
+          "isolates": "the other bounds layer: an access through a loan is decided against the loan's own [0, len) and rebased into the owner's coordinates, and both the custody model and the route refuse it - two halves of one law, each in the layer that owns it."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT07/read_loan.qcore",
+          "role": "the superseded configuration",
+          "expectation": "accept",
+          "measured": "checks, StandardStringV1, emits C",
+          "isolates": "the upgrade direction: the wave-28 mapping's own case - two disjoint READ loans beside the owner's retained write authority - stays admitted beside the write remap, so the remap extends the family of admitted disjointness shapes rather than replacing it. Its reject twins are not lost: the Q078 overlap is CT08's own case, still measured there."
+        }
+      ]
+    }
+  }
+}

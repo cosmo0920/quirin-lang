@@ -2,14 +2,15 @@ import std.buffer;
 import std.fmt;
 import std.io;
 
-// The control for disjoint_write_halves.qcore: one bound of the second lend
-// moved from 4 to 3, so the two ranges share exactly byte 3 and everything
-// else is identical. The refusal is therefore a statement about the OVERLAP —
-// the exclusivity rule between two write lends — and not about lending at all.
+// CT07's bounds control, the lend's own range: the case program (case.qcore)
+// with one bound of the second lend moved from 8 to 9, one byte past the
+// declared extent, everything else identical. Refused at Q053 at check time —
+// `source.buffer.v1` lends a range only when 0 <= low <= high <= extent — so
+// the case's bounds half is a refusal, not a run-time trap.
 fn main() -> unit effects { io, alloc, mut } {
     let store = bytes(8);
     let left = lend(store, 0, 4);
-    let right = lend(store, 3, 8);
+    let right = lend(store, 4, 9);
     left[0] = 11;
     right[0] = 55;
     left[1] = 22;
