@@ -43,7 +43,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
 | `crates/qcore-schemas/` | L0 published schema surface (Rust API **14.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
-| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its three load-bearing modules: `crates/qcore-c-gateway/src/legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `crates/qcore-c-gateway/src/legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `crates/qcore-c-gateway/src/typed_source.rs` (opaque typed C path import and source def/use) |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its four load-bearing modules: `crates/qcore-c-gateway/src/legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `crates/qcore-c-gateway/src/legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `crates/qcore-c-gateway/src/typed_source.rs` (opaque typed C path import and source def/use), and since wave 27 `crates/qcore-c-gateway/src/legacy_location.rs` (the presentation-only preprocessed → original `file:line` map — constraint 12a) |
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
@@ -65,25 +65,32 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-26 close. The **corpus baseline is still
-`docs/reports/wave23-c-operations/artifacts/`** — no arbiter since has re-pinned
-it — with the attributed AFTER runs chained beneath it:
-`docs/reports/aom-destroy-siblings/artifacts/` (wave 23) and
-`docs/reports/aom-binding-poison/artifacts/` (wave 25), the run the corpus rows
-below are read from. Wave 26 ran **no arbiter** — not one of its five cards
-touched a gateway, contract, audit or provider file — so those rows are
-**carried** from the wave-25 measurement and labelled carried, not presented as
-a fresh run. Only the CT row (by **mapping**, not conformance — constraint 23)
-and the gate row moved. Every preceding corpus archive stays frozen
-(constraint 21):
+Headline numbers at the wave-27 close. The **corpus baseline moves to
+`docs/reports/gateway-c-location/artifacts/`**, and the move is
+**presentation-only**. Wave 27 ran one arbiter, `GATEWAY-C-LOCATION`: its BEFORE
+run reproduces the preceding baseline's `diagnostics.json` and
+`chunk-contracts.json` **byte for byte**, and its AFTER run differs from that in
+attribution *presentation* alone — **zero verdict moves, zero leaf-set moves,
+zero STOP findings**, every figure below unchanged on every count. What moved is
+what a diagnostic **presents**: 54,371 rows gained an `origin` naming the
+original, pre-preprocessing `file:line`; 266 descriptions had their site
+rewritten (exactly the 266 leak leaves — the only category present here whose
+text names a site); 178 unit rows gained an `origin_coordinates` account; and two
+envelope keys changed. The preprocessed `L`-number stays the **internal**
+coordinate — pin identity, leaf identity, certificate comparability — by the
+user's ruling, not by omission (`GATEWAY-LOCATION-INTERNAL-CHANNELS`). Every
+preceding corpus archive stays frozen (constraint 21):
+`docs/reports/wave23-c-operations/artifacts/` and the attributed AFTER runs
+chained beneath it — `aom-destroy-siblings` (wave 23), `aom-binding-poison`
+(wave 25), now `gateway-c-location` (wave 27):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-25 re-measurement). Two non-pinned diagnostic totals moved at that re-measurement and are attributed leaf by leaf in `docs/reports/aom-binding-poison/README.md` §4: `unknown_alias` 4,421 → **4,344** (−77) and `unsupported` 49,781 → **49,773** (−8), 87 `Unknown`-class leaves across 26 units, 1 added and 86 removed |
-| CT01–CT50 conformance | **36/50 mapped**, 14 unmapped; sanitized-native 5 of 36, proof 0 of 36 (wave 26: CT06, CT11 and CT49 mapped — a grown denominator is mapping, not conformance) |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-27 presentation re-pin, as are `unknown_alias` **4,344** and `unsupported` **49,773**, with all 54,383 diagnostic rows keeping their `(function, preprocessed line, category)`). The authoritative artifacts are `docs/reports/gateway-c-location/artifacts/`, where a diagnostic row now carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
+| CT01–CT50 conformance | **36/50 mapped**, 14 unmapped; sanitized-native 5 of 36, proof 0 of 36. Wave 27 mapped **nothing** and edited no manifest row: CT08, CT09, CT21, CT22 and CT23 gained *capability* — their archived reasons are retired or narrowed in the cards' own reports and `ct_stage_evidence.json` proposals — and a capability is not a mapping (constraint 23) |
 | Contract corpus | **73 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 4,209 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **110 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave26-close/gate.json`, measured at the integration tip over the five merged cards; each card's own gate is in its report) |
+| Merged gate | 4,376 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **114 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave27-close/gate.json`, measured at the integration tip over the six merged pieces; each card's own gate is in its report) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -99,7 +106,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" (every wave and card
 paragraph, in order, each keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-35 entries) plus each report's own follow-on list; per-card evidence in
+39 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table; trust/verdict rules and
@@ -221,11 +228,16 @@ pointer is the card that established it; read it before deviating.
    decided instead by the **discharging** arm of that same contract, its first
    firing anywhere in the pinned corpus: a strictly better answer to the same
    question, changing no count, the pin still **266** with not one leak leaf
-   added or removed. `remaining-o04-b08`, `corpus-repin`,
+   added or removed. There is **no sixth move** either: the wave-27 arbiter
+   re-pinned *presentation* only, and the 266 leak rows are exactly the 266 whose
+   description text was rewritten — each verified to be the substitution of the
+   **site alone**, the text on both sides of the phrase byte-identical. A leak
+   leaf's identity is still its preprocessed line.
+   `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
    `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1,
-   `aom-binding-poison` Headline and §5.2.
+   `aom-binding-poison` Headline and §5.2, `gateway-c-location` §5.3.
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
@@ -318,6 +330,37 @@ pointer is the card that established it; read it before deviating.
     scope; attribution is by include-depth flags no directive can move, and
     `Safe` requires full analysed coverage at the certificate gate.
     `remaining-e01-tail`.
+12a. **A presented coordinate is derived, and no file spelling is ever read from
+    a flagless marker.** A gateway diagnostic presents the original,
+    pre-preprocessing `file:line`; the preprocessed `L`-number stays the
+    **internal** coordinate of the certificate, `source-effects.json`,
+    `chunk-contracts.json`, the census APIs and the probe examples, which is the
+    user's ruling and not an omission (`GATEWAY-LOCATION-INTERNAL-CHANNELS`). The
+    coordinate is derived by pairing the analysed `-E -P` text with a second,
+    **presentation-only** marked `-E` run, and the pairing is **checked, not
+    assumed**: same length, same trimmed text line for line, or the whole map is
+    refused. Three rules carry the anti-forgery property and must survive
+    refactors — a frame's spelling is adopted **only** from an *entering* marker
+    (flag `1`), so a `#line`, which Clang re-emits flagless, can never write one;
+    include depth 0 is not named by a marker at all but resolved by the caller
+    against the audit's own configured file, which is what keeps the pinned
+    transport's guessable `<stdin>` out of every report; and a flagless marker
+    naming a file other than the one its frame was entered as **withdraws** the
+    coordinate for every line it governs rather than relabelling it, the
+    diagnostic falling back to `preprocessed line N`, which names itself as
+    internal. Proved in general as `presented_files_are_entered_files`
+    (`QCore.SourceCoordinate`), not on witnesses. What a `#line` *can* still do is
+    renumber the file it is written in, which is its C11 §6.10.4 meaning and
+    indistinguishable from one of Clang's own resynchronisations
+    (`GATEWAY-LOCATION-LINE-ONLY-DIRECTIVE`) — it moves no file identity, no
+    include depth and **no audited scope**, so constraint 12 is untouched: the
+    scope reader (`legacy_enumeration`) is not read, not written and cannot be
+    influenced by this module, and the map is built only *after* a unit's result
+    is settled. All four refusal grounds are
+    `ReasonCategory::EnvironmentUnavailable` on the producer-supplied path, so
+    §L21.1 rule 1 applies and none can contribute to a provisional `Unsafe`; a
+    refused unit keeps every internal position and is never given an approximate
+    coordinate. `gateway-c-location`.
 
 **Concurrency source routes**
 
@@ -393,17 +436,59 @@ pointer is the card that established it; read it before deviating.
       so a port name stays a genuine reference — and the census measures it
       claiming a span in **no** `.qcore`/`.qc` file of this repository outside
       the card's own two examples.
+    * `AGGREGATES-V1` **+0 words and +0 tokens**, and its census is the one that
+      **rejected a spelling on archived evidence**. The head is the
+      already-reserved `type`, claimed contextually at `type NAME {` — censused
+      at **zero** bare occurrences across 435 `.qcore`/`.qc` files (all eleven
+      `type NAME {` in the tree are `resource type`, which an earlier branch
+      claims) and zero in Rust string literals, so the shape was a parse failure
+      before the card, the `extern library NAME;` precedent. **`record` is
+      rejected and must stay rejected**:
+      `docs/reports/remaining-v07/probes/d02_boundary_record.qcore` is the single
+      line `record R { }` and **two archived reports pin it to `Q000`**, so
+      claiming the word at declaration position would make that file parse and
+      falsify a frozen archive (constraint 21) — the `buffer` → `bytes` and
+      `work` → `effort` shape, the syntax renamed rather than the pin edited.
+      `struct` is census-clean and was still not taken, on the ground that the
+      language already has a declaration head for a named type. The card also ran
+      the census in the **other** direction — which *existing* reserved words does
+      the construct put in a new position — and found the six whole-token-stream
+      route-selector words: a record naming `spawn`, `join` or one of the four
+      buffer/payload intrinsics refuses `Q015` declared and `Q000` constructed.
+      Both are fail-closed, so `NATIVE-LIBRARY-SOURCE-BINDING`'s span exclusion
+      was measured and **deliberately not copied** — it would retire the `Q015`
+      half and leave the `Q000` half, buying a type that declares and cannot be
+      constructed (`AGGREGATE-SELECTOR-WORDS`).
+    * **+0, exact rather than statistical:** `QUANT-REGION-SOURCE`. Every word of
+      `error region … catch (…) quant open … as …` and `discharge` is reserved
+      already (Cycle 6; `credit`/`effort` from `T08-EPOCH-SRC`) and the shape
+      already parsed, so the reservation question does not arise: before the card
+      the statement collected `R` as a referenced name and refused at `Q013`,
+      measured, so **no program in this repository could contain it at all**. The
+      `credit`/`effort` seam with the epoch route is one-way and was probed in
+      both directions rather than argued.
     * **+0, censused not assumed:** EXTERN-MODES (`move NAME` spells all four
       departing modes and the declaration decides which ran),
       `SOCKET-EVENT-COMPOSE`, `STRING-CONCAT`, `HTTP-V1-COMPUTED-LENGTH`,
-      `CT-WIRE-LANE`. `EXAMPLES-SUITE-WIRE` does not engage this constraint at
-      all: it reserves no word and touches no crate source.
+      `CT-WIRE-LANE`; and in wave 27 `CT07-SLICE-PERMISSIONS` (`borrow_utf8` has
+      been contextual since `STRING-CONCAT`, `,` and `)` are existing tokens, and
+      **no `.qcore`/`.qc` file on disk spells the new three-argument arity**, so
+      no shipped program's meaning changes — with **`part` recorded as colliding**
+      in binding position in a shipped fixture, and `lend`, `range`, `low`,
+      `high`, `sub`, `window` recorded free for a later card) and
+      `CT23-CREDIT-ERROR-PATH` (whose census is **vacuous by construction**:
+      `error`, `move`, `drop`, `close` and `effort` are all already reserved, so
+      the `error(…)` row clause can stop no existing source parsing).
+      `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3` and `GATEWAY-C-LOCATION` do not
+      engage this constraint at all: none reserves a word, and the first two
+      touch no crate source.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
     `native-library-source-binding`, `quirin-socket-v1`, `loop-v1`,
     `socket-event-compose`, `string-concat`, `socket-inet-addresses`,
-    `loop-unroll-budget`, `http-v1-computed-length`.
+    `loop-unroll-budget`, `http-v1-computed-length`, `aggregates-v1`,
+    `quant-region-source`, `ct07-slice-permissions`, `ct23-credit-error-path`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -525,7 +610,8 @@ pointer is the card that established it; read it before deviating.
     carries that model's own error value": do not split it per model.
     `socket-event-compose`.
 15h. **A `concat` result is static storage the compiler computed, and a
-    `borrow_utf8` view is the buffer's own.** `source.string.v1` composes text
+    `borrow_utf8` view is the buffer's own — since wave 27, a view of a
+    *range* of it (amended below).** `source.string.v1` composes text
     from **check-time-known** pieces into a new `static const` payload of the
     emitted program: no allocation, no run-time copy, no custody, and a length
     that is the **sum of the pieces' lengths** and is itself a check-time
@@ -552,6 +638,36 @@ pointer is the card that established it; read it before deviating.
     `borrow_utf8` keeps `source.buffer.v1` — and a composed module is one that
     **acquires** a buffer, which is what keeps `drop s;` on a string refusing at
     `Q068` where it always did. `string-concat`.
+    **Amended, card `CT07-SLICE-PERMISSIONS` (deliberate; it narrows a sentence
+    15h already carried rather than taking a new number).**
+    `borrow_utf8(NAME, LOW, HIGH)` lends the bytes `[LOW, HIGH)`, and the
+    whole-extent spelling is that form at `[0, extent)` — an **equation**, proved
+    against the shipped definition and measured on the certificate, the
+    observation and the emitted bytes, not an abbreviation. The window is
+    unchanged; what changed is what it **excludes**: a write is refused when its
+    byte lies inside a live loan and **admitted when it lies outside every one of
+    them**, with disjointness decided by `max low < min high`, which is the
+    set-theoretic question itself (`overlaps_iff_a_shared_byte`) because every
+    bound on this route is a check-time constant. Three asymmetries must survive
+    refactors. A **release is refused for any live loan however narrow**, because
+    it ends the storage all of them address — do not make that arm range-wise. An
+    index the route cannot resolve to a constant is **not provably disjoint** and
+    conflicts with every live loan, because the exclusion is decided *before*
+    `source.buffer.v1` judges the statement; falling through would make an
+    unresolvable index an admission at this gate. And two overlapping **borrows**
+    are deliberately **not** refused: both are immutable, they conflict on
+    nothing, and a slice of a loan is a fully overlapping second loan of the same
+    buffer by construction, so refusing overlap would refuse the mechanism this
+    constraint already rests on. There is **no write lend** — the owner keeps the
+    write authority over every byte it did not lend — which is why the window's
+    exactness argument survives and a `for` beside a loan still refuses
+    (`STRING-CONCAT-LOOP-WINDOW`, re-measured rather than assumed: a range narrows
+    *which* writes conflict and says nothing about *when* a statement runs). The
+    recorded blocker `STD-BUFFER-SLICE` ("needs the ownership IR's borrow nodes to
+    carry a footprint fraction") was measured to be about the **write** direction:
+    the ownership IR is untouched here, a `borrow_utf8` contributing an ordinary
+    `Read` as it always did, and the fraction is what
+    `SLICE-PERMISSIONS-WRITE-LEND` needs. `ct07-slice-permissions`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
@@ -582,6 +698,85 @@ pointer is the card that established it; read it before deviating.
     fallback would bind a different address from the declared one. The implicit
     `bind NAME;` and `connect NAME NAME;` forms emit the statements they always
     did. `socket-inet-addresses`.
+15j. **A flat epoch's credit is conserved across the creator's own error edges,
+    and the disposition is declared while the edge is derived.** For every task
+    of an admitted plan `restored + spent = credit` and `restored ≤ credit`,
+    componentwise on both axes, and over the epoch
+    `restored_credits + spent_credits = granted_credits ≤ allocation`. Both
+    directions are **refusals**, not conventions: an abandoned grant — neither
+    restored nor spent — is always refused (`Q635`, and this is CT23), and a
+    restoration larger than its grant is refused per task and per axis (`Q636`),
+    because it would put credit into the epoch that the epoch never granted. The
+    split is spelled and checked, never inferred both ways: the creator's error
+    edges are **derived** from the checked task IR (`TrySpawn.spawn_error`, an
+    eliminated `TryOutcome` join), while what the edge does with the grant is
+    **declared** and then checked against the grant the epoch actually makes — so
+    a plan can neither claim an error path the program does not have nor restore
+    credit that was never granted. Three things must stay as they are.
+    **`Q637` is deliberately not extended**: because `spent ≤ granted`, the credit
+    committed on every error edge is bounded by the success exit's, which `Q637`
+    already bounds by the allocation, so a second allocation check there would be
+    an unreachable condition rather than a gate (proved as
+    `the_error_arm_commits_no_more_than_the_granted_total`). **Restored credit is
+    not re-granted** — making the committed total path-sensitive would *admit*
+    programs `check_flat_epoch` refuses today, the forbidden direction
+    (`CT23-RESTORE-REUSE`). And the **declarative** route has no error edge at
+    all, so a clause written there is refused by the owning band
+    (`ErrorArmWithoutErrorEdge`, `Q630`) rather than by a grammar that pretends
+    the word does not exist; an elided arm is `error(drop);`, which is exactly the
+    accounting that existed before, and `qcore_core::epoch_accounting` is
+    untouched. `ct23-credit-error-path`.
+15k. **A v1 record is a plain copyable value, and the field-custody answer is a
+    measurement rather than a simplification.** `source.record.v1`'s
+    `type NAME { FIELD: i32, … }`, `let p = NAME { FIELD: OPERAND, … };` and
+    `let a = p.FIELD;` are admitted on `source.buffer.v1` only, with every other
+    route's refusal measured and pinned rather than widened. Every field is an
+    `i32`, so a record contributes **no** `qcore_core::ownership` operation, opens
+    no obligation and derives **no effect** — do not give a field custody without
+    the four rules that do not exist: the cycle-3 ownership IR addresses an owner
+    by a plain **name** and has no path, so `p.buf` is not a question
+    `check_ownership` can be asked, and an owned field needs a field-path owner
+    vocabulary, a partial-move rule, a drop-through-aggregate rule and a leak rule
+    at normal exit that sees into the aggregate (`AGGREGATE-OWNED-FIELD`;
+    `AGGREGATE-VIEW-FIELD` for the smaller view-field step, which constraint 15h's
+    exact borrow window cannot reach through). The consequences are the admitting
+    route's **existing** rules and not new ones — `drop p;` is `Q052`, a leak
+    beside a record is still the inherited checker's `Q054` — and construction
+    totality is what makes projection total, which is what makes the field read a
+    function rather than a partial one. Two emission facts are load-bearing: the
+    `qcore_record_`/`f_`/`r_` prefixes, so a QCore name that is a C keyword still
+    emits compilable C and a record, a buffer and a scalar of one source name are
+    three distinct C objects; and **a program that acquires no buffer carries no
+    buffer prelude**, forced by `-Wall -Wextra -Werror` on an unused `static` and
+    byte-neutral for every previously admitted program by an argument about which
+    programs the emitter could reach (among admitted programs, reading or writing
+    a byte *implies* acquiring a buffer) — measured over the whole tree at 80
+    emitting programs byte-identical, not asserted. `aggregates-v1`.
+15l. **An admitted quantitative region erases from emission, and the sealed pack
+    is a linear capability consumed exactly once.** `source.region.v1` —
+    `error region NAME { … } catch (ERROR) quant open NAME as BINDING { discharge
+    BINDING; }` — lands on the **sequential** route, is not a route of its own and
+    selects nothing, which is what gives it the existing certificate, reference
+    execution, C emission and native comparison unchanged. Every outcome is a
+    check-time literal, so the region has one path and compiles to
+    **byte-identical C with the hand-written straight-line program it is**
+    (measured against a twin, the whole difference being the `#line` directive
+    naming the other file): a region buys checking, not code. Every *semantic*
+    refusal is the unedited `qcore_core::error_region` model's own at the code
+    that pass already allocates (`Q303`–`Q309`, plus `Q300` for an undeclared
+    error type); only the reader's own **shape** refusals land on `Q302`. Two
+    things must not be "repaired". `RegionOp::QuantOpen` — the operation
+    **variant** — is **unreachable from a valid program by design**: the admitting
+    constructor is the `error_region::QuantOpen` **struct** on a catch clause, and
+    the variant is retained so an opening outside a catch has an explicit `Q302`
+    (`REGION-QUANTOPEN-OP-VARIANT`). And the v1 **path** bound is refused by name
+    rather than admitted silently — no error edge, a second catch clause, a second
+    region, an uncaught raise, a failing acquisition as the edge, a region in a
+    branch arm, a handler statement other than a discharge, a payload binder —
+    because `analyze_error_regions` calls `handle_catch` only for an error exit
+    that reaches a matching clause, so a clause on a path the region does not take
+    is a clause **nothing decides**, and admitting one would be silent rather than
+    fail-closed (invariant 1). `quant-region-source`.
 
 **Providers, packages and limits**
 
@@ -793,7 +988,14 @@ condition, still stable, still not reusable by a second pass. Wave 26 ran the
 consequence three times without strain — `LOOP-UNROLL-BUDGET` (`Q097`/`Q098`),
 `HTTP-V1-COMPUTED-LENGTH` (`Q090`/`Q093`/`Q094`) and `SOCKET-INET-ADDRESSES`
 (widening `Q084` inside `Q080`–`Q089`) — each stating its widening in both
-places and allocating nothing.
+places and allocating nothing. **Wave 27 ran it four more times, on four
+different bands** — `CT23-CREDIT-ERROR-PATH` (`Q630`/`Q635`/`Q636`/`Q641`),
+`AGGREGATES-V1` (`Q051`/`Q052`/`Q053`), `QUANT-REGION-SOURCE` (`Q302`, and
+`Q303`–`Q309` reached from a second route) and `CT07-SLICE-PERMISSIONS`
+(`Q077`/`Q078`) — including the wave's **language head**, an aggregate type,
+which took a condition extension rather than a pass of its own. `GATEWAY-C-LOCATION`
+allocated nothing either and is not an instance of the rule: fixing where a
+diagnostic is *attributed* is not a code change (constraint 1).
 
 | Codes | Owning pass | Meaning |
 |---|---|---|
@@ -809,20 +1011,20 @@ places and allocating nothing.
 | `Q043` | `ComposedStdIo` | composed extern/std-io route's own refusals (`source.std-io.v1` × `source.extern-call.v1`) |
 | `Q044`–`Q046` | `Branch` | `source.branch.v1` `if`/`else` admission: shape and arm subset, decidable condition tier (connectives, `!`, bitwise, constant bindings), custody join over survivors |
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
-| `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
+| `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`). Card `AGGREGATES-V1` admits the first source-level aggregate on this route — `source.record.v1`'s `type NAME { FIELD: i32, … }`, its construction and its field read — and **allocates no code**, widening three conditions: `Q051`'s to a record declaration, a field declaration, a construction outside the form (including one supplying a field twice, an undeclared field, or not every declared field), a field value that is not one operand and a numeric field path; `Q052`'s to a name at a record or field position that is not one (a construction of an *undeclared type* refuses earlier still, at `Q013`, a type name being an ordinary reference); and `Q053`'s from an index/byte/extent range to those and a **field count** outside `1..=32`. `Q054` (leak beside a record) and `Q055` (a buffer at a field position) are the route's existing rules reached unchanged, and `Q056`'s condition is **not** widened — the recheck comparing two more published halves is that condition working |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
-| `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` behind `std.string`, three bands. `Q068`–`Q073` (relocated from `Q065`–`Q070` at integration) the immutable UTF-8 `{ptr, len}` view: entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, the declared `effects` row. `Q075`–`Q076` (`STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool) text reaching a stream: `Q075` the line's shape, `Q076` a text operand naming no string this entry bound. `Q077`–`Q079` (`STRING-CONCAT`, reassigned to this pass) **computed text** — `concat(…)`, `dec`/`hex`, `borrow_utf8`: `Q077` shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window with the inherited ownership checker's own refusal, `Q079` the **static UTF-8 decision** on a buffer's write history |
+| `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` behind `std.string`, three bands. `Q068`–`Q073` (relocated from `Q065`–`Q070` at integration) the immutable UTF-8 `{ptr, len}` view: entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, the declared `effects` row. `Q075`–`Q076` (`STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool) text reaching a stream: `Q075` the line's shape, `Q076` a text operand naming no string this entry bound. `Q077`–`Q079` (`STRING-CONCAT`, reassigned to this pass) **computed text** — `concat(…)`, `dec`/`hex`, `borrow_utf8`: `Q077` shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window with the inherited ownership checker's own refusal, `Q079` the **static UTF-8 decision** on a buffer's write history. Card `CT07-SLICE-PERMISSIONS` makes the borrow lend a **range** (`borrow_utf8(NAME, LOW, HIGH)`, arity one or three) and allocates **no code**: `Q077` also covers a range bound violating `0 <= low <= high <= extent` and the two-argument spelling (deliberately not `Q071`, whose condition is a bound on a *view* decided against `len(s)`); **`Q078`'s condition is widened** from "a store into or a release of a buffer inside a live borrow's window" to "a store **into the bytes** of a live loan, or a release of a buffer any live loan holds", a whole-extent loan reporting the sentence it always reported byte for byte; and `Q079` is reached **without widening at all**, because that condition was always *the bytes this borrow would view* — so a range whose end splits a code point refuses there by the rule already written. A bound that is not a check-time constant stays `Q069`/`Q013` and a buffer or string at a bound position stays `Q072` |
 | `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — `Q080` entry shape, `Q081` the operand rule, `Q082` the transport state machine, `Q083` the inherited custody refusal, `Q084` byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), `Q086` the crossing boundary, `Q087` the `effects` row, `Q088`/`Q089` the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Two later cards extend the row and **allocate no code**, landing on `Q080`–`Q082` and `Q085`–`Q087`: `SOCKET-EVENT-COMPOSE`, the **reactor composition** (a checked socket registered with `source.event.v1`'s reactor), and `SOCKET-INET-ADDRESSES`, **declared IPv4/IPv6 addresses with ports** (`bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`, `sendto U ADDRESS […];`), whose external-peer refusal is `Q085`. Each **widens one condition**, stated here and in §L21 (constraint 1): `Q083`'s from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value; and `Q084`'s from a byte/payload-length/receive-count range to those and a **port** range. Per-condition mapping in §L21 |
 | `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (signature condition: a declared `Content-Length` that is not the content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`). Card `HTTP-V1-COMPUTED-LENGTH` admits a **computed** header value or content — a quoted token, a name this entry bound to text, a `concat(…)` of check-time-known pieces, or `dec(NAME)`/`hex(NAME)` — allocating **no code** and widening no gate, since every component is resolved to bytes *before* `admit_field` and `admit_framing` run and `Q093`'s equality stays decided rather than trusted (constraint 15f). It widens `Q090`'s condition (a malformed `concat`/`len`, a composition of fewer than two pieces, a composed payload above the 4096-byte bound, a selector without its operand, a value name rebound) and `Q094`'s (a component, piece or `len` operand naming a binding of the other kind). The field **name** stays a written token |
 | `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`). Card `LOOP-UNROLL-BUDGET` widens two conditions and allocates **no code**: `Q097` also covers the statement-adjacent `[| #unroll, where #bound < N |]` clause list's **shape** and a list that licenses nothing (before a non-`for`, doubled, or dangling; an *unterminated* list stays a `Q000` parse failure), and `Q098` becomes the **three-layer budget** — an absolute ceiling of 4096 no declaration may raise, a default budget of 256 an unattributed `for` is held to (refusing *with the licensing clause list written into the message*), and a licence that is **checked, never trusted**, a declared `N` above the ceiling refusing before this loop's bound is read. The licence **erases from emission**: attributed and unattributed programs of the same admitted bound emit byte-identical C |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
-| `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
+| `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend |
 | `Q400`, `Q401`, `Q403` | driver invocation | no inputs; missing/ambiguous entry; `--entry` against a library module |
 | `Q500` | `CEmission` | construct the reduced C11 CFG cannot encode |
 | `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile |
 | `Q610`–`Q627` | `Concurrency` | `CheckedMutexInvariantV1`; `Q624`/`Q625` opt-in lock ranks, `Q626`/`Q627` opt-in protection growth |
-| `Q630`–`Q641` | `Concurrency` | `FlatEpochBoundV1` flat-epoch accounting (`source.epoch.bound.v1`) |
+| `Q630`–`Q641` | `Concurrency` | `FlatEpochBoundV1` flat-epoch accounting (`source.epoch.bound.v1`), and its sibling `EpochCreditRecoveryV1` — the error path over the same epoch's credits, reached from source by `source.epoch.tasks.v1`'s `error(move\|drop\|close);` row clause (card `CT23-CREDIT-ERROR-PATH`). The same pass and the same quantities, so it **extends four of this band's conditions and takes no code of its own**: `Q630` a plan that does not describe its epoch (including a clause on the declarative route, which has no error edge), `Q635` credit **abandoned** at the creator's error edge, `Q636` a restoration larger than its grant, `Q641` the error path's arithmetic. `Q637` is deliberately **not** extended (constraint 15j) |
 | `Q650`–`Q667` | `Concurrency` | `DisjointFootprintsV1` disjoint footprints |
 | `Q670`–`Q677` | `Concurrency` | `CheckedRegionTaskCreditV1` error-region task credit |
 | `Q700`–`Q703` | `PluginVerification` | scope resolution, undischarged obligations, conflicting evidence, unvalidatable provider allegation |
