@@ -348,7 +348,7 @@ shape `c11_threads_compat.h` and `qcore_event_poll_compat.h` established.
 
 | Arm | Descriptor type | Close | Wait | Startup | Evidence in this card |
 |---|---|---|---|---|---|
-| `_WIN32` | `SOCKET` (unsigned handle, **not** a CRT fd) | `closesocket` | `WSAPoll` | `WSAStartup(2,2)`; `ws2_32.lib` named from inside the emitted file via `#pragma comment` under MSVC | **compile-path-correct only.** Residual **`SOCKET-V1-WINDOWS-RUN`** |
+| `_WIN32` | `SOCKET` (unsigned handle, **not** a CRT fd) | `closesocket` | `WSAPoll` | `WSAStartup(2,2)`; `ws2_32.lib` named from inside the emitted file via `#pragma comment` under MSVC | **runtime-verified by follow-on `SOCKET-V1-WINDOWS-RUN`**; see `docs/reports/socket-v1-windows-run/README.md` |
 | `__APPLE__` | `int` | `close(2)` | `poll(2)` | none | **compile-path-correct only.** Residual **`SOCKET-V1-APPLE-RUN`** |
 | else (Linux, other POSIX) | `int` | `close(2)` | `poll(2)` | none | **runtime-verified**: emitted C built with `-std=c11 -Wall -Wextra -Werror -pedantic`, run under ASan/UBSan/LSan, stdout byte-compared with the reference observation |
 
@@ -366,12 +366,12 @@ carries neither**. AF_INET loopback is used on all three arms — the AF_UNIX
 capability dance is `std.event`'s and is not needed here, which is why constraint
 15d is cited for its *discipline* rather than reused as a mechanism.
 
-**What the residuals mean.** `SOCKET-V1-WINDOWS-RUN` and `SOCKET-V1-APPLE-RUN`
-are the TRACE-STDIO-WIN precedent: the arms are written and compile-path-correct,
-but this card publishes **no** native-run, sanitizer or byte-comparison claim for
-them. A `#[cfg(any(target_os = "linux", target_os = "macos"))]` guard confines
-the native tests, and the macOS branch of the ASan options is present and correct
-(LSan is Linux-only) but was not exercised on this card's hardware.
+**What the residuals mean.** This card originally left both platform runs at the
+TRACE-STDIO-WIN precedent: written and compile-path-correct, without a native-run,
+sanitizer or byte-comparison claim. Follow-on `SOCKET-V1-WINDOWS-RUN` closes the
+Windows residual with native `cl.exe` TCP and UDP runs and byte comparisons. The
+Apple residual remains: the macOS branch of the ASan options is present and
+correct (LSan is Linux-only) but has not been exercised on macOS hardware.
 
 ---
 
@@ -558,7 +558,7 @@ are unread and unmoved by this card.
 | `SOCKET-UDP-CONNECT` | a connected datagram socket |
 | `SOCKET-V1-EINTR-RESUME` | resuming an interrupted call. Today a `-1` return fails the run, because the retry count is not model-determined |
 | `SOCKET-V1-CLOSE-ERRNO` | reading `errno` and pinning the target on a failed close, moving some arms from the poisoned `Attempted` to `Released` (§5) |
-| `SOCKET-V1-WINDOWS-RUN` | a native run, sanitizer or byte-comparison claim for the Windows arm |
+| `SOCKET-V1-WINDOWS-RUN` | **closed** by `docs/reports/socket-v1-windows-run/README.md`: native Visual Studio `cl.exe` TCP/UDP runs and byte comparisons; no sanitizer claim |
 | `SOCKET-V1-APPLE-RUN` | the same for the Apple arm |
 | `SOCKET-V1-SHUTDOWN` | half-close (`shutdown(2)`), socket options, non-blocking mode, IPv6 |
 

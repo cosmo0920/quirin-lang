@@ -811,7 +811,8 @@ fn the_published_example_runs_and_matches_its_readme_transcript() {
 
     // The transcript is read out of the README rather than restated here, so
     // the page cannot drift from what the program does.
-    let transcript = STRINGS_README
+    let readme = STRINGS_README.replace("\r\n", "\n");
+    let transcript = readme
         .split("## Transcript")
         .nth(1)
         .and_then(|tail| tail.split("```text").nth(1))

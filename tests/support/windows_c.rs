@@ -9,12 +9,31 @@ pub fn run(source: &str, header: Option<&str>, defines: &[String]) -> Output {
     run_with_sources(source, header, defines, &[])
 }
 
+/// Compile and run with Microsoft's native `cl.exe`, refusing an MSVC-like
+/// substitute such as clang-cl. Cards that publish Visual Studio/MSVC evidence
+/// use this entry point so the compiler named by the evidence is executable,
+/// not merely inferred from the Rust target.
+#[allow(dead_code)]
+pub fn run_msvc(source: &str, header: Option<&str>, defines: &[String]) -> Output {
+    run_with_sources_impl(source, header, defines, &[], true)
+}
+
 #[allow(dead_code)]
 pub fn run_with_sources(
     source: &str,
     header: Option<&str>,
     defines: &[String],
     extra_sources: &[(&str, &str)],
+) -> Output {
+    run_with_sources_impl(source, header, defines, extra_sources, false)
+}
+
+fn run_with_sources_impl(
+    source: &str,
+    header: Option<&str>,
+    defines: &[String],
+    extra_sources: &[(&str, &str)],
+    require_cl: bool,
 ) -> Output {
     static NEXT: AtomicU64 = AtomicU64::new(0);
     let directory = std::env::temp_dir().join(format!(
@@ -87,6 +106,18 @@ pub fn run_with_sources(
         build.define(name, value);
     }
     let compiler = build.get_compiler();
+    if require_cl {
+        let compiler_name = compiler
+            .path()
+            .file_stem()
+            .and_then(|name| name.to_str())
+            .unwrap_or_default();
+        assert!(
+            compiler.is_like_msvc() && compiler_name.eq_ignore_ascii_case("cl"),
+            "native MSVC evidence requires Visual Studio cl.exe, got {}",
+            compiler.path().display()
+        );
+    }
     let mut command = compiler.to_command();
     command.current_dir(&directory);
     if let Some(header) = header {
