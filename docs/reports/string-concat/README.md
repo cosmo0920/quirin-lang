@@ -706,8 +706,8 @@ on `PATH`.
 
 | Step | Result |
 |---|---|
-| `git submodule update --init --recursive` | run in this fresh worktree |
-| `cargo test --workspace --no-fail-fast` | see §14.1 |
+| `git submodule update --init --recursive` | run in this fresh worktree — **after** the workspace run, see §14.1 |
+| `cargo test --workspace --no-fail-fast` | **3,990 passed, 10 failed, 8 ignored** across 206 result lines. All ten failures are the uninitialised submodule; all ten pass after the repair — §14.1 |
 | `cargo fmt --all -- --check` | exit **0** |
 | `cargo clippy --all-targets -- -D warnings` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
@@ -723,6 +723,41 @@ The four suite lines above are the load-bearing ones for this card and were
 re-run at the **final committed state**. `std_buffer.rs` in particular was run
 after each step of §9's refactor, which is what makes "no behaviour change" a
 measurement rather than an intention.
+
+### 14.1 The ten failures are the submodule pin, and all ten pass after it
+
+`cargo test --workspace --no-fail-fast` reported **3,990 passed, 10 failed, 8
+ignored** across 206 result lines. **Every one of the ten is
+`third_party/libevent` being uninitialised in this fresh worktree**, which is
+invariant 5's pin doing its job on an *environment gap* rather than a code
+failure — the same thing cards `STD-EVENT`, `COMPOSE-EVENT-LINES` and
+`STRING-SLICE-IO` each recorded in their own fresh worktrees, and the gate's own
+first line is the repair.
+
+| Suite | Failing rows | After `git submodule update --init --recursive` |
+|---|---|---|
+| `libevent_submodule.rs` | `libevent_submodule_matches_the_audited_revision` | **1 passed, 0 failed** |
+| `native_library_header.rs` | four census/subset rows over libevent's core header | **17 passed, 0 failed** |
+| `native_library_header_decoration.rs` | three declared-text/derivation rows | **22 passed, 0 failed** |
+| `profile_loader.rs` | two pinned-checkout/inventory rows | **18 passed, 0 failed** |
+
+The submodule was then checked out at the audited revision
+`d82464a277d0f42703702c4dfd9af6af38595a83` (`release-2.2.2-alpha-11-gd82464a2`)
+and all four suites re-run: **58 tests, 0 failed**. So the workspace figure to
+read is **4,000 passed, 0 failed, 8 ignored** — 3,990 from the run plus the ten
+that the repair turns green, none of which this card touches: no file under
+`crates/qcore-c-gateway/`, `contract/` or the profile loader is in its diff
+(§10).
+
+**No `P02-FLAKE` row tripped** (standing constraint 16). Three of the five rows
+are in this workspace suite and each passed on the first attempt of the complete
+run: `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` and
+`memory_growth_beyond_the_declared_limit_is_bounded`. That is worth recording
+given §14.4's load. The other two live in the separate `providers/` workspace,
+which this card neither touches nor ran: no provider, schema, package template
+or protocol changed, so constraint 18's rebuild is not owed and the 122-test
+provider checkpoint is **carried, not rerun**.
 
 ### 14.2 The Lean toolchain is not on the default `PATH`
 
@@ -744,13 +779,19 @@ carries the pre-card count. §12 item 3. The other 192 Python tests pass.
 ### 14.4 The load this was measured under
 
 Sibling wave-25 card agents were running their own suites in other worktrees on
-the same machine throughout, with the one-minute load average between **40 and
-81**. That is recorded so the integrator can read the workspace numbers
-correctly, and it is the direct cause of the first workspace run being abandoned
-rather than reported: it was still in flight when three tests and a `cargo fmt`
-pass changed the tree, so the numbers below are a second, complete run made
-after the last edit. Measuring a superseded state and reporting it would have
-been worse than re-running.
+the same machine throughout, with the one-minute load average between **11 and
+81** and mostly in the 25–40 band. That is recorded so the integrator can read
+the numbers correctly, and it is the direct cause of the **first** workspace run
+being abandoned rather than reported: it was still in flight when three tests
+and a `cargo fmt` pass changed the tree, so the figures above are a second,
+complete run made after the last edit. Measuring a superseded state and
+reporting it would have been worse than re-running.
+
+The run itself took several hours of wall clock under that contention and was
+driven from a detached script (`measure/run_workspace.sh`) writing a sentinel,
+because a run piped through the harness's own background-task machinery had
+twice been terminated mid-suite. That is a measurement-hygiene note, not a
+finding: the script runs the same command the gate names.
 
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad.
