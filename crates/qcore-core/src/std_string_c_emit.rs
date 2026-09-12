@@ -169,6 +169,19 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
         BufferEvent::Extent { name, .. } | BufferEvent::Release { name } => {
             consumed.insert(name.clone(), true);
         }
+        // Card `SLICE-PERMISSIONS-WRITE-LEND`: unreachable here — the composed
+        // route refuses a lend before emission — and total anyway, marking
+        // exactly what the statement reads.
+        BufferEvent::Lend {
+            name, low, high, ..
+        } => {
+            consumed.insert(name.clone(), true);
+            for operand in [low, high] {
+                if let BufferOperand::Scalar(scalar) = operand {
+                    consumed.insert(scalar.clone(), true);
+                }
+            }
+        }
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 buffer_consumers(event, consumed);

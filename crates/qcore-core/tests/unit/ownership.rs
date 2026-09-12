@@ -202,3 +202,239 @@ fn live_vector_is_componentwise_ledger_sum() {
     assert_eq!(state.live().get("descriptors"), 1);
     state.validate_invariant().unwrap();
 }
+
+// --- The write lend (card `SLICE-PERMISSIONS-WRITE-LEND`). ---
+
+fn lend(owner: &str, borrower: &str, low: u64, high: u64, body: Vec<OwnershipOp>) -> OwnershipOp {
+    OwnershipOp::LendRange {
+        owner: owner.into(),
+        borrower: borrower.into(),
+        axis: "memory".into(),
+        low,
+        high,
+        body,
+    }
+}
+
+fn write_range(place: &str, low: u64, high: u64) -> OwnershipOp {
+    OwnershipOp::WriteRange {
+        place: place.into(),
+        axis: "memory".into(),
+        low,
+        high,
+    }
+}
+
+fn read_range(place: &str, low: u64, high: u64) -> OwnershipOp {
+    OwnershipOp::ReadRange {
+        place: place.into(),
+        axis: "memory".into(),
+        low,
+        high,
+    }
+}
+
+#[test]
+fn two_disjoint_lends_hold_write_authority_at_once() {
+    // The exclusivity rule's admitting direction — the one `BorrowMutable`
+    // could never take, and the reason the lend is a distinct node.
+    check_ownership(&[
+        acquire(1, "a", 8),
+        lend(
+            "a",
+            "left",
+            0,
+            4,
+            vec![lend(
+                "a",
+                "right",
+                4,
+                8,
+                vec![
+                    write_range("left", 0, 1),
+                    write_range("right", 4, 5),
+                    read_range("right", 4, 5),
+                    read_range("left", 0, 1),
+                ],
+            )],
+        ),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap();
+}
+
+#[test]
+fn two_overlapping_lends_refuse() {
+    let error = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "left", 0, 4, vec![lend("a", "mid", 3, 6, vec![])]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::OverlappingLends("a".into()));
+}
+
+#[test]
+fn an_empty_lend_overlaps_nothing_and_a_whole_borrow_blocks_a_nonempty_one() {
+    // The empty interval is a consequence of the decision, not a case beside
+    // it: an empty lend stands beside a whole shared borrow, and a non-empty
+    // one refuses against it as the whole-resource conflict it is.
+    check_ownership(&[
+        acquire(1, "a", 8),
+        OwnershipOp::BorrowShared {
+            owner: "a".into(),
+            borrower: "view".into(),
+            body: vec![lend("a", "none", 4, 4, vec![])],
+        },
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap();
+
+    let error = check_ownership(&[
+        acquire(1, "a", 8),
+        OwnershipOp::BorrowShared {
+            owner: "a".into(),
+            borrower: "view".into(),
+            body: vec![lend("a", "part", 0, 4, vec![])],
+        },
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        error,
+        OwnershipError::MutableBorrowWhileBorrowed("a".into())
+    );
+}
+
+#[test]
+fn owner_accesses_are_rangewise_against_a_live_lend() {
+    // Outside the lent range the owner keeps both authorities; inside it has
+    // neither — the transfer, at the IR level. The empty interval is an
+    // extent query and touches no byte.
+    check_ownership(&[
+        acquire(1, "a", 8),
+        lend(
+            "a",
+            "part",
+            0,
+            4,
+            vec![
+                write_range("a", 6, 7),
+                read_range("a", 4, 5),
+                read_range("a", 0, 0),
+            ],
+        ),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap();
+
+    let write_inside = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![write_range("a", 3, 4)]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        write_inside,
+        OwnershipError::OwnerMutationWhileBorrowed("a".into())
+    );
+
+    let read_inside = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![read_range("a", 3, 4)]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        read_inside,
+        OwnershipError::OwnerAccessWhileMutablyBorrowed("a".into())
+    );
+}
+
+#[test]
+fn an_access_through_a_lend_must_state_a_footprint_inside_its_range() {
+    // The rebasing law, enforced rather than trusted: containment for a stated
+    // footprint, and a refusal for a rangeless access that states none.
+    let outside = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 2, 6, vec![write_range("part", 6, 7)]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        outside,
+        OwnershipError::AccessOutsideLendRange("part".into())
+    );
+
+    let rangeless = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 2, 6, vec![OwnershipOp::Write("part".into())]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        rangeless,
+        OwnershipError::AccessOutsideLendRange("part".into())
+    );
+}
+
+#[test]
+fn a_lend_blocks_drop_and_move_and_cannot_itself_be_lent_or_dropped() {
+    let dropped = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![OwnershipOp::Drop("a".into())]),
+    ])
+    .unwrap_err();
+    assert_eq!(dropped, OwnershipError::DropWhileBorrowed("a".into()));
+
+    let moved = check_ownership(&[
+        acquire(1, "a", 8),
+        lend(
+            "a",
+            "part",
+            0,
+            4,
+            vec![OwnershipOp::Move {
+                from: "a".into(),
+                to: "b".into(),
+            }],
+        ),
+    ])
+    .unwrap_err();
+    assert_eq!(moved, OwnershipError::MoveWhileBorrowed("a".into()));
+
+    let relent = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![lend("part", "sub", 0, 2, vec![])]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(relent, OwnershipError::LendOfBorrow("part".into()));
+
+    let loan_dropped = check_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![OwnershipOp::Drop("part".into())]),
+        OwnershipOp::Drop("a".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(loan_dropped, OwnershipError::DropOfBorrow("part".into()));
+}
+
+#[test]
+fn a_lend_moves_no_quantity_and_its_binding_ends_with_its_body() {
+    // The transfer is of authority, not of quantity: the live vector is the
+    // owner's throughout, and the borrower's binding does not survive the node.
+    let state = execute_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![write_range("part", 0, 1)]),
+    ])
+    .unwrap();
+    assert_eq!(state.live().get("memory"), 8);
+    let error = execute_ownership(&[
+        acquire(1, "a", 8),
+        lend("a", "part", 0, 4, vec![]),
+        OwnershipOp::Read("part".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UnknownBinding("part".into()));
+}

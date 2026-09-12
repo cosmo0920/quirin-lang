@@ -699,7 +699,9 @@ fn collect_ownership_identities(operations: &[OwnershipOp], result: &mut BTreeSe
             OwnershipOp::Acquire { id, .. } => {
                 result.insert(*id);
             }
-            OwnershipOp::BorrowShared { body, .. } | OwnershipOp::BorrowMutable { body, .. } => {
+            OwnershipOp::BorrowShared { body, .. }
+            | OwnershipOp::BorrowMutable { body, .. }
+            | OwnershipOp::LendRange { body, .. } => {
                 collect_ownership_identities(body, result);
             }
             OwnershipOp::Branch { then_ops, else_ops } => {
@@ -708,6 +710,8 @@ fn collect_ownership_identities(operations: &[OwnershipOp], result: &mut BTreeSe
             }
             OwnershipOp::Read(_)
             | OwnershipOp::Write(_)
+            | OwnershipOp::ReadRange { .. }
+            | OwnershipOp::WriteRange { .. }
             | OwnershipOp::Move { .. }
             | OwnershipOp::Copy(_)
             | OwnershipOp::Drop(_)

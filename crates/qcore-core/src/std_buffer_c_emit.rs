@@ -71,6 +71,14 @@ pub enum BufferEmissionRefusal {
     /// that could not recurse would have silently emitted nothing for the loop
     /// and dropped every write its body performs.
     UnemittableLoop { event: usize },
+    /// A write lend reached a caller that cannot emit one (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`) — the [`Self::UnemittableLoop`] shape
+    /// and for its reason: a lend and every access through it need the loan
+    /// **environment** [`emit_events`] carries (which owner, which
+    /// displacement, which length), and [`buffer_event_statement`] has none.
+    /// The one caller without it is the composed string/buffer route, whose
+    /// checker refuses a lend before emission (`SLICE-PERMISSIONS-COMPOSED-LEND`).
+    UnemittableLend { event: usize },
     /// A record construction or a field read reached a caller that cannot emit
     /// one (card `AGGREGATES-V1`).
     ///
@@ -231,6 +239,18 @@ pub fn buffer_name(name: &str) -> String {
 /// The C name of a scalar binding.
 fn scalar_name(name: &str) -> String {
     format!("s_{name}")
+}
+
+/// The C name of a write lend's binding (card `SLICE-PERMISSIONS-WRITE-LEND`).
+///
+/// A fourth prefix beside `b_`, `s_` and `r_`, so a loan, a buffer, a scalar
+/// and a record of one source name are distinct C objects. The object is a
+/// `const` **pointer** into the owner's block, displaced by the lend's low
+/// bound — the rebasing arithmetic, emitted once at the lend rather than at
+/// every access.
+#[must_use]
+pub fn lend_name(name: &str) -> String {
+    format!("l_{name}")
 }
 
 /// The C name of a record binding (card `AGGREGATES-V1`).
@@ -447,6 +467,10 @@ pub fn buffer_event_statement(
         BufferEvent::Construct { .. } | BufferEvent::Field { .. } => {
             return Err(BufferEmissionRefusal::UnemittableRecord { event: index });
         }
+        // **Refused, not skipped** — see [`BufferEmissionRefusal::UnemittableLend`].
+        BufferEvent::Lend { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableLend { event: index });
+        }
     };
     Ok(Some(statement))
 }
@@ -478,6 +502,12 @@ pub fn emit_buffer_c11(
         bound: BTreeMap::new(),
     };
 
+    let lends: BTreeMap<usize, &std_buffer::LendRecord> = certificate
+        .lends
+        .iter()
+        .map(|record| (record.event, record))
+        .collect();
+    let mut loans: BTreeMap<String, (u32, u32)> = BTreeMap::new();
     emit_events(
         &program.events,
         "    ",
@@ -485,6 +515,8 @@ pub fn emit_buffer_c11(
         true,
         &mut scalars,
         &mut extents,
+        &mut loans,
+        &lends,
         &mut records,
         &mut source,
     )?;
@@ -530,11 +562,80 @@ fn emit_events(
     top_level: bool,
     scalars: &mut BTreeMap<String, String>,
     extents: &mut BTreeMap<String, u32>,
+    loans: &mut BTreeMap<String, (u32, u32)>,
+    lends: &BTreeMap<usize, &std_buffer::LendRecord>,
     records: &mut RecordEnvironment,
     source: &mut String,
 ) -> Result<(), BufferEmissionRefusal> {
     for (position, event) in events.iter().enumerate() {
         let index = if top_level { position } else { attributed };
+        // Card `SLICE-PERMISSIONS-WRITE-LEND`: the lend and every access
+        // through a loan are emitted here, where the loan environment lives —
+        // which owner, which displacement, which length. The displacement is
+        // written **once**, at the lend (from the bounds the certificate's
+        // `LendRecord` resolved), so every later access is written in the
+        // loan's own coordinates exactly as the source spells it, and the
+        // emitted bounds witness is the loan's own `[0, len)`.
+        match event {
+            BufferEvent::Lend { binding, name, .. } => {
+                let Some(record) = lends.get(&index) else {
+                    return Err(BufferEmissionRefusal::UnemittableLend { event: index });
+                };
+                let len = record.high - record.low;
+                loans.insert(binding.clone(), (record.low, len));
+                let emitted = lend_name(binding);
+                let owner = buffer_name(name);
+                if record.low == 0 {
+                    let _ = writeln!(source, "{indent}unsigned char *const {emitted} = {owner};");
+                } else {
+                    let _ = writeln!(
+                        source,
+                        "{indent}unsigned char *const {emitted} = {owner} + {}u;",
+                        record.low
+                    );
+                }
+                continue;
+            }
+            BufferEvent::Store {
+                name,
+                index: at,
+                value,
+            } if loans.contains_key(name) => {
+                let (_, len) = loans[name];
+                let at = operand_expression(scalars, index, at)?;
+                let value = operand_expression(scalars, index, value)?;
+                let _ = writeln!(
+                    source,
+                    "{indent}qcore_bytes_store({}, (size_t) {len}u, (size_t) ({at}), {value});",
+                    lend_name(name)
+                );
+                continue;
+            }
+            BufferEvent::Load {
+                binding,
+                name,
+                index: at,
+            } if loans.contains_key(name) => {
+                let (_, len) = loans[name];
+                let at = operand_expression(scalars, index, at)?;
+                let emitted = scalar_name(binding);
+                scalars.insert(binding.clone(), emitted.clone());
+                let _ = writeln!(
+                    source,
+                    "{indent}int32_t {emitted} = qcore_bytes_load({}, (size_t) {len}u, (size_t) ({at}));",
+                    lend_name(name)
+                );
+                continue;
+            }
+            BufferEvent::Extent { binding, name } if loans.contains_key(name) => {
+                let (_, len) = loans[name];
+                let emitted = scalar_name(binding);
+                scalars.insert(binding.clone(), emitted.clone());
+                let _ = writeln!(source, "{indent}int32_t {emitted} = INT32_C({len});");
+                continue;
+            }
+            _ => {}
+        }
         match event {
             // **The composition of the two restructures** (cards `LOOP-V1`
             // and `STRING-CONCAT`). The recursion and the indent are
@@ -648,7 +749,7 @@ fn emit_events(
                 scalars.insert(variable.clone(), name);
                 let inner = format!("{indent}    ");
                 emit_events(
-                    body, &inner, index, false, scalars, extents, records, source,
+                    body, &inner, index, false, scalars, extents, loans, lends, records, source,
                 )?;
                 // The body's declarations do not outlive the C block either, so
                 // the emitter's environment is scoped exactly as the model's is.
@@ -657,6 +758,9 @@ fn emit_events(
                 records.bound.retain(|key, _| outer_records.contains(key));
                 let _ = writeln!(source, "{indent}}}");
             }
+            // Handled — or refused — by the loan environment's own match
+            // above, which never falls through for a lend.
+            BufferEvent::Lend { .. } => {}
             BufferEvent::Line(line) => {
                 // The rendering itself — the conversion, the level tag, the
                 // stream, the `fflush` — is decided by `source.std-io.v1`'s own
