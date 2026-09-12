@@ -1218,7 +1218,7 @@ composed_entry = "fn", NAME, "(", ")", "->", result, "{", plan, { statement }, "
 plan           = "thread", "scope", NAME, "epoch", "{", { header | row }, "}" ;
 header         = allocation | overhead | latency_claim ;   (* G02e's, minus `cell` *)
 row            = "thread", "scope", WORKER, "{", { clause }, "}" ;
-clause         = "move", ";" | "copy", ";"
+clause         = "move", ";" | "copy", ";" | "read", ";"
                | "peak", NAT, ";" | "effort", NAT, ";"
                | "credit", NAT, "effort", NAT, ";"
                | "retained", NAT, ";"
@@ -1230,9 +1230,25 @@ clause         = "move", ";" | "copy", ";"
 declaration order, correspond one-to-one with that worker's `TrySpawn` sites in
 the checked task IR, in source order; a declared row with no matching creation
 and a creation with no declared row are both refused, per worker. A row's
-ordered `move;`/`copy;` clauses must equal that creation's ordered argument
-operands, and `retained BYTES;` is required exactly when the spawned worker's
-checked result type is an owned Buffer.
+ordered `move;`/`copy;`/`read;` clauses must equal that creation's ordered
+argument operands, and `retained BYTES;` is required exactly when the spawned
+worker's checked result type is an owned Buffer.
+
+The `read;` clause (card `REGION-JOINS-LOAN`, wave 30, discharging
+`T08-COMPOSE-LOAN` deliberately) declares a **counted read share** — the task
+route's own `read PLACE share N` at the spawn argument. Like `move;` and
+`copy;` it is place-free, and it also spells no share: the lent place and the
+share are the checked task region's, not the plan's, to name. The wave-15
+refusal reason ("a read loan's residency is shared with the lender, which this
+flat accounting does not represent") dissolved rather than being overridden:
+the lender on this route is always the **creator** — a spawned worker is a
+leaf function and lends nothing — and creator-scope bytes are outside the
+epoch's allocation (`REGION-JOINS-EPOCH-AXIS`), so the loan contributes no
+epoch byte and no shared cell. Share arithmetic, the write exclusion while a
+share is out, the refusal of a `drop` of the lent owner (`LoanOutstanding`)
+and the share's return at the join stay the **unedited** task ledger's own
+rules on the task half. A `read NAME;` clause — the shared-cell read — still
+has no referent here (`T08-COMPOSE-SHARED`).
 
 The `join` clause is **optional here**: the creator's disposal is derived from
 the checked IR (the handle's joins, the outcome's eliminations, and whether the
@@ -1270,7 +1286,8 @@ opening discards parent-local unused credit after joins"*, made expressible:
 region_epilogue = "error", "region", NAME, "{",
                     { "credit", NAT, ";" | "effort", NAT, ";"
                     | "let", NAME, "=", "qcore_buffer_new", "(", NAT, ")", "?", ";"
-                    | "drop", NAME, ";" },
+                    | "drop", NAME, ";"
+                    | "move", NAME, ";" },
                     "qcore_check", "(", "false", ",", ERROR, ")", ";",
                   "}",
                   "catch", "(", ERROR, ")",
@@ -1304,12 +1321,32 @@ which names no task-route resource; every pack obligation keeps the model's
 own `Q303`–`Q309`. Two simultaneously live owners refuse at the task route's
 existing custody `Q600` — the second acquisition's `?` failure edge discards
 the first, the erased program's real leak path (`REGION-JOINS-MULTI-OWNER`).
-See [the composition record](reports/region-credit-joins/README.md) and
-[the duty record](reports/region-joins-duties/README.md).
+
+Since card `REGION-JOINS-LOAN` (wave 30) the body also admits the **adoption**
+`move NAME;`: the region takes a live entry owner's cleanup duty into the
+pack — the same sealed `Destroy`, an acquisition from the pack's side — so an
+**acquired** owner's name is the region's own while an **adopted** owner's
+name is the entry's own (a name the entry does not bind refuses at `Q302`, as
+does one owner taken twice through either shape). The adoption erases
+completely — the owner's acquisition already stands in the entry's own text —
+and the discharge's `drop NAME;` is written into the blanks after every join,
+where the **unedited** task route decides everything custodial: an adopted
+scalar refuses at that route's `Q500` ("drop requires an owned buffer"), a
+drop of a still-lent owner at its `Q600` (`LoanOutstanding`), and an
+acquisition beside an adopted owner keeps the `REGION-JOINS-MULTI-OWNER`
+boundary. With a worker capturing a counted read share of the adopted owner,
+this is **CT25's whole scenario** — cleanup destroys owner after joins *and
+loan expiry* — because the share returns at the join under the unedited task
+ledger, and the wave-28 after-joins rule (`Q600`) orders the erased release
+after every join and therefore after the expiry.
+See [the composition record](reports/region-credit-joins/README.md),
+[the duty record](reports/region-joins-duties/README.md) and
+[the loan record](reports/region-joins-loan/README.md).
 
 Refused at `Q600`, each with a named follow-on: shared storage cells and
-`read`/`write` clauses (`T08-COMPOSE-SHARED`), read-loan captures
-(`T08-COMPOSE-LOAN`), a mutex generation anywhere in the composed body
+shared-cell `read NAME;`/`write` clauses (`T08-COMPOSE-SHARED`; the read-loan
+refusal `T08-COMPOSE-LOAN` is **discharged** by card `REGION-JOINS-LOAN`
+above), a mutex generation anywhere in the composed body
 (`T08-COMPOSE-GUARD`, ranked or not), a joined owned result the creator hands on
 rather than releasing or keeping (`T08-COMPOSE-RESULT-REUSE`), a plan that is
 not the entry's first statement, a second epoch scope, and a spawn or join

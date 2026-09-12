@@ -16,7 +16,7 @@
 //!               | "overhead" "scope" INT "thread" INT ("measured" INT)? ";"
 //!               | "bound" "effort" "as" "latency" ";"
 //! row         ::= "thread" "scope" WORKER "{" clause* "}"
-//! clause      ::= "move" ";" | "copy" ";"          -- ordered captures
+//! clause      ::= "move" ";" | "copy" ";" | "read" ";"   -- ordered captures
 //!               | "peak" INT ";" | "effort" INT ";"
 //!               | "credit" INT "effort" INT ";"
 //!               | "retained" INT ";"
@@ -61,8 +61,18 @@
 //! **Shapes this composition refuses.** Shared storage cells (`let NAME = share
 //! N;`, `read NAME;`, `write NAME;`) have no referent in the copy/owned task
 //! forms, so they are refused rather than admitted as free-floating declarations
-//! (`T08-COMPOSE-SHARED`). Read loans and counted shares are refused as captures
-//! (`T08-COMPOSE-LOAN`). A mutex generation in the composed body is refused
+//! (`T08-COMPOSE-SHARED`). A read-loan capture — the task route's own
+//! `read PLACE share N` at a spawn argument — is **admitted** since card
+//! `REGION-JOINS-LOAN` (wave 30), declared as a place-free `read;` clause: the
+//! wave-15 refusal reason ("a read loan's residency is shared with the lender,
+//! which this flat accounting does not represent") dissolves on this route
+//! because the lender is always the **creator** — a spawned worker is a leaf
+//! function and lends nothing — and creator-scope bytes are already outside the
+//! epoch's allocation (`REGION-JOINS-EPOCH-AXIS`), so the loan contributes no
+//! epoch byte and no shared cell; the share's arithmetic, the write exclusion
+//! while a share is out and the reclamation at the join stay the **unedited**
+//! task ledger's own rules on the task half (`T08-COMPOSE-LOAN` discharged by
+//! that card). A mutex generation in the composed body is refused
 //! (`T08-COMPOSE-GUARD`): the epoch models no guard and the mutex ledger models
 //! no accounting, and admitting the pair would be asserting a composition
 //! neither checker was given. A joined owned result that the creator then moves
@@ -101,6 +111,14 @@ pub enum ComposedCapture {
     Copy,
     /// `move;` — an owned Buffer consumed by the creation.
     Move,
+    /// `read;` — a counted read share of a creator-owned Buffer lent to the
+    /// child for the creation (card `REGION-JOINS-LOAN`). The lent place and
+    /// the share are the checked task region's, not the plan's, to name,
+    /// exactly as the captured place of a `move;` is; the loan's bytes reside
+    /// with the lender — the creator — whose allocations are outside the
+    /// epoch's allocation axis (`REGION-JOINS-EPOCH-AXIS`), so the capture
+    /// contributes no epoch byte figure.
+    Read,
 }
 
 impl ComposedCapture {
@@ -108,6 +126,7 @@ impl ComposedCapture {
         match self {
             Self::Copy => "copy",
             Self::Move => "move",
+            Self::Read => "read",
         }
     }
 }
@@ -336,13 +355,22 @@ fn split(
 /// The body admits the parent's own quantities, the decided error edge, and —
 /// since card `REGION-JOINS-DUTIES` (wave 29), which deliberately supersedes
 /// the duty-free premise standing constraint 15m recorded — the task route's
-/// **own** acquisition and release shapes, and nothing else: `credit N;`,
-/// `effort N;`, `qcore_check(false, ERROR);`, `let NAME =
-/// qcore_buffer_new(INT)?;` and `drop NAME;` of a region-acquired owner. An
-/// acquisition seals into the pack as a real cleanup duty
-/// (`CleanupAction::Destroy`), and the opening's `discharge` destroys the
-/// remaining owners in reverse acquisition order — CT25's duty half, *"cleanup
-/// destroys owner after joins"*.
+/// **own** acquisition and release shapes, and — since card
+/// `REGION-JOINS-LOAN` (wave 30) — the adoption of a live entry owner, and
+/// nothing else: `credit N;`, `effort N;`, `qcore_check(false, ERROR);`,
+/// `let NAME = qcore_buffer_new(INT)?;`, `drop NAME;` of a region owner, and
+/// `move NAME;` of an entry binding. An acquisition seals into the pack as a
+/// real cleanup duty (`CleanupAction::Destroy`); an adoption takes a live
+/// entry-scope owner's cleanup duty into the pack — the same `Destroy`, the
+/// owner's acquisition standing in the entry's own text before the region —
+/// and the opening's `discharge` destroys the remaining owners in reverse
+/// order of appearance. With a worker capturing a counted read share of that
+/// owner (`read PLACE share N` at the spawn), this is CT25's whole scenario,
+/// *"cleanup destroys owner after joins **and loan expiry**"*: the share
+/// returns at the join under the unedited task ledger, every join precedes
+/// the region (`Q600`), and the erased `drop NAME;` is therefore ordered
+/// after the expiry — while a `drop` of a still-lent owner refuses at the
+/// task route's own custody rule.
 ///
 /// The emission story is the sequential route's own precedent read at the
 /// text level: an admitted region has exactly one path, so it **erases into
@@ -378,12 +406,13 @@ pub struct ComposedRegion {
     /// published. The driver cross-checks the model's abandoned quantity
     /// against this independent computation before publishing either.
     pub remainder: Option<u64>,
-    /// The duties the sealed pack will carry — the region's acquisitions the
-    /// body did not release, in acquisition order, each an owner name with the
-    /// resource identity the reader assigned it (1, 2, … in acquisition
-    /// order). The driver cross-checks the model's own cleanup trace against
-    /// this independent fold before publishing either, exactly as it
-    /// cross-checks the credit (card `REGION-JOINS-DUTIES`).
+    /// The duties the sealed pack will carry — the region's owners
+    /// (acquisitions and adoptions alike) the body did not release, in order
+    /// of appearance, each an owner name with the resource identity the
+    /// reader assigned it (1, 2, … in order of appearance). The driver
+    /// cross-checks the model's own cleanup trace against this independent
+    /// fold before publishing either, exactly as it cross-checks the credit
+    /// (cards `REGION-JOINS-DUTIES`, `REGION-JOINS-LOAN`).
     pub duties: Vec<(String, u64)>,
     /// The module's declared nominal error type names, for the model's
     /// declaration and effect rows. Derived from the declarations rather than
@@ -527,15 +556,22 @@ fn read_region_statement(
     let mut region_body = Vec::new();
     let mut raised: Option<String> = None;
     let mut remainder: Option<u64> = Some(0);
-    // The region's own acquisitions (card `REGION-JOINS-DUTIES`): each owner
-    // name with the resource identity this reader assigns it, in acquisition
-    // order, and the subset the body did not release — the duties the sealed
-    // pack will carry. The identities are the reader's own (1, 2, …); the
-    // model checks their ledger discipline, and the driver cross-checks its
-    // trace against this independent fold.
-    let mut owners: Vec<(String, u64)> = Vec::new();
+    // The region's own owners: each name with the resource identity this
+    // reader assigns it, in order of appearance, and the subset the body did
+    // not release — the duties the sealed pack will carry. An owner enters
+    // the region one of two ways, and the third component records which:
+    // **acquired** (`false`; card `REGION-JOINS-DUTIES`) by the task route's
+    // own `let NAME = qcore_buffer_new(INT)?;`, whose name must be the
+    // region's own, or **adopted** (`true`; card `REGION-JOINS-LOAN`) by
+    // `move NAME;`, which takes the cleanup duty of a live entry-scope owner
+    // into the pack, whose name must therefore be the entry's own. The
+    // identities are the reader's own (1, 2, …); the model checks their
+    // ledger discipline, and the driver cross-checks its trace against this
+    // independent fold.
+    let mut owners: Vec<(String, u64, bool)> = Vec::new();
     let mut duties: Vec<(String, u64)> = Vec::new();
     let mut kept: Vec<Span> = Vec::new();
+    let entry_bindings = entry_bindings_outside(entry_body, span);
     for body_statement in &blocks[0].statements {
         if raised.is_some() {
             return Err(region_shape(
@@ -546,17 +582,18 @@ fn read_region_statement(
         }
         let admitted_set = "statement is not in the composed region body: after every join the \
                             body admits the parent's own quantities, the task route's own \
-                            acquisition and release, and the decided error edge — `credit N;`, \
-                            `effort N;`, `let NAME = qcore_buffer_new(INT)?;`, `drop NAME;` and \
-                            `qcore_check(false, ERROR);` (card `REGION-JOINS-DUTIES`). \
-                            `qcore_acquire` is the sequential route's spelling and names no \
-                            task-route resource";
+                            acquisition and release, the adoption of a live entry owner, and the \
+                            decided error edge — `credit N;`, `effort N;`, \
+                            `let NAME = qcore_buffer_new(INT)?;`, `drop NAME;`, `move NAME;` and \
+                            `qcore_check(false, ERROR);` (cards `REGION-JOINS-DUTIES` and \
+                            `REGION-JOINS-LOAN`). `qcore_acquire` is the sequential route's \
+                            spelling and names no task-route resource";
         let tokens = header_tokens(source, body_statement.span);
         match &body_statement.value {
             StatementKind::Let {
                 binding: Some(owner),
             } if region_acquisition(&tokens).is_some() => {
-                if owners.iter().any(|(name, _)| name == owner) {
+                if owners.iter().any(|(name, _, _)| name == owner) {
                     return Err(region_shape(
                         body_statement.span,
                         format!(
@@ -566,7 +603,7 @@ fn read_region_statement(
                     ));
                 }
                 let resource = owners.len() as u64 + 1;
-                owners.push((owner.clone(), resource));
+                owners.push((owner.clone(), resource, false));
                 duties.push((owner.clone(), resource));
                 kept.push(body_statement.span);
                 region_body.push(RegionOp::Acquire {
@@ -574,8 +611,58 @@ fn read_region_statement(
                     destructor_noexcept: true,
                 });
             }
+            // `move NAME;` — the adoption of a live entry-scope owner (card
+            // `REGION-JOINS-LOAN`): the region takes the owner's cleanup duty
+            // into the pack, which from the pack's side is an acquisition —
+            // the duty seals as a `Destroy` exactly as a region acquisition's
+            // does. The statement erases completely (the binding already
+            // stands in the entry's own text before the region), and the
+            // discharge's `drop NAME;` is written into the blanks after every
+            // join, where the **unedited** task route custody-checks it: an
+            // adopted name that is not a live owned Buffer there — dropped,
+            // moved away, a scalar, or still lent to an unjoined child —
+            // refuses at that route's own codes, never here.
+            StatementKind::Move { place: Some(place) } => {
+                if tokens.len() != 3
+                    || !word(tokens.first(), "move")
+                    || !symbol(tokens.get(2), Symbol::Semicolon)
+                {
+                    return Err(region_shape(
+                        body_statement.span,
+                        "an adoption is exactly `move NAME;` (card `REGION-JOINS-LOAN`)",
+                    ));
+                }
+                if owners.iter().any(|(name, _, _)| name == place) {
+                    return Err(region_shape(
+                        body_statement.span,
+                        format!(
+                            "the region takes `{place}` twice; each owner of the composed \
+                             region is one binding (card `REGION-JOINS-LOAN`)"
+                        ),
+                    ));
+                }
+                if !entry_bindings.contains(place) {
+                    return Err(region_shape(
+                        body_statement.span,
+                        format!(
+                            "the region adopts `{place}`, which the entry does not bind: \
+                             `move NAME;` takes the cleanup duty of a live task-scope owner \
+                             into the pack, so the name must be a binding of the entry (card \
+                             `REGION-JOINS-LOAN`)"
+                        ),
+                    ));
+                }
+                let resource = owners.len() as u64 + 1;
+                owners.push((place.clone(), resource, true));
+                duties.push((place.clone(), resource));
+                region_body.push(RegionOp::Acquire {
+                    resource,
+                    destructor_noexcept: true,
+                });
+            }
             StatementKind::Drop { place: Some(place) } => {
-                let Some((_, resource)) = owners.iter().find(|(name, _)| name == place) else {
+                let Some((_, resource, _)) = owners.iter().find(|(name, _, _)| name == place)
+                else {
                     return Err(region_shape(
                         body_statement.span,
                         format!(
@@ -664,14 +751,17 @@ fn read_region_statement(
         }),
         _ => None,
     };
-    // The erasure keeps each owner binding at its own offsets in the task
-    // half, so a name it binds must not collide with a binding the entry makes
-    // elsewhere: the region body's block scope is flattened into the task
-    // scope by the split, and a collision would change which binding a later
-    // statement names (card `REGION-JOINS-DUTIES`).
-    if let Some((owner, _)) = owners
+    // The erasure keeps each **acquired** owner binding at its own offsets in
+    // the task half, so a name it binds must not collide with a binding the
+    // entry makes elsewhere: the region body's block scope is flattened into
+    // the task scope by the split, and a collision would change which binding
+    // a later statement names (card `REGION-JOINS-DUTIES`). An **adopted**
+    // owner is the opposite case on purpose — its name must be an entry
+    // binding, checked at admission (card `REGION-JOINS-LOAN`) — so the
+    // collision rule reads only the acquired ones.
+    if let Some((owner, _, _)) = owners
         .iter()
-        .find(|(owner, _)| entry_bindings_outside(entry_body, span).contains(owner))
+        .find(|(owner, _, adopted)| !adopted && entry_bindings.contains(owner))
     {
         return Err(region_shape(
             span,
@@ -914,14 +1004,15 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
             captures.push(match argument {
                 ScalarOperand::Slot(_) => ComposedCapture::Copy,
                 ScalarOperand::Move(_) => ComposedCapture::Move,
-                ScalarOperand::Loan { .. } => {
-                    return Err(failure(
-                        span,
-                        "source.epoch.tasks.v1 admits copy and move captures only \
-                         (T08-COMPOSE-LOAN): a read loan's residency is shared with the lender, \
-                         which this flat accounting does not represent",
-                    ));
-                }
+                // A read loan (card `REGION-JOINS-LOAN`, discharging
+                // `T08-COMPOSE-LOAN`): the lender is the creator — a spawned
+                // worker is a leaf function and lends nothing — and
+                // creator-scope bytes are outside the epoch's allocation
+                // (`REGION-JOINS-EPOCH-AXIS`), so the loan's residency needs
+                // no epoch representation. Share arithmetic, the write
+                // exclusion and the reclamation at the join are the unedited
+                // task ledger's rules on the task half.
+                ScalarOperand::Loan { .. } => ComposedCapture::Read,
                 ScalarOperand::Unit | ScalarOperand::I32(_) => {
                     return Err(failure(
                         span,
@@ -1643,10 +1734,28 @@ fn lower_row_clause(
             row.captures.push(ComposedCapture::Copy);
             Ok(())
         }
-        Some("read" | "write") => Err(failure(
+        Some("read") => {
+            // The read-loan capture clause (card `REGION-JOINS-LOAN`). Like
+            // `move;` and `copy;` it carries no place and no figure: the lent
+            // place and its share are the checked task region's, not the
+            // plan's, to name. A `read NAME;` is the shared-cell read, which
+            // still has no referent here.
+            if tokens.len() != 2 || !symbol(tokens.get(1), Symbol::Semicolon) {
+                return Err(failure(
+                    span,
+                    "a composed read-loan capture clause is exactly `read;` — the lent place and \
+                     its share are the checked task region's, not the plan's, to name (card \
+                     `REGION-JOINS-LOAN`); a shared cell read has no referent here \
+                     (T08-COMPOSE-SHARED)",
+                ));
+            }
+            row.captures.push(ComposedCapture::Read);
+            Ok(())
+        }
+        Some("write") => Err(failure(
             span,
-            "source.epoch.tasks.v1 has no shared storage (T08-COMPOSE-SHARED) and admits no read \
-             loan capture (T08-COMPOSE-LOAN)",
+            "source.epoch.tasks.v1 has no shared storage (T08-COMPOSE-SHARED): a shared cell \
+             write has no referent in the copy and owned task forms",
         )),
         Some("peak") => {
             let value = single_integer(&tokens, span, "peak")?;
@@ -1706,7 +1815,7 @@ fn lower_row_clause(
 fn unknown_clause(span: Span) -> SourceDiagnostic {
     failure(
         span,
-        "a composed row admits `move;`, `copy;`, `peak BYTES;`, `effort UNITS;`, \
+        "a composed row admits `move;`, `copy;`, `read;`, `peak BYTES;`, `effort UNITS;`, \
          `credit BYTES effort UNITS;`, `retained BYTES;`, at most one \
          `join(move|drop|close);` and at most one `error(move|drop|close);` only",
     )
