@@ -115,7 +115,8 @@ use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{BORROW_KEYWORD, FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
 use qcore_core::std_io::{Level, Rendering};
 use qcore_core::std_string::{
-    LiteralRefusal, StringEvent, StringOperand, StringProgram, TextOperand, decode_string_literal,
+    LiteralRefusal, StringEvent, StringOperand, StringPiece, StringProgram, TextOperand,
+    decode_string_literal,
 };
 use qcore_core::typed_errors::{Effect, EffectRow};
 
@@ -127,6 +128,30 @@ pub const LEN_KEYWORD: &str = "len";
 /// where the existing reference collector already drains it, so it is reserved
 /// nowhere and shadows nothing.
 pub const STRING_TYPE: &str = "string";
+
+/// The composition query (card `STRING-CONCAT`). **Contextual, not reserved**,
+/// on exactly the `len` precedent: the word is skipped by name resolution only
+/// where it is immediately followed by `(`.
+pub const CONCAT_KEYWORD: &str = "concat";
+
+/// The `std.buffer` → `std.string` bridge, amendment §5's first operation
+/// (card `STRING-CONCAT`). **Contextual, not reserved**, on the same terms.
+pub const BORROW_UTF8_KEYWORD: &str = "borrow_utf8";
+
+/// Whether this token is one of the contextual clause words `source.string.v1`
+/// supplies — `len`, `concat` or `borrow_utf8` — immediately followed by `(`.
+///
+/// The **one** rule name resolution consults, so the module's contextual words
+/// cannot drift from the words this lowering reads. Each was censused at zero
+/// occurrences of its `WORD(` shape across every `.qcore`/`.qc` fixture and
+/// every tracked Rust source file, which is what makes the narrow rule collide
+/// with nothing; `dec` and `hex` need no entry because they have been reserved
+/// words since `STD-MODULES`.
+#[must_use]
+pub fn is_string_clause_word(word: &str, next: Option<&TokenKind>) -> bool {
+    matches!(word, LEN_KEYWORD | CONCAT_KEYWORD | BORROW_UTF8_KEYWORD)
+        && matches!(next, Some(TokenKind::Symbol(Symbol::LeftParen)))
+}
 
 /// Whether this token is the contextual `len` clause word — the word `len`
 /// immediately followed by `(`.
@@ -258,6 +283,15 @@ pub enum StringUse {
     /// composition rules have — a text render is a capability of a string
     /// module, not a way to become one.
     Render,
+    /// `let NAME [: string] = concat(PIECE, …);` — text this program computes
+    /// (card `STRING-CONCAT`).
+    Concat,
+    /// `let NAME [: string] = borrow_utf8(NAME);` — the `std.buffer` bridge
+    /// (card `STRING-CONCAT`). **This is the one construct that changes route
+    /// selection**: a module holding a buffer reaches `source.buffer.v1`
+    /// unless it spells this, so every program written before this card travels
+    /// an identical code path.
+    Borrow,
 }
 
 /// Whether a text operand at `cursor` **constructs** a string, which is what
@@ -307,11 +341,16 @@ fn string_use(window: &[&Token]) -> Option<StringUse> {
     if literal_text(window, value).is_some() {
         return Some(StringUse::Literal);
     }
-    if is_length_query(
-        word(window, value)?,
-        window.get(value + 1).map(|token| &token.kind),
-    ) {
+    let head = word(window, value)?;
+    let after = window.get(value + 1).map(|token| &token.kind);
+    if is_length_query(head, after) {
         return Some(StringUse::Length);
+    }
+    if head == CONCAT_KEYWORD && is_string_clause_word(head, after) {
+        return Some(StringUse::Concat);
+    }
+    if head == BORROW_UTF8_KEYWORD && is_string_clause_word(head, after) {
+        return Some(StringUse::Borrow);
     }
     // `let NAME = NAME [ … : … ]`. The colon is what separates a slice from
     // `source.buffer.v1`'s byte read; see the module header.
@@ -386,6 +425,19 @@ pub fn has_source_string(program: &SourceProgram) -> bool {
 #[must_use]
 pub fn string_span(program: &SourceProgram) -> Option<Span> {
     string_uses(program).values().next().copied()
+}
+
+/// Whether this module spells the `std.buffer` → `std.string` bridge
+/// (card `STRING-CONCAT`).
+///
+/// **The whole of the route-selection change this card makes.** A module that
+/// holds a buffer reaches `source.buffer.v1` exactly as it did before, unless
+/// it writes `borrow_utf8(…)` — the one construct whose meaning needs both
+/// models at once. A module that only composes text holds no buffer and never
+/// competed with that route in the first place.
+#[must_use]
+pub fn has_source_string_bridge(program: &SourceProgram) -> bool {
+    string_uses(program).contains_key(&StringUse::Borrow)
 }
 
 fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -637,6 +689,124 @@ fn text_line(
     LineForm::Refused
 }
 
+/// Read one `concat` piece, returning it and the cursor just past it
+/// (card `STRING-CONCAT`).
+///
+/// Four forms, and every one of them is check-time-known — which is the whole
+/// reason the result can be composed by the compiler rather than built at run
+/// time. The first three are the **same three** a rendered text operand takes,
+/// spelled the same way; the fourth is the one scalar-to-text direction this
+/// route has.
+fn concat_piece(
+    window: &[&Token],
+    cursor: usize,
+    literals: &mut Literals,
+    span: Span,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<(StringPiece, usize)> {
+    // `"…"` — a quoted literal, interned into the same pool a bound literal
+    // view interns into.
+    if let Some(raw) = literal_text(window, cursor) {
+        let payload = match decode_string_literal(raw) {
+            Ok(payload) => payload,
+            Err(refusal) => {
+                // Decoding is the base route's rule and keeps the base route's
+                // code, wherever the token is written.
+                diagnostics.push(diagnostic("Q070", span, refusal.to_string()));
+                return None;
+            }
+        };
+        return Some((
+            StringPiece::Text(TextOperand::Literal(literals.intern(payload))),
+            cursor + 1,
+        ));
+    }
+    let Some(head) = word(window, cursor) else {
+        diagnostics.push(diagnostic(
+            "Q077",
+            span,
+            "a `concat` piece is a quoted literal, a string this entry bound, one slice of one, or \
+             `dec(NAME)`/`hex(NAME)` for the text of a bound integer",
+        ));
+        return None;
+    };
+    // `dec ( NAME )` / `hex ( NAME )` — the digits of a check-time constant,
+    // produced by the **same** `Rendering` a `print dec n;` line renders with,
+    // so the two spellings of a number cannot disagree.
+    if let Some(rendering) = Rendering::parse(head)
+        && symbol(window, cursor + 1, Symbol::LeftParen)
+    {
+        let Some(name) = word(window, cursor + 2) else {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "`dec(NAME)` and `hex(NAME)` name the bound integer whose text they compose",
+            ));
+            return None;
+        };
+        if !symbol(window, cursor + 3, Symbol::RightParen) {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "this rendering piece is not closed",
+            ));
+            return None;
+        }
+        return Some((
+            StringPiece::Scalar {
+                rendering,
+                name: name.to_owned(),
+            },
+            cursor + 4,
+        ));
+    }
+    // `NAME [ OPERAND : OPERAND ]` — an inline slice, decided by the same
+    // predicate a bound slice is decided by.
+    if symbol(window, cursor + 1, Symbol::LeftBracket) {
+        let Some((low, next)) = operand(window, cursor + 2) else {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "a slice bounds with one integer literal or one bound integer name",
+            ));
+            return None;
+        };
+        if !symbol(window, next, Symbol::Colon) {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "`source.string.v1` slices with `NAME[LOW:HIGH]`",
+            ));
+            return None;
+        }
+        let Some((high, next)) = operand(window, next + 1) else {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "a slice bounds with one integer literal or one bound integer name",
+            ));
+            return None;
+        };
+        if !symbol(window, next, Symbol::RightBracket) {
+            diagnostics.push(diagnostic("Q077", span, "this slice is not closed"));
+            return None;
+        }
+        return Some((
+            StringPiece::Text(TextOperand::Slice {
+                name: head.to_owned(),
+                low,
+                high,
+            }),
+            next + 1,
+        ));
+    }
+    // `NAME` — a string this entry bound.
+    Some((
+        StringPiece::Text(TextOperand::Name(head.to_owned())),
+        cursor + 1,
+    ))
+}
+
 /// Lower one `let` statement.
 fn lower_let(
     window: &[&Token],
@@ -702,6 +872,58 @@ fn lower_let(
             binding,
             literal: literals.intern(payload),
         });
+    }
+
+    // `let NAME [: string] = borrow_utf8 ( NAME ) ;` (card `STRING-CONCAT`)
+    if let Some(head) = word(window, value)
+        && head == BORROW_UTF8_KEYWORD
+        && is_string_clause_word(head, window.get(value + 1).map(|token| &token.kind))
+    {
+        let Some(buffer) = word(window, value + 2) else {
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "`borrow_utf8(NAME)` names the owned byte buffer whose bytes it views",
+            ));
+            return None;
+        };
+        if !symbol(window, value + 3, Symbol::RightParen) || !ends_with_semicolon(window, value + 4)
+        {
+            diagnostics.push(diagnostic("Q077", span, "this `borrow_utf8(…)` is not closed"));
+            return None;
+        }
+        return Some(StringEvent::Borrow {
+            binding,
+            buffer: buffer.to_owned(),
+        });
+    }
+
+    // `let NAME [: string] = concat ( PIECE { "," PIECE } ) ;`
+    // (card `STRING-CONCAT`)
+    if let Some(head) = word(window, value)
+        && head == CONCAT_KEYWORD
+        && is_string_clause_word(head, window.get(value + 1).map(|token| &token.kind))
+    {
+        let mut pieces = Vec::new();
+        let mut cursor = value + 2;
+        loop {
+            let Some((piece, next)) = concat_piece(window, cursor, literals, span, diagnostics)
+            else {
+                return None;
+            };
+            pieces.push(piece);
+            cursor = next;
+            if symbol(window, cursor, Symbol::Comma) {
+                cursor += 1;
+                continue;
+            }
+            break;
+        }
+        if !symbol(window, cursor, Symbol::RightParen) || !ends_with_semicolon(window, cursor + 1) {
+            diagnostics.push(diagnostic("Q077", span, "this `concat(…)` is not closed"));
+            return None;
+        }
+        return Some(StringEvent::Concat { binding, pieces });
     }
 
     // `let NAME = len ( NAME ) ;`
@@ -839,6 +1061,26 @@ pub fn lower_source_string(
                     ),
                 ));
             }
+            // Card `STRING-CONCAT`: a composed module models buffer statements
+            // too, so a buffer statement in a helper must be refused here
+            // rather than being neither emitted nor refused. That is the same
+            // fail-closed hole `STRING-SLICE-IO` closed for a rendered text
+            // line, at this band's own code.
+            if let Some(span) = body.statements.iter().map(|statement| statement.span).find(
+                |span| {
+                    crate::source_std_buffer::buffer_statement(parsed, *span).is_some()
+                },
+            ) {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    format!(
+                        "`source.string.v1` models the entry only; the owned byte buffer `{}` \
+                         holds is outside the entry `{entry}`",
+                        other.value.name
+                    ),
+                ));
+            }
         }
     }
 
@@ -869,6 +1111,20 @@ pub fn lower_source_string(
     let mut events = Vec::new();
     let mut event_spans = Vec::new();
 
+    // Card `STRING-CONCAT`: **a composed module is one that acquires a
+    // buffer.** Deciding that up front, from the acquisition and nothing else,
+    // is what keeps every program written before this card byte-identical: a
+    // module with no `bytes(N)` in its entry embeds no buffer statement, so
+    // `drop s;` on a string keeps refusing at `Q068` where it refused before,
+    // rather than acquiring a "that is not a buffer" answer to a question it
+    // never asked.
+    let holds_a_buffer = body.statements.iter().any(|statement| {
+        matches!(
+            crate::source_std_buffer::buffer_statement(parsed, statement.span),
+            Some(Ok(qcore_core::std_buffer::BufferEvent::Acquire { .. }))
+        )
+    });
+
     for statement in &body.statements {
         let span = statement.span;
         if !statement.value.nested_blocks().is_empty() {
@@ -882,6 +1138,36 @@ pub fn lower_source_string(
         }
         let window = window(tokens, span);
         let head = word(&window, 0).unwrap_or_default();
+        // Card `STRING-CONCAT`: a `source.buffer.v1` statement embedded in a
+        // composed module is read by **that route's own reader**, so a byte
+        // write this route admits is one that route admits, spelled and bounded
+        // identically. Its refusal message is that route's; only the code is
+        // this pass's, because §L21 gives each pass its own range.
+        //
+        // The attempt runs before this route's own `let` reader and cannot
+        // steal a statement from it: `buffer_use` claims a `let` only for
+        // `bytes(…)`, `extent(…)` and a **colon-free** bracket, and this
+        // route's own `let` forms are a quoted literal, `len(…)`, `concat(…)`,
+        // `borrow_utf8(…)`, an integer and a colon-bearing bracket.
+        let buffer_read = if !holds_a_buffer
+            || head.is_empty()
+            || matches!(head, PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD | "return")
+            || string_use(&window).is_some()
+        {
+            Option::None
+        } else {
+            crate::source_std_buffer::buffer_statement(parsed, span)
+        };
+        if let Some(read) = buffer_read {
+            match read {
+                Ok(buffer_event) => {
+                    events.push(StringEvent::Buffer(buffer_event));
+                    event_spans.push(span);
+                }
+                Err(message) => diagnostics.push(diagnostic("Q077", span, message)),
+            }
+            continue;
+        }
         let event = match head {
             "let" => lower_let(&window, span, &mut literals, &mut diagnostics),
             // `log_level LEVEL;` is deliberately **absent** from this list, so

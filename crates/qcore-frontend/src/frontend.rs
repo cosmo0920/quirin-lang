@@ -2612,7 +2612,11 @@ fn lexical_references(
         // repository, so the narrower rule collides with nothing — the same
         // "rename or narrow rather than edit the pinned surface" discipline that
         // gave `bytes` its spelling and `effort` its name.
-        let length_query = crate::source_std_string::is_length_query(word, next.map(|t| &t.kind));
+        // Card `STRING-CONCAT` widens the same rule to `concat` and
+        // `borrow_utf8`, each censused at zero occurrences of its `WORD(` shape
+        // anywhere in the repository, and each therefore reserved **nowhere**.
+        let length_query =
+            crate::source_std_string::is_string_clause_word(word, next.map(|t| &t.kind));
         if body_binder
             || length_query
             || is_reserved_source_word(word)

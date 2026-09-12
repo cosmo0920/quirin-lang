@@ -443,14 +443,161 @@ pub fn custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
 /// The state the value half of the check carries: which names are buffers, what
 /// their declared extents are, what bytes they hold, and what each scalar name
 /// denotes.
-struct Evaluation {
-    extents: BTreeMap<String, u32>,
-    contents: BTreeMap<String, Vec<u8>>,
-    scalars: BTreeMap<String, i32>,
+///
+/// **Published rather than private since card `STRING-CONCAT`**, which needed
+/// this route's byte semantics inside a module that also holds string views. It
+/// is published as the *state plus one stepping function* rather than as three
+/// maps, so a second route reaches the extent rule, the bounds rule, the
+/// byte-range rule and the decidability rule by **running them** — there is one
+/// implementation of each and a composed module cannot admit a byte access this
+/// route would refuse, or refuse one it would admit.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct BufferEvaluation {
+    /// Declared extent per acquired buffer name.
+    pub extents: BTreeMap<String, u32>,
+    /// The modelled bytes of each buffer, zero at acquisition.
+    pub contents: BTreeMap<String, Vec<u8>>,
+    /// The check-time-constant integer environment. A composed route shares
+    /// **this** map rather than keeping a second one, so a name bound by a byte
+    /// read and a name bound by a string's `len` live in one environment.
+    pub scalars: BTreeMap<String, i32>,
 }
 
-impl Evaluation {
-    fn operand(&self, event: usize, operand: &BufferOperand) -> Result<i32, BufferError> {
+/// What applying one value-bearing [`BufferEvent`] produced.
+///
+/// Every field is something the certificate publishes, so a composed route
+/// records exactly what this route records without knowing how it was decided.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct BufferStep {
+    pub acquisition: Option<(String, u32)>,
+    pub release: Option<String>,
+    pub access: Option<BufferAccess>,
+    pub errors: Vec<BufferError>,
+}
+
+impl BufferEvaluation {
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Apply one **value-bearing** event: `Bind`, `Acquire`, `Store`, `Load`,
+    /// `Extent` or `Release`.
+    ///
+    /// [`BufferEvent::Line`] and [`BufferEvent::Return`] carry no buffer value
+    /// and return [`BufferStep::default`]; a caller decides those itself,
+    /// because a line's bytes are `source.std-io.v1`'s and a return is the
+    /// caller's own shape rule.
+    #[must_use]
+    pub fn apply(&mut self, index: usize, event: &BufferEvent) -> BufferStep {
+        let mut step = BufferStep::default();
+        match event {
+            BufferEvent::Bind { binding, value } => {
+                self.scalars.insert(binding.clone(), *value);
+            }
+            BufferEvent::Acquire { name, extent } => {
+                if *extent == 0 || *extent > MAX_EXTENT {
+                    step.errors.push(BufferError::ExtentOutOfRange {
+                        event: index,
+                        extent: i64::from(*extent),
+                    });
+                    // Registered anyway, and deliberately: the errors are
+                    // collected rather than fatal, so a refused acquisition
+                    // that left its name unbound would make every later
+                    // statement about it cascade into a second, misleading
+                    // refusal. The program is refused either way; what this
+                    // buys is that the report names the one thing that is
+                    // wrong with it.
+                }
+                self.extents.insert(name.clone(), *extent);
+                // Zero-initialised, and the emitted program uses `calloc` for
+                // exactly this reason: a `malloc` would leave the bytes
+                // indeterminate, so a read before a write would be undefined
+                // behaviour natively and unpredictable in the reference.
+                self.contents
+                    .insert(name.clone(), vec![0u8; *extent as usize]);
+                step.acquisition = Some((name.clone(), *extent));
+            }
+            BufferEvent::Store {
+                name,
+                index: at,
+                value,
+            } => {
+                let place = self.place(index, name, at);
+                let value = self.operand(index, value);
+                match (place, value) {
+                    (Ok((_, at)), Ok(value)) => {
+                        let Ok(byte) = u8::try_from(value) else {
+                            step.errors
+                                .push(BufferError::ByteOutOfRange { event: index, value });
+                            return step;
+                        };
+                        if let Some(bytes) = self.contents.get_mut(name) {
+                            bytes[at] = byte;
+                        }
+                        step.access = Some(BufferAccess {
+                            event: index,
+                            name: name.clone(),
+                            index: at as u32,
+                            byte,
+                            write: true,
+                        });
+                    }
+                    (place, value) => {
+                        step.errors.extend(place.err());
+                        step.errors.extend(value.err());
+                    }
+                }
+            }
+            BufferEvent::Load {
+                binding,
+                name,
+                index: at,
+            } => match self.place(index, name, at) {
+                Ok((_, at)) => {
+                    let byte = self
+                        .contents
+                        .get(name)
+                        .and_then(|bytes| bytes.get(at).copied())
+                        .unwrap_or(0);
+                    self.scalars.insert(binding.clone(), i32::from(byte));
+                    step.access = Some(BufferAccess {
+                        event: index,
+                        name: name.clone(),
+                        index: at as u32,
+                        byte,
+                        write: false,
+                    });
+                }
+                Err(error) => step.errors.push(error),
+            },
+            BufferEvent::Extent { binding, name } => match self.extents.get(name).copied() {
+                // The extent read back out of the acquisition. `i32` is
+                // total here because `MAX_EXTENT` is far inside it.
+                Some(extent) => {
+                    self.scalars.insert(binding.clone(), extent as i32);
+                }
+                None => step.errors.push(BufferError::NotABuffer {
+                    event: index,
+                    name: name.clone(),
+                }),
+            },
+            BufferEvent::Release { name } => {
+                if self.extents.contains_key(name) {
+                    step.release = Some(name.clone());
+                } else {
+                    step.errors.push(BufferError::NotABuffer {
+                        event: index,
+                        name: name.clone(),
+                    });
+                }
+            }
+            BufferEvent::Line(_) | BufferEvent::Return => {}
+        }
+        step
+    }
+
+    pub fn operand(&self, event: usize, operand: &BufferOperand) -> Result<i32, BufferError> {
         match operand {
             BufferOperand::Literal(value) => Ok(*value),
             BufferOperand::Scalar(name) => {
@@ -477,7 +624,7 @@ impl Evaluation {
     /// Resolve `NAME[INDEX]` to a validated `(extent, index)` pair. The bounds
     /// rule lives here and nowhere else, so a read and a write cannot disagree
     /// about it.
-    fn place(
+    pub fn place(
         &self,
         event: usize,
         name: &str,
@@ -540,11 +687,7 @@ pub fn check_buffer_program(
     }
 
     // --- Half two: the values. ---
-    let mut evaluation = Evaluation {
-        extents: BTreeMap::new(),
-        contents: BTreeMap::new(),
-        scalars: BTreeMap::new(),
-    };
+    let mut evaluation = BufferEvaluation::new();
     let mut acquisitions = Vec::new();
     let mut releases = Vec::new();
     let mut accesses = Vec::new();
@@ -564,110 +707,20 @@ pub fn check_buffer_program(
             break;
         }
         match event {
-            BufferEvent::Bind { binding, value } => {
-                evaluation.scalars.insert(binding.clone(), *value);
-            }
-            BufferEvent::Acquire { name, extent } => {
-                if *extent == 0 || *extent > MAX_EXTENT {
-                    errors.push(BufferError::ExtentOutOfRange {
-                        event: index,
-                        extent: i64::from(*extent),
-                    });
-                    // Registered anyway, and deliberately: the errors are
-                    // collected rather than fatal, so a refused acquisition
-                    // that left its name unbound would make every later
-                    // statement about it cascade into a second, misleading
-                    // refusal. The program is refused either way; what this
-                    // buys is that the report names the one thing that is
-                    // wrong with it.
-                }
-                evaluation.extents.insert(name.clone(), *extent);
-                // Zero-initialised, and the emitted program uses `calloc` for
-                // exactly this reason: a `malloc` would leave the bytes
-                // indeterminate, so a read before a write would be undefined
-                // behaviour natively and unpredictable in the reference.
-                evaluation
-                    .contents
-                    .insert(name.clone(), vec![0u8; *extent as usize]);
-                acquisitions.push((name.clone(), *extent));
-            }
-            BufferEvent::Store {
-                name,
-                index: at,
-                value,
-            } => {
-                let place = evaluation.place(index, name, at);
-                let value = evaluation.operand(index, value);
-                match (place, value) {
-                    (Ok((_, at)), Ok(value)) => {
-                        let Ok(byte) = u8::try_from(value) else {
-                            errors.push(BufferError::ByteOutOfRange {
-                                event: index,
-                                value,
-                            });
-                            continue;
-                        };
-                        if let Some(bytes) = evaluation.contents.get_mut(name) {
-                            bytes[at] = byte;
-                        }
-                        accesses.push(BufferAccess {
-                            event: index,
-                            name: name.clone(),
-                            index: at as u32,
-                            byte,
-                            write: true,
-                        });
-                    }
-                    (place, value) => {
-                        errors.extend(place.err());
-                        errors.extend(value.err());
-                    }
-                }
-            }
-            BufferEvent::Load {
-                binding,
-                name,
-                index: at,
-            } => match evaluation.place(index, name, at) {
-                Ok((_, at)) => {
-                    let byte = evaluation
-                        .contents
-                        .get(name)
-                        .and_then(|bytes| bytes.get(at).copied())
-                        .unwrap_or(0);
-                    evaluation.scalars.insert(binding.clone(), i32::from(byte));
-                    accesses.push(BufferAccess {
-                        event: index,
-                        name: name.clone(),
-                        index: at as u32,
-                        byte,
-                        write: false,
-                    });
-                }
-                Err(error) => errors.push(error),
-            },
-            BufferEvent::Extent { binding, name } => {
-                match evaluation.extents.get(name).copied() {
-                    // The extent read back out of the acquisition. `i32` is
-                    // total here because `MAX_EXTENT` is far inside it.
-                    Some(extent) => {
-                        evaluation.scalars.insert(binding.clone(), extent as i32);
-                    }
-                    None => errors.push(BufferError::NotABuffer {
-                        event: index,
-                        name: name.clone(),
-                    }),
-                }
-            }
-            BufferEvent::Release { name } => {
-                if evaluation.extents.contains_key(name) {
-                    releases.push(name.clone());
-                } else {
-                    errors.push(BufferError::NotABuffer {
-                        event: index,
-                        name: name.clone(),
-                    });
-                }
+            // Every value-bearing event is decided by [`BufferEvaluation::apply`]
+            // and nowhere else, so the composed route card `STRING-CONCAT`
+            // added runs *these* rules rather than a second copy of them.
+            BufferEvent::Bind { .. }
+            | BufferEvent::Acquire { .. }
+            | BufferEvent::Store { .. }
+            | BufferEvent::Load { .. }
+            | BufferEvent::Extent { .. }
+            | BufferEvent::Release { .. } => {
+                let step = evaluation.apply(index, event);
+                errors.extend(step.errors);
+                acquisitions.extend(step.acquisition);
+                releases.extend(step.release);
+                accesses.extend(step.access);
             }
             BufferEvent::Line(line) => match line {
                 StdIoEvent::LogLevel { .. } => {}
@@ -676,7 +729,7 @@ pub fn check_buffer_program(
                     rendering, operand, ..
                 } => {
                     renderings.insert(*rendering);
-                    match line_operand(&evaluation, index, operand) {
+                    match evaluation.line_operand(index, operand) {
                         Ok(value) => lines.push(
                             rendered_line(line, value)
                                 .expect("a print and a log each produce exactly one line"),
@@ -730,27 +783,27 @@ pub fn check_buffer_program(
     }
 }
 
-/// Resolve a rendering operand against this route's scalar environment.
-///
-/// `source.std-io.v1`'s three operand forms are handled here rather than
-/// re-derived: a literal is itself, a scalar name is looked up, and a
-/// `borrow NAME` refuses — this route publishes no custody identity, so the
-/// structural refusal `STD-FMT-BORROW` established for the uncomposed route
-/// applies here for exactly the same reason.
-fn line_operand(
-    evaluation: &Evaluation,
-    event: usize,
-    operand: &StdIoOperand,
-) -> Result<i32, BufferError> {
-    match operand {
-        StdIoOperand::Literal(value) => Ok(*value),
-        StdIoOperand::Scalar(name) => {
-            evaluation.operand(event, &BufferOperand::Scalar(name.clone()))
+impl BufferEvaluation {
+    /// Resolve a rendering operand against this route's scalar environment.
+    ///
+    /// `source.std-io.v1`'s three operand forms are handled here rather than
+    /// re-derived: a literal is itself, a scalar name is looked up, and a
+    /// `borrow NAME` refuses — this route publishes no custody identity, so the
+    /// structural refusal `STD-FMT-BORROW` established for the uncomposed route
+    /// applies here for exactly the same reason.
+    pub fn line_operand(
+        &self,
+        event: usize,
+        operand: &StdIoOperand,
+    ) -> Result<i32, BufferError> {
+        match operand {
+            StdIoOperand::Literal(value) => Ok(*value),
+            StdIoOperand::Scalar(name) => self.operand(event, &BufferOperand::Scalar(name.clone())),
+            StdIoOperand::Borrowed(name) => Err(BufferError::CrossesBoundary {
+                event,
+                name: name.clone(),
+            }),
         }
-        StdIoOperand::Borrowed(name) => Err(BufferError::CrossesBoundary {
-            event,
-            name: name.clone(),
-        }),
     }
 }
 

@@ -13,6 +13,7 @@
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
+use qcore_core::std_string::StringStorage;
 
 const SLICES: &str = include_str!("fixtures/std_string/slices.qcore");
 const SILENT: &str = include_str!("fixtures/std_string/silent.qcore");
@@ -621,7 +622,7 @@ fn every_slice_derives_a_view_of_the_same_storage_at_an_offset() {
     assert!(!checked.certificate.slices.is_empty());
     for slice in &checked.certificate.slices {
         assert_eq!(
-            slice.derived.literal, slice.from.literal,
+            slice.derived.storage, slice.from.storage,
             "a derived view must address the storage it was derived from"
         );
         assert_eq!(
@@ -651,7 +652,7 @@ fn a_slice_of_a_slice_composes_the_offsets_into_the_original_storage() {
     assert_eq!(inner.from.offset, 1);
     assert_eq!(inner.derived.offset, 2);
     assert_eq!(inner.derived.len, 1);
-    assert_eq!(inner.derived.literal, 0);
+    assert_eq!(inner.derived.storage, StringStorage::Literal(0));
 }
 
 #[test]
@@ -761,10 +762,13 @@ fn every_view_names_the_static_storage_it_addresses() {
     let literals = checked.certificate.literals.len();
     for (name, view) in &checked.certificate.views {
         assert!(
-            view.literal < literals,
+            matches!(&view.storage, StringStorage::Literal(index) if *index < literals),
             "view `{name}` addresses no stored literal"
         );
-        let payload = &checked.certificate.literals[view.literal];
+        let StringStorage::Literal(index) = &view.storage else {
+            unreachable!("this fixture's views all address literals");
+        };
+        let payload = &checked.certificate.literals[*index];
         assert!(
             (view.offset + view.len) as usize <= payload.len(),
             "view `{name}` runs past the storage it names"

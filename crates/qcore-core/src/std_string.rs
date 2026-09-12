@@ -66,6 +66,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::ownership::{self, OwnershipError, OwnershipOp};
+use crate::std_buffer::{BufferAccess, BufferEvaluation, BufferEvent};
 use crate::std_io::{
     Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
 };
@@ -135,6 +137,44 @@ pub fn text_slice_name(event: usize) -> String {
     format!("qcore_text_{event}")
 }
 
+/// The certificate-side name of the view a **concat piece** derives, when that
+/// piece is an inline slice (card `STRING-CONCAT`).
+///
+/// Distinct per piece as well as per event, because one `concat` may write
+/// several inline slices and each is its own checked derivation with its own
+/// [`SliceRecord`].
+#[must_use]
+pub fn concat_piece_name(event: usize, piece: usize) -> String {
+    format!("qcore_concat_{event}_{piece}")
+}
+
+/// What one piece of a `concat` may be (card `STRING-CONCAT`).
+///
+/// **Every form is check-time-known, and that is the whole design.** The
+/// composed payload is therefore a byte sequence the compiler computes, and it
+/// becomes static storage of the emitted program — so a concat allocates
+/// nothing, copies nothing at run time, and derives neither `Alloc` nor `Mut`,
+/// exactly as amendment §7 requires of every string operation.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum StringPiece {
+    /// A quoted literal, a string this entry bound, or one inline slice — the
+    /// same three forms a rendered text operand takes, resolved by the same
+    /// function, so a piece cannot be admitted where the same spelling at a
+    /// rendering operand would be refused.
+    Text(TextOperand),
+    /// `dec(NAME)` / `hex(NAME)` — the **text of a check-time-constant
+    /// integer**, byte-identical to what `print dec NAME;` would write, because
+    /// it is produced by [`Rendering::render`] and by nothing else.
+    ///
+    /// This is the one direction of scalar/text conversion v1 has, and it is
+    /// the piece that makes a **computed `Content-Length`** expressible: the
+    /// number is `len(content)`, which this route already decides.
+    Scalar {
+        rendering: Rendering,
+        name: String,
+    },
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StringEvent {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
@@ -174,6 +214,35 @@ pub enum StringEvent {
         level: Option<Level>,
         operand: TextOperand,
     },
+    /// `let NAME = concat(PIECE, …);` — **text this program computes rather
+    /// than writes** (card `STRING-CONCAT`).
+    ///
+    /// Every piece is check-time-known, so the checker computes the composed
+    /// bytes and the result becomes a static payload of the emitted program.
+    /// The alternative — materialising into an owned buffer at run time — was
+    /// measured and rejected: it would add an allocation, a copy and a custody
+    /// obligation to an operation whose result the compiler already holds, and
+    /// it would make `len` of the result a run-time quantity, which is the one
+    /// property this operation exists to preserve.
+    Concat {
+        binding: String,
+        pieces: Vec<StringPiece>,
+    },
+    /// `let NAME = borrow_utf8(BUFFER);` — amendment §5's first operation
+    /// (card `STRING-CONCAT`).
+    ///
+    /// Validates the buffer's bytes as UTF-8 **at check time** — v1's buffers
+    /// hold only constant bytes written at constant indices, so their contents
+    /// are a check-time fact — and yields a view of that buffer's storage. The
+    /// view creates and discharges no custody; what it does create is a
+    /// **window** in which the buffer may not be mutated or released, ending at
+    /// the last statement that reads the view or anything derived from it.
+    Borrow { binding: String, buffer: String },
+    /// A `source.buffer.v1` statement, embedded unchanged (card
+    /// `STRING-CONCAT`). Its bytes, bounds, extent and custody are decided by
+    /// [`crate::std_buffer`]'s own published rules, so a composed module cannot
+    /// admit a byte access that route would refuse.
+    Buffer(BufferEvent),
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -189,19 +258,42 @@ pub struct StringProgram {
     pub events: Vec<StringEvent>,
 }
 
-/// One view, as the certificate publishes it: **which static storage it
-/// addresses, where in that storage it starts, and how long it is.**
+/// Where a view's bytes live (card `STRING-CONCAT`).
+///
+/// Before that card there was one answer and the field was spelled `literal`.
+/// There are now three, and the distinction is exactly amendment §3.6's: the
+/// first two are **static storage of this program**, which cannot end, and the
+/// third is storage the program **owns and releases**, which can — so a view of
+/// it carries a borrow window and a view of the others does not.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum StringStorage {
+    /// A `static const` payload the source spelled: an index into
+    /// [`StringProgram::literals`].
+    Literal(usize),
+    /// A `static const` payload the **compiler composed** from check-time-known
+    /// pieces: an index into [`StringCertificate::composed`]. A concat result
+    /// is storage of exactly the same kind a literal is — static, immutable and
+    /// unable to end — which is the whole reason the static-composition route
+    /// needs no allocation, no custody and no lifetime rule.
+    Composed(usize),
+    /// The bytes of an owned `std.buffer` this entry holds, named by its
+    /// binding (card `STRING-CONCAT`'s `borrow_utf8`). **The only storage that
+    /// can end**, and therefore the only one a borrow window is about.
+    Buffer(String),
+}
+
+/// One view, as the certificate publishes it: **which storage it addresses,
+/// where in that storage it starts, and how long it is.**
 ///
 /// This triple is the `{ptr, len}` of amendment §3 with the provenance made
-/// explicit. `literal` is the answer to "what storage does this view address",
+/// explicit. `storage` is the answer to "what storage does this view address",
 /// which is what makes §3.6 — a derived view cannot outlive the storage it was
-/// derived from — a checkable statement rather than a promise: in v1 that
-/// storage is always a static literal of this program.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// derived from — a checkable statement rather than a promise.
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StringViewRecord {
-    /// Index into [`StringProgram::literals`].
-    pub literal: usize,
-    /// Byte offset of this view's first byte within that literal.
+    /// The storage this view addresses.
+    pub storage: StringStorage,
+    /// Byte offset of this view's first byte within that storage.
     pub offset: u32,
     /// Exact byte length. Never recovered by scanning.
     pub len: u32,
@@ -218,11 +310,48 @@ pub struct SliceRecord {
     pub from: StringViewRecord,
     pub low: u32,
     pub high: u32,
-    /// The derived view. `derived.literal == from.literal` and
+    /// The derived view. `derived.storage == from.storage` and
     /// `derived.offset == from.offset + low` hold for every record — that
     /// equality *is* the zero-copy claim, and it is a field a reader can check
     /// rather than a sentence they must believe.
     pub derived: StringViewRecord,
+}
+
+/// One admitted `concat`, published so a reader sees the **length arithmetic**
+/// rather than being told it happened (card `STRING-CONCAT`).
+///
+/// `result.len == piece_lens.iter().sum()` holds for every record, and that
+/// equation is the operational content of "a computed `Content-Length` is
+/// decidable": a length the compiler derived from pieces is a check-time
+/// constant exactly as a literal's own length is.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ConcatRecord {
+    pub event: usize,
+    pub binding: String,
+    /// The byte length each piece contributed, in written order.
+    pub piece_lens: Vec<u32>,
+    /// The composed view. Its storage is always
+    /// [`StringStorage::Composed`]: the result is a new static payload, never a
+    /// window onto a piece.
+    pub result: StringViewRecord,
+}
+
+/// One admitted `borrow_utf8`, published with the **window** over which the
+/// borrowed buffer may not be mutated or released (card `STRING-CONCAT`).
+///
+/// `through` is the index of the last event that reads this view or any view
+/// derived from it. A buffer store or release at an index in `[event, through]`
+/// is refused; one after it is admitted. That interval is exact rather than
+/// conservative because the route is a flat statement sequence with no branch
+/// and no loop — the borrow's extent *is* a range of statement indices.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct BorrowRecord {
+    pub event: usize,
+    pub buffer: String,
+    pub binding: String,
+    pub through: usize,
+    /// The view the borrow yields: the whole buffer, validated as UTF-8.
+    pub view: StringViewRecord,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -232,10 +361,25 @@ pub struct StringCertificate {
     pub effects: EffectRow,
     /// The decoded literal payloads this program stores statically.
     pub literals: Vec<Vec<u8>>,
+    /// The payloads the **compiler composed**, in program order — one per
+    /// admitted `concat` (card `STRING-CONCAT`). Published as bytes, so a
+    /// reader checks the computed text itself rather than trusting that it was
+    /// computed.
+    pub composed: Vec<Vec<u8>>,
     /// Every view this program binds, in program order.
     pub views: Vec<(String, StringViewRecord)>,
     /// Every admitted slice, in program order.
     pub slices: Vec<SliceRecord>,
+    /// Every admitted `concat`, with its length arithmetic.
+    pub concats: Vec<ConcatRecord>,
+    /// Every admitted `borrow_utf8`, with the window it excludes mutation over.
+    pub borrows: Vec<BorrowRecord>,
+    /// `(name, extent)` for every buffer this composed entry acquires, in
+    /// program order — `source.buffer.v1`'s own extent transport, republished
+    /// here because a composed module holds those resources.
+    pub acquisitions: Vec<(String, u32)>,
+    /// Every checked byte access, in program order.
+    pub accesses: Vec<BufferAccess>,
     /// The final scalar environment, so a reader can see what each rendered
     /// name denoted.
     pub scalars: BTreeMap<String, i32>,
@@ -426,6 +570,43 @@ pub enum StringError {
     /// integer `x` wants to be told to name a rendering rather than to be told
     /// that `x` is not a string.
     NotRenderableText { event: usize, name: String },
+    /// `Q077`: the **shape or the bound** of a construct this pass's third band
+    /// adds (card `STRING-CONCAT`) — a `concat` with fewer than two pieces, a
+    /// composed payload longer than [`MAX_STRING_BYTES`], or an embedded
+    /// `source.buffer.v1` statement whose own model refused its shape.
+    Composition { event: usize, reason: String },
+    /// `Q077`: a bridge position naming something this entry acquired no buffer
+    /// for. Deliberately **this band's own code** and not `source.buffer.v1`'s
+    /// `Q052`: that code belongs to a second semantic pass, and §L21 forbids a
+    /// pass taking another's code even where the condition reads alike.
+    NotABuffer { event: usize, name: String },
+    /// `Q078`: the **borrow discipline** — a store into, or a release of, a
+    /// buffer inside a live borrow's window.
+    BorrowExclusion {
+        event: usize,
+        buffer: String,
+        view: String,
+        through: usize,
+        /// What the offending statement did: `"write a byte of"` or
+        /// `"release"`.
+        action: &'static str,
+    },
+    /// `Q078`: a refusal reported by the **inherited, unedited** ownership
+    /// checker over this composed entry's buffer operations — a leak, a double
+    /// release, a use after release, or a rebound live name. It carries that
+    /// checker's own error value rather than a re-worded copy.
+    Custody {
+        event: usize,
+        error: OwnershipError,
+    },
+    /// `Q079`: **the static UTF-8 decision.** The bytes a `borrow_utf8` would
+    /// view are not well-formed UTF-8, decided at check time from the buffer's
+    /// own write history rather than trusted or deferred to a run-time scan.
+    BufferNotUtf8 {
+        event: usize,
+        buffer: String,
+        at: usize,
+    },
 }
 
 impl StringError {
@@ -438,6 +619,9 @@ impl StringError {
             Self::CrossesBoundary { .. } => "Q072",
             Self::EffectNotDeclared { .. } => "Q073",
             Self::NotRenderableText { .. } => "Q076",
+            Self::Composition { .. } | Self::NotABuffer { .. } => "Q077",
+            Self::BorrowExclusion { .. } | Self::Custody { .. } => "Q078",
+            Self::BufferNotUtf8 { .. } => "Q079",
         }
     }
 
@@ -451,7 +635,12 @@ impl StringError {
             | Self::NotABoundary { event, .. }
             | Self::CrossesBoundary { event, .. }
             | Self::EffectNotDeclared { event, .. }
-            | Self::NotRenderableText { event, .. } => *event,
+            | Self::NotRenderableText { event, .. }
+            | Self::Composition { event, .. }
+            | Self::NotABuffer { event, .. }
+            | Self::BorrowExclusion { event, .. }
+            | Self::Custody { event, .. }
+            | Self::BufferNotUtf8 { event, .. } => *event,
         }
     }
 }
@@ -513,6 +702,38 @@ impl fmt::Display for StringError {
                  string's own bytes; name a `std.fmt` rendering (`print dec {name};`) to render a \
                  scalar, or bind `{name}` to a string literal or a slice"
             ),
+            Self::Composition { reason, .. } => f.write_str(reason),
+            Self::NotABuffer { name, .. } => write!(
+                f,
+                "`{name}` is not an owned byte buffer this entry acquired; `borrow_utf8(NAME)` \
+                 views the bytes of a `std.buffer` acquisition, and a string view has nothing to \
+                 borrow from"
+            ),
+            Self::BorrowExclusion {
+                buffer,
+                view,
+                through,
+                action,
+                ..
+            } => write!(
+                f,
+                "this statement would {action} `{buffer}` while `{view}` borrows it; a \
+                 `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it \
+                 addresses may not be written or released until the last statement that reads the \
+                 view or anything derived from it (statement {through} of this entry)"
+            ),
+            Self::Custody { error, .. } => write!(
+                f,
+                "the checked ownership discipline refuses this program: {error}"
+            ),
+            Self::BufferNotUtf8 { buffer, at, .. } => write!(
+                f,
+                "the bytes of `{buffer}` are not well-formed UTF-8 from byte {at}; \
+                 `borrow_utf8(NAME)` yields a `string`, which is a sequence of bytes known to be \
+                 well-formed UTF-8 for the whole lifetime of every view of it, and this route \
+                 decides that at check time out of the buffer's own write history rather than \
+                 scanning at run time"
+            ),
         }
     }
 }
@@ -542,23 +763,168 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             | StringEvent::Text { .. } => {
                 effects.insert(Effect::Io);
             }
-            StringEvent::Bind { .. }
+            // A composed buffer statement derives `source.buffer.v1`'s own
+            // effects: an acquisition and a release are `Alloc`, a store is
+            // `Mut`, a read observes. Read from that route's vocabulary rather
+            // than restated, so the two rows cannot drift.
+            StringEvent::Buffer(BufferEvent::Acquire { .. } | BufferEvent::Release { .. }) => {
+                effects.insert(Effect::Alloc);
+            }
+            StringEvent::Buffer(BufferEvent::Store { .. }) => {
+                effects.insert(Effect::Mut);
+            }
+            StringEvent::Buffer(BufferEvent::Line(
+                StdIoEvent::LogLevel { .. }
+                | StdIoEvent::Print { .. }
+                | StdIoEvent::Log { .. }
+                | StdIoEvent::Flush,
+            )) => {
+                effects.insert(Effect::Io);
+            }
+            // **`concat` and `borrow_utf8` derive nothing**, and that is the
+            // static-composition decision stated as an effect fact: composing
+            // text is a compile-time computation whose result becomes static
+            // storage, and borrowing is a read. Amendment §7's "no `Alloc` or
+            // `Mut` for a string operation" therefore survives this card
+            // exactly; the `Alloc` a composed module can carry is the
+            // *buffer's*, never the string's.
+            StringEvent::Concat { .. }
+            | StringEvent::Borrow { .. }
+            | StringEvent::Bind { .. }
             | StringEvent::Literal { .. }
             | StringEvent::Slice { .. }
             | StringEvent::Len { .. }
             | StringEvent::Line(StdIoEvent::Return)
+            | StringEvent::Buffer(
+                BufferEvent::Bind { .. }
+                | BufferEvent::Load { .. }
+                | BufferEvent::Extent { .. }
+                | BufferEvent::Line(StdIoEvent::Return)
+                | BufferEvent::Return,
+            )
             | StringEvent::Return => {}
         }
     }
     EffectRow::new(effects)
 }
 
+/// The **custody half** of a composed module's check, and the whole of what it
+/// inherits (card `STRING-CONCAT`).
+///
+/// Builds the cycle-3 ownership operation list from the embedded buffer events
+/// and hands it to [`ownership::check_ownership`] unchanged, exactly as
+/// [`crate::std_buffer::custody_operations`] does for the uncomposed route. The
+/// one addition is that **a borrow is a read** of the buffer it views, so
+/// borrowing a released buffer is `UseAfterDrop` from the inherited checker
+/// rather than a rule this card wrote.
+#[must_use]
+pub fn string_custody_operations(program: &StringProgram) -> Vec<OwnershipOp> {
+    let acquired: BTreeSet<&str> = program
+        .events
+        .iter()
+        .filter_map(|event| match event {
+            StringEvent::Buffer(BufferEvent::Acquire { name, .. }) => Some(name.as_str()),
+            _ => None,
+        })
+        .collect();
+    let names = |name: &String| acquired.contains(name.as_str());
+
+    let mut operations = Vec::new();
+    let mut next_id: ownership::ResourceId = 1;
+    for event in &program.events {
+        match event {
+            StringEvent::Buffer(BufferEvent::Acquire { name, extent }) => {
+                operations.push(OwnershipOp::Acquire {
+                    id: next_id,
+                    owner: name.clone(),
+                    resource_type: crate::std_buffer::BUFFER_RESOURCE_TYPE.to_owned(),
+                    footprint: ownership::Footprint::single(
+                        crate::std_buffer::BYTE_AXIS,
+                        u64::from(*extent),
+                    ),
+                });
+                next_id += 1;
+            }
+            StringEvent::Buffer(BufferEvent::Store { name, .. }) if names(name) => {
+                operations.push(OwnershipOp::Write(name.clone()));
+            }
+            StringEvent::Buffer(
+                BufferEvent::Load { name, .. } | BufferEvent::Extent { name, .. },
+            ) if names(name) => {
+                operations.push(OwnershipOp::Read(name.clone()));
+            }
+            StringEvent::Borrow { buffer, .. } if names(buffer) => {
+                operations.push(OwnershipOp::Read(buffer.clone()));
+            }
+            StringEvent::Buffer(BufferEvent::Release { name }) if names(name) => {
+                operations.push(OwnershipOp::Drop(name.clone()));
+            }
+            _ => {}
+        }
+    }
+    operations
+}
+
+/// Every **view name** one event reads.
+///
+/// The borrow window rests on this and nothing else, so it is written once: a
+/// widening of the grammar that forgets to extend this function would shorten a
+/// borrow's window, and the exhaustive `match` is what makes that a compile
+/// error rather than an unsoundness.
+fn view_uses(event: &StringEvent) -> Vec<&str> {
+    fn operand_use(operand: &TextOperand) -> Option<&str> {
+        match operand {
+            TextOperand::Literal(_) => None,
+            TextOperand::Name(name) => Some(name.as_str()),
+            TextOperand::Slice { name, .. } => Some(name.as_str()),
+        }
+    }
+    match event {
+        StringEvent::Slice { name, .. } | StringEvent::Len { name, .. } => vec![name.as_str()],
+        StringEvent::Text { operand, .. } => operand_use(operand).into_iter().collect(),
+        StringEvent::Concat { pieces, .. } => pieces
+            .iter()
+            .filter_map(|piece| match piece {
+                StringPiece::Text(operand) => operand_use(operand),
+                StringPiece::Scalar { .. } => None,
+            })
+            .collect(),
+        StringEvent::Bind { .. }
+        | StringEvent::Literal { .. }
+        | StringEvent::Borrow { .. }
+        | StringEvent::Buffer(_)
+        | StringEvent::Line(_)
+        | StringEvent::Return => Vec::new(),
+    }
+}
+
+/// The last event index at which each view name is read.
+///
+/// Purely syntactic, and exact for this route because the route is one flat
+/// statement sequence: there is no branch to make a later index unreachable and
+/// no loop to make an earlier one run again.
+fn last_view_uses(program: &StringProgram) -> BTreeMap<String, usize> {
+    let mut last: BTreeMap<String, usize> = BTreeMap::new();
+    for (index, event) in program.events.iter().enumerate() {
+        for name in view_uses(event) {
+            last.insert(name.to_owned(), index);
+        }
+    }
+    last
+}
+
 /// The state the check carries: which names are views of which storage, and what
 /// each scalar name denotes.
 struct Evaluation<'a> {
     literals: &'a [Vec<u8>],
+    /// Payloads the compiler composed, in program order (card `STRING-CONCAT`).
+    composed: Vec<Vec<u8>>,
     views: BTreeMap<String, StringViewRecord>,
-    scalars: BTreeMap<String, i32>,
+    /// The embedded `source.buffer.v1` state — extents, buffer contents **and
+    /// the scalar environment**. There is deliberately no second scalar map: a
+    /// name bound by `len(s)` and a name bound by `b[0]` live in one
+    /// environment, so neither route can see a value the other cannot.
+    buffer: BufferEvaluation,
 }
 
 impl Evaluation<'_> {
@@ -575,7 +941,18 @@ impl Evaluation<'_> {
                         name: name.clone(),
                     });
                 }
-                self.scalars
+                if self.buffer.extents.contains_key(name) {
+                    // A buffer at a scalar position, refused for the same
+                    // reason and at the same code a string is: neither is a
+                    // number, and the reader needs to be told which of the two
+                    // they wrote.
+                    return Err(StringError::CrossesBoundary {
+                        event,
+                        name: name.clone(),
+                    });
+                }
+                self.buffer
+                    .scalars
                     .get(name)
                     .copied()
                     .ok_or_else(|| StringError::NotAScalar {
@@ -587,10 +964,18 @@ impl Evaluation<'_> {
     }
 
     /// The bytes a view addresses. Total for a view this evaluation holds,
-    /// because every record was built from a decoded literal and a checked
-    /// slice of one.
-    fn bytes(&self, view: StringViewRecord) -> &[u8] {
-        let payload = &self.literals[view.literal];
+    /// because every record was built from a decoded literal, a composed
+    /// payload, a validated buffer, or a checked slice of one of those.
+    fn bytes(&self, view: &StringViewRecord) -> &[u8] {
+        let payload: &[u8] = match &view.storage {
+            StringStorage::Literal(index) => &self.literals[*index],
+            StringStorage::Composed(index) => &self.composed[*index],
+            StringStorage::Buffer(name) => self
+                .buffer
+                .contents
+                .get(name)
+                .map_or(&[][..], |bytes| bytes.as_slice()),
+        };
         &payload[view.offset as usize..(view.offset + view.len) as usize]
     }
 }
@@ -611,7 +996,7 @@ fn admit_slice(
     low: &StringOperand,
     high: &StringOperand,
 ) -> Result<(StringViewRecord, StringViewRecord, u32, u32), Vec<StringError>> {
-    let Some(source) = evaluation.views.get(name).copied() else {
+    let Some(source) = evaluation.views.get(name).cloned() else {
         return Err(vec![StringError::NotAString {
             event,
             name: name.to_owned(),
@@ -642,7 +1027,7 @@ fn admit_slice(
             len: source.len,
         }]);
     }
-    let bytes = evaluation.bytes(source);
+    let bytes = evaluation.bytes(&source);
     let low = low as u32;
     let high = high as u32;
     let mut refusals = Vec::new();
@@ -659,15 +1044,31 @@ fn admit_slice(
     if !refusals.is_empty() {
         return Err(refusals);
     }
-    // §4, verbatim: `{ ptr = p + low, len = high - low }`. The literal index is
+    // §4, verbatim: `{ ptr = p + low, len = high - low }`. The storage is
     // carried through unchanged, which is the statement that the derived view
-    // addresses the *same* storage.
+    // addresses the *same* storage — and, since card `STRING-CONCAT`, the
+    // statement that a slice of a **borrowed** view is itself a borrow of the
+    // same buffer and inherits its exclusion window.
     let derived = StringViewRecord {
-        literal: source.literal,
+        storage: source.storage.clone(),
         offset: source.offset + low,
         len: high - low,
     };
     Ok((source, derived, low, high))
+}
+
+/// Where a [`TextOperand`] was written, which decides only **which code a name
+/// with no view refuses at** (card `STRING-CONCAT`).
+///
+/// Nothing else differs: the literal, the name and the slice are resolved by
+/// the same rules in both positions, so a piece cannot be admitted where the
+/// same spelling at a rendering operand would be refused.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum TextPosition {
+    /// A rendering operand: `print TEXT;`.
+    Render,
+    /// A `concat` piece.
+    Piece,
 }
 
 /// Resolve a text-line operand to the view whose bytes the line writes (card
@@ -682,6 +1083,8 @@ fn text_view(
     evaluation: &Evaluation<'_>,
     event: usize,
     operand: &TextOperand,
+    label: &str,
+    position: TextPosition,
     slices: &mut Vec<SliceRecord>,
     views: &mut Vec<(String, StringViewRecord)>,
 ) -> Result<StringViewRecord, StringError> {
@@ -694,28 +1097,38 @@ fn text_view(
                 });
             };
             let record = StringViewRecord {
-                literal: *literal,
+                storage: StringStorage::Literal(*literal),
                 offset: 0,
                 // `as` is exact: the payload was bounded at decoding.
                 len: payload.len() as u32,
             };
-            views.push((text_slice_name(event), record));
+            views.push((label.to_owned(), record.clone()));
             Ok(record)
         }
-        TextOperand::Name(name) => match evaluation.views.get(name).copied() {
+        TextOperand::Name(name) => match evaluation.views.get(name).cloned() {
             Some(view) => Ok(view),
-            // The reader wrote a bare operand, which is the *text* form, so the
-            // refusal is this composition's own and names the two repairs.
-            Option::None => Err(StringError::NotRenderableText {
-                event,
-                name: name.clone(),
+            Option::None => Err(match position {
+                // The reader wrote a bare *rendering* operand, so the refusal is
+                // `STRING-SLICE-IO`'s own and names the two repairs.
+                TextPosition::Render => StringError::NotRenderableText {
+                    event,
+                    name: name.clone(),
+                },
+                // A `concat` piece is a view position **inside the string
+                // vocabulary**, exactly like a slice's source and a `len`'s
+                // argument, so it keeps the base route's own `Q069` rather than
+                // telling the reader to name a rendering they did not write.
+                TextPosition::Piece => StringError::NotAString {
+                    event,
+                    name: name.clone(),
+                },
             }),
         },
         TextOperand::Slice { name, low, high } => {
             match admit_slice(evaluation, event, name, low, high) {
                 Ok((from, derived, low, high)) => {
-                    let binding = text_slice_name(event);
-                    views.push((binding.clone(), derived));
+                    let binding = label.to_owned();
+                    views.push((binding.clone(), derived.clone()));
                     slices.push(SliceRecord {
                         event,
                         source: name.clone(),
@@ -723,7 +1136,7 @@ fn text_view(
                         from,
                         low,
                         high,
-                        derived,
+                        derived: derived.clone(),
                     });
                     Ok(derived)
                 }
@@ -737,6 +1150,31 @@ fn text_view(
             }
         }
     }
+}
+
+/// Bind a refused `concat` or `borrow_utf8` name to an empty view, so that a
+/// later statement reading it does not cascade into a second, misleading
+/// refusal (card `STRING-CONCAT`).
+///
+/// This is `STD-BUFFER`'s own lesson, applied to a string binding: errors on
+/// this route are collected rather than fatal, and a refused binding that left
+/// its name unbound would make `print s;` report that `s` is not a string when
+/// the one thing wrong with the program is the statement above it. The program
+/// is refused either way; what this buys is that the report names the fault.
+///
+/// The empty payload it addresses is never published: a program reaching here
+/// has at least one error, so no certificate is built from this evaluation.
+fn register_refused_view(evaluation: &mut Evaluation<'_>, binding: &str) {
+    let storage = StringStorage::Composed(evaluation.composed.len());
+    evaluation.composed.push(Vec::new());
+    evaluation.views.insert(
+        binding.to_owned(),
+        StringViewRecord {
+            storage,
+            offset: 0,
+            len: 0,
+        },
+    );
 }
 
 /// Check a lowered program and derive its certificate.
@@ -775,23 +1213,52 @@ pub fn check_string_program(
         }
     }
 
+    // The **inherited custody discipline** (card `STRING-CONCAT`), run first
+    // and for the same reason `source.buffer.v1` runs it first: it is what lets
+    // the value half assume a name it reads is live. A module holding no buffer
+    // produces an empty operation list, which the checker accepts — so an
+    // uncomposed string program reaches exactly the code it reached before.
+    let operations = string_custody_operations(program);
+    if let Err(error) = ownership::check_ownership(&operations) {
+        errors.push(StringError::Custody {
+            event: program.events.len(),
+            error,
+        });
+    }
+
+    let last_use = last_view_uses(program);
     let mut evaluation = Evaluation {
         literals: &program.literals,
+        composed: Vec::new(),
         views: BTreeMap::new(),
-        scalars: BTreeMap::new(),
+        buffer: BufferEvaluation::new(),
     };
     let mut views = Vec::new();
     let mut slices = Vec::new();
+    let mut concats = Vec::new();
+    let mut borrows: Vec<BorrowRecord> = Vec::new();
+    let mut acquisitions = Vec::new();
+    let mut accesses = Vec::new();
     let mut lines = Vec::new();
     let mut flushes = 0usize;
     let mut renderings = BTreeSet::new();
     let mut returned = false;
+    /// `(buffer, view, through)` for every borrow whose window has not closed.
+    type LiveBorrow = (String, String, usize);
+    let mut live: Vec<LiveBorrow> = Vec::new();
 
     if !errors.is_empty() {
         return Err(errors);
     }
 
     for (index, event) in program.events.iter().enumerate() {
+        // A borrow's window closes after the last statement that reads it, so
+        // the expiry happens *before* this statement is judged. That is what
+        // makes `let s = borrow_utf8(b); print s; b[0] = 65; drop b;` admitted
+        // and `let s = borrow_utf8(b); b[0] = 65; print s;` refused — the same
+        // two statements, in the order that decides whether the view the
+        // program renders is the view the checker validated.
+        live.retain(|(_, _, through)| *through >= index);
         if returned {
             errors.push(StringError::Shape {
                 event: index,
@@ -803,7 +1270,7 @@ pub fn check_string_program(
         }
         match event {
             StringEvent::Bind { binding, value } => {
-                evaluation.scalars.insert(binding.clone(), *value);
+                evaluation.buffer.scalars.insert(binding.clone(), *value);
             }
             StringEvent::Literal { binding, literal } => {
                 let Some(payload) = program.literals.get(*literal) else {
@@ -814,12 +1281,12 @@ pub fn check_string_program(
                     continue;
                 };
                 let record = StringViewRecord {
-                    literal: *literal,
+                    storage: StringStorage::Literal(*literal),
                     offset: 0,
                     // `as` is exact: the payload was bounded above.
                     len: payload.len() as u32,
                 };
-                evaluation.views.insert(binding.clone(), record);
+                evaluation.views.insert(binding.clone(), record.clone());
                 views.push((binding.clone(), record));
             }
             StringEvent::Slice {
@@ -836,8 +1303,20 @@ pub fn check_string_program(
                             continue;
                         }
                     };
-                evaluation.views.insert(binding.clone(), derived);
-                views.push((binding.clone(), derived));
+                // A slice of a borrowed view is itself a borrow of the same
+                // buffer: its storage is that buffer's, so it is registered as
+                // a live borrow with its **own** last use. That is how a borrow
+                // window extends through every view derived from it, rather
+                // than by a separate reachability pass that could disagree.
+                if let StringStorage::Buffer(buffer) = &derived.storage {
+                    live.push((
+                        buffer.clone(),
+                        binding.clone(),
+                        last_use.get(binding).copied().unwrap_or(index),
+                    ));
+                }
+                evaluation.views.insert(binding.clone(), derived.clone());
+                views.push((binding.clone(), derived.clone()));
                 slices.push(SliceRecord {
                     event: index,
                     source: name.clone(),
@@ -848,13 +1327,211 @@ pub fn check_string_program(
                     derived,
                 });
             }
-            StringEvent::Len { binding, name } => match evaluation.views.get(name).copied() {
+            // Card `STRING-CONCAT`: amendment §5's borrow, with its two
+            // obligations decided here — the bytes are validated as UTF-8 out
+            // of the buffer's own write history, and the window in which the
+            // buffer may not change opens.
+            StringEvent::Borrow { binding, buffer } => {
+                let Some(bytes) = evaluation.buffer.contents.get(buffer).cloned() else {
+                    errors.push(StringError::NotABuffer {
+                        event: index,
+                        name: buffer.clone(),
+                    });
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                };
+                if let Err(error) = std::str::from_utf8(&bytes) {
+                    errors.push(StringError::BufferNotUtf8 {
+                        event: index,
+                        buffer: buffer.clone(),
+                        at: error.valid_up_to(),
+                    });
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                }
+                let through = last_use.get(binding).copied().unwrap_or(index);
+                let record = StringViewRecord {
+                    storage: StringStorage::Buffer(buffer.clone()),
+                    offset: 0,
+                    // `as` is exact: an extent is at most `MAX_EXTENT`.
+                    len: bytes.len() as u32,
+                };
+                live.push((buffer.clone(), binding.clone(), through));
+                evaluation.views.insert(binding.clone(), record.clone());
+                views.push((binding.clone(), record.clone()));
+                borrows.push(BorrowRecord {
+                    event: index,
+                    buffer: buffer.clone(),
+                    binding: binding.clone(),
+                    through,
+                    view: record,
+                });
+            }
+            // Card `STRING-CONCAT`: text this program **computes**. Every piece
+            // is check-time-known, so the bytes are composed here and become a
+            // static payload of the emitted program — no allocation, no copy at
+            // run time, and a result whose length is a check-time constant.
+            StringEvent::Concat { binding, pieces } => {
+                if pieces.len() < 2 {
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: "`concat` composes two or more pieces; a composition of one is \
+                                 that piece, and `source.string.v1` refuses a spelling whose \
+                                 result is a view it already has"
+                            .to_owned(),
+                    });
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                }
+                let mut payload: Vec<u8> = Vec::new();
+                let mut piece_lens = Vec::new();
+                let mut refused = false;
+                for (position, piece) in pieces.iter().enumerate() {
+                    let bytes = match piece {
+                        StringPiece::Text(operand) => {
+                            let label = concat_piece_name(index, position);
+                            match text_view(
+                                &evaluation,
+                                index,
+                                operand,
+                                &label,
+                                TextPosition::Piece,
+                                &mut slices,
+                                &mut views,
+                            ) {
+                                Ok(view) => evaluation.bytes(&view).to_vec(),
+                                Err(error) => {
+                                    errors.push(error);
+                                    refused = true;
+                                    continue;
+                                }
+                            }
+                        }
+                        // The digits are `Rendering::render`'s and nothing
+                        // else's, so `concat("n=", dec(n))` and `print dec n;`
+                        // cannot disagree about what the number looks like.
+                        StringPiece::Scalar { rendering, name } => {
+                            match evaluation.operand(index, &StringOperand::Scalar(name.clone())) {
+                                Ok(value) => rendering.render(value).into_bytes(),
+                                Err(error) => {
+                                    errors.push(error);
+                                    refused = true;
+                                    continue;
+                                }
+                            }
+                        }
+                    };
+                    piece_lens.push(bytes.len() as u32);
+                    payload.extend_from_slice(&bytes);
+                }
+                if refused {
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                }
+                if payload.len() > MAX_STRING_BYTES as usize {
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: format!(
+                            "this composition is {} bytes, longer than the {MAX_STRING_BYTES}-byte \
+                             payload `source.string.v1` models; a longer result is refused rather \
+                             than truncated",
+                            payload.len()
+                        ),
+                    });
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                }
+                // Well-formedness is a *consequence* here rather than a check:
+                // every piece is well-formed UTF-8 (a literal is validated at
+                // decoding, a slice only at code-point boundaries, a borrow at
+                // its own gate, and rendered digits are ASCII), and the
+                // concatenation of well-formed UTF-8 sequences is well-formed.
+                // It is checked anyway, because the model must not be able to
+                // hold an ill-formed payload however it was constructed.
+                if let Err(error) = std::str::from_utf8(&payload) {
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: format!(
+                            "this composition is not well-formed UTF-8 from byte {}, which is a \
+                             defect in this checker rather than in the program: every piece it \
+                             admits is well-formed and concatenation preserves that",
+                            error.valid_up_to()
+                        ),
+                    });
+                    register_refused_view(&mut evaluation, binding);
+                    continue;
+                }
+                let storage = StringStorage::Composed(evaluation.composed.len());
+                let record = StringViewRecord {
+                    storage,
+                    offset: 0,
+                    len: payload.len() as u32,
+                };
+                evaluation.composed.push(payload);
+                evaluation.views.insert(binding.clone(), record.clone());
+                views.push((binding.clone(), record.clone()));
+                concats.push(ConcatRecord {
+                    event: index,
+                    binding: binding.clone(),
+                    piece_lens,
+                    result: record,
+                });
+            }
+            // Card `STRING-CONCAT`: an embedded `source.buffer.v1` statement.
+            // The borrow exclusion is decided here, **before** the buffer
+            // model runs, because a statement refused for writing through a
+            // live borrow should say that rather than report a byte it never
+            // wrote.
+            StringEvent::Buffer(buffer_event) => {
+                let excluded = match buffer_event {
+                    BufferEvent::Store { name, .. } => Some((name, "write a byte of")),
+                    BufferEvent::Release { name } => Some((name, "release")),
+                    _ => Option::None,
+                };
+                if let Some((name, action)) = excluded
+                    && let Some((buffer, view, through)) =
+                        live.iter().find(|(buffer, _, _)| buffer == name)
+                {
+                    errors.push(StringError::BorrowExclusion {
+                        event: index,
+                        buffer: buffer.clone(),
+                        view: view.clone(),
+                        through: *through,
+                        action,
+                    });
+                    continue;
+                }
+                if matches!(buffer_event, BufferEvent::Line(_) | BufferEvent::Return) {
+                    errors.push(StringError::Shape {
+                        event: index,
+                        reason: "a line and a return are this route's own events, not embedded \
+                                 buffer ones"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                let step = evaluation.buffer.apply(index, buffer_event);
+                for error in step.errors {
+                    // `source.buffer.v1`'s message, verbatim, under **this**
+                    // pass's code. §L21 forbids a second pass taking `Q052`
+                    // through `Q055`; what a reader needs is the buffer model's
+                    // own account of what is wrong plus the code that says
+                    // which route asked, and that is what this is.
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: error.to_string(),
+                    });
+                }
+                acquisitions.extend(step.acquisition);
+                accesses.extend(step.access);
+            }
+            StringEvent::Len { binding, name } => match evaluation.views.get(name).cloned() {
                 // §3.1: the exact byte count, available without scanning. It is
                 // read out of the view record itself, which is the model's
                 // `{ptr, len}` pair, and there is no second place it could come
                 // from.
                 Some(view) => {
-                    evaluation.scalars.insert(binding.clone(), view.len as i32);
+                    evaluation.buffer.scalars.insert(binding.clone(), view.len as i32);
                 }
                 Option::None => errors.push(StringError::NotAString {
                     event: index,
@@ -887,9 +1564,18 @@ pub fn check_string_program(
             // slice is recorded in the same list a bound slice's is, and the
             // line's bytes are decided by `source.std-io.v1`'s own framing.
             StringEvent::Text { level, operand } => {
-                match text_view(&evaluation, index, operand, &mut slices, &mut views) {
+                let label = text_slice_name(index);
+                match text_view(
+                    &evaluation,
+                    index,
+                    operand,
+                    &label,
+                    TextPosition::Render,
+                    &mut slices,
+                    &mut views,
+                ) {
                     Ok(view) => {
-                        let bytes = evaluation.bytes(view);
+                        let bytes = evaluation.bytes(&view);
                         match std::str::from_utf8(bytes) {
                             Ok(text) => lines.push(rendered_text_line(*level, text)),
                             // Unreachable for a view this evaluation holds: a
@@ -936,9 +1622,14 @@ pub fn check_string_program(
             entry: program.entry.clone(),
             effects: derived,
             literals: program.literals.clone(),
+            composed: evaluation.composed,
             views,
             slices,
-            scalars: evaluation.scalars,
+            concats,
+            borrows,
+            acquisitions,
+            accesses,
+            scalars: evaluation.buffer.scalars,
             lines,
             flushes,
             renderings,
@@ -975,8 +1666,13 @@ pub enum StringRecheckFailure {
     Entry,
     Effects,
     Literals,
+    Composed,
     Views,
     Slices,
+    Concats,
+    Borrows,
+    Acquisitions,
+    Accesses,
     Scalars,
     Lines,
     Flushes,
@@ -990,8 +1686,13 @@ impl fmt::Display for StringRecheckFailure {
             Self::Entry => "the entry name",
             Self::Effects => "the derived effect row",
             Self::Literals => "the stored literal payloads",
+            Self::Composed => "the composed payloads",
             Self::Views => "the views and the storage they address",
             Self::Slices => "the admitted slices and their arithmetic",
+            Self::Concats => "the admitted compositions and their length arithmetic",
+            Self::Borrows => "the admitted borrows and their exclusion windows",
+            Self::Acquisitions => "the buffers acquired and the extents they declare",
+            Self::Accesses => "the checked byte accesses",
             Self::Scalars => "the scalar environment",
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
@@ -1018,11 +1719,26 @@ pub fn recheck_string_certificate(
     if rederived.literals != certificate.literals {
         return Err(StringRecheckFailure::Literals);
     }
+    if rederived.composed != certificate.composed {
+        return Err(StringRecheckFailure::Composed);
+    }
     if rederived.views != certificate.views {
         return Err(StringRecheckFailure::Views);
     }
     if rederived.slices != certificate.slices {
         return Err(StringRecheckFailure::Slices);
+    }
+    if rederived.concats != certificate.concats {
+        return Err(StringRecheckFailure::Concats);
+    }
+    if rederived.borrows != certificate.borrows {
+        return Err(StringRecheckFailure::Borrows);
+    }
+    if rederived.acquisitions != certificate.acquisitions {
+        return Err(StringRecheckFailure::Acquisitions);
+    }
+    if rederived.accesses != certificate.accesses {
+        return Err(StringRecheckFailure::Accesses);
     }
     if rederived.scalars != certificate.scalars {
         return Err(StringRecheckFailure::Scalars);

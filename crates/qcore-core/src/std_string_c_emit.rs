@@ -37,10 +37,13 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
+use crate::std_buffer::{BufferEvent, BufferOperand};
+use crate::std_buffer_c_emit;
 use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
 use crate::std_string::{
-    StringCertificate, StringEvent, StringOperand, StringProgram, TextOperand, text_slice_name,
+    StringCertificate, StringEvent, StringOperand, StringPiece, StringProgram, StringStorage,
+    TextOperand, text_slice_name,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -128,6 +131,17 @@ fn literal_name(index: usize) -> String {
     format!("qcore_string_literal_{index}")
 }
 
+/// The C name of a **composed** payload's static byte array (card
+/// `STRING-CONCAT`).
+///
+/// Deliberately a second pool rather than more entries in the first: a literal
+/// is a payload the source spelled and a composed payload is one the compiler
+/// derived, and a reader of the emitted C should be able to tell which is
+/// which without consulting the certificate.
+fn composed_name(index: usize) -> String {
+    format!("qcore_string_composed_{index}")
+}
+
 /// The reference observation, as `"<stream>: <line>"` records in program order.
 ///
 /// The lines are the **certificate's** lines: the checker already computed every
@@ -178,18 +192,18 @@ fn operand_expression(
     }
 }
 
-/// One literal's static byte array, written as explicit hexadecimal bytes.
+/// One payload's static byte array, written as explicit hexadecimal bytes.
 ///
 /// Byte-wise and not as a C string literal, deliberately: a payload may contain
 /// an embedded NUL, and a C string literal would make that byte look like the
 /// end of the data to every reader and tool. The trailing `0x00` after the
 /// payload is the toolchain terminator and is outside the declared length.
-fn literal_definition(index: usize, payload: &[u8]) -> String {
+fn payload_definition(name: &str, payload: &[u8]) -> String {
     let mut bytes: Vec<String> = payload.iter().map(|byte| format!("0x{byte:02x}")).collect();
     bytes.push("0x00".to_owned());
     format!(
         "static const unsigned char {}[{}] = {{ {} }};\n",
-        literal_name(index),
+        name,
         bytes.len(),
         bytes.join(", ")
     )
@@ -204,7 +218,7 @@ pub fn emit_string_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_string_program(program, certificate)?;
 
-    let fragments = preamble(program);
+    let fragments = preamble(program, certificate);
     let mut source = String::new();
 
     // Which bindings a later event actually consumes. A binding nothing
@@ -253,6 +267,52 @@ pub fn emit_string_c11(
                     }
                 }
             },
+            // Card `STRING-CONCAT`. A composed payload consumes every view and
+            // every scalar it was built from, and an embedded buffer statement
+            // consumes the buffer it names and the operands it indexes with.
+            StringEvent::Concat { pieces, .. } => {
+                for piece in pieces {
+                    match piece {
+                        StringPiece::Text(TextOperand::Literal(_)) => {}
+                        StringPiece::Text(TextOperand::Name(name))
+                        | StringPiece::Scalar { name, .. } => {
+                            consumed.insert(name.clone(), true);
+                        }
+                        StringPiece::Text(TextOperand::Slice { name, low, high }) => {
+                            consumed.insert(name.clone(), true);
+                            for operand in [low, high] {
+                                if let StringOperand::Scalar(scalar) = operand {
+                                    consumed.insert(scalar.clone(), true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            StringEvent::Borrow { buffer, .. } => {
+                consumed.insert(buffer.clone(), true);
+            }
+            StringEvent::Buffer(buffer_event) => match buffer_event {
+                BufferEvent::Store { name, index, value } => {
+                    consumed.insert(name.clone(), true);
+                    for operand in [index, value] {
+                        if let BufferOperand::Scalar(scalar) = operand {
+                            consumed.insert(scalar.clone(), true);
+                        }
+                    }
+                }
+                BufferEvent::Load { name, index, .. } => {
+                    consumed.insert(name.clone(), true);
+                    if let BufferOperand::Scalar(scalar) = index {
+                        consumed.insert(scalar.clone(), true);
+                    }
+                }
+                BufferEvent::Extent { name, .. } | BufferEvent::Release { name } => {
+                    consumed.insert(name.clone(), true);
+                }
+                BufferEvent::Bind { .. } | BufferEvent::Acquire { .. } => {}
+                BufferEvent::Line(_) | BufferEvent::Return => {}
+            },
             StringEvent::Bind { .. }
             | StringEvent::Literal { .. }
             | StringEvent::Line(_)
@@ -262,6 +322,9 @@ pub fn emit_string_c11(
 
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
     let mut views: BTreeMap<String, String> = BTreeMap::new();
+    // The declared extents of the buffers a composed module holds, carried for
+    // `source.buffer.v1`'s own emitter (card `STRING-CONCAT`).
+    let mut extents: BTreeMap<String, u32> = BTreeMap::new();
     let discard = |source: &mut String, binding: &str, emitted: &str| {
         if !consumed.contains_key(binding) {
             let _ = writeln!(source, "    (void) {emitted};");
@@ -275,6 +338,83 @@ pub fn emit_string_c11(
                 let _ = writeln!(source, "    int32_t {emitted} = INT32_C({value});");
                 scalars.insert(binding.clone(), emitted.clone());
                 discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: the composed payload is a file-scope
+            // `static const` array exactly as a literal's is, so the view that
+            // names it is built the same way and **no allocation and no
+            // run-time copy exists anywhere in this route's output**. The bytes
+            // were computed by the checker; the emitted program only addresses
+            // them.
+            StringEvent::Concat { binding, .. } => {
+                let Some(record) = certificate
+                    .concats
+                    .iter()
+                    .find(|record| record.event == index)
+                else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let StringStorage::Composed(slot) = &record.result.storage else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let emitted = view_name(binding);
+                let _ = writeln!(
+                    source,
+                    "    qcore_string_view {emitted} = {{ {}, (size_t) {}u }};",
+                    composed_name(*slot),
+                    record.result.len
+                );
+                views.insert(binding.clone(), emitted.clone());
+                discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: a borrow is a view of the buffer's own
+            // storage — the pointer `qcore_bytes_new` returned and the extent
+            // the checker proved. No copy, no allocation, no validation at run
+            // time: the UTF-8 decision was made at check time out of the
+            // buffer's write history.
+            StringEvent::Borrow { binding, buffer } => {
+                let Some(record) = certificate
+                    .borrows
+                    .iter()
+                    .find(|record| record.event == index)
+                else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let emitted = view_name(binding);
+                let _ = writeln!(
+                    source,
+                    "    qcore_string_view {emitted} = {{ {}, (size_t) {}u }};",
+                    std_buffer_c_emit::buffer_name(buffer),
+                    record.view.len
+                );
+                views.insert(binding.clone(), emitted.clone());
+                discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: an embedded buffer statement is emitted by
+            // `source.buffer.v1`'s **own** emitter, with that route's own C
+            // names, so a composed module's `bytes(8)` is the same call the
+            // uncomposed route writes.
+            StringEvent::Buffer(buffer_event) => {
+                match std_buffer_c_emit::buffer_event_statement(
+                    index,
+                    buffer_event,
+                    &mut scalars,
+                    &mut extents,
+                ) {
+                    Ok(Some(statement)) => {
+                        let _ = writeln!(source, "    {statement}");
+                        if let BufferEvent::Bind { binding, .. }
+                        | BufferEvent::Load { binding, .. }
+                        | BufferEvent::Extent { binding, .. } = buffer_event
+                        {
+                            let emitted = scalar_name(binding);
+                            discard(&mut source, binding, &emitted);
+                        }
+                    }
+                    Ok(Option::None) => {}
+                    Err(_) => {
+                        return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                    }
+                }
             }
             StringEvent::Literal { binding, literal } => {
                 let Some(payload) = program.literals.get(*literal) else {
@@ -407,8 +547,13 @@ pub fn emit_string_c11(
 /// renders none is unchanged by that card — is a property of this conditional,
 /// and moving the condition into the assembler would have replaced a measured
 /// fact with an unconditional fragment the assembler then had to remove again.
+///
+/// The **buffer** prelude is contributed on the same terms since card
+/// `STRING-CONCAT`: only a program that acquires a buffer carries `calloc`,
+/// `free` and their accessors, so every program written before that card — and
+/// every program that only composes text — is byte-identical to what it was.
 #[must_use]
-pub fn preamble(program: &StringProgram) -> Vec<Fragment> {
+pub fn preamble(program: &StringProgram, certificate: &StringCertificate) -> Vec<Fragment> {
     let mut fragments = vec![
         Fragment::new(Section::Includes, "string.includes", INCLUDES),
         io_emit::io_prelude_fragment(),
@@ -430,14 +575,33 @@ pub fn preamble(program: &StringProgram) -> Vec<Fragment> {
         "string.prelude",
         STRING_PRELUDE,
     ));
-    let mut literals = String::from("\n");
+    let buffer_event = |matcher: fn(&BufferEvent) -> bool| {
+        program.events.iter().any(|event| match event {
+            StringEvent::Buffer(buffer_event) => matcher(buffer_event),
+            _ => false,
+        })
+    };
+    if buffer_event(|event| matches!(event, BufferEvent::Acquire { .. })) {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "string.buffer_prelude",
+            std_buffer_c_emit::buffer_prelude_for(
+                buffer_event(|event| matches!(event, BufferEvent::Store { .. })),
+                buffer_event(|event| matches!(event, BufferEvent::Load { .. })),
+            ),
+        ));
+    }
+    let mut payloads = String::from("\n");
     for (index, payload) in program.literals.iter().enumerate() {
-        literals.push_str(&literal_definition(index, payload));
+        payloads.push_str(&payload_definition(&literal_name(index), payload));
+    }
+    for (index, payload) in certificate.composed.iter().enumerate() {
+        payloads.push_str(&payload_definition(&composed_name(index), payload));
     }
     fragments.push(Fragment::new(
         Section::FileScope,
         "string.literals",
-        literals,
+        payloads,
     ));
     fragments
 }
