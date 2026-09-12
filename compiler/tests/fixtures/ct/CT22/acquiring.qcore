@@ -1,0 +1,43 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// The duty-free-pack premise, refused when false (card CT22-WIRE, on card
+// REGION-CREDIT-JOINS's REGION-JOINS-DUTIES boundary): a region body that
+// acquires would seal a live duty into the pack, and the composed route has
+// no emission for the discharge's releases in the task program. Refused by
+// name at Q302 -- which is what makes "the pack holds only the parent-local
+// remainder" a checked premise of the case rather than a convention.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        error region R {
+            let outer = qcore_acquire(1, true, Failure);
+            credit 5;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return answer;
+    }
+}
