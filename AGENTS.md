@@ -65,21 +65,23 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-24 close. The **corpus baseline is still
-`docs/reports/wave23-c-operations/artifacts/`** — wave 23's arbiter card
-deliberately did **not** re-pin it — and the leak row is still read from the
-attributed AFTER run in `docs/reports/aom-destroy-siblings/artifacts/`. Every
-corpus row below is wave 23's, unmoved and unread: wave 24 touched no gateway,
-contract, audit or provider file. Every preceding corpus archive stays frozen
-(constraint 21):
+Headline numbers at the wave-25 close. The **corpus baseline is still
+`docs/reports/wave23-c-operations/artifacts/`** — no arbiter since has re-pinned
+it — with the attributed AFTER runs chained beneath it:
+`docs/reports/aom-destroy-siblings/artifacts/` (wave 23), and now
+`docs/reports/aom-binding-poison/artifacts/` (wave 25), which is the run the
+rows below are read from. Wave 25's four source-route cards touched no gateway,
+contract, audit or provider file; its arbiter touched the gateway and
+**re-measured**, so the corpus rows are measured rather than carried this wave.
+Every preceding corpus archive stays frozen (constraint 21):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7) |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-25 re-measurement). Two non-pinned diagnostic totals moved at that re-measurement and are attributed leaf by leaf in `docs/reports/aom-binding-poison/README.md` §4: `unknown_alias` 4,421 → **4,344** (−77) and `unsupported` 49,781 → **49,773** (−8), 87 `Unknown`-class leaves across 26 units, 1 added and 86 removed |
 | CT01–CT50 conformance | **33/50 mapped**, 17 unmapped; sanitized-native 4 of 33, proof 0 of 33 |
 | Contract corpus | **73 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 3,950 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **103 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave24-close/gate.json`, measured at the integration tip over the five merged cards; each card's own gate is in its report) |
+| Merged gate | 4,089 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **107 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave25-close/gate.json`, measured at the integration tip over the five merged cards; each card's own gate is in its report) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -212,10 +214,17 @@ pointer is the card that established it; read it before deviating.
    L19544, is on the success path where no destroy call runs, so it **stands**,
    the function keeps its leak and its provisional `Unsafe`, and the pin reads
    266 rather than 265. Nothing is promoted by any of the four: zero unit status
-   moves, zero function status moves. `remaining-o04-b08`, `corpus-repin`,
+   moves, zero function status moves. There is **no fifth move**: at the wave-25
+   re-measurement the L19399 leaf that wave 23 decided by *withdrawal* is decided
+   instead by the **discharging** arm of the same
+   `flb_input_chunk_destroy_direct_routes` contract — its first firing anywhere
+   in the pinned corpus — which is a strictly better answer to the same question
+   and changes no count, the pin still reading **266** with not one leak leaf
+   added or removed. `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
-   `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1.
+   `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1,
+   `aom-binding-poison` Headline and §5.2.
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
@@ -271,6 +280,29 @@ pointer is the card that established it; read it before deviating.
     its residual *violation* claim is withdrawn rather than strengthened, each
     statement keeping the refusal it already had. `remaining-ctwin-publish`,
     `remaining-ctwin-residuals`.
+10a. **A refused statement invalidates only the bindings it could have
+    written.** The blanket poison — every refused statement setting `unknown`
+    and `may_be_null` on every binding in the state, including bindings its own
+    text cannot have written — is bounded, and only where the reader positively
+    recognised all three premises: a plain name, an automatic object of this
+    body whose address is never taken, and no write position for that name in
+    the refused text. The allow-list is built **positively**, so an
+    unrecognised place is always poisoned, and every refusal that does not stand
+    for one complete statement — every condition, every control-flow refusal —
+    **keeps the blanket poison** (`AOM-POISON-CONDITION-FRAME`). The refusal
+    itself is never weakened: the `Unsupported` diagnostic, the `unmodeled` path
+    flag and the `Unknown` function status are untouched, which is what makes it
+    impossible for this rule to promote anything — measured as zero unit and
+    zero function status moves, and a leak pin that does not move. The frame
+    premise is the ordinary C object model under the **no-undefined-behaviour**
+    reading (`AOM-POISON-NO-UB`), and the declaration reader
+    (`publication::body_declarations`) over-approximates in the direction that
+    *reduces* refusal, so the file-scope exclusion is applied unconditionally
+    here rather than with `publication::destinations`' shadowing exemption
+    (`AOM-POISON-DECLARATION-READER`). Do not widen `may_write_names` without
+    measuring: sparing a binding can **unmask** a stale scalar fact a `NoOp`
+    mutation left behind (`AOM-POISON-NOOP-INCREMENT`, constraint 5a's already
+    recorded hazard). `aom-binding-poison`.
 
 **Compile-task identity and source transport**
 
@@ -323,7 +355,15 @@ pointer is the card that established it; read it before deviating.
     were **rejected by the census** and must stay rejected: `stream` occurs as a
     contract `extern fn` parameter name (shielded only by the following `:`), and
     `socket` would name a transport the route deliberately makes explicit at
-    creation. `quirin-socket-v1`.
+    creation. `quirin-socket-v1`. `LOOP-V1` added **one** — `for`, census-clean
+    at zero code occurrences across all 418 `.qcore`/`.qc` files — and **zero**
+    new tokens, `..` being two existing `Dot` tokens. **`in` is deliberately not
+    reserved**: the census found it as a genuine reference inside the pinned
+    contract corpus (`ensures normal resource_borrowed(in);`), exactly the shape
+    that kept `len` out of the global list, so it takes that card's narrow
+    contextual rule instead. Do not promote it to the global set.
+    `SOCKET-EVENT-COMPOSE` and `STRING-CONCAT` each added **none**, both censuses
+    run rather than assumed. `loop-v1`, `socket-event-compose`, `string-concat`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -416,6 +456,55 @@ pointer is the card that established it; read it before deviating.
     this module's syntax and constructs no `string` value
     (`STRING_SLICE_V1.md` §2), while a `let`-bound one does and takes
     `std.string`'s gate. `http-quirin-v1`.
+15g. **A reactor registration is a loan, and the reactor owns no descriptor of
+    `source.socket.v1`.** A composed entry's projection carries **no**
+    `CreateSocketPair` and **no** `CloseSocket` — those are the operations by
+    which `event_reactor` owns a number — and `watch E S …;` is an
+    `OwnershipOp::BorrowShared` of `S` to `E` running to the matching
+    `unwatch E;`. Do not give the reactor a descriptor of this route: the three
+    rules a reader wants (a close while registered refuses, a
+    `bind`/`listen`/`connect` on a watched socket refuses, a
+    `send`/`recv`/`accept` on one is admitted) are the **unedited** ownership
+    checker's drop, write and read under a shared loan, and "deregister before
+    close" is their consequence rather than a rule. The loan's span is
+    **lexical**, because the ownership IR's borrow nodes are; a crossed pair is
+    refused by name and must not be approximated
+    (`SOCKET-EVENT-CROSSED-SPANS`). A dispatch turn **drains nothing** — it
+    observes level-triggered readiness and the entry's own transport statements
+    do the work — and the four bookkeeping statements emit no call and derive no
+    effect, because the reactor an emitted program runs *is* the declared
+    registration set materialised as the `poll` set at each turn. `Q083`'s
+    condition is "an inherited, unedited custody model refused, and the variant
+    carries that model's own error value": do not split it per model.
+    `socket-event-compose`.
+15h. **A `concat` result is static storage the compiler computed, and a
+    `borrow_utf8` view is the buffer's own.** `source.string.v1` composes text
+    from **check-time-known** pieces into a new `static const` payload of the
+    emitted program: no allocation, no run-time copy, no custody, and a length
+    that is the **sum of the pieces' lengths** and is itself a check-time
+    constant. Do not make the composition materialise into an owned buffer —
+    that was measured and rejected, because it would add an allocation, a copy
+    and a release to an operation whose result the compiler already holds, and
+    would turn `len` of the result into a run-time quantity, which is the one
+    property the operation exists to preserve (`STRING-SLICE-CONCAT-RUNTIME`).
+    The `std.buffer` bridge is **borrow only**: an owned string is a new custody
+    shape the `{storage, offset, len}` view has nowhere to carry, and composing
+    a borrowed view already launders its bytes into static storage, so nothing
+    is blocked on the freeze (`STRING-SLICE-FREEZE`). A borrow's UTF-8 validity
+    is decided **statically**, out of the buffer's own write history —
+    `source.buffer.v1` admits only constant bytes at constant indices — and its
+    **window** runs from the borrow to the last statement reading the view or
+    **anything derived from it**, a slice of a borrow being itself a borrow of
+    the same buffer. Do not widen the window's computation without revisiting
+    it: the interval is exact because the route is one flat statement sequence,
+    and a loop construct invalidates that premise — which is why the composed
+    route **refuses** a `for` today (`STRING-CONCAT-LOOP-WINDOW`). A borrow
+    contributes an ordinary `Read` to the cycle-3 ownership operation list; do
+    not re-implement the custody rules beside it. **Route selection changes only
+    for the bridge construct** — a module holding a buffer without spelling
+    `borrow_utf8` keeps `source.buffer.v1` — and a composed module is one that
+    **acquires** a buffer, which is what keeps `drop s;` on a string refusing at
+    `Q068` where it always did. `string-concat`.
 
 **Providers, packages and limits**
 
@@ -583,6 +672,23 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 Authority is `docs/QCORE_SPEC_r0_3.md` §L21 (ownership by semantic pass) —
 this table is a summary of it, not a second allocation.
 
+**Q-space note — `Q-NAMESPACE-DECISION`, an open decision deferred to the
+icebox.** The `Q000`–`Q099` route-code space is **exhausted**: `Q077`–`Q079`
+(`STRING-CONCAT`) and `Q097`–`Q099` (`LOOP-V1`) were the last two pools and are
+now spent, so there is no free range left below `Q100`. The next allocation
+therefore needs a §L21 namespace decision rather than a range — candidates being
+to open `Q101`/`Q102`/`Q104`+ around the legacy three-digit bands, or to take a
+new prefix. **By user direction (2026-09-12) that decision is in the ice box**,
+on the stated ground that naming collisions happen easily; it is recorded here
+as an open decision named `Q-NAMESPACE-DECISION`, **not** as a rule, and it is
+integrator/spec work when it is taken up. Its operative consequence until then:
+**no card allocates new `Q` codes.** A new refusal lands as a **condition
+extension of an existing band**, on the `SOCKET-EVENT-COMPOSE` /
+`NATIVE-LIBRARY-HEADER-DECORATION` precedent — the same condition reached by a
+new route — with the widening stated in §L21 and in the card's report rather
+than taken silently. Constraint 1 is unchanged: a code is still allocated to a
+condition, still stable, and still may not be reused by a second pass.
+
 | Codes | Owning pass | Meaning |
 |---|---|---|
 | `Q000` | `NameResolution` (per file) | input file does not parse as a QCore declaration |
@@ -599,9 +705,10 @@ this table is a summary of it, not a second allocation.
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
-| `Q068`–`Q073`, `Q075`–`Q076` | `StandardString` | `source.string.v1` in two bands: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row (`Q068`–`Q073`, relocated from `Q065`–`Q070` at integration); its composition with the output modules — `print TEXT;` and `log LEVEL TEXT;` over a quoted literal, a bound string or one inline slice — where `Q075` is the text line's shape and `Q076` a text operand naming no string this entry bound (`Q075`–`Q076`, card `STRING-SLICE-IO`; `Q077`–`Q079` of that pre-assigned range unused and returned to the pool) |
-| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card |
+| `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` in three bands: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row (`Q068`–`Q073`, relocated from `Q065`–`Q070` at integration); its composition with the output modules — `print TEXT;` and `log LEVEL TEXT;` over a quoted literal, a bound string or one inline slice — where `Q075` is the text line's shape and `Q076` a text operand naming no string this entry bound (`Q075`–`Q076`, card `STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool); and **computed text** (`Q077`–`Q079`, card `STRING-CONCAT`, reassigned to the same pass) — `concat(…)` over check-time-known pieces into a new static payload, `dec(NAME)`/`hex(NAME)` for the text of a bound integer, and `borrow_utf8(NAME)` bridging an owned `std.buffer` into an immutable view, where `Q077` is the band's shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window together with the inherited ownership checker's own refusal, and `Q079` the **static UTF-8 decision** on a buffer's write history |
+| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Since card `SOCKET-EVENT-COMPOSE` the row also covers the **reactor composition** — a checked socket registered with `source.event.v1`'s reactor — which allocates **no code**: a registration's refusals land on `Q080` (shape, including crossed spans), `Q081` (a name at a registration position), `Q082` (a socket in no state this program can make ready), `Q083` (whose condition is **widened** from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value), `Q085` (a turn the committed history does not decide, including a two-member ready set) and `Q087` |
 | `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (whose signature condition is a declared `Content-Length` that is not the literal content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`) |
+| `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`) |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |

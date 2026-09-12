@@ -77,6 +77,18 @@ requirements that are part of the gate.
   `docs/reports/windows-vs2026/README.md`,
   `docs/reports/windows-clang-fixtures/README.md`. Visual Studio Clang
   discovery orders vswhere newest first with VS 2026/2022 fallbacks.
+  **`SOCKET-V1-WINDOWS-RUN` is discharged (user-validated, 2026-09-12):** both
+  published `source.socket.v1` examples were compiled by Microsoft's actual
+  `cl.exe` (Visual Studio 18 Community, MSVC 19.51.36248), executed against
+  Winsock loopback and compared byte for byte with the checked reference
+  observation, the complete 49-test `std_socket` target passing —
+  `docs/reports/socket-v1-windows-run/README.md`. Scope: native execution and
+  byte agreement, **no sanitizer claim** (MSVC ships no ASan/UBSan in this
+  harness). `HTTP-V1-WINDOWS-RUN` and `STRING-SLICE-IO-WINDOWS-RUN` are wired
+  and stay open with exact test-name discharge conditions
+  (`docs/reports/windows-native-sockets-harness/README.md`), and four tests keep
+  `runs_sanitized` in their names while their Windows arm claims no sanitizer
+  coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
   Linux-only, so leak detection stays a Linux observation), and Apple Clang
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.
