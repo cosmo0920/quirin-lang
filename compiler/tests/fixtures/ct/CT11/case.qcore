@@ -1,0 +1,24 @@
+// CT11 — "Full permission reconstructed while local shared aliases survive";
+// expected: "Reject".
+//
+// `borrow_utf8(store)` is a **local** shared alias: an immutable view of the
+// buffer's own bytes, bound in this very frame, with no task and no other party
+// involved. A byte write into `store` demands the buffer's exclusive authority
+// back. The write below asks for exactly that while the alias is still live,
+// and is refused.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(2);
+    store[0] = 104;
+    store[1] = 105;
+    let view = borrow_utf8(store);
+    // Refused: reconstructing write authority over `store` while `view` — a
+    // local shared alias of the same bytes — survives.
+    store[0] = 106;
+    print view;
+    drop store;
+    return;
+}

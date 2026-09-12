@@ -372,21 +372,26 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(summary.check_newly_decidable(ROOT), [])
         manifest = load_manifest()
         for case in manifest["cases"]:
-            if case["id"] == "CT11":
+            if case["id"] == "CT24":
                 case["mapping_status"] = "mapped"
         with MutableRoot() as scratch:
             scratch.write_manifest(manifest)
             # Card HYGIENE-16 deliberately widened this pin rather than
-            # loosening it: CT11 is named in BOTH hand-kept halves, so mapping it
-            # must now be reported twice — once for the id list, once for the
-            # companion reasons map. The load-bearing half (the list) is
+            # loosening it: the staged case is named in BOTH hand-kept halves, so
+            # mapping it must be reported twice — once for the id list, once for
+            # the companion reasons map. The load-bearing half (the list) is
             # unchanged and still asserted verbatim.
+            #
+            # The staged case was CT11 until the wave-26 CT lane mapped it for
+            # real, which is the mechanism working: the committed tree no longer
+            # names CT11 in either half, so staging it here would assert nothing.
+            # CT24 is one of the two ids the committed halves still carry.
             self.assertEqual(
                 summary.check_newly_decidable(scratch.directory),
                 [
-                    "acceptance.json newly_decidable_not_mapped names CT11, "
+                    "acceptance.json newly_decidable_not_mapped names CT24, "
                     "which the manifest maps",
-                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT11 "
+                    "acceptance.json newly_decidable_not_mapped_reasons explains why CT24 "
                     "is not mapped, but the manifest maps it",
                 ],
             )
@@ -694,13 +699,14 @@ class SummaryTest(unittest.TestCase):
     WAVE13 = "docs/reports/wave13-ct34/ct_stage_evidence.json"
     NEWEST = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
     WAVE17 = "docs/reports/wave17-ct40/ct_stage_evidence.json"
+    WAVE26 = "docs/reports/ct-wire-lane/ct_stage_evidence.json"
 
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Four of the seventeen unmapped cases carry a lane's measured bucket; the
-        other thirteen still read card T00's 2026-09-07 analysis, and the
-        published source is what makes the difference legible.
+        Five of the fourteen unmapped cases carry a lane's measured bucket; the
+        other nine still read card T00's 2026-09-07 analysis, and the published
+        source is what makes the difference legible.
         """
         labels = summary.unmapped_labels(ROOT)
         measured = {
@@ -711,18 +717,30 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(
             measured,
             {
-                "CT11": self.WAVE3,
+                "CT07": self.WAVE26,
+                "CT08": self.WAVE26,
                 "CT41": self.WAVE17,
                 "CT42": self.WAVE17,
                 "CT46": self.WAVE13,
             },
         )
-        # The two labels that actually moved, with the archived text retained
-        # beside each rather than overwritten.
-        self.assertEqual(
-            labels["CT11"]["label"], "blocked-on-scenario-mismatch (no local alias form)"
-        )
-        self.assertEqual(labels["CT11"]["archived_label"], "blocked-on-task-lowering (share captures)")
+        # The labels that actually moved, with the archived text retained beside
+        # each rather than overwritten. CT11 used to be one of them — the wave-3
+        # lane's `blocked-on-scenario-mismatch (no local alias form)` over T00's
+        # `blocked-on-task-lowering (share captures)` — and it left the set
+        # entirely when the wave-26 CT lane mapped it. CT07 and CT08 took its
+        # place from the other direction: both were still on T00's archive, and
+        # the wave-26 lane re-measured them.
+        self.assertNotIn("CT11", labels)
+        for case in ["CT07", "CT08"]:
+            self.assertEqual(
+                labels[case]["label"],
+                "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
+            )
+            self.assertEqual(
+                labels[case]["archived_label"], "blocked-on-unimplemented-syntax"
+            )
+            self.assertNotEqual(labels[case]["label"], labels[case]["archived_label"])
         self.assertEqual(labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)")
         self.assertEqual(
             labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
@@ -910,7 +928,7 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 17)
+            self.assertEqual(sum(counts.values()), 14)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),

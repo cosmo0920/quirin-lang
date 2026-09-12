@@ -1,0 +1,45 @@
+// CT49 refusal control. The case's own program with both workers given the
+// same value, so both write the same bytes inside one concurrent window.
+//
+// The declared relation identifies a native line's emitter by that line's
+// bytes. Two emitters that can write the same line make that identification
+// impossible, and the declaration is refused rather than downgraded to a
+// multiset comparison — which is what stops "compare up to a partial order"
+// from being a licence to stop comparing.
+import std.concurrency;
+import std.io;
+import std.logger;
+import std.fmt;
+concurrency checked;
+
+fn worker(value: i32) -> i32 effects { io } {
+    value |> log info dec;
+    value |> log warn dec;
+    value |> log fatal dec;
+    return value;
+}
+
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    let first_value = 11;
+    let second_value = 11;
+    log info dec 0;
+    thread scope workers {
+        let first = spawn workers worker(copy first_value)?;
+        match spawn workers worker(copy second_value) {
+            Result::Ok { value: second } => {
+                log info dec 9;
+                log warn dec 9;
+                let second_result = join move second?;
+                let first_result = join move first?;
+                first_result |> log info dec;
+                second_result |> print dec;
+                return first_result;
+            }
+            Result::Err { error: failure } => {
+                let first_result = join move first?;
+                first_result |> log warn dec;
+                return first_result;
+            }
+        }
+    }
+}

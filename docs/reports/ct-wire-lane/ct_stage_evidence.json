@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "card": "CT-WIRE-LANE",
+  "generated": "2026-09-12",
+  "report": "docs/reports/ct-wire-lane/README.md",
+  "purpose": "Per-stage executed evidence for the three cases the wave-26 CT lane mapped, written in the shape docs/reports/wave17-ct40/ct_stage_evidence.json uses so scripts/ct_stage_summary.py merges it with the earlier per-card records.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control with its own source is executed on THAT artifact and is therefore not one of this case's observations. CT49's sixteen native runs are sixteen executions of one binary built from the case's own emitted C, so `native_execution` and `native_sanitized` read 16 while `c_emission` reads 1: the emission happened once.",
+  "route": "Two routes. CT06 and CT11 are the first mapped cases on the `sequential` route, which schema 2 declared and left empty; their artifact is a source.string.v1 module compiled by compile_files. CT49 is on the `task` route, as source.std-io-tasks.v1's task half, with its native observation compared up to qcore_core::obs_reordering's declared relation instead of byte for byte. No checker rule, diagnostic code, lowering or model changed: `git diff` over crates/ and compiler/src/ is empty for this card.",
+  "why_these_cases_map_now": {
+    "CT06": "Card T00's archived reason was `expected result is not an accept/reject verdict, and aliasing is refused outright`. The second half is retired by card STRING-CONCAT (wave 25): `borrow_utf8` bridges an owned std.buffer into an immutable view, and a whole-extent slice of that view is the same pointer and the same length under a second name. The first half is answered the way the wave-9 attribution rule answers a modelling expectation: the refusal names the COPY rather than the view it came from, and two controls bound it.",
+    "CT11": "Card T05 / the wave-3 CT lane left CT11 unmapped because `ScopedReadSharesV1 has no local alias form at all, and the party retaining the share here is an unjoined child task`. That is exactly what card STRING-CONCAT supplied: a shared, immutable alias of an owned buffer's own bytes, bound in the same frame, with no task and no second party. A byte write into the buffer demands its exclusive authority back and is refused while the alias survives.",
+    "CT49": "Card T00's archived reason was `the harness pins an exact total transcript (stdout == render_task_observation), which is the opposite of a partial-order check`. Card OBS-REORDERING (wave 22) landed the partial-order check: a program with a source line in a worker body declares qcore.obs-reordering.v1, and its streams are compared window by window and emitter by emitter, with byte equality retained as that relation's own degenerate case. CT49's expectation - `validate partial order, not exact total trace` - is that comparison."
+  },
+  "what_the_mappings_do_not_claim": {
+    "CT06": "The alias measured is immutable and shared, inside one entry. Nothing here measures an owning copy, a mutable alias, an alias crossing a function or a thread boundary, or a pointer value: this language has no raw pointer type, and `same` is a view, not an address the program can compute with.",
+    "CT11": "`Full permission` here is the buffer's exclusive write authority as source.buffer.v1 defines it, and `local shared alias` is one immutable view. No write share, no fractional permission arithmetic and no second party is involved, and the refusal is a check-time decision over one flat statement sequence.",
+    "CT49": "Nothing about the scheduler. An admitted run says that run's stream lies in the admitted set; sixteen admitted runs say it sixteen times. The count is printed and never asserted, because observing one order is a legal outcome of a legal scheduler. The relation's premises - one emitter per line's bytes, `io` declared in the writing worker's own effect row - are card OBS-REORDERING's and are inherited unedited."
+  },
+  "lean_is_not_applicable": "Judged not applicable on the grounds cards T00-CT-SCHEMA, T08-SRC-CT, CT-CTWIN and the wave-11/13/17 CT lanes recorded: this lane adds no checker rule, no diagnostic code, no lowering and no model. It adds three fixtures with their controls, harness pins for two new verdict modes, and the manifest rows those derive. `proof` stays `unassessed` for all three; no theorem is bound to any CT fixture (T00.7 remains open).",
+  "sanitized_native_growth": "One case is added to the sanitizer gate: CT49, whose sixteen runs really are compiled with `-fsanitize=address,undefined -fno-omit-frame-pointer` and run with `detect_leaks=1:halt_on_error=1` (Linux; Apple ASan ships no leak detector, so the macOS arm runs `detect_leaks=0` under the standing platform boundary). Harness-gated sanitized-native evidence moves from 4 of 33 to 5 of 36. CT06 and CT11 add none: their fixtures are refusals that emit nothing, and their route has no control carrying a sanitized run, so `native_sanitized` reads `unassessed` for both. Proof stays 0 of 36.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT06",
+      "CT11",
+      "CT49"
+    ],
+    "mapped_before": 33,
+    "mapped_after": 36,
+    "unmapped_after": 14,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 3,
+    "source_compilations_of_control_artifacts": 6,
+    "accepted_controls": 4,
+    "relation_controls": 2,
+    "reference_executions": 1,
+    "c_emissions": 1,
+    "sanitized_native_compile_and_run": 16,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT06": {
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": null,
+      "sequential_reject_controls_executed": 2,
+      "measured_refusal": {
+        "diagnostic_sequence": [
+          "Q078"
+        ],
+        "message": "this statement would release `store` while `same` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 7 of this entry)"
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT06/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT06/case.qcore",
+          "observations": 1,
+          "note": "The route refuses at Q078, a code below 500, so `derive_stage_plan` does not credit the sequential whole-program stage. That is the harness's own conservative rule and this lane does not touch it; the honest reading is that the refusal is reached at or before elaboration as far as this derivation can tell."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT06/no_copy.qcore",
+          "role": "attribution",
+          "expectation": "accept",
+          "measured": "checks, StandardStringV1, emits C",
+          "isolates": "exactly the copy and the read through it. The release stays where the case refuses it and is admitted, so the refusal is attributable to the copy rather than to the release's position."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT06/copy_read_first.qcore",
+          "role": "boundary",
+          "expectation": "accept",
+          "measured": "checks, StandardStringV1, emits C",
+          "isolates": "the position of the copy's own last read. The copy stays and only the release moves past it, so the obligation the second name carries is the original's obligation, bounded by that read - not a new obligation created by naming."
+        }
+      ]
+    },
+    "CT11": {
+      "harness_verdict_mode": "reject",
+      "manifest_evidence_target": null,
+      "sequential_reject_controls_executed": 2,
+      "measured_refusal": {
+        "diagnostic_sequence": [
+          "Q078"
+        ],
+        "message": "this statement would write a byte of `store` while `view` borrows it; a `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it addresses may not be written or released until the last statement that reads the view or anything derived from it (statement 5 of this entry)"
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT11/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT11/case.qcore",
+          "observations": 1,
+          "note": "As for CT06: Q078 is below 500, so the derivation credits no deeper sequential stage."
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "not_applicable"
+        },
+        "native_execution": {
+          "status": "not_applicable"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT11/write_before_alias.qcore",
+          "role": "attribution",
+          "expectation": "accept",
+          "measured": "checks, StandardStringV1, emits C",
+          "isolates": "the alias's existence at the moment of the write. The identical write before the alias exists is admitted, so the refusal is not about writing a buffer."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT11/write_after_alias.qcore",
+          "role": "boundary",
+          "expectation": "accept",
+          "measured": "checks, StandardStringV1, emits C",
+          "isolates": "the alias's survival. The alias exists and the write follows its last read, and is admitted, so exclusive authority IS reconstructible once no alias survives - which is what makes the case's refusal a statement about survival rather than about aliasing at all."
+        }
+      ]
+    },
+    "CT49": {
+      "harness_verdict_mode": "reordering_partial_order",
+      "manifest_evidence_target": "linux",
+      "relation_controls_executed": 2,
+      "measured_relation": {
+        "declared_stdout": [
+          "QCORE_TASK_SPAWN 1 0",
+          "QCORE_TASK_SPAWN 2 0",
+          "QCORE_TASK_RESULT 2 I32 22",
+          "QCORE_TASK_JOIN 2",
+          "QCORE_TASK_RESULT 1 I32 11",
+          "QCORE_TASK_JOIN 1",
+          "22",
+          "QCORE_TASK_RESULT 0 I32 11"
+        ],
+        "declared_stderr": [
+          "[INFO] 0",
+          "[INFO] 11",
+          "[WARN] 11",
+          "[FATAL] 11",
+          "[INFO] 22",
+          "[WARN] 22",
+          "[FATAL] 22",
+          "[INFO] 9",
+          "[WARN] 9",
+          "[INFO] 11"
+        ],
+        "stderr_window_sizes": [
+          1,
+          8,
+          1
+        ],
+        "stderr_emitters": 3,
+        "stdout_relation_strict": true,
+        "stderr_relation_strict": false
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1,
+          "note": "execute_with_source_lines over the checked composed task IR. It never reads the emitted C, which is what makes the comparison below a comparison."
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 1,
+          "note": "One emission per module, however many times the binary built from it runs."
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 16
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
+          "artifact": "compiler/tests/fixtures/ct/CT49/case.qcore",
+          "observations": 16,
+          "note": "The same sixteen runs: the one binary is built with -fsanitize=address,undefined, so every native execution of this case is a sanitized one. LeakSanitizer is enabled on Linux and off on macOS, where Apple's ASan ships no leak detector."
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT49/parent_only.qcore",
+          "role": "boundary (pinned for keeping BYTE equality)",
+          "expectation": "strict_relation",
+          "measured": "checks; the derived relation is strict on both streams",
+          "isolates": "the worker-body line. The same spawn/join structure with every line in the parent's body keeps byte equality, so this lane's looser comparison is what one declaration buys and not a corpus-wide weakening."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qcore",
+          "role": "refusal",
+          "expectation": "refuse_relation",
+          "measured": "checks; the relation is refused with AmbiguousAlphabet (code 2), message naming `[INFO] 11`",
+          "isolates": "the premise that a line's emitter is a function of its bytes. Two workers given the same value can write the same line inside one window, and the declaration is refused outright rather than downgraded to a multiset comparison."
+        }
+      ]
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT07": {
+      "scenario": "Two disjoint array halves mutated independently",
+      "expected": "Accept with bounds/disjointness proof",
+      "re_measured_on_this_tree": "Indexed arrays now exist: source.buffer.v1 admits `bytes(N)` with constant indices, and card LOOP-V1 added the counted `for i in 0..BOUND`. Bounds are decided at check time, measured verbatim: `index 4 is outside `store`, whose declared extent is 4 bytes; `source.buffer.v1` decides every access at check time, so this is a refusal and not a run-time trap` (Q053). The loop counts from 0 only - `for j in 4..8` is refused at Q097 - so the second half cannot even be spelled as its own range.",
+      "why_still_unmapped": "The bounds half of the expectation is retired; the disjointness half is not. `independently` means two parties with disjoint permission over two ranges, and no source form lends a sub-extent of a buffer to anyone: the slice-permission surface is unit F1 of docs/design/DISJOINT_FOOTPRINT_PROFILE.md and has not landed. A sequential mapping would accept two halves written one after the other by one party, which answers a different question.",
+      "follow_on": "CT07-SLICE-PERMISSIONS"
+    },
+    "CT08": {
+      "scenario": "Overlapping array ranges",
+      "expected": "Reject or analyzer potential/unknown",
+      "re_measured_on_this_tree": "Same surface as CT07, and the same measurement: an out-of-extent index is refused at Q053. What is absent is a relation BETWEEN two ranges - nothing in this route computes an overlap, because nothing lends a range in the first place.",
+      "why_still_unmapped": "As CT07. The archived note that the harness lacks an `unknown` verdict also stands for the source routes: `Unknown` is the gateway's verdict vocabulary, and the source harness's is accept/reject.",
+      "follow_on": "CT07-SLICE-PERMISSIONS"
+    },
+    "CT24": {
+      "scenario": "Cleanup destroys an owner before child join",
+      "expected": "Reject",
+      "re_measured_on_this_tree": "Two shapes. An EXPLICIT drop of a shared owner before the join is refused: `Q600: LoanOutstanding { resource: 1, outstanding: 512, borrowers: [2] }`. The cleanup shape - a `?` that would leave the thread scope while a child is unjoined, so scope-exit cleanup would release the owner - is refused first and for another reason: `Q600: ScopeBusy(5)`, at the `?` itself.",
+      "why_still_unmapped": "Card T00 called this DECIDABLE-NOW `with a distinguishing fixture`, the distinction being that scope-exit cleanup is a different mechanism from an explicit drop. That fixture is measurably unwritable on this tree: the task obligation refuses the scope exit before any cleanup runs, so no program can reach a state in which cleanup destroys an owner a child still borrows. Mapping the explicit-drop shape instead would record a refusal attributable to `drop`, which is not the construct CT24 names.",
+      "follow_on": "CT24-CLEANUP-PREEMPTED"
+    },
+    "CT47": {
+      "scenario": "Raw pointer is Copy but no transfer/share contract exists",
+      "expected": "Reject automatic cross-thread acceptance",
+      "re_measured_on_this_tree": "Two refusals, measured. A capture with no declared mode does not parse: `Q000: capture requires copy, move, read ... share, or write` - there is no automatic mode at a thread boundary. A `copy` capture of an owned resource handle checks at the model level and is refused by the BACKEND: `Q500: only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable`. The `read buffer share 512` form of the same program is admitted and emitted.",
+      "why_still_unmapped": "The refusal that would carry the mapping is a Q500 emission refusal, which is `the reduced C11 CFG cannot encode this` - exactly the `the profile cannot express this at all` vacuity the wave-9 attribution rule excludes. The grammar half is real but is a syntax gate rather than a contract analysis, and this language has no raw pointer type for the case's premise to be about. Card T00's DECIDABLE-NOW label is kept, and the measurement is what a future lane needs to decide it deliberately rather than by stretching.",
+      "follow_on": "CT47-COPY-CAPTURE"
+    }
+  },
+  "unmapped_reasons_provenance": "Two labelled rows, both measured on this tree rather than inherited: CT07 and CT08 move bucket, because their archived label - `blocked-on-unimplemented-syntax` - is no longer accurate now that indexed arrays, check-time bounds and a counted loop all exist, and the measured obstacle is one specific missing surface. Both were held by card T00's frozen archive rather than by a lane record, so neither declares a supersession: a lane label beats the archive by the resolution rule and declaring that would be vacuous. CT24 and CT47 were re-measured too and are written up under `cases_examined_and_left_unmapped` above, but deliberately carry NO labelled row: both are keys of the derived `newly_decidable_not_mapped_reasons` map, whose text is read out of the newest record that labels the case, so publishing a row here would change a DERIVED section of docs/reviews/r0_3/acceptance_matrix.json - which a card may not hand-edit and this card does not regenerate. Their classification is unchanged in any case (both keep card T00's DECIDABLE-NOW buckets, since re-verification reaching the same classification is the record saying the label holds), so nothing measured is lost: the measurements are in this record's prose, in docs/reviews/r0_3/acceptance.json's own hand-kept reasons, and in docs/reports/ct-wire-lane/README.md sections 3.5 and 3.8. A later lane that wants the derived map to carry them publishes the rows and regenerates the matrix in the same change. The remaining ten unmapped cases carry no row from this lane: CT09, CT10, CT21, CT22, CT23, CT25 and CT44 were re-read rather than re-measured, and CT41, CT42 and CT46 keep the rows the wave-17 and wave-13 lanes measured. Re-reading is not measuring, and this record publishes only what was run.",
+  "unmapped_reasons": {
+    "CT07": {
+      "bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
+      "reason": "Indexed arrays, check-time bounds (Q053) and a counted loop (card LOOP-V1) all exist now, so the archived `no array types, indexing or disjointness in source` is half retired. What is missing is the surface that lends a sub-extent of a buffer to a second party - unit F1 of docs/design/DISJOINT_FOOTPRINT_PROFILE.md - so `mutated independently` has no source form and a sequential mapping would answer a different question.",
+      "measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane): Q053 on an out-of-extent index, Q097 on a loop range whose low end is not 0; follow-on CT07-SLICE-PERMISSIONS"
+    },
+    "CT08": {
+      "bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
+      "reason": "As CT07: every index is decided at check time and refused out of extent, but nothing in any source route lends a range, so no route computes a relation between two ranges. The archived note that the harness has no `unknown` verdict also stands - `Unknown` belongs to the gateway's vocabulary, not to the source harness's accept/reject.",
+      "measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane), measured on the same buffer surface as CT07; follow-on CT07-SLICE-PERMISSIONS"
+    }
+  },
+  "retired_unmapped_reasons": {
+    "CT11": {
+      "retires": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+      "mapped_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane): CT11 is mapped on the sequential route, so it has no blocker to publish. The wave-3 record keeps its row and its bytes; this declaration is what retires it, exactly as the wave-17 lane retired CT40's wave-9 row.",
+      "wave3_bucket_retired": "blocked-on-scenario-mismatch (no local alias form)",
+      "wave3_reason_retired": "ScopedReadSharesV1 has no local alias form at all, and the party retaining the share is an unjoined child task, so mapping it would claim intra-frame alias evidence the corpus does not have. Card STRING-CONCAT's borrow_utf8 bridge is that missing form: an immutable shared alias of an owned buffer's own bytes, bound in the same frame, with no task and no second party."
+    }
+  }
+}

@@ -1,0 +1,43 @@
+// CT49 boundary control, pinned for NOT being compared up to a reordering.
+//
+// The same spawn/join structure, with every line moved into the parent's body.
+// Every write is then performed by the parent's own thread — workers buffer
+// their trace events privately and the parent replays them at collect — so this
+// program's declared relation is **strict**, and its two streams are compared
+// byte for byte against the reference execution.
+//
+// This is what keeps CT49's mapping a statement about a declaration rather than
+// a blanket weakening of the corpus's stream comparison: the partial order is
+// what a worker-body line buys, and a program without one keeps byte equality.
+import std.concurrency;
+import std.io;
+import std.logger;
+import std.fmt;
+concurrency checked;
+
+fn worker(value: i32) -> i32 { return value; }
+
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    let first_value = 11;
+    let second_value = 22;
+    log info dec 0;
+    thread scope workers {
+        let first = spawn workers worker(copy first_value)?;
+        match spawn workers worker(copy second_value) {
+            Result::Ok { value: second } => {
+                log info dec 9;
+                log warn dec 9;
+                let second_result = join move second?;
+                let first_result = join move first?;
+                first_result |> log info dec;
+                second_result |> print dec;
+                return first_result;
+            }
+            Result::Err { error: failure } => {
+                let first_result = join move first?;
+                first_result |> log warn dec;
+                return first_result;
+            }
+        }
+    }
+}

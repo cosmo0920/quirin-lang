@@ -1,0 +1,82 @@
+{
+  "id": "CT49",
+  "verdict": "reordering_partial_order",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check",
+    "task_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.std-io-tasks.v1 with a source line in a worker body, so the program declares qcore.obs-reordering.v1 (card OBS-REORDERING) and its observation is compared up to that relation. CT49 asks for a partial-order check rather than an exact total trace, and card T00's archived reason for leaving it unmapped was that the harness pinned an exact total transcript. It no longer must: the emitted program performs each worker's three lines on that worker's own thread, the reference execution runs each worker eagerly at its spawn, and standard error is compared window by window and emitter by emitter while standard output stays byte-compared (every trace write of an emitted task program is the parent thread's). What is pinned: the reference's rendering of both streams, the relation's window structure [1, 8, 1] and its three emitters, which stream is strict, sixteen sanitized runs each admitted, and two deterministic witnesses - an emitter-preserving regrouping that is admitted and is not the declared order, and a reversal inside one emitter that is refused. Boundary: nothing here is a claim about the scheduler. An admitted run says that run's stream lies in the admitted set; the distinct-order count is printed and never asserted, because observing one order is a legal outcome of a legal scheduler.",
+  "reordering_partial_order": {
+    "execution_profile": "ComposedStdIoTasksV1",
+    "runs": 16,
+    "sanitizer_flags": [
+      "-std=c11",
+      "-pedantic",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-O0",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "asan_options": "detect_leaks=1:halt_on_error=1",
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "declared_stdout": [
+      "QCORE_TASK_SPAWN 1 0",
+      "QCORE_TASK_SPAWN 2 0",
+      "QCORE_TASK_RESULT 2 I32 22",
+      "QCORE_TASK_JOIN 2",
+      "QCORE_TASK_RESULT 1 I32 11",
+      "QCORE_TASK_JOIN 1",
+      "22",
+      "QCORE_TASK_RESULT 0 I32 11"
+    ],
+    "declared_stderr": [
+      "[INFO] 0",
+      "[INFO] 11",
+      "[WARN] 11",
+      "[FATAL] 11",
+      "[INFO] 22",
+      "[WARN] 22",
+      "[FATAL] 22",
+      "[INFO] 9",
+      "[WARN] 9",
+      "[INFO] 11"
+    ],
+    "stderr_window_sizes": [
+      1,
+      8,
+      1
+    ],
+    "stderr_emitters": 3,
+    "stdout_relation_strict": true,
+    "stderr_relation_strict": false,
+    "controls": [
+      {
+        "source": "parent_only.qcore",
+        "expectation": "strict_relation",
+        "note": "Pinned for KEEPING byte equality. The same spawn/join structure with every line moved into the parent's body derives a strict relation on both streams, so this case's looser comparison is what one declaration buys rather than a corpus-wide weakening."
+      },
+      {
+        "source": "ambiguous_alphabet.qcore",
+        "expectation": "refuse_relation",
+        "refusal_code": 2,
+        "refusal_contains": "[INFO] 11",
+        "note": "Both workers given the same value, so two emitters can write the same line inside one window. The relation identifies a line's emitter by its bytes, so the declaration is refused outright (AmbiguousAlphabet, code 2) instead of degrading to a multiset comparison - which is what stops `compare up to a partial order` from becoming a licence to stop comparing."
+      }
+    ]
+  }
+}

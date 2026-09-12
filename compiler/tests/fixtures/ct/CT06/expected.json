@@ -1,0 +1,40 @@
+{
+  "id": "CT06",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q078",
+      "message_contains": "this statement would release `store` while `same` borrows it"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate"
+  ],
+  "evidence_target": null,
+  "notes": "source.string.v1 (cards STRING-SLICE and STRING-CONCAT). CT06 asks whether the same pointer under a second name is still the same permission identity. `borrow_utf8(store)` is a { ptr, len } view of the buffer's own bytes and `view[0:2]` over its whole extent is { ptr = p + 0, len = 2 - 0 } - the same pointer and the same length under a different name. The measurement is that the obligation follows the copy: the release is refused, and the refusal names `same`, the copy, rather than `view`. The attribution control removes exactly the copy and its read, leaving the release where the case refuses it, and is admitted; the boundary control keeps the copy and moves the release past the copy's own last read, and is admitted too, so the obligation the copy carries is the original's obligation and not a new one. Boundary: what is measured is an immutable shared view of an owned buffer inside one entry. Nothing here measures an owning copy, a mutable alias, an alias crossing a function or a thread, or a pointer value the language has no type for; and CT06's expectation is a modelling property rather than an accept/reject verdict, so the mapping rests on the refusal naming the copy plus the two controls that bound it.",
+  "sequential_reject": {
+    "diagnostic_sequence": [
+      "Q078"
+    ],
+    "controls": [
+      {
+        "source": "no_copy.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardStringV1",
+        "note": "Attribution: exactly the copy and the read through it are removed, the release stays where the case refuses it, and the program is admitted. The refusal is attributable to the copy."
+      },
+      {
+        "source": "copy_read_first.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardStringV1",
+        "note": "Boundary: the copy stays and only the release moves past the copy's last read. Admitted, so the second name carries the original's obligation for exactly as long as it is read - not an obligation of its own."
+      }
+    ]
+  }
+}
