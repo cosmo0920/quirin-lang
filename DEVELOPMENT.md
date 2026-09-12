@@ -349,6 +349,43 @@ full suite.
 
 ## Increment records
 
+Wave 30 close (2026-09-13): **six cards** merged one at a time under the
+failure-gated chain — `DOCS-COMPACT-4`, `CT24-CLEANUP-PREEMPTED`,
+`CT-PROOF-LEG-2`, `REGION-JOINS-LOAN`, `CT07-WRITE-REMAP` and the arbiter
+`W4-RECURSIVE-SUMMARIES` — plus one salvage commit recovered during the
+worktree sweep (the `check_lean_audits.py` exit-code hardening: a failure now
+exits non-zero and a missing `lake` is a hard error naming the elan path).
+The wave's head is the **second executed proof row**: CT37, chosen by a
+measured survey of all 42 mapped cases — **proof 1 of 42 → 2 of 42** under
+the pinned `PROOF_GATED_CASES` gate, its stage evidence superseding card
+T00's frozen archive from its own record. CT25's whole scenario became
+expressible (`REGION-JOINS-LOAN`: the counted read share expiring at the
+join, the adoption `move NAME;`, `T08-COMPOSE-LOAN` **deliberately
+discharged** by measurement as a stated `Q600` narrowing; constraint 15m
+amended a second time). CT07's evidence was upgraded to the write-lend
+two-write-authorities scenario with **no count moved** (42/50, 8 unmapped,
+sanitized-native 7 of 42). `CT24-CLEANUP-PREEMPTED` re-attributed the
+early-exit refusal from the exit rule's own loan backstop, refused set
+proved unchanged (attribution only, constraint 1). The wave ran **one
+arbiter** whose honest headline is a measured disposition: the
+neutral-element unit was **already landed** (C03-NFR;
+`W4-RECSUM-ALREADY-LANDED`), so it lands the design's §4.3 soundness
+induction in Lean and **constraint 4 is amended** — the assume-guarantee
+prohibition now reads "above the neutral element" with both load-bearing
+premises stated; BEFORE byte-identical to the wave-29 baseline, AFTER
+byte-identical to its own BEFORE (a determinism measurement), corpus rows
+confirmed unmoved (leak **266**, `unknown_alias` 4,344, `unsupported`
+49,760, nothing promoted), baseline moved to
+`docs/reports/w4-recursive-summaries/artifacts/`. `DOCS-COMPACT-4` honoured
+the cadence (44 constraints in/out, five drifts fixed; next pass ~wave 32).
+Zero reserved words, zero new codes. Lean audits 118 → **121**. Merged gate
+at the close tip: 4,466 workspace tests (8 ignored, `--no-fail-fast`), 122
+provider (carried), 193 Python, both probes exit 0, fmt/clippy clean
+(`docs/reports/wave30-close/gate.json`); the matrix regenerated through
+`build_matrix.py --gate`, hand-kept sections carried, `T08-SRC-O`'s
+follow-up annotated with the loan discharge, every tripwire green at the
+close tip. Nothing is promoted; full language conformance stays **false**.
+
 W4-RECURSIVE-SUMMARIES (2026-09-13, wave 30): the wave's one arbiter card. Its
 brief asked for the design's bounded first unit — the neutral-element
 fixed-point start for recursive components

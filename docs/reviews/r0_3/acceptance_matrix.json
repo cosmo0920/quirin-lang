@@ -1018,7 +1018,9 @@
    "docs/reports/ct-wire-lane/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
    "docs/reports/ct22-wire/ct_stage_evidence.json",
-   "docs/reports/ct01-proof-leg/ct_stage_evidence.json"
+   "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
+   "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
+   "docs/reports/ct07-write-remap/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
@@ -1220,8 +1222,8 @@
     "not_applicable": 39
    },
    "proof": {
-    "executed": 1,
-    "unassessed": 41
+    "executed": 2,
+    "unassessed": 40
    }
   },
   "depth_profile": {
@@ -1229,9 +1231,9 @@
    "epoch_bound_check": 4,
    "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
-   "native_execution": 8,
+   "native_execution": 7,
    "native_sanitized": 7,
-   "proof": 1,
+   "proof": 2,
    "task_ledger_check": 6,
    "task_lowering": 1
   },
@@ -1269,7 +1271,7 @@
    "CT34": "native_sanitized",
    "CT35": "epoch_bound_check",
    "CT36": "epoch_bound_check",
-   "CT37": "native_execution",
+   "CT37": "proof",
    "CT38": "epoch_bound_check",
    "CT39": "epoch_bound_check",
    "CT40": "legacy_c_twin",
@@ -1291,7 +1293,7 @@
    "native_execution": 47,
    "native_sanitized": 28,
    "parse": 42,
-   "proof": 1,
+   "proof": 2,
    "sequential_reference_execution": 2,
    "sequential_whole_program": 2,
    "task_ledger_check": 18,
@@ -1946,8 +1948,8 @@
     },
     "auxiliary_executed_stages": {},
     "deepest_executed_stage": "native_sanitized",
-    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
-    "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise borrow_utf8(NAME, LOW, HIGH): two immutable loans of [0, 2) and [4, 6) of one six-byte owned buffer live at once while the owner writes bytes 2 and 3 between them, the writes admitted because disjointness is decided at check time (max low < min high, the set-theoretic question itself since every bound is a check-time constant) and read back by a third view in the sanitized native run. Boundary, stated as narrowly as it is true: one of the two disjoint permissions is a READ loan and the other is the owner's retained write authority - disjoint permission over two ranges of one array, NOT two parties each holding write authority over their own range. A write lend is unlanded residual SLICE-PERMISSIONS-WRITE-LEND, and this mapping claims nothing about it. Bounds are the out_of_extent control's check-time Q077 refusal; disjointness is the overlapping control's Q078 refusal, which is CT08's own case shape."
+    "stage_evidence_record": "docs/reports/ct07-write-remap/ct_stage_evidence.json",
+    "semantic_profile": "StandardBufferV1 with card SLICE-PERMISSIONS-WRITE-LEND's write lend lend(NAME, LOW, HIGH), remapped by card CT07-WRITE-REMAP (wave 30) from the read-loan program the wave-28 lane mapped: two WRITE authorities over disjoint ranges of one eight-byte owned buffer - lend(store, 0, 4) and lend(store, 4, 8) - both held by one sequential entry's bindings and live at once across four interleaved stores, each store admitted because it goes through the loan that owns its byte, the bytes read back through the loans and then by the owner after both windows close in the sanitized native run. Disjointness is decided at check time (max low < min high on the ownership IR's own u64 axis, exact because every bound is a check-time constant) and the authority genuinely MOVES: the borrow node carries the footprint fraction, so a second overlapping lend refuses and an owner access inside a live lent range refuses - the exclusivity is the custody model's, not a route rule's. Boundary, stated as narrowly as it is true: both write authorities are bindings of ONE SEQUENTIAL entry - disjoint write authority with interleaved statements, NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS. Bounds are the out_of_extent_lend control's check-time Q053 refusal plus the loan_index_out_of_extent control's [Q054, Q053] two-layer refusal; disjointness is the overlapping_lends control's Q054 exclusivity refusal; the wave-28 read-loan case is retained as the read_loan accept control, so the weaker configuration stays admitted beside the stronger one."
    },
    {
     "id": "CT08",
@@ -2021,7 +2023,7 @@
     "auxiliary_executed_stages": {},
     "deepest_executed_stage": "elaborate",
     "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
-    "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion, taking the REJECT arm of the case's expected text: a write whose one-byte range [1, 2) overlaps a live loan's [0, 2) on exactly one byte is refused at Q078 naming the footprint that decided it, with the overlap decided at check time by max low < min high. The boundary control moves the byte outside both ranges and is admitted (CT07's own case shape); the attribution control runs the identical write with no live loan and is admitted. The `analyzer potential/unknown` arm is not claimed: Unknown remains the gateway's verdict vocabulary, and the source harness's is accept/reject."
+    "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion, taking the REJECT arm of the case's expected text: a write whose one-byte range [1, 2) overlaps a live loan's [0, 2) on exactly one byte is refused at Q078 naming the footprint that decided it, with the overlap decided at check time by max low < min high. The boundary control moves the byte outside both ranges and is admitted (CT07's own case shape at the wave-28 mapping; CT07's case is the write-lend program since card CT07-WRITE-REMAP); the attribution control runs the identical write with no live loan and is admitted. The `analyzer potential/unknown` arm is not claimed: Unknown remains the gateway's verdict vocabulary, and the source harness's is accept/reject."
    },
    {
     "id": "CT09",
@@ -4669,7 +4671,7 @@
     "route": "task",
     "harness_verdict_mode": "native_task_scenarios",
     "manifest_evidence_target": "linux",
-    "source_reject_controls_executed": 2,
+    "source_reject_controls_executed": null,
     "epoch_controls_executed": null,
     "legacy_c_controls_executed": null,
     "stage_derived_status": {
@@ -4759,7 +4761,10 @@
       "status": "not_applicable"
      },
      "proof": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
+      "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+      "observations": 1
      }
     },
     "auxiliary_executed_stages": {
@@ -4769,8 +4774,8 @@
       "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
      }
     },
-    "deepest_executed_stage": "native_execution",
-    "stage_evidence_record": "docs/reports/remaining-t00/coverage.json",
+    "deepest_executed_stage": "proof",
+    "stage_evidence_record": "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
     "semantic_profile": "Linux ScopedOwnedTasksV1: a real worker allocates a Buffer and returns it into its completion record. The native adapter forces worker-body completion before creation returns and checks that the original allocation and environment remain live at join entry. Parent join transfers generation 4294967297, which must be consumed and dropped. Unconsumed or undropped results reject at Q600. The earlier sequential transferred-payload control remains separately executed. General memory-peak accounting, owned graphs, loan returns and native refinement remain open."
    },
    {
@@ -6007,11 +6012,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Wave-29 close, 2026-09-13: SIX cards merged one at a time under the failure-gated chain, each under its own green gate - CT47-COPY-CAPTURE, CT22-WIRE, CT01-PROOF-LEG (with the integrator flip), REGION-JOINS-DUTIES, SLICE-PERMISSIONS-WRITE-LEND and the arbiter W29-CORPUS-CONTRACTS - plus the user's Windows test fixes merged mid-chain, reconciled onto one measured standing gate at the integration tip. The wave's head is THE FIRST EXECUTED PROOF ROW: CT01's scenario property (the moved generation released exactly once, by the parent, after the join; generation-preserving child return) is proved in Lean of the checked artifact's reference run and its admitted renderings (QCore.Ct01OwnedTransfer, kernel-checked acceptance of the recorded roundTrip, symbolic closure over admitted renderings, five refusal mutants, digest pin), bound to the case's own fixture by ct01_proof_leg.rs's named host-unconditional test, native execution DELIBERATELY observation-only - proof 0 of 41 -> 1 of 42, gated by the pinned fail-closed PROOF_GATED_CASES table, the stage evidence superseding card T00's frozen archive from its own record (constraint 21). CT coverage 41/50 -> 42/50: CT22-WIRE maps CT22 on the composed_epoch route with REGION-CREDIT-JOINS' evidence, retiring the wave-28 narrowed reason in its own record; sanitized-native 7 of 42. The language head is the WRITE LEND: SLICE-PERMISSIONS-WRITE-LEND lands let NAME = lend(BUFFER, LOW, HIGH); - write authority over a half-open byte range for a lexical window, decided by the lend-extended cycle-3 ownership IR (LendRange: the footprint fraction STD-BUFFER-SLICE predicted), two live lends admitted exactly when disjoint, owner access refused exactly where its footprint meets a live lend, release refused under any live lend however narrow; constraint 15h amended on the card's own proposal (its 'no write lend' sentence superseded by the card that sentence's residual named), 25 Lean declarations audited, and CT07's write half now expressible for a lane. Beside it REGION-JOINS-DUTIES deliberately supersedes 15m's duty-free premise (amended on its proposal): the composed region's sealed pack carries real Destroy duties discharged in reverse acquisition order after every join - CT25's duty half, its loan half named (REGION-JOINS-LOAN). CT47-COPY-CAPTURE re-attributes the spawn boundary: a copy of own<Buffer> now refuses at Q600 FROM THE TRANSFERABILITY JUDGMENT naming the missing transfer/share contract instead of dying in the Q500 backend catch-all (kept as the unreachable fail-closed backstop), the refused set proved unchanged in Lean (the boundary decided exactly once over the full matrix). THE WAVE RAN ONE ARBITER and its re-pin is DECIDING-DIRECTION ONLY: W29-CORPUS-CONTRACTS declares two faithful size-query contracts (fluent_bit/input_chunk_sizes.qcore, read against the pinned bodies at 66910c10; contract corpus 73 -> 74 deliberate), its BEFORE run reproduces the wave-27 gateway-c-location diagnostics.json and chunk-contracts.json BYTE FOR BYTE, and its AFTER run removes exactly THIRTEEN unsupported uncontracted-call leaves (49,773 -> 49,760), each attributed leaf by leaf; LEAK 266 UNMOVED (no fifth move), unknown_alias 4,344 unmoved, zero unit and zero function status moves, nothing promoted. The corpus baseline moves to docs/reports/w29-corpus-contracts/artifacts/ with every frozen predecessor listed (constraint 21). Zero reserved words across the wave (lend is contextual, censused +0) and zero new diagnostic codes (Q600, Q302, Q051-Q055 and Q077 condition widenings, each stated in section L21). Lean audits 115 -> 118 (+AuditCt01OwnedTransfer, +RegionJoinsDuties in AuditRegionJoinsDuties, +AuditWriteLend; CT47's theorems in the existing AuditTransferability), read from the text line 'Passed 118 Lean audits'. Provider 122 CARRIED - no provider source, manifest template or qcore-schemas version changed (qcore-schemas stays 14.0.0), constraint 18 not engaged. Constraint-16 load rows tripped under concurrent suites during several cards' gates and were re-verified green in isolation, both facts recorded each time. Nothing is promoted, and full language conformance stays false. Evidence: docs/reports/ct47-copy-capture/README.md, docs/reports/ct22-wire/README.md, docs/reports/ct01-proof-leg/README.md, docs/reports/region-joins-duties/README.md, docs/reports/slice-permissions-write-lend/README.md, docs/reports/w29-corpus-contracts/README.md.",
-  "workspace_tests": 4445,
+  "note": "Wave-30 close, 2026-09-13: SIX cards merged one at a time under the failure-gated chain - DOCS-COMPACT-4, CT24-CLEANUP-PREEMPTED, CT-PROOF-LEG-2 (with the integrator flip), REGION-JOINS-LOAN, CT07-WRITE-REMAP and the arbiter W4-RECURSIVE-SUMMARIES - plus one salvage commit (the check_lean_audits exit-code hardening recovered from a stale worktree's uncommitted work during the sweep: a failure now exits non-zero and a missing lake is a hard error naming the elan path). The wave's head is the SECOND EXECUTED PROOF ROW: CT37, chosen by a measured survey of all 42 mapped cases, its completion-capsule property proved in Lean of the checked artifact's reference run and every rendering the F02 relation admits (completion strictly before the join in every admitted rendering), bound by a named host-unconditional test - proof 1 of 42 -> 2 of 42 under the pinned fail-closed PROOF_GATED_CASES table, the stage evidence superseding card T00's frozen archive from its own record. CT25's WHOLE SCENARIO became expressible: REGION-JOINS-LOAN lands the loan half (a worker's counted read share of a creator owner, expiring at the join; the adoption move NAME; taking a live entry owner's duty into the pack), deliberately discharging T08-COMPOSE-LOAN by measurement (the refusal's stated premise did not hold on this route - a stated Q600 condition NARROWING in section L21) and completing REGION-JOINS-DUTIES' wave-29 duty half; constraint 15m amended a second time on the card's own proposal. CT07's mapping was upgraded to the write-lend scenario - two write authorities over disjoint ranges of one buffer, one sequential entry, not two threads - superseding the wave-28 record from its own record with NO COUNT MOVED (evidence quality, not coverage; still 42/50 mapped, 8 unmapped, sanitized-native 7 of 42). CT24-CLEANUP-PREEMPTED re-attributes the early-exit refusal on the CT47 precedent: the ScopeBusy message now names the owner the preempted cleanup would destroy and the borrower whose join it precedes, from the exit rule's own loan backstop, refused set proved unchanged in Lean (attribution only, constraint 1 - no code moved, no condition widened). THE WAVE RAN ONE ARBITER whose honest headline is a MEASURED DISPOSITION: the neutral-element fixed-point unit the design owed was ALREADY LANDED by card C03-NFR (recorded W4-RECSUM-ALREADY-LANDED, no route double-counted), so the card lands the design's section-4.3 soundness induction in Lean (QCore.NeutralPrefixPreservation: per-frame validation under the all-neutral map propagates to every finite execution prefix; an assumed effect appears in no divergent prefix) and constraint 4 is AMENDED on its proposal - the assume-guarantee prohibition now reads 'above the neutral element' with both load-bearing premises stated. Its BEFORE run reproduces the wave-29 baseline byte for byte and its AFTER is byte-identical to its own BEFORE in all five artifacts (a run-to-run determinism measurement); corpus rows CONFIRMED not moved: leak 266 (no fifth move), unknown_alias 4,344, unsupported 49,760, zero status moves, nothing promoted; the baseline moves to docs/reports/w4-recursive-summaries/artifacts/ with the frozen chain stated. DOCS-COMPACT-4 honoured the cadence: 44 standing constraints in, 44 out, zero dropped, five drifts fixed against source numbers, next pass due ~wave 32. Zero reserved words and zero new diagnostic codes across the wave. Lean audits 118 -> 121 (+AuditCt37CompletionCapsule, +AuditRegionJoinsLoan, +AuditNeutralPrefixPreservation; CT24's theorems in the existing AuditTaskExecution). Provider 122 CARRIED (qcore-schemas stays 14.0.0, constraint 18 not engaged). Constraint-16 load rows that tripped under concurrent suites were re-verified green in isolation, both facts recorded each time. Nothing is promoted, and full language conformance stays false. Evidence: docs/reports/docs-compact-4/README.md, docs/reports/ct24-cleanup-preempted/README.md, docs/reports/ct-proof-leg-2/README.md, docs/reports/region-joins-loan/README.md, docs/reports/ct07-write-remap/README.md, docs/reports/w4-recursive-summaries/README.md.",
+  "workspace_tests": 4466,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 118,
+  "lean_audits": 121,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6037,6 +6042,7 @@
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
    "AuditCt01OwnedTransfer.lean",
+   "AuditCt37CompletionCapsule.lean",
    "AuditCtReasons.lean",
    "AuditCycle10.lean",
    "AuditCycle11.lean",
@@ -6082,6 +6088,7 @@
    "AuditNativeLibrarySourceBinding.lean",
    "AuditNeutralExpressionPosition.lean",
    "AuditNeutralFrameRecursion.lean",
+   "AuditNeutralPrefixPreservation.lean",
    "AuditO05.lean",
    "AuditObsReordering.lean",
    "AuditOsEndpointPostState.lean",
@@ -6101,6 +6108,7 @@
    "AuditRefusedWrites.lean",
    "AuditRegionCreditJoins.lean",
    "AuditRegionJoinsDuties.lean",
+   "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
@@ -6138,7 +6146,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/wave29-close/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave30-close/gate.json)"
  },
  "named_followups": [
   {
@@ -6180,7 +6188,7 @@
   {
    "id": "T08-SRC-O",
    "title": "Epoch source-form residuals",
-   "why": "T08-SRC-EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them). T08-SRC-CT closed in wave 8: CT35/CT36/CT38/CT39 mapped through the epoch route with exhaustive certificate-figure pinning (docs/reports/wave8-epoch-ct/README.md). T08-COMPOSE landed in wave 11 (source.epoch.tasks.v1: byte-blanking composition, agreement checked both directions, disposal derived; the extent-derivation example refuted by measurement). Its residuals: T08-COMPOSE-SHARED/-LOAN/-GUARD/-RESULT-REUSE/-EXIT/-PAYLOAD/-DERIVE/-CT. CT23-CREDIT-ERROR-PATH landed in wave 27 as EpochCreditRecoveryV1, a new core sibling of the unedited FlatEpochBoundV1 (qcore_core::epoch_accounting has an EMPTY diff for the card): the creator's OWN error edges over a flat epoch's credits, spelled on source.epoch.tasks.v1 by the row clause `error(move|drop|close);` (or `error(move BYTES effort UNITS);`) and checked as restored + spent = credit with restored <= credit componentwise on both axes, and over the epoch restored_credits + spent_credits = granted_credits <= allocation. Both directions are REFUSALS: abandonment - neither restored nor spent - is always refused at Q635 and IS CT23, and a restoration larger than its grant is refused per task and per axis at Q636. The split is derived and declared in exactly the right halves - the edges come from the checked task IR (TrySpawn.spawn_error, an eliminated TryOutcome join), the disposition is declared and then checked against the grant the epoch actually makes - so a plan can neither claim an error path the program does not have nor restore credit that was never granted. ZERO new codes (four conditions of the Q630-Q641 band extended, argued one by one), ZERO reserved words (the census is vacuous by construction: error, move, drop, close and effort are all already reserved), no qcore-schemas change, no CT manifest edit and no corpus artifact touched; every epoch program admitted before the card is admitted after it with a byte-identical EpochBoundCertificate and byte-identical emitted C. Q637 is DELIBERATELY NOT EXTENDED - because spent <= granted, the credit committed on every error edge is bounded by the success exit's, which Q637 already bounds by the allocation, so a second check there would be an unreachable condition rather than a gate (proved as the_error_arm_commits_no_more_than_the_granted_total). The DECLARATIVE route has no error edge at all and says so as a checked refusal from the owning band (ErrorArmWithoutErrorEdge, Q630) rather than through a grammar that pretends the word does not exist. 22 Rust tests, 17 new audited Lean theorems inside the EXISTING AuditEpochSourceLowering.lean (67 names -> 84), no new axiom. The wave-27 integrator adopted its accounting law as standing constraint 15j. New: CT23-CT-MAPPING (the manifest has no composed_epoch route and no epoch_credit_split verdict mode; the fixtures are parked outside compiler/tests/fixtures/ct/ because ct_corpus.rs fails closed when an unmapped case owns a directory there - mapping MOVES them, the T08-EPOCH-SRC precedent), CT23-RESTORE-REUSE (restored credit is not re-grantable; making the committed total path-sensitive would ADMIT programs check_flat_epoch refuses today, the forbidden direction), CT23-EDGE-SPLIT (one disposition per row covers both of the creator's error edges; distinguishing 'the creation failed' from 'the child raised' needs two clauses and two published splits), CT23-T07-SEAM (CheckedRegionTaskCreditV1 models the same discipline over error REGIONS and still has no source route of its own; connecting the two waits on the region route's own growth - the seam was measured, not assumed, and the card deliberately did not cross it) and CT23-ARM-UNREACHABLE (ArmCountMismatch, UnknownTask and DuplicateArm are unreachable from either source form, both lowerings emitting exactly one arm per task in task order, and are tested at the core level only; ErrorArmWithoutErrorEdge IS reachable). CT23-EMACS is recorded for completeness rather than as an omission: the clause reserves no word, so editors/emacs/qcore-mode.el already highlights every word it uses.",
+   "why": "T08-SRC-EMACS (editor highlighting for the new form); -UNREACHABLE (four core epoch diagnostics unreachable from source); -COMPOSE (composition with task/mutex profiles); -DERIVE (deriving figures instead of declaring them). T08-SRC-CT closed in wave 8: CT35/CT36/CT38/CT39 mapped through the epoch route with exhaustive certificate-figure pinning (docs/reports/wave8-epoch-ct/README.md). T08-COMPOSE landed in wave 11 (source.epoch.tasks.v1: byte-blanking composition, agreement checked both directions, disposal derived; the extent-derivation example refuted by measurement). Its residuals: T08-COMPOSE-SHARED/-LOAN/-GUARD/-RESULT-REUSE/-EXIT/-PAYLOAD/-DERIVE/-CT. CT23-CREDIT-ERROR-PATH landed in wave 27 as EpochCreditRecoveryV1, a new core sibling of the unedited FlatEpochBoundV1 (qcore_core::epoch_accounting has an EMPTY diff for the card): the creator's OWN error edges over a flat epoch's credits, spelled on source.epoch.tasks.v1 by the row clause `error(move|drop|close);` (or `error(move BYTES effort UNITS);`) and checked as restored + spent = credit with restored <= credit componentwise on both axes, and over the epoch restored_credits + spent_credits = granted_credits <= allocation. Both directions are REFUSALS: abandonment - neither restored nor spent - is always refused at Q635 and IS CT23, and a restoration larger than its grant is refused per task and per axis at Q636. The split is derived and declared in exactly the right halves - the edges come from the checked task IR (TrySpawn.spawn_error, an eliminated TryOutcome join), the disposition is declared and then checked against the grant the epoch actually makes - so a plan can neither claim an error path the program does not have nor restore credit that was never granted. ZERO new codes (four conditions of the Q630-Q641 band extended, argued one by one), ZERO reserved words (the census is vacuous by construction: error, move, drop, close and effort are all already reserved), no qcore-schemas change, no CT manifest edit and no corpus artifact touched; every epoch program admitted before the card is admitted after it with a byte-identical EpochBoundCertificate and byte-identical emitted C. Q637 is DELIBERATELY NOT EXTENDED - because spent <= granted, the credit committed on every error edge is bounded by the success exit's, which Q637 already bounds by the allocation, so a second check there would be an unreachable condition rather than a gate (proved as the_error_arm_commits_no_more_than_the_granted_total). The DECLARATIVE route has no error edge at all and says so as a checked refusal from the owning band (ErrorArmWithoutErrorEdge, Q630) rather than through a grammar that pretends the word does not exist. 22 Rust tests, 17 new audited Lean theorems inside the EXISTING AuditEpochSourceLowering.lean (67 names -> 84), no new axiom. The wave-27 integrator adopted its accounting law as standing constraint 15j. New: CT23-CT-MAPPING (the manifest has no composed_epoch route and no epoch_credit_split verdict mode; the fixtures are parked outside compiler/tests/fixtures/ct/ because ct_corpus.rs fails closed when an unmapped case owns a directory there - mapping MOVES them, the T08-EPOCH-SRC precedent), CT23-RESTORE-REUSE (restored credit is not re-grantable; making the committed total path-sensitive would ADMIT programs check_flat_epoch refuses today, the forbidden direction), CT23-EDGE-SPLIT (one disposition per row covers both of the creator's error edges; distinguishing 'the creation failed' from 'the child raised' needs two clauses and two published splits), CT23-T07-SEAM (CheckedRegionTaskCreditV1 models the same discipline over error REGIONS and still has no source route of its own; connecting the two waits on the region route's own growth - the seam was measured, not assumed, and the card deliberately did not cross it) and CT23-ARM-UNREACHABLE (ArmCountMismatch, UnknownTask and DuplicateArm are unreachable from either source form, both lowerings emitting exactly one arm per task in task order, and are tested at the core level only; ErrorArmWithoutErrorEdge IS reachable). CT23-EMACS is recorded for completeness rather than as an omission: the clause reserves no word, so editors/emacs/qcore-mode.el already highlights every word it uses. The loan-capture half of -COMPOSE (T08-COMPOSE-LOAN in the epoch-source reports) was DISCHARGED in wave 30 by REGION-JOINS-LOAN: read-loan captures admitted on source.epoch.tasks.v1, a deliberate Q600 condition narrowing stated in spec L21, because the lender on that route is always the creator and creator-scope bytes are outside the epoch allocation (docs/reports/region-joins-loan/README.md).",
    "source": "docs/reports/remaining-t08-epoch-src/README.md, docs/reports/remaining-t08-compose/README.md, docs/reports/ct23-credit-error-path/README.md"
   },
   {

@@ -65,12 +65,18 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-29 close. The **corpus baseline is
-`docs/reports/w29-corpus-contracts/artifacts/`** (wave 29's arbiter card
-`W29-CORPUS-CONTRACTS`: two faithful size-query contracts decide exactly
-thirteen `unsupported` uncontracted-call leaves in the unit that defines the
-callees; its BEFORE run reproduces the wave-27 `gateway-c-location`
-`diagnostics.json` and `chunk-contracts.json` **byte for byte**). The wave-27
+Headline numbers at the wave-30 close. The **corpus baseline is
+`docs/reports/w4-recursive-summaries/artifacts/`** — wave 30's arbiter,
+`W4-RECURSIVE-SUMMARIES`, ran the protocol as a **determinism measurement**:
+its BEFORE run reproduces the wave-29 `w29-corpus-contracts`
+`diagnostics.json` and `chunk-contracts.json` **byte for byte**, and its AFTER
+run is byte-identical to its own BEFORE in all five artifacts, because the
+card changes no analysis input — the neutral-element unit it was chartered to
+land was **measured already landed** (card C03-NFR, recorded as
+`W4-RECSUM-ALREADY-LANDED` so the route is not double-counted), and what it
+lands is the design's owed §4.3 soundness induction in Lean plus the amended
+constraint 4 below. Wave 29's arbiter facts stand beneath it (two faithful
+size-query contracts deciding exactly thirteen `unsupported` leaves). The wave-27
 presentation facts carry forward: 54,371 rows carry an `origin` naming the
 original pre-preprocessing `file:line`, while the preprocessed `L`-number
 stays the **internal** coordinate for pin identity, leaf identity and
@@ -79,15 +85,15 @@ certificate comparability, by the user's ruling
 frozen (constraint 21): `docs/reports/wave23-c-operations/artifacts/` and the
 attributed AFTER runs chained beneath it — `aom-destroy-siblings` (wave 23),
 `aom-binding-poison` (wave 25), `gateway-c-location` (wave 27),
-`w29-corpus-contracts` (wave 29):
+`w29-corpus-contracts` (wave 29), `w4-recursive-summaries` (wave 30):
 
 | Measure | Value |
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at both the wave-27 presentation re-pin and the wave-29 arbiter re-pin, as is `unknown_alias` **4,344**). `unsupported` **49,760** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; zero leaves added, one unit changed). A diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
-| CT01–CT50 conformance | **42/50 mapped**, 8 unmapped; sanitized-native **7 of 42**; **proof 1 of 42** — the manifest's first executed proof row (wave 29, `CT01-PROOF-LEG`): CT01's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings, bound to the case by `ct01_proof_leg.rs`'s named test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and the stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
+| CT01–CT50 conformance | **42/50 mapped**, 8 unmapped; sanitized-native **7 of 42**; **proof 2 of 42** — CT01 (wave 29, `CT01-PROOF-LEG`) and CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 4,445 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **118 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave29-close/gate.json`, measured at the integration tip over the six merged cards plus the user's Windows fixes; each card's own gate is in its report; constraint-16 load rows that tripped under concurrent suites were re-verified in isolation, both facts recorded each time) |
+| Merged gate | 4,466 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **121 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave30-close/gate.json`, measured at the integration tip over the six merged cards plus the sweep's salvage commit; each card's own gate is in its report; constraint-16 load rows that tripped under concurrent suites were re-verified in isolation, both facts recorded each time) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -174,9 +180,25 @@ pointer is the card that established it; read it before deviating.
    published without validation, **do not** seed a formal parameter with entry
    custody the body did not demand (that asserts non-nullness and deletes
    failure paths), and **do not** accept an assume-guarantee fixed point for a
-   recursive component. Declared contracts always win; a disagreement is a
-   `SummaryConflict` diagnostic, never a silent override.
-   `w4-custody-inference`, `w4-custody-extensions`, `w4-gateway-crate`.
+   recursive component **above the neutral element**. The one admissible
+   optimistic start is `N(m)` — every formal `Borrowed`, result `None`, seeded
+   for every member of an undeclared component and descended to the greatest
+   post-fixed point (`legacy_neutral.rs`, card C03-NFR) — and it is admissible
+   on exactly two premises, both load-bearing: (1) `N(m)` states **no
+   precondition**, installs no entry resource and asserts no non-nullness, so
+   it cannot delete a failure path — the hazard this sentence names; (2)
+   `N(m)` is a conjunction of **negative, prefix-closed** facts, so its
+   soundness is an induction on execution prefixes
+   (`QCore.NeutralPrefixPreservation.neutral_prefix_preservation`) rather than
+   a termination rank, and divergence cannot manufacture it — while validation
+   by re-analysis alone provably cannot refuse a circular *effectful*
+   candidate (`an_assumed_effect_appears_in_no_divergent_prefix`). Any route
+   that seeds any element above `N(m)` for a member of its own component must
+   supply a well-founded rank, as the contextual and countdown routes do.
+   Declared contracts always win; a disagreement is a `SummaryConflict`
+   diagnostic, never a silent override. `w4-custody-inference`,
+   `w4-custody-extensions`, `w4-gateway-crate`, `remaining-c03`,
+   `w4-recursive-summaries`.
 5. The typed scalar-field whitelist's last premise — the base is a name this
    function never binds to a resource identity — exists because dropping it
    turned a read through a released pointer into `Safe`. The fail-closed pin
@@ -816,34 +838,52 @@ pointer is the card that established it; read it before deviating.
     route's own acquisition and release — `let NAME = qcore_buffer_new(INT)?;`
     sealing a real `Destroy` duty, `drop NAME;` of a region owner erasing one —
     and the discharge destroys the remaining owners in reverse acquisition
-    order, CT25's duty half. Premises that must survive refactors, each a
+    order, CT25's duty half. `REGION-JOINS-LOAN` (wave 30) **deliberately
+    discharged `T08-COMPOSE-LOAN`** and landed the loan half: a worker may
+    capture a counted read share of a creator owner (`read PLACE share N` at
+    the spawn; the place-free `read;` clause in the plan), admitted because the
+    lender on this route is always the creator and creator-scope bytes are
+    outside the epoch allocation (`REGION-JOINS-EPOCH-AXIS`), so the loan has
+    no epoch residency; and the region body also admits the **adoption**
+    `move NAME;`, which takes a live entry owner's cleanup duty into the pack —
+    an acquisition from the pack's side, erasing completely, its release
+    written into the blanks after every join. "After joins and loan expiry" is
+    the composition of unedited rules: the share returns at the join under the
+    task ledger, the joins precede the region (`Q600`), and a destruction while
+    a share is live refuses as the ledger's own `LoanOutstanding` — do not
+    re-implement any of the three. Premises that must survive refactors, each a
     refusal today: every `TrySpawn`/`Join` span of the checked task IR
     **precedes** the region (`Q600` in both directions — children live at the
     opening stays `CheckedRegionTaskCreditV1`'s territory, `REGION-JOINS-T07`);
     the region **erases into its straight-line twin** — a duty-free region
     blanks completely (emitted C, source map and reference observation
-    byte-identical with and without it, the wave-28 measurement kept), and a
+    byte-identical with and without it, the wave-28 measurement kept), a
     duty-carrying one keeps its acquisitions and body releases at their own
     byte offsets in the task half with one `drop NAME;` per remaining duty
     written into the blanked space after them, first-fit, newlines never
-    crossed, refusing when it does not fit (`REGION-JOINS-ERASURE-FIT`) — so
-    the three composed checkers (the scoped-task route, `check_flat_epoch` +
-    `EpochCreditRecoveryV1`, `analyze_error_regions`) stay **unedited**, each
-    refusing at its own codes. **Do not re-implement a custody rule beside the
-    erasure**: two simultaneously live owners refuse at the task route's
-    existing custody `Q600`, because the second acquisition's `?` failure edge
-    discards the first — the erased program's real leak path
-    (`REGION-JOINS-MULTI-OWNER`) — and teaching the erasure control flow to
-    "repair" that would invalidate the one-path premise the erasure rests on.
-    Both published figures are re-derived before publication —
-    `abandoned_credit` against the reader's quantity fold, `released` against
-    its duty fold, over the model's own cleanup trace. A region owner's name is
-    the region's own (a collision with an entry binding refuses, since the
-    erasure flattens the body's block into the task scope), the sequential
-    `qcore_acquire` spelling names no task-route resource and stays refused,
+    crossed, refusing when it does not fit (`REGION-JOINS-ERASURE-FIT`), and an
+    adoption keeps nothing (the owner's acquisition already stands in the
+    entry's own text) — so the composed checkers (the scoped-task route and its
+    ledger, `check_flat_epoch` + `EpochCreditRecoveryV1`,
+    `analyze_error_regions`) stay **unedited**, each refusing at its own codes.
+    **Do not re-implement a custody rule beside the erasure**: two
+    simultaneously live owners refuse at the task route's existing custody
+    `Q600` — the second acquisition's `?` failure edge discards the first, the
+    erased program's real leak path (`REGION-JOINS-MULTI-OWNER`, reachable
+    since wave 30 with an adopted owner beside an acquisition) — and an adopted
+    name that is not a live owned Buffer in the erased program refuses at the
+    task route's own codes (`Q500` for a non-buffer, `Q600` for custody). Both
+    published figures are re-derived before publication — `abandoned_credit`
+    against the reader's quantity fold, `released` against its duty fold, over
+    the model's own cleanup trace. An **acquired** owner's name is the region's
+    own (a collision with an entry binding refuses, since the erasure flattens
+    the body's block into the task scope); an **adopted** owner's name is the
+    entry's own (a name the entry does not bind refuses); the sequential
+    `qcore_acquire` spelling names no task-route resource and stays refused;
     and the declarative epoch route gains no error path (constraint 15j's
-    shape). Zero new codes: `Q302` condition widenings, stated in §L21.
-    `region-credit-joins`, `region-joins-duties`.
+    shape). Zero new codes: `Q302` condition widenings and the one stated
+    `Q600` narrowing, in §L21. `region-credit-joins`, `region-joins-duties`,
+    `region-joins-loan`.
 
 **Providers, packages and limits**
 
