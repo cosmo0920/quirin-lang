@@ -1,0 +1,70 @@
+{
+  "card": "GATEWAY-C-LOCATION",
+  "note": "uncompressed digests of both runs' artifacts, the archived AFTER set (compressed and uncompressed), the two measured binaries and the pinned compile database; the BEFORE set is not archived because its diagnostics and chunk-contracts are byte-identical to docs/reports/aom-binding-poison/artifacts, which is not touched",
+  "binaries": {
+    "before": "9564846fc7bc3e645c93da69c2ee7ce715d328d0a64341db0d582c6a7e66ea2a",
+    "after": "2ea0d4b875a5c2928d1fb87c398ddb4e854fb0e67da8d8f20bb0c78f97ef1fc0"
+  },
+  "compile_database": {
+    "sha256": "ee471fbad091f7a0aa9c686b4efd13fc84dc97be7f6b9918e7d641603e675ad8",
+    "entries": 1415
+  },
+  "runs": {
+    "before": {
+      "diagnostics": "6fd12d24b8381bac22c70cfdd3537302a25ca8598d7012f85e5fa44bb1b540ea",
+      "source": "554db0ae150090e2639de40076b3f955c24a5abc5ca32d594f20a7e4758a2371",
+      "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "source-effects": "ee04aca6321e3f6f14aab7ca6f51eeb6faa97b474f48d415d3802701a4f026b4",
+      "contracts": "b138f79acb23bf6e0fd134c2e1f5df2190e1512ed3d325fa3b8dda3e83bb7ac3"
+    },
+    "after": {
+      "diagnostics": "61ac6bb537c99ff078bc7c71f6f41749ec775cf42177d9324c43a9fc233d7ed5",
+      "source": "554db0ae150090e2639de40076b3f955c24a5abc5ca32d594f20a7e4758a2371",
+      "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "source-effects": "ee04aca6321e3f6f14aab7ca6f51eeb6faa97b474f48d415d3802701a4f026b4",
+      "contracts": "b138f79acb23bf6e0fd134c2e1f5df2190e1512ed3d325fa3b8dda3e83bb7ac3"
+    }
+  },
+  "archived": {
+    "chunk-contracts.json.gz": {
+      "compressed_sha256": "ba87cffb54ddc1227cd819e2e2e067bcaa9d3b87953a364fbb5922009f70bfb9",
+      "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "compressed_bytes": 281968
+    },
+    "contracts.json.gz": {
+      "compressed_sha256": "e338a7bf77e41ea3c4e58ec93a599a8d6ebc4e5c296eb6e77d653fedec3e9843",
+      "uncompressed_sha256": "b138f79acb23bf6e0fd134c2e1f5df2190e1512ed3d325fa3b8dda3e83bb7ac3",
+      "compressed_bytes": 21717
+    },
+    "diagnostics.json.gz": {
+      "compressed_sha256": "1afb2b885b44a1ac181cb8cb2a7263745283566fab313a131154b5264f38a49b",
+      "uncompressed_sha256": "61ac6bb537c99ff078bc7c71f6f41749ec775cf42177d9324c43a9fc233d7ed5",
+      "compressed_bytes": 564636
+    },
+    "diff-baseline-to-after.json.gz": {
+      "compressed_sha256": "1091975f511b551a557f04de710783ce2f204e3aeb207cde5ad4a4a7188c3f71",
+      "uncompressed_sha256": "74fe40cf671959812db46cf44dd0db1db0fe6fc8484bcfdce6290f00f329f95c",
+      "compressed_bytes": 986251
+    },
+    "diff-baseline-to-before.json.gz": {
+      "compressed_sha256": "e61fa64534319665da961c40b39b4d33714a4efbac596ed0181d4f259e582724",
+      "uncompressed_sha256": "821fb105139ad750bc91a5277ee5700bbcdfcac0b94057377f1ed57a02ef3d62",
+      "compressed_bytes": 97004
+    },
+    "diff-before-to-after.json.gz": {
+      "compressed_sha256": "5b11e652c0aba92388bd7afb4d563f79a18fff7000cff6c78ada6e80fd05f9e9",
+      "uncompressed_sha256": "e38155d46896338b89bd33c4a0206b83ae62ce490d7f517e911f4126ef5051ce",
+      "compressed_bytes": 889989
+    },
+    "source-effects.json.gz": {
+      "compressed_sha256": "dc1202e13ecec852a274336257790d4e2c31d978d23513f10883659a0105cec1",
+      "uncompressed_sha256": "ee04aca6321e3f6f14aab7ca6f51eeb6faa97b474f48d415d3802701a4f026b4",
+      "compressed_bytes": 16800
+    },
+    "source.json.gz": {
+      "compressed_sha256": "09465f85aeacb8e535e5dd7a2461204c94c13c3286566cc54237e2b9b1419b86",
+      "uncompressed_sha256": "554db0ae150090e2639de40076b3f955c24a5abc5ca32d594f20a7e4758a2371",
+      "compressed_bytes": 41711
+    }
+  }
+}
