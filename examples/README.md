@@ -25,6 +25,7 @@ page says so. It is the only one.
 | [sockets/](sockets/) | Checked TCP and UDP over loopback, both ends in one program — with a kernel-chosen port, or over a **declared** IPv4/IPv6 address and port | `source.socket.v1` |
 | [http/](http/) | A checked, executed HTTP/1.1 subset — including a `Content-Length` the program computes — and the same bytes written by hand | `source.http.v1`, `source.socket.v1` |
 | [loops/](loops/) | The bounded counted loop `for i in 0..n`, and the bulk buffer copy it was landed for | `source.loop.v1` on `source.buffer.v1` |
+| [records/](records/) | The first aggregate type: `type NAME { … }`, construction, field reads — a plain copyable value, shown alone and beside an owned buffer | `source.record.v1` on `source.buffer.v1` |
 
 `compiler/tests/examples_suite.rs` holds **every** directory in the table above
 to one standard: each published program has a row on its family page, each row
@@ -42,7 +43,7 @@ ones no other file does and references the rest rather than building them twice:
 
 | Directory | Native runner |
 |---|---|
-| stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/ | `cargo test -p qcore-compiler --test examples_suite` |
+| stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/, records/ | `cargo test -p qcore-compiler --test examples_suite` |
 | threads/ | `cargo test -p qcore-compiler --test thread_examples` |
 | events/ | `cargo test -p qcore-compiler --test std_event` (`self_pipe`, `write_interest`), `--test compose_event_lines` (`wake_payload`), `--test socket_event_compose` (`socket_server`) |
 | strings/ | `cargo test -p qcore-compiler --test string_slice_io` (`status_line`), `--test string_concat` (`computed_length`) |

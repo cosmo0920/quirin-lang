@@ -113,6 +113,8 @@ EVIDENCE_FILES = [
     "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
     "docs/reports/wave17-ct40/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane/ct_stage_evidence.json",
+    "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "docs/reports/ct22-wire/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

@@ -1,0 +1,34 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// The attribution control for CT22: `case.qcore` with exactly the region
+// removed. Admitted with no region evidence, and with the same epoch bound and
+// credit-recovery certificates the case publishes -- the region moves nothing
+// either checker already published.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        return answer;
+    }
+}

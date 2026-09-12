@@ -1,0 +1,17 @@
+// CT21's attribution control: the same region, the same opening, one
+// `discharge pack;` (card `CT-WIRE-LANE-2`).
+//
+// Admitted, and it emits: the pack's duty is consumed exactly once before the
+// handler leaves, so the case's refusal is about *discarding* the opened
+// pack's live permission — not about the region, the raise or the opening.
+error Failure { Failed; }
+
+fn main() -> i32 {
+    error region R {
+        let a = qcore_acquire(1, true, Failure);
+        qcore_check(false, Failure);
+    } catch (Failure) quant open R as pack {
+        discharge pack;
+    }
+    return 0;
+}

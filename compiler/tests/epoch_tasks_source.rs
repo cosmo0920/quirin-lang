@@ -213,8 +213,8 @@ fn the_emitted_c_is_the_task_routes_own_output_byte_for_byte() {
     // route hands the scoped-task route, and on its own it *is* a scoped-task
     // module.
     let parsed = qcore_frontend::frontend::parse_source_program(&composed()).expect("parses");
-    let split =
-        qcore_frontend::source_epoch_tasks::split_composed_epoch(&parsed, "main").expect("splits");
+    let split = qcore_frontend::source_epoch_tasks::split_composed_epoch(&parsed, "main", None)
+        .expect("splits");
     let plain = accept(&split.task_source);
     assert_eq!(
         plain.execution_profile,

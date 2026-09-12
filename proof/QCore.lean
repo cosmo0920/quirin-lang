@@ -111,6 +111,7 @@ import QCore.RegionTaskCredit
 import QCore.AggregateComposition
 import QCore.DenominatorCoverage
 import QCore.EnumerationAttribution
+import QCore.SourceCoordinate
 import QCore.SourceEnumeration
 import QCore.RawDirectiveLexing
 import QCore.ConditionalGroupDepth
@@ -141,6 +142,7 @@ import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.SourceRecord
 import QCore.QuantRegionSource
+import QCore.RegionCreditJoins
 import QCore.LoopBudget
 import QCore.StdString
 import QCore.StringSliceIo

@@ -1,0 +1,58 @@
+// `source.record.v1` — the first source-level aggregate type, published (card
+// `EXAMPLES-AGGREGATES`; the construct is card `AGGREGATES-V1`'s).
+//
+// CT09's scenario is "distinct ordinary struct fields", and this program is
+// that scenario as a published example: three fields declared, one value
+// constructed with three *different* numbers, all three read back and printed.
+// A model that confused two fields — or a lowering that gave two fields one C
+// member — would print the same number twice, so the byte comparison against
+// the native run is a real check of distinctness rather than a restatement.
+//
+// A v1 record is a plain copyable value: every field is an `i32`, so it
+// carries no custody, opens no obligation and derives no effect. That is why
+// this program's effect row is `io` alone, why it imports no `std.buffer`,
+// and why its emitted C carries no buffer prelude at all — nothing here
+// allocates.
+//
+// The declaration head is the already-reserved `type`, told from the alias
+// `type NAME = …;` by the `{`. No word is reserved for any of this.
+
+import std.fmt;
+import std.io;
+import std.logger;
+
+type Point { x: i32, y: i32, weight: i32 }
+
+fn main() -> unit effects { io } {
+    // A field value is the admitting route's own operand: an integer literal,
+    // or a name this entry bound to a check-time-constant integer.
+    let base = 40;
+
+    let p = Point { x: 65, y: 66, weight: base };
+
+    // The distinctness evidence: three reads of three declared fields, each
+    // producing the value supplied for that field and no other. Each scalar
+    // flows straight into one sink, so each line below is piped — the rule
+    // examples/README.md states. The construction above stays a statement:
+    // it is the assembly half of that rule, built from three pieces.
+    let a = p.x;
+    let b = p.y;
+    let w = p.weight;
+    a |> print dec;
+    b |> print dec;
+    w |> print dec;
+
+    // A second value of the same type, so the type is genuinely a type rather
+    // than a description of one value — written in a different field order,
+    // which the certificate publishes in *declared* order (`x, y, weight`),
+    // so two certificates of one program compare field for field however the
+    // source spelled them.
+    let q = Point { weight: 9, y: 2, x: 1 };
+    let qw = q.weight;
+    let qx = q.x;
+    qw |> log info dec;
+    qx |> log info dec;
+    flush;
+
+    return;
+}

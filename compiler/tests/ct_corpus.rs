@@ -37,11 +37,26 @@
 //! the route's vocabulary carries `parse` and `legacy_c_twin` and no
 //! `elaborate`. That route's evidence is gated on Clang rather than on a
 //! `target_os`, which the stage entry records as a `tool_gate`. The
-//! `sequential` route, declared and empty since schema 2, is CT06 and CT11
+//! `sequential` route, declared and empty since schema 2, gained CT06 and CT11
 //! (card `CT-WIRE-LANE`): `source.string.v1`'s `borrow_utf8` bridge is this
 //! corpus's first **local** shared alias — a second name for an owned buffer's
 //! own bytes, bound in the same frame, with no task and no second party — which
 //! is the form the wave-3 lane recorded as missing when it left CT11 unmapped.
+//! Card `CT-WIRE-LANE-2` (wave 28) grows the same route by four: CT07 and CT09
+//! are its first **accepted** cases, each with a sanitized native run of its
+//! own emitted C (`CT07-SLICE-PERMISSIONS`'s range-wise disjointness and
+//! `AGGREGATES-V1`'s distinct record fields), and CT08 and CT21 are two more
+//! rejections (an overlapping-range write at `Q078`; `QUANT-REGION-SOURCE`'s
+//! undischarged cleanup pack at `Q305`). The same card maps CT23 on the new
+//! `composed_epoch` route — `source.epoch.tasks.v1`, a flat-epoch plan over a
+//! checked task region — where `error(close);` abandoning a child's granted
+//! credit on the creator's own error edge refuses at `Q635`
+//! (card `CT23-CREDIT-ERROR-PATH`). Card `CT22-WIRE` (wave 29) puts that
+//! route's first **accepted** case beside it: CT22's parent-local `error
+//! region … quant open … discharge` after every join (card
+//! `REGION-CREDIT-JOINS`), whose published abandoned/restored/spent
+//! quantities are compared wholesale under the same `epoch_credit_split`
+//! verdict mode, widened for the accepting shape.
 //!
 //! One case's native evidence is not a total transcript. CT49 asks for exactly
 //! that (`validate partial order, not exact total trace`), and card
@@ -103,9 +118,10 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT11", "CT12", "CT13", "CT14", "CT15", "CT16",
-    "CT17", "CT18", "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33",
-    "CT34", "CT35", "CT36", "CT37", "CT38", "CT39", "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
+    "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
+    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT26", "CT27",
+    "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38", "CT39",
+    "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -147,7 +163,29 @@ const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
 /// the alias blocks the reconstruction of exclusive authority; CT06 measures
 /// that the alias's identity survives being copied into a differently named
 /// variable.
-const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT11"];
+const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21"];
+/// `sequential`-route **accept** cases whose evidence is a sanitized native run
+/// of the case's own emitted C compared per stream with the route's checked
+/// observation (card `CT-WIRE-LANE-2`, wave 28). CT07 is card
+/// `CT07-SLICE-PERMISSIONS`'s disjoint-halves program — two read loans of two
+/// disjoint ranges live at once while the owner writes between them — and CT09
+/// is card `AGGREGATES-V1`'s three-field record program, whose sanitized byte
+/// comparison is the executed layout *observation* (`AGGREGATE-CT09-LAYOUT`:
+/// an observation, never the layout proof the case's `proof` stage would need).
+const SEQUENTIAL_SANITIZED_CASES: &[&str] = &["CT07", "CT09"];
+/// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
+/// published credit quantities wholesale because an epoch that merely checks
+/// has measured nothing. CT23 (cards `CT23-CREDIT-ERROR-PATH` and
+/// `CT-WIRE-LANE-2`) is the refusal: the credit a flat epoch granted a
+/// creation, abandoned on the creator's own error edge — the exact cascade
+/// plus every admitting control's published split. CT22 (cards
+/// `REGION-CREDIT-JOINS` and `CT22-WIRE`, wave 29) is the mode's first
+/// **accepted** case: the parent's own `error region … quant open …
+/// discharge` after every join, whose published evidence — the credit-recovery
+/// split and the region's re-derived `abandoned_credit` — is compared
+/// wholesale, with the duty-free pack and the join-before-region span fact
+/// re-asserted on the published objects.
+const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23"];
 /// The case whose native evidence is compared **up to a declared partial
 /// order** rather than byte for byte (card `CT-WIRE-LANE`, wave 26). Exactly
 /// one, and its own controls pin both boundaries: a program with no worker-body
@@ -214,6 +252,30 @@ const STAGE_STATUSES: &[&str] = &[
 /// carry no mapped case — declaring them is what makes "this route has no such
 /// stage" a structural statement rather than a note.
 const ROUTE_STAGES: &[(&str, &[&str])] = &[
+    // `source.epoch.tasks.v1` (card T08-COMPOSE; first mapped case in card
+    // CT-WIRE-LANE-2): a flat-epoch plan over a real checked scoped-task
+    // region. Both halves lower and check — the credit-recovery gate derives
+    // the creator's error edges from the *checked* region, so neither half can
+    // be skipped — and an admitted module emits the task route's own C
+    // (byte-identical whatever the plan's error arm says), which is why the
+    // emission and native stages are in this vocabulary even though no runner
+    // executes them today. The composed module publishes no reference
+    // observation, so no reference-execution stage exists here.
+    (
+        "composed_epoch",
+        &[
+            "parse",
+            "elaborate",
+            "epoch_lowering",
+            "task_lowering",
+            "task_ledger_check",
+            "epoch_bound_check",
+            "c_emission",
+            "native_execution",
+            "native_sanitized",
+            "proof",
+        ],
+    ),
     // `source.epoch.bound.v1` is check-only by construction: an admitted epoch
     // is an accounting statement about declared shapes, so the driver publishes
     // it with `c_source: None` and `reference_observation: None`. There is
@@ -293,6 +355,10 @@ const RUNNER_REGISTRY: &[&str] = &[
     // Card `CT-WIRE-LANE`: the one runner whose native observation is compared
     // up to a declared partial order instead of byte for byte.
     "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
+    // Card `CT-WIRE-LANE-2`: the sequential accept runner — one sanitized
+    // compile-and-run of the case's own emitted C, compared per stream with
+    // the checked module's own observation.
+    "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -303,7 +369,7 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
-const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26", "CT34", "CT49"];
+const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT07", "CT09", "CT17", "CT26", "CT34", "CT49"];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
 /// never `executed`.
@@ -432,6 +498,10 @@ struct ExpectedCase {
     sequential_reject: Option<SourceReject>,
     #[serde(default)]
     reordering_partial_order: Option<ReorderingPartialOrder>,
+    #[serde(default)]
+    sequential_sanitized: Option<SequentialSanitized>,
+    #[serde(default)]
+    epoch_credit_split: Option<EpochCreditSplit>,
     #[serde(default)]
     epoch_bound_figures: Option<EpochBoundFigures>,
     #[serde(default)]
@@ -668,6 +738,95 @@ struct ReorderingControl {
     refusal_code: Option<u32>,
     #[serde(default)]
     refusal_contains: Option<String>,
+    #[allow(dead_code)]
+    note: String,
+}
+
+/// A `sequential`-route **accept** case's evidence (card `CT-WIRE-LANE-2`):
+/// the case's own fixture is admitted, its per-stream observation is pinned
+/// exactly, and one binary built from its own emitted C with the recorded
+/// sanitizer flags is run and compared per stream against that observation.
+///
+/// The observation this route publishes is per-stream (`out: `/`err: `
+/// prefixed lines computed from the checked model, never from the emitted C),
+/// which is what makes the native comparison a comparison. An accepted case
+/// still needs at least one **refused** control, or the acceptance says only
+/// "this route admits programs" — the wave-9 attribution rule read from the
+/// accepting side.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SequentialSanitized {
+    /// The `SourceExecutionProfile` the module must be published under, so a
+    /// case that silently changed route would not still pass.
+    execution_profile: String,
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    /// The checked observation's per-stream projections, pinned exactly.
+    declared_stdout: Vec<String>,
+    declared_stderr: Vec<String>,
+    controls: Vec<SourceControl>,
+}
+
+/// The `source.epoch.tasks.v1` credit-disposition evidence (cards
+/// `CT23-CREDIT-ERROR-PATH` and `CT-WIRE-LANE-2`; widened for an accepted
+/// case by card `CT22-WIRE`, wave 29). What is measured is never a bare
+/// verdict: an epoch that merely checks has said nothing, so every admitted
+/// module states the credit split the driver published and independently
+/// re-derived, and the accounting law `restored + spent = credit` is asserted
+/// on each disposition, with the mint refusal on the other side.
+///
+/// Two case shapes, decided by the cascade:
+/// * a **refusal** (CT23) pins `diagnostic_sequence` and publishes no split of
+///   its own — the split evidence lives on the admitting controls;
+/// * an **acceptance** (CT22) leaves the cascade empty and pins the case's own
+///   published figures instead: the credit-recovery split (`restored`/`spent`)
+///   and the composed region's `abandoned` credit, each compared wholesale
+///   against the driver's re-derived publication.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct EpochCreditSplit {
+    /// The composed route's profile; a control that silently changed route
+    /// would otherwise still pass.
+    execution_profile: String,
+    /// Empty exactly when the case is accepted.
+    diagnostic_sequence: Vec<String>,
+    /// The grant the epoch makes the one creation, per axis. Every admitted
+    /// module's split — the case's own where it accepts, and every accepted
+    /// control's — must add back to exactly this.
+    granted: BTreeMap<String, u64>,
+    /// Accepted case only: its own published split, per axis.
+    #[serde(default)]
+    restored: BTreeMap<String, u64>,
+    #[serde(default)]
+    spent: BTreeMap<String, u64>,
+    /// Accepted case only: the region evidence's abandoned parent-local
+    /// credit (card `REGION-CREDIT-JOINS`). `Some` exactly when the case is
+    /// accepted, because the accepted shape this mode admits is the composed
+    /// region's — an acceptance with nothing measured would map nothing.
+    #[serde(default)]
+    abandoned: Option<u64>,
+    controls: Vec<CreditControl>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CreditControl {
+    source: String,
+    /// `accept` or `reject`; any other spelling fails the harness.
+    expectation: String,
+    diagnostic_sequence: Vec<String>,
+    /// An accepted control's published split, per axis; a refused control
+    /// publishes none.
+    #[serde(default)]
+    restored: BTreeMap<String, u64>,
+    #[serde(default)]
+    spent: BTreeMap<String, u64>,
+    /// An accepted control that writes a region pins the abandoned credit it
+    /// publishes; one that writes none must publish no region evidence at all
+    /// (card `CT22-WIRE`). Absent for every refused control.
+    #[serde(default)]
+    abandoned: Option<u64>,
     #[allow(dead_code)]
     note: String,
 }
@@ -956,6 +1115,10 @@ fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
         // Card `CT-WIRE-LANE`: a composed task/std-io module, so the task route
         // exactly as `ComposedStdIoTasksV1`'s task half takes it.
         | "reordering_partial_order" => "task",
+        // Card `CT-WIRE-LANE-2`: the sequential accept mode with a sanitized
+        // native run, and the composed flat-epoch/scoped-task route.
+        "sequential_sanitized" => "sequential",
+        "epoch_credit_split" => "composed_epoch",
         "accept" => "sequential",
         "reject" => {
             if MUTEX_REJECT_CASES.contains(&case_id) {
@@ -1002,6 +1165,7 @@ fn derive_stage_plan(
         "reordering_partial_order" => {
             Some("compiler/tests/ct_corpus.rs::run_reordering_partial_order")
         }
+        "sequential_sanitized" => Some("compiler/tests/ct_corpus.rs::run_sequential_sanitized"),
         _ => None,
     };
     // Invocation counts, read from the fixture data each runner loops over — an
@@ -1054,6 +1218,9 @@ fn derive_stage_plan(
                 .expect("mode metadata")
                 .runs,
         ),
+        // One per-stream reference comparison; one compile and one run of the
+        // one sanitized binary.
+        "sequential_sanitized" => (1, 1),
         _ => (0, 0),
     };
     // The emitted C is produced once per module, however many times the binary
@@ -1073,7 +1240,10 @@ fn derive_stage_plan(
     // sanitized compile-and-run is Unix-only.
     let deep_gate = if matches!(
         verdict,
-        "native_heap_scenarios" | "checked_mutex_sanitized" | "reordering_partial_order"
+        "native_heap_scenarios"
+            | "checked_mutex_sanitized"
+            | "reordering_partial_order"
+            | "sequential_sanitized"
     ) {
         vec!["linux", "macos"]
     } else {
@@ -1117,6 +1287,12 @@ fn derive_stage_plan(
             Some("sequential_reference_execution"),
         ),
         "epoch" => ("epoch_lowering", Some("epoch_bound_check"), None),
+        // The composed route lowers a flat-epoch plan over a checked task
+        // region; the epoch pair is the tuple here and the task pair is
+        // inserted below, because both halves demonstrably run before the
+        // credit-recovery band can refuse anything. No reference stage: the
+        // composed module publishes no reference observation.
+        "composed_epoch" => ("epoch_lowering", Some("epoch_bound_check"), None),
         other => panic!("{case_id}: route `{other}` has no mapped case shape"),
     };
 
@@ -1134,6 +1310,28 @@ fn derive_stage_plan(
         && reached_model_check
     {
         plan.insert(check, StagePlan::executed(base, 1, None));
+    }
+    // Card `CT-WIRE-LANE-2`. The composed epoch route lowers and checks its
+    // task half before the accounting half can say anything: the
+    // credit-recovery gate derives the creator's error edges from the
+    // *checked* region, so a refusal in the flat epoch's own band
+    // (`Q630`–`Q641`) proves the task stages ran on this fixture.
+    if route == "composed_epoch" && !refused_before_lowering {
+        plan.insert("task_lowering", StagePlan::executed(base, 1, None));
+        if reached_model_check {
+            plan.insert("task_ledger_check", StagePlan::executed(base, 1, None));
+        }
+    }
+    // Card `CT22-WIRE`. An *admitted* composed-epoch module really emits the
+    // task route's own C (the runner asserts `c_source` is present), but no
+    // runner of this harness executes that emission or runs a binary from it
+    // today, so the two stages are open items rather than structurally absent:
+    // `unassessed`, exactly as `native_sanitized` already reads on this route.
+    // A refused composed-epoch fixture keeps `not_applicable` — its refusal
+    // provably never reaches the backend.
+    if route == "composed_epoch" && !refused {
+        plan.insert("c_emission", StagePlan::absent("unassessed"));
+        plan.insert("native_execution", StagePlan::absent("unassessed"));
     }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
@@ -1361,6 +1559,26 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert_eq!(
+        expected.sequential_sanitized.is_some(),
+        expected.verdict == "sequential_sanitized"
+    );
+    assert_eq!(
+        expected.sequential_sanitized.is_some(),
+        SEQUENTIAL_SANITIZED_CASES.contains(&case.id.as_str()),
+        "{}: sequential sanitized-accept evidence is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
+        expected.epoch_credit_split.is_some(),
+        expected.verdict == "epoch_credit_split"
+    );
+    assert_eq!(
+        expected.epoch_credit_split.is_some(),
+        EPOCH_CREDIT_SPLIT_CASES.contains(&case.id.as_str()),
+        "{}: composed-epoch credit-split evidence is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
         expected.epoch_reject.is_some(),
         EPOCH_REJECT_CASES.contains(&case.id.as_str()),
         "{}: epoch-route rejection metadata is pinned to its own case set",
@@ -1402,6 +1620,18 @@ fn run_mapped_case(case: &ManifestCase) {
             // Card `CT-WIRE-LANE`: the sanitized compile-and-run half is
             // Unix-only, exactly as the two runners above.
             || expected.reordering_partial_order.is_some()
+            // Card `CT-WIRE-LANE-2`: the same Unix-only sanitized half, on the
+            // sequential accept runner.
+            || expected.sequential_sanitized.is_some()
+            // Card `CT-WIRE-LANE-2`: a composed-epoch accept control compiles
+            // through the host-gated task emission path.
+            || expected
+                .epoch_credit_split
+                .as_ref()
+                .is_some_and(|split| split
+                    .controls
+                    .iter()
+                    .any(|control| control.expectation == "accept"))
             || expected
                 .checked_mutex_reject
                 .as_ref()
@@ -1718,6 +1948,173 @@ fn run_mapped_case(case: &ManifestCase) {
                      merely that one happened",
                     case.id
                 ),
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
+    if let Some(mode) = &expected.sequential_sanitized {
+        assert!(
+            mode.sanitizer_flags
+                .iter()
+                .any(|flag| flag == "-fsanitize=address,undefined"),
+            "{}: the sanitized run must actually request ASan/UBSan",
+            case.id
+        );
+        assert!(
+            mode.asan_options.contains("detect_leaks=1"),
+            "{}: LeakSanitizer stays enabled on the Linux arm — Apple's ASan \
+             ships no leak detector, and the runner records that boundary",
+            case.id
+        );
+        assert!(
+            mode.ubsan_options.contains("halt_on_error=1"),
+            "{}: UBSan must halt rather than continue past a fault",
+            case.id
+        );
+        assert!(
+            !mode.declared_stdout.is_empty() || !mode.declared_stderr.is_empty(),
+            "{}: an accepted case with no observable output would compare nothing",
+            case.id
+        );
+        assert!(
+            mode.controls
+                .iter()
+                .any(|control| control.expectation == "reject"),
+            "{}: an accepted case needs a refused control, or the acceptance \
+             says only `this route admits programs`",
+            case.id
+        );
+        for control in &mode.controls {
+            match control.expectation.as_str() {
+                "accept" => {
+                    assert!(
+                        control.diagnostic_sequence.is_empty(),
+                        "{}: an accepted control has no diagnostics",
+                        case.id
+                    );
+                    assert!(
+                        control.execution_profile.is_some(),
+                        "{}: an accepted control must name the route it takes",
+                        case.id
+                    );
+                }
+                "reject" => {
+                    assert!(
+                        !control.diagnostic_sequence.is_empty(),
+                        "{}: a refused control pins its codes",
+                        case.id
+                    );
+                    assert!(control.execution_profile.is_none());
+                }
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
+    if let Some(split) = &expected.epoch_credit_split {
+        // Card `CT22-WIRE`: the mode carries two case shapes. A rejection
+        // (CT23) pins its exact ordered code vector and publishes no split of
+        // its own; an acceptance (CT22) leaves the cascade empty and pins its
+        // own published figures — the credit split and the composed region's
+        // abandoned credit — so an acceptance can never be "it checks" alone.
+        let case_accepts = split.diagnostic_sequence.is_empty();
+        assert_eq!(
+            case_accepts,
+            split.abandoned.is_some(),
+            "{}: an accepted credit-split case pins its published abandoned \
+             figure; a rejection pins its cascade and no case figures",
+            case.id
+        );
+        if case_accepts {
+            // The law itself, on the case's declared figures, before anything
+            // is compiled — exactly the accepted-control rule below.
+            let mut sum: BTreeMap<&str, u64> = BTreeMap::new();
+            for (axis, amount) in split.restored.iter().chain(split.spent.iter()) {
+                *sum.entry(axis.as_str()).or_insert(0) += *amount;
+            }
+            let granted: BTreeMap<&str, u64> = split
+                .granted
+                .iter()
+                .map(|(axis, amount)| (axis.as_str(), *amount))
+                .collect();
+            assert_eq!(
+                sum, granted,
+                "{}: the case states a split that does not add back to the grant",
+                case.id
+            );
+        } else {
+            assert!(
+                split.restored.is_empty() && split.spent.is_empty(),
+                "{}: a refused case publishes no split of its own",
+                case.id
+            );
+        }
+        assert!(
+            !split.granted.is_empty(),
+            "{}: the grant the split is measured against is part of the fixture",
+            case.id
+        );
+        assert!(
+            split
+                .controls
+                .iter()
+                .any(|control| control.expectation == "accept"),
+            "{}: a credit-split rejection needs an admitted control, or the \
+             refusal is only `the profile cannot express this at all`",
+            case.id
+        );
+        assert!(
+            split
+                .controls
+                .iter()
+                .any(|control| control.expectation == "reject"),
+            "{}: the mint direction is part of the law — an admitted-only \
+             control set would not pin the other refusal",
+            case.id
+        );
+        for control in &split.controls {
+            match control.expectation.as_str() {
+                "accept" => {
+                    assert!(
+                        control.diagnostic_sequence.is_empty(),
+                        "{}: an accepted control has no diagnostics",
+                        case.id
+                    );
+                    // The law itself, on the declared figures: the split must
+                    // add back to the grant, componentwise, before anything is
+                    // compiled — a fixture stating figures that cannot conserve
+                    // is wrong on its face.
+                    let mut sum: BTreeMap<&str, u64> = BTreeMap::new();
+                    for (axis, amount) in control.restored.iter().chain(control.spent.iter()) {
+                        *sum.entry(axis.as_str()).or_insert(0) += *amount;
+                    }
+                    let granted: BTreeMap<&str, u64> = split
+                        .granted
+                        .iter()
+                        .map(|(axis, amount)| (axis.as_str(), *amount))
+                        .collect();
+                    assert_eq!(
+                        sum, granted,
+                        "{}: control {} states a split that does not add back to \
+                         the grant",
+                        case.id, control.source
+                    );
+                }
+                "reject" => {
+                    assert!(
+                        !control.diagnostic_sequence.is_empty(),
+                        "{}: a refused control pins its codes",
+                        case.id
+                    );
+                    assert!(
+                        control.restored.is_empty()
+                            && control.spent.is_empty()
+                            && control.abandoned.is_none(),
+                        "{}: a refused control publishes no split and no region figure",
+                        case.id
+                    );
+                }
                 other => panic!("{}: unknown control expectation `{other}`", case.id),
             }
             assert!(required_files.insert(control.source.clone()));
@@ -2222,6 +2619,41 @@ fn run_mapped_case(case: &ManifestCase) {
             );
             run_reordering_partial_order(&directory, &expected, result);
         }
+        "sequential_sanitized" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none(),
+                "{}: this mode's post-state is the per-stream observation, not \
+                 a sequential outcome and trace",
+                case.id
+            );
+            run_sequential_sanitized(&directory, &case.id, &expected, result);
+        }
+        "epoch_credit_split" => {
+            assert!(
+                expected.outcome.is_none() && expected.trace.is_none(),
+                "{}: this mode's post-state is the published credit quantities, \
+                 not a sequential outcome and trace",
+                case.id
+            );
+            // A refused case (CT23) pins at least one diagnostic beside its
+            // cascade; an accepted case (CT22, card `CT22-WIRE`) has none —
+            // the two fields must agree with the mode metadata's own shape.
+            assert_eq!(
+                expected.diagnostics.is_empty(),
+                expected
+                    .epoch_credit_split
+                    .as_ref()
+                    .expect("mode metadata")
+                    .diagnostic_sequence
+                    .is_empty(),
+                "{}: expected diagnostics accompany the cascade exactly when \
+                 the case refuses",
+                case.id
+            );
+            run_epoch_credit_split(&directory, &case.id, &expected, result);
+        }
         "native_task_scenarios" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -2563,9 +2995,9 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 36 of 50 CT cases are mapped
-/// as executed tests over their own fixture; 14 remain unmapped. Thirty-three of
-/// the thirty-six are source-level; CT40, CT43 and CT45 are C twins executed
+/// The moving count is the W6 genericity metric: 42 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 8 remain unmapped. Thirty-nine of
+/// the forty-two are source-level; CT40, CT43 and CT45 are C twins executed
 /// through
 /// the unrestricted-C gateway, which is a different artifact and a different
 /// property, so they are counted here and separated in the report.
@@ -2576,14 +3008,18 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
 /// accepted controls are multi-task modules this backend renders in no thread at
 /// all (published checked with `c_source: None`, card T03-F §3.5). CT34 records
-/// a real compiled and sanitizer-run control (card `CT34-SANITIZED`) and CT49
-/// sixteen sanitized runs of its own emitted C (card `CT-WIRE-LANE`), so
-/// harness-gated sanitized-native evidence is 5 of 36 — CT03, CT17, CT26, CT34
-/// and CT49 — and proof stays 0 of 36. CT06 and CT11 add neither: their fixtures
-/// are refusals that emit nothing. Mapping is not conformance: the wave-17
-/// denominator grew by a C twin and the wave-26 denominator by two refusals and
-/// one sanitized case, and only the last of those contributes sanitizer
-/// evidence.
+/// a real compiled and sanitizer-run control (card `CT34-SANITIZED`), CT49
+/// sixteen sanitized runs of its own emitted C (card `CT-WIRE-LANE`), and CT07
+/// and CT09 one sanitized run each of their own emitted C (card
+/// `CT-WIRE-LANE-2`), so harness-gated sanitized-native evidence is 7 of 42 —
+/// CT03, CT07, CT09, CT17, CT26, CT34 and CT49 — and proof stays 0 of 42.
+/// CT06, CT08, CT11 and CT21 add none: their fixtures are refusals that emit
+/// nothing, and CT23's is too. CT22 (card `CT22-WIRE`, wave 29) adds none
+/// either, deliberately: its admitted module emits the task route's own C,
+/// but no runner of this harness executes that emission today, so its
+/// emission and native stages read `unassessed` — open items, not claims.
+/// Mapping is not conformance: the wave-29 denominator grew by one accepted
+/// composed-epoch program that contributes no sanitizer evidence.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -2712,7 +3148,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 11] = [
+const EVIDENCE_FILES: [&str; 13] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -2724,6 +3160,8 @@ const EVIDENCE_FILES: [&str; 11] = [
     "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
     "docs/reports/wave17-ct40/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane/ct_stage_evidence.json",
+    "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "docs/reports/ct22-wire/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -4026,6 +4464,7 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
         "StandardBufferV1" => Profile::StandardBufferV1,
         "StandardStringV1" => Profile::StandardStringV1,
         "ComposedStdIoTasksV1" => Profile::ComposedStdIoTasksV1,
+        "ComposedEpochTasksV1" => Profile::ComposedEpochTasksV1,
         other => panic!("unknown execution profile `{other}`"),
     }
 }
@@ -4110,7 +4549,15 @@ fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
 /// scope these cases do not have — which is also why CT06 and CT11 carry no
 /// `evidence_target`.
 fn run_sequential_controls(directory: &Path, id: &str, reject: &SourceReject) {
-    for control in &reject.controls {
+    run_sequential_control_list(directory, id, &reject.controls);
+}
+
+/// The control loop the two sequential verdict modes share (card
+/// `CT-WIRE-LANE-2` factored it out of `run_sequential_controls` unchanged):
+/// this route emits self-contained C with no platform boundary, so an accepted
+/// control is admitted on every host and must emit on every host.
+fn run_sequential_control_list(directory: &Path, id: &str, controls: &[SourceControl]) {
+    for control in controls {
         let path = directory.join(&control.source);
         let source = fs::read_to_string(&path)
             .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
@@ -4165,6 +4612,444 @@ fn run_sequential_controls(directory: &Path, id: &str, reject: &SourceReject) {
                 );
             }
             other => panic!("{id}: unknown control expectation `{other}`"),
+        }
+    }
+}
+
+/// CT07 and CT09: the whole sequential stage stack on the case's own fixture —
+/// parse, elaborate, whole-program check, the route's own per-stream
+/// observation compared exactly, C11 emission, then one binary built from that
+/// C under ASan/UBSan (and LSan on Linux) run once and compared per stream
+/// with the observation (card `CT-WIRE-LANE-2`).
+///
+/// The observation is computed from the checked model and never reads the
+/// emitted C, which is what makes the comparison a comparison. For CT07 the
+/// load-bearing sanitizer is ASan: a sub-extent loan emits a displaced pointer
+/// and a length, and an off-by-one in either is a real out-of-bounds read the
+/// emitted `fwrite` actually performs. For CT09 the run is the executed layout
+/// **observation** (`AGGREGATE-CT09-LAYOUT`): that a C compiler's designated
+/// initializer and member reads agree with the model is cross-checked by the
+/// byte comparison, not proved, and the `proof` stage stays `unassessed`.
+///
+/// The Windows arm asserts the emission exists and returns before compiling;
+/// it makes **no** sanitizer claim, exactly as the other sanitized runners do.
+fn run_sequential_sanitized(
+    directory: &Path,
+    case_id: &str,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    let mode = expected.sequential_sanitized.as_ref().unwrap();
+    let module = result.unwrap_or_else(|diagnostics| {
+        panic!(
+            "{case_id}: expected acceptance but the checker rejected:\n{}",
+            diagnostics
+                .iter()
+                .map(format_diagnostic)
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    });
+    assert_eq!(
+        module.execution_profile,
+        execution_profile(&mode.execution_profile),
+        "{case_id}: the case must take the route it names"
+    );
+
+    // The route's own observation, pinned exactly per stream. Every line is
+    // one of the two streams, so nothing in the observation escapes the pin.
+    let observation = module
+        .extern_observation
+        .as_deref()
+        .unwrap_or_else(|| panic!("{case_id}: this route publishes a per-stream observation"));
+    assert!(
+        observation
+            .iter()
+            .all(|line| line.starts_with("out: ") || line.starts_with("err: ")),
+        "{case_id}: an observation line outside both streams would escape the pin"
+    );
+    let declared_out: Vec<&str> = observation
+        .iter()
+        .filter_map(|line| line.strip_prefix("out: "))
+        .collect();
+    let declared_err: Vec<&str> = observation
+        .iter()
+        .filter_map(|line| line.strip_prefix("err: "))
+        .collect();
+    assert_eq!(
+        declared_out, mode.declared_stdout,
+        "{case_id}: the observation's standard output drifted from the pinned rendering"
+    );
+    assert_eq!(
+        declared_err, mode.declared_stderr,
+        "{case_id}: the observation's standard error drifted from the pinned rendering"
+    );
+
+    // The controls run on every host: this route has no platform boundary.
+    run_sequential_control_list(directory, case_id, &mode.controls);
+
+    let c = module
+        .c_source
+        .as_deref()
+        .expect("this route emits on every host");
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+        eprintln!(
+            "{case_id}: emitted; Unix sanitizer evidence unexecuted on this host \
+             (manifest evidence_target=linux)"
+        );
+        return;
+    }
+
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let build = std::env::temp_dir().join(format!(
+        "qcore-ct-sequential-{case_id}-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&build).unwrap();
+    let generated = build.join("module.c");
+    fs::write(&generated, c).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let compiled = Command::new(&compiler)
+        .args(&mode.sanitizer_flags)
+        .arg(&generated)
+        .arg("-o")
+        .arg(build.join("module"))
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{case_id}: C compiler rejected the emitted program:\n{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    // Apple's AddressSanitizer ships no leak detector, so leak checking stays
+    // a Linux observation — the standing platform boundary.
+    let asan_options = if cfg!(target_os = "macos") {
+        "detect_leaks=0:halt_on_error=1".to_owned()
+    } else {
+        mode.asan_options.clone()
+    };
+    let run = Command::new(build.join("module"))
+        .env("ASAN_OPTIONS", asan_options)
+        .env("UBSAN_OPTIONS", &mode.ubsan_options)
+        .output()
+        .unwrap();
+    assert!(
+        run.status.success(),
+        "{case_id}: the emitted program failed under the platform sanitizers:\n{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let split = |bytes: &[u8]| -> Vec<String> {
+        String::from_utf8(bytes.to_vec())
+            .unwrap()
+            .lines()
+            .map(ToOwned::to_owned)
+            .collect()
+    };
+    assert_eq!(
+        split(&run.stdout),
+        mode.declared_stdout,
+        "{case_id}: the native run's standard output is compared byte for byte"
+    );
+    assert_eq!(
+        split(&run.stderr),
+        mode.declared_stderr,
+        "{case_id}: the native run's standard error is compared byte for byte"
+    );
+    fs::remove_dir_all(&build).unwrap();
+}
+
+/// Every nonzero axis of a published credit quantity, keyed by axis. Rebuilt
+/// wholesale from the certificate, exactly as `epoch_certificate_figures`
+/// does, so a fixture cannot pin only the axes that suit it.
+fn credit_axes(quantity: &qcore_core::resource_flow::Quantity) -> BTreeMap<String, u64> {
+    quantity
+        .iter()
+        .map(|(axis, amount)| (axis.to_owned(), amount))
+        .collect()
+}
+
+/// CT23: the composed flat-epoch/scoped-task route's credit-disposition law
+/// (cards `CT23-CREDIT-ERROR-PATH` and `CT-WIRE-LANE-2`). The case's own
+/// fixture declares `error(close);` — the creator's error edge abandons the
+/// grant — and is refused with the exact cascade; each admitting control's
+/// published split is compared wholesale against the pinned figures, its
+/// conservation asserted, and the mint control pins the other refusal.
+fn run_epoch_credit_split(
+    directory: &Path,
+    case_id: &str,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    let split = expected.epoch_credit_split.as_ref().unwrap();
+    if split.diagnostic_sequence.is_empty() {
+        // Card `CT22-WIRE`: the accepted case. The verdict alone measures
+        // nothing, so every published quantity is compared wholesale against
+        // the fixture's pins, and the two premises that make the abandoned
+        // figure *parent-local* are re-asserted on the published objects
+        // rather than trusted to the checker that already refused their
+        // negations (the fixture's own `Q600`/`Q302` controls below).
+        let module = result.unwrap_or_else(|diagnostics| {
+            panic!(
+                "{case_id}: expected acceptance but the checker refused the fixture:\n{}",
+                diagnostics
+                    .iter()
+                    .map(format_diagnostic)
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+        });
+        assert_eq!(
+            module.execution_profile,
+            execution_profile(&split.execution_profile),
+            "{case_id}: the case must take the composed route"
+        );
+        assert!(
+            module.c_source.is_some(),
+            "{case_id}: the composed route emits the task route's own C"
+        );
+        let composed = module
+            .checked
+            .as_composed_epoch_tasks()
+            .unwrap_or_else(|| panic!("{case_id}: the checked artifact variant is explicit"));
+        let credit = &composed.credit_recovery;
+        assert_eq!(
+            credit_axes(&credit.granted_credits),
+            split.granted,
+            "{case_id}: the grant is the fixture's"
+        );
+        assert_eq!(
+            credit_axes(&credit.restored_credits),
+            split.restored,
+            "{case_id}: published restored credits"
+        );
+        assert_eq!(
+            credit_axes(&credit.spent_credits),
+            split.spent,
+            "{case_id}: published spent credits"
+        );
+        let mut sum = credit_axes(&credit.restored_credits);
+        for (axis, amount) in credit.spent_credits.iter() {
+            *sum.entry(axis.to_owned()).or_insert(0) += amount;
+        }
+        sum.retain(|_, amount| *amount != 0);
+        assert_eq!(
+            sum,
+            credit_axes(&credit.granted_credits),
+            "{case_id}: restored + spent must equal the grant"
+        );
+        assert_eq!(
+            credit_axes(&credit.error_arm_committed),
+            credit_axes(&credit.spent_credits),
+            "{case_id}: the error path commits the spent part and nothing else"
+        );
+        // The region evidence: the published, independently re-derived
+        // abandoned credit is the case's own figure.
+        let region = composed
+            .region
+            .as_ref()
+            .unwrap_or_else(|| panic!("{case_id}: the entry's region is published"));
+        assert_eq!(
+            region.abandoned_credit,
+            split.abandoned.expect("an accepted case pins its figure"),
+            "{case_id}: the abandoned parent-local credit is the pinned figure"
+        );
+        // Premise one, on the published operations: the pack is duty-free —
+        // the body holds quantities and the decided edge only, so the one
+        // thing the discharge can discard is the parent-local remainder.
+        use qcore_core::error_region::RegionOp;
+        let [RegionOp::ErrorRegion { body, .. }] = region.operations.as_slice() else {
+            panic!("{case_id}: exactly one region operation is published");
+        };
+        assert!(
+            body.iter()
+                .all(|op| !matches!(op, RegionOp::Acquire { .. })),
+            "{case_id}: the composed region body holds no acquisition, so the \
+             sealed pack carries no duty"
+        );
+        // Premise two, on the checked task IR: every creation of the entry is
+        // joined before the region statement begins, so no child exists and
+        // no child holds any grant at the opening.
+        assert!(
+            !composed.composed.ledger.is_empty(),
+            "{case_id}: the scenario's `after joins` needs at least one join"
+        );
+        for row in &composed.composed.ledger {
+            assert!(
+                row.span.end < region.span.start,
+                "{case_id}: every task-ledger span precedes the region statement"
+            );
+        }
+    } else {
+        let diagnostics = match result {
+            Err(diagnostics) => diagnostics,
+            Ok(_) => panic!("{case_id}: expected rejection but the checker accepted the fixture"),
+        };
+        let rendered = diagnostics
+            .iter()
+            .map(format_diagnostic)
+            .collect::<Vec<_>>()
+            .join("\n");
+        assert_eq!(
+            diagnostics
+                .iter()
+                .map(|diagnostic| diagnostic.code.clone())
+                .collect::<Vec<_>>(),
+            split.diagnostic_sequence,
+            "{case_id}: exact diagnostic cascade mismatch; actual:\n{rendered}"
+        );
+        for want in &expected.diagnostics {
+            assert!(
+                diagnostics
+                    .iter()
+                    .any(|diagnostic| diagnostic.code == want.code
+                        && diagnostic.message.contains(&want.message_contains)),
+                "{case_id}: no diagnostic with code `{}` containing `{}`; actual:\n{rendered}",
+                want.code,
+                want.message_contains
+            );
+        }
+    }
+
+    for control in &split.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let result = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            "accept" => {
+                if !cfg!(any(
+                    target_os = "linux",
+                    target_os = "macos",
+                    target_os = "windows"
+                )) {
+                    unsupported_target(&result.unwrap_err());
+                    eprintln!(
+                        "{case_id} control {}: source/core checked; threaded emission \
+                         unexecuted on this host",
+                        control.source
+                    );
+                    continue;
+                }
+                let module = result.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{case_id} control {} must check, so the case's refusal is not \
+                         vacuous:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                assert_eq!(
+                    module.execution_profile,
+                    execution_profile(&split.execution_profile),
+                    "{case_id} control {} must take the composed route",
+                    control.source
+                );
+                assert!(
+                    module.c_source.is_some(),
+                    "{case_id} control {}: the composed route emits the task route's own C",
+                    control.source
+                );
+                let composed = module.checked.as_composed_epoch_tasks().unwrap_or_else(|| {
+                    panic!("{case_id}: the checked artifact variant is explicit")
+                });
+                let credit = &composed.credit_recovery;
+                assert_eq!(
+                    credit_axes(&credit.granted_credits),
+                    split.granted,
+                    "{case_id} control {}: the grant is the fixture's, not the control's",
+                    control.source
+                );
+                assert_eq!(
+                    credit_axes(&credit.restored_credits),
+                    control.restored,
+                    "{case_id} control {}: published restored credits",
+                    control.source
+                );
+                assert_eq!(
+                    credit_axes(&credit.spent_credits),
+                    control.spent,
+                    "{case_id} control {}: published spent credits",
+                    control.source
+                );
+                // The law itself, on the published object rather than the
+                // fixture's declared figures: the split adds back to the
+                // grant, and the error path commits exactly the spent part.
+                let mut sum = credit_axes(&credit.restored_credits);
+                for (axis, amount) in credit.spent_credits.iter() {
+                    *sum.entry(axis.to_owned()).or_insert(0) += amount;
+                }
+                sum.retain(|_, amount| *amount != 0);
+                assert_eq!(
+                    sum,
+                    credit_axes(&credit.granted_credits),
+                    "{case_id} control {}: restored + spent must equal the grant",
+                    control.source
+                );
+                assert_eq!(
+                    credit_axes(&credit.error_arm_committed),
+                    credit_axes(&credit.spent_credits),
+                    "{case_id} control {}: the error path commits the spent part and \
+                     nothing else",
+                    control.source
+                );
+                // Card `CT22-WIRE`: an accepted control that writes a region
+                // pins the abandoned credit it publishes; one that writes
+                // none must publish no region evidence at all, which is what
+                // keeps the case's figure attributable to the region rather
+                // than to the route.
+                match control.abandoned {
+                    Some(figure) => {
+                        let region = composed.region.as_ref().unwrap_or_else(|| {
+                            panic!(
+                                "{case_id} control {}: the control's region is published",
+                                control.source
+                            )
+                        });
+                        assert_eq!(
+                            region.abandoned_credit, figure,
+                            "{case_id} control {}: published abandoned credit",
+                            control.source
+                        );
+                    }
+                    None => assert!(
+                        composed.region.is_none(),
+                        "{case_id} control {}: a control that writes no region \
+                         publishes no region evidence",
+                        control.source
+                    ),
+                }
+            }
+            "reject" => {
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!("{case_id} control {} must be refused", control.source),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{case_id} control {}: exact diagnostic vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            other => panic!("{case_id}: unknown control expectation `{other}`"),
         }
     }
 }

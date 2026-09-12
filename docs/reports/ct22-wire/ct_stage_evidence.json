@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "card": "CT22-WIRE",
+  "generated": "2026-09-12",
+  "report": "docs/reports/ct22-wire/README.md",
+  "purpose": "Per-stage executed evidence for the one case the wave-29 CT lane mapped, in the shape the earlier per-card records use so scripts/ct_stage_summary.py merges it with them, plus the declared retirement of the wave-28 lane's CT22 unmapped-reasons row.",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. CT22's task_lowering and task_ledger_check read executed on an ACCEPTED fixture for the same structural reason CT23's read executed on a refused one: the composed route lowers and checks both halves before anything downstream can be published, and here the case is admitted, so every stage of the composed pipeline demonstrably ran. c_emission and native_execution read `unassessed` rather than `not_applicable` or `executed`, deliberately: the admitted module really emits the task route's own C (the runner asserts c_source is present), but no runner of this harness executes that emission or runs a binary built from it, so the stages are open items, never claims and never structurally absent.",
+  "route": "One route, one case. CT22 is the second case on the `composed_epoch` route (source.epoch.tasks.v1, cards T08-COMPOSE, CT23-CREDIT-ERROR-PATH and REGION-CREDIT-JOINS) and the route's first ACCEPTED one. This lane adds no checker rule, no diagnostic code, no lowering and no model: the only Rust is harness wiring in compiler/tests/ct_corpus.rs (the epoch_credit_split verdict mode widened for an accepting case, its pinned tables grown deliberately) plus the fixture move of compiler/tests/fixtures/epoch_credit/CT22/ into compiler/tests/fixtures/ct/CT22/ with compiler/tests/region_credit_joins.rs repointed at it — the CT23 precedent, exactly as card REGION-CREDIT-JOINS's own fixture comment prescribed.",
+  "why_this_case_maps_now": {
+    "CT22": "The wave-28 lane's own measured reason — `blocked-on-joins-composition (credit abandonment measured, joins not on this route)` — is retired by card REGION-CREDIT-JOINS: a source.epoch.tasks.v1 entry may now write, after every spawn and join of its task scope, one `error region … catch (E) quant open R as pack { discharge pack; }` whose sealed pack carries no duty and exactly the parent's unused credit, which the discharge abandons — the kernel's own explicit AbandonCredit, decided by the unedited qcore_core::error_region model. Every word of the scenario is a checked fact: `quant opening` and `discards` by the AbandonCredit on the discharge of the opened pack; `parent-local` by the duty-free pack plus the after-joins IR rule; `unused credit` by the published, independently re-derived abandoned_credit of 3; `after joins` by the Q600 refusal in both directions when false. Mapped exactly as docs/reports/region-credit-joins/README.md section 7 prescribed for a lane taking the row."
+  },
+  "what_the_mapping_does_not_claim": {
+    "CT22": "The region's credit quantities are WRITTEN statements folded at check time, not measurements of any execution, and the epoch's four FlatEpochBoundV1 premises are carried unchanged on every certificate measured here. The pack is duty-free by refusal (REGION-JOINS-DUTIES): a region acquisition has no source form on this route, which is also CT25's still-open gap, so nothing here speaks to duties sealed into a pack. A region entered with live children stays refused (REGION-JOINS-T07, CheckedRegionTaskCreditV1's territory). The parent-local strict credit is not charged against the epoch's two-axis allocation (REGION-JOINS-EPOCH-AXIS). The region erases from emission — measured byte-for-byte by compiler/tests/region_credit_joins.rs, not re-measured here — and no native, sanitizer or proof evidence is claimed: the emitted program is the scoped-task route's own, and no harness runner executes it for this case."
+  },
+  "lean_is_not_applicable": "Judged not applicable on the grounds every mapping lane since wave 26 has recorded: this lane adds no checker rule, no diagnostic code, no lowering and no model. The capability card carries its own audited Lean (QCore.RegionCreditJoins, 14 theorems registered in AuditRegionCreditJoins.lean, audits 114 -> 115 at that card); this lane adds fixtures, harness pins for the widened verdict mode, and the manifest row those derive. `proof` stays `unassessed`; no theorem is bound to any CT fixture (T00.7 remains open, proof 0 of 42).",
+  "sanitized_native_growth": "None. The sanitizer gate is unchanged at 7 of 42 (CT03, CT07, CT09, CT17, CT26, CT34, CT49): CT22's admitted module emits the task route's own C, but no harness runner compiles or runs that emission, so its c_emission, native_execution and native_sanitized stages all read unassessed and nothing is added to the gate. A grown denominator is mapping, not conformance.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT22"
+    ],
+    "mapped_before": 41,
+    "mapped_after": 42,
+    "unmapped_after": 8,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 1,
+    "source_compilations_of_control_artifacts": 9,
+    "accepted_controls": 3,
+    "rejected_controls": 6,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT22": {
+      "harness_verdict_mode": "epoch_credit_split",
+      "manifest_evidence_target": "linux",
+      "measured_splits": {
+        "granted": {"effort": 100, "memory": 4096},
+        "case.qcore": {"restored": {}, "spent": {"effort": 100, "memory": 4096}, "abandoned_credit": 3},
+        "no_region.qcore": {"restored": {}, "spent": {"effort": 100, "memory": 4096}, "region": null},
+        "spent_out.qcore": {"restored": {}, "spent": {"effort": 100, "memory": 4096}, "abandoned_credit": 0},
+        "both_models.qcore": {"restored": {"effort": 100, "memory": 4096}, "spent": {}, "abandoned_credit": 3}
+      },
+      "measured_premises": {
+        "duty_free_pack": "the published region operations hold one RegionOp::ErrorRegion whose body carries AddStrictCredit(5), SpendStrictCredit(2) and the decided Raise — no Acquire — re-asserted by the runner on the published object",
+        "after_joins": "the checked task ledger holds one row and its span ends before the region statement's span begins, re-asserted by the runner on the published object"
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1,
+          "note": "The composed route lowers and checks its task half before anything is published; the case is admitted, so both task stages demonstrably ran — the same derivation rule CT23 recorded from the refusing side."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1,
+          "note": "The bound and credit-recovery certificates are measured elsewhere to be byte-identical with and without the region (region_credit_joins.rs::the_epoch_certificates_are_unmoved_by_the_region); the runner here compares the published credit-recovery split wholesale."
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "unassessed"
+        },
+        "native_execution": {
+          "status": "unassessed"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      },
+      "controls": [
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/no_region.qcore",
+          "role": "attribution",
+          "expectation": "accept",
+          "measured": "checks, ComposedEpochTasksV1, emits C; the identical credit-recovery split with region: None",
+          "isolates": "exactly the region: removing it removes the region evidence and moves neither epoch certificate, so the abandoned figure is the region's own publication."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/spent_out.qcore",
+          "role": "boundary",
+          "expectation": "accept",
+          "measured": "checks; abandoned_credit = 0",
+          "isolates": "the fold: a parent that spends its whole credit abandons nothing, so the published quantity is a real fold of the written statements, not a flag."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/both_models.qcore",
+          "role": "composition",
+          "expectation": "accept",
+          "measured": "checks; restored = {memory 4096, effort 100}, spent = 0, abandoned_credit = 3",
+          "isolates": "the two models' independence: error(move); restores the epoch grant on the creator's derived error edges (CT23's law) while the region abandons 3 on the success path — two unedited models, two published quantities, one entry."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/before_join.qcore",
+          "role": "the scenario's other half, false (join direction)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q600], the message naming card REGION-CREDIT-JOINS's rule",
+          "isolates": "`after joins`, derived from the checked task IR: the region between the spawn and the join is entered while the child is live and holds its grant."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/spawn_after.qcore",
+          "role": "the scenario's other half, false (spawn direction)",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q600]",
+          "isolates": "the same rule's other direction: the region written before the creation itself. Both directions are gates."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/acquiring.qcore",
+          "role": "the duty-free-pack premise, false",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q302], the message naming REGION-JOINS-DUTIES",
+          "isolates": "`parent-local`: a body acquisition would seal a live duty into the pack, and the route refuses it by name rather than approximating a custody composition it was not given."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/no_discharge.qcore",
+          "role": "the model's own walk-away refusal",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q305]",
+          "isolates": "CT21's shape from this route: the opened pack's capability may not be dropped silently, so the case's discard is the explicit AbandonCredit and nothing else."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/no_open.qcore",
+          "role": "the model's own unopened-pack refusal",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q306]",
+          "isolates": "the neighbouring rule: a nonempty pack may not be caught unopened, so neither way of walking away from the remainder is writable."
+        },
+        {
+          "artifact": "compiler/tests/fixtures/ct/CT22/wrong_region.qcore",
+          "role": "the capability's identity",
+          "expectation": "reject",
+          "measured": "refused, exact cascade [Q303]",
+          "isolates": "the opening binds the pack of its own region and no other."
+        }
+      ]
+    }
+  },
+  "unmapped_reasons_provenance": "This lane publishes no unmapped-case rows: the one case it examined, it mapped. The retirement below is the wave-17 mechanism, exactly as the wave-28 lane applied it to CT07/CT08: the wave-28 record keeps its CT22 row and its bytes, and this declaration is what retires it. The remaining eight unmapped cases carry no row from this lane — CT10, CT24, CT25 and CT44 were not re-measured, CT41/CT42 keep the wave-17 lane's rows, CT46 keeps the wave-13 lane's, and CT47 keeps card T00's DECIDABLE-NOW bucket with the wave-26 lane's measurement standing. Re-reading is not measuring, and this record publishes only what was run.",
+  "retired_unmapped_reasons": {
+    "CT22": {
+      "retires": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+      "mapped_by": "docs/reports/ct22-wire/README.md (wave-29 CT lane, card CT22-WIRE): CT22 is mapped on the composed_epoch route, so it has no blocker to publish. The wave-28 record keeps its row and its bytes; this declaration is what retires it, exactly as the wave-17 lane retired CT40's wave-9 row and the wave-28 lane retired CT07/CT08's wave-26 rows. The bucket's own reason — `blocked-on-joins-composition (credit abandonment measured, joins not on this route)` — was retired by card REGION-CREDIT-JOINS, whose section 7 asked the mapping lane to publish its own measurements in its own record.",
+      "wave28_bucket_retired": "blocked-on-joins-composition (credit abandonment measured, joins not on this route)",
+      "wave28_reason_retired": "What was missing was the composition: the region's credit lived on the flat sequential route, which has no tasks and no join. Card REGION-CREDIT-JOINS landed the region as a source.epoch.tasks.v1 entry's own epilogue after every join, so the credit and the joins are in one program, `after joins` is a derived fact of the checked task IR refused at Q600 when false, and the follow-on REGION-CREDIT-WITH-JOINS the wave-28 row named is discharged by that card."
+    }
+  }
+}

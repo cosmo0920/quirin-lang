@@ -700,12 +700,14 @@ class SummaryTest(unittest.TestCase):
     NEWEST = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
     WAVE17 = "docs/reports/wave17-ct40/ct_stage_evidence.json"
     WAVE26 = "docs/reports/ct-wire-lane/ct_stage_evidence.json"
+    WAVE28 = "docs/reports/ct-wire-lane-2/ct_stage_evidence.json"
+    WAVE29 = "docs/reports/ct22-wire/ct_stage_evidence.json"
 
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Five of the fourteen unmapped cases carry a lane's measured bucket; the
-        other nine still read card T00's 2026-09-07 analysis, and the published
+        Three of the eight unmapped cases carry a lane's measured bucket; the
+        other five still read card T00's 2026-09-07 analysis, and the published
         source is what makes the difference legible.
         """
         labels = summary.unmapped_labels(ROOT)
@@ -717,30 +719,27 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(
             measured,
             {
-                "CT07": self.WAVE26,
-                "CT08": self.WAVE26,
                 "CT41": self.WAVE17,
                 "CT42": self.WAVE17,
                 "CT46": self.WAVE13,
             },
         )
         # The labels that actually moved, with the archived text retained beside
-        # each rather than overwritten. CT11 used to be one of them — the wave-3
-        # lane's `blocked-on-scenario-mismatch (no local alias form)` over T00's
-        # `blocked-on-task-lowering (share captures)` — and it left the set
-        # entirely when the wave-26 CT lane mapped it. CT07 and CT08 took its
-        # place from the other direction: both were still on T00's archive, and
-        # the wave-26 lane re-measured them.
+        # each rather than overwritten. CT11 used to be one of them and left
+        # the set when the wave-26 CT lane mapped it; CT07 and CT08 took its
+        # place with wave-26 measured labels and left in turn when the wave-28
+        # lane mapped them (their wave-26 rows are retired, not deleted). CT22
+        # took the same round trip one wave later: the wave-28 lane's measured
+        # row — the narrowed joins-composition bucket over T00's archived
+        # `blocked-on-W3/W4` — is retired by the wave-29 lane that mapped the
+        # case (card CT22-WIRE), so it publishes no blocker any more.
         self.assertNotIn("CT11", labels)
-        for case in ["CT07", "CT08"]:
-            self.assertEqual(
-                labels[case]["label"],
-                "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
-            )
-            self.assertEqual(
-                labels[case]["archived_label"], "blocked-on-unimplemented-syntax"
-            )
-            self.assertNotEqual(labels[case]["label"], labels[case]["archived_label"])
+        for case in ["CT07", "CT08", "CT22"]:
+            self.assertNotIn(case, labels)
+        # CT21 was archive-held (`no source path emits RegionOp::QuantOpen`), so
+        # mapping it simply removed it from the tally — no lane row existed to
+        # retire, exactly as CT06's archived row left in wave 26.
+        self.assertNotIn("CT21", labels)
         self.assertEqual(labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)")
         self.assertEqual(
             labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
@@ -928,7 +927,7 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 14)
+            self.assertEqual(sum(counts.values()), 8)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
@@ -952,6 +951,14 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(wave17["retired_unmapped_reasons"]["CT40"]["retires"], self.WAVE9)
         self.assertNotIn("CT40", summary.unmapped_labels(ROOT))
         self.assertNotIn("CT40", summary.unmapped_label_sources(ROOT))
+        # The wave-29 lane (card CT22-WIRE) applies the same mechanism to the
+        # wave-28 lane's CT22 row: the row stays byte for byte in its own
+        # record, the retirement lives in the retiring lane's.
+        wave28 = json.loads((ROOT / self.WAVE28).read_text())
+        self.assertIn("CT22", wave28["unmapped_reasons"])
+        wave29 = json.loads((ROOT / self.WAVE29).read_text())
+        self.assertEqual(wave29["retired_unmapped_reasons"]["CT22"]["retires"], self.WAVE28)
+        self.assertNotIn("CT22", summary.unmapped_labels(ROOT))
 
     def test_a_row_for_a_mapped_case_still_fails_closed_without_a_retirement(self):
         """Silence is not a retirement.

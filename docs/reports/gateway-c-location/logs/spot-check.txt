@@ -1,0 +1,46 @@
+A. Sampled diagnostic rows: the internal position, the presented coordinate,
+   and the text of that line in the pinned checkout.
+
+unit                                           L  presented                      source line
+--------------------------------------------------------------------------------------------------------------------------------
+fluent-bit-chunk/flb_input_chunk.c         19357  (no diagnostic row at this line)
+fluent-bit-chunk/flb_input_chunk.c         19384  (no diagnostic row at this line)
+fluent-bit-chunk/flb_input_chunk.c         19388  (no diagnostic row at this line)
+fluent-bit-chunk/flb_input_chunk.c         19399  (no diagnostic row at this line)
+fluent-bit-chunk/flb_input_chunk.c         19544  flb_input_chunk.c:2480         return 0;   [flb_input_chunk_get_direct_routes] leak
+fluent-bit-chunk/flb_input_chunk.c         19849  (no diagnostic row at this line)
+cmetrics/cmetrics.c                         5588  cmetrics.c:47                  cmt = calloc(1, sizeof(struct cmt));   [cmt_create] unsupported
+cmetrics/cmetrics.c                         5595  cmetrics.c:55                  free(cmt);   [cmt_create] unknown_alias
+
+B. Every leak of the seven-leaf family the corpus record names. A leak row's
+   own position is its exit; its description names the ACQUISITION, which is
+   the coordinate the previous records wrote as L19357 / L19388.
+
+ exit L exit origin                acquisition (from the text)      source line
+--------------------------------------------------------------------------------------------------------------------------------
+  19544 flb_input_chunk.c:2480     flb_input_chunk.c:2267           result = flb_calloc((size_t) stored_count, sizeof(stru
+
+C. The two hand-noted oracles of the wave-22/23 records, read straight out of
+   the pinned source: the declaration lines of the two destructors.
+   flb_input_chunk.c:2483  void flb_input_chunk_destroy_direct_routes(struct flb_chunk_direct_route *routes
+   flb_input_chunk.c:2623  int flb_input_chunk_destroy_corrupted(struct flb_input_chunk *ic,
+
+D. A deterministic cross-library sample: every 4,001st diagnostic row of the
+   run, with the pinned source line its coordinate names. A coordinate that
+   did not land would show as a blank or an unrelated line here.
+
+unit                                           L  presented                      source line
+--------------------------------------------------------------------------------------------------------------------------------
+cmetrics/cmt_encode_prometheus_remote_write.c    7103  cmt_encode_prometheus_remote_write.c:867 summary = (struct cmt_summary *) map->parent;   [unsupported]
+librdkafka/lz4.c                            1128  lz4.c:1613                     workingStream->internal_donotuse.dictCtx = dictCtx;   [unsupported]
+librdkafka/rdkafka.c                       23813  rdkafka.c:5194                 rd_kafka_q_fwd_set(rk->rk_rep, rkq);   [unsupported]
+librdkafka/rdkafka_admin.c                 26540  rdkafka_admin.c:9735           rd_kafka_buf_skip_tags(reply);   [unknown_alias]
+librdkafka/rdkafka_cert.c                  20403  rdkafka_cert.c:405             cert->pkey = PEM_read_bio_PrivateKey(   [unsupported]
+librdkafka/rdkafka_fetcher.c               21835  rdkafka_fetcher.c:2853         rd_kafka_buf_write_tags_empty(rkbuf);   [unsupported]
+librdkafka/rdkafka_mock.c                  23638  rdkafka_mock.c:3659            RD_UT_SAY("test fixture %" PRIusz ": %s", i,   [unsupported]
+librdkafka/rdkafka_mock_sharegrp.c         21948  rdkafka_mock_sharegrp.c:209    RD_IF_FREE(member->assignment, rd_kafka_topic_partit   [unsupported]
+librdkafka/rdkafka_queue.c                 19700  rdkafka_queue.c:71             assert(!rkq->rkq_fwdq);   [unsupported]
+librdkafka/rdkafka_sasl_oauthbearer.c      20841  rdkafka_sasl_oauthbearer.c:1289 rd_kafka_oauthbearer_enqueue_token_refresh_if_necess   [unsupported]
+librdkafka/rdkafka_timer.c                 19616  rdkafka_timer.c:131            rd_kafka_timers_unlock(rkts);   [unsupported]
+librdkafka/rdunittest_msgset_errors.c      20116  rdunittest_msgset_errors.c:920 RD_UT_ASSERT(rko != NULL, "Expected FETCH op %d", i)   [leak]
+monkey-libevent/mk_server/mk_http.c         6565  mk_server/mk_http.c:756        if (memmem(sr->uri_processed.data, sr->uri_processed   [unsupported]

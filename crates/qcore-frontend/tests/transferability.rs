@@ -1,15 +1,28 @@
-//! Card `CT46-SENDSYNC`: source-level evidence for the transferability
-//! judgment.
+//! Cards `CT46-SENDSYNC` and `CT47-COPY-CAPTURE`: source-level evidence for
+//! the transferability judgment.
 //!
-//! Two things are checked here.
+//! Three things are checked here.
 //!
-//! 1. **Nothing moved.** Every case below goes through the real pipeline and
-//!    asserts the *exact* message it produced before the judgment was wired
-//!    in. The judgment is consulted beside the existing enumeration and the
-//!    two must agree, so a case whose diagnostic moved would mean the
-//!    composition changed behavior rather than checking it.
+//! 1. **The admitted set did not move.** Every accepting control below goes
+//!    through the real pipeline; nothing the enumeration admitted is
+//!    withdrawn and nothing it refused is admitted.
 //!
-//! 2. **The judgment is not vacuous.** The agreement test at the bottom
+//! 2. **The refusal is the judgment's own** (card `CT47-COPY-CAPTURE`). A
+//!    capture both the judgment and the enumeration refuse is now attributed
+//!    at the crossing construct — `Q600`, the Concurrency pass, a condition
+//!    widening stated in spec §L21 — with a message naming the missing
+//!    transfer/share contract and the contracts the kind does carry. Before
+//!    that card the same shapes fell through to the enumeration's
+//!    executable-subset catch-all at `Q500` (`CEmission`), a statement about
+//!    the backend rather than about the boundary; the wave-26 CT lane
+//!    measured exactly that attribution gap
+//!    (`docs/reports/ct-wire-lane/README.md` §3.8). Every expectation below
+//!    is a deliberate pin update recorded in
+//!    `docs/reports/ct47-copy-capture/README.md`; the refused set is
+//!    unchanged, and the grammar gate (`Q000`) and the catch-all keep their
+//!    own text for the shapes that still reach them.
+//!
+//! 3. **The judgment is not vacuous.** The agreement test at the bottom
 //!    quantifies over every reachable (mode, place kind, parameter kind)
 //!    triple and shows the derived judgment reproduces the enumeration
 //!    exactly — which is why the disagreement branch never fires, and is the
@@ -127,53 +140,84 @@ fn the_controls_check() {
     assert_eq!(task_diagnostic(COPIED), None);
 }
 
+/// Card CT47-COPY-CAPTURE: the messages the judgment refuses with, one per
+/// refusal shape. Pinned verbatim so a drift in the wording is a deliberate
+/// change, not an accident.
+const COPY_OF_BUFFER: &str = "the transferability judgment refuses this capture: no transfer or \
+     share contract admits `copy` of `own<Buffer>` across a spawn boundary; `own<Buffer>` \
+     crosses only under `move` (custody transferred to the worker) or `read PLACE share N` \
+     (a counted read share)";
+const LEND_TO_OWN: &str = "the transferability judgment refuses this capture: `read ... share \
+     ...` of `own<Buffer>` is an admitted transfer, but it delivers `borrow<Buffer>` and the \
+     worker declares it receives `own<Buffer>`";
+const MOVE_TO_LOAN_PARAMETER: &str = "the transferability judgment refuses this capture: `move` \
+     of `own<Buffer>` is an admitted transfer, but it delivers `own<Buffer>` and the worker \
+     declares it receives `borrow<Buffer>`";
+const WRITE_OF_BUFFER: &str = "the transferability judgment refuses this capture: a `write` \
+     capture names no transfer or share contract — no kind crosses a spawn boundary under it; \
+     `own<Buffer>` crosses only under `move` (custody transferred to the worker) or `read PLACE \
+     share N` (a counted read share)";
+const MOVE_OF_I32: &str = "the transferability judgment refuses this capture: no transfer or \
+     share contract admits `move` of `i32` across a spawn boundary; `i32` crosses only under \
+     `copy` (an independent duplicate; no custody crosses)";
+const LEND_OF_I32: &str = "the transferability judgment refuses this capture: no transfer or \
+     share contract admits `read ... share ...` of `i32` across a spawn boundary; `i32` crosses \
+     only under `copy` (an independent duplicate; no custody crosses)";
+const WRITE_OF_I32: &str = "the transferability judgment refuses this capture: a `write` capture \
+     names no transfer or share contract — no kind crosses a spawn boundary under it; `i32` \
+     crosses only under `copy` (an independent duplicate; no custody crosses)";
+
 /// The capture-mode refusals: an affine Buffer may not be duplicated, a scalar
 /// may not be moved, and a lend may not be delivered as custody or a move as a
-/// loan. Every one of these keeps the enumeration's own message.
+/// loan. Since card CT47-COPY-CAPTURE every one of these is the judgment's own
+/// refusal at `Q600`, attributed to the capture and naming the missing
+/// contract — a deliberate pin update from the `Q500` catch-all these rows
+/// carried before it.
 #[test]
-fn a_mode_the_kind_does_not_admit_is_refused_with_its_existing_diagnostic() {
-    const CAPTURE: &str =
-        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable";
-
+fn a_mode_the_kind_does_not_admit_is_refused_by_the_judgment() {
     // Copying affine custody would duplicate an identity.
     assert_refused(
         &OWNED.replace("move buffer", "copy buffer"),
-        "Q500",
-        CAPTURE,
+        "Q600",
+        COPY_OF_BUFFER,
     );
     // Lending to an `own<Buffer>` parameter: the transfer is admitted, but a
     // lend delivers a loan, not custody.
     assert_refused(
         &OWNED.replace("move buffer", "read buffer share FULL"),
-        "Q500",
-        CAPTURE,
+        "Q600",
+        LEND_TO_OWN,
     );
     // A `write` capture. The keyword parses and has never had a lowering.
     assert_refused(
         &OWNED.replace("move buffer", "write buffer"),
-        "Q500",
-        CAPTURE,
+        "Q600",
+        WRITE_OF_BUFFER,
     );
     // Moving a scalar. There is no custody to move.
-    assert_refused(&COPIED.replace("copy count", "move count"), "Q500", CAPTURE);
+    assert_refused(
+        &COPIED.replace("copy count", "move count"),
+        "Q600",
+        MOVE_OF_I32,
+    );
     // Lending a scalar. A copy already gives the child an independent value,
     // so there is no authority to split.
     assert_refused(
         &COPIED.replace("copy count", "read count share FULL"),
-        "Q500",
-        CAPTURE,
+        "Q600",
+        LEND_OF_I32,
     );
     // Writing a scalar.
     assert_refused(
         &COPIED.replace("copy count", "write count"),
-        "Q500",
-        CAPTURE,
+        "Q600",
+        WRITE_OF_I32,
     );
 }
 
 /// Delivering a move to a `borrow<Buffer>` parameter. The judgment separates
 /// this from the mode refusals — the transfer is fine, the delivered kind is
-/// not — and the enumeration refuses it with the same message it always did.
+/// not — and since card CT47-COPY-CAPTURE its refusal says exactly that.
 #[test]
 fn a_move_delivered_to_a_loan_parameter_is_refused() {
     // The reader is a well-formed loan worker; only the capture mode is wrong.
@@ -204,10 +248,63 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
         task_diagnostic(&MOVE_TO_LOAN.replace("move buffer)", "read buffer share FULL)")),
         None
     );
+    assert_refused(MOVE_TO_LOAN, "Q600", MOVE_TO_LOAN_PARAMETER);
+}
+
+/// CT47's own boundary, the three shapes the wave-26 CT lane measured
+/// (`docs/reports/ct-wire-lane/README.md` §3.8), re-measured after card
+/// CT47-COPY-CAPTURE.
+///
+/// The middle shape is the one that moved: a `copy` capture of an owned
+/// handle — the nearest expressible shape to CT47's raw-pointer bit-copy,
+/// this language having no raw pointer type — is now refused **by the
+/// transferability judgment**, attributed to the capture at the crossing
+/// construct, with the missing transfer/share contract named. Before the
+/// card it fell through to the backend's executable-subset catch-all
+/// (`Q500`), which is the attribution the lane refused to map CT47 on. The
+/// other two shapes are pinned unchanged: no declared mode still does not
+/// parse (there is no automatic mode at a thread boundary), and the declared
+/// read share is still admitted.
+#[test]
+fn ct47s_measured_shapes_a_copy_capture_is_refused_by_the_judgment() {
+    const READER: &str = "import std.concurrency; concurrency checked;
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(read buffer share FULL) {
+      Result::Ok { value: handle } => {
+        let seen = join move handle?;
+        drop buffer;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}";
+    // Shape 3: the declared read share is admitted, exactly as measured.
+    assert_eq!(task_diagnostic(READER), None);
+    // Shape 1: a capture with no declared mode does not parse. The grammar
+    // gate is untouched by this card and keeps its own text.
+    let modeless = READER.replace("read buffer share FULL", "buffer");
+    let parse_error = qcore_frontend::frontend::parse_source_program(&modeless)
+        .expect_err("a modeless capture must not parse");
+    assert_eq!(
+        parse_error.message,
+        "capture requires copy, move, read ... share, or write"
+    );
+    // Shape 2: the bit-copy of an owned handle, refused by the judgment at
+    // the boundary — no longer by the backend.
     assert_refused(
-        MOVE_TO_LOAN,
-        "Q500",
-        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
+        &READER.replace("read buffer share FULL", "copy buffer"),
+        "Q600",
+        COPY_OF_BUFFER,
     );
 }
 
@@ -320,17 +417,18 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 }";
     // The mixed control checks: a copy and a move in one capture list.
     assert_eq!(task_diagnostic(MIXED), None);
-    // Swapping only the second component's mode refuses that component.
+    // Swapping only the second component's mode refuses that component, by
+    // the judgment, naming that component's own kind.
     assert_refused(
         &MIXED.replace("copy count, move buffer", "copy count, copy buffer"),
-        "Q500",
-        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
+        "Q600",
+        COPY_OF_BUFFER,
     );
     // Swapping only the first refuses that one instead, at the same gate.
     assert_refused(
         &MIXED.replace("copy count, move buffer", "move count, move buffer"),
-        "Q500",
-        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
+        "Q600",
+        MOVE_OF_I32,
     );
     // Reversing the two components is a place/parameter type disagreement on
     // the first, which the type check reaches first.
@@ -417,7 +515,8 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
 
 /// **The identity evidence.** The derived judgment reproduces the existing
 /// enumeration on every reachable triple, so the composition's disagreement
-/// branch is unreachable and every diagnostic is the one it always was.
+/// branch is unreachable and the judgment-first refusal (card
+/// CT47-COPY-CAPTURE) fires for exactly the set the catch-all used to.
 ///
 /// The enumeration is written out here independently of the production copy —
 /// if the production one changes, this test disagrees rather than following

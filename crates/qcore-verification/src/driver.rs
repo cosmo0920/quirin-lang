@@ -11,7 +11,8 @@ use qcore_core::cleanup_lowering::{
     interpret_source,
 };
 use qcore_core::error_region::{
-    QuantOpen as RegionQuantOpen, RegionCatchClause, RegionOp, analyze_error_regions,
+    CleanupEvent, QuantOpen as RegionQuantOpen, RegionCatchClause, RegionExitTag, RegionOp,
+    analyze_error_regions,
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
@@ -409,10 +410,38 @@ pub struct ComposedEpochModule {
     /// return to the epoch and how much its failure handling spends. Published
     /// beside the bound, never inside it — the bound is unchanged by it.
     pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
+    /// The parent's own quantitative epilogue over the unedited
+    /// `qcore_core::error_region` model (card `REGION-CREDIT-JOINS`): an
+    /// `error region` written after every spawn and join, whose catch's
+    /// `quant open` binds the sealed pack and whose `discharge` abandons
+    /// exactly the parent-local unused credit. `None` for every entry that
+    /// writes no region, which is what keeps every previously admitted
+    /// composed epoch byte-identical.
+    pub region: Option<ComposedRegionEvidence>,
     /// The scoped-task profile the task half executes under, kept because the
     /// composed label would otherwise hide whether the region moves owned
     /// Buffers or only copies scalars.
     pub task_profile: SourceExecutionProfile,
+}
+
+/// The published evidence for one composed region (card `REGION-CREDIT-JOINS`).
+///
+/// Every field is re-derived rather than believed: `operations` is what the
+/// unedited model was handed and admitted, and `abandoned_credit` is read out
+/// of the model's own cleanup trace **and** cross-checked against the reader's
+/// independent fold of the body's `credit`/`effort` quantities before either is
+/// published.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComposedRegionEvidence {
+    /// The statement's extent in the original file — the blanked range.
+    pub span: Span,
+    /// Exactly one `RegionOp::ErrorRegion`, built from the model's own
+    /// constructors and admitted by `analyze_error_regions`.
+    pub operations: Vec<RegionOp>,
+    /// The parent-local unused credit the discharge abandoned — the sealed
+    /// pack's remainder, which is the one thing the opening may discard because
+    /// a credit is an accounting quantity and not a live resource.
+    pub abandoned_credit: u64,
 }
 
 impl CheckedSourceModule {
@@ -6008,7 +6037,24 @@ fn compile_composed_epoch_source(
             .collect::<Vec<_>>()
     })?;
     let entry = select_entry(&planned_typed, options).map_err(|error| vec![error])?;
-    let split = source_epoch_tasks::split_composed_epoch(parsed, &entry).map_err(|errors| {
+    // Card `REGION-CREDIT-JOINS`: the parent's own quantitative epilogue, if the
+    // entry writes one. Read and validated before the split so the statement is
+    // blanked from the task half exactly as the plan is — the region, like the
+    // plan, erases from emission (constraint 15l) — and so a region anywhere it
+    // is not admitted refuses about the composition rather than about the task
+    // profile.
+    let region = source_epoch_tasks::read_composed_region(parsed, &entry).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let split = source_epoch_tasks::split_composed_epoch(
+        parsed,
+        &entry,
+        region.as_ref().map(|region| region.span),
+    )
+    .map_err(|errors| {
         errors
             .into_iter()
             .map(|error| map_diagnostic(error, ranges))
@@ -6089,12 +6135,21 @@ fn compile_composed_epoch_source(
         };
         return Err(vec![map_diagnostic(composed.plan.locate(&refusal), ranges)]);
     }
+    // The region half (card `REGION-CREDIT-JOINS`): the unedited
+    // `qcore_core::error_region` model over the parent's own quantities, after
+    // the checked task IR has confirmed that every creation and every join
+    // precedes the statement.
+    let region = match region {
+        None => None,
+        Some(region) => Some(check_composed_region(&tasks, region, ranges)?),
+    };
     Ok(CompiledModule {
         checked: CheckedSourceModule::ComposedEpochTasks(Box::new(ComposedEpochModule {
             tasks: *tasks,
             composed,
             certificate,
             credit_recovery,
+            region,
             task_profile: task_module.execution_profile,
         })),
         execution_profile: SourceExecutionProfile::ComposedEpochTasksV1,
@@ -6109,6 +6164,130 @@ fn compile_composed_epoch_source(
         source_map: task_module.source_map,
         reference_observation: task_module.reference_observation,
         extern_observation: task_module.extern_observation,
+    })
+}
+
+/// Check one composed region against the checked task IR and the unedited
+/// `qcore_core::error_region` model (card `REGION-CREDIT-JOINS`).
+///
+/// Three facts are established, in order, and each is a refusal when absent:
+///
+/// 1. **After every join.** Every `TrySpawn` terminator and every `Join`
+///    instruction of the checked creator ends before the region statement
+///    begins. The entry's statements run in written order on this route and the
+///    scoped-task ledger already requires every creation joined before its
+///    scope exits, so at the region's entry no child exists and no child holds
+///    any grant — which is what makes the sealed pack's credit **parent-local**.
+///    Derived from the checked IR, never declared (`Q600`, the composed route's
+///    own reconciliation band).
+/// 2. **The model admits the region.** `analyze_error_regions` — unedited —
+///    decides every pack obligation, reported at the codes that pass already
+///    allocates (`Q302`–`Q309`, `Q300`), exactly as the sequential route
+///    reports them (constraint 15l).
+/// 3. **The published quantity is re-derived.** The abandoned credit is read
+///    out of the model's own cleanup trace and cross-checked against the
+///    reader's independent fold of the body's quantities; a disagreement is
+///    `Q600`, exactly as the bound's and the split's recheck failures are.
+fn check_composed_region(
+    tasks: &task_execution::CheckedTaskModule,
+    region: qcore_frontend::source_epoch_tasks::ComposedRegion,
+    ranges: &[FileRange],
+) -> Result<ComposedRegionEvidence, Vec<FileDiagnostic>> {
+    use qcore_core::task_execution::{TaskInstructionKind, TaskTerminatorKind};
+
+    let module = tasks.module();
+    let creator = &module.functions[&module.entry];
+    let mut last_task_fact: Option<usize> = None;
+    for block in creator.blocks.values() {
+        if matches!(block.terminator.kind, TaskTerminatorKind::TrySpawn { .. }) {
+            last_task_fact = last_task_fact.max(Some(block.terminator.span.end));
+        }
+        for instruction in &block.instructions {
+            if matches!(instruction.kind, TaskInstructionKind::Join { .. }) {
+                last_task_fact = last_task_fact.max(Some(instruction.span.end));
+            }
+        }
+    }
+    if last_task_fact.is_some_and(|end| end > region.span.start) {
+        return Err(vec![map_diagnostic(
+            diagnostic(
+                SemanticPass::Concurrency,
+                region.span,
+                "the composed region is the parent's own epilogue over credit no child still \
+                 holds, so every creation and every join of the checked task region precedes it; \
+                 a spawn or join after the region is refused rather than accounted for (card \
+                 `REGION-CREDIT-JOINS`)",
+            ),
+            ranges,
+        )]);
+    }
+    let declarations = ErrorDeclarations::new(region.declared_errors.iter().cloned());
+    let allowed = EffectRow::new(
+        std::iter::once(Effect::Alloc)
+            .chain(region.declared_errors.iter().cloned().map(Effect::Throws)),
+    );
+    let exits = analyze_error_regions(
+        &declarations,
+        &allowed,
+        ErrorLedger::default(),
+        &region.operations,
+    )
+    .map_err(|error| {
+        vec![map_diagnostic(
+            SourceDiagnostic {
+                code: qcore_frontend::source_region::error_region_code(&error),
+                pass: SemanticPass::ErrorRegion,
+                span: region.span,
+                message: qcore_frontend::source_region::error_region_message(&error),
+            },
+            ranges,
+        )]
+    })?;
+    let recheck_failure = |message: &str| {
+        vec![map_diagnostic(
+            diagnostic(SemanticPass::Concurrency, region.span, message),
+            ranges,
+        )]
+    };
+    // An admitted composed region has exactly one path: the decided edge is
+    // caught and the handler returns normally, so the model publishes exactly
+    // one normal exit and no error exit. Anything else is a defect of this
+    // wiring, not of the program.
+    let mut states = exits.iter();
+    let (RegionExitTag::Normal, [state]) = states
+        .next()
+        .ok_or_else(|| recheck_failure("composed region produced no exit state"))?
+    else {
+        return Err(recheck_failure(
+            "composed region produced an exit the composition does not admit",
+        ));
+    };
+    if states.next().is_some() {
+        return Err(recheck_failure(
+            "composed region produced an exit the composition does not admit",
+        ));
+    }
+    let abandoned = match state.cleanup_trace() {
+        [] => 0,
+        [CleanupEvent::AbandonCredit(amount)] => *amount,
+        _ => {
+            return Err(recheck_failure(
+                "composed region's cleanup trace carries an event its body cannot produce",
+            ));
+        }
+    };
+    // The independent re-derivation: the reader's own fold over the written
+    // `credit`/`effort` quantities must name the same figure the model's trace
+    // does, or nothing is published.
+    if region.remainder != Some(abandoned) {
+        return Err(recheck_failure(
+            "composed region's abandoned credit failed independent re-derivation",
+        ));
+    }
+    Ok(ComposedRegionEvidence {
+        span: region.span,
+        operations: region.operations,
+        abandoned_credit: abandoned,
     })
 }
 

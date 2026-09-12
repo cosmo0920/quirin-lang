@@ -1,0 +1,45 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// Both compositions in one module: the epoch's credit-recovery split over the
+// creator's derived error edges (card CT23-CREDIT-ERROR-PATH, `error(move);`)
+// and the parent's own region epilogue after the join (card
+// REGION-CREDIT-JOINS). Two unedited models, two published quantities, one
+// entry -- the epoch's granted credit restored on the creator's error path,
+// and the parent-local remainder 3 abandoned by the opening on the success
+// path.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+            error(move);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        error region R {
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return answer;
+    }
+}

@@ -4,8 +4,8 @@ use std::fs;
 use std::path::Path;
 
 use qcore_c_gateway::legacy_c::{
-    LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, SourceDefinitionInventory,
-    UnrestrictedLegacyResult,
+    LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind, SourceDefinitionInventory, SourceLineMap,
+    UnrestrictedLegacyResult, unlocated_site,
 };
 use qcore_schemas::reason::ReasonCategory;
 use serde_json::{Value, json};
@@ -222,12 +222,36 @@ impl AuditReport {
         }));
     }
 
+    /// Card **GATEWAY-C-LOCATION**: render one diagnostic's site.
+    ///
+    /// The presented coordinate is the **original** pre-preprocessing
+    /// `file:line`, because the preprocessed translation unit is a text nobody
+    /// reads. The preprocessed position stays in the row's `line` key, which is
+    /// the leaf identity every pinned corpus comparison is keyed on; it reaches
+    /// presented text only as the explicit fallback when no original coordinate
+    /// was established, where it names itself as internal.
+    fn site(locations: Option<&SourceLineMap>, file: &str, line: usize) -> String {
+        locations
+            .and_then(|map| map.present(line, file))
+            .unwrap_or_else(|| unlocated_site(line))
+    }
+
+    /// The row value for an original coordinate: the presented `file:line`, or
+    /// `null` where none is established. `null` asserts nothing.
+    fn origin(locations: Option<&SourceLineMap>, file: &str, line: usize) -> Value {
+        match locations.and_then(|map| map.present(line, file)) {
+            Some(origin) => json!(origin),
+            None => Value::Null,
+        }
+    }
+
     pub fn record(
         &mut self,
         library: &str,
         file: &str,
         source_functions: &[String],
         result: &Result<UnrestrictedLegacyResult, LegacyCError>,
+        locations: Option<&SourceLineMap>,
     ) -> Vec<String> {
         let (status, summary, reason) = match result {
             Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
@@ -246,17 +270,22 @@ impl AuditReport {
             for function in summary.functions.values() {
                 let mut diagnostics = Vec::new();
                 for diagnostic in &function.diagnostics {
-                    let (category, description) = diagnostic_description(diagnostic);
+                    let (category, description) = diagnostic_description(diagnostic, &|line| {
+                        Self::site(locations, file, line)
+                    });
                     *counts.entry(category.into()).or_default() += 1;
                     *self.diagnostic_counts.entry(category.into()).or_default() += 1;
                     if examples.len() < 3 {
                         examples.push(format!(
-                            "{}: preprocessed line {}: {category}: {description}",
-                            diagnostic.function, diagnostic.line,
+                            "{}: {}: {category}: {description}",
+                            diagnostic.function,
+                            Self::site(locations, file, diagnostic.line),
                         ));
                     }
                     diagnostics.push(json!({
-                        "line": diagnostic.line, "category": category,
+                        "line": diagnostic.line,
+                        "origin": Self::origin(locations, file, diagnostic.line),
+                        "category": category,
                         "description": description,
                     }));
                 }
@@ -276,6 +305,7 @@ impl AuditReport {
             "reason_code": reason_code(reason.as_deref()),
             "source_functions": source_functions, "functions": functions,
             "not_projected": not_projected, "diagnostic_counts": counts,
+            "origin_coordinates": origin_coordinates(locations),
         }));
         if counts.is_empty() {
             return Vec::new();
@@ -308,7 +338,8 @@ impl AuditReport {
         let mut report = json!({
             "schema_version": 1, revision_key: self.revision,
             "scope": "generic resource projection; separate chunk/callback source profiles are not certificates here",
-            "line_coordinates": "Clang -E -P preprocessed translation unit, not original file; line 0 is synthetic",
+            "line_coordinates": "`line` is the Clang -E -P preprocessed translation unit's line, not the original file; line 0 is synthetic. It is retained as the internal leaf identity every pinned comparison is keyed on, and is not a coordinate anyone can open; `origin` beside it is the original pre-preprocessing coordinate and is what diagnostic text presents",
+            "origin_meaning": "the original `file:line` of the C a person wrote (card GATEWAY-C-LOCATION), derived from the line markers of the same unit's marked preprocessing and paired content line by content line with the analysed -E -P text; a diagnostic inside a macro expansion carries the expansion site's line. No presented file spelling is ever read from a flagless marker: an included file is named by its own entering (flag 1) marker and the primary input by this report's own `file`, so a `#line` directive in analysed source can neither move the audited scope (standing constraint 12) nor name a file here. A flagless marker that renames its frame withdraws that frame's coordinates instead of adopting the name, and `null` asserts no coordinate at all; `origin_coordinates` carries the per-unit account",
             "not_projected_meaning": "raw source definitions absent from the projection, including build-excluded definitions; see unit reason for parser failures",
             "enumeration_meaning": "the enumerated main-source definition denominator (E01-F1): `absent_from_raw_scan` names main-source definitions the historical raw token scan did not see — produced by macro expansion, or lost by that scan for another reason — each an ordinary definition in the preprocessed unit that the unmodified analyzer reads; `unanalyzable` definitions are counted but not read by the resource analyzer and carry their own classified Unknown row; `completeness: refused` means the definition set itself could not be established on the named ground, so no whole-unit Safe claim is published over it",
             "reason_code_meaning": "closed reason-code vocabulary of QCORE_SPEC_r0_3 L21.1 classifying the sibling reason; null asserts no category, either because there is no reason or because the closed vocabulary does not recognise it; `environment-unavailable` says nothing about the analysed source and never contributes to a provisional Unsafe",
@@ -324,7 +355,44 @@ impl AuditReport {
     }
 }
 
-fn diagnostic_description(diagnostic: &LegacyDiagnostic) -> (&'static str, String) {
+/// The per-unit account of the original-coordinate derivation.
+///
+/// `null` means the derivation was not run for this unit, which happens exactly
+/// when the unit publishes no diagnostic to attribute. A refusal is published
+/// with its ground rather than left silent, and it is always an
+/// `environment-unavailable` fact about this analysis machinery — never a
+/// statement about the analysed source (§L21.1 rule 1).
+fn origin_coordinates(locations: Option<&SourceLineMap>) -> Value {
+    let Some(map) = locations else {
+        return Value::Null;
+    };
+    if map.is_established() {
+        return json!({
+            "status": "established",
+            "withdrawn_lines": map.relabelled_lines(),
+        });
+    }
+    let refusals = map
+        .refusals()
+        .iter()
+        .map(|refusal| {
+            json!({
+                "ground": refusal.as_str(),
+                "reason": refusal.reason(),
+                "reason_code": reason_code_value(Some(refusal.category())),
+            })
+        })
+        .collect::<Vec<_>>();
+    json!({ "status": "refused", "refusals": refusals })
+}
+
+/// Card **GATEWAY-C-LOCATION**: every site this text names is the original
+/// pre-preprocessing coordinate, supplied by `site`. The internal preprocessed
+/// position appears only through `site`'s explicit fallback.
+fn diagnostic_description(
+    diagnostic: &LegacyDiagnostic,
+    site: &impl Fn(usize) -> String,
+) -> (&'static str, String) {
     match &diagnostic.kind {
         LegacyDiagnosticKind::Unsupported { description } => ("unsupported", description.clone()),
         LegacyDiagnosticKind::UnknownAlias { variable } => (
@@ -333,21 +401,28 @@ fn diagnostic_description(diagnostic: &LegacyDiagnostic) -> (&'static str, Strin
         ),
         LegacyDiagnosticKind::Leak { acquisition_line } => (
             "leak",
-            format!("live obligation acquired at preprocessed line {acquisition_line}"),
+            format!("live obligation acquired at {}", site(*acquisition_line)),
         ),
         LegacyDiagnosticKind::DoubleRelease { acquisition_line } => (
             "double_release",
-            format!("repeated release of acquisition at preprocessed line {acquisition_line}"),
+            format!(
+                "repeated release of acquisition at {}",
+                site(*acquisition_line)
+            ),
         ),
         LegacyDiagnosticKind::ReleaseAfterEscape { acquisition_line } => (
             "release_after_escape",
             format!(
-                "release after transfer of acquisition at preprocessed line {acquisition_line}"
+                "release after transfer of acquisition at {}",
+                site(*acquisition_line)
             ),
         ),
         LegacyDiagnosticKind::CustodyConflict { acquisition_line } => (
             "custody_conflict",
-            format!("conflicting custody of acquisition at preprocessed line {acquisition_line}"),
+            format!(
+                "conflicting custody of acquisition at {}",
+                site(*acquisition_line)
+            ),
         ),
         LegacyDiagnosticKind::SummaryConflict { inferred, declared } => (
             "summary_conflict",
@@ -365,6 +440,23 @@ mod tests {
     use qcore_c_gateway::legacy_c::analyze_legacy_c_translation_unit;
     use qcore_contract::contract_loader::load_resource_contract_sources;
     use std::collections::BTreeMap;
+
+    /// One acquisition with no release, and one uncontracted call: a leak row
+    /// whose site is an acquisition line, and an unsupported row whose site is
+    /// its own line.
+    const TWO_FUNCTIONS: &str = "void a(void) { void *p = alloc(); } void b(void) { opaque(); }";
+
+    fn two_function_result() -> Result<UnrestrictedLegacyResult, LegacyCError> {
+        // W1 literal-site migration: loaded from a `.qcore` fixture module.
+        let contracts = load_resource_contract_sources(&BTreeMap::from([(
+            "alloc_acquire.qcore".to_owned(),
+            include_str!("../tests/fixtures/alloc_acquire.qcore").to_owned(),
+        )]))
+        .unwrap();
+        Ok(UnrestrictedLegacyResult::Unsafe(
+            analyze_legacy_c_translation_unit(TWO_FUNCTIONS, "a", &contracts).unwrap(),
+        ))
+    }
 
     #[test]
     fn inventory_keeps_unknown_diagnostics_inside_unsafe_units_and_unprojected_names() {
@@ -387,6 +479,7 @@ mod tests {
             "unit.c",
             &["a".into(), "b".into(), "excluded".into()],
             &result,
+            None,
         );
         let unit = &report.units[0];
         assert_eq!(unit["status"], "Unsafe");
@@ -398,6 +491,107 @@ mod tests {
         );
         assert_eq!(report.diagnostic_counts["unsupported"], 1);
         assert_eq!(report.diagnostic_counts["leak"], 1);
+    }
+
+    // -----------------------------------------------------------------------
+    // Card GATEWAY-C-LOCATION: the presented coordinate, and the internal
+    // position it never replaces.
+    // -----------------------------------------------------------------------
+
+    /// A unit with no established coordinate keeps the internal position, and
+    /// says it is internal. `origin` is `null`, which asserts nothing.
+    #[test]
+    fn a_unit_without_coordinates_names_its_internal_position_as_internal() {
+        let mut report = AuditReport::new("revision");
+        report.record(
+            "test",
+            "unit.c",
+            &["a".into()],
+            &two_function_result(),
+            None,
+        );
+        let unit = &report.units[0];
+        let unsupported = &unit["functions"][1]["diagnostics"][0];
+        assert_eq!(unsupported["category"], "unsupported");
+        assert_eq!(unsupported["line"], 1);
+        assert_eq!(unsupported["origin"], Value::Null);
+        let leak = &unit["functions"][0]["diagnostics"][0];
+        assert_eq!(leak["category"], "leak");
+        assert_eq!(
+            leak["description"],
+            "live obligation acquired at preprocessed line 1"
+        );
+        assert_eq!(unit["origin_coordinates"], Value::Null);
+    }
+
+    /// With a map in force the same rows present the original `file:line` in
+    /// both the `origin` key and the diagnostic text, and **still** carry the
+    /// unchanged preprocessed `line`.
+    #[test]
+    fn a_presented_coordinate_replaces_the_text_and_not_the_leaf_identity() {
+        // A one-line unit that is line 42 of the file it was written in.
+        let marked = format!("# 42 \"<stdin>\"\n{TWO_FUNCTIONS}\n");
+        let map = qcore_c_gateway::legacy_c::map_marked_preprocessing(
+            &marked,
+            &format!("{TWO_FUNCTIONS}\n"),
+        );
+        assert!(map.is_established(), "{:?}", map.refusals());
+        let mut report = AuditReport::new("revision");
+        let plain = {
+            let mut plain = AuditReport::new("revision");
+            plain.record(
+                "test",
+                "src/unit.c",
+                &["a".into()],
+                &two_function_result(),
+                None,
+            );
+            plain
+        };
+        report.record(
+            "test",
+            "src/unit.c",
+            &["a".into()],
+            &two_function_result(),
+            Some(&map),
+        );
+        let unit = &report.units[0];
+        let unsupported = &unit["functions"][1]["diagnostics"][0];
+        assert_eq!(
+            unsupported["line"], plain.units[0]["functions"][1]["diagnostics"][0]["line"],
+            "the internal leaf identity is untouched by the presentation"
+        );
+        assert_eq!(unsupported["origin"], "src/unit.c:42");
+        let leak = &unit["functions"][0]["diagnostics"][0];
+        assert_eq!(
+            leak["description"], "live obligation acquired at src/unit.c:42",
+            "presented text names the original coordinate, never the preprocessed one"
+        );
+        assert_eq!(
+            unit["origin_coordinates"],
+            json!({"status": "established", "withdrawn_lines": 0})
+        );
+        // Only the presentation moved: category, status and counts are equal.
+        assert_eq!(unit["status"], plain.units[0]["status"]);
+        assert_eq!(
+            unit["diagnostic_counts"],
+            plain.units[0]["diagnostic_counts"]
+        );
+        assert_eq!(unsupported["category"], "unsupported");
+    }
+
+    #[test]
+    fn a_refused_derivation_is_published_as_an_environment_ground() {
+        let map = qcore_c_gateway::legacy_c::map_marked_preprocessing("no marker here\n", "x\n");
+        assert!(!map.is_established());
+        let value = origin_coordinates(Some(&map));
+        assert_eq!(value["status"], "refused");
+        assert_eq!(
+            value["refusals"][0]["reason_code"],
+            "environment-unavailable"
+        );
+        // L21.1 rule 1: a ground about this machinery can never support Unsafe.
+        assert!(!ReasonCategory::EnvironmentUnavailable.may_support_unsafe());
     }
 
     #[test]
@@ -412,6 +606,7 @@ mod tests {
                 reason: "projection failure".into(),
                 partial: None,
             }),
+            None,
         );
         assert_eq!(report.units[0]["reason"], "projection failure");
         assert_eq!(report.units[0]["functions"], json!([]));
@@ -557,6 +752,7 @@ mod tests {
                     reason: reason.into(),
                     partial: None,
                 }),
+                None,
             );
             let unit = report.units.last().unwrap();
             assert_eq!(unit["reason"], reason, "the reason text is untouched");

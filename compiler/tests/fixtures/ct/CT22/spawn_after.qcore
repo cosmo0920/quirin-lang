@@ -1,0 +1,44 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// The spawn direction of the after-joins rule (card CT22-WIRE, on card
+// REGION-CREDIT-JOINS's own in-memory measurement): the region is written
+// before the creation itself, so both the spawn and the join follow it in the
+// checked task IR. Refused at Q600, the composed route's own reconciliation
+// band -- a region the parent enters while children can still come to exist
+// is CheckedRegionTaskCreditV1's territory (REGION-JOINS-T07), which has no
+// source route.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        error region R {
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        return answer;
+    }
+}

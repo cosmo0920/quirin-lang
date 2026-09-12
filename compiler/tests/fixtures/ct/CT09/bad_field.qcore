@@ -1,0 +1,36 @@
+// CT09's access control: a read of a field the type does not declare
+// (card `CT-WIRE-LANE-2`).
+//
+// The case's expected text is "Accept only after layout/access proof", and
+// this control is what makes the *access* half a gate rather than a
+// convention: `p.z` names no declared field of `Point`, and the program is
+// refused at check time (`Q052`, `source.record.v1`'s own message), so a
+// field read is admitted only against the declaration it projects from.
+import std.fmt;
+import std.io;
+import std.logger;
+
+type Point { x: i32, y: i32, weight: i32 }
+
+fn main() -> unit effects { io } {
+    let base = 40;
+
+    let p = Point { x: 65, y: 66, weight: base };
+
+    let a = p.z;
+    let b = p.y;
+    let w = p.weight;
+
+    print dec a;
+    print dec b;
+    print dec w;
+
+    let q = Point { weight: 9, y: 2, x: 1 };
+    let qw = q.weight;
+    let qx = q.x;
+    log info dec qw;
+    log info dec qx;
+    flush;
+
+    return;
+}

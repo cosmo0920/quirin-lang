@@ -392,7 +392,16 @@ pub fn enumerate_source_definitions(unit: &C11TranslationUnit<'_>) -> SourceDefi
 /// files; it is never published, never digested and never analysed, so the
 /// unit's `-E -P` `preprocessed_source` — and every identity bound to it — is
 /// unchanged by this module.
-fn preprocess_with_line_markers(unit: &C11TranslationUnit<'_>) -> Result<String, LegacyCError> {
+///
+/// Card **GATEWAY-C-LOCATION** shares this run with
+/// [`crate::legacy_c::location`], which reads the same markers for the
+/// *presentation* of a diagnostic's original `file:line`. That reader consumes
+/// depth and line the same way and adopts a file spelling only from an
+/// entering marker, so neither the scope this module decides nor the
+/// coordinate that one presents can be moved by a `#line` directive.
+pub(crate) fn preprocess_with_line_markers(
+    unit: &C11TranslationUnit<'_>,
+) -> Result<String, LegacyCError> {
     let mut command = crate::clang::command().map_err(LegacyCError::ProductionParserUnavailable)?;
     command.args(["-x", "c", unit.dialect.clang_argument(), "-E"]);
     for include in &unit.include_paths {
@@ -631,15 +640,22 @@ fn tokenize_marked(source: &str) -> MarkedStream {
 }
 
 /// One `# <digits> "<file>" <flags…>` line marker.
-struct LineMarker {
+pub(crate) struct LineMarker {
+    /// The line number the marker declares for the next output line. This
+    /// module never reads it — attribution here is by flags alone — and it is
+    /// carried for [`crate::legacy_c::location`]'s presentation only. An
+    /// unparseable digit run reads `0` rather than rejecting the marker, so
+    /// this module's acceptance is exactly what it was before the field
+    /// existed.
+    pub(crate) number: usize,
     /// The quoted body exactly as written, escapes included. Used only to
     /// record that the output opened with a marker at all; nothing is gained
     /// by unescaping and a wrong unescaping could merge two files.
-    file: String,
+    pub(crate) file: String,
     /// Flag `1`: Clang is *entering* a file.
-    enters: bool,
+    pub(crate) enters: bool,
     /// Flag `2`: Clang is *returning* to the file that included this one.
-    returns: bool,
+    pub(crate) returns: bool,
 }
 
 /// Read a line marker, including its GNU/Clang flags.
@@ -650,7 +666,7 @@ struct LineMarker {
 /// — which Clang re-emits as a flagless marker — carries none, so it cannot
 /// move a token between files. Any trailing word that is not a digit run makes
 /// this not a marker at all, so a `#pragma` is discarded as before.
-fn line_marker(directive: &str) -> Option<LineMarker> {
+pub(crate) fn line_marker(directive: &str) -> Option<LineMarker> {
     let rest = directive.strip_prefix('#')?.trim_start();
     let digits = rest
         .split(|c: char| c.is_whitespace())
@@ -685,6 +701,7 @@ fn line_marker(directive: &str) -> Option<LineMarker> {
         }
     }
     Some(LineMarker {
+        number: digits.parse().unwrap_or(0),
         file,
         enters,
         returns,

@@ -300,16 +300,23 @@ fn a_read_share_must_be_a_positive_fraction_of_the_full_authority() {
 /// carries no usage grade in this profile.
 #[test]
 fn capture_mode_and_parameter_type_must_agree() {
-    for source in [
-        READ_LOAN.replace("read buffer share FULL", "move buffer"),
-        READ_LOAN.replace("read buffer share FULL", "copy buffer"),
-        READ_LOAN.replace("payload: borrow<Buffer>", "payload: own<Buffer> use one"),
-    ] {
-        rejects(
-            &source,
-            "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
-        );
-    }
+    // Since card CT47-COPY-CAPTURE these three are the transferability
+    // judgment's own refusals, each naming its shape: a deliberate pin update
+    // from the `Q500` executable-subset catch-all they carried before it.
+    rejects(
+        &READ_LOAN.replace("read buffer share FULL", "move buffer"),
+        "`move` of `own<Buffer>` is an admitted transfer, but it delivers `own<Buffer>` \
+         and the worker declares it receives `borrow<Buffer>`",
+    );
+    rejects(
+        &READ_LOAN.replace("read buffer share FULL", "copy buffer"),
+        "no transfer or share contract admits `copy` of `own<Buffer>` across a spawn boundary",
+    );
+    rejects(
+        &READ_LOAN.replace("payload: borrow<Buffer>", "payload: own<Buffer> use one"),
+        "`read ... share ...` of `own<Buffer>` is an admitted transfer, but it delivers \
+         `borrow<Buffer>` and the worker declares it receives `own<Buffer>`",
+    );
     rejects(
         &READ_LOAN.replace("payload: borrow<Buffer>", "payload: borrow<Buffer> use one"),
         "task parameters require i32, own<Buffer> use one, or an ungraded borrow<Buffer>",
