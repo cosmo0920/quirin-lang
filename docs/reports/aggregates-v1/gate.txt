@@ -1,0 +1,54 @@
+AGGREGATES-V1 — standing per-change gate
+base commit: f122cc03 (the wave-26 close)
+
+=== git submodule update --init --recursive
+ d82464a277d0f42703702c4dfd9af6af38595a83 third_party/libevent (release-2.2.2-alpha-11-gd82464a2)
+
+=== cargo test --workspace --no-fail-fast
+exit 0
+4265 passed, 0 failed, 8 ignored, across 210 suites
+lines beginning `error`: 0
+`test result: FAILED` blocks: 0
+
+=== fmt
+exit 0
+
+=== clippy
+exit 0
+
+=== source_record
+exit 0
+test result: ok. 56 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+=== std_buffer
+exit 0
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+=== source_loop
+exit 0
+test result: ok. 39 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+=== probe
+exit 0
+
+=== followup
+exit 0
+
+=== lean
+exit 0
+Passed 111 Lean audits
+
+=== pytests
+exit 1
+Passed 6 Lean audits
+Ran 193 tests in 19.846s
+FAILED (failures=1)
+
+=== the one expected failure
+FAIL: test_the_derived_facts_are_recomputed_rather_than_carried (test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried)
+(the derived-value tripwire on `validation.lean_audits`, 110 -> 111;
+ this card's brief forbids editing the acceptance matrix, so the row is
+ left stale for the wave integrator to regenerate)
+
+=== byte identity, measured against the base build
+byte-identical: 80   differ: 0

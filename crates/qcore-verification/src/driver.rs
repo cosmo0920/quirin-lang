@@ -1197,7 +1197,24 @@ pub fn compile_files_with_registry(
     if qcore_frontend::source_std_string::has_source_string_bridge(&parsed) {
         return compile_string_source(&parsed, &typed, mode, options, &ranges);
     }
-    if qcore_frontend::source_std_buffer::has_source_buffer(&parsed) {
+    // Card `AGGREGATES-V1`, and **the whole of the route-selection change it
+    // makes**: a module that declares a record type reaches the buffer route,
+    // which since that card models the aggregate as well. The condition is the
+    // **declaration and nothing else**, on the `STRING-CONCAT` precedent, so a
+    // module that holds a buffer without declaring one keeps the route it had
+    // and a module that declares none travels an identical code path. No
+    // program written before this card can satisfy the guard, because
+    // `type NAME { … }` did not parse at all: the one new door is opened only by
+    // the one new spelling.
+    //
+    // It is placed **here**, beside the buffer guard, for that route's own
+    // reasons: every concurrent route, the extern route and the event route are
+    // selected above it, so a module that declares a record and spawns, calls
+    // out or dispatches keeps that route's existing refusal — measured, not
+    // assumed.
+    if qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
+        || qcore_frontend::source_record::has_source_record(&parsed)
+    {
         return compile_buffer_source(&parsed, &typed, mode, options, &ranges);
     }
     // Card `STRING-SLICE`, selected after the buffer route above and before the

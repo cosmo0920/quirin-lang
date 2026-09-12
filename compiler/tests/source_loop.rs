@@ -571,6 +571,7 @@ fn the_inherited_checker_refuses_a_repeated_release_on_its_own() {
     let program = BufferProgram {
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
+        records: Vec::new(),
         events: vec![
             BufferEvent::Acquire {
                 name: "b".to_owned(),
@@ -664,6 +665,7 @@ fn the_body_is_unrolled_exactly_and_its_bindings_are_per_iteration() {
     let program = BufferProgram {
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
+        records: Vec::new(),
         events: vec![
             BufferEvent::Repeat {
                 variable: "i".to_owned(),

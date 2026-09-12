@@ -1,0 +1,53 @@
+// `source.record.v1` (card AGGREGATES-V1): the first source-level aggregate.
+//
+// CT09's scenario is "Distinct ordinary struct fields", and this program is
+// that scenario made executable. Three fields are declared, one value is
+// constructed with three *different* numbers, and all three are read back and
+// printed. A model that confused two fields — or a lowering that gave two
+// fields one C member — would print the same number twice, so the byte
+// comparison against the native run is a real check of distinctness rather
+// than a restatement of it.
+//
+// The record declaration reserves no word: `type NAME { … }` is the
+// already-reserved `type` head claimed at one shape, told from the alias
+// `type NAME = …;` by the `{`.
+//
+// Every field value is a check-time constant, so this program needs no
+// `std.buffer` import at all: a record is a plain value, not a resource.
+
+import std.fmt;
+import std.io;
+import std.logger;
+
+type Point { x: i32, y: i32, weight: i32 }
+
+fn main() -> unit effects { io } {
+    // A field value is `source.buffer.v1`'s own operand: a literal, or a name
+    // this entry bound to a check-time-constant integer.
+    let base = 40;
+
+    let p = Point { x: 65, y: 66, weight: base };
+
+    // The distinctness evidence. Three reads of three declared fields, each
+    // producing the value supplied for that field and no other.
+    let a = p.x;
+    let b = p.y;
+    let w = p.weight;
+
+    print dec a;
+    print dec b;
+    print dec w;
+
+    // A second value of the same type, so the type is genuinely a type rather
+    // than a description of one value. Its fields are read in a different
+    // order, which the certificate publishes as three projections naming the
+    // fields they answered to.
+    let q = Point { weight: 9, y: 2, x: 1 };
+    let qw = q.weight;
+    let qx = q.x;
+    log info dec qw;
+    log info dec qx;
+    flush;
+
+    return;
+}

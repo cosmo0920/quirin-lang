@@ -1,0 +1,97 @@
+=== measure/census.py — every .qcore/.qc file in the tree
+files scanned: 436
+
+candidate      code  comment  files-with-code (first 4)
+record            8       22  ['docs/reports/remaining-v07/probes/d02_boundary_record.qcore', 'docs/reports/w5-configured-process-audit/second-codebase/frame.qcore', 'docs/reports/w5-configured-process-audit/second-codebase/policy.qcore', 'providers/conformance/tests/fixtures/configured_boolean_source/sample.qcore']
+struct            0       27  []
+field             5       26  ['contract/qcore/cmetrics/counter_reset.qcore', 'docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore']
+fields            0       18  []
+data             12       20  ['contract/qcore/monkey/wrapper_paths.qcore', 'contract/qcore/msgpack/packer.qcore', 'crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qcore', 'crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore']
+tuple             0        0  []
+object            1       16  ['contract/qcore/monkey/callback_binding.qcore']
+row               0        5  []
+Point             3        0  ['compiler/tests/fixtures/source_record/point.qcore']
+of                0      274  []
+
+`type NAME {` occurrences in code: 12
+    ('compiler/tests/fixtures/source_record/point.qcore', 'type Point {')
+    ('contract/qcore/cfl/arena_lifetime.qcore', 'type CflArena {')
+    ('contract/qcore/cfl/intrusive_list.qcore', 'type CflListEntry {')
+    ('contract/qcore/chunkio/chunk_destructor.qcore', 'type Chunk {')
+    ('contract/qcore/chunkio/context_destructor.qcore', 'type ChunkContext {')
+    ('contract/qcore/chunkio/stream_destructor.qcore', 'type ChunkStream {')
+    ('contract/qcore/library/custody_evidence.qcore', 'type LibraryResource {')
+    ('contract/qcore/librdkafka/queue_destructor.qcore', 'type KafkaQueueOwner {')
+    ('contract/qcore/librdkafka/refcount.qcore', 'type KafkaReference {')
+    ('contract/qcore/librdkafka/typed_queue.qcore', 'type KafkaQueue {')
+`type NAME` declaration heads at line start: 1
+
+total '.' characters in code: 297
+distinct WORD.WORD shapes in code: 20
+   std.concurrency                    76
+   std.io                             36
+   std.logger                         35
+   std.fmt                            34
+   std.extern                         24
+   std.string                         14
+   std.buffer                         12
+   std.socket                         8
+   std.event                          4
+   std.http                           2
+   p.x                                1
+   p.y                                1
+   p.weight                           1
+   q.weight                           1
+   q.x                                1
+   returned_credit.chunks             1
+   credit.chunks                      1
+   cost.total                         1
+   qcore.libevent                     1
+   index.html                         1
+
+=== measure/census_rust.py — QCore source inside Rust string literals
+rust files scanned: 575   string literals scanned: 48453
+
+`type NAME {` (the claimed declaration head): 33 hit(s), 1 outside this card's own suite
+    crates/qcore-frontend/tests/unit/frontend.rs
+
+`resource type NAME {` (claimed by an earlier branch): 2 hit(s), 1 outside this card's own suite
+    crates/qcore-frontend/tests/unit/frontend.rs
+
+`let NAME = NAME {` (the claimed construction): 30 hit(s), 2 outside this card's own suite
+    crates/qcore-c-gateway/src/legacy_c.rs
+    crates/qcore-core/src/std_socket.rs
+
+`let NAME = NAME.` (the claimed field read): 66 hit(s), 8 outside this card's own suite
+    compiler/src/verifier_plugins/libevent/monkey_binding.rs
+    compiler/tests/workspace_layering.rs
+    crates/qcore-audit/src/compile_db.rs
+    crates/qcore-c-gateway/src/legacy_c.rs
+    crates/qcore-c-gateway/src/legacy_enumeration.rs
+    crates/qcore-core/src/extern_c_emit.rs
+    crates/qcore-core/src/std_socket.rs
+    crates/qcore-core/src/task_c_emit.rs
+
+`record` at a declaration head (the rejected spelling): 0 hit(s), 0 outside this card's own suite
+
+=== the two claimed statement shapes, in .qcore/.qc code
+let NAME = NAME .  : 0
+let NAME = NAME {  : 0
+
+=== every 'type NAME {' in .qcore/.qc code — all eleven are 'resource type'
+./contract/qcore/chunkio/context_destructor.qcore:6:resource type ChunkContext {
+./contract/qcore/chunkio/chunk_destructor.qcore:6:resource type Chunk {
+./contract/qcore/chunkio/stream_destructor.qcore:6:resource type ChunkStream {
+./contract/qcore/monkey/composition.qcore:17:resource type EventMap {
+./contract/qcore/library/custody_evidence.qcore:13:resource type LibraryResource {
+./contract/qcore/librdkafka/queue_destructor.qcore:6:resource type KafkaQueueOwner {
+./contract/qcore/librdkafka/refcount.qcore:6:resource type KafkaReference {
+./contract/qcore/librdkafka/typed_queue.qcore:6:resource type KafkaQueue {
+./contract/qcore/librdkafka/typed_queue.qcore:14:resource type KafkaQueueEntry {
+./contract/qcore/cfl/arena_lifetime.qcore:10:resource type CflArena {
+./contract/qcore/cfl/intrusive_list.qcore:6:resource type CflListEntry {
+./compiler/tests/fixtures/source_record/point.qcore:11:// The record declaration reserves no word: `type NAME { … }` is the
+./compiler/tests/fixtures/source_record/point.qcore:22:type Point { x: i32, y: i32, weight: i32 }
+
+=== the rejected spelling: 'record' at a declaration head
+./docs/reports/remaining-v07/probes/d02_boundary_record.qcore:1:record R { }
