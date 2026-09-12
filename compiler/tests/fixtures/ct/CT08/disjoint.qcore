@@ -1,0 +1,38 @@
+// CT08's boundary control: the identical program with the overlapping byte
+// moved **outside** both lent ranges (card `CT-WIRE-LANE-2`; the program is
+// card `CT07-SLICE-PERMISSIONS`'s `disjoint_halves.qcore` shape, which is
+// also CT07's own case).
+//
+// Bytes 2 and 3 lie outside both `[0, 2)` and `[4, 6)`, so the writes are
+// admitted and the third view reads them back. The case's refusal is
+// therefore keyed to the overlap — `max low < min high` on the write's
+// one-byte range against each live loan — and not to writing a borrowed
+// buffer at all.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(6);
+    store[0] = 97;
+    store[1] = 98;
+    store[2] = 99;
+    store[3] = 100;
+    store[4] = 101;
+    store[5] = 102;
+
+    let head = borrow_utf8(store, 0, 2);
+    let tail = borrow_utf8(store, 4, 6);
+
+    store[2] = 88;
+    store[3] = 89;
+
+    print head;
+    print tail;
+
+    let middle = borrow_utf8(store, 2, 4);
+    print middle;
+
+    drop store;
+    return;
+}

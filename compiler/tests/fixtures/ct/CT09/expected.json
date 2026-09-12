@@ -1,0 +1,55 @@
+{
+  "id": "CT09",
+  "verdict": "sequential_sanitized",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "sequential_whole_program",
+    "sequential_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.record.v1 (card AGGREGATES-V1) on source.buffer.v1. Three declared fields, one value constructed with three different numbers, all three read back and printed, then a second value of the same type read in a different order - a model that aliased two fields or a lowering that gave two fields one C member would print one value twice, so the per-stream byte comparison against the sanitized native run is a check of distinctness rather than a restatement of it. HONESTY BOUNDARY (AGGREGATE-CT09-LAYOUT): the ACCESS proof is supplied - construction totality, projection soundness and distinctness are checked, and the bad_field control refuses a read outside the declaration - but the LAYOUT leg is an executed sanitized byte-comparison OBSERVATION, not a proof. That a C compiler's designated initializer and member reads agree with the model is cross-checked by the comparison; nothing proves it, and the proof stage stays unassessed.",
+  "sequential_sanitized": {
+    "execution_profile": "StandardBufferV1",
+    "sanitizer_flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-g",
+      "-O0",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "asan_options": "detect_leaks=1:halt_on_error=1",
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "declared_stdout": [
+      "65",
+      "66",
+      "40"
+    ],
+    "declared_stderr": [
+      "[INFO] 9",
+      "[INFO] 1"
+    ],
+    "controls": [
+      {
+        "source": "bad_field.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q052",
+          "Q052"
+        ],
+        "note": "Access: the identical program with one read renamed to a field the type does not declare. Refused at check time with the whole cascade pinned (the undeclared projection, then the binding it would have fed), so a field read is admitted only against the declaration it projects from."
+      }
+    ]
+  }
+}

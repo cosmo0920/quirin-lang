@@ -1,0 +1,41 @@
+{
+  "id": "CT21",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q305",
+      "message_contains": "cleanup pack is not discharged"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate"
+  ],
+  "evidence_target": null,
+  "notes": "source.region.v1 (card QUANT-REGION-SOURCE), the first source path to RegionOp::QuantOpen. The region acquires one resource and raises, so the error edge seals a cleanup pack holding one live duty - positive access permission. `quant open R as pack` binds the pack as a linear capability which `discharge pack;` must consume exactly once, and this handler leaves without doing so: the opening discards the permission, and the unedited qcore_core::error_region model refuses at Q305, exactly the class CT21 expects. The attribution control adds the one discharge and is admitted (and emits), so the refusal is about discarding rather than about the region or the opening; the boundary control never opens the pack and is refused by the neighbouring rule at Q306, so neither way of walking away from live custody is writable. Archived reason retired: card T00's `no source path emits RegionOp::QuantOpen` was true when written and is not true on this tree.",
+  "sequential_reject": {
+    "diagnostic_sequence": [
+      "Q305"
+    ],
+    "controls": [
+      {
+        "source": "discharged.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "SequentialCleanupV1",
+        "note": "Attribution: the same region, the same opening, one `discharge pack;`. Admitted and emits, so the case's refusal is about discarding the opened pack's live permission."
+      },
+      {
+        "source": "unopened.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q306"
+        ],
+        "note": "Boundary: the same nonempty pack caught by a clause that does not open it - refused by the neighbouring rule of the same model (a nonempty pack may not be caught unopened), which separates the discard-after-opening refusal from the never-opening one."
+      }
+    ]
+  }
+}

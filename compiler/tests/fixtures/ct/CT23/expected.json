@@ -1,0 +1,92 @@
+{
+  "id": "CT23",
+  "verdict": "epoch_credit_split",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q635",
+      "message_contains": "CreditAbandonedAtErrorArm { task: 1, axis: \"effort\", abandoned: 100 }"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "epoch_lowering",
+    "task_lowering",
+    "task_ledger_check",
+    "epoch_bound_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.epoch.tasks.v1 (cards T08-COMPOSE and CT23-CREDIT-ERROR-PATH): a flat-epoch plan over a real checked scoped-task region whose creator has both error edges - the creation can fail (throws<SpawnError>) and the join can observe a raised child (the worker declares throws<AllocError>), which is the edge on which the child existed and held the grant. The plan's `error(close);` declares that the creator's own error edge abandons the credit the epoch granted the creation: neither restored nor spent, credit that no exit accounts for. Refused with the exact cascade [Q635], the flat epoch's outstanding-at-the-epoch-exit band, naming the task and the abandoned figure - which is CT23's scenario, `parent abandons child-owned credit during its own error`, expected Reject. Every quantity is a DECLARED figure under the four unchanged FlatEpochBoundV1 premises (DeclaredTaskFootprints and its siblings); the checked task IR carries no credits, so the derived half is the error-edge SHAPE and the declared half is the disposition, checked against the grant the epoch actually makes. The four admitting controls pin the accounting law restored + spent = credit on every disposition including a real partial division, and the minted control pins the other refused direction (restoring more than the grant, Q636).",
+  "epoch_credit_split": {
+    "execution_profile": "ComposedEpochTasksV1",
+    "diagnostic_sequence": [
+      "Q635"
+    ],
+    "granted": {
+      "effort": 100,
+      "memory": 4096
+    },
+    "controls": [
+      {
+        "source": "restored.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "spent": {},
+        "note": "The whole grant returns to the epoch on the error edge: error(move); resolved against the row's own credit clause. Admitted with restored = credit and nothing spent."
+      },
+      {
+        "source": "spent.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {},
+        "spent": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "note": "The conservative disposition, spelled: error(drop); - the creator's failure handling spends the whole grant."
+      },
+      {
+        "source": "no_arm.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {},
+        "spent": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "note": "Attribution: removing exactly the error(...) clause removes the refusal, and the elided arm publishes the identical all-spent split spent.qcore publishes - eliding is spelling the conservative reading, so no pre-existing epoch program changed."
+      },
+      {
+        "source": "partial.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {
+          "effort": 25,
+          "memory": 1024
+        },
+        "spent": {
+          "effort": 75,
+          "memory": 3072
+        },
+        "note": "Boundary: error(move 1024 effort 25); - the split is a real componentwise division of the grant, not a flag, and it adds back to the grant on both axes."
+      },
+      {
+        "source": "minted.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q636"
+        ],
+        "restored": {},
+        "spent": {},
+        "note": "The other refused direction: error(move 8192 effort 200); restores more than the epoch ever granted, refused per task and per axis at Q636 (RestoredCreditExceedsGrant), so the error path cannot mint credit into the epoch."
+      }
+    ]
+  }
+}

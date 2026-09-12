@@ -1,0 +1,20 @@
+// CT21: "Quant opening discards positive access permission", expected Reject
+// (card `CT-WIRE-LANE-2`; the construct is card `QUANT-REGION-SOURCE`'s).
+//
+// The region acquires one resource and raises, so on the error edge the frame
+// seals into a cleanup pack holding one live duty — positive access
+// permission. `quant open R as pack` binds that pack as a linear capability,
+// and this handler walks away without the one `discharge pack;` that must
+// consume it. The opening therefore discards the permission the pack holds,
+// which is exactly what the unedited `qcore_core::error_region` model refuses
+// (`Q305`: cleanup pack is not discharged).
+error Failure { Failed; }
+
+fn main() -> i32 {
+    error region R {
+        let a = qcore_acquire(1, true, Failure);
+        qcore_check(false, Failure);
+    } catch (Failure) quant open R as pack {
+    }
+    return 0;
+}

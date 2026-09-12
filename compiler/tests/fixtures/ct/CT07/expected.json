@@ -1,0 +1,59 @@
+{
+  "id": "CT07",
+  "verdict": "sequential_sanitized",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "sequential_whole_program",
+    "sequential_reference_execution",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.string.v1 with card CT07-SLICE-PERMISSIONS's range-wise borrow_utf8(NAME, LOW, HIGH). Two loans of [0, 2) and [4, 6) of one six-byte buffer are live at the same time while the owner writes bytes 2 and 3 between them; the writes are admitted because disjointness is decided at check time (max low < min high, exact because every bound is a check-time constant), and a third view then reads the written bytes back so the admission is visible in the observation. BOUNDARY, stated as the semantic profile states it: one of the two disjoint permissions is a READ loan and the other is the owner's retained write authority - this is disjoint permission over two ranges, not two parties each holding write authority (that lend is unlanded residual SLICE-PERMISSIONS-WRITE-LEND). The bounds half is the out_of_extent control's Q077 refusal; the disjointness half is the overlapping control's Q078 refusal, which is CT08's own case shape.",
+  "sequential_sanitized": {
+    "execution_profile": "StandardStringV1",
+    "sanitizer_flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-pedantic",
+      "-g",
+      "-O0",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "asan_options": "detect_leaks=1:halt_on_error=1",
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "declared_stdout": [
+      "ab",
+      "ef",
+      "XY"
+    ],
+    "declared_stderr": [],
+    "controls": [
+      {
+        "source": "overlapping.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q078"
+        ],
+        "note": "Disjointness: the identical program with one byte of the write moved inside head's [0, 2). Refused naming the footprint, so the case's admission is a decided disjointness rather than a route that admits owner writes anywhere. This program is CT08's own case."
+      },
+      {
+        "source": "out_of_extent.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q077"
+        ],
+        "note": "Bounds: the identical program with one byte of the write moved past the declared extent. Refused at check time by source.buffer.v1's own bounds rule, reported at Q077 on this composed route - a refusal, not a run-time trap."
+      }
+    ]
+  }
+}

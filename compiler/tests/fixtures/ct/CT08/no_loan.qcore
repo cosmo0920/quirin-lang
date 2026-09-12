@@ -1,0 +1,29 @@
+// CT08's attribution control: the identical write with **no loan live** at
+// the moment it runs (card `CT-WIRE-LANE-2`).
+//
+// `store[1] = 88;` is the very statement the case refuses, admitted here
+// because no `borrow_utf8` range exists yet when it executes — the
+// whole-extent view is taken only afterwards, and its render shows the write
+// landed. So the case's refusal is about the overlap between the write's
+// range and a *live* loan's range, not about the write itself.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(6);
+    store[0] = 97;
+    store[1] = 98;
+    store[2] = 99;
+    store[3] = 100;
+    store[4] = 101;
+    store[5] = 102;
+
+    store[1] = 88;
+
+    let all = borrow_utf8(store);
+    print all;
+
+    drop store;
+    return;
+}
