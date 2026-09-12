@@ -33,7 +33,7 @@ codes, zero new reserved words, zero new tokens.
   statement is an **equation** with `QCore.StringConcat.excluded` — the
   definition the route has run since card `STRING-CONCAT`.
 
-**24** end-to-end tests in `compiler/tests/slice_permissions.rs`, one of them a
+**25** end-to-end tests in `compiler/tests/slice_permissions.rs`, one of them a
 sanitized native run with a positive leak control. **39** declarations in a new
 `QCore.SlicePermissions`, **36** of them audited by name. Two published fixture
 programs a CT lane can point at. **Corpus-neutral by construction** (§9).
@@ -65,7 +65,7 @@ lend, where two parties each hold exclusive authority over their own range. This
 card lends **read** permission and leaves the write authority with the owner, so
 what it needed was a range on the route's own window and nothing else.
 
-The follow-on that does need the fraction is named in §10 as
+The follow-on that does need the fraction is named in §13 as
 **`SLICE-PERMISSIONS-WRITE-LEND`**, and §8 says exactly what CT07 can and cannot
 claim because of the difference.
 
@@ -282,6 +282,26 @@ decided against `len(s)`; this is a bound on an owned **buffer** decided against
 its declared extent, and the `Q076`-rather-than-`Q069` and
 `Q079`-rather-than-`Q070` precedents both govern.
 
+### 6.1 The one refusal that moves, measured and pinned
+
+Making the decision range-wise moves exactly one pre-card program's **code**,
+and it is worth naming rather than leaving to be discovered.
+
+```qcore
+let b = bytes(4); …            let s = borrow_utf8(b);   b[9] = 122;
+```
+
+Before this card, *any* store into a borrowed buffer was refused at `Q078`,
+including one whose index is outside the buffer. Byte 9 is now provably outside
+every live loan's range — a whole-extent loan of a four-byte buffer is
+`[0, 4)` — so the exclusion does not fire and the statement reaches
+`source.buffer.v1`'s own bounds rule, which reports it at `Q077` carrying that
+model's own message ("index 9 is outside `b`, whose declared extent is 4
+bytes"). The program is refused either way; what changed is that the reader is
+now told the fault is the index rather than the borrow, which is the better of
+the two answers. `an_out_of_extent_write_under_a_whole_loan_is_reported_by_the_buffer_model`
+pins it in the new state, and no shipped test pinned it in the old one.
+
 ---
 
 ## 7. Keyword census (standing constraint 14): zero new words, zero new tokens
@@ -354,9 +374,9 @@ editing the wave-26 record.
 
 ## 9. Corpus neutrality
 
-By construction. **Fifteen files**, and the list is short enough to read whole:
+By construction. **Eighteen files**, and the list is short enough to read whole:
 three in `crates/qcore-core` and `crates/qcore-frontend` (the model, the emitter,
-the parser), five normative or design documents, two Lean files plus the one
+the parser), six normative or design documents, two Lean files plus the one
 import line in `proof/QCore.lean`, one test file, two fixtures, and this report
 with its two artifacts.
 
@@ -433,21 +453,39 @@ on `PATH`.
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree **before** the workspace run |
-| `cargo test --workspace --no-fail-fast` | **GATE-WORKSPACE** |
+| `cargo test --workspace --no-fail-fast` | **4,234 passed, 0 failed, 8 ignored** across **212** result lines, exit **0** — §11.1 |
 | `cargo fmt --all -- --check` | exit **0** |
 | `cargo clippy --all-targets -- -D warnings` | exit **0** |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | **GATE-PROBE** |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | **GATE-FOLLOWUP** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
 | `python3 scripts/check_lean_audits.py` | **Passed 111 Lean audits** (110 → 111: `AuditSlicePermissions.lean`), no project axiom, exit **0** |
-| `python3 -m unittest discover -s scripts/tests` | **GATE-PYTHON** |
-| `compiler/tests/slice_permissions.rs` | **24 passed, 0 failed** |
+| `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 expected failure** — §11.3 |
+| `compiler/tests/slice_permissions.rs` | **25 passed, 0 failed** |
 | `compiler/tests/string_concat.rs` | **53 passed, 0 failed** (unmoved) |
 | `compiler/tests/std_string.rs` | **62 passed, 0 failed** (unmoved) |
 | `compiler/tests/string_slice_io.rs` | **37 passed, 0 failed** (unmoved) |
 | `compiler/tests/std_buffer.rs` | **52 passed, 0 failed** (unmoved) |
 | `compiler/tests/source_loop.rs` | **39 passed, 0 failed** (unmoved) |
 
-### 11.1 The Lean toolchain is not on the default `PATH`
+### 11.1 The workspace row, and what its number is against
+
+`cargo test --workspace --no-fail-fast` exits **0** with
+**4,234 passed, 0 failed, 8 ignored** across **212** result lines. The
+wave-26 close measured 4,209 (8 ignored); the difference is this card's own test
+file and nothing else. **No `P02-FLAKE` row tripped** (standing constraint 16):
+the three of the five that live in this workspace suite —
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` and
+`memory_growth_beyond_the_declared_limit_is_bounded` — each passed on the first
+attempt of the complete run, so none needed verifying in isolation. The other
+two live in the separate `providers/` workspace, which this card neither touches
+nor ran (§9).
+
+The submodule was initialised **before** the run rather than after it, so none
+of the environment-gap rows cards `STD-EVENT`, `STRING-SLICE-IO` and
+`STRING-CONCAT` each recorded in their own fresh worktrees appears here.
+
+### 11.2 The Lean toolchain is not on the default `PATH`
 
 `lean`, `lake` and `elan` live at `$HOME/.elan/bin` and are **not** on this
 worktree's default `PATH`; `scripts/check_lean_audits.py` reports a missing
@@ -457,7 +495,15 @@ environment note cards `STRING-SLICE`, `STRING-SLICE-IO` and `STRING-CONCAT` eac
 recorded, and it recurred; the worktree-private `measure/lean_gate.sh` exists
 only to export that directory.
 
-### 11.2 Measurement hygiene
+### 11.3 One expected Python failure, left for the integrator
+
+`test_the_derived_facts_are_recomputed_rather_than_carried` reports
+`lean_audits: 110 != 111`. That is the derived-value tripwire working as
+designed: this card adds one audited Lean module, and
+`docs/reviews/r0_3/acceptance_matrix.json` — which this card may not edit —
+carries the pre-card count. §12 item 3. The other 192 Python tests pass.
+
+### 11.4 Measurement hygiene
 
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad. The workspace run is driven

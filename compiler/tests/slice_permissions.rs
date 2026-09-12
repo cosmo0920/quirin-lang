@@ -521,6 +521,36 @@ fn a_buffer_at_a_range_bound_refuses_where_every_other_scalar_position_refuses_o
 }
 
 #[test]
+fn an_out_of_extent_write_under_a_whole_loan_is_reported_by_the_buffer_model() {
+    // **The one place a pre-card program's refusal moves**, measured rather than
+    // discovered later. `b[9] = 122;` under a live whole-extent loan of a
+    // four-byte buffer was reported at `Q078` before this card, because *any*
+    // store into a borrowed buffer was. Byte 9 is now provably outside every
+    // live loan's range, so the exclusion does not fire and the statement
+    // reaches `source.buffer.v1`'s own bounds rule, which reports it at `Q077`
+    // carrying that model's own message.
+    //
+    // The program is refused either way, and the message a reader gets is the
+    // better of the two: the fault is the index, not the borrow. Recorded as a
+    // deliberate consequence of making the decision range-wise.
+    let mut body = abcd();
+    body.extend_from_slice(&[
+        "let s = borrow_utf8(b);",
+        "b[9] = 122;",
+        "print s;",
+        "drop b;",
+        "return;",
+    ]);
+    let source = module(&body);
+    assert_eq!(codes(&source), ["Q077"]);
+    assert!(
+        messages(&source)[0].contains("outside `b`, whose declared extent is 4 bytes"),
+        "{:?}",
+        messages(&source)[0]
+    );
+}
+
+#[test]
 fn a_two_argument_bridge_still_refuses_by_shape() {
     // A range needs both of its ends, so the arity is one or three and nothing
     // between. This is card `STRING-CONCAT`'s pinned refusal, unmoved.
