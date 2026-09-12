@@ -1,0 +1,59 @@
+// A record beside a real resource: the aggregate carries the numbers, the
+// buffer carries the custody, and the two do not mix.
+//
+// `Rgb` supplies three stored *values* and `Write` supplies an *index* and a
+// value for the fourth store — a field read binds an ordinary scalar of the
+// route's environment, so it stands anywhere a check-time-constant integer
+// does: a stored byte, an index, a rendering operand. Nothing was added to
+// make that so.
+//
+// The custody line is the contrast this program exists to draw. `pixels` is
+// acquired and must be dropped — remove the `drop` and the unedited ownership
+// checker refuses at `Q054` — while `c` and `w` are constructed and simply go
+// out of scope: a record is a value, not a resource, and `drop c;` would
+// refuse at `Q052` ("is not a buffer this entry acquired"). The four bytes
+// printed back are `QCor` in ASCII, the same payload the loops family copies.
+
+import std.buffer;
+import std.fmt;
+import std.io;
+
+type Rgb { red: i32, green: i32, blue: i32 }
+type Write { at: i32, value: i32 }
+
+fn main() -> unit effects { io, alloc, mut } {
+    let c = Rgb { red: 81, green: 67, blue: 111 };
+
+    let r = c.red;
+    let g = c.green;
+    let bl = c.blue;
+
+    // A store has two operands, an index and a value, so it is assembly
+    // rather than flow and stays a statement — no pipe spelling exists for it.
+    let pixels = bytes(4);
+    pixels[0] = r;
+    pixels[1] = g;
+    pixels[2] = bl;
+
+    // The fourth write is driven entirely out of a record: the index and the
+    // value are both field reads.
+    let w = Write { at: 3, value: 114 };
+    let i = w.at;
+    let v = w.value;
+    pixels[i] = v;
+
+    // Read all four back and print them. Each scalar flows straight into one
+    // sink, so these are piped.
+    let first = pixels[0];
+    let second = pixels[1];
+    let third = pixels[2];
+    let fourth = pixels[3];
+    first |> print dec;
+    second |> print dec;
+    third |> print dec;
+    fourth |> print dec;
+
+    // The buffer owes a release; the records owe nothing.
+    drop pixels;
+    return;
+}
