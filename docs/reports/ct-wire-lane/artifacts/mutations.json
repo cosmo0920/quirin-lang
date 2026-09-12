@@ -1,0 +1,128 @@
+[
+  {
+    "id": "M01",
+    "mutation": "CT49 claims its standard-error relation is strict",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT49: if this case's own stream relation were strict it would be measuring byte equality under another name"
+  },
+  {
+    "id": "M02",
+    "mutation": "CT49 drops the parent-only control that keeps byte equality",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT49: the partial order must be bounded by a control that keeps byte equality, or the mapping reads as a corpus-wide weakening"
+  },
+  {
+    "id": "M03",
+    "mutation": "CT49 inflates c_emission to one emission per run",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: acceptance.json `observation_counts` is not what the manifest's stage evidence derives"
+  },
+  {
+    "id": "M04",
+    "mutation": "CT49 keeps the sanitizer gate but records native_sanitized unassessed",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: acceptance.json `stage_histogram` is not what the manifest's stage evidence derives"
+  },
+  {
+    "id": "M05",
+    "mutation": "CT49's ambiguous-alphabet control is claimed to derive a strict relation",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT49: a relation that is never refused is not a premise"
+  },
+  {
+    "id": "M06",
+    "mutation": "CT49's declared standard-error rendering loses its trailing barrier line",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: CT49: the reference's standard error drifted from the pinned rendering"
+  },
+  {
+    "id": "M07",
+    "mutation": "CT49's concurrent window is widened to swallow both barriers",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT49: a relation with no barrier on either side of the concurrent window would not pin where commuting stops"
+  },
+  {
+    "id": "M08",
+    "mutation": "CT11 declares the task route instead of the sequential one",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: CT11: the declared route must be the one this verdict mode really takes"
+  },
+  {
+    "id": "M09",
+    "mutation": "CT06 drops both accepting controls, keeping only the refusal",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT06: a sequential-route rejection needs an admitted control, or the refusal is only `this route cannot express the program at all`"
+  },
+  {
+    "id": "M10",
+    "mutation": "CT06's attribution control is claimed to be refused rather than admitted",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT06 control no_copy.qcore must be refused"
+  },
+  {
+    "id": "M11",
+    "mutation": "CT11 pins a convenient subset of the cascade (an empty vector)",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT11: a sequential-route rejection pins its exact ordered code vector"
+  },
+  {
+    "id": "M12",
+    "mutation": "CT11 goes back to unmapped while its fixture exists",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: mapped CT case count"
+  },
+  {
+    "id": "M13",
+    "mutation": "the CT11 retirement is dropped from this lane's own record",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "CT11: docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json records an unmapped-case bucket, but the manifest maps this case"
+  },
+  {
+    "id": "M14",
+    "mutation": "the retirement names a record that holds no row for CT11",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: CT11: docs/reports/ct-wire-lane/ct_stage_evidence.json retires the bucket in docs/reports/wave17-ct40/ct_stage_evidence.json, but the record holding it is docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json"
+  },
+  {
+    "id": "M15",
+    "mutation": "this lane's record inflates CT49's own sanitized run count",
+    "gate": "python3 scripts/ct_stage_summary.py . --check",
+    "refused": true,
+    "by": "DRIFT: CT49/native_sanitized: manifest counts 16 runs, docs/reports/ct-wire-lane/ct_stage_evidence.json counts 32"
+  },
+  {
+    "id": "M16",
+    "mutation": "acceptance.json is left at the wave-25 ct_mapped: 33",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: ct_mapped is generated from the manifest"
+  },
+  {
+    "id": "M17",
+    "mutation": "this lane's record is removed from the Python generator's file set",
+    "gate": "python3 scripts/ct_stage_summary.py . --check",
+    "refused": true,
+    "by": "CT11: docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json records an unmapped-case bucket, but the manifest maps this case"
+  },
+  {
+    "id": "M18",
+    "mutation": "CT06 credits its parse stage to CT11's artifact",
+    "gate": "cargo test -p qcore-compiler --test ct_corpus",
+    "refused": true,
+    "by": "assertion `left == right` failed: CT06: `parse` must name the exact file its runner executed \u2014 the case's own fixture, or the one control this harness derives a native run for"
+  }
+]

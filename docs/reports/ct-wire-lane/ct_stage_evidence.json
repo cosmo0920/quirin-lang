@@ -378,7 +378,7 @@
       "follow_on": "CT47-COPY-CAPTURE"
     }
   },
-  "unmapped_reasons_provenance": "Four rows, each measured on this tree rather than inherited. CT07 and CT08 move bucket: their archived label - `blocked-on-unimplemented-syntax` - is no longer accurate now that indexed arrays, check-time bounds and a counted loop all exist, and the measured obstacle is one specific missing surface. Both were held by card T00's frozen archive, not by a lane record, so neither declares a supersession: a lane label beats the archive by the resolution rule and declaring that would be vacuous. CT24 and CT47 keep their archived DECIDABLE-NOW buckets, because re-verification reaching the same classification is the record saying the label still holds, and only their reasons move. The remaining ten unmapped cases carry no row from this lane: CT09, CT10, CT21, CT22, CT23, CT25 and CT44 were re-read rather than re-measured, and CT41, CT42 and CT46 keep the rows the wave-17 and wave-13 lanes measured. Re-reading is not measuring, and this record publishes only what was run.",
+  "unmapped_reasons_provenance": "Two labelled rows, both measured on this tree rather than inherited: CT07 and CT08 move bucket, because their archived label - `blocked-on-unimplemented-syntax` - is no longer accurate now that indexed arrays, check-time bounds and a counted loop all exist, and the measured obstacle is one specific missing surface. Both were held by card T00's frozen archive rather than by a lane record, so neither declares a supersession: a lane label beats the archive by the resolution rule and declaring that would be vacuous. CT24 and CT47 were re-measured too and are written up under `cases_examined_and_left_unmapped` above, but deliberately carry NO labelled row: both are keys of the derived `newly_decidable_not_mapped_reasons` map, whose text is read out of the newest record that labels the case, so publishing a row here would change a DERIVED section of docs/reviews/r0_3/acceptance_matrix.json - which a card may not hand-edit and this card does not regenerate. Their classification is unchanged in any case (both keep card T00's DECIDABLE-NOW buckets, since re-verification reaching the same classification is the record saying the label holds), so nothing measured is lost: the measurements are in this record's prose, in docs/reviews/r0_3/acceptance.json's own hand-kept reasons, and in docs/reports/ct-wire-lane/README.md sections 3.5 and 3.8. A later lane that wants the derived map to carry them publishes the rows and regenerates the matrix in the same change. The remaining ten unmapped cases carry no row from this lane: CT09, CT10, CT21, CT22, CT23, CT25 and CT44 were re-read rather than re-measured, and CT41, CT42 and CT46 keep the rows the wave-17 and wave-13 lanes measured. Re-reading is not measuring, and this record publishes only what was run.",
   "unmapped_reasons": {
     "CT07": {
       "bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
@@ -389,16 +389,6 @@
       "bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
       "reason": "As CT07: every index is decided at check time and refused out of extent, but nothing in any source route lends a range, so no route computes a relation between two ranges. The archived note that the harness has no `unknown` verdict also stands - `Unknown` belongs to the gateway's vocabulary, not to the source harness's accept/reject.",
       "measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane), measured on the same buffer surface as CT07; follow-on CT07-SLICE-PERMISSIONS"
-    },
-    "CT24": {
-      "bucket": "DECIDABLE-NOW (with a distinguishing fixture)",
-      "reason": "Re-measured, and the distinguishing fixture is the obstacle rather than the mapping. An explicit `drop` of a shared owner before the join is refused with Q600 LoanOutstanding naming the borrower, but the CLEANUP shape - a `?` leaving the thread scope with a child unjoined - is refused first at Q600 ScopeBusy, on the task obligation, so scope-exit cleanup never reaches the owner. The mechanism CT24 names cannot be brought into contact with the owner it is supposed to destroy.",
-      "measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane), two shapes measured; follow-on CT24-CLEANUP-PREEMPTED"
-    },
-    "CT47": {
-      "bucket": "DECIDABLE-NOW (coarser reason)",
-      "reason": "Re-measured. A modeless capture is refused by the grammar (Q000: `capture requires copy, move, read ... share, or write`), so there is no automatic cross-thread acceptance to reject; and a `copy` capture of an owned handle is refused only by the BACKEND (Q500), which is the `cannot express this at all` vacuity the attribution rule excludes. The language also has no raw pointer type for the case's premise to be about, so a mapping today would rest on a syntax gate plus an emission refusal.",
-      "measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane), three shapes measured; follow-on CT47-COPY-CAPTURE"
     }
   },
   "retired_unmapped_reasons": {

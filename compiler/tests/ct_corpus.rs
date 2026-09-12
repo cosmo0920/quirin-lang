@@ -4495,7 +4495,10 @@ fn build_reordering_binary(
     directory
 }
 
-fn run_reordering_binary(directory: &Path, reordering: &ReorderingPartialOrder) -> (String, String) {
+fn run_reordering_binary(
+    directory: &Path,
+    reordering: &ReorderingPartialOrder,
+) -> (String, String) {
     use std::process::Command;
     // Apple's AddressSanitizer ships no leak detector, so leak checking stays a
     // Linux observation — the standing platform boundary.
