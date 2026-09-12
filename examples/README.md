@@ -82,6 +82,15 @@ examples make it the same way every time:
 * A **written literal at a sink** is not a flow: `print "HTTP/1.1 200 OK";` has
   nothing to move to the front, so it stays as written.
 
+One published program is **not** yet spelled to the rule, and saying so here is
+cheaper than a rule with a silent exception:
+[strings/status_line.qcore](strings/status_line.qcore) writes `body |> print;`
+and then `body[7:12] |> print;`, so `body` is read by two statements and belongs
+on the fan-out side. Whether a *slice of* a value counts as a second reader, or
+as the assembly half of this rule, is an open question about the rule rather
+than about that program, and it is the one case where moving a line would mean
+un-piping rather than piping (`EXAMPLES-STYLE-SLICE-FANOUT`).
+
 Two families sit above this rule rather than under it, and deliberately:
 
 * [events/](events/) keeps its own standing rule — **every line in those
