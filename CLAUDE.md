@@ -38,7 +38,8 @@ the operational guidance that is in neither of those.
   `README.md` accrete: constraints restate their card reports, sections drift
   apart, README falls behind the ledger. A recurring compaction card
   (DOCS-COMPACT 2026-09-10, DOCS-COMPACT-2 2026-09-11, DOCS-COMPACT-3
-  2026-09-12 after wave 26; next due around wave 29) re-reads every headline
+  2026-09-12 after wave 26, DOCS-COMPACT-4 2026-09-13 after wave 29; next due
+  around wave 32) re-reads every headline
   number from its source, inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
   hard invariant or evidence pointer may be dropped, and a fact that lives only
@@ -101,6 +102,10 @@ requirements that are part of the gate.
     `windows_c` path is carried unchanged, but no Windows or Apple run was
     performed and none is claimed
     (`docs/reports/ct07-slice-permissions/README.md`).
+    `WRITE-LEND-WINDOWS-RUN` is its wave-29 sibling on the same footing: the
+    write-lend card's native test ran the Linux arm only, the `windows_c` path
+    carried unchanged, no Windows run claimed
+    (`docs/reports/slice-permissions-write-lend/README.md` §13).
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is

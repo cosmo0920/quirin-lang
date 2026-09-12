@@ -349,6 +349,47 @@ full suite.
 
 ## Increment records
 
+Wave 30, card `DOCS-COMPACT-4` (2026-09-13): the fourth recurring
+documentation compaction over `AGENTS.md`, `CLAUDE.md` and `README.md`, on the
+cadence `CLAUDE.md` schedules (precedents DOCS-COMPACT, DOCS-COMPACT-2,
+DOCS-COMPACT-3; next due around wave 32), with waves 27–29 as its material.
+Every headline number was re-read from its source and the ledger's wave-29
+figures all agree (74 contract modules, 118 Lean audits, 4,445 workspace
+tests, CT 42/50 mapped with sanitized-native 7 and proof 1 of 42, 39 named
+follow-ons, leak 266 / `unknown_alias` 4,344 / `unsupported` 49,760 at the
+`w29-corpus-contracts` baseline). Five drifts were found and fixed, none a
+close error in the ledger itself: the repository map still said 73 contract
+modules; constraint 25's aside still said "a live 73"; constraint 23 still
+carried the wave-26 CT numerators ("5 of 36 and proof 0 of 36") as if current;
+the diagnostics-table summary rows for `Q051`–`Q057`, `Q077` and `Q302` were
+behind §L21's recorded wave-28/29 condition widenings
+(`SLICE-PERMISSIONS-WRITE-LEND`, `REGION-CREDIT-JOINS`,
+`REGION-JOINS-DUTIES`); and constraint 14's census ledger and the Q-space
+note stopped at wave 27, while `CLAUDE.md`'s platform records lacked
+`WRITE-LEND-WINDOWS-RUN` beside its wave-27 sibling. The standing-constraint
+inventory is **44 before, 44 after — zero dropped, zero renumbered** (41
+bodies byte-identical; 14, 23 and 25 reworded, each preserving every count,
+keyword, census figure and rejected candidate), six hard invariants
+byte-identical, and no evidence pointer, residual name or diagnostics code
+lost (verified mechanically; one residual name gained,
+`WRITE-LEND-WINDOWS-RUN`, and constraint 14's pointer list now also cites the
+three wave-28/29 census reports, which 15h and 15m already cited). Constraints 15h and 15m, both superseded
+and amended since DOCS-COMPACT-3, needed no further reconciliation: no
+sentence in the three files still states the old "no write lend" or
+"duty-free pack" premises outside the amendments themselves. `README.md` was
+refreshed rather than compacted: records, the write lend, the ranged
+`borrow_utf8`, the quantitative error region (alone and composed after
+joins), the epoch error arm and the gateway's original-`file:line`
+presentation. Net sizes moved +2.9% / +4.0% / +7.5% (`AGENTS.md` 92,530 →
+95,189 B, `CLAUDE.md` 7,752 → 8,063 B, `README.md` 10,441 → 11,223 B) — this
+pass was synchronisation-heavy, the accretion being exactly the waves-28/29
+material the files had not yet absorbed, offset only partly by trims (the
+Q-space note's per-wave runs merged, a duplicated baseline pointer removed).
+`EXAMPLES-STYLE-SLICE-FANOUT` remains an open user decision, flagged in
+`examples/README.md` and untouched. No crate source, no spec, no frozen
+archive, no manifest and no matrix file changed; corpus-neutral by
+construction. Evidence: `docs/reports/docs-compact-4/README.md`.
+
 Wave 30, card `CT-PROOF-LEG-2` (2026-09-13): the **second proof-stage
 capability**, on the CT01 precedent — delivered without flipping the row: the
 manifest, the acceptance matrix, `acceptance.json` and `ct_corpus.rs` are

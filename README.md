@@ -22,7 +22,8 @@ Two things live here, and they are useful to keep apart:
   to C11 with a tagged-error ABI and explicit cleanup.
 - **The gateway.** A checker that reads unmodified C, models what it can, and
   answers `Unknown` for everything it cannot — it never guesses in the
-  optimistic direction.
+  optimistic direction. Its diagnostics name the original pre-preprocessing
+  `file:line`.
 
 ## What the type system tracks
 
@@ -52,8 +53,8 @@ guessed. Capabilities are opt-in per file through the `std` module family:
 | `std.concurrency` | scoped tasks, checked mutexes, epoch bounds, disjoint footprints |
 | `std.fmt` / `std.io` / `std.logger` | rendered `print`, `log`, `flush` lines and declared log levels |
 | `std.extern` (plus `std.extern.unsafe`) | bounded declared extern calls; adding the second import is explicit unchecked linkage, scalars only, every pointer refused |
-| `std.buffer` | the owned, extent-carrying byte buffer |
-| `std.string` | immutable UTF-8 `{ptr, len}` string views, and text the compiler **composes**: `concat(…)` of check-time-known pieces into static storage, `dec`/`hex` of a bound integer, `borrow_utf8` bridging an owned buffer |
+| `std.buffer` | the owned, extent-carrying byte buffer; plain-value **record** types over it (`type Name { field: i32, … }`, construction and field read); and the range **write lend** — `lend(b, lo, hi)` hands write authority over a byte range to a loan, two loans admitted exactly when their ranges are disjoint |
+| `std.string` | immutable UTF-8 `{ptr, len}` string views, and text the compiler **composes**: `concat(…)` of check-time-known pieces into static storage, `dec`/`hex` of a bound integer, `borrow_utf8` bridging an owned buffer — whole-extent or a declared byte range |
 | `std.event` | the checked event/reactor surface over descriptor custody |
 | `std.socket` | checked TCP and UDP over loopback, both ends in one program — including **declared** IPv4/IPv6 addresses with ports, resolved at check time against this program's own binds |
 | `std.http` | a checked HTTP/1.1 message subset whose framing the compiler constructs and whose `Content-Length` it **decides**, written or computed |
@@ -61,9 +62,15 @@ guessed. Capabilities are opt-in per file through the `std` module family:
 Also admitted at source level: the `|>` pipe operator, `if`/`else` branching
 with a decidable condition tier, the counted loop `for i in 0..n` over the owned
 buffer (with an opt-in, checked-never-trusted unroll licence under a three-layer
-budget), `extern library NAME;` native-library binding, and several composed
-profiles — extern × rendered lines, tasks × rendered lines, events × rendered
-lines, and a checked socket registered with the event reactor. Concurrency is
+budget), `extern library NAME;` native-library binding, the quantitative
+**error region** (`error region … catch … quant open … discharge`) — which
+compiles to the byte-identical straight-line program it checks, alone and
+composed onto the epoch task route where its sealed pack carries real cleanup
+duties discharged after every join — a declared error arm over epoch credits
+(`error(move|drop|close);`, with `restored + spent = credit` checked per task),
+and several composed profiles — extern × rendered lines, tasks × rendered
+lines, events × rendered lines, and a checked socket registered with the event
+reactor. Concurrency is
 unavailable without its file-local import, and the checked concurrency models
 are exposed from the Rust kernel as `qcore_core::prelude::concurrency` with a
 matching bounded Lean entry point, `QCore.ConcurrencyPrelude` — see the
@@ -103,9 +110,10 @@ denominator.
 The conformance-case corpus stands at **42 of 50 mapped**, with 8 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
 means the harness now runs it, not that anything new was proved. Of the 42
-mapped, 7 carry a sanitized native run and 1 carries a proof stage — the
-first: CT01's scenario property proved in Lean of the checked artifact's
-reference run, with native execution still covered by observation only.
+mapped, 7 carry a sanitized native run and 2 carry a proof stage — CT01 and
+CT37, each a scenario property proved in Lean of the checked artifact's
+reference run and its admitted renderings, with native execution still
+covered by observation only.
 
 Verdict vocabulary, invariants, per-increment evidence and the full cycle
 narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
