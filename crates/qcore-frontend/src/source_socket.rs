@@ -8,14 +8,17 @@
 //!               ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 //! stmt      ::= "let" NAME "=" ["-"] INTEGER ";"
 //!             | "let" NAME "=" ("tcp" | "udp") ";"        -- create, acquiring custody
-//!             | "bind" NAME ";"                           -- loopback, kernel-chosen port
+//!             | "bind" NAME ";"                           -- IPv4 loopback, kernel-chosen port
+//!             | "bind" NAME ADDRESS ";"                   -- the address this program DECLARES
 //!             | "listen" NAME ";"
 //!             | "connect" NAME NAME ";"                   -- to a listener of THIS program
+//!             | "connect" NAME ADDRESS ";"                -- to that same listener, by address
 //!             | "let" NAME "=" "accept" NAME ";"          -- acquire the accepted socket
 //!             | "send" NAME PAYLOAD ";"
 //!             | "recv" NAME INTEGER ";"
 //!             | "let" NAME "=" "recv" NAME ";"            -- one byte, bound
 //!             | "sendto" NAME NAME PAYLOAD ";"
+//!             | "sendto" NAME ADDRESS PAYLOAD ";"
 //!             | "recvfrom" NAME INTEGER ";"
 //!             | "let" NAME "=" "recvfrom" NAME ";"        -- one byte, bound
 //!             | "close" NAME ";"                          -- release
@@ -31,6 +34,8 @@
 //!             | "return" ";"
 //! PAYLOAD   ::= "[" OPERAND {"," OPERAND} "]"
 //! OPERAND   ::= ["-"] INTEGER | NAME
+//! ADDRESS   ::= IPV4 ":" PORT | "[" IPV6 "]" ":" PORT
+//! PORT      ::= INTEGER | NAME                -- a check-time-constant binding
 //! INTEREST  ::= "read" | "write"
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
@@ -99,6 +104,24 @@
 //! is decided before emission — which is what lets the checker predict what each
 //! receive takes and the emitted program verify it.
 //!
+//! # Declared addresses add **no** reserved word and change **no** lexer rule
+//!
+//! Card `SOCKET-INET-ADDRESSES` lets a `bind` spell the address it binds and a
+//! `connect`/`sendto` name their target by an address. It reserves nothing: an
+//! address is read back out of the tokens the existing lexer already produces —
+//! a dotted quad is `Float Dot Float` because `127.0` is a float spelling, `::`
+//! is the existing atomic `ColonColon`, `[` and `]` are the existing brackets and
+//! `[|` still wins over `[` by longest match. An address position is told from a
+//! name position by the one fact that **every address of this route spells a
+//! port**, so its token run carries a `:`; the run's tokens must be lexically
+//! adjacent, which is what makes `127.0.0.1 : 8080` not an address.
+//!
+//! A declared address is **not** a spelled peer: the checker resolves a target
+//! address against the addresses this same program's own binds declared, and one
+//! no bind answers to refuses at `Q085` by name (`SOCKET-EXTERNAL-PEER`). A
+//! hostname refuses at `Q080` by name, because there is no name resolution here
+//! and a resolved name is a value the checker cannot compute (`SOCKET-DNS`).
+//!
 //! # What this lowering does not establish
 //!
 //! It decides no custody, no transport state and no determinism question: it
@@ -113,6 +136,7 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use qcore_core::socket_address::{AddressRefusal, Endpoint, SocketAddress, parse_socket_address};
 use qcore_core::std_event::Interest;
 use qcore_core::std_socket::{
     MAX_PAYLOAD, SocketKind, SocketOperand, SocketPayload, SocketProgram, SocketStatement,
@@ -237,6 +261,156 @@ fn literal_text<'a>(window: &'a [&Token], cursor: usize) -> Option<&'a str> {
     }
 }
 
+/// The exact source text of one token, for the tokens an address is built from.
+///
+/// **This is the whole of the card's lexer story.** `SOCKET-INET-ADDRESSES` adds
+/// no token, changes no lexer rule and reserves no word: an address is read back
+/// out of the tokens the existing lexer already produces, by the text each one
+/// carries. The census in the card report records what those tokens are — a
+/// dotted quad is always `Float Dot Float` (because `127.0` is a float spelling
+/// and the second `.` cannot begin one), `::` is the existing atomic
+/// `ColonColon`, and `[` and `]` are the existing brackets, `[|` still winning
+/// by longest match so the `[| |]` quantitative surface is untouched.
+///
+/// `None` for every other token, which is what terminates a run.
+fn token_text(token: &Token) -> Option<String> {
+    match &token.kind {
+        TokenKind::Word(text) | TokenKind::Integer(text) | TokenKind::Float(text) => {
+            Some(text.clone())
+        }
+        TokenKind::Symbol(Symbol::Dot) => Some(".".to_owned()),
+        TokenKind::Symbol(Symbol::Colon) => Some(":".to_owned()),
+        TokenKind::Symbol(Symbol::ColonColon) => Some("::".to_owned()),
+        TokenKind::Symbol(Symbol::LeftBracket) => Some("[".to_owned()),
+        TokenKind::Symbol(Symbol::RightBracket) => Some("]".to_owned()),
+        // `%` is here **so that a zone identifier can be refused by its own
+        // name**. Without it the run would stop at the `%` and the truncated
+        // text would refuse as a malformed address, which would hide the reason:
+        // a zone names an interface of the running host, not a constant this
+        // checker can evaluate. A zone whose name is a *word* additionally
+        // reaches name resolution first and refuses there.
+        TokenKind::Symbol(Symbol::Percent) => Some("%".to_owned()),
+        _ => None,
+    }
+}
+
+/// The maximal run of **lexically adjacent** address tokens starting at
+/// `cursor`, and the cursor after it.
+///
+/// Adjacency — the previous token's end being exactly this one's start — is what
+/// makes an address one lexeme to the reader's eye and two different things to
+/// this reader: `127.0.0.1:8080` is an address and `127.0.0.1 : 8080` is not,
+/// which is why the run stops rather than joining across a space. It is also what
+/// separates an address from the statement's own `;`, from a payload's `[`, and
+/// from a socket name written beside it.
+///
+/// `None` when the run carries no `:` at all, because **every address of this
+/// route names a port**: that single fact is what lets one reader tell an address
+/// position from a name position without a keyword, and it is why the card adds
+/// no reserved word.
+fn address_run(window: &[&Token], cursor: usize) -> Option<(String, usize)> {
+    let mut text = String::new();
+    let mut at = cursor;
+    let mut end: Option<usize> = None;
+    while let Some(token) = window.get(at) {
+        if let Some(previous) = end
+            && previous != token.span.start
+        {
+            break;
+        }
+        let Some(piece) = token_text(token) else {
+            break;
+        };
+        text.push_str(&piece);
+        end = Some(token.span.end);
+        at += 1;
+    }
+    if text.contains(':') {
+        Some((text, at))
+    } else {
+        None
+    }
+}
+
+/// Read one declared address, reporting why a spelling is not one.
+///
+/// The refusal codes are this route's own and no new one is allocated: a
+/// spelling that is not an address is a **shape** fault (`Q080`), and an integer
+/// port literal outside `0..=65535` is a **range** fault (`Q084`), which is the
+/// one condition this card widens — from a byte, a payload length and a receive
+/// count to those and a port.
+fn lower_address(
+    window: &[&Token],
+    cursor: usize,
+    refusals: &mut Refusals,
+) -> Option<(SocketAddress, usize)> {
+    let Some((text, next)) = address_run(window, cursor) else {
+        refuse(refusals, "Q080", AddressRefusal::Empty.to_string());
+        return None;
+    };
+    match parse_socket_address(&text) {
+        Ok(address) => Some((address, next)),
+        Err(refusal @ AddressRefusal::PortRange(_)) => {
+            refuse(refusals, "Q084", refusal.to_string());
+            None
+        }
+        Err(refusal) => {
+            refuse(refusals, "Q080", refusal.to_string());
+            None
+        }
+    }
+}
+
+/// The token index range of a statement's **address host**, for the one narrow
+/// exclusion card `SOCKET-INET-ADDRESSES` asks of name resolution.
+///
+/// # Why an exclusion is needed at all, and why this one is exact
+///
+/// `lexical_references` collects the words of a statement as *referenced names*.
+/// The host half of an address is spelled with words — a hexadecimal IPv6 group
+/// like `fe80` lexes exactly as an identifier does, and so does every label of a
+/// hostname — so without an exclusion `bind s [fe80::1]:80;` refuses at `Q013`
+/// naming `fe80` as an unknown name, and `connect c example.com:80;` refuses the
+/// same way instead of saying **why** a hostname is not an address. That is the
+/// hazard `STRING-SLICE` met with `len` and `NATIVE-LIBRARY-SOURCE-BINDING` met
+/// with a binding span, and it takes the same answer: narrow the rule rather than
+/// reserve a word.
+///
+/// The rule is not a shape heuristic. It is **the address reader itself**: the
+/// range returned is exactly the span [`address_run`] finds at exactly the
+/// position [`socket_statement`] reads an address from, so a token is excluded if
+/// and only if the lowering would read it as part of a host. Three consequences
+/// follow, and the card's census measures the first:
+///
+/// * It fires in **no** statement of this repository that is not one of this
+///   card's own addresses — three statement heads, one token position each, and
+///   a run that must carry a `:` and be lexically adjacent throughout.
+/// * The **port** is deliberately outside the range. A port may be a name this
+///   entry bound, and it is a genuine reference that must still resolve — which
+///   is what makes `let port = 49301; bind s 127.0.0.1:port;` work and
+///   `bind s 127.0.0.1:missing;` refuse at `Q013`.
+/// * A **hostname** now reaches this route's own reader and is refused there by
+///   name, with `SOCKET-DNS` written in the message, instead of being reported as
+///   an unknown name.
+#[must_use]
+pub fn address_host_span(window: &[&Token]) -> Option<(usize, usize)> {
+    // The three statement heads that read an address, and the one token position
+    // each of them reads it from. Read from the same constants the lowering uses.
+    let cursor = match word(window, 0)? {
+        BIND_KEYWORD | CONNECT_KEYWORD | SENDTO_KEYWORD => 2,
+        _ => return None,
+    };
+    let (_, end) = address_run(window, cursor)?;
+    // The host ends at the bracket that closes it, or — in the unbracketed form —
+    // at the last `:`, which is the separator `split_host_and_port` uses.
+    if symbol(window, cursor, Symbol::LeftBracket) {
+        let close = (cursor..end).find(|index| symbol(window, *index, Symbol::RightBracket))?;
+        return Some((cursor, close + 1));
+    }
+    let separator = (cursor..end).rfind(|index| symbol(window, *index, Symbol::Colon))?;
+    Some((cursor, separator))
+}
+
 fn operand(window: &[&Token], cursor: usize) -> Option<(SocketOperand, usize)> {
     if let Some((value, next)) = integer(window, cursor) {
         return Some((SocketOperand::Literal(value), next));
@@ -335,7 +509,10 @@ fn socket_use(window: &[&Token]) -> Option<SocketUse> {
 fn carries_text_payload(window: &[&Token]) -> bool {
     let cursor = match word(window, 0) {
         Some(SEND_KEYWORD | RECV_KEYWORD | RECVFROM_KEYWORD) => 2,
-        Some(SENDTO_KEYWORD) => 3,
+        // A declared address target shifts the payload, so the cursor is read
+        // from the same run reader the lowering uses rather than assumed to be
+        // one token wide (card `SOCKET-INET-ADDRESSES`).
+        Some(SENDTO_KEYWORD) => address_run(window, 2).map_or(3, |(_, next)| next),
         _ => return false,
     };
     literal_text(window, cursor).is_some()
@@ -779,7 +956,47 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
     let head = word(window, 0).unwrap_or_default();
     let lowered = match head {
         "let" => lower_let(window, &mut refusals),
-        BIND_KEYWORD | LISTEN_KEYWORD | CLOSE_KEYWORD => {
+        // `bind NAME;` binds IPv4 loopback on a kernel-chosen port, exactly as
+        // it always has. `bind NAME ADDRESS;` binds the address the program
+        // declares (card `SOCKET-INET-ADDRESSES`).
+        BIND_KEYWORD => {
+            let Some(name) = word(window, 1) else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`bind NAME;` names one socket, and `bind NAME ADDRESS;` also names the \
+                     address it binds",
+                );
+                return SocketLowering::Refused(refusals);
+            };
+            let name = name.to_owned();
+            if ends_with_semicolon(window, 2) {
+                Some(SocketStatement::Bind {
+                    name,
+                    address: None,
+                })
+            } else {
+                match lower_address(window, 2, &mut refusals) {
+                    Some((address, next)) if ends_with_semicolon(window, next) => {
+                        Some(SocketStatement::Bind {
+                            name,
+                            address: Some(address),
+                        })
+                    }
+                    Some(_) => {
+                        refuse(
+                            &mut refusals,
+                            "Q080",
+                            "`source.socket.v1` spells this statement `bind NAME;` or \
+                             `bind NAME ADDRESS;`",
+                        );
+                        None
+                    }
+                    None => None,
+                }
+            }
+        }
+        LISTEN_KEYWORD | CLOSE_KEYWORD => {
             let Some(name) = word(window, 1) else {
                 refuse(
                     &mut refusals,
@@ -798,30 +1015,48 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
             }
             let name = name.to_owned();
             Some(match head {
-                BIND_KEYWORD => SocketStatement::Bind { name },
                 LISTEN_KEYWORD => SocketStatement::Listen { name },
                 _ => SocketStatement::Close { name },
             })
         }
-        CONNECT_KEYWORD => match (word(window, 1), word(window, 2)) {
-            (Some(client), Some(listener)) if ends_with_semicolon(window, 3) => {
-                Some(SocketStatement::Connect {
-                    client: client.to_owned(),
-                    listener: listener.to_owned(),
-                })
-            }
-            _ => {
+        CONNECT_KEYWORD => {
+            let Some(client) = word(window, 1) else {
                 refuse(
                     &mut refusals,
                     "Q080",
-                    "`connect NAME NAME;` names the connecting socket and a listening \
-                     socket of this same program; `source.socket.v1` has no spelled \
-                     address, which is what makes the connection's completion decidable \
-                     (`SOCKET-EXTERNAL-PEER`)",
+                    "`connect NAME NAME;` names the connecting socket and a listening socket of \
+                     this same program, and `connect NAME ADDRESS;` names that same socket by the \
+                     address it declared",
                 );
-                None
+                return SocketLowering::Refused(refusals);
+            };
+            let client = client.to_owned();
+            match word(window, 2) {
+                Some(listener) if ends_with_semicolon(window, 3) => {
+                    Some(SocketStatement::Connect {
+                        client,
+                        listener: Endpoint::Named(listener.to_owned()),
+                    })
+                }
+                _ => match lower_address(window, 2, &mut refusals) {
+                    Some((address, next)) if ends_with_semicolon(window, next) => {
+                        Some(SocketStatement::Connect {
+                            client,
+                            listener: Endpoint::Address(address),
+                        })
+                    }
+                    Some(_) => {
+                        refuse(
+                            &mut refusals,
+                            "Q080",
+                            "`connect NAME ADDRESS;` carries one address and nothing else",
+                        );
+                        None
+                    }
+                    None => None,
+                },
             }
-        },
+        }
         ACCEPT_KEYWORD => {
             refuse(
                 &mut refusals,
@@ -876,9 +1111,40 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
                 }
             }
         }
-        SENDTO_KEYWORD => match (word(window, 1), word(window, 2)) {
-            (Some(name), Some(target)) if literal_text(window, 3).is_some() => {
-                let Some((text, next)) = lower_text_payload(window, 3, &mut refusals) else {
+        SENDTO_KEYWORD => {
+            let Some(name) = word(window, 1) else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`sendto NAME NAME [BYTE, …];` names the sending socket and a bound udp \
+                     socket of this same program, and `sendto NAME ADDRESS [BYTE, …];` names \
+                     that same socket by the address it declared",
+                );
+                return SocketLowering::Refused(refusals);
+            };
+            let name = name.to_owned();
+            // A name or an address, decided by the one fact that separates
+            // them: an address of this route always spells a port, so the run
+            // carries a `:` and a name never does.
+            let (target, cursor) = if address_run(window, 2).is_some() {
+                match lower_address(window, 2, &mut refusals) {
+                    Some((address, next)) => (Endpoint::Address(address), next),
+                    None => return SocketLowering::Refused(refusals),
+                }
+            } else if let Some(target) = word(window, 2) {
+                (Endpoint::Named(target.to_owned()), 3)
+            } else {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`sendto NAME NAME [BYTE, …];` names the sending socket and a bound udp \
+                     socket of this same program, and `sendto NAME ADDRESS [BYTE, …];` names \
+                     that same socket by the address it declared",
+                );
+                return SocketLowering::Refused(refusals);
+            };
+            if literal_text(window, cursor).is_some() {
+                let Some((text, next)) = lower_text_payload(window, cursor, &mut refusals) else {
                     return SocketLowering::Refused(refusals);
                 };
                 if !ends_with_semicolon(window, next) {
@@ -890,40 +1156,32 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
                     return SocketLowering::Refused(refusals);
                 }
                 Some(SocketStatement::SendTo {
-                    name: name.to_owned(),
-                    target: target.to_owned(),
+                    name,
+                    target,
                     payload: SocketPayload::Text(text),
                 })
-            }
-            (Some(name), Some(target)) => match payload(window, 3) {
-                Some((bytes, next)) if ends_with_semicolon(window, next) => {
-                    Some(SocketStatement::SendTo {
-                        name: name.to_owned(),
-                        target: target.to_owned(),
-                        payload: SocketPayload::Bytes(bytes),
-                    })
+            } else {
+                match payload(window, cursor) {
+                    Some((bytes, next)) if ends_with_semicolon(window, next) => {
+                        Some(SocketStatement::SendTo {
+                            name,
+                            target,
+                            payload: SocketPayload::Bytes(bytes),
+                        })
+                    }
+                    _ => {
+                        refuse(
+                            &mut refusals,
+                            "Q080",
+                            "`sendto NAME NAME [BYTE, …];` carries a bracketed list of \
+                             integer literals or bound integer names, or \
+                             `sendto NAME NAME \"…\";` one quoted payload",
+                        );
+                        None
+                    }
                 }
-                _ => {
-                    refuse(
-                        &mut refusals,
-                        "Q080",
-                        "`sendto NAME NAME [BYTE, …];` carries a bracketed list of \
-                         integer literals or bound integer names, or \
-                         `sendto NAME NAME \"…\";` one quoted payload",
-                    );
-                    None
-                }
-            },
-            _ => {
-                refuse(
-                    &mut refusals,
-                    "Q080",
-                    "`sendto NAME NAME [BYTE, …];` names the sending socket and a bound \
-                     udp socket of this same program",
-                );
-                None
             }
-        },
+        }
         RECV_KEYWORD | RECVFROM_KEYWORD => lower_receive(window, head, &mut refusals),
         // The reactor composition (card `SOCKET-EVENT-COMPOSE`). Every word is
         // already reserved; the composition adds none.

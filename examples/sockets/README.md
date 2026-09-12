@@ -1,27 +1,35 @@
 # `source.socket.v1` examples — checked TCP and UDP in pure QCore
 
-Two published programs, both written entirely in QCore source and lowered to
-self-contained C11 by the existing backend. Neither links a library, neither
-declares an extern function, and neither reads a manifest: the whole transport
-mechanism is the embedded three-arm shim
+Four published programs, all written entirely in QCore source and lowered to
+self-contained C11 by the existing backend. None links a library, none declares
+an extern function, and none reads a manifest: the whole transport mechanism is
+the embedded three-arm shim
 `crates/qcore-core/src/qcore_socket_compat.h`.
 
-Card `QUIRIN-SOCKET-V1`; the evidence package is
-`docs/reports/quirin-socket-v1/README.md`, the checked model is
+Cards `QUIRIN-SOCKET-V1` and `SOCKET-INET-ADDRESSES`; the evidence packages are
+`docs/reports/quirin-socket-v1/README.md` and
+`docs/reports/socket-inet-addresses/README.md`, the checked model is
 `crates/qcore-core/src/std_socket.rs`, and the tests that hold these files to
-the `examples/threads` standard are in `compiler/tests/std_socket.rs`.
+the `examples/threads` standard are in `compiler/tests/std_socket.rs` and
+`compiler/tests/std_socket_inet.rs`.
 
 | File | What it shows |
 |---|---|
 | [`tcp_echo.qcore`](tcp_echo.qcore) | create / bind / listen / connect / accept, a stream `send` and both `recv` forms, three closes |
 | [`udp_echo.qcore`](udp_echo.qcore) | create / bind, `sendto` / `recvfrom`, and the whole-datagram rule |
+| [`inet_v4_echo.qcore`](inet_v4_echo.qcore) | a **declared** IPv4 address and port — inbound `bind S 127.0.0.1:port;` and outbound `connect C 127.0.0.1:port;` |
+| [`inet_v6_echo.qcore`](inet_v6_echo.qcore) | the same over declared IPv6 `[::1]`, with `IPV6_V6ONLY` set explicitly and a host without IPv6 answered by name |
 
 ## The one thing to understand first
 
 **Both ends of every connection are sockets of the same program.** There is no
-remote host, no spelled address and no name resolution anywhere in
-`source.socket.v1`. That is not a limitation grafted on for testing; it is what
-makes the route's two determinism rules decidable:
+remote host and no name resolution anywhere in `source.socket.v1`. An address a
+program *declares* does not change that: `connect client 127.0.0.1:port;` is
+admitted only because a `bind` of this same program declares exactly that
+address, and the checker resolves it to that socket at check time. An address no
+bind of this program answers to is refused at `Q085` by name, and a hostname is
+refused at `Q080` by name. This is not a limitation grafted on for testing; it is
+what makes the route's two determinism rules decidable:
 
 1. The model carries the exact bytes each `send` commits, so a `recv` the
    program's own history does not already satisfy is **refused at check time**
@@ -36,12 +44,20 @@ is a change to the determinism argument rather than to the syntax.
 
 ## Nothing that is not model-determined reaches the output
 
-Every `bind` is to port 0 and the kernel's choice is read back with
-`getsockname` only to hand this same program's `connect` or `sendto` an address.
-No port, no descriptor number, no segment boundary and no timing appears in a
-line, a certificate field or an observation record. Two concurrent runs of these
-programs — and parallel runs of the whole test suite — therefore write the same
-bytes, which is a correctness requirement rather than a convenience.
+`tcp_echo` and `udp_echo` write no port down at all: every `bind` is to port 0
+and the kernel's choice is read back with `getsockname` only to hand this same
+program's `connect` or `sendto` an address. `inet_v4_echo` and `inet_v6_echo`
+declare a port, and that port is a **check-time constant** — so it is still not a
+run-time quantity, and it still never appears in a line or an observation record.
+No descriptor number, no segment boundary and no timing appears in any of the
+four.
+
+What a declared fixed port does change is collision: two programs on one host
+cannot both hold `127.0.0.1:49301`. That is answered loudly rather than quietly —
+a collision *inside* one program is refused at check time (`Q082`), and a
+collision with anything outside it fails the run with the distinct bind status
+rather than producing a different observation. The port-0 forms remain the
+collision-free spelling and remain the default.
 
 ## Building and running
 
@@ -59,9 +75,10 @@ inside the emitted source.
 
 ## Transcripts
 
-Both programs write the same two lines — the byte the echo returned, rendered
-twice. These blocks are read out of this file by
+All four programs write the same two lines — the byte the echo returned,
+rendered twice. These blocks are read out of this file by
 `compiler/tests/std_socket.rs::the_readme_transcript_is_the_real_one` and
+`compiler/tests/std_socket_inet.rs::the_readme_transcript_is_the_real_one`, and
 compared with what the pipeline really produces, so they cannot drift.
 
 <!-- transcript: tcp_echo -->
@@ -71,6 +88,18 @@ compared with what the pipeline really produces, so they cannot drift.
 ```
 
 <!-- transcript: udp_echo -->
+```text
+101
+0x00000065
+```
+
+<!-- transcript: inet_v4_echo -->
+```text
+101
+0x00000065
+```
+
+<!-- transcript: inet_v6_echo -->
 ```text
 101
 0x00000065
@@ -104,6 +133,38 @@ compared with what the pipeline really produces, so they cannot drift.
 * `listen` and `connect` on a datagram socket are refused at `Q082`, and `send`
   and `sendto` never stand in for each other.
 
+### `inet_v4_echo.qcore` and `inet_v6_echo.qcore`
+
+* A **declared address** is a check-time constant: a literal IPv4 dotted quad or
+  a bracketed IPv6 literal, and a port that is an integer literal or a name this
+  entry bound to one. It is parsed **once**, by the checker, and the emitted C
+  carries the address' octets — there is no `inet_pton` call in an emitted
+  program, so no second parser can read a spelling differently from the first.
+* The two address families are **disjoint**. A socket is created in exactly one
+  of them, connecting an IPv4 socket to an IPv6 endpoint is refused at `Q082`,
+  and every IPv6 socket the emitted program creates sets `IPV6_V6ONLY` to 1
+  **explicitly** — Linux defaults it off and Windows defaults it on, so an
+  inherited default would mean the same program binds different things on
+  different hosts.
+* A declared bind **succeeds when no live socket holds the address and fails when
+  one does**, on every platform — one decided property, spelled differently per
+  arm because the platforms need opposite options to reach it. POSIX sets
+  `SO_REUSEADDR` (without it a second run inside the first run's `TIME_WAIT`
+  cannot rebind, which is not a live holder); Winsock deliberately does **not**,
+  because there `SO_REUSEADDR` permits a second *live* socket on the same address.
+  Neither arm sets `SO_REUSEPORT`.
+* A host without IPv6 is answered rather than assumed: the emitted program asks
+  the running kernel for the socket, and an explicit "address family not
+  supported" result exits with its own distinct status (92) having written
+  nothing. It does **not** fall back to IPv4 — a fallback would bind a different
+  address from the declared one.
+* What is still refused: a hostname (`Q080`, `SOCKET-DNS`), the embedded-IPv4
+  IPv6 form (`SOCKET-INET-V6-EMBEDDED-V4`), a zone identifier
+  (`SOCKET-INET-V6-ZONE`), an IPv4 component with a leading zero, an IPv6 address
+  written without its brackets, a port outside `0..=65535` (`Q084`), and an
+  address that names a kernel-chosen port at a `connect` (`Q085` — an ephemeral
+  port is not a name).
+
 ## What these examples do not show, because it does not exist in v1
 
 * No string or text payload — a payload is a bracketed list of check-time byte
@@ -112,6 +173,6 @@ compared with what the pipeline really produces, so they cannot drift.
   buffer route and keeps that route's refusal (`SOCKET-BUFFER-PAYLOAD`).
 * No composition with `source.event.v1` — registering a socket with the reactor
   is `SOCKET-EVENT-COMPOSE`.
-* No non-blocking mode, no socket options, no shutdown, no `SO_REUSEADDR`, no
-  IPv6, and no concurrency: `source.socket.v1` is single-threaded and a module
-  that sockets and spawns keeps its `Q600`.
+* No non-blocking mode and no shutdown.
+* No concurrency: `source.socket.v1` is single-threaded and a module that sockets
+  and spawns keeps its `Q600`.

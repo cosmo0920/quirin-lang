@@ -3,11 +3,18 @@
  *
  * Kept embedded, on the `c11_threads_compat.h` and `qcore_event_poll_compat.h`
  * precedent, so emitted C needs no QCore include path and no linked QCore
- * artifact. It is a *subset*, not a socket library: only the loopback
- * interface, only a kernel-chosen port, only TCP stream pairs this same program
- * creates on both ends, only single datagrams between two UDP sockets of this
- * same program, and no name resolution, no options, no non-blocking mode and no
- * timers.
+ * artifact. It is a *subset*, not a socket library: only TCP stream pairs this
+ * same program creates on both ends, only single datagrams between two UDP
+ * sockets of this same program, and no name resolution, no non-blocking mode and
+ * no timers.
+ *
+ * Card SOCKET-INET-ADDRESSES adds the DECLARED-ADDRESS arms at the end of this
+ * file — IPv4 and IPv6, with a port the source program wrote down — together
+ * with exactly two socket options, IPV6_V6ONLY and SO_REUSEADDR, each set for a
+ * stated reason and each decided per arm rather than inherited. Everything above
+ * those arms is unchanged: a program that declares no address still binds IPv4
+ * loopback on a kernel-chosen port through qcore_socket_bind_loopback and still
+ * connects by getsockname through qcore_socket_connect.
  *
  * THREE ARMS, on the same shape the threads and poll shims use: `_WIN32`,
  * `__APPLE__`, and everything else (Linux and other POSIX). The two POSIX arms
@@ -30,10 +37,13 @@
  * compares one against a POSIX fd. The **observation never carries either**:
  * every byte an emitted program writes is a line the source program asked for,
  * and a real descriptor number — which is not model-determined — reaches no
- * comparison. The same is true of the port: every bind is to port 0 and the
- * kernel's choice is read back with getsockname only to hand it to this same
- * program's connect or sendto. That is why two concurrent runs of the same
- * emitted program, and parallel runs of a whole test suite, cannot collide.
+ * comparison. The same is true of the port: an UNDECLARED bind is to port 0 and
+ * the kernel's choice is read back with getsockname only to hand it to this same
+ * program's connect or sendto, which is why two concurrent runs of such a
+ * program cannot collide. A DECLARED port is a check-time constant the source
+ * wrote down; it reaches no observation either, and a collision with a live
+ * holder of that address fails the run with the distinct bind status rather than
+ * producing a different observation.
  *
  * What is claimed, and what is not:
  *
@@ -72,6 +82,11 @@
 #include <ws2tcpip.h>
 #include <stddef.h>
 #include <string.h>
+/* Card SOCKET-INET-ADDRESSES: the declared-address arms below use
+ * `struct sockaddr_storage`, `struct sockaddr_in6` and `IPV6_V6ONLY`, all of
+ * which this arm already has from <ws2tcpip.h>. Winsock reports its own error
+ * codes through WSAGetLastError rather than errno, which is why the
+ * family-availability probe has a separate arm rather than a shared body. */
 
 /* Keep the emitted program self-contained on this arm too: without this the
  * caller would have to add `ws2_32.lib` to every build command, which the other
@@ -102,6 +117,7 @@ typedef int qcore_socket_addrlen;
 #endif
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <netinet/in.h>
 #include <poll.h>
 #include <string.h>
@@ -131,6 +147,7 @@ typedef socklen_t qcore_socket_addrlen;
 #endif
 
 #include <arpa/inet.h>
+#include <errno.h>
 #include <netinet/in.h>
 #include <poll.h>
 #include <string.h>
@@ -471,6 +488,306 @@ QCORE_SOCKET_UNUSED static int qcore_socket_close(qcore_socket_fd endpoint)
 #else
     return closesocket(endpoint) == 0 ? 0 : 1;
 #endif
+}
+
+/* ==========================================================================
+ * DECLARED IPv4 AND IPv6 ADDRESSES (card SOCKET-INET-ADDRESSES).
+ *
+ * Everything above stays exactly as it was, and a program that declares no
+ * address reaches none of what follows: the implicit `bind NAME;` form still
+ * binds IPv4 loopback on a kernel-chosen port through qcore_socket_bind_loopback
+ * and still connects by getsockname through qcore_socket_connect, so its emitted
+ * C is byte-identical to what it was before this card.
+ *
+ * THREE DECISIONS ARE MADE HERE AND NOWHERE ELSE:
+ *
+ *  1. AN ADDRESS ARRIVES AS BYTES, NEVER AS TEXT. The checker parsed the source
+ *     spelling once; there is no inet_pton call anywhere below, so there is no
+ *     second parser that could read a spelling differently from the first. The
+ *     octets are already in network order, so they are copied rather than
+ *     converted; only the port passes through htons.
+ *
+ *  2. IPV6_V6ONLY IS SET EXPLICITLY, TO 1, ON EVERY ARM. It is NOT inherited:
+ *     Linux defaults it to 0 (net.ipv6.bindv6only) and Windows defaults it to 1,
+ *     so an inherited default would be a silent per-platform difference in what
+ *     an emitted program binds. The model keeps the two address families
+ *     disjoint — `::` and `0.0.0.0` are different addresses — and setting the
+ *     option makes the C agree with the model rather than with the host. A
+ *     setsockopt failure fails socket creation; it is never ignored.
+ *
+ *  3. IPv6 AVAILABILITY IS PROBED ON THE RUNNING SYSTEM, on the same shape the
+ *     Windows AF_UNIX arm of qcore_event_poll_compat.h uses. Compiling is not
+ *     evidence that the host has IPv6: qcore_socket_create_family asks the
+ *     kernel for the socket, and ONLY an explicit unsupported-family/type/
+ *     protocol result selects the distinct "IPv6 unavailable" return (2). Every
+ *     other failure returns 1 and refuses. Nothing falls back to IPv4 — a
+ *     fallback would bind a different address from the one the program declared,
+ *     which is exactly what the declaration exists to prevent.
+ * ========================================================================== */
+
+/* Whether the last socket(2)/socket() failure was the platform saying it does
+ * not have this address family, rather than any other failure.
+ *
+ * This is the one place in the shim that reads errno, and it is deliberate: the
+ * close discipline above does NOT read errno because no arm of its behaviour
+ * depends on which failure occurred, whereas here two arms do — a recorded
+ * "no IPv6 on this host" and a refusal. */
+static int qcore_socket_family_unsupported(void)
+{
+#if defined(QCORE_SOCKET_POSIX)
+    return errno == EAFNOSUPPORT || errno == EPROTONOSUPPORT
+#if defined(EPFNOSUPPORT)
+           || errno == EPFNOSUPPORT
+#endif
+        ;
+#else
+    int code = WSAGetLastError();
+    return code == WSAEAFNOSUPPORT || code == WSAEPROTONOSUPPORT
+           || code == WSAEPFNOSUPPORT;
+#endif
+}
+
+/* Build a sockaddr from model-determined octets. Zero on success. */
+static int qcore_socket_address_from(int v6, const unsigned char *host, unsigned port,
+                                     struct sockaddr_storage *out,
+                                     qcore_socket_addrlen *length)
+{
+    memset(out, 0, sizeof *out);
+    if (v6) {
+        struct sockaddr_in6 address;
+        memset(&address, 0, sizeof address);
+        address.sin6_family = AF_INET6;
+        address.sin6_port = htons((unsigned short) port);
+        memcpy(&address.sin6_addr, host, 16);
+        memcpy(out, &address, sizeof address);
+        *length = (qcore_socket_addrlen) sizeof address;
+    } else {
+        struct sockaddr_in address;
+        memset(&address, 0, sizeof address);
+        address.sin_family = AF_INET;
+        address.sin_port = htons((unsigned short) port);
+        memcpy(&address.sin_addr, host, 4);
+        memcpy(out, &address, sizeof address);
+        *length = (qcore_socket_addrlen) sizeof address;
+    }
+    return 0;
+}
+
+/* The address a bound socket of this program actually got, in either family. */
+static int qcore_socket_storage_of(qcore_socket_fd endpoint, struct sockaddr_storage *address,
+                                   qcore_socket_addrlen *length)
+{
+    *length = (qcore_socket_addrlen) sizeof *address;
+    memset(address, 0, sizeof *address);
+    return getsockname(endpoint, (struct sockaddr *) address, length) == 0 ? 0 : 1;
+}
+
+/* Whether two addresses this program's own model relates are the same endpoint.
+ *
+ * Compared field for field per family rather than with a blanket memcmp: a
+ * sockaddr carries padding no platform promises anything about, and a padding
+ * byte is not part of an address. */
+static int qcore_socket_same_address(const struct sockaddr_storage *left,
+                                     const struct sockaddr_storage *right)
+{
+    if (left->ss_family != right->ss_family) {
+        return 0;
+    }
+    if (left->ss_family == AF_INET6) {
+        struct sockaddr_in6 a;
+        struct sockaddr_in6 b;
+        memcpy(&a, left, sizeof a);
+        memcpy(&b, right, sizeof b);
+        return a.sin6_port == b.sin6_port
+               && memcmp(&a.sin6_addr, &b.sin6_addr, sizeof a.sin6_addr) == 0;
+    }
+    if (left->ss_family == AF_INET) {
+        struct sockaddr_in a;
+        struct sockaddr_in b;
+        memcpy(&a, left, sizeof a);
+        memcpy(&b, right, sizeof b);
+        return a.sin_port == b.sin_port
+               && memcmp(&a.sin_addr, &b.sin_addr, sizeof a.sin_addr) == 0;
+    }
+    return 0;
+}
+
+/* One socket in a DECLARED family.
+ *
+ * Returns 0 on success, 2 when the host explicitly does not support this address
+ * family, and 1 on every other failure — three results, so a failed run says
+ * which, and so that "this host has no IPv6" is never read as "IPv6 is broken"
+ * and never silently becomes IPv4. */
+QCORE_SOCKET_UNUSED static int qcore_socket_create_family(int v6, int datagram,
+                                                          qcore_socket_fd *out)
+{
+    qcore_socket_fd created = socket(v6 ? AF_INET6 : AF_INET,
+                                     datagram ? SOCK_DGRAM : SOCK_STREAM,
+                                     datagram ? IPPROTO_UDP : IPPROTO_TCP);
+    if (created == QCORE_SOCKET_INVALID) {
+        return qcore_socket_family_unsupported() && v6 ? 2 : 1;
+    }
+    if (v6) {
+        int only = 1;
+        /* Decision 2 in the header above: explicit on every arm, never
+         * inherited, and a failure to set it fails creation. */
+        if (setsockopt(created, IPPROTO_IPV6, IPV6_V6ONLY, (const char *) &only,
+                       (qcore_socket_addrlen) sizeof only)
+            != 0) {
+            (void) qcore_socket_close(created);
+            return 1;
+        }
+    }
+    *out = created;
+    return 0;
+}
+
+/* Bind the address the program DECLARED.
+ *
+ * ONE DECIDED PROPERTY, TWO SPELLINGS — the same shape as _POSIX_C_SOURCE versus
+ * _DARWIN_C_SOURCE above, and for the same reason. What is decided is:
+ *
+ *     A declared bind SUCCEEDS when no LIVE socket holds the address, and FAILS
+ *     when one does.
+ *
+ * That is not the default on either family of platform, and the two need
+ * opposite options to reach it:
+ *
+ *   - POSIX. Without SO_REUSEADDR a listener cannot rebind an address while a
+ *     connection THIS PROGRAM ALREADY CLOSED is in TIME_WAIT, so running the same
+ *     declared-address program twice inside a minute fails the second run. That
+ *     is not a live holder and must not fail. SO_REUSEADDR permits exactly that
+ *     rebind and still refuses a live duplicate (permitting a live duplicate is
+ *     SO_REUSEPORT, which is NOT set).
+ *   - Windows. Winsock's SO_REUSEADDR means something else: it permits a SECOND
+ *     LIVE socket to bind the same address, which is address hijacking and the
+ *     opposite of the decided property. It is therefore NOT set on that arm,
+ *     where the default already refuses a live duplicate and already permits a
+ *     TIME_WAIT rebind for a listening socket.
+ *
+ * So a collision with a live holder — inside or outside this program — is still
+ * answered loudly, with the distinct bind status, on every arm. */
+QCORE_SOCKET_UNUSED static int qcore_socket_bind_address(qcore_socket_fd endpoint, int v6,
+                                                         const unsigned char *host,
+                                                         unsigned port)
+{
+    struct sockaddr_storage address;
+    qcore_socket_addrlen length = 0;
+#if defined(QCORE_SOCKET_POSIX)
+    int reuse = 1;
+    if (setsockopt(endpoint, SOL_SOCKET, SO_REUSEADDR, (const char *) &reuse,
+                   (qcore_socket_addrlen) sizeof reuse)
+        != 0) {
+        return 1;
+    }
+#endif
+    if (qcore_socket_address_from(v6, host, port, &address, &length) != 0) {
+        return 1;
+    }
+    return bind(endpoint, (struct sockaddr *) &address, length) == 0 ? 0 : 1;
+}
+
+/* Connect to the address the program DECLARED.
+ *
+ * The checker has already proved a socket of this same program is listening
+ * there, so this is outbound transport to a spelled endpoint whose peer is still
+ * decided at check time. */
+QCORE_SOCKET_UNUSED static int qcore_socket_connect_address(qcore_socket_fd endpoint, int v6,
+                                                            const unsigned char *host,
+                                                            unsigned port)
+{
+    struct sockaddr_storage address;
+    qcore_socket_addrlen length = 0;
+    if (qcore_socket_address_from(v6, host, port, &address, &length) != 0) {
+        return 1;
+    }
+    return connect(endpoint, (struct sockaddr *) &address, length) == 0 ? 0 : 1;
+}
+
+/* Connect to a listening socket of this program by its actual address, in either
+ * family — what qcore_socket_connect does, for a listener that is not IPv4. */
+QCORE_SOCKET_UNUSED static int qcore_socket_connect_at(qcore_socket_fd endpoint,
+                                                       qcore_socket_fd listener)
+{
+    struct sockaddr_storage address;
+    qcore_socket_addrlen length = 0;
+    if (qcore_socket_storage_of(listener, &address, &length) != 0) {
+        return 1;
+    }
+    return connect(endpoint, (struct sockaddr *) &address, length) == 0 ? 0 : 1;
+}
+
+/* One datagram to the address the program DECLARED. */
+QCORE_SOCKET_UNUSED static int qcore_socket_sendto_address(qcore_socket_fd endpoint, int v6,
+                                                           const unsigned char *host,
+                                                           unsigned port,
+                                                           const unsigned char *bytes,
+                                                           size_t length)
+{
+    struct sockaddr_storage address;
+    qcore_socket_addrlen address_length = 0;
+    qcore_socket_ssize written;
+    if (qcore_socket_address_from(v6, host, port, &address, &address_length) != 0) {
+        return 1;
+    }
+    written = sendto(endpoint, (const char *) bytes, (qcore_socket_len) length, 0,
+                     (struct sockaddr *) &address, address_length);
+    return written == (qcore_socket_ssize) length ? 0 : 1;
+}
+
+/* One datagram to a bound socket of this program in either family — what
+ * qcore_socket_sendto does, for a target that is not IPv4. */
+QCORE_SOCKET_UNUSED static int qcore_socket_sendto_at(qcore_socket_fd endpoint,
+                                                      qcore_socket_fd target,
+                                                      const unsigned char *bytes, size_t length)
+{
+    struct sockaddr_storage address;
+    qcore_socket_addrlen address_length = 0;
+    qcore_socket_ssize written;
+    if (qcore_socket_storage_of(target, &address, &address_length) != 0) {
+        return 1;
+    }
+    written = sendto(endpoint, (const char *) bytes, (qcore_socket_len) length, 0,
+                     (struct sockaddr *) &address, address_length);
+    return written == (qcore_socket_ssize) length ? 0 : 1;
+}
+
+/* qcore_socket_recvfrom for a receiver that is not IPv4.
+ *
+ * Same three results and the same load-bearing source comparison: the datagram's
+ * reported sender is compared with the bound address of the socket this
+ * program's own model says sent it, so a stray datagram on the same port fails
+ * the run instead of being read as this one. */
+QCORE_SOCKET_UNUSED static int qcore_socket_recvfrom_at(qcore_socket_fd endpoint,
+                                                        qcore_socket_fd sender,
+                                                        const unsigned char *expected,
+                                                        size_t length)
+{
+    unsigned char received[QCORE_SOCKET_MAX_PAYLOAD];
+    struct sockaddr_storage source;
+    struct sockaddr_storage declared;
+    qcore_socket_addrlen declared_length = 0;
+    qcore_socket_addrlen source_length = (qcore_socket_addrlen) sizeof source;
+    qcore_socket_ssize taken;
+    if (length == 0 || length > (size_t) QCORE_SOCKET_MAX_PAYLOAD) {
+        return 1;
+    }
+    if (qcore_socket_storage_of(sender, &declared, &declared_length) != 0) {
+        return 1;
+    }
+    if (qcore_socket_wait_readable(endpoint) != 0) {
+        return 1;
+    }
+    memset(&source, 0, sizeof source);
+    taken = recvfrom(endpoint, (char *) received, (qcore_socket_len) length, 0,
+                     (struct sockaddr *) &source, &source_length);
+    if (taken != (qcore_socket_ssize) length) {
+        return 1;
+    }
+    if (!qcore_socket_same_address(&source, &declared)) {
+        return 2;
+    }
+    return memcmp(received, expected, length) == 0 ? 0 : 2;
 }
 
 #endif /* QCORE_SOCKET_COMPAT_H */

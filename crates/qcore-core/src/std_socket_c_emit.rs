@@ -57,6 +57,7 @@ use crate::io_emit;
 use crate::obs_reordering::{
     AdmittedReordering, DeclaredRecord, Emitter, ReorderingRefusal, ReorderingWitness,
 };
+use crate::socket_address::{Endpoint, Family, PortSpec, ResolvedAddress};
 use crate::std_io::{StdIoEvent, Stream};
 use crate::std_io_c_emit;
 use crate::std_socket::{
@@ -88,6 +89,17 @@ pub const STATUS_PAYLOAD: i32 = 88;
 pub const STATUS_CLOSE: i32 = 89;
 /// A dispatch turn's wait failed or expired (card `SOCKET-EVENT-COMPOSE`).
 pub const STATUS_DISPATCH: i32 = 90;
+/// **IPv6 is not available on the running host** (card
+/// `SOCKET-INET-ADDRESSES`).
+///
+/// A *recorded refusal* rather than a fallback, on constraint 15d's shape: the
+/// emitted program probes the running system by creating the socket, and only an
+/// **explicit** unsupported-family/type/protocol result selects this status. Any
+/// other creation failure stays [`STATUS_CREATE`]. Nothing silently retries and
+/// nothing silently falls back to IPv4 — a fallback would bind a different
+/// address from the one the program declared, which is the one thing this card
+/// exists to make impossible.
+pub const STATUS_IPV6_UNAVAILABLE: i32 = 92;
 /// A dispatch turn's wait reported a ready set that is **not** the one the
 /// checked program declared.
 ///
@@ -106,6 +118,11 @@ pub enum SocketEmissionRefusal {
     /// no bytes. Unreachable for a checked program, and refused rather than
     /// emitted with a payload the backend invented.
     MissingReceipt { event: usize },
+    /// A statement that spells an address for which the certificate publishes no
+    /// resolved one (card `SOCKET-INET-ADDRESSES`). Unreachable for a checked
+    /// program, and refused rather than emitted with an address the backend
+    /// invented — the same discipline [`Self::MissingReceipt`] applies to bytes.
+    MissingAddress { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -293,6 +310,50 @@ fn operand_expression(
     }
 }
 
+/// The block-local declaration of one declared address' **bytes**
+/// (card `SOCKET-INET-ADDRESSES`).
+///
+/// The emitted program carries the address' wire octets, not its text, and calls
+/// no `inet_pton`: the address was parsed once, by
+/// [`crate::socket_address::parse_socket_address`], and a second parser in the
+/// emitted C could only ever disagree with the first. This is the same rule a
+/// payload byte already follows, applied to an address.
+fn address_bytes(address: ResolvedAddress) -> String {
+    format!(
+        "        const unsigned char host[] = {{ {} }};\n",
+        byte_array(address.ip.octets())
+    )
+}
+
+/// The `v6` flag and the port an address call takes.
+///
+/// The port follows the **same rule a payload byte follows**: a literal is
+/// written as the number the checker read, and a name this entry bound is written
+/// as that binding's own C expression. The two can never disagree — the checker
+/// resolved the port from the same binding — and writing the name keeps the
+/// emitted C readable and its `let` live.
+fn address_arguments(address: ResolvedAddress, port: &str) -> String {
+    format!("{}, host, {port}", i32::from(address.ip.family().is_v6()))
+}
+
+fn port_expression(
+    scalars: &BTreeMap<String, String>,
+    event: usize,
+    port: Option<&PortSpec>,
+    resolved: u16,
+) -> Result<String, SocketEmissionRefusal> {
+    match port {
+        Some(PortSpec::Scalar(name)) => scalars
+            .get(name)
+            .map(|expression| format!("(unsigned) ({expression})"))
+            .ok_or_else(|| SocketEmissionRefusal::Unbound {
+                event,
+                name: name.clone(),
+            }),
+        _ => Ok(format!("{resolved}u")),
+    }
+}
+
 /// A `const unsigned char` initialiser list for a byte sequence the model
 /// determined.
 fn byte_array(bytes: &[u8]) -> String {
@@ -406,6 +467,17 @@ pub fn entry_parts(
         .iter()
         .map(|receipt| (receipt.event, receipt))
         .collect();
+    // Card `SOCKET-INET-ADDRESSES`: the two facts this backend reads about
+    // addresses, both taken from the certificate the checker rederives rather
+    // than recomputed here.
+    let families: BTreeMap<&str, Family> = certificate
+        .families
+        .iter()
+        .map(|(name, family)| (name.as_str(), *family))
+        .collect();
+    let declared: BTreeMap<usize, ResolvedAddress> =
+        certificate.declared_addresses.iter().copied().collect();
+    let family_of = |name: &str| families.get(name).copied().unwrap_or(Family::V4);
 
     // Starting the platform's socket layer is the entry's prologue: it runs
     // before this route's first statement and before any other route's, which
@@ -436,21 +508,62 @@ pub fn entry_parts(
             }
             SocketStatement::Create { name, kind } => {
                 let datagram = i32::from(*kind == SocketKind::Udp);
-                let _ = writeln!(
-                    source,
-                    "    qcore_socket_fd {0} = QCORE_SOCKET_INVALID;\n    \
-                     if (qcore_socket_create({datagram}, &{0}) != 0) {{\n        \
-                     return {STATUS_CREATE};\n    }}",
-                    socket_name(name)
-                );
+                // An IPv4 socket keeps the call it always had, byte for byte: a
+                // program that declares no address emits exactly what it emitted
+                // before card `SOCKET-INET-ADDRESSES`.
+                if family_of(name).is_v6() {
+                    let _ = writeln!(
+                        source,
+                        "    qcore_socket_fd {0} = QCORE_SOCKET_INVALID;\n    {{\n        \
+                         int created = qcore_socket_create_family(1, {datagram}, &{0});\n        \
+                         if (created == 2) {{\n            \
+                         return {STATUS_IPV6_UNAVAILABLE};\n        }}\n        \
+                         if (created != 0) {{\n            \
+                         return {STATUS_CREATE};\n        }}\n    }}",
+                        socket_name(name)
+                    );
+                } else {
+                    let _ = writeln!(
+                        source,
+                        "    qcore_socket_fd {0} = QCORE_SOCKET_INVALID;\n    \
+                         if (qcore_socket_create({datagram}, &{0}) != 0) {{\n        \
+                         return {STATUS_CREATE};\n    }}",
+                        socket_name(name)
+                    );
+                }
             }
-            SocketStatement::Bind { name } => {
-                let _ = writeln!(
-                    source,
-                    "    if (qcore_socket_bind_loopback({}) != 0) {{\n        \
-                     return {STATUS_BIND};\n    }}",
-                    socket_name(name)
-                );
+            SocketStatement::Bind { name, address } => {
+                // A statement that spells an address must find one, and there is
+                // no arm in which it falls back to the loopback bind: that would
+                // bind a *different* address from the declared one, which is the
+                // one thing a declaration exists to prevent.
+                match address {
+                    Some(spelled) => {
+                        let resolved = declared
+                            .get(&index)
+                            .copied()
+                            .ok_or(SocketEmissionRefusal::MissingAddress { event: index })?;
+                        let port =
+                            port_expression(&scalars, index, Some(&spelled.port), resolved.port)?;
+                        let _ = writeln!(
+                            source,
+                            "    {{\n{}        \
+                         if (qcore_socket_bind_address({}, {}) != 0) {{\n            \
+                         return {STATUS_BIND};\n        }}\n    }}",
+                            address_bytes(resolved),
+                            socket_name(name),
+                            address_arguments(resolved, &port)
+                        );
+                    }
+                    None => {
+                        let _ = writeln!(
+                            source,
+                            "    if (qcore_socket_bind_loopback({}) != 0) {{\n        \
+                         return {STATUS_BIND};\n    }}",
+                            socket_name(name)
+                        );
+                    }
+                }
             }
             SocketStatement::Listen { name } => {
                 let _ = writeln!(
@@ -460,15 +573,47 @@ pub fn entry_parts(
                     socket_name(name)
                 );
             }
-            SocketStatement::Connect { client, listener } => {
-                let _ = writeln!(
-                    source,
-                    "    if (qcore_socket_connect({}, {}) != 0) {{\n        \
-                     return {STATUS_CONNECT};\n    }}",
-                    socket_name(client),
-                    socket_name(listener)
-                );
-            }
+            SocketStatement::Connect { client, listener } => match listener {
+                // **Outbound to a declared endpoint.** The emitted program
+                // connects to the address the source spelled, not to whatever
+                // `getsockname` reports — so the run exercises the declared
+                // address rather than merely agreeing with it. The checker has
+                // already proved a socket of this same program is bound there.
+                Endpoint::Address(spelled) => {
+                    let address = declared
+                        .get(&index)
+                        .copied()
+                        .ok_or(SocketEmissionRefusal::MissingAddress { event: index })?;
+                    let port = port_expression(&scalars, index, Some(&spelled.port), address.port)?;
+                    let _ = writeln!(
+                        source,
+                        "    {{\n{}        \
+                         if (qcore_socket_connect_address({}, {}) != 0) {{\n            \
+                         return {STATUS_CONNECT};\n        }}\n    }}",
+                        address_bytes(address),
+                        socket_name(client),
+                        address_arguments(address, &port)
+                    );
+                }
+                Endpoint::Named(name) if family_of(name).is_v6() => {
+                    let _ = writeln!(
+                        source,
+                        "    if (qcore_socket_connect_at({}, {}) != 0) {{\n        \
+                         return {STATUS_CONNECT};\n    }}",
+                        socket_name(client),
+                        socket_name(name)
+                    );
+                }
+                Endpoint::Named(name) => {
+                    let _ = writeln!(
+                        source,
+                        "    if (qcore_socket_connect({}, {}) != 0) {{\n        \
+                         return {STATUS_CONNECT};\n    }}",
+                        socket_name(client),
+                        socket_name(name)
+                    );
+                }
+            },
             SocketStatement::Accept { binding, listener } => {
                 let _ = writeln!(
                     source,
@@ -495,14 +640,46 @@ pub fn entry_parts(
                 payload,
             } => {
                 let (declaration, reference) = payload_reference(&scalars, index, payload)?;
-                let _ = writeln!(
-                    source,
-                    "    {{\n{declaration}        \
-                     if (qcore_socket_sendto({}, {}, {reference}, sizeof {reference}) != 0) \
-                     {{\n            return {STATUS_SEND};\n        }}\n    }}",
-                    socket_name(name),
-                    socket_name(target)
-                );
+                match target {
+                    Endpoint::Address(spelled) => {
+                        let address = declared
+                            .get(&index)
+                            .copied()
+                            .ok_or(SocketEmissionRefusal::MissingAddress { event: index })?;
+                        let port =
+                            port_expression(&scalars, index, Some(&spelled.port), address.port)?;
+                        let _ = writeln!(
+                            source,
+                            "    {{\n{declaration}{}        \
+                             if (qcore_socket_sendto_address({}, {}, {reference}, sizeof \
+                             {reference}) != 0) {{\n            \
+                             return {STATUS_SEND};\n        }}\n    }}",
+                            address_bytes(address),
+                            socket_name(name),
+                            address_arguments(address, &port)
+                        );
+                    }
+                    Endpoint::Named(target) if family_of(target).is_v6() => {
+                        let _ = writeln!(
+                            source,
+                            "    {{\n{declaration}        \
+                             if (qcore_socket_sendto_at({}, {}, {reference}, sizeof {reference}) \
+                             != 0) {{\n            return {STATUS_SEND};\n        }}\n    }}",
+                            socket_name(name),
+                            socket_name(target)
+                        );
+                    }
+                    Endpoint::Named(target) => {
+                        let _ = writeln!(
+                            source,
+                            "    {{\n{declaration}        \
+                             if (qcore_socket_sendto({}, {}, {reference}, sizeof {reference}) != 0) \
+                             {{\n            return {STATUS_SEND};\n        }}\n    }}",
+                            socket_name(name),
+                            socket_name(target)
+                        );
+                    }
+                }
             }
             SocketStatement::Recv {
                 binding,
@@ -546,8 +723,17 @@ pub fn entry_parts(
                 // stream receive needs no such argument: the connection already
                 // decides who the bytes came from.
                 let call = if datagram {
+                    // The source comparison is the same measurement on both
+                    // families; only the address structure it reads differs, so
+                    // an IPv6 receiver takes the `sockaddr_storage` reader and an
+                    // IPv4 one keeps the `sockaddr_in` reader it always had.
+                    let reader = if family_of(name).is_v6() {
+                        "qcore_socket_recvfrom_at"
+                    } else {
+                        "qcore_socket_recvfrom"
+                    };
                     format!(
-                        "qcore_socket_recvfrom({}, {}, {reference}, sizeof {reference})",
+                        "{reader}({}, {}, {reference}, sizeof {reference})",
                         socket_name(name),
                         socket_name(&receipt.from)
                     )

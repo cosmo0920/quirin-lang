@@ -144,6 +144,7 @@ import QCore.StringSliceIo
 import QCore.StringConcat
 import QCore.ComposeEventLines
 import QCore.StdSocket
+import QCore.SocketInetAddresses
 import QCore.StdHttp
 import QCore.SocketEventCompose
 
