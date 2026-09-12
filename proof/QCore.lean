@@ -137,6 +137,7 @@ import QCore.SingleEmissionRoute
 import QCore.CProgram
 import QCore.ObsReordering
 import QCore.StdBuffer
+import QCore.SourceLoop
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.ComposeEventLines

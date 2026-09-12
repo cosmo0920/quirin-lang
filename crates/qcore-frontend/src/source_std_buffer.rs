@@ -15,10 +15,23 @@
 //!             | "print" RENDERING OPERAND ";"                  -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"              -- std.logger + std.fmt
 //!             | "flush" ";"                                    -- std.logger
+//!             | "for" NAME "in" "0" ".." BOUND "{" stmt* "}"   -- source.loop.v1
 //!             | "return" ";"
 //! OPERAND   ::= ["-"] INTEGER | NAME
+//! BOUND     ::= INTEGER | NAME
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
+//!
+//! # The one nested block this route models
+//!
+//! Card `LOOP-V1` admits `source.loop.v1`'s bounded counted loop here, and it is
+//! the **only** nested block this route reads: every other one still refuses at
+//! `Q051` with "this statement opens a nested block". The loop's own grammar,
+//! its bound tier and its per-iteration custody rule are
+//! [`crate::source_loop`]'s and [`qcore_core::source_loop`]'s, reported at
+//! `Q097`–`Q099`; what this route supplies is the body's **statements**, read by
+//! the reader below, so a shape one admits and the other refuses is not
+//! expressible.
 //!
 //! # Two reserved words, and one measured collision
 //!
@@ -540,6 +553,21 @@ pub fn lower_source_buffer(
                     ),
                 ));
             }
+            // Card `LOOP-V1`: a `for` outside the entry is refused for the same
+            // reason and at the loop's own code. Without this it would be
+            // silently unmodelled — this route lowers the entry only, and a
+            // construct nothing checks is exactly what invariant 1 forbids.
+            if let Some(span) = crate::source_loop::block_loop_span(body) {
+                diagnostics.push(loop_shape_diagnostic(
+                    span,
+                    format!(
+                        "`source.loop.v1` is admitted in the entry `{entry}` only on this route; \
+                         `{}` is not it, and a loop nothing checks is not one this revision \
+                         admits",
+                        other.value.name
+                    ),
+                ));
+            }
         }
     }
 
@@ -566,9 +594,105 @@ pub fn lower_source_buffer(
 
     let mut events = Vec::new();
     let mut event_spans = Vec::new();
+    let mut constants = LoweringConstants::default();
 
-    for statement in &body.statements {
+    lower_statements(
+        parsed,
+        tokens,
+        &body.statements,
+        &mut constants,
+        &mut events,
+        Some(&mut event_spans),
+        &mut diagnostics,
+    );
+
+    if !diagnostics.is_empty() {
+        return Err(diagnostics);
+    }
+
+    Ok(LoweredBufferModule {
+        entry: entry.to_owned(),
+        program: BufferProgram {
+            entry: entry.to_owned(),
+            declared_effects,
+            events,
+        },
+        event_spans,
+        scope_span,
+    })
+}
+
+/// The check-time constants the lowering itself can see.
+///
+/// The loop's **bound** is decided here, before any byte exists, so its
+/// decidable tier is deliberately narrower than the index tier
+/// `source.buffer.v1` uses: a literal, a name bound by a literal `let`, or a
+/// name bound by `extent(NAME)`. A bound read out of a *byte* is refused by
+/// name — the value is known to the checker but not to the lowering, and
+/// widening the tier would mean deciding the count in a second place
+/// (`LOOP-BOUND-FROM-BYTE`).
+#[derive(Clone, Debug, Default)]
+struct LoweringConstants {
+    scalars: BTreeMap<String, i32>,
+    extents: BTreeMap<String, u32>,
+}
+
+impl LoweringConstants {
+    /// Record what one lowered event binds.
+    fn observe(&mut self, event: &BufferEvent) {
+        match event {
+            BufferEvent::Bind { binding, value } => {
+                self.scalars.insert(binding.clone(), *value);
+            }
+            BufferEvent::Acquire { name, extent } => {
+                self.extents.insert(name.clone(), *extent);
+            }
+            BufferEvent::Extent { binding, name } => {
+                if let Some(extent) = self.extents.get(name).copied() {
+                    self.scalars.insert(binding.clone(), extent as i32);
+                }
+            }
+            // A byte read binds a value the *checker* computes; the lowering
+            // does not, so it contributes no bound.
+            BufferEvent::Load { .. }
+            | BufferEvent::Store { .. }
+            | BufferEvent::Release { .. }
+            | BufferEvent::Line(_)
+            | BufferEvent::Repeat { .. }
+            | BufferEvent::Return => {}
+        }
+    }
+}
+
+/// Lower one statement sequence — an entry body, or a loop body.
+///
+/// `event_spans` is `Some` only for the entry's own sequence: a loop body's
+/// events have no top-level index, and their refusals are attributed to the
+/// `for` statement (`LOOP-BODY-ATTRIBUTION`).
+#[allow(clippy::too_many_arguments)]
+fn lower_statements(
+    parsed: &SourceProgram,
+    tokens: &[Token],
+    statements: &[crate::frontend::Located<crate::frontend::StatementKind>],
+    constants: &mut LoweringConstants,
+    events: &mut Vec<BufferEvent>,
+    mut event_spans: Option<&mut Vec<Span>>,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) {
+    for statement in statements {
         let span = statement.span;
+        // Card `LOOP-V1`: the one nested block this route models.
+        if let crate::frontend::StatementKind::For { binding, body } = &statement.value {
+            if let Some(event) =
+                lower_loop(parsed, tokens, binding, body, span, constants, diagnostics)
+            {
+                events.push(event);
+                if let Some(spans) = event_spans.as_deref_mut() {
+                    spans.push(span);
+                }
+            }
+            continue;
+        }
         if !statement.value.nested_blocks().is_empty() {
             diagnostics.push(diagnostic(
                 "Q051",
@@ -581,7 +705,7 @@ pub fn lower_source_buffer(
         let window = window(tokens, span);
         let head = word(&window, 0).unwrap_or_default();
         let event = match head {
-            "let" => lower_let(&window, span, &mut diagnostics),
+            "let" => lower_let(&window, span, diagnostics),
             DROP_KEYWORD => {
                 let Some(name) = word(&window, 1) else {
                     diagnostics.push(diagnostic("Q051", span, "`drop NAME;` names one buffer"));
@@ -621,7 +745,21 @@ pub fn lower_source_buffer(
                 }
             }
             "return" => {
-                if ends_with_semicolon(&window, 1) {
+                // Card `LOOP-V1`: a `return` inside a loop body is the loop's
+                // refusal, not this route's. An early exit needs a lowering with
+                // more than one exit position — the same missing capability
+                // `IF-ARM-RETURN` names — and saying so at `Q097` points the
+                // reader at the construct they have to change.
+                if event_spans.is_none() {
+                    diagnostics.push(loop_shape_diagnostic(
+                        span,
+                        "a `return` inside a `for` body is an early exit, and `source.loop.v1` \
+                         models none: a counted loop runs its body a known number of times, and a \
+                         lowering with one exit position has nowhere to put a second \
+                         (`LOOP-BODY-RETURN`)",
+                    ));
+                    None
+                } else if ends_with_semicolon(&window, 1) {
                     Some(BufferEvent::Return)
                 } else {
                     diagnostics.push(diagnostic(
@@ -632,12 +770,27 @@ pub fn lower_source_buffer(
                     None
                 }
             }
+            // Card `LOOP-V1`: both are already reserved words with their own
+            // `StatementKind`, so they reach this reader as an unmodelled head.
+            // They are refused at the **loop's** code, by name, because that is
+            // the construct whose absence they name.
+            "break" | "continue" => {
+                diagnostics.push(loop_shape_diagnostic(
+                    span,
+                    format!(
+                        "`{head}` is an early exit from a loop and `source.loop.v1` models none; \
+                         the per-exit cleanup discharge it needs is the capability \
+                         `IF-ARM-RETURN` names and no lowering on this route has (`LOOP-BREAK`)"
+                    ),
+                ));
+                None
+            }
             other => {
                 // A byte write has a *name* at its head, so it is recognised by
                 // shape rather than by keyword — which is exactly why it needs
                 // no reserved word.
                 if symbol(&window, 1, Symbol::LeftBracket) {
-                    lower_store(&window, span, &mut diagnostics)
+                    lower_store(&window, span, diagnostics)
                 } else {
                     diagnostics.push(diagnostic(
                         "Q051",
@@ -649,23 +802,77 @@ pub fn lower_source_buffer(
             }
         };
         if let Some(event) = event {
+            constants.observe(&event);
             events.push(event);
-            event_spans.push(span);
+            if let Some(spans) = event_spans.as_deref_mut() {
+                spans.push(span);
+            }
         }
     }
+}
 
-    if !diagnostics.is_empty() {
-        return Err(diagnostics);
+fn loop_shape_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: "Q097",
+        pass: SemanticPass::Loop,
+        span,
+        message: message.into(),
+    }
+}
+
+/// Lower one `for NAME in 0..BOUND { … }` into a [`BufferEvent::Repeat`].
+///
+/// The header is [`crate::source_loop`]'s and the body is **this route's own**
+/// statements, read by the reader above — so "a loop body's statements are the
+/// byte-buffer route's statements" is a statement about code rather than about
+/// two implementations that agree.
+fn lower_loop(
+    parsed: &SourceProgram,
+    tokens: &[Token],
+    binding: &str,
+    body: &SourceBlock,
+    span: Span,
+    constants: &mut LoweringConstants,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<BufferEvent> {
+    let header_window = crate::source_loop::header_window(tokens, span);
+    let header =
+        match crate::source_loop::read_loop_header(&header_window, span, &constants.scalars) {
+            Ok(header) => header,
+            Err(refusal) => {
+                diagnostics.push(refusal);
+                return None;
+            }
+        };
+    if header.variable != binding {
+        // The parser and this reader disagree about which name the header
+        // binds, which no well-formed header can produce. Refused rather than
+        // resolved in favour of either.
+        diagnostics.push(loop_shape_diagnostic(
+            span,
+            "this `for` header does not bind the name the parser read from it",
+        ));
+        return None;
     }
 
-    Ok(LoweredBufferModule {
-        entry: entry.to_owned(),
-        program: BufferProgram {
-            entry: entry.to_owned(),
-            declared_effects,
-            events,
-        },
-        event_spans,
-        scope_span,
+    // The body is lowered in a **scoped copy** of the constant environment: the
+    // index is deliberately *not* in it, so a nested loop's bound can never be
+    // a varying value, and names the body binds do not escape it.
+    let mut inner = constants.clone();
+    let mut body_events = Vec::new();
+    lower_statements(
+        parsed,
+        tokens,
+        &body.statements,
+        &mut inner,
+        &mut body_events,
+        None,
+        diagnostics,
+    );
+
+    Some(BufferEvent::Repeat {
+        variable: header.variable,
+        count: header.count,
+        body: body_events,
     })
 }

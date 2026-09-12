@@ -1,0 +1,157 @@
+LOOP-V1 (wave 25) — standing per-change gate
+Base: main a53fe2a4 (the wave-24 close).
+Linux x86_64.  Measurement outputs are worktree-private under measure/
+(gitignored), never under target/ and never in the shared scratchpad.
+
+Every step below wrote its own exit status to its own file
+(measure/<step>.exitcode) rather than through a shell wrapper, because card
+STD-BUFFER §10.5.1 records a wrapper losing one.  measure/gate.sh is the script.
+
+
+  git submodule update --init --recursive
+    -> third_party/libevent checked out at
+       d82464a277d0f42703702c4dfd9af6af38595a83.
+
+       The submodule was uninitialised in this fresh worktree, which made four
+       suites fail on the first exploratory run --- libevent_submodule,
+       profile_loader, native_library_header_decoration and the declared-pins
+       test.  This is the same situation waves 18, 19 and 22 each recorded.
+       THE PIN WAS NOT WEAKENED: the gate's own documented command fixed it and
+       every measurement below was taken afterwards.
+
+
+  cargo test --workspace --no-fail-fast
+    -> 3,989 passed, 0 failed, 8 ignored, across 204 suites reporting
+       "test result: ok" (doctests included).  EXIT 0, read from
+       measure/workspace.exitcode.
+
+
+  cargo test -p qcore-compiler --test source_loop
+    -> 39 passed, 0 failed.  Includes two sanitized native runs (the payoff
+       fixture and the edge-shape fixture), each compiled with
+         -std=c11 -Wall -Wextra -Werror -pedantic -g -O0
+         -fsanitize=address,undefined -fno-omit-frame-pointer
+       under ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 and
+       UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1.
+       A POSITIVE leak control: the payoff fixture allocates two buffers and
+       releases both, and one of the four writes into the second is performed
+       by the loop body.
+
+
+  cargo test -p qcore-compiler --test std_buffer
+    -> 52 passed, 0 failed.  UNCHANGED from main: this card edits
+       crates/qcore-core/src/std_buffer.rs and its emitter, and the route this
+       construct is admitted on is that suite's, so its being unmoved is
+       evidence rather than a formality.
+
+
+  cargo fmt --all -- --check
+    -> exit 0, clean.
+
+
+  cargo clippy --all-targets -- -D warnings
+    -> exit 0, clean.  One lint of this card's own (needless_lifetimes, on
+       source_loop::header_window) was found and FIXED, not suppressed.
+
+
+  cargo run -p qcore-compiler --example reevaluation_probe
+    -> exit 0.
+
+  cargo run -p qcore-compiler --example reevaluation_followup
+    -> exit 0.
+
+
+  python3 scripts/check_lean_audits.py
+    -> exit 0, 104/104 Lean audits pass.  One new audit file,
+       proof/AuditSourceLoop.lean, carrying 20 audited entries.  No new axiom,
+       no placeholder, no native_decide: every audited theorem depends on
+       nothing, or only on the allowed propext / Quot.sound.
+       103 -> 104.
+
+
+  python3 -m unittest discover -s scripts/tests
+    -> exit 1: 193 tests, 1 failure.
+       test_build_matrix_sections.BuildMatrixSections
+         .test_the_derived_facts_are_recomputed_rather_than_carried
+         AssertionError: ['14.0.0', 103] != ['14.0.0', 104]
+
+       THIS IS THE TRIPWIRE DOING ITS JOB, not a defect.
+       docs/reviews/r0_3/acceptance_matrix.json carries a derived
+       validation.lean_audits row, this card adds one audit file, and this
+       card's brief forbids editing the matrix.  It is deliberately left stale
+       for the wave integrator to regenerate --- the same handling every wave's
+       derived sections receive, and exactly what cards IF-STATEMENT and
+       STD-BUFFER each recorded for their own one new audit file.
+       The delta is entirely this card's.
+
+
+BYTE IDENTITY, measured rather than asserted
+--------------------------------------------
+
+The BASE COMMIT's compiler was built in a scratch tree (measure/baseline.sh,
+`git archive a53fe2a4`) and used to emit the C of every .qcore file under
+compiler/tests/fixtures/ and examples/ that emits at all.  The card build was
+then run over the same inputs with the same spelled paths and compared byte for
+byte (measure/compare.sh):
+
+    byte-identical: 65   differ: 0   no-longer-emits: 0
+
+ALL 65 PROGRAMS THAT EMIT ARE BYTE-IDENTICAL.
+
+A measurement hazard, recorded because it cost a full re-run: the first
+comparison reported 16 differences, every one of them a `#line` directive
+carrying the SPELLED INPUT PATH --- the baseline had been emitted with absolute
+paths and the card build with relative ones.  Standing constraint 11 is exactly
+about this ("do not normalize the spelled input path --- that changes
+__FILE__"), so the TOOL was corrected to use one spelling rather than the
+compiler to use one path.
+
+
+WORKSPACE
+---------
+
+    3,989 passed, 0 failed, 8 ignored, across 204 suites.  Exit 0.
+
+    COMPLETENESS, stated exactly.  The run reached and finished its final phase
+    --- the merged doctests --- and the log ends with that summary.  It contains
+    zero lines beginning "error", zero "failures:" blocks, and no
+    "test result: FAILED".  All 204 suites reported "test result: ok".  The
+    figures were recomputed from the finished log rather than read off a
+    mid-run snapshot.
+
+    THE EXIT STATUS IS READ, not inferred.  measure/workspace.sh writes it to
+    measure/workspace.exitcode with `echo $? >`, so no shell wrapper stands
+    between the cargo process and the recorded number.  That file reads 0.
+
+    THE ARITHMETIC RECONCILES EXACTLY.  AGENTS.md's wave-24 close records
+    3,950 workspace tests with 8 ignored.  3,950 + 39 = 3,989, and 39 is
+    precisely the size of this card's new suite --- so the card adds its own
+    tests and moves no other count, which is what corpus neutrality looks like
+    from the test side.
+
+
+ENVIRONMENT FINDINGS
+--------------------
+
+1.  TWO WORKSPACE RUNS WERE KILLED BY THE ENVIRONMENT, not by this card, and
+    are recorded rather than hidden.  Both were started as background tasks and
+    both received SIGTERM (exit 143) after roughly the same elapsed time, at 52
+    of the tree's ~190 suites.  Neither had reported a single failure at that
+    point.  NO NUMBER IN THIS FILE COMES FROM EITHER OF THEM.  The run recorded
+    above was started in the foreground and allowed to move to the background on
+    its own, which is the shape the card's very first exploratory run had taken
+    --- and that one had completed normally.
+
+2.  ONE EARLIER RUN WAS INVALIDATED BY THIS CARD'S OWN EDIT and was stopped
+    deliberately: a diagnostic-quality fix (one refusal per loop rather than one
+    per failing iteration, §9.9 of the report) landed while it was in flight.
+    The STD-BUFFER precedent governs: a run with a source change under it is not
+    a measurement.
+
+3.  Machine contention.  Three sibling agents were running against neighbouring
+    worktrees for most of this card's closing measurements, and the host was
+    under memory pressure.  Wall-clock timings here are therefore not comparable
+    with a quiet run.  Nothing about the results depends on that.
+
+4.  NONE of standing constraint 16's five load-sensitive rows tripped.  No
+    assertion was weakened and no test was re-run in isolation to obtain a pass.
