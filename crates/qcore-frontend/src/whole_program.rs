@@ -101,6 +101,13 @@ pub struct CheckedFunction {
     pub ownership: OwnershipState,
     pub typed_errors: ExitMap,
     pub regions: RegionExitMap,
+    /// The region operations the model above was asked about, retained beside
+    /// its answer (card `QUANT-REGION-SOURCE`). A consumer that wants to know
+    /// *what* was checked — which region, which catch clause, whether a
+    /// `quant open` reached the kernel at all — reads them here rather than
+    /// re-deriving them from the source. Empty for every function that writes
+    /// no `error region`.
+    pub region_operations: Vec<RegionOp>,
     pub summary: FunctionSummary,
     pub cfg: TypedCfg,
 }
@@ -386,6 +393,7 @@ pub fn check_whole_program_with_externs(
                     ownership: function.ownership,
                     typed_errors: function.typed_errors,
                     regions: function.regions,
+                    region_operations: function.semantics.region_operations.clone(),
                     summary: summaries[&symbol].clone(),
                     cfg: function.cfg,
                 },
@@ -491,7 +499,19 @@ fn check_local(
         semantics.initial_error_ledger.clone(),
         &semantics.region_operations,
     )
-    .map_err(|error| source_diagnostic(SemanticPass::ErrorRegion, source.span, &error))?;
+    // Card `QUANT-REGION-SOURCE`: the error-region model's refusals carry the
+    // finer `Q300` and `Q303`–`Q309` codes the `ErrorRegion` pass **already**
+    // allocates for exactly those conditions — the same allocation
+    // `qcore_core::region_task_credit::RegionTaskDiagnostic::code` reads — with
+    // `Q302` still the generic presentation code of every other condition.
+    // Nothing is allocated here. Before this card `region_operations` was empty
+    // on every path that reaches this line, so no existing diagnostic moves.
+    .map_err(|error| SourceDiagnostic {
+        code: crate::source_region::error_region_code(&error),
+        pass: SemanticPass::ErrorRegion,
+        span: source.span,
+        message: crate::source_region::error_region_message(&error),
+    })?;
     let cfg = lower_cleanup_cfg(&semantics.lowering)
         .map_err(|error| source_diagnostic(SemanticPass::CleanupLowering, source.span, &error))?;
     let source_observation = interpret_source(&semantics.lowering)

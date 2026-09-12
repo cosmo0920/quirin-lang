@@ -1,0 +1,4 @@
+136c136
+< #line 22 "compiler/tests/fixtures/region/discharged_pack.qcore"
+---
+> #line 11 "compiler/tests/fixtures/region/hand_written_twin.qcore"
