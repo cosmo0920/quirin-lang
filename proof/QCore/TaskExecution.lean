@@ -597,4 +597,120 @@ theorem infallible_extraction_does_not_accept_actual_error (errors : List ErrorT
 theorem consumed_infallible_result_cannot_be_extracted_again (errors : List ErrorTag) :
     unwrapInfallible errors none = none := rfl
 
+/-! ### Cleanup-preemption attribution (card CT24-CLEANUP-PREEMPTED, wave 30)
+
+The scope obligation refuses an early exit while the scope holds an unjoined
+child, and the exit rule carries its own loan backstop: a frame may not leave
+while one of its resources stays lent to an unjoined borrower. The preempting
+refusal is now *attributed* from that same loan judgment when it holds — the
+frame's cleanup would destroy a lent owner before the borrower's join, the
+construct CT24 names. These relations pin what makes that move incapable of
+changing any verdict: whether the exit refuses is decided by the scope
+obligation alone, before and after; the judgment only selects the message. -/
+
+/-- The two renderings a refused scope exit can carry. -/
+inductive ExitAttribution where
+  | scopeBusy
+  | cleanupPreempted (resource : Nat)
+  deriving DecidableEq, Repr
+
+/-- The exit rule's own loan judgment: the first frame resource with an
+outstanding read share, exactly the search the exit backstop performs. -/
+def outstandingLentResource (lent : Nat → Nat) : List Nat → Option Nat
+  | [] => none
+  | resource :: rest =>
+    if lent resource > 0 then some resource else outstandingLentResource lent rest
+
+/-- A scope exit under the scope obligation: `some` attribution is a refusal,
+`none` is the admitted exit. The loan judgment is consulted only after the
+obligation has already refused. -/
+def scopeExit (busy : Bool) (lent : Nat → Nat) (resources : List Nat) :
+    Option ExitAttribution :=
+  if busy then
+    some (match outstandingLentResource lent resources with
+      | some resource => .cleanupPreempted resource
+      | none => .scopeBusy)
+  else none
+
+/-- The attribution cannot move the refusal: whether the exit refuses is the
+scope obligation's own decision, whatever the loan judgment says. -/
+theorem attribution_never_moves_the_refusal
+    (busy : Bool) (lent : Nat → Nat) (resources : List Nat) :
+    (scopeExit busy lent resources).isSome = busy := by
+  cases busy <;> simp [scopeExit]
+
+/-- An admitted exit is never attributed: the judgment is read only inside a
+refusal the obligation already made. -/
+theorem an_admitted_exit_is_never_attributed (lent : Nat → Nat) (resources : List Nat) :
+    scopeExit false lent resources = none := rfl
+
+/-- A named owner is a genuinely lent frame resource: the judgment cannot
+invent a resource, and what it names carries an outstanding share. -/
+theorem a_named_owner_is_a_lent_frame_resource
+    {lent : Nat → Nat} {resources : List Nat} {resource : Nat}
+    (found : outstandingLentResource lent resources = some resource) :
+    resource ∈ resources ∧ lent resource > 0 := by
+  induction resources with
+  | nil => cases found
+  | cons head rest ih =>
+    unfold outstandingLentResource at found
+    by_cases lentHead : lent head > 0
+    · rw [if_pos lentHead] at found
+      cases found
+      exact ⟨List.mem_cons_self, lentHead⟩
+    · rw [if_neg lentHead] at found
+      obtain ⟨member, positive⟩ := ih found
+      exact ⟨List.mem_cons_of_mem head member, positive⟩
+
+/-- The preempting gate reads the backstop's own judgment: the refined
+attribution appears exactly where that judgment resolves a resource. -/
+theorem the_preempting_gate_reads_the_backstops_own_judgment
+    (lent : Nat → Nat) (resources : List Nat) (resource : Nat) :
+    scopeExit true lent resources = some (.cleanupPreempted resource) ↔
+      outstandingLentResource lent resources = some resource := by
+  unfold scopeExit
+  cases found : outstandingLentResource lent resources with
+  | none => simp
+  | some judged => simp
+
+/-- A frame with no lent resource keeps the plain refusal byte for byte: a
+busy scope whose unjoined child holds no loan is not the CT24 construct, and
+nothing is attributed to it. -/
+theorem an_unlent_frame_keeps_the_plain_refusal
+    {lent : Nat → Nat} {resources : List Nat}
+    (unlent : ∀ resource ∈ resources, lent resource = 0) :
+    scopeExit true lent resources = some .scopeBusy := by
+  have empty : outstandingLentResource lent resources = none := by
+    induction resources with
+    | nil => rfl
+    | cons head rest ih =>
+      unfold outstandingLentResource
+      rw [if_neg (by simp [unlent head List.mem_cons_self])]
+      exact ih fun resource member => unlent resource (List.mem_cons_of_mem head member)
+  simp [scopeExit, empty]
+
+/-- CT24's cell: a refused exit whose frame holds a lent owner is always
+attributed to the destroy-before-join, and the owner it names really is a
+lent resource of the exiting frame. -/
+theorem ct24s_cell_is_attributed_to_the_destroy_before_join
+    {lent : Nat → Nat} {resources : List Nat} {witness : Nat}
+    (member : witness ∈ resources) (outstanding : lent witness > 0) :
+    ∃ resource, scopeExit true lent resources = some (.cleanupPreempted resource) ∧
+      resource ∈ resources ∧ lent resource > 0 := by
+  have found : ∃ resource, outstandingLentResource lent resources = some resource := by
+    induction resources with
+    | nil => cases member
+    | cons head rest ih =>
+      unfold outstandingLentResource
+      by_cases lentHead : lent head > 0
+      · exact ⟨head, by rw [if_pos lentHead]⟩
+      · rw [if_neg lentHead]
+        cases List.mem_cons.mp member with
+        | inl atHead => exact absurd (atHead ▸ outstanding) lentHead
+        | inr inRest => exact ih inRest
+  obtain ⟨resource, judged⟩ := found
+  exact ⟨resource,
+    (the_preempting_gate_reads_the_backstops_own_judgment lent resources resource).mpr judged,
+    a_named_owner_is_a_lent_frame_resource judged⟩
+
 end QCore.TaskExecution

@@ -200,13 +200,17 @@ fn reconstruction_to_full_authority_is_refused_while_a_share_is_retained() {
     );
     // A path that leaves without joining the second borrower cannot exit the
     // scope at all. The release is removed too, so the measured refusal is the
-    // scope rule rather than the release rule that would fire first.
+    // scope rule rather than the release rule that would fire first. Pin moved
+    // deliberately (card CT24-CLEANUP-PREEMPTED): the scope rule's refusal now
+    // carries the exit backstop's own loan judgment — here naming the second
+    // borrower alone, because the first join already reclaimed its share.
     rejects(
         &shares("512", "512").replace(
             "let a = join move first?;\n            let b = join move second?;\n            let restored = qcore_buffer_write(buffer, 7);\n            let after = qcore_buffer_read(buffer);\n            drop buffer;\n            return after;",
             "let a = join move first?;\n            return a;",
         ),
-        "ScopeBusy",
+        "cleanup preempted — this exit would run the frame's cleanup over resource 1 \
+         while task(s) [3] still hold a read share of it",
     );
 }
 
