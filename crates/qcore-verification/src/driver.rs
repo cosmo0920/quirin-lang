@@ -411,12 +411,13 @@ pub struct ComposedEpochModule {
     /// beside the bound, never inside it — the bound is unchanged by it.
     pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
     /// The parent's own quantitative epilogue over the unedited
-    /// `qcore_core::error_region` model (card `REGION-CREDIT-JOINS`): an
-    /// `error region` written after every spawn and join, whose catch's
-    /// `quant open` binds the sealed pack and whose `discharge` abandons
-    /// exactly the parent-local unused credit. `None` for every entry that
-    /// writes no region, which is what keeps every previously admitted
-    /// composed epoch byte-identical.
+    /// `qcore_core::error_region` model (cards `REGION-CREDIT-JOINS` and
+    /// `REGION-JOINS-DUTIES`): an `error region` written after every spawn
+    /// and join, whose catch's `quant open` binds the sealed pack and whose
+    /// `discharge` destroys the pack's owners in reverse acquisition order
+    /// and abandons exactly the parent-local unused credit. `None` for every
+    /// entry that writes no region, which is what keeps every previously
+    /// admitted composed epoch byte-identical.
     pub region: Option<ComposedRegionEvidence>,
     /// The scoped-task profile the task half executes under, kept because the
     /// composed label would otherwise hide whether the region moves owned
@@ -433,15 +434,22 @@ pub struct ComposedEpochModule {
 /// published.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ComposedRegionEvidence {
-    /// The statement's extent in the original file — the blanked range.
+    /// The statement's extent in the original file — the erased range.
     pub span: Span,
     /// Exactly one `RegionOp::ErrorRegion`, built from the model's own
     /// constructors and admitted by `analyze_error_regions`.
     pub operations: Vec<RegionOp>,
     /// The parent-local unused credit the discharge abandoned — the sealed
-    /// pack's remainder, which is the one thing the opening may discard because
-    /// a credit is an accounting quantity and not a live resource.
+    /// pack's remainder, which the opening may discard because a credit is an
+    /// accounting quantity and not a live resource.
     pub abandoned_credit: u64,
+    /// The owners the discharge destroyed — the pack's duties, by binding
+    /// name, in destruction order (reverse acquisition order). Read out of the
+    /// model's own cleanup trace and cross-checked against the reader's
+    /// independent duty fold before publication, exactly as the credit is
+    /// (card `REGION-JOINS-DUTIES`). Empty for a duty-free region, which is
+    /// wave 28's evidence unchanged.
+    pub released: Vec<String>,
 }
 
 impl CheckedSourceModule {
@@ -6039,10 +6047,13 @@ fn compile_composed_epoch_source(
     let entry = select_entry(&planned_typed, options).map_err(|error| vec![error])?;
     // Card `REGION-CREDIT-JOINS`: the parent's own quantitative epilogue, if the
     // entry writes one. Read and validated before the split so the statement is
-    // blanked from the task half exactly as the plan is — the region, like the
-    // plan, erases from emission (constraint 15l) — and so a region anywhere it
-    // is not admitted refuses about the composition rather than about the task
-    // profile.
+    // erased from the task half exactly as the plan is — into its straight-line
+    // twin: a duty-free region blanks completely (constraint 15l), and a
+    // duty-carrying one (card `REGION-JOINS-DUTIES`) keeps its acquisitions and
+    // releases at their own offsets with the discharge's drops written after
+    // them, so the task half is an ordinary scoped-task program the unedited
+    // route compiles. A region anywhere it is not admitted refuses about the
+    // composition rather than about the task profile.
     let region = source_epoch_tasks::read_composed_region(parsed, &entry).map_err(|errors| {
         errors
             .into_iter()
@@ -6052,7 +6063,7 @@ fn compile_composed_epoch_source(
     let split = source_epoch_tasks::split_composed_epoch(
         parsed,
         &entry,
-        region.as_ref().map(|region| region.span),
+        region.as_ref().map(|region| &region.erasure),
     )
     .map_err(|errors| {
         errors
@@ -6267,15 +6278,36 @@ fn check_composed_region(
             "composed region produced an exit the composition does not admit",
         ));
     }
-    let abandoned = match state.cleanup_trace() {
-        [] => 0,
-        [CleanupEvent::AbandonCredit(amount)] => *amount,
-        _ => {
-            return Err(recheck_failure(
-                "composed region's cleanup trace carries an event its body cannot produce",
-            ));
+    // The trace an admitted composed region can produce is exactly: one
+    // `Destroy` per remaining duty in reverse acquisition order (card
+    // `REGION-JOINS-DUTIES`), then the abandoned remainder when it is not
+    // zero. Both halves are re-derived: the destroys against the reader's own
+    // duty fold, the credit against its quantity fold — a disagreement in
+    // either is a defect of this wiring, never of the program.
+    let mut trace = state.cleanup_trace();
+    let abandoned = match trace.last() {
+        Some(CleanupEvent::AbandonCredit(amount)) => {
+            trace = &trace[..trace.len() - 1];
+            *amount
         }
+        _ => 0,
     };
+    let destroyed: Vec<u64> = trace
+        .iter()
+        .map(|event| match event {
+            CleanupEvent::Destroy(resource) => Ok(*resource),
+            _ => Err(recheck_failure(
+                "composed region's cleanup trace carries an event its body cannot produce",
+            )),
+        })
+        .collect::<Result<_, _>>()?;
+    let expected: Vec<u64> = region.duties.iter().rev().map(|(_, id)| *id).collect();
+    if destroyed != expected {
+        return Err(recheck_failure(
+            "composed region's cleanup trace failed independent re-derivation against the \
+             reader's duty fold",
+        ));
+    }
     // The independent re-derivation: the reader's own fold over the written
     // `credit`/`effort` quantities must name the same figure the model's trace
     // does, or nothing is published.
@@ -6288,6 +6320,12 @@ fn check_composed_region(
         span: region.span,
         operations: region.operations,
         abandoned_credit: abandoned,
+        released: region
+            .duties
+            .iter()
+            .rev()
+            .map(|(owner, _)| owner.clone())
+            .collect(),
     })
 }
 

@@ -1268,7 +1268,9 @@ opening discards parent-local unused credit after joins"*, made expressible:
 
 ```ebnf
 region_epilogue = "error", "region", NAME, "{",
-                    { "credit", NAT, ";" | "effort", NAT, ";" },
+                    { "credit", NAT, ";" | "effort", NAT, ";"
+                    | "let", NAME, "=", "qcore_buffer_new", "(", NAT, ")", "?", ";"
+                    | "drop", NAME, ";" },
                     "qcore_check", "(", "false", ",", ERROR, ")", ";",
                   "}",
                   "catch", "(", ERROR, ")",
@@ -1278,20 +1280,32 @@ region_epilogue = "error", "region", NAME, "{",
 
 It is admitted only as a direct statement of the entry's task scope, **after
 every spawn and join** — an ordering derived from the checked task IR's own
-spans, refused at `Q600` when false in either direction — and its body is
-narrowed to the parent's own quantities: a region **acquisition** is refused
-(`REGION-JOINS-DUTIES`), because a task-route resource has its own custody
-model and the region **erases from emission** exactly as the plan does
-(constraint 15l): the emitted C, the source map and the reference observation
-are byte-identical with and without it. The sealed pack therefore carries no
-duty and exactly the remainder of the written `credit`/`effort` fold, the one
-quantity the opening's `discharge` may discard — the kernel's own explicit
-`AbandonCredit`, checked by the **unedited**
-`qcore_core::error_region::analyze_error_regions` and published as
-`ComposedRegionEvidence::abandoned_credit` only after the driver re-derives it
-from an independent fold. Shape refusals are `Q302` and an undeclared error is
-`Q300`, per §L21; every pack obligation keeps the model's own `Q303`–`Q309`.
-See [the composition record](reports/region-credit-joins/README.md).
+spans, refused at `Q600` when false in either direction. Since card
+`REGION-JOINS-DUTIES` (wave 29, deliberately superseding the wave-28 duty-free
+premise) the body admits the task route's **own** acquisition and release
+beside the parent's quantities, so the sealed pack carries real cleanup duties
+(`Destroy`, one per unreleased owner) beside the remainder, and the opening's
+`discharge` destroys the owners in reverse acquisition order — CT25's duty
+half. The region **erases into its straight-line twin**: the split keeps each
+acquisition and body release at its own byte offsets in the task half and
+writes one `drop NAME;` per remaining duty into the blanks after them, so the
+**unedited** scoped-task route compiles, custody-checks, emits and
+reference-executes the destruction the model decided; a duty-free region
+still blanks completely and keeps the emitted C, source map and reference
+observation byte-identical with and without it (constraint 15l, the wave-28
+measurement unchanged). Both published figures are re-derived before
+publication: `abandoned_credit` against the reader's quantity fold and
+`released` against its duty fold, over the model's own cleanup trace. Shape
+refusals are `Q302` and an undeclared error is `Q300`, per §L21 — including a
+release of a name the region did not acquire, an owner colliding with an
+entry binding, an erasure that does not fit inside the statement it erases
+(`REGION-JOINS-ERASURE-FIT`), and the sequential `qcore_acquire` spelling,
+which names no task-route resource; every pack obligation keeps the model's
+own `Q303`–`Q309`. Two simultaneously live owners refuse at the task route's
+existing custody `Q600` — the second acquisition's `?` failure edge discards
+the first, the erased program's real leak path (`REGION-JOINS-MULTI-OWNER`).
+See [the composition record](reports/region-credit-joins/README.md) and
+[the duty record](reports/region-joins-duties/README.md).
 
 Refused at `Q600`, each with a named follow-on: shared storage cells and
 `read`/`write` clauses (`T08-COMPOSE-SHARED`), read-loan captures

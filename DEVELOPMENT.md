@@ -349,6 +349,47 @@ full suite.
 
 ## Increment records
 
+REGION-JOINS-DUTIES (2026-09-12, wave 29): the remainder `REGION-CREDIT-JOINS`
+named, landed as CT25's **duty half** — *"cleanup destroys owner after
+joins"*, expected Accept, now expressible and accepted end to end. The
+composed region body on `source.epoch.tasks.v1` admits the task route's own
+acquisition and release — `let NAME = qcore_buffer_new(INT)?;` sealing a real
+`CleanupAction::Destroy` duty, `drop NAME;` of a region owner erasing one — so
+the sealed pack carries duties beside the remainder and the opening's
+`discharge` destroys the remaining owners in **reverse acquisition order,
+after every join**. This **deliberately supersedes constraint 15m's duty-free
+premise** (amendment text proposed in the card report §2 for the integrator).
+The emission story is the sequential route's precedent read at the text level:
+the region **erases into its straight-line twin** — the split keeps
+acquisitions and body releases at their own byte offsets in the task half and
+writes one `drop NAME;` per remaining duty into the blanked space after them,
+first-fit, newlines never crossed, refusing when it does not fit
+(`REGION-JOINS-ERASURE-FIT`) — so the three composed checkers stay unedited
+and the destruction is a real emitted, custody-checked, reference-executed
+program (a native run under counting allocator hooks frees every buffer,
+worker result and region owner both). A duty-free region still blanks
+completely, byte for byte (the wave-28 measurement kept). Both published
+figures are re-derived before publication: `abandoned_credit` against the
+reader's quantity fold and the new `released` against its duty fold, over the
+model's own cleanup trace. Every refusal that stands and is not the admitted
+one keeps its exact code: the after-joins `Q600` both directions, `Q635`/`Q636`,
+the model's `Q303`–`Q309` (Q305/Q306 now reachable with a real duty), and the
+sequential `qcore_acquire` spelling stays refused. Measured boundary: two
+simultaneously live owners refuse at the task route's **existing** custody
+`Q600` — the second acquisition's `?` failure edge discards the first, the
+erased program's real leak path (`REGION-JOINS-MULTI-OWNER`); the sequenced
+spelling is admitted. CT25's **loan-expiry half is not landed**: read-loan
+captures stay refused (`T08-COMPOSE-LOAN`), so *loan expiry* still has no
+referent on this route — a lane should not map CT25 until it decides whether
+the duty half alone carries the scenario (the card report §7 states both
+readings). Zero new codes (`Q302` condition widenings, stated in §L21), zero
+reserved words (every admitted token already parsed on this route), no model
+edited, no manifest/matrix/corpus file touched. Rust: 9 new end-to-end tests
+(`compiler/tests/region_joins_duties.rs`) on 8 fixtures under
+`compiler/tests/fixtures/epoch_credit/CT25/`, 3 new frontend unit tests; Lean:
+`QCore.RegionJoinsDuties`, 14 audited theorems, audits 115 → **116**.
+Evidence: `docs/reports/region-joins-duties/README.md`.
+
 Wave 29, card `CT01-PROOF-LEG` (2026-09-12): the first **proof-stage
 capability** for a mapped CT case, delivered without flipping the row — the
 manifest and the acceptance matrix are untouched, proof still reads 0 of 41,

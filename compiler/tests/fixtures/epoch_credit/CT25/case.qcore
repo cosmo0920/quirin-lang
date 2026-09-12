@@ -1,0 +1,57 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// CT25's duty half -- "Cleanup destroys owner after joins", expected Accept
+// (card REGION-JOINS-DUTIES, superseding constraint 15m's duty-free premise
+// deliberately).
+//
+// The plan grants the worker's credit; the parent spawns and joins its one
+// child; and only then does the parent's own error region acquire `owner` --
+// the task route's own resource, `let owner = qcore_buffer_new(7)?;` -- credit
+// 5, spend 2 and take its decided error edge. The sealed pack carries one
+// real cleanup duty (Destroy) and remainder 3; the catch's quant open binds
+// it as a linear capability, and the discharge destroys the owner -- after
+// every join -- and abandons exactly the parent-local unused credit. The
+// region erases into its straight-line twin: the acquisition stays in the
+// task half at its own offsets and the discharge's `drop owner;` is written
+// after it, so the unedited scoped-task route compiles, custody-checks and
+// emits the destruction the model decided.
+//
+// The loan-expiry half of CT25's scenario is NOT expressible here: read-loan
+// captures stay refused on this route (T08-COMPOSE-LOAN), so no loan over the
+// owner exists to expire. That remainder is named in the card report.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        error region R {
+            let owner = qcore_buffer_new(7)?;
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return answer;
+    }
+}
