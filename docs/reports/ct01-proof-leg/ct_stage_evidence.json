@@ -1,0 +1,111 @@
+{
+ "schema_version": 1,
+ "card": "CT01-PROOF-LEG",
+ "generated": "2026-09-12",
+ "report": "docs/reports/ct01-proof-leg/README.md",
+ "purpose": "The integrator flip of CT01 proof stage: the first executed proof row of the manifest, superseding card T00 archived stage evidence for CT01 without editing that frozen file (constraint 21). Every other stage row is carried from T00 record unchanged; only proof moves, on the named workspace test the capability card landed.",
+ "derivation_rule": "A stage is executed only where a named workspace test runs it on the case own artifact. compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape lowers CT01 fixture through the real pipeline, recomputes the Lean-proved digest from the artifact and runs the same total decision procedure the theorems cover. The theorem covers the checked artifact reference run and its admitted renderings; native execution stays covered by observation only, and a grown proof numerator is evidence about this case artifact, not language conformance (constraint 23).",
+ "mapped_case_stage_matrix": {
+  "CT01": {
+   "supersedes": "docs/reports/remaining-t00/coverage.json",
+   "harness_verdict_mode": "native_owned_transfer",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_owned_transfer",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "unassessed",
+     "note": "no sanitized run recorded for this case"
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "executed",
+     "executor": "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
+     "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+     "observations": 1,
+     "note": "the artifact checked against the Lean-proved total decision procedure dischargesOwnedTransfer (QCore.Ct01OwnedTransfer, AuditCt01OwnedTransfer.lean); reference-run discharge and admitted renderings covered, native execution deliberately not (observation only)"
+    },
+    "aux:cli_end_to_end": {
+     "status": "executed",
+     "executor": "crates/qcorec/tests/cli.rs::cli_names_owned_profile_and_emits_real_buffer_transfer",
+     "host_gate": [
+      "linux"
+     ],
+     "note": "qcorec check + emit + clang + run on CT01/case.qcore (Linux-gated)"
+    },
+    "aux:frontend_mutation_matrix": {
+     "status": "executed",
+     "executor": "crates/qcore-frontend/tests/owned_tasks.rs (ROUND_TRIP = CT01/case.qcore)",
+     "note": "~25 mutation/adversarial variants checked at the task ledger"
+    }
+   }
+  }
+ }
+}

@@ -183,7 +183,10 @@
           "status": "not_applicable"
         },
         "proof": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
+          "artifact": "compiler/tests/fixtures/ct/CT01/case.qcore",
+          "observations": 1
         }
       },
       "evidence_target": "linux"

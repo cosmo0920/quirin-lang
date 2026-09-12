@@ -173,6 +173,19 @@ const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21"];
 /// comparison is the executed layout *observation* (`AGGREGATE-CT09-LAYOUT`:
 /// an observation, never the layout proof the case's `proof` stage would need).
 const SEQUENTIAL_SANITIZED_CASES: &[&str] = &["CT07", "CT09"];
+/// Card `CT01-PROOF-LEG`: the cases whose `proof` stage is executed, each
+/// bound to the named workspace test that checks the case's own artifact
+/// against the Lean-proved decision procedure. The gate is pinned per case and
+/// fail-closed — every case outside this table keeps `unassessed`, and
+/// advancing another case means editing this table deliberately (the
+/// sanitizer-gate precedent). CT01's theorem covers the checked artifact's
+/// reference run and its admitted renderings; native execution stays covered
+/// by observation only, and a grown proof numerator is evidence about the
+/// case's artifact, not language conformance.
+const PROOF_GATED_CASES: &[(&str, &str)] = &[(
+    "CT01",
+    "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
+)];
 /// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
 /// published credit quantities wholesale because an epoch that merely checks
 /// has measured nothing. CT23 (cards `CT23-CREDIT-ERROR-PATH` and
@@ -359,6 +372,11 @@ const RUNNER_REGISTRY: &[&str] = &[
     // compile-and-run of the case's own emitted C, compared per stream with
     // the checked module's own observation.
     "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+    // Card `CT01-PROOF-LEG`: the proof-stage runner — the named test that
+    // lowers the case's own fixture and checks its artifact against the
+    // Lean-proved decision procedure (host-unconditional; the theorems
+    // themselves are checked by the standing Lean audit gate).
+    "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -1415,9 +1433,16 @@ fn derive_stage_plan(
             StagePlan::absent("unassessed")
         },
     );
-    // No CT fixture has a theorem bound to it. Advancing this is card T00.7 and
-    // requires editing this line deliberately.
-    plan.insert("proof", StagePlan::absent("unassessed"));
+    // Card `CT01-PROOF-LEG` advanced this line deliberately (it was card
+    // T00.7's open item): a case in the pinned table has its theorem-bound
+    // runner; every other case keeps `unassessed`, fail-closed.
+    plan.insert(
+        "proof",
+        match PROOF_GATED_CASES.iter().find(|(case, _)| *case == case_id) {
+            Some((_, executor)) => StagePlan::executed(executor, 1, None),
+            None => StagePlan::absent("unassessed"),
+        },
+    );
     plan
 }
 
@@ -3148,7 +3173,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 13] = [
+const EVIDENCE_FILES: [&str; 14] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3162,6 +3187,7 @@ const EVIDENCE_FILES: [&str; 13] = [
     "docs/reports/ct-wire-lane/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
     "docs/reports/ct22-wire/ct_stage_evidence.json",
+    "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
