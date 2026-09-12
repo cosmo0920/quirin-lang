@@ -785,6 +785,16 @@ pub enum SourceExecutionProfile {
     /// tagged error payload carrying exactly one owned Buffer out of a child
     /// through its completion and the creator's join.
     ScopedErrorPayloadV1,
+    /// `ScopedWriteLeasesV1` (card `WRITE-LEND-TASKS`): the owned-task
+    /// profile plus range write leases — `lend PLACE LOW..HIGH` captures
+    /// handing a worker write authority over its own byte range of one
+    /// payload for spawn..join, ranges pairwise disjoint by the wave-29
+    /// overlap decision, the owner holding no whole-payload authority (read
+    /// included) while any lease is out. A strictly stronger claim than owned
+    /// transfer, so it names its own profile. In this first slice the holder
+    /// exercises nothing: the worker-side range write is the named residual
+    /// `WRITE-LEND-TASKS-EXERCISE`.
+    ScopedWriteLeasesV1,
     /// `source.mutex.guard.v1`: a lexical guard over one fixed-shape
     /// `CheckedMutexInvariantV1` mutex generation, on one Linux thread.
     CheckedMutexGuardsV1,
@@ -3908,6 +3918,24 @@ fn task_route(
             }
         })
     });
+    // A range write lease transfers write authority over a byte range across
+    // the boundary, which no earlier profile does, so it names its own
+    // profile (card `WRITE-LEND-TASKS`).
+    let write_lease_profile = checked.module().functions.values().any(|function| {
+        function
+            .parameters
+            .iter()
+            .any(|(_, kind)| *kind == ScalarType::WriteLease)
+            || function
+                .blocks
+                .values()
+                .any(|block| match &block.terminator.kind {
+                    TaskTerminatorKind::TrySpawn { arguments, .. } => arguments
+                        .iter()
+                        .any(|argument| matches!(argument, ScalarOperand::Lease { .. })),
+                    _ => false,
+                })
+    });
     // A typed error payload transfers custody along an error edge, which no
     // earlier profile does, so it names its own profile rather than being
     // reported as an ordinary owned-task run.
@@ -3938,10 +3966,13 @@ fn task_route(
                 let scalar = match function.result {
                     ScalarType::I32 => ExecutableResultType::I32,
                     ScalarType::Unit => ExecutableResultType::Unit,
-                    // Neither is an ordinary scalar result. `ReadLoan` is
-                    // additionally refused as a result by the checker, so this
-                    // arm is a total match, not a silent reclassification.
-                    ScalarType::OwnedBuffer | ScalarType::ReadLoan => return None,
+                    // None is an ordinary scalar result. `ReadLoan` and
+                    // `WriteLease` are additionally refused as results by the
+                    // checker, so this arm is a total match, not a silent
+                    // reclassification.
+                    ScalarType::OwnedBuffer | ScalarType::ReadLoan | ScalarType::WriteLease => {
+                        return None;
+                    }
                 };
                 Some((function.name.clone(), scalar))
             })
@@ -3978,6 +4009,8 @@ fn task_route(
             // as the task profile it composes: its guarantees are that route's
             // plus the join's, and a consumer must be able to tell.
             SourceExecutionProfile::ComposedStdIoTasksV1
+        } else if write_lease_profile {
+            SourceExecutionProfile::ScopedWriteLeasesV1
         } else if read_share_profile {
             SourceExecutionProfile::ScopedReadSharesV1
         } else if error_payload_profile {

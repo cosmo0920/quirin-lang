@@ -136,7 +136,13 @@ enum BorrowKind {
 /// point? The same decision `qcore_core::std_string::ranges_overlap` publishes
 /// for `u32` bounds, restated on the ownership IR's own `u64` axis so the two
 /// layers cannot drift by a conversion. An empty interval overlaps nothing.
-fn axes_overlap(low_a: u64, high_a: u64, low_b: u64, high_b: u64) -> bool {
+///
+/// Public since card `WRITE-LEND-TASKS`: the scoped-task ledger's range write
+/// leases (`crate::scoped_tasks`) decide their exclusive-overlap rule by
+/// **calling this function** rather than restating it, so the sequential
+/// route's lend and the task-crossing lease cannot drift apart. The rule
+/// itself still lives here, in the IR, per the amended constraint 15h.
+pub fn axes_overlap(low_a: u64, high_a: u64, low_b: u64, high_b: u64) -> bool {
     low_a.max(low_b) < high_a.min(high_b)
 }
 

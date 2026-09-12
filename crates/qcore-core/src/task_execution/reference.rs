@@ -8,6 +8,9 @@ pub enum ScalarValue {
     /// A borrowed identity. The reference run refuses to treat it as an
     /// outcome, independently of the checker's type rule.
     ReadLoan(ResourceId),
+    /// A write-leased identity (card `WRITE-LEND-TASKS`). Refused as an
+    /// outcome exactly as a loan is, independently of the checker's rule.
+    WriteLease(ResourceId),
 }
 impl ScalarValue {
     fn outcome(self) -> Result<TaskOutcome, String> {
@@ -16,6 +19,7 @@ impl ScalarValue {
             Self::I32(value) => Ok(TaskOutcome::I32(value)),
             Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
             Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
+            Self::WriteLease(_) => Err("a write lease is not a reference outcome".into()),
         }
     }
 }
@@ -71,6 +75,20 @@ pub enum TaskEvent {
     },
     /// A read loan closed by a successful creator join.
     BufferReturned {
+        borrower: u64,
+        buffer: ResourceId,
+    },
+    /// A range write lease opened to a child that was actually created (card
+    /// `WRITE-LEND-TASKS`): write authority over the payload bytes
+    /// `[low, high)`, held by `borrower` until its creator's join.
+    BufferLeased {
+        borrower: u64,
+        buffer: ResourceId,
+        low: u64,
+        high: u64,
+    },
+    /// A range write lease closed by a successful creator join.
+    BufferLeaseReturned {
         borrower: u64,
         buffer: ResourceId,
     },
@@ -162,6 +180,14 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
                 Ok(ScalarValue::ReadLoan(*resource))
             }
             _ => Err("reference lender slot is unavailable".into()),
+        },
+        // Leasing, like lending, neither consumes nor copies the binding; the
+        // range travels with the reservation, not with the value.
+        ScalarOperand::Lease { slot, .. } => match slots.get(slot) {
+            Some(Value::Scalar(ScalarValue::OwnedBuffer(resource))) => {
+                Ok(ScalarValue::WriteLease(*resource))
+            }
+            _ => Err("reference lessor slot is unavailable".into()),
         },
     }
 }
@@ -441,6 +467,14 @@ impl Runtime<'_> {
                                     self.ledger.loan_borrowers(buffer).contains(&child)
                                 })
                                 .collect::<Vec<_>>();
+                            let returned_leases = self
+                                .ledger
+                                .outstanding_write_leases()
+                                .into_iter()
+                                .filter(|&buffer| {
+                                    self.ledger.lease_holders(buffer).contains(&child)
+                                })
+                                .collect::<Vec<_>>();
                             let completion = self
                                 .ledger
                                 .join(task, actual)
@@ -460,6 +494,12 @@ impl Runtime<'_> {
                             self.events.push(TaskEvent::Join { task: child });
                             for buffer in returned_loans {
                                 self.events.push(TaskEvent::BufferReturned {
+                                    borrower: child,
+                                    buffer,
+                                });
+                            }
+                            for buffer in returned_leases {
+                                self.events.push(TaskEvent::BufferLeaseReturned {
                                     borrower: child,
                                     buffer,
                                 });
@@ -579,18 +619,40 @@ impl Runtime<'_> {
                             })
                             .zip(shares)
                             .collect::<Vec<_>>();
+                        let ranges = arguments_syntax
+                            .iter()
+                            .filter_map(|argument| match argument {
+                                ScalarOperand::Lease { low, high, .. } => Some(LeaseRange {
+                                    low: *low,
+                                    high: *high,
+                                }),
+                                _ => None,
+                            })
+                            .collect::<Vec<_>>();
+                        let leased_resources = arguments
+                            .iter()
+                            .filter_map(|value| {
+                                if let ScalarValue::WriteLease(id) = value {
+                                    Some(*id)
+                                } else {
+                                    None
+                                }
+                            })
+                            .zip(ranges)
+                            .collect::<Vec<_>>();
                         let reservation = self.next_reservation;
                         self.next_reservation += 1;
                         let actual_scope = *scopes
                             .get(scope)
                             .ok_or("reference spawn scope unavailable")?;
                         self.ledger
-                            .reserve_with_loans(
+                            .reserve_with_transfers(
                                 task,
                                 actual_scope,
                                 reservation,
                                 &moved_resources,
                                 &lent_resources,
+                                &leased_resources,
                             )
                             .map_err(|e| format!("{e:?}"))?;
                         let succeeds = self
@@ -617,6 +679,14 @@ impl Runtime<'_> {
                                 self.events.push(TaskEvent::BufferLoaned {
                                     borrower: child,
                                     buffer,
+                                });
+                            }
+                            for &(buffer, range) in &leased_resources {
+                                self.events.push(TaskEvent::BufferLeased {
+                                    borrower: child,
+                                    buffer,
+                                    low: range.low,
+                                    high: range.high,
                                 });
                             }
                             // Leaf workers have no shared state. Eager reference
@@ -923,6 +993,19 @@ pub fn render_task_event(event: &TaskEvent) -> String {
             }
             TaskEvent::BufferReturned { borrower, buffer } => {
                 writeln!(output, "QCORE_BUFFER_RETURN {borrower} {buffer}").unwrap()
+            }
+            TaskEvent::BufferLeased {
+                borrower,
+                buffer,
+                low,
+                high,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_LEASE {borrower} {buffer} {low} {high}"
+            )
+            .unwrap(),
+            TaskEvent::BufferLeaseReturned { borrower, buffer } => {
+                writeln!(output, "QCORE_BUFFER_LEASE_RETURN {borrower} {buffer}").unwrap()
             }
             TaskEvent::Join { task } => writeln!(output, "QCORE_TASK_JOIN {task}").unwrap(),
             TaskEvent::Result { task, outcome } => match outcome {

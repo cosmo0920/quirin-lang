@@ -48,6 +48,16 @@ pub enum SourceShareExpression {
     Parenthesized(Box<Located<SourceShareExpression>>),
 }
 
+/// One bound of a range write lend's `LOW..HIGH` (card `WRITE-LEND-TASKS`).
+/// Retained structurally: an integer literal is the only bound the lowering
+/// admits, and a name is kept so the boundary can refuse it as a varying
+/// bound by its own spelling rather than as a parse failure.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum SourceLeaseBound {
+    Integer(String),
+    Name(String),
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SourceCaptureMode {
     Copy,
@@ -56,6 +66,14 @@ pub enum SourceCaptureMode {
         share: Located<SourceShareExpression>,
     },
     Write,
+    /// `lend PLACE LOW..HIGH` (card `WRITE-LEND-TASKS`): lend write authority
+    /// over the payload bytes `[LOW, HIGH)` to the worker for spawn..join.
+    /// `lend` is contextual — claimed only as the first word of a capture,
+    /// a position that was a parse failure before this card.
+    LendWrite {
+        low: Located<SourceLeaseBound>,
+        high: Located<SourceLeaseBound>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -203,10 +221,10 @@ fn parse_task(
         while cursor < close {
             let begin = cursor;
             let mode = parser.word_value(cursor).unwrap_or("");
-            if !matches!(mode, "copy" | "move" | "read" | "write") {
+            if !matches!(mode, "copy" | "move" | "read" | "write" | "lend") {
                 return Err(parser.error(
                     cursor,
-                    "capture requires copy, move, read ... share, or write",
+                    "capture requires copy, move, read ... share, lend ... LOW..HIGH, or write",
                 ));
             }
             let (place, end) = parse_place(parser, cursor + 1, close)?;
@@ -223,6 +241,18 @@ fn parse_task(
                     let (share, end) = parse_share(parser, cursor + 1, close)?;
                     cursor = end;
                     SourceCaptureMode::Read { share }
+                }
+                "lend" => {
+                    // The range spelling is the loop's: `LOW..HIGH`, the `..`
+                    // being the two existing `Dot` tokens (card `LOOP-V1`'s
+                    // precedent; no new token).
+                    let (low, next) = lease_bound(parser, cursor, close)?;
+                    if !parser.symbol(next, Symbol::Dot) || !parser.symbol(next + 1, Symbol::Dot) {
+                        return Err(parser.error(next, "a write lend spells its range `LOW..HIGH`"));
+                    }
+                    let (high, next) = lease_bound(parser, next + 2, close)?;
+                    cursor = next;
+                    SourceCaptureMode::LendWrite { low, high }
                 }
                 _ => unreachable!(),
             };
@@ -342,6 +372,32 @@ fn parse_place(
         }
     }
     Ok((place, next))
+}
+
+/// One bound of a `lend PLACE LOW..HIGH` capture: an integer literal, or a
+/// name retained for the boundary's varying-bound refusal.
+fn lease_bound(
+    parser: &SourceParser<'_>,
+    start: usize,
+    limit: usize,
+) -> Result<(Located<SourceLeaseBound>, usize), SourceParseError> {
+    if start >= limit {
+        return Err(parser.error(start, "expected a write lend bound"));
+    }
+    let value = match &parser.tokens[start].kind {
+        TokenKind::Integer(value) => SourceLeaseBound::Integer(value.clone()),
+        TokenKind::Word(_) => SourceLeaseBound::Name(identifier(parser, start)?.value),
+        _ => {
+            return Err(parser.error(start, "a write lend bound is an integer literal"));
+        }
+    };
+    Ok((
+        Located {
+            span: parser.tokens[start].span,
+            value,
+        },
+        start + 1,
+    ))
 }
 
 fn parse_share(

@@ -83,7 +83,9 @@ enum qcore_diagnostic_kind {
     QCORE_DIAG_EXTERN_CALL,
     QCORE_DIAG_EXTERN_OUTCOME,
     QCORE_DIAG_EVENT_STEP,
-    QCORE_DIAG_RUN_OUTCOME
+    QCORE_DIAG_RUN_OUTCOME,
+    QCORE_DIAG_TASK_LEASE,
+    QCORE_DIAG_TASK_LEASE_RETURN
 };
 
 struct qcore_diagnostic_event {
@@ -181,6 +183,15 @@ static void qcore_diagnostic_stdout(const struct qcore_diagnostic_event *event)
             event->subject, event->related); return;
     case QCORE_DIAG_TASK_RETURN:
         (void)fprintf(stdout, "QCORE_BUFFER_RETURN %" PRIu64 " %" PRIu64 "\n",
+            event->subject, event->related); return;
+    case QCORE_DIAG_TASK_LEASE:
+        /* The lease's byte range travels packed in `value`: low bound in the
+           high 32 bits, high bound in the low 32 (card WRITE-LEND-TASKS). */
+        (void)fprintf(stdout, "QCORE_BUFFER_LEASE %" PRIu64 " %" PRIu64 " %" PRIu64 " %" PRIu64 "\n",
+            event->subject, event->related,
+            (uint64_t)event->value >> 32, (uint64_t)event->value & 0xffffffffu); return;
+    case QCORE_DIAG_TASK_LEASE_RETURN:
+        (void)fprintf(stdout, "QCORE_BUFFER_LEASE_RETURN %" PRIu64 " %" PRIu64 "\n",
             event->subject, event->related); return;
     case QCORE_DIAG_TASK_RESULT:
         if (event->name != NULL && event->name[0] == 'i')

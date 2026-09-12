@@ -356,7 +356,8 @@ fn operand_slots(operand: &ScalarOperand) -> Vec<SlotId> {
     match operand {
         ScalarOperand::Slot(slot)
         | ScalarOperand::Move(slot)
-        | ScalarOperand::Loan { slot, .. } => {
+        | ScalarOperand::Loan { slot, .. }
+        | ScalarOperand::Lease { slot, .. } => {
             vec![*slot]
         }
         ScalarOperand::Unit | ScalarOperand::I32(_) => Vec::new(),

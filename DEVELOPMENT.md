@@ -349,6 +349,53 @@ full suite.
 
 ## Increment records
 
+WRITE-LEND-TASKS (2026-09-13, wave 31): write lends crossing the spawn
+boundary — the residual `SLICE-PERMISSIONS-WRITE-LEND` named ("both parties
+are one sequential entry's bindings — the F1 task-crossing remainder") and
+the direction CT10's rejection needs. A spawn capture `lend PLACE LOW..HIGH`
+delivers an ungraded `lend<Buffer>` worker parameter: a **range write lease**
+— write authority over `[LOW, HIGH)` of an owned Buffer's payload
+(`BUFFER_PAYLOAD_BYTES = 4`, the `int32_t`'s real bytes) transferred to one
+worker for exactly spawn..join. The rules live in the scoped-task ledger's
+new `ResourceState::WriteLeased` and every layer inherits them: two leases
+are admitted exactly when disjoint — decided by `ownership::axes_overlap`,
+made `pub` and **called** rather than restated — the owner holds no
+whole-payload authority (read included) while any lease is out, an empty
+lease refuses (a deliberate divergence from the sequential lend's empty
+admission, in the refusing direction), `MAX_WRITERS = 2`, read shares and
+leases never coexist, and only the creator's join reclaims. The
+transferability judgment gains its fourth row (`TransferMode::LendWrite`,
+`ShareProtocol::DisjointWriteLeases`, delivered `TransferKind::WriteLease`;
+`TransferClass::MovedOnly` gains `mutably_shareable_under`), with the plain
+`write` capture's pinned refusal re-decided untouched over the grown
+14 x 5 x 14 matrices. Zero new codes (two condition widenings stated in
+spec §L21: `Q600` boundary/ledger, `Q020` parameter), zero reserved words
+(`lend` contextual in two new positions, censused over 487 fixture files),
+zero tokens (`..` is the loop's two `Dot`s). The exclusivity statement is
+audited: `QCore.WriteLendTasks.no_byte_has_two_write_authorities` — at any
+point of any spawn/join interleaving (reachability over admitted ledger
+opens/closes), no byte has two write authorities, owner-vs-holder and
+holder-vs-holder in one count — backing the judgment's new admitting arm as
+`LeaseObligation` (Lean audits 121 → **122**, `AuditWriteLendTasks.lean`).
+17 end-to-end tests in `compiler/tests/write_lend_tasks.rs` (the two-worker
+disjoint fixture with its pinned lease trace, all four card refusals —
+overlap, owner write, release-before-join, varying bound — plus kind
+mismatches, third holder, mixing, temporal reuse, and one ASan/UBSan/LSan
+native run: two threads holding leases of one allocation counted once);
+4 ledger rows and re-pinned transfer matrices in `qcore-core`. Scope
+honesty: the worker **holds** and does not yet **exercise** the authority —
+no operation admits a lease in a worker body — so no two-threads-mutating
+claim is made; that is the flagship residual `WRITE-LEND-TASKS-EXERCISE`,
+beside `-EXTENT` (a byte-extent buffer), `-VARYING-BOUND`, `-EPOCH` (the
+composed epoch route refuses the capture by name) and `-F1` (the interval
+onto `DisjointFootprintsV1`'s derived footprints). CT07's recorded
+sequential-only boundary is now dischargeable and CT10's concurrency half
+now exists at byte granularity (readiness statements, no mapping; manifest
+and matrix untouched). Deliberate pin updates disclosed: the transferability
+message texts (three contracts named), the capture grammar-gate message, the
+task-parameter message, the transfer matrix pins. Evidence:
+`docs/reports/write-lend-tasks/README.md`.
+
 Worktree census hygiene (2026-09-13, post-wave-30 close): the
 `SOCKET-INET-ADDRESSES` census test
 (`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)
