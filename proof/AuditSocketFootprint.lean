@@ -1,0 +1,13 @@
+import QCore.SocketFootprint
+
+#print axioms QCore.SocketFootprint.initial_is_bounded
+#print axioms QCore.SocketFootprint.assigned_cell_is_bounded
+#print axioms QCore.SocketFootprint.step_preserves_bounded
+#print axioms QCore.SocketFootprint.run_preserves_bounded
+#print axioms QCore.SocketFootprint.create_assigns_the_fresh_cell
+#print axioms QCore.SocketFootprint.a_fresh_cell_is_no_existing_cell
+#print axioms QCore.SocketFootprint.an_accepted_pair_shares_one_cell
+#print axioms QCore.SocketFootprint.an_accept_keeps_every_other_assignment
+#print axioms QCore.SocketFootprint.a_create_keeps_every_other_assignment
+#print axioms QCore.SocketFootprint.a_derived_pair_is_refused_as_a_shared_cell
+#print axioms QCore.SocketFootprint.a_distinct_derived_cell_decides_disjoint
