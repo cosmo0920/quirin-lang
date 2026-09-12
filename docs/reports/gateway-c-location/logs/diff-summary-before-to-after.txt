@@ -1,0 +1,16 @@
+schema_version: 2
+archived: measure/before-gz
+measured: /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a1e06161086be80b0/measure/runs/after
+--- chunk-contracts
+    results: 96 -> 96 (+0 -0 ~0)
+    backend_teardown: 21 -> 21 (+0 -0 ~0)
+--- contracts
+    sources: 18 -> 18 (+0 -0 ~0)
+    manifest.modules: 18 -> 18 (+0 -0 ~0)
+    audit_selection.libraries: 5 -> 5 (+0 -0 ~0)
+--- diagnostics
+    units: 185 -> 185 (+0 -0 ~178)
+    envelope: {"line_coordinates": {"after": "`line` is the Clang -E -P preprocessed translation unit's line, not the original file; line 0 is synthetic. It is retained as the internal leaf identity every pinned comparison is keyed on, and is not a coordinate anyone can open; `origin` beside it is the original pre-preprocessing coordinate and is what diagnostic text presents", "before": "Clang -E -P preprocesse
+--- source
+--- source-effects
+    results: 96 -> 96 (+0 -0 ~0)

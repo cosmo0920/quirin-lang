@@ -1,0 +1,19 @@
+{
+  "units": 185,
+  "functions": 4834,
+  "diagnostics": 54383,
+  "origin_present": 54371,
+  "origin_null": 12,
+  "descriptions_changed": 266,
+  "descriptions_unchanged": 54117,
+  "origin_coordinates_established": 178,
+  "origin_coordinates_refused": 0,
+  "origin_coordinates_null": 7,
+  "withdrawn_lines": 0,
+  "sites_presented": 266,
+  "sites_agreeing_with_a_sibling_row": 0,
+  "sites_without_a_sibling_row": 266
+}
+
+
+STOP findings: 0; notes: 0

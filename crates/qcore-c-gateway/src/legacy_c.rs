@@ -18,6 +18,14 @@ pub use enumeration::{
     enumerate_source_definitions,
 };
 
+#[path = "legacy_location.rs"]
+pub mod location;
+
+pub use location::{
+    LocationRefusal, OriginFile, OriginalLocation, SourceLineMap, map_marked_preprocessing,
+    map_preprocessed_lines, unlocated_site,
+};
+
 #[path = "legacy_recursion.rs"]
 pub(crate) mod recursion;
 
