@@ -700,12 +700,13 @@ class SummaryTest(unittest.TestCase):
     NEWEST = "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json"
     WAVE17 = "docs/reports/wave17-ct40/ct_stage_evidence.json"
     WAVE26 = "docs/reports/ct-wire-lane/ct_stage_evidence.json"
+    WAVE28 = "docs/reports/ct-wire-lane-2/ct_stage_evidence.json"
 
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Five of the fourteen unmapped cases carry a lane's measured bucket; the
-        other nine still read card T00's 2026-09-07 analysis, and the published
+        Four of the nine unmapped cases carry a lane's measured bucket; the
+        other five still read card T00's 2026-09-07 analysis, and the published
         source is what makes the difference legible.
         """
         labels = summary.unmapped_labels(ROOT)
@@ -717,30 +718,34 @@ class SummaryTest(unittest.TestCase):
         self.assertEqual(
             measured,
             {
-                "CT07": self.WAVE26,
-                "CT08": self.WAVE26,
+                "CT22": self.WAVE28,
                 "CT41": self.WAVE17,
                 "CT42": self.WAVE17,
                 "CT46": self.WAVE13,
             },
         )
         # The labels that actually moved, with the archived text retained beside
-        # each rather than overwritten. CT11 used to be one of them — the wave-3
-        # lane's `blocked-on-scenario-mismatch (no local alias form)` over T00's
-        # `blocked-on-task-lowering (share captures)` — and it left the set
-        # entirely when the wave-26 CT lane mapped it. CT07 and CT08 took its
-        # place from the other direction: both were still on T00's archive, and
-        # the wave-26 lane re-measured them.
+        # each rather than overwritten. CT11 used to be one of them and left
+        # the set when the wave-26 CT lane mapped it; CT07 and CT08 took its
+        # place with wave-26 measured labels and left in turn when the wave-28
+        # lane mapped them (their wave-26 rows are retired, not deleted). CT22
+        # is the wave-28 lane's own measured row: the credit half of its
+        # scenario is measured to accept, and the narrowed obstacle is the
+        # joins composition — over T00's archived `blocked-on-W3/W4`.
         self.assertNotIn("CT11", labels)
         for case in ["CT07", "CT08"]:
-            self.assertEqual(
-                labels[case]["label"],
-                "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
-            )
-            self.assertEqual(
-                labels[case]["archived_label"], "blocked-on-unimplemented-syntax"
-            )
-            self.assertNotEqual(labels[case]["label"], labels[case]["archived_label"])
+            self.assertNotIn(case, labels)
+        self.assertEqual(
+            labels["CT22"]["label"],
+            "blocked-on-joins-composition (credit abandonment measured, joins not on "
+            "this route)",
+        )
+        self.assertEqual(labels["CT22"]["archived_label"], "blocked-on-W3/W4")
+        self.assertNotEqual(labels["CT22"]["label"], labels["CT22"]["archived_label"])
+        # CT21 was archive-held (`no source path emits RegionOp::QuantOpen`), so
+        # mapping it simply removed it from the tally — no lane row existed to
+        # retire, exactly as CT06's archived row left in wave 26.
+        self.assertNotIn("CT21", labels)
         self.assertEqual(labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)")
         self.assertEqual(
             labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
@@ -928,7 +933,7 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 14)
+            self.assertEqual(sum(counts.values()), 9)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
