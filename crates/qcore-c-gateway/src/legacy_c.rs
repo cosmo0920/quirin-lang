@@ -204,7 +204,211 @@ pub enum LegacyInstruction {
     NoOp,
     Unknown {
         description: String,
+        /// Card **AOM-BINDING-POISON**: what this refusal is allowed to do to
+        /// the *binding* environment. [`RefusedWrites::Unbounded`] is the
+        /// pre-repair answer and the answer every construct-level refusal
+        /// keeps; see [`RefusedWrites`] for the premises the bounded answer
+        /// rests on.
+        writes: RefusedWrites,
     },
+}
+
+/// Card **AOM-BINDING-POISON**. What a refused statement may do to the binding
+/// environment, as opposed to the resource states — which it never touches.
+///
+/// Before this card every refusal set `unknown` and `may_be_null` on **every**
+/// binding in the state, including bindings the refused text does not so much
+/// as mention. Card AOM-DESTROY-SIBLINGS measured the cost of that: in
+/// `flb_input_chunk_get_direct_routes` an acquisition at preprocessed line
+/// 19357 lost its *name* to three unrelated refused stores into
+/// `result[index].…`, so twelve declared releases of `result` could only refuse
+/// and six leak leaves retired by **withdrawal** rather than by discharge.
+///
+/// The bounded answer is **not** a relaxation of any refusal: the statement
+/// keeps its `Unsupported` diagnostic, still poisons the path
+/// ([`is_path_poisoning`]) and still makes its function `Unknown`. It only
+/// stops the refusal from destroying facts about names it cannot have written.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum RefusedWrites {
+    /// Nothing bounds this refusal's effect on the binding environment, so
+    /// every binding is poisoned. This is the answer for every refusal that
+    /// does **not** stand for exactly one statement whose complete token text
+    /// was read into it — a `goto` to an unresolved label, a malformed
+    /// for-loop clause, a break or continue outside its construct, a duplicate
+    /// or stray label, and every refused `return`, branch, loop, `switch` or
+    /// `case` *condition*, whose node stands for an expression the builder
+    /// classified without handing its tokens to
+    /// [`Parser::classify_simple`].
+    Unbounded,
+    /// This refusal stands for exactly one statement — or one for-loop init or
+    /// increment clause — whose **complete** token text
+    /// [`Parser::classify_simple`] read, and the set carried here is the
+    /// explicit, closed list of places it **spares**. Everything not in it,
+    /// including every place this projection has not bound yet, is poisoned
+    /// exactly as before.
+    ///
+    /// A place is on that list only when all three premises hold:
+    ///
+    /// 1. it is a plain name ([`is_plain_name_place`]) — not a member, a
+    ///    subscript or a `*out` slot, each of which denotes storage some other
+    ///    lvalue can reach;
+    /// 2. [`frame_protected_locals`] positively recognised it as an object of
+    ///    **automatic** storage duration declared by this body, or one of its
+    ///    formals, and no `&` anywhere in the body takes its address — so no
+    ///    lvalue other than the name itself designates that slot;
+    /// 3. the refused text contains no occurrence of the name in a position
+    ///    [`may_write_names`] reads as a write.
+    ///
+    /// Under those three a refused statement cannot change the value of that
+    /// slot: a store through a pointer, a subscript or a member selection
+    /// writes the pointed-to object, and a call can reach only what its
+    /// arguments and file-scope objects give it. The premise is the ordinary C
+    /// object model, and the no-undefined-behaviour reading of it that the
+    /// whole projection already rests on when it models `flb_free(p)` as
+    /// releasing exactly `p`'s site: a write past the end of one object onto
+    /// another is undefined, not a modelled effect.
+    Sparing(BTreeSet<String>),
+}
+
+impl RefusedWrites {
+    /// Whether this refusal poisons the binding of `place`.
+    ///
+    /// Fail-closed by construction: an unbounded refusal poisons everything,
+    /// and a bounded one poisons everything outside a list it built positively.
+    fn poisons(&self, place: &str) -> bool {
+        match self {
+            Self::Unbounded => true,
+            Self::Sparing(spared) => !spared.contains(place),
+        }
+    }
+}
+
+/// Whether `place` names a slot rather than storage some other lvalue reaches.
+///
+/// [`canonical_place`] and [`direct_assignment_destination`] between them build
+/// `NAME`, `NAME.f`, `NAME->f`, `NAME[0]` and `*NAME`; only the first is a
+/// variable, and every other shape denotes memory an unrelated write can reach.
+fn is_plain_name_place(place: &str) -> bool {
+    !place.is_empty() && !place.contains(['.', '[', ']', '*', '-', '>', '(', ')'])
+}
+
+/// Card **AOM-BINDING-POISON**: the names one statement's text may write.
+///
+/// This is the load-bearing reader of the repair, so it is written as a
+/// positive recognition of C's **write** positions, with everything it does not
+/// recognise defaulting to *written*. The importer's lexer emits one token per
+/// punctuation character, so `==` is `=` `=`, `+=` is `+` `=`, `++` is `+` `+`
+/// and `->` is `-` `>`; the operator run after a name is read with that in
+/// mind.
+///
+/// A name at index `i` is taken to be written when, skipping a run of `)` (so
+/// `(x) = 1` and `((x)) = 1` are read like `x = 1`):
+///
+/// * the operator run that follows contains `=` and is not one of the four
+///   comparisons `==`, `!=`, `<=`, `>=` — which covers `=` and every compound
+///   assignment including `<<=` and `>>=`, and defaults *toward* written for
+///   any run this reader does not know;
+/// * or that run is `++` or `--`, or the two tokens before the name are;
+/// * or the next token is `.`, so a member store into a struct **object** is
+///   attributed to the object.
+///
+/// Every other occurrence is a read: a subscript base (`a[i] = v` writes
+/// `*(a+i)`), a `->` base (`p->f = v` writes `*p`), a call argument passed by
+/// value, and an operand. Taking a name's address is not read here at all —
+/// [`frame_protected_locals`] has already removed every name a `&` reaches
+/// anywhere in the body, which is what makes "a call can only write what it can
+/// reach" true of the names this set does not mention.
+fn may_write_names(texts: &[&str]) -> BTreeSet<String> {
+    const OPERATORS: [&str; 12] = ["=", "!", "<", ">", "+", "-", "*", "/", "%", "&", "|", "^"];
+    const COMPARISONS: [[&str; 2]; 4] = [["=", "="], ["!", "="], ["<", "="], [">", "="]];
+    let mut written = BTreeSet::new();
+    for (index, text) in texts.iter().enumerate() {
+        // Reserved words are deliberately *not* excluded: over-recognising a
+        // write costs only precision, while missing one would be unsound.
+        if !is_identifier(text) {
+            continue;
+        }
+        if index >= 2 && matches!(&texts[index - 2..index], ["+", "+"] | ["-", "-"]) {
+            written.insert((*text).to_owned());
+            continue;
+        }
+        let mut cursor = index + 1;
+        while texts.get(cursor) == Some(&")") {
+            cursor += 1;
+        }
+        if texts.get(cursor) == Some(&".") {
+            written.insert((*text).to_owned());
+            continue;
+        }
+        let end = (cursor..texts.len().min(cursor + 3))
+            .take_while(|at| OPERATORS.contains(&texts[*at]))
+            .last()
+            .map_or(cursor, |at| at + 1);
+        let run = &texts[cursor..end];
+        let assigns = if run.starts_with(&["+", "+"]) || run.starts_with(&["-", "-"]) {
+            true
+        } else if COMPARISONS.iter().any(|pair| run.starts_with(pair)) {
+            false
+        } else {
+            run.contains(&"=")
+        };
+        if assigns {
+            written.insert((*text).to_owned());
+        }
+    }
+    written
+}
+
+/// Card **AOM-BINDING-POISON**: the names of one function body whose *slot* no
+/// lvalue but the name itself designates.
+///
+/// Three exclusions, each positive and each fail-closed — a name this reader
+/// cannot classify is simply never added:
+///
+/// * only names [`crate::publication::body_declarations`] read out of this
+///   body's own declaration runs, plus its formals, are candidates at all;
+/// * a `static` (or `_Thread_local`) local is dropped: its object outlives the
+///   call exactly as a file-scope object does, so a callee can reach it. So is
+///   any name that is *also* a file-scope object of this translation unit,
+///   which covers a declaration run the reader misread (`a * b;` contributes
+///   `b`) whenever that name is in fact a global;
+/// * any name a `&` in this body is followed by — after a run of `(` — is
+///   dropped. To take the address of a declared object you must name it, and
+///   after any parentheses that name comes first; `&p->f`, `&a[i]` and a
+///   bitwise `x & y` all drop a name they did not need to, which is the
+///   harmless direction.
+///
+/// The result is used only to *spare* bindings from a refused statement's
+/// poison, never to admit anything: see [`RefusedWrites::Sparing`].
+fn frame_protected_locals(
+    unit: &[&str],
+    body: &[&str],
+    formals: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let (declared, static_duration) = crate::publication::body_declarations(body);
+    let file_scope = crate::publication::file_scope_objects(unit);
+    let mut protected = declared
+        .into_iter()
+        .chain(formals.iter().cloned())
+        .filter(|name| {
+            is_plain_name_place(name)
+                && !static_duration.contains(name)
+                && !file_scope.contains(name)
+        })
+        .collect::<BTreeSet<_>>();
+    for (index, text) in body.iter().enumerate() {
+        if *text != "&" {
+            continue;
+        }
+        let mut cursor = index + 1;
+        while body.get(cursor) == Some(&"(") {
+            cursor += 1;
+        }
+        if let Some(name) = body.get(cursor) {
+            protected.remove(*name);
+        }
+    }
+    protected
 }
 
 /// One modeled read's C02-P-ALIAS obligation (card C02-P-ALIAS).
@@ -1552,15 +1756,16 @@ pub(crate) fn build_function_cfg(
     let protected_formals =
         protected_resource_formals(tokens, body_start, function, &parameters, contracts);
     let variadic_tails = declared_variadic_tails(contracts);
-    let (typed_model, typed_types, typed_bases, store_bases, publications) = typed_access_facts(
-        tokens,
-        function,
-        body_start,
-        &parameters,
-        &protected_formals,
-        contracts,
-        &variadic_tails,
-    );
+    let (typed_model, typed_types, typed_bases, store_bases, publications, frame_protected) =
+        typed_access_facts(
+            tokens,
+            function,
+            body_start,
+            &parameters,
+            &protected_formals,
+            contracts,
+            &variadic_tails,
+        );
     let alias_classes = crate::may_alias::MayAliasClasses::read(&typed_types);
     let mut parser = Parser {
         tokens,
@@ -1575,6 +1780,7 @@ pub(crate) fn build_function_cfg(
         store_bases,
         alias_classes,
         variadic_tails,
+        frame_protected,
     };
     let statements =
         parser
@@ -1629,6 +1835,7 @@ fn typed_access_facts(
     UntrackedBases,
     AggregateStoreBases,
     PublicationFacts,
+    BTreeSet<String>,
 ) {
     let texts = tokens
         .iter()
@@ -1653,6 +1860,9 @@ fn typed_access_facts(
             // admits anything: the refusal below fires only on a name this
             // reader positively recognised.
             PublicationFacts::default(),
+            // Card AOM-BINDING-POISON: no body, so no name is spared and every
+            // refusal in this function keeps the full poison.
+            BTreeSet::new(),
         );
     };
     let types = FunctionTypes::read(
@@ -1702,7 +1912,12 @@ fn typed_access_facts(
         &formals,
         &types,
     );
-    (model, types, bases, stores, publications)
+    // Card AOM-BINDING-POISON, read from the same token stream for the same
+    // reason as every set above: W4 derivation, W4 validation and certificate
+    // rederivation each hold exactly this stream and so reproduce it.
+    let frame_protected =
+        frame_protected_locals(&texts, &texts[body_start + 1..body_end], &formals);
+    (model, types, bases, stores, publications, frame_protected)
 }
 
 /// The parenthesis indices of the definition whose body starts at `body_start`.
@@ -2615,9 +2830,34 @@ struct Parser<'a> {
     /// retained trusted sources. Empty for an environment with no declared
     /// sources, so an inferred summary never acquires a tail.
     variadic_tails: BTreeSet<String>,
+    /// Card **AOM-BINDING-POISON**: the names of this body whose slot no lvalue
+    /// but the name itself designates, per [`frame_protected_locals`]. It
+    /// admits nothing; it only bounds what a refused statement destroys in the
+    /// binding environment. Empty whenever the body could not be delimited,
+    /// which restores the pre-repair blanket poison for the whole function.
+    frame_protected: BTreeSet<String>,
 }
 
 impl Parser<'_> {
+    /// Card **AOM-BINDING-POISON**: the bindings one refused statement spares.
+    ///
+    /// Called only where `texts` is the **complete** token text of the refused
+    /// statement, which is exactly [`Self::classify_simple`]'s contract with
+    /// its callers — the statement walker hands it a whole
+    /// `consume_to_semicolon` run, and the `for` walker a whole init or
+    /// increment clause. Every refusal raised anywhere else keeps
+    /// [`RefusedWrites::Unbounded`].
+    fn refused_writes(&self, texts: &[&str]) -> RefusedWrites {
+        let written = may_write_names(texts);
+        RefusedWrites::Sparing(
+            self.frame_protected
+                .iter()
+                .filter(|name| !written.contains(name.as_str()))
+                .cloned()
+                .collect(),
+        )
+    }
+
     /// Whether one expression position is resource-neutral.
     ///
     /// Card W4-EXPR-POS. The existing lexical predicate is consulted **first**
@@ -2894,6 +3134,7 @@ impl Parser<'_> {
                     return Ok(Statement::Instruction(
                         LegacyInstruction::Unknown {
                             description: "malformed for-loop clauses".to_owned(),
+                            writes: RefusedWrites::Unbounded,
                         },
                         line,
                     ));
@@ -2904,6 +3145,7 @@ impl Parser<'_> {
                     return Ok(Statement::Instruction(
                         LegacyInstruction::Unknown {
                             description: "malformed for-loop clauses".to_owned(),
+                            writes: RefusedWrites::Unbounded,
                         },
                         line,
                     ));
@@ -3114,15 +3356,19 @@ impl Parser<'_> {
         // Retain the enclosing function and subsequent cleanup, but never
         // mistake nested initializers or GNU statement expressions for a
         // single modeled call/assignment. Their custody effects are unknown.
-        if contains_braces(tokens) {
-            return LegacyInstruction::Unknown {
-                description: "braced initializer, expression, or declaration is not modeled".into(),
-            };
-        }
         let texts = tokens
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
+        if contains_braces(tokens) {
+            return LegacyInstruction::Unknown {
+                description: "braced initializer, expression, or declaration is not modeled".into(),
+                // A GNU statement expression's inner statements are inside this
+                // same token run — `consume_to_semicolon` tracks delimiters —
+                // so the mention set covers them too.
+                writes: self.refused_writes(&texts),
+            };
+        }
         let assignment = texts.iter().position(|text| *text == "=");
         let mentions_formal = texts
             .iter()
@@ -3146,6 +3392,7 @@ impl Parser<'_> {
         if mentions_formal && (has_increment || nested_assignment) {
             return LegacyInstruction::Unknown {
                 description: "unmodeled expression may mutate a formal resource identity".into(),
+                writes: self.refused_writes(&texts),
             };
         }
         // Resource places currently use names, without lexical binding IDs.
@@ -3182,6 +3429,7 @@ impl Parser<'_> {
         if may_shadow_formal {
             return LegacyInstruction::Unknown {
                 description: "local declaration may shadow a formal resource identity".into(),
+                writes: self.refused_writes(&texts),
             };
         }
         // Fixed scalar queries are data, but their numerical result is not
@@ -3407,6 +3655,7 @@ impl Parser<'_> {
                 description: format!(
                     "call to `{callee}` outside its declared literal-argument premise"
                 ),
+                writes: self.refused_writes(&texts),
             };
         }
         // Card LOADER-ABI, for the same reason: a withdrawn declaration is the
@@ -3421,6 +3670,7 @@ impl Parser<'_> {
                      declaration in this translation unit ({})",
                     refusal.as_str()
                 ),
+                writes: self.refused_writes(&texts),
             };
         }
         // Card LOADER-ABI-MODES, in the same position and for the same reason:
@@ -3435,11 +3685,13 @@ impl Parser<'_> {
                      summary derived from its body in this translation unit ({})",
                     refusal.as_str()
                 ),
+                writes: self.refused_writes(&texts),
             };
         }
         if unsupported_access {
             return LegacyInstruction::Unknown {
                 description: "indirect memory access is outside the resource projection".into(),
+                writes: self.refused_writes(&texts),
             };
         }
         let call = find_call(&texts);
@@ -3451,6 +3703,7 @@ impl Parser<'_> {
             ) {
                 return LegacyInstruction::Unknown {
                     description: format!("C operator `{function}` requires type/operand analysis"),
+                    writes: self.refused_writes(&texts),
                 };
             }
             // Card O04-B09B10, a fail-closed repair of a pre-existing hole this
@@ -3493,6 +3746,7 @@ impl Parser<'_> {
                         description: format!(
                             "nested call `{other}` inside a modeled call is outside the resource projection"
                         ),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 let mut call_depth = 0usize;
@@ -3547,6 +3801,7 @@ impl Parser<'_> {
                     return LegacyInstruction::Unknown {
                         description:
                             "resource call with a formal embedded in an unmodeled expression".into(),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 let destination =
@@ -3561,11 +3816,13 @@ impl Parser<'_> {
                     return LegacyInstruction::Unknown {
                         description: "indirect memory access is outside the resource projection"
                             .into(),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 if !matches!(contract.result, ResourceReturnMode::None) && destination.is_none() {
                     return LegacyInstruction::Unknown {
                         description: format!("discarded owned result of resource API `{function}`"),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 let raw_arguments = argument_spans.as_ref().map(|spans| {
@@ -3599,6 +3856,7 @@ impl Parser<'_> {
                         description: format!(
                             "arguments beyond the declared parameters of `{function}` are outside the resource projection"
                         ),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 // O04-B09B10: an argument this statement's member-address rule
@@ -3637,6 +3895,7 @@ impl Parser<'_> {
                     return LegacyInstruction::Unknown {
                         description: "call has an unmodeled formal address or borrowed expression"
                             .into(),
+                        writes: self.refused_writes(&texts),
                     };
                 }
                 let arguments = contract
@@ -3715,6 +3974,7 @@ impl Parser<'_> {
                     description: format!(
                         "call to `{callee}` outside its declared literal-argument premise"
                     ),
+                    writes: self.refused_writes(&texts),
                 };
             }
             // Card LOADER-ABI: a callee whose declared contract this
@@ -3729,6 +3989,7 @@ impl Parser<'_> {
                          declaration in this translation unit ({})",
                         refusal.as_str()
                     ),
+                    writes: self.refused_writes(&texts),
                 };
             }
             // Card LOADER-ABI-MODES: likewise for a declaration the callee's
@@ -3742,10 +4003,12 @@ impl Parser<'_> {
                          summary derived from its body in this translation unit ({})",
                         refusal.as_str()
                     ),
+                    writes: self.refused_writes(&texts),
                 };
             }
             return LegacyInstruction::Unknown {
                 description: format!("call to uncontracted function `{function}`"),
+                writes: self.refused_writes(&texts),
             };
         }
 
@@ -3778,6 +4041,7 @@ impl Parser<'_> {
                 // refusal and the existing diagnostic.
                 return LegacyInstruction::Unknown {
                     description: "indirect memory access is outside the resource projection".into(),
+                    writes: self.refused_writes(&texts),
                 };
             };
             return match value {
@@ -3802,6 +4066,7 @@ impl Parser<'_> {
                 }
                 return LegacyInstruction::Unknown {
                     description: "unrecognized assignment destination".to_owned(),
+                    writes: self.refused_writes(&texts),
                 };
             };
             let right = &texts[equal + 1..];
@@ -3836,6 +4101,7 @@ impl Parser<'_> {
             }
             return LegacyInstruction::Unknown {
                 description: "unsupported assignment expression".to_owned(),
+                writes: self.refused_writes(&texts),
             };
         }
 
@@ -4376,6 +4642,7 @@ impl CfgBuilder {
             } else {
                 builder.nodes[node].instruction = LegacyInstruction::Unknown {
                     description: format!("goto to unresolved label `{label}`"),
+                    writes: RefusedWrites::Unbounded,
                 };
                 builder.nodes[node].successors = vec![fallback];
             }
@@ -4417,6 +4684,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in return expression"
                                 .to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     }
                 } else if let Some(source) = returned_place {
                     LegacyInstruction::EscapeIfOwned {
@@ -4459,6 +4727,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in branch condition"
                                 .to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     }
                 };
                 self.push(instruction, vec![then_entry, else_entry], *line, false)
@@ -4481,6 +4750,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in loop condition"
                                 .to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     }
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -4569,6 +4839,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in switch expression"
                                 .to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     }
                 };
                 self.push(instruction, successors, *line, false)
@@ -4585,6 +4856,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in case expression"
                                 .to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     }
                 };
                 let entry = self.push(instruction, vec![continuation], *line, false);
@@ -4594,6 +4866,7 @@ impl CfgBuilder {
                 } else {
                     self.nodes[entry].instruction = LegacyInstruction::Unknown {
                         description: "case label outside switch".to_owned(),
+                        writes: RefusedWrites::Unbounded,
                     };
                 }
                 entry
@@ -4603,6 +4876,7 @@ impl CfgBuilder {
                 if self.labels.insert(name.clone(), entry).is_some() {
                     self.nodes[entry].instruction = LegacyInstruction::Unknown {
                         description: format!("duplicate label `{name}`"),
+                        writes: RefusedWrites::Unbounded,
                     };
                 }
                 entry
@@ -4623,6 +4897,7 @@ impl CfgBuilder {
                     self.push(
                         LegacyInstruction::Unknown {
                             description: "break outside loop or switch".to_owned(),
+                            writes: RefusedWrites::Unbounded,
                         },
                         vec![continuation],
                         *line,
@@ -4637,6 +4912,7 @@ impl CfgBuilder {
                     self.push(
                         LegacyInstruction::Unknown {
                             description: "continue outside loop".to_owned(),
+                            writes: RefusedWrites::Unbounded,
                         },
                         vec![continuation],
                         *line,
@@ -4680,6 +4956,7 @@ fn branch_instruction(
     } else {
         LegacyInstruction::Unknown {
             description: unsupported_description.to_owned(),
+            writes: RefusedWrites::Unbounded,
         }
     }
 }
@@ -6433,7 +6710,10 @@ fn transfer(
             state.pointers.remove(place);
         }
         LegacyInstruction::BranchOnNull { .. } | LegacyInstruction::BranchOnDistinct { .. } => {}
-        LegacyInstruction::Unknown { description } => {
+        LegacyInstruction::Unknown {
+            description,
+            writes,
+        } => {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
                 line: node.line,
@@ -6480,9 +6760,22 @@ fn transfer(
                     );
                 }
             }
-            for pointer in state.pointers.values_mut() {
-                pointer.unknown = true;
-                pointer.may_be_null = true;
+            // Card AOM-BINDING-POISON. The refusal itself is unchanged — the
+            // `Unsupported` diagnostic above still stands, still poisons the
+            // path and still makes this function `Unknown` — and so is every
+            // resource state: `state.resources` is not touched here and never
+            // was. What is bounded is the collateral damage to *bindings*.
+            //
+            // `Unbounded` is the pre-repair behaviour and the answer for every
+            // refusal that does not stand for one complete statement. A
+            // `Mentions` refusal spares exactly the bindings whose place is a
+            // plain automatic name of this body, never address-taken, that the
+            // refused text does not mention; see [`RefusedWrites`].
+            for (place, pointer) in state.pointers.iter_mut() {
+                if writes.poisons(place) {
+                    pointer.unknown = true;
+                    pointer.may_be_null = true;
+                }
             }
         }
         LegacyInstruction::NoOp => {}

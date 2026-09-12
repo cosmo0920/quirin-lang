@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/cycle20_verifier_plugins.rs (target/debug/deps/cycle20_verifier_plugins-3c4ed6ad082957ec)
+
+running 1 test
+test vp04_vp07_vp08_process_lifecycle_and_payload_budgets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 1.61s
+
