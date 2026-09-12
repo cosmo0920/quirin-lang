@@ -95,6 +95,12 @@ requirements that are part of the gate.
     examples' MSVC rows are written and wired through
     `tests/support/windows_c.rs::run_msvc`, no such run has happened, so no
     claim is made (`docs/reports/socket-inet-addresses/README.md`).
+    `SLICE-PERMISSIONS-WINDOWS-RUN` joins them (wave 27): the range-lending
+    card's one native test ran the **Linux** arm only — the emitted difference
+    is one pointer displacement inside an existing initialiser and the
+    `windows_c` path is carried unchanged, but no Windows or Apple run was
+    performed and none is claimed
+    (`docs/reports/ct07-slice-permissions/README.md`).
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
