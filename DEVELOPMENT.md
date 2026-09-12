@@ -349,6 +349,43 @@ full suite.
 
 ## Increment records
 
+REGION-JOINS-LOAN (2026-09-13, wave 30): the loan half of CT25, giving *loan
+expiry* the referent the wave-29 readiness statement said it lacked — CT25's
+whole scenario (*"cleanup destroys owner after joins and loan expiry"*,
+expected Accept) is now expressible and accepted end to end. Two admissions,
+each composing unedited checkers: **read-loan captures** on
+`source.epoch.tasks.v1` (`read PLACE share N` at the spawn; the place-free
+`read;` plan clause), **deliberately discharging `T08-COMPOSE-LOAN`** because
+its stated premise — a residency shared with the lender that the flat
+accounting cannot represent — does not hold on this route, where the lender
+is always the creator (workers are leaf functions) and creator-scope bytes
+are outside the epoch allocation (`REGION-JOINS-EPOCH-AXIS`, re-measured:
+certificates byte-identical with and without the loan); and the **adoption**
+`move NAME;` in the composed region body, taking a live entry owner's cleanup
+duty into the sealed pack — an acquisition from the pack's side, erasing
+completely (the owner's acquisition already stands in the entry's text) with
+the discharge's `drop NAME;` written into the blanks after every join.
+"After joins and loan expiry" is then three unedited rules composed: the
+share returns at the join (task ledger), joins precede the region (wave 28's
+`Q600` span rule), and the erased release therefore follows the expiry — while
+a destruction under a live share refuses at the ledger's own `LoanOutstanding`
+(`Q600`), measured as a written drop and as a region moved above the join. An
+adopted non-buffer refuses at the task route's own `Q500`; an acquisition
+beside an adopted owner keeps `REGION-JOINS-MULTI-OWNER` (`Q600`). An
+acquired owner's name stays the region's own; an adopted owner's name must be
+the entry's own (`Q302` both ways). Zero new codes (one `Q302` widening, one
+stated deliberate `Q600` narrowing, §L21), zero reserved words (census
+vacuous: `read`/`move` already clause words), no model, driver, schema,
+manifest, matrix or corpus file touched; the wave-29 `CT25/` fixtures stand
+unedited. Rust: 11 new end-to-end tests (`compiler/tests/region_joins_loan.rs`,
+hand-written-twin byte comparison and native counting-allocator run included)
+on 7 fixtures under `compiler/tests/fixtures/epoch_credit/CT25_LOAN/`, 3 new
+frontend unit tests (24 total); Lean: `QCore.RegionJoinsLoan`, 16 audited
+theorems consuming `ReadLoan`/`EpochSourceLowering`/`RegionJoinsDuties`
+unedited, audits 118 → **119**. Constraint 15m amendment proposed in the card
+report §2 for the integrator. Evidence:
+`docs/reports/region-joins-loan/README.md`.
+
 Wave 29 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,
 `REGION-JOINS-DUTIES`, `SLICE-PERMISSIONS-WRITE-LEND` and the arbiter

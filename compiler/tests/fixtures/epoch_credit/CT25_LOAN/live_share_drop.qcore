@@ -1,0 +1,38 @@
+import std.concurrency;
+concurrency checked;
+
+// "Destroying the owner while a share is live refuses" -- the unedited task
+// ledger's own custody rule (LoanOutstanding): the drop stands between the spawn
+// and the join, while the read share is still out. No rule of card
+// REGION-JOINS-LOAN decides this, and the erased region's release cannot
+// reach this position because every join precedes the region (Q600).
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope reader {
+            read;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+        }
+    }
+    let owner = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s reader(read owner share FULL) {
+            Result::Ok { value: handle } => {
+                drop owner;
+                let seen = join move handle?;
+                return seen;
+            }
+            Result::Err { error: failure } => {
+                drop owner;
+                return 0;
+            }
+        }
+    }
+}

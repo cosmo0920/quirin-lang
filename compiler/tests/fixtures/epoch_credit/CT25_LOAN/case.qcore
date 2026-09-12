@@ -1,0 +1,58 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// CT25 -- "Cleanup destroys owner after joins and loan expiry", expected
+// Accept (card REGION-JOINS-LOAN, wave 30, discharging T08-COMPOSE-LOAN and
+// the REGION-JOINS-LOAN residual of docs/reports/region-joins-duties).
+//
+// The parent owns `owner` and lends the worker a counted read share of it at
+// the spawn (`read owner share FULL`), declared in the plan as the place-free
+// `read;` capture clause. The loan expires at the join -- the unedited task
+// ledger returns the share, and every join precedes the region (Q600) -- and
+// only then does the parent's own error region adopt the owner
+// (`move owner;`), sealing its cleanup duty into the pack beside credit 5
+// spend 2. The discharge destroys the owner -- after every join and after the
+// loan's expiry -- and abandons the parent-local remainder 3. The region
+// erases into its straight-line twin: `drop owner;` is written into the
+// blanks after the joins, so the unedited scoped-task route compiles,
+// custody-checks, emits and reference-executes the destruction the model
+// decided; the same drop while the share is still out refuses at that route's
+// own custody rule (live_share_drop.qcore).
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope reader {
+            read;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+        }
+    }
+    let owner = qcore_buffer_new(42)?;
+    thread scope s {
+        match spawn s reader(read owner share FULL) {
+            Result::Ok { value: handle } => {
+                let seen = join move handle?;
+            }
+            Result::Err { error: failure } => {
+                drop owner;
+                return 0;
+            }
+        }
+        error region R {
+            move owner;
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return 1;
+    }
+}

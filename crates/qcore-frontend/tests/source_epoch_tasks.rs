@@ -1016,3 +1016,155 @@ fn the_split_blanks_the_region_and_preserves_every_byte_offset() {
         "no region survives the blanking"
     );
 }
+
+/// A read-loan capture is derived from the checked task IR as `Read` and
+/// declared in the plan as the place-free `read;` clause (card
+/// `REGION-JOINS-LOAN`, discharging `T08-COMPOSE-LOAN`): the lender is always
+/// the creator on this route, and creator-scope bytes are outside the epoch's
+/// allocation, so the loan contributes no epoch figure and the reconciliation
+/// is elementwise exactly as `move;`/`copy;` are.
+#[test]
+fn a_read_loan_capture_is_derived_and_declared_as_read() {
+    let source = r#"import std.concurrency;
+concurrency checked;
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope reader {
+            read;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+        }
+    }
+    let owner = qcore_buffer_new(1)?;
+    thread scope s {
+        match spawn s reader(read owner share FULL) {
+            Result::Ok { value: handle } => {
+                let seen = join move handle?;
+            }
+            Result::Err { error: failure } => {
+                drop owner;
+                return 0;
+            }
+        }
+        drop owner;
+        return 1;
+    }
+}
+"#;
+    let (lowered, _) = compose(source).expect("the lending module composes");
+    assert_eq!(lowered.ledger.len(), 1);
+    assert_eq!(lowered.ledger[0].captures, vec![ComposedCapture::Read]);
+    assert_eq!(lowered.rows[0].captures, vec![ComposedCapture::Read]);
+
+    // The declared and the derived list are still compared elementwise.
+    let mismatched = source.replace("            read;\n", "            copy;\n");
+    let message = refusal(&mismatched);
+    assert!(message.contains("declares captures [copy]"), "{message}");
+    assert!(message.contains("passes [read]"), "{message}");
+}
+
+/// The adoption shape (card `REGION-JOINS-LOAN`): `move NAME;` of an entry
+/// binding takes the owner's cleanup duty into the pack — an `Acquire` from
+/// the pack's side — keeps nothing in the erasure (the acquisition already
+/// stands in the entry's own text), and plans the discharge's release over
+/// the region's first blank run.
+#[test]
+fn the_adoption_reader_reads_a_move_as_a_duty() {
+    let source = region_module(
+        "        let owner = 1;\n        error region R {\n            move owner;\n            \
+         credit 5;\n            effort 2;\n            qcore_check(false, Failure);\n        } \
+         catch (Failure) quant open R as pack {\n            discharge pack;\n        }",
+    );
+    let region = read(&source)
+        .expect("the region reads")
+        .expect("the region is found");
+    assert_eq!(region.remainder, Some(3));
+    assert_eq!(region.duties, vec![("owner".to_owned(), 1)]);
+    let [RegionOp::ErrorRegion { body, .. }] = region.operations.as_slice() else {
+        panic!("one region operation");
+    };
+    assert_eq!(
+        body.as_slice(),
+        [
+            RegionOp::Acquire {
+                resource: 1,
+                destructor_noexcept: true,
+            },
+            RegionOp::AddStrictCredit(5),
+            RegionOp::SpendStrictCredit(2),
+            RegionOp::Raise("Failure".to_owned()),
+        ]
+    );
+    // The adoption erases completely: nothing kept, one release planned at
+    // the region's own first blank run.
+    assert_eq!(region.erasure.kept, vec![]);
+    let [(offset, release)] = region.erasure.releases.as_slice() else {
+        panic!("one release");
+    };
+    assert_eq!(release, "drop owner;");
+    assert_eq!(*offset, region.span.start);
+
+    // A body release of the adopted owner erases its duty and is kept.
+    let dropped = region_module(
+        "        let owner = 1;\n        error region R {\n            move owner;\n            \
+         drop owner;\n            credit 5;\n            effort 2;\n            \
+         qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n        \
+         \x20   discharge pack;\n        }",
+    );
+    let dropped = read(&dropped)
+        .expect("the region reads")
+        .expect("the region is found");
+    assert_eq!(dropped.duties, vec![]);
+    assert_eq!(dropped.erasure.kept.len(), 1);
+    assert_eq!(dropped.erasure.releases, vec![]);
+}
+
+/// The adoption reader's own refusals, each `Q302` with the rule named: a
+/// name the entry does not bind, one owner taken twice (through either
+/// shape), and the bare `move;` capture clause outside the plan.
+#[test]
+fn the_adoption_reader_refuses_its_own_shapes() {
+    let refusal =
+        |source: &str| -> String { read(source).expect_err("the shape is refused").remove(0) };
+
+    // A name the entry does not bind.
+    assert!(
+        refusal(&region_module(
+            "        error region R {\n            move ghost;\n            \
+             qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n    \
+             \x20       discharge pack;\n        }"
+        ))
+        .contains("which the entry does not bind")
+    );
+
+    // One owner is one binding, through the adoption shape…
+    let doubled = region_module(
+        "        let owner = 1;\n        error region R {\n            move owner;\n            \
+         move owner;\n            qcore_check(false, Failure);\n        } catch (Failure) quant \
+         open R as pack {\n            discharge pack;\n        }",
+    );
+    assert!(refusal(&doubled).contains("takes `owner` twice"));
+
+    // …and across the two shapes: an adopted name cannot also be acquired.
+    let crossed = region_module(
+        "        let owner = 1;\n        error region R {\n            move owner;\n            \
+         let owner = qcore_buffer_new(7)?;\n            qcore_check(false, Failure);\n        } \
+         catch (Failure) quant open R as pack {\n            discharge pack;\n        }",
+    );
+    assert!(refusal(&crossed).contains("acquires `owner` twice"));
+
+    // A bare `move;` is the plan's capture clause, not a region statement.
+    let bare = region_module(
+        "        error region R {\n            move;\n            \
+         qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n        \
+         \x20   discharge pack;\n        }",
+    );
+    assert!(refusal(&bare).contains("REGION-JOINS-LOAN"));
+}
