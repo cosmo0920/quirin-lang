@@ -258,13 +258,25 @@ fn braced_declarations_retain_following_cleanup_without_certifying_their_effects
             &summary,
             |kind| matches!(kind, LegacyDiagnosticKind::Unsupported { description } if description.contains("braced"))
         ));
+        // Card AOM-BINDING-POISON re-pinned this assertion **deliberately**,
+        // in the accusing direction. Before it, the refusal poisoned every
+        // binding, so `p` was unresolvable at the first `q_free` and the
+        // double release disappeared into one `UnknownAlias`. None of these
+        // four declarations mentions `p`, and `p`'s address is never taken, so
+        // none of them can write that slot: `p` now survives the refusal, the
+        // first release discharges and the second is reported as what it is.
+        // The refusal itself is untouched — the `braced` diagnostic above
+        // still stands and the function is still not `Safe` — and the outcome
+        // is strictly more informative, never weaker.
         assert!(
             has(&summary, |kind| matches!(
                 kind,
-                LegacyDiagnosticKind::UnknownAlias { .. }
+                LegacyDiagnosticKind::DoubleRelease { .. }
             )),
-            "unsupported effects must keep subsequent cleanup unresolved: {declaration}"
+            "unsupported effects must never certify subsequent cleanup: {declaration} {:?}",
+            summary.diagnostics
         );
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{declaration}");
     }
     let returned = analyze("struct pair subject(void) { return (struct pair){.value = 0}; }");
     assert_eq!(returned.status, AnalysisStatus::Unknown);
@@ -278,6 +290,123 @@ fn braced_declarations_retain_following_cleanup_without_certifying_their_effects
             "{source}"
         );
     }
+}
+
+/// Card **AOM-BINDING-POISON**: the write reader, pinned shape by shape.
+///
+/// Everything this reader does not positively recognise as a read must come
+/// back as a write, so the list below is read in both directions.
+#[test]
+fn a_refused_statement_reads_its_write_positions_and_defaults_to_written() {
+    let write = |text: &str| {
+        let texts = text.split_whitespace().collect::<Vec<_>>();
+        may_write_names(&texts).contains("n")
+    };
+    for written in [
+        "n = x ;",
+        "n = - 1 ;",
+        "n + = 1 ;",
+        "n - = 1 ;",
+        "n & = m ;",
+        "n < < = 1 ;",
+        "n > > = 1 ;",
+        "n + + ;",
+        "+ + n ;",
+        "- - n ;",
+        "( n ) = 1 ;",
+        "( ( n ) ) = 1 ;",
+        "n . field = 1 ;",
+        "x = f ( & n ) , n = 2 ;",
+    ] {
+        assert!(write(written), "must be read as a write: {written}");
+    }
+    for read in [
+        "n [ i ] = 1 ;",
+        "n -> field = 1 ;",
+        "n -> a -> b = 1 ;",
+        "x = n ;",
+        "f ( n ) ;",
+        "if ( n = = 0 ) x = 1 ;",
+        "if ( n ! = 0 ) x = 1 ;",
+        "if ( n < = 0 ) x = 1 ;",
+        "if ( n > = - 1 ) x = 1 ;",
+        "x = n < < 2 ;",
+        "x = n & m ;",
+        "x = a [ n ] ;",
+        "x = ( n ) ;",
+    ] {
+        assert!(!write(read), "must be read as a read: {read}");
+    }
+}
+
+/// The frame premise, pinned from the other side: a name a `&` reaches, a
+/// `static` local and a file-scope object are never spared, whatever the
+/// refused statement says.
+#[test]
+fn only_automatic_locals_whose_address_is_never_taken_are_spared() {
+    let unit = "int global ; void subject ( void ) { int a ; int b ; static int c ; int d ; f ( & d ) ; }"
+        .split_whitespace()
+        .collect::<Vec<_>>();
+    let body = &unit[unit.iter().position(|text| *text == "{").unwrap() + 1..unit.len() - 1];
+    let formals = BTreeSet::from(["formal".to_owned()]);
+    let protected = frame_protected_locals(&unit, body, &formals);
+    assert!(protected.contains("a"), "{protected:?}");
+    assert!(protected.contains("b"), "{protected:?}");
+    assert!(protected.contains("formal"), "{protected:?}");
+    assert!(!protected.contains("c"), "a static local outlives the call");
+    assert!(!protected.contains("d"), "its address is taken");
+    assert!(!protected.contains("global"), "a file-scope object");
+}
+
+/// The repair spares a binding an unrelated refusal cannot have written, and
+/// keeps the full poison where any of the three premises fails.
+#[test]
+fn an_unrelated_refusal_no_longer_poisons_a_binding_it_cannot_write() {
+    // `p` is automatic, never address-taken, and the refused store writes
+    // through `q` rather than to `p`, so the release still discharges.
+    let spared = analyze(
+        "void subject(void) { void *p = q_alloc(); struct pair *q = opaque_pair(); q->value = 1; q_free(p); }",
+    );
+    assert!(
+        !has(&spared, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { .. }
+        )) && !has(&spared, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Leak { .. }
+        )),
+        "{:?}",
+        spared.diagnostics
+    );
+    // Still `Unknown`: the refusal itself is untouched.
+    assert_eq!(spared.status, AnalysisStatus::Unknown);
+
+    // Address taken anywhere in the body withdraws the sparing for that name,
+    // so the same shape keeps the pre-repair unresolved release.
+    let addressed = analyze(
+        "void subject(void) { void *p = q_alloc(); void **slot = &p; struct pair *q = opaque_pair(); q->value = 1; q_free(p); consume(slot); }",
+    );
+    assert!(
+        has(&addressed, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { .. }
+        )),
+        "{:?}",
+        addressed.diagnostics
+    );
+
+    // A refused statement that *writes* the name poisons it exactly as before.
+    let written = analyze(
+        "void subject(void) { void *p = q_alloc(); p = opaque_pair()->value; q_free(p); }",
+    );
+    assert!(
+        has(&written, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { .. }
+        )),
+        "{:?}",
+        written.diagnostics
+    );
 }
 
 #[test]

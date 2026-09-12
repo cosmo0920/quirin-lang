@@ -229,7 +229,15 @@ fn undeclared_neutral_recursion_leaves_the_component_and_its_callers_unknown() {
         vec!["call to uncontracted function `depth`".to_owned()]
     );
     assert_eq!(probe.status("subject"), AnalysisStatus::Unknown);
-    assert!(probe.has_unresolved_alias("subject"));
+    // Card AOM-BINDING-POISON re-pinned the *mechanism* here, deliberately, and
+    // not the verdict: `depth(p, 3)` passes `p` by value and cannot write that
+    // slot, whose address `subject` never takes, so `p` survives the refusal
+    // and `q_free(p)` resolves instead of reporting an unresolved alias. What
+    // this probe is about is unchanged and re-asserted below: the caller stays
+    // `Unknown` on the uncontracted call itself, and — because every path
+    // through a refusal carries `unmodeled` — every exit of it still publishes
+    // `ExitCustody::Unknown`, so no summary can be derived from it.
+    assert!(!probe.has_unresolved_alias("subject"));
     assert_eq!(
         probe.unsupported("subject"),
         vec!["call to uncontracted function `depth`".to_owned()]

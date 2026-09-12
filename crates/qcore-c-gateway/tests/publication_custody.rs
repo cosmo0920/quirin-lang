@@ -763,12 +763,19 @@ fn a_publishing_helper_no_longer_launders_its_callers_release() {
         AnalysisStatus::Unknown,
         "the publishing helper itself is refused"
     );
+    // Card AOM-BINDING-POISON re-pinned this **vector**, deliberately, and
+    // neither of the two verdicts above. The refusal that decides this test is
+    // the uncontracted call, and it is still here; what left is the collateral
+    // `unknown_alias:h`, which the blanket binding poison produced. The
+    // statement `publish(h);` passes `h` by value and `w` never takes that
+    // slot's address, so the refusal cannot have written it and `b_close(h)`
+    // resolves. Nothing about the withheld summary, the publication refusal or
+    // the `Unknown` verdicts moves: the caller still does not certify, and
+    // every exit of it still carries `unmodeled` and so publishes
+    // `ExitCustody::Unknown`.
     assert_eq!(
         vector(entry(summary)),
-        [
-            "unknown_alias:h".to_owned(),
-            "unsupported:call to uncontracted function `publish`".to_owned(),
-        ],
+        ["unsupported:call to uncontracted function `publish`".to_owned()],
         "the caller refuses because the helper published no summary"
     );
 }

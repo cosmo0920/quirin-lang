@@ -282,7 +282,9 @@ fn explain_member(
         .nodes
         .iter()
         .filter_map(|node| match &node.instruction {
-            LegacyInstruction::Unknown { description } => Some((node.line, description.clone())),
+            LegacyInstruction::Unknown { description, .. } => {
+                Some((node.line, description.clone()))
+            }
             _ => None,
         })
         .collect::<Vec<_>>();
