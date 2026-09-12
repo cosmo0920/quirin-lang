@@ -175,6 +175,23 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
             }
         }
         BufferEvent::Bind { .. } | BufferEvent::Acquire { .. } => {}
+        // Card `AGGREGATES-V1`: a record construction reads its field values
+        // and a field read reads the record it names. Both are marked
+        // **consumed** here even though this route refuses a record statement
+        // before emission ever runs, for the same reason the `Repeat` arm above
+        // recurses: the alternative is the fail-open one, and a name this scan
+        // missed would be `(void)`-discarded and then used, which is a C
+        // compile error rather than a refusal.
+        BufferEvent::Construct { fields, .. } => {
+            for (_, operand) in fields {
+                if let BufferOperand::Scalar(scalar) = operand {
+                    consumed.insert(scalar.clone(), true);
+                }
+            }
+        }
+        BufferEvent::Field { record, .. } => {
+            consumed.insert(record.clone(), true);
+        }
         BufferEvent::Line(_) | BufferEvent::Return => {}
     }
 }

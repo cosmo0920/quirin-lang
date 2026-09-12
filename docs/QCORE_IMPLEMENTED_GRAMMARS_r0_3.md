@@ -2566,6 +2566,71 @@ comparison, while the emitted C needs to be the program a C reader would have
 written — and emitting the loop makes the native run a *check* of the unrolling
 rather than a restatement of it.
 
+## G07.13. The first source-level aggregate (`source.record.v1`)
+
+Card `AGGREGATES-V1` implements this consumer grammar. It **allocates no
+diagnostic code**: every refusal is a condition of the admitting route's
+existing `Q051`–`Q057` band (spec §L21), widened and stated there rather than
+taken silently, under the `Q-NAMESPACE-DECISION` ice box and on the
+`SOCKET-EVENT-COMPOSE` / `SOCKET-INET-ADDRESSES` precedent. It **reserves no
+word** either. Like `if` and `for` it is a language construct and not a bundled
+module: it needs no `import`. **v1 admits it on `source.buffer.v1` only**; every
+other route keeps the refusal it already had (`AGGREGATE-ROUTE-WIDENING`).
+
+```ebnf
+decl    = "type", NAME, "{", field, { ",", field }, [ "," ], "}" ;
+field   = NAME, ":", "i32" ;
+stmt    = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
+        | "let", NAME, "=", NAME, ".", NAME, ";" ;
+assign  = NAME, ":", OPERAND ;
+OPERAND = [ "-" ], INTEGER | NAME ;                (* `source.buffer.v1`'s own *)
+```
+
+* **The declaration head is the already-reserved `type`**, claimed at the one
+  shape a `{` after the name gives it; `type NAME = …;` is the alias it always
+  was. `resource type NAME {` is claimed by an earlier branch and never reaches
+  it. The constraint-14 census found **zero** bare `type NAME {` occurrences in
+  the tree and **rejected `record`** as a spelling: an archived probe fixture is
+  the single line `record R { }`, pinned to `Q000` by two archived reports.
+* **Every field is an `i32`, and a record is therefore a plain copyable value.**
+  It contributes no ownership operation, opens no obligation, derives no effect,
+  and is refused at every custody position by the admitting route's existing
+  "this is not a buffer" rule. An owned or view field is a new custody shape and
+  a separate card (`AGGREGATE-OWNED-FIELD`, `AGGREGATE-VIEW-FIELD`): the cycle-3
+  ownership IR addresses an owner by a plain **name** and has no notion of a
+  path, so `p.buf` is not something the checker can be asked about.
+* **Type formation decides distinctness.** A record declares 1 to 32 fields and
+  no two may share a name (`Q051`; the field bound is `Q053`). A repeated name is
+  refused rather than resolved, because which of two declarations a read answers
+  to would otherwise depend on the order a reader walks the list in.
+* **Construction is total**: every declared field is supplied exactly once, by
+  name, never by position. A missing, undeclared or repeated field refuses at
+  `Q051`. Totality is what makes a field read total on the declared names.
+* **A field value is the admitting route's own operand** — an integer literal or
+  a name that route bound to a check-time-constant integer — read by that route's
+  own reader, so a value one admits and the other refuses is not expressible. A
+  buffer at a field position is that route's existing `Q055`.
+* **A field read binds an ordinary scalar** of the admitting route, so rendering,
+  indexing and storing a field needs **no new operand form**. A record at a
+  position that takes an integer refuses at `Q052`, naming the field read that
+  would fix it.
+* **v1 is construct-then-read.** There is no field write
+  (`AGGREGATE-FIELD-WRITE`), no nested record (`AGGREGATE-NESTED`) and no
+  record-valued parameter or result (`AGGREGATE-ACROSS-CALL`).
+* **Name resolution needed no new rule.** A field name sits before a `:` at a
+  construction and after a `.` at a read, and both positions were already drained
+  by `lexical_references`; the type name is an ordinary reference and resolves
+  because every declaration's name is a global. A construction of an undeclared
+  type therefore refuses at `Q013`.
+* **The `.` adjacency is pinned.** A field access is `Word Dot Word` and cannot
+  collapse into a float, because the lexer starts a `Float` only at a digit —
+  `127.0.0.1` is still `Float Dot Float`. A *numeric* field path (`p.1.2`) is one
+  float token after the `Dot` and refuses by name at `Q051`.
+* **Each declared type emits one C struct**, with one member per field in
+  declared order, and a construction emits one designated initializer naming
+  every field. Member and tag names are prefixed (`f_`, `qcore_record_`) so a
+  QCore name that is a C keyword still emits a compilable struct.
+
 ## G08. Source-contract service configuration v1
 
 This JSON format configures the audit service; it adds no QCore source syntax.

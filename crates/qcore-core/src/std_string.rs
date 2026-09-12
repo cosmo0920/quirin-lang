@@ -779,6 +779,11 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 let body = BufferProgram {
                     entry: String::new(),
                     declared_effects: EffectRow::default(),
+                    // Card `AGGREGATES-V1`: this route models no record, so the
+                    // synthetic program built to derive a refused loop's
+                    // effects declares none. Nothing is lost by that — a record
+                    // operation derives no effect at all.
+                    records: Vec::new(),
                     events: vec![repeat.clone()],
                 };
                 for effect in crate::std_buffer::derived_effects(&body).iter() {
@@ -811,6 +816,16 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 BufferEvent::Bind { .. }
                 | BufferEvent::Load { .. }
                 | BufferEvent::Extent { .. }
+                // Card `AGGREGATES-V1`: a record operation derives **nothing**,
+                // here for exactly the reason it derives nothing on the route
+                // that admits it — a v1 record is a plain value in automatic
+                // storage, so constructing one allocates nothing and reading a
+                // field mutates nothing. This route refuses a record statement
+                // before emission, but the effect row is derived from the
+                // program *before* that refusal is reported, so this arm has to
+                // be right rather than absent.
+                | BufferEvent::Construct { .. }
+                | BufferEvent::Field { .. }
                 | BufferEvent::Line(StdIoEvent::Return)
                 | BufferEvent::Return,
             )

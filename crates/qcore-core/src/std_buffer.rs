@@ -60,6 +60,17 @@
 //! (`Q052`), and the missing capability — a relational domain over indices — is
 //! the named follow-on `STD-BUFFER-VARYING-INDEX`.
 //!
+//! # The aggregate this route also admits
+//!
+//! Card `AGGREGATES-V1` admits [`crate::source_record`]'s record type here — a
+//! module-level `type NAME { FIELD: i32, … }` declaration, a construction and a
+//! field read. A v1 record is a **plain copyable value**: every field is a
+//! scalar, so it contributes no ownership operation, opens no obligation and
+//! derives no effect, and a record name at a custody or a scalar position is
+//! refused. It is admitted here rather than anywhere else because this is the
+//! route that already holds a check-time-constant integer environment, which is
+//! exactly what a field value is and what a field read produces.
+//!
 //! # What is not claimed
 //!
 //! * **No string, no text, no encoding.** A byte buffer is not a string. There
@@ -83,6 +94,7 @@ use std::fmt;
 
 use crate::ownership::{self, Footprint, OwnershipError, OwnershipOp, ResourceId};
 use crate::source_loop::{self, BoundRefusal, LoopRefusal, MAX_ITERATIONS, MAX_UNROLLED_EVENTS};
+use crate::source_record::{self, RecordRefusal, RecordType, RecordValue};
 use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
 use crate::typed_errors::{Effect, EffectRow};
 
@@ -176,6 +188,31 @@ pub enum BufferEvent {
         count: u32,
         body: Vec<BufferEvent>,
     },
+    /// `let NAME = TYPE { FIELD: OPERAND, … };` — construct a record value
+    /// (card `AGGREGATES-V1`, `source.record.v1`).
+    ///
+    /// The construct is [`crate::source_record`]'s and its refusals are that
+    /// model's, reported on this pass's own band because the aggregate
+    /// allocates **no** diagnostic code; what this variant adds is that a field
+    /// value is a [`BufferOperand`] — this route's own check-time-constant
+    /// integer — so a record's fields are exactly the values this route already
+    /// decides, and a record can never carry one it cannot.
+    Construct {
+        binding: String,
+        type_name: String,
+        fields: Vec<(String, BufferOperand)>,
+    },
+    /// `let BINDING = RECORD.FIELD;` — read one field into an integer.
+    ///
+    /// The result is an ordinary scalar of this route's environment, which is
+    /// what makes a field readable, renderable and indexable with **no** new
+    /// operand form: `source.std-io.v1`'s existing `Scalar` operand already
+    /// denotes it, exactly as card `LOOP-V1` found for a loop index.
+    Field {
+        binding: String,
+        record: String,
+        field: String,
+    },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -221,6 +258,14 @@ pub struct BufferProgram {
     pub entry: String,
     /// The entry's declared `effects { … }` row, verbatim from source.
     pub declared_effects: EffectRow,
+    /// The record types this **module** declares (card `AGGREGATES-V1`).
+    ///
+    /// Module-scoped rather than entry-scoped because a record type is a
+    /// declaration and not a statement: it is `type NAME { … }` at the top
+    /// level, beside the entry rather than inside it. The list is empty for
+    /// every program written before that card, which is what keeps their
+    /// checking, their certificates and their emitted C byte-identical.
+    pub records: Vec<RecordType>,
     pub events: Vec<BufferEvent>,
 }
 
@@ -234,6 +279,31 @@ pub struct BufferAccess {
     /// The byte written, or the byte read.
     pub byte: u8,
     pub write: bool,
+}
+
+/// One constructed record value, published so a certificate names every field
+/// this program supplied rather than only the ones it read back (card
+/// `AGGREGATES-V1`).
+///
+/// The field list is in **declared** order, so two certificates of one program
+/// compare field for field regardless of the order the source wrote them in.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecordConstruction {
+    pub event: usize,
+    pub binding: String,
+    pub type_name: String,
+    pub fields: Vec<(String, i32)>,
+}
+
+/// One checked field read: which value, which field, and the integer it
+/// produced.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecordProjection {
+    pub event: usize,
+    pub record: String,
+    pub type_name: String,
+    pub field: String,
+    pub value: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -254,6 +324,13 @@ pub struct BufferCertificate {
     pub peak_live_bytes: u64,
     /// Every checked byte access, in program order.
     pub accesses: Vec<BufferAccess>,
+    /// Every record value this program constructed, in program order, with the
+    /// value supplied for each declared field (card `AGGREGATES-V1`).
+    pub constructions: Vec<RecordConstruction>,
+    /// Every field this program read, in program order. **This is the
+    /// distinctness evidence, published**: a reader sees which field each read
+    /// answered to and what it produced, without re-deriving anything.
+    pub projections: Vec<RecordProjection>,
     /// The final scalar environment, so a reader can see what each rendered
     /// name denoted.
     pub scalars: BTreeMap<String, i32>,
@@ -311,12 +388,26 @@ pub enum BufferError {
     /// forbids a second pass reusing a code, and the conditions are the loop's
     /// (a bound, an iteration's net custody effect), not the buffer's.
     Loop { event: usize, refusal: LoopRefusal },
+    /// A refusal the **record type** owns (card `AGGREGATES-V1`). Carried as
+    /// [`RecordRefusal`]'s own value rather than a re-worded copy.
+    ///
+    /// Unlike [`Self::Loop`], this variant reports at **this pass's own codes**
+    /// — `Q051`, `Q052` and `Q053`, whose conditions the card widens — because
+    /// `source.record.v1` allocates no code at all: the `Q-NAMESPACE-DECISION`
+    /// ice box forbids a new allocation, so an aggregate refusal lands on the
+    /// admitting band's existing shape, name and range conditions. The mapping
+    /// lives in [`RecordRefusal::code`] and nowhere else.
+    Record {
+        event: usize,
+        refusal: RecordRefusal,
+    },
 }
 
 impl BufferError {
     pub fn code(&self) -> &'static str {
         match self {
             Self::Loop { refusal, .. } => refusal.code(),
+            Self::Record { refusal, .. } => refusal.code(),
             Self::Shape { .. } => "Q051",
             Self::NotAScalar { .. } | Self::NotABuffer { .. } => "Q052",
             Self::OutOfBounds { .. }
@@ -339,6 +430,7 @@ impl BufferError {
             | Self::Custody { event, .. }
             | Self::CrossesBoundary { event, .. }
             | Self::Loop { event, .. }
+            | Self::Record { event, .. }
             | Self::EffectNotDeclared { event, .. } => *event,
         }
     }
@@ -407,6 +499,7 @@ impl fmt::Display for BufferError {
                  admit it"
             ),
             Self::Loop { refusal, .. } => refusal.fmt(f),
+            Self::Record { refusal, .. } => refusal.fmt(f),
         }
     }
 }
@@ -445,7 +538,18 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 // admitted only with a positive bound, so a body's effect is
                 // always performed at least once and the row cannot over-report.
                 BufferEvent::Repeat { body, .. } => walk(body, effects),
-                BufferEvent::Bind { .. }
+                // **A record operation derives nothing**, and that is the
+                // plain-value decision stated as an effect fact (card
+                // `AGGREGATES-V1`). A v1 record's fields are scalars, so
+                // constructing one allocates nothing — the value lives in
+                // automatic storage exactly as a `let`-bound integer does — and
+                // reading a field mutates no object of the program: it
+                // *observes*, exactly as a byte read does. An owned field would
+                // make the first of those false, which is one more reason it is
+                // a separate card (`AGGREGATE-OWNED-FIELD`).
+                BufferEvent::Construct { .. }
+                | BufferEvent::Field { .. }
+                | BufferEvent::Bind { .. }
                 | BufferEvent::Load { .. }
                 | BufferEvent::Extent { .. }
                 | BufferEvent::Line(StdIoEvent::Return)
@@ -624,7 +728,18 @@ pub fn custody_operations_with_gates(
                     | BufferEvent::Load { .. }
                     | BufferEvent::Extent { .. }
                     | BufferEvent::Release { .. } => {}
-                    BufferEvent::Bind { .. } | BufferEvent::Line(_) | BufferEvent::Return => {}
+                    // **A record contributes no custody operation at all**
+                    // (card `AGGREGATES-V1`). Every field of a v1 record is a
+                    // scalar, so there is no resource for the cycle-3 checker
+                    // to be asked about — which is exactly why a record name at
+                    // a custody position is refused by this route's existing
+                    // "this is not a buffer" rule rather than by anything the
+                    // aggregate added.
+                    BufferEvent::Construct { .. }
+                    | BufferEvent::Field { .. }
+                    | BufferEvent::Bind { .. }
+                    | BufferEvent::Line(_)
+                    | BufferEvent::Return => {}
                 }
             }
         }
@@ -662,6 +777,16 @@ pub struct BufferEvaluation {
     /// **this** map rather than keeping a second one, so a name bound by a byte
     /// read and a name bound by a string's `len` live in one environment.
     pub scalars: BTreeMap<String, i32>,
+    /// The record types the module declared, by name (card `AGGREGATES-V1`).
+    ///
+    /// Installed **before** the run and never written by it, because a record
+    /// type is a declaration: a statement can construct a value of one and read
+    /// a field of one, and neither can change what a type is.
+    pub record_types: BTreeMap<String, RecordType>,
+    /// The record values this entry constructed, by binding name. A record is a
+    /// plain value, so this map is the whole of what holding one costs — there
+    /// is no ledger entry beside it.
+    pub records: BTreeMap<String, RecordValue>,
 }
 
 /// What applying one value-bearing [`BufferEvent`] produced.
@@ -673,6 +798,10 @@ pub struct BufferStep {
     pub acquisition: Option<(String, u32)>,
     pub release: Option<String>,
     pub access: Option<BufferAccess>,
+    /// The record value this event constructed (card `AGGREGATES-V1`).
+    pub construction: Option<RecordConstruction>,
+    /// The field this event read.
+    pub projection: Option<RecordProjection>,
     pub errors: Vec<BufferError>,
 }
 
@@ -805,6 +934,101 @@ impl BufferEvaluation {
                     });
                 }
             }
+            // --- The aggregate (card `AGGREGATES-V1`). ---
+            //
+            // Both arms delegate every rule to `crate::source_record`: this
+            // function decides *which* operand values a construction supplies
+            // and *which* value a field read produces, and that module decides
+            // whether the construction is total and whether the field exists.
+            // There is one implementation of each rule and it is the one the
+            // Lean model mirrors.
+            BufferEvent::Construct {
+                binding,
+                type_name,
+                fields,
+            } => {
+                let Some(declared) = self.record_types.get(type_name).cloned() else {
+                    step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal: RecordRefusal::UnknownType {
+                            type_name: type_name.clone(),
+                        },
+                    });
+                    return step;
+                };
+                let mut supplied = Vec::new();
+                for (field, operand) in fields {
+                    match self.operand(index, operand) {
+                        Ok(value) => supplied.push((field.clone(), value)),
+                        Err(error) => {
+                            step.errors.push(error);
+                            return step;
+                        }
+                    }
+                }
+                match source_record::construct(&declared, &supplied) {
+                    Ok(value) => {
+                        // Published in **declared** order, so two certificates
+                        // of one program compare field for field however the
+                        // source wrote them.
+                        let published = declared
+                            .fields
+                            .iter()
+                            .filter_map(|field| {
+                                value
+                                    .project(&field.name)
+                                    .map(|value| (field.name.clone(), value))
+                            })
+                            .collect();
+                        self.records.insert(binding.clone(), value);
+                        step.construction = Some(RecordConstruction {
+                            event: index,
+                            binding: binding.clone(),
+                            type_name: type_name.clone(),
+                            fields: published,
+                        });
+                    }
+                    Err(refusal) => step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal,
+                    }),
+                }
+            }
+            BufferEvent::Field {
+                binding,
+                record,
+                field,
+            } => {
+                let Some(value) = self.records.get(record) else {
+                    step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal: RecordRefusal::NotARecord {
+                            name: record.clone(),
+                        },
+                    });
+                    return step;
+                };
+                match value.project(field) {
+                    Some(read) => {
+                        step.projection = Some(RecordProjection {
+                            event: index,
+                            record: record.clone(),
+                            type_name: value.type_name.clone(),
+                            field: field.clone(),
+                            value: read,
+                        });
+                        self.scalars.insert(binding.clone(), read);
+                    }
+                    None => step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal: RecordRefusal::NoSuchField {
+                            name: record.clone(),
+                            type_name: value.type_name.clone(),
+                            field: field.clone(),
+                        },
+                    }),
+                }
+            }
             BufferEvent::Line(_) | BufferEvent::Return | BufferEvent::Repeat { .. } => {}
         }
         step
@@ -821,6 +1045,18 @@ impl BufferEvaluation {
                     return Err(BufferError::CrossesBoundary {
                         event,
                         name: name.clone(),
+                    });
+                }
+                if self.records.contains_key(name) {
+                    // A record at a position that takes an integer. Reported as
+                    // the aggregate's own refusal rather than the generic one,
+                    // for the reason the buffer arm above states: the reader
+                    // needs to know *why* a name they bound is not usable here,
+                    // and the answer — read the field you mean first — is one
+                    // this revision can actually give them.
+                    return Err(BufferError::Record {
+                        event,
+                        refusal: RecordRefusal::RecordAtScalarPosition { name: name.clone() },
                     });
                 }
                 self.scalars
@@ -875,6 +1111,30 @@ pub fn check_buffer_program(
     program: &BufferProgram,
 ) -> Result<BufferCertificate, Vec<BufferError>> {
     let mut errors = Vec::new();
+
+    // --- Half minus one: the module's record types, total or reject. ---
+    //
+    // Built before anything runs, and a module carrying one declaration
+    // `admit_type` refuses gets **no table at all** rather than a partial one
+    // (card `AGGREGATES-V1`). That is what makes it impossible for a later rule
+    // to read a type this model did not admit — the `contract_loader`
+    // total-or-reject discipline, applied to a declaration the source wrote.
+    //
+    // Two record types of one module cannot share a name: name resolution
+    // already refuses a duplicate declaration at `Q010`, so the table below
+    // cannot silently lose one to the other.
+    let record_types = match source_record::admit_types(&program.records) {
+        Ok(types) => types,
+        Err(refusal) => {
+            return Err(vec![BufferError::Record {
+                // Attributed to the entry's scope: a declaration is not one of
+                // this entry's events and has no event index of its own. The
+                // lowering carries a scope span for exactly this case.
+                event: program.events.len(),
+                refusal,
+            }]);
+        }
+    };
 
     // --- Half zero: the checking route's own cost, bounded before it is paid. ---
     //
@@ -944,10 +1204,15 @@ pub fn check_buffer_program(
 
     // --- Half two: the values. ---
     let mut run = ValueRun {
-        evaluation: BufferEvaluation::new(),
+        evaluation: BufferEvaluation {
+            record_types,
+            ..BufferEvaluation::new()
+        },
         acquisitions: Vec::new(),
         releases: Vec::new(),
         accesses: Vec::new(),
+        constructions: Vec::new(),
+        projections: Vec::new(),
         lines: Vec::new(),
         flushes: 0,
         renderings: BTreeSet::new(),
@@ -960,6 +1225,8 @@ pub fn check_buffer_program(
         acquisitions,
         releases,
         accesses,
+        constructions,
+        projections,
         lines,
         flushes,
         renderings,
@@ -994,6 +1261,8 @@ pub fn check_buffer_program(
             releases,
             peak_live_bytes,
             accesses,
+            constructions,
+            projections,
             scalars: evaluation.scalars,
             lines,
             flushes,
@@ -1016,6 +1285,8 @@ struct ValueRun {
     acquisitions: Vec<(String, u32)>,
     releases: Vec<String>,
     accesses: Vec<BufferAccess>,
+    constructions: Vec<RecordConstruction>,
+    projections: Vec<RecordProjection>,
     lines: Vec<ObservedLine>,
     flushes: usize,
     renderings: BTreeSet<Rendering>,
@@ -1066,6 +1337,8 @@ impl ValueRun {
             acquisitions,
             releases,
             accesses,
+            constructions,
+            projections,
             lines,
             flushes,
             renderings,
@@ -1094,12 +1367,20 @@ impl ValueRun {
             | BufferEvent::Store { .. }
             | BufferEvent::Load { .. }
             | BufferEvent::Extent { .. }
-            | BufferEvent::Release { .. } => {
+            | BufferEvent::Release { .. }
+            // Card `AGGREGATES-V1`: the two aggregate events are value-bearing
+            // exactly as the six above are, and they reach the **same** stepper,
+            // so a record constructed inside a `for` body is decided by the one
+            // implementation a top-level one is.
+            | BufferEvent::Construct { .. }
+            | BufferEvent::Field { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
                 releases.extend(step.release);
                 accesses.extend(step.access);
+                constructions.extend(step.construction);
+                projections.extend(step.projection);
             }
             BufferEvent::Line(line) => match line {
                 StdIoEvent::LogLevel { .. } => {}
@@ -1146,8 +1427,16 @@ impl ValueRun {
     fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
         let outer_scalars: BTreeSet<String> = self.evaluation.scalars.keys().cloned().collect();
         let outer_buffers: BTreeSet<String> = self.evaluation.extents.keys().cloned().collect();
+        // Card `AGGREGATES-V1`: a record binding is body-local exactly as a
+        // scalar and a buffer binding are, and it shadows exactly as they do.
+        // Listed here rather than given a rule of its own, so the loop's scoping
+        // rule stays one rule over every kind of binding this route holds.
+        let outer_records: BTreeSet<String> = self.evaluation.records.keys().cloned().collect();
 
-        if outer_scalars.contains(variable) || outer_buffers.contains(variable) {
+        if outer_scalars.contains(variable)
+            || outer_buffers.contains(variable)
+            || outer_records.contains(variable)
+        {
             self.errors.push(BufferError::Loop {
                 event: index,
                 refusal: LoopRefusal::Shape(format!(
@@ -1179,7 +1468,10 @@ impl ValueRun {
         // inner binding has already overwritten the outer value and the two are
         // no longer distinguishable.
         for name in body_bindings(body) {
-            if outer_scalars.contains(&name) || outer_buffers.contains(&name) {
+            if outer_scalars.contains(&name)
+                || outer_buffers.contains(&name)
+                || outer_records.contains(&name)
+            {
                 self.errors.push(BufferError::Loop {
                     event: index,
                     refusal: LoopRefusal::Shape(format!(
@@ -1224,6 +1516,9 @@ impl ValueRun {
         self.evaluation
             .contents
             .retain(|name, _| outer_buffers.contains(name));
+        self.evaluation
+            .records
+            .retain(|name, _| outer_records.contains(name));
     }
 }
 
@@ -1236,7 +1531,11 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
             match event {
                 BufferEvent::Bind { binding, .. }
                 | BufferEvent::Load { binding, .. }
-                | BufferEvent::Extent { binding, .. } => {
+                | BufferEvent::Extent { binding, .. }
+                // Card `AGGREGATES-V1`: both aggregate events bind a name, and
+                // both names are body-local.
+                | BufferEvent::Construct { binding, .. }
+                | BufferEvent::Field { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {
@@ -1285,6 +1584,8 @@ pub enum BufferRecheckFailure {
     Releases,
     PeakLiveBytes,
     Accesses,
+    Constructions,
+    Projections,
     Scalars,
     Lines,
     Flushes,
@@ -1301,6 +1602,8 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Releases => "the releases",
             Self::PeakLiveBytes => "the peak live byte total",
             Self::Accesses => "the checked byte accesses",
+            Self::Constructions => "the constructed record values and the fields they supply",
+            Self::Projections => "the checked field reads",
             Self::Scalars => "the scalar environment",
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
@@ -1335,6 +1638,12 @@ pub fn recheck_buffer_certificate(
     }
     if rederived.accesses != certificate.accesses {
         return Err(BufferRecheckFailure::Accesses);
+    }
+    if rederived.constructions != certificate.constructions {
+        return Err(BufferRecheckFailure::Constructions);
+    }
+    if rederived.projections != certificate.projections {
+        return Err(BufferRecheckFailure::Projections);
     }
     if rederived.scalars != certificate.scalars {
         return Err(BufferRecheckFailure::Scalars);

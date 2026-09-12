@@ -42,6 +42,22 @@ pub enum DeclarationKind {
     Dimension,
     Axis,
     TypeAlias,
+    /// `type NAME { FIELD: TYPE, … }` — a source-level record type (card
+    /// `AGGREGATES-V1`, `source.record.v1`).
+    ///
+    /// **The head is the already-reserved `type`, so this construct reserves no
+    /// word at all.** It is told from [`Self::TypeAlias`] by the one token after
+    /// the name — a `{` rather than the `=` an alias requires — and the
+    /// constraint-14 census found that three-token shape in **zero** files: all
+    /// eleven `type NAME {` occurrences in the tree are `resource type NAME {`,
+    /// which the declaration reader claims before it reaches the `type` branch.
+    ///
+    /// `record` was measured and **rejected** as a spelling: an archived probe
+    /// fixture is literally the one line `record R { }` and two archived reports
+    /// pin it to a `Q000` refusal, so claiming the word at declaration position
+    /// would have falsified a frozen archive's own table (standing constraint
+    /// 21) — the `buffer`, `stream` and `len` collision shape exactly.
+    Record,
     ResourceType,
     ErrorType,
     Constant,
@@ -646,7 +662,19 @@ impl<'a> SourceParser<'a> {
         } else if self.words(start, &["resource", "type"]) {
             (DeclarationKind::ResourceType, Some(start + 2))
         } else if self.word(start, "type") {
-            (DeclarationKind::TypeAlias, Some(start + 1))
+            // Card `AGGREGATES-V1`: `type NAME {` is a record type and
+            // `type NAME = …;` is the alias it always was. The discriminator is
+            // the **one token after the name**, which is the narrowest rule that
+            // separates them, and it claims a shape that did not parse at all
+            // before this card — a bare `type NAME {` fails the alias's own
+            // `=` validation. `resource type NAME {` is claimed by the branch
+            // above and never reaches here, which is what keeps the eleven
+            // resource types of the pinned contract corpus untouched.
+            if self.symbol(start + 2, Symbol::LeftBrace) {
+                (DeclarationKind::Record, Some(start + 1))
+            } else {
+                (DeclarationKind::TypeAlias, Some(start + 1))
+            }
         } else if self.word(start, "error") {
             (DeclarationKind::ErrorType, Some(start + 1))
         } else if self.word(start, "const") {
@@ -675,6 +703,7 @@ impl<'a> SourceParser<'a> {
         let (end, body_open) = match kind {
             DeclarationKind::ResourceType
             | DeclarationKind::ErrorType
+            | DeclarationKind::Record
             | DeclarationKind::VerifierScope => {
                 let open = self.find_symbol(start, Symbol::LeftBrace)?;
                 (self.close(open)? + 1, None)
@@ -1283,6 +1312,13 @@ impl<'a> SourceParser<'a> {
                 }
             }
             DeclarationKind::ErrorType => {}
+            // Card `AGGREGATES-V1`: the head is validated by the branch that
+            // selected it — a `{` immediately after the name is what made this
+            // a record rather than an alias — and the field list's own shape is
+            // `crate::source_record`'s to read, exactly as every route reads its
+            // own statements out of a byte-span token window. Refusing a
+            // malformed field list here would put the rule in a second place.
+            DeclarationKind::Record => {}
         }
         Ok(())
     }

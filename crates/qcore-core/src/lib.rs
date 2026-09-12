@@ -45,6 +45,7 @@ pub mod resource_flow;
 pub mod socket_address;
 pub mod socket_event;
 pub mod source_loop;
+pub mod source_record;
 pub mod std_buffer;
 pub mod std_buffer_c_emit;
 pub mod std_event;

@@ -21,6 +21,7 @@ pub mod source_extern;
 pub mod source_http;
 pub mod source_loop;
 pub mod source_mutex;
+pub mod source_record;
 pub mod source_socket;
 pub mod source_std_buffer;
 pub mod source_std_io;

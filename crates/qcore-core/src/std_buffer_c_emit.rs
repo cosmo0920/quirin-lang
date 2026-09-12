@@ -45,6 +45,7 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
+use crate::source_record::RecordType;
 use crate::std_buffer::{
     self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT,
 };
@@ -70,6 +71,19 @@ pub enum BufferEmissionRefusal {
     /// that could not recurse would have silently emitted nothing for the loop
     /// and dropped every write its body performs.
     UnemittableLoop { event: usize },
+    /// A record construction or a field read reached a caller that cannot emit
+    /// one (card `AGGREGATES-V1`).
+    ///
+    /// Exactly the [`Self::UnemittableLoop`] shape and for its reason. Emitting
+    /// either needs the record **environment** [`emit_events`] carries — which
+    /// C object a binding names and which declared type it has — and
+    /// [`buffer_event_statement`] has no such environment. Returning `None`
+    /// would have been the one fail-open shape available here: a caller that
+    /// could not emit the construction would have silently emitted nothing for
+    /// it and left every later field read addressing an object that was never
+    /// declared. The composed string/buffer route is such a caller, and this is
+    /// the refusal it receives (`AGGREGATE-STRING-COMPOSE`).
+    UnemittableRecord { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -169,6 +183,23 @@ pub fn buffer_prelude_for(stores: bool, loads: bool) -> String {
 }
 
 fn buffer_prelude(program: &BufferProgram) -> String {
+    // Card `AGGREGATES-V1`: a program that acquires **no** buffer carries no
+    // buffer prelude at all, not even the lifetime pair.
+    //
+    // This is byte-neutral for every program admitted before that card, and
+    // that is a measurement rather than a hope: the prelude's helpers are
+    // `static`, the emitted C is built with `-Wall -Wextra -Werror` where an
+    // unused one is an error, and among *admitted* programs "reads or writes a
+    // byte" implies "acquires a buffer" — a store, a load or an extent read
+    // naming nothing this entry acquired is already refused at `Q052`. So no
+    // program that reached this function before could have failed the test
+    // below. What the card adds is the first program that can: a module that
+    // declares a record and prints, holding no buffer at all.
+    if !std_buffer::any_event(&program.events, |event| {
+        matches!(event, BufferEvent::Acquire { .. })
+    }) {
+        return String::new();
+    }
     // `any_event` and not a flat `iter().any(…)`: the scan is over every event
     // at **every depth** (card `LOOP-V1`), because a program whose only byte
     // write is inside a `for` body still writes one and emitting no writer for
@@ -201,6 +232,73 @@ pub fn buffer_name(name: &str) -> String {
 fn scalar_name(name: &str) -> String {
     format!("s_{name}")
 }
+
+/// The C name of a record binding (card `AGGREGATES-V1`).
+///
+/// A third prefix beside `b_` and `s_`, so a record, a buffer and a scalar of
+/// one source name are three distinct C objects and no emitted expression can
+/// read one for another.
+#[must_use]
+pub fn record_binding_name(name: &str) -> String {
+    format!("r_{name}")
+}
+
+/// The C tag of a declared record type.
+///
+/// Prefixed rather than spelled through, because a QCore type name is a QCore
+/// word and nothing stops it being a C keyword. The prefix is what makes
+/// `type int { … }` emit a compilable struct instead of a syntax error.
+#[must_use]
+pub fn record_type_tag(type_name: &str) -> String {
+    format!("qcore_record_{type_name}")
+}
+
+/// The C member name of a declared field, prefixed for the reason
+/// [`record_type_tag`] is.
+#[must_use]
+pub fn record_field_name(field: &str) -> String {
+    format!("f_{field}")
+}
+
+/// The C type definitions the module's record declarations contribute.
+///
+/// Emitted in **declaration order**, with each field in its own declared order,
+/// so the emitted struct is the type the source wrote rather than a
+/// reconstruction of it. A module declaring no record contributes the empty
+/// string, which is what keeps every program written before card
+/// `AGGREGATES-V1` byte-identical: [`c_program::assemble`] drops an empty
+/// fragment.
+#[must_use]
+pub fn record_types_text(records: &[RecordType]) -> String {
+    if records.is_empty() {
+        return String::new();
+    }
+    let mut text = String::from(RECORD_PRELUDE_HEADER);
+    for record in records {
+        let _ = writeln!(text, "struct {} {{", record_type_tag(&record.name));
+        for field in &record.fields {
+            let _ = writeln!(text, "    int32_t {};", record_field_name(&field.name));
+        }
+        let _ = writeln!(text, "}};");
+    }
+    text
+}
+
+/// What the emitted struct is, and what it is not.
+pub const RECORD_PRELUDE_HEADER: &str = r#"
+/* source.record.v1 (card AGGREGATES-V1): one C struct per declared record type.
+
+   Every field of a v1 record is an `i32`, so each member is a distinct object
+   of the same scalar type and the struct owns nothing: there is no allocation,
+   no destructor and no custody obligation anywhere in this file on its account.
+   A value is constructed with a designated initializer naming every declared
+   field exactly once — the checker already refused a construction that does
+   not — so no member is left indeterminate and no field read is undefined.
+
+   The member names carry an `f_` prefix and the tags a `qcore_record_` prefix
+   so that a QCore field or type name which happens to be a C keyword still
+   emits a compilable struct. */
+"#;
 
 /// The reference observation, as `"<stream>: <line>"` records in program order.
 /// A consumer projects one stream by filtering on the prefix.
@@ -344,6 +442,11 @@ pub fn buffer_event_statement(
         BufferEvent::Repeat { .. } => {
             return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
         }
+        // **Refused, not skipped** — the same rule, for the same reason. See
+        // [`BufferEmissionRefusal::UnemittableRecord`].
+        BufferEvent::Construct { .. } | BufferEvent::Field { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableRecord { event: index });
+        }
     };
     Ok(Some(statement))
 }
@@ -366,6 +469,14 @@ pub fn emit_buffer_c11(
     // no value until its event runs.
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
     let mut extents: BTreeMap<String, u32> = BTreeMap::new();
+    let mut records = RecordEnvironment {
+        types: program
+            .records
+            .iter()
+            .map(|record| (record.name.clone(), record.clone()))
+            .collect(),
+        bound: BTreeMap::new(),
+    };
 
     emit_events(
         &program.events,
@@ -374,6 +485,7 @@ pub fn emit_buffer_c11(
         true,
         &mut scalars,
         &mut extents,
+        &mut records,
         &mut source,
     )?;
 
@@ -399,6 +511,17 @@ pub fn emit_buffer_c11(
 /// makes the native run a **check** of the unrolling rather than a restatement
 /// of it: the C computes the index itself, so an unrolled reference observation
 /// that disagreed with a rolled native one would show up as a byte difference.
+/// The record half of the emitter's environment (card `AGGREGATES-V1`): the
+/// module's declared types, and which type each live record binding has.
+///
+/// A struct rather than two more parameters, because the two are only ever used
+/// together and the walk already carries the maximum number of arguments a
+/// reader can follow.
+struct RecordEnvironment {
+    types: BTreeMap<String, RecordType>,
+    bound: BTreeMap<String, String>,
+}
+
 #[allow(clippy::too_many_arguments)]
 fn emit_events(
     events: &[BufferEvent],
@@ -407,6 +530,7 @@ fn emit_events(
     top_level: bool,
     scalars: &mut BTreeMap<String, String>,
     extents: &mut BTreeMap<String, u32>,
+    records: &mut RecordEnvironment,
     source: &mut String,
 ) -> Result<(), BufferEmissionRefusal> {
     for (position, event) in events.iter().enumerate() {
@@ -431,6 +555,78 @@ fn emit_events(
                     let _ = writeln!(source, "{indent}{statement}");
                 }
             }
+            // Card `AGGREGATES-V1`. Emitted here rather than in
+            // `buffer_event_statement` because both need the record
+            // environment, which that function does not carry; it refuses them
+            // rather than silently emitting nothing.
+            BufferEvent::Construct {
+                binding,
+                type_name,
+                fields,
+            } => {
+                let Some(declared) = records.types.get(type_name) else {
+                    return Err(BufferEmissionRefusal::Unbound {
+                        event: index,
+                        name: type_name.clone(),
+                    });
+                };
+                // Emitted in **declared** order with a designated initializer
+                // per field. The checker already refused a construction that
+                // does not supply every declared field exactly once, so this
+                // lookup is total for an admitted program — and the `else`
+                // below refuses rather than leaving a member indeterminate if
+                // it ever were not.
+                let mut initializers = Vec::new();
+                for field in &declared.fields {
+                    let Some((_, operand)) = fields.iter().find(|(name, _)| *name == field.name)
+                    else {
+                        return Err(BufferEmissionRefusal::Unbound {
+                            event: index,
+                            name: format!("{type_name}.{}", field.name),
+                        });
+                    };
+                    let value = operand_expression(scalars, index, operand)?;
+                    initializers.push(format!(".{} = {value}", record_field_name(&field.name)));
+                }
+                let emitted = record_binding_name(binding);
+                records.bound.insert(binding.clone(), type_name.clone());
+                let _ = writeln!(
+                    source,
+                    "{indent}struct {} {emitted} = {{ {} }};",
+                    record_type_tag(type_name),
+                    initializers.join(", ")
+                );
+            }
+            BufferEvent::Field {
+                binding,
+                record,
+                field,
+            } => {
+                let Some(type_name) = records.bound.get(record) else {
+                    return Err(BufferEmissionRefusal::Unbound {
+                        event: index,
+                        name: record.clone(),
+                    });
+                };
+                // The declared type is consulted rather than trusted: a field
+                // the type does not declare has no member to read, and the
+                // checker already refused it.
+                let declares = records
+                    .types
+                    .get(type_name)
+                    .is_some_and(|declared| declared.field(field).is_some());
+                if !declares {
+                    return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                }
+                let emitted = scalar_name(binding);
+                scalars.insert(binding.clone(), emitted.clone());
+                let _ = writeln!(
+                    source,
+                    "{indent}int32_t {emitted} = {}.{};",
+                    record_binding_name(record),
+                    record_field_name(field)
+                );
+            }
             BufferEvent::Repeat {
                 variable,
                 count,
@@ -448,13 +644,17 @@ fn emit_events(
                 );
                 let outer_scalars: Vec<String> = scalars.keys().cloned().collect();
                 let outer_extents: Vec<String> = extents.keys().cloned().collect();
+                let outer_records: Vec<String> = records.bound.keys().cloned().collect();
                 scalars.insert(variable.clone(), name);
                 let inner = format!("{indent}    ");
-                emit_events(body, &inner, index, false, scalars, extents, source)?;
+                emit_events(
+                    body, &inner, index, false, scalars, extents, records, source,
+                )?;
                 // The body's declarations do not outlive the C block either, so
                 // the emitter's environment is scoped exactly as the model's is.
                 scalars.retain(|key, _| outer_scalars.contains(key));
                 extents.retain(|key, _| outer_extents.contains(key));
+                records.bound.retain(|key, _| outer_records.contains(key));
                 let _ = writeln!(source, "{indent}}}");
             }
             BufferEvent::Line(line) => {
@@ -489,6 +689,17 @@ pub fn preamble(program: &BufferProgram) -> Vec<Fragment> {
     vec![
         Fragment::new(Section::Includes, "buffer.includes", INCLUDES),
         io_emit::io_prelude_fragment(),
+        // Card `AGGREGATES-V1`, and **before** the buffer prelude: a record
+        // type is a type definition and nothing in the buffer prelude reads it,
+        // so the order is readability rather than dependency. A module
+        // declaring no record contributes the empty string, and an empty
+        // fragment is dropped — which is what keeps every program written
+        // before this card byte-identical.
+        Fragment::new(
+            Section::Prelude,
+            "record.types",
+            record_types_text(&program.records),
+        ),
         Fragment::new(Section::Prelude, "buffer.prelude", buffer_prelude(program)),
     ]
 }

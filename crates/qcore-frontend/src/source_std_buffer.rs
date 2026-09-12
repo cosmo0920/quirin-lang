@@ -364,6 +364,17 @@ fn lower_let(
         ));
         return None;
     }
+    // Card `AGGREGATES-V1`: the two aggregate forms, tried **first**.
+    //
+    // Both are told apart from every other `let` by the token at index 4 — a
+    // `{` or a `.` — and no other form of this route has either there: `bytes`
+    // and `extent` take a `(`, a byte read takes a `[`, and a literal bind takes
+    // a digit or a `-`. Trying them first is therefore free of ambiguity, and it
+    // is what makes `type extent { … }` constructible rather than swallowed by
+    // the `extent(NAME)` branch below.
+    if let Some(event) = lower_record(window, span, diagnostics) {
+        return event;
+    }
     // `let NAME = bytes ( INTEGER ) ;`
     if word(window, 3) == Some(BYTES_KEYWORD) {
         if !symbol(window, 4, Symbol::LeftParen) {
@@ -464,6 +475,83 @@ fn lower_let(
                  one byte read; nothing else",
             ));
             None
+        }
+    }
+}
+
+/// Lower one record construction or field read, if this statement is one (card
+/// `AGGREGATES-V1`).
+///
+/// The outer `Option` says whether this statement is a record form at all; the
+/// inner one is the ordinary "lowered, or refused with a diagnostic already
+/// pushed" answer. The *grammar* is [`crate::source_record`]'s, read by that
+/// module's own reader, and the *field values* are this route's operands, read
+/// by the reader above — so neither half is written twice.
+fn lower_record(
+    window: &[&Token],
+    span: Span,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<Option<BufferEvent>> {
+    let read = crate::source_record::read_record_statement(window)?;
+    let statement = match read {
+        Ok(statement) => statement,
+        Err(message) => {
+            // `Q051` is this pass's **shape** condition, widened by this card to
+            // cover a malformed record declaration, construction or field read.
+            // The card allocates no code; see `qcore_core::source_record`.
+            diagnostics.push(diagnostic("Q051", span, message));
+            return Some(None);
+        }
+    };
+    match statement {
+        crate::source_record::RecordStatement::Field {
+            binding,
+            record,
+            field,
+        } => Some(Some(BufferEvent::Field {
+            binding,
+            record,
+            field,
+        })),
+        crate::source_record::RecordStatement::Construct {
+            binding,
+            type_name,
+            fields,
+        } => {
+            let mut lowered = Vec::new();
+            for (field, (start, end)) in fields {
+                let Some((value, next)) = operand(window, start) else {
+                    diagnostics.push(diagnostic(
+                        "Q051",
+                        span,
+                        format!(
+                            "`{type_name}.{field}` is supplied a value that is not one \
+                             `source.buffer.v1` decides; a field takes one integer literal or one \
+                             bound integer name, so that every field of a constructed record is \
+                             known before emission"
+                        ),
+                    ));
+                    return Some(None);
+                };
+                if next != end {
+                    diagnostics.push(diagnostic(
+                        "Q051",
+                        span,
+                        format!(
+                            "`{type_name}.{field}` is supplied more than one operand; this \
+                             revision carries no arithmetic, so a field value is exactly one \
+                             literal or one bound name"
+                        ),
+                    ));
+                    return Some(None);
+                }
+                lowered.push((field, value));
+            }
+            Some(Some(BufferEvent::Construct {
+                binding,
+                type_name,
+                fields: lowered,
+            }))
         }
     }
 }
@@ -602,6 +690,22 @@ pub fn lower_source_buffer(
             // reason and at the loop's own code. Without this it would be
             // silently unmodelled — this route lowers the entry only, and a
             // construct nothing checks is exactly what invariant 1 forbids.
+            // Card `AGGREGATES-V1`: a record construct outside the entry is
+            // refused for exactly the reason a `for` outside it is — this route
+            // lowers the entry only, and a construct nothing checks is what
+            // invariant 1 forbids.
+            if let Some(span) = crate::source_record::block_record_span(body, tokens) {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    format!(
+                        "`source.record.v1` models the entry only on this route; `{}` is not the \
+                         entry `{entry}`, and a record nothing checks is not one this revision \
+                         admits",
+                        other.value.name
+                    ),
+                ));
+            }
             if let Some(span) = crate::source_loop::block_loop_span(body) {
                 diagnostics.push(loop_shape_diagnostic(
                     span,
@@ -623,6 +727,19 @@ pub fn lower_source_buffer(
             "`source.buffer.v1` models an entry with no parameters",
         ));
     }
+
+    // Card `AGGREGATES-V1`: the module's record type declarations, read before
+    // any statement. A malformed declaration is refused here; whether a
+    // well-formed one is a type the *model* admits is
+    // `qcore_core::source_record::admit_type`'s and is decided in the checker,
+    // so the shape rule and the formation rule each live in one place.
+    let records = match crate::source_record::record_declarations(parsed) {
+        Ok(records) => records,
+        Err((span, message)) => {
+            diagnostics.push(diagnostic("Q051", span, message));
+            return Err(diagnostics);
+        }
+    };
 
     let declared_effects = match declared_effect_row(&declaration.value.tokens, scope_span) {
         Ok(row) => row,
@@ -660,6 +777,7 @@ pub fn lower_source_buffer(
         program: BufferProgram {
             entry: entry.to_owned(),
             declared_effects,
+            records,
             events,
         },
         event_spans,
@@ -698,8 +816,15 @@ impl LoweringConstants {
                 }
             }
             // A byte read binds a value the *checker* computes; the lowering
-            // does not, so it contributes no bound.
+            // does not, so it contributes no bound. Card `AGGREGATES-V1`: a
+            // **field read** is in exactly that position and for exactly that
+            // reason — the value is a field of a record the checker constructs,
+            // so a loop bound read out of a field is refused by name
+            // (`AGGREGATE-BOUND-FROM-FIELD`, the `LOOP-BOUND-FROM-BYTE` shape)
+            // rather than decided in a second place.
             BufferEvent::Load { .. }
+            | BufferEvent::Construct { .. }
+            | BufferEvent::Field { .. }
             | BufferEvent::Store { .. }
             | BufferEvent::Release { .. }
             | BufferEvent::Line(_)

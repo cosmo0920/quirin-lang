@@ -241,6 +241,7 @@ fn a_leak_refuses_and_the_refusal_comes_from_the_unedited_ownership_checker() {
     let program = std_buffer::BufferProgram {
         entry: "main".to_owned(),
         declared_effects: EffectRow::new([Effect::Alloc]),
+        records: Vec::new(),
         events: vec![
             std_buffer::BufferEvent::Acquire {
                 name: "b".to_owned(),
