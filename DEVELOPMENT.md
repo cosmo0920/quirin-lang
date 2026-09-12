@@ -349,6 +349,49 @@ full suite.
 
 ## Increment records
 
+Wave 29, card `SLICE-PERMISSIONS-WRITE-LEND` (2026-09-12): the write half of
+CT07 the read card named — `let NAME = lend(BUFFER, LOW, HIGH);` on
+`source.buffer.v1`, a loan a store can name, so **two parties mutate two
+disjoint ranges of one buffer independently** while both loans are live.
+Accesses through a loan are decided against the loan's own `[0, HIGH-LOW)` and
+rebased into the owner's coordinates; the window runs from the lend to the last
+statement naming the loan. The custody shape is the card's head: residual
+`STD-BUFFER-SLICE`'s footprint fraction now exists — the cycle-3 ownership IR
+gains a `LendRange` borrow node carrying a half-open byte interval plus
+`WriteRange`/`ReadRange` footprint-stating accesses, and the **IR itself**
+decides the exclusivity rule (a second lend admitted exactly when disjoint,
+`OverlappingLends` otherwise; empty lends conflict with nothing; exclusivity is
+temporal), the range-wise transfer (owner reads and writes refused inside a
+live lend's range, admitted outside every one; an unresolvable index conflicts
+with everything, `WRITE-LEND-COMPUTED-INDEX`), the rebasing containment
+(`AccessOutsideLendRange`) and the release arm, which is the existing
+`DropWhileBorrowed` unchanged — every one arriving at the route through the
+inherited `Q054`. A module with no lend builds the custody operation list it
+always built, by a structural branch. Zero new codes (`Q051`/`Q052`/`Q053`/
+`Q054`/`Q055` and the composed route's `Q077` condition widenings, stated in
+§L21) and zero reserved words (`lend` is contextual on the
+`len`/`concat`/`borrow_utf8` precedent, censused; `let lend = 5;` is still a
+program). Fail-closed boundaries, each a named residual: a `for` beside a lend
+(`SLICE-PERMISSIONS-LOOP-WINDOW`), crossed windows — borrow nodes are lexical —
+(`SLICE-PERMISSIONS-CROSSED-WINDOWS`), an acquisition inside a window
+(`WRITE-LEND-NESTED-ACQUIRE`), a lend bound outside the lowering-visible tier
+(`WRITE-LEND-BOUND-FROM-BYTE`), re-lending (`WRITE-LEND-RELEND`), and a lend
+beside `borrow_utf8` on the composed string route
+(`SLICE-PERMISSIONS-COMPOSED-LEND`). 31 end-to-end tests in
+`compiler/tests/write_lend.rs` (one sanitized native run — ASan is
+load-bearing: a displaced-pointer write is the construct's worst failure mode —
+Linux arm only, `WRITE-LEND-WINDOWS-RUN`), 7 IR-level unit rows,
+`QCore.WriteLend` + `AuditWriteLend.lean` (25 declarations audited by name,
+115 → **116** Lean audits; exclusivity is the read card's own set-theoretic
+`overlaps` imported, every byte has exactly one write authority, disjoint
+lends' rebased accesses cannot collide, a confined window preserves every
+unlent byte). Two fixture programs a CT lane can point at
+(`disjoint_write_halves.qcore`, `overlapping_lends.qcore`); the lane statement,
+the proposed 15h amendment and the boundaries are in
+`docs/reports/slice-permissions-write-lend/README.md`. Corpus-neutral by
+construction: no gateway, contract, audit or provider file in the diff, leak
+pin 266 untouched, nothing promoted.
+
 REGION-JOINS-DUTIES (2026-09-12, wave 29): the remainder `REGION-CREDIT-JOINS`
 named, landed as CT25's **duty half** — *"cleanup destroys owner after
 joins"*, expected Accept, now expressible and accepted end to end. The

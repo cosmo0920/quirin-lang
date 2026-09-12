@@ -2896,8 +2896,15 @@ fn lexical_references(
         // anywhere in the repository, and each therefore reserved **nowhere**.
         let length_query =
             crate::source_std_string::is_string_clause_word(word, next.map(|t| &t.kind));
+        // Card `SLICE-PERMISSIONS-WRITE-LEND` widens the same rule to `lend`,
+        // censused at zero occurrences of its `lend(` shape anywhere in the
+        // repository and therefore reserved **nowhere** — the read card's own
+        // census already recorded the bare word free in source position.
+        let lend_clause =
+            crate::source_std_buffer::is_lend_clause_word(word, next.map(|t| &t.kind));
         if body_binder
             || length_query
+            || lend_clause
             || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),

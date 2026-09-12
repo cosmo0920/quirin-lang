@@ -934,6 +934,12 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 BufferEvent::Bind { .. }
                 | BufferEvent::Load { .. }
                 | BufferEvent::Extent { .. }
+                // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend derives nothing
+                // — authority moves, no byte does. The composed route refuses
+                // the statement itself (`Q077`), but the effect row is derived
+                // before that refusal is reported, so this arm must be right
+                // rather than absent.
+                | BufferEvent::Lend { .. }
                 // Card `AGGREGATES-V1`: a record operation derives **nothing**,
                 // here for exactly the reason it derives nothing on the route
                 // that admits it — a v1 record is a plain value in automatic
@@ -1830,6 +1836,30 @@ pub fn check_string_program(
                                  route is one flat sequence, so a loop body writing a borrowed \
                                  buffer would need a window over iterations rather than over \
                                  indices (`STRING-CONCAT-LOOP-WINDOW`)"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                // **A write lend is refused here, and refusing is fail-closed**
+                // (card `SLICE-PERMISSIONS-WRITE-LEND`). This composed entry
+                // already holds `borrow_utf8`'s immutable read loans, and a
+                // lend's exclusive write authority over a range of the same
+                // buffer would need the cross-model overlap rule — a write
+                // lend overlapping a live read loan refused, a disjoint one
+                // admitted — which no route decides yet. Until it exists,
+                // every lend beside a read loan refuses, which trivially
+                // refuses every overlapping one; the range-wise admission is
+                // the named follow-on `SLICE-PERMISSIONS-COMPOSED-LEND`. The
+                // uncomposed `source.buffer.v1` route models the lend itself.
+                if matches!(buffer_event, BufferEvent::Lend { .. }) {
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: "`lend(…)` is not a statement this composed string/buffer entry \
+                                 models; a write lend's exclusive authority beside \
+                                 `borrow_utf8`'s immutable read loans needs the cross-model \
+                                 overlap rule, and until that exists the composition refuses \
+                                 rather than admitting an unchecked pair \
+                                 (`SLICE-PERMISSIONS-COMPOSED-LEND`)"
                             .to_owned(),
                     });
                     continue;

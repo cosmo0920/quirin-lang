@@ -237,7 +237,14 @@ immutable views, they conflict on nothing, and a slice of a borrow is a fully
 overlapping second borrow of the same buffer by construction. There is no
 **write** lend — the owner keeps the write authority over every byte it did not
 lend — which is why rule 2's exactness argument survives untouched and a `for`
-beside a loan is still refused. The follow-on is `SLICE-PERMISSIONS-WRITE-LEND`.
+beside a loan is still refused. The follow-on was `SLICE-PERMISSIONS-WRITE-LEND`,
+landed at wave 29 **on the uncomposed buffer route** (`lend(b, lo, hi)`, write
+authority genuinely transferred through the ownership IR's range-carrying
+borrow node); on *this* composed route a lend still refuses by name until the
+cross-model overlap rule with these read loans exists
+(`SLICE-PERMISSIONS-COMPOSED-LEND`,
+`docs/reports/slice-permissions-write-lend/README.md`), so every sentence above
+stands here unchanged.
 
 ## 6. C11 lowering and ABI boundary
 

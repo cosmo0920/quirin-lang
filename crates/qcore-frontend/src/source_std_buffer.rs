@@ -9,6 +9,7 @@
 //! stmt      ::= "let" NAME "=" ["-"] INTEGER ";"
 //!             | "let" NAME "=" "bytes" "(" INTEGER ")" ";"     -- acquire
 //!             | "let" NAME "=" "extent" "(" NAME ")" ";"       -- bind the length
+//!             | "let" NAME "=" "lend" "(" NAME "," OPERAND "," OPERAND ")" ";" -- write lend
 //!             | "let" NAME "=" NAME "[" OPERAND "]" ";"        -- read one byte
 //!             | NAME "[" OPERAND "]" "=" OPERAND ";"           -- write one byte
 //!             | "drop" NAME ";"                                -- release
@@ -99,6 +100,25 @@ pub const EXTENT_KEYWORD: &str = "extent";
 /// The release keyword. Deliberately the **existing** reserved `drop`.
 pub const DROP_KEYWORD: &str = "drop";
 
+/// The write-lend clause word (card `SLICE-PERMISSIONS-WRITE-LEND`).
+///
+/// **Contextual, deliberately not reserved** — the `len`/`concat`/`borrow_utf8`
+/// discipline: it is recognised only as `lend` immediately followed by `(` in
+/// a `let`'s value position, so `let lend = 5;` is still a program and the
+/// constraint-14 census stays at **zero new reserved words**. The read card's
+/// census (`ct07-slice-permissions` §7) already measured `lend` free at zero
+/// source-position occurrences and recorded it for this card.
+pub const LEND_KEYWORD: &str = "lend";
+
+/// Whether `word` at a clause-head position, followed by `next`, is this
+/// route's contextual `lend(` — the same shape
+/// `source_std_string::is_string_clause_word` decides for the string route's
+/// three words, and consumed by the same reference-collection site.
+#[must_use]
+pub fn is_lend_clause_word(word: &str, next: Option<&TokenKind>) -> bool {
+    word == LEND_KEYWORD && matches!(next, Some(TokenKind::Symbol(Symbol::LeftParen)))
+}
+
 /// A complete lowering of one entry. The core checker still has to validate the
 /// program; this type is not evidence on its own.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -176,6 +196,8 @@ pub enum BufferUse {
     Load,
     /// `let NAME = extent(NAME);`
     Extent,
+    /// `let NAME = lend(NAME, LOW, HIGH);` (card `SLICE-PERMISSIONS-WRITE-LEND`)
+    Lend,
 }
 
 /// Classify one statement's token window as a buffer construct.
@@ -193,6 +215,10 @@ fn buffer_use(window: &[&Token]) -> Option<BufferUse> {
         return match word(window, 3) {
             Some(BYTES_KEYWORD) => Some(BufferUse::Acquire),
             Some(EXTENT_KEYWORD) => Some(BufferUse::Extent),
+            // Contextual: only `lend(` is this route's, so a scalar named
+            // `lend` keeps every reading it had (card
+            // `SLICE-PERMISSIONS-WRITE-LEND`).
+            Some(LEND_KEYWORD) if symbol(window, 4, Symbol::LeftParen) => Some(BufferUse::Lend),
             // `let NAME = NAME [ … ]`, where the bracket holds no `:`.
             Some(_)
                 if symbol(window, 4, Symbol::LeftBracket) && !bracket_holds_a_colon(window, 4) =>
@@ -439,6 +465,64 @@ fn lower_let(
             name: name.to_owned(),
         });
     }
+    // `let NAME = lend ( NAME , OPERAND , OPERAND ) ;` — the write lend (card
+    // `SLICE-PERMISSIONS-WRITE-LEND`). Contextual: only the `lend(` shape is
+    // this route's, exactly as `buffer_use` decides it.
+    if word(window, 3) == Some(LEND_KEYWORD) && symbol(window, 4, Symbol::LeftParen) {
+        let Some(name) = word(window, 5) else {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`lend(NAME, LOW, HIGH)` names the owned buffer whose bytes it lends",
+            ));
+            return None;
+        };
+        if !symbol(window, 6, Symbol::Comma) {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`lend(NAME, LOW, HIGH)` lends a range and needs both of its ends; a lend of a \
+                 whole buffer is `lend(NAME, 0, extent)` with the extent bound by `extent(NAME)`",
+            ));
+            return None;
+        }
+        let Some((low, next)) = operand(window, 7) else {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`lend(NAME, LOW, HIGH)` bounds the lent range with an integer literal or a \
+                 name bound to one",
+            ));
+            return None;
+        };
+        if !symbol(window, next, Symbol::Comma) {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`lend(NAME, LOW, HIGH)` lends a range and needs both of its ends",
+            ));
+            return None;
+        }
+        let Some((high, next)) = operand(window, next + 1) else {
+            diagnostics.push(diagnostic(
+                "Q051",
+                span,
+                "`lend(NAME, LOW, HIGH)` bounds the lent range with an integer literal or a \
+                 name bound to one",
+            ));
+            return None;
+        };
+        if !symbol(window, next, Symbol::RightParen) || !ends_with_semicolon(window, next + 1) {
+            diagnostics.push(diagnostic("Q051", span, "this `lend(…)` is not closed"));
+            return None;
+        }
+        return Some(BufferEvent::Lend {
+            binding: binding.to_owned(),
+            name: name.to_owned(),
+            low,
+            high,
+        });
+    }
     // `let NAME = NAME [ OPERAND ] ;`
     if let Some(name) = word(window, 3)
         && symbol(window, 4, Symbol::LeftBracket)
@@ -471,8 +555,8 @@ fn lower_let(
             diagnostics.push(diagnostic(
                 "Q051",
                 span,
-                "`source.buffer.v1` binds an integer literal, `bytes(INTEGER)`, `extent(NAME)` or \
-                 one byte read; nothing else",
+                "`source.buffer.v1` binds an integer literal, `bytes(INTEGER)`, `extent(NAME)`, \
+                 `lend(NAME, LOW, HIGH)` or one byte read; nothing else",
             ));
             None
         }
@@ -827,6 +911,10 @@ impl LoweringConstants {
             | BufferEvent::Field { .. }
             | BufferEvent::Store { .. }
             | BufferEvent::Release { .. }
+            // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a loan, not a
+            // constant, so it contributes no bound — and a loop cannot stand
+            // beside one anyway (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+            | BufferEvent::Lend { .. }
             | BufferEvent::Line(_)
             | BufferEvent::Repeat { .. }
             | BufferEvent::Return => {}

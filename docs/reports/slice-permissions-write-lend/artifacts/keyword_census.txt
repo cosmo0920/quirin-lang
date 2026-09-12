@@ -1,0 +1,53 @@
+Keyword census — card SLICE-PERMISSIONS-WRITE-LEND (standing constraint 14)
+Run on this card's worktree at the wave-28 close (5d8b2ff1) plus this card,
+before the report was written. Third_party/ and the worktree-private private/
+directory are excluded throughout.
+
+Result: ZERO new reserved words, zero new tokens, one new CONTEXTUAL clause
+word — `lend`, recognised only as `lend` immediately followed by `(` in a
+`let`'s value position (the `len`/`concat`/`borrow_utf8` discipline,
+`source_std_buffer::is_lend_clause_word`). The read card's census
+(docs/reports/ct07-slice-permissions/artifacts/keyword_census.txt) had already
+measured the bare word free at zero source-position occurrences and recorded it
+for a later card; this census re-ran the measurement rather than assuming it.
+
+1. The candidate shape `lend(` across every .qcore/.qc fixture
+   $ grep -rn --include="*.qcore" --include="*.qc" "lend(" . \
+       --exclude-dir=third_party
+   Occurrences outside this card's own fixtures
+   (compiler/tests/fixtures/write_lend/): 0, across 469 files
+   ($ find . -path ./third_party -prune -o -type f \
+        \( -name "*.qcore" -o -name "*.qc" \) -print | wc -l).
+
+2. The bare word `lend` across the same fixtures
+   $ grep -rn --include="*.qcore" --include="*.qc" -w "lend" . \
+       --exclude-dir=third_party
+   One occurrence outside this card's fixtures, and it is a COMMENT, not a
+   code position:
+     examples/extern/buffer_round_trip.qcore:4:
+       // Acquire a buffer from C, lend it twice, and give it back. ...
+   A comment contributes no token to name resolution, and the word is
+   contextual besides — even a binding named `lend` keeps every reading it
+   had, which compiler/tests/write_lend.rs pins as
+   `lend_is_contextual_and_a_scalar_named_lend_is_still_a_program`
+   (`let lend = 5; print dec lend;` is a program).
+
+3. The `lend(` shape inside Rust string literals (embedded programs)
+   $ grep -rn --include="*.rs" '"[^"]*\blend([^"]*"' crates compiler
+   Matches only in this card's own files (compiler/tests/write_lend.rs and
+   the unit-test helper in crates/qcore-core/tests/unit/ownership.rs).
+
+4. Rejected alternatives, recorded rather than merely avoided
+   - Reusing `bytes` at arity three (`bytes(b, 0, 4)`) was considered on the
+     borrow_utf8-arity precedent and rejected: `bytes(N)` acquires and the
+     lend does not, and one word meaning an acquisition or a loan by arity
+     would make the route's Alloc derivation a function of an argument's
+     kind rather than of the clause word.
+   - Reserving `lend` globally was unnecessary (the contextual rule
+     suffices) and would have claimed a word the census shows in prose.
+
+Route-selection exclusions: `buffer_use` claims only the
+`let NAME = lend ( ...` shape (the `(` is part of the classifier), so a scalar
+named `lend` selects no route and acquires no import requirement; the
+statement itself is gated by `import std.buffer;` through the same classifier
+route selection reads, so the two cannot disagree.

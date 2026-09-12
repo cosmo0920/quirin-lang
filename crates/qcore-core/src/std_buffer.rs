@@ -164,6 +164,35 @@ pub enum BufferEvent {
     /// operation *is* [`OwnershipOp::Drop`], so a new `release` keyword would
     /// have been a synonym for one the language already spells.
     Release { name: String },
+    /// `let NAME = lend(BUFFER, LOW, HIGH);` — lend **write authority** over
+    /// the bytes `[LOW, HIGH)` of an owned buffer to a new binding (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`).
+    ///
+    /// The second value kind this route holds, and the half of CT07 the read
+    /// card could not reach: a loan a store can name. `NAME[i] = v` writes the
+    /// owner's byte `LOW + i` — index rebasing into the owner's coordinates,
+    /// published in the certificate and enforced again by the ownership IR —
+    /// and while the loan's window is open the owner's authority over
+    /// `[LOW, HIGH)` is genuinely **transferred**: an owner access inside the
+    /// range refuses, one outside it is admitted, and two live lends must
+    /// cover disjoint ranges. The window runs from this statement to the last
+    /// statement naming the loan, exact for the same reason the read card's
+    /// window is: the route is one flat statement sequence, which is also why
+    /// a `for` beside a lend refuses (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+    ///
+    /// Bounds are check-time constants of the **lowering-visible tier** — an
+    /// integer literal, a literal `let`, or an `extent` binding — the same
+    /// deliberately narrow tier a loop bound takes and for the same reason
+    /// (`LOOP-BOUND-FROM-BYTE`): the custody projection must state the lend's
+    /// footprint, so a bound only the checker's byte model can compute is
+    /// refused by name rather than decided in a second place
+    /// (`WRITE-LEND-BOUND-FROM-BYTE`).
+    Lend {
+        binding: String,
+        name: String,
+        low: BufferOperand,
+        high: BufferOperand,
+    },
     /// A `source.std-io.v1` line-producing statement, reused unchanged. The
     /// bytes of the line are decided by [`rendered_line`] and nowhere else, so
     /// "this route's lines are the standard-IO route's lines" is a statement
@@ -306,6 +335,26 @@ pub struct RecordProjection {
     pub value: i32,
 }
 
+/// One admitted write lend, published with the **window** over which the
+/// owner's authority is transferred and the footprint the loan holds (card
+/// `SLICE-PERMISSIONS-WRITE-LEND`).
+///
+/// `through` is the index of the last event naming the loan; the window
+/// `[event, through]` is exact for the read card's reason — the route is one
+/// flat statement sequence. `low`/`high` are the owner's coordinates, so a
+/// reader checks the rebasing arithmetic (`loan index i` writes owner byte
+/// `low + i`) against the published accesses rather than being told it
+/// happened.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LendRecord {
+    pub event: usize,
+    pub buffer: String,
+    pub binding: String,
+    pub low: u32,
+    pub high: u32,
+    pub through: usize,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BufferCertificate {
     pub entry: String,
@@ -317,6 +366,10 @@ pub struct BufferCertificate {
     pub acquisitions: Vec<(String, u32)>,
     /// Every release, in program order.
     pub releases: Vec<String>,
+    /// Every admitted write lend, with its footprint and its window (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`). Empty for every program written before
+    /// that card, which is what keeps their certificates value-identical.
+    pub lends: Vec<LendRecord>,
     /// The maximum live byte total the program ever holds, taken from the
     /// ownership state's own `live()` footprint after each event. Zero at the
     /// normal exit is not published here because it is not optional: the
@@ -340,6 +393,92 @@ pub struct BufferCertificate {
     pub flushes: usize,
     /// The renderings actually used.
     pub renderings: BTreeSet<Rendering>,
+}
+
+/// The refusals the write lend owns (card `SLICE-PERMISSIONS-WRITE-LEND`),
+/// each landing on a condition an existing `source.buffer.v1` code already
+/// names — the `Q-NAMESPACE-DECISION` ice box forbids a new allocation, and the
+/// widenings are stated in spec §L21 and in the card's report.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LendRefusal {
+    /// `Q051`: a shape the lend's window model cannot hold — a `for` in an
+    /// entry that lends, a crossed pair of windows, an acquisition inside a
+    /// window, or a lend binding shadowing a live name.
+    Shape(String),
+    /// `Q052`: a lend position naming something that is not an owned buffer
+    /// this entry acquired — a loan (re-lending is not modelled), or a `drop`
+    /// of a loan, whose window closes at its last use instead.
+    NotLendable { name: String, reason: String },
+    /// `Q053`: `0 <= low <= high <= extent` is violated. Decided at check time
+    /// against the extent the acquisition declared, exactly as the read card's
+    /// `borrow_utf8` range is, so this is a refusal and not a run-time trap.
+    Range {
+        buffer: String,
+        low: i32,
+        high: i32,
+        extent: u32,
+    },
+    /// `Q053`: a lend bound outside the lowering-visible constant tier — a
+    /// value read out of a byte or a field. The custody projection must state
+    /// the lend's footprint, so a bound only the checker's byte model can
+    /// compute is refused by name (`WRITE-LEND-BOUND-FROM-BYTE`, the
+    /// `LOOP-BOUND-FROM-BYTE` shape).
+    BoundFromByte { name: String },
+    /// `Q053`: an index through a loan outside the loan's own `[0, len)`.
+    OutOfLend { name: String, index: i32, len: u32 },
+    /// `Q055`: a loan at a position this route refuses to let it cross —
+    /// a scalar position, a rendering operand, a record field value.
+    CrossesBoundary { name: String },
+}
+
+impl LendRefusal {
+    #[must_use]
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::Shape(_) => "Q051",
+            Self::NotLendable { .. } => "Q052",
+            Self::Range { .. } | Self::BoundFromByte { .. } | Self::OutOfLend { .. } => "Q053",
+            Self::CrossesBoundary { .. } => "Q055",
+        }
+    }
+}
+
+impl fmt::Display for LendRefusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Shape(reason) => f.write_str(reason),
+            Self::NotLendable { name, reason } => write!(f, "`{name}` {reason}"),
+            Self::Range {
+                buffer,
+                low,
+                high,
+                extent,
+            } => write!(
+                f,
+                "`lend({buffer}, {low}, {high})` is not a range of `{buffer}`, whose declared \
+                 extent is {extent} bytes; `source.buffer.v1` lends a range only when \
+                 `0 <= low <= high <= extent`, and decides it at check time, so this is a \
+                 refusal and not a run-time trap"
+            ),
+            Self::BoundFromByte { name } => write!(
+                f,
+                "`{name}` is not a bound the lend's custody projection can state; a lend bound \
+                 is an integer literal, a literal `let`, or an `extent` binding, so that the \
+                 lend's footprint is decided in one place (`WRITE-LEND-BOUND-FROM-BYTE`)"
+            ),
+            Self::OutOfLend { name, index, len } => write!(
+                f,
+                "index {index} is outside `{name}`, a lend of {len} bytes; an access through a \
+                 lend is rebased into the owner's coordinates and stays inside the lent range, \
+                 decided at check time, so this is a refusal and not a run-time trap"
+            ),
+            Self::CrossesBoundary { name } => write!(
+                f,
+                "`{name}` is a lend of a buffer and cannot cross here; a scalar position takes \
+                 an integer, and a lend publishes no custody identity for a borrowed render"
+            ),
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -388,6 +527,18 @@ pub enum BufferError {
     /// forbids a second pass reusing a code, and the conditions are the loop's
     /// (a bound, an iteration's net custody effect), not the buffer's.
     Loop { event: usize, refusal: LoopRefusal },
+    /// A refusal the **write lend** owns (card `SLICE-PERMISSIONS-WRITE-LEND`).
+    ///
+    /// Like [`Self::Record`], this variant reports at **this pass's own codes**
+    /// — `Q051`, `Q052`, `Q053` and `Q055`, whose conditions the card widens —
+    /// because the `Q-NAMESPACE-DECISION` ice box forbids a new allocation.
+    /// The mapping lives in [`LendRefusal::code`] and nowhere else. The
+    /// custody refusals of the lend — an overlap between two lends, an owner
+    /// access inside a lent range, a release under a live lend — are **not**
+    /// here at all: they arrive from the extended ownership IR through
+    /// [`Self::Custody`] at `Q054`, which is what "the authority is genuinely
+    /// transferred" means operationally.
+    Lend { event: usize, refusal: LendRefusal },
     /// A refusal the **record type** owns (card `AGGREGATES-V1`). Carried as
     /// [`RecordRefusal`]'s own value rather than a re-worded copy.
     ///
@@ -408,6 +559,7 @@ impl BufferError {
         match self {
             Self::Loop { refusal, .. } => refusal.code(),
             Self::Record { refusal, .. } => refusal.code(),
+            Self::Lend { refusal, .. } => refusal.code(),
             Self::Shape { .. } => "Q051",
             Self::NotAScalar { .. } | Self::NotABuffer { .. } => "Q052",
             Self::OutOfBounds { .. }
@@ -431,6 +583,7 @@ impl BufferError {
             | Self::CrossesBoundary { event, .. }
             | Self::Loop { event, .. }
             | Self::Record { event, .. }
+            | Self::Lend { event, .. }
             | Self::EffectNotDeclared { event, .. } => *event,
         }
     }
@@ -500,6 +653,7 @@ impl fmt::Display for BufferError {
             ),
             Self::Loop { refusal, .. } => refusal.fmt(f),
             Self::Record { refusal, .. } => refusal.fmt(f),
+            Self::Lend { refusal, .. } => refusal.fmt(f),
         }
     }
 }
@@ -547,9 +701,15 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 // *observes*, exactly as a byte read does. An owned field would
                 // make the first of those false, which is one more reason it is
                 // a separate card (`AGGREGATE-OWNED-FIELD`).
+                // **A lend derives nothing** (card
+                // `SLICE-PERMISSIONS-WRITE-LEND`): authority moves, no byte
+                // does. The `Mut` a lend-holding module carries is its
+                // stores', which the arm above already derives whichever
+                // binding they go through.
                 BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
                 | BufferEvent::Bind { .. }
+                | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
                 | BufferEvent::Extent { .. }
                 | BufferEvent::Line(StdIoEvent::Return)
@@ -615,6 +775,16 @@ pub struct LoopCustodyGate {
 pub fn custody_operations_with_gates(
     program: &BufferProgram,
 ) -> (Vec<OwnershipOp>, Vec<LoopCustodyGate>) {
+    // Card `SLICE-PERMISSIONS-WRITE-LEND`: a module with **no** lend builds the
+    // operation list it always built — this branch is what makes that a
+    // structural fact rather than a measurement. A module with one builds the
+    // lend-structured projection below, in which a loan is a real borrow node
+    // of the ownership IR carrying its footprint fraction.
+    if any_event(&program.events, |event| {
+        matches!(event, BufferEvent::Lend { .. })
+    }) {
+        return (lend_custody_operations(program), Vec::new());
+    }
     fn acquired_names(events: &[BufferEvent], into: &mut BTreeSet<String>) {
         for event in events {
             match event {
@@ -728,6 +898,12 @@ pub fn custody_operations_with_gates(
                     | BufferEvent::Load { .. }
                     | BufferEvent::Extent { .. }
                     | BufferEvent::Release { .. } => {}
+                    // Unreachable: a program with a lend takes
+                    // `lend_custody_operations` before this walk runs. Kept
+                    // total with **no** operation, which cannot admit anything
+                    // — a loan this walk did not open makes every later use of
+                    // its binding an unknown name to the checker.
+                    BufferEvent::Lend { .. } => {}
                     // **A record contributes no custody operation at all**
                     // (card `AGGREGATES-V1`). Every field of a v1 record is a
                     // scalar, so there is no resource for the cycle-3 checker
@@ -754,6 +930,377 @@ pub fn custody_operations_with_gates(
     };
     walk.walk(&program.events, 0, true, &BTreeMap::new());
     (walk.operations, walk.gates)
+}
+
+/// One write lend's window and footprint, as the custody projection states it
+/// (card `SLICE-PERMISSIONS-WRITE-LEND`).
+///
+/// `through` is the index of the **last top-level event naming the loan** — a
+/// store, a load, an extent read, or a refused later spelling — and `event`
+/// the lend's own, so `[event, through]` is the loan's lexical window. The
+/// bounds are resolved from the lowering-visible constant tier and **clamped
+/// into `[0, extent]`** when the spelling is out of range: the value half owns
+/// that refusal (`Q053`), and the projection stays total so one fault produces
+/// one report.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LendWindow {
+    pub event: usize,
+    pub binding: String,
+    pub buffer: String,
+    pub low: u32,
+    pub high: u32,
+    pub through: usize,
+}
+
+/// Resolve every lend of a flat entry to its window and footprint.
+///
+/// The second component collects the **tier refusals**: a bound outside the
+/// lowering-visible constant tier (a byte read, a field read) cannot be stated
+/// by the custody projection and is refused by name
+/// (`WRITE-LEND-BOUND-FROM-BYTE`). A lend whose bounds do not resolve, or whose
+/// buffer this entry never acquired, still receives a window — over-approximated
+/// to the buffer's whole extent, the maximally refusing direction — so the
+/// projection below is total whatever the value half goes on to say.
+#[must_use]
+pub fn lend_windows(events: &[BufferEvent]) -> (Vec<LendWindow>, Vec<BufferError>) {
+    let mut scalars: BTreeMap<String, i32> = BTreeMap::new();
+    let mut extents: BTreeMap<String, u32> = BTreeMap::new();
+    let mut windows = Vec::new();
+    let mut errors = Vec::new();
+
+    // The last top-level event naming each lend binding.
+    let mut last_use: BTreeMap<&str, usize> = BTreeMap::new();
+    let lend_bindings: BTreeSet<&str> = events
+        .iter()
+        .filter_map(|event| match event {
+            BufferEvent::Lend { binding, .. } => Some(binding.as_str()),
+            _ => None,
+        })
+        .collect();
+    for (index, event) in events.iter().enumerate() {
+        let names: Vec<&str> = match event {
+            BufferEvent::Store { name, .. }
+            | BufferEvent::Load { name, .. }
+            | BufferEvent::Extent { name, .. }
+            | BufferEvent::Release { name }
+            | BufferEvent::Lend { name, .. } => vec![name.as_str()],
+            _ => Vec::new(),
+        };
+        for name in names {
+            if lend_bindings.contains(name) {
+                last_use.insert(name, index);
+            }
+        }
+    }
+
+    for (index, event) in events.iter().enumerate() {
+        match event {
+            BufferEvent::Bind { binding, value } => {
+                scalars.insert(binding.clone(), *value);
+            }
+            BufferEvent::Acquire { name, extent } => {
+                extents.insert(name.clone(), *extent);
+            }
+            BufferEvent::Extent { binding, name } => {
+                if let Some(extent) = extents.get(name).copied() {
+                    scalars.insert(binding.clone(), extent as i32);
+                }
+            }
+            BufferEvent::Lend {
+                binding,
+                name,
+                low,
+                high,
+            } => {
+                let extent = extents.get(name).copied().unwrap_or(0);
+                let mut resolve = |operand: &BufferOperand| -> Option<i32> {
+                    match operand {
+                        BufferOperand::Literal(value) => Some(*value),
+                        BufferOperand::Scalar(scalar) => match scalars.get(scalar) {
+                            Some(value) => Some(*value),
+                            Option::None => {
+                                errors.push(BufferError::Lend {
+                                    event: index,
+                                    refusal: LendRefusal::BoundFromByte {
+                                        name: scalar.clone(),
+                                    },
+                                });
+                                Option::None
+                            }
+                        },
+                    }
+                };
+                let low = resolve(low);
+                let high = resolve(high);
+                let (low, high) = match (low, high) {
+                    // Clamped, never trusted: the value half refuses an
+                    // out-of-range spelling at `Q053`, and the projection
+                    // stays inside the footprint the ledger holds.
+                    (Some(low), Some(high)) => {
+                        let low = low.clamp(0, extent as i32) as u32;
+                        let high = high.clamp(low as i32, extent as i32) as u32;
+                        (low, high)
+                    }
+                    // A bound the projection cannot state over-approximates to
+                    // the whole extent — the maximally refusing direction.
+                    _ => (0, extent),
+                };
+                windows.push(LendWindow {
+                    event: index,
+                    binding: binding.clone(),
+                    buffer: name.clone(),
+                    low,
+                    high,
+                    through: last_use.get(binding.as_str()).copied().unwrap_or(index),
+                });
+            }
+            _ => {}
+        }
+    }
+    (windows, errors)
+}
+
+/// The first crossed pair of lend windows, if any: `a` opens first, `b` opens
+/// inside `a`'s window and outlives it. The ownership IR's borrow nodes are
+/// lexical, so a crossed pair cannot be encoded as nesting; it is refused by
+/// name rather than approximated — the `SOCKET-EVENT-CROSSED-SPANS` precedent,
+/// and residual `SLICE-PERMISSIONS-CROSSED-WINDOWS`.
+#[must_use]
+pub fn crossed_lend_windows(windows: &[LendWindow]) -> Option<(&LendWindow, &LendWindow)> {
+    for (position, a) in windows.iter().enumerate() {
+        for b in &windows[position + 1..] {
+            if a.event < b.event && b.event <= a.through && b.through > a.through {
+                return Some((a, b));
+            }
+        }
+    }
+    None
+}
+
+/// The custody projection of an entry that lends (card
+/// `SLICE-PERMISSIONS-WRITE-LEND`): every lend is an
+/// [`OwnershipOp::LendRange`] node whose body is the ops of its window, every
+/// resolved access states its byte footprint, and an access the
+/// lowering-visible tier cannot resolve stays rangeless — which under a live
+/// loan conflicts with everything, the fail-closed direction
+/// (`WRITE-LEND-COMPUTED-INDEX`).
+fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
+    let acquired: BTreeSet<String> = program
+        .events
+        .iter()
+        .filter_map(|event| match event {
+            BufferEvent::Acquire { name, .. } => Some(name.clone()),
+            _ => None,
+        })
+        .collect();
+    let (windows, _) = lend_windows(&program.events);
+    let by_event: BTreeMap<usize, &LendWindow> = windows
+        .iter()
+        .map(|window| (window.event, window))
+        .collect();
+
+    struct Build<'a> {
+        acquired: &'a BTreeSet<String>,
+        by_event: &'a BTreeMap<usize, &'a LendWindow>,
+        scalars: BTreeMap<String, i32>,
+        extents: BTreeMap<String, u32>,
+        /// binding -> (buffer, low, high) for every loan whose window this
+        /// segment is inside.
+        loans: BTreeMap<String, (String, u64, u64)>,
+        next_id: ResourceId,
+    }
+
+    impl Build<'_> {
+        fn constant(&self, operand: &BufferOperand) -> Option<u64> {
+            let value = match operand {
+                BufferOperand::Literal(value) => *value,
+                BufferOperand::Scalar(name) => *self.scalars.get(name)?,
+            };
+            u64::try_from(value).ok()
+        }
+
+        fn segment(
+            &mut self,
+            events: &[BufferEvent],
+            start: usize,
+            end: usize,
+        ) -> Vec<OwnershipOp> {
+            let mut operations = Vec::new();
+            let mut index = start;
+            while index < end {
+                let event = &events[index];
+                match event {
+                    BufferEvent::Bind { binding, value } => {
+                        self.scalars.insert(binding.clone(), *value);
+                    }
+                    BufferEvent::Acquire { name, extent } => {
+                        self.extents.insert(name.clone(), *extent);
+                        operations.push(OwnershipOp::Acquire {
+                            id: self.next_id,
+                            owner: name.clone(),
+                            resource_type: BUFFER_RESOURCE_TYPE.to_owned(),
+                            footprint: Footprint::single(BYTE_AXIS, u64::from(*extent)),
+                        });
+                        self.next_id += 1;
+                    }
+                    BufferEvent::Lend { binding, .. } => {
+                        if let Some(window) = self.by_event.get(&index).copied()
+                            && self.acquired.contains(&window.buffer)
+                        {
+                            // The window is `[event, through]`, so the body
+                            // is the ops of `(event, through]`, clamped to
+                            // this segment — the gate refuses a crossed
+                            // pair before this projection is consulted, so
+                            // the clamp is reachable only through a direct
+                            // model-level caller, and then it shortens the
+                            // loan, which only *adds* refusals.
+                            let body_end = (window.through + 1).min(end);
+                            let (low, high) = (u64::from(window.low), u64::from(window.high));
+                            self.loans
+                                .insert(binding.clone(), (window.buffer.clone(), low, high));
+                            let body = self.segment(events, index + 1, body_end);
+                            self.loans.remove(binding);
+                            operations.push(OwnershipOp::LendRange {
+                                owner: window.buffer.clone(),
+                                borrower: binding.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low,
+                                high,
+                                body,
+                            });
+                            index = body_end;
+                            continue;
+                        }
+                        // A lend of nothing this entry acquired contributes no
+                        // node; the value half refuses the statement, and every
+                        // later use of the binding is an unknown name there.
+                    }
+                    BufferEvent::Store {
+                        name, index: at, ..
+                    } => {
+                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                            match self.constant(at) {
+                                // Rebased into the owner's coordinates; the IR
+                                // checks the result stays inside the lend, so
+                                // an access provably past the loan is stated
+                                // as written and refused by containment.
+                                Some(at) => operations.push(OwnershipOp::WriteRange {
+                                    place: name.clone(),
+                                    axis: BYTE_AXIS.to_owned(),
+                                    low: lend_low.saturating_add(at),
+                                    high: lend_low.saturating_add(at).saturating_add(1),
+                                }),
+                                Option::None => {
+                                    // Not resolvable by this tier: a rangeless
+                                    // write through a range lend refuses in
+                                    // the IR — fail-closed
+                                    // (`WRITE-LEND-COMPUTED-INDEX`).
+                                    operations.push(OwnershipOp::Write(name.clone()));
+                                }
+                            }
+                        } else if self.acquired.contains(name) {
+                            match self.constant(at) {
+                                Some(at) => operations.push(OwnershipOp::WriteRange {
+                                    place: name.clone(),
+                                    axis: BYTE_AXIS.to_owned(),
+                                    low: at,
+                                    high: at.saturating_add(1),
+                                }),
+                                // An owner index this tier cannot resolve is
+                                // not provably disjoint from any live lend, so
+                                // it stays rangeless and conflicts with every
+                                // one of them — the read card's own rule,
+                                // reached from the write side.
+                                Option::None => {
+                                    operations.push(OwnershipOp::Write(name.clone()));
+                                }
+                            }
+                        }
+                    }
+                    BufferEvent::Load {
+                        name, index: at, ..
+                    } => {
+                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                            match self.constant(at) {
+                                Some(at) => operations.push(OwnershipOp::ReadRange {
+                                    place: name.clone(),
+                                    axis: BYTE_AXIS.to_owned(),
+                                    low: lend_low.saturating_add(at),
+                                    high: lend_low.saturating_add(at).saturating_add(1),
+                                }),
+                                Option::None => {
+                                    operations.push(OwnershipOp::Read(name.clone()));
+                                }
+                            }
+                        } else if self.acquired.contains(name) {
+                            match self.constant(at) {
+                                Some(at) => operations.push(OwnershipOp::ReadRange {
+                                    place: name.clone(),
+                                    axis: BYTE_AXIS.to_owned(),
+                                    low: at,
+                                    high: at.saturating_add(1),
+                                }),
+                                Option::None => {
+                                    operations.push(OwnershipOp::Read(name.clone()));
+                                }
+                            }
+                        }
+                    }
+                    BufferEvent::Extent { binding, name } => {
+                        // An extent read touches no byte, so its footprint is
+                        // the empty interval — admitted beside any loan while
+                        // the binding's liveness is still checked.
+                        if let Some((_, lend_low, _)) = self.loans.get(name).cloned() {
+                            operations.push(OwnershipOp::ReadRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: lend_low,
+                                high: lend_low,
+                            });
+                        } else if self.acquired.contains(name) {
+                            operations.push(OwnershipOp::ReadRange {
+                                place: name.clone(),
+                                axis: BYTE_AXIS.to_owned(),
+                                low: 0,
+                                high: 0,
+                            });
+                        }
+                        if let Some(extent) = self.extents.get(name).copied() {
+                            self.scalars.insert(binding.clone(), extent as i32);
+                        }
+                    }
+                    BufferEvent::Release { name } => {
+                        if self.acquired.contains(name) {
+                            operations.push(OwnershipOp::Drop(name.clone()));
+                        }
+                    }
+                    // Unreachable from the route: `check_buffer_program`
+                    // refuses a `for` in an entry that lends before this
+                    // projection is consulted (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+                    // A direct model-level caller gets no operation for it,
+                    // and the refusal it already received stands.
+                    BufferEvent::Repeat { .. }
+                    | BufferEvent::Construct { .. }
+                    | BufferEvent::Field { .. }
+                    | BufferEvent::Line(_)
+                    | BufferEvent::Return => {}
+                }
+                index += 1;
+            }
+            operations
+        }
+    }
+
+    let mut build = Build {
+        acquired: &acquired,
+        by_event: &by_event,
+        scalars: BTreeMap::new(),
+        extents: BTreeMap::new(),
+        loans: BTreeMap::new(),
+        next_id: 1,
+    };
+    let end = program.events.len();
+    build.segment(&program.events, 0, end)
 }
 
 /// The state the value half of the check carries: which names are buffers, what
@@ -787,6 +1334,36 @@ pub struct BufferEvaluation {
     /// plain value, so this map is the whole of what holding one costs — there
     /// is no ledger entry beside it.
     pub records: BTreeMap<String, RecordValue>,
+    /// The live write lends, by binding name (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`). A loan never leaves this map, and that
+    /// is not a leak: the loan's window runs to the last statement naming it,
+    /// so by construction there is no later use for an expired entry to
+    /// mislead — the same self-consistency the read card's `through` rests on.
+    pub loans: BTreeMap<String, LoanShape>,
+}
+
+/// What one live write lend holds: which buffer, and which of its bytes (card
+/// `SLICE-PERMISSIONS-WRITE-LEND`). The window is not here — it is a
+/// whole-program fact ([`lend_windows`]) and the certificate's [`LendRecord`]
+/// carries it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LoanShape {
+    pub buffer: String,
+    pub low: u32,
+    pub high: u32,
+}
+
+impl LoanShape {
+    /// The loan's own extent: how many bytes `[low, high)` covers.
+    #[must_use]
+    pub fn len(&self) -> u32 {
+        self.high - self.low
+    }
+
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.high == self.low
+    }
 }
 
 /// What applying one value-bearing [`BufferEvent`] produced.
@@ -802,6 +1379,10 @@ pub struct BufferStep {
     pub construction: Option<RecordConstruction>,
     /// The field this event read.
     pub projection: Option<RecordProjection>,
+    /// The write lend this event opened, with its **resolved** footprint in the
+    /// owner's coordinates (card `SLICE-PERMISSIONS-WRITE-LEND`). The window is
+    /// the caller's to pair in, because `through` is a whole-program fact.
+    pub lend: Option<(String, LoanShape)>,
     pub errors: Vec<BufferError>,
 }
 
@@ -863,10 +1444,25 @@ impl BufferEvaluation {
                 index: at,
                 value,
             } => {
-                let place = self.place(index, name, at);
+                // Card `SLICE-PERMISSIONS-WRITE-LEND`: a store through a loan
+                // is decided against the loan's **own** extent and rebased
+                // into the owner's coordinates — `NAME[i]` is the owner's byte
+                // `low + i`, the one arithmetic the certificate's `LendRecord`
+                // publishes. The owner's exclusion from the lent range is
+                // *not* decided here: it is the extended ownership IR's, so it
+                // arrives through the inherited `Q054` and nothing here can
+                // disagree with it.
+                let place = match self.loans.get(name).cloned() {
+                    Some(loan) => self
+                        .lend_place(index, name, &loan, at)
+                        .map(|at| (loan.buffer.clone(), loan.low as usize + at)),
+                    Option::None => self
+                        .place(index, name, at)
+                        .map(|(_, at)| (name.clone(), at)),
+                };
                 let value = self.operand(index, value);
                 match (place, value) {
-                    (Ok((_, at)), Ok(value)) => {
+                    (Ok((owner, at)), Ok(value)) => {
                         let Ok(byte) = u8::try_from(value) else {
                             step.errors.push(BufferError::ByteOutOfRange {
                                 event: index,
@@ -874,13 +1470,21 @@ impl BufferEvaluation {
                             });
                             return step;
                         };
-                        if let Some(bytes) = self.contents.get_mut(name) {
+                        if let Some(bytes) = self.contents.get_mut(&owner) {
                             bytes[at] = byte;
                         }
                         step.access = Some(BufferAccess {
                             event: index,
                             name: name.clone(),
-                            index: at as u32,
+                            // Published in the coordinates the source wrote —
+                            // the owner's for an owner store, the loan's own
+                            // for a lend store, with the `LendRecord` carrying
+                            // the displacement a reader adds to check them.
+                            index: if self.loans.contains_key(name) {
+                                (at - self.loans[name].low as usize) as u32
+                            } else {
+                                at as u32
+                            },
                             byte,
                             write: true,
                         });
@@ -895,44 +1499,168 @@ impl BufferEvaluation {
                 binding,
                 name,
                 index: at,
-            } => match self.place(index, name, at) {
-                Ok((_, at)) => {
-                    let byte = self
-                        .contents
-                        .get(name)
-                        .and_then(|bytes| bytes.get(at).copied())
-                        .unwrap_or(0);
-                    self.scalars.insert(binding.clone(), i32::from(byte));
-                    step.access = Some(BufferAccess {
-                        event: index,
-                        name: name.clone(),
-                        index: at as u32,
-                        byte,
-                        write: false,
-                    });
+            } => {
+                let place = match self.loans.get(name).cloned() {
+                    Some(loan) => self
+                        .lend_place(index, name, &loan, at)
+                        .map(|at| (loan.buffer.clone(), loan.low as usize + at, at as u32)),
+                    Option::None => self
+                        .place(index, name, at)
+                        .map(|(_, at)| (name.clone(), at, at as u32)),
+                };
+                match place {
+                    Ok((owner, at, published)) => {
+                        let byte = self
+                            .contents
+                            .get(&owner)
+                            .and_then(|bytes| bytes.get(at).copied())
+                            .unwrap_or(0);
+                        self.scalars.insert(binding.clone(), i32::from(byte));
+                        step.access = Some(BufferAccess {
+                            event: index,
+                            name: name.clone(),
+                            index: published,
+                            byte,
+                            write: false,
+                        });
+                    }
+                    Err(error) => step.errors.push(error),
                 }
-                Err(error) => step.errors.push(error),
-            },
+            }
             BufferEvent::Extent { binding, name } => match self.extents.get(name).copied() {
                 // The extent read back out of the acquisition. `i32` is
                 // total here because `MAX_EXTENT` is far inside it.
                 Some(extent) => {
                     self.scalars.insert(binding.clone(), extent as i32);
                 }
-                None => step.errors.push(BufferError::NotABuffer {
-                    event: index,
-                    name: name.clone(),
-                }),
+                // Card `SLICE-PERMISSIONS-WRITE-LEND`: the extent of a loan is
+                // its own length, a check-time constant exactly as the owner's
+                // is — read out of the loan's footprint, which the ownership
+                // ledger's own extent bounded at the lend.
+                None => match self.loans.get(name) {
+                    Some(loan) => {
+                        self.scalars.insert(binding.clone(), loan.len() as i32);
+                    }
+                    Option::None => step.errors.push(BufferError::NotABuffer {
+                        event: index,
+                        name: name.clone(),
+                    }),
+                },
             },
             BufferEvent::Release { name } => {
                 if self.extents.contains_key(name) {
                     step.release = Some(name.clone());
+                } else if self.loans.contains_key(name) {
+                    // Card `SLICE-PERMISSIONS-WRITE-LEND`: a loan is not
+                    // released — its window closes at its last use, and the
+                    // storage it addresses is the owner's to release.
+                    step.errors.push(BufferError::Lend {
+                        event: index,
+                        refusal: LendRefusal::NotLendable {
+                            name: name.clone(),
+                            reason: "is a lend, and a lend is not released; its window closes \
+                                     at its last use, and the storage it addresses is the \
+                                     owner's to release"
+                                .to_owned(),
+                        },
+                    });
                 } else {
                     step.errors.push(BufferError::NotABuffer {
                         event: index,
                         name: name.clone(),
                     });
                 }
+            }
+            // Card `SLICE-PERMISSIONS-WRITE-LEND`: open one write lend. The
+            // bound rule lives here; the exclusivity rule — two live lends
+            // must cover disjoint ranges — deliberately does **not**: it is
+            // the extended ownership IR's own admission, inherited at `Q054`.
+            BufferEvent::Lend {
+                binding,
+                name,
+                low,
+                high,
+            } => {
+                if self.scalars.contains_key(binding)
+                    || self.extents.contains_key(binding)
+                    || self.loans.contains_key(binding)
+                    || self.records.contains_key(binding)
+                {
+                    step.errors.push(BufferError::Lend {
+                        event: index,
+                        refusal: LendRefusal::Shape(format!(
+                            "`{binding}` is already bound in this entry; a lend binds a fresh \
+                             name, and `source.buffer.v1` refuses a shadowing binding rather \
+                             than deciding which of two values survives"
+                        )),
+                    });
+                    return step;
+                }
+                if self.loans.contains_key(name) {
+                    step.errors.push(BufferError::Lend {
+                        event: index,
+                        refusal: LendRefusal::NotLendable {
+                            name: name.clone(),
+                            reason: "is itself a lend; re-lending is not modelled in this \
+                                     revision (`WRITE-LEND-RELEND`)"
+                                .to_owned(),
+                        },
+                    });
+                    return step;
+                }
+                let Some(extent) = self.extents.get(name).copied() else {
+                    step.errors.push(BufferError::NotABuffer {
+                        event: index,
+                        name: name.clone(),
+                    });
+                    return step;
+                };
+                let low = self.operand(index, low);
+                let high = self.operand(index, high);
+                let (low, high) = match (low, high) {
+                    (Ok(low), Ok(high)) => (low, high),
+                    (low, high) => {
+                        step.errors.extend(low.err());
+                        step.errors.extend(high.err());
+                        return step;
+                    }
+                };
+                let length = i32::try_from(extent).expect("an extent is bounded by MAX_EXTENT");
+                if low < 0 || high < low || high > length {
+                    step.errors.push(BufferError::Lend {
+                        event: index,
+                        refusal: LendRefusal::Range {
+                            buffer: name.clone(),
+                            low,
+                            high,
+                            extent,
+                        },
+                    });
+                    // Registered anyway with the bounds clamped into the
+                    // extent — the refused-acquisition precedent: the errors
+                    // are collected rather than fatal, and a refused lend that
+                    // left its name unbound would make every later statement
+                    // about it cascade into a second, misleading refusal. The
+                    // program is refused either way; the custody projection
+                    // clamps identically, so the two layers still agree.
+                    let low = low.clamp(0, length) as u32;
+                    self.loans.insert(
+                        binding.clone(),
+                        LoanShape {
+                            buffer: name.clone(),
+                            low,
+                            high: high.clamp(low as i32, length) as u32,
+                        },
+                    );
+                    return step;
+                }
+                let shape = LoanShape {
+                    buffer: name.clone(),
+                    low: low as u32,
+                    high: high as u32,
+                };
+                self.loans.insert(binding.clone(), shape.clone());
+                step.lend = Some((binding.clone(), shape));
             }
             // --- The aggregate (card `AGGREGATES-V1`). ---
             //
@@ -1034,10 +1762,45 @@ impl BufferEvaluation {
         step
     }
 
+    /// Resolve `LOAN[INDEX]` to a validated index **in the loan's own
+    /// coordinates** (card `SLICE-PERMISSIONS-WRITE-LEND`). The bounds rule is
+    /// the loan's own `[0, len)`; the caller rebases by adding `loan.low`,
+    /// which is the one arithmetic the certificate publishes.
+    fn lend_place(
+        &self,
+        event: usize,
+        name: &str,
+        loan: &LoanShape,
+        index: &BufferOperand,
+    ) -> Result<usize, BufferError> {
+        let index = self.operand(event, index)?;
+        if index < 0 || u32::try_from(index).is_ok_and(|index| index >= loan.len()) {
+            return Err(BufferError::Lend {
+                event,
+                refusal: LendRefusal::OutOfLend {
+                    name: name.to_owned(),
+                    index,
+                    len: loan.len(),
+                },
+            });
+        }
+        Ok(index as usize)
+    }
+
     pub fn operand(&self, event: usize, operand: &BufferOperand) -> Result<i32, BufferError> {
         match operand {
             BufferOperand::Literal(value) => Ok(*value),
             BufferOperand::Scalar(name) => {
+                if self.loans.contains_key(name) {
+                    // A lend at a scalar position (card
+                    // `SLICE-PERMISSIONS-WRITE-LEND`), refused for the reason
+                    // a buffer is and at the same code: neither is a number,
+                    // and the reader needs to be told which they wrote.
+                    return Err(BufferError::Lend {
+                        event,
+                        refusal: LendRefusal::CrossesBoundary { name: name.clone() },
+                    });
+                }
                 if self.extents.contains_key(name) {
                     // A buffer at a scalar position. Reported as the boundary
                     // refusal rather than the generic one, because the reader
@@ -1150,6 +1913,85 @@ pub fn check_buffer_program(
         }]);
     }
 
+    // --- Half zero-and-a-half: the lend's window premises (card
+    // `SLICE-PERMISSIONS-WRITE-LEND`), decided before the custody projection
+    // is consulted because the projection's borrow nodes rest on them. ---
+    let mut lend_window_by_event: BTreeMap<usize, usize> = BTreeMap::new();
+    if any_event(&program.events, |event| {
+        matches!(event, BufferEvent::Lend { .. })
+    }) {
+        // A lend's window is an interval of statement indices, exact because
+        // the route is one flat sequence; a `for` makes one index run many
+        // times and invalidates that premise — the same wall the read card
+        // re-measured (`STRING-CONCAT-LOOP-WINDOW`), reached from the write
+        // side (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+        if let Some(position) = program
+            .events
+            .iter()
+            .position(|event| matches!(event, BufferEvent::Repeat { .. }))
+        {
+            return Err(vec![BufferError::Lend {
+                event: position,
+                refusal: LendRefusal::Shape(
+                    "`source.loop.v1`'s `for` is not a statement an entry that lends models; a \
+                     lend's window is an interval of statement indices and is exact only \
+                     because the route is one flat sequence, so a loop body writing under a \
+                     live lend would need a window over iterations rather than over indices \
+                     (`SLICE-PERMISSIONS-LOOP-WINDOW`)"
+                        .to_owned(),
+                ),
+            }]);
+        }
+        let (windows, tier_errors) = lend_windows(&program.events);
+        if !tier_errors.is_empty() {
+            return Err(tier_errors);
+        }
+        if let Some((first, second)) = crossed_lend_windows(&windows) {
+            return Err(vec![BufferError::Lend {
+                event: second.event,
+                refusal: LendRefusal::Shape(format!(
+                    "the windows of `{}` (statements {} through {}) and `{}` (statements {} \
+                     through {}) cross; the ownership IR's borrow nodes are lexical, so two \
+                     lends either nest or are disjoint, and a crossed pair is refused by name \
+                     rather than approximated (`SLICE-PERMISSIONS-CROSSED-WINDOWS`)",
+                    first.binding,
+                    first.event,
+                    first.through,
+                    second.binding,
+                    second.event,
+                    second.through
+                )),
+            }]);
+        }
+        // An acquisition inside a lend's window would put a footprint step
+        // inside a borrow node's body, where the one-pass peak walker cannot
+        // see it; refused rather than under-measured
+        // (`WRITE-LEND-NESTED-ACQUIRE`).
+        for window in &windows {
+            for (index, event) in program.events.iter().enumerate() {
+                if index > window.event
+                    && index <= window.through
+                    && matches!(event, BufferEvent::Acquire { .. })
+                {
+                    return Err(vec![BufferError::Lend {
+                        event: index,
+                        refusal: LendRefusal::Shape(format!(
+                            "this acquisition sits inside the window of `{}` (statements {} \
+                             through {}); an entry that lends acquires before its first lend \
+                             opens, so the published peak-live measurement stays exact \
+                             (`WRITE-LEND-NESTED-ACQUIRE`)",
+                            window.binding, window.event, window.through
+                        )),
+                    }]);
+                }
+            }
+        }
+        lend_window_by_event = windows
+            .iter()
+            .map(|window| (window.event, window.through))
+            .collect();
+    }
+
     // --- Half one: the inherited custody discipline. ---
     let (operations, gates) = custody_operations_with_gates(program);
     // The per-iteration identity obligation. Most of this discipline is the
@@ -1210,6 +2052,8 @@ pub fn check_buffer_program(
         },
         acquisitions: Vec::new(),
         releases: Vec::new(),
+        lend_windows: lend_window_by_event,
+        lends: Vec::new(),
         accesses: Vec::new(),
         constructions: Vec::new(),
         projections: Vec::new(),
@@ -1224,6 +2068,7 @@ pub fn check_buffer_program(
         evaluation,
         acquisitions,
         releases,
+        lends,
         accesses,
         constructions,
         projections,
@@ -1232,6 +2077,7 @@ pub fn check_buffer_program(
         renderings,
         returned,
         errors: value_errors,
+        ..
     } = run;
     errors.extend(value_errors);
 
@@ -1259,6 +2105,7 @@ pub fn check_buffer_program(
             effects: derived,
             acquisitions,
             releases,
+            lends,
             peak_live_bytes,
             accesses,
             constructions,
@@ -1284,6 +2131,11 @@ struct ValueRun {
     evaluation: BufferEvaluation,
     acquisitions: Vec<(String, u32)>,
     releases: Vec<String>,
+    /// Each lend's window end by its event index, precomputed by
+    /// [`lend_windows`] — `through` is a whole-program fact the stepper cannot
+    /// know (card `SLICE-PERMISSIONS-WRITE-LEND`).
+    lend_windows: BTreeMap<usize, usize>,
+    lends: Vec<LendRecord>,
     accesses: Vec<BufferAccess>,
     constructions: Vec<RecordConstruction>,
     projections: Vec<RecordProjection>,
@@ -1336,6 +2188,8 @@ impl ValueRun {
             evaluation,
             acquisitions,
             releases,
+            lend_windows,
+            lends,
             accesses,
             constructions,
             projections,
@@ -1368,6 +2222,10 @@ impl ValueRun {
             | BufferEvent::Load { .. }
             | BufferEvent::Extent { .. }
             | BufferEvent::Release { .. }
+            // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend is value-bearing —
+            // it binds the loan the later stores name — and it reaches the
+            // same stepper, whose bound rule is the one implementation.
+            | BufferEvent::Lend { .. }
             // Card `AGGREGATES-V1`: the two aggregate events are value-bearing
             // exactly as the six above are, and they reach the **same** stepper,
             // so a record constructed inside a `for` body is decided by the one
@@ -1381,6 +2239,16 @@ impl ValueRun {
                 accesses.extend(step.access);
                 constructions.extend(step.construction);
                 projections.extend(step.projection);
+                if let Some((binding, shape)) = step.lend {
+                    lends.push(LendRecord {
+                        event: index,
+                        buffer: shape.buffer,
+                        binding,
+                        low: shape.low,
+                        high: shape.high,
+                        through: lend_windows.get(&index).copied().unwrap_or(index),
+                    });
+                }
             }
             BufferEvent::Line(line) => match line {
                 StdIoEvent::LogLevel { .. } => {}
@@ -1541,6 +2409,13 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 BufferEvent::Acquire { name, .. } => {
                     names.insert(name.clone());
                 }
+                // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a name,
+                // and it is body-local exactly as every other binding is —
+                // though an entry that lends refuses a `for` before this can
+                // matter (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+                BufferEvent::Lend { binding, .. } => {
+                    names.insert(binding.clone());
+                }
                 BufferEvent::Repeat { variable, body, .. } => {
                     names.insert(variable.clone());
                     walk(body, names);
@@ -1582,6 +2457,7 @@ pub enum BufferRecheckFailure {
     Effects,
     Acquisitions,
     Releases,
+    Lends,
     PeakLiveBytes,
     Accesses,
     Constructions,
@@ -1600,6 +2476,7 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Effects => "the derived effect row",
             Self::Acquisitions => "the acquisitions and the extents they declare",
             Self::Releases => "the releases",
+            Self::Lends => "the admitted write lends, their footprints and their windows",
             Self::PeakLiveBytes => "the peak live byte total",
             Self::Accesses => "the checked byte accesses",
             Self::Constructions => "the constructed record values and the fields they supply",
@@ -1632,6 +2509,9 @@ pub fn recheck_buffer_certificate(
     }
     if rederived.releases != certificate.releases {
         return Err(BufferRecheckFailure::Releases);
+    }
+    if rederived.lends != certificate.lends {
+        return Err(BufferRecheckFailure::Lends);
     }
     if rederived.peak_live_bytes != certificate.peak_live_bytes {
         return Err(BufferRecheckFailure::PeakLiveBytes);

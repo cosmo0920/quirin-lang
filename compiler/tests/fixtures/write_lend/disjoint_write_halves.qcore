@@ -1,0 +1,30 @@
+import std.buffer;
+import std.fmt;
+import std.io;
+
+// Card SLICE-PERMISSIONS-WRITE-LEND: the half of CT07 the read card could not
+// reach — two parties each holding WRITE authority over their own range of one
+// buffer, mutating independently while both loans are live. `left` and `right`
+// cover [0, 4) and [4, 8): provably disjoint, decided at check time, and the
+// interleaved stores below are each admitted because each goes through the
+// loan that owns its byte. The owner reads the bytes back only after both
+// windows close, which is when its authority returns.
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(8);
+    let left = lend(store, 0, 4);
+    let right = lend(store, 4, 8);
+    left[0] = 11;
+    right[0] = 55;
+    left[1] = 22;
+    right[1] = 66;
+    let b = right[1];
+    let a = left[1];
+    let x = store[0];
+    let y = store[4];
+    print dec a;
+    print dec b;
+    print dec x;
+    print dec y;
+    drop store;
+    return;
+}

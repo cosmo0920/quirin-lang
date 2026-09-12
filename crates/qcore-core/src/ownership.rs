@@ -109,10 +109,35 @@ impl ResourceEntry {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum BorrowKind {
     Shared,
     Mutable,
+    /// **Write authority over `[low, high)` of the resource's footprint on
+    /// `axis`, genuinely transferred** (card `SLICE-PERMISSIONS-WRITE-LEND`).
+    ///
+    /// This is the footprint fraction card `STD-BUFFER-SLICE` predicted a
+    /// borrow node would need, carried as a half-open interval rather than an
+    /// amount because the question it answers — do two lends conflict? — is
+    /// about *which* bytes, not how many. While such a loan is live the owner
+    /// keeps authority over every byte outside `[low, high)` and none inside
+    /// it, which is what distinguishes a lend from the read exclusion card
+    /// `CT07-SLICE-PERMISSIONS` landed: there the owner *kept* the write
+    /// authority and the route excluded its use; here the authority itself
+    /// moves for the loan's lexical extent.
+    MutableRange {
+        axis: String,
+        low: u64,
+        high: u64,
+    },
+}
+
+/// Do the half-open intervals `[low_a, high_a)` and `[low_b, high_b)` share a
+/// point? The same decision `qcore_core::std_string::ranges_overlap` publishes
+/// for `u32` bounds, restated on the ownership IR's own `u64` axis so the two
+/// layers cannot drift by a conversion. An empty interval overlaps nothing.
+fn axes_overlap(low_a: u64, high_a: u64, low_b: u64, high_b: u64) -> bool {
+    low_a.max(low_b) < high_a.min(high_b)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -154,6 +179,51 @@ pub enum OwnershipOp {
         owner: String,
         borrower: String,
         body: Vec<OwnershipOp>,
+    },
+    /// Lend write authority over `[low, high)` of `owner`'s footprint on
+    /// `axis` to `borrower` for the lexical extent of `body` (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`).
+    ///
+    /// Distinct from [`Self::BorrowMutable`] in exactly one way: a second live
+    /// lend of the same resource is **admitted when its range is disjoint**
+    /// from every live loan's and refused when it is not, so two parties can
+    /// hold write authority over two disjoint ranges at once. A whole-resource
+    /// borrow of either kind still conflicts with any non-empty lend, and any
+    /// lend with it.
+    ///
+    /// The lend's bound against the ledger footprint (`high <= extent`) is
+    /// deliberately **not** decided here: the admitting route decides it at
+    /// check time against the extent the acquisition declared, exactly as the
+    /// read card decided its range, so one fault produces one refusal.
+    LendRange {
+        owner: String,
+        borrower: String,
+        axis: String,
+        low: u64,
+        high: u64,
+        body: Vec<OwnershipOp>,
+    },
+    /// A write whose footprint the emitting route resolved to `[low, high)` on
+    /// `axis` — through the owner, refused exactly when the interval shares a
+    /// point with a live loan's; through a range lend, admitted exactly when
+    /// it stays inside that lend's own range (the rebasing law, enforced in
+    /// the IR rather than trusted). A write the route cannot resolve stays a
+    /// rangeless [`Self::Write`], which conflicts with everything — the
+    /// fail-closed direction.
+    WriteRange {
+        place: String,
+        axis: String,
+        low: u64,
+        high: u64,
+    },
+    /// The read counterpart of [`Self::WriteRange`]. An empty interval is a
+    /// read that touches no byte (an extent query), which is why it is
+    /// admitted beside any loan while still checking the binding is live.
+    ReadRange {
+        place: String,
+        axis: String,
+        low: u64,
+        high: u64,
     },
     Branch {
         then_ops: Vec<OwnershipOp>,
@@ -249,6 +319,26 @@ impl OwnershipState {
                 borrower,
                 body,
             } => self.borrow(owner, borrower, BorrowKind::Mutable, body),
+            OwnershipOp::LendRange {
+                owner,
+                borrower,
+                axis,
+                low,
+                high,
+                body,
+            } => self.lend_range(owner, borrower, axis, *low, *high, body),
+            OwnershipOp::WriteRange {
+                place,
+                axis,
+                low,
+                high,
+            } => self.write_range(place, axis, *low, *high),
+            OwnershipOp::ReadRange {
+                place,
+                axis,
+                low,
+                high,
+            } => self.read_range(place, axis, *low, *high),
             OwnershipOp::Branch { then_ops, else_ops } => self.branch(then_ops, else_ops),
         }
     }
@@ -298,6 +388,14 @@ impl OwnershipState {
                     Ok(())
                 }
             }
+            // A rangeless access through a **range** lend could name any byte,
+            // including one outside the lent range, so it is refused: a route
+            // that holds a range lend states every access's footprint or does
+            // not access at all — the fail-closed direction.
+            Binding::Borrowed {
+                kind: BorrowKind::MutableRange { .. },
+                ..
+            } => Err(OwnershipError::AccessOutsideLendRange(place.into())),
             Binding::Borrowed { .. } => Ok(()),
             Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
             Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
@@ -317,6 +415,11 @@ impl OwnershipState {
                 kind: BorrowKind::Mutable,
                 ..
             } => Ok(()),
+            // The rangeless-write rule of the range lend: see `read` above.
+            Binding::Borrowed {
+                kind: BorrowKind::MutableRange { .. },
+                ..
+            } => Err(OwnershipError::AccessOutsideLendRange(place.into())),
             Binding::Borrowed {
                 kind: BorrowKind::Shared,
                 ..
@@ -401,6 +504,211 @@ impl OwnershipState {
         Ok(())
     }
 
+    /// Open one write lend of `[low, high)` on `axis`, run `body` under it, and
+    /// close it (card `SLICE-PERMISSIONS-WRITE-LEND`).
+    ///
+    /// The admission is the exclusivity rule: the new range must share no point
+    /// with any live loan of the resource. Against another range lend that is
+    /// `axes_overlap` on the same axis; against a whole-resource borrow of
+    /// either kind it is "the lend is non-empty", because a whole borrow covers
+    /// every byte. An **empty** lend conflicts with nothing — a consequence of
+    /// the interval decision, not a case beside it.
+    fn lend_range(
+        &mut self,
+        owner: &str,
+        borrower: &str,
+        axis: &str,
+        low: u64,
+        high: u64,
+        body: &[OwnershipOp],
+    ) -> Result<(), OwnershipError> {
+        if self.bindings.contains_key(borrower) {
+            return Err(OwnershipError::BindingAlreadyExists(borrower.into()));
+        }
+        let resource = match self.binding(owner)? {
+            Binding::Owned(resource) => *resource,
+            // A loan is not an owner: re-lending is refused rather than given a
+            // transitive reading this revision does not model.
+            Binding::Borrowed { .. } => return Err(OwnershipError::LendOfBorrow(owner.into())),
+            Binding::Moved => return Err(OwnershipError::UseAfterMove(owner.into())),
+            Binding::Dropped => return Err(OwnershipError::UseAfterDrop(owner.into())),
+        };
+        for binding in self.bindings.values() {
+            let Binding::Borrowed {
+                resource: loaned,
+                kind,
+            } = binding
+            else {
+                continue;
+            };
+            if *loaned != resource {
+                continue;
+            }
+            match kind {
+                // A whole-resource borrow holds every byte, so any non-empty
+                // lend shares one with it. The refusal is the existing
+                // whole-borrow conflict, because a lend *is* a mutable borrow.
+                BorrowKind::Shared | BorrowKind::Mutable => {
+                    if low < high {
+                        return Err(OwnershipError::MutableBorrowWhileBorrowed(owner.into()));
+                    }
+                }
+                BorrowKind::MutableRange {
+                    axis: held_axis,
+                    low: held_low,
+                    high: held_high,
+                } => {
+                    if held_axis == axis && axes_overlap(low, high, *held_low, *held_high) {
+                        return Err(OwnershipError::OverlappingLends(owner.into()));
+                    }
+                }
+            }
+        }
+        let loan = Binding::Borrowed {
+            resource,
+            kind: BorrowKind::MutableRange {
+                axis: axis.to_owned(),
+                low,
+                high,
+            },
+        };
+        self.bindings.insert(borrower.into(), loan.clone());
+        self.execute(body)?;
+        if self.bindings.remove(borrower) != Some(loan) {
+            return Err(OwnershipError::LedgerInvariantViolation);
+        }
+        Ok(())
+    }
+
+    /// A write whose byte footprint the route resolved. Through the owner it is
+    /// range-wise: refused exactly when the interval shares a point with a live
+    /// loan's. Through a range lend it is the **rebasing law**: admitted
+    /// exactly when it stays inside that lend's own range.
+    fn write_range(
+        &self,
+        place: &str,
+        axis: &str,
+        low: u64,
+        high: u64,
+    ) -> Result<(), OwnershipError> {
+        match self.binding(place)? {
+            Binding::Owned(resource) => {
+                if self.has_loan_overlapping(*resource, axis, low, high, false) {
+                    Err(OwnershipError::OwnerMutationWhileBorrowed(place.into()))
+                } else {
+                    Ok(())
+                }
+            }
+            Binding::Borrowed {
+                kind: BorrowKind::Mutable,
+                ..
+            } => Ok(()),
+            Binding::Borrowed {
+                kind: BorrowKind::Shared,
+                ..
+            } => Err(OwnershipError::WriteThroughSharedBorrow(place.into())),
+            Binding::Borrowed {
+                kind:
+                    BorrowKind::MutableRange {
+                        axis: held_axis,
+                        low: held_low,
+                        high: held_high,
+                    },
+                ..
+            } => {
+                if held_axis == axis && *held_low <= low && high <= *held_high {
+                    Ok(())
+                } else {
+                    Err(OwnershipError::AccessOutsideLendRange(place.into()))
+                }
+            }
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+        }
+    }
+
+    /// The read counterpart. An owner read conflicts only with loans that hold
+    /// **write** authority — a whole mutable borrow or a range lend — and only
+    /// on a shared point; a shared borrow blocks no read. An empty interval
+    /// (an extent query) overlaps nothing and is admitted beside any loan,
+    /// while the liveness of the binding is still checked.
+    fn read_range(
+        &self,
+        place: &str,
+        axis: &str,
+        low: u64,
+        high: u64,
+    ) -> Result<(), OwnershipError> {
+        match self.binding(place)? {
+            Binding::Owned(resource) => {
+                if self.has_loan_overlapping(*resource, axis, low, high, true) {
+                    Err(OwnershipError::OwnerAccessWhileMutablyBorrowed(
+                        place.into(),
+                    ))
+                } else {
+                    Ok(())
+                }
+            }
+            Binding::Borrowed {
+                kind: BorrowKind::Shared | BorrowKind::Mutable,
+                ..
+            } => Ok(()),
+            Binding::Borrowed {
+                kind:
+                    BorrowKind::MutableRange {
+                        axis: held_axis,
+                        low: held_low,
+                        high: held_high,
+                    },
+                ..
+            } => {
+                if held_axis == axis && *held_low <= low && high <= *held_high {
+                    Ok(())
+                } else {
+                    Err(OwnershipError::AccessOutsideLendRange(place.into()))
+                }
+            }
+            Binding::Moved => Err(OwnershipError::UseAfterMove(place.into())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(place.into())),
+        }
+    }
+
+    /// Whether any live loan of `resource` shares a point with `[low, high)` on
+    /// `axis`. `mutable_only` restricts the question to loans carrying write
+    /// authority, which is the read direction's conflict set. A whole-resource
+    /// borrow covers every point, so it overlaps exactly when the interval is
+    /// non-empty.
+    fn has_loan_overlapping(
+        &self,
+        resource: ResourceId,
+        axis: &str,
+        low: u64,
+        high: u64,
+        mutable_only: bool,
+    ) -> bool {
+        self.bindings.values().any(|binding| {
+            let Binding::Borrowed {
+                resource: loaned,
+                kind,
+            } = binding
+            else {
+                return false;
+            };
+            if *loaned != resource {
+                return false;
+            }
+            match kind {
+                BorrowKind::Shared => !mutable_only && low < high,
+                BorrowKind::Mutable => low < high,
+                BorrowKind::MutableRange {
+                    axis: held_axis,
+                    low: held_low,
+                    high: held_high,
+                } => held_axis == axis && axes_overlap(low, high, *held_low, *held_high),
+            }
+        })
+    }
+
     fn branch(
         &mut self,
         then_ops: &[OwnershipOp],
@@ -462,7 +770,10 @@ impl OwnershipState {
                 binding,
                 Binding::Borrowed {
                     resource: loaned,
-                    kind: BorrowKind::Mutable,
+                    // A range lend carries write authority, so for every rule
+                    // that asks "is there a mutable borrow" — the owner's
+                    // rangeless read, a candidate shared borrow — it is one.
+                    kind: BorrowKind::Mutable | BorrowKind::MutableRange { .. },
                 } if *loaned == resource
             )
         })
@@ -512,6 +823,15 @@ pub enum OwnershipError {
     WriteThroughSharedBorrow(String),
     SharedBorrowWhileMutablyBorrowed(String),
     MutableBorrowWhileBorrowed(String),
+    /// Two write lends of one resource would share a byte (card
+    /// `SLICE-PERMISSIONS-WRITE-LEND`). The exclusivity rule: a second lend is
+    /// admitted exactly when its range is disjoint from every live loan's.
+    OverlappingLends(String),
+    /// A lend names a loan as its owner; re-lending is not modelled.
+    LendOfBorrow(String),
+    /// An access through a range lend lies outside — or does not state — the
+    /// lent range. The rebasing law, enforced rather than trusted.
+    AccessOutsideLendRange(String),
     BranchOwnershipMismatch {
         then_owned: Vec<String>,
         else_owned: Vec<String>,
@@ -556,6 +876,24 @@ impl fmt::Display for OwnershipError {
                 write!(
                     f,
                     "cannot mutably borrow `{name}` while another borrow is active"
+                )
+            }
+            Self::OverlappingLends(name) => {
+                write!(
+                    f,
+                    "two write lends of `{name}` would share a byte; a write lend holds \
+                     exclusive authority over its range, so a second lend is admitted only \
+                     where its range is disjoint from every live loan's"
+                )
+            }
+            Self::LendOfBorrow(name) => {
+                write!(f, "loan `{name}` cannot itself be lent")
+            }
+            Self::AccessOutsideLendRange(name) => {
+                write!(
+                    f,
+                    "an access through lend `{name}` lies outside — or does not state — the \
+                     range it was lent"
                 )
             }
             Self::BranchOwnershipMismatch { .. } => {

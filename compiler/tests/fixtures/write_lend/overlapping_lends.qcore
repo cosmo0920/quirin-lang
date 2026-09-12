@@ -1,0 +1,27 @@
+import std.buffer;
+import std.fmt;
+import std.io;
+
+// The control for disjoint_write_halves.qcore: one bound of the second lend
+// moved from 4 to 3, so the two ranges share exactly byte 3 and everything
+// else is identical. The refusal is therefore a statement about the OVERLAP —
+// the exclusivity rule between two write lends — and not about lending at all.
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(8);
+    let left = lend(store, 0, 4);
+    let right = lend(store, 3, 8);
+    left[0] = 11;
+    right[0] = 55;
+    left[1] = 22;
+    right[1] = 66;
+    let b = right[1];
+    let a = left[1];
+    let x = store[0];
+    let y = store[4];
+    print dec a;
+    print dec b;
+    print dec x;
+    print dec y;
+    drop store;
+    return;
+}
