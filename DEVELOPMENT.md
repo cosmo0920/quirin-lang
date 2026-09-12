@@ -349,6 +349,44 @@ full suite.
 
 ## Increment records
 
+Wave 30, card `CT24-CLEANUP-PREEMPTED` (2026-09-13): the preempted-cleanup
+refusal CT24 names is now attributable to its own construct. The wave-26 CT
+lane measured CT24's distinguishing fixture unwritable — an early exit (`?` or
+`return`) inside a thread scope while a child holds a read share of the frame's
+owner refuses first on the task obligation, `Q600` `ScopeBusy(5)` bare, so the
+refusal was never attributable to a cleanup destroying an owner before the
+child's join (`docs/reports/ct-wire-lane/README.md` §3.5). The judgment that
+names that construct already existed: the reference execution's exit rule
+carries a loan backstop ("return/error leaves resource N lent to an unjoined
+child"), recorded since card T04 as redundant because the scope rule preempts
+it, its result discarded for the bare debug rendering. On the wave-29 CT47
+precedent this card re-emits the preempting refusal **from that judgment**
+(`task_execution.rs::scope_exit_refusal` over the factored
+`outstanding_lent_resource`, the same reader `exit` keeps): the message keeps
+its `ScopeBusy(..)` prefix and now names the owner the preempted cleanup would
+destroy and the borrower whose join it precedes. **Attribution-only, and the
+weaker half of constraint 1's clause**: zero codes allocated, zero codes
+moved, zero conditions widened, same span, same pass, and the refused set is
+unchanged — proved, not asserted, by the new attribution relations in
+`QCore.TaskExecution` (`attribution_never_moves_the_refusal`: refusal is the
+scope obligation's decision alone; `the_preempting_gate_reads_the_backstops_own_judgment`,
+`a_named_owner_is_a_lent_frame_resource`, `an_unlent_frame_keeps_the_plain_refusal`,
+`ct24s_cell_is_attributed_to_the_destroy_before_join`), registered in the
+existing `AuditTaskExecution` (audits stay 118). A busy scope with no lent
+frame resource — CT13's shape — keeps the bare rendering byte for byte, the
+explicit-drop shape keeps `LoanOutstanding` byte-identical, and joining the
+borrower and releasing the owner ahead of the `?` is admitted whole; all four
+shapes plus the early-return twin are pinned by the new
+`crates/qcore-frontend/tests/cleanup_preempted.rs`, with the two standing
+`ScopeBusy` substring pins in `read_loans.rs`/`read_shares.rs` moved
+deliberately to the refined messages. CT24 stays **unmapped** — its manifest
+and derived-matrix rows belong to a mapping lane (constraint 25); this card
+delivers the attribution, the readiness statement and the updated hand-kept
+`acceptance.json` reason, with the non-widening stated in §L21's `Q6xx` row.
+Zero reserved words, no gateway/contract/audit/provider file touched (corpus
+rows carried, leak pin 266 untouched by construction). Evidence:
+`docs/reports/ct24-cleanup-preempted/README.md`.
+
 Wave 29 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,
 `REGION-JOINS-DUTIES`, `SLICE-PERMISSIONS-WRITE-LEND` and the arbiter

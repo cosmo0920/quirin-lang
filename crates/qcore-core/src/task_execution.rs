@@ -23,7 +23,9 @@
 //! has no external custodian. Several payloads, borrowed payloads, scalar
 //! payloads and payload-carrying rethrow of a bound error stay outside.
 pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, MAX_READERS, ScopeId};
-use crate::scoped_tasks::{ResourceId, ResourceState, ScopedTaskLedger, TaskOutcome};
+use crate::scoped_tasks::{
+    ResourceId, ResourceState, ScopedTaskLedger, TaskId, TaskLedgerError, TaskOutcome,
+};
 use std::collections::{BTreeMap, BTreeSet};
 pub type FunctionId = usize;
 pub type SlotId = usize;
@@ -460,11 +462,7 @@ impl State {
         // An outstanding share is an unfinished lifetime duty, not a leak: name
         // it separately so the refusal says what the exit actually failed to
         // do, which is reclaim the share by joining its borrower.
-        if let Some(&resource) = self
-            .resources
-            .iter()
-            .find(|&&resource| self.ledger.lent_share(resource) > 0)
-        {
+        if let Some((resource, _)) = self.outstanding_lent_resource() {
             return Err(format!(
                 "return/error leaves resource {resource} lent to an unjoined child"
             ));
@@ -477,6 +475,43 @@ impl State {
             }
         }
         Ok(())
+    }
+    /// The exit rule's own loan judgment — the one `exit` names "lent to an
+    /// unjoined child": the first frame resource with an outstanding read
+    /// share, plus its borrowers. A borrower with an outstanding share is
+    /// unjoined by the ledger's own transaction (`join` reclaims the child's
+    /// shares in the same transaction that consumes the handle, and a failed
+    /// join keeps its scope inexitable), so the borrowers named here are
+    /// exactly the unjoined children whose joins this frame still owes.
+    fn outstanding_lent_resource(&self) -> Option<(ResourceId, Vec<TaskId>)> {
+        self.resources
+            .iter()
+            .find(|&&resource| self.ledger.lent_share(resource) > 0)
+            .map(|&resource| (resource, self.ledger.loan_borrowers(resource)))
+    }
+    /// Render a refused scope exit (card CT24-CLEANUP-PREEMPTED). The ledger's
+    /// `ScopeBusy` obligation is neither weakened nor reordered — it still
+    /// refuses exactly the exits it refused, at the same instruction and span,
+    /// and the message keeps its `ScopeBusy(..)` prefix. What changes is the
+    /// attribution: when the busy scope's preempted teardown would run this
+    /// frame's cleanup over an owner a live child still borrows — the
+    /// construct CT24 names, cleanup destroying an owner before the child's
+    /// join — the refusal carries that fact, read from the same loan judgment
+    /// the `exit` backstop reads instead of being discarded in favour of the
+    /// bare debug rendering. A busy scope with no lent frame resource (an
+    /// unjoined child holding no loan) keeps the bare rendering byte for byte.
+    fn scope_exit_refusal(&self, error: TaskLedgerError) -> String {
+        if matches!(error, TaskLedgerError::ScopeBusy(_))
+            && let Some((resource, borrowers)) = self.outstanding_lent_resource()
+        {
+            return format!(
+                "{error:?}: cleanup preempted — this exit would run the frame's \
+                 cleanup over resource {resource} while task(s) {borrowers:?} still \
+                 hold a read share of it, destroying the owner before the child's \
+                 join; the scope refuses the exit with that loan outstanding"
+            );
+        }
+        format!("{error:?}")
     }
 }
 
@@ -830,7 +865,7 @@ fn check_function(
                         state
                             .ledger
                             .exit_scope(0, *scope)
-                            .map_err(|e| format!("{e:?}"))?;
+                            .map_err(|error| state.scope_exit_refusal(error))?;
                         state.scopes.pop();
                     }
                     TaskInstructionKind::Join {

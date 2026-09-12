@@ -203,14 +203,23 @@ fn the_lender_cannot_release_or_relend_while_the_loan_is_outstanding() {
 
 /// An outstanding loan keeps its scope busy, so a path that never joins its
 /// borrower cannot leave. The scope rule reaches this first; the exit rule's
-/// own loan check is a redundant backstop, recorded as such.
+/// own loan check is a redundant backstop, recorded as such. **Pin moved
+/// deliberately** (card CT24-CLEANUP-PREEMPTED): the preempting refusal now
+/// carries that backstop's own judgment — the frame's cleanup would destroy
+/// the lent owner before the borrower's join — instead of discarding it; the
+/// refusal itself is unmoved (same code, same span, same refused program).
 #[test]
 fn a_path_that_never_joins_its_borrower_cannot_leave_the_scope() {
     let source = READ_LOAN.replace(
         "let seen = join move handle?;\n        let after = qcore_buffer_read(buffer);\n        drop buffer;\n        return seen;",
         "return 7;",
     );
-    rejects(&source, "ScopeBusy");
+    rejects(
+        &source,
+        "ScopeBusy(5): cleanup preempted — this exit would run the frame's cleanup over \
+         resource 1 while task(s) [2] still hold a read share of it, destroying the owner \
+         before the child's join; the scope refuses the exit with that loan outstanding",
+    );
 }
 
 /// The borrower holds read authority and nothing else. Each case is a different
