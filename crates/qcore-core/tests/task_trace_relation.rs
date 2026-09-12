@@ -90,6 +90,11 @@ fn encode_event(event: &ObservedEvent) -> u64 {
             buffer,
             value,
         } => 5 + 16 * (task + 8 * (buffer + 64 * natural(*value))),
+        ObservedEvent::Written {
+            task,
+            buffer,
+            value,
+        } => 11 + 16 * (task + 8 * (buffer + 64 * natural(*value))),
         ObservedEvent::Dropped { task, buffer } => 6 + 16 * (task + 8 * buffer),
         ObservedEvent::Loaned { borrower, buffer } => 7 + 16 * (borrower + 8 * buffer),
         ObservedEvent::Returned { borrower, buffer } => 8 + 16 * (borrower + 8 * buffer),
@@ -530,18 +535,136 @@ fn the_observer_reads_the_whole_line_or_refuses_it() {
 #[test]
 fn every_alphabet_line_round_trips_through_the_observer() {
     let text = "QCORE_BUFFER_ALLOC 0 1 42\nQCORE_BUFFER_ALLOC_FAILED 3\nQCORE_BUFFER_READ 1 1 42\n\
+                QCORE_BUFFER_WRITE 0 1 7\n\
                 QCORE_BUFFER_DROP 0 1\nQCORE_BUFFER_LOAN 2 1\nQCORE_BUFFER_RETURN 2 1\n\
                 QCORE_TASK_SPAWN 1 0\nQCORE_TASK_CREATE_FAILED 4\nQCORE_TASK_JOIN 1\n\
                 QCORE_TASK_RESULT 0 UNIT\nQCORE_TASK_RESULT 0 I32 -7\nQCORE_TASK_RESULT 0 BUFFER 9\n\
                 QCORE_TASK_RESULT 0 ERROR AllocError\n";
     let parsed = parse_observed_trace(text).unwrap();
-    assert_eq!(parsed.len(), 13);
+    assert_eq!(parsed.len(), 14);
     assert_eq!(
-        parsed[12],
+        parsed[3],
+        ObservedEvent::Written {
+            task: 0,
+            buffer: 1,
+            value: 7
+        }
+    );
+    assert_eq!(
+        parsed[13],
         ObservedEvent::Completed {
             task: 0,
             outcome: ObservedOutcome::Error("AllocError".into())
         }
     );
-    assert_eq!(parsed[7].actor(), None);
+    assert_eq!(parsed[8].actor(), None);
+}
+
+/* --------------------------- the write-aware payload rule (CT03-PROOF-ALPHABET)
+
+A generation that is never written keeps exactly the pinned rule (the tests
+above measure that: every domain digest and census is unchanged); a written
+generation's reads must each report the value established by the nearest
+preceding allocation or write. ------------------------------------------- */
+
+fn written(task: u64, buffer: u64, value: i32) -> ObservedEvent {
+    ObservedEvent::Written {
+        task,
+        buffer,
+        value,
+    }
+}
+
+#[test]
+fn a_written_generation_admits_reads_of_the_established_value() {
+    let trace = parse_observed_trace(
+        "QCORE_BUFFER_ALLOC 0 1 1\nQCORE_BUFFER_WRITE 0 1 42\nQCORE_BUFFER_READ 0 1 42\n\
+         QCORE_BUFFER_WRITE 0 1 7\nQCORE_BUFFER_READ 0 1 7\nQCORE_BUFFER_DROP 0 1\n\
+         QCORE_TASK_RESULT 0 I32 7\n",
+    )
+    .unwrap();
+    let order = AdmittedCausalOrder::declare(trace.clone()).unwrap();
+    assert!(relate(&order, &trace).unwrap().is_reference_order());
+}
+
+#[test]
+fn a_stale_read_after_a_write_is_refused() {
+    // The read reports the allocation's initial payload, not the value the
+    // preceding write established.
+    let trace = vec![
+        ObservedEvent::Allocated {
+            task: 0,
+            buffer: 1,
+            payload: 1,
+        },
+        written(0, 1, 42),
+        ObservedEvent::Read {
+            task: 0,
+            buffer: 1,
+            value: 1,
+        },
+        ObservedEvent::Dropped { task: 0, buffer: 1 },
+        ObservedEvent::Completed {
+            task: 0,
+            outcome: ObservedOutcome::I32(1),
+        },
+    ];
+    assert_eq!(
+        AdmittedCausalOrder::declare(trace),
+        Err(TraceRelationViolation::PayloadMismatch { buffer: 1 })
+    );
+}
+
+#[test]
+fn a_write_outside_the_generations_lifetime_is_refused() {
+    // A write is a mention: after the release it is a use-after-release,
+    // before the allocation it is a use-before-allocation.
+    let after_release = vec![
+        ObservedEvent::Allocated {
+            task: 0,
+            buffer: 1,
+            payload: 1,
+        },
+        ObservedEvent::Dropped { task: 0, buffer: 1 },
+        written(0, 1, 42),
+        ObservedEvent::Completed {
+            task: 0,
+            outcome: ObservedOutcome::I32(0),
+        },
+    ];
+    assert_eq!(
+        AdmittedCausalOrder::declare(after_release),
+        Err(TraceRelationViolation::ReleaseOrder { buffer: 1 })
+    );
+    let before_allocation = vec![
+        written(0, 1, 42),
+        ObservedEvent::Allocated {
+            task: 0,
+            buffer: 1,
+            payload: 1,
+        },
+        ObservedEvent::Dropped { task: 0, buffer: 1 },
+        ObservedEvent::Completed {
+            task: 0,
+            outcome: ObservedOutcome::I32(0),
+        },
+    ];
+    assert_eq!(
+        AdmittedCausalOrder::declare(before_allocation),
+        Err(TraceRelationViolation::AllocationOrder { buffer: 1 })
+    );
+}
+
+#[test]
+fn a_rendering_with_a_write_against_a_write_free_order_is_refused() {
+    // Conservativity's observable face: no pre-existing admitted order gains
+    // a rendering — a write is a fact the write-free reference never
+    // reported, so it refuses as a multiset mismatch.
+    let order = order(ROUND_TRIP);
+    let mut trace = events(ROUND_TRIP);
+    trace[4] = written(0, 1, 42);
+    assert_eq!(
+        relate(&order, &trace),
+        Err(TraceRelationViolation::EventMultisetMismatch)
+    );
 }

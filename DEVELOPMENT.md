@@ -349,6 +349,53 @@ full suite.
 
 ## Increment records
 
+Wave 31, card `CT03-PROOF-ALPHABET` (2026-09-13): the **third proof-stage
+capability** (CT03), and the one the `CT-PROOF-LEG-2` survey showed required
+growing the F02 trace alphabet — CT03's reference run carries the T05 Buffer
+write, which `AdmittedCausalOrder::derive` refused
+(`UnsupportedObservedEvent { index: 1 }`). Half one is the **conservative
+alphabet extension**: `ObservedEvent::Written` in the production relation
+(`crates/qcore-core/src/task_trace_relation.rs` — parse of the existing
+`QCORE_BUFFER_WRITE` line, `reference_trace` admission, and the payload
+conjunct split per generation so a never-written generation keeps *exactly*
+the pinned rule while a written one takes the established-value walk; the
+write is otherwise an ordinary mention, and `TRACE_RELATION_IDENTITY` stays
+v1 because no recorded evidence is reinterpreted), with the new Lean module
+`QCore.TaskTraceWrites` transcribing the extended relation and proving it
+conservative — `relate_agrees_on_the_embedded_alphabet` (arbitrary
+old-alphabet traces, conjunct for conjunct),
+`write_free_traces_relate_exactly_as_before` (a trace without `written`
+relates exactly as before), `mixTrace_agrees_on_the_embedded_alphabet`
+(`written` takes the fresh code 11; the digest domain grows moving no
+existing digest) and `the_pinned_domain_one_verdicts_are_carried` (a pinned
+verdict digest re-derived from the old theorem alone). Every F02 pin was
+**measured** unchanged: all trace/verdict digests, censuses, admitted and
+edge counts in the Rust harness, both generated-C digests in the native
+suite, and the CT01/CT37 digest pins; `QCore.TaskTraceRelation` itself is
+untouched beyond a header pointer. Half two is **CT03's proof leg** on the
+CT01/CT37 pattern over the extended alphabet: `QCore.Ct03ReadShares` with the
+nineteen-event `referenceRun` (a declared admitted causal order — the
+derivation that refused before), the total decision procedure
+`dischargesSharedReads` (exact parent and per-borrower projections, six
+counts, and a per-borrower positional window clause), meaning theorems
+including the writes bracketing the lending window, each borrower's read
+strictly inside its own window, and reads reporting the written values
+(42 ≠ 1, the T05 crux), kernel-checked acceptance, the digest pin
+`9638775376944872586`, the symbolic closure over all admitted renderings
+(both window clauses extracted from the relation's own `loanFlag` and
+`activityAfterJoinFlag` conjuncts, addressable by name because the extended
+`checkOrder` is stated over named flags), and seven refused mutants; the
+host-unconditional runner `compiler/tests/ct03_proof_leg.rs` binds the
+theorems to the artifact. One new audit registers both modules
+(`AuditCt03ReadShares.lean`, 121 → 122). The manifest, matrix,
+`acceptance.json`, `ct_corpus.rs` and every EVIDENCE_FILES list are
+untouched; the proposed flip terms (manifest `proof` row, `PROOF_GATED_CASES`
+entry, stage-evidence record superseding
+`docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json`) are in
+the report. Native execution stays observation-only; typed error outcomes
+remain outside the alphabet. Evidence:
+`docs/reports/ct03-proof-alphabet/README.md`.
+
 Worktree census hygiene (2026-09-13, post-wave-30 close): the
 `SOCKET-INET-ADDRESSES` census test
 (`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)

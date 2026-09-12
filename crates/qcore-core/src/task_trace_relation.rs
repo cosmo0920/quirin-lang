@@ -73,6 +73,16 @@ pub enum ObservedEvent {
         buffer: ResourceId,
         value: i32,
     },
+    /// Card `CT03-PROOF-ALPHABET`: the T05 Buffer write, previously refused by
+    /// [`reference_trace`] as an unsupported observed event. Admitting it is a
+    /// **conservative extension**: a trace without a write relates exactly as
+    /// before (`QCore.TaskTraceWrites.write_free_traces_relate_exactly_as_before`),
+    /// and every pre-existing digest and verdict pin is unchanged.
+    Written {
+        task: TaskId,
+        buffer: ResourceId,
+        value: i32,
+    },
     Dropped {
         task: TaskId,
         buffer: ResourceId,
@@ -101,6 +111,7 @@ impl ObservedEvent {
             Self::Allocated { task, .. }
             | Self::AllocationFailed { task }
             | Self::Read { task, .. }
+            | Self::Written { task, .. }
             | Self::Dropped { task, .. }
             | Self::Completed { task, .. } => Some(*task),
             // P3: the creator, lender and joiner is the root task.
@@ -117,6 +128,7 @@ impl ObservedEvent {
         match self {
             Self::Allocated { buffer, .. }
             | Self::Read { buffer, .. }
+            | Self::Written { buffer, .. }
             | Self::Dropped { buffer, .. }
             | Self::Loaned { buffer, .. }
             | Self::Returned { buffer, .. } => Some(*buffer),
@@ -139,6 +151,7 @@ impl ObservedEvent {
             Self::Allocated { task, .. }
             | Self::AllocationFailed { task }
             | Self::Read { task, .. }
+            | Self::Written { task, .. }
             | Self::Dropped { task, .. }
                 if *task != ROOT_TASK =>
             {
@@ -168,7 +181,9 @@ pub enum TraceRelationViolation {
     UnallocatedUse { buffer: ResourceId },
     /// R4 — a generation used before its allocation.
     AllocationOrder { buffer: ResourceId },
-    /// R4 — a read that does not report the allocated payload.
+    /// R4 — a read that does not report the established payload: the
+    /// allocated payload for a generation that is never written, or the value
+    /// of the nearest preceding allocation or write for one that is.
     PayloadMismatch { buffer: ResourceId },
     /// R5 — one generation released twice.
     DuplicateRelease { buffer: ResourceId },
@@ -300,6 +315,18 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
                 }),
                 _ => None,
             },
+            "QCORE_BUFFER_WRITE" => match (
+                number(rest.next()),
+                number(rest.next()),
+                signed(rest.next()),
+            ) {
+                (Some(task), Some(buffer), Some(value)) => Some(ObservedEvent::Written {
+                    task,
+                    buffer,
+                    value,
+                }),
+                _ => None,
+            },
             "QCORE_BUFFER_DROP" => match (number(rest.next()), number(rest.next())) {
                 (Some(task), Some(buffer)) => Some(ObservedEvent::Dropped { task, buffer }),
                 _ => None,
@@ -366,13 +393,13 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
     Ok(events)
 }
 
-/// An observation event outside this relation's observable alphabet. The
-/// relation is stated for the pre-T06 owned worker/capsule/join path; the T05
-/// Buffer write and the T06 typed error payload have no admitted rendering
-/// here, so an observation containing one is refused rather than encoded.
+/// An observation event outside this relation's observable alphabet. Since
+/// card `CT03-PROOF-ALPHABET` the T05 Buffer write is inside the alphabet
+/// ([`ObservedEvent::Written`]); the T06 typed error payload still has no
+/// admitted rendering here, so an observation carrying one is refused rather
+/// than encoded.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ReferenceTraceError {
-    UnsupportedObservedEvent { index: usize },
     UnsupportedOutcome { index: usize },
 }
 
@@ -398,8 +425,8 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
 }
 
 /// The reference run's own rendering, in the observable alphabet. An event the
-/// alphabet cannot express (a T05 Buffer write, a T06 error payload) refuses
-/// the whole observation; nothing outside the admitted path is encoded.
+/// alphabet cannot express (a T06 error payload) refuses the whole
+/// observation; nothing outside the admitted path is encoded.
 pub fn reference_trace(
     observation: &TaskExecutionObservation,
 ) -> Result<Vec<ObservedEvent>, ReferenceTraceError> {
@@ -454,9 +481,15 @@ pub fn reference_trace(
                     task: *task,
                     outcome: outcome(o, index)?,
                 },
-                TaskEvent::BufferWritten { .. } => {
-                    return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
-                }
+                TaskEvent::BufferWritten {
+                    task,
+                    buffer,
+                    value,
+                } => ObservedEvent::Written {
+                    task: *task,
+                    buffer: *buffer,
+                    value: *value,
+                },
             })
         })
         .collect()
@@ -564,8 +597,35 @@ fn check_order(events: &[ObservedEvent]) -> Result<(), TraceRelationViolation> {
             return Err(V::AllocationOrder { buffer });
         }
     }
+    // The payload rule is per generation and split on whether the generation
+    // is ever written, so that a trace without writes is checked by exactly
+    // the pre-extension rule (`QCore.TaskTraceWrites` proves the split
+    // conservative): a never-written generation's reads must all report the
+    // allocated payload, and a written generation's reads must each report
+    // the value established by the nearest preceding allocation or write.
     for (&buffer, &(_, payload)) in &allocated {
-        if events.iter().any(
+        let written = events
+            .iter()
+            .any(|event| matches!(event, ObservedEvent::Written { buffer: b, .. } if *b == buffer));
+        if written {
+            let mut established: Option<i32> = None;
+            for event in events {
+                match event {
+                    ObservedEvent::Allocated {
+                        buffer: b, payload, ..
+                    } if *b == buffer => established = Some(*payload),
+                    ObservedEvent::Written {
+                        buffer: b, value, ..
+                    } if *b == buffer => established = Some(*value),
+                    ObservedEvent::Read {
+                        buffer: b, value, ..
+                    } if *b == buffer && established != Some(*value) => {
+                        return Err(V::PayloadMismatch { buffer });
+                    }
+                    _ => {}
+                }
+            }
+        } else if events.iter().any(
             |event| matches!(event, ObservedEvent::Read { buffer: b, value, .. } if *b == buffer && *value != payload),
         ) {
             return Err(V::PayloadMismatch { buffer });
