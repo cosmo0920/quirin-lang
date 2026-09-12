@@ -853,6 +853,9 @@ fn the_modules_under_test_are_the_production_ones() {
     // 17 -> 18 by card AOM-DESTROY-SIBLINGS, which adds
     // `fluent_bit/input_chunk_destroy_direct_routes.qcore` — the sibling
     // release the previous card deliberately left undeclared, read on its own
-    // terms and landed with a `nullable` release.
-    assert_eq!(contracts.source_assumptions().len(), 18);
+    // terms and landed with a `nullable` release. 18 -> 19 by card
+    // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qcore` —
+    // two read-only size queries declared borrowed/none against their pinned
+    // bodies, again because the manifest grew and nothing measured here moved.
+    assert_eq!(contracts.source_assumptions().len(), 19);
 }

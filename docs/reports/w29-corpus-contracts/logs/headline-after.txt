@@ -1,0 +1,10 @@
+== measure/runs/after2
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+   diagnostics         : {'leak': 266, 'unknown_alias': 4344, 'unsupported': 49760}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}

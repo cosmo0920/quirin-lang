@@ -1,0 +1,141 @@
+module contract;
+
+// Fluent Bit input-chunk size queries — resource-projection vocabulary v1.
+//
+// Card W29-CORPUS-CONTRACTS. TWO TRUSTED ASSUMPTIONS about two upstream
+// functions. This module verifies nothing: the C bodies are not analyzed by
+// this loader, and a declaration is a premise. Any verdict that rests on it is
+// a verdict RELATIVE TO these declarations, never a proof of the C
+// implementation.
+//
+// Both bodies were read at Fluent Bit
+// `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and are cited by line. The C
+// declarations in force are `include/fluent-bit/flb_input_chunk.h:167-168`:
+//
+//     ssize_t flb_input_chunk_get_size(struct flb_input_chunk *ic);
+//     ssize_t flb_input_chunk_get_real_size(struct flb_input_chunk *ic);
+//
+// `ssize_t` resolves to `long int` on the LP64 model the audited targets use,
+// so `isize` is an admissible spelling of the result under the declared-ABI
+// agreement gate (standing constraint 8); the parameter is one object-pointer
+// level, spelled `ptr<mut, u8>` as every object pointer of this vocabulary is.
+//
+// ## `flb_input_chunk_get_size`, read from `src/flb_input_chunk.c:756-759`
+//
+//     ssize_t flb_input_chunk_get_size(struct flb_input_chunk *ic)
+//     {
+//         return cio_chunk_get_content_size(ic->chunk);
+//     }
+//
+// That is the whole body. `cio_chunk_get_content_size`
+// (`lib/chunkio/src/cio_chunk.c:315-334`) resets the chunk's own error field
+// (`cio_error_reset`, `lib/chunkio/src/cio_error.c:56-59`, which is one store
+// `ch->error_n = 0;`), reads the backend's length field on either storage arm
+// (`mf->buf_len` or `cf->data_size`), and returns it — or `-1` on an
+// unrecognized storage type. It allocates nothing, frees nothing, stores no
+// pointer and retains nothing.
+//
+// ## `flb_input_chunk_get_real_size`, read from `src/flb_input_chunk.c:767-790`
+//
+//     ssize_t flb_input_chunk_get_real_size(struct flb_input_chunk *ic)
+//
+// Four callees, each read:
+//
+//   * `cio_chunk_get_real_size(ic->chunk)` (`:772`;
+//     `lib/chunkio/src/cio_chunk.c:336-361`) — the same error-field reset and
+//     field reads as its content-size sibling; on the filesystem arm with
+//     `cf->fs_size == 0` it calls `cio_file_real_size`
+//     (`lib/chunkio/src/cio_file.c:576-588`), which reads the file's size into
+//     a local through `cio_file_native_get_size` and returns it. No custody
+//     anywhere.
+//   * `flb_input_chunk_get_size(ic)` (`:779`) — this module's own first
+//     declaration.
+//   * `flb_debug(...)` with `flb_input_chunk_get_name(ic)` in its argument
+//     list (`:781-782`) — the logging vocabulary `fluent_bit/logging.qcore`
+//     declares (all parameters borrowed) and the name accessor
+//     `fluent_bit/input_chunk_name.qcore` declares (borrowed, result carries
+//     no custody).
+//   * `cio_meta_size(ic->chunk)` (`:786`; `lib/chunkio/src/cio_meta.c:75-89`)
+//     — the memory arm reads `mf->meta_len`; the filesystem arm first calls
+//     `cio_file_read_prepare` (`lib/chunkio/src/cio_file.c:505-508`), which is
+//     one call `mmap_file(ctx, ch, 0)`: it (re)maps the chunk's OWN file into
+//     the chunk's OWN state (`cf->map`). That is a mutation of `ic`'s object
+//     graph whose result the chunk itself owns and releases; nothing is handed
+//     to the caller and nothing of the caller's is released.
+//
+// The rest of the body is scalar arithmetic on locals (`:787`) and returns.
+//
+// ## Which mode is faithful
+//
+// Both bodies read fields, call read-only queries, and return a scalar. On
+// every path the caller keeps exactly the obligations it had before the call:
+// `resource_borrowed(ic)` states that, and it is the only v1 parameter mode
+// with that caller-side effect (`owned` demands live custody, `consumed`
+// transfers, `released` discharges, `out` creates custody at a destination,
+// `stored` transfers under an owner and `removed` detaches from one). Writing
+// into `ic`'s own fields — the error-field reset, the filesystem arm's remap —
+// does not move custody, exactly as `input_chunk_write_header`'s writes
+// through `chunk` did not (`fluent_bit/input_chunk_helpers.qcore`).
+//
+// The RESULT is a byte count (or a negative status), a value with no identity:
+// `resource_return_none()`.
+//
+// Neither declaration says anything about `ic` being non-null — both bodies
+// dereference it unconditionally, but `resource_borrowed` imposes NO non-null
+// precondition, which is the weaker statement and deliberately so: a mode that
+// demanded entry custody would delete the caller's failure paths. This is the
+// same position `fluent_bit/input_chunk_name.qcore` records for the same
+// receiver.
+//
+// ## Why these functions are declared although the analysed unit defines them
+//
+// Both are defined in `src/flb_input_chunk.c`, itself a unit of the pinned
+// corpus, so this is the arrangement cards PROD-CONTRACTS, NEIGHBOURS,
+// ADDRESS-OF-MEMBER-DESTROY-UNDECLARED and AOM-DESTROY-SIBLINGS already
+// established: a declared contract ALWAYS wins over a W4-inferred summary, a
+// disagreement is reported as a `SummaryConflict` diagnostic and never
+// silently resolved (`crates/qcore-c-gateway/src/legacy_summary.rs`), and
+// declaring a defined function does not stop the unit analysing that
+// function's own body — it only fixes what its CALLERS may assume. Each
+// function's own status is whatever its body earns, and this module does not
+// move it.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **Nothing about the returned value's meaning.** `-1` on an unrecognized
+//     storage type, `-1` from `flb_input_chunk_get_real_size` when the chunk
+//     is empty (`:783`), a `0` from a failed `stat` inside
+//     `cio_file_real_size` — all value semantics, outside a custody
+//     projection.
+//   * **Nothing about the filesystem arm's remap succeeding**, or about the
+//     mapping it replaces. `mmap_file`'s failure returns an error status the
+//     size query folds into `-1`; whether the chunk is left up or down is
+//     chunk-residency state (`chunkio/chunk_residency.qcore` declares the
+//     explicit residency entry points; this module declares nothing about
+//     residency).
+//   * **Nothing about retention.** Whether any other object holds `ic` or its
+//     interior pointers is the unmodeled retention this corpus records as
+//     B03/R13 and is not decided here.
+//   * **`cio_chunk_get_content_size` itself remains UNDECLARED.** It is
+//     called directly (not through this wrapper) at one refused site of the
+//     corpus (`flb_input_chunk_map`), but its receiver there is the chained
+//     actual `ic->chunk`, and a ChunkIO-side declaration is a different
+//     library's module with its own reading; this card declares only the two
+//     Fluent Bit wrappers it read the callers of. Named
+//     `W29-CONTENT-SIZE-UNDECLARED`.
+
+// --- the chunk's content size, as the input layer queries it ---------------
+extern fn flb_input_chunk_get_size(ic: ptr<mut, u8>) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_return_none();
+};
+
+// --- the chunk's real (filesystem-inclusive) size ---------------------------
+extern fn flb_input_chunk_get_real_size(ic: ptr<mut, u8>) -> isize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ic);
+    ensures normal resource_return_none();
+};

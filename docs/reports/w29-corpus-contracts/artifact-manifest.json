@@ -1,0 +1,69 @@
+{
+  "card": "W29-CORPUS-CONTRACTS",
+  "note": "uncompressed digests of both runs' artifacts, the archived AFTER set (compressed and uncompressed), the single measured binary and the pinned compile database; this card changes no Rust, so the BEFORE and AFTER runs executed the same binary and the only input difference is the contract manifest and the module it selects. The BEFORE set is not archived because its diagnostics and chunk-contracts are byte-identical to docs/reports/gateway-c-location/artifacts, which is not touched. The discarded first AFTER attempt produced no artifacts and is recorded in the report, not here.",
+  "binaries": {
+    "audit": "b9e76958c24e744520ee53ca910b06d4c78f66594a2b3e8b2855193daf3eb69f"
+  },
+  "compile_database": {
+    "sha256": "b9dbb8f0e15f91117d44221f1b9e45110ac6b73c3a1191f2074baf87f4fe1fb7",
+    "entries": 1415
+  },
+  "runs": {
+    "before": {
+      "diagnostics": "61ac6bb537c99ff078bc7c71f6f41749ec775cf42177d9324c43a9fc233d7ed5",
+      "source": "a74131eadd7d4c6eb0bdae69e4aa58aef502123dc177588f90784a1034d5d777",
+      "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "source-effects": "a2e881906ec7a0168607916e8c4a84273614e54def1e18ff02d2a9c033f27db2",
+      "contracts": "a9113fc58eca172def4fbdc8d0b79da235c93a67ccef871e7d1ee88faee12690"
+    },
+    "after2": {
+      "diagnostics": "8662337d256d0f7a7d76c7966c1f8bc37c22937a6e0adc7b3b275388f1118a0d",
+      "source": "a74131eadd7d4c6eb0bdae69e4aa58aef502123dc177588f90784a1034d5d777",
+      "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "source-effects": "a2e881906ec7a0168607916e8c4a84273614e54def1e18ff02d2a9c033f27db2",
+      "contracts": "b7125a15be4ae12102cd980cbc0803b07441b857de8902002dd1b20ca572d884"
+    }
+  },
+  "archived": {
+    "chunk-contracts.json.gz": {
+      "compressed_sha256": "2ecc56d92a4db85db1032f33b016a5a5b7d2d14016e639ee98217ecd9763a7e3",
+      "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "compressed_bytes": 281968
+    },
+    "contracts.json.gz": {
+      "compressed_sha256": "fe58b5cfc7a2f2686e6814842a92f6a217a74d305e20d77b3aeabe84be0e6356",
+      "uncompressed_sha256": "b7125a15be4ae12102cd980cbc0803b07441b857de8902002dd1b20ca572d884",
+      "compressed_bytes": 23448
+    },
+    "diagnostics.json.gz": {
+      "compressed_sha256": "60f4909c2593fca155857bb4eac81f64b15aa02a9c86f4b59913734c6c2b811a",
+      "uncompressed_sha256": "8662337d256d0f7a7d76c7966c1f8bc37c22937a6e0adc7b3b275388f1118a0d",
+      "compressed_bytes": 564526
+    },
+    "diff-baseline-to-after.json.gz": {
+      "compressed_sha256": "90d9d1197b47099b235813c785e7cd71977fd10630fa482653f4e6f0a62e6ddc",
+      "uncompressed_sha256": "2d67a46a5d7186fd0903d951fd149c48473d84fde94dadc25a840b85c83672f1",
+      "compressed_bytes": 115403
+    },
+    "diff-baseline-to-before.json.gz": {
+      "compressed_sha256": "678f157a7ca84ebab3930fb9ed759aedf6f940a9d1e51e6502ca3492424cfe21",
+      "uncompressed_sha256": "d70c226254a1eed4c2eb10c723ee9770b67d81e75b85060c38c22a32ba191c15",
+      "compressed_bytes": 96993
+    },
+    "diff-before-to-after.json.gz": {
+      "compressed_sha256": "64e33e1651afc767b1b40606195727838a69eb2e189f99d8edbc6f7e4a312c87",
+      "uncompressed_sha256": "7c8b22d60382cedd0c9255f60d4a76ab99ef41288944aabbebf7b7a636fadfea",
+      "compressed_bytes": 19291
+    },
+    "source-effects.json.gz": {
+      "compressed_sha256": "edf7d0e4e783ffe4d17e618f4d2889e18ce979d9a0251008989d2e24825b4721",
+      "uncompressed_sha256": "a2e881906ec7a0168607916e8c4a84273614e54def1e18ff02d2a9c033f27db2",
+      "compressed_bytes": 16791
+    },
+    "source.json.gz": {
+      "compressed_sha256": "6e48a9206a15131b12273222512eb7df4241d5bb81508f46d5860baf78a47ed3",
+      "uncompressed_sha256": "a74131eadd7d4c6eb0bdae69e4aa58aef502123dc177588f90784a1034d5d777",
+      "compressed_bytes": 41712
+    }
+  }
+}

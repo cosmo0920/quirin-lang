@@ -13,6 +13,7 @@
     "qcore/fluent_bit/input_chunk_destroy_direct_routes.qcore",
     "qcore/fluent_bit/input_chunk_helpers.qcore",
     "qcore/fluent_bit/input_chunk_name.qcore",
+    "qcore/fluent_bit/input_chunk_sizes.qcore",
     "qcore/fluent_bit/logging.qcore",
     "qcore/fluent_bit/resource_memory.qcore",
     "qcore/fluent_bit/routes_mask.qcore",

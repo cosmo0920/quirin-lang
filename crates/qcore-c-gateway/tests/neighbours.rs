@@ -853,6 +853,9 @@ fn the_modules_under_test_are_the_production_ones() {
     // six declarations are asserted above by name, so the count moving does
     // not weaken what it pins. 17 -> 18 by card AOM-DESTROY-SIBLINGS, which
     // adds `fluent_bit/input_chunk_destroy_direct_routes.qcore`, a fourth
-    // declaration of a function this very unit defines.
-    assert_eq!(contracts.source_assumptions().len(), 18);
+    // declaration of a function this very unit defines. 18 -> 19 by card
+    // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qcore` —
+    // a fifth and sixth declaration of functions this very unit defines,
+    // under the same declaration-beats-summary arrangement.
+    assert_eq!(contracts.source_assumptions().len(), 19);
 }

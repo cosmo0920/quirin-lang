@@ -349,6 +349,44 @@ full suite.
 
 ## Increment records
 
+W29-CORPUS-CONTRACTS (2026-09-12, wave 29): the wave's one arbiter card —
+additional `Unknown`-class leaves of the pinned 185-unit corpus decided by
+declaring **faithful** contracts, on the PROD-CONTRACTS → NEIGHBOURS → AOM
+chain's arrangement. One new module,
+`contract/qcore/fluent_bit/input_chunk_sizes.qcore` (corpus **73 → 74**,
+resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19, every pin
+updated deliberately), declares `flb_input_chunk_get_size` and
+`flb_input_chunk_get_real_size` — both read against their pinned bodies
+(`src/flb_input_chunk.c:756-759`, `:767-790` at
+`66910c10a4d7eafa810b84229cf2dcf7b0f26f97`), pure size queries whose every
+transitive callee was read too, so `resource_borrowed(ic)` /
+`resource_return_none()` are the only faithful modes; `ssize_t` spells `isize`
+under the LP64 declared-ABI projection, and nullability is deliberately not
+claimed (`resource_borrowed` imposes no non-null precondition — the weaker
+statement). The BEFORE run reproduces the wave-27 `gateway-c-location`
+baseline's `diagnostics.json` and `chunk-contracts.json` **byte for byte**;
+the AFTER run moves exactly the **thirteen** `unsupported`
+`call to uncontracted function` leaves that named the two callees (11 + 2,
+all in `fluent-bit-chunk/flb_input_chunk.c`, each attributed with function,
+internal line, origin coordinate and mechanism in the card report §5), with
+**zero leaves added**: every actual resolved, so the admitted calls produced
+no replacement refusal. Leak pin **266 unmoved** (no fifth move in
+constraint 7's history), `unknown_alias` **4,344 unmoved**, `unsupported`
+49,773 → **49,760**; zero unit status moves, zero function status moves, zero
+reason-code moves — nothing is promoted, and the defining unit stays
+provisional `Unsafe` on its unchanged five leak leaves. Both counted runs exit
+0 on a fresh Clang pin (1,415 entries) with the same binary (the card changes
+no Rust; the only input difference is the manifest and the module it selects);
+one discarded first AFTER attempt (exit 101, truncated output, no artifacts)
+is archived and recorded as environment-class, contributing to no verdict. No
+new diagnostic code, no keyword, no Lean module (no semantic surface moves —
+the AOM-DESTROY-SIBLINGS precedent). New baseline
+`docs/reports/w29-corpus-contracts/artifacts/`, chained on the frozen
+predecessors (constraint 21); named follow-ons `W29-CONTENT-SIZE-UNDECLARED`
+and `W29-SIZE-SIBLINGS-UNDECLARED`. Gate at the card tip: workspace tests,
+fmt/clippy, both probes, Lean audits and Python suite per the card report §6.
+Evidence: `docs/reports/w29-corpus-contracts/README.md`.
+
 Wave 29, card `SLICE-PERMISSIONS-WRITE-LEND` (2026-09-12): the write half of
 CT07 the read card named — `let NAME = lend(BUFFER, LOW, HIGH);` on
 `source.buffer.v1`, a loan a store can name, so **two parties mutate two

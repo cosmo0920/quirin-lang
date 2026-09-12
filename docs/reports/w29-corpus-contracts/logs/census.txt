@@ -1,0 +1,35 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 266 -> 266 (+0)
+  unknown_alias: 4344 -> 4344 (+0)
+  unsupported: 49773 -> 49760 (-13)
+units with diagnostic-count changes: 1
+  fluent-bit-chunk/flb_input_chunk.c: {'unsupported': -13}
+description inventory deltas:
+  unsupported / 'call to uncontracted function `flb_input_chunk_get_real_size`': 11 -> 0 (-11)
+  unsupported / 'call to uncontracted function `flb_input_chunk_get_size`': 2 -> 0 (-2)
+leaf-level diff, per changed unit:
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_destroy L19723 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_destroy_corrupted L19661 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_flush L20418 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_flush L20436 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_get_projected_write_size L18375 unsupported: call to uncontracted function `flb_input_chunk_get_size`
+    -1 flb_input_chunk_get_projected_write_size L18424 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_get_real_size L18190 unsupported: call to uncontracted function `flb_input_chunk_get_size`
+    -1 flb_input_chunk_map L18932 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_release_route L18229 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 flb_input_chunk_release_space L18068 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 input_chunk_append_raw L20116 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 input_chunk_append_raw L20214 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+    -1 memrb_input_chunk_release_space L20005 unsupported: call to uncontracted function `flb_input_chunk_get_real_size`
+leaves added: 0; leaves removed: 13
