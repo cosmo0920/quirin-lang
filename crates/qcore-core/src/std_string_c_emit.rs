@@ -37,10 +37,13 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
+use crate::std_buffer::{BufferEvent, BufferOperand};
+use crate::std_buffer_c_emit;
 use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
 use crate::std_string::{
-    StringCertificate, StringEvent, StringOperand, StringProgram, TextOperand, text_slice_name,
+    StringCertificate, StringEvent, StringOperand, StringProgram, StringStorage, TextOperand,
+    text_slice_name,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -84,13 +87,23 @@ pub const STRING_PRELUDE_HEADER: &str = r#"
    taken; if it ever fired, that would be a defect in the checker. */
 "#;
 
-/// The view type and the slice helper: amendment §6's aggregate, verbatim, and
-/// §4's arithmetic, verbatim.
-pub const STRING_PRELUDE: &str = r#"typedef struct {
+/// The view type: amendment §6's aggregate, verbatim.
+pub const STRING_PRELUDE_VIEW: &str = r#"typedef struct {
     const unsigned char *ptr;
     size_t len;
 } qcore_string_view;
+"#;
 
+/// The slice helper: §4's arithmetic, verbatim.
+///
+/// Emitted **only for a program that slices at run time** (card
+/// `STRING-CONCAT`). A `concat` piece written as a slice is composed at check
+/// time and calls nothing, so a program whose only slices are pieces would
+/// otherwise carry a helper it never uses — and the emitted C is built with
+/// `-Wall -Wextra -Werror`, where an unused `static` function is an error. This
+/// is `source.buffer.v1`'s own selective-prelude constraint, which that route
+/// recorded in its prelude comment for exactly this reason.
+pub const STRING_PRELUDE_SLICE: &str = r#"
 static qcore_string_view qcore_string_slice(qcore_string_view s, size_t low, size_t high)
 {
     qcore_string_view derived;
@@ -126,6 +139,55 @@ fn scalar_name(name: &str) -> String {
 /// The C name of a literal's static byte array.
 fn literal_name(index: usize) -> String {
     format!("qcore_string_literal_{index}")
+}
+
+/// Mark every name an embedded `source.buffer.v1` event reads, **at every
+/// depth**.
+///
+/// Recursive for the `LOOP-V1` × `STRING-CONCAT` composition. A `for` is
+/// refused on this route, so this never meets one in practice; it recurses
+/// anyway because the alternative is the fail-open one. This map decides which
+/// bindings get an explicit `(void)` discard, so a name a loop body reads and
+/// this scan missed would be discarded and then used, which is a C compile
+/// error rather than a refusal.
+fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) {
+    match event {
+        BufferEvent::Store { name, index, value } => {
+            consumed.insert(name.clone(), true);
+            for operand in [index, value] {
+                if let BufferOperand::Scalar(scalar) = operand {
+                    consumed.insert(scalar.clone(), true);
+                }
+            }
+        }
+        BufferEvent::Load { name, index, .. } => {
+            consumed.insert(name.clone(), true);
+            if let BufferOperand::Scalar(scalar) = index {
+                consumed.insert(scalar.clone(), true);
+            }
+        }
+        BufferEvent::Extent { name, .. } | BufferEvent::Release { name } => {
+            consumed.insert(name.clone(), true);
+        }
+        BufferEvent::Repeat { body, .. } => {
+            for event in body {
+                buffer_consumers(event, consumed);
+            }
+        }
+        BufferEvent::Bind { .. } | BufferEvent::Acquire { .. } => {}
+        BufferEvent::Line(_) | BufferEvent::Return => {}
+    }
+}
+
+/// The C name of a **composed** payload's static byte array (card
+/// `STRING-CONCAT`).
+///
+/// Deliberately a second pool rather than more entries in the first: a literal
+/// is a payload the source spelled and a composed payload is one the compiler
+/// derived, and a reader of the emitted C should be able to tell which is
+/// which without consulting the certificate.
+fn composed_name(index: usize) -> String {
+    format!("qcore_string_composed_{index}")
 }
 
 /// The reference observation, as `"<stream>: <line>"` records in program order.
@@ -178,18 +240,18 @@ fn operand_expression(
     }
 }
 
-/// One literal's static byte array, written as explicit hexadecimal bytes.
+/// One payload's static byte array, written as explicit hexadecimal bytes.
 ///
 /// Byte-wise and not as a C string literal, deliberately: a payload may contain
 /// an embedded NUL, and a C string literal would make that byte look like the
 /// end of the data to every reader and tool. The trailing `0x00` after the
 /// payload is the toolchain terminator and is outside the declared length.
-fn literal_definition(index: usize, payload: &[u8]) -> String {
+fn payload_definition(name: &str, payload: &[u8]) -> String {
     let mut bytes: Vec<String> = payload.iter().map(|byte| format!("0x{byte:02x}")).collect();
     bytes.push("0x00".to_owned());
     format!(
         "static const unsigned char {}[{}] = {{ {} }};\n",
-        literal_name(index),
+        name,
         bytes.len(),
         bytes.join(", ")
     )
@@ -204,7 +266,7 @@ pub fn emit_string_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_string_program(program, certificate)?;
 
-    let fragments = preamble(program);
+    let fragments = preamble(program, certificate);
     let mut source = String::new();
 
     // Which bindings a later event actually consumes. A binding nothing
@@ -253,6 +315,21 @@ pub fn emit_string_c11(
                     }
                 }
             },
+            // Card `STRING-CONCAT`. A `concat` piece is **deliberately not a
+            // consumer**: the composition happens at check time, so the emitted
+            // program never reads the piece's view or scalar — it reads the
+            // composed static array. A binding whose only reader is a
+            // composition is therefore `(void)`-discarded, which is the honest
+            // record of what the emitted program does with it. An embedded
+            // buffer statement, by contrast, is emitted, so it consumes the
+            // buffer it names and the operands it indexes with.
+            StringEvent::Concat { .. } => {}
+            StringEvent::Borrow { buffer, .. } => {
+                consumed.insert(buffer.clone(), true);
+            }
+            StringEvent::Buffer(buffer_event) => {
+                buffer_consumers(buffer_event, &mut consumed);
+            }
             StringEvent::Bind { .. }
             | StringEvent::Literal { .. }
             | StringEvent::Line(_)
@@ -262,6 +339,9 @@ pub fn emit_string_c11(
 
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
     let mut views: BTreeMap<String, String> = BTreeMap::new();
+    // The declared extents of the buffers a composed module holds, carried for
+    // `source.buffer.v1`'s own emitter (card `STRING-CONCAT`).
+    let mut extents: BTreeMap<String, u32> = BTreeMap::new();
     let discard = |source: &mut String, binding: &str, emitted: &str| {
         if !consumed.contains_key(binding) {
             let _ = writeln!(source, "    (void) {emitted};");
@@ -275,6 +355,83 @@ pub fn emit_string_c11(
                 let _ = writeln!(source, "    int32_t {emitted} = INT32_C({value});");
                 scalars.insert(binding.clone(), emitted.clone());
                 discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: the composed payload is a file-scope
+            // `static const` array exactly as a literal's is, so the view that
+            // names it is built the same way and **no allocation and no
+            // run-time copy exists anywhere in this route's output**. The bytes
+            // were computed by the checker; the emitted program only addresses
+            // them.
+            StringEvent::Concat { binding, .. } => {
+                let Some(record) = certificate
+                    .concats
+                    .iter()
+                    .find(|record| record.event == index)
+                else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let StringStorage::Composed(slot) = &record.result.storage else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let emitted = view_name(binding);
+                let _ = writeln!(
+                    source,
+                    "    qcore_string_view {emitted} = {{ {}, (size_t) {}u }};",
+                    composed_name(*slot),
+                    record.result.len
+                );
+                views.insert(binding.clone(), emitted.clone());
+                discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: a borrow is a view of the buffer's own
+            // storage — the pointer `qcore_bytes_new` returned and the extent
+            // the checker proved. No copy, no allocation, no validation at run
+            // time: the UTF-8 decision was made at check time out of the
+            // buffer's write history.
+            StringEvent::Borrow { binding, buffer } => {
+                let Some(record) = certificate
+                    .borrows
+                    .iter()
+                    .find(|record| record.event == index)
+                else {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                };
+                let emitted = view_name(binding);
+                let _ = writeln!(
+                    source,
+                    "    qcore_string_view {emitted} = {{ {}, (size_t) {}u }};",
+                    std_buffer_c_emit::buffer_name(buffer),
+                    record.view.len
+                );
+                views.insert(binding.clone(), emitted.clone());
+                discard(&mut source, binding, &emitted);
+            }
+            // Card `STRING-CONCAT`: an embedded buffer statement is emitted by
+            // `source.buffer.v1`'s **own** emitter, with that route's own C
+            // names, so a composed module's `bytes(8)` is the same call the
+            // uncomposed route writes.
+            StringEvent::Buffer(buffer_event) => {
+                match std_buffer_c_emit::buffer_event_statement(
+                    index,
+                    buffer_event,
+                    &mut scalars,
+                    &mut extents,
+                ) {
+                    Ok(Some(statement)) => {
+                        let _ = writeln!(source, "    {statement}");
+                        if let BufferEvent::Bind { binding, .. }
+                        | BufferEvent::Load { binding, .. }
+                        | BufferEvent::Extent { binding, .. } = buffer_event
+                        {
+                            let emitted = scalar_name(binding);
+                            discard(&mut source, binding, &emitted);
+                        }
+                    }
+                    Ok(Option::None) => {}
+                    Err(_) => {
+                        return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                    }
+                }
             }
             StringEvent::Literal { binding, literal } => {
                 let Some(payload) = program.literals.get(*literal) else {
@@ -407,8 +564,13 @@ pub fn emit_string_c11(
 /// renders none is unchanged by that card — is a property of this conditional,
 /// and moving the condition into the assembler would have replaced a measured
 /// fact with an unconditional fragment the assembler then had to remove again.
+///
+/// The **buffer** prelude is contributed on the same terms since card
+/// `STRING-CONCAT`: only a program that acquires a buffer carries `calloc`,
+/// `free` and their accessors, so every program written before that card — and
+/// every program that only composes text — is byte-identical to what it was.
 #[must_use]
-pub fn preamble(program: &StringProgram) -> Vec<Fragment> {
+pub fn preamble(program: &StringProgram, certificate: &StringCertificate) -> Vec<Fragment> {
     let mut fragments = vec![
         Fragment::new(Section::Includes, "string.includes", INCLUDES),
         io_emit::io_prelude_fragment(),
@@ -428,16 +590,75 @@ pub fn preamble(program: &StringProgram) -> Vec<Fragment> {
     fragments.push(Fragment::new(
         Section::Prelude,
         "string.prelude",
-        STRING_PRELUDE,
+        STRING_PRELUDE_VIEW,
     ));
-    let mut literals = String::from("\n");
+    // Only a program that derives a view at run time carries the helper that
+    // does it. Both forms that call it are here, and a `concat` piece is
+    // deliberately not one of them.
+    if program.events.iter().any(|event| {
+        matches!(
+            event,
+            StringEvent::Slice { .. }
+                | StringEvent::Text {
+                    operand: TextOperand::Slice { .. },
+                    ..
+                }
+        )
+    }) {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "string.prelude_slice",
+            STRING_PRELUDE_SLICE,
+        ));
+    }
+    let buffer_event = |matcher: fn(&BufferEvent) -> bool| {
+        program.events.iter().any(|event| match event {
+            StringEvent::Buffer(buffer_event) => matcher(buffer_event),
+            _ => false,
+        })
+    };
+    if buffer_event(|event| matches!(event, BufferEvent::Acquire { .. })) {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "string.buffer_prelude",
+            std_buffer_c_emit::buffer_prelude_for(
+                buffer_event(|event| matches!(event, BufferEvent::Store { .. })),
+                buffer_event(|event| matches!(event, BufferEvent::Load { .. })),
+            ),
+        ));
+    }
+    // Only the literals the emitted program **addresses**. A literal written as
+    // a `concat` piece is read by the checker and folded into the composed
+    // payload, so the emitted program never names it — and an unreferenced
+    // file-scope `static const` array is an error under `-Wall -Wextra
+    // -Werror`. The array names carry their pool index, so skipping one
+    // renumbers nothing and every surviving name is the name it always had.
+    let mut referenced = std::collections::BTreeSet::new();
+    for event in &program.events {
+        match event {
+            StringEvent::Literal { literal, .. }
+            | StringEvent::Text {
+                operand: TextOperand::Literal(literal),
+                ..
+            } => {
+                referenced.insert(*literal);
+            }
+            _ => {}
+        }
+    }
+    let mut payloads = String::from("\n");
     for (index, payload) in program.literals.iter().enumerate() {
-        literals.push_str(&literal_definition(index, payload));
+        if referenced.contains(&index) {
+            payloads.push_str(&payload_definition(&literal_name(index), payload));
+        }
+    }
+    for (index, payload) in certificate.composed.iter().enumerate() {
+        payloads.push_str(&payload_definition(&composed_name(index), payload));
     }
     fragments.push(Fragment::new(
         Section::FileScope,
         "string.literals",
-        literals,
+        payloads,
     ));
     fragments
 }

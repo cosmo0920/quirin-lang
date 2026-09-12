@@ -140,6 +140,7 @@ import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.StdString
 import QCore.StringSliceIo
+import QCore.StringConcat
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.StdHttp

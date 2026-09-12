@@ -1,0 +1,69 @@
+// Card `STRING-CONCAT`: text a program **computes** rather than writes.
+//
+// Every form the third band adds appears here once — a composition of two
+// literals, a composition mixing a bound view, an inline slice and a rendered
+// integer, a slice *of* a composition, an owned byte buffer borrowed as UTF-8,
+// a slice of the borrow, a composition that launders a borrow into static
+// storage, and a length taken of a computed result and rendered.
+//
+// The buffer is a **positive leak control**: this program allocates, so a lost
+// release is something LSan can find, unlike a string-only fixture whose clean
+// exit only confirms that no allocation was introduced.
+import std.string;
+import std.buffer;
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io, alloc, mut } {
+    // Two literals, composed. The result is a payload the source never spelled
+    // and the compiler computed: `qcore_string_composed_0` in the emitted C.
+    let head = concat("HTTP/1.1 ", "200 OK");
+    print head;
+
+    // A length taken of a computed result. This is the number that makes a
+    // computed `Content-Length` decidable: it is a check-time constant exactly
+    // as a literal's own length is.
+    let n = len(head);
+    print dec n;
+
+    // A composition mixing every piece form: a bound view, a quoted literal
+    // written at the piece, an inline slice, and the *text of an integer*
+    // produced by the same `Rendering` a `print dec n;` line renders with.
+    let subject = "hello, world";
+    let mixed = concat(subject[0:5], ", ", subject[7:12], " (", dec(n), ")");
+    print mixed;
+
+    // A composition slices like any other view: it is ordinary static storage.
+    print mixed[0:5];
+
+    // An owned byte buffer, written one constant byte at a time — which is all
+    // `source.buffer.v1` admits, and exactly why its contents are a check-time
+    // fact this route can decide UTF-8 validity from.
+    let body = bytes(3);
+    body[0] = 111;
+    body[1] = 107;
+    body[2] = 33;
+
+    // Amendment §5's borrow. The view addresses the buffer's own storage, so
+    // the bytes this line renders are read out of the heap block the program
+    // filled — not out of a static array.
+    let text = borrow_utf8(body);
+    print text;
+    log info text[0:2];
+
+    // The extent, read back through the view rather than through `extent(b)`.
+    let held = len(text);
+    print dec held;
+
+    // A composition **laundering** a borrow into static storage: `framed`
+    // addresses a composed payload, not the buffer, so the buffer's window
+    // closes here and the release below is admitted even though `framed` is
+    // rendered after it.
+    let framed = concat("[", text, "]");
+    drop body;
+    print framed;
+
+    flush;
+    return;
+}

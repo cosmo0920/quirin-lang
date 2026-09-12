@@ -1,0 +1,70 @@
+Card STRING-CONCAT — constraint-14 keyword census
+=================================================
+
+Scope: every `.qcore`/`.qc` file on disk (418 at census time, 420 after this
+card's two new files) plus every tracked `.rs` and `.md` file. The shape that
+matters is the CONTEXTUAL one — the word immediately followed by `(` — because
+that, and not the bare word, is what this card's rule skips in name resolution.
+
+Reproduce from the repository root:
+
+    find . -path ./.git -prune -o \( -name '*.qcore' -o -name '*.qc' \) -print | wc -l
+
+    grep -rho --include='*.qcore' --include='*.qc' \
+      -E '\b(concat|borrow_utf8|freeze_utf8|utf8|join|append|compose|build)\b' . \
+      | sort | uniq -c | sort -rn
+
+    grep -rn --include='*.rs' --include='*.qcore' --include='*.qc' --include='*.md' \
+      -E '(^|[^A-Za-z0-9_.])concat\(' . | grep -v '^./target'
+
+    grep -rn --include='*.rs' --include='*.qcore' --include='*.qc' \
+      -E 'borrow_utf8|freeze_utf8' . | grep -v '^./target'
+
+    grep -rn --include='*.rs' --include='*.qcore' --include='*.qc' \
+      -E '(^|[^A-Za-z0-9_.])(dec|hex)\(' . | grep -v '^./target'
+
+
+1. Bare-word occurrences in `.qcore`/`.qc`, on the base
+-------------------------------------------------------
+
+    207  join          <- REJECTED as a spelling: `thread scope` join, pinned
+     78  dec           <- already a reserved word (STD-MODULES)
+     21  hex           <- already a reserved word (STD-MODULES)
+     10  build         <- REJECTED as a spelling: occurs in comments and prose
+      0  concat
+      0  borrow_utf8
+      0  freeze_utf8
+      0  utf8
+      0  append
+      0  compose
+
+After this card the same census returns `concat` 4 and `borrow_utf8` 2, and all
+six occurrences are this card's own two files:
+
+    examples/strings/computed_length.qcore:38     let content = borrow_utf8(body);
+    examples/strings/computed_length.qcore:49     let declared = concat("Content-Length: ", dec(length), "\r");
+    compiler/tests/fixtures/std_string/composed.qcore:21   let head = concat("HTTP/1.1 ", "200 OK");
+    compiler/tests/fixtures/std_string/composed.qcore:34   let mixed = concat(subject[0:5], ", ", ...);
+    compiler/tests/fixtures/std_string/composed.qcore:51   let text = borrow_utf8(body);
+    compiler/tests/fixtures/std_string/composed.qcore:63   let framed = concat("[", text, "]");
+
+
+2. The contextual `WORD(` shape, across every tracked file
+----------------------------------------------------------
+
+    concat(        0 matches
+    borrow_utf8(   0 matches
+    freeze_utf8(   0 matches
+    dec(           0 matches
+    hex(           0 matches
+
+Zero across `.rs`, `.qcore`, `.qc` and `.md`, `target/` excluded. Rust's own
+`concat!` macro is a different token (`concat!`) and its `.concat()` method is
+preceded by `.`, which the pattern excludes; neither appears in these counts.
+
+Conclusion: **this card reserves no word.** `concat` and `borrow_utf8` join
+`len` as contextual clause words skipped by name resolution only where they are
+immediately followed by `(`; `dec` and `hex` need no rule at all, having been
+reserved since STD-MODULES. The narrow rule collides with nothing, and both
+words remain ordinary binding names away from a `(` — pinned by
+`the_two_contextual_words_are_reserved_nowhere`.

@@ -1,0 +1,62 @@
+// A response head whose `Content-Length` the program COMPUTES.
+//
+// Card `STRING-CONCAT`. Its predecessor `STRING-SLICE-IO` published
+// `status_line.qcore`, an HTTP/1.1 response head in which the `Content-Length`
+// line and the body were two independent literals that no rule related. This
+// program relates them: the content is bytes the program writes into storage it
+// owns, the number is the length of those bytes, and the header line is
+// composed from that number.
+//
+// Nothing here is spelled twice. Change a byte of the content and the header
+// changes with it, because the header is derived from the content rather than
+// written beside it.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    // The content: `{"ok":true}`, eleven bytes, written one constant byte at a
+    // time. That is the whole of what `source.buffer.v1` admits, and it is
+    // exactly why the checker knows these bytes — which is what lets it decide
+    // UTF-8 validity, and the length, before anything runs.
+    let body = bytes(11);
+    body[0] = 123;
+    body[1] = 34;
+    body[2] = 111;
+    body[3] = 107;
+    body[4] = 34;
+    body[5] = 58;
+    body[6] = 116;
+    body[7] = 114;
+    body[8] = 117;
+    body[9] = 101;
+    body[10] = 125;
+
+    // Amendment §5's bridge: the owned buffer, viewed as immutable UTF-8. The
+    // validity decision is made here, at check time, out of the eleven writes
+    // above. While this view is live the buffer may not be written or released.
+    let content = borrow_utf8(body);
+
+    // The number. `len` of a borrowed view is the buffer's extent, read out of
+    // the view's own length field — no scan, and no `strlen` anywhere in the
+    // emitted program.
+    let length = len(content);
+
+    // The head. Each line carries its own `\r`; the sink's line discipline
+    // supplies the `\n`, so what reaches standard output is CRLF-framed.
+    let status = "HTTP/1.1 200 OK\r";
+    let kind = "Content-Type: application/json\r";
+    let declared = concat("Content-Length: ", dec(length), "\r");
+
+    print status;
+    print kind;
+    print declared;
+    print "\r";
+
+    // The content itself, last — which is also the last statement that reads
+    // the borrow, so the buffer's window closes here and the release below is
+    // admitted.
+    print content;
+    drop body;
+    return;
+}

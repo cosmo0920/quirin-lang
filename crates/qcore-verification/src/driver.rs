@@ -1174,6 +1174,17 @@ pub fn compile_files_with_registry(
     //
     // Every concurrent route is selected above both, so a module that buffers
     // and spawns never reaches here and keeps its `Q600`.
+    // Card `STRING-CONCAT`, and **the whole of the route-selection change it
+    // makes**: a module that spells `borrow_utf8(…)` reaches the string route,
+    // which since that card models both vocabularies, rather than the buffer
+    // route below. The condition is the bridge construct and nothing else, so
+    // a module that holds a buffer without spelling the bridge keeps the buffer
+    // route and that route's existing refusal — which is to say every program
+    // written before this card travels an identical code path, and the one new
+    // door is opened only by the one new spelling.
+    if qcore_frontend::source_std_string::has_source_string_bridge(&parsed) {
+        return compile_string_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_std_buffer::has_source_buffer(&parsed) {
         return compile_buffer_source(&parsed, &typed, mode, options, &ranges);
     }

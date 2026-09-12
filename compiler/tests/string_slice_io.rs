@@ -752,7 +752,7 @@ fn a_rendered_view_is_published_in_the_certificates_provenance_list() {
     let certificate = check_string_program(&program).expect("this program is admitted");
     assert_eq!(certificate.slices.len(), 1);
     let record = &certificate.slices[0];
-    assert_eq!(record.derived.literal, record.from.literal);
+    assert_eq!(record.derived.storage, record.from.storage);
     assert_eq!(record.derived.offset, record.from.offset + record.low);
     assert_eq!(record.derived.len, record.high - record.low);
     assert!(

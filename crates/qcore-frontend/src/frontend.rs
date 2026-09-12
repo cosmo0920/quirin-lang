@@ -1994,15 +1994,33 @@ pub enum SemanticPass {
     /// for an undeclared derived effect — because the composition added no new
     /// way for any of those to fail.
     ///
+    /// **Third band, `Q077`–`Q079`** (card `STRING-CONCAT`): text a program
+    /// **computes** rather than writes, and amendment §5's `std.buffer` bridge.
+    /// `Q077` the shape or the bound of a construct the band adds — a malformed
+    /// `concat(…)`, `borrow_utf8(…)` or `dec(…)` piece, a composition of fewer
+    /// than two pieces, an over-long composed payload, a bridge position naming
+    /// no buffer, a buffer statement outside the entry, and an embedded
+    /// `source.buffer.v1` statement that route's own model refused, carrying
+    /// **that model's own message** under this pass's code. `Q078` the borrow
+    /// discipline (a store into or release of a buffer inside a live borrow's
+    /// window) together with the inherited, unedited ownership checker's own
+    /// refusal, carrying that checker's error value. `Q079` the **static UTF-8
+    /// decision**: the bytes a `borrow_utf8` would view are not well-formed,
+    /// decided at check time out of the buffer's write history. The band is
+    /// `Q077`–`Q079` because `STRING-SLICE-IO` returned exactly those three
+    /// codes to the pool and the integrator assigned them back to this pass.
+    ///
     /// A separate pass from `StandardBuffer` on purpose, and the separation is
     /// the amendment's own §5: that pass admits an **owned, mutable, explicitly
     /// released** `{identity, extent, custody}` and every one of its refusals is
     /// either a custody rule or a rule about writing a byte, while this pass
-    /// admits an **immutable, custody-free view of storage it does not own**,
-    /// builds no ownership operation list at all, and decides two questions no
-    /// buffer rule can state: whether a quoted token decodes to well-formed
-    /// UTF-8, and whether a slice bound falls on a code-point boundary. Sharing
-    /// a band would make the range stop describing what either pass decides.
+    /// admits an **immutable view**, and decides two questions no buffer rule
+    /// can state: whether bytes are well-formed UTF-8, and whether a slice bound
+    /// falls on a code-point boundary. Sharing a band would make the range stop
+    /// describing what either pass decides — which is why, since card
+    /// `STRING-CONCAT` let one module hold both vocabularies, an embedded buffer
+    /// statement's refusal is reported at **this** pass's `Q077` with **that**
+    /// pass's message rather than at `Q051`–`Q057`.
     ///
     /// It is likewise separate from `StandardIo`, whose `Q029` this pass does
     /// not reuse for its own `Q073` effect refusal, on §L21's rule that a code
@@ -2681,7 +2699,11 @@ fn lexical_references(
         // repository, so the narrower rule collides with nothing — the same
         // "rename or narrow rather than edit the pinned surface" discipline that
         // gave `bytes` its spelling and `effort` its name.
-        let length_query = crate::source_std_string::is_length_query(word, next.map(|t| &t.kind));
+        // Card `STRING-CONCAT` widens the same rule to `concat` and
+        // `borrow_utf8`, each censused at zero occurrences of its `WORD(` shape
+        // anywhere in the repository, and each therefore reserved **nowhere**.
+        let length_query =
+            crate::source_std_string::is_string_clause_word(word, next.map(|t| &t.kind));
         if body_binder
             || length_query
             || is_reserved_source_word(word)

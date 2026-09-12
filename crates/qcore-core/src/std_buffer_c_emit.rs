@@ -60,6 +60,16 @@ pub enum BufferEmissionRefusal {
     /// An access the checker admitted but the backend cannot place. Unreachable
     /// for a checked program, and refused rather than emitted.
     UnplaceableAccess { event: usize },
+    /// A `for` statement reached a caller that cannot emit one (the
+    /// `LOOP-V1` × `STRING-CONCAT` composition).
+    ///
+    /// Emitting a loop needs the **recursion** [`emit_events`] has, so
+    /// [`buffer_event_statement`] — which returns one statement's text and has
+    /// no way to emit a block — refuses rather than returning `None`. Returning
+    /// `None` would have been the one fail-open shape available here: a caller
+    /// that could not recurse would have silently emitted nothing for the loop
+    /// and dropped every write its body performs.
+    UnemittableLoop { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -131,25 +141,46 @@ static int32_t qcore_bytes_load(const unsigned char *bytes, size_t extent, size_
 }
 "#;
 
-/// The C fragment for one program: the header, the lifetime pair, and each
-/// accessor the program actually uses.
-fn buffer_prelude(program: &BufferProgram) -> String {
+/// The C fragment for a program holding buffers: the header, the lifetime pair,
+/// and each accessor the program actually uses.
+///
+/// Published since card `STRING-CONCAT` so the composed string/buffer route
+/// assembles **this** prelude rather than a second copy of it. The two booleans
+/// are the two conditional accessors, and they are the caller's because a
+/// composed program's events are not all [`BufferEvent`]s.
+///
+/// Every caller must compute them over **every depth**, which is card
+/// `LOOP-V1`'s rule: a program whose only byte write is inside a `for` body
+/// still writes one, and emitting no writer for it would not compile. Both
+/// callers do — this route through [`std_buffer::any_event`] below, and the
+/// composed string/buffer route through the same function — so the scan is
+/// depth-recursive wherever the prelude is assembled.
+#[must_use]
+pub fn buffer_prelude_for(stores: bool, loads: bool) -> String {
     let mut prelude = String::from(BUFFER_PRELUDE_HEADER);
     prelude.push_str(BUFFER_PRELUDE_LIFETIME);
-    // The scan is over every event at **every depth**: a program whose only
-    // byte write is inside a `for` body still writes one, and emitting no
-    // writer for it would not compile.
-    if std_buffer::any_event(&program.events, |event| {
-        matches!(event, BufferEvent::Store { .. })
-    }) {
+    if stores {
         prelude.push_str(BUFFER_PRELUDE_STORE);
     }
-    if std_buffer::any_event(&program.events, |event| {
-        matches!(event, BufferEvent::Load { .. })
-    }) {
+    if loads {
         prelude.push_str(BUFFER_PRELUDE_LOAD);
     }
     prelude
+}
+
+fn buffer_prelude(program: &BufferProgram) -> String {
+    // `any_event` and not a flat `iter().any(…)`: the scan is over every event
+    // at **every depth** (card `LOOP-V1`), because a program whose only byte
+    // write is inside a `for` body still writes one and emitting no writer for
+    // it would not compile.
+    buffer_prelude_for(
+        std_buffer::any_event(&program.events, |event| {
+            matches!(event, BufferEvent::Store { .. })
+        }),
+        std_buffer::any_event(&program.events, |event| {
+            matches!(event, BufferEvent::Load { .. })
+        }),
+    )
 }
 
 const INCLUDES: &str = "\
@@ -158,8 +189,11 @@ const INCLUDES: &str = "\
 #include <stdio.h>\n\
 #include <stdlib.h>\n";
 
-/// The C name of a buffer binding.
-fn buffer_name(name: &str) -> String {
+/// The C name of a buffer binding. Published since card `STRING-CONCAT`: a
+/// borrowed string view addresses this object, so the composed route must spell
+/// the same name this one does.
+#[must_use]
+pub fn buffer_name(name: &str) -> String {
     format!("b_{name}")
 }
 
@@ -223,6 +257,95 @@ fn operand_expression(
                 })
         }
     }
+}
+
+/// The C statement one **value-bearing** buffer event emits, without its
+/// indentation.
+///
+/// Published since card `STRING-CONCAT` so the composed string/buffer route
+/// emits these statements rather than a second implementation of them: a
+/// composed program's `bytes(8)` is the *same* `qcore_bytes_new` call this
+/// route's is, with the same C names, so the two backends cannot drift.
+///
+/// [`BufferEvent::Line`] and [`BufferEvent::Return`] return `None` — a line is
+/// `source.std-io.v1`'s own emitter's and a return is the assembler's.
+pub fn buffer_event_statement(
+    index: usize,
+    event: &BufferEvent,
+    scalars: &mut BTreeMap<String, String>,
+    extents: &mut BTreeMap<String, u32>,
+) -> Result<Option<String>, BufferEmissionRefusal> {
+    let statement = match event {
+        BufferEvent::Bind { binding, value } => {
+            let emitted = scalar_name(binding);
+            scalars.insert(binding.clone(), emitted.clone());
+            format!("int32_t {emitted} = INT32_C({value});")
+        }
+        BufferEvent::Acquire { name, extent } => {
+            debug_assert!(*extent > 0 && *extent <= MAX_EXTENT);
+            extents.insert(name.clone(), *extent);
+            format!(
+                "unsigned char *{} = qcore_bytes_new((size_t) {extent}u);",
+                buffer_name(name)
+            )
+        }
+        BufferEvent::Store {
+            name,
+            index: at,
+            value,
+        } => {
+            let Some(extent) = extents.get(name).copied() else {
+                return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+            };
+            let at = operand_expression(scalars, index, at)?;
+            let value = operand_expression(scalars, index, value)?;
+            format!(
+                "qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
+                buffer_name(name)
+            )
+        }
+        BufferEvent::Load {
+            binding,
+            name,
+            index: at,
+        } => {
+            let Some(extent) = extents.get(name).copied() else {
+                return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+            };
+            let at = operand_expression(scalars, index, at)?;
+            let emitted = scalar_name(binding);
+            scalars.insert(binding.clone(), emitted.clone());
+            format!(
+                "int32_t {emitted} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) ({at}));",
+                buffer_name(name)
+            )
+        }
+        BufferEvent::Extent { binding, name } => {
+            let Some(extent) = extents.get(name).copied() else {
+                return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+            };
+            // The extent is a number the checker determined out of the
+            // ownership ledger, so it is emitted as a literal exactly as
+            // this route's `let`-bound integers are. The emitted program
+            // reads no length out of the object, and there is none to read:
+            // a `calloc`ed block carries no queryable size in portable C.
+            let emitted = scalar_name(binding);
+            scalars.insert(binding.clone(), emitted.clone());
+            format!("int32_t {emitted} = INT32_C({extent});")
+        }
+        BufferEvent::Release { name } => {
+            format!("qcore_bytes_drop({});", buffer_name(name))
+        }
+        BufferEvent::Line(_) | BufferEvent::Return => return Ok(None),
+        // **Refused, not skipped.** A loop is a block, not a statement, and
+        // this function returns one statement's text. `emit_events` handles a
+        // `Repeat` in its own arm and never reaches here; a caller that cannot
+        // recurse gets a refusal rather than an empty emission.
+        BufferEvent::Repeat { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
+        }
+    };
+    Ok(Some(statement))
 }
 
 /// Emit C11 for a checked program. The emitted lines must reproduce the
@@ -289,75 +412,24 @@ fn emit_events(
     for (position, event) in events.iter().enumerate() {
         let index = if top_level { position } else { attributed };
         match event {
-            BufferEvent::Bind { binding, value } => {
-                let _ = writeln!(
-                    source,
-                    "{indent}int32_t {} = INT32_C({value});",
-                    scalar_name(binding)
-                );
-                scalars.insert(binding.clone(), scalar_name(binding));
-            }
-            BufferEvent::Acquire { name, extent } => {
-                debug_assert!(*extent > 0 && *extent <= MAX_EXTENT);
-                let _ = writeln!(
-                    source,
-                    "{indent}unsigned char *{} = qcore_bytes_new((size_t) {extent}u);",
-                    buffer_name(name)
-                );
-                extents.insert(name.clone(), *extent);
-            }
-            BufferEvent::Store {
-                name,
-                index: at,
-                value,
-            } => {
-                let Some(extent) = extents.get(name).copied() else {
-                    return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
-                };
-                let at = operand_expression(scalars, index, at)?;
-                let value = operand_expression(scalars, index, value)?;
-                let _ = writeln!(
-                    source,
-                    "{indent}qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
-                    buffer_name(name)
-                );
-            }
-            BufferEvent::Load {
-                binding,
-                name,
-                index: at,
-            } => {
-                let Some(extent) = extents.get(name).copied() else {
-                    return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
-                };
-                let at = operand_expression(scalars, index, at)?;
-                let _ = writeln!(
-                    source,
-                    "{indent}int32_t {} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) \
-                     ({at}));",
-                    scalar_name(binding),
-                    buffer_name(name)
-                );
-                scalars.insert(binding.clone(), scalar_name(binding));
-            }
-            BufferEvent::Extent { binding, name } => {
-                let Some(extent) = extents.get(name).copied() else {
-                    return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
-                };
-                // The extent is a number the checker determined out of the
-                // ownership ledger, so it is emitted as a literal exactly as
-                // this route's `let`-bound integers are. The emitted program
-                // reads no length out of the object, and there is none to read:
-                // a `calloc`ed block carries no queryable size in portable C.
-                let _ = writeln!(
-                    source,
-                    "{indent}int32_t {} = INT32_C({extent});",
-                    scalar_name(binding)
-                );
-                scalars.insert(binding.clone(), scalar_name(binding));
-            }
-            BufferEvent::Release { name } => {
-                let _ = writeln!(source, "{indent}qcore_bytes_drop({});", buffer_name(name));
+            // **The composition of the two restructures** (cards `LOOP-V1`
+            // and `STRING-CONCAT`). The recursion and the indent are
+            // `LOOP-V1`'s and are unchanged; what one value-bearing event
+            // emits is `STRING-CONCAT`'s published
+            // [`buffer_event_statement`], so a byte write inside a `for` body
+            // is emitted by the same function — with the same C names — that
+            // the composed string/buffer route emits a top-level one with.
+            // The indent is applied here rather than inside that function,
+            // because a statement's text does not depend on its depth.
+            BufferEvent::Bind { .. }
+            | BufferEvent::Acquire { .. }
+            | BufferEvent::Store { .. }
+            | BufferEvent::Load { .. }
+            | BufferEvent::Extent { .. }
+            | BufferEvent::Release { .. } => {
+                if let Some(statement) = buffer_event_statement(index, event, scalars, extents)? {
+                    let _ = writeln!(source, "{indent}{statement}");
+                }
             }
             BufferEvent::Repeat {
                 variable,

@@ -501,6 +501,50 @@ fn lower_store(
     Some(BufferEvent::Store { name, index, value })
 }
 
+/// Read one statement as a `source.buffer.v1` event, reporting a refusal as a
+/// **message** the caller attributes to its own diagnostic code.
+///
+/// Published for card `STRING-CONCAT`'s composed string/buffer route, on the
+/// `source_std_io::std_io_statement` shape and for its reason: a composed route
+/// must read this route's statements with **this route's own reader**, so a
+/// shape one route accepts and the other refuses is not expressible. The code
+/// is the caller's because §L21 gives each semantic pass its own range; the
+/// message is this route's, because the fault is this route's to describe.
+///
+/// `None` means the statement is not one this route spells at all.
+#[must_use]
+pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
+    let tokens = parsed.lexical_tokens();
+    let window = window(tokens, span);
+    let mut diagnostics = Vec::new();
+    let event = match word(&window, 0) {
+        Some("let") => {
+            buffer_use(&window)?;
+            lower_let(&window, span, &mut diagnostics)
+        }
+        Some(DROP_KEYWORD) if ends_with_semicolon(&window, 2) => {
+            let name = word(&window, 1)?;
+            Some(BufferEvent::Release {
+                name: name.to_owned(),
+            })
+        }
+        _ => {
+            buffer_use(&window)?;
+            lower_store(&window, span, &mut diagnostics)
+        }
+    };
+    match event {
+        Some(event) => Some(Ok(event)),
+        None => {
+            let message = diagnostics.into_iter().next().map_or_else(
+                || "this is not a statement `source.buffer.v1` models".to_owned(),
+                |diagnostic| diagnostic.message,
+            );
+            Some(Err(message))
+        }
+    }
+}
+
 /// Lower one entry into a [`BufferProgram`]. The module is either entirely
 /// inside the grammar above or refused with a precise diagnostic; there is no
 /// partially lowered middle state.
