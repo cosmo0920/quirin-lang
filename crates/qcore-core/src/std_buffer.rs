@@ -528,8 +528,10 @@ impl BufferEvaluation {
                 match (place, value) {
                     (Ok((_, at)), Ok(value)) => {
                         let Ok(byte) = u8::try_from(value) else {
-                            step.errors
-                                .push(BufferError::ByteOutOfRange { event: index, value });
+                            step.errors.push(BufferError::ByteOutOfRange {
+                                event: index,
+                                value,
+                            });
                             return step;
                         };
                         if let Some(bytes) = self.contents.get_mut(name) {
@@ -791,11 +793,7 @@ impl BufferEvaluation {
     /// `borrow NAME` refuses — this route publishes no custody identity, so the
     /// structural refusal `STD-FMT-BORROW` established for the uncomposed route
     /// applies here for exactly the same reason.
-    pub fn line_operand(
-        &self,
-        event: usize,
-        operand: &StdIoOperand,
-    ) -> Result<i32, BufferError> {
+    pub fn line_operand(&self, event: usize, operand: &StdIoOperand) -> Result<i32, BufferError> {
         match operand {
             StdIoOperand::Literal(value) => Ok(*value),
             StdIoOperand::Scalar(name) => self.operand(event, &BufferOperand::Scalar(name.clone())),

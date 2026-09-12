@@ -169,10 +169,7 @@ pub enum StringPiece {
     /// This is the one direction of scalar/text conversion v1 has, and it is
     /// the piece that makes a **computed `Content-Length`** expressible: the
     /// number is `len(content)`, which this route already decides.
-    Scalar {
-        rendering: Rendering,
-        name: String,
-    },
+    Scalar { rendering: Rendering, name: String },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -595,10 +592,7 @@ pub enum StringError {
     /// checker over this composed entry's buffer operations — a leak, a double
     /// release, a use after release, or a rebound live name. It carries that
     /// checker's own error value rather than a re-worded copy.
-    Custody {
-        event: usize,
-        error: OwnershipError,
-    },
+    Custody { event: usize, error: OwnershipError },
     /// `Q079`: **the static UTF-8 decision.** The bytes a `borrow_utf8` would
     /// view are not well-formed UTF-8, decided at check time from the buffer's
     /// own write history rather than trusted or deferred to a run-time scan.
@@ -1531,7 +1525,10 @@ pub fn check_string_program(
                 // `{ptr, len}` pair, and there is no second place it could come
                 // from.
                 Some(view) => {
-                    evaluation.buffer.scalars.insert(binding.clone(), view.len as i32);
+                    evaluation
+                        .buffer
+                        .scalars
+                        .insert(binding.clone(), view.len as i32);
                 }
                 Option::None => errors.push(StringError::NotAString {
                     event: index,

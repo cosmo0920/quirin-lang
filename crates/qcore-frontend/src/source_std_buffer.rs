@@ -500,12 +500,9 @@ fn lower_store(
 ///
 /// `None` means the statement is not one this route spells at all.
 #[must_use]
-pub fn buffer_statement(
-    parsed: &SourceProgram,
-    span: Span,
-) -> Option<Result<BufferEvent, String>> {
+pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
     let tokens = parsed.lexical_tokens();
-    let window = window(&tokens, span);
+    let window = window(tokens, span);
     let mut diagnostics = Vec::new();
     let event = match word(&window, 0) {
         Some("let") => {
@@ -525,10 +522,13 @@ pub fn buffer_statement(
     };
     match event {
         Some(event) => Some(Ok(event)),
-        None => Some(Err(diagnostics
-            .into_iter()
-            .next()
-            .map_or_else(|| "this is not a statement `source.buffer.v1` models".to_owned(), |diagnostic| diagnostic.message))),
+        None => {
+            let message = diagnostics.into_iter().next().map_or_else(
+                || "this is not a statement `source.buffer.v1` models".to_owned(),
+                |diagnostic| diagnostic.message,
+            );
+            Some(Err(message))
+        }
     }
 }
 

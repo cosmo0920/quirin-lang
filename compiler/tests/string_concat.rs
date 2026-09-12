@@ -32,7 +32,10 @@ fn options() -> CompileOptions {
 fn compile(
     source: &str,
 ) -> Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>> {
-    compile_files(&[SourceFile::new("string_concat.qcore", source)], &options())
+    compile_files(
+        &[SourceFile::new("string_concat.qcore", source)],
+        &options(),
+    )
 }
 
 fn codes(source: &str) -> Vec<String> {
@@ -764,6 +767,58 @@ fn a_rendering_piece_naming_no_bound_integer_refuses() {
 }
 
 #[test]
+fn a_composition_longer_than_the_route_models_refuses_rather_than_truncating() {
+    // Each piece is inside the 4096-byte literal bound and their composition is
+    // not. The refusal is the band's own, and it names the size — a payload the
+    // route cannot model exactly is not modelled at all, the discipline
+    // `source.string.v1` already applies to a literal and `source.buffer.v1` to
+    // an extent.
+    let half = "A".repeat(3000);
+    let body = format!("let s = concat(\"{half}\", \"{half}\");");
+    let source = module(&[body.as_str(), "print s;", "return;"]);
+    assert_eq!(codes(&source), ["Q077"]);
+    assert!(
+        messages(&source)[0].contains("6000 bytes, longer than the 4096-byte payload"),
+        "{:?}",
+        messages(&source)[0]
+    );
+}
+
+#[test]
+fn a_composition_just_inside_the_bound_is_admitted() {
+    // The other side of the same boundary, so the rule is the rule it names
+    // rather than something that happens to refuse the cases tried.
+    let half = "A".repeat(2048);
+    let body = format!("let s = concat(\"{half}\", \"{half}\");");
+    let module = compile(&module(&[
+        body.as_str(),
+        "let n = len(s);",
+        "print dec n;",
+        "return;",
+    ]))
+    .expect("4096 bytes is inside the bound");
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        ["out: 4096".to_owned()]
+    );
+}
+
+#[test]
+fn a_malformed_bridge_refuses_by_shape() {
+    assert_eq!(
+        codes(&module(&[
+            "let b = bytes(1);",
+            "b[0] = 97;",
+            "let s = borrow_utf8(b, b);",
+            "print s;",
+            "drop b;",
+            "return;",
+        ])),
+        ["Q077"]
+    );
+}
+
+#[test]
 fn a_composition_missing_a_separator_refuses_by_shape() {
     assert_eq!(
         codes(&module(&[
@@ -872,7 +927,11 @@ fn the_bridge_needs_the_string_module() {
     ]
     .join("\n");
     assert_eq!(codes(&source), ["Q015"]);
-    assert!(messages(&source)[0].contains("std.string"), "{:?}", messages(&source)[0]);
+    assert!(
+        messages(&source)[0].contains("std.string"),
+        "{:?}",
+        messages(&source)[0]
+    );
 }
 
 #[test]
@@ -893,7 +952,11 @@ fn the_bridge_needs_the_buffer_module() {
     ]
     .join("\n");
     assert_eq!(codes(&source), ["Q015"]);
-    assert!(messages(&source)[0].contains("std.buffer"), "{:?}", messages(&source)[0]);
+    assert!(
+        messages(&source)[0].contains("std.buffer"),
+        "{:?}",
+        messages(&source)[0]
+    );
 }
 
 #[test]

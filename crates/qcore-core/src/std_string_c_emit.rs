@@ -42,8 +42,8 @@ use crate::std_buffer_c_emit;
 use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
 use crate::std_string::{
-    StringCertificate, StringEvent, StringOperand, StringPiece, StringProgram, StringStorage,
-    TextOperand, text_slice_name,
+    StringCertificate, StringEvent, StringOperand, StringProgram, StringStorage, TextOperand,
+    text_slice_name,
 };
 
 #[derive(Clone, Debug, PartialEq, Eq)]

@@ -32,8 +32,8 @@ Three diagnostic codes, **`Q077`–`Q079`**, the `StandardString` pass's third
 band — the three `STRING-SLICE-IO` returned to the pool. **Zero** new reserved
 words. One new published example, `examples/strings/computed_length.qcore`. 47
 end-to-end tests in `compiler/tests/string_concat.rs`, two of them sanitized
-native runs with a **positive** leak control. 51 audited Lean declarations in a
-new `QCore.StringConcat`.
+native runs with a **positive** leak control. **53** declarations in a new
+`QCore.StringConcat`, **47** of them audited by name.
 
 **Corpus-neutral by construction** (§10). No file under
 `crates/qcore-c-gateway/`, `crates/qcore-audit/`, `contract/qcore/` or
@@ -534,9 +534,12 @@ contract pin and the CT manifest are main's, untouched and unread.
 
 `proof/QCore/StringConcat.lean` (registered in `proof/QCore.lean`, so
 `AuditAll.lean` includes it in the whole-project axiom closure) and
-`proof/AuditStringConcat.lean` — **51 audited entries**, all placeholder-free
-with no project axiom; every closure is a subset of
-`{propext, Classical.choice, Quot.sound}`.
+`proof/AuditStringConcat.lean` — **53 declarations, 47 audited by name**, all
+placeholder-free with no project axiom; every closure is a subset of
+`{propext, Classical.choice, Quot.sound}`. `Classical.choice` appears in
+exactly one closure, `a_changed_buffer_had_a_touching_statement`, which is the
+contrapositive and uses `Classical.byContradiction`; it is one of the three
+allowed axioms and is recorded here rather than left to be discovered.
 
 What is proved, in the order the card argues:
 
@@ -690,6 +693,49 @@ on `PATH`.
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
 | `python3 scripts/check_lean_audits.py` | see §14.2 |
+| `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 expected failure** — see §14.3 |
+| `compiler/tests/string_concat.rs` | **50 passed, 0 failed** |
+| `compiler/tests/std_string.rs` | **62 passed, 0 failed** (base route, unmoved) |
+| `compiler/tests/string_slice_io.rs` | **37 passed, 0 failed** (second band, unmoved) |
+| `compiler/tests/std_buffer.rs` | **52 passed, 0 failed** (the refactored sibling route, unmoved) |
+
+The four suite lines above are the load-bearing ones for this card and were
+re-run at the **final committed state**. `std_buffer.rs` in particular was run
+after each step of §9's refactor, which is what makes "no behaviour change" a
+measurement rather than an intention.
+
+### 14.3 One expected Python failure, left for the integrator
+
+`test_the_derived_facts_are_recomputed_rather_than_carried` reports
+`lean_audits: 103 != 104`. That is the derived-value tripwire working as
+designed: this card adds one audited Lean module, and
+`docs/reviews/r0_3/acceptance_matrix.json` — which this card may not edit —
+carries the pre-card count. §12 item 3. The other 192 Python tests pass.
+
+### 14.4 The load this was measured under
+
+Sibling wave-25 card agents were running their own suites in other worktrees on
+the same machine throughout, with the one-minute load average between **40 and
+81**. That is recorded so the integrator can read the workspace numbers
+correctly, and it is the direct cause of the first workspace run being abandoned
+rather than reported: it was still in flight when three tests and a `cargo fmt`
+pass changed the tree, so the numbers below are a second, complete run made
+after the last edit. Measuring a superseded state and reporting it would have
+been worse than re-running.
 
 Measurement outputs are worktree-private under `measure/` (gitignored), never
 under `target/` and never in the shared scratchpad.
+
+## 15. Artifacts
+
+- `artifacts/keyword_census.txt` — the constraint-14 census, with its
+  reproduction commands.
+- `artifacts/composed.c` — the emitted C11 for the accepted fixture. Three
+  things in it are the card, readable without the certificate: the composed
+  payloads are `static const` arrays (`qcore_string_composed_0..2`), the borrow
+  is `qcore_string_view v_text = { b_body, (size_t) 3u };` — a view of the
+  `calloc`ed block itself — and `qcore_bytes_drop(b_body);` stands **before**
+  the render of `v_framed`, because that composition had already laundered the
+  buffer's bytes into `qcore_string_composed_2`. Only one of the fixture's
+  literals survives as an array; the rest were folded into compositions at check
+  time and the emitted program never names them.

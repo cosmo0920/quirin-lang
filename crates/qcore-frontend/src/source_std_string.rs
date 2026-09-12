@@ -889,7 +889,11 @@ fn lower_let(
         };
         if !symbol(window, value + 3, Symbol::RightParen) || !ends_with_semicolon(window, value + 4)
         {
-            diagnostics.push(diagnostic("Q077", span, "this `borrow_utf8(…)` is not closed"));
+            diagnostics.push(diagnostic(
+                "Q077",
+                span,
+                "this `borrow_utf8(…)` is not closed",
+            ));
             return None;
         }
         return Some(StringEvent::Borrow {
@@ -907,10 +911,7 @@ fn lower_let(
         let mut pieces = Vec::new();
         let mut cursor = value + 2;
         loop {
-            let Some((piece, next)) = concat_piece(window, cursor, literals, span, diagnostics)
-            else {
-                return None;
-            };
+            let (piece, next) = concat_piece(window, cursor, literals, span, diagnostics)?;
             pieces.push(piece);
             cursor = next;
             if symbol(window, cursor, Symbol::Comma) {
@@ -1066,14 +1067,13 @@ pub fn lower_source_string(
             // rather than being neither emitted nor refused. That is the same
             // fail-closed hole `STRING-SLICE-IO` closed for a rendered text
             // line, at this band's own code.
-            if let Some(span) = body.statements.iter().map(|statement| statement.span).find(
-                |span| {
-                    crate::source_std_buffer::buffer_statement(parsed, *span).is_some()
-                },
-            ) {
+            let outside = body.statements.iter().find(|statement| {
+                crate::source_std_buffer::buffer_statement(parsed, statement.span).is_some()
+            });
+            if let Some(statement) = outside {
                 diagnostics.push(diagnostic(
                     "Q077",
-                    span,
+                    statement.span,
                     format!(
                         "`source.string.v1` models the entry only; the owned byte buffer `{}` \
                          holds is outside the entry `{entry}`",
