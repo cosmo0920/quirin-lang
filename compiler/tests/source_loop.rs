@@ -445,6 +445,29 @@ fn a_return_inside_a_body_refuses_as_an_early_exit() {
     assert!(messages(&source).contains("LOOP-BODY-RETURN"));
 }
 
+/// One refusal per loop, not one per failing iteration. The program is refused
+/// either way; this is about what the report *says*. Every iteration before the
+/// failing one still ran and was checked, so the refusal names the first index
+/// that is actually wrong.
+#[test]
+fn a_failing_body_is_reported_once_and_names_the_first_failing_iteration() {
+    let source = module(
+        "alloc, mut",
+        &[
+            "let b = bytes(4);",
+            "for i in 0..100 { b[i] = 1; }",
+            "drop b;",
+            "return;",
+        ],
+    );
+    assert_eq!(codes(&source), ["Q053"]);
+    assert!(
+        messages(&source).contains("index 4 is outside `b`"),
+        "{}",
+        messages(&source)
+    );
+}
+
 #[test]
 fn a_body_binding_that_shadows_an_outer_one_refuses() {
     let source = module(

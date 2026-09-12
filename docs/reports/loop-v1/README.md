@@ -17,7 +17,7 @@ identity**. It is admitted on `source.buffer.v1`; every other route keeps the
 refusal it already had, measured and pinned. Checking is **exact bounded
 unrolling**; emission is a **genuine C11 `for` loop**. `STD-BUFFER-COPY` is made
 real and byte-compared under ASan/UBSan/LSan. **One reserved word** (`for`),
-**zero new tokens**, **`Q097`–`Q099`** under a new `Loop` pass, 36 tests, 20
+**zero new tokens**, **`Q097`–`Q099`** under a new `Loop` pass, 39 tests, 20
 audited Lean entries in one new audit file, no new axiom.
 
 **Two measurements carry the card.** The first is why the checking route is
@@ -437,7 +437,14 @@ a shift.
    flat-sequence refusal (`Q051`, "this statement opens a nested block") is now
    reached by every nested block *except* a `for`. That statement in the route's
    own header and grammar is updated; the refusal itself is unchanged.
-9. **No file under `crates/qcore-verification/` was touched at all.** The route
+9. **A failing loop body reported once per failing iteration**, which is one
+   mistake printed up to ninety-six times at one span. Found by reading the
+   implementation rather than by a test, and fixed: the walk stops at the first
+   iteration that produces a refusal. Every iteration before it still ran and
+   was checked, so the refusal still names the first index that is actually
+   wrong, and the set of admitted programs is unchanged —
+   `a_failing_body_is_reported_once_and_names_the_first_failing_iteration`.
+10. **No file under `crates/qcore-verification/` was touched at all.** The route
    selector already fires on a buffer construct found at any nesting depth, so
    the driver needed no edit — which is why the "driver.rs edits minimal and
    flagged" instruction has nothing to flag.
@@ -448,8 +455,8 @@ a shift.
 
 ### 10.1 Tests
 
-`compiler/tests/source_loop.rs` — **36 tests**, including one sanitized native
-run. Two new files under `compiler/tests/fixtures/source_loop/`:
+`compiler/tests/source_loop.rs` — **39 tests**, including two sanitized native
+runs. Two new files under `compiler/tests/fixtures/source_loop/`:
 `copy.qcore` (the payoff) and `bytes_expected.c` (the byte-identity baseline,
 §10.3).
 
@@ -578,25 +585,60 @@ See §11.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the closing measurement (checked out `d82464a277d0f42703702c4dfd9af6af38595a83`) |
-| `cargo test --workspace --no-fail-fast` | *(recorded in §11.1)* |
-| `cargo test -p qcore-compiler --test source_loop` | **36 pass**, including the sanitized native run |
+| `cargo test --workspace --no-fail-fast` | **3,989 passed, 0 failed, 8 ignored** across 204 suites, **exit 0** (§11.1) |
+| `cargo test -p qcore-compiler --test source_loop` | **39 pass**, including both sanitized native runs |
 | `cargo test -p qcore-compiler --test std_buffer` | **52 pass**, unchanged |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean; one lint of this card's own (`needless_lifetimes`) was **fixed, not suppressed** |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | *(recorded in §11.1)* |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | *(recorded in §11.1)* |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
 | `python3 scripts/check_lean_audits.py` | **104/104**, one new audit file, no new axiom |
-| `python3 -m unittest discover -s scripts/tests` | *(recorded in §11.1)* |
+| `python3 -m unittest discover -s scripts/tests` | **193 tests, 1 failure** — the expected derived-value tripwire (§11.2) |
 
-Command evidence, with each step's exit code written to its own file so no
-wrapper can lose it (the `STD-BUFFER` §10.5.1 hazard), is in the worktree-private
-`measure/` directory: `measure/gate.sh` and the `*.exitcode` files beside it.
-Measurement outputs are never under `target/` and never in the shared
-scratchpad.
+Command evidence is in [`gate.txt`](gate.txt) beside this report, and each
+step's exit code was written to its own file so no wrapper could lose it (the
+`STD-BUFFER` §10.5.1 hazard) — `measure/gate.sh` and the `*.exitcode` files
+beside it in the worktree-private `measure/` directory, never under `target/`
+and never in the shared scratchpad.
 
 ### 11.1 The closing run
 
-*(filled in from `measure/*.exitcode` — see §11.2.)*
+**3,989 passed, 0 failed, 8 ignored, across 204 suites reporting
+`test result: ok`, exit 0.** The run reached and finished its final phase — the
+merged doctests — and the log ends with that summary; it contains zero lines
+beginning `error`, zero `failures:` blocks and no `test result: FAILED`. The
+exit status is **read rather than inferred**: `measure/workspace.sh` writes it
+with `echo $? >` into `measure/workspace.exitcode`, so no shell wrapper stands
+between the cargo process and the recorded number — the `STD-BUFFER` §10.5.1
+hazard, avoided by construction.
+
+**The arithmetic reconciles exactly.** `AGENTS.md`'s wave-24 close records
+**3,950** workspace tests with 8 ignored. 3,950 + 39 = **3,989**, and 39 is
+precisely this card's new suite — so the card adds its own tests and moves no
+other count, which is what corpus neutrality looks like from the test side.
+
+Three environment findings, recorded rather than hidden:
+
+1. **Two workspace runs were killed by the environment.** Both were started as
+   background tasks and both received `SIGTERM` (exit **143**) after roughly the
+   same elapsed time, at 52 of the tree's suites, neither having reported a
+   single failure. **No number above comes from either of them.** The run
+   recorded here was started in the foreground and allowed to move to the
+   background on its own, which is the shape the card's first exploratory run
+   had taken — and that one completed normally.
+2. **One run was invalidated by this card's own edit and stopped deliberately**:
+   the diagnostic-quality fix of §9.9 landed while it was in flight. The
+   `STD-BUFFER` precedent governs — a run with a source change under it is not a
+   measurement.
+3. **Machine contention.** Three sibling agents were running against
+   neighbouring worktrees for most of the closing measurements and the host was
+   under memory pressure, so wall-clock timings are not comparable with a quiet
+   run. Nothing about the results depends on that.
+
+**None of standing constraint 16's five load-sensitive rows tripped.** No
+assertion was weakened and no test was re-run in isolation to obtain a pass.
+
+Full command evidence is in [`gate.txt`](gate.txt) beside this report.
 
 ### 11.2 For the integrator
 
@@ -690,7 +732,7 @@ rather than a backlog item.
 > (`ensures normal resource_borrowed(in);`) — exactly the shape that kept `len`
 > out of the global list, and it takes exactly that card's narrow contextual
 > answer. `Q097`–`Q099` under a new `Loop` pass through the §L21 process, the
-> band `HTTP-QUIRIN-V1` returned to the pool. 36 tests, 20 audited Lean entries
+> band `HTTP-QUIRIN-V1` returned to the pool. 39 tests, 20 audited Lean entries
 > in one new audit file, no new axiom, 103 → 104 audits. Corpus-neutral by
 > construction, and byte identity is **measured rather than asserted**: the base
 > commit's compiler was rebuilt in a scratch tree and all **65** emitted programs

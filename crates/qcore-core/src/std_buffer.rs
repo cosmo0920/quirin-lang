@@ -1126,7 +1126,18 @@ impl ValueRun {
                 variable.to_owned(),
                 i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
             );
+            let before = self.errors.len();
             self.walk(body, index, false);
+            // **One refusal per loop, not one per failing iteration.** The
+            // program is refused either way — this is about what the report
+            // says, not about what it admits. `for i in 0..100 { b[i] = 1; }`
+            // on a four-byte buffer is one mistake, and printing it 96 times
+            // at the same span buries it. Every iteration before the failing
+            // one still ran and was checked, so the refusal still names the
+            // first iteration that is actually wrong.
+            if self.errors.len() > before {
+                break;
+            }
         }
 
         // Scope the body's bindings out, including the index. A later statement
