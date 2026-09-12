@@ -163,6 +163,7 @@ theorem.
 | `ct01_artifact_is_the_lean_proved_owned_transfer_shape` | green: artifact = fixture trace, digest = `13023433800416048247`, procedure accepts, relation admits |
 | `the_procedure_refuses_the_lean_named_mutations` | green: all five mutants refused |
 
+Raw gate logs: worktree-private `measure/ct01-proof-leg-{workspace-tests,clippy,probe,followup}.log`.
 The full gate table is in §7.
 
 ## 6. Proposed proof-stage evidence (the integrator's flip)
@@ -203,15 +204,24 @@ conformance (constraint 23's spirit applies to this denominator too).
 
 ## 7. Gate
 
-Run at the card tip on Linux (constraint-16 caveats as annotated):
+Run at the card tip on Linux. One environmental fact is disclosed rather than
+hidden: this worktree's host disk could not hold a full debug-info workspace
+build (a first attempt died in `rust-lld` with signal 7 — a bus error in the
+linker's memory-mapped output write — and a second in plain `No space left on
+device`; both raw logs are in the worktree-private `measure/` directory). The
+gate's workspace run was therefore executed after `cargo clean` with
+`CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0` —
+debug-info emission off, which changes binary sizes and nothing about what any
+test asserts or observes. No test, pin or assertion was edited to obtain the
+results below.
 
 | Check | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see final report table |
+| `cargo test --workspace --no-fail-fast` | **4,394 passed / 0 failed / 8 ignored** (218 suite summaries, exit 0; wave-28 baseline 4,392 + this card's 2). None of constraint 16's five load-sensitive rows tripped — nothing needed re-verification in isolation |
 | `cargo fmt --all -- --check` | clean |
-| `cargo clippy --all-targets -- -D warnings` | clean |
-| `reevaluation_probe` | exit 0 |
-| `reevaluation_followup` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | clean (exit 0) |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
 | `python3 scripts/check_lean_audits.py` | Passed 116 Lean audits |
 | `python3 -m unittest discover -s scripts/tests` | 192 of 193 green; the one expected failure is §7.1 |
 
