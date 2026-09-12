@@ -67,7 +67,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ownership::{self, OwnershipError, OwnershipOp};
-use crate::std_buffer::{BufferAccess, BufferEvaluation, BufferEvent};
+use crate::std_buffer::{BufferAccess, BufferEvaluation, BufferEvent, BufferProgram};
 use crate::std_io::{
     Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
 };
@@ -766,6 +766,24 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             }
             StringEvent::Buffer(BufferEvent::Store { .. }) => {
                 effects.insert(Effect::Mut);
+            }
+            // A composed `for` (the `LOOP-V1` × `STRING-CONCAT` composition).
+            // The checker refuses one on this route (`Q077`, and the lowering
+            // refuses it earlier still), but the effect row is derived from the
+            // program **before** that refusal is reported, so this arm must
+            // still be right rather than empty. It derives the body's effects
+            // through `source.buffer.v1`'s own recursive walk, which is the
+            // fail-closed direction: under-deriving an effect would let a
+            // declared row not have to admit one the program performs.
+            StringEvent::Buffer(repeat @ BufferEvent::Repeat { .. }) => {
+                let body = BufferProgram {
+                    entry: String::new(),
+                    declared_effects: EffectRow::default(),
+                    events: vec![repeat.clone()],
+                };
+                for effect in crate::std_buffer::derived_effects(&body).iter() {
+                    effects.insert(effect.clone());
+                }
             }
             StringEvent::Buffer(BufferEvent::Line(
                 StdIoEvent::LogLevel { .. }
@@ -1500,6 +1518,37 @@ pub fn check_string_program(
                         event: index,
                         reason: "a line and a return are this route's own events, not embedded \
                                  buffer ones"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                // **A `for` is refused here, and refusing is the whole point**
+                // (the `LOOP-V1` × `STRING-CONCAT` composition, follow-on
+                // `STRING-CONCAT-LOOP-WINDOW`).
+                //
+                // `source.loop.v1` admits a counted loop on `source.buffer.v1`.
+                // This composed route models **one flat statement sequence**,
+                // and its borrow window is an interval of statement indices
+                // that is exact *because* of that flatness: a loop body would
+                // make one statement index run many times, so a store inside a
+                // body could precede — in index order — a read that happens
+                // after it in time, and the window's last-use computation would
+                // no longer bound the mutation. Admitting the composition needs
+                // a window over iterations rather than over indices.
+                //
+                // Until then the answer is a refusal, which is the fail-closed
+                // direction: the loop keeps every route it already had, and the
+                // borrow keeps the exactness argument its soundness rests on.
+                // Neither card's semantics is weakened to make them compose.
+                if matches!(buffer_event, BufferEvent::Repeat { .. }) {
+                    errors.push(StringError::Composition {
+                        event: index,
+                        reason: "`source.loop.v1`'s `for` is not a statement this composed \
+                                 string/buffer entry models; a borrow's exclusion window is an \
+                                 interval of statement indices and is exact only because the \
+                                 route is one flat sequence, so a loop body writing a borrowed \
+                                 buffer would need a window over iterations rather than over \
+                                 indices (`STRING-CONCAT-LOOP-WINDOW`)"
                             .to_owned(),
                     });
                     continue;

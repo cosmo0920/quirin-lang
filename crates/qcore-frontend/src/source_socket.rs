@@ -19,14 +19,33 @@
 //!             | "recvfrom" NAME INTEGER ";"
 //!             | "let" NAME "=" "recvfrom" NAME ";"        -- one byte, bound
 //!             | "close" NAME ";"                          -- release
+//!             | "event" "open" ";"                        -- std.event, the one reactor context
+//!             | "event" "close" ";"
+//!             | "watch" NAME NAME INTEREST ";"            -- register a socket: a LOAN of it
+//!             | "unwatch" NAME ";"                        -- end the loan, retire the registration
+//!             | "dispatch" "ready" NAME ";"               -- one turn, declared and verified
+//!             | "dispatch" "idle" ";"
 //!             | "print" RENDERING OPERAND ";"             -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"         -- std.logger + std.fmt
 //!             | "flush" ";"                               -- std.logger
 //!             | "return" ";"
 //! PAYLOAD   ::= "[" OPERAND {"," OPERAND} "]"
 //! OPERAND   ::= ["-"] INTEGER | NAME
+//! INTEREST  ::= "read" | "write"
 //! EFFECT    ::= "io" | "alloc" | "mut"
 //! ```
+//!
+//! # The reactor composition adds **no** reserved word
+//!
+//! `event`, `open`, `close`, `watch`, `unwatch`, `dispatch`, `ready`, `idle`,
+//! `read` and `write` are every word of the composition, and `STD-EVENT` and the
+//! profiles before it reserved all ten. Card `SOCKET-EVENT-COMPOSE` therefore
+//! runs the constraint-14 census and adds nothing to it — the composition is
+//! spelled entirely in the two routes' existing vocabularies, which is what a
+//! composition should look like. `wake` and `endpoints` are deliberately
+//! **absent**: this route's readiness is induced by `connect`, `send` and
+//! `sendto`, and its descriptors come from `tcp`, `udp` and `accept`, so a
+//! module spelling either is refused as a statement this route does not model.
 //!
 //! # Ten reserved words, and a census that found no collision
 //!
@@ -94,6 +113,7 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use qcore_core::std_event::Interest;
 use qcore_core::std_socket::{
     MAX_PAYLOAD, SocketKind, SocketOperand, SocketPayload, SocketProgram, SocketStatement,
     TextPayload,
@@ -115,6 +135,28 @@ pub const SENDTO_KEYWORD: &str = "sendto";
 pub const RECVFROM_KEYWORD: &str = "recvfrom";
 /// The release keyword. Deliberately the **existing** reserved `close`.
 pub const CLOSE_KEYWORD: &str = "close";
+
+/// The reactor context keyword (card `SOCKET-EVENT-COMPOSE`). Every word of the
+/// composition — `event`, `open`, `close`, `watch`, `unwatch`, `dispatch`,
+/// `ready`, `idle`, `read`, `write` — is **already reserved**, by `STD-EVENT`
+/// and by the profiles before it, so this card adds **none**.
+pub const EVENT_KEYWORD: &str = "event";
+pub const WATCH_KEYWORD: &str = "watch";
+pub const UNWATCH_KEYWORD: &str = "unwatch";
+pub const DISPATCH_KEYWORD: &str = "dispatch";
+
+/// The statement heads of the reactor composition.
+///
+/// Deliberately **not** part of [`STATEMENT_HEADS`]: they do not select this
+/// route. A module spelling only these is a `source.event.v1` module and stays
+/// one; the composed route is reached only when *both* vocabularies are present,
+/// which the driver decides with the two routes' own existing detectors.
+const REACTOR_HEADS: [&str; 4] = [
+    EVENT_KEYWORD,
+    WATCH_KEYWORD,
+    UNWATCH_KEYWORD,
+    DISPATCH_KEYWORD,
+];
 
 /// The statement heads this route owns. A file containing any of them at a
 /// statement head is a `source.socket.v1` module.
@@ -337,6 +379,30 @@ fn scan(block: &SourceBlock, tokens: &[Token], found: &mut BTreeMap<SocketUse, S
 #[must_use]
 pub fn has_source_socket(program: &SourceProgram) -> bool {
     !socket_uses(program).is_empty()
+}
+
+/// The span of the first reactor statement anywhere in `block`, if any
+/// (card `SOCKET-EVENT-COMPOSE`).
+///
+/// Used only by [`lower_source_socket`]'s helper scan, so a `dispatch` in a
+/// function this route never lowers is refused rather than silently unmodelled —
+/// the hole `COMPOSE-EVENT-LINES` closed for its own lines. It is deliberately
+/// **not** part of [`socket_uses`]: route selection and the `std.socket` import
+/// gate both read that map, and a pure `source.event.v1` module must select
+/// neither.
+fn reactor_span(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
+    for statement in &block.statements {
+        let window = window(tokens, statement.span);
+        if word(&window, 0).is_some_and(|head| REACTOR_HEADS.contains(&head)) {
+            return Some(statement.span);
+        }
+        for nested in statement.value.nested_blocks() {
+            if let Some(span) = reactor_span(nested, tokens) {
+                return Some(span);
+            }
+        }
+    }
+    None
 }
 
 /// The span of the first statement needing `import std.socket;`.
@@ -859,6 +925,93 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
             }
         },
         RECV_KEYWORD | RECVFROM_KEYWORD => lower_receive(window, head, &mut refusals),
+        // The reactor composition (card `SOCKET-EVENT-COMPOSE`). Every word is
+        // already reserved; the composition adds none.
+        EVENT_KEYWORD => match word(window, 1) {
+            Some("open") if ends_with_semicolon(window, 2) => Some(SocketStatement::ReactorOpen),
+            Some(CLOSE_KEYWORD) if ends_with_semicolon(window, 2) => {
+                Some(SocketStatement::ReactorClose)
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`source.socket.v1` opens and closes its one reactor context with \
+                     `event open;` and `event close;`",
+                );
+                None
+            }
+        },
+        WATCH_KEYWORD => match (
+            word(window, 1),
+            word(window, 2),
+            word(window, 3).and_then(Interest::parse),
+        ) {
+            (Some(registration), Some(socket), Some(interest))
+                if ends_with_semicolon(window, 4) =>
+            {
+                Some(SocketStatement::Watch {
+                    registration: registration.to_owned(),
+                    socket: socket.to_owned(),
+                    interest,
+                })
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`watch NAME NAME INTEREST;` registers a socket of this entry with its \
+                     reactor, where INTEREST is `read` or `write`; the registration is a loan of \
+                     the socket and not a second owner of it",
+                );
+                None
+            }
+        },
+        UNWATCH_KEYWORD => match word(window, 1) {
+            Some(registration) if ends_with_semicolon(window, 2) => {
+                Some(SocketStatement::Unwatch {
+                    registration: registration.to_owned(),
+                })
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`unwatch NAME;` names the one registration it retires",
+                );
+                None
+            }
+        },
+        DISPATCH_KEYWORD => match word(window, 1) {
+            Some("ready") => match word(window, 2) {
+                Some(registration) if ends_with_semicolon(window, 3) => {
+                    Some(SocketStatement::Dispatch {
+                        ready: Some(registration.to_owned()),
+                    })
+                }
+                _ => {
+                    refuse(
+                        &mut refusals,
+                        "Q080",
+                        "`dispatch ready NAME;` names the one registration this turn reports",
+                    );
+                    None
+                }
+            },
+            Some("idle") if ends_with_semicolon(window, 2) => {
+                Some(SocketStatement::Dispatch { ready: None })
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "a dispatch turn is `dispatch ready NAME;` or `dispatch idle;`: it declares \
+                     what the turn reports, and the emitted program checks the declaration rather \
+                     than trusting it",
+                );
+                None
+            }
+        },
         PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD => {
             // The line grammar is `source.std-io.v1`'s, read by its own
             // reader, so a shape one route accepts and another refuses is
@@ -934,10 +1087,19 @@ pub fn lower_source_socket(
         if let Some(body) = &other.value.body {
             let mut found = BTreeMap::new();
             scan(body, tokens, &mut found);
-            if let Some(span) = found.values().next() {
+            // A reactor statement in a helper is refused for the same reason a
+            // socket statement is: this route models the entry, and admitting a
+            // construct without extending the helper scan would leave it
+            // neither emitted nor refused.
+            let span = found
+                .values()
+                .next()
+                .copied()
+                .or_else(|| reactor_span(body, tokens));
+            if let Some(span) = span {
                 diagnostics.push(diagnostic(
                     "Q080",
-                    *span,
+                    span,
                     format!(
                         "`source.socket.v1` models the entry only; `{}` is not the entry `{entry}`",
                         other.value.name

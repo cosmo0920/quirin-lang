@@ -42,6 +42,8 @@ pub mod ownership;
 pub mod prelude;
 pub mod research_closure;
 pub mod resource_flow;
+pub mod socket_event;
+pub mod source_loop;
 pub mod std_buffer;
 pub mod std_buffer_c_emit;
 pub mod std_event;

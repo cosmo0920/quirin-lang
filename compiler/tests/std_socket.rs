@@ -22,6 +22,10 @@ use qcore_core::std_io::Stream;
 use qcore_core::std_socket::{SocketError, SocketKind};
 use qcore_core::typed_errors::Effect;
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
 const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
 const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
@@ -985,28 +989,40 @@ fn a_module_that_buffers_and_sockets_stays_with_the_buffer_route() {
 }
 
 #[test]
-fn a_module_that_dispatches_and_sockets_stays_with_the_event_route() {
+fn a_module_that_dispatches_and_sockets_reaches_this_route_and_is_now_admitted() {
+    // **Rewritten by card `SOCKET-EVENT-COMPOSE`**, which retires the follow-on
+    // this test's earlier form named. Before it, a module that both dispatched
+    // and socketed stayed with `source.event.v1` and kept that route's refusal;
+    // it now reaches this route, which models both — the registration half
+    // through the *unedited* reactor model, the custody half through the
+    // *unedited* ownership checker. The precedent is
+    // `COMPOSE-EVENT-LINES`'s own rewrite of
+    // `a_module_that_both_dispatches_and_prints_stays_with_this_route…`.
     let source = source_lines(&[
         "import std.event;",
         "import std.socket;",
         "",
-        "fn main() -> i32 effects { io, alloc } {",
+        "fn main() -> unit effects { io, alloc } {",
         "    event open;",
         "    let a = udp;",
         "    bind a;",
-        "    close a;",
+        "    let b = udp;",
+        "    bind b;",
+        "    watch inbox b read;",
+        "    sendto a b [81];",
+        "    dispatch ready inbox;",
+        "    recvfrom b 1;",
+        "    unwatch inbox;",
         "    event close;",
-        "    return 0;",
+        "    close b;",
+        "    close a;",
+        "    return;",
         "}",
     ]);
-    let codes = codes(&source);
-    assert!(
-        codes.iter().all(|code| code == "Q058" || code == "Q074"),
-        "the event route must keep its own refusals (`SOCKET-EVENT-COMPOSE`): {codes:?}"
-    );
-    assert!(
-        !codes.iter().any(|code| code.starts_with("Q08")),
-        "no socket-band code may be issued for a module this route never received: {codes:?}"
+    let module = compile(&source).expect("the composed module must be admitted");
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::StandardSocketV1
     );
 }
 
@@ -1220,5 +1236,64 @@ mod native {
         let compiled = compile(TCP_ECHO).expect("admitted");
         let source = compiled.c_source.as_deref().expect("emitted");
         assert_eq!(run(source), run(source));
+    }
+}
+
+/// Native Winsock evidence for follow-on card `SOCKET-V1-WINDOWS-RUN`.
+///
+/// This is intentionally separate from the sanitized POSIX module: MSVC is a
+/// native execution and byte-comparison claim, not a sanitizer claim. The
+/// shared harness additionally refuses unless Visual Studio's real `cl.exe`
+/// was selected.
+#[cfg(target_os = "windows")]
+mod native_windows {
+    use super::{TCP_ECHO, UDP_ECHO, compile, windows_c};
+
+    fn reference(source: &str) -> (String, String) {
+        let compiled = compile(source).expect("the published socket example must be admitted");
+        let expected = compiled
+            .extern_observation
+            .as_deref()
+            .expect("a reference observation")
+            .iter()
+            .filter_map(|record| record.strip_prefix("out: "))
+            .map(|line| format!("{line}\n"))
+            .collect::<String>();
+        let emitted = compiled.c_source.expect("the socket route must emit C11");
+        assert!(
+            emitted.contains("#pragma comment(lib, \"ws2_32.lib\")"),
+            "the emitted Windows arm must carry its own Winsock link dependency"
+        );
+        (emitted, expected)
+    }
+
+    fn run(source: &str) -> String {
+        let output = windows_c::run_msvc(source, None, &[]);
+        assert!(
+            output.status.success(),
+            "the emitted Winsock program failed with {}:\n{}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(output.stderr.is_empty(), "the Winsock run wrote stderr");
+        String::from_utf8(output.stdout).expect("the emitted program writes UTF-8")
+    }
+
+    #[test]
+    fn the_tcp_example_runs_under_cl_and_writes_the_reference_observation() {
+        let (emitted, expected) = reference(TCP_ECHO);
+        assert_eq!(run(&emitted), expected);
+    }
+
+    #[test]
+    fn the_udp_example_runs_under_cl_and_writes_the_reference_observation() {
+        let (emitted, expected) = reference(UDP_ECHO);
+        assert_eq!(run(&emitted), expected);
+    }
+
+    #[test]
+    fn two_windows_runs_of_one_program_write_identical_bytes() {
+        let (emitted, _) = reference(TCP_ECHO);
+        assert_eq!(run(&emitted), run(&emitted));
     }
 }

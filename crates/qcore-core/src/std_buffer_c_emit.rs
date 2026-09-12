@@ -45,7 +45,9 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
-use crate::std_buffer::{BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT};
+use crate::std_buffer::{
+    self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT,
+};
 use crate::std_io::StdIoEvent;
 use crate::std_io_c_emit;
 
@@ -58,6 +60,16 @@ pub enum BufferEmissionRefusal {
     /// An access the checker admitted but the backend cannot place. Unreachable
     /// for a checked program, and refused rather than emitted.
     UnplaceableAccess { event: usize },
+    /// A `for` statement reached a caller that cannot emit one (the
+    /// `LOOP-V1` × `STRING-CONCAT` composition).
+    ///
+    /// Emitting a loop needs the **recursion** [`emit_events`] has, so
+    /// [`buffer_event_statement`] — which returns one statement's text and has
+    /// no way to emit a block — refuses rather than returning `None`. Returning
+    /// `None` would have been the one fail-open shape available here: a caller
+    /// that could not recurse would have silently emitted nothing for the loop
+    /// and dropped every write its body performs.
+    UnemittableLoop { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -136,6 +148,13 @@ static int32_t qcore_bytes_load(const unsigned char *bytes, size_t extent, size_
 /// assembles **this** prelude rather than a second copy of it. The two booleans
 /// are the two conditional accessors, and they are the caller's because a
 /// composed program's events are not all [`BufferEvent`]s.
+///
+/// Every caller must compute them over **every depth**, which is card
+/// `LOOP-V1`'s rule: a program whose only byte write is inside a `for` body
+/// still writes one, and emitting no writer for it would not compile. Both
+/// callers do — this route through [`std_buffer::any_event`] below, and the
+/// composed string/buffer route through the same function — so the scan is
+/// depth-recursive wherever the prelude is assembled.
 #[must_use]
 pub fn buffer_prelude_for(stores: bool, loads: bool) -> String {
     let mut prelude = String::from(BUFFER_PRELUDE_HEADER);
@@ -150,15 +169,17 @@ pub fn buffer_prelude_for(stores: bool, loads: bool) -> String {
 }
 
 fn buffer_prelude(program: &BufferProgram) -> String {
+    // `any_event` and not a flat `iter().any(…)`: the scan is over every event
+    // at **every depth** (card `LOOP-V1`), because a program whose only byte
+    // write is inside a `for` body still writes one and emitting no writer for
+    // it would not compile.
     buffer_prelude_for(
-        program
-            .events
-            .iter()
-            .any(|event| matches!(event, BufferEvent::Store { .. })),
-        program
-            .events
-            .iter()
-            .any(|event| matches!(event, BufferEvent::Load { .. })),
+        std_buffer::any_event(&program.events, |event| {
+            matches!(event, BufferEvent::Store { .. })
+        }),
+        std_buffer::any_event(&program.events, |event| {
+            matches!(event, BufferEvent::Load { .. })
+        }),
     )
 }
 
@@ -192,16 +213,22 @@ pub fn interpret_buffer_program(
     program: &BufferProgram,
     certificate: &BufferCertificate,
 ) -> Result<Vec<String>, BufferEmissionRefusal> {
-    let produced = program
-        .events
-        .iter()
-        .filter(|event| {
-            matches!(
-                event,
-                BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
-            )
-        })
-        .count();
+    /// How many lines this sequence produces when it runs — a `for` body's
+    /// lines counted once per iteration, because that is how many times they
+    /// are written.
+    fn produced_lines(events: &[BufferEvent]) -> usize {
+        events
+            .iter()
+            .map(|event| match event {
+                BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. }) => 1,
+                BufferEvent::Repeat { count, body, .. } => {
+                    (*count as usize).saturating_mul(produced_lines(body))
+                }
+                _ => 0,
+            })
+            .sum()
+    }
+    let produced = produced_lines(&program.events);
     if produced != certificate.lines.len() {
         return Err(BufferEmissionRefusal::CertificateDisagrees);
     }
@@ -310,6 +337,13 @@ pub fn buffer_event_statement(
             format!("qcore_bytes_drop({});", buffer_name(name))
         }
         BufferEvent::Line(_) | BufferEvent::Return => return Ok(None),
+        // **Refused, not skipped.** A loop is a block, not a statement, and
+        // this function returns one statement's text. `emit_events` handles a
+        // `Repeat` in its own arm and never reaches here; a caller that cannot
+        // recurse gets a refusal rather than an empty emission.
+        BufferEvent::Repeat { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
+        }
     };
     Ok(Some(statement))
 }
@@ -333,19 +367,95 @@ pub fn emit_buffer_c11(
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
     let mut extents: BTreeMap<String, u32> = BTreeMap::new();
 
-    for (index, event) in program.events.iter().enumerate() {
+    emit_events(
+        &program.events,
+        "    ",
+        0,
+        true,
+        &mut scalars,
+        &mut extents,
+        &mut source,
+    )?;
+
+    Ok(BufferCEmission {
+        source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
+    })
+}
+
+/// Emit one sequence of events at `indent`.
+///
+/// Recursive because of the bounded counted loop (card `LOOP-V1`), and the
+/// recursion is the whole of what emitting a loop costs: a `for` body is
+/// emitted **once**, inside a real C `for` statement, rather than once per
+/// iteration.
+///
+/// That is a deliberate asymmetry with the *checking* route, which runs the body
+/// once per iteration, and both halves are right for their own reason. The
+/// checker needs each iteration's exact values, because the certificate
+/// publishes them and the evidence is a byte comparison. The emitted C needs
+/// none of that: it needs to be the program a C reader would have written, and
+/// it needs to stay one program rather than growing linearly in a number that
+/// can reach [`qcore_core::source_loop::MAX_ITERATIONS`]. Emitting the loop also
+/// makes the native run a **check** of the unrolling rather than a restatement
+/// of it: the C computes the index itself, so an unrolled reference observation
+/// that disagreed with a rolled native one would show up as a byte difference.
+#[allow(clippy::too_many_arguments)]
+fn emit_events(
+    events: &[BufferEvent],
+    indent: &str,
+    attributed: usize,
+    top_level: bool,
+    scalars: &mut BTreeMap<String, String>,
+    extents: &mut BTreeMap<String, u32>,
+    source: &mut String,
+) -> Result<(), BufferEmissionRefusal> {
+    for (position, event) in events.iter().enumerate() {
+        let index = if top_level { position } else { attributed };
         match event {
+            // **The composition of the two restructures** (cards `LOOP-V1`
+            // and `STRING-CONCAT`). The recursion and the indent are
+            // `LOOP-V1`'s and are unchanged; what one value-bearing event
+            // emits is `STRING-CONCAT`'s published
+            // [`buffer_event_statement`], so a byte write inside a `for` body
+            // is emitted by the same function — with the same C names — that
+            // the composed string/buffer route emits a top-level one with.
+            // The indent is applied here rather than inside that function,
+            // because a statement's text does not depend on its depth.
             BufferEvent::Bind { .. }
             | BufferEvent::Acquire { .. }
             | BufferEvent::Store { .. }
             | BufferEvent::Load { .. }
             | BufferEvent::Extent { .. }
             | BufferEvent::Release { .. } => {
-                if let Some(statement) =
-                    buffer_event_statement(index, event, &mut scalars, &mut extents)?
-                {
-                    let _ = writeln!(source, "    {statement}");
+                if let Some(statement) = buffer_event_statement(index, event, scalars, extents)? {
+                    let _ = writeln!(source, "{indent}{statement}");
                 }
+            }
+            BufferEvent::Repeat {
+                variable,
+                count,
+                body,
+            } => {
+                // A real C `for`. The index is a C variable the emitted program
+                // computes itself, so every index expression inside the body is
+                // written in terms of it rather than of a number the checker
+                // substituted.
+                let name = scalar_name(variable);
+                let _ = writeln!(
+                    source,
+                    "{indent}for (int32_t {name} = INT32_C(0); {name} < INT32_C({count}); \
+                     {name} += INT32_C(1)) {{"
+                );
+                let outer_scalars: Vec<String> = scalars.keys().cloned().collect();
+                let outer_extents: Vec<String> = extents.keys().cloned().collect();
+                scalars.insert(variable.clone(), name);
+                let inner = format!("{indent}    ");
+                emit_events(body, &inner, index, false, scalars, extents, source)?;
+                // The body's declarations do not outlive the C block either, so
+                // the emitter's environment is scoped exactly as the model's is.
+                scalars.retain(|key, _| outer_scalars.contains(key));
+                extents.retain(|key, _| outer_extents.contains(key));
+                let _ = writeln!(source, "{indent}}}");
             }
             BufferEvent::Line(line) => {
                 // The rendering itself — the conversion, the level tag, the
@@ -353,9 +463,9 @@ pub fn emit_buffer_c11(
                 // emitter and nowhere else, so this route renders one way with
                 // it rather than in a way that happens to agree.
                 let identities = BTreeMap::new();
-                match std_io_c_emit::event_statement(line, &scalars, &identities) {
+                match std_io_c_emit::event_statement(line, scalars, &identities) {
                     Ok(Some(statement)) => {
-                        let _ = writeln!(source, "    {statement}");
+                        let _ = writeln!(source, "{indent}{statement}");
                     }
                     Ok(None) => {}
                     Err(name) => {
@@ -366,10 +476,7 @@ pub fn emit_buffer_c11(
             BufferEvent::Return => {}
         }
     }
-
-    Ok(BufferCEmission {
-        source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
-    })
+    Ok(())
 }
 
 /// The file-scope text `source.buffer.v1` contributes to a program it is part

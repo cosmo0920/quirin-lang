@@ -134,7 +134,7 @@ jobs:
         run: |
           # An authoritative missing override prevents discovery of runner LLVM.
           $env:QCORE_CLANG = Join-Path $env:RUNNER_TEMP 'missing-qcore-clang.exe'
-          cargo test --test toolchain_compatibility --test module_modes --test quant_index_contracts --test qcore_contract_corpus --test source_tasks --test windows_threads --test checked_mutex_guards
+          cargo test --test toolchain_compatibility --test module_modes --test quant_index_contracts --test qcore_contract_corpus --test source_tasks --test windows_threads --test checked_mutex_guards --test std_socket
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test -p qcorec --test cli
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

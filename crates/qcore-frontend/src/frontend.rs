@@ -214,6 +214,20 @@ pub enum StatementKind {
     While {
         body: SourceBlock,
     },
+    /// `for NAME in 0..BOUND { … }` — the checked bounded counted loop (card
+    /// `LOOP-V1`, `source.loop.v1`).
+    ///
+    /// The parser records only the name the header **binds**, because that is
+    /// the one thing name resolution cannot recover from the token window: the
+    /// index is a definition in the body's scope, not a reference to an outer
+    /// one. Everything else in the header — the bound, and whether it is a
+    /// constant this entry bound — is read out of the token window by
+    /// `crate::source_loop`, exactly as every other route reads its own
+    /// statements. This variant exists for scoping, not for semantics.
+    For {
+        binding: String,
+        body: SourceBlock,
+    },
     Return,
     Raise,
     Break,
@@ -259,6 +273,7 @@ impl StatementKind {
         match self {
             Self::If { branches, .. } | Self::Match { arms: branches } => branches.iter().collect(),
             Self::While { body }
+            | Self::For { body, .. }
             | Self::Unsafe { body }
             | Self::ThreadScope { body, .. }
             | Self::WithLock { body, .. } => vec![body],
@@ -1287,6 +1302,14 @@ impl<'a> SourceParser<'a> {
         if self.word(start, "while") {
             return self.single_body_statement(start, limit, |body| StatementKind::While { body });
         }
+        // Card `LOOP-V1`. `for` is census-clean across every `.qcore`/`.qc`
+        // file in the tree (zero occurrences outside `//` comments), so this
+        // head claims a statement shape that previously did not parse at all.
+        if self.word(start, "for") {
+            let binding = self.identifier(start + 1)?.to_owned();
+            return self
+                .single_body_statement(start, limit, |body| StatementKind::For { binding, body });
+        }
         if self.words(start, &["error", "region"]) {
             return self.error_region_statement(start, limit);
         }
@@ -1698,6 +1721,12 @@ impl<'a> SourceParser<'a> {
                     | "if"
                     | "match"
                     | "while"
+                    // Card `LOOP-V1`. Measured load-bearing: without this row
+                    // `last_top_level_block` ran past the first `for`'s body
+                    // and claimed a *later* loop's block as it, so a module
+                    // with two loops bound the first loop's index over the
+                    // second loop's body and refused at `Q013`.
+                    | "for"
                     | "return"
                     | "raise"
                     | "break"
@@ -2051,6 +2080,21 @@ pub enum SemanticPass {
     /// not reuse for a quoted token that fails to decode, on §L21's rule that a
     /// code may not be reused by a second semantic pass.
     StandardHttp,
+    /// Card `LOOP-V1`: admission of the checked bounded counted loop
+    /// `for NAME in 0..BOUND { … }` (`source.loop.v1`). Owns `Q097`–`Q099`
+    /// (spec §L21).
+    ///
+    /// A separate pass on the `IF-STATEMENT` precedent, and for that card's
+    /// reason: the construct is a *control shape*, not a capability of any one
+    /// bundled module, and a route admits it the way a route admits `if`. v1
+    /// admits it on `source.buffer.v1` only; every other route's refusal is
+    /// measured and pinned rather than widened (`LOOP-ROUTE-WIDENING`).
+    ///
+    /// It is separate from `StandardBuffer` on purpose. That pass decides what a
+    /// byte access means; this one decides how many times a body runs and what
+    /// one pass through it may do to custody — and a second route admitting the
+    /// construct inherits those rules rather than restating them.
+    Loop,
     PluginVerification,
 }
 
@@ -2471,6 +2515,12 @@ fn elaborate_block(
         let body_binding = match &statement.value {
             StatementKind::WithLock { guard, .. } => Some((guard.as_str(), false)),
             StatementKind::ThreadScope { name, .. } => Some((name.as_str(), true)),
+            // Card `LOOP-V1`: the loop index is a binding **of the body's
+            // scope**, exactly as a `with lock … as g` guard is. It is therefore
+            // not visible after the loop, which is the same rule the checked
+            // model applies to a body's bindings and the same rule the emitted
+            // C's block scoping applies to its declarations.
+            StatementKind::For { binding, .. } => Some((binding.as_str(), false)),
             _ => None,
         }
         .map(|(name, thread_scope)| {
@@ -2567,6 +2617,7 @@ fn lexical_references(
         StatementKind::If { .. }
             | StatementKind::Match { .. }
             | StatementKind::While { .. }
+            | StatementKind::For { .. }
             | StatementKind::ErrorRegion { .. }
             | StatementKind::Unsafe { .. }
             | StatementKind::ThreadScope { .. }
@@ -2611,6 +2662,24 @@ fn lexical_references(
             // binding forms put them at different positions and a binder name
             // is never also a reference within one statement of that grammar.
             StatementKind::Event { bindings } => bindings.iter().any(|name| name == word),
+            // Card `LOOP-V1`: `for NAME in 0..BOUND`. The index is a definition
+            // in the body's scope, not a reference to an outer one, and `in` is
+            // a **contextual** clause word skipped only at the one position a
+            // `for` header puts it — index 2, immediately after `for NAME`.
+            //
+            // `in` is deliberately **not** in `is_reserved_source_word`, and the
+            // constraint-14 census is why: it occurs as a *reference* inside the
+            // pinned contract corpus — `ensures normal resource_borrowed(in);`
+            // in `contract/qcore/fluent_bit/input_chunk_helpers.qcore`, whose
+            // `extern fn generate_chunk_name(in: ptr<mut, u8>, …)` names a
+            // parameter `in`. That is exactly the shape card `STRING-SLICE`
+            // measured for `len`, and it gets exactly that card's answer: narrow
+            // the rule rather than edit a pinned corpus this card may not touch.
+            // The bound, if it is a name rather than a literal, is a genuine
+            // reference and still resolves normally.
+            StatementKind::For { binding, .. } => {
+                index == 1 && word == binding || (index == 2 && word == "in")
+            }
             StatementKind::ThreadScope { .. } => index == 2,
             StatementKind::WithLock { .. } => matches!(
                 previous.map(|token| &token.kind),
@@ -2661,6 +2730,17 @@ fn is_reserved_source_word(word: &str) -> bool {
         word,
         "let"
             | "idx"
+            // Card `LOOP-V1`: the bounded counted loop's own statement head
+            // (`for NAME in 0..BOUND { … }`). Reserved for the same reason as
+            // every profile keyword below: it is a statement's own keyword,
+            // never a reference to a binding. The constraint-14 census found
+            // **zero** occurrences outside `//` comments across all 418
+            // `.qcore`/`.qc` files, so the reservation collides with nothing.
+            //
+            // `in` is **not** reserved and is handled contextually in
+            // `referenced_names` instead — see the comment there for the
+            // census site that forbids a global reservation.
+            | "for"
             | "drop"
             | "move"
             | "discharge"
@@ -2934,6 +3014,11 @@ fn statement_metadata(statement: &StatementKind) -> (Option<&str>, Option<&str>,
         StatementKind::Match { .. } | StatementKind::While { .. } => {
             (None, None, SemanticPass::Usage)
         }
+        // Card `LOOP-V1`: `for` is the loop pass's own statement, on the
+        // `IF-STATEMENT` precedent that gave `if` the branch pass. The binding
+        // is introduced into the body's scope by `elaborate_block`, which reads
+        // it off the variant.
+        StatementKind::For { .. } => (None, None, SemanticPass::Loop),
         StatementKind::Return => (None, None, SemanticPass::OrdinaryTypes),
         StatementKind::Raise => (None, None, SemanticPass::TypedErrors),
         StatementKind::Break | StatementKind::Continue => (None, None, SemanticPass::ResourceFlow),
@@ -3057,6 +3142,15 @@ pub fn source_diagnostic(
         // `source.socket.v1` checker reported) and Q096 (an undeclared derived
         // effect) are issued at their own emission sites.
         SemanticPass::StandardHttp => "Q090",
+        // The generic presentation code of the loop pass, and the code of every
+        // shape refusal in it — a `for` header this construct does not model, a
+        // body statement outside the admitted subset (including `break` and
+        // `continue`), and a body binding that shadows one the entry already
+        // made. The specific conditions Q098 (the bound — not a check-time
+        // constant, zero, above the iteration maximum, or above the unrolled
+        // budget) and Q099 (one iteration's net custody effect is not the
+        // identity) are issued at their own emission sites.
+        SemanticPass::Loop => "Q097",
         SemanticPass::PluginVerification => "Q700",
     };
     SourceDiagnostic {

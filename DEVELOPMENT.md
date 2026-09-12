@@ -349,6 +349,8 @@ full suite.
 
 ## Increment records
 
+SOCKET-V1-WINDOWS-RUN (2026-09-12): the two published `source.socket.v1` examples now compile and execute through the shared Visual Studio infrastructure on Windows, with a harness entry point that refuses unless the `cc` toolchain resolved Microsoft's actual `cl.exe` rather than an MSVC-like substitute. The TCP and UDP programs link Winsock solely through the emitted source's `#pragma comment(lib, "ws2_32.lib")`, run their real loopback implementations, keep stderr empty and reproduce the reference observation byte for byte; a repeated TCP run pins platform-independent determinism. Visual Studio 18 Community MSVC 19.51.36248 passes all three native rows and the complete 49-test `std_socket` target, and the MSVC-core CI lane now names that target explicitly while Clang is unavailable. The standing workspace gate also exposed and repaired one unrelated CRLF-only test-reader defect: `string_slice_io` now normalizes the included README before locating its LF-spelled transcript fence, without changing source or string semantics. This is native execution evidence, not a sanitizer claim; socket semantics, certificates, verdicts, providers, Lean and frozen corpus artifacts are unchanged. Evidence: `docs/reports/socket-v1-windows-run/README.md`.
+
 Wave 24 close (2026-09-12): five cards merged one at a time under the
 failure-gated chain, each under its own green gate. `DOCS-COMPACT-2` ran the
 recurring compaction of `AGENTS.md`, `CLAUDE.md` and `README.md` before the

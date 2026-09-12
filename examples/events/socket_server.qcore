@@ -1,0 +1,84 @@
+// A checked socket registered with the checked reactor — the server shape, in
+// pure QCore source (card SOCKET-EVENT-COMPOSE).
+//
+// This is the composition of `std.socket` and `std.event`: the program owns its
+// sockets, registers them with the reactor, waits for readiness on more than one
+// descriptor, and does its `accept` and `recv` in its own body when a turn says
+// which one is ready.
+//
+// The two readiness kinds `source.event.v1`'s self-pipe generalises to are both
+// here and both induced by this program's own transport statements — there is no
+// `wake` on this route because it needs none:
+//
+//   * ACCEPT readiness — `connect client listener;` queues a connection, so the
+//     listener's registration becomes ready and the turn that follows reports it;
+//   * DATA readiness — `send client [...]` commits bytes, so the accepted
+//     socket's registration becomes ready.
+//
+// A registration is a LOAN of its socket, not a second owner of it. The socket
+// stays owned by the name that created it, and `close` while registered is
+// refused by the unedited ownership checker (`DropWhileBorrowed`, reported at
+// `Q083`) — which is why every `unwatch` below precedes its `close`.
+//
+// Nothing that is not model-determined reaches the output: the port is chosen by
+// the kernel, the descriptor numbers are never printed, and the only lines are
+// the two pipelines at the end.
+import std.socket;
+import std.event;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    event open;
+
+    // A listening socket, and its registration. The registration is admitted
+    // because a listening socket is one this program can make ready.
+    let listener = tcp;
+    bind listener;
+    listen listener;
+
+    // The client connects first, so the accept readiness the next turn declares
+    // is one this program's own history already decided. `connect` is an
+    // ownership *write* of the listener, so it must precede the loan.
+    let client = tcp;
+    connect client listener;
+
+    watch inbound listener read;
+
+    // One turn over one registration, declared to report the listener. The
+    // emitted program polls the watched set and exits non-zero unless exactly
+    // that member is ready.
+    dispatch ready inbound;
+    let server = accept listener;
+
+    // A second registration, on the accepted socket. Two descriptors are watched
+    // from here, which is what makes this a server shape rather than a single
+    // exchange: a turn now has to say which one it reports.
+    watch traffic server read;
+
+    // Nothing is ready yet, so the turn declares that. The program has committed
+    // nothing to either socket and has taken the one queued connection.
+    dispatch idle;
+
+    // Data readiness, induced by this program's own send.
+    send client [81, 67, 111, 114, 101];
+    dispatch ready traffic;
+
+    let first = recv server;
+    recv server 4;
+
+    first |> print dec;
+    first |> print hex;
+
+    // The loans end in the reverse of the order they were taken, and each ends
+    // before its socket is released.
+    unwatch traffic;
+    unwatch inbound;
+
+    event close;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

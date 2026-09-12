@@ -691,7 +691,7 @@ This card may not edit `AGENTS.md`, `DEVELOPMENT.md` or
 | `STRING-SLICE-BORROW-VARYING` | A borrow of a buffer whose contents are not a check-time value. Needs a run-time validation and a checked failure arm — amendment §2's second arm, the wall `STD-BUFFER-VARYING-INDEX` names. §2.4. |
 | `STRING-SLICE-PARSE` | Text into a number. The reverse of `dec(NAME)`, and the harder direction: it has a failure arm this flat route has nowhere to put. §2.2. |
 | `HTTP-V1-COMPUTED-LENGTH` | A computed `Content-Length` inside `source.http.v1`. Needs a `content` clause taking a bound view rather than a quoted literal, and a header value that is a composed string — both in a route this card does not own. §7. |
-| `STRING-CONCAT-LOOP-WINDOW` | **Recorded now rather than discovered later.** The borrow window is an interval of statement indices, exact because the route is one flat sequence. A loop construct (a parallel card's) invalidates that premise: a store inside a loop body can precede a read that is textually earlier. The computation lives in `last_view_uses` over one exhaustive `match` precisely so this is a small, locatable repair. §3.1. |
+| `STRING-CONCAT-LOOP-WINDOW` | **Predicted, then met — see §16.** `LOOP-V1` merged first and the reconciliation measured the interaction. The composed route **refuses** a `for` (`Q068` from source, `Q077` in the model), so the borrow window keeps the flat-sequence premise its exactness rests on and the loop keeps every route it already had. What remains is the *capability*: a window over **iterations** rather than over statement indices, which is what admitting `for i in 0..n { b[i] = …; }` beside a live borrow of `b` would need. |
 | `STRING-CONCAT-WINDOWS-RUN` | This card ran the **Linux** arm only. The emitted composition is a `static const` array and the borrow is a field initialisation, both C11 and both inside the existing prelude structure, and the test file carries the Windows `windows_c` path unchanged — but no Windows or Apple run was performed and none is claimed. The `EVENT-V1-WINDOWS-RUN` / `STRING-SLICE-IO-WINDOWS-RUN` precedent. |
 | `STRING-SLICE-IO-EXAMPLE-SUITE` | *(unchanged, `STRING-SLICE-IO`'s)* `examples/strings/` is verified by the string cards' own test files rather than by `compiler/tests/examples_suite.rs`. This card's example joins that arrangement rather than changing it. |
 | `STRING-SLICE-ABI`, `STRING-SLICE-VARYING-INDEX`, `STRING-SLICE-NOTASCALAR-REACH`, `BYTE-SLICE-CAP`, `STD-FMT-DIAGNOSTIC` | *(unchanged, earlier cards')* |
@@ -809,3 +809,139 @@ under `target/` and never in the shared scratchpad.
   buffer's bytes into `qcore_string_composed_2`. Only one of the fixture's
   literals survives as an array; the rest were folded into compositions at check
   time and the emitted program never names them.
+
+---
+
+## 16. Reconciliation with `LOOP-V1` (post-acceptance merge)
+
+`LOOP-V1` merged onto main first, and this card was resumed to reconcile on its
+own branch — the wave-16 `LOADER-ABI` precedent, because the integrator must not
+guess at either card's semantics. Merge base: this card's `d3f66d1f`; merged:
+`origin/main` at `d10a2d56` (`LOOP-V1`, `SOCKET-EVENT-COMPOSE`, the Windows
+harness card).
+
+**The two cards restructured the same two functions differently, and the
+resolution composes them rather than picking one.** Both restructures exist for
+a reason the other does not supply, and both survive.
+
+### 16.1 The checker: `ValueRun::event` × `BufferEvaluation::apply`
+
+`LOOP-V1` turned `check_buffer_program`'s value half into a **recursive**
+`ValueRun` — a struct, because a `Repeat` runs its body once per iteration and
+every pass writes into the same bytes, scalars and line sequence. This card
+turned the same loop into a **published** `BufferEvaluation::apply` returning a
+`BufferStep`, so the composed string/buffer route runs *these* value rules
+rather than a second copy.
+
+The composition is that `ValueRun` keeps its recursion, its `repeat` method and
+its scoping, and its six value arms **delegate to `apply`**:
+
+```rust
+BufferEvent::Bind { .. } | … | BufferEvent::Release { .. } => {
+    let step = evaluation.apply(index, event);
+    errors.extend(step.errors);
+    acquisitions.extend(step.acquisition);
+    releases.extend(step.release);
+    accesses.extend(step.access);
+}
+```
+
+Neither is a special case of the other: **the loop decides how often an event
+runs and `apply` decides what it means.** The composition is strictly stronger
+than either card alone claimed — the extent, bounds, byte-range and
+decidability rules now have one implementation that a *loop body's* events run
+through as well as the composed route's. `ValueRun.evaluation` is the published
+`BufferEvaluation`; `LOOP-V1`'s private `Evaluation` and its free `line_operand`
+are gone, the latter replaced by this card's method of the same name and body.
+
+### 16.2 The emitter: `emit_events` × `buffer_event_statement`
+
+Identically shaped. `LOOP-V1` made emission recursive with an `indent` and a
+real C `for`; this card factored one event's statement text into a published
+`buffer_event_statement`. Composed: `emit_events` keeps the recursion, the
+indent and the `Repeat` arm, and its six value arms write
+`{indent}{statement}` from `buffer_event_statement`. **The indent stays at the
+call site**, because a statement's text does not depend on its depth.
+
+### 16.3 The prelude scan — the one place a silent regression was possible
+
+`LOOP-V1` changed the selective accessor prelude to scan `any_event` at **every
+depth**, because a byte write inside a `for` body must still emit its writer.
+This card had rewritten that same scan into `buffer_prelude_for(stores, loads)`
+with two *flat* `iter().any(…)` arguments. Taking this card's side verbatim
+would have compiled and silently emitted a program missing
+`qcore_bytes_store` — a C compile failure, not a QCore refusal.
+
+Resolved by keeping **both**: `buffer_prelude_for` stays published with its two
+booleans (so the string route assembles the same prelude), and every caller
+computes them with `std_buffer::any_event`. Pinned by
+`the_loop_route_is_unchanged_by_this_cards_refactor`, which asserts the emitted
+C contains `static void qcore_bytes_store(` for a program whose only store is
+inside a loop body, alongside the real `for` header and the body's store emitted
+**exactly once**.
+
+### 16.4 `STRING-CONCAT-LOOP-WINDOW`: the premise, re-verified, and the refusal
+
+This card's own follow-on predicted this interaction, and the merge is where it
+had to be decided. The composed route's borrow window is an interval of
+**statement indices**, exact *because* the route is one flat sequence. A loop
+body makes one index run many times, so a store inside a body could precede — in
+index order — a read that happens after it in time, and the window's last-use
+computation would no longer bound the mutation.
+
+**The composed refusal direction is fail-closed, at the earliest point rather
+than the latest.** A composed module writing a borrowed buffer from a `for`
+refuses at `Q068` — this route's own flat-sequence rule, which fires *before*
+the statement is read as a buffer statement at all:
+
+```
+Q068: `source.string.v1` models one flat statement sequence;
+      this statement opens a nested block
+```
+
+pinned by `a_loop_in_a_composed_module_refuses_before_it_can_reach_a_borrowed_buffer`.
+Behind it the **model** refuses a `Repeat` at this band's own `Q077`, naming the
+follow-on. That guard is unreachable from any single source module, because the
+shape rule above refuses first; it is kept rather than deleted on the
+`EXTERN-F1-STORE-REACH` and `STRING-SLICE-NOTASCALAR-REACH` precedent and checked
+through the library by `the_models_own_loop_guard_refuses_a_repeat_this_route_cannot_model`.
+
+Three further sites the composition exposed, each decided fail-closed rather
+than left to a silent default — the compiler's exhaustiveness check found all
+three, which is why `BufferEvent` gaining a variant was safe:
+
+| Site | Decision |
+|---|---|
+| `BufferEvaluation::apply` | A `Repeat` is **not** a value-bearing event and returns `BufferStep::default()`, like `Line`/`Return`. Iterating is `ValueRun::repeat`'s, which owns the index binding, body-local scoping and the shadowing refusal; deciding it here would put a second iteration rule beside that one. A caller that cannot recurse must *refuse*, not step over. |
+| `buffer_event_statement` | Returns **`Err(UnemittableLoop)`**, a new refusal variant — not `Ok(None)`. `None` was the one fail-open shape available: a caller that could not recurse would have emitted nothing for the loop and dropped every write its body performs. |
+| the string route's `consumed` scan | Made **recursive** (`buffer_consumers`). This map decides which bindings get a `(void)` discard, so a name a loop body reads and the scan missed would be discarded and then used — a C compile error rather than a refusal. |
+
+The composed `derived_effects` arm likewise recurses, through
+`std_buffer::derived_effects`, because the effect row is derived from the
+program *before* the `Q077` refusal is reported: under-deriving an effect would
+let a declared row not have to admit one the program performs.
+
+### 16.5 Documents
+
+`docs/QCORE_SPEC_r0_3.md` §L21 keeps **both** sides' rows, this card's
+`Q077`–`Q079` in numeric position above `Q080`–`Q089` — and the `Q080` row is
+**main's**, which `SOCKET-EVENT-COMPOSE` had rewritten; taking this branch's
+stale copy would have reverted that card. `examples/README.md` keeps both
+updated rows: main's `events/` row (the socket registered with the reactor) and
+this card's `strings/` row (text a program computes).
+
+### 16.6 Suites on the merged tree
+
+| Suite | Result |
+|---|---|
+| `std_buffer` | **52 passed, 0 failed** |
+| `source_loop` | **39 passed, 0 failed** |
+| `string_concat` | **53 passed, 0 failed** (50 + the three composition tests) |
+| `std_string` | **62 passed, 0 failed** |
+| `string_slice_io` | **37 passed, 0 failed** |
+| `cargo fmt --all -- --check` | exit **0** |
+| `cargo clippy --all-targets -- -D warnings` | exit **0** |
+
+`source_loop` and `std_buffer` are `LOOP-V1`'s own and are **unchanged at 39 and
+52** — the evidence that the composition preserved that card's semantics rather
+than merely compiling alongside them.

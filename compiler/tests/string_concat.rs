@@ -1174,6 +1174,143 @@ fn the_computed_length_is_the_length_of_the_content_it_declares() {
     assert_eq!(declared, content.len());
 }
 
+// --- 9. The LOOP-V1 composition (`STRING-CONCAT-LOOP-WINDOW`). ---
+
+#[test]
+fn a_loop_in_a_composed_module_refuses_before_it_can_reach_a_borrowed_buffer() {
+    // The interaction this card's own `STRING-CONCAT-LOOP-WINDOW` follow-on
+    // predicted, measured on the merged tree. `source.loop.v1` admits `for` on
+    // `source.buffer.v1`; this composed route models **one flat statement
+    // sequence**, and its borrow window is an interval of statement indices
+    // that is exact *because* of that flatness. A loop body would make one
+    // index run many times, so the window's last-use computation would no
+    // longer bound the mutation.
+    //
+    // The refusal is the route's own flat-sequence rule at `Q068`, which fires
+    // **before** the statement is read as a buffer statement at all — so the
+    // composition is fail-closed at the earliest point rather than at the
+    // latest, and neither card's semantics is weakened to make them compose.
+    let source = module(&[
+        "let b = bytes(2);",
+        "for i in 0..2 {",
+        "    b[i] = 97;",
+        "}",
+        "let s = borrow_utf8(b);",
+        "print s;",
+        "drop b;",
+        "return;",
+    ]);
+    assert_eq!(codes(&source), ["Q068"]);
+    assert!(
+        messages(&source)[0].contains("one flat statement sequence"),
+        "{:?}",
+        messages(&source)[0]
+    );
+}
+
+#[test]
+fn the_models_own_loop_guard_refuses_a_repeat_this_route_cannot_model() {
+    // `STRING-CONCAT-LOOP-WINDOW`'s guard, checked through the library because
+    // no single source module reaches it: the flat-sequence rule above refuses
+    // a `for` first. Kept rather than deleted, on the `EXTERN-F1-STORE-REACH`
+    // and `STRING-SLICE-NOTASCALAR-REACH` precedent — a guard whose refusal is
+    // currently shadowed is still the thing that makes the composition safe if
+    // a later card widens the statement grammar.
+    use qcore_core::std_buffer::{BufferEvent, BufferOperand};
+    use qcore_core::std_string::{StringEvent, StringProgram, check_string_program};
+    use qcore_core::typed_errors::EffectRow;
+
+    let program = StringProgram {
+        entry: "main".to_owned(),
+        declared_effects: EffectRow::default(),
+        literals: Vec::new(),
+        events: vec![
+            StringEvent::Buffer(BufferEvent::Acquire {
+                name: "b".to_owned(),
+                extent: 2,
+            }),
+            StringEvent::Buffer(BufferEvent::Repeat {
+                variable: "i".to_owned(),
+                count: 2,
+                body: vec![BufferEvent::Store {
+                    name: "b".to_owned(),
+                    index: BufferOperand::Scalar("i".to_owned()),
+                    value: BufferOperand::Literal(97),
+                }],
+            }),
+            StringEvent::Buffer(BufferEvent::Release {
+                name: "b".to_owned(),
+            }),
+            StringEvent::Return,
+        ],
+    };
+    let errors = check_string_program(&program).expect_err("a composed loop must be refused");
+    assert!(
+        errors.iter().any(|error| error.code() == "Q077"),
+        "the composed route refuses a loop at its own code: {:?}",
+        errors.iter().map(|e| e.code()).collect::<Vec<_>>()
+    );
+    assert!(
+        errors
+            .iter()
+            .any(|error| error.to_string().contains("STRING-CONCAT-LOOP-WINDOW")),
+        "the refusal names the follow-on that owns the missing capability"
+    );
+}
+
+#[test]
+fn the_loop_route_is_unchanged_by_this_cards_refactor() {
+    // The other direction, and the one that matters for `LOOP-V1`: a module
+    // that loops over a buffer **without** spelling the bridge keeps the buffer
+    // route, and its emitted C is still a real `for` whose body's store is
+    // emitted once — through this card's published per-event statement emitter.
+    // The accessor prelude is the load-bearing part: the writer must be present
+    // even though the only store is inside the body, which is `LOOP-V1`'s
+    // depth-recursive `any_event` scan surviving the composition.
+    let source = [
+        "import std.buffer;",
+        "import std.fmt;",
+        "import std.io;",
+        "",
+        "fn main() -> unit effects { io, alloc, mut } {",
+        "    let b = bytes(3);",
+        "    for i in 0..3 {",
+        "        b[i] = 65;",
+        "    }",
+        "    let x = b[2];",
+        "    print dec x;",
+        "    drop b;",
+        "    return;",
+        "}",
+        "",
+    ]
+    .join("\n");
+    let module = compile(&source).expect("a looping buffer module compiles");
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::StandardBufferV1,
+        "a loop without the bridge keeps the buffer route"
+    );
+    let c = module.c_source.expect("an executable module emits C");
+    assert!(
+        c.contains("for (int32_t s_i = INT32_C(0); s_i < INT32_C(3); s_i += INT32_C(1)) {"),
+        "the emitted C is a real `for` loop:\n{c}"
+    );
+    assert_eq!(
+        c.matches("qcore_bytes_store(").count(),
+        2,
+        "the body's store is emitted exactly once, beside the prelude's definition:\n{c}"
+    );
+    assert!(
+        c.contains("static void qcore_bytes_store("),
+        "the accessor prelude reaches a write only a loop body performs:\n{c}"
+    );
+    assert_eq!(
+        module.extern_observation.as_deref().unwrap(),
+        ["out: 65".to_owned()]
+    );
+}
+
 #[test]
 fn the_certificate_is_rederived_and_a_tampered_one_is_refused() {
     let module = compile(&module(&[

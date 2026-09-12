@@ -1361,10 +1361,17 @@ stmt      = "let", NAME, "=", [ "-" ], INTEGER, ";"
           | "print", RENDERING, OPERAND, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
           | "flush", ";"
+          | "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}"
           | "return", ";" ;
 OPERAND   = [ "-" ], INTEGER | NAME ;
+BOUND     = INTEGER | NAME ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
+
+**The `for` row is `source.loop.v1`'s** (card `LOOP-V1`, §G07.12), admitted here
+and on no other route in v1. It is the **only** nested block this profile reads:
+every other one still refuses at `Q051`. Its own refusals carry `Q097`–`Q099`;
+its body's statements are the rows above, read by this profile's own reader.
 
 ```qcore
 import std.buffer;
@@ -2402,6 +2409,96 @@ connections and pipelining (`HTTP-V1-PERSISTENT`), `100 (Continue)`
 (`HTTP-V1-TLS`), a body that is a `std.buffer` extent
 (`HTTP-V1-BUFFER-CONTENT`), `obs-text` in a field value (`HTTP-V1-OBS-TEXT`), and
 a rendered text line inside this route (`HTTP-V1-TEXT-TRANSCRIPT`).
+
+## G07.11. A checked socket as a reactor-registered event source
+
+Card `SOCKET-EVENT-COMPOSE`. This is not a new route: it is `source.socket.v1`'s
+own grammar (§L21's `Q080`–`Q089` band) widened by the five statements of the
+reactor vocabulary, which are `source.event.v1`'s own words (§G02k) and **add no
+reserved word at all**.
+
+```ebnf
+socket-stmt    = (* every §G's socket statement, unchanged *)
+               | "event", "open", ";"
+               | "event", "close", ";"
+               | "watch", NAME, NAME, INTEREST, ";"
+               | "unwatch", NAME, ";"
+               | "dispatch", "ready", NAME, ";"
+               | "dispatch", "idle", ";" ;
+INTEREST       = "read" | "write" ;
+```
+
+Route selection: a module using **both** vocabularies is a `source.socket.v1`
+module; one using only the reactor's stays `source.event.v1`'s; one that also
+buffers, constructs a string or declares an HTTP message declines the composed
+guard and keeps the refusal it already had (`EVENT-BUFFER-PAYLOAD`,
+`HTTP-V1-EVENT-COMPOSE`). `wake` and `endpoints` are deliberately **not** in the
+grammar above: readiness here is induced by `connect`, `send` and `sendto`, and
+descriptors come from `tcp`, `udp` and `accept`, so neither statement has
+anything to do. A `write` interest is checked in full and makes the module
+emit no C, which is §G02k's own `accept_check_only` arm.
+
+The custody relation is a **loan**: `watch E S …;` is an
+`OwnershipOp::BorrowShared` of `S` to `E` running to the matching `unwatch E;`,
+so a close while registered and a `bind`/`listen`/`connect` on a watched socket
+are refused by the *unedited* ownership checker while a `send`, a `recv` and an
+`accept` are admitted. Spans are **lexical**, so registrations retire in the
+reverse of the order they are taken; a crossed pair is refused by name
+(`SOCKET-EVENT-CROSSED-SPANS`). A dispatch turn **drains nothing** — it observes
+level-triggered readiness, and the entry's own transport statements do the work.
+
+What remains outside this grammar, each a named follow-on: a source-level
+callback body (`EVENT-CALLBACK-BODY`), an executable write interest
+(`SOCKET-EVENT-WRITE-READY`), a turn over a two-member ready set
+(`OBS-REORDERING`), crossed registration spans
+(`SOCKET-EVENT-CROSSED-SPANS`), a registration on a socket of another program
+(`SOCKET-EXTERNAL-PEER`), and composition with `source.http.v1`
+(`HTTP-V1-EVENT-COMPOSE`).
+## G07.12. The checked bounded counted loop (`source.loop.v1`)
+
+Card `LOOP-V1` implements this consumer grammar (diagnostics `Q097`–`Q099`, spec
+§L21). It is a **control shape**, not a bundled module: it needs no `import`,
+exactly as `source.branch.v1`'s `if` does, and a route admits it the way a route
+admits `if`. **v1 admits it on `source.buffer.v1` only**; every other route keeps
+the refusal it already had (`LOOP-ROUTE-WIDENING`).
+
+```ebnf
+stmt   = "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}" ;
+BOUND  = INTEGER | NAME ;
+```
+
+* **`BOUND` is a check-time constant** the *lowering* can compute: an integer
+  literal, a name bound by a literal `let`, or a name bound by `extent(NAME)`.
+  A bound read out of a byte is refused (`Q098`, `LOOP-BOUND-FROM-BYTE`), and so
+  is a bound of zero, a negative bound, a bound above 4096, and an entry whose
+  unrolled event total is above 8192.
+* **The low end is the written-out `0`.** A range with another low end refuses
+  at `Q097` rather than being silently re-based (`LOOP-RANGE-LOW`).
+* **`NAME` is a scalar binding scoped to the body**, taking `0, 1, …, BOUND-1`
+  in order and read-only inside it. It is not visible after the loop, and
+  neither is any other name the body binds — the `IF-STATEMENT` rule for arm
+  bindings. A body binding that shadows one the entry already made refuses at
+  `Q097` rather than deciding which of two values survives the loop.
+* **The body's statements are the admitting route's own**, read by that route's
+  own reader, so a shape one admits and the other refuses is not expressible.
+  Nesting a `for` inside a `for` is admitted; `break`, `continue` and `return`
+  inside a body are refused by name at `Q097`.
+* **One iteration's net custody effect must be the identity** (`Q099`). A body
+  that acquires and releases is admitted; one that acquires without releasing,
+  or releases a resource it did not acquire, is refused.
+
+**Zero new tokens and one reserved word.** `..` is two existing `Dot` tokens read
+positionally; `for` is reserved (census-clean at zero occurrences outside `//`
+comments across all 418 `.qcore`/`.qc` files); `in` is a **contextual** clause
+word and deliberately **not** reserved, because the constraint-14 census found it
+as a reference inside the pinned contract corpus.
+
+**Checked by exact bounded unrolling, emitted as a real `for` loop.** The two
+halves are asymmetric on purpose: the checker needs each iteration's exact
+values because the certificate publishes them and the route's evidence is a byte
+comparison, while the emitted C needs to be the program a C reader would have
+written — and emitting the loop makes the native run a *check* of the unrolling
+rather than a restatement of it.
 
 ## G08. Source-contract service configuration v1
 

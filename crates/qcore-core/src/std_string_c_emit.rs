@@ -141,6 +141,44 @@ fn literal_name(index: usize) -> String {
     format!("qcore_string_literal_{index}")
 }
 
+/// Mark every name an embedded `source.buffer.v1` event reads, **at every
+/// depth**.
+///
+/// Recursive for the `LOOP-V1` × `STRING-CONCAT` composition. A `for` is
+/// refused on this route, so this never meets one in practice; it recurses
+/// anyway because the alternative is the fail-open one. This map decides which
+/// bindings get an explicit `(void)` discard, so a name a loop body reads and
+/// this scan missed would be discarded and then used, which is a C compile
+/// error rather than a refusal.
+fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) {
+    match event {
+        BufferEvent::Store { name, index, value } => {
+            consumed.insert(name.clone(), true);
+            for operand in [index, value] {
+                if let BufferOperand::Scalar(scalar) = operand {
+                    consumed.insert(scalar.clone(), true);
+                }
+            }
+        }
+        BufferEvent::Load { name, index, .. } => {
+            consumed.insert(name.clone(), true);
+            if let BufferOperand::Scalar(scalar) = index {
+                consumed.insert(scalar.clone(), true);
+            }
+        }
+        BufferEvent::Extent { name, .. } | BufferEvent::Release { name } => {
+            consumed.insert(name.clone(), true);
+        }
+        BufferEvent::Repeat { body, .. } => {
+            for event in body {
+                buffer_consumers(event, consumed);
+            }
+        }
+        BufferEvent::Bind { .. } | BufferEvent::Acquire { .. } => {}
+        BufferEvent::Line(_) | BufferEvent::Return => {}
+    }
+}
+
 /// The C name of a **composed** payload's static byte array (card
 /// `STRING-CONCAT`).
 ///
@@ -289,27 +327,9 @@ pub fn emit_string_c11(
             StringEvent::Borrow { buffer, .. } => {
                 consumed.insert(buffer.clone(), true);
             }
-            StringEvent::Buffer(buffer_event) => match buffer_event {
-                BufferEvent::Store { name, index, value } => {
-                    consumed.insert(name.clone(), true);
-                    for operand in [index, value] {
-                        if let BufferOperand::Scalar(scalar) = operand {
-                            consumed.insert(scalar.clone(), true);
-                        }
-                    }
-                }
-                BufferEvent::Load { name, index, .. } => {
-                    consumed.insert(name.clone(), true);
-                    if let BufferOperand::Scalar(scalar) = index {
-                        consumed.insert(scalar.clone(), true);
-                    }
-                }
-                BufferEvent::Extent { name, .. } | BufferEvent::Release { name } => {
-                    consumed.insert(name.clone(), true);
-                }
-                BufferEvent::Bind { .. } | BufferEvent::Acquire { .. } => {}
-                BufferEvent::Line(_) | BufferEvent::Return => {}
-            },
+            StringEvent::Buffer(buffer_event) => {
+                buffer_consumers(buffer_event, &mut consumed);
+            }
             StringEvent::Bind { .. }
             | StringEvent::Literal { .. }
             | StringEvent::Line(_)

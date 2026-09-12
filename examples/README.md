@@ -15,7 +15,7 @@ here can drift from what its programs do.
 | [extern/](extern/) | Declared extern calls, `succeeds`, `borrow NAME` | `source.extern-call.v1` |
 | [unsafe-linkage/](unsafe-linkage/) | `unsafe extern fn` and native-library manifests | `source.extern-call.v1` |
 | [threads/](threads/) | Scoped tasks, owned buffers, read shares | the checked task profiles |
-| [events/](events/) | One event context, a registration on a descriptor, declared dispatch turns | `source.event.v1` |
+| [events/](events/) | One event context, a registration on a descriptor, declared dispatch turns — and a **checked socket** registered with that reactor, the server shape | `source.event.v1`, `source.socket.v1` |
 | [strings/](strings/) | Immutable UTF-8 views, slices, text reaching a stream, and text a program computes | `source.string.v1` |
 | [sockets/](sockets/) | Checked TCP and UDP over loopback, both ends in one program | `source.socket.v1` |
 | [http/](http/) | A checked, executed HTTP/1.1 subset, and the same bytes written by hand | `source.http.v1`, `source.socket.v1` |

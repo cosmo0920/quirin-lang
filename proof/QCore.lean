@@ -137,11 +137,13 @@ import QCore.SingleEmissionRoute
 import QCore.CProgram
 import QCore.ObsReordering
 import QCore.StdBuffer
+import QCore.SourceLoop
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.StdHttp
+import QCore.SocketEventCompose
 
 /-! The executable formal core of QCore-C revision 0.1. -/
