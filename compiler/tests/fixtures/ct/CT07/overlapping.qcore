@@ -1,0 +1,33 @@
+// CT07's disjointness control: the identical program with one byte of the
+// owner's write moved **inside** a lent range (card `CT-WIRE-LANE-2`; the
+// program is card `CT07-SLICE-PERMISSIONS`'s `overlapping_write.qcore` shape,
+// which is also CT08's own case).
+//
+// `store[1] = 88;` writes byte 1, inside `head`'s `[0, 2)`, so the write's
+// one-byte range and the loan overlap and the program refuses at `Q078`
+// naming the footprint. This is what makes the case's admission a decision
+// about disjointness rather than a route that admits owner writes anywhere.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(6);
+    store[0] = 97;
+    store[1] = 98;
+    store[2] = 99;
+    store[3] = 100;
+    store[4] = 101;
+    store[5] = 102;
+
+    let head = borrow_utf8(store, 0, 2);
+    let tail = borrow_utf8(store, 4, 6);
+
+    store[1] = 88;
+
+    print head;
+    print tail;
+
+    drop store;
+    return;
+}

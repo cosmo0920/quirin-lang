@@ -1,0 +1,18 @@
+// CT21's boundary control: the same region caught by a clause that does not
+// open the pack at all (card `CT-WIRE-LANE-2`).
+//
+// Refused too, but by a *different* rule of the same model (`Q306`: a
+// nonempty pack may not be caught by a clause that does not open it). The two
+// refusals together are what pin the case to its own construct: discarding
+// after an opening is `Q305`, and never opening is `Q306` — neither way of
+// walking away from live custody is writable.
+error Failure { Failed; }
+
+fn main() -> i32 {
+    error region R {
+        let a = qcore_acquire(1, true, Failure);
+        qcore_check(false, Failure);
+    } catch (Failure) {
+    }
+    return 0;
+}
