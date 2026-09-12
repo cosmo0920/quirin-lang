@@ -945,10 +945,11 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
   `stdio`, `pipes`, `branching`, `extern`, `unsafe-linkage`, `threads`,
   `events`, `strings` (text reaching a stream), `sockets` (checked TCP/UDP over
   loopback, now including declared IPv4/IPv6 addresses), `http` (an executed
-  HTTP/1.1 subset, beside the same bytes written by hand) and `loops`. Every
+  HTTP/1.1 subset, beside the same bytes written by hand), `loops` and
+  `records` (the first aggregate type; `EXAMPLES-AGGREGATES`, wave 28). Every
   program compiles through the real pipeline and is byte-compared against its
   reference execution by a workspace test. Since card `EXAMPLES-SUITE-WIRE` all
-  **eleven** families are held to one standard by
+  **twelve** families are held to one standard by
   `compiler/tests/examples_suite.rs`, which reaches them by **directory scan**
   rather than a hand-kept list — so a new family is covered structurally rather
   than by an author's diligence — while `examples/{strings,sockets,http}` keep
