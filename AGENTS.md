@@ -363,7 +363,21 @@ pointer is the card that established it; read it before deviating.
     that kept `len` out of the global list, so it takes that card's narrow
     contextual rule instead. Do not promote it to the global set.
     `SOCKET-EVENT-COMPOSE` and `STRING-CONCAT` each added **none**, both censuses
-    run rather than assumed. `loop-v1`, `socket-event-compose`, `string-concat`.
+    run rather than assumed. `SOCKET-INET-ADDRESSES` added **none and changed no
+    lexer rule**: a declared address (`bind S 127.0.0.1:8080;`,
+    `connect C [::1]:8080;`) is read back out of the tokens the existing lexer
+    already produces — a dotted quad is `Float Dot Float` because `127.0` is a
+    float spelling, `::` is the existing atomic `ColonColon`, and `[|` still wins
+    over `[` by longest match, so the `[| |]` and `..` golden surfaces are
+    untouched. An address position is told from a name position by the one fact
+    that **every address of this route spells a port**, so its token run carries a
+    `:`; the run's tokens must be lexically adjacent. Its one name-resolution
+    exclusion is **the address reader itself** — `source_socket::address_host_span`
+    returns the token range of a statement's address *host*, deliberately leaving
+    the **port** outside it so a port name stays a genuine reference — and the
+    census measures it claiming a span in **no** `.qcore`/`.qc` file of this
+    repository outside the card's own two examples. `loop-v1`,
+    `socket-event-compose`, `string-concat`, `socket-inet-addresses`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -505,6 +519,36 @@ pointer is the card that established it; read it before deviating.
     `borrow_utf8` keeps `source.buffer.v1` — and a composed module is one that
     **acquires** a buffer, which is what keeps `drop s;` on a string refusing at
     `Q068` where it always did. `string-concat`.
+15i. **A declared address is a check-time constant parsed once, and the two
+    address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
+    `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
+    dotted quad or a bracketed IPv6 literal and a port that is an integer literal
+    or a check-time-constant binding. The address is parsed **once**, by
+    `qcore_core::socket_address`, and the emitted program carries its **octets** —
+    do not add an `inet_pton` (or any other text conversion) to the emitted C, or
+    two parsers can read one spelling differently. **The address form admits no
+    external peer**: a target is resolved against the addresses this program's own
+    binds declared, and one no bind answers to refuses at `Q085`
+    (`SOCKET-EXTERNAL-PEER`); an **ephemeral** port never names a socket, which is
+    also what keeps every pre-existing implicit-bind program unreachable by
+    address. Custody and the transport check read **one** resolution
+    (`std_socket::resolve_addresses`) so a `connect` through an address and a
+    `connect` through a name write the *same* listener — do not add a second
+    resolution, or constraint 15g's loan could be evaded by spelling a socket
+    differently. Two per-arm decisions are **explicit and must stay explicit**,
+    because the platforms' defaults differ and an inherited default is a silent
+    divergence: every IPv6 socket sets `IPV6_V6ONLY` to **1** on every arm (proved
+    constant in `QCore.SocketInetAddresses`), and a declared bind must *succeed*
+    when no live socket holds the address and *fail* when one does — which needs
+    `SO_REUSEADDR` on the POSIX arms (a `TIME_WAIT` remnant is not a live holder)
+    and needs it **absent** on Winsock, where it would admit a second live socket.
+    `SO_REUSEPORT` is set nowhere. A host without IPv6 is **probed on the running
+    system** (constraint 15d's shape): only an explicit
+    unsupported-family/type/protocol result selects the distinct recorded exit
+    status, every other failure refuses, and **nothing falls back to IPv4** — a
+    fallback would bind a different address from the declared one. The implicit
+    `bind NAME;` and `connect NAME NAME;` forms emit the statements they always
+    did. `socket-inet-addresses`.
 
 **Providers, packages and limits**
 
@@ -706,7 +750,7 @@ condition, still stable, and still may not be reused by a second pass.
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
 | `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` in three bands: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row (`Q068`–`Q073`, relocated from `Q065`–`Q070` at integration); its composition with the output modules — `print TEXT;` and `log LEVEL TEXT;` over a quoted literal, a bound string or one inline slice — where `Q075` is the text line's shape and `Q076` a text operand naming no string this entry bound (`Q075`–`Q076`, card `STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool); and **computed text** (`Q077`–`Q079`, card `STRING-CONCAT`, reassigned to the same pass) — `concat(…)` over check-time-known pieces into a new static payload, `dec(NAME)`/`hex(NAME)` for the text of a bound integer, and `borrow_utf8(NAME)` bridging an owned `std.buffer` into an immutable view, where `Q077` is the band's shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window together with the inherited ownership checker's own refusal, and `Q079` the **static UTF-8 decision** on a buffer's write history |
-| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Since card `SOCKET-EVENT-COMPOSE` the row also covers the **reactor composition** — a checked socket registered with `source.event.v1`'s reactor — which allocates **no code**: a registration's refusals land on `Q080` (shape, including crossed spans), `Q081` (a name at a registration position), `Q082` (a socket in no state this program can make ready), `Q083` (whose condition is **widened** from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value), `Q085` (a turn the committed history does not decide, including a two-member ready set) and `Q087` |
+| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Since card `SOCKET-EVENT-COMPOSE` the row also covers the **reactor composition** — a checked socket registered with `source.event.v1`'s reactor — which allocates **no code**: a registration's refusals land on `Q080` (shape, including crossed spans), `Q081` (a name at a registration position), `Q082` (a socket in no state this program can make ready), `Q083` (whose condition is **widened** from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value), `Q085` (a turn the committed history does not decide, including a two-member ready set) and `Q087`. Since card `SOCKET-INET-ADDRESSES` the row also covers **declared IPv4 and IPv6 addresses with ports** — `bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`, `sendto U ADDRESS […];` — which likewise allocates **no code**: a spelling that is not an address lands on `Q080`, a port naming nothing on `Q081`, a family mismatch or a second bind of one address on `Q082`, a socket at a port position on `Q086`, and a target address no bind of this program declares (or one naming a kernel-chosen port) on `Q085` as the external-peer refusal. One condition is **widened**: `Q084`'s, from a byte/payload-length/receive-count range to those and a **port** range |
 | `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (whose signature condition is a declared `Content-Length` that is not the literal content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`) |
 | `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`) |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |

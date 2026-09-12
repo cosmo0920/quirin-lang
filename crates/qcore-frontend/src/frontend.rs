@@ -2705,11 +2705,20 @@ fn lexical_references(
         tokens.drain(..=equal);
     }
 
+    // Card `SOCKET-INET-ADDRESSES`: the host half of a declared address is
+    // spelled with words — a hexadecimal IPv6 group and every label of a
+    // hostname both lex as identifiers — so it is excluded from reference
+    // collection by the address reader itself rather than by a shape rule. The
+    // **port** stays outside the excluded range and remains a genuine reference.
+    let address_host = crate::source_socket::address_host_span(&tokens);
     let mut result = BTreeSet::new();
     for (index, token) in tokens.iter().enumerate() {
         let TokenKind::Word(word) = &token.kind else {
             continue;
         };
+        if address_host.is_some_and(|(start, end)| start <= index && index < end) {
+            continue;
+        }
         let previous = index.checked_sub(1).and_then(|index| tokens.get(index));
         let next = tokens.get(index + 1);
         // Header binders are definitions in the body scope, not references.

@@ -1,0 +1,47 @@
+// The same checked TCP echo over a DECLARED IPv6 address and port
+// (card SOCKET-INET-ADDRESSES).
+//
+// `[::1]` is the IPv6 loopback, spelled in the bracketed form RFC 3986 uses so
+// that the `:` before the port cannot be confused with the `:` inside the
+// address. `source.socket.v1` keeps the two address families disjoint: this
+// program's sockets are created with AF_INET6, and the emitted C sets
+// IPV6_V6ONLY to 1 EXPLICITLY rather than inheriting it — Linux defaults it off
+// and Windows defaults it on, and an inherited default would mean this program
+// binds different things on different hosts.
+//
+// A host without IPv6 is a real environment and is answered honestly: the
+// emitted program asks the running kernel for the socket, and an explicit
+// "address family not supported" result exits with its own distinct status. It
+// does NOT fall back to IPv4 — a fallback would bind a different address from
+// the one written here, which is the one thing a declared address exists to
+// prevent.
+import std.socket;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    let port = 49302;
+
+    let listener = tcp;
+    bind listener [::1]:port;
+    listen listener;
+
+    let client = tcp;
+    connect client [::1]:port;
+    let server = accept listener;
+
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+    send server [101, 114, 111, 67, 81];
+
+    let first = recv client;
+    recv client 4;
+
+    print dec first;
+    print hex first;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}

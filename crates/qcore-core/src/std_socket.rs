@@ -77,12 +77,35 @@
 //!   for uniformity.
 //! * **An unaccepted connection at listener close.** Same ground.
 //!
+//! # Declared addresses (card `SOCKET-INET-ADDRESSES`)
+//!
+//! A `bind` may spell the address it binds — `bind S 127.0.0.1:8080;`,
+//! `bind S [::1]:8080;` — and a `connect` or a `sendto` may name its target by
+//! that address instead of by a socket name. **This does not admit an external
+//! peer.** A target address is resolved, at check time, against the addresses
+//! this same program's own binds declared ([`resolve_addresses`]); one no bind
+//! answers to is refused by name at `Q085`, and so is one naming a kernel-chosen
+//! port, because an ephemeral port is not known at check time and so is not a
+//! name. What the declared form adds is that the emitted program really binds and
+//! really connects to the spelled address rather than reading a peer's address
+//! back with `getsockname` — inbound and outbound both naming the endpoint.
+//!
+//! The two address families are kept **disjoint**: a socket is created in exactly
+//! one of them, decided by its own bind or by the first peer it reaches, and a
+//! socket that declares neither is created in IPv4 — the family every program
+//! written before that card already had. There is still **no name resolution**: a
+//! hostname is not an address and is refused by name (`SOCKET-DNS`).
+//!
 //! # What is not claimed
 //!
-//! * **No addressing.** A port is chosen by the kernel (bind to port 0, read
-//!   back with `getsockname`) and never reaches a source program, a certificate
-//!   or an observation. This is what lets two runs of the same program, and
-//!   parallel runs of the whole test suite, produce byte-identical output.
+//! * **No resolution, and no port the checker cannot compute.** A port is either
+//!   chosen by the kernel (bind to port 0, read back with `getsockname`) or a
+//!   check-time constant the program declared; either way nothing computed at run
+//!   time reaches a certificate or an observation. The port-0 forms are what let
+//!   two runs of the same program, and parallel runs of the whole test suite,
+//!   produce byte-identical output; a declared fixed port trades that for a
+//!   nameable endpoint and answers a collision with a bounded, distinctly-statused
+//!   run failure (`SOCKET-INET-FIXED-PORT-COLLISION`).
 //! * **No text.** A payload is bytes. A string payload is the named follow-on
 //!   `SOCKET-STRING-PAYLOAD` and belongs to whichever card owns text.
 //!
@@ -119,6 +142,7 @@ use crate::os_endpoint::{
     DescriptionState, DescriptorState, Errno, Outcome, Premises, Recovery, Target, close_poststate,
 };
 use crate::ownership::{self, Footprint, OwnershipError, OwnershipOp, ResourceId};
+use crate::socket_address::{Endpoint, Family, MAX_PORT, PortSpec, ResolvedAddress, SocketAddress};
 use crate::socket_event::{
     MAX_WATCHED, RegistrationId, SocketDispatchTurn, SocketRegistration, assign, close_context,
     idle_turn, open_context, ready_turn, retire,
@@ -294,18 +318,43 @@ pub enum SocketStatement {
     /// `let NAME = tcp;` / `let NAME = udp;` — create an owned socket. The
     /// custody obligation opens here.
     Create { name: String, kind: SocketKind },
-    /// `bind NAME;` — bind to the loopback interface on a kernel-chosen port.
+    /// `bind NAME;` — bind to the IPv4 loopback interface on a kernel-chosen
+    /// port — or `bind NAME ADDRESS;`, which binds the address the program
+    /// declares (card `SOCKET-INET-ADDRESSES`).
     ///
-    /// The port is deliberately **not** spellable. A fixed port would make two
-    /// concurrent runs of the same program collide, which is a correctness
-    /// requirement for a test suite that runs in parallel and not a nicety.
-    Bind { name: String },
+    /// `address: None` is the original form and is **unchanged in every
+    /// respect**, down to the byte the backend emits for it. It stays the
+    /// collision-free spelling: no port is written down, so two concurrent runs
+    /// of the same program cannot collide on one.
+    ///
+    /// `address: Some(..)` is the declared form. Its port may still be `0`, the
+    /// explicit spelling of "this address, a kernel-chosen port"; a non-zero port
+    /// is what makes the socket **nameable by address** to a later `connect` or
+    /// `sendto` of the same program, and it is also the only spelling that can
+    /// collide with something outside this program — refused at check time
+    /// against this program's own binds, and a *bounded, distinctly-statused*
+    /// run failure against anything else.
+    Bind {
+        name: String,
+        address: Option<SocketAddress>,
+    },
     /// `listen NAME;` — accept-queue depth one, which is all a program whose
     /// every connection is accepted before the next needs.
     Listen { name: String },
     /// `connect NAME NAME;` — connect the first socket to the second, which
-    /// must be a **listening socket of this same program**.
-    Connect { client: String, listener: String },
+    /// must be a **listening socket of this same program** — or
+    /// `connect NAME ADDRESS;`, which names that same socket by the address it
+    /// declared (card `SOCKET-INET-ADDRESSES`).
+    ///
+    /// **The address form does not admit an external peer**, and that is the
+    /// whole of the card's determinism argument: the address is resolved against
+    /// the addresses this program's own `bind` statements declared, and an
+    /// address no such bind matches is refused at `Q085` by name
+    /// (`SOCKET-EXTERNAL-PEER`). What the form adds is that the emitted program
+    /// really does connect to the spelled address rather than to whatever
+    /// `getsockname` reports — outbound transport to a declared endpoint, with
+    /// the peer's existence still decided at check time.
+    Connect { client: String, listener: Endpoint },
     /// `let NAME = accept NAME;` — take the pending connection off a listener,
     /// acquiring a second owned socket.
     Accept { binding: String, listener: String },
@@ -332,10 +381,16 @@ pub enum SocketStatement {
         expect: Option<TextPayload>,
     },
     /// `sendto NAME NAME [OPERAND, …];` — one datagram from the first socket to
-    /// the second, which must be a **bound UDP socket of this same program**.
+    /// the second, which must be a **bound UDP socket of this same program** —
+    /// or `sendto NAME ADDRESS [OPERAND, …];`, naming that same socket by the
+    /// address it declared (card `SOCKET-INET-ADDRESSES`).
+    ///
+    /// The address form is resolved exactly as [`SocketStatement::Connect`]'s
+    /// is, and refuses on the same ground when nothing this program bound
+    /// answers to it.
     SendTo {
         name: String,
-        target: String,
+        target: Endpoint,
         payload: SocketPayload,
     },
     /// `recvfrom NAME COUNT;`, `let NAME = recvfrom NAME;` with an implied count
@@ -467,6 +522,26 @@ pub struct SocketCertificate {
     pub effects: EffectRow,
     /// `(name, kind)` for every socket this entry acquired, in program order.
     pub acquisitions: Vec<(String, SocketKind)>,
+    /// The **address family** every socket this entry acquired is created in, in
+    /// the same order as [`Self::acquisitions`] (card `SOCKET-INET-ADDRESSES`).
+    ///
+    /// Published because it is the one fact the backend needs that no statement
+    /// spells directly: a socket's family is decided by the address its `bind`
+    /// declared, or — for a connector or a datagram sender that declares none —
+    /// by the peer it reaches. A socket that neither binds nor reaches a peer
+    /// declares no family at all and is created in [`Family::V4`], which is the
+    /// family every program written before this card already had; that is what
+    /// keeps their emitted C byte-identical.
+    pub families: Vec<(String, Family)>,
+    /// Every **declared** address this entry spells, by the event that spells it
+    /// and with its port already resolved (card `SOCKET-INET-ADDRESSES`).
+    ///
+    /// One vector for all three positions — a `bind`'s local address, a
+    /// `connect`'s target and a `sendto`'s target — because they are one thing:
+    /// an address the program wrote down and the checker evaluated. A program
+    /// that declares none publishes an empty vector and emits exactly what it
+    /// emitted before.
+    pub declared_addresses: Vec<(usize, ResolvedAddress)>,
     /// Every release, in program order.
     pub closes: Vec<String>,
     /// The maximum number of live descriptors the program ever holds, taken
@@ -560,6 +635,21 @@ pub enum SocketError {
     },
     /// `Q084`: a payload byte outside `0..=255`.
     ByteOutOfRange { event: usize, value: i32 },
+    /// `Q084`: a **port** outside `0..=65535`, reached through a name this entry
+    /// bound to an integer that is not one (card `SOCKET-INET-ADDRESSES`).
+    ///
+    /// Deliberately `Q084` and **not a new code**. `Q084`'s condition has always
+    /// been "a declared numeric operand of this route is outside the range the
+    /// position models" — a byte, a payload length, a receive count — and a port
+    /// is the same condition reached by a new position. §L21 allocates a code to
+    /// a condition, and the `Q-NAMESPACE-DECISION` ice box makes the condition
+    /// extension the standing mechanism rather than an expedient; the widening is
+    /// stated there and in this card's report rather than taken silently.
+    ///
+    /// A port written as a **literal** never reaches here: the source reader
+    /// refuses an out-of-range literal where it reads it, because at that point
+    /// the text is all it has. This arm is for the form the reader cannot decide.
+    PortOutOfRange { event: usize, value: i32 },
     /// `Q084`: a payload length outside `1..=MAX_PAYLOAD`, or a datagram receive
     /// whose declared count is not the queued datagram's length.
     PayloadOutOfRange {
@@ -608,6 +698,7 @@ impl SocketError {
             Self::Protocol { .. } => "Q082",
             Self::Custody { .. } | Self::Reactor { .. } => "Q083",
             Self::ByteOutOfRange { .. }
+            | Self::PortOutOfRange { .. }
             | Self::PayloadOutOfRange { .. }
             | Self::PayloadDisagrees { .. } => "Q084",
             Self::WouldBlock { .. } => "Q085",
@@ -627,6 +718,7 @@ impl SocketError {
             | Self::Custody { event, .. }
             | Self::Reactor { event, .. }
             | Self::ByteOutOfRange { event, .. }
+            | Self::PortOutOfRange { event, .. }
             | Self::PayloadOutOfRange { event, .. }
             | Self::PayloadDisagrees { event, .. }
             | Self::WouldBlock { event, .. }
@@ -669,6 +761,12 @@ impl fmt::Display for SocketError {
                 f,
                 "{value} is not a byte; `source.socket.v1` sends 0 through 255 and refuses \
                  anything else rather than truncating it"
+            ),
+            Self::PortOutOfRange { value, .. } => write!(
+                f,
+                "{value} is not a port; `source.socket.v1` models 0 through {MAX_PORT}, where 0 \
+                 is the explicit spelling of a kernel-chosen port, and refuses anything else \
+                 rather than truncating it"
             ),
             Self::PayloadOutOfRange {
                 length,
@@ -808,7 +906,8 @@ pub fn custody_operations(program: &SocketProgram) -> Vec<OwnershipOp> {
         })
         .collect();
     let mut next_id: ResourceId = 1;
-    custody_span(&program.statements, &owned, &mut next_id)
+    let resolution = resolve_addresses(program);
+    custody_span(&program.statements, 0, &owned, &resolution, &mut next_id)
 }
 
 /// The operations of one span of statements, with each registration's span
@@ -824,7 +923,9 @@ pub fn custody_operations(program: &SocketProgram) -> Vec<OwnershipOp> {
 /// operation list.
 fn custody_span(
     statements: &[SocketStatement],
+    offset: usize,
     owned: &BTreeSet<&str>,
+    resolution: &AddressResolution,
     next_id: &mut ResourceId,
 ) -> Vec<OwnershipOp> {
     let mut operations = Vec::new();
@@ -844,7 +945,13 @@ fn custody_span(
                 })
                 .map(|offset| index + 1 + offset);
             let body_end = end.unwrap_or(statements.len());
-            let body = custody_span(&statements[index + 1..body_end], owned, next_id);
+            let body = custody_span(
+                &statements[index + 1..body_end],
+                offset + index + 1,
+                owned,
+                resolution,
+                next_id,
+            );
             operations.push(OwnershipOp::BorrowShared {
                 owner: socket.clone(),
                 borrower: registration.clone(),
@@ -853,7 +960,14 @@ fn custody_span(
             index = end.map_or(statements.len(), |end| end + 1);
             continue;
         }
-        statement_custody(&statements[index], owned, next_id, &mut operations);
+        statement_custody(
+            &statements[index],
+            offset + index,
+            owned,
+            resolution,
+            next_id,
+            &mut operations,
+        );
         index += 1;
     }
     operations
@@ -861,7 +975,9 @@ fn custody_span(
 
 fn statement_custody(
     statement: &SocketStatement,
+    event: usize,
     owned: &BTreeSet<&str>,
+    resolution: &AddressResolution,
     next_id: &mut ResourceId,
     operations: &mut Vec<OwnershipOp>,
 ) {
@@ -889,26 +1005,36 @@ fn statement_custody(
         // distinction is the ownership IR's own, used for what it means — and
         // it is what decides, with no rule of this card's, that a registered
         // socket may be sent on and received from but not re-configured.
-        SocketStatement::Bind { name } | SocketStatement::Listen { name } if names(name) => {
+        SocketStatement::Bind { name, .. } | SocketStatement::Listen { name } if names(name) => {
             operations.push(OwnershipOp::Write(name.clone()));
         }
-        SocketStatement::Connect { client, listener } => {
+        // A `connect` whose target is an **address** writes the listener that
+        // address resolves to, exactly as the named form writes the listener it
+        // spells. The resolution is read from [`AddressResolution`] rather than
+        // recomputed, which is what makes "a `connect` on a watched socket
+        // refuses" hold for **both** spellings: the loan sees the same listener
+        // either way (constraint 15g).
+        SocketStatement::Connect { client, .. } => {
             if names(client) {
                 operations.push(OwnershipOp::Write(client.clone()));
             }
-            if names(listener) {
-                operations.push(OwnershipOp::Write(listener.clone()));
+            if let Some(listener) = resolved_target(resolution, event)
+                && owned.contains(listener)
+            {
+                operations.push(OwnershipOp::Write(listener.to_owned()));
             }
         }
         SocketStatement::Send { name, .. } | SocketStatement::Recv { name, .. } if names(name) => {
             operations.push(OwnershipOp::Read(name.clone()));
         }
-        SocketStatement::SendTo { name, target, .. } => {
+        SocketStatement::SendTo { name, .. } => {
             if names(name) {
                 operations.push(OwnershipOp::Read(name.clone()));
             }
-            if names(target) {
-                operations.push(OwnershipOp::Read(target.clone()));
+            if let Some(target) = resolved_target(resolution, event)
+                && owned.contains(target)
+            {
+                operations.push(OwnershipOp::Read(target.to_owned()));
             }
         }
         SocketStatement::RecvFrom { name, .. } if names(name) => {
@@ -999,6 +1125,336 @@ pub fn close_disposition(name: &str) -> SocketCloseDisposition {
         success_description: success.description,
         failure_descriptor: failure.descriptor,
         failure_retry_permitted: failure.permitted_recovery.contains(&Recovery::Close),
+    }
+}
+
+/// What one declared-address position of a program evaluates to
+/// (card `SOCKET-INET-ADDRESSES`).
+///
+/// Total by construction: every `bind`, `connect` and `sendto` of a program gets
+/// exactly one of these, including the forms that spell no address at all. The
+/// failing arms are **facts about the program**, not diagnostics — turning one
+/// into a refusal is [`check_socket_program`]'s job, and reading one to build the
+/// ownership operation list is [`custody_operations`]'.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum AddressOutcome {
+    /// The position is well-formed. `address` is the evaluated address where the
+    /// program declared one, and `target` is the socket of this program a
+    /// `connect` or a `sendto` reaches.
+    Resolved {
+        address: Option<ResolvedAddress>,
+        target: Option<String>,
+    },
+    /// The port names something this entry bound to no integer.
+    PortNotAScalar(String),
+    /// The port names a socket.
+    PortIsASocket(String),
+    /// The port evaluated outside `0..=65535`.
+    PortOutOfRange(i32),
+    /// A target address carrying port 0. An ephemeral port is chosen by the
+    /// kernel and is therefore not a name: no bind of this program can be known
+    /// at check time to answer to it.
+    EphemeralEndpoint(ResolvedAddress),
+    /// **The external-peer refusal, as a fact.** No `bind` of this program
+    /// declared this address, so the peer is outside the program.
+    NoSuchEndpoint(ResolvedAddress),
+    /// The two ends of a connection or a datagram are in different address
+    /// families.
+    FamilyMismatch { socket: Family, endpoint: Family },
+}
+
+/// Everything a program's own addresses determine, derived in **one** forward
+/// walk (card `SOCKET-INET-ADDRESSES`).
+///
+/// Published, and consumed by both readers that need it, because the alternative
+/// is two walks that can disagree about which socket an address names — and the
+/// custody operation list and the transport check must name the *same* listener
+/// or a `watch`ed socket could be connected to through its address without the
+/// loan noticing.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct AddressResolution {
+    /// One entry per `bind`, `connect` and `sendto`, by statement index.
+    pub outcomes: BTreeMap<usize, AddressOutcome>,
+    /// The family every socket that declares one is created in. A socket absent
+    /// from this map declares none and is created in [`Family::V4`].
+    pub families: BTreeMap<String, Family>,
+    /// The address every bound socket holds.
+    pub locals: BTreeMap<String, ResolvedAddress>,
+}
+
+/// The IPv4 loopback address a bare `bind NAME;` binds, spelled once.
+fn implicit_local() -> ResolvedAddress {
+    ResolvedAddress {
+        ip: crate::socket_address::IpAddress::V4([127, 0, 0, 1]),
+        port: 0,
+    }
+}
+
+fn evaluate_port(
+    port: &PortSpec,
+    scalars: &BTreeMap<String, i32>,
+    sockets: &BTreeSet<String>,
+) -> Result<u16, AddressOutcome> {
+    let value = match port {
+        PortSpec::Literal(literal) => {
+            return u16::try_from(*literal).map_err(|_| {
+                AddressOutcome::PortOutOfRange(i32::try_from(*literal).unwrap_or(i32::MAX))
+            });
+        }
+        PortSpec::Scalar(name) => {
+            if sockets.contains(name) {
+                return Err(AddressOutcome::PortIsASocket(name.clone()));
+            }
+            match scalars.get(name) {
+                Some(value) => *value,
+                None => return Err(AddressOutcome::PortNotAScalar(name.clone())),
+            }
+        }
+    };
+    u16::try_from(value).map_err(|_| AddressOutcome::PortOutOfRange(value))
+}
+
+/// Evaluate every declared address of a program and resolve every target.
+///
+/// Deliberately **total and diagnostic-free**: it never refuses, it never stops,
+/// and it decides no transport rule. A program this walk cannot resolve is one
+/// [`check_socket_program`] refuses, and the two agree because the second reads
+/// the first rather than repeating it.
+#[must_use]
+pub fn resolve_addresses(program: &SocketProgram) -> AddressResolution {
+    let mut resolution = AddressResolution::default();
+    let mut scalars: BTreeMap<String, i32> = BTreeMap::new();
+    let mut sockets: BTreeSet<String> = BTreeSet::new();
+    let mut bound: Vec<(String, ResolvedAddress)> = Vec::new();
+
+    // Assign a family, or report that this socket already had a different one.
+    // First assignment wins: a socket's family is decided once, by its own bind
+    // or by the peer it first reaches, and never re-decided.
+    fn adopt(
+        families: &mut BTreeMap<String, Family>,
+        name: &str,
+        family: Family,
+    ) -> Option<AddressOutcome> {
+        match families.get(name) {
+            Some(existing) if *existing != family => Some(AddressOutcome::FamilyMismatch {
+                socket: *existing,
+                endpoint: family,
+            }),
+            Some(_) => None,
+            None => {
+                families.insert(name.to_owned(), family);
+                None
+            }
+        }
+    }
+
+    for (index, statement) in program.statements.iter().enumerate() {
+        match statement {
+            SocketStatement::Let { binding, value } => {
+                scalars.insert(binding.clone(), *value);
+            }
+            SocketStatement::Create { name, .. } => {
+                sockets.insert(name.clone());
+            }
+            SocketStatement::Accept { binding, listener } => {
+                sockets.insert(binding.clone());
+                if let Some(family) = resolution.families.get(listener).copied() {
+                    resolution.families.insert(binding.clone(), family);
+                }
+            }
+            SocketStatement::Bind { name, address } => {
+                let outcome = match address {
+                    None => {
+                        resolution.locals.insert(name.clone(), implicit_local());
+                        bound.push((name.clone(), implicit_local()));
+                        adopt(&mut resolution.families, name, Family::V4).unwrap_or(
+                            AddressOutcome::Resolved {
+                                address: None,
+                                target: None,
+                            },
+                        )
+                    }
+                    Some(address) => match evaluate_port(&address.port, &scalars, &sockets) {
+                        Err(outcome) => outcome,
+                        Ok(port) => {
+                            let resolved = ResolvedAddress {
+                                ip: address.ip,
+                                port,
+                            };
+                            resolution.locals.insert(name.clone(), resolved);
+                            bound.push((name.clone(), resolved));
+                            adopt(&mut resolution.families, name, address.family()).unwrap_or(
+                                AddressOutcome::Resolved {
+                                    address: Some(resolved),
+                                    target: None,
+                                },
+                            )
+                        }
+                    },
+                };
+                resolution.outcomes.insert(index, outcome);
+            }
+            SocketStatement::Connect { client, listener } => {
+                let outcome = reach(
+                    &mut resolution,
+                    &scalars,
+                    &sockets,
+                    &bound,
+                    client,
+                    listener,
+                );
+                resolution.outcomes.insert(index, outcome);
+            }
+            SocketStatement::SendTo { name, target, .. } => {
+                let outcome = reach(&mut resolution, &scalars, &sockets, &bound, name, target);
+                resolution.outcomes.insert(index, outcome);
+            }
+            _ => {}
+        }
+    }
+    resolution
+}
+
+/// Resolve the socket one `connect` or `sendto` reaches, and agree the two ends'
+/// families.
+fn reach(
+    resolution: &mut AddressResolution,
+    scalars: &BTreeMap<String, i32>,
+    sockets: &BTreeSet<String>,
+    bound: &[(String, ResolvedAddress)],
+    origin: &str,
+    endpoint: &Endpoint,
+) -> AddressOutcome {
+    let (address, target) = match endpoint {
+        Endpoint::Named(name) => (None, name.clone()),
+        Endpoint::Address(address) => {
+            let port = match evaluate_port(&address.port, scalars, sockets) {
+                Ok(port) => port,
+                Err(outcome) => return outcome,
+            };
+            let resolved = ResolvedAddress {
+                ip: address.ip,
+                port,
+            };
+            if resolved.ephemeral() {
+                return AddressOutcome::EphemeralEndpoint(resolved);
+            }
+            // The whole determinism argument, in three lines: the peer is
+            // whichever socket **of this program** declared this address. If
+            // none did, the peer is outside the program and the address is
+            // refused by name.
+            let Some((name, _)) = bound.iter().find(|(_, candidate)| *candidate == resolved) else {
+                return AddressOutcome::NoSuchEndpoint(resolved);
+            };
+            (Some(resolved), name.clone())
+        }
+    };
+    let family = resolution
+        .families
+        .get(&target)
+        .copied()
+        .unwrap_or(Family::V4);
+    if let Some(mismatch) = adopt_family(resolution, origin, family) {
+        return mismatch;
+    }
+    AddressOutcome::Resolved {
+        address,
+        target: Some(target),
+    }
+}
+
+fn adopt_family(
+    resolution: &mut AddressResolution,
+    name: &str,
+    family: Family,
+) -> Option<AddressOutcome> {
+    match resolution.families.get(name) {
+        Some(existing) if *existing != family => Some(AddressOutcome::FamilyMismatch {
+            socket: *existing,
+            endpoint: family,
+        }),
+        Some(_) => None,
+        None => {
+            resolution.families.insert(name.to_owned(), family);
+            None
+        }
+    }
+}
+
+/// The socket a target position of one statement resolves to, if the program
+/// determines one.
+fn resolved_target(resolution: &AddressResolution, event: usize) -> Option<&str> {
+    match resolution.outcomes.get(&event) {
+        Some(AddressOutcome::Resolved {
+            target: Some(target),
+            ..
+        }) => Some(target.as_str()),
+        _ => None,
+    }
+}
+
+/// The address a declared position evaluated to, for the certificate.
+fn declared_address(event: usize, resolution: &AddressResolution) -> Option<ResolvedAddress> {
+    match resolution.outcomes.get(&event) {
+        Some(AddressOutcome::Resolved {
+            address: Some(address),
+            ..
+        }) => Some(*address),
+        _ => None,
+    }
+}
+
+/// The refusal one address position earns, if it earns one.
+///
+/// **The whole mapping from an address fact to a diagnostic lives here**, in one
+/// place, so `bind`, `connect` and `sendto` cannot report the same fault
+/// differently. Every code is one this route already owns — the card allocates
+/// none — and the one condition that is *widened* rather than reused as-is is
+/// `Q084`'s, which now covers a port range beside a byte, a payload length and a
+/// receive count.
+fn address_error(event: usize, resolution: &AddressResolution) -> Option<SocketError> {
+    match resolution.outcomes.get(&event)? {
+        AddressOutcome::Resolved { .. } => None,
+        AddressOutcome::PortNotAScalar(name) => Some(SocketError::NotAScalar {
+            event,
+            name: name.clone(),
+        }),
+        AddressOutcome::PortIsASocket(name) => Some(SocketError::CrossesBoundary {
+            event,
+            name: name.clone(),
+        }),
+        AddressOutcome::PortOutOfRange(value) => Some(SocketError::PortOutOfRange {
+            event,
+            value: *value,
+        }),
+        AddressOutcome::EphemeralEndpoint(address) => Some(would_block(
+            event,
+            format!(
+                "`{address}` names a kernel-chosen port, which is not a name: no `bind` of this \
+                 program can be known at check time to hold it. Reach a socket bound to port 0 by \
+                 its own name instead, or declare the port the listener binds"
+            ),
+        )),
+        AddressOutcome::NoSuchEndpoint(address) => Some(would_block(
+            event,
+            format!(
+                "no `bind` of this program declares `{address}`, so this endpoint is outside the \
+                 program; `source.socket.v1` reaches only sockets of this same program, which is \
+                 what makes every receive, accept and connection completion decidable at check \
+                 time rather than at run time (`SOCKET-EXTERNAL-PEER`)"
+            ),
+        )),
+        AddressOutcome::FamilyMismatch { socket, endpoint } => Some(protocol(
+            event,
+            format!(
+                "this socket is an {} socket and this endpoint is {}; `source.socket.v1` keeps the \
+                 two address families disjoint — a socket is created in exactly one of them, and \
+                 every IPv6 socket the emitted program creates sets `IPV6_V6ONLY`, so the C agrees \
+                 with the model rather than inheriting a platform default",
+                socket.label(),
+                endpoint.label()
+            ),
+        )),
     }
 }
 
@@ -1239,6 +1695,16 @@ pub fn check_socket_program(
 ) -> Result<SocketCertificate, Vec<SocketError>> {
     let mut errors = Vec::new();
 
+    // --- Half zero: the program's own addresses (card `SOCKET-INET-ADDRESSES`). ---
+    //
+    // Derived **before** either half and read by both, so the listener a
+    // `connect` reaches is one socket rather than two answers that happen to
+    // agree. `custody_operations` below derives the same resolution from the
+    // same program and therefore sees the same listener.
+    let resolution = resolve_addresses(program);
+    let mut declared_addresses: Vec<(usize, ResolvedAddress)> = Vec::new();
+    let mut occupied: BTreeMap<ResolvedAddress, String> = BTreeMap::new();
+
     // --- Half one: the inherited custody discipline. ---
     let operations = custody_operations(program);
     if let Err(error) = ownership::check_ownership(&operations) {
@@ -1320,7 +1786,7 @@ pub fn check_socket_program(
                 acquisitions.push((name.clone(), *kind));
                 acquire_descriptor(&mut descriptors, &mut descriptor_order, name);
             }
-            SocketStatement::Bind { name } => match evaluation.open(index, name) {
+            SocketStatement::Bind { name, address } => match evaluation.open(index, name) {
                 Ok(state) => {
                     if state.bound {
                         errors.push(protocol(index, format!("`{name}` is already bound")));
@@ -1335,6 +1801,39 @@ pub fn check_socket_program(
                             .get_mut(name)
                             .expect("resolved above")
                             .bound = true;
+                    }
+                    if address.is_some() {
+                        match address_error(index, &resolution) {
+                            Some(error) => errors.push(error),
+                            None => {
+                                if let Some(declared) = declared_address(index, &resolution) {
+                                    // A second bind of this program declaring the
+                                    // **same** non-ephemeral address is decided
+                                    // here rather than left to the run: two
+                                    // sockets of one program cannot hold one
+                                    // address, and the checker knows both. A
+                                    // collision with something *outside* this
+                                    // program is a different question and stays a
+                                    // bounded run failure with its own status.
+                                    if !declared.ephemeral()
+                                        && let Some(other) = occupied.get(&declared)
+                                    {
+                                        errors.push(protocol(
+                                            index,
+                                            format!(
+                                                "`{other}` of this same program already declares \
+                                                 `{declared}`; two sockets cannot hold one \
+                                                 address, so `source.socket.v1` decides the \
+                                                 collision here rather than leaving it to the run"
+                                            ),
+                                        ));
+                                    } else if !declared.ephemeral() {
+                                        occupied.insert(declared, name.clone());
+                                    }
+                                    declared_addresses.push((index, declared));
+                                }
+                            }
+                        }
                     }
                 }
                 Err(error) => errors.push(error),
@@ -1366,7 +1865,28 @@ pub fn check_socket_program(
                 }
                 Err(error) => errors.push(error),
             },
-            SocketStatement::Connect { client, listener } => {
+            SocketStatement::Connect {
+                client,
+                listener: endpoint,
+            } => {
+                // The address half first: a target this program does not
+                // determine is refused here, and the transport rules below are
+                // then asked about a listener that exists.
+                if let Some(error) = address_error(index, &resolution) {
+                    errors.push(error);
+                    continue;
+                }
+                if let Some(declared) = declared_address(index, &resolution) {
+                    declared_addresses.push((index, declared));
+                }
+                let Some(listener) = resolved_target(&resolution, index).map(str::to_owned) else {
+                    errors.push(SocketError::NotASocket {
+                        event: index,
+                        name: endpoint.to_string(),
+                    });
+                    continue;
+                };
+                let listener = &listener;
                 let client_state = evaluation.open(index, client);
                 let listener_state = evaluation.open(index, listener);
                 match (client_state, listener_state) {
@@ -1644,7 +2164,7 @@ pub fn check_socket_program(
             }
             SocketStatement::SendTo {
                 name,
-                target,
+                target: endpoint,
                 payload,
             } => {
                 let bytes = match evaluation.transfer_bytes(index, payload) {
@@ -1654,6 +2174,21 @@ pub fn check_socket_program(
                         continue;
                     }
                 };
+                if let Some(error) = address_error(index, &resolution) {
+                    errors.push(error);
+                    continue;
+                }
+                if let Some(declared) = declared_address(index, &resolution) {
+                    declared_addresses.push((index, declared));
+                }
+                let Some(target) = resolved_target(&resolution, index).map(str::to_owned) else {
+                    errors.push(SocketError::NotASocket {
+                        event: index,
+                        name: endpoint.to_string(),
+                    });
+                    continue;
+                };
+                let target = &target;
                 let sender = evaluation.open(index, name);
                 let receiver = evaluation.open(index, target);
                 match (sender, receiver) {
@@ -2196,10 +2731,24 @@ pub fn check_socket_program(
     }
 
     if errors.is_empty() {
+        // A socket that declares no family is created in IPv4 — the family every
+        // program written before card `SOCKET-INET-ADDRESSES` already had, which
+        // is what keeps their emitted C byte-identical.
+        let families = acquisitions
+            .iter()
+            .map(|(name, _)| {
+                (
+                    name.clone(),
+                    resolution.families.get(name).copied().unwrap_or(Family::V4),
+                )
+            })
+            .collect();
         Ok(SocketCertificate {
             entry: program.entry.clone(),
             effects: derived,
             acquisitions,
+            families,
+            declared_addresses,
             closes,
             peak_live_descriptors,
             transfers,
@@ -2249,6 +2798,8 @@ pub enum SocketRecheckFailure {
     Entry,
     Effects,
     Acquisitions,
+    Families,
+    DeclaredAddresses,
     Closes,
     PeakLiveDescriptors,
     Transfers,
@@ -2272,6 +2823,8 @@ impl fmt::Display for SocketRecheckFailure {
             Self::Entry => "the entry name",
             Self::Effects => "the derived effect row",
             Self::Acquisitions => "the sockets this entry acquired",
+            Self::Families => "the address family every socket is created in",
+            Self::DeclaredAddresses => "the declared addresses and their resolved ports",
             Self::Closes => "the closes",
             Self::PeakLiveDescriptors => "the peak live descriptor total",
             Self::Transfers => "the committed transfers",
@@ -2311,6 +2864,12 @@ pub fn recheck_socket_certificate(
     }
     if rederived.acquisitions != certificate.acquisitions {
         return Err(SocketRecheckFailure::Acquisitions);
+    }
+    if rederived.families != certificate.families {
+        return Err(SocketRecheckFailure::Families);
+    }
+    if rederived.declared_addresses != certificate.declared_addresses {
+        return Err(SocketRecheckFailure::DeclaredAddresses);
     }
     if rederived.closes != certificate.closes {
         return Err(SocketRecheckFailure::Closes);

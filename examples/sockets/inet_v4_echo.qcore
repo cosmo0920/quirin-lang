@@ -1,0 +1,55 @@
+// A checked TCP echo over a DECLARED IPv4 address and port, in pure QCore
+// source (card SOCKET-INET-ADDRESSES).
+//
+// This is `tcp_echo.qcore` with one thing changed: the listener binds an address
+// the program writes down, and the client reaches it by that address rather than
+// by the listener's name. Inbound and outbound both name the endpoint.
+//
+// What has NOT changed is the determinism argument, and that is the point. A
+// declared address is not a spelled peer: `connect client 127.0.0.1:port;` is
+// admitted only because a `bind` of this same program declares exactly that
+// address, and the checker resolves it to that socket at check time. An address
+// no bind of this program answers to is refused at `Q085` by name — reaching a
+// peer outside the program stays the named follow-on `SOCKET-EXTERNAL-PEER`.
+//
+// The port is written once, as a check-time-constant binding, and both ends read
+// it. A declared port is the one thing here that can collide with something
+// outside this program; if it does, the emitted program fails with the distinct
+// bind status rather than producing a different observation.
+import std.socket;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    // One number, read by the bind and by the connect, so the two cannot drift.
+    let port = 49301;
+
+    // Inbound: the listener binds the address this program declares.
+    let listener = tcp;
+    bind listener 127.0.0.1:port;
+    listen listener;
+
+    // Outbound: the client connects to that declared address. The emitted C
+    // really does connect to 127.0.0.1 on this port — it does not read the
+    // listener's address back with getsockname — and the checker has already
+    // proved a socket of this program is listening there.
+    let client = tcp;
+    connect client 127.0.0.1:port;
+    let server = accept listener;
+
+    // "QCore", as five declared bytes, and the reversed echo back.
+    send client [81, 67, 111, 114, 101];
+    recv server 5;
+    send server [101, 114, 111, 67, 81];
+
+    let first = recv client;
+    recv client 4;
+
+    print dec first;
+    print hex first;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}
