@@ -18,6 +18,11 @@ import std.logger;
 //
 // Two imports are doing separate work here, and both are required: `std.fmt`
 // grants the renderings, `std.io`/`std.logger` grant the two sinks.
+//
+// Of the three rendered lines below exactly one is piped, and the split is the
+// rule examples/README.md records. `total` is bound once and read once, so it
+// flows; the two `borrow b` lines render a *live resource* that four statements
+// read, which is not a linear flow at all, and they stay statements.
 error Failure { Failed; }
 
 extern fn demo_alloc(size: usize) -> ptr<mut, u8>;
@@ -31,7 +36,7 @@ fn main() -> unit effects { io, alloc, mut } {
     print dec borrow b;
     demo_fill(b, 7);
     let total = demo_sum(b, 8) succeeds 56;
-    log info dec total;
+    total |> log info dec;
     log warn hex borrow b;
     demo_release(move b);
     flush;

@@ -44,7 +44,7 @@ fn main() -> unit effects { io, alloc } {
     recv client "HTTP/1.1 204 No Content\r\nConnection: close\r\n\r\n";
 
     let status = 204;
-    print dec status;
+    status |> print dec;
 
     close server;
     close client;

@@ -55,6 +55,53 @@ one acquisition, one check, one release. It has no page of its own and claims
 none of the guarantees the table above does; the suite holds it to one thing
 only, that it still checks.
 
+## How these programs are spelled: pipe the flow, parenthesize the assembly
+
+`|>` and the statement form desugar to the same tokens before any checker runs,
+so choosing between them is a choice about reading and never about meaning. The
+examples make it the same way every time:
+
+* **Pipe the flow.** Where a value moves in a straight line from one binding
+  into one sink — a scalar rendered, a string written, a loop index printed —
+  write `value |> print dec;`. The value goes where the eye starts, and nothing
+  is lost, because a pipeline is exactly linear.
+* **Parenthesize the assembly.** Where a value is *built* from several pieces,
+  write the call: `concat("Content-Length: ", dec(length), "\r")`. Pipe
+  insertion is first-argument-only by design, so an n-ary construction has no
+  honest pipeline spelling — one operand would go to the front and the rest
+  would stay behind, which reads as a claim about the pieces that is not true.
+* **A value that fans out stays a statement.** Where one binding is read by two
+  or more later statements — `first` printed twice in
+  [sockets/tcp_echo.qcore](sockets/tcp_echo.qcore), `length` both declared in a
+  header and printed in [http/computed_length.qcore](http/computed_length.qcore)
+  — the flow is not linear, and piping the first reader would suggest the value
+  ends there. Keep `print dec first;`.
+* **Never contort one into the other.** A pipeline is linear and first-argument
+  only; those are design decisions, not gaps. Where the shape does not fit,
+  the statement form is the right spelling and not a fallback.
+* A **written literal at a sink** is not a flow: `print "HTTP/1.1 200 OK";` has
+  nothing to move to the front, so it stays as written.
+
+One published program is **not** yet spelled to the rule, and saying so here is
+cheaper than a rule with a silent exception:
+[strings/status_line.qcore](strings/status_line.qcore) writes `body |> print;`
+and then `body[7:12] |> print;`, so `body` is read by two statements and belongs
+on the fan-out side. Whether a *slice of* a value counts as a second reader, or
+as the assembly half of this rule, is an open question about the rule rather
+than about that program, and it is the one case where moving a line would mean
+un-piping rather than piping (`EXAMPLES-STYLE-SLICE-FANOUT`).
+
+Two families sit above this rule rather than under it, and deliberately:
+
+* [events/](events/) keeps its own standing rule — **every line in those
+  programs is spelled as a pipeline**, fan-out included — stated on that page
+  and unchanged here. Where the two rules disagree, the events page wins.
+* [pipes/](pipes/) and [stdio/](stdio/) are the *demonstration* of the two
+  spellings: `pipes/rendered_lines.qcore` and its unpiped twins
+  `stdio/renderings.qcore` and `stdio/severities.qcore` exist to be read side by
+  side and emit the same C. Neither side is respelled toward the other, because
+  the contrast is the content.
+
 Two things worth knowing before reading any of them:
 
 * **A route is selected by what a file uses, not by a flag.** Importing

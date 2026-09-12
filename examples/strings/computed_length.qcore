@@ -48,14 +48,20 @@ fn main() -> unit effects { io, alloc, mut } {
     let kind = "Content-Type: application/json\r";
     let declared = concat("Content-Length: ", dec(length), "\r");
 
-    print status;
-    print kind;
-    print declared;
+    status |> print;
+    kind |> print;
+    declared |> print;
     print "\r";
 
     // The content itself, last — which is also the last statement that reads
     // the borrow, so the buffer's window closes here and the release below is
     // admitted.
+    //
+    // This one is NOT piped, and the difference is the point: `content` is read
+    // twice, once by `len` above and once here, so its flow is not linear and a
+    // pipeline would suggest it ends at this sink. The three lines above each
+    // have one reader, and the empty line is a written literal with nothing to
+    // move to the front — see examples/README.md.
     print content;
     drop body;
     return;
