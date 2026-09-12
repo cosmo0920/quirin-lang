@@ -343,6 +343,100 @@ theorem theGapKindIsSendableAndOtherwiseShareable :
       (shareableUnder (transferable .ownedBuffer)).isSome := by
   refine ⟨by decide, by decide, by decide⟩
 
+/-! ### The refusal reasons, decided beside the admissions
+    (card `CT47-COPY-CAPTURE`)
+
+Model of `qcore_core::transfer::TransferRefusal` and of the decision order the
+frontend's boundary refusal now surfaces: since card `CT47-COPY-CAPTURE`, a
+capture the judgment refuses is attributed **by the judgment** at the crossing
+construct (`Q600`, a condition widening stated in spec §L21) with a message
+built from exactly this reason vocabulary — no longer by falling through to
+the backend's executable-subset catch-all. The theorems establish that the
+reasons partition the boundary against the admissions: every cell of both
+matrices is decided exactly once, so moving the attribution cannot have moved
+the refused set. -/
+
+/-- Why a capture is refused, mirroring `TransferRefusal`. -/
+inductive Refusal where
+  | kindNotTransferable (reason : NotTransferable)
+  | modeNotAdmittedForKind
+  | protocolUnavailable (protocol : Protocol)
+  | writeCaptureUnimplemented
+  | receivedKindMismatch
+  deriving DecidableEq, Repr
+
+/-- The refusing half of the operational judgment, in the same decision order
+as `admits`: `write` is refused by name before anything else is asked, a
+non-transferable kind refuses with its class's own reason, and a transferable
+kind in a mode it does not carry refuses for the mode. -/
+def refuse (k : Kind) (m : Mode) : Option Refusal :=
+  match m with
+  | .write => some .writeCaptureUnimplemented
+  | _ =>
+    match transferable k with
+    | .never reason => some (.kindNotTransferable reason)
+    | .duplicated => match m with
+      | .copy => none
+      | _ => some .modeNotAdmittedForKind
+    | .movedOnly p => match m with
+      | .move => none
+      | .lend => match p with
+        | some _ => none
+        | none => some (.protocolUnavailable .checkedMutex)
+      | _ => some .modeNotAdmittedForKind
+
+/-- The refusing half of the whole boundary decision: an admitted transfer
+whose delivered kind is not the declared parameter is a mismatch, and an
+unadmitted one carries `refuse`'s own reason. -/
+def refuseCapture (place : Kind) (mode : Mode) (parameter : Kind) : Option Refusal :=
+  match admits place mode with
+  | none => refuse place mode
+  | some t => if receivedKind place t = parameter then none else some .receivedKindMismatch
+
+/-- Refusal and admission partition the 13 x 4 matrix: every cell is decided,
+and decided exactly once. This is what makes moving the refusal's attribution
+(card `CT47-COPY-CAPTURE`) incapable of moving the refused set. -/
+theorem refusalComplementsAdmission :
+    ∀ k ∈ allKinds, ∀ m ∈ allModes, (refuse k m).isSome = (admits k m).isNone := by decide
+
+set_option maxRecDepth 8000 in
+/-- The same partition over the whole 13 x 4 x 13 boundary matrix. -/
+theorem theBoundaryIsDecidedExactlyOnce :
+    ∀ place ∈ allKinds, ∀ mode ∈ allModes, ∀ parameter ∈ allKinds,
+      (refuseCapture place mode parameter).isSome =
+        (admitsCapture place mode parameter).isNone := by decide
+
+/-- A `write` capture is refused by its own name for every kind — the reason
+is the mode's missing lowering, never the kind. -/
+theorem aWriteCaptureIsRefusedByName :
+    ∀ k ∈ allKinds, refuse k .write = some .writeCaptureUnimplemented := by decide
+
+/-- A kind that never crosses refuses with its class's own reason in every
+non-write mode, so the boundary message can name the kind's rule rather than a
+generic subset. -/
+theorem aNeverKindRefusesWithItsClassReason :
+    ∀ k ∈ allKinds, ∀ m ∈ [Mode.copy, .move, .lend],
+      ∀ reason ∈ [NotTransferable.notAValue, .owedToCreatingFrame,
+                  .unmodeledType, .resultPositionOnly],
+        transferable k = .never reason → refuse k m = some (.kindNotTransferable reason) := by
+  decide
+
+/-- **CT47's cell.** A `copy` of the owned Buffer — the nearest expressible
+shape to the case's raw-pointer bit-copy — is refused *for its mode*: the kind
+is sendable, so the refusal is exactly "no transfer/share contract admits
+duplication of affine custody", not a vacuous kind refusal and not a backend
+statement. -/
+theorem copyOfTheOwnedBufferIsRefusedForItsMode :
+    refuse .ownedBuffer .copy = some .modeNotAdmittedForKind ∧
+      sendable (transferable .ownedBuffer) = true := ⟨rfl, rfl⟩
+
+/-- The two delivered-kind mismatches the boundary can spell: a lend delivered
+as custody and a move delivered as a loan. Both transfers are admitted; the
+refusal is the declaration's. -/
+theorem aDeliveredKindMismatchIsItsOwnReason :
+    refuseCapture .ownedBuffer .lend .ownedBuffer = some .receivedKindMismatch ∧
+      refuseCapture .ownedBuffer .move .readLoan = some .receivedKindMismatch := ⟨rfl, rfl⟩
+
 /-! ### Per-kind soundness: each admitting arm names a proved ledger rule
 
 The obligations below are statements about the *existing* ledgers. Nothing

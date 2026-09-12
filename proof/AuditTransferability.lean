@@ -56,6 +56,20 @@ import QCore.Transferability
 #print axioms QCore.Transferability.noModeRequestsTheMutexProtocol
 #print axioms QCore.Transferability.theGapKindIsSendableAndOtherwiseShareable
 
+-- Card `CT47-COPY-CAPTURE`: the refusal reasons, decided beside the
+-- admissions. Refusal and admission partition both matrices — every cell
+-- decided exactly once — so moving the boundary refusal's attribution from
+-- the backend catch-all to the judgment cannot have moved the refused set;
+-- a write capture is refused by its own name, a never-kind by its class's
+-- reason, CT47's copy-of-a-Buffer cell for its mode with the kind still
+-- sendable, and a delivered-kind mismatch as its own reason.
+#print axioms QCore.Transferability.refusalComplementsAdmission
+#print axioms QCore.Transferability.theBoundaryIsDecidedExactlyOnce
+#print axioms QCore.Transferability.aWriteCaptureIsRefusedByName
+#print axioms QCore.Transferability.aNeverKindRefusesWithItsClassReason
+#print axioms QCore.Transferability.copyOfTheOwnedBufferIsRefusedForItsMode
+#print axioms QCore.Transferability.aDeliveredKindMismatchIsItsOwnReason
+
 -- Per-kind soundness: each admitting arm names a ledger rule that is already
 -- proved, and each refusing arm carries no obligation because it admits
 -- nothing. The move arm rests on reservation rollback and parent
