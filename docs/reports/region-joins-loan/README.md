@@ -387,7 +387,7 @@ Run at the card tip with `$HOME/.elan/bin` on `PATH`.
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | ok |
-| `cargo test --workspace --no-fail-fast` | see the final report table (run at the tip) |
+| `cargo test --workspace --no-fail-fast` | **4,459 passed, 0 failed, 8 ignored**, over 219 test binaries, in one run (exit 0) — no constraint-16 load row tripped, so no isolation re-verification was needed |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
