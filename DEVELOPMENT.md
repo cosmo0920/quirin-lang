@@ -349,6 +349,42 @@ full suite.
 
 ## Increment records
 
+Wave 29, card `CT22-WIRE` (2026-09-12): the wave-29 CT mapping lane, one case.
+**CT22** — *"Quant opening discards parent-local unused credit after joins"*,
+expected Accept — is **mapped** on the `composed_epoch` route, converting
+wave-28 card `REGION-CREDIT-JOINS`'s capability into a manifest row exactly as
+its §7 prescribed: CT coverage **41/50 → 42/50 mapped**, 8 unmapped, by
+mapping, not conformance (constraint 23). The `epoch_credit_split` verdict
+mode is **widened for the accepting shape** — the case's cascade is empty
+exactly when it pins its own published figures, and the runner compares them
+wholesale: the credit-recovery split under the conservation law, the region's
+independently re-derived `abandoned_credit` of 3, and the two parent-local
+premises re-asserted on the published objects (no `Acquire` in the published
+region body; every task-ledger span before the region statement). The
+fixtures move from `epoch_credit/CT22/` into `fixtures/ct/CT22/` (the CT23
+precedent, `region_credit_joins.rs` repointed, all 9 tests green on the moved
+bytes), plus two new refusing controls measured before pinning (`spawn_after`
+`["Q600"]`, `acquiring` `["Q302"]`); `ct_corpus.rs`'s pinned tables grow
+deliberately (`MAPPED_CASES` 42, `EPOCH_CREDIT_SPLIT_CASES` + CT22,
+`EVIDENCE_FILES` 13). One deliberate stage-derivation rule: an **admitted**
+composed-epoch module's `c_emission`/`native_execution` read `unassessed` —
+it really emits the task route's own C that no harness runner executes, an
+open item, never a claim and never `not_applicable` (named follow-on
+`CT-COMPOSED-NATIVE`). The wave-28 lane's narrowed CT22 row is **retired in
+this lane's own record** (`retired_unmapped_reasons`; the wave-28 bytes
+untouched, constraint 21), `acceptance.json` is regenerated through
+`ct_stage_summary.py --write` with `derived_from` grown, and the derived
+`newly_decidable_not_mapped_reasons` map is untouched and verified — keys
+`["CT24", "CT47"]` before and after (constraint 25). Sanitized-native stays 7
+(now of 42), proof 0 of 42; zero new Q codes, zero condition widenings, zero
+reserved words, no crate-source change, no gateway/contract/audit/provider
+file touched (corpus carried, leak pin 266). Gate at the card tip: 4,392
+workspace tests (8 ignored, `--no-fail-fast`, 0 failed — all five
+constraint-16 rows green on the first attempt), 193 Python OK, 115 Lean
+audits, both probes exit 0, fmt/clippy clean, `ct_stage_summary.py . --check`
+exit 0 at `mapped 42 / unmapped 8`. Evidence:
+`docs/reports/ct22-wire/README.md`.
+
 Wave 28 close (2026-09-12): **three cards** merged one at a time under the
 failure-gated chain — `EXAMPLES-AGGREGATES`, `REGION-CREDIT-JOINS` and
 `CT-WIRE-LANE-2` — reconciled at integration tip `71574edc`. The wave's head is

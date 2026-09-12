@@ -23,13 +23,15 @@ use qcore_compiler::{
 use qcore_core::error_region::RegionOp;
 use qcore_core::resource_flow::Quantity;
 
-/// The CT22 fixtures. They live **outside** `compiler/tests/fixtures/ct/` on
-/// purpose: `ct_corpus.rs` fails closed when an unmapped case already owns a
-/// fixture directory there, and this card does not edit the manifest. A CT
-/// lane that maps the case moves this directory — the T08-EPOCH-SRC and CT23
-/// precedent.
+/// The CT22 fixtures. Card `REGION-CREDIT-JOINS` parked them under
+/// `tests/fixtures/epoch_credit/CT22/` because `ct_corpus.rs` fails closed
+/// when an unmapped case owns a directory under `fixtures/ct/`; the wave-29
+/// CT lane (card `CT22-WIRE`) mapped the case and moved the directory here —
+/// the T08-EPOCH-SRC and CT23 precedent. `ct_corpus.rs` now runs the case and
+/// its controls too; this file remains the capability card's own end-to-end
+/// evidence on the same bytes.
 fn fixtures() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/epoch_credit/CT22")
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ct/CT22")
 }
 
 fn fixture(name: &str) -> SourceFile {
@@ -37,7 +39,7 @@ fn fixture(name: &str) -> SourceFile {
     let source = std::fs::read_to_string(&path)
         .unwrap_or_else(|error| panic!("fixture {} is readable: {error}", path.display()));
     SourceFile {
-        path: format!("compiler/tests/fixtures/epoch_credit/CT22/{name}"),
+        path: format!("compiler/tests/fixtures/ct/CT22/{name}"),
         source,
     }
 }
