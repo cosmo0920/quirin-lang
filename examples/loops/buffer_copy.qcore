@@ -40,19 +40,23 @@ fn main() -> unit effects { io, alloc, mut } {
     // index is an ordinary integer scalar, so rendering it needs no new operand
     // form: `source.std-io.v1`'s existing one already denotes it.
     for k in 0..3 {
-        print dec k;
+        k |> print dec;
     }
 
     let a = dst[0];
     let b = dst[1];
     let c = dst[2];
     let d = dst[3];
-    print dec a;
-    print dec b;
-    print dec c;
-    print dec d;
+    a |> print dec;
+    b |> print dec;
+    c |> print dec;
+    d |> print dec;
 
     // The bound, on the logger's stream, so this example writes both.
+    //
+    // This line is NOT piped where the five above are: `n` is read twice, by
+    // the loop header and by this rendering, so its flow is not linear.
+    // examples/README.md states the rule.
     log info dec n;
     flush;
 
