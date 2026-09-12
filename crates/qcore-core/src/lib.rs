@@ -44,6 +44,7 @@ pub mod research_closure;
 pub mod resource_flow;
 pub mod socket_address;
 pub mod socket_event;
+pub mod socket_footprint;
 pub mod source_loop;
 pub mod source_record;
 pub mod std_buffer;
