@@ -1,0 +1,42 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// The erasure flattens the region body's block into the task scope, so an
+// owner named like a binding the entry already makes would change which
+// binding a later statement names. Refused by the composed reader at Q302,
+// before any erasure is planned.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        error region R {
+            let answer = qcore_buffer_new(7)?;
+            credit 5;
+            effort 5;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return answer;
+    }
+}

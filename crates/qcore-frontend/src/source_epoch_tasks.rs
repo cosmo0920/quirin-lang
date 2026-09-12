@@ -218,25 +218,29 @@ fn entry_body<'a>(
 /// the blanked text rather than by scanning for a second marker, so a marker
 /// this function did not remove cannot be missed.
 ///
-/// `region_span` is the entry's validated `error region` statement, when
-/// [`read_composed_region`] found one (card `REGION-CREDIT-JOINS`). It is
-/// blanked exactly as the plan is — offsets preserved, so every span the task
-/// route reports still points at the original file — because the region, like
-/// the plan, **erases from emission** (constraint 15l): its body admits no
-/// statement the task program performs, so the task half the scoped-task route
-/// compiles is byte-for-byte the program the entry runs.
+/// `region` is the entry's validated `error region` statement's erasure, when
+/// [`read_composed_region`] found one (cards `REGION-CREDIT-JOINS` and
+/// `REGION-JOINS-DUTIES`). The statement's range is blanked exactly as the
+/// plan is — offsets preserved, so every span the task route reports still
+/// points at the original file — and then the region's **straight-line twin**
+/// is restored into that range: each body acquisition and body release
+/// verbatim at its own offsets, and one `drop NAME;` per remaining duty
+/// written into the blanks after them, in reverse acquisition order. A
+/// duty-free region keeps nothing and inserts nothing, which is wave 28's
+/// pure blanking unchanged: its body admits no statement the task program
+/// performs, so the task half is byte-for-byte the program the entry runs.
 pub fn split_composed_epoch(
     source: &SourceProgram,
     entry: &str,
-    region_span: Option<Span>,
+    region: Option<&RegionErasure>,
 ) -> Result<ComposedSplit, Vec<SourceDiagnostic>> {
-    split(source, entry, region_span).map_err(|diagnostic| vec![diagnostic])
+    split(source, entry, region).map_err(|diagnostic| vec![diagnostic])
 }
 
 fn split(
     source: &SourceProgram,
     entry: &str,
-    region_span: Option<Span>,
+    region: Option<&RegionErasure>,
 ) -> Result<ComposedSplit, SourceDiagnostic> {
     let (_, body) = entry_body(source, entry)?;
     let Some(first) = body.statements.first() else {
@@ -272,8 +276,30 @@ fn split(
         text.replace_range(span.start..span.end, &blank);
     };
     blank_range(&mut task_source, plan_span);
-    if let Some(region) = region_span {
-        blank_range(&mut task_source, region);
+    if let Some(erasure) = region {
+        blank_range(&mut task_source, erasure.span);
+        // The straight-line twin: kept statements back at their own offsets…
+        for kept in &erasure.kept {
+            task_source.replace_range(kept.start..kept.end, &source.source()[kept.start..kept.end]);
+        }
+        // …and the discharge's releases over bytes the blanking made spaces.
+        // The reader planned each placement over spaces only; a placement over
+        // anything else here is a defect of this wiring, never of the program.
+        for (offset, text) in &erasure.releases {
+            let range = *offset..offset + text.len();
+            if range.end > erasure.span.end
+                || !task_source.as_bytes()[range.clone()]
+                    .iter()
+                    .all(|byte| *byte == b' ')
+            {
+                return Err(failure(
+                    erasure.span,
+                    "composed region erasure placed a release outside the blanked range \
+                     (card `REGION-JOINS-DUTIES`)",
+                ));
+            }
+            task_source.replace_range(range, text);
+        }
     }
     let reparsed = parse_source_program(&task_source)
         .map_err(|error| failure(error.span, error.message.clone()))?;
@@ -307,17 +333,28 @@ fn split(
 /// quant open … { discharge …; }` statement written **after every spawn and
 /// join** of the composed entry's task scope (card `REGION-CREDIT-JOINS`).
 ///
-/// The body admits the parent-local quantities and the decided error edge and
-/// **nothing else** — `credit N;`, `effort N;`, `qcore_check(false, ERROR);` —
-/// so the region contributes no statement the task program performs and erases
-/// from emission exactly as the plan does. In particular a region
-/// **acquisition** is refused rather than admitted: the scoped-task route's
-/// resources are buffers with their own custody model, and sealing one into a
-/// cleanup pack would need an emission for the discharge's releases that this
-/// composition does not have (follow-on `REGION-JOINS-DUTIES`). The pack a
-/// composed region seals therefore carries **no duty** — only the credit
-/// remainder — which is why the one thing its opening can discard is the
-/// parent-local unused credit. That is CT22's scenario, stated as a shape.
+/// The body admits the parent's own quantities, the decided error edge, and —
+/// since card `REGION-JOINS-DUTIES` (wave 29), which deliberately supersedes
+/// the duty-free premise standing constraint 15m recorded — the task route's
+/// **own** acquisition and release shapes, and nothing else: `credit N;`,
+/// `effort N;`, `qcore_check(false, ERROR);`, `let NAME =
+/// qcore_buffer_new(INT)?;` and `drop NAME;` of a region-acquired owner. An
+/// acquisition seals into the pack as a real cleanup duty
+/// (`CleanupAction::Destroy`), and the opening's `discharge` destroys the
+/// remaining owners in reverse acquisition order — CT25's duty half, *"cleanup
+/// destroys owner after joins"*.
+///
+/// The emission story is the sequential route's own precedent read at the
+/// text level: an admitted region has exactly one path, so it **erases into
+/// its straight-line twin**. The split keeps each acquisition and body release
+/// at its original byte offsets in the task half, and writes the discharge's
+/// releases — one `drop NAME;` per remaining duty, in reverse order — into
+/// the blanked space after the last kept statement ([`RegionErasure`]). The
+/// task half is therefore an ordinary scoped-task program the **unedited**
+/// route compiles, custody-checks, emits and reference-executes; a duty-free
+/// region keeps wave 28's pure blanking byte for byte, because its erasure
+/// keeps nothing and inserts nothing. The sequential spelling
+/// `qcore_acquire(…)` stays refused: it names no task-route resource.
 ///
 /// Everything semantic is the unedited [`qcore_core::error_region`] model's to
 /// decide; the caller hands it `operations` whole. This reader owns only the
@@ -326,7 +363,7 @@ fn split(
 /// `Q303`–`Q309`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ComposedRegion {
-    /// The whole statement's extent — the blanked range, and where the model's
+    /// The whole statement's extent — the erased range, and where the model's
     /// refusals are attributed.
     pub span: Span,
     /// Exactly one [`RegionOp::ErrorRegion`], built from the model's own
@@ -341,12 +378,43 @@ pub struct ComposedRegion {
     /// published. The driver cross-checks the model's abandoned quantity
     /// against this independent computation before publishing either.
     pub remainder: Option<u64>,
+    /// The duties the sealed pack will carry — the region's acquisitions the
+    /// body did not release, in acquisition order, each an owner name with the
+    /// resource identity the reader assigned it (1, 2, … in acquisition
+    /// order). The driver cross-checks the model's own cleanup trace against
+    /// this independent fold before publishing either, exactly as it
+    /// cross-checks the credit (card `REGION-JOINS-DUTIES`).
+    pub duties: Vec<(String, u64)>,
     /// The module's declared nominal error type names, for the model's
     /// declaration and effect rows. Derived from the declarations rather than
     /// from the entry's written `effects` row: a caught error never leaves the
     /// entry, so it is not an entry effect (the `REGION-EFFECT-ROW` boundary,
     /// reached from a second route).
     pub declared_errors: BTreeSet<String>,
+    /// How the split erases this region into the task half.
+    pub erasure: RegionErasure,
+}
+
+/// The textual erasure of a composed region into its straight-line twin
+/// (card `REGION-JOINS-DUTIES`).
+///
+/// The whole `span` is blanked (spaces for every byte, newlines preserved),
+/// then each `kept` range — a body acquisition or a body release, at its own
+/// original offsets — is restored verbatim, and each insertion of
+/// `releases` — one `drop NAME;` per remaining duty, in reverse acquisition
+/// order — is written into bytes the blanking made spaces, after every kept
+/// range. Offsets are preserved exactly, so every span the task route reports
+/// still points at the original file; a duty-free region has an empty `kept`
+/// and empty `releases`, which is wave 28's pure blanking unchanged.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RegionErasure {
+    /// The region statement's whole extent.
+    pub span: Span,
+    /// Body statements kept verbatim at their original offsets, in order.
+    pub kept: Vec<Span>,
+    /// The discharge's releases: byte offset and the exact text written there,
+    /// each inside `span`, after every `kept` range, over spaces only.
+    pub releases: Vec<(usize, String)>,
 }
 
 /// Find and read the composed entry's `error region` statement, if any.
@@ -405,7 +473,7 @@ fn composed_region(
              nowhere else (card `REGION-CREDIT-JOINS`)",
         ));
     }
-    read_region_statement(source, statement).map(Some)
+    read_region_statement(source, statement, body).map(Some)
 }
 
 fn collect_region_statements<'a>(
@@ -426,6 +494,7 @@ fn collect_region_statements<'a>(
 fn read_region_statement(
     source: &SourceProgram,
     statement: &Located<StatementKind>,
+    entry_body: &SourceBlock,
 ) -> Result<ComposedRegion, SourceDiagnostic> {
     let span = statement.span;
     let StatementKind::ErrorRegion {
@@ -458,6 +527,15 @@ fn read_region_statement(
     let mut region_body = Vec::new();
     let mut raised: Option<String> = None;
     let mut remainder: Option<u64> = Some(0);
+    // The region's own acquisitions (card `REGION-JOINS-DUTIES`): each owner
+    // name with the resource identity this reader assigns it, in acquisition
+    // order, and the subset the body did not release — the duties the sealed
+    // pack will carry. The identities are the reader's own (1, 2, …); the
+    // model checks their ledger discipline, and the driver cross-checks its
+    // trace against this independent fold.
+    let mut owners: Vec<(String, u64)> = Vec::new();
+    let mut duties: Vec<(String, u64)> = Vec::new();
+    let mut kept: Vec<Span> = Vec::new();
     for body_statement in &blocks[0].statements {
         if raised.is_some() {
             return Err(region_shape(
@@ -467,37 +545,81 @@ fn read_region_statement(
             ));
         }
         let admitted_set = "statement is not in the composed region body: after every join the \
-                            body admits the parent's own quantities and the decided error edge \
-                            only — `credit N;`, `effort N;` and `qcore_check(false, ERROR);`. A \
-                            region acquisition has no task-route resource to hold and is refused \
-                            rather than approximated (follow-on `REGION-JOINS-DUTIES`)";
-        if !matches!(body_statement.value, StatementKind::Expression) {
-            return Err(region_shape(body_statement.span, admitted_set));
-        }
+                            body admits the parent's own quantities, the task route's own \
+                            acquisition and release, and the decided error edge — `credit N;`, \
+                            `effort N;`, `let NAME = qcore_buffer_new(INT)?;`, `drop NAME;` and \
+                            `qcore_check(false, ERROR);` (card `REGION-JOINS-DUTIES`). \
+                            `qcore_acquire` is the sequential route's spelling and names no \
+                            task-route resource";
         let tokens = header_tokens(source, body_statement.span);
-        if let Some(amount) = region_quantity(&tokens, crate::source_region::CREDIT_KEYWORD) {
-            remainder = remainder.and_then(|held| held.checked_add(amount));
-            region_body.push(RegionOp::AddStrictCredit(amount));
-        } else if let Some(amount) = region_quantity(&tokens, crate::source_region::EFFORT_KEYWORD)
-        {
-            remainder = remainder.and_then(|held| held.checked_sub(amount));
-            region_body.push(RegionOp::SpendStrictCredit(amount));
-        } else if let Some((passes, error)) = region_check(&tokens) {
-            if passes {
-                return Err(region_shape(
-                    body_statement.span,
-                    "the composed region reads `qcore_check(false, ERROR);` as its decided error \
-                     edge; a check decided to pass has no edge to model and is refused rather \
-                     than emitted as a dead branch",
-                ));
+        match &body_statement.value {
+            StatementKind::Let {
+                binding: Some(owner),
+            } if region_acquisition(&tokens).is_some() => {
+                if owners.iter().any(|(name, _)| name == owner) {
+                    return Err(region_shape(
+                        body_statement.span,
+                        format!(
+                            "the region acquires `{owner}` twice; each owner of the composed \
+                             region is one binding (card `REGION-JOINS-DUTIES`)"
+                        ),
+                    ));
+                }
+                let resource = owners.len() as u64 + 1;
+                owners.push((owner.clone(), resource));
+                duties.push((owner.clone(), resource));
+                kept.push(body_statement.span);
+                region_body.push(RegionOp::Acquire {
+                    resource,
+                    destructor_noexcept: true,
+                });
             }
-            if !declared_errors.contains(&error) {
-                return Err(unknown_error(body_statement.span, &error));
+            StatementKind::Drop { place: Some(place) } => {
+                let Some((_, resource)) = owners.iter().find(|(name, _)| name == place) else {
+                    return Err(region_shape(
+                        body_statement.span,
+                        format!(
+                            "the region releases `{place}`, which it did not acquire: a \
+                             composed region's pack holds the region's own owners only, so an \
+                             outer resource is released outside it (card `REGION-JOINS-DUTIES`, \
+                             the `REGION-OUTER-LIVE-RESOURCES` boundary reached from this route)"
+                        ),
+                    ));
+                };
+                let resource = *resource;
+                duties.retain(|(_, id)| *id != resource);
+                kept.push(body_statement.span);
+                region_body.push(RegionOp::Drop(resource));
             }
-            region_body.push(RegionOp::Raise(error.clone()));
-            raised = Some(error);
-        } else {
-            return Err(region_shape(body_statement.span, admitted_set));
+            StatementKind::Expression => {
+                if let Some(amount) = region_quantity(&tokens, crate::source_region::CREDIT_KEYWORD)
+                {
+                    remainder = remainder.and_then(|held| held.checked_add(amount));
+                    region_body.push(RegionOp::AddStrictCredit(amount));
+                } else if let Some(amount) =
+                    region_quantity(&tokens, crate::source_region::EFFORT_KEYWORD)
+                {
+                    remainder = remainder.and_then(|held| held.checked_sub(amount));
+                    region_body.push(RegionOp::SpendStrictCredit(amount));
+                } else if let Some((passes, error)) = region_check(&tokens) {
+                    if passes {
+                        return Err(region_shape(
+                            body_statement.span,
+                            "the composed region reads `qcore_check(false, ERROR);` as its \
+                             decided error edge; a check decided to pass has no edge to model \
+                             and is refused rather than emitted as a dead branch",
+                        ));
+                    }
+                    if !declared_errors.contains(&error) {
+                        return Err(unknown_error(body_statement.span, &error));
+                    }
+                    region_body.push(RegionOp::Raise(error.clone()));
+                    raised = Some(error);
+                } else {
+                    return Err(region_shape(body_statement.span, admitted_set));
+                }
+            }
+            _ => return Err(region_shape(body_statement.span, admitted_set)),
         }
     }
     let Some(raised) = raised else {
@@ -542,6 +664,25 @@ fn read_region_statement(
         }),
         _ => None,
     };
+    // The erasure keeps each owner binding at its own offsets in the task
+    // half, so a name it binds must not collide with a binding the entry makes
+    // elsewhere: the region body's block scope is flattened into the task
+    // scope by the split, and a collision would change which binding a later
+    // statement names (card `REGION-JOINS-DUTIES`).
+    if let Some((owner, _)) = owners
+        .iter()
+        .find(|(owner, _)| entry_bindings_outside(entry_body, span).contains(owner))
+    {
+        return Err(region_shape(
+            span,
+            format!(
+                "the region's owner `{owner}` collides with a binding of the entry: the erased \
+                 acquisition stands in the task scope, so its name must be the region's own \
+                 (card `REGION-JOINS-DUTIES`)"
+            ),
+        ));
+    }
+    let releases = plan_releases(source, span, &kept, &duties)?;
     Ok(ComposedRegion {
         span,
         operations: vec![RegionOp::ErrorRegion {
@@ -555,8 +696,96 @@ fn read_region_statement(
         }],
         raised,
         remainder,
+        duties,
         declared_errors,
+        erasure: RegionErasure {
+            span,
+            kept,
+            releases,
+        },
     })
+}
+
+/// Every binding name the entry makes outside the region statement: a kept
+/// owner restored into the task scope must not collide with one. The scan
+/// over-approximates in the refusing direction — it collects every `let`,
+/// `let` index and `for` binding of every block of the entry except the
+/// region's own — so a collision this misses is impossible rather than
+/// admitted (card `REGION-JOINS-DUTIES`).
+fn entry_bindings_outside(body: &SourceBlock, region: Span) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    collect_bindings(body, region, &mut names);
+    names
+}
+
+fn collect_bindings(block: &SourceBlock, region: Span, names: &mut BTreeSet<String>) {
+    for statement in &block.statements {
+        if statement.span == region {
+            continue;
+        }
+        match &statement.value {
+            StatementKind::Let {
+                binding: Some(name),
+            }
+            | StatementKind::LetIndex { binding: name }
+            | StatementKind::For { binding: name, .. } => {
+                names.insert(name.clone());
+            }
+            _ => {}
+        }
+        for child in statement.value.nested_blocks() {
+            collect_bindings(child, region, names);
+        }
+    }
+}
+
+/// Plan where the discharge's releases are written: one `drop NAME;` per
+/// remaining duty, in **reverse acquisition order** — the order the model's
+/// own discharge destroys them — each placed over a run of bytes the blanking
+/// turns into spaces, after every kept statement and inside the region's own
+/// extent. First fit, newlines never crossed, so the placement is
+/// deterministic and every byte offset of the file is preserved. A region
+/// whose own text has no room for its erasure is refused rather than
+/// approximated (`REGION-JOINS-ERASURE-FIT`).
+fn plan_releases(
+    source: &SourceProgram,
+    span: Span,
+    kept: &[Span],
+    duties: &[(String, u64)],
+) -> Result<Vec<(usize, String)>, SourceDiagnostic> {
+    let text = source.source().as_bytes();
+    let mut cursor = kept.iter().map(|span| span.end).max().unwrap_or(span.start);
+    let mut releases = Vec::new();
+    for (owner, _) in duties.iter().rev() {
+        let release = format!("drop {owner};");
+        let need = release.len();
+        let mut run = 0usize;
+        let mut placed = None;
+        for (index, byte) in text.iter().enumerate().take(span.end).skip(cursor) {
+            if *byte == b'\n' {
+                run = 0;
+                continue;
+            }
+            run += 1;
+            if run == need {
+                placed = Some(index + 1 - need);
+                break;
+            }
+        }
+        let Some(offset) = placed else {
+            return Err(region_shape(
+                span,
+                format!(
+                    "the region's erasure does not fit inside the statement it erases: no room \
+                     remains for `{release}` after the region's own statements \
+                     (`REGION-JOINS-ERASURE-FIT`, card `REGION-JOINS-DUTIES`)"
+                ),
+            ));
+        };
+        releases.push((offset, release));
+        cursor = offset + need + 1;
+    }
+    Ok(releases)
 }
 
 /// A shape refusal of the composed region reader. Always `Q302`, under
@@ -591,6 +820,39 @@ fn region_quantity(tokens: &[Token], keyword: &str) -> Option<u64> {
             if word(Some(first), keyword) && symbol(Some(third), Symbol::Semicolon) =>
         {
             integer(Some(second))
+        }
+        _ => None,
+    }
+}
+
+/// `let NAME = qcore_buffer_new(INT)?;` — the task route's **own** acquisition
+/// shape, admitted in the composed region body (card `REGION-JOINS-DUTIES`).
+/// The payload is a check-time integer literal; the statement is kept verbatim
+/// in the task half, where the unedited scoped-task route checks and emits it,
+/// so its runtime failure path (`?`, `AllocError`) is that route's own exactly
+/// as everywhere else in the entry.
+fn region_acquisition(tokens: &[Token]) -> Option<()> {
+    match tokens {
+        [
+            let_word,
+            _name,
+            equals,
+            intrinsic,
+            open,
+            payload,
+            close,
+            question,
+            semicolon,
+        ] if word(Some(let_word), "let")
+            && symbol(Some(equals), Symbol::Equal)
+            && word(Some(intrinsic), "qcore_buffer_new")
+            && symbol(Some(open), Symbol::LeftParen)
+            && integer(Some(payload)).is_some()
+            && symbol(Some(close), Symbol::RightParen)
+            && symbol(Some(question), Symbol::Question)
+            && symbol(Some(semicolon), Symbol::Semicolon) =>
+        {
+            Some(())
         }
         _ => None,
     }

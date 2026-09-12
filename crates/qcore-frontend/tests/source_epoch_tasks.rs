@@ -841,6 +841,155 @@ fn main() -> i32 {
     );
 }
 
+// ---------------------------------------------------------------------------
+// Card `REGION-JOINS-DUTIES`: acquisitions in the composed region body.
+// ---------------------------------------------------------------------------
+
+const OWNER_REGION: &str = r#"        error region R {
+            let owner = qcore_buffer_new(7)?;
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }"#;
+
+/// The reader reads the task route's own acquisition as a real duty: the
+/// model is handed `Acquire`, the duty fold names the owner, and the erasure
+/// plan keeps the acquisition at its own offsets and writes exactly one
+/// `drop owner;` after it, over bytes the blanking makes spaces.
+#[test]
+fn the_reader_reads_an_owner_acquisition_as_a_duty() {
+    let source = region_module(OWNER_REGION);
+    let region = read(&source)
+        .expect("the region reads")
+        .expect("the region is found");
+    assert_eq!(region.remainder, Some(3));
+    assert_eq!(region.duties, vec![("owner".to_owned(), 1)]);
+    let [RegionOp::ErrorRegion { body, .. }] = region.operations.as_slice() else {
+        panic!("one region operation");
+    };
+    assert_eq!(
+        body.as_slice(),
+        [
+            RegionOp::Acquire {
+                resource: 1,
+                destructor_noexcept: true,
+            },
+            RegionOp::AddStrictCredit(5),
+            RegionOp::SpendStrictCredit(2),
+            RegionOp::Raise("Failure".to_owned()),
+        ]
+    );
+    // The erasure keeps the acquisition verbatim and inserts one release.
+    let [kept] = region.erasure.kept.as_slice() else {
+        panic!("one kept statement");
+    };
+    assert_eq!(
+        &source[kept.start..kept.end],
+        "let owner = qcore_buffer_new(7)?;"
+    );
+    let [(offset, release)] = region.erasure.releases.as_slice() else {
+        panic!("one release");
+    };
+    assert_eq!(release, "drop owner;");
+    assert!(*offset > kept.end && offset + release.len() <= region.span.end);
+
+    // A body release erases its duty, so nothing is inserted for it.
+    let dropped = region_module(
+        "        error region R {\n            let owner = qcore_buffer_new(7)?;\n            \
+         drop owner;\n            credit 5;\n            effort 2;\n            \
+         qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n        \
+         \x20   discharge pack;\n        }",
+    );
+    let dropped = read(&dropped)
+        .expect("the region reads")
+        .expect("the region is found");
+    assert_eq!(dropped.duties, vec![]);
+    assert_eq!(dropped.erasure.kept.len(), 2);
+    assert_eq!(dropped.erasure.releases, vec![]);
+}
+
+/// The split writes the straight-line twin: kept bytes at their own offsets,
+/// the release over blanks, every byte offset preserved, and the reparsed
+/// task half carries the acquisition and the release as ordinary statements.
+#[test]
+fn the_split_erases_a_duty_region_into_its_straight_line_twin() {
+    let source = region_module(OWNER_REGION);
+    let parsed = parse(&source);
+    let region = read_composed_region(&parsed, "main")
+        .expect("the region reads")
+        .expect("the region is found");
+    let split =
+        split_composed_epoch(&parsed, "main", Some(&region.erasure)).expect("the module splits");
+    assert_eq!(split.task_source.len(), source.len());
+    let kept = &region.erasure.kept[0];
+    assert_eq!(
+        &split.task_source[kept.start..kept.end],
+        "let owner = qcore_buffer_new(7)?;"
+    );
+    let (offset, release) = &region.erasure.releases[0];
+    assert_eq!(&split.task_source[*offset..offset + release.len()], release);
+    // Everything else of the region range is blank, and the reparsed task
+    // half is an ordinary program: no region, one more let, one more drop.
+    let reparsed = parse(&split.task_source);
+    assert!(
+        read_composed_region(&reparsed, "main")
+            .expect("the blanked text reads")
+            .is_none(),
+        "no region survives the erasure"
+    );
+    assert!(split.task_source.contains("drop owner;"));
+}
+
+/// The reader's own refusals for the duty shapes, each `Q302` with the rule
+/// named: a release of a name the region did not acquire, an owner that
+/// collides with an entry binding, a doubled owner, and an erasure that does
+/// not fit inside the statement it erases.
+#[test]
+fn the_duty_reader_refuses_its_own_shapes() {
+    let refusal =
+        |source: &str| -> String { read(source).expect_err("the shape is refused").remove(0) };
+
+    // A release of a name the region did not acquire.
+    assert!(
+        refusal(&region_module(
+            "        error region R {\n            drop elsewhere;\n            \
+             qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n    \
+             \x20       discharge pack;\n        }"
+        ))
+        .contains("REGION-OUTER-LIVE-RESOURCES")
+    );
+
+    // An owner colliding with a binding of the entry (the task scope binds
+    // `kept` below).
+    let colliding = region_module(
+        "        let kept = 1;\n        error region R {\n            let kept = \
+         qcore_buffer_new(7)?;\n            qcore_check(false, Failure);\n        } catch \
+         (Failure) quant open R as pack {\n            discharge pack;\n        }",
+    );
+    assert!(refusal(&colliding).contains("collides with a binding of the entry"));
+
+    // One owner is one binding.
+    let doubled = region_module(
+        "        error region R {\n            let owner = qcore_buffer_new(1)?;\n            \
+         drop owner;\n            let owner = qcore_buffer_new(2)?;\n            \
+         qcore_check(false, Failure);\n        } catch (Failure) quant open R as pack {\n        \
+         \x20   discharge pack;\n        }",
+    );
+    assert!(refusal(&doubled).contains("acquires `owner` twice"));
+
+    // The erasure must fit inside the statement it erases: an owner name too
+    // long for any blank run after the region's own statements.
+    let unfit = region_module(
+        "        error region R {\n            let \
+         w_123456789_123456789_123456789_123456789_123456789_123456789_123456789_123456789 = \
+         qcore_buffer_new(7)?;\n            qcore_check(false, Failure);\n        } catch \
+         (Failure) quant open R as pack { discharge pack; }",
+    );
+    assert!(refusal(&unfit).contains("REGION-JOINS-ERASURE-FIT"));
+}
+
 /// The split blanks the region exactly as it blanks the plan: every byte
 /// offset preserved, and the reparsed task half carries no region at all.
 #[test]
@@ -851,7 +1000,7 @@ fn the_split_blanks_the_region_and_preserves_every_byte_offset() {
         .expect("the region reads")
         .expect("the region is found");
     let split =
-        split_composed_epoch(&parsed, "main", Some(region.span)).expect("the module splits");
+        split_composed_epoch(&parsed, "main", Some(&region.erasure)).expect("the module splits");
     assert_eq!(split.task_source.len(), source.len());
     assert!(
         split.task_source[region.span.start..region.span.end]
