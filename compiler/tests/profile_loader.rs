@@ -29,6 +29,27 @@ fn repository_root() -> PathBuf {
         .to_path_buf()
 }
 
+/// Precondition for the tests that read the Libevent checkout itself. In a
+/// fresh worktree the submodule directory exists but is empty, and `git -C
+/// <dir> rev-parse HEAD` then answers from the *superproject*, so the pin
+/// check would report a revision mismatch against whatever commit this
+/// repository is on — a misleading invariant-5 alarm for a checkout that is
+/// merely uninitialised (residual `DOCS-COMPACT-3-WORKTREE-SUBMODULE`,
+/// `docs/reports/docs-compact-3/README.md` §11.1). The test still fails in
+/// that state; only the message changes. The pin assertion itself is
+/// untouched: an initialised checkout on the wrong revision reports
+/// `SourceRevisionMismatch` exactly as before.
+fn initialized_libevent_checkout() -> PathBuf {
+    let checkout = repository_root().join(LIBEVENT_SUBMODULE_PATH);
+    assert!(
+        checkout.join(".git").exists(),
+        "the `{LIBEVENT_SUBMODULE_PATH}` submodule at {} is not initialized; \
+         run `git submodule update --init --recursive` first",
+        checkout.display()
+    );
+    checkout
+}
+
 /// Write a mutated copy of a shipped profile into a scratch directory whose
 /// name is the source set, so the directory-name rule still applies.
 fn scratch_profile(
@@ -129,7 +150,7 @@ fn declared_pins_match_the_checkouts_and_the_retained_rust_constant() {
     let pin = libevent
         .pin_for(LIBEVENT_SOURCE_SET)
         .expect("libevent binds a pin");
-    let checkout = repository_root().join(LIBEVENT_SUBMODULE_PATH);
+    let checkout = initialized_libevent_checkout();
     assert_eq!(
         verify_pin(LIBEVENT_SOURCE_SET, pin, &checkout).expect("the submodule matches the pin"),
         pin.git_commit
@@ -428,7 +449,7 @@ fn f9_and_f10_missing_files_and_digest_drift_reject_the_inventory() {
         .pin_for(LIBEVENT_SOURCE_SET)
         .expect("libevent pin")
         .git_commit;
-    let checkout = repository_root().join(LIBEVENT_SUBMODULE_PATH);
+    let checkout = initialized_libevent_checkout();
     let bundle = load_audited_bundle(library, &checkout, revision).expect("the checkout audits");
     assert_eq!(bundle.files.len(), library.audited_files.len());
 
