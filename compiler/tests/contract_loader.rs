@@ -42,8 +42,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // (`fluent_bit/input_chunk_destroy.qcore`), which decides the leak leaf
     // that card's corpus movement opened; 17 -> 18 by card AOM-DESTROY-SIBLINGS
     // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`), which decides one
-    // of the two siblings that card deliberately left undeclared.
-    assert_eq!(contracts.source_assumptions().len(), 18);
+    // of the two siblings that card deliberately left undeclared; 18 -> 19 by
+    // card W29-CORPUS-CONTRACTS (`fluent_bit/input_chunk_sizes.qcore`), whose
+    // two borrowed/none size queries decide thirteen uncontracted-call leaves.
+    assert_eq!(contracts.source_assumptions().len(), 19);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -144,6 +146,14 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // function designator is never a resource identity, so `Borrowed` is
         // both the only mode the loader admits there and the true one.
         ("msgpack_packer_init", 3),
+        // Card W29-CORPUS-CONTRACTS adds two more, listed explicitly for the
+        // same reason and in the same shape: every parameter borrowed, no
+        // result custody. Both are pure size queries over the input chunk's
+        // own state (`src/flb_input_chunk.c:756-759` and `:767-790`), and
+        // their `ssize_t` result spells `isize` under the LP64 declared-ABI
+        // projection.
+        ("flb_input_chunk_get_size", 1),
+        ("flb_input_chunk_get_real_size", 1),
     ] {
         old.insert_contract(
             name,
@@ -447,8 +457,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF; 15 -> 16 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER; 16 -> 17 by card
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED; 17 -> 18 by card
-    // AOM-DESTROY-SIBLINGS.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 18);
+    // AOM-DESTROY-SIBLINGS; 18 -> 19 by card W29-CORPUS-CONTRACTS.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 19);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -595,7 +605,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // where its neighbour carries `nonnull`. The other sibling,
     // `flb_input_chunk_destroy_corrupted`, was read too and deliberately NOT
     // landed at measured payoff zero.
-    assert_eq!(modules.len(), 73, "corpus module count");
+    // 73 -> 74: card W29-CORPUS-CONTRACTS adds
+    // `fluent_bit/input_chunk_sizes.qcore`, entirely v1 and manifest-selected
+    // — two read-only size queries declared borrowed/none against their
+    // pinned bodies.
+    assert_eq!(modules.len(), 74, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -667,11 +681,15 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`'s
     // `flb_input_chunk_destroy_direct_routes`, the sibling release the previous
     // card deliberately left undeclared, read on its own terms).
-    // The rejected count is unchanged in all eight cases, because every added
+    // 18 -> 19 and 39 -> 41 by card W29-CORPUS-CONTRACTS
+    // (`fluent_bit/input_chunk_sizes.qcore`'s `flb_input_chunk_get_size` and
+    // `flb_input_chunk_get_real_size`, two read-only size queries declared
+    // borrowed/none against their pinned bodies).
+    // The rejected count is unchanged in all nine cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (18, 39, 145)
+        (19, 41, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

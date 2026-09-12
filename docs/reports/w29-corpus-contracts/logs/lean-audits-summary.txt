@@ -1,0 +1,3 @@
+'QCore.BorrowedActual.the_admission_survives_the_closure' depends on axioms: [propext]
+Passed AuditW4.lean (115/115) in 0.3s
+Passed 115 Lean audits

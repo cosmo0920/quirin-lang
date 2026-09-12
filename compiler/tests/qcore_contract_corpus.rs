@@ -289,6 +289,27 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_get_name",
         3,
     ),
+    // Card W29-CORPUS-CONTRACTS: the corpus moves 73 -> 74 modules with this
+    // file, and the resource-v1 declaration count 39 -> 41. Deliberate; see
+    // `docs/reports/w29-corpus-contracts/README.md`. Both bodies are pure size
+    // queries read against the pinned checkout (`src/flb_input_chunk.c:756-759`
+    // and `:767-790`): fields read, read-only ChunkIO queries called, a scalar
+    // returned, so `resource_borrowed(ic)` and `resource_return_none()` are
+    // the only faithful modes — the same reading as `flb_input_chunk_get_name`
+    // above. `ssize_t` spells `isize` under the LP64 declared-ABI projection.
+    // Both callees are defined inside `src/flb_input_chunk.c`, itself a corpus
+    // unit, so the declared contract wins over any W4-inferred summary and a
+    // disagreement is a `SummaryConflict` diagnostic, never a silent override.
+    (
+        "fluent_bit/input_chunk_sizes.qcore",
+        "flb_input_chunk_get_size",
+        3,
+    ),
+    (
+        "fluent_bit/input_chunk_sizes.qcore",
+        "flb_input_chunk_get_real_size",
+        3,
+    ),
     ("fluent_bit/logging.qcore", "flb_log_check", 3),
     // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
     // `libc/errno.qcore`, and this module gains one declaration. Deliberate;
@@ -539,8 +560,11 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // deliberate addition of
     // `fluent_bit/input_chunk_destroy_direct_routes.qcore`, which decides one
     // of the two siblings that card left undeclared and declines the other at
-    // measured payoff zero.
-    assert_eq!(sources.len(), 73, "unexpected contract corpus size");
+    // measured payoff zero. 73 -> 74 by card W29-CORPUS-CONTRACTS' deliberate
+    // addition of `fluent_bit/input_chunk_sizes.qcore`, whose two read-only
+    // size queries decide the thirteen standing uncontracted-call refusals
+    // that named them inside the unit that defines them.
+    assert_eq!(sources.len(), 74, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

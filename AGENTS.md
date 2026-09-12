@@ -65,25 +65,28 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-28 close. The **corpus baseline remains
-`docs/reports/gateway-c-location/artifacts/`** (the wave-27 presentation-only
-re-pin: 54,371 rows carry an `origin` naming the original pre-preprocessing
-`file:line`, while the preprocessed `L`-number stays the **internal** coordinate
-for pin identity, leaf identity and certificate comparability, by the user's
-ruling — `GATEWAY-LOCATION-INTERNAL-CHANNELS`). Wave 28 ran **no arbiter** —
-none of its three cards touched a gateway, contract, audit or provider source
-file — so the corpus rows below are **carried** from the wave-27 measurement
-and labelled carried, not presented as a fresh run. Every preceding corpus
-archive stays frozen (constraint 21):
-`docs/reports/wave23-c-operations/artifacts/` and the attributed AFTER runs
-chained beneath it — `aom-destroy-siblings` (wave 23), `aom-binding-poison`
-(wave 25), `gateway-c-location` (wave 27):
+Headline numbers at the wave-28 close, with wave 29's arbiter re-pin applied
+to the corpus and contract rows. The **corpus baseline is
+`docs/reports/w29-corpus-contracts/artifacts/`** (wave 29's arbiter card
+`W29-CORPUS-CONTRACTS`: two faithful size-query contracts decide exactly
+thirteen `unsupported` uncontracted-call leaves in the unit that defines the
+callees; its BEFORE run reproduces the wave-27 `gateway-c-location`
+`diagnostics.json` and `chunk-contracts.json` **byte for byte**). The wave-27
+presentation facts carry forward: 54,371 rows carry an `origin` naming the
+original pre-preprocessing `file:line`, while the preprocessed `L`-number
+stays the **internal** coordinate for pin identity, leaf identity and
+certificate comparability, by the user's ruling
+(`GATEWAY-LOCATION-INTERNAL-CHANNELS`). Every preceding corpus archive stays
+frozen (constraint 21): `docs/reports/wave23-c-operations/artifacts/` and the
+attributed AFTER runs chained beneath it — `aom-destroy-siblings` (wave 23),
+`aom-binding-poison` (wave 25), `gateway-c-location` (wave 27),
+`w29-corpus-contracts` (wave 29):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-27 presentation re-pin, as are `unknown_alias` **4,344** and `unsupported` **49,773**, with all 54,383 diagnostic rows keeping their `(function, preprocessed line, category)`). The authoritative artifacts are `docs/reports/gateway-c-location/artifacts/`, where a diagnostic row now carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at both the wave-27 presentation re-pin and the wave-29 arbiter re-pin, as is `unknown_alias` **4,344**). `unsupported` **49,760** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; zero leaves added, one unit changed). The authoritative artifacts are `docs/reports/w29-corpus-contracts/artifacts/`; a diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
 | CT01–CT50 conformance | **41/50 mapped**, 9 unmapped; sanitized-native **7 of 41** (the two new legs by real execution: `run_sequential_sanitized` compiles and runs CT07's and CT09's own emitted C under ASan/UBSan/LSan), proof 0 of 41. Wave 28 (`CT-WIRE-LANE-2`) mapped **CT07, CT08, CT09, CT21 and CT23** — CT07 with its semantic profile stating the read-loan/retained-write boundary, CT09 with the layout leg an executed *observation* and its `proof` stage `unassessed`, CT23 on the new `composed_epoch` route with the `epoch_credit_split` verdict mode — and published CT22's **narrowed** reason (`blocked-on-joins-composition`; the same wave's `REGION-CREDIT-JOINS` made the scenario *expressible*, and a capability is not a mapping). A grown denominator is mapping, not conformance (constraint 23) |
-| Contract corpus | **73 modules** |
+| Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
 | Merged gate | 4,392 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **115 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave28-close/gate.json`, measured at the integration tip over the three merged cards; each card's own gate is in its report; two constraint-16 load rows re-verified in isolation during integration, both facts recorded) |
 | Full language conformance | **false** |
