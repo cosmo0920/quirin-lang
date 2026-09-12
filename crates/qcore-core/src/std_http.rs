@@ -14,13 +14,18 @@
 //!
 //! # The signature move: a conformance fact a compiler can decide
 //!
-//! Every component of a message is a quoted token, so its bytes — and therefore
-//! its *length* — are known before emission. That makes a whole family of
-//! RFC 9112 facts **decidable statically**, and this module decides them rather
-//! than trusting the author:
+//! Every component of a message is **check-time-known** — a quoted token, or
+//! (card `HTTP-V1-COMPUTED-LENGTH`) a value this entry composed out of
+//! check-time-known pieces — so its bytes, and therefore its *length*, are held
+//! by the compiler before emission. That makes a whole family of RFC 9112 facts
+//! **decidable statically**, and this module decides them rather than trusting
+//! the author:
 //!
-//! * a declared `Content-Length` must equal the literal content's byte count,
-//!   and a message with content must declare one ([`HttpError::Framing`]);
+//! * a declared `Content-Length` must equal the content's byte count, and a
+//!   message with content must declare one ([`HttpError::Framing`]). **The
+//!   equality is unchanged by a computed length**: both sides are resolved to
+//!   bytes before [`admit_framing`] runs, so that gate never learns which
+//!   spelling produced them;
 //! * the version must be exactly `HTTP/1.1` ([`HTTP_VERSION`]);
 //! * a request must carry exactly one `Host` field (RFC 9112 §3.2);
 //! * a method, a field name and a request target must be the grammar's own
@@ -58,13 +63,22 @@
 //! * **It parses nothing.** A receive names the message it expects and the bytes
 //!   are compared; reading a message out of unknown input is the named follow-on
 //!   `HTTP-V1-PARSE` and needs a varying-value tier this language does not have.
+//! * **It computes nothing at run time.** A `concat` result is a byte sequence
+//!   *the compiler* holds, exactly as `source.string.v1`'s is (constraint 15h):
+//!   no allocation, no copy, no custody, and a length that is itself a
+//!   check-time constant. A composition whose pieces the compiler cannot
+//!   evaluate is the sibling route's named follow-on
+//!   `STRING-SLICE-CONCAT-RUNTIME`, and is what would make the framing equality
+//!   undecidable here.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::std_io::{Rendering, StdIoEvent, StdIoOperand};
 use crate::std_socket::{
     self, SocketCertificate, SocketError, SocketProgram, SocketStatement, TextPayload,
 };
+use crate::std_string::MAX_STRING_BYTES;
 use crate::typed_errors::{Effect, EffectRow};
 
 /// The only HTTP version `source.http.v1` admits, spelled exactly as RFC 9112
@@ -216,6 +230,18 @@ pub struct HttpMessageRecord {
     /// statement names is an unused object, and the emitted C is built under
     /// `-Wall -Wextra -Werror`.
     pub transferred: bool,
+    /// Whether this message's `Content-Length` was written as a value the entry
+    /// **computed** rather than as a quoted token
+    /// (card `HTTP-V1-COMPUTED-LENGTH`).
+    ///
+    /// It changes no decision: `declared_length` still equals the content's byte
+    /// count for every admitted message, because both are check-time-known
+    /// whichever spelling produced them. It is published so a reader of a
+    /// certificate can see *that* a length was derived, which is the property
+    /// this card exists to make expressible.
+    pub declared_length_computed: bool,
+    /// The same for the content itself.
+    pub content_computed: bool,
 }
 
 impl HttpMessageRecord {
@@ -230,15 +256,86 @@ impl HttpMessageRecord {
     }
 }
 
+/// What may stand at a **header-value** or **content** position
+/// (card `HTTP-V1-COMPUTED-LENGTH`).
+///
+/// Every form is **check-time-known**, which is the entire reason a computed
+/// component changes nothing about what the conformance gates decide. Card
+/// `HTTP-QUIRIN-V1` admitted only the first; the other two are `STRING-CONCAT`'s
+/// own vocabulary, resolved here into the same byte sequence a quoted token
+/// would have produced, *before* [`admit_field`] and [`admit_framing`] run. The
+/// gates are therefore unchanged — they see bytes, and they never learn which
+/// spelling produced them.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum HttpPiece {
+    /// A quoted token written at the position — the only form before card
+    /// `HTTP-V1-COMPUTED-LENGTH`, and the one this route's own syntax owns
+    /// (constraint 15f: it constructs no `string` value).
+    Literal(Vec<u8>),
+    /// A name this entry bound to text, with `let NAME = "…";` or
+    /// `let NAME = concat(PIECE, …);`.
+    Name(String),
+    /// `dec(NAME)` / `hex(NAME)` — the **text of a check-time-constant
+    /// integer**, byte-identical to what `print dec NAME;` writes, because it is
+    /// produced by [`Rendering::render`] and by nothing else. This is the piece
+    /// that makes a **computed `Content-Length`** expressible.
+    Scalar { rendering: Rendering, name: String },
+}
+
+impl HttpPiece {
+    /// The name this piece reads, if it reads one.
+    #[must_use]
+    pub fn name(&self) -> Option<&str> {
+        match self {
+            Self::Literal(_) => None,
+            Self::Name(name) | Self::Scalar { name, .. } => Some(name.as_str()),
+        }
+    }
+
+    /// Whether this piece is a value the entry computed rather than a token it
+    /// wrote. Published per message so a reader of a certificate can see that a
+    /// declared length was derived rather than spelled.
+    #[must_use]
+    pub fn is_computed(&self) -> bool {
+        !matches!(self, Self::Literal(_))
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum HttpStatement {
     /// `let NAME = request "GET" "/" "HTTP/1.1";` /
     /// `let NAME = response "HTTP/1.1" 200 "OK";`
     Declare { binding: String, start: HttpStart },
-    /// `header NAME "Field" "value";`
-    Header { message: String, field: HttpField },
-    /// `content NAME "…";` — the message's literal content.
-    Content { message: String, bytes: Vec<u8> },
+    /// `header NAME "Field" VALUE;` — the field name is a quoted token (a
+    /// `token` is this route's own syntax) and the **value** is any
+    /// [`HttpPiece`].
+    Header {
+        message: String,
+        name: String,
+        value: HttpPiece,
+    },
+    /// `content NAME VALUE;` — the message's content, a quoted token or a value
+    /// this entry computed.
+    Content { message: String, value: HttpPiece },
+    /// `let NAME = concat(PIECE, …);` — **text this entry computes rather than
+    /// writes** (card `HTTP-V1-COMPUTED-LENGTH`, reusing `STRING-CONCAT`'s
+    /// operation unchanged in meaning).
+    ///
+    /// Two or more pieces: a composition of one *is* that piece, and admitting
+    /// it would give the route two spellings of one value with nothing to tell
+    /// them apart by — exactly `source.string.v1`'s own rule.
+    Compose {
+        binding: String,
+        pieces: Vec<HttpPiece>,
+    },
+    /// `let NAME = len(NAME);` — the exact byte count of a bound text value,
+    /// available without scanning because the bytes are the compiler's own.
+    ///
+    /// It binds a **check-time scalar**. It lowers to the transport's own
+    /// `let` binding only where the transport reads the name, which is what
+    /// keeps a length used solely as a header value out of the emitted C
+    /// (`-Werror=unused-variable`).
+    Length { binding: String, name: String },
     /// `let NAME = "…";` — a string view of statically stored literal bytes,
     /// usable as a transfer payload. `source.string.v1`'s own construction,
     /// modelled here so a payload can be named rather than only written at the
@@ -268,6 +365,25 @@ pub struct HttpProgram {
     pub statements: Vec<HttpStatement>,
 }
 
+/// One admitted `concat`, published so a reader sees the **length arithmetic**
+/// rather than being told it happened (card `HTTP-V1-COMPUTED-LENGTH`).
+///
+/// `bytes.len() == piece_lens.iter().sum()` holds for every record, and that
+/// equation is the operational content of "a computed `Content-Length` is still
+/// decided": a length the compiler derived from pieces is a check-time constant
+/// exactly as a literal's own length is. The shape is `STRING-CONCAT`'s
+/// [`crate::std_string::ConcatRecord`], carried here with the composed bytes
+/// themselves so the evidence is the text and not a claim about it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct HttpComposition {
+    pub event: usize,
+    pub binding: String,
+    /// The byte length each piece contributed, in written order.
+    pub piece_lens: Vec<u32>,
+    /// The composed payload.
+    pub bytes: Vec<u8>,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct HttpCertificate {
     pub entry: String,
@@ -276,8 +392,15 @@ pub struct HttpCertificate {
     pub effects: EffectRow,
     /// Every message this entry declared, in program order, with its wire bytes.
     pub messages: Vec<HttpMessageRecord>,
-    /// Every string view this entry bound, in program order.
+    /// Every string view this entry bound, in program order — written literals
+    /// and composed payloads alike, each with the exact bytes it denotes.
     pub views: Vec<(String, Vec<u8>)>,
+    /// Every admitted `concat`, with its length arithmetic
+    /// (card `HTTP-V1-COMPUTED-LENGTH`).
+    pub compositions: Vec<HttpComposition>,
+    /// The check-time scalar environment: every integer this entry bound, by
+    /// name, whether with `let NAME = INTEGER;` or with `let NAME = len(NAME);`.
+    pub scalars: BTreeMap<String, i32>,
     /// The transport's own certificate, derived by the **unedited**
     /// `source.socket.v1` checker over the program this route lowered to.
     pub transport: SocketCertificate,
@@ -389,7 +512,8 @@ impl fmt::Display for FramingRefusal {
             Self::LengthDisagrees { declared, actual } => write!(
                 f,
                 "this message declares `Content-Length: {declared}` and carries {actual} byte(s) \
-                 of content. A literal's byte count is known at check time, so \
+                 of content. Both numbers are known at check time — whether each component was \
+                 written as a quoted token or composed from values this entry computed — so \
                  `source.http.v1` decides the equality here rather than emitting a message whose \
                  own framing contradicts it"
             ),
@@ -438,6 +562,20 @@ pub enum HttpError {
     },
     /// `Q094`: a name at a message or value position that is not one.
     NotAMessage { event: usize, name: String },
+    /// `Q094`, **the same condition reached by a new position** (card
+    /// `HTTP-V1-COMPUTED-LENGTH`): a name at a **text** or **scalar** position
+    /// that this entry bound to no such value. `what` names the position, so
+    /// one code still distinguishes the faults by message.
+    ///
+    /// No code is allocated: the Q-space note (`Q-NAMESPACE-DECISION`) puts a
+    /// new allocation in the icebox, and `Q094`'s condition — "a name at a
+    /// position that is not one" — is widened rather than duplicated, on the
+    /// `SOCKET-EVENT-COMPOSE` precedent.
+    NotAValue {
+        event: usize,
+        name: String,
+        what: &'static str,
+    },
     /// `Q095`: a refusal reported by the **inherited, unedited**
     /// `source.socket.v1` checker — custody, the transport state machine, or the
     /// determinism boundary. This variant carries that checker's own error value
@@ -455,7 +593,7 @@ impl HttpError {
             Self::StartLine { .. } => "Q091",
             Self::Field { .. } => "Q092",
             Self::Framing { .. } => "Q093",
-            Self::NotAMessage { .. } => "Q094",
+            Self::NotAMessage { .. } | Self::NotAValue { .. } => "Q094",
             Self::Transport { .. } => "Q095",
             Self::EffectNotDeclared { .. } => "Q096",
         }
@@ -469,6 +607,7 @@ impl HttpError {
             | Self::Field { event, .. }
             | Self::Framing { event, .. }
             | Self::NotAMessage { event, .. }
+            | Self::NotAValue { event, .. }
             | Self::Transport { event, .. }
             | Self::EffectNotDeclared { event, .. } => *event,
         }
@@ -488,6 +627,12 @@ impl fmt::Display for HttpError {
                 "`{name}` is not an HTTP message or a string view this entry bound; \
                  `source.http.v1` transfers a declared message or a bound view, so that every \
                  byte on the wire is decided before emission"
+            ),
+            Self::NotAValue { name, what, .. } => write!(
+                f,
+                "`{name}` is not {what} this entry bound; `source.http.v1` resolves every \
+                 computed component against values whose bytes it already holds, so a name it \
+                 cannot resolve is refused rather than deferred to run time"
             ),
             Self::Transport { error, .. } => write!(
                 f,
@@ -829,6 +974,113 @@ pub struct HttpTransport {
     pub attribution: Vec<usize>,
     pub messages: Vec<HttpMessageRecord>,
     pub views: Vec<(String, Vec<u8>)>,
+    pub compositions: Vec<HttpComposition>,
+    pub scalars: BTreeMap<String, i32>,
+}
+
+/// The check-time environment a computed component resolves against.
+///
+/// Two maps, and they never merge: a text name is never a scalar and a scalar
+/// name is never text. That is [`crate::std_io::StdIoProgram`]'s own discipline
+/// for `scalars`/`identities`, applied here for the same reason — a name
+/// resolved in the wrong namespace would be a silently different byte sequence.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct ValueEnvironment {
+    text: BTreeMap<String, Vec<u8>>,
+    scalars: BTreeMap<String, i32>,
+}
+
+impl ValueEnvironment {
+    /// The exact bytes one piece denotes, or the position that did not resolve.
+    ///
+    /// **Total on a resolvable environment, and never deferred.** A literal is
+    /// already bytes, a name is bytes this entry bound, and a rendering is the
+    /// digits [`Rendering::render`] writes — so every arm is a byte sequence the
+    /// compiler holds, which is exactly the premise the framing gate needs.
+    fn resolve(&self, piece: &HttpPiece) -> Result<Vec<u8>, (String, &'static str)> {
+        match piece {
+            HttpPiece::Literal(bytes) => Ok(bytes.clone()),
+            HttpPiece::Name(name) => self
+                .text
+                .get(name)
+                .cloned()
+                .ok_or_else(|| (name.clone(), "text")),
+            HttpPiece::Scalar { rendering, name } => self
+                .scalars
+                .get(name)
+                .map(|value| rendering.render(*value).into_bytes())
+                .ok_or_else(|| (name.clone(), "an integer")),
+        }
+    }
+}
+
+/// The scalar names the **transport half** of this program reads.
+///
+/// A `len` binding is a check-time constant: it lowers to the transport's own
+/// integer binding only where a `print`/`log` line renders it, so a length used
+/// solely as a header value contributes no C object. Without this the emitted
+/// program would carry an unread `int32_t` and fail `-Werror=unused-variable` —
+/// a C compile failure rather than a QCore refusal, which is the shape of
+/// hygiene finding `STRING-CONCAT` §8 recorded three of.
+fn transport_scalar_reads(program: &HttpProgram) -> BTreeSet<String> {
+    let mut read = BTreeSet::new();
+    let mut note = |operand: &StdIoOperand| {
+        if let StdIoOperand::Scalar(name) | StdIoOperand::Borrowed(name) = operand {
+            read.insert(name.clone());
+        }
+    };
+    for statement in &program.statements {
+        if let HttpStatement::Transport(SocketStatement::Line(event)) = statement {
+            match event {
+                StdIoEvent::Print { operand, .. } | StdIoEvent::Log { operand, .. } => {
+                    note(operand)
+                }
+                StdIoEvent::LogLevel { .. } | StdIoEvent::Flush | StdIoEvent::Return => {}
+            }
+        }
+    }
+    read
+}
+
+/// Resolve one piece against the environment, reporting the position that did
+/// not resolve at `Q094`.
+fn resolve(
+    environment: &ValueEnvironment,
+    piece: &HttpPiece,
+    event: usize,
+    errors: &mut Vec<HttpError>,
+) -> Option<Vec<u8>> {
+    match environment.resolve(piece) {
+        Ok(bytes) => Some(bytes),
+        Err((name, what)) => {
+            errors.push(HttpError::NotAValue { event, name, what });
+            None
+        }
+    }
+}
+
+/// Register a value binding, refusing a name this entry already bound.
+///
+/// One namespace for the check: a name is text **or** a scalar and never both,
+/// so `dec(s)` on a bound view and `concat(n)` on a bound integer are each a
+/// `Q094` rather than a silently different byte sequence.
+fn bind_value(
+    environment: &mut ValueEnvironment,
+    binding: &str,
+    event: usize,
+    errors: &mut Vec<HttpError>,
+) -> bool {
+    if environment.text.contains_key(binding) || environment.scalars.contains_key(binding) {
+        errors.push(HttpError::Shape {
+            event,
+            reason: format!(
+                "`{binding}` already names a value this entry bound; `source.http.v1` binds each \
+                 name once, so that the bytes a component names are never ambiguous"
+            ),
+        });
+        return false;
+    }
+    true
 }
 
 /// Build the transport program: validate every message, compute its wire bytes,
@@ -846,11 +1098,14 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
     let mut messages: BTreeMap<String, HttpMessage> = BTreeMap::new();
     let mut order: Vec<String> = Vec::new();
     let mut sent: BTreeSet<String> = BTreeSet::new();
-    let mut views: BTreeMap<String, Vec<u8>> = BTreeMap::new();
+    let mut computed: BTreeMap<String, (bool, bool)> = BTreeMap::new();
+    let mut environment = ValueEnvironment::default();
     let mut view_order: Vec<String> = Vec::new();
+    let mut compositions: Vec<HttpComposition> = Vec::new();
     let mut published: Vec<HttpMessageRecord> = Vec::new();
     let mut statements = Vec::new();
     let mut attribution = Vec::new();
+    let rendered_scalars = transport_scalar_reads(program);
 
     for (index, statement) in program.statements.iter().enumerate() {
         match statement {
@@ -879,7 +1134,8 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
             }
             HttpStatement::Header {
                 message: name,
-                field,
+                name: field_name,
+                value,
             } => {
                 if sent.contains(name) {
                     errors.push(HttpError::Shape {
@@ -891,8 +1147,40 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                     });
                     continue;
                 }
+                // **The value is resolved here, before any gate runs.** A
+                // computed component becomes the same byte sequence a quoted
+                // token would have produced, so `admit_field`'s `CR`/`LF`
+                // exclusion and `admit_framing`'s length equality are the
+                // *unchanged* functions of card `HTTP-QUIRIN-V1` — they see
+                // bytes and never learn which spelling produced them.
+                let Some(bytes) = resolve(&environment, value, index, &mut errors) else {
+                    continue;
+                };
+                let Ok(text) = String::from_utf8(bytes) else {
+                    // Unreachable from source: every piece is a decoded literal
+                    // (well-formed UTF-8 by `decode_string_literal`) or ASCII
+                    // digits, and a concatenation of well-formed UTF-8 is
+                    // well-formed. Kept as a fail-closed guard on the model
+                    // rather than an `expect`, on the `EXTERN-F1-STORE-REACH`
+                    // precedent (`HTTP-COMPUTED-UTF8-REACH`).
+                    errors.push(HttpError::Field {
+                        event: index,
+                        reason: format!(
+                            "the bytes this `{field_name}` value denotes are not text; a field \
+                             value is ASCII field-content, so `source.http.v1` refuses rather \
+                             than putting bytes on the wire whose meaning it cannot state"
+                        ),
+                    });
+                    continue;
+                };
+                if value.is_computed() && field_name.eq_ignore_ascii_case(CONTENT_LENGTH) {
+                    computed.entry(name.clone()).or_default().0 = true;
+                }
                 match messages.get_mut(name) {
-                    Some(message) => message.fields.push(field.clone()),
+                    Some(message) => message.fields.push(HttpField {
+                        name: field_name.clone(),
+                        value: text,
+                    }),
                     None => errors.push(HttpError::NotAMessage {
                         event: index,
                         name: name.clone(),
@@ -901,7 +1189,7 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
             }
             HttpStatement::Content {
                 message: name,
-                bytes,
+                value,
             } => {
                 if sent.contains(name) {
                     errors.push(HttpError::Shape {
@@ -912,6 +1200,12 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                         ),
                     });
                     continue;
+                }
+                let Some(bytes) = resolve(&environment, value, index, &mut errors) else {
+                    continue;
+                };
+                if value.is_computed() {
+                    computed.entry(name.clone()).or_default().1 = true;
                 }
                 match messages.get_mut(name) {
                     Some(message) if message.content.is_some() => {
@@ -924,15 +1218,100 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                             ),
                         });
                     }
-                    Some(message) => message.content = Some(bytes.clone()),
+                    Some(message) => message.content = Some(bytes),
                     None => errors.push(HttpError::NotAMessage {
                         event: index,
                         name: name.clone(),
                     }),
                 }
             }
+            HttpStatement::Compose { binding, pieces } => {
+                // A composition of one *is* that piece. `source.string.v1`
+                // refuses it for the reason this route inherits: two spellings
+                // of one value with nothing to tell them apart by.
+                if pieces.len() < 2 {
+                    errors.push(HttpError::Shape {
+                        event: index,
+                        reason: format!(
+                            "`concat(…)` composes two or more pieces; a composition of \
+                             {} *is* that piece, and `source.http.v1` refuses the second \
+                             spelling of one value",
+                            pieces.len()
+                        ),
+                    });
+                    continue;
+                }
+                let mut bytes = Vec::new();
+                let mut piece_lens = Vec::new();
+                let mut resolved = true;
+                for piece in pieces {
+                    match resolve(&environment, piece, index, &mut errors) {
+                        Some(piece_bytes) => {
+                            piece_lens.push(u32::try_from(piece_bytes.len()).unwrap_or(u32::MAX));
+                            bytes.extend_from_slice(&piece_bytes);
+                        }
+                        None => resolved = false,
+                    }
+                }
+                if !resolved {
+                    continue;
+                }
+                // The same bound `source.string.v1` puts on a literal, applied
+                // to a composition for the same reason: a payload this route
+                // cannot model exactly is not modelled at all.
+                if bytes.len() > MAX_STRING_BYTES as usize {
+                    errors.push(HttpError::Shape {
+                        event: index,
+                        reason: format!(
+                            "this composition is {} bytes, longer than the {MAX_STRING_BYTES}-byte \
+                             payload `source.http.v1` models; a longer one is refused rather than \
+                             truncated",
+                            bytes.len()
+                        ),
+                    });
+                    continue;
+                }
+                if !bind_value(&mut environment, binding, index, &mut errors) {
+                    continue;
+                }
+                compositions.push(HttpComposition {
+                    event: index,
+                    binding: binding.clone(),
+                    piece_lens,
+                    bytes: bytes.clone(),
+                });
+                environment.text.insert(binding.clone(), bytes);
+                view_order.push(binding.clone());
+            }
+            HttpStatement::Length { binding, name } => {
+                let Some(bytes) = environment.text.get(name) else {
+                    errors.push(HttpError::NotAValue {
+                        event: index,
+                        name: name.clone(),
+                        what: "text",
+                    });
+                    continue;
+                };
+                let length = i32::try_from(bytes.len()).unwrap_or(i32::MAX);
+                if !bind_value(&mut environment, binding, index, &mut errors) {
+                    continue;
+                }
+                environment.scalars.insert(binding.clone(), length);
+                // The transport binds the same name only where the emitted
+                // program reads it; see `transport_scalar_reads`.
+                if rendered_scalars.contains(binding) {
+                    statements.push(SocketStatement::Let {
+                        binding: binding.clone(),
+                        value: length,
+                    });
+                    attribution.push(index);
+                }
+            }
             HttpStatement::Text { binding, bytes } => {
-                views.insert(binding.clone(), bytes.clone());
+                if !bind_value(&mut environment, binding, index, &mut errors) {
+                    continue;
+                }
+                environment.text.insert(binding.clone(), bytes.clone());
                 view_order.push(binding.clone());
             }
             HttpStatement::Transfer {
@@ -949,6 +1328,7 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                     // is refused above), so re-deciding it at every transfer
                     // would report one fault as several.
                     if sent.insert(value.clone()) {
+                        let flags = computed.get(value).copied().unwrap_or_default();
                         match admit_message(index, message) {
                             Ok(declared) => published.push(HttpMessageRecord {
                                 binding: message.binding.clone(),
@@ -959,6 +1339,8 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                                 declared_length: declared,
                                 field_count: message.fields.len(),
                                 transferred: true,
+                                declared_length_computed: flags.0,
+                                content_computed: flags.1,
                             }),
                             Err(refusals) => errors.extend(refusals),
                         }
@@ -970,7 +1352,7 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                         continue;
                     };
                     TextPayload::named(record.symbol.clone(), record.wire())
-                } else if let Some(bytes) = views.get(value) {
+                } else if let Some(bytes) = environment.text.get(value) {
                     TextPayload::inline(bytes.clone())
                 } else {
                     errors.push(HttpError::NotAMessage {
@@ -983,6 +1365,14 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                 attribution.push(index);
             }
             HttpStatement::Transport(statement) => {
+                // The transport's own integer binding is the **one** place a
+                // scalar enters this route: `let n = 200;` is read by
+                // `source.socket.v1`'s reader and checked by its checker, and
+                // this route merely observes the value it already carries. A
+                // second scalar reader here could disagree with that one.
+                if let SocketStatement::Let { binding, value } = statement {
+                    environment.scalars.insert(binding.clone(), *value);
+                }
                 statements.push(statement.clone());
                 attribution.push(index);
             }
@@ -999,6 +1389,7 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
             continue;
         }
         let message = messages.get(binding).expect("declared above");
+        let flags = computed.get(binding).copied().unwrap_or_default();
         match admit_message(program.statements.len(), message) {
             Ok(declared) => published.push(HttpMessageRecord {
                 binding: message.binding.clone(),
@@ -1009,6 +1400,8 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
                 declared_length: declared,
                 field_count: message.fields.len(),
                 transferred: false,
+                declared_length_computed: flags.0,
+                content_computed: flags.1,
             }),
             Err(refusals) => errors.extend(refusals),
         }
@@ -1029,10 +1422,12 @@ pub fn lower_transport(program: &HttpProgram) -> Result<HttpTransport, Vec<HttpE
         views: view_order
             .into_iter()
             .map(|name| {
-                let bytes = views.get(&name).cloned().unwrap_or_default();
+                let bytes = environment.text.get(&name).cloned().unwrap_or_default();
                 (name, bytes)
             })
             .collect(),
+        compositions,
+        scalars: environment.scalars,
     })
 }
 
@@ -1096,6 +1491,8 @@ pub fn check_http_program(program: &HttpProgram) -> Result<HttpCertificate, Vec<
         effects: certificate.effects.clone(),
         messages: transport.messages,
         views: transport.views,
+        compositions: transport.compositions,
+        scalars: transport.scalars,
         transport: certificate,
     })
 }
@@ -1119,6 +1516,8 @@ pub enum HttpRecheckFailure {
     Effects,
     Messages,
     Views,
+    Compositions,
+    Scalars,
     Transport,
     Refused,
 }
@@ -1130,6 +1529,8 @@ impl fmt::Display for HttpRecheckFailure {
             Self::Effects => "the derived effect row",
             Self::Messages => "the declared messages and their wire bytes",
             Self::Views => "the bound string views",
+            Self::Compositions => "the composed payloads and their length arithmetic",
+            Self::Scalars => "the check-time scalar environment",
             Self::Transport => "the transport certificate",
             Self::Refused => "the program itself, which the recheck refuses",
         };
@@ -1159,6 +1560,12 @@ pub fn recheck_http_certificate(
     }
     if rederived.views != certificate.views {
         return Err(HttpRecheckFailure::Views);
+    }
+    if rederived.compositions != certificate.compositions {
+        return Err(HttpRecheckFailure::Compositions);
+    }
+    if rederived.scalars != certificate.scalars {
+        return Err(HttpRecheckFailure::Scalars);
     }
     if rederived.transport != certificate.transport {
         return Err(HttpRecheckFailure::Transport);

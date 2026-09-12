@@ -2343,9 +2343,11 @@ cannot evaluate, and the separate mutable `{ptr, len, cap}` byte slice.
 ## G07.10. A checked HTTP/1.1 message subset (`source.http.v1`)
 
 Card `HTTP-QUIRIN-V1` registers `std.http` and implements this consumer grammar
-(diagnostics `Q090`–`Q096`, spec §L21). It is **an executed HTTP/1.1 subset with
-the boundary named**, never HTTP/1.1 conformance: what is outside it is listed at
-the end of this section and in `examples/http/README.md`.
+(diagnostics `Q090`–`Q096`, spec §L21); card `HTTP-V1-COMPUTED-LENGTH` widens a
+component position to a value the entry **computes**, allocating no code and
+reserving no word. It is **an executed HTTP/1.1 subset with the boundary named**,
+never HTTP/1.1 conformance: what is outside it is listed at the end of this
+section and in `examples/http/README.md`.
 
 ```ebnf
 module    = { import }, entry ;
@@ -2355,12 +2357,17 @@ entry     = "fn", NAME, "(", ")", "->", "unit",
             [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ], "{", { stmt }, "}" ;
 stmt      = "let", NAME, "=", "request", STRING-TOKEN, STRING-TOKEN, STRING-TOKEN, ";"
           | "let", NAME, "=", "response", STRING-TOKEN, INTEGER, STRING-TOKEN, ";"
-          | "header", NAME, STRING-TOKEN, STRING-TOKEN, ";"
-          | "content", NAME, STRING-TOKEN, ";"
+          | "header", NAME, STRING-TOKEN, VALUE, ";"
+          | "content", NAME, VALUE, ";"
           | "let", NAME, "=", STRING-TOKEN, ";"        (* a bound string view *)
+          | "let", NAME, "=", "concat", "(", VALUE, { ",", VALUE }, ")", ";"
+          | "let", NAME, "=", "len", "(", NAME, ")", ";"
           | "send", NAME, NAME, ";"                    (* a message or a view *)
           | "recv", NAME, NAME, ";"                    (* verified against one *)
           | SOCKET-STMT ;                              (* §G's socket surface *)
+VALUE     = STRING-TOKEN                               (* this module's syntax *)
+          | NAME                                       (* text this entry bound *)
+          | ( "dec" | "hex" ), "(", NAME, ")" ;        (* a bound integer's text *)
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
@@ -2377,12 +2384,29 @@ QCore *source* position, as a binding name in shipped fixtures), `message` and
 `payload`; RFC 9110 §6.4 renamed the body concept **content**, so the admitted
 word is also the specification's current one.
 
-**Every component is a literal**, which is what makes a family of RFC 9112 facts
+**Every component is check-time-known** — a quoted token, or a value composed
+from check-time-known pieces — which is what makes a family of RFC 9112 facts
 decidable before emission and refused by name: the version is exactly `HTTP/1.1`
 (`Q091`), a method and a field name are `token`s and a target is origin-form
 (`Q091`, `Q092`), no component may carry a `CR` or an `LF` (`Q092`), a request
 carries exactly one `Host` field (`Q092`, RFC 9112 §3.2), and a declared
 `Content-Length` **equals the content's byte count** (`Q093`).
+
+**A computed component decides exactly the same facts** (card
+`HTTP-V1-COMPUTED-LENGTH`). A `VALUE` is resolved to bytes *before* any gate
+runs, so `Q092`'s `CR`/`LF` exclusion and `Q093`'s length equality are the
+unchanged functions above and never learn which spelling produced the bytes: a
+`concat` piece carrying a framing byte refuses at `Q092` exactly as a written one
+does, and a `dec(len(body))` that is not the content's byte count refuses at
+`Q093`. The composition is **static** — the compiler holds the bytes, so the
+result is a `static const` payload of the emitted program with no allocation, no
+run-time copy and a length that is itself a check-time constant (constraint
+15h) — and a composition of fewer than two pieces, or one above the 4096-byte
+payload bound, refuses at `Q090`. `concat` and `len` are `source.string.v1`'s
+**contextual** clause words read through that route's own predicates, `dec` and
+`hex` have been reserved since `STD-MODULES`, and `has_source_http` is unchanged,
+so this widening adds no reserved word and moves no route selection. The **field
+name** stays a written token (`HTTP-V1-COMPUTED-FIELD-NAME`).
 
 **The framing is constructed, not spelled.** No source program writes a CRLF:
 the compiler writes one after the start line, one after each field and one to end
@@ -2394,16 +2418,22 @@ else: it opens no socket (a program that speaks HTTP names `std.socket` too),
 constructs no `string` — a quoted token at a method, target, field name, field
 value or content position is this module's own syntax and no value can name it,
 which is the case `STRING_SLICE_V1.md` §2 excludes — and writes no line. A
-`let NAME = STRING-TOKEN;` binding **does** construct a string value a later
-statement names, and takes `std.string`'s own gate.
+`let NAME = STRING-TOKEN;` or `let NAME = concat(…);` binding **does** construct
+a string value a later statement names, and takes `std.string`'s own gate, as
+does `let NAME = len(NAME);`. A `dec(NAME)` written *at a component* is this
+module's syntax on the same terms as a quoted token there and takes neither that
+gate nor `std.fmt`'s — the answer `STRING-CONCAT` already gave for a `dec` piece
+inside a composition, inherited rather than decided again.
 
 `source.socket.v1` itself also gains a string payload here
 (`send NAME STRING-TOKEN;` and `recv NAME STRING-TOKEN;`, the socket card's
 follow-on `SOCKET-STRING-PAYLOAD`), gated by `std.string` for the same reason.
 
-What remains outside this grammar, each a named follow-on: a `Content-Length` of
-a **computed** value (`STRING-SLICE-CONCAT`), reading a message out of unknown
-input (`HTTP-V1-PARSE`), chunked transfer coding (`HTTP-V1-CHUNKED`), persistent
+What remains outside this grammar, each a named follow-on: a component whose
+bytes the compiler **cannot** evaluate (`STRING-SLICE-CONCAT-RUNTIME` — the point
+at which the `Content-Length` equality would stop being decidable), a computed
+**field name** (`HTTP-V1-COMPUTED-FIELD-NAME`), a slice of a bound view beside
+HTTP (`HTTP-V1-STRING-COMPOSE`), reading a message out of unknown input (`HTTP-V1-PARSE`), chunked transfer coding (`HTTP-V1-CHUNKED`), persistent
 connections and pipelining (`HTTP-V1-PERSISTENT`), `100 (Continue)`
 (`HTTP-V1-EXPECT-CONTINUE`), an external peer (`SOCKET-EXTERNAL-PEER`), TLS
 (`HTTP-V1-TLS`), a body that is a `std.buffer` extent

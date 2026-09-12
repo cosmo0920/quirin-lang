@@ -1,0 +1,91 @@
+// A checked HTTP/1.1 exchange whose `Content-Length` the program COMPUTES
+// (card HTTP-V1-COMPUTED-LENGTH).
+//
+// `exchange.qcore` next door writes `header rs "Content-Length" "6";` and the
+// compiler checks that 6 is the content's byte count. That check is real, but
+// the number is still written by hand: change the content and you must change
+// the header, and the compiler will only tell you afterwards.
+//
+// Here NOTHING IS SPELLED TWICE. The content is composed from a literal and the
+// text of a number, the length is taken OF THAT CONTENT, and the header value
+// is that length rendered as digits. Change `count` and the body, the header
+// and the transcript all move together — because all three are derived from it.
+//
+// AND THE CHECK IS EXACTLY AS HARD AS BEFORE. Every piece of the composition is
+// known at check time — a quoted token is decoded by the compiler, `dec(count)`
+// is the digits of a check-time constant — so the composed bytes and their
+// length are the compiler's own. `Content-Length` is therefore still DECIDED
+// (Q093), not assumed: write `dec(count)` there instead of `dec(length)` and
+// this file is refused.
+//
+// The `CR`/`LF` wall is unchanged too, and applies to composed bytes exactly as
+// to written ones: a piece carrying either byte refuses at Q092, so header
+// injection stays unexpressible however the value was built.
+//
+// WHAT THIS IS NOT: not HTTP/1.1 conformance. It is an executed HTTP/1.1
+// subset with the boundary named — see examples/http/README.md.
+import std.http;
+import std.socket;
+import std.string;
+import std.fmt;
+import std.io;
+
+fn main() -> unit effects { io, alloc } {
+    // The one number this response is about. Every other number below is
+    // derived from it.
+    let count = 3;
+
+    // The content, COMPOSED rather than written: a literal, the text of
+    // `count`, and a literal. `dec` here is the same rendering `print dec`
+    // writes with, so the digits in the body are the digits in the transcript.
+    let body = concat("{\"items\":", dec(count), "}\n");
+
+    // The length OF THOSE BYTES. No scan and no `strlen`: the compiler composed
+    // the payload, so it already holds the number.
+    let length = len(body);
+
+    // A composed header value that is not a length, to show the position is
+    // general: the product and its version, joined.
+    let agent = concat("quirin/", "0.4");
+
+    let rq = request "GET" "/items" "HTTP/1.1";
+    header rq "Host" "127.0.0.1";
+    header rq "User-Agent" agent;
+    header rq "Accept" "application/json";
+    header rq "Connection" "close";
+
+    // The response. `Content-Length` is `dec(length)` — a value the program
+    // worked out — and the equality against the content's byte count is still
+    // decided at compile time, because both sides are check-time constants.
+    let rs = response "HTTP/1.1" 200 "OK";
+    header rs "Content-Type" "application/json";
+    header rs "Content-Length" dec(length);
+    header rs "Connection" "close";
+    content rs body;
+
+    // Both ends of the connection, in one program, on the loopback interface at
+    // a port the kernel picks.
+    let listener = tcp;
+    bind listener;
+    listen listener;
+    let client = tcp;
+    connect client listener;
+    let server = accept listener;
+
+    send client rq;
+    recv server rq;
+    send server rs;
+    recv client rs;
+
+    // The transcript: the number the body is about, and the number the header
+    // declares. Both are read out of the same two bindings the message was
+    // built from, which is what makes the printed pair evidence rather than
+    // decoration.
+    print dec count;
+    print dec length;
+
+    close server;
+    close client;
+    close listener;
+    return;
+}
