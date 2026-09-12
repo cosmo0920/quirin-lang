@@ -340,7 +340,7 @@ run.
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | run in this fresh worktree before the workspace run |
-| `cargo test --workspace --no-fail-fast` | **4,430 passed, 0 failed, 8 ignored** across **214** result lines, exit **0** — §11.1 |
+| `cargo test --workspace --no-fail-fast` | **4,430 passed, 0 failed, 8 ignored** across **216** result lines, exit **0** — §11.1 |
 | `cargo fmt --all -- --check` | exit **0** |
 | `cargo clippy --all-targets -- -D warnings` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
@@ -360,10 +360,19 @@ run.
 
 The wave-28 close measured 4,392 (8 ignored); the difference is this card's
 own 38 rows — 31 in `write_lend.rs` and 7 IR-level unit rows — and nothing
-else. Constraint 16's load-sensitive rows: see the gate log
-(worktree-private `measure/workspace_tests.log`); any row that tripped under
-the concurrent suite was re-verified in isolation and both facts are recorded
-here.
+else. **No `P02-FLAKE` row tripped** (standing constraint 16): the three of the
+five that live in this workspace suite —
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+`a_confined_fixture_cannot_write_outside_the_admitted_paths` and
+`memory_growth_beyond_the_declared_limit_is_bounded` — each passed on the first
+attempt of the complete run. The other two live in the separate `providers/`
+workspace, which this card neither touches nor ran (§9). One provenance note,
+disclosed rather than smoothed over: a `cargo fmt` pass landed **after** the
+suite's build phase began, so the run's `write_lend.rs` binary was one
+whitespace-only reflow (two reformatted statements, no token changed) behind
+the final tree; that one binary was re-run at the tip — **31 passed, 0
+failed** — and both facts are recorded here. Every other compiled source is
+byte-identical between the measured run and the tip.
 
 ### 11.2 One expected Python failure, left for the integrator
 
