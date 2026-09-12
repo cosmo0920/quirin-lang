@@ -563,6 +563,123 @@ fn transfer_mode(mode: &SourceCaptureMode) -> qcore_core::transfer::TransferMode
     }
 }
 
+// ---------------------------------------------------------------------------
+// Card CT47-COPY-CAPTURE: the judgment's refusal, spelled at the boundary.
+//
+// CT46-SENDSYNC wired the judgment in beside the enumeration and deliberately
+// moved nothing: a capture both sides refused still fell through to the
+// enumeration's executable-subset catch-all in `spawn_inputs`, attributed to
+// `CEmission` (`Q500`) — a statement about what the backend can encode, not
+// about why the value may not cross. This card moves that attribution: where
+// the judgment and the enumeration agree the capture is refused, the refusal
+// is now the judgment's own, attributed to the crossing construct at
+// `Concurrency` (`Q600`; a condition widening stated in spec §L21), with a
+// message naming the missing transfer/share contract and the contracts the
+// kind does carry. The grammar gate (`Q000`, a capture with no declared mode)
+// and the catch-all itself are untouched: the catch-all stays as the
+// fail-closed backstop for anything the judgment does not decide first.
+// ---------------------------------------------------------------------------
+
+/// The source spelling of an executable scalar, for the judgment's refusal
+/// messages. Total over `Scalar`.
+fn scalar_spelling(scalar: Scalar) -> &'static str {
+    match scalar {
+        Scalar::I32 => "`i32`",
+        Scalar::Unit => "`unit`",
+        Scalar::OwnedBuffer => "`own<Buffer>`",
+        Scalar::ReadLoan => "`borrow<Buffer>`",
+    }
+}
+
+/// The source spelling of a capture mode, for the judgment's refusal
+/// messages. Total over `SourceCaptureMode`.
+fn mode_spelling(mode: &SourceCaptureMode) -> &'static str {
+    match mode {
+        SourceCaptureMode::Copy => "`copy`",
+        SourceCaptureMode::Move => "`move`",
+        SourceCaptureMode::Read { .. } => "`read ... share ...`",
+        SourceCaptureMode::Write => "`write`",
+    }
+}
+
+/// The transfer/share contracts a kind does carry, read from the judgment's
+/// own classification so a refusal names what would cross rather than only
+/// what does not.
+fn admitted_contracts(scalar: Scalar) -> &'static str {
+    use qcore_core::transfer::{ShareProtocol, TransferClass};
+    match qcore_core::transfer::transferable(transfer_kind(scalar)) {
+        TransferClass::Duplicated => "`copy` (an independent duplicate; no custody crosses)",
+        TransferClass::MovedOnly {
+            shareable_under: Some(ShareProtocol::CountedReadShares),
+        } => {
+            "`move` (custody transferred to the worker) or `read PLACE share N` \
+             (a counted read share)"
+        }
+        TransferClass::MovedOnly { shareable_under: _ } => {
+            "`move` (custody transferred to the worker)"
+        }
+        TransferClass::Never(_) => "no transfer or share contract at all",
+    }
+}
+
+/// Card CT47-COPY-CAPTURE: one refusal message per [`TransferRefusal`]
+/// variant. Each names the judgment, the capture it refuses, and the missing
+/// transfer/share contract — which is what makes the boundary's refusal
+/// attributable to the crossing construct rather than to the backend.
+fn transfer_refusal_message(
+    place: Scalar,
+    mode: &SourceCaptureMode,
+    parameter: Scalar,
+    refusal: qcore_core::transfer::TransferRefusal,
+) -> String {
+    use qcore_core::transfer::{TransferKind, TransferRefusal};
+    let kind = scalar_spelling(place);
+    let asked = mode_spelling(mode);
+    let carries = admitted_contracts(place);
+    match refusal {
+        TransferRefusal::ModeNotAdmittedForKind => format!(
+            "the transferability judgment refuses this capture: no transfer or share \
+             contract admits {asked} of {kind} across a spawn boundary; {kind} crosses \
+             only under {carries}"
+        ),
+        TransferRefusal::WriteCaptureUnimplemented => format!(
+            "the transferability judgment refuses this capture: a {asked} capture names \
+             no transfer or share contract — no kind crosses a spawn boundary under it; \
+             {kind} crosses only under {carries}"
+        ),
+        TransferRefusal::ReceivedKindMismatch => {
+            let declared = scalar_spelling(parameter);
+            // A mismatch presupposes an admitted transfer; re-derive what it
+            // delivers. The `Err` arm is unreachable and refuses generically
+            // rather than panicking.
+            let delivered =
+                match qcore_core::transfer::admits(transfer_kind(place), transfer_mode(mode)) {
+                    Ok(admitted) => {
+                        match qcore_core::transfer::received_kind(transfer_kind(place), admitted) {
+                            TransferKind::ReadLoan => "`borrow<Buffer>`",
+                            _ => kind,
+                        }
+                    }
+                    Err(_) => kind,
+                };
+            format!(
+                "the transferability judgment refuses this capture: {asked} of {kind} is \
+                 an admitted transfer, but it delivers {delivered} and the worker \
+                 declares it receives {declared}"
+            )
+        }
+        TransferRefusal::KindNotTransferable(_) => format!(
+            "the transferability judgment refuses this capture: {kind} carries no \
+             transfer or share contract, so it does not cross a spawn boundary in any \
+             capture mode"
+        ),
+        TransferRefusal::ProtocolUnavailable(_) => format!(
+            "the transferability judgment refuses this capture: sharing {kind} needs a \
+             protocol no capture mode of this route can request"
+        ),
+    }
+}
+
 /// Which of the three admitted capture forms the existing enumeration picked,
 /// as a value rather than as an early return, so that the derived judgment can
 /// be compared against a refusal as well as against an admission.
@@ -1568,6 +1685,21 @@ impl<'a> Builder<'a> {
                     capture.span,
                     "the derived transferability judgment and the capture enumeration disagree \
                      about this capture",
+                ));
+            }
+            // Card CT47-COPY-CAPTURE. Where both sides agree the capture is
+            // refused, the refusal is the judgment's own, attributed to this
+            // capture at the crossing construct with the missing contract
+            // named (`Q600`; condition widening stated in spec §L21). Before
+            // this card the same shapes fell through to the executable-subset
+            // catch-all below — a `CEmission` (`Q500`) statement about the
+            // backend rather than about the boundary. The catch-all is kept,
+            // unedited, as the fail-closed backstop.
+            if let Err(refusal) = derived {
+                return Err(failure(
+                    capture.span,
+                    SemanticPass::Concurrency,
+                    transfer_refusal_message(place_type, &capture.mode, *parameter_type, refusal),
                 ));
             }
             let operand = match enumerated {

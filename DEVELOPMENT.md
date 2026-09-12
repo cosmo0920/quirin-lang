@@ -349,6 +349,36 @@ full suite.
 
 ## Increment records
 
+Wave 29, card `CT47-COPY-CAPTURE` (2026-09-12): the boundary refusal CT47
+names is now the transferability judgment's own. A task-creation capture that
+`qcore_core::transfer` (card `CT46-SENDSYNC`) and the capture enumeration
+agree to refuse is refused **by the judgment**, attributed to the capture at
+the crossing construct — `Q600`, a condition widening stated in §L21, one
+message per `TransferRefusal` variant naming the missing transfer/share
+contract and the contracts the kind does carry — where before it fell through
+to the enumeration's executable-subset catch-all at `Q500` (`CEmission`), the
+attribution gap the wave-26 lane measured and refused to map CT47 on
+(`docs/reports/ct-wire-lane/README.md` §3.8). The refused set is unchanged
+and that is proved, not asserted: `QCore.Transferability` gains the refusal
+half of the judgment (`Refusal`, `refuse`, `refuseCapture`) with
+`theBoundaryIsDecidedExactlyOnce` partitioning the whole 13 × 4 × 13 matrix
+against the admissions, registered in the existing `AuditTransferability`
+(audits stay 115). The grammar gate (`Q000`, a modeless capture) and the
+`Q500` catch-all are untouched — the catch-all stays as the unreachable
+fail-closed backstop — and the wave-26 lane's three shapes are re-measured
+and pinned by
+`transferability.rs::ct47s_measured_shapes_a_copy_capture_is_refused_by_the_judgment`:
+`Q000` byte-identical, `copy buffer` moved `Q500 → Q600`, the declared read
+share still admitted. Scope landed is the **nearest expressible shape**: the
+language still has no raw pointer type, so the copy of an owned handle stands
+in for the case's bit-copy and the residue is published rather than papered
+over. CT47 stays **unmapped** — its manifest and derived-matrix rows belong
+to a mapping lane (constraint 25); this card delivers the capability, the
+readiness statement and the updated hand-kept `acceptance.json` reason.
+Zero new codes, zero reserved words, no gateway/contract/audit/provider file
+touched (corpus rows carried, leak pin 266 untouched by construction).
+Evidence: `docs/reports/ct47-copy-capture/README.md`.
+
 Wave 28 close (2026-09-12): **three cards** merged one at a time under the
 failure-gated chain — `EXAMPLES-AGGREGATES`, `REGION-CREDIT-JOINS` and
 `CT-WIRE-LANE-2` — reconciled at integration tip `71574edc`. The wave's head is
