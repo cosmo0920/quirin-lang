@@ -591,6 +591,39 @@ pub fn execute_ownership(operations: &[OwnershipOp]) -> Result<OwnershipState, O
     Ok(state)
 }
 
+/// The maximum value `axis` ever reaches in the live footprint while these
+/// operations run — **the same number a scan of every prefix gives**, computed
+/// in one pass (card `LOOP-UNROLL-BUDGET`).
+///
+/// The maximum over every prefix of a sequence is the maximum of the values the
+/// sequence passes through, so this is an equality rather than an
+/// approximation; `the_one_pass_peak_is_the_number_a_full_prefix_scan_gives`
+/// pins it. A prefix the model refuses ends the walk, exactly as a refused
+/// prefix ended the scan — the maximum reported is the maximum over the
+/// prefixes that executed, and nothing about a refused one is invented.
+///
+/// **Why it exists.** Card `LOOP-V1` narrowed a scan of every prefix to the
+/// prefixes that can *be* the maximum, which is linear in the number of
+/// acquisitions — but each of those prefixes was still re-executed from the
+/// start, so a body acquiring once per iteration cost a quadratic number of
+/// ownership steps. Measured at a bound of 1024 that was **56.4 s** of check
+/// time against **0.39 s** for this one pass (0.20 s with the computation
+/// removed entirely, which lower-bounds it), and it is the measurement that
+/// makes `source.loop.v1`'s absolute ceiling defensible at 4096 rather than
+/// 1024.
+#[must_use]
+pub fn peak_live_axis(operations: &[OwnershipOp], axis: &str) -> u64 {
+    let mut state = OwnershipState::default();
+    let mut peak = state.live.get(axis);
+    for operation in operations {
+        if state.execute_one(operation).is_err() || state.validate_invariant().is_err() {
+            break;
+        }
+        peak = peak.max(state.live.get(axis));
+    }
+    peak
+}
+
 /// Checks the operations and rejects every live local at a normal function exit.
 pub fn check_ownership(operations: &[OwnershipOp]) -> Result<OwnershipState, OwnershipError> {
     let state = execute_ownership(operations)?;

@@ -154,7 +154,7 @@ produced by a rolled C loop that disagreed would show up as a byte difference.
 |---|---|---|
 | a bound the lowering cannot compute | `Q098` | `LOOP-BOUND-FROM-BYTE`, `LOOP-VARYING-BOUND` |
 | a bound of zero | `Q098` | — (a decision, not a gap: its body would never be checked) |
-| a bound above 4096, or an entry above 8192 unrolled events | `Q098` | `LOOP-BUDGET` |
+| a bound above 4096, or an entry above 8192 unrolled events | `Q098` | `LOOP-BUDGET` — **closed** by card `LOOP-UNROLL-BUDGET`, which replaced the single ceiling with a three-layer budget (an unattributed `for` is now held to **256** and a longer one is licensed by `[| #unroll, where #bound < N |]`). This note records `LOOP-V1`'s design and is not edited further; `docs/reports/loop-unroll-budget/README.md` and §G07.12 are current |
 | `break` / `continue` | `Q097` | `LOOP-BREAK` |
 | `return` in a body | `Q097` | `LOOP-BODY-RETURN` |
 | a body binding that shadows an outer one | `Q097` | `LOOP-SHADOWING` |

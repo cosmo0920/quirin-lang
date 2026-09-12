@@ -67,13 +67,49 @@ use std::collections::BTreeMap;
 
 use crate::ownership::{Footprint, OwnershipError, OwnershipOp, OwnershipState, execute_ownership};
 
-/// The largest iteration count this construct admits.
+/// The largest iteration count this construct admits — **the absolute
+/// ceiling**, layer one of the three-layer budget (card `LOOP-UNROLL-BUDGET`).
 ///
 /// Equal to `std_buffer::MAX_EXTENT` on purpose: a traversal of the largest
 /// buffer the byte-buffer route admits is expressible, and nothing larger is.
 /// A greater bound is refused by name rather than truncated, the same
 /// discipline every other quantity on these routes follows.
+///
+/// **Chosen by measurement, not by symmetry.** At this bound the three
+/// non-custody bodies measured by card `LOOP-UNROLL-BUDGET` cost 11–45 ms of
+/// check time, and the per-iteration acquire/release body costs 3.0 s once the
+/// one-pass peak of [`peak_live_axis`] replaces the prefix rescan — down from a
+/// pre-repair cost measured in minutes. The alternative ceiling the card
+/// considered, 1024, was rejected because it would **withdraw** the
+/// full-extent traversal for a worst case the repair already removes.
 pub const MAX_ITERATIONS: u32 = 4096;
+
+/// The absolute ceiling, named for what it is. Layer one of the budget.
+///
+/// No declaration may license a bound above this, which is what makes the
+/// ceiling a ceiling rather than a default with a longer spelling.
+pub const UNROLL_CEILING: u32 = MAX_ITERATIONS;
+
+/// The bound a `for` carrying **no** unrolling attribute may reach — layer two,
+/// the default budget.
+///
+/// Chosen by the same measurement that chose the ceiling: at 256 iterations
+/// every body the card measured costs at most 24 ms of check time, which is
+/// inside the cost of compiling the module around it; at 1024 the
+/// acquire/release body costs 202 ms, roughly eight times the whole compile.
+/// An unattributed loop above this is refused **by name, with the attribute
+/// spelling in the message** — the refusal teaches the license rather than
+/// merely denying the loop.
+pub const DEFAULT_UNROLL_BUDGET: u32 = 256;
+
+/// The largest `N` a `[| #unroll, where #bound < N |]` clause may name.
+///
+/// One more than [`UNROLL_CEILING`], because `#bound < N` licenses bounds up to
+/// `N - 1`: the rule is about what a declaration can *license*, so the ceiling
+/// binds the admitted bound rather than the spelled numeral. The full-extent
+/// traversal is therefore expressible as `#bound < 4097`, and nothing above
+/// 4096 is expressible at all.
+pub const MAX_DECLARED_LIMIT: u32 = UNROLL_CEILING + 1;
 
 /// The largest number of unrolled events a single entry may present.
 ///
@@ -119,6 +155,123 @@ pub struct LoopHeader {
     pub count: u32,
 }
 
+/// The unrolling licence one `[| #unroll, where #bound < N |]` clause list
+/// declares (card `LOOP-UNROLL-BUDGET`).
+///
+/// The declaration is **checked, never trusted**: [`admit_unroll`] compares the
+/// loop's actual check-time bound against `limit` and compares `limit` against
+/// the ceiling, so a condition the loop violates and a condition that would
+/// license more than the construct models are two different refusals and
+/// neither is a promotion.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct UnrollLicense {
+    /// The `N` of `#bound < N`. The loop's bound must be strictly below it.
+    pub limit: u32,
+}
+
+/// The three-layer budget decision, as one total function's result.
+///
+/// Two admitting answers and three refusing ones, and the difference between
+/// the two admitting answers is *why* the loop is admitted rather than what it
+/// costs — an admitted loop is unrolled identically either way, which is the
+/// erasure the emission half rests on.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BudgetVerdict {
+    /// No attribute, and the bound is inside [`DEFAULT_UNROLL_BUDGET`].
+    Default,
+    /// An attribute whose declared condition is inside the ceiling and which
+    /// this loop's own bound satisfies.
+    Licensed,
+    /// No attribute, and the bound is above [`DEFAULT_UNROLL_BUDGET`].
+    AboveDefault,
+    /// The declared condition would license a bound above [`UNROLL_CEILING`].
+    LicenseAboveCeiling,
+    /// The declaration is present and this loop's bound does not satisfy it.
+    LicenseViolated,
+}
+
+impl BudgetVerdict {
+    /// Whether this verdict admits the loop.
+    #[must_use]
+    pub fn is_admitted(self) -> bool {
+        matches!(self, Self::Default | Self::Licensed)
+    }
+}
+
+/// The three-layer budget decision (card `LOOP-UNROLL-BUDGET`), total in both
+/// arguments.
+///
+/// The order of the two licensed tests is load-bearing and is the reason the
+/// ceiling survives a declaration: a `#bound < 99999` clause is refused for
+/// naming more than the construct models **before** this loop's own bound is
+/// looked at, so a tiny loop cannot carry a declaration that licenses a huge
+/// one. Nothing here reads the body, the route or the cost — only the two
+/// numbers and the two constants.
+#[must_use]
+pub fn admit_unroll(bound: u32, license: Option<UnrollLicense>) -> BudgetVerdict {
+    match license {
+        None => {
+            if bound <= DEFAULT_UNROLL_BUDGET {
+                BudgetVerdict::Default
+            } else {
+                BudgetVerdict::AboveDefault
+            }
+        }
+        Some(UnrollLicense { limit }) => {
+            if limit > MAX_DECLARED_LIMIT {
+                BudgetVerdict::LicenseAboveCeiling
+            } else if bound >= limit {
+                BudgetVerdict::LicenseViolated
+            } else {
+                BudgetVerdict::Licensed
+            }
+        }
+    }
+}
+
+/// What the reader knows about one loop's unrolling licence.
+///
+/// The third arm is the only one that is not a statement about the program: a
+/// clause list this reader already refused licenses nothing, but holding the
+/// loop to the default budget on top of that would print **two** refusals for
+/// **one** mistake — card `LOOP-V1` §9.9's rule, applied to the attribute.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum LoopBudget {
+    /// No attribute at all: the default budget governs.
+    #[default]
+    Default,
+    /// A clause list that read: this loop is checked against it.
+    Licensed(UnrollLicense),
+    /// A clause list already refused at `Q097` or `Q098`. The budget decision
+    /// is suppressed; every other rule still applies.
+    Unreadable,
+}
+
+/// The budget decision presented as this construct's own `Q098` refusal, or
+/// `None` when the loop is admitted (or when the clause list before it was
+/// already refused).
+#[must_use]
+pub fn budget_refusal(bound: u32, budget: LoopBudget) -> Option<BoundRefusal> {
+    let license = match budget {
+        LoopBudget::Default => None,
+        LoopBudget::Licensed(license) => Some(license),
+        LoopBudget::Unreadable => return None,
+    };
+    match admit_unroll(bound, license) {
+        BudgetVerdict::Default | BudgetVerdict::Licensed => None,
+        BudgetVerdict::AboveDefault => Some(BoundRefusal::AboveDefaultBudget { bound }),
+        BudgetVerdict::LicenseAboveCeiling => Some(BoundRefusal::LicenseAboveCeiling {
+            limit: license.expect("a ceiling refusal carries a licence").limit,
+        }),
+        BudgetVerdict::LicenseViolated => Some(BoundRefusal::LicenseViolated {
+            bound,
+            limit: license
+                .expect("a violation refusal carries a licence")
+                .limit,
+        }),
+    }
+}
+
 /// Why a bound is not one this construct models.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BoundRefusal {
@@ -133,6 +286,23 @@ pub enum BoundRefusal {
     TooLarge { value: i64 },
     /// The entry's unrolled event total is above [`MAX_UNROLLED_EVENTS`].
     Budget { unrolled: usize },
+    /// Card `LOOP-UNROLL-BUDGET`, layer two: the loop carries no unrolling
+    /// attribute and its bound is above [`DEFAULT_UNROLL_BUDGET`]. The message
+    /// names the attribute and spells the clause that would license this loop.
+    AboveDefaultBudget { bound: u32 },
+    /// Layer one, reached through a declaration: the declared condition would
+    /// license a bound above [`UNROLL_CEILING`].
+    LicenseAboveCeiling { limit: u32 },
+    /// Layer three: the declaration is present and this loop's bound does not
+    /// satisfy it. The declaration is checked, not trusted.
+    LicenseViolated { bound: u32, limit: u32 },
+    /// A declared condition no bound at all can satisfy — `#bound < 0` or
+    /// `#bound < 1`, when the construct counts at least one iteration.
+    ///
+    /// Reported **without** looking at the loop, because it is a fact about the
+    /// clause list alone: reporting it as a violated condition would have to
+    /// name a bound, and the reader has not read one yet.
+    LicenseLicensesNothing { limit: u32 },
 }
 
 impl std::fmt::Display for BoundRefusal {
@@ -164,6 +334,34 @@ impl std::fmt::Display for BoundRefusal {
                 "this entry unrolls to {unrolled} events, above the {MAX_UNROLLED_EVENTS} \
                  `source.loop.v1` checks; the construct is checked by running the body once per \
                  iteration, and that cost is bounded rather than paid"
+            ),
+            Self::AboveDefaultBudget { bound } => write!(
+                f,
+                "a `for` with no unrolling attribute is budgeted at {DEFAULT_UNROLL_BUDGET} \
+                 iterations and this one counts {bound}; write \
+                 `[| #unroll, where #bound < {} |]` immediately before the `for` to license it, \
+                 up to the {UNROLL_CEILING}-iteration ceiling",
+                u64::from(*bound) + 1
+            ),
+            Self::LicenseAboveCeiling { limit } => write!(
+                f,
+                "`#bound < {limit}` would license a bound of {}, above the {UNROLL_CEILING} \
+                 iterations `source.loop.v1` models; the largest condition this construct admits \
+                 is `#bound < {MAX_DECLARED_LIMIT}`, and the ceiling is a ceiling rather than a \
+                 default a declaration can raise",
+                u64::from(*limit) - 1
+            ),
+            Self::LicenseViolated { bound, limit } => write!(
+                f,
+                "`[| #unroll, where #bound < {limit} |]` licenses a bound below {limit} and this \
+                 loop counts {bound}; the declared condition is checked against the bound the \
+                 checker computes rather than taken on trust"
+            ),
+            Self::LicenseLicensesNothing { limit } => write!(
+                f,
+                "`#bound < {limit}` licenses no bound at all — `source.loop.v1` counts at least \
+                 one iteration — so this clause list refuses the loop it was written to permit; \
+                 the smallest condition that licenses anything is `#bound < 2`"
             ),
         }
     }
@@ -306,9 +504,17 @@ pub fn iteration_is_custody_identity(
 /// The live footprint of the cycle-3 ownership model grows at exactly one
 /// operation — an [`OwnershipOp::Acquire`] — so the maximum over every prefix is
 /// attained at length zero or immediately after an acquisition. Scanning only
-/// those points gives the **same number** as scanning every prefix, and it is
-/// what keeps a peak computed from an unrolled body linear in the number of
-/// acquisitions rather than quadratic in the number of events.
+/// those points gives the **same number** as scanning every prefix.
+///
+/// **Retained as the statement of that equality, not as the route that runs.**
+/// Card `LOOP-V1` used this list to drive the peak, re-executing each candidate
+/// prefix from the start — linear in the number of acquisitions, but quadratic
+/// in ownership steps, which a body acquiring once per iteration pays in full
+/// (56.4 s at a bound of 1024). Card `LOOP-UNROLL-BUDGET` moved the computation
+/// to [`crate::ownership::peak_live_axis`], one pass over the same operations
+/// yielding the same number. This function still names the prefixes that can be
+/// the maximum, and its test still compares them against a full scan, so the
+/// claim both routes rest on stays checked.
 #[must_use]
 pub fn peak_candidate_prefixes(operations: &[OwnershipOp]) -> Vec<usize> {
     let mut lengths = vec![0usize];

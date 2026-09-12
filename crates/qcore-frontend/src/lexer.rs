@@ -49,6 +49,25 @@ pub enum Symbol {
     /// exactly as card `PIPE-OPERATOR` did for a bare `|` — and card
     /// `BITWISE-CONDITIONS` gave it its meaning.
     Caret,
+    /// `#`, the **attribute marker** (card `LOOP-UNROLL-BUDGET`).
+    ///
+    /// A bare `#` was a lexer error (`unexpected character '#'`) before this
+    /// card; it becomes a token on the precedent card `OR-AND-LOWERING` set for
+    /// `^`, where promoting a lex error to a token moved the layer and the
+    /// message without changing the set of accepted programs. The
+    /// constraint-14 census found **zero** `#` characters in code position
+    /// across every `.qcore`/`.qc` file in the tree, so the promotion collides
+    /// with nothing.
+    ///
+    /// It is read in exactly one place: a `[| #unroll, where #bound < N |]`
+    /// clause list immediately preceding a `for` statement. Everywhere else a
+    /// `#` reaches a reader that does not model it and is refused there.
+    ///
+    /// **`#` is still not an identifier character.** The word rule is
+    /// unchanged, so `qcore_core::source_loop::ITERATION_SCOPE_SEPARATOR`'s
+    /// premise — that a scoped owner name `c#0` can never collide with a name a
+    /// program wrote — survives this token exactly as it stood.
+    Hash,
     Question,
     Less,
     Greater,
@@ -307,6 +326,11 @@ impl Lexer<'_> {
             '&' => Ok(Symbol::Ampersand),
             '|' => Ok(Symbol::Pipe),
             '^' => Ok(Symbol::Caret),
+            // Card `LOOP-UNROLL-BUDGET`: the attribute marker. One byte, no
+            // two-byte spelling, so no row of the longest-match table above
+            // moves — `[|`, `|]`, `|>`, `||`, `&&` and every one-byte member
+            // lex exactly as they did.
+            '#' => Ok(Symbol::Hash),
             '?' => Ok(Symbol::Question),
             '<' => Ok(Symbol::Less),
             '>' => Ok(Symbol::Greater),

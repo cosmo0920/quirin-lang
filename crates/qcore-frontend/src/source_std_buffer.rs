@@ -15,8 +15,9 @@
 //!             | "print" RENDERING OPERAND ";"                  -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"              -- std.logger + std.fmt
 //!             | "flush" ";"                                    -- std.logger
-//!             | "for" NAME "in" "0" ".." BOUND "{" stmt* "}"   -- source.loop.v1
+//!             | [attr] "for" NAME "in" "0" ".." BOUND "{" stmt* "}"  -- source.loop.v1
 //!             | "return" ";"
+//! attr      ::= "[|" "#" "unroll" "," "where" "#" "bound" "<" INTEGER "|]"
 //! OPERAND   ::= ["-"] INTEGER | NAME
 //! BOUND     ::= INTEGER | NAME
 //! EFFECT    ::= "io" | "alloc" | "mut"
@@ -723,19 +724,74 @@ fn lower_statements(
     mut event_spans: Option<&mut Vec<Span>>,
     diagnostics: &mut Vec<SourceDiagnostic>,
 ) {
+    // Card `LOOP-UNROLL-BUDGET`: the unrolling attribute is **statement
+    // adjacent** — it licenses the `for` immediately after it, and nothing
+    // else. The pairing is carried here, in the reader that walks the
+    // statements in order, so "immediately preceding" is a property of this
+    // walk rather than of a span comparison.
+    let mut pending: Option<Span> = None;
+    let mut budget = qcore_core::source_loop::LoopBudget::Default;
     for statement in statements {
         let span = statement.span;
+        if matches!(
+            statement.value,
+            crate::frontend::StatementKind::LoopAttribute
+        ) {
+            if pending.is_some() {
+                diagnostics.push(loop_shape_diagnostic(
+                    span,
+                    "an unrolling attribute licenses the one `for` statement that follows it, and \
+                     this one follows another attribute; `source.loop.v1` refuses a second clause \
+                     list rather than deciding which of two conditions governs the loop",
+                ));
+                continue;
+            }
+            let window = crate::source_loop::attribute_window(tokens, span);
+            match crate::source_loop::read_loop_attribute(&window, span) {
+                Ok(read) => budget = qcore_core::source_loop::LoopBudget::Licensed(read),
+                Err(refusal) => {
+                    // A clause list this reader cannot read licenses nothing —
+                    // and holding the loop to the *default* budget on top of
+                    // that would print two refusals for one mistake, which is
+                    // card `LOOP-V1` §9.9's rule applied to the attribute. The
+                    // budget decision is suppressed; every other rule still
+                    // applies to the loop.
+                    diagnostics.push(refusal);
+                    budget = qcore_core::source_loop::LoopBudget::Unreadable;
+                }
+            }
+            pending = Some(span);
+            continue;
+        }
         // Card `LOOP-V1`: the one nested block this route models.
         if let crate::frontend::StatementKind::For { binding, body } = &statement.value {
-            if let Some(event) =
-                lower_loop(parsed, tokens, binding, body, span, constants, diagnostics)
-            {
+            let licensed = std::mem::take(&mut budget);
+            pending = None;
+            if let Some(event) = lower_loop(
+                parsed,
+                tokens,
+                binding,
+                body,
+                span,
+                constants,
+                licensed,
+                diagnostics,
+            ) {
                 events.push(event);
                 if let Some(spans) = event_spans.as_deref_mut() {
                     spans.push(span);
                 }
             }
             continue;
+        }
+        if let Some(attribute) = pending.take() {
+            budget = qcore_core::source_loop::LoopBudget::Default;
+            diagnostics.push(loop_shape_diagnostic(
+                attribute,
+                "an unrolling attribute licenses a `for` statement and this one precedes a \
+                 statement that is not one; `source.loop.v1` refuses an attribute that licenses \
+                 nothing rather than letting it apply to whatever comes next",
+            ));
         }
         if !statement.value.nested_blocks().is_empty() {
             diagnostics.push(diagnostic(
@@ -853,6 +909,15 @@ fn lower_statements(
             }
         }
     }
+    // A clause list at the end of a sequence licenses nothing at all.
+    if let Some(attribute) = pending {
+        diagnostics.push(loop_shape_diagnostic(
+            attribute,
+            "an unrolling attribute licenses the `for` statement that follows it and nothing \
+             follows this one; `source.loop.v1` refuses a dangling clause list rather than \
+             discarding it",
+        ));
+    }
 }
 
 fn loop_shape_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -870,6 +935,7 @@ fn loop_shape_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagno
 /// statements, read by the reader above — so "a loop body's statements are the
 /// byte-buffer route's statements" is a statement about code rather than about
 /// two implementations that agree.
+#[allow(clippy::too_many_arguments)]
 fn lower_loop(
     parsed: &SourceProgram,
     tokens: &[Token],
@@ -877,17 +943,22 @@ fn lower_loop(
     body: &SourceBlock,
     span: Span,
     constants: &mut LoweringConstants,
+    budget: qcore_core::source_loop::LoopBudget,
     diagnostics: &mut Vec<SourceDiagnostic>,
 ) -> Option<BufferEvent> {
     let header_window = crate::source_loop::header_window(tokens, span);
-    let header =
-        match crate::source_loop::read_loop_header(&header_window, span, &constants.scalars) {
-            Ok(header) => header,
-            Err(refusal) => {
-                diagnostics.push(refusal);
-                return None;
-            }
-        };
+    let header = match crate::source_loop::read_loop_header(
+        &header_window,
+        span,
+        &constants.scalars,
+        budget,
+    ) {
+        Ok(header) => header,
+        Err(refusal) => {
+            diagnostics.push(refusal);
+            return None;
+        }
+    };
     if header.variable != binding {
         // The parser and this reader disagree about which name the header
         // binds, which no well-formed header can produce. Refused rather than

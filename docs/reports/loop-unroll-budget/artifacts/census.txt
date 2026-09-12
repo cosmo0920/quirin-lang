@@ -1,0 +1,33 @@
+# Constraint-14 census for card LOOP-UNROLL-BUDGET, run against the BASE
+# tree (main e26bb0c3, extracted with `git archive`), so a zero count means
+# the spelling collided with nothing *before* this card claimed it.
+# Produced by measure/census.py.
+
+qcore/qc files scanned: 422
+
+--- `.qcore`/`.qc` word census (code / comment) ---
+  unroll            0 /      0
+  where             8 /     25
+  bound            12 /     20
+  in                8 /    177
+  for               2 /     97
+  attr              0 /      0
+  attribute         0 /      0
+  hint              0 /      0
+  budget            0 /      0
+
+--- `#` character in `.qcore`/`.qc` ---
+  code (outside string literals): 0
+  comment text:                   112
+
+--- Rust string literals scanned: 48393 ---
+  unroll            0
+  where            83
+  bound           305
+  in              804
+  for             604
+  attr              0
+  attribute        11
+  hint              0
+  budget            4
+  '#' occurrences:        1092

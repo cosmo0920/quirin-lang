@@ -1,0 +1,5 @@
+case	bound	ms	peakRSS_KiB	status
+custody	64	7.6	17940	ok
+custody	256	23.9	17972	ok
+custody	1024	202.4	19448	ok
+custody	4096	3022.7	22604	ok
