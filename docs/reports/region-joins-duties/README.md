@@ -356,16 +356,20 @@ workspace test totals), and `acceptance_matrix.json` follow-on reconciliation.
 
 ## 10. Standing per-change gate
 
-Run at the card tip with `$HOME/.elan/bin` on `PATH`. (Table completed at
-close; see the final report for the verbatim numbers.)
+Run at the card tip with `$HOME/.elan/bin` on `PATH`.
 
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | ok |
-| `cargo test --workspace --no-fail-fast` | see the final gate table |
+| `cargo test --workspace --no-fail-fast` | **4,404 passed, 0 failed, 8 ignored**, over 216 test binaries, in one run — no constraint-16 load row tripped, despite a sibling wave-29 agent's concurrent suite (machine load ~35 on 16 cores at launch), so no isolation re-verification was needed |
 | `cargo fmt --all -- --check` | clean |
-| `cargo clippy --all-targets -- -D warnings` | clean |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | clean (exit 0) |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
 | `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **Passed 116 Lean audits** (115 → 116, `AuditRegionJoinsDuties.lean`) |
-| `python3 -m unittest discover -s scripts/tests` | 193 OK (no matrix touched) |
+| `python3 -m unittest discover -s scripts/tests` | 193 ran, **192 OK, 1 failure** — `test_build_matrix_sections … test_the_derived_facts_are_recomputed_rather_than_carried`, asserting the committed matrix's **derived** `validation.lean_audits` (115) equals the tree's recomputed value (116). That drift is exactly this card's new audit file; the card's boundary forbids editing the acceptance matrix, and the reconciliation is the integrator's wave-close matrix pass (the wave-28 close's own "reconcile … the matrix" step). No assertion is weakened and no other Python test moves |
+
+This card's own rows: `compiler/tests/region_joins_duties.rs` **9 passed**
+(native run included), `qcore-frontend`'s `source_epoch_tasks` integration
+tests **21 passed** (18 → 21), and the wave-28 `region_credit_joins.rs` suite
+**9 passed unedited**.

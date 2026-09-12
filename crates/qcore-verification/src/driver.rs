@@ -411,12 +411,13 @@ pub struct ComposedEpochModule {
     /// beside the bound, never inside it — the bound is unchanged by it.
     pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
     /// The parent's own quantitative epilogue over the unedited
-    /// `qcore_core::error_region` model (card `REGION-CREDIT-JOINS`): an
-    /// `error region` written after every spawn and join, whose catch's
-    /// `quant open` binds the sealed pack and whose `discharge` abandons
-    /// exactly the parent-local unused credit. `None` for every entry that
-    /// writes no region, which is what keeps every previously admitted
-    /// composed epoch byte-identical.
+    /// `qcore_core::error_region` model (cards `REGION-CREDIT-JOINS` and
+    /// `REGION-JOINS-DUTIES`): an `error region` written after every spawn
+    /// and join, whose catch's `quant open` binds the sealed pack and whose
+    /// `discharge` destroys the pack's owners in reverse acquisition order
+    /// and abandons exactly the parent-local unused credit. `None` for every
+    /// entry that writes no region, which is what keeps every previously
+    /// admitted composed epoch byte-identical.
     pub region: Option<ComposedRegionEvidence>,
     /// The scoped-task profile the task half executes under, kept because the
     /// composed label would otherwise hide whether the region moves owned
