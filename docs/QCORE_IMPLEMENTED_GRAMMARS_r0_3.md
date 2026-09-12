@@ -1368,7 +1368,7 @@ BOUND     = INTEGER | NAME ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
-**The `for` row is `source.loop.v1`'s** (card `LOOP-V1`, §G07.11), admitted here
+**The `for` row is `source.loop.v1`'s** (card `LOOP-V1`, §G07.12), admitted here
 and on no other route in v1. It is the **only** nested block this profile reads:
 every other one still refuses at `Q051`. Its own refusals carry `Q097`–`Q099`;
 its body's statements are the rows above, read by this profile's own reader.

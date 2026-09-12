@@ -378,7 +378,7 @@ a second lowering and a second emission path for a construct nobody asked for.
 
 A new semantic pass, `Loop`, owning **`Q097`–`Q099`** — the three codes
 `HTTP-QUIRIN-V1` returned to the pool from its pre-assigned `Q090`–`Q099`, and
-the band the integrator pre-assigned to this card. Spec §L21 and grammar §G07.11
+the band the integrator pre-assigned to this card. Spec §L21 and grammar §G07.12 (written as §G07.11 on this card's base; renumbered at integration after SOCKET-EVENT-COMPOSE merged first)
 updated in the same change.
 
 | Code | Condition |
@@ -557,7 +557,7 @@ crates/qcore-frontend/src/lib.rs                 (one module declaration)
 compiler/tests/source_loop.rs                    (new)
 compiler/tests/fixtures/source_loop/             (new)
 docs/QCORE_SPEC_r0_3.md                          (§L21, one row)
-docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md          (§G07.11, new)
+docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md          (§G07.12, new; §G07.11 on this card's base)
 docs/design/SOURCE_LOOP_V1.md                    (new)
 proof/QCore/SourceLoop.lean, proof/AuditSourceLoop.lean, proof/QCore.lean
 docs/reports/loop-v1/README.md
