@@ -2365,6 +2365,51 @@ connections and pipelining (`HTTP-V1-PERSISTENT`), `100 (Continue)`
 (`HTTP-V1-BUFFER-CONTENT`), `obs-text` in a field value (`HTTP-V1-OBS-TEXT`), and
 a rendered text line inside this route (`HTTP-V1-TEXT-TRANSCRIPT`).
 
+## G07.11. A checked socket as a reactor-registered event source
+
+Card `SOCKET-EVENT-COMPOSE`. This is not a new route: it is `source.socket.v1`'s
+own grammar (§L21's `Q080`–`Q089` band) widened by the five statements of the
+reactor vocabulary, which are `source.event.v1`'s own words (§G02k) and **add no
+reserved word at all**.
+
+```ebnf
+socket-stmt    = (* every §G's socket statement, unchanged *)
+               | "event", "open", ";"
+               | "event", "close", ";"
+               | "watch", NAME, NAME, INTEREST, ";"
+               | "unwatch", NAME, ";"
+               | "dispatch", "ready", NAME, ";"
+               | "dispatch", "idle", ";" ;
+INTEREST       = "read" | "write" ;
+```
+
+Route selection: a module using **both** vocabularies is a `source.socket.v1`
+module; one using only the reactor's stays `source.event.v1`'s; one that also
+buffers, constructs a string or declares an HTTP message declines the composed
+guard and keeps the refusal it already had (`EVENT-BUFFER-PAYLOAD`,
+`HTTP-V1-EVENT-COMPOSE`). `wake` and `endpoints` are deliberately **not** in the
+grammar above: readiness here is induced by `connect`, `send` and `sendto`, and
+descriptors come from `tcp`, `udp` and `accept`, so neither statement has
+anything to do. A `write` interest is checked in full and makes the module
+emit no C, which is §G02k's own `accept_check_only` arm.
+
+The custody relation is a **loan**: `watch E S …;` is an
+`OwnershipOp::BorrowShared` of `S` to `E` running to the matching `unwatch E;`,
+so a close while registered and a `bind`/`listen`/`connect` on a watched socket
+are refused by the *unedited* ownership checker while a `send`, a `recv` and an
+`accept` are admitted. Spans are **lexical**, so registrations retire in the
+reverse of the order they are taken; a crossed pair is refused by name
+(`SOCKET-EVENT-CROSSED-SPANS`). A dispatch turn **drains nothing** — it observes
+level-triggered readiness, and the entry's own transport statements do the work.
+
+What remains outside this grammar, each a named follow-on: a source-level
+callback body (`EVENT-CALLBACK-BODY`), an executable write interest
+(`SOCKET-EVENT-WRITE-READY`), a turn over a two-member ready set
+(`OBS-REORDERING`), crossed registration spans
+(`SOCKET-EVENT-CROSSED-SPANS`), a registration on a socket of another program
+(`SOCKET-EXTERNAL-PEER`), and composition with `source.http.v1`
+(`HTTP-V1-EVENT-COMPOSE`).
+
 ## G08. Source-contract service configuration v1
 
 This JSON format configures the audit service; it adds no QCore source syntax.

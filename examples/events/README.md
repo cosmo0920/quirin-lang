@@ -19,6 +19,7 @@ Design record: [`docs/design/STD_EVENT_V1.md`](../../docs/design/STD_EVENT_V1.md
 | [`self_pipe.qcore`](self_pipe.qcore) | The executable subset: the program induces its own readiness and every dispatch turn declares what it reports. |
 | [`wake_payload.qcore`](wake_payload.qcore) | A **value** that came off an endpoint: the byte a wake delivered, bound by the turn that drained it and piped into a logger line. Card `COMPOSE-EVENT-LINES`. |
 | [`write_interest.qcore`](write_interest.qcore) | The check-only arm: a write registration is checked in full and emits no C. |
+| [`socket_server.qcore`](socket_server.qcore) | A **checked socket** registered with the reactor: the server shape, waiting on two descriptors and taking its accept and its receive in its own body. Route `source.socket.v1`, card `SOCKET-EVENT-COMPOSE`. |
 
 **Every line in these programs is spelled as a pipeline.** `value |> log info dec;`
 is the form, and the statement form it desugars to emits the same C byte for
@@ -155,6 +156,77 @@ and exits non-zero on disagreement, so the second named premise —
 program that drains without naming a byte carries this premise no more than a
 program with no wait carries the readiness one.
 
+## `socket_server.qcore` — a checked socket as an event source
+
+Card `SOCKET-EVENT-COMPOSE`. This program is the one on this page that is **not**
+a `source.event.v1` module: a module that both dispatches and sockets takes the
+`source.socket.v1` route, which models both. It lives here because this is the
+page a reader comes to for "how do I wait on readiness", and because the
+pipeline rule above binds it like the rest.
+
+```qcore
+    event open;
+    let listener = tcp;
+    bind listener;
+    listen listener;
+    let client = tcp;
+    connect client listener;
+    watch inbound listener read;
+    dispatch ready inbound;
+    let server = accept listener;
+    watch traffic server read;
+    dispatch idle;
+    send client [81, 67, 111, 114, 101];
+    dispatch ready traffic;
+    let first = recv server;
+    recv server 4;
+    first |> print dec;
+    first |> print hex;
+    unwatch traffic;
+    unwatch inbound;
+    event close;
+```
+
+It writes:
+
+```text
+81
+0x00000051
+```
+
+**A registration is a loan.** `watch inbound listener read;` opens an
+`OwnershipOp::BorrowShared` of `listener` to the borrower `inbound`, running to
+the matching `unwatch`. The socket stays owned by the name that created it; the
+reactor acquires nothing and releases nothing, and the projection this route
+hands the reactor model contains no `CreateSocketPair` and no `CloseSocket`,
+because those are the operations by which that model *owns* a descriptor.
+
+Three consequences, each the **unedited** ownership checker's rather than a rule
+this composition wrote:
+
+| Written inside a registration's span | What happens |
+|---|---|
+| `close listener;` | refused — `DropWhileBorrowed`, reported at `Q083` |
+| `bind`, `listen`, `connect` on the watched socket | refused — `OwnerMutationWhileBorrowed`: those are the ownership IR's *writes*, and a shared loan is outstanding |
+| `send`, `recv`, `recvfrom`, `accept` on it | **admitted** — those are reads, and a shared loan admits reads |
+
+So "deregister before close" is a consequence rather than a rule, and it is
+enforced twice: the ownership checker refuses the drop, and the reactor's own
+terminal sweep refuses a registration that was never retired (`L07`).
+
+**There is no `wake` here, and none is needed.** `std.event` needs one because a
+socket pair has no other statement that makes an endpoint readable. This route
+has three: `connect` queues a connection on a listener (*accept* readiness),
+`send` commits bytes to a stream (*data* readiness), and `sendto` queues a
+datagram. Both of the first two are in the program above, which is the
+generalisation of the self-pipe the `std.event` page describes.
+
+**A turn drains nothing.** `dispatch ready traffic;` *observes* that the accepted
+socket is readable; the `recv` two lines later is what takes the bytes, checked
+by the socket model exactly as it always was. That is what level-triggered
+readiness means, and it is why the `dispatch idle;` after the `accept` is
+admitted: the accept took the queued connection, so nothing is ready any more.
+
 ## The determinism boundary
 
 A certificate compares **one** observation, so a dispatch turn has to report one
@@ -216,11 +288,17 @@ the explicitly selected diagnostic log:
 ```sh
 cargo test -p qcore-compiler --test std_event
 cargo test -p qcore-compiler --test compose_event_lines
+cargo test -p qcore-compiler --test socket_event_compose
 ```
 
 The first target runs `self_pipe.qcore`; the second runs `wake_payload.qcore`
 and compares **both** streams — the selected system trace on stdout and the two
-source-authored lines on stderr — against the reference observation.
+source-authored lines on stderr — against the reference observation. The third
+runs `socket_server.qcore` and compares its stdout with its own reference
+observation; that program's transport arm is `source.socket.v1`'s shim rather
+than this page's, so its Windows and Apple arms are compile-path-correct only
+(`SOCKET-EVENT-WINDOWS-RUN`, `SOCKET-EVENT-APPLE-RUN`) and
+`build-windows.ps1` does not run it.
 
 Windows, from a Visual Studio Developer PowerShell:
 

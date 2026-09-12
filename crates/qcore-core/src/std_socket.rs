@@ -85,9 +85,25 @@
 //!   parallel runs of the whole test suite, produce byte-identical output.
 //! * **No text.** A payload is bytes. A string payload is the named follow-on
 //!   `SOCKET-STRING-PAYLOAD` and belongs to whichever card owns text.
-//! * **No reactor.** Registering a socket with `source.event.v1` is the named
-//!   follow-on `SOCKET-EVENT-COMPOSE`. This route stands alone, as
-//!   `source.buffer.v1` does.
+//!
+//! # The reactor composition (card `SOCKET-EVENT-COMPOSE`)
+//!
+//! An entry may now **register a socket it owns with the checked reactor** —
+//! `event open;`, `watch E S read;`, `dispatch ready E;`, `unwatch E;`,
+//! `event close;` — and then do its `accept`/`recv`/`recvfrom` in its own body.
+//! The registration half is not decided here: it is projected onto
+//! [`crate::event_reactor::EventProgram`] by [`crate::socket_event`] and handed
+//! to that model unmodified, exactly as the custody half is handed to
+//! [`crate::ownership`].
+//!
+//! **A registration is a loan, and the descriptor's custody never leaves this
+//! route's ownership ledger.** `watch E S read;` opens an
+//! [`OwnershipOp::BorrowShared`] of `S` to the borrower `E` whose body runs to
+//! the matching `unwatch E;`, so a close while registered is the unedited
+//! ownership checker's `DropWhileBorrowed` and a `bind`/`listen`/`connect` on a
+//! watched socket is its `OwnerMutationWhileBorrowed`, while a `send`, a `recv`
+//! and an `accept` stay admitted because a shared loan admits reads. The
+//! argument is in [`crate::socket_event`]'s own header.
 //! * **Partial correctness only.** A primitive failure exits non-zero and
 //!   produces no observation, so the claim is: *if the emitted program produces
 //!   an observation at all, that observation is the reference observation.*
@@ -95,10 +111,19 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
 
+use crate::event_reactor::{
+    DescriptorId, EventCertificate, EventDiagnostic, EventOperation, EventProgram,
+    check_event_program,
+};
 use crate::os_endpoint::{
     DescriptionState, DescriptorState, Errno, Outcome, Premises, Recovery, Target, close_poststate,
 };
 use crate::ownership::{self, Footprint, OwnershipError, OwnershipOp, ResourceId};
+use crate::socket_event::{
+    MAX_WATCHED, RegistrationId, SocketDispatchTurn, SocketRegistration, assign, close_context,
+    idle_turn, open_context, ready_turn, retire,
+};
+use crate::std_event::{ACCEPTED_PROFILES, EventProfile, Interest};
 use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
 use crate::typed_errors::{Effect, EffectRow};
 
@@ -329,6 +354,33 @@ pub enum SocketStatement {
     /// A `source.std-io.v1` line-producing statement, reused unchanged. The
     /// bytes of the line are decided by [`rendered_line`] and nowhere else.
     Line(StdIoEvent),
+    /// `event open;` — create the one reactor context of this entry
+    /// (card `SOCKET-EVENT-COMPOSE`).
+    ReactorOpen,
+    /// `event close;` — tear it down. The reactor's own `L07` refuses a
+    /// teardown that leaves a registration alive and its `L11` one that is not
+    /// quiescent.
+    ReactorClose,
+    /// `watch E S INTEREST;` — register `S` with the reactor as `E`.
+    ///
+    /// **This is the loan**, and the only statement of this route that opens
+    /// one: it is an [`OwnershipOp::BorrowShared`] of `S` to `E` running to the
+    /// matching [`SocketStatement::Unwatch`]. The descriptor's custody stays
+    /// with `S`; the reactor acquires nothing and releases nothing.
+    Watch {
+        registration: String,
+        socket: String,
+        interest: Interest,
+    },
+    /// `unwatch E;` — end the loan and retire the registration.
+    Unwatch { registration: String },
+    /// `dispatch ready E;` / `dispatch idle;` — one turn, declared to report
+    /// exactly `E` or to report nothing.
+    ///
+    /// The turn **drains nothing**: readiness is level-triggered and the work it
+    /// announces is done by this entry's own `accept`/`recv`/`recvfrom`, which
+    /// the transport half already checks.
+    Dispatch { ready: Option<String> },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -435,6 +487,30 @@ pub struct SocketCertificate {
     pub flushes: usize,
     /// The renderings actually used.
     pub renderings: BTreeSet<Rendering>,
+    /// The **model** descriptor identity of every socket this entry acquired, in
+    /// program order (card `SOCKET-EVENT-COMPOSE`).
+    ///
+    /// Published even for a program that registers nothing, because it is what a
+    /// registration names and a reader should be able to see the naming. It is
+    /// deliberately not a real descriptor number.
+    pub descriptors: Vec<(String, DescriptorId)>,
+    /// Every registration, in program order.
+    pub registrations: Vec<SocketRegistration>,
+    /// Every dispatch turn and what it was checked to report.
+    pub turns: Vec<SocketDispatchTurn>,
+    /// The reactor model's own certificate over the projected program, for an
+    /// entry that opens a context. This is the registration evidence, and it is
+    /// that model's rather than this one's.
+    pub reactor: Option<EventCertificate>,
+    /// Whether this route can *execute* the program, i.e. whether it emits C and
+    /// publishes a reference observation.
+    ///
+    /// `false` for a module carrying a `write` registration: a write interest's
+    /// readiness is a function of the kernel's send-buffer free space, which no
+    /// statement of this route induces, so the module is checked in full and
+    /// emits nothing (`source.event.v1`'s own `accept_check_only` arm, inherited
+    /// rather than re-decided).
+    pub executable: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -444,8 +520,18 @@ pub enum SocketError {
     /// `Q081`: an operand that is not a check-time constant this entry bound.
     NotAScalar { event: usize, name: String },
     /// `Q081`: a custody position naming something this entry created no socket
-    /// for.
+    /// for, or a registration position naming something it registered no socket
+    /// as (card `SOCKET-EVENT-COMPOSE`).
+    ///
+    /// One condition, two kinds of name: "a name at a position of this route
+    /// that names nothing of the right kind". §L21 allocates a code to a
+    /// condition rather than to a field, and widening the condition to the
+    /// registration namespace is the `NATIVE-LIBRARY-HEADER-DECORATION`
+    /// precedent — the same condition reached by a new construct.
     NotASocket { event: usize, name: String },
+    /// `Q081`: a registration position naming something this entry never
+    /// registered.
+    NotARegistration { event: usize, name: String },
     /// `Q082`: an operation at a socket state that does not admit it — the
     /// transport state machine's own refusal.
     Protocol { event: usize, reason: String },
@@ -454,6 +540,24 @@ pub enum SocketError {
     /// a rebound live name. This variant carries that checker's own error value
     /// rather than a re-worded copy of it.
     Custody { event: usize, error: OwnershipError },
+    /// `Q083`: a refusal reported by the **inherited, unedited reactor model**
+    /// over the projected registration program — its own `L00`–`L12`
+    /// diagnostic, attributed to the statement whose projection named it
+    /// (card `SOCKET-EVENT-COMPOSE`).
+    ///
+    /// Deliberately `Q083` and **not a new code**. `Q083`'s condition has always
+    /// been "an inherited, unedited custody model refused this program, and this
+    /// variant carries that model's own error value rather than a re-worded copy
+    /// of it". The composition reaches that same condition through a second such
+    /// model; §L21 allocates a code to a condition, and a reader who sees `Q083`
+    /// learns exactly what they learned before — *someone else's checker said
+    /// no, and here is what it said*. The alternative, a new code per inherited
+    /// model, would have split one condition across the diagnostic space to
+    /// record which checker happened to speak.
+    Reactor {
+        event: usize,
+        diagnostic: EventDiagnostic,
+    },
     /// `Q084`: a payload byte outside `0..=255`.
     ByteOutOfRange { event: usize, value: i32 },
     /// `Q084`: a payload length outside `1..=MAX_PAYLOAD`, or a datagram receive
@@ -498,9 +602,11 @@ impl SocketError {
     pub fn code(&self) -> &'static str {
         match self {
             Self::Shape { .. } => "Q080",
-            Self::NotAScalar { .. } | Self::NotASocket { .. } => "Q081",
+            Self::NotAScalar { .. } | Self::NotASocket { .. } | Self::NotARegistration { .. } => {
+                "Q081"
+            }
             Self::Protocol { .. } => "Q082",
-            Self::Custody { .. } => "Q083",
+            Self::Custody { .. } | Self::Reactor { .. } => "Q083",
             Self::ByteOutOfRange { .. }
             | Self::PayloadOutOfRange { .. }
             | Self::PayloadDisagrees { .. } => "Q084",
@@ -516,8 +622,10 @@ impl SocketError {
             Self::Shape { event, .. }
             | Self::NotAScalar { event, .. }
             | Self::NotASocket { event, .. }
+            | Self::NotARegistration { event, .. }
             | Self::Protocol { event, .. }
             | Self::Custody { event, .. }
+            | Self::Reactor { event, .. }
             | Self::ByteOutOfRange { event, .. }
             | Self::PayloadOutOfRange { event, .. }
             | Self::PayloadDisagrees { event, .. }
@@ -543,9 +651,19 @@ impl fmt::Display for SocketError {
                 "`{name}` is not a socket this entry created; `source.socket.v1` names a socket \
                  only at a custody position, and every such position must name one"
             ),
+            Self::NotARegistration { name, .. } => write!(
+                f,
+                "`{name}` is not a registration of this entry; `source.socket.v1` names a \
+                 registration only at a reactor position, and every such position must name one \
+                 bound by `watch NAME NAME INTEREST;` and not yet unwatched"
+            ),
             Self::Custody { error, .. } => write!(
                 f,
                 "the checked ownership discipline refuses this program: {error}"
+            ),
+            Self::Reactor { diagnostic, .. } => write!(
+                f,
+                "the checked reactor model refuses this program: {diagnostic}"
             ),
             Self::ByteOutOfRange { value, .. } => write!(
                 f,
@@ -640,7 +758,23 @@ pub fn derived_effects(program: &SocketProgram) -> EffectRow {
             ) => {
                 effects.insert(Effect::Io);
             }
-            SocketStatement::Let { .. }
+            // A dispatch turn performs the one wait this composition adds, so it
+            // is `Io` and nothing else.
+            SocketStatement::Dispatch { .. } => {
+                effects.insert(Effect::Io);
+            }
+            // The context statements and the registration statements derive
+            // **nothing**, and that is a measurement rather than an omission:
+            // the emitted program performs no call for any of them. The watched
+            // set is a fact the checker already knows at every turn, so the
+            // reactor a composed program runs *is* the declared registration
+            // set, materialised as the `poll` set at each dispatch. There is no
+            // run-time registry to allocate, and so no `Alloc` to derive.
+            SocketStatement::ReactorOpen
+            | SocketStatement::ReactorClose
+            | SocketStatement::Watch { .. }
+            | SocketStatement::Unwatch { .. }
+            | SocketStatement::Let { .. }
             | SocketStatement::Line(StdIoEvent::Return)
             | SocketStatement::Return => {}
         }
@@ -673,73 +807,155 @@ pub fn custody_operations(program: &SocketProgram) -> Vec<OwnershipOp> {
             _ => None,
         })
         .collect();
-    let names = |name: &String| owned.contains(name.as_str());
-
-    let mut operations = Vec::new();
     let mut next_id: ResourceId = 1;
+    custody_span(&program.statements, &owned, &mut next_id)
+}
+
+/// The operations of one span of statements, with each registration's span
+/// nested inside its own [`OwnershipOp::BorrowShared`]
+/// (card `SOCKET-EVENT-COMPOSE`).
+///
+/// The nesting is **lexical**, because the ownership IR's borrow nodes are:
+/// their own documentation says they "delimit lexical loan lifetimes". A
+/// `watch E S …;` therefore runs to the *first* matching `unwatch E;`, and a
+/// program whose registration spans cross is refused by name at `Q080` in
+/// [`check_socket_program`] rather than approximated here — this function stays
+/// total and deterministic so that a refused program still has a well-defined
+/// operation list.
+fn custody_span(
+    statements: &[SocketStatement],
+    owned: &BTreeSet<&str>,
+    next_id: &mut ResourceId,
+) -> Vec<OwnershipOp> {
+    let mut operations = Vec::new();
+    let mut index = 0usize;
+    while index < statements.len() {
+        if let SocketStatement::Watch {
+            registration,
+            socket,
+            ..
+        } = &statements[index]
+            && owned.contains(socket.as_str())
+        {
+            let end = statements[index + 1..]
+                .iter()
+                .position(|statement| {
+                    matches!(statement, SocketStatement::Unwatch { registration: name } if name == registration)
+                })
+                .map(|offset| index + 1 + offset);
+            let body_end = end.unwrap_or(statements.len());
+            let body = custody_span(&statements[index + 1..body_end], owned, next_id);
+            operations.push(OwnershipOp::BorrowShared {
+                owner: socket.clone(),
+                borrower: registration.clone(),
+                body,
+            });
+            index = end.map_or(statements.len(), |end| end + 1);
+            continue;
+        }
+        statement_custody(&statements[index], owned, next_id, &mut operations);
+        index += 1;
+    }
+    operations
+}
+
+fn statement_custody(
+    statement: &SocketStatement,
+    owned: &BTreeSet<&str>,
+    next_id: &mut ResourceId,
+    operations: &mut Vec<OwnershipOp>,
+) {
+    let names = |name: &String| owned.contains(name.as_str());
     let mut acquire = |operations: &mut Vec<OwnershipOp>, name: &str| {
         operations.push(OwnershipOp::Acquire {
-            id: next_id,
+            id: *next_id,
             owner: name.to_owned(),
             resource_type: SOCKET_RESOURCE_TYPE.to_owned(),
             footprint: Footprint::single(DESCRIPTOR_AXIS, 1),
         });
-        next_id += 1;
+        *next_id += 1;
     };
+    match statement {
+        SocketStatement::Create { name, .. } => acquire(operations, name),
+        SocketStatement::Accept { binding, listener } => {
+            if names(listener) {
+                operations.push(OwnershipOp::Read(listener.clone()));
+            }
+            acquire(operations, binding);
+        }
+        // A bind, a listen and a connect change the socket's own state, so
+        // they are writes; a send and a sendto change no object of this
+        // program and a receive observes one, so both are reads. The
+        // distinction is the ownership IR's own, used for what it means — and
+        // it is what decides, with no rule of this card's, that a registered
+        // socket may be sent on and received from but not re-configured.
+        SocketStatement::Bind { name } | SocketStatement::Listen { name } if names(name) => {
+            operations.push(OwnershipOp::Write(name.clone()));
+        }
+        SocketStatement::Connect { client, listener } => {
+            if names(client) {
+                operations.push(OwnershipOp::Write(client.clone()));
+            }
+            if names(listener) {
+                operations.push(OwnershipOp::Write(listener.clone()));
+            }
+        }
+        SocketStatement::Send { name, .. } | SocketStatement::Recv { name, .. } if names(name) => {
+            operations.push(OwnershipOp::Read(name.clone()));
+        }
+        SocketStatement::SendTo { name, target, .. } => {
+            if names(name) {
+                operations.push(OwnershipOp::Read(name.clone()));
+            }
+            if names(target) {
+                operations.push(OwnershipOp::Read(target.clone()));
+            }
+        }
+        SocketStatement::RecvFrom { name, .. } if names(name) => {
+            operations.push(OwnershipOp::Read(name.clone()));
+        }
+        SocketStatement::Close { name } if names(name) => {
+            operations.push(OwnershipOp::Drop(name.clone()));
+        }
+        SocketStatement::Bind { .. }
+        | SocketStatement::Listen { .. }
+        | SocketStatement::Send { .. }
+        | SocketStatement::Recv { .. }
+        | SocketStatement::RecvFrom { .. }
+        | SocketStatement::Close { .. } => {}
+        // A registration statement whose socket this entry never created falls
+        // through to here, so the loan is simply absent and `Q081` names the
+        // real fault. A dispatch turn, the context statements and an `unwatch`
+        // touch no binding at all.
+        SocketStatement::Watch { .. }
+        | SocketStatement::Unwatch { .. }
+        | SocketStatement::Dispatch { .. }
+        | SocketStatement::ReactorOpen
+        | SocketStatement::ReactorClose
+        | SocketStatement::Let { .. }
+        | SocketStatement::Line(_)
+        | SocketStatement::Return => {}
+    }
+}
 
-    for statement in &program.statements {
-        match statement {
-            SocketStatement::Create { name, .. } => acquire(&mut operations, name),
-            SocketStatement::Accept { binding, listener } => {
-                if names(listener) {
-                    operations.push(OwnershipOp::Read(listener.clone()));
-                }
-                acquire(&mut operations, binding);
+/// The same operations with every borrow node replaced by its body.
+///
+/// A loan carries **no footprint** — it neither acquires nor releases — so
+/// erasing the borrow nodes leaves exactly the operations that move the ledger.
+/// That is what [`SocketCertificate::peak_live_descriptors`] is read from, and
+/// it is why a program with no registration gets byte-identically the number it
+/// got before this card: on such a program the erasure is the identity.
+fn borrow_free(operations: &[OwnershipOp]) -> Vec<OwnershipOp> {
+    let mut flattened = Vec::with_capacity(operations.len());
+    for operation in operations {
+        match operation {
+            OwnershipOp::BorrowShared { body, .. } | OwnershipOp::BorrowMutable { body, .. } => {
+                flattened.extend(borrow_free(body));
             }
-            // A bind, a listen and a connect change the socket's own state, so
-            // they are writes; a send and a sendto change no object of this
-            // program and a receive observes one, so both are reads. The
-            // distinction is the ownership IR's own, used for what it means.
-            SocketStatement::Bind { name } | SocketStatement::Listen { name } if names(name) => {
-                operations.push(OwnershipOp::Write(name.clone()));
-            }
-            SocketStatement::Connect { client, listener } => {
-                if names(client) {
-                    operations.push(OwnershipOp::Write(client.clone()));
-                }
-                if names(listener) {
-                    operations.push(OwnershipOp::Write(listener.clone()));
-                }
-            }
-            SocketStatement::Send { name, .. } | SocketStatement::Recv { name, .. }
-                if names(name) =>
-            {
-                operations.push(OwnershipOp::Read(name.clone()));
-            }
-            SocketStatement::SendTo { name, target, .. } => {
-                if names(name) {
-                    operations.push(OwnershipOp::Read(name.clone()));
-                }
-                if names(target) {
-                    operations.push(OwnershipOp::Read(target.clone()));
-                }
-            }
-            SocketStatement::RecvFrom { name, .. } if names(name) => {
-                operations.push(OwnershipOp::Read(name.clone()));
-            }
-            SocketStatement::Close { name } if names(name) => {
-                operations.push(OwnershipOp::Drop(name.clone()));
-            }
-            SocketStatement::Bind { .. }
-            | SocketStatement::Listen { .. }
-            | SocketStatement::Send { .. }
-            | SocketStatement::Recv { .. }
-            | SocketStatement::RecvFrom { .. }
-            | SocketStatement::Close { .. } => {}
-            SocketStatement::Let { .. } | SocketStatement::Line(_) | SocketStatement::Return => {}
+            other => flattened.push(other.clone()),
         }
     }
-    operations
+    flattened
 }
 
 /// What the OS-endpoint close relation answers for one close of this route.
@@ -966,6 +1182,45 @@ fn would_block(event: usize, reason: impl Into<String>) -> SocketError {
     }
 }
 
+/// Whether the model says one registration is ready, read off **this program's
+/// own committed history** and nothing else (card `SOCKET-EVENT-COMPOSE`).
+///
+/// Three shapes of readiness, one per thing this route's own statements can
+/// induce — which is the generalisation of `source.event.v1`'s self-pipe to a
+/// transport that already has inducing statements:
+///
+/// * a **listening** socket is ready when a `connect` of this same program has
+///   queued a connection its `accept` has not taken — *accept readiness*;
+/// * a **connected** stream socket is ready when a `send` of this same program
+///   has committed bytes no `recv` has taken — *data readiness*;
+/// * a **bound** datagram socket is ready when a `sendto` of this same program
+///   has queued a datagram no `recvfrom` has taken.
+///
+/// A **write** registration is never ready here: this route induces no
+/// send-buffer pressure, so it has nothing to say about one, and a module
+/// carrying such a registration is check-only anyway.
+fn registration_ready(evaluation: &Evaluation, registration: &SocketRegistration) -> bool {
+    if registration.interest != Interest::Read {
+        return false;
+    }
+    let Some(state) = evaluation.sockets.get(&registration.socket) else {
+        return false;
+    };
+    if state.closed {
+        return false;
+    }
+    if state.listening {
+        return evaluation
+            .pending
+            .get(&registration.socket)
+            .is_some_and(|queue| !queue.is_empty());
+    }
+    match state.kind {
+        SocketKind::Tcp => !state.inbound.is_empty(),
+        SocketKind::Udp => !state.datagrams.is_empty(),
+    }
+}
+
 /// Check a lowered program and derive its certificate.
 ///
 /// Two halves, in this order and deliberately:
@@ -993,8 +1248,9 @@ pub fn check_socket_program(
         });
     }
     let mut peak_live_descriptors = 0u64;
-    for length in 0..=operations.len() {
-        if let Ok(state) = ownership::execute_ownership(&operations[..length]) {
+    let ledger_moves = borrow_free(&operations);
+    for length in 0..=ledger_moves.len() {
+        if let Ok(state) = ownership::execute_ownership(&ledger_moves[..length]) {
             peak_live_descriptors = peak_live_descriptors.max(state.live().get(DESCRIPTOR_AXIS));
         }
     }
@@ -1015,6 +1271,34 @@ pub fn check_socket_program(
     let mut renderings = BTreeSet::new();
     let mut returned = false;
 
+    // --- The reactor half (card `SOCKET-EVENT-COMPOSE`). ---
+    //
+    // Every one of these is bookkeeping for a **projection**: none of them
+    // decides a registration rule. The projected program below is handed to
+    // `check_event_program` unmodified, exactly as `operations` above was handed
+    // to `check_ownership`.
+    let mut descriptors: BTreeMap<String, DescriptorId> = BTreeMap::new();
+    let mut descriptor_order: Vec<(String, DescriptorId)> = Vec::new();
+    let mut next_descriptor: DescriptorId = 0;
+    let mut context: Option<bool> = None;
+    let mut registrations: BTreeMap<String, (SocketRegistration, bool)> = BTreeMap::new();
+    let mut registration_order: Vec<SocketRegistration> = Vec::new();
+    let mut next_registration: RegistrationId = 0;
+    let mut watch_stack: Vec<String> = Vec::new();
+    let mut turns: Vec<SocketDispatchTurn> = Vec::new();
+    let mut reactor_operations: Vec<EventOperation<EventProfile>> = Vec::new();
+    let mut reactor_origins: Vec<usize> = Vec::new();
+    let mut arguments: BTreeSet<u32> = BTreeSet::new();
+    let mut executable = true;
+    let mut acquire_descriptor = |descriptors: &mut BTreeMap<String, DescriptorId>,
+                                  descriptor_order: &mut Vec<(String, DescriptorId)>,
+                                  name: &str| {
+        let descriptor = next_descriptor;
+        next_descriptor += 1;
+        descriptors.insert(name.to_owned(), descriptor);
+        descriptor_order.push((name.to_owned(), descriptor));
+    };
+
     for (index, statement) in program.statements.iter().enumerate() {
         if returned {
             errors.push(SocketError::Shape {
@@ -1034,6 +1318,7 @@ pub fn check_socket_program(
                     .sockets
                     .insert(name.clone(), SocketState::new(*kind));
                 acquisitions.push((name.clone(), *kind));
+                acquire_descriptor(&mut descriptors, &mut descriptor_order, name);
             }
             SocketStatement::Bind { name } => match evaluation.open(index, name) {
                 Ok(state) => {
@@ -1171,6 +1456,11 @@ pub fn check_socket_program(
                                         client_state.peer = Some(binding.clone());
                                     }
                                     acquisitions.push((binding.clone(), SocketKind::Tcp));
+                                    acquire_descriptor(
+                                        &mut descriptors,
+                                        &mut descriptor_order,
+                                        binding,
+                                    );
                                 }
                                 None => {
                                     errors.push(would_block(
@@ -1190,6 +1480,11 @@ pub fn check_socket_program(
                                         .sockets
                                         .insert(binding.clone(), SocketState::new(SocketKind::Tcp));
                                     acquisitions.push((binding.clone(), SocketKind::Tcp));
+                                    acquire_descriptor(
+                                        &mut descriptors,
+                                        &mut descriptor_order,
+                                        binding,
+                                    );
                                 }
                             }
                         }
@@ -1545,6 +1840,296 @@ pub fn check_socket_program(
                         .to_owned(),
                 }),
             },
+            SocketStatement::ReactorOpen => {
+                if context.is_some() {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: "`source.socket.v1` models exactly one reactor context per entry"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                context = Some(true);
+                reactor_operations.push(open_context());
+                reactor_origins.push(index);
+            }
+            SocketStatement::ReactorClose => {
+                if context != Some(true) {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason:
+                            "`event close;` tears down the context `event open;` created; this \
+                                 entry has none open here"
+                                .to_owned(),
+                    });
+                    continue;
+                }
+                context = Some(false);
+                reactor_operations.push(close_context());
+                reactor_origins.push(index);
+            }
+            SocketStatement::Watch {
+                registration,
+                socket,
+                interest,
+            } => {
+                if context != Some(true) {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: "a registration needs this entry's reactor context: \
+                                 `source.socket.v1` opens one with `event open;` before every \
+                                 `watch` and closes it with `event close;` after every `unwatch`"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                if registrations.contains_key(registration) {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: format!(
+                            "`{registration}` is already a registration of this entry; \
+                             `source.socket.v1` has no re-assignment form"
+                        ),
+                    });
+                    continue;
+                }
+                if watch_stack.len() >= MAX_WATCHED {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: format!(
+                            "this entry would hold more than {MAX_WATCHED} registrations at once; \
+                             the emitted program materialises the watched set as a fixed-size poll \
+                             set at each turn, so `source.socket.v1` refuses beyond the bound it \
+                             sizes that set for rather than overflowing it"
+                        ),
+                    });
+                    continue;
+                }
+                let admissible = match evaluation.open(index, socket) {
+                    Ok(state) => {
+                        // The registration must name a socket some statement of
+                        // this program can make ready. Otherwise the readiness
+                        // a turn declares would be one nothing here decides,
+                        // which is the transport state machine's own question.
+                        if state.listening
+                            || (state.kind == SocketKind::Tcp && state.peer.is_some())
+                            || (state.kind == SocketKind::Udp && state.bound)
+                        {
+                            true
+                        } else {
+                            errors.push(protocol(
+                                index,
+                                format!(
+                                    "`{socket}` is in no state this program can make ready; \
+                                     `source.socket.v1` registers a listening tcp socket (accept \
+                                     readiness), a connected tcp socket (data readiness) or a \
+                                     bound udp socket, so that every readiness a turn declares is \
+                                     one this program's own history decides"
+                                ),
+                            ));
+                            false
+                        }
+                    }
+                    Err(error) => {
+                        errors.push(error);
+                        false
+                    }
+                };
+                if !admissible {
+                    continue;
+                }
+                let Some(descriptor) = descriptors.get(socket).copied() else {
+                    errors.push(SocketError::NotASocket {
+                        event: index,
+                        name: socket.clone(),
+                    });
+                    continue;
+                };
+                let id = next_registration;
+                next_registration += 1;
+                if !interest.executable() {
+                    // The `accept_check_only` arm, inherited from
+                    // `source.event.v1` rather than re-decided here.
+                    executable = false;
+                }
+                let record = SocketRegistration {
+                    name: registration.clone(),
+                    id,
+                    socket: socket.clone(),
+                    descriptor,
+                    interest: *interest,
+                };
+                registrations.insert(registration.clone(), (record.clone(), true));
+                registration_order.push(record);
+                arguments.insert(id);
+                watch_stack.push(registration.clone());
+                for operation in assign(id, descriptor, *interest) {
+                    reactor_operations.push(operation);
+                    reactor_origins.push(index);
+                }
+            }
+            SocketStatement::Unwatch { registration } => {
+                let Some((record, watched)) = registrations.get_mut(registration) else {
+                    errors.push(SocketError::NotARegistration {
+                        event: index,
+                        name: registration.clone(),
+                    });
+                    continue;
+                };
+                if !*watched {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: format!("`{registration}` was already unwatched"),
+                    });
+                    continue;
+                }
+                let id = record.id;
+                *watched = false;
+                match watch_stack.iter().position(|name| name == registration) {
+                    Some(position) if position + 1 == watch_stack.len() => {
+                        watch_stack.pop();
+                    }
+                    Some(position) => {
+                        // The loan is an `OwnershipOp::BorrowShared`, whose body
+                        // is a lexical span: the ownership IR's borrow nodes
+                        // "delimit lexical loan lifetimes" in their own words.
+                        // Crossed spans have no such body, so they are refused
+                        // by name rather than approximated.
+                        let inner = watch_stack[position + 1..].join("`, `");
+                        errors.push(SocketError::Shape {
+                            event: index,
+                            reason: format!(
+                                "`{registration}` is unwatched while `{inner}` opened after it is \
+                                 still watched; a registration is a lexical loan of its socket, so \
+                                 `source.socket.v1` retires registrations in the reverse of the \
+                                 order it takes them (`SOCKET-EVENT-CROSSED-SPANS`)"
+                            ),
+                        });
+                        watch_stack.remove(position);
+                    }
+                    None => {}
+                }
+                for operation in retire(id) {
+                    reactor_operations.push(operation);
+                    reactor_origins.push(index);
+                }
+            }
+            SocketStatement::Dispatch { ready } => {
+                if context != Some(true) {
+                    errors.push(SocketError::Shape {
+                        event: index,
+                        reason: "a dispatch turn needs this entry's reactor context, opened with \
+                                 `event open;`"
+                            .to_owned(),
+                    });
+                    continue;
+                }
+                let watching =
+                    |name: &str| registrations.get(name).is_some_and(|(_, watched)| *watched);
+                let watched: Vec<String> = registration_order
+                    .iter()
+                    .filter(|record| watching(&record.name))
+                    .map(|record| record.socket.clone())
+                    .collect();
+                let ready_now: Vec<SocketRegistration> = registration_order
+                    .iter()
+                    .filter(|record| watching(&record.name))
+                    .filter(|record| registration_ready(&evaluation, record))
+                    .cloned()
+                    .collect();
+                let declared = match ready {
+                    Some(name) => match registrations.get(name) {
+                        Some((record, true)) => Some(record.clone()),
+                        Some((_, false)) => {
+                            errors.push(SocketError::Shape {
+                                event: index,
+                                reason: format!("`{name}` is not watched at this turn"),
+                            });
+                            continue;
+                        }
+                        None => {
+                            errors.push(SocketError::NotARegistration {
+                                event: index,
+                                name: name.clone(),
+                            });
+                            continue;
+                        }
+                    },
+                    None => None,
+                };
+                if ready_now.len() > 1 {
+                    errors.push(would_block(
+                        index,
+                        format!(
+                            "{} registrations are ready at this dispatch turn; `poll(2)` reports a \
+                             set, and the order a reactor runs one ready set's callbacks in is the \
+                             implementation's rather than one this program induced \
+                             (`explore_activation_orders`: equal-priority events are deliberately \
+                             nondeterministic). A certificate compares one observation, so this \
+                             route refuses a turn with more than one ready registration by name; \
+                             covering it waits on comparison up to an admitted reordering (card \
+                             `OBS-REORDERING`)",
+                            ready_now.len()
+                        ),
+                    ));
+                    continue;
+                }
+                match (&declared, ready_now.first()) {
+                    (None, None) => {
+                        turns.push(SocketDispatchTurn {
+                            event: index,
+                            ready: None,
+                            watched,
+                        });
+                        for operation in idle_turn() {
+                            reactor_operations.push(operation);
+                            reactor_origins.push(index);
+                        }
+                    }
+                    (None, Some(record)) => errors.push(would_block(
+                        index,
+                        format!(
+                            "`dispatch idle;` declares that this turn reports nothing, but this \
+                             program's own committed history has already made `{}` ready through \
+                             `{}`",
+                            record.name, record.socket
+                        ),
+                    )),
+                    (Some(record), None) => errors.push(would_block(
+                        index,
+                        format!(
+                            "`dispatch ready {}` declares that this turn reports that \
+                             registration, but nothing this program committed has made `{}` ready; \
+                             `source.socket.v1` waits only on readiness the program itself induced \
+                             — a `connect` queued on a listener, bytes a `send` committed, a \
+                             datagram a `sendto` queued — so that a turn has one well-defined \
+                             observation",
+                            record.name, record.socket
+                        ),
+                    )),
+                    (Some(record), Some(actual)) if record.id != actual.id => {
+                        errors.push(would_block(
+                            index,
+                            format!(
+                                "`dispatch ready {}` declares that this turn reports that \
+                                 registration, but the ready one is `{}` on `{}`",
+                                record.name, actual.name, actual.socket
+                            ),
+                        ));
+                    }
+                    (Some(record), Some(_)) => {
+                        turns.push(SocketDispatchTurn {
+                            event: index,
+                            ready: Some(record.id),
+                            watched,
+                        });
+                        for operation in ready_turn(record.id, record.interest) {
+                            reactor_operations.push(operation);
+                            reactor_origins.push(index);
+                        }
+                    }
+                }
+            }
             SocketStatement::Return => returned = true,
         }
     }
@@ -1556,6 +2141,49 @@ pub fn check_socket_program(
                 .to_owned(),
         });
     }
+    if context == Some(true) {
+        errors.push(SocketError::Shape {
+            event: program.statements.len(),
+            reason: "this entry leaves its reactor context open; `source.socket.v1` requires \
+                     `event close;`"
+                .to_owned(),
+        });
+    }
+
+    // --- The registration half: the reactor model's own answer, unedited. ---
+    //
+    // The projected program carries no `CreateSocketPair` and no `CloseSocket`,
+    // because the reactor owns no descriptor of this route: it **borrows** one
+    // (see `crate::socket_event`). What it decides is the registration
+    // lifecycle — that every `Assign` names a live base, that every activation
+    // has a reason the flags permit, that a callback runs only while the base
+    // dispatches, and that nothing is left unfreed at the end.
+    let reactor = if reactor_operations.is_empty() {
+        None
+    } else {
+        let projected = EventProgram {
+            live_arguments: arguments.clone(),
+            operations: reactor_operations.clone(),
+        };
+        match check_event_program(&projected, &ACCEPTED_PROFILES) {
+            Ok(certificate) => Some(certificate),
+            Err(diagnostics) => {
+                for diagnostic in diagnostics {
+                    let operation = crate::std_event::reactor_operation(&diagnostic);
+                    let event = reactor_origins
+                        .get(operation)
+                        .copied()
+                        // A diagnostic at the terminal sweep names the operation
+                        // count, which has no origin. The last statement is the
+                        // honest place: it is a statement about what the program
+                        // left behind.
+                        .unwrap_or(program.statements.len().saturating_sub(1));
+                    errors.push(SocketError::Reactor { event, diagnostic });
+                }
+                None
+            }
+        }
+    };
 
     let derived = derived_effects(program);
     for effect in derived.iter() {
@@ -1581,6 +2209,11 @@ pub fn check_socket_program(
             lines,
             flushes,
             renderings,
+            descriptors: descriptor_order,
+            registrations: registration_order,
+            turns,
+            reactor,
+            executable,
         })
     } else {
         Err(errors)
@@ -1625,6 +2258,11 @@ pub enum SocketRecheckFailure {
     Lines,
     Flushes,
     Renderings,
+    Descriptors,
+    Registrations,
+    Turns,
+    Reactor,
+    Executable,
     Refused,
 }
 
@@ -1643,6 +2281,11 @@ impl fmt::Display for SocketRecheckFailure {
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
             Self::Renderings => "the used renderings",
+            Self::Descriptors => "the model descriptor identities",
+            Self::Registrations => "the reactor registrations",
+            Self::Turns => "the dispatch turns and what each reports",
+            Self::Reactor => "the reactor model's own certificate",
+            Self::Executable => "whether this program is executable",
             Self::Refused => "the program itself, which the recheck refuses",
         };
         write!(f, "{what} does not survive an independent rederivation")
@@ -1695,6 +2338,21 @@ pub fn recheck_socket_certificate(
     }
     if rederived.renderings != certificate.renderings {
         return Err(SocketRecheckFailure::Renderings);
+    }
+    if rederived.descriptors != certificate.descriptors {
+        return Err(SocketRecheckFailure::Descriptors);
+    }
+    if rederived.registrations != certificate.registrations {
+        return Err(SocketRecheckFailure::Registrations);
+    }
+    if rederived.turns != certificate.turns {
+        return Err(SocketRecheckFailure::Turns);
+    }
+    if rederived.reactor != certificate.reactor {
+        return Err(SocketRecheckFailure::Reactor);
+    }
+    if rederived.executable != certificate.executable {
+        return Err(SocketRecheckFailure::Executable);
     }
     Ok(())
 }

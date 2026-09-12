@@ -1124,6 +1124,26 @@ pub fn compile_files_with_registry(
     // would put two custody models in one entry and is a card of its own
     // (`EVENT-BUFFER-PAYLOAD`). A `print` inside a dispatch turn is still not
     // spellable, because v1 has no source-level callback body.
+    // Card `SOCKET-EVENT-COMPOSE`, selected immediately **above** the event
+    // route and reaching `compile_socket_source`, which now models both
+    // vocabularies. This retires the socket card's named follow-on: a module
+    // that dispatches and sockets is no longer refused by the event route.
+    //
+    // The conjunction is deliberately narrow — *exactly* these two special
+    // vocabularies and no third. A module that also buffers, strings or does
+    // HTTP declines this guard and reaches the route it reached before, keeping
+    // that route's existing refusal byte for byte (`EVENT-BUFFER-PAYLOAD`,
+    // `HTTP-V1-EVENT-COMPOSE`). Every concurrent route and the extern route are
+    // selected above all of it, so a module that dispatches, sockets and spawns
+    // still keeps its `Q600`.
+    if qcore_frontend::source_event::has_source_event(&parsed)
+        && qcore_frontend::source_socket::has_source_socket(&parsed)
+        && !qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
+        && !qcore_frontend::source_std_string::has_source_string(&parsed)
+        && !qcore_frontend::source_http::has_source_http(&parsed)
+    {
+        return compile_socket_source(&parsed, &typed, mode, options, &ranges);
+    }
     if qcore_frontend::source_event::has_source_event(&parsed) {
         return compile_event_source(&parsed, &typed, mode, options, &ranges);
     }
@@ -4880,20 +4900,33 @@ fn compile_socket_source(
         )]
     })?;
 
-    let observation = std_socket_c_emit::interpret_socket_program(&lowered.program, &certificate)
-        .map_err(|refusal| {
-        vec![plain_diagnostic(
-            "Q089",
-            format!("the socket reference execution refused this trace: {refusal:?}"),
-        )]
-    })?;
-    let emission =
-        std_socket_c_emit::emit_socket_c11(&lowered.program, &certificate).map_err(|refusal| {
-            vec![plain_diagnostic(
-                "Q089",
-                format!("the socket backend refused this trace: {refusal:?}"),
-            )]
-        })?;
+    // The check-only arm (card `SOCKET-EVENT-COMPOSE`, inheriting
+    // `source.event.v1`'s own). Both are absent together or present together: a
+    // module that emits C without a reference observation, or the reverse, would
+    // publish an unchecked comparison. Only a `write` registration reaches the
+    // `false` branch; every program without one is executable exactly as before.
+    let (c_source, observation) = if certificate.executable {
+        let observation =
+            std_socket_c_emit::interpret_socket_program(&lowered.program, &certificate).map_err(
+                |refusal| {
+                    vec![plain_diagnostic(
+                        "Q089",
+                        format!("the socket reference execution refused this trace: {refusal:?}"),
+                    )]
+                },
+            )?;
+        let emission = std_socket_c_emit::emit_socket_c11(&lowered.program, &certificate).map_err(
+            |refusal| {
+                vec![plain_diagnostic(
+                    "Q089",
+                    format!("the socket backend refused this trace: {refusal:?}"),
+                )]
+            },
+        )?;
+        (Some(emission.source), Some(observation.labelled()))
+    } else {
+        (None, None)
+    };
 
     let result_profile = SourceResultProfile {
         scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
@@ -4913,13 +4946,13 @@ fn compile_socket_source(
         mode,
         result_profile,
         entry: Some(entry),
-        c_source: Some(emission.source),
+        c_source,
         source_map: Vec::new(),
         // The reference observation of this route is the per-stream line trace,
         // carried on `extern_observation` beside the extern route's own trace
         // exactly as `source.buffer.v1` and `source.std-io.v1` carry theirs.
         reference_observation: None,
-        extern_observation: Some(observation.labelled()),
+        extern_observation: observation,
     })
 }
 
