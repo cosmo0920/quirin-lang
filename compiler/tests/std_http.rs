@@ -18,8 +18,20 @@
 //! `the_declared_reordering_relation_is_strict` asserts that rather than leaving
 //! it as a convention.
 //!
+//! On **Windows** the same native runs go through the established
+//! `tests/support/windows_c.rs` harness (`/W4 /WX`, MSVC), which is where
+//! `std_event`'s own native run goes. That arm is a native **byte comparison**
+//! and nothing more: MSVC ships no ASan/UBSan instrumentation here, so the
+//! sanitizer half of the two Unix arms' claim is **not** made on Windows, and
+//! the `runs_sanitized` in the two example tests' names describes the Unix arm
+//! that measured them (the names are unchanged because archived reports cite
+//! them). Card `WINDOWS-NATIVE-SOCKETS-HARNESS`.
+//!
 //! Every socket in every fixture binds to port 0, so two of these runs in
 //! parallel cannot collide on a port.
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::c_program;
 use qcore_core::io_emit;
@@ -1153,83 +1165,119 @@ fn readme_block(name: &str) -> Vec<String> {
 
 // --- The native runs. ---
 
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(target_os = "linux", target_os = "macos", target_os = "windows"))]
 mod native {
     use super::{EXCHANGE, RAW_REQUEST, compile};
-    use std::process::Command;
-    use std::sync::atomic::{AtomicU64, Ordering};
 
-    static NEXT: AtomicU64 = AtomicU64::new(0);
-
-    /// Compile the emitted program under `-Werror`-class flags with ASan/UBSan
-    /// (plus LSan on Linux) and run it, returning its stdout.
+    /// Compile the emitted program and run it, returning its stdout.
+    ///
+    /// Two arms, and they claim different things. The **Unix** arm compiles
+    /// under `-Werror`-class flags with ASan/UBSan (plus LSan on Linux), so its
+    /// clean exit is a sanitizer result as well as a byte comparison. The
+    /// **Windows** arm goes through the shared native-C harness — the same one
+    /// `std_event`'s native run uses — which selects the installed MSVC
+    /// toolchain and builds at `/W4 /WX`; MSVC has no ASan/UBSan here, so that
+    /// arm is a native byte comparison and **no sanitizer claim is made for
+    /// it**. Neither arm adds a library flag: the Windows arm of the emitted
+    /// transport shim names `ws2_32.lib` from inside the emitted source with
+    /// `#pragma comment(lib, …)`.
     ///
     /// Every socket in these programs binds to port 0, so several of these
-    /// binaries running at once cannot collide on a port.
+    /// binaries running at once cannot collide on a port — on either arm. Both
+    /// arms build in a fresh per-run directory under the platform temporary
+    /// directory and remove it again.
     fn run(source: &str) -> String {
-        let directory = std::env::temp_dir().join(format!(
-            "qcore-std-http-{}-{}-{}",
-            std::process::id(),
-            NEXT.fetch_add(1, Ordering::Relaxed),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .expect("the clock is after the epoch")
-                .as_nanos()
-        ));
-        std::fs::create_dir(&directory).expect("a fresh build directory");
-        let generated = directory.join("generated.c");
-        let binary = directory.join("generated");
-        std::fs::write(&generated, source).expect("write the emitted program");
-        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
-        let compile = Command::new(&compiler)
-            .args([
-                "-std=c11",
-                "-Wall",
-                "-Wextra",
-                "-Werror",
-                "-pedantic",
-                "-g",
-                "-O0",
-                "-fsanitize=address,undefined",
-                "-fno-omit-frame-pointer",
-            ])
-            .arg(&generated)
-            .arg("-o")
-            .arg(&binary)
-            .output()
-            .expect("run the C compiler");
-        assert!(
-            compile.status.success(),
-            "C compiler rejected the emitted program:\n{}",
-            String::from_utf8_lossy(&compile.stderr)
-        );
-        let run = Command::new(&binary)
-            .env(
-                "ASAN_OPTIONS",
-                if cfg!(target_os = "macos") {
-                    // Apple's AddressSanitizer provides no LeakSanitizer, so
-                    // leak detection stays a Linux-only observation.
-                    "detect_leaks=0:halt_on_error=1"
-                } else {
-                    "detect_leaks=1:halt_on_error=1"
-                },
-            )
-            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
-            .output()
-            .expect("run the emitted program");
-        std::fs::remove_dir_all(&directory).expect("clean up");
-        // A non-zero exit here is not only a sanitizer finding: it is also how
-        // the emitted program reports that the bytes it read disagreed with the
-        // checked model (status 88), that a primitive failed, or that a bounded
-        // wait expired. All are failures, deliberately so.
-        assert!(
-            run.status.success(),
-            "the emitted program failed with {}:\n{}",
-            run.status,
-            String::from_utf8_lossy(&run.stderr)
-        );
-        assert!(run.stderr.is_empty(), "the run wrote stderr");
-        String::from_utf8(run.stdout).expect("the emitted program writes UTF-8")
+        #[cfg(target_os = "windows")]
+        {
+            let run = super::windows_c::run(source, None, &[]);
+            // A non-zero exit here is how the emitted program reports that the
+            // bytes it read disagreed with the checked model (status 88), that
+            // a primitive failed, or that a bounded wait expired.
+            assert!(
+                run.status.success(),
+                "the emitted program failed with {}:\n{}",
+                run.status,
+                String::from_utf8_lossy(&run.stderr)
+            );
+            assert!(run.stderr.is_empty(), "the run wrote stderr");
+            // The harness has already folded the CRT's CRLF text endings back
+            // to LF. The observation lines this route writes are scalars — a
+            // status code and a length — so no CRLF of the *wire* messages
+            // reaches stdout and that folding cannot touch one.
+            String::from_utf8(run.stdout).expect("the emitted program writes UTF-8")
+        }
+
+        #[cfg(not(target_os = "windows"))]
+        {
+            use std::process::Command;
+            use std::sync::atomic::{AtomicU64, Ordering};
+
+            static NEXT: AtomicU64 = AtomicU64::new(0);
+
+            let directory = std::env::temp_dir().join(format!(
+                "qcore-std-http-{}-{}-{}",
+                std::process::id(),
+                NEXT.fetch_add(1, Ordering::Relaxed),
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .expect("the clock is after the epoch")
+                    .as_nanos()
+            ));
+            std::fs::create_dir(&directory).expect("a fresh build directory");
+            let generated = directory.join("generated.c");
+            let binary = directory.join("generated");
+            std::fs::write(&generated, source).expect("write the emitted program");
+            let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+            let compile = Command::new(&compiler)
+                .args([
+                    "-std=c11",
+                    "-Wall",
+                    "-Wextra",
+                    "-Werror",
+                    "-pedantic",
+                    "-g",
+                    "-O0",
+                    "-fsanitize=address,undefined",
+                    "-fno-omit-frame-pointer",
+                ])
+                .arg(&generated)
+                .arg("-o")
+                .arg(&binary)
+                .output()
+                .expect("run the C compiler");
+            assert!(
+                compile.status.success(),
+                "C compiler rejected the emitted program:\n{}",
+                String::from_utf8_lossy(&compile.stderr)
+            );
+            let run = Command::new(&binary)
+                .env(
+                    "ASAN_OPTIONS",
+                    if cfg!(target_os = "macos") {
+                        // Apple's AddressSanitizer provides no LeakSanitizer, so
+                        // leak detection stays a Linux-only observation.
+                        "detect_leaks=0:halt_on_error=1"
+                    } else {
+                        "detect_leaks=1:halt_on_error=1"
+                    },
+                )
+                .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+                .output()
+                .expect("run the emitted program");
+            std::fs::remove_dir_all(&directory).expect("clean up");
+            // A non-zero exit here is not only a sanitizer finding: it is also how
+            // the emitted program reports that the bytes it read disagreed with the
+            // checked model (status 88), that a primitive failed, or that a bounded
+            // wait expired. All are failures, deliberately so.
+            assert!(
+                run.status.success(),
+                "the emitted program failed with {}:\n{}",
+                run.status,
+                String::from_utf8_lossy(&run.stderr)
+            );
+            assert!(run.stderr.is_empty(), "the run wrote stderr");
+            String::from_utf8(run.stdout).expect("the emitted program writes UTF-8")
+        }
     }
 
     fn reference(source: &str) -> (String, String) {
