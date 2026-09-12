@@ -349,6 +349,40 @@ full suite.
 
 ## Increment records
 
+The published records family (EXAMPLES-AGGREGATES, wave 28): the follow-on
+card `AGGREGATES-V1` named is discharged — `examples/records/` publishes the
+first aggregate type as a family held to `EXAMPLES-SUITE`'s standard, growing
+the published family count **11 → 12** with **no crate-source change, no
+reserved word and no allocated code**. Two programs, chosen to be each other's
+leak control: `point.qcore` is CT09's "distinct ordinary struct fields"
+scenario as a published example — three fields, three different values, three
+reads on stdout plus two on the logger's stream, record-only, so its emitted C
+carries **no buffer prelude** (constraint 15k's conditional-prelude fact,
+visible in a published program for the first time) and its sanitized run is a
+*negative* allocation control — while `pixel_writes.qcore` puts records beside
+a real resource: `Rgb` fields drive three stored bytes, a `Write` record
+drives the fourth store's **index and value** both out of field reads, the
+buffer owes its `drop` (removing it still refuses at `Q054` — the records
+launder nothing) and the four bytes printed back are `QCor`, the loops
+family's own payload. Both programs are spelled to the index's rule — every
+once-read scalar is piped into its sink, constructions and stores stay
+statements as the assembly half — and the page's transcripts, its emitted
+struct block and its pinned `Q051` incomplete-construction refusal (span caret
+included) are read out of the file by the suite rather than restated.
+`compiler/tests/examples_suite.rs` reaches the new directory structurally by
+its scan and gains four records-owned tests (38 → 42 in that file): the native
+runs, the emitted-C claims (declared-order initialization, the three binding
+prefixes' contrast, no `qcore_bytes_new` in the record-only program), the
+documented refusal compared with the compiler's real diagnostic, and the four
+side-table refusals (`Q052` drop, `Q052` undeclared field, `Q013` undeclared
+type, `Q054` lost release) each earned by exactly the statement the table
+writes. The six `AGGREGATE-SELECTOR-WORDS` route-selector words are avoided in
+every published type and field name and the page says so. The family README
+publishes no `quirin` command line, deliberately: `examples_cli.rs` pins the
+published check/emit command-line counts at 6/6, and the loops precedent is
+`cargo test` lines only. Evidence:
+`docs/reports/examples-aggregates/README.md`.
+
 Worktree submodule diagnostic (2026-09-12, post-wave-27 close, `1e1916b4`
 merged at `e552e59c`): the two checkout-reading `profile_loader` tests
 (`declared_pins_match_the_checkouts_and_the_retained_rust_constant`,

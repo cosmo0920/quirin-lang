@@ -1242,6 +1242,7 @@ const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
 const HTTP_README: &str = include_str!("../../examples/http/README.md");
 const EVENTS_README: &str = include_str!("../../examples/events/README.md");
 const LOOPS_README: &str = include_str!("../../examples/loops/README.md");
+const RECORDS_README: &str = include_str!("../../examples/records/README.md");
 const INDEX_README: &str = include_str!("../../examples/README.md");
 
 const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qcore");
@@ -1255,6 +1256,8 @@ const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qcor
 const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qcore");
 const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qcore");
 const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qcore");
+const RECORD_POINT: &str = include_str!("../../examples/records/point.qcore");
+const PIXEL_WRITES: &str = include_str!("../../examples/records/pixel_writes.qcore");
 const CYCLE12: &str = include_str!("../../examples/cycle12.qcore");
 
 /// `examples/`, on disk. The scan below is the point: a constant list cannot
@@ -1439,6 +1442,19 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
             BUFFER_COPY,
             SourceExecutionProfile::StandardBufferV1,
         ),
+        // A record is admitted on the buffer route and on no other, so both
+        // records programs are that route's — including `point.qcore`, which
+        // holds no buffer at all.
+        (
+            "records/point.qcore",
+            RECORD_POINT,
+            SourceExecutionProfile::StandardBufferV1,
+        ),
+        (
+            "records/pixel_writes.qcore",
+            PIXEL_WRITES,
+            SourceExecutionProfile::StandardBufferV1,
+        ),
         (
             "cycle12.qcore",
             CYCLE12,
@@ -1475,6 +1491,8 @@ fn the_check_only_example_is_the_only_one_that_emits_no_c() {
         ("events/wake_payload.qcore", WAKE_PAYLOAD),
         ("events/socket_server.qcore", SOCKET_SERVER),
         ("loops/buffer_copy.qcore", BUFFER_COPY),
+        ("records/point.qcore", RECORD_POINT),
+        ("records/pixel_writes.qcore", PIXEL_WRITES),
         ("cycle12.qcore", CYCLE12),
     ] {
         assert!(
@@ -1558,6 +1576,20 @@ fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
             "transcript: buffer_copy stdout",
             Some("transcript: buffer_copy stderr"),
         ),
+        (
+            "records/point.qcore",
+            RECORD_POINT,
+            RECORDS_README,
+            "transcript: point stdout",
+            Some("transcript: point stderr"),
+        ),
+        (
+            "records/pixel_writes.qcore",
+            PIXEL_WRITES,
+            RECORDS_README,
+            "transcript: pixel_writes stdout",
+            None,
+        ),
     ] {
         let module = plain(name, source);
         let (out, err) = projections(&module);
@@ -1631,6 +1663,9 @@ fn the_newer_transcript_checks_would_notice_a_changed_line() {
         (EVENTS_README, "transcript: socket_server stdout", "81"),
         (LOOPS_README, "transcript: buffer_copy stdout", "0"),
         (LOOPS_README, "transcript: buffer_copy stderr", "[INFO] 4"),
+        (RECORDS_README, "transcript: point stdout", "65"),
+        (RECORDS_README, "transcript: point stderr", "[INFO] 9"),
+        (RECORDS_README, "transcript: pixel_writes stdout", "81"),
     ] {
         let lines = documented(readme, marker);
         assert!(!lines.is_empty(), "`{marker}` extracted nothing");
@@ -1742,5 +1777,165 @@ fn the_loop_refusals_the_page_names_beside_it_hold() {
     // Every code the page's table names is one the page also spells.
     for code in ["Q097", "Q098", "Q099", "Q054", "Q013"] {
         assert!(LOOPS_README.contains(code), "the page does not name {code}");
+    }
+}
+
+// --- examples/records — the native half, which this suite owns
+//     (card `EXAMPLES-AGGREGATES`). ---
+
+/// Both record examples build and run under the sanitizers, and both streams
+/// of each equal the reference execution's projection and the page's published
+/// transcripts.
+///
+/// The two programs are each other's leak control, and the page says so.
+/// `point.qcore` allocates nothing at all, so its run is a **negative**
+/// control: LSan reporting a leak would mean the aggregate had acquired
+/// something the model says it cannot. `pixel_writes.qcore` allocates one real
+/// buffer and releases it, so its run is a **positive** control: a lost
+/// release would be a finding, and the two records beside the buffer change
+/// nothing about that.
+#[test]
+fn the_record_examples_run_clean_and_match_their_reference_execution() {
+    for (label, name, source, out_marker, err_marker) in [
+        (
+            "record-point",
+            "records/point.qcore",
+            RECORD_POINT,
+            "transcript: point stdout",
+            Some("transcript: point stderr"),
+        ),
+        (
+            "pixel-writes",
+            "records/pixel_writes.qcore",
+            PIXEL_WRITES,
+            "transcript: pixel_writes stdout",
+            None,
+        ),
+    ] {
+        let module = plain(name, source);
+        let (expected_out, expected_err) = projections(&module);
+        let (out, err) = run(label, module.c_source.as_deref().unwrap(), &[]);
+        assert_eq!(out, expected_out, "{name}: stdout");
+        assert_eq!(err, expected_err, "{name}: stderr");
+        assert_eq!(out, documented(RECORDS_README, out_marker), "{name}");
+        match err_marker {
+            Some(marker) => assert_eq!(err, documented(RECORDS_README, marker), "{name}"),
+            None => assert!(err.is_empty(), "{name}: the page publishes no stderr"),
+        }
+    }
+}
+
+/// The page's claims about the emitted C, read out of the page: one struct per
+/// declared type with one distinctly named member per field, constructions
+/// initialized in declared order however the source wrote them, and no buffer
+/// prelude in a program that acquires nothing.
+#[test]
+fn the_records_page_publishes_the_struct_the_backend_really_writes() {
+    let point = plain("records/point.qcore", RECORD_POINT);
+    let c = point.c_source.as_deref().unwrap();
+    let published = block(RECORDS_README, "emitted: point-struct");
+    let published = published.trim_end();
+    assert!(
+        c.contains(published),
+        "the page publishes a struct the backend does not write: {published}"
+    );
+    // Declared order is the emission order: the second value is written
+    // `{ weight: 9, y: 2, x: 1 }` and initialized `x, y, weight`.
+    assert!(RECORD_POINT.contains("Point { weight: 9, y: 2, x: 1 }"));
+    assert!(
+        c.contains(".f_x = INT32_C(1), .f_y = INT32_C(2), .f_weight = INT32_C(9)"),
+        "constructions must be emitted in declared order:\n{c}"
+    );
+    // The page's "no buffer prelude" sentence: a record is a plain value, so a
+    // program holding none carries no allocator at all.
+    assert!(
+        !c.contains("qcore_bytes_new"),
+        "point.qcore acquires nothing and must carry no buffer prelude"
+    );
+    // And the neighbouring program does hold a buffer, so the contrast is a
+    // fact about the programs rather than about the backend.
+    let pixel = plain("records/pixel_writes.qcore", PIXEL_WRITES);
+    assert!(
+        pixel
+            .c_source
+            .as_deref()
+            .unwrap()
+            .contains("qcore_bytes_new"),
+        "pixel_writes.qcore acquires a real buffer"
+    );
+}
+
+/// The refused program the records page publishes, compiled, and the
+/// diagnostic it quotes, compared with the real one — span caret included.
+#[test]
+fn the_documented_incomplete_construction_is_the_refusal_the_compiler_gives() {
+    let program = block(RECORDS_README, "refusal: Q051");
+    assert!(program.contains("let p = Point { x: 1 };"), "{program}");
+    assert_eq!(refusal_codes(&program, None), ["Q051"]);
+    assert_eq!(
+        refusal(&program, None),
+        vec![
+            block(RECORDS_README, "diagnostic: Q051")
+                .trim_end()
+                .to_owned()
+        ],
+        "the page quotes a diagnostic the compiler does not give"
+    );
+    // Non-vacuous: the same construction with the field supplied is admitted,
+    // so what the page pins is the totality rule rather than the shape.
+    let complete = program.replace("Point { x: 1 }", "Point { x: 1, y: 2 }");
+    compile_named("complete.qcore", &complete, None).expect("the complete construction checks");
+}
+
+/// The four refusals the page names beside it, each earned by exactly the
+/// statement the table writes.
+#[test]
+fn the_record_refusals_the_page_names_beside_it_hold() {
+    const DECLARATIONS: &str = "import std.fmt;\n\
+         import std.io;\n\
+         \n\
+         type Point { x: i32, y: i32 }\n\
+         \n";
+    // A record is a value, not a resource: `drop` on one refuses with the
+    // route's own custody message even where the effect row would admit an
+    // allocation.
+    let dropped = format!(
+        "{DECLARATIONS}fn main() -> unit effects {{ io, alloc, mut }} {{\n    \
+             let p = Point {{ x: 1, y: 2 }};\n    \
+             drop p;\n    \
+             return;\n\
+         }}\n"
+    );
+    assert_eq!(refusal_codes(&dropped, None), ["Q052"]);
+    // A field the type does not declare.
+    let undeclared_field = format!(
+        "{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    \
+             let p = Point {{ x: 1, y: 2 }};\n    \
+             let z = p.z;\n    \
+             print dec 7;\n    \
+             return;\n\
+         }}\n"
+    );
+    assert_eq!(refusal_codes(&undeclared_field, None), ["Q052"]);
+    // A construction of a type nothing declares is name resolution's, before
+    // this route's reader ever runs.
+    let undeclared_type = format!(
+        "{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    \
+             let p = Square {{ x: 1, y: 2 }};\n    \
+             print dec 7;\n    \
+             return;\n\
+         }}\n"
+    );
+    assert_eq!(refusal_codes(&undeclared_type, None), ["Q013"]);
+    // And the published program without its release: the records beside the
+    // buffer launder nothing, so the unedited ownership checker refuses.
+    let leaked = PIXEL_WRITES.replace("    drop pixels;\n", "");
+    assert_eq!(refusal_codes(&leaked, None), ["Q054"]);
+    // Every code the page's table names is one the page also spells.
+    for code in ["Q051", "Q052", "Q013", "Q054"] {
+        assert!(
+            RECORDS_README.contains(code),
+            "the page does not name {code}"
+        );
     }
 }
