@@ -78,12 +78,15 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::frontend::*;
 use crate::lexer::{Span, Symbol, Token};
 use crate::source_epoch::{
-    EpochSourceTask, LoweredEpochModule, both, failure, header_tokens, integer, memory, name,
-    symbol, word, work,
+    EpochSourceTask, ErrorArmClause, LoweredEpochModule, both, error_arm, failure, header_tokens,
+    integer, memory, name, parse_error_arm, resolve_error_arm, symbol, word, work,
 };
 use qcore_core::prelude::concurrency::epoch_accounting::{
     EpochTask, EpochTaskId, FlatEpochProgram, OverheadBasis, ResultDisposal, RuntimeOverhead,
     TaskResult,
+};
+use qcore_core::prelude::concurrency::epoch_credit_recovery::{
+    CreationErrorEdges, EpochCreditRecoveryPlan,
 };
 use qcore_core::task_execution::{
     CheckedTaskModule, ScalarOperand, ScalarType, TaskInstructionKind, TaskTerminatorKind,
@@ -129,6 +132,10 @@ pub struct LedgerSpawn {
     /// What the creator does with that result, derived from the IR. `None` when
     /// the worker retains nothing.
     pub disposal: Option<ResultDisposal>,
+    /// The creator's own error edges over this creation, derived from the IR
+    /// (card `CT23-CREDIT-ERROR-PATH`). Never declared: a plan cannot claim an
+    /// error path the checked region does not have.
+    pub error_edges: CreationErrorEdges,
 }
 
 /// One reconciled row: a declared plan row and the ledger spawn it agreed with.
@@ -340,10 +347,48 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
             captures,
             retains_result,
             disposal,
+            error_edges: CreationErrorEdges {
+                // Every `TrySpawn` carries a `spawn_error` successor: the
+                // creation is a fallible operation of the creator, and its
+                // failure arm is the creator's own error path over a child that
+                // was never made.
+                creation_failure: true,
+                join_failure: joins_can_fail(creator, *handle_slot),
+            },
         });
     }
     spawns.sort_by_key(|spawn| (spawn.span.start, spawn.span.end));
     Ok(spawns)
+}
+
+/// Whether the creator's join of this creation can observe a raised child and
+/// take an error edge, read out of the checked IR (card
+/// `CT23-CREDIT-ERROR-PATH`).
+///
+/// This is the edge CT23's scenario names: the child **did** exist and **did**
+/// hold the credit the epoch granted it, and the creator is now on its own error
+/// path. A join whose outcome is eliminated by `UnwrapInfallible` alone has no
+/// such edge, and a creation with no join at all has none either — absence of an
+/// edge is recorded, never assumed in either direction.
+fn joins_can_fail(creator: &qcore_core::task_execution::TaskFunction, handle: usize) -> bool {
+    let outcomes = creator
+        .blocks
+        .values()
+        .flat_map(|block| block.instructions.iter())
+        .filter_map(|instruction| match instruction.kind {
+            TaskInstructionKind::Join {
+                handle: joined,
+                outcome_slot: Some(outcome),
+            } if joined == handle => Some(outcome),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
+    creator.blocks.values().any(|block| {
+        matches!(
+            block.terminator.kind,
+            TaskTerminatorKind::TryOutcome { result_slot, .. } if outcomes.contains(&result_slot)
+        )
+    })
 }
 
 /// What the creator does with one completed child's owned result, read out of
@@ -476,6 +521,9 @@ struct PlanRow {
     credit: Option<(u64, u64)>,
     retained: Option<u64>,
     join: Option<ResultDisposal>,
+    /// `error(move|drop|close);` — the creator's error path over this row's
+    /// grant (card `CT23-CREDIT-ERROR-PATH`), with the clause's own span.
+    error_arm: Option<(ErrorArmClause, Span)>,
     span: Span,
     worker: String,
 }
@@ -568,6 +616,22 @@ fn compose(
         tasks,
         unsupported: Vec::new(),
     };
+    // The error path over the epoch's credits. The *edges* come from the checked
+    // task IR and the *disposition* from the plan; a row that declares nothing
+    // spends its grant, which is the accounting this route had before card
+    // `CT23-CREDIT-ERROR-PATH`.
+    let mut arms = Vec::new();
+    let mut error_arm_spans = BTreeMap::new();
+    for row in &rows {
+        let declared = match row.error_arm {
+            None => None,
+            Some((clause, clause_span)) => {
+                error_arm_spans.insert(row.task, clause_span);
+                Some(resolve_error_arm(clause, row.credit, clause_span)?)
+            }
+        };
+        arms.push(error_arm(row.task, row.error_edges, declared));
+    }
     let plan_record = LoweredEpochModule {
         entry: entry.to_owned(),
         program,
@@ -583,6 +647,8 @@ fn compose(
         cell_spans: BTreeMap::new(),
         scope_span: plan_span,
         latency_claim: plan.latency_claim,
+        recovery: EpochCreditRecoveryPlan { arms },
+        error_arm_spans,
     };
     Ok(LoweredComposedEpoch {
         plan: plan_record,
@@ -612,6 +678,10 @@ struct Reconciled {
     peak: u64,
     effort: u64,
     credit: (u64, u64),
+    /// The creator's error edges over this creation, carried from the ledger.
+    error_edges: CreationErrorEdges,
+    /// The row's own `error(…)` clause, unresolved, with its span.
+    error_arm: Option<(ErrorArmClause, Span)>,
     row_span: Span,
     spawn_span: Span,
 }
@@ -782,6 +852,8 @@ fn reconcile(
             peak,
             effort,
             credit,
+            error_edges: spawn.error_edges,
+            error_arm: row.error_arm,
             row_span: row.span,
             spawn_span: spawn.span,
         });
@@ -927,6 +999,7 @@ fn lower_row(
         credit: None,
         retained: None,
         join: None,
+        error_arm: None,
         span,
         worker: worker.to_owned(),
     };
@@ -1026,6 +1099,10 @@ fn lower_row_clause(
             };
             set_once(&mut row.join, disposal, span, "join")
         }
+        Some("error") => {
+            let clause = parse_error_arm(&tokens, span)?;
+            set_once(&mut row.error_arm, (clause, span), span, "error")
+        }
         _ => Err(unknown_clause(span)),
     }
 }
@@ -1034,8 +1111,8 @@ fn unknown_clause(span: Span) -> SourceDiagnostic {
     failure(
         span,
         "a composed row admits `move;`, `copy;`, `peak BYTES;`, `effort UNITS;`, \
-         `credit BYTES effort UNITS;`, `retained BYTES;` and at most one \
-         `join(move|drop|close);` only",
+         `credit BYTES effort UNITS;`, `retained BYTES;`, at most one \
+         `join(move|drop|close);` and at most one `error(move|drop|close);` only",
     )
 }
 

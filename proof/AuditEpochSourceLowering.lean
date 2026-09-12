@@ -69,3 +69,23 @@ import QCore.EpochSourceLowering
 #print axioms QCore.EpochSourceLowering.an_agreed_composition_is_admitted
 #print axioms QCore.EpochSourceLowering.every_configuration_of_a_composed_epoch_is_bounded
 #print axioms QCore.EpochSourceLowering.the_owned_composition_is_admitted
+
+-- The error path over the epoch's credits (card CT23-CREDIT-ERROR-PATH).
+-- The accounting law, both directions: no leak and no mint.
+#print axioms QCore.EpochSourceLowering.an_admitted_arm_restores_no_more_than_its_grant
+#print axioms QCore.EpochSourceLowering.an_admitted_arm_conserves_its_grant
+#print axioms QCore.EpochSourceLowering.an_abandoned_grant_is_not_admitted
+#print axioms QCore.EpochSourceLowering.a_declared_arm_without_an_error_edge_is_not_admitted
+#print axioms QCore.EpochSourceLowering.an_elided_arm_is_admitted_and_spends_its_whole_grant
+#print axioms QCore.EpochSourceLowering.restoring_nothing_is_spending_everything
+#print axioms QCore.EpochSourceLowering.a_member_of_an_admitted_plan_is_admitted
+#print axioms QCore.EpochSourceLowering.an_admitted_plan_conserves_the_granted_total
+#print axioms QCore.EpochSourceLowering.the_error_arm_commits_no_more_than_the_granted_total
+#print axioms QCore.EpochSourceLowering.an_admitted_plan_restores_no_more_than_it_granted
+#print axioms QCore.EpochSourceLowering.a_plan_with_an_abandoned_arm_is_not_admitted
+#print axioms QCore.EpochSourceLowering.the_worked_plans_are_admitted
+#print axioms QCore.EpochSourceLowering.the_worked_plans_publish_their_split
+#print axioms QCore.EpochSourceLowering.the_abandoning_plan_is_refused
+#print axioms QCore.EpochSourceLowering.an_over_restoring_plan_is_refused
+#print axioms QCore.EpochSourceLowering.a_declarative_arm_is_refused
+#print axioms QCore.EpochSourceLowering.an_elided_declarative_arm_is_admitted

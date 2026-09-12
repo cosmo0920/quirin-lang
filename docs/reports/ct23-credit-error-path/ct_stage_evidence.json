@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "card": "CT23-CREDIT-ERROR-PATH",
+  "generated": "2026-09-12",
+  "report": "docs/reports/ct23-credit-error-path/README.md",
+  "purpose": "Measured per-stage evidence for CT23, offered to the integrator's CT lane as a PROPOSAL. docs/reevaluation/ct_manifest.json and docs/reviews/r0_3/acceptance.json are untouched by this card and CT coverage stays 33/50 mapped. Written in the shape docs/reports/wave17-ct40/ct_stage_evidence.json uses so scripts/ct_stage_summary.py can merge it once a lane accepts it.",
+  "mapping_status_proposed": "mapped",
+  "manifest_edited": false,
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. A control with its own source file is executed on THAT artifact and is therefore not one of this case's observations. The case is a refusal, so no stage after `epoch_bound_check` runs on it at all: its emission and execution stages are `not_applicable` for the case itself, and the four admitting controls are what exercise them.",
+  "route": "source.epoch.tasks.v1 (`ComposedEpochTasksV1`). NOT the existing `epoch` route: a composed module carries both the flat-epoch accounting stages and the whole scoped-task region, including emission and reference execution. The manifest has no route for it, which is blocker 1 below.",
+  "why_this_case_maps_now": "docs/reports/ct-wire-lane/README.md §3.4 recorded CT23 as PARTIALLY RETIRED: `credits yes, an error path over them no`. Quantitative credits became executable with T08-EPOCH-SRC (`credit N effort M`, checked by the unedited FlatEpochBoundV1) and CT38 is already mapped on them, but the epoch route is a declarative accounting block with no failure arm, so the parent's own error moved no credit. Card CT23-CREDIT-ERROR-PATH lands that failure arm: `EpochCreditRecoveryV1` checks what the creator's own error edges — the creation that failed (`TrySpawn.spawn_error`) and the join that observed a raised child (`TryOutcome.error`) — do with the credit the epoch granted each creation, and refuses the claim that a grant is neither restored to the epoch nor spent by the creator.",
+  "why_the_refusal_is_attributable_to_credit": "CT23's scenario is `Parent abandons child-owned credit during its own error` and the wave-9 attribution rule requires the verdict to be the class the scenario demands AND attributable to the construct it names. The case's worker declares `throws<AllocError>` and the creator joins it with `?`, so the derived error edges are {creation_failure: true, join_failure: true}; the join edge is the one on which the child existed and held the grant. The refusal is `CreditAbandonedAtErrorArm { task: 1, axis: \"effort\", abandoned: 100 }` at Q635 — about the credit, not about the handle. The scoped-task ledger's own ScopeBusy refusal (which is about the handle, and which card CT24 measured) never fires here: the creator joins before it exits.",
+  "what_the_mapping_does_not_claim": "Every credit figure is a declared premise of FlatEpochBoundV1 (DeclaredTaskFootprints, DeclaredRuntimeOverhead, DisjointSharedStorageCells, NoScheduleModel are carried unchanged on the case's own certificate). `restored` is declared too; only the SHAPE — whether the creator has an error edge over a creation — is derived, and it is derived from the checked task IR. The card relaxes nothing: `granted_credits` is still the plain sum and Q637 still bounds it, restored credit is not re-grantable to a replacement creation (CT23-RESTORE-REUSE), and the emitted C is byte-identical across every spelling of the clause.",
+  "lean_is_not_applicable": "The `proof` stage stays `unassessed`. Seventeen new audited theorems in QCore.EpochSourceLowering prove the accounting law in both directions over the Lean transcription of the checker, but no Lean theorem is executed on this case's own artifact, and the transcription is by inspection rather than extraction. Recording `proof: executed` on that basis would be the claim constraint 23 forbids.",
+  "sanitized_native_growth": "None. This card runs no native fixture and adds no sanitizer observation. If the lane accepts this row, sanitized-native stays 4 of 33 (4 of 34 after the denominator grows) and proof stays 0 of 33 — a grown denominator is mapping, not conformance.",
+  "blockers_for_the_lane": [
+    {
+      "id": "CT23-ROUTE-VOCABULARY",
+      "detail": "`stage_vocabulary.routes` has no entry for a composed epoch. The case needs either a new `composed_epoch` route — [parse, elaborate, epoch_lowering, epoch_bound_check, task_lowering, task_ledger_check, task_reference_execution, c_emission, native_execution, native_sanitized, proof] — or the existing `epoch` route extended with the task stages. compiler/tests/ct_corpus.rs pins its own copy of the vocabulary and fails closed on drift, so both must move together."
+    },
+    {
+      "id": "CT23-VERDICT-MODE",
+      "detail": "`reject` covers the case. The four admitting controls carry exact published figures (restored, spent, granted, error_arm_committed), which no existing verdict mode records; an `epoch_credit_split` mode beside `epoch_bound_figures` would let the mapping claim what was measured rather than less."
+    },
+    {
+      "id": "CT23-FIXTURE-MOVE",
+      "detail": "The fixtures live at compiler/tests/fixtures/epoch_credit/CT23/ because ct_corpus.rs fails closed when an unmapped case already owns a directory under compiler/tests/fixtures/ct/. Mapping moves the directory and repoints compiler/tests/epoch_credit_error_path.rs at it."
+    }
+  ],
+  "cases": [
+    {
+      "id": "CT23",
+      "scenario": "Parent abandons child-owned credit during its own error",
+      "expected": "Reject",
+      "measured_verdict": "reject",
+      "measured_cascade": ["Q635"],
+      "measured_diagnostic": "CreditAbandonedAtErrorArm { task: 1, axis: \"effort\", abandoned: 100 }",
+      "source_fixture_proposed": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore",
+      "semantic_profile": "source.epoch.tasks.v1 composed with EpochCreditRecoveryV1: one creation of a worker that declares throws<AllocError>, joined with `?`, so the creator's derived error edges are {creation_failure: true, join_failure: true}. The plan's row grants `credit 4096 effort 100;` and declares `error(close);` — the creator's error edge neither returns the grant to the epoch nor spends it. The exact ordered cascade is [Q635], the flat epoch's own outstanding-at-the-epoch-exit band, which already carries UntransferredResultAtEpochExit and UnjoinedTask; abandoned credit is the third condition in it and no new diagnostic code is added. Five controls bound the case in both directions and are executed on their own artifacts.",
+      "harness_verdict_mode_proposed": "reject",
+      "executor": "compiler/tests/epoch_credit_error_path.rs::abandoning_a_childs_credit_on_the_creators_error_edge_is_refused",
+      "stages": {
+        "parse": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "elaborate": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "task_lowering": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "task_ledger_check": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "mutex_lowering": { "status": "not_applicable" },
+        "mutex_invariant_check": { "status": "not_applicable" },
+        "epoch_lowering": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "epoch_bound_check": { "status": "executed", "executor": "compiler/tests/epoch_credit_error_path.rs", "artifact": "compiler/tests/fixtures/epoch_credit/CT23/case.qcore", "observations": 1 },
+        "sequential_whole_program": { "status": "not_applicable" },
+        "sequential_reference_execution": { "status": "not_applicable" },
+        "task_reference_execution": { "status": "not_applicable", "note": "the case is a refusal, so nothing after the epoch credit check runs on its own artifact; the no_arm.qcore control exercises this stage on THAT artifact" },
+        "mutex_reference_execution": { "status": "not_applicable" },
+        "c_emission": { "status": "not_applicable", "note": "same reason; the controls emit, and their emission is asserted byte-identical across every clause spelling" },
+        "native_execution": { "status": "unassessed" },
+        "native_sanitized": { "status": "unassessed" },
+        "legacy_c_twin": { "status": "not_applicable" },
+        "proof": { "status": "unassessed" }
+      },
+      "controls": [
+        { "source": "restored.qcore", "role": "the other disposition", "measured": "admitted; restored = {memory 4096, effort 100}, spent = 0, error_arm_committed = 0" },
+        { "source": "spent.qcore", "role": "the conservative disposition", "measured": "admitted; restored = 0, spent = {memory 4096, effort 100}" },
+        { "source": "no_arm.qcore", "role": "attribution", "measured": "admitted; removing EXACTLY the error clause removes the refusal, and the published split is the one spent.qcore publishes" },
+        { "source": "partial.qcore", "role": "boundary", "measured": "admitted; restored = {1024, 25}, spent = {3072, 75} — the split is a real division of the grant, not a flag" },
+        { "source": "minted.qcore", "role": "boundary, the other direction", "measured": "refused, exact cascade [Q636], RestoredCreditExceedsGrant { task: 1, axis: \"effort\", restored: 200, credit: 100 }" }
+      ]
+    }
+  ],
+  "retired_unmapped_reasons": {
+    "CT23": "docs/reports/ct-wire-lane/README.md §3.4, `PARTIALLY RETIRED — credits yes, an error path over them no`. The error path now exists, is checked by EpochCreditRecoveryV1 and refuses the case's own construct from the flat epoch's own Q635 band. This retirement is declared HERE, in this lane's own record; the ct-wire-lane record is not edited (constraints 21 and 23)."
+  }
+}

@@ -527,3 +527,122 @@ fn a_mutex_generation_in_the_composed_body_is_refused_deliberately() {
     let message = refusal(&format!("{HEAD}{PLAN}{ranked}"));
     assert!(message.contains("T08-COMPOSE-GUARD"), "{message}");
 }
+
+// ---------------------------------------------------------------------------
+// The error path over the epoch's credits — card `CT23-CREDIT-ERROR-PATH`.
+// ---------------------------------------------------------------------------
+
+/// A plan with one extra row clause, for the tests below.
+fn planned(clause: &str) -> String {
+    let plan = PLAN.replace(
+        "            join(drop);\n",
+        &format!("            join(drop);\n{clause}"),
+    );
+    format!("{HEAD}{plan}{TASKS}")
+}
+
+/// The creator's error edges over a creation are **derived** from the checked
+/// task IR, never declared. `TrySpawn` always carries a `spawn_error`
+/// successor, so every creation has a creation-failure edge; the join-failure
+/// edge exists only where the outcome is eliminated by a `TryOutcome`, which is
+/// to say only where the child can actually raise.
+#[test]
+fn the_creators_error_edges_are_derived_from_the_checked_region() {
+    // This card's fixture worker cannot raise, so the `?` on its join outcome
+    // is infallible and contributes no edge.
+    let (lowered, _) = compose(&composed_source()).expect("the composition is admitted");
+    assert_eq!(lowered.ledger.len(), 1);
+    assert!(lowered.ledger[0].error_edges.creation_failure);
+    assert!(
+        !lowered.ledger[0].error_edges.join_failure,
+        "an infallible join is not an error edge"
+    );
+    assert!(lowered.ledger[0].error_edges.any());
+
+    // A worker that can raise gives the creator a second edge — the one on
+    // which the child existed and held the grant.
+    let fallible = composed_source().replace(
+        "fn worker(buffer: own<Buffer> use one) -> own<Buffer> { return move buffer; }",
+        "fn worker(buffer: own<Buffer> use one) -> own<Buffer> \
+         effects { alloc, throws<AllocError> } { drop buffer; \
+         let fresh = qcore_buffer_new(1)?; return move fresh; }",
+    );
+    let (lowered, _) = compose(&fallible).expect("a raising worker composes");
+    assert!(lowered.ledger[0].error_edges.creation_failure);
+    assert!(lowered.ledger[0].error_edges.join_failure);
+}
+
+/// One arm per row, carrying the declared disposition and the derived edges.
+/// An elided clause declares nothing, which is not the same thing as declaring
+/// that the grant is spent — the distinction is what makes a declared arm over
+/// a program with no error edge refusable while an elided one is not.
+#[test]
+fn every_row_carries_one_arm_with_its_declared_disposition() {
+    use qcore_core::epoch_credit_recovery::ErrorArmCredit;
+
+    let arms = |clause: &str| {
+        let (lowered, _) = compose(&planned(clause)).expect("the composition is admitted");
+        lowered.plan.recovery.arms.clone()
+    };
+    let quantity = |memory: u64, work: u64| {
+        Quantity::from_axes([
+            (MEMORY_AXIS.to_owned(), memory),
+            (EFFORT_AXIS.to_owned(), work),
+        ])
+        .expect("two distinct axes")
+    };
+
+    let elided = arms("");
+    assert_eq!(elided.len(), 1);
+    assert_eq!(elided[0].task, 1);
+    assert!(elided[0].declared.is_none());
+    assert_eq!(elided[0].disposition(), ErrorArmCredit::SpentByCreator);
+
+    assert_eq!(
+        arms("            error(drop);\n")[0].declared,
+        Some(ErrorArmCredit::SpentByCreator)
+    );
+    assert_eq!(
+        arms("            error(close);\n")[0].declared,
+        Some(ErrorArmCredit::AbandonedAtErrorArm)
+    );
+    // `error(move);` with no figures is the full rollback, so it resolves to
+    // the row's own grant rather than repeating a figure the row already wrote.
+    assert_eq!(
+        arms("            error(move);\n")[0].declared,
+        Some(ErrorArmCredit::RestoredToEpoch {
+            restored: quantity(4096, 100)
+        })
+    );
+    assert_eq!(
+        arms("            error(move 1024 effort 25);\n")[0].declared,
+        Some(ErrorArmCredit::RestoredToEpoch {
+            restored: quantity(1024, 25)
+        })
+    );
+}
+
+/// The clause's own grammar refusals, at this route's `Q600`. Nothing here is a
+/// new code, and nothing here is a new reserved word: `error`, `move`, `drop`,
+/// `close` and `effort` are all already reserved.
+#[test]
+fn the_error_clause_refuses_the_forms_it_cannot_represent() {
+    for clause in [
+        "            error(open);\n",
+        "            error(move 1024);\n",
+        "            error(move effort 25);\n",
+        "            error();\n",
+    ] {
+        let message = refusal(&planned(clause));
+        assert!(
+            message.contains("the creator's error path over this row's credit is exactly"),
+            "{clause}: {message}"
+        );
+    }
+    assert!(
+        refusal(&planned(
+            "            error(move);\n            error(close);\n"
+        ))
+        .contains("declares `error` at most once")
+    );
+}
