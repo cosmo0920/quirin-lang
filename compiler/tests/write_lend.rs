@@ -31,11 +31,15 @@ use qcore_core::typed_errors::EffectRow;
 
 /// Two write lends of disjoint halves, mutated independently while both are
 /// live — the shape CT07's missing half asks for, kept as a file so a lane can
-/// point at the program rather than at a string in a test.
-const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/write_lend/disjoint_write_halves.qcore");
+/// point at the program rather than at a string in a test. Card
+/// `CT07-WRITE-REMAP` (wave 30) took the lane statement up: the file now lives
+/// in CT07's own fixture directory as that case's `case.qcore`, and this test
+/// keeps running it there — the `epoch_credit_error_path.rs`/CT23 precedent.
+const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/ct/CT07/case.qcore");
 /// The same program with one bound of the second lend moved from 4 to 3, so
-/// the two ranges share exactly byte 3 — this card's control.
-const OVERLAPPING_LENDS: &str = include_str!("fixtures/write_lend/overlapping_lends.qcore");
+/// the two ranges share exactly byte 3 — this card's control, now also CT07's
+/// disjointness control in the same directory.
+const OVERLAPPING_LENDS: &str = include_str!("fixtures/ct/CT07/overlapping_lends.qcore");
 
 fn options() -> CompileOptions {
     CompileOptions {

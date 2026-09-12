@@ -44,7 +44,9 @@
 //! is the form the wave-3 lane recorded as missing when it left CT11 unmapped.
 //! Card `CT-WIRE-LANE-2` (wave 28) grows the same route by four: CT07 and CT09
 //! are its first **accepted** cases, each with a sanitized native run of its
-//! own emitted C (`CT07-SLICE-PERMISSIONS`'s range-wise disjointness and
+//! own emitted C (`CT07-SLICE-PERMISSIONS`'s range-wise disjointness — CT07's
+//! evidence since upgraded to `SLICE-PERMISSIONS-WRITE-LEND`'s two disjoint
+//! write authorities by card `CT07-WRITE-REMAP`, wave 30 — and
 //! `AGGREGATES-V1`'s distinct record fields), and CT08 and CT21 are two more
 //! rejections (an overlapping-range write at `Q078`; `QUANT-REGION-SOURCE`'s
 //! undischarged cleanup pack at `Q305`). The same card maps CT23 on the new
@@ -167,8 +169,11 @@ const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21"];
 /// `sequential`-route **accept** cases whose evidence is a sanitized native run
 /// of the case's own emitted C compared per stream with the route's checked
 /// observation (card `CT-WIRE-LANE-2`, wave 28). CT07 is card
-/// `CT07-SLICE-PERMISSIONS`'s disjoint-halves program — two read loans of two
-/// disjoint ranges live at once while the owner writes between them — and CT09
+/// `SLICE-PERMISSIONS-WRITE-LEND`'s disjoint-write-halves program — two write
+/// lends of two disjoint ranges live at once, each party mutating its own
+/// range — remapped onto that stronger scenario from the read-loan program by
+/// card `CT07-WRITE-REMAP` (wave 30), which keeps the read-loan program as the
+/// case's accept control. CT09
 /// is card `AGGREGATES-V1`'s three-field record program, whose sanitized byte
 /// comparison is the executed layout *observation* (`AGGREGATE-CT09-LAYOUT`:
 /// an observation, never the layout proof the case's `proof` stage would need).
@@ -3173,7 +3178,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 14] = [
+const EVIDENCE_FILES: [&str; 15] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3188,6 +3193,7 @@ const EVIDENCE_FILES: [&str; 14] = [
     "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
     "docs/reports/ct22-wire/ct_stage_evidence.json",
     "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
+    "docs/reports/ct07-write-remap/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -4650,9 +4656,12 @@ fn run_sequential_control_list(directory: &Path, id: &str, controls: &[SourceCon
 ///
 /// The observation is computed from the checked model and never reads the
 /// emitted C, which is what makes the comparison a comparison. For CT07 the
-/// load-bearing sanitizer is ASan: a sub-extent loan emits a displaced pointer
-/// and a length, and an off-by-one in either is a real out-of-bounds read the
-/// emitted `fwrite` actually performs. For CT09 the run is the executed layout
+/// load-bearing sanitizer is ASan, and since card `CT07-WRITE-REMAP` moved the
+/// case onto the write-lend program it traps the construct's worst failure
+/// mode: a write lend emits a displaced `const` pointer and every store
+/// through it is a real memory write at `owner + low + i`, so an off-by-one in
+/// the displacement, the length or the rebasing would be an out-of-bounds
+/// **write**. For CT09 the run is the executed layout
 /// **observation** (`AGGREGATE-CT09-LAYOUT`): that a C compiler's designated
 /// initializer and member reads agree with the model is cross-checked by the
 /// byte comparison, not proved, and the `proof` stage stays `unassessed`.

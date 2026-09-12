@@ -1,43 +1,34 @@
-// Two disjoint sub-ranges of one owned buffer, held at the same time, while the
-// owner writes a third range that neither of them covers
-// (card `CT07-SLICE-PERMISSIONS`).
-//
-// `borrow_utf8(store, 0, 2)` and `borrow_utf8(store, 4, 6)` are two immutable
-// views of two ranges of the same buffer. Both windows are open across
-// `store[2] = 88;` and `store[3] = 89;`, and those writes are **admitted**
-// because byte 2 and byte 3 lie outside both `[0, 2)` and `[4, 6)`. The
-// disjointness is decided at check time — `max low < min high`, exact because
-// every bound here is a check-time constant — and a write into either lent
-// range refuses at `Q078` instead.
-//
-// The third view reads the bytes the owner wrote, after the first two windows
-// have closed, which is what makes the admission visible in the observation
-// rather than only in the certificate.
-import std.string;
 import std.buffer;
+import std.fmt;
 import std.io;
 
+// CT07's case since card CT07-WRITE-REMAP (wave 30): the program card
+// SLICE-PERMISSIONS-WRITE-LEND published as the half of CT07 the read card
+// could not reach — two parties each holding WRITE authority over their own
+// range of one buffer, mutating independently while both loans are live.
+// `left` and `right` cover [0, 4) and [4, 8): provably disjoint, decided at
+// check time, and the interleaved stores below are each admitted because each
+// goes through the loan that owns its byte. The owner reads the bytes back
+// only after both windows close, which is when its authority returns. Moved
+// here from compiler/tests/fixtures/write_lend/disjoint_write_halves.qcore
+// byte-identically (only this comment changed); compiler/tests/write_lend.rs
+// still runs it as that card's own fixture.
 fn main() -> unit effects { io, alloc, mut } {
-    let store = bytes(6);
-    store[0] = 97;
-    store[1] = 98;
-    store[2] = 99;
-    store[3] = 100;
-    store[4] = 101;
-    store[5] = 102;
-
-    let head = borrow_utf8(store, 0, 2);
-    let tail = borrow_utf8(store, 4, 6);
-
-    store[2] = 88;
-    store[3] = 89;
-
-    print head;
-    print tail;
-
-    let middle = borrow_utf8(store, 2, 4);
-    print middle;
-
+    let store = bytes(8);
+    let left = lend(store, 0, 4);
+    let right = lend(store, 4, 8);
+    left[0] = 11;
+    right[0] = 55;
+    left[1] = 22;
+    right[1] = 66;
+    let b = right[1];
+    let a = left[1];
+    let x = store[0];
+    let y = store[4];
+    print dec a;
+    print dec b;
+    print dec x;
+    print dec y;
     drop store;
     return;
 }

@@ -15,7 +15,7 @@
     "elaborate"
   ],
   "evidence_target": null,
-  "notes": "source.string.v1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion. CT08 asks for overlapping array ranges to be rejected (or reported potential/unknown by an analyzer); this mapping takes the REJECT arm, the source harness's own vocabulary - `Unknown` remains the gateway's verdict vocabulary and is not claimed here. Two ranges of one array overlap on exactly one byte: the write `store[1] = 88;` enters as the one-byte range [1, 2), head's loan is [0, 2), and the overlap is decided at check time by max low < min high, which is the set-theoretic question itself because every bound is a check-time constant. The refusal names the footprint that decided it. The boundary control moves the byte outside both ranges and is admitted (it is CT07's own case shape), and the attribution control runs the identical write with no loan live and is admitted, so the refusal is keyed to the overlap between the write's range and a live loan's range and to nothing else.",
+  "notes": "source.string.v1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion. CT08 asks for overlapping array ranges to be rejected (or reported potential/unknown by an analyzer); this mapping takes the REJECT arm, the source harness's own vocabulary - `Unknown` remains the gateway's verdict vocabulary and is not claimed here. Two ranges of one array overlap on exactly one byte: the write `store[1] = 88;` enters as the one-byte range [1, 2), head's loan is [0, 2), and the overlap is decided at check time by max low < min high, which is the set-theoretic question itself because every bound is a check-time constant. The refusal names the footprint that decided it. The boundary control moves the byte outside both ranges and is admitted (it was CT07's own case shape at the wave-28 mapping; card CT07-WRITE-REMAP has since moved CT07's case onto the write-lend program and keeps the read-loan program as that case's accept control), and the attribution control runs the identical write with no loan live and is admitted, so the refusal is keyed to the overlap between the write's range and a live loan's range and to nothing else.",
   "sequential_reject": {
     "diagnostic_sequence": [
       "Q078"
@@ -26,7 +26,7 @@
         "expectation": "accept",
         "diagnostic_sequence": [],
         "execution_profile": "StandardStringV1",
-        "note": "Boundary: the overlapping byte moved outside both lent ranges. Admitted, with the owner's writes read back by a third view, so the refusal is keyed to the overlap rather than to writing a borrowed buffer at all. This program is CT07's own case."
+        "note": "Boundary: the overlapping byte moved outside both lent ranges. Admitted, with the owner's writes read back by a third view, so the refusal is keyed to the overlap rather than to writing a borrowed buffer at all. This program was CT07's own case at the wave-28 mapping; CT07's case is the write-lend program since card CT07-WRITE-REMAP, which keeps the read-loan program as its accept control."
       },
       {
         "source": "no_loan.qcore",

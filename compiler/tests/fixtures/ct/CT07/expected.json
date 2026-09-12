@@ -15,9 +15,9 @@
     "native_sanitized"
   ],
   "evidence_target": "linux",
-  "notes": "source.string.v1 with card CT07-SLICE-PERMISSIONS's range-wise borrow_utf8(NAME, LOW, HIGH). Two loans of [0, 2) and [4, 6) of one six-byte buffer are live at the same time while the owner writes bytes 2 and 3 between them; the writes are admitted because disjointness is decided at check time (max low < min high, exact because every bound is a check-time constant), and a third view then reads the written bytes back so the admission is visible in the observation. BOUNDARY, stated as the semantic profile states it: one of the two disjoint permissions is a READ loan and the other is the owner's retained write authority - this is disjoint permission over two ranges, not two parties each holding write authority (that lend is unlanded residual SLICE-PERMISSIONS-WRITE-LEND). The bounds half is the out_of_extent control's Q077 refusal; the disjointness half is the overlapping control's Q078 refusal, which is CT08's own case shape.",
+  "notes": "source.buffer.v1 with card SLICE-PERMISSIONS-WRITE-LEND's write lend lend(NAME, LOW, HIGH), remapped from the read-loan program by card CT07-WRITE-REMAP (wave 30). Two WRITE authorities over disjoint ranges of one eight-byte buffer — lend(store, 0, 4) and lend(store, 4, 8) — are live at once across four interleaved stores, each store admitted because it goes through the loan that owns its byte; the bytes are read back through the loans and then by the owner after both windows close, so the admission is visible in the observation. Disjointness is decided at check time (max low < min high on the ownership IR's own u64 axis, exact because every bound is a check-time constant) and the authority genuinely MOVES: the borrow node carries the footprint fraction, so a second overlapping lend refuses and an owner access inside a live lent range refuses — the exclusivity is the custody model's, not a route rule's. BOUNDARY, stated as the semantic profile states it: both write authorities are bindings of ONE SEQUENTIAL entry — disjoint write authority with interleaved statements, NOT two threads; the task-crossing half is residual WRITE-LEND-TASKS. The bounds half is the out_of_extent_lend control's Q053 refusal plus the loan_index_out_of_extent control's [Q054, Q053] two-layer refusal; the disjointness half is the overlapping_lends control's Q054 exclusivity refusal; the wave-28 read-loan case is retained as the read_loan accept control.",
   "sequential_sanitized": {
-    "execution_profile": "StandardStringV1",
+    "execution_profile": "StandardBufferV1",
     "sanitizer_flags": [
       "-std=c11",
       "-Wall",
@@ -32,27 +32,44 @@
     "asan_options": "detect_leaks=1:halt_on_error=1",
     "ubsan_options": "halt_on_error=1:print_stacktrace=1",
     "declared_stdout": [
-      "ab",
-      "ef",
-      "XY"
+      "22",
+      "66",
+      "11",
+      "55"
     ],
     "declared_stderr": [],
     "controls": [
       {
-        "source": "overlapping.qcore",
+        "source": "overlapping_lends.qcore",
         "expectation": "reject",
         "diagnostic_sequence": [
-          "Q078"
+          "Q054"
         ],
-        "note": "Disjointness: the identical program with one byte of the write moved inside head's [0, 2). Refused naming the footprint, so the case's admission is a decided disjointness rather than a route that admits owner writes anywhere. This program is CT08's own case."
+        "note": "Disjointness: the identical program with one bound of the second lend moved from 4 to 3, so the two ranges share exactly byte 3. Refused by the exclusivity rule between two write lends, arriving from the extended ownership IR through the inherited Q054 and naming the shared byte — so the case's admission is a decided disjointness between two WRITE authorities, not a route that admits second lends anywhere."
       },
       {
-        "source": "out_of_extent.qcore",
+        "source": "out_of_extent_lend.qcore",
         "expectation": "reject",
         "diagnostic_sequence": [
-          "Q077"
+          "Q053"
         ],
-        "note": "Bounds: the identical program with one byte of the write moved past the declared extent. Refused at check time by source.buffer.v1's own bounds rule, reported at Q077 on this composed route - a refusal, not a run-time trap."
+        "note": "Bounds, the lend's own range: the identical program with one bound of the second lend moved from 8 to 9, one byte past the declared extent. Refused at check time by source.buffer.v1's lend-range rule — a refusal, not a run-time trap."
+      },
+      {
+        "source": "loan_index_out_of_extent.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q054",
+          "Q053"
+        ],
+        "note": "Bounds, the loan's own index: the identical program with one store's index moved from 1 to 4 — one past the [4, 8) loan's own 4-byte extent. Both halves of the one law refuse: the IR's rebased containment check (AccessOutsideLendRange through Q054) and the route's own bound (Q053, reported in the loan's own coordinates), each in the layer that owns it."
+      },
+      {
+        "source": "read_loan.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardStringV1",
+        "note": "The wave-28 mapping's own case, kept as the accept control: two disjoint READ loans beside the owner's retained write authority (card CT07-SLICE-PERMISSIONS) stay admitted beside the write remap, so the remap extends the family of admitted disjointness shapes rather than replacing it. Its reject twins live on as CT08's own case (the Q078 overlap) and the string route's bounds tests."
       }
     ]
   }

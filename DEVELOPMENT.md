@@ -349,6 +349,42 @@ full suite.
 
 ## Increment records
 
+Wave 30, card `CT07-WRITE-REMAP` (2026-09-13): the CT lane wave 29's
+write-lend card named — CT07's evidence upgraded from the read-loan half to
+the real two-write-authorities scenario, **no count moved** (mapped 42/50,
+unmapped 8, sanitized-native 7 of 42, proof 1 of 42 all unchanged; evidence
+quality, not coverage, constraint 23). The case's artifact is now
+`SLICE-PERMISSIONS-WRITE-LEND`'s own published disjoint-write-halves program,
+**moved** into `compiler/tests/fixtures/ct/CT07/` with
+`compiler/tests/write_lend.rs` repointed at it (the
+CT23/`epoch_credit_error_path.rs` precedent), taking `StandardBufferV1` where
+the wave-28 case took `StandardStringV1`. The manifest's semantic profile
+replaces the read-loan/retained-write boundary sentence with the stronger true
+one — **two write authorities over disjoint ranges of one buffer, both held by
+one sequential entry's bindings**, interleaved stores each admitted because
+each goes through the loan that owns its byte, and the remaining boundary
+stated: **not two threads**, `WRITE-LEND-TASKS` the residual. The bounds proof
+moves to the lend surface's own `Q053` in both layers (the lend's range,
+`[Q053]`; the loan's own index, `[Q054, Q053]` — the IR's rebased containment
+beside the route's bound), the disjointness proof to the `Q054` exclusivity
+refusal of the one-shared-byte control, and the wave-28 read-loan case is
+**kept as the accept control**, measuring that the weaker configuration stays
+admitted beside the stronger one; the wave-28 `Q078`/`Q077` controls are
+dropped as no longer earning rows here (the former is CT08's own case, still
+pinned there). The sanitized-native leg is the same one gated
+`run_sequential_sanitized` run, now of the write program's own emitted C, with
+ASan trapping the write direction (a displaced-pointer store's off-by-one is
+an out-of-bounds **write**). Record mechanics per constraints 21/23/25:
+`docs/reports/ct07-write-remap/ct_stage_evidence.json`'s CT07 entry declares
+`supersedes` of the wave-28 `ct-wire-lane-2` record — whose bytes are
+untouched — the new record is appended to both `EVIDENCE_FILES` lists
+(`ct_corpus.rs`'s pinned array grown 14 → 15 deliberately, constraint 5) and
+to `acceptance.json`'s `derived_from`, and
+`scripts/ct_stage_summary.py --write`/`--check` exit 0 at mapped 42 /
+unmapped 8 with no generated field moved; no proof row, `PROOF_GATED_CASES`
+entry or CT01 evidence touched. Zero new codes, zero reserved words, no crate
+source changed. Report `docs/reports/ct07-write-remap/README.md`.
+
 Wave 29 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,
 `REGION-JOINS-DUTIES`, `SLICE-PERMISSIONS-WRITE-LEND` and the arbiter
