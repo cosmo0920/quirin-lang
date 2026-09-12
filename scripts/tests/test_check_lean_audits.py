@@ -4,6 +4,7 @@ import contextlib
 import io
 import os
 from pathlib import Path
+import stat
 import subprocess
 import sys
 import tempfile
@@ -185,6 +186,105 @@ class ParallelAuditTests(unittest.TestCase):
         with patch.object(checks, "run_audits_in_parallel") as parallel:
             checks.check_audits(self.proof, self.args)
         self.assertEqual(parallel.call_args.args[-1], len(self.names))
+
+
+class ExitStatusTests(unittest.TestCase):
+    """`main` reports failure through its return value, which `__main__` raises
+    as the process exit code. A run that printed "Lean checks failed" while
+    exiting 0 masked a real Lean failure (wave-24 integration, 2026-09-12), so
+    every failure path is pinned non-zero here."""
+
+    def run_main(self, **patches):
+        stderr = io.StringIO()
+        with patch.object(checks.shutil, "which", return_value="/usr/bin/lake"):
+            with patch.object(checks, "check_audits", **patches):
+                with contextlib.redirect_stderr(stderr):
+                    status = checks.main([])
+        return status, stderr.getvalue()
+
+    def test_success_returns_zero(self):
+        status, stderr = self.run_main(return_value=None)
+        self.assertEqual(status, 0)
+        self.assertEqual(stderr, "")
+
+    def test_every_caught_failure_returns_nonzero(self):
+        failures = (
+            OSError(2, "No such file or directory", "lake"),
+            ValueError("missing whole-project Lean axiom audit"),
+            TimeoutError("Lean build exceeded 600s; stopped its process tree"),
+            subprocess.CalledProcessError(1, ["lake", "build"]),
+        )
+        for failure in failures:
+            with self.subTest(failure=type(failure).__name__):
+                status, stderr = self.run_main(side_effect=failure)
+                self.assertEqual(status, 1)
+                self.assertTrue(stderr.startswith("Lean checks failed: "))
+
+    def test_interrupt_returns_130(self):
+        status, stderr = self.run_main(side_effect=KeyboardInterrupt())
+        self.assertEqual(status, 130)
+        self.assertIn("Lean checks interrupted", stderr)
+
+    def test_missing_lake_is_a_hard_error_naming_the_elan_path(self):
+        stderr = io.StringIO()
+        with patch.object(checks.shutil, "which", return_value=None):
+            with patch.object(checks, "check_audits") as audits:
+                with contextlib.redirect_stderr(stderr):
+                    status = checks.main([])
+        audits.assert_not_called()
+        self.assertEqual(status, 1)
+        message = stderr.getvalue()
+        self.assertTrue(message.startswith("Lean checks failed: "))
+        self.assertIn(str(Path.home() / ".elan" / "bin"), message)
+        self.assertIn("proof/lean-toolchain", message)
+
+
+@unittest.skipUnless(os.name == "posix", "stub lake is a POSIX shell script")
+class ProcessExitCodeTests(unittest.TestCase):
+    """The gate reads only the child's exit code, so pin it at the process
+    boundary rather than trusting the in-process return value."""
+
+    script = Path(checks.__file__).resolve()
+
+    def run_script(self, path_dir, *argv):
+        return subprocess.run(
+            [sys.executable, str(self.script), *argv],
+            env={**os.environ, "PATH": str(path_dir)},
+            capture_output=True, text=True, timeout=120,
+        )
+
+    def stub_lake(self, directory, body):
+        lake = Path(directory) / "lake"
+        lake.write_text(f"#!/bin/sh\n{body}\n")
+        lake.chmod(lake.stat().st_mode | stat.S_IXUSR)
+        return Path(directory)
+
+    def test_missing_lake_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as empty:
+            result = self.run_script(Path(empty))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("Lean checks failed: ", result.stderr)
+        self.assertIn(".elan", result.stderr)
+
+    def test_failing_lake_build_exits_nonzero(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path_dir = self.stub_lake(directory, 'echo "error: build failed" >&2\nexit 1')
+            result = self.run_script(path_dir)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(
+            "Lean checks failed: Command '['lake', 'build']' returned "
+            "non-zero exit status 1.", result.stderr,
+        )
+
+    def test_successful_run_keeps_the_passed_line_and_exit_zero(self):
+        # CI and the archived reports reference the "Passed N Lean audits"
+        # line; a no-op lake exercises the real transcript against the real
+        # proof directory without a toolchain.
+        with tempfile.TemporaryDirectory() as directory:
+            path_dir = self.stub_lake(directory, "exit 0")
+            result = self.run_script(path_dir)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertRegex(result.stdout, r"Passed \d+ Lean audits\n$")
 
 
 if __name__ == "__main__":

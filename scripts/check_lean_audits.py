@@ -5,8 +5,10 @@ from concurrent.futures import ThreadPoolExecutor
 import math
 import os
 from pathlib import Path
+import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -201,6 +203,17 @@ def check_audits(proof, args):
     print(f"Passed {len(audits)} Lean audits", flush=True)
 
 
+def missing_lake_error():
+    """A run without `lake` must be a hard error, not a printed shrug: both
+    `--skip-build` audits and the build itself invoke it."""
+    elan_bin = Path.home() / ".elan" / "bin"
+    return OSError(
+        "`lake` was not found on PATH; the pinned Lean toolchain "
+        f"(proof/lean-toolchain) is installed by elan into {elan_bin} — "
+        "install elan and put that directory on PATH"
+    )
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--build-timeout", type=positive_seconds, default=600,
@@ -218,13 +231,22 @@ def main(argv=None):
                         help="audit existing artifacts; only use after a successful lake build")
     args = parser.parse_args(argv)
     proof = Path(__file__).resolve().parents[1] / "proof"
+    # The status is returned and raised as this process's own exit code below,
+    # never delegated: a run that printed "Lean checks failed" while exiting 0
+    # masked a real Lean failure from every gate that reads only the code.
     try:
+        if shutil.which("lake") is None:
+            raise missing_lake_error()
         check_audits(proof, args)
     except (OSError, ValueError, TimeoutError, subprocess.CalledProcessError) as error:
-        parser.exit(1, f"Lean checks failed: {error}\n")
+        print(f"Lean checks failed: {error}", file=sys.stderr, flush=True)
+        return 1
     except KeyboardInterrupt:
-        parser.exit(130, "Lean checks interrupted; stopped active process tree\n")
+        print("Lean checks interrupted; stopped active process tree",
+              file=sys.stderr, flush=True)
+        return 130
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
