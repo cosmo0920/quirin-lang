@@ -1165,6 +1165,7 @@ fn the_published_example_is_spelled_with_pipelines() {
 #[test]
 fn the_readme_transcript_is_the_real_one() {
     let compiled = compile(SOCKET_SERVER).expect("admitted");
+    let readme = EVENTS_README.replace("\r\n", "\n");
     let transcript = compiled
         .extern_observation
         .as_deref()
@@ -1174,11 +1175,11 @@ fn the_readme_transcript_is_the_real_one() {
         .map(|line| format!("{line}\n"))
         .collect::<String>();
     assert!(
-        EVENTS_README.contains(transcript.trim_end()),
+        readme.contains(transcript.trim_end()),
         "the page's transcript must be the one the pipeline produces: {transcript:?}"
     );
     assert!(
-        EVENTS_README.contains("socket_server.qcore"),
+        readme.contains("socket_server.qcore"),
         "the page must index the program"
     );
 }
