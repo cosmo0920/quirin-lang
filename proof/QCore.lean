@@ -140,6 +140,7 @@ import QCore.ObsReordering
 import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.SourceRecord
+import QCore.QuantRegionSource
 import QCore.LoopBudget
 import QCore.StdString
 import QCore.StringSliceIo

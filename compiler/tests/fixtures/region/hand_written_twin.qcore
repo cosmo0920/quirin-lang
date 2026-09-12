@@ -1,0 +1,17 @@
+error Failure { Failed; }
+
+// The straight-line program `discharged_pack.qcore` **is** once the region has
+// been checked: the same two acquisitions, and the same two releases in reverse
+// acquisition order, which is the order a discharged pack runs its duties in.
+//
+// The two emit byte-identical C. That is the point of the pairing: a region
+// buys *checking*, not code. What the twin cannot say is that the releases are
+// a duty the region owes — so deleting a release here is an ordinary leak,
+// while in the region it is a pack that was never discharged.
+fn main() -> i32 {
+    let outer = qcore_acquire(1, true, Failure);
+    let inner = qcore_acquire(2, true, Failure);
+    drop inner;
+    drop outer;
+    return 0;
+}

@@ -10,6 +10,9 @@ use qcore_core::cleanup_lowering::{
     BitwiseOp, BranchCondition, CompareOp, IntExpr, SourceOp, SourceProgram as LoweringProgram,
     interpret_source,
 };
+use qcore_core::error_region::{
+    QuantOpen as RegionQuantOpen, RegionCatchClause, RegionOp, analyze_error_regions,
+};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
     epoch_accounting, epoch_credit_recovery, mutex_c_emit, mutex_invariant, task_c_emit,
@@ -1571,6 +1574,8 @@ fn synthesize_function(
             total: 0,
             reachable: true,
         },
+        region_operations: Vec::new(),
+        region_span: None,
     };
     let mut sequence = SequenceLowering::default();
     builder.lower_sequence(&body.statements, &mut sequence, ArmPosition::TopLevel)?;
@@ -1581,9 +1586,46 @@ fn synthesize_function(
         calls,
         mut resource_segments,
         counters,
+        region_operations,
+        region_span,
         ..
     } = builder;
     resource_segments.push(sequence.flow);
+    // Card `QUANT-REGION-SOURCE`. The effect row the sequential route declares
+    // is `[Alloc]`, and the error-region model requires a raised error to be in
+    // it. An entry that writes a region therefore carries the declared error
+    // set as its `Throws` row; an entry that writes none carries exactly the
+    // row it always carried, which is what keeps every existing program
+    // byte-identical. The row is **derived** from the declarations rather than
+    // written by the reader — this route has no `effects { … }` syntax — and
+    // that is a boundary, not a claim (follow-on `REGION-EFFECT-ROW`).
+    let allowed_effects = if region_operations.is_empty() {
+        EffectRow::new([Effect::Alloc])
+    } else {
+        EffectRow::new(
+            std::iter::once(Effect::Alloc).chain(errors.iter().cloned().map(Effect::Throws)),
+        )
+    };
+    // Run the unedited model here, before the flattened program is assembled,
+    // so a region's own refusal is the one the reader sees. `check_whole_program`
+    // runs it again over the same operations and remains the authority; this
+    // call only decides *which* refusal is reported first, because the cleanup
+    // lowering below would otherwise report a leak at `Q202` for a pack the
+    // handler never discharged.
+    if !region_operations.is_empty() {
+        analyze_error_regions(
+            &ErrorDeclarations::new(errors.iter().cloned()),
+            &allowed_effects,
+            ErrorLedger::default(),
+            &region_operations,
+        )
+        .map_err(|error| SourceDiagnostic {
+            code: qcore_frontend::source_region::error_region_code(&error),
+            pass: SemanticPass::ErrorRegion,
+            span: region_span.unwrap_or(declaration.span),
+            message: qcore_frontend::source_region::error_region_message(&error),
+        })?;
+    }
     let lowering = LoweringProgram::new(
         declaration.value.name.clone(),
         resources,
@@ -1615,10 +1657,10 @@ fn synthesize_function(
             Quantity::single("resources", counters.peak_live),
             Quantity::single("allocations", counters.total),
         ),
-        allowed_effects: EffectRow::new([Effect::Alloc]),
+        allowed_effects,
         initial_error_ledger: ErrorLedger::default(),
         error_operations: sequence.error_operations,
-        region_operations: Vec::new(),
+        region_operations,
         lowering,
         calls,
         identity_entry: Vec::new(),
@@ -1714,6 +1756,17 @@ struct FunctionLowering<'a> {
     calls: Vec<CallSite>,
     resource_segments: Vec<Flow>,
     counters: Counters,
+    /// The checked error-region operations this entry contributes (card
+    /// `QUANT-REGION-SOURCE`, `source.region.v1`). Empty for every entry that
+    /// writes no `error region`, which is what keeps every program that
+    /// predates the card byte-identical: an empty list is the value this field
+    /// carried unconditionally before it.
+    region_operations: Vec<RegionOp>,
+    /// The span of the entry's `error region` statement, for attributing the
+    /// model's refusals — [`analyze_error_regions`] reports no position of its
+    /// own. v1 admits at most one region per entry, so this span is exact
+    /// (follow-on `REGION-MULTIPLE`).
+    region_span: Option<Span>,
 }
 
 impl FunctionLowering<'_> {
@@ -1739,8 +1792,14 @@ impl FunctionLowering<'_> {
             // Card `IF-STATEMENT` narrows this gate rather than removing it:
             // `if` is admitted by `source.branch.v1` and every other structured
             // statement keeps the refusal it has always had.
-            if !matches!(statement.value, StatementKind::If { .. })
-                && !statement.value.nested_blocks().is_empty()
+            // Card `QUANT-REGION-SOURCE` narrows this gate a second time, the
+            // way card `IF-STATEMENT` narrowed it the first: `error region` is
+            // admitted by `source.region.v1` and every other structured
+            // statement keeps the refusal it has always had.
+            if !matches!(
+                statement.value,
+                StatementKind::If { .. } | StatementKind::ErrorRegion { .. }
+            ) && !statement.value.nested_blocks().is_empty()
             {
                 return Err(diagnostic(
                     SemanticPass::CEmission,
@@ -1898,43 +1957,14 @@ impl FunctionLowering<'_> {
                             format!("unknown error type `{error}`"),
                         ));
                     }
-                    self.resources.push(resource);
-                    self.owners.insert(binding.clone(), resource);
-                    // Distinguish a local from a shadowed parameter. Ownership and
-                    // implicit error cleanup remain the ownership pass's concern.
-                    let usage_name = format!("$local:{}:{binding}", statement.span.start);
-                    self.usage_declarations
-                        .insert(usage_name.clone(), Usage::MANY);
-                    self.local_usage_names.insert(binding.clone(), usage_name);
-                    self.counters.reachable &= succeeds;
-                    output.lowering.push(SourceOp::Acquire {
+                    self.record_acquisition(
+                        statement.span,
+                        binding,
                         resource,
                         succeeds,
                         error,
-                    });
-                    output.ownership.push(OwnershipOp::Acquire {
-                        id: resource,
-                        owner: binding.clone(),
-                        resource_type: "Resource".into(),
-                        footprint: Footprint::single("resources", 1),
-                    });
-                    output.error_operations.push(ErrorOp::Acquire(resource));
-                    output.flow = output
-                        .flow
-                        .then(&Flow::acquire(
-                            Quantity::single("resources", 1),
-                            Quantity::single("allocations", 1),
-                        ))
-                        .map_err(|error| {
-                            diagnostic(
-                                SemanticPass::ResourceFlow,
-                                statement.span,
-                                error.to_string(),
-                            )
-                        })?;
-                    self.counters.live = self.counters.live.saturating_add(1);
-                    self.counters.peak_live = self.counters.peak_live.max(self.counters.live);
-                    self.counters.total = self.counters.total.saturating_add(1);
+                        output,
+                    )?;
                 }
                 StatementKind::Expression => {
                     if let Some((passes, error)) = parse_check(&tokens) {
@@ -2043,29 +2073,7 @@ impl FunctionLowering<'_> {
                             format!("unknown resource binding `{place}`"),
                         )
                     })?;
-                    output.lowering.push(SourceOp::Drop(resource));
-                    if self.counters.reachable {
-                        output.demands.push((
-                            UsageExpr::Variable(self.local_usage_names[place].clone()),
-                            false,
-                        ));
-                    }
-                    output.ownership.push(OwnershipOp::Drop(place.clone()));
-                    output.error_operations.push(ErrorOp::Drop(resource));
-                    output.flow = output
-                        .flow
-                        .then(&Flow::release(
-                            Quantity::single("resources", 1),
-                            Quantity::zero(),
-                        ))
-                        .map_err(|error| {
-                            diagnostic(
-                                SemanticPass::ResourceFlow,
-                                statement.span,
-                                error.to_string(),
-                            )
-                        })?;
-                    self.counters.live = self.counters.live.saturating_sub(1);
+                    self.record_release(statement.span, place, resource, false, output)?;
                 }
                 StatementKind::Move { place: Some(place) } => {
                     let resource = *self.owners.get(place).ok_or_else(|| {
@@ -2075,31 +2083,21 @@ impl FunctionLowering<'_> {
                             format!("unknown resource binding `{place}`"),
                         )
                     })?;
-                    output.lowering.push(SourceOp::TransferToResult(resource));
-                    if self.counters.reachable {
-                        output.demands.push((
-                            UsageExpr::Variable(self.local_usage_names[place].clone()),
-                            false,
-                        ));
-                    }
-                    output
-                        .ownership
-                        .push(OwnershipOp::TransferOut(place.clone()));
-                    output.error_operations.push(ErrorOp::Drop(resource));
-                    output.flow = output
-                        .flow
-                        .then(&Flow::release(
-                            Quantity::single("resources", 1),
-                            Quantity::zero(),
-                        ))
-                        .map_err(|error| {
-                            diagnostic(
-                                SemanticPass::ResourceFlow,
-                                statement.span,
-                                error.to_string(),
-                            )
-                        })?;
-                    self.counters.live = self.counters.live.saturating_sub(1);
+                    self.record_release(statement.span, place, resource, true, output)?;
+                }
+                StatementKind::ErrorRegion {
+                    name,
+                    blocks,
+                    catch_bindings,
+                } => {
+                    self.lower_error_region(
+                        statement,
+                        name,
+                        blocks,
+                        catch_bindings,
+                        output,
+                        position,
+                    )?;
                 }
                 StatementKind::Return => {
                     let value = parse_return(&tokens, self.result_type).ok_or_else(|| {
@@ -2160,6 +2158,400 @@ impl FunctionLowering<'_> {
             }
         }
         Ok(terminates)
+    }
+
+    /// Record one acquisition in every model the sequential route checks.
+    ///
+    /// Factored out of the statement loop by card `QUANT-REGION-SOURCE` so a
+    /// region body's acquisition is *the same* acquisition, in all five models,
+    /// as one written outside a region. A second copy of this bookkeeping could
+    /// drift; one copy cannot.
+    fn record_acquisition(
+        &mut self,
+        span: Span,
+        binding: &str,
+        resource: ResourceId,
+        succeeds: bool,
+        error: String,
+        output: &mut SequenceLowering,
+    ) -> Result<(), SourceDiagnostic> {
+        self.resources.push(resource);
+        self.owners.insert(binding.to_owned(), resource);
+        // Distinguish a local from a shadowed parameter. Ownership and
+        // implicit error cleanup remain the ownership pass's concern.
+        let usage_name = format!("$local:{}:{binding}", span.start);
+        self.usage_declarations
+            .insert(usage_name.clone(), Usage::MANY);
+        self.local_usage_names
+            .insert(binding.to_owned(), usage_name);
+        self.counters.reachable &= succeeds;
+        output.lowering.push(SourceOp::Acquire {
+            resource,
+            succeeds,
+            error,
+        });
+        output.ownership.push(OwnershipOp::Acquire {
+            id: resource,
+            owner: binding.to_owned(),
+            resource_type: "Resource".into(),
+            footprint: Footprint::single("resources", 1),
+        });
+        output.error_operations.push(ErrorOp::Acquire(resource));
+        output.flow = output
+            .flow
+            .then(&Flow::acquire(
+                Quantity::single("resources", 1),
+                Quantity::single("allocations", 1),
+            ))
+            .map_err(|error| diagnostic(SemanticPass::ResourceFlow, span, error.to_string()))?;
+        self.counters.live = self.counters.live.saturating_add(1);
+        self.counters.peak_live = self.counters.peak_live.max(self.counters.live);
+        self.counters.total = self.counters.total.saturating_add(1);
+        Ok(())
+    }
+
+    /// Record one release in every model the sequential route checks —
+    /// `transfer` distinguishing `move name;` from `drop name;`.
+    ///
+    /// Factored out by card `QUANT-REGION-SOURCE` for the reason
+    /// [`Self::record_acquisition`] states: the releases a region's cleanup
+    /// performs are the releases the reader would have written by hand, so they
+    /// must be the same operation in every model rather than a second spelling
+    /// of one.
+    fn record_release(
+        &mut self,
+        span: Span,
+        place: &str,
+        resource: ResourceId,
+        transfer: bool,
+        output: &mut SequenceLowering,
+    ) -> Result<(), SourceDiagnostic> {
+        output.lowering.push(if transfer {
+            SourceOp::TransferToResult(resource)
+        } else {
+            SourceOp::Drop(resource)
+        });
+        if self.counters.reachable {
+            output.demands.push((
+                UsageExpr::Variable(self.local_usage_names[place].clone()),
+                false,
+            ));
+        }
+        output.ownership.push(if transfer {
+            OwnershipOp::TransferOut(place.to_owned())
+        } else {
+            OwnershipOp::Drop(place.to_owned())
+        });
+        output.error_operations.push(ErrorOp::Drop(resource));
+        output.flow = output
+            .flow
+            .then(&Flow::release(
+                Quantity::single("resources", 1),
+                Quantity::zero(),
+            ))
+            .map_err(|error| diagnostic(SemanticPass::ResourceFlow, span, error.to_string()))?;
+        self.counters.live = self.counters.live.saturating_sub(1);
+        Ok(())
+    }
+
+    /// Lower one `error region NAME { … } catch (E) [quant open NAME as B] { … }`
+    /// statement (card `QUANT-REGION-SOURCE`, `source.region.v1`).
+    ///
+    /// # What is built, and what decides it
+    ///
+    /// Two things, from one reading of the statement:
+    ///
+    /// * the **region operations** — a `RegionOp::ErrorRegion` whose body,
+    ///   catch clause and `quant open` are exactly
+    ///   [`qcore_core::error_region`]'s own constructors. Nothing about the
+    ///   pack, the capability or its discharge is decided here; the unedited
+    ///   model decides all of it, and this is the first source path that
+    ///   reaches `RegionOp::QuantOpen`'s `QuantOpen` at all.
+    /// * the **emitted operations** — the statements the region's *decided*
+    ///   path performs, in the existing flat `SourceOp` vocabulary. Every
+    ///   outcome on this route is a check-time literal, so the region has one
+    ///   path; the region therefore **erases** into the straight-line program
+    ///   that path runs, exactly as card `LOOP-UNROLL-BUDGET`'s licence erases.
+    ///   No `SourceOp`, no CFG terminator and no C backend rule is added.
+    ///
+    /// The erasure is not an approximation and is not asserted: the emitted
+    /// program's release sequence **is** the pack's actions in reverse, which
+    /// is the same sequence [`qcore_core::error_region`]'s `discharge` puts in
+    /// its own cleanup trace, and `region_cleanup_matches_emitted_releases`
+    /// compares the two on every fixture of this route.
+    ///
+    /// # The v1 boundary, stated rather than hidden
+    ///
+    /// The body must end in the decided error edge `qcore_check(false, E);` and
+    /// the region must carry exactly one catch clause, naming `E`. That is what
+    /// makes *every* clause of an admitted region one the model reaches and
+    /// decides — the model is path-sensitive, so a handler on a path the region
+    /// does not take is a handler nothing decides, and admitting one would be
+    /// silent rather than fail-closed. A region with no error edge
+    /// (`REGION-NORMAL-EXIT`), a second clause (`REGION-MULTIPLE-CATCH`), a
+    /// second region in one entry (`REGION-MULTIPLE`), a failing acquisition as
+    /// the edge (`REGION-FAILING-ACQUIRE`), an uncaught raise
+    /// (`REGION-PROPAGATE`) and a region inside a branch arm
+    /// (`REGION-IN-ARM`) are each refused by name.
+    fn lower_error_region(
+        &mut self,
+        statement: &Located<StatementKind>,
+        name: &str,
+        blocks: &[SourceBlock],
+        catch_bindings: &[Option<String>],
+        output: &mut SequenceLowering,
+        position: ArmPosition,
+    ) -> Result<(), SourceDiagnostic> {
+        let span = statement.span;
+        let refuse = |message: &str| region_refusal(span, message.to_owned());
+        if position.conditional() {
+            return Err(region_refusal(
+                span,
+                "`source.region.v1` admits an `error region` at the top level of an entry body \
+                 only: a region inside a branch arm seals a cleanup pack on one path and not on \
+                 the other, and the four models that join a branch cannot join on that \
+                 (follow-on `REGION-IN-ARM`)"
+                    .to_owned(),
+            ));
+        }
+        if self.region_span.is_some() {
+            return Err(refuse(
+                "`source.region.v1` admits at most one `error region` per entry in this revision \
+                 (follow-on `REGION-MULTIPLE`)",
+            ));
+        }
+        let clauses = qcore_frontend::source_region::read_catch_headers(
+            self.parsed,
+            blocks,
+            catch_bindings,
+            span,
+        )?;
+        let [clause] = clauses.as_slice() else {
+            return Err(refuse(
+                "`source.region.v1` admits exactly one `catch` clause per region in this \
+                 revision: the error-region model is path-sensitive, so a clause the region's \
+                 decided path does not reach is one the model does not decide, and admitting an \
+                 undecided handler would be silent rather than fail-closed (follow-on \
+                 `REGION-MULTIPLE-CATCH`)",
+            ));
+        };
+        if !self.errors.contains(&clause.error) {
+            return Err(diagnostic(
+                SemanticPass::TypedErrors,
+                clause.span,
+                format!("unknown error type `{}`", clause.error),
+            ));
+        }
+        let body_block = &blocks[0];
+        let handler_block = &blocks[1];
+
+        // ---- the region body ----------------------------------------------
+        //
+        // `frame` mirrors the model's own `RegionFrame::actions`: one entry per
+        // resource this region acquired and has not released, in acquisition
+        // order. At the error edge it *is* the sealed pack's action list, which
+        // is what the handler's discharge releases in reverse.
+        let mut region_body = Vec::new();
+        let mut frame: Vec<(String, ResourceId)> = Vec::new();
+        let mut raised: Option<String> = None;
+        for body_statement in &body_block.statements {
+            if raised.is_some() {
+                return Err(region_refusal(
+                    body_statement.span,
+                    "the region's error edge is decided at check time, so nothing after it runs; \
+                     `source.region.v1` refuses an unreachable statement rather than emitting one"
+                        .to_owned(),
+                ));
+            }
+            let tokens = statement_tokens(self.parsed, body_statement.span)?;
+            match &body_statement.value {
+                StatementKind::Let {
+                    binding: Some(binding),
+                } => {
+                    let Some((resource, succeeds, error)) = parse_acquire(&tokens) else {
+                        return Err(region_refusal(
+                            body_statement.span,
+                            "the only `let` a `source.region.v1` body admits is an acquisition, \
+                             `let NAME = qcore_acquire(ID, true, ERROR);`"
+                                .to_owned(),
+                        ));
+                    };
+                    if !succeeds {
+                        return Err(region_refusal(
+                            body_statement.span,
+                            "a **failing** acquisition inside a region never makes its identity \
+                             live, so the region's frame and the emitted program would disagree \
+                             about which slot exists; `source.region.v1` spells the region's \
+                             error edge as `qcore_check(false, ERROR);` instead (follow-on \
+                             `REGION-FAILING-ACQUIRE`)"
+                                .to_owned(),
+                        ));
+                    }
+                    if !self.errors.contains(&error) {
+                        return Err(diagnostic(
+                            SemanticPass::TypedErrors,
+                            body_statement.span,
+                            format!("unknown error type `{error}`"),
+                        ));
+                    }
+                    self.record_acquisition(
+                        body_statement.span,
+                        binding,
+                        resource,
+                        true,
+                        error,
+                        output,
+                    )?;
+                    region_body.push(RegionOp::Acquire {
+                        resource,
+                        // The sequential route models one destructor and it is
+                        // total: `SourceOp::Drop` lowers to a release with no
+                        // failure edge. A fallible destructor is `Q308`'s
+                        // condition and is not expressible here.
+                        destructor_noexcept: true,
+                    });
+                    frame.push((binding.clone(), resource));
+                }
+                StatementKind::Drop { place: Some(place) } => {
+                    let Some(index) = frame.iter().position(|(owner, _)| owner == place) else {
+                        return Err(region_refusal(
+                            body_statement.span,
+                            format!(
+                                "`{place}` names no resource this region acquired; \
+                                 `source.region.v1` admits a release of a region-local \
+                                 acquisition only, because a release of an outer resource is not \
+                                 a cleanup duty this region's frame carries"
+                            ),
+                        ));
+                    };
+                    let (_, resource) = frame.remove(index);
+                    self.record_release(body_statement.span, place, resource, false, output)?;
+                    region_body.push(RegionOp::Drop(resource));
+                }
+                StatementKind::Expression => {
+                    if let Some(amount) = parse_region_quantity(
+                        &tokens,
+                        qcore_frontend::source_region::CREDIT_KEYWORD,
+                    ) {
+                        region_body.push(RegionOp::AddStrictCredit(amount));
+                    } else if let Some(amount) = parse_region_quantity(
+                        &tokens,
+                        qcore_frontend::source_region::EFFORT_KEYWORD,
+                    ) {
+                        region_body.push(RegionOp::SpendStrictCredit(amount));
+                    } else if let Some((passes, error)) = parse_check(&tokens) {
+                        if passes {
+                            return Err(region_refusal(
+                                body_statement.span,
+                                "`source.region.v1` reads `qcore_check(false, ERROR);` as the \
+                                 region's error edge; a check decided to pass has no edge to \
+                                 model and is refused rather than emitted as a dead cleanup \
+                                 branch that would leave the region rather than reach its handler"
+                                    .to_owned(),
+                            ));
+                        }
+                        if !self.errors.contains(&error) {
+                            return Err(diagnostic(
+                                SemanticPass::TypedErrors,
+                                body_statement.span,
+                                format!("unknown error type `{error}`"),
+                            ));
+                        }
+                        region_body.push(RegionOp::Raise(error.clone()));
+                        raised = Some(error);
+                    } else {
+                        return Err(region_refusal(
+                            body_statement.span,
+                            "statement is not in `source.region.v1`'s region body: the body \
+                             admits `let NAME = qcore_acquire(ID, true, ERROR);`, `drop NAME;`, \
+                             `credit N;`, `effort N;` and the error edge \
+                             `qcore_check(false, ERROR);`"
+                                .to_owned(),
+                        ));
+                    }
+                }
+                _ => {
+                    return Err(region_refusal(
+                        body_statement.span,
+                        "statement is not in `source.region.v1`'s region body: the body admits \
+                         `let NAME = qcore_acquire(ID, true, ERROR);`, `drop NAME;`, `credit N;`, \
+                         `effort N;` and the error edge `qcore_check(false, ERROR);`"
+                            .to_owned(),
+                    ));
+                }
+            }
+        }
+        let Some(raised) = raised else {
+            return Err(refuse(
+                "`source.region.v1` requires a region body to end in its decided error edge, \
+                 `qcore_check(false, ERROR);`: a region that exits normally reaches no catch \
+                 clause, so the model decides none of the clause's obligations and the clause \
+                 would stand unchecked (follow-on `REGION-NORMAL-EXIT`)",
+            ));
+        };
+        if clause.error != raised {
+            return Err(refuse(&format!(
+                "the region raises `{raised}` and its one catch clause names `{}`, so the raise \
+                 is uncaught; `source.region.v1` admits no error leaving a region in this \
+                 revision, because a propagated pack is a second emission shape (follow-on \
+                 `REGION-PROPAGATE`)",
+                clause.error
+            )));
+        }
+
+        // ---- the handler ---------------------------------------------------
+        let mut handler = Vec::new();
+        let mut discharges = 0_usize;
+        for handler_statement in &handler_block.statements {
+            match &handler_statement.value {
+                StatementKind::Discharge {
+                    binding: Some(binding),
+                } => {
+                    handler.push(RegionOp::Discharge(binding.clone()));
+                    discharges += 1;
+                }
+                _ => {
+                    return Err(region_refusal(
+                        handler_statement.span,
+                        "`source.region.v1`'s handler admits `discharge CAPABILITY;` only in \
+                         this revision (follow-on `REGION-HANDLER-BODY`)"
+                            .to_owned(),
+                    ));
+                }
+            }
+        }
+
+        let quant_open = match (&clause.opened_region, &clause.binding) {
+            (Some(region), Some(binding)) => Some(RegionQuantOpen {
+                region: region.clone(),
+                binding: binding.clone(),
+            }),
+            _ => None,
+        };
+        self.region_span = Some(span);
+        self.region_operations.push(RegionOp::ErrorRegion {
+            region: name.to_owned(),
+            body: region_body,
+            catches: vec![RegionCatchClause {
+                error: clause.error.clone(),
+                quant_open,
+                handler,
+            }],
+        });
+
+        // ---- the emitted path ----------------------------------------------
+        //
+        // The pack's actions are `frame`, in acquisition order; discharging it
+        // runs them in **reverse**, which is the same order the existing
+        // cleanup lowering gives every other fallible edge. A handler that does
+        // not discharge emits nothing here and is refused by the model
+        // (`Q305`/`Q306`) before this entry's lowering is assembled.
+        if discharges > 0 {
+            for (place, resource) in frame.iter().rev().cloned().collect::<Vec<_>>() {
+                self.record_release(span, &place, resource, false, output)?;
+            }
+        }
+        Ok(())
     }
 
     /// Lower the `index`th `if` header of a (possibly `else if`-chained)
@@ -3146,6 +3538,54 @@ fn parse_check(tokens: &[Token]) -> Option<(bool, String)> {
             },
         ] if name == "qcore_check" => Some((parse_bool(passes)?, error.clone())),
         _ => None,
+    }
+}
+
+/// `credit N;` / `effort N;` — one region-body quantity declaration (card
+/// `QUANT-REGION-SOURCE`).
+///
+/// Both words are **already** reserved (card `T08-EPOCH-SRC`), so this form
+/// reserves nothing; it is read only inside a `source.region.v1` region body,
+/// which is a statement position no program in this repository could reach
+/// before this card. The seam with the epoch route is one-way and measured: the
+/// epoch route is selected by `epoch {`
+/// (`qcore_frontend::source_epoch::has_source_epoch`), which a region body
+/// cannot spell, so a region that credits never reaches that route and an
+/// epoch's `credit N effort M` never reaches this reader.
+///
+/// The amount is a non-negative integer **literal**. The model's quantity is a
+/// `u64` and its arithmetic is checked
+/// (`CreditOverflow` / `InsufficientCredit`), so nothing here has to be.
+fn parse_region_quantity(tokens: &[Token], keyword: &str) -> Option<u64> {
+    match tokens {
+        [
+            Token {
+                kind: TokenKind::Word(word),
+                ..
+            },
+            Token {
+                kind: TokenKind::Integer(amount),
+                ..
+            },
+            Token {
+                kind: TokenKind::Symbol(Symbol::Semicolon),
+                ..
+            },
+        ] if word == keyword => amount.parse().ok(),
+        _ => None,
+    }
+}
+
+/// A `source.region.v1` shape refusal. Always `Q302`: every condition this
+/// route adds is a condition of the `ErrorRegion` pass's own generic
+/// presentation code, allocated under the standing `Q-NAMESPACE-DECISION` ice
+/// box rather than given a code of its own.
+fn region_refusal(span: Span, message: String) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: "Q302",
+        pass: SemanticPass::ErrorRegion,
+        span,
+        message,
     }
 }
 

@@ -266,9 +266,25 @@ pub enum StatementKind {
     Break,
     Continue,
     Defer,
+    /// `error region NAME { … } catch (E) [quant open NAME as B] { … } …`
+    ///
+    /// `blocks[0]` is the region body and `blocks[1..]` are the catch handlers
+    /// in written order. `catch_bindings` is parallel to `blocks[1..]`: it
+    /// carries the cleanup-capability name a clause's `quant open … as B`
+    /// introduces, and `None` for a clause that opens no pack.
+    ///
+    /// The binding list is recorded here on card `STD-EVENT`'s and card
+    /// `LOOP-V1`'s stated rule — the parser records the names a statement
+    /// **binds**, because that is the one thing name resolution cannot recover
+    /// from a token window, and `discharge B;` inside the handler is an
+    /// ordinary reference that must resolve. Everything else about the clause
+    /// (which error it catches, which region it opens) is read out of the
+    /// statement's own token window by [`crate::source_region`], exactly as
+    /// every other route reads its own statements.
     ErrorRegion {
         name: String,
         blocks: Vec<SourceBlock>,
+        catch_bindings: Vec<Option<String>>,
     },
     Unsafe {
         body: SourceBlock,
@@ -1584,6 +1600,7 @@ impl<'a> SourceParser<'a> {
         let name = self.identifier(start + 2)?.to_owned();
         let body_open = self.find_symbol(start + 3, Symbol::LeftBrace)?;
         let mut blocks = vec![self.block(body_open)?];
+        let mut catch_bindings = Vec::new();
         let mut next = self.close(body_open)? + 1;
         while next < limit && self.word(next, "catch") {
             let pattern_open = next + 1;
@@ -1591,19 +1608,41 @@ impl<'a> SourceParser<'a> {
                 return Err(self.error(pattern_open, "catch requires a parenthesized pattern"));
             }
             let mut block_open = self.close(pattern_open)? + 1;
+            let mut binding = None;
             if self.words(block_open, &["quant", "open"]) {
+                // `quant open REGION as BINDING` — five tokens. The binding is
+                // the one name the clause introduces, so it is recorded; the
+                // region it names is a reference into this statement's own
+                // token window and is read there.
+                if !self.word(block_open + 3, "as") {
+                    return Err(self.error(
+                        block_open + 3,
+                        "quant open names the cleanup capability it binds: \
+                         `quant open REGION as BINDING`",
+                    ));
+                }
+                binding = Some(self.identifier(block_open + 4)?.to_owned());
                 block_open += 5;
             }
             if !self.symbol(block_open, Symbol::LeftBrace) {
                 return Err(self.error(block_open, "catch requires a block"));
             }
             blocks.push(self.block(block_open)?);
+            catch_bindings.push(binding);
             next = self.close(block_open)? + 1;
         }
         if blocks.len() == 1 {
             return Err(self.error(next, "error region requires at least one catch"));
         }
-        Ok(self.located_statement(start, next, StatementKind::ErrorRegion { name, blocks }))
+        Ok(self.located_statement(
+            start,
+            next,
+            StatementKind::ErrorRegion {
+                name,
+                blocks,
+                catch_bindings,
+            },
+        ))
     }
 
     fn located_statement(
@@ -2654,6 +2693,42 @@ fn elaborate_block(
                 scrutinee,
                 arms,
             })
+        } else if let StatementKind::ErrorRegion {
+            blocks,
+            catch_bindings,
+            ..
+        } = &statement.value
+        {
+            // Card `QUANT-REGION-SOURCE`. An error region's blocks do not share
+            // one binding: the body introduces none, and each catch clause
+            // introduces exactly the cleanup capability its own
+            // `quant open … as B` names — a linear capability of *that*
+            // handler, which is why it is scoped to that handler's block and to
+            // nothing else. `body_binding` carries one name for one nested
+            // block and cannot express that, so the clause list is read off the
+            // variant here, exactly as `StatementKind::Event`'s binding list is
+            // read off its own variant above.
+            for (position, child) in blocks.iter().enumerate() {
+                let clause_binding = position
+                    .checked_sub(1)
+                    .and_then(|clause| catch_bindings.get(clause))
+                    .and_then(Option::as_deref)
+                    .map(|name| {
+                        let symbol = SymbolId(*next_symbol);
+                        *next_symbol += 1;
+                        (name, false, symbol)
+                    });
+                nested.extend(elaborate_block(
+                    child,
+                    scopes,
+                    globals,
+                    context,
+                    next_symbol,
+                    diagnostics,
+                    clause_binding,
+                ));
+            }
+            None
         } else {
             for child in statement.value.nested_blocks() {
                 nested.extend(elaborate_block(
@@ -2700,6 +2775,18 @@ fn lexical_references(
     // card may not touch resolves a name. `bound` is already reserved and is
     // reused rather than respelled.
     if matches!(statement.value, StatementKind::LoopAttribute) {
+        return BTreeSet::new();
+    }
+    // Card `QUANT-REGION-SOURCE`: a region **label** is not a reference. After
+    // the truncation below an `error region R { … }` statement would contribute
+    // exactly `R`, which names no binding and resolved to `Q013` — which is why
+    // no program in this repository could contain an error region at all. The
+    // label is the statement's own, `error` and `region` are reserved, and the
+    // clause words after the body's `{` are already outside the window, so the
+    // whole statement contributes no referenced name. This is `LoopAttribute`'s
+    // rule reached by a second statement, and it is what keeps `region` and
+    // `catch` from needing any change to name resolution.
+    if matches!(statement.value, StatementKind::ErrorRegion { .. }) {
         return BTreeSet::new();
     }
     let mut tokens = lexical_tokens

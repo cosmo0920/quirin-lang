@@ -1,0 +1,32 @@
+error Failure { Failed; }
+
+// `source.region.v1`'s flagship (card `QUANT-REGION-SOURCE`).
+//
+// An **error region** is a lexical frame that records the ledger it was entered
+// with and accumulates one cleanup duty per resource acquired inside it, plus a
+// strict credit remainder. On the error edge the frame *seals* into a cleanup
+// pack carrying exactly those duties.
+//
+// `quant open R as pack` does **not** discard that pack: it binds it as a
+// linear capability, which `discharge pack;` must consume exactly once before
+// the handler leaves. Delete the `discharge` and the module refuses at `Q305`;
+// delete the whole `quant open` clause and it refuses at `Q306`, because a
+// nonempty pack may not be caught by a clause that does not open it. Those are
+// the two ways a program could discard live custody here, and neither is
+// writable.
+//
+// The credit is the region's *quantity*. It is unspent at the error edge, rides
+// into the pack as the remainder, and is **abandoned** by the discharge — which
+// is the one thing a discharge may discard, because a credit is an accounting
+// quantity and not a live resource.
+fn main() -> i32 {
+    error region R {
+        let outer = qcore_acquire(1, true, Failure);
+        let inner = qcore_acquire(2, true, Failure);
+        credit 3;
+        qcore_check(false, Failure);
+    } catch (Failure) quant open R as pack {
+        discharge pack;
+    }
+    return 0;
+}
