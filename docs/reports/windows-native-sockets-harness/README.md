@@ -233,3 +233,19 @@ among them.
    diagnostic it reports is a finding about the emitted C, not a reason to
    lower `/WX` in the harness.
 3. The Apple arms of all three suites remain unrun.
+
+## Integration note (2026-09-12, integrator)
+
+While this card was in flight, the user's Windows host landed commit
+`360d9464` — its own validated `native_windows` module for
+`compiler/tests/std_socket.rs` plus a `tests/support/windows_c.rs`
+extension, with real MSVC runs closing `SOCKET-V1-WINDOWS-RUN`
+(`docs/reports/socket-v1-windows-run/README.md`). At integration the
+socket half of this card was therefore **withdrawn in favour of the
+validated wiring**: `std_socket.rs` carries the user's version, and this
+card's contribution stands for `std_http.rs` (the Windows arm and its
+discharge condition for `HTTP-V1-WINDOWS-RUN`) and
+`string_slice_io.rs` (the CRLF transcript repair;
+`STRING-SLICE-IO-WINDOWS-RUN`'s condition unchanged). §"What was wired"
+above describes the card's own branch, not the merged tree, for the
+socket file.
