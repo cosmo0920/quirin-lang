@@ -1,0 +1,18 @@
+// CT11 boundary control. The alias exists, and the write is placed after the
+// alias's last read. Admitted — full permission *is* reconstructible, once no
+// alias survives, so the case's refusal is about survival rather than about the
+// alias ever having existed.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(2);
+    store[0] = 104;
+    store[1] = 105;
+    let view = borrow_utf8(store);
+    print view;
+    store[0] = 106;
+    drop store;
+    return;
+}

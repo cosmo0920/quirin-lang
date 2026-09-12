@@ -19,7 +19,8 @@
 //! Namespace discipline (§W6 task 3): CT is the language corpus only. WM/VP/LC
 //! probe regressions and per-library provider cases must not be added here.
 //!
-//! Four routes are represented. The task route (`ScopedCopyTasksV1`,
+//! All five declared routes now carry at least one mapped case. The task route
+//! (`ScopedCopyTasksV1`,
 //! `ScopedOwnedTasksV1`, and its `ScopedReadSharesV1` / `ScopedErrorPayloadV1`
 //! extensions) is the original eleven cases plus CT03/CT04/CT05/CT17/CT18. The
 //! mutex route (`source.mutex.guard.v1` lowering onto the unedited
@@ -35,7 +36,21 @@
 //! (`validate_unrestricted_c11` then `analyze_unrestricted_c11`), which is why
 //! the route's vocabulary carries `parse` and `legacy_c_twin` and no
 //! `elaborate`. That route's evidence is gated on Clang rather than on a
-//! `target_os`, which the stage entry records as a `tool_gate`.
+//! `target_os`, which the stage entry records as a `tool_gate`. The
+//! `sequential` route, declared and empty since schema 2, is CT06 and CT11
+//! (card `CT-WIRE-LANE`): `source.string.v1`'s `borrow_utf8` bridge is this
+//! corpus's first **local** shared alias — a second name for an owned buffer's
+//! own bytes, bound in the same frame, with no task and no second party — which
+//! is the form the wave-3 lane recorded as missing when it left CT11 unmapped.
+//!
+//! One case's native evidence is not a total transcript. CT49 asks for exactly
+//! that (`validate partial order, not exact total trace`), and card
+//! `OBS-REORDERING` supplies it: a source line in a worker body is written by
+//! that worker's own thread, so the program declares `qcore.obs-reordering.v1`
+//! and its `stderr` is compared window by window and emitter by emitter while
+//! its `stdout` stays byte-compared. Two controls bound that: a parent-only
+//! program keeps a strict relation, and a window whose emitters could write the
+//! same bytes refuses the declaration outright.
 //! Rejection cases on any route pin the whole ordered diagnostic cascade rather
 //! than its head, because a refusal that silently dropped a custody obligation
 //! would still satisfy a head-only assertion, and each carries at least one
@@ -88,9 +103,9 @@ use serde::Deserialize;
 /// Pinned mapping expectation. Exactly these manifest entries carry
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
-    "CT01", "CT02", "CT03", "CT04", "CT05", "CT12", "CT13", "CT14", "CT15", "CT16", "CT17", "CT18",
-    "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35",
-    "CT36", "CT37", "CT38", "CT39", "CT40", "CT43", "CT45", "CT48", "CT50",
+    "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT11", "CT12", "CT13", "CT14", "CT15", "CT16",
+    "CT17", "CT18", "CT19", "CT20", "CT26", "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33",
+    "CT34", "CT35", "CT36", "CT37", "CT38", "CT39", "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -121,6 +136,24 @@ const MUTEX_SANITIZED_CASE: &str = "CT26";
 /// rejections: the exact ordered code vector plus at least one control that
 /// isolates the refused element from the surrounding program.
 const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
+/// `sequential`-route rejection cases (card `CT-WIRE-LANE`, wave 26). The same
+/// discipline one route over: the exact ordered code vector plus controls that
+/// keep the refusal from being vacuous. These are the first mapped cases on the
+/// `sequential` route, which has been declared and empty since schema 2.
+///
+/// Both are `source.string.v1`'s `borrow_utf8` bridge, which is the corpus's
+/// first **local** shared alias — a second name for an owned buffer's bytes,
+/// bound in the same frame, with no task and no other party. CT11 measures that
+/// the alias blocks the reconstruction of exclusive authority; CT06 measures
+/// that the alias's identity survives being copied into a differently named
+/// variable.
+const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT11"];
+/// The case whose native evidence is compared **up to a declared partial
+/// order** rather than byte for byte (card `CT-WIRE-LANE`, wave 26). Exactly
+/// one, and its own controls pin both boundaries: a program with no worker-body
+/// line keeps a strict relation, and a window whose emitters could write the
+/// same bytes refuses the declaration outright.
+const REORDERING_CASES: &[&str] = &["CT49"];
 /// The `source.epoch.bound.v1` rejection cases (card T08-EPOCH-SRC's lowering
 /// onto the unedited `FlatEpochBoundV1` checker, mapped by card T08-SRC-CT).
 /// Same discipline again: the exact ordered code vector plus at least one
@@ -257,6 +290,9 @@ const RUNNER_REGISTRY: &[&str] = &[
     // Card `CT34-SANITIZED`: the one runner that executes a stage on a control
     // rather than on the case's own fixture.
     "compiler/tests/ct_corpus.rs::run_mutex_controls",
+    // Card `CT-WIRE-LANE`: the one runner whose native observation is compared
+    // up to a declared partial order instead of byte for byte.
+    "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -267,7 +303,7 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
-const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26", "CT34"];
+const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT17", "CT26", "CT34", "CT49"];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
 /// never `executed`.
@@ -392,6 +428,10 @@ struct ExpectedCase {
     native_heap_scenarios: Option<NativeHeapScenarios>,
     #[serde(default)]
     source_reject: Option<SourceReject>,
+    #[serde(default)]
+    sequential_reject: Option<SourceReject>,
+    #[serde(default)]
+    reordering_partial_order: Option<ReorderingPartialOrder>,
     #[serde(default)]
     epoch_bound_figures: Option<EpochBoundFigures>,
     #[serde(default)]
@@ -559,6 +599,77 @@ struct HeapScenario {
 struct SourceReject {
     diagnostic_sequence: Vec<String>,
     controls: Vec<SourceControl>,
+}
+
+/// Native evidence compared **up to a declared partial order** (card
+/// `CT-WIRE-LANE`, wave 26; the relation is `qcore_core::obs_reordering`,
+/// landed by card `OBS-REORDERING`).
+///
+/// Every other native mode in this corpus pins an exact total transcript. This
+/// one cannot, and that is the point of the case it maps: the fixture's worker
+/// bodies write from their own threads, so the emitted program's byte order is
+/// the scheduler's and the reference execution's is one particular schedule.
+///
+/// What is pinned instead, and what makes the looser comparison evidence rather
+/// than a weakening:
+///
+/// * the **structure** of the derived relation — its window sizes, its emitter
+///   count, and which of the two streams is strict — so a relation that
+///   silently became one big commuting window would move a number here;
+/// * the declared rendering of **both** streams, so the reference itself is
+///   still pinned exactly;
+/// * `runs` sanitized executions, each of which must lie in the admitted set,
+///   and the `stdout` of each compared byte for byte;
+/// * two deterministic witnesses that the relation is neither vacuous nor total:
+///   a regrouped stream that is admitted and is *not* the declared order, and a
+///   reversal inside one emitter that is refused.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReorderingPartialOrder {
+    /// The `SourceExecutionProfile` the module must be published under.
+    execution_profile: String,
+    /// How many times the one sanitized executable is run.
+    runs: usize,
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    /// The reference execution's own rendering of each stream, pinned exactly.
+    declared_stdout: Vec<String>,
+    declared_stderr: Vec<String>,
+    /// The derived relation's shape on `stderr`: one entry per window, in
+    /// order, giving that window's record count.
+    stderr_window_sizes: Vec<usize>,
+    /// How many distinct emitters write to `stderr`.
+    stderr_emitters: usize,
+    /// Whether each stream's declared relation is strict. `stdout` must be —
+    /// every trace write of an emitted task program is the parent's — and
+    /// `stderr` must not be, or this case would be measuring byte equality
+    /// under another name.
+    stdout_relation_strict: bool,
+    stderr_relation_strict: bool,
+    controls: Vec<ReorderingControl>,
+}
+
+/// One control of the partial-order case. Unlike every other control kind here,
+/// these are about the **relation** a program declares rather than about a
+/// checker verdict: both fixtures check, and what distinguishes them is what
+/// their derived relation is.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReorderingControl {
+    source: String,
+    /// `strict_relation` — the control's own relation is strict on both
+    /// streams, and its sanitized native run is compared byte for byte;
+    /// `refuse_relation` — the relation cannot be derived at all.
+    expectation: String,
+    /// For `refuse_relation`: the `ReorderingRefusal` code, and a substring its
+    /// message must carry, so a refusal for another reason is not accepted.
+    #[serde(default)]
+    refusal_code: Option<u32>,
+    #[serde(default)]
+    refusal_contains: Option<String>,
+    #[allow(dead_code)]
+    note: String,
 }
 
 #[derive(Deserialize)]
@@ -841,13 +952,18 @@ fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
         | "native_create_recovery"
         | "native_owned_transfer"
         | "native_task_scenarios"
-        | "native_heap_scenarios" => "task",
+        | "native_heap_scenarios"
+        // Card `CT-WIRE-LANE`: a composed task/std-io module, so the task route
+        // exactly as `ComposedStdIoTasksV1`'s task half takes it.
+        | "reordering_partial_order" => "task",
         "accept" => "sequential",
         "reject" => {
             if MUTEX_REJECT_CASES.contains(&case_id) {
                 "mutex_guard"
             } else if EPOCH_REJECT_CASES.contains(&case_id) {
                 "epoch"
+            } else if SEQUENTIAL_REJECT_CASES.contains(&case_id) {
+                "sequential"
             } else {
                 "task"
             }
@@ -882,6 +998,9 @@ fn derive_stage_plan(
         "native_heap_scenarios" => Some("compiler/tests/ct_corpus.rs::run_native_heap_scenarios"),
         "checked_mutex_sanitized" => {
             Some("compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized")
+        }
+        "reordering_partial_order" => {
+            Some("compiler/tests/ct_corpus.rs::run_reordering_partial_order")
         }
         _ => None,
     };
@@ -924,13 +1043,38 @@ fn derive_stage_plan(
             (runs, runs)
         }
         "checked_mutex_sanitized" => (1, 1),
+        // One reference execution; one compile and `runs` executions of the one
+        // sanitized binary. The native count is read from the fixture rather
+        // than typed in, on the same rule as every other mode here.
+        "reordering_partial_order" => (
+            1,
+            expected
+                .reordering_partial_order
+                .as_ref()
+                .expect("mode metadata")
+                .runs,
+        ),
         _ => (0, 0),
     };
+    // The emitted C is produced once per module, however many times the binary
+    // built from it is executed. Every other mode recompiles per run, so its
+    // emission count really is the run count; `reordering_partial_order` builds
+    // one executable and runs it `runs` times, and saying `runs` emissions there
+    // would inflate a count this harness is supposed to read off its own
+    // dispatch.
+    let emission_runs = if verdict == "reordering_partial_order" {
+        1
+    } else {
+        native_runs
+    };
     let all_three = vec!["linux", "macos", "windows"];
-    // The two sanitized runners return on Windows after asserting that the
+    // The sanitized runners return on Windows after asserting that the
     // emitted C exists, so emission is reached on all three hosts while the
     // sanitized compile-and-run is Unix-only.
-    let deep_gate = if matches!(verdict, "native_heap_scenarios" | "checked_mutex_sanitized") {
+    let deep_gate = if matches!(
+        verdict,
+        "native_heap_scenarios" | "checked_mutex_sanitized" | "reordering_partial_order"
+    ) {
         vec!["linux", "macos"]
     } else {
         all_three.clone()
@@ -1006,7 +1150,7 @@ fn derive_stage_plan(
         );
         plan.insert(
             "c_emission",
-            StagePlan::executed(deep, native_runs, Some(all_three.clone())),
+            StagePlan::executed(deep, emission_runs, Some(all_three.clone())),
         );
         plan.insert(
             "native_execution",
@@ -1196,6 +1340,27 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert_eq!(
+        expected.sequential_reject.is_some(),
+        SEQUENTIAL_REJECT_CASES.contains(&case.id.as_str()),
+        "{}: sequential-route rejection metadata is pinned to its own case set",
+        case.id
+    );
+    assert!(
+        expected.source_reject.is_none() || expected.sequential_reject.is_none(),
+        "{}: a rejection takes one route, so it carries one route's metadata",
+        case.id
+    );
+    assert_eq!(
+        expected.reordering_partial_order.is_some(),
+        expected.verdict == "reordering_partial_order"
+    );
+    assert_eq!(
+        expected.reordering_partial_order.is_some(),
+        REORDERING_CASES.contains(&case.id.as_str()),
+        "{}: partial-order native evidence is pinned to its own case set",
+        case.id
+    );
+    assert_eq!(
         expected.epoch_reject.is_some(),
         EPOCH_REJECT_CASES.contains(&case.id.as_str()),
         "{}: epoch-route rejection metadata is pinned to its own case set",
@@ -1234,6 +1399,9 @@ fn run_mapped_case(case: &ManifestCase) {
             || expected.native_task_scenarios.is_some()
             || expected.checked_mutex_sanitized.is_some()
             || expected.native_heap_scenarios.is_some()
+            // Card `CT-WIRE-LANE`: the sanitized compile-and-run half is
+            // Unix-only, exactly as the two runners above.
+            || expected.reordering_partial_order.is_some()
             || expected
                 .checked_mutex_reject
                 .as_ref()
@@ -1470,6 +1638,91 @@ fn run_mapped_case(case: &ManifestCase) {
             assert!(required_files.insert(control.source.clone()));
         }
     }
+    if let Some(reordering) = &expected.reordering_partial_order {
+        assert!(
+            reordering.runs >= 2,
+            "{}: a partial-order case runs its executable more than once — one \
+             run could not distinguish a relation from an equality",
+            case.id
+        );
+        assert!(
+            reordering
+                .sanitizer_flags
+                .iter()
+                .any(|flag| flag == "-fsanitize=address,undefined"),
+            "{}: the partial-order runs must actually request ASan/UBSan",
+            case.id
+        );
+        assert!(
+            reordering.asan_options.contains("detect_leaks=1"),
+            "{}: LeakSanitizer stays enabled, so a threaded program that retains \
+             an allocation is caught rather than tolerated",
+            case.id
+        );
+        assert!(
+            reordering.ubsan_options.contains("halt_on_error=1"),
+            "{}: UBSan must halt rather than continue past a fault",
+            case.id
+        );
+        assert!(
+            reordering.stdout_relation_strict,
+            "{}: every trace write of an emitted task program is performed by \
+             the parent's thread, so the standard-output relation is strict",
+            case.id
+        );
+        assert!(
+            !reordering.stderr_relation_strict,
+            "{}: if this case's own stream relation were strict it would be \
+             measuring byte equality under another name",
+            case.id
+        );
+        assert!(
+            reordering.stderr_emitters >= 3,
+            "{}: the interleaving this case is about needs both workers and the \
+             parent writing to the same stream",
+            case.id
+        );
+        assert!(
+            reordering.stderr_window_sizes.len() >= 3,
+            "{}: a relation with no barrier on either side of the concurrent \
+             window would not pin where commuting stops",
+            case.id
+        );
+        assert!(
+            reordering
+                .controls
+                .iter()
+                .any(|control| control.expectation == "strict_relation"),
+            "{}: the partial order must be bounded by a control that keeps byte \
+             equality, or the mapping reads as a corpus-wide weakening",
+            case.id
+        );
+        assert!(
+            reordering
+                .controls
+                .iter()
+                .any(|control| control.expectation == "refuse_relation"),
+            "{}: a relation that is never refused is not a premise",
+            case.id
+        );
+        for control in &reordering.controls {
+            match control.expectation.as_str() {
+                "strict_relation" => assert!(
+                    control.refusal_code.is_none() && control.refusal_contains.is_none(),
+                    "{}: a strict control derives a relation, so it names no refusal",
+                    case.id
+                ),
+                "refuse_relation" => assert!(
+                    control.refusal_code.is_some() && control.refusal_contains.is_some(),
+                    "{}: a refused relation pins the refusal it reaches, never \
+                     merely that one happened",
+                    case.id
+                ),
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
     if let Some(reject) = &expected.source_reject {
         assert!(
             !reject.diagnostic_sequence.is_empty(),
@@ -1494,6 +1747,54 @@ fn run_mapped_case(case: &ManifestCase) {
                         control.execution_profile.is_some(),
                         "{}: an accepted control must name the route it takes, \
                          so a control cannot silently pass through another one",
+                        case.id
+                    );
+                }
+                "reject" => {
+                    assert!(
+                        !control.diagnostic_sequence.is_empty(),
+                        "{}: a refused control pins its codes",
+                        case.id
+                    );
+                    assert!(control.execution_profile.is_none());
+                }
+                other => panic!("{}: unknown control expectation `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
+    }
+    if let Some(reject) = &expected.sequential_reject {
+        assert!(
+            !reject.diagnostic_sequence.is_empty(),
+            "{}: a sequential-route rejection pins its exact ordered code vector",
+            case.id
+        );
+        assert!(
+            reject
+                .controls
+                .iter()
+                .any(|control| control.expectation == "accept"),
+            "{}: a sequential-route rejection needs an admitted control, or the \
+             refusal is only `this route cannot express the program at all`",
+            case.id
+        );
+        assert!(
+            reject.controls.len() >= 2,
+            "{}: one admitted control shows the refusal is not vacuous; the \
+             second is what separates the construct from its position",
+            case.id
+        );
+        for control in &reject.controls {
+            match control.expectation.as_str() {
+                "accept" => {
+                    assert!(
+                        control.diagnostic_sequence.is_empty(),
+                        "{}: an accepted control has no diagnostics",
+                        case.id
+                    );
+                    assert!(
+                        control.execution_profile.is_some(),
+                        "{}: an accepted control must name the route it takes",
                         case.id
                     );
                 }
@@ -1855,6 +2156,9 @@ fn run_mapped_case(case: &ManifestCase) {
     if let Some(reject) = &expected.source_reject {
         run_source_controls(&directory, &case.id, reject);
     }
+    if let Some(reject) = &expected.sequential_reject {
+        run_sequential_controls(&directory, &case.id, reject);
+    }
     if let Some(reject) = &expected.epoch_reject {
         run_epoch_controls(&directory, &case.id, &reject.controls);
     }
@@ -1906,6 +2210,17 @@ fn run_mapped_case(case: &ManifestCase) {
                     && expected.trace.is_none()
             );
             run_checked_mutex_sanitized(&expected, result);
+        }
+        "reordering_partial_order" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none(),
+                "{}: this mode's post-state is two stream relations, not a \
+                 sequential outcome and trace",
+                case.id
+            );
+            run_reordering_partial_order(&directory, &expected, result);
         }
         "native_task_scenarios" => {
             assert!(
@@ -2081,6 +2396,22 @@ fn run_mapped_case(case: &ManifestCase) {
                     case.id
                 );
             }
+            if let Some(reject) = &expected.sequential_reject {
+                // Same discipline on the sequential route. It matters here for
+                // a reason of its own: the borrow window and the inherited
+                // ownership checker report through one code, so a fixture that
+                // pinned only a head could not tell a window refusal from a
+                // second, unrelated custody refusal in the same program.
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    reject.diagnostic_sequence,
+                    "{}: exact diagnostic cascade mismatch; actual:\n{rendered}",
+                    case.id
+                );
+            }
             if let Some(reject) = &expected.source_reject {
                 // Same discipline on the task route: the whole vector, in
                 // order. A refusal that also silently dropped a custody
@@ -2232,9 +2563,9 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
     );
 }
 
-/// The moving count is the W6 genericity metric: 33 of 50 CT cases are mapped
-/// as executed tests over their own fixture; 17 remain unmapped. Thirty of
-/// the thirty-three are source-level; CT40, CT43 and CT45 are C twins executed
+/// The moving count is the W6 genericity metric: 36 of 50 CT cases are mapped
+/// as executed tests over their own fixture; 14 remain unmapped. Thirty-three of
+/// the thirty-six are source-level; CT40, CT43 and CT45 are C twins executed
 /// through
 /// the unrestricted-C gateway, which is a different artifact and a different
 /// property, so they are counted here and separated in the report.
@@ -2244,11 +2575,15 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// The manifest's `evidence_target` still identifies the archived Linux evidence
 /// run; for CT28/CT31/CT32 it records only the `Q500` host gate, because those
 /// accepted controls are multi-task modules this backend renders in no thread at
-/// all (published checked with `c_source: None`, card T03-F §3.5). CT34 now
-/// records a real compiled and sanitizer-run control (card `CT34-SANITIZED`), so
-/// harness-gated sanitized-native evidence is 4 of 33 — CT03, CT17, CT26 and
-/// CT34 — and proof stays 0 of 33. Mapping is not conformance: the wave-17
-/// denominator grew by a C twin, which structurally contributes neither.
+/// all (published checked with `c_source: None`, card T03-F §3.5). CT34 records
+/// a real compiled and sanitizer-run control (card `CT34-SANITIZED`) and CT49
+/// sixteen sanitized runs of its own emitted C (card `CT-WIRE-LANE`), so
+/// harness-gated sanitized-native evidence is 5 of 36 — CT03, CT17, CT26, CT34
+/// and CT49 — and proof stays 0 of 36. CT06 and CT11 add neither: their fixtures
+/// are refusals that emit nothing. Mapping is not conformance: the wave-17
+/// denominator grew by a C twin and the wave-26 denominator by two refusals and
+/// one sanitized case, and only the last of those contributes sanitizer
+/// evidence.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -2377,7 +2712,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 10] = [
+const EVIDENCE_FILES: [&str; 11] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -2388,6 +2723,7 @@ const EVIDENCE_FILES: [&str; 10] = [
     "docs/reports/wave13-ct34/ct_stage_evidence.json",
     "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
     "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "docs/reports/ct-wire-lane/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -3687,6 +4023,9 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
         "ScopedReadSharesV1" => Profile::ScopedReadSharesV1,
         "ScopedErrorPayloadV1" => Profile::ScopedErrorPayloadV1,
         "CheckedMutexGuardsV1" => Profile::CheckedMutexGuardsV1,
+        "StandardBufferV1" => Profile::StandardBufferV1,
+        "StandardStringV1" => Profile::StandardStringV1,
+        "ComposedStdIoTasksV1" => Profile::ComposedStdIoTasksV1,
         other => panic!("unknown execution profile `{other}`"),
     }
 }
@@ -3758,6 +4097,427 @@ fn run_source_controls(directory: &Path, id: &str, reject: &SourceReject) {
             other => panic!("{id}: unknown control expectation `{other}`"),
         }
     }
+}
+
+/// The controls a `sequential`-route rejection carries (card `CT-WIRE-LANE`).
+///
+/// Deliberately **not** `run_source_controls` with a different case set: that
+/// function treats an accepted control as host-gated, because the task backend
+/// refuses a host outside Linux/macOS/Windows at `Q500` before reaching the
+/// backend at all. The sequential string/buffer route emits self-contained C
+/// with no platform boundary of any kind, so an accepted control here is
+/// admitted on every host, and copying the gate over would have recorded a host
+/// scope these cases do not have — which is also why CT06 and CT11 carry no
+/// `evidence_target`.
+fn run_sequential_controls(directory: &Path, id: &str, reject: &SourceReject) {
+    for control in &reject.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let result = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            "accept" => {
+                let module = result.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {} must check, so the case's refusal is not vacuous:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                assert_eq!(
+                    module.execution_profile,
+                    execution_profile(control.execution_profile.as_deref().unwrap()),
+                    "{id} control {} must take the route it names",
+                    control.source
+                );
+                assert!(
+                    module.c_source.is_some(),
+                    "{id} control {}: this route emits on every host, so an \
+                     admitted control that emits nothing is a finding",
+                    control.source
+                );
+            }
+            "reject" => {
+                let diagnostics = match result {
+                    Err(diagnostics) => diagnostics,
+                    Ok(_) => panic!("{id} control {} must be refused", control.source),
+                };
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{id} control {}: exact diagnostic vector mismatch; actual:\n{}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(format_diagnostic)
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                );
+            }
+            other => panic!("{id}: unknown control expectation `{other}`"),
+        }
+    }
+}
+
+/// CT49: the whole composed task/std-io stage stack on the case's own fixture,
+/// with the native observation compared **up to the relation the program
+/// declares** (card `CT-WIRE-LANE`; the relation is card `OBS-REORDERING`'s).
+///
+/// Every other native runner in this corpus pins an exact total transcript.
+/// This one may not: the fixture's worker bodies write from their own threads,
+/// so the byte order of the emitted program is the scheduler's, while the
+/// reference execution runs each worker eagerly at its spawn. That difference
+/// is precisely CT49's scenario, and the comparison is the case's expectation:
+/// validate the partial order, not the total trace.
+///
+/// The looser comparison is bounded four ways, all pinned in the fixture:
+/// the relation's own **shape** (window sizes, emitter count, which stream is
+/// strict); the reference's declared rendering of both streams; `stdout`
+/// compared byte for byte on every run; and two deterministic witnesses that
+/// the relation is neither vacuous (an admitted stream that is not the declared
+/// order) nor total (a reversal inside one emitter, refused).
+fn run_reordering_partial_order(
+    directory: &Path,
+    expected: &ExpectedCase,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    use qcore_core::obs_reordering::Emitter;
+    use qcore_core::std_io::Stream;
+    let reordering = expected.reordering_partial_order.as_ref().unwrap();
+
+    // The controls first: both are about the relation a program declares, and
+    // both are decided without running anything, so they are checked even on a
+    // host where the sanitized run below does not happen.
+    for control in &reordering.controls {
+        let path = directory.join(&control.source);
+        let module = compile_files(
+            &[SourceFile::new(
+                path.to_string_lossy(),
+                fs::read_to_string(&path).unwrap(),
+            )],
+            &CompileOptions::default(),
+        )
+        .unwrap_or_else(|diagnostics| {
+            panic!(
+                "{} control {}: this control's point is its relation, so it must check:\n{}",
+                expected.id,
+                control.source,
+                diagnostics
+                    .iter()
+                    .map(format_diagnostic)
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+        });
+        let observation = reordering_reference(&module);
+        match control.expectation.as_str() {
+            "strict_relation" => {
+                for stream in [Stream::Out, Stream::Err] {
+                    let relation = observation
+                        .admitted_reordering(stream)
+                        .expect("a parent-only program declares a relation");
+                    assert!(
+                        relation.is_strict(),
+                        "{} control {}: a program with no worker-body line keeps byte \
+                         equality on {stream:?}",
+                        expected.id,
+                        control.source
+                    );
+                }
+            }
+            "refuse_relation" => {
+                let refusal = observation
+                    .admitted_reordering(Stream::Err)
+                    .expect_err("this control's relation must be refused");
+                assert_eq!(
+                    refusal.code(),
+                    control.refusal_code.unwrap(),
+                    "{} control {}: {refusal}",
+                    expected.id,
+                    control.source
+                );
+                assert!(
+                    refusal
+                        .to_string()
+                        .contains(control.refusal_contains.as_deref().unwrap()),
+                    "{} control {}: {refusal}",
+                    expected.id,
+                    control.source
+                );
+            }
+            other => panic!("{}: unknown control expectation `{other}`", expected.id),
+        }
+    }
+
+    if cfg!(target_os = "windows") {
+        assert!(
+            result
+                .as_ref()
+                .expect("Windows source must check and emit")
+                .c_source
+                .is_some()
+        );
+        eprintln!(
+            "{}: emitted on Windows; Unix sanitizer evidence unexecuted on this host",
+            expected.id
+        );
+        return;
+    }
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+        unsupported_target(&result.unwrap_err());
+        eprintln!(
+            "{}: source/core checked; partial-order native evidence unexecuted on this \
+             host (manifest evidence_target=linux)",
+            expected.id
+        );
+        return;
+    }
+
+    let module = result.expect("the partial-order fixture must check on this route");
+    assert_eq!(
+        module.execution_profile,
+        execution_profile(&reordering.execution_profile),
+        "{}: the case must select the composed task/std-io route",
+        expected.id
+    );
+    let observation = reordering_reference(&module);
+    let (declared_out, declared_err) = observation.projections();
+    assert_eq!(
+        declared_out.lines().collect::<Vec<_>>(),
+        reordering.declared_stdout,
+        "{}: the reference's standard output drifted from the pinned rendering",
+        expected.id
+    );
+    assert_eq!(
+        declared_err.lines().collect::<Vec<_>>(),
+        reordering.declared_stderr,
+        "{}: the reference's standard error drifted from the pinned rendering",
+        expected.id
+    );
+
+    // The relation's shape, pinned. A relation that quietly became one big
+    // commuting window, or lost an emitter, moves a number here rather than
+    // passing as "still admitted".
+    let out_relation = observation.admitted_reordering(Stream::Out).unwrap();
+    let err_relation = observation.admitted_reordering(Stream::Err).unwrap();
+    assert_eq!(
+        out_relation.is_strict(),
+        reordering.stdout_relation_strict,
+        "{}: the standard-output relation's strictness drifted",
+        expected.id
+    );
+    assert_eq!(
+        err_relation.is_strict(),
+        reordering.stderr_relation_strict,
+        "{}: the standard-error relation's strictness drifted",
+        expected.id
+    );
+    assert_eq!(
+        err_relation.window_sizes(),
+        reordering.stderr_window_sizes,
+        "{}: the standard-error window structure drifted",
+        expected.id
+    );
+    assert_eq!(
+        err_relation.emitters().len(),
+        reordering.stderr_emitters,
+        "{}: the standard-error emitter set drifted",
+        expected.id
+    );
+
+    // Deterministic: the relation admits a stream that is not the declared
+    // order, and refuses one that reverses an emitter's own program order.
+    // Neither depends on the scheduler, so the two properties that make the
+    // comparison meaningful hold whatever the runs below observe.
+    let mut regrouped: Vec<&str> = Vec::new();
+    let mut window = usize::MAX;
+    let mut pending: Vec<(Emitter, &str)> = Vec::new();
+    fn flush<'a>(pending: &mut Vec<(Emitter, &'a str)>, out: &mut Vec<&'a str>) {
+        let emitters: BTreeSet<Emitter> = pending.iter().map(|(emitter, _)| *emitter).collect();
+        for emitter in emitters.into_iter().rev() {
+            out.extend(
+                pending
+                    .iter()
+                    .filter(|(candidate, _)| *candidate == emitter)
+                    .map(|(_, text)| *text),
+            );
+        }
+        pending.clear();
+    }
+    for record in err_relation.records() {
+        if record.window != window {
+            flush(&mut pending, &mut regrouped);
+            window = record.window;
+        }
+        pending.push((record.emitter, record.text.as_str()));
+    }
+    flush(&mut pending, &mut regrouped);
+    let other: String = regrouped.iter().map(|line| format!("{line}\n")).collect();
+    assert_ne!(
+        other, declared_err,
+        "{}: the regrouping must not be the declared order, or it witnesses nothing",
+        expected.id
+    );
+    let witness = observation
+        .compare_stream(Stream::Err, &other)
+        .unwrap_or_else(|refusal| {
+            panic!(
+                "{}: an emitter-preserving regrouping must be admitted: {refusal}",
+                expected.id
+            )
+        });
+    assert!(
+        !witness.is_declared_order(),
+        "{}: the regrouping is a different order, and the witness must say so",
+        expected.id
+    );
+    let mut reversed: Vec<&str> = declared_err.lines().collect();
+    let first_window = reordering.stderr_window_sizes[0];
+    reversed.swap(first_window, first_window + 1);
+    let reversed: String = reversed.iter().map(|line| format!("{line}\n")).collect();
+    assert!(
+        observation.compare_stream(Stream::Err, &reversed).is_err(),
+        "{}: program order inside one emitter is preserved by the relation",
+        expected.id
+    );
+
+    // The runs. One compile, `runs` executions, every one of them admitted.
+    let c = module.c_source.as_deref().expect("threaded emission");
+    let built = build_reordering_binary(&expected.id, c, reordering);
+    let mut distinct: BTreeSet<String> = BTreeSet::new();
+    let mut not_declared = 0usize;
+    for index in 0..reordering.runs {
+        let (out, err) = run_reordering_binary(&built, reordering);
+        assert_eq!(
+            out, declared_out,
+            "{}: run {index}: the parent's standard output is compared byte for byte",
+            expected.id
+        );
+        let witness = observation
+            .compare_stream(Stream::Err, &err)
+            .unwrap_or_else(|refusal| {
+                panic!(
+                    "{}: run {index}: standard error is outside the declared relation: \
+                     {refusal}\n{err}",
+                    expected.id
+                )
+            });
+        if !witness.is_declared_order() {
+            not_declared += 1;
+        }
+        distinct.insert(err);
+    }
+    // Reported, never asserted. Observing one order is a legal outcome of a
+    // legal scheduler, so an assertion on the count would be a flake; the runs
+    // buy exercise, not a claim.
+    println!(
+        "{}: {} sanitized runs, {} distinct standard-error orders, {not_declared} not the \
+         declared order",
+        expected.id,
+        reordering.runs,
+        distinct.len()
+    );
+    fs::remove_dir_all(&built).unwrap();
+}
+
+fn reordering_reference(
+    module: &qcore_compiler::CompiledModule,
+) -> qcore_core::composed_tasks::ComposedTaskObservation {
+    use qcore_core::prelude::concurrency::task_execution::{
+        TaskExecutionScript, execute_with_source_lines,
+    };
+    let composed = module
+        .checked
+        .as_composed_tasks()
+        .expect("the composed task/std-io route publishes a composed artifact");
+    execute_with_source_lines(
+        composed.tasks(),
+        &TaskExecutionScript::default(),
+        &BTreeMap::new(),
+        composed.sites(),
+    )
+    .expect("the composed reference execution runs")
+}
+
+/// Compile the emitted C once under the sanitizers, with the maintained typed
+/// stdout sink installed so the program's own lines reach the streams.
+fn build_reordering_binary(
+    id: &str,
+    generated: &str,
+    reordering: &ReorderingPartialOrder,
+) -> PathBuf {
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let directory = std::env::temp_dir().join(format!(
+        "qcore-ct-reordering-{id}-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&directory).unwrap();
+    let path = directory.join("module.c");
+    let generated = if generated.contains("#define QCORE_DIAGNOSTIC_THRESHOLD QCORE_LOG_TRACE") {
+        generated.to_owned()
+    } else {
+        diagnostic_sink::instrument(generated)
+    };
+    fs::write(&path, generated).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let mut command = Command::new(&compiler);
+    command.args(&reordering.sanitizer_flags);
+    if cfg!(target_os = "macos") {
+        command.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
+    let compiled = command
+        .arg(&path)
+        .arg("-o")
+        .arg(directory.join("module"))
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{id}: C compiler rejected the emitted program:\n{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    directory
+}
+
+fn run_reordering_binary(directory: &Path, reordering: &ReorderingPartialOrder) -> (String, String) {
+    use std::process::Command;
+    // Apple's AddressSanitizer ships no leak detector, so leak checking stays a
+    // Linux observation — the standing platform boundary.
+    let asan_options = if cfg!(target_os = "macos") {
+        "detect_leaks=0:halt_on_error=1".to_owned()
+    } else {
+        reordering.asan_options.clone()
+    };
+    let output = Command::new(directory.join("module"))
+        .env("ASAN_OPTIONS", asan_options)
+        .env("UBSAN_OPTIONS", &reordering.ubsan_options)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "the emitted program failed under the platform sanitizers:\n{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    (
+        String::from_utf8(output.stdout).unwrap(),
+        String::from_utf8(output.stderr).unwrap(),
+    )
 }
 
 /// CT03 and CT17: the whole task-route stage stack on the case's own fixture —

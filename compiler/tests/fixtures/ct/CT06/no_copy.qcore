@@ -1,0 +1,17 @@
+// CT06 attribution control. The identical program with the copy — and the read
+// through the copy — removed. The release sits exactly where the case refuses
+// it, and is admitted, so the refusal is attributable to the copy rather than
+// to the release's position.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(2);
+    store[0] = 104;
+    store[1] = 105;
+    let view = borrow_utf8(store);
+    print view;
+    drop store;
+    return;
+}

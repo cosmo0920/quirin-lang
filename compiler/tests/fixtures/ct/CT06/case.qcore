@@ -1,0 +1,28 @@
+// CT06 — "Same pointer copied into differently named variables"; expected:
+// "Still same permission identity".
+//
+// `borrow_utf8(store)` is a `{ ptr, len }` view of the buffer's own bytes, and
+// `view[0:2]` over its whole extent is `{ ptr = p + 0, len = 2 - 0 }` — the same
+// pointer and the same length, bound to a second name. The question the case
+// asks is whether the second name carries the first's permission obligations.
+//
+// It does: the release below is refused, and the refusal names `same`, not
+// `view`. The obligation followed the copy.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(2);
+    store[0] = 104;
+    store[1] = 105;
+    let view = borrow_utf8(store);
+    print view;
+    // The copy: the same pointer, a different name.
+    let same = view[0:2];
+    // Refused. `view`'s own last read was the statement above the copy, so
+    // without the copy this release is admitted (`no_copy.qcore`).
+    drop store;
+    print same;
+    return;
+}

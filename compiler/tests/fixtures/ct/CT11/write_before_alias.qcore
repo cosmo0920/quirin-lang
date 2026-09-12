@@ -1,0 +1,17 @@
+// CT11 attribution control. The identical write, placed before the alias
+// exists. Admitted — so the refusal is keyed to the surviving alias and not to
+// writing a buffer at all.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(2);
+    store[0] = 104;
+    store[1] = 105;
+    store[0] = 106;
+    let view = borrow_utf8(store);
+    print view;
+    drop store;
+    return;
+}

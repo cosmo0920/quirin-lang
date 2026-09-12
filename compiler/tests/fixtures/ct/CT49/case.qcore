@@ -1,0 +1,54 @@
+// CT49 — "Independent event order differs between C and interpreter";
+// expected: "Validate partial order, not exact total trace".
+//
+// Two workers each write three lines from their **own** body, so the emitted C
+// performs those writes on those workers' own threads and their interleaving
+// with the parent's is decided by the scheduler, not by the program. The
+// reference execution runs each worker eagerly at its spawn, so the reference's
+// total order is one specific schedule the native program has no reason to
+// reproduce.
+//
+// The three emitters write disjoint bytes inside the concurrent window — 11, 22
+// and 9 — because the declared relation refuses a window in which two emitters
+// could write the same line (`AmbiguousAlphabet`): a native line's writer must
+// be a function of its bytes.
+import std.concurrency;
+import std.io;
+import std.logger;
+import std.fmt;
+concurrency checked;
+
+fn worker(value: i32) -> i32 effects { io } {
+    value |> log info dec;
+    value |> log warn dec;
+    value |> log fatal dec;
+    return value;
+}
+
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    let first_value = 11;
+    let second_value = 22;
+    // Nothing is live: a barrier, ordered against every other record.
+    log info dec 0;
+    thread scope workers {
+        let first = spawn workers worker(copy first_value)?;
+        match spawn workers worker(copy second_value) {
+            Result::Ok { value: second } => {
+                // Both workers are live: these two lines commute with theirs.
+                log info dec 9;
+                log warn dec 9;
+                let second_result = join move second?;
+                let first_result = join move first?;
+                // Both joined: a barrier again.
+                first_result |> log info dec;
+                second_result |> print dec;
+                return first_result;
+            }
+            Result::Err { error: failure } => {
+                let first_result = join move first?;
+                first_result |> log warn dec;
+                return first_result;
+            }
+        }
+    }
+}

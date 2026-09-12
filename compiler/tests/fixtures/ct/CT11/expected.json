@@ -1,0 +1,40 @@
+{
+  "id": "CT11",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q078",
+      "message_contains": "this statement would write a byte of `store` while `view` borrows it"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate"
+  ],
+  "evidence_target": null,
+  "notes": "source.string.v1's borrow_utf8 bridge (card STRING-CONCAT), which is this corpus's first LOCAL shared alias: a second name for an owned buffer's own bytes, bound in the same frame, with no task and no second party. CT11 asks for a rejection when full permission is reconstructed while such an alias survives; a byte write into a std.buffer is exactly the reconstruction of exclusive write authority, and it is refused while the view is live. The two controls place the identical write before the alias exists and after its last read, and both are admitted, so the refusal is keyed to the alias's survival rather than to writing a buffer or to the alias ever having existed. Boundary: the alias is immutable and shared by construction here, so nothing in this mapping measures a WRITE share, a partial permission arithmetic, or an alias crossing a frame or a thread. The refusal is a check-time decision over one flat statement sequence; no C is emitted for the case and nothing is executed.",
+  "sequential_reject": {
+    "diagnostic_sequence": [
+      "Q078"
+    ],
+    "controls": [
+      {
+        "source": "write_before_alias.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardStringV1",
+        "note": "The identical write placed before the alias exists. Admitted, so Q078 is keyed to the surviving alias and not to writing a buffer at all."
+      },
+      {
+        "source": "write_after_alias.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "StandardStringV1",
+        "note": "The alias exists and the write is placed after its last read. Admitted, so full permission IS reconstructible once no alias survives - which is what makes the case's refusal a statement about survival."
+      }
+    ]
+  }
+}
