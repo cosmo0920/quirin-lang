@@ -349,6 +349,23 @@ full suite.
 
 ## Increment records
 
+Worktree census hygiene (2026-09-13, post-wave-30 close): the
+`SOCKET-INET-ADDRESSES` census test
+(`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)
+walked the repository root recursively and, when run from the **primary
+checkout**, recursed into `.claude/worktrees/*` — sibling checkouts of this
+same repository — finding their copies of the two published examples and
+failing against the pinned two-file expectation. The walker now skips any
+subdirectory carrying its own `.git` entry (a nested git worktree or embedded
+checkout is another tree, not this one), the same environment-shape family as
+the wave-29 submodule-diagnostic precondition. The census itself is
+unweakened: over one checkout's tree it visits exactly the files it always
+visited (the >400-file floor and the two-example pin are untouched), and the
+other test walkers were surveyed — every other `read_dir` use starts inside a
+bounded directory, so this was the only root-recursive walk. Measured in both
+environments: 36/36 in an isolated worktree, 36/36 from the primary checkout
+after the fix.
+
 Wave 30 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `DOCS-COMPACT-4`, `CT24-CLEANUP-PREEMPTED`,
 `CT-PROOF-LEG-2`, `REGION-JOINS-LOAN`, `CT07-WRITE-REMAP` and the arbiter

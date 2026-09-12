@@ -798,6 +798,15 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
                 if name == "target" || name == ".git" {
                     continue;
                 }
+                // A subdirectory with its own `.git` entry is another checkout
+                // of this repository (a sibling git worktree under
+                // `.claude/worktrees/`, or an embedded checkout), not part of
+                // this tree: recursing into one double-counts its copies of
+                // the two published examples when the census runs from the
+                // primary checkout.
+                if path.join(".git").exists() {
+                    continue;
+                }
                 collect(&path, files);
             } else if matches!(
                 path.extension().and_then(|extension| extension.to_str()),
