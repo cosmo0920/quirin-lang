@@ -512,16 +512,31 @@ behaviour-preserving.
   published on the `source_std_io::std_io_statement` shape — it returns the
   refusal as a **message** the caller attributes to its own code.
 
-Everything else the card touched is the string route's own, plus the three-line
-`driver.rs` seam of §6 and the one-line reference-collector hook of §5.
+Everything else the card touched is the string route's own, plus the
+`driver.rs` seam of §6 (**11 lines, 3 of them code**) and the
+reference-collector hook of §5 (**one call changed**, from `is_length_query` to
+`is_string_clause_word`; the old function is retained unchanged for the tests
+that name it).
+
+**Two existing test files were edited, and only for the renamed field.**
+`compiler/tests/std_string.rs` (12 lines) and
+`compiler/tests/string_slice_io.rs` (1 line) read
+`StringViewRecord::literal`, which became `storage: StringStorage`. Every
+assertion keeps its meaning: `slice.derived.literal == slice.from.literal`
+became `slice.derived.storage == slice.from.storage`, which is the same claim
+about a wider type. **No test was deleted, weakened or re-pinned**, and the two
+suites' counts are unchanged at 62 and 37.
 
 ---
 
 ## 10. Corpus neutrality
 
-By construction. The diff touches four `qcore-core` files, three
-`qcore-frontend` files, one `qcore-verification` line, three documents, two Lean
-files, two test files, one fixture and the `examples/strings` directory.
+By construction, and the file list is short enough to read whole — **24 files**:
+four in `qcore-core`, three in `qcore-frontend`, one three-line seam in
+`qcore-verification/src/driver.rs`, three normative documents, three Lean files
+(one new module, one new audit, one import line), four test files, one fixture,
+the two `examples/strings` files plus the examples index, and this report with
+its two artifacts.
 `contract/`, `crates/qcore-c-gateway/`, `crates/qcore-audit/`,
 `crates/qcore-contract/`, `providers/`, `examples/threads`, `examples/events`,
 `examples/sockets`, `examples/http` and every frozen archive appear nowhere in
@@ -536,10 +551,15 @@ contract pin and the CT manifest are main's, untouched and unread.
 `AuditAll.lean` includes it in the whole-project axiom closure) and
 `proof/AuditStringConcat.lean` — **53 declarations, 47 audited by name**, all
 placeholder-free with no project axiom; every closure is a subset of
-`{propext, Classical.choice, Quot.sound}`. `Classical.choice` appears in
-exactly one closure, `a_changed_buffer_had_a_touching_statement`, which is the
-contrapositive and uses `Classical.byContradiction`; it is one of the three
+`{propext, Classical.choice, Quot.sound}`. Most closures are `[propext]` or
+`[propext, Quot.sound]` and thirteen depend on **no axiom at all**, including
+every case of the UTF-8 decision and `a_composition_addresses_none_of_its_pieces`;
+`Classical.choice` appears in **three** closures — the borrow-window theorems,
+where it arrives through the decidability lemmas `simp` uses, and the
+contrapositive, which uses `Classical.byContradiction`. It is one of the three
 allowed axioms and is recorded here rather than left to be discovered.
+`python3 scripts/check_lean_audits.py` reports **Passed 104 Lean audits**
+(103 → 104) with no warning and exit **0**.
 
 What is proved, in the order the card argues:
 
@@ -692,7 +712,7 @@ on `PATH`.
 | `cargo clippy --all-targets -- -D warnings` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit **0** |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit **0** |
-| `python3 scripts/check_lean_audits.py` | see §14.2 |
+| `python3 scripts/check_lean_audits.py` | **Passed 104 Lean audits** (103 → 104: `AuditStringConcat.lean`), no project axiom, exit **0** |
 | `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 expected failure** — see §14.3 |
 | `compiler/tests/string_concat.rs` | **50 passed, 0 failed** |
 | `compiler/tests/std_string.rs` | **62 passed, 0 failed** (base route, unmoved) |
@@ -703,6 +723,15 @@ The four suite lines above are the load-bearing ones for this card and were
 re-run at the **final committed state**. `std_buffer.rs` in particular was run
 after each step of §9's refactor, which is what makes "no behaviour change" a
 measurement rather than an intention.
+
+### 14.2 The Lean toolchain is not on the default `PATH`
+
+`lean`, `lake` and `elan` live at `$HOME/.elan/bin` and are **not** on this
+worktree's default `PATH`; `scripts/check_lean_audits.py` reports a missing
+`lake` **and exits 0** in that state, so the run above was made with that
+directory exported and the "Passed 104 Lean audits" **text** verified rather
+than the exit code alone. That is the environment note cards `STRING-SLICE` and
+`STRING-SLICE-IO` each recorded, and it recurred.
 
 ### 14.3 One expected Python failure, left for the integrator
 
