@@ -1,0 +1,50 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// The scenario's ordering premise, false: the whole adopting region stands
+// before the spawn and the join, so its erased `drop owner;` destroys the
+// owner before the loan is even made. Refused at Q600 by the unedited task
+// route over the erased program -- the lend finds no owned buffer to lend --
+// which is the destroy-before-join direction of CT25's "after joins and loan
+// expiry" shown to be a gate rather than a convention. Materialized by card
+// CT-WIRE-LANE-3 from the in-memory mutation
+// region_joins_loan.rs::the_region_cannot_precede_the_loan_expiry measured
+// (card REGION-JOINS-LOAN), on the CT22-WIRE control-fixture precedent.
+fn reader(payload: borrow<Buffer>) -> i32 {
+    let seen = qcore_buffer_read(payload);
+    return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope reader {
+            read;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+        }
+    }
+    let owner = qcore_buffer_new(42)?;
+    thread scope s {
+        error region R {
+            move owner;
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        match spawn s reader(read owner share FULL) {
+            Result::Ok { value: handle } => {
+                let seen = join move handle?;
+            }
+            Result::Err { error: failure } => {
+                drop owner;
+                return 0;
+            }
+        }
+        return 1;
+    }
+}
