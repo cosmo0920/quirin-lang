@@ -1,0 +1,19 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running tests/confined_process_execution.rs (target/debug/deps/confined_process_execution-39b6b4f02e4bba85)
+
+running 12 tests
+test a_confined_fixture_cannot_reach_a_listening_localhost_server ... ok
+test a_confined_fixture_cannot_read_outside_the_admitted_paths ... ok
+test a_confined_fixture_cannot_write_outside_the_admitted_paths ... ok
+test a_confining_profile_without_a_policy_is_refused_before_spawning ... ok
+test a_policy_under_a_non_confining_profile_is_refused ... ok
+test an_absent_admitted_path_grants_nothing_and_is_recorded ... ok
+test an_admitted_path_still_works_under_confinement ... ok
+test an_uninstallable_policy_is_refused_before_spawning ... ok
+test the_confined_profile_composes_with_the_limit_profile ... ok
+test the_default_profile_still_confines_nothing ... ok
+test the_evidence_records_the_achieved_confinement_and_its_boundary ... ok
+test the_package_root_is_admitted_read_and_execute_only ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+

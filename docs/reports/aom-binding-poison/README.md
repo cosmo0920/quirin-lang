@@ -180,7 +180,7 @@ afterwards.
 | **P2** no W4 summary gets stronger | **held** — every exit of the flagship function reads `custody Unknown` in both probes |
 | **P3** no unit is promoted | **held** — 2/42/137/4 before and after, zero moves |
 | **P4** `summary_conflict` 0 in all 136 reporting units | **held** — 0 in both runs |
-| **P5** contract corpus unmoved (73/18/39/145) | **held** — 18 raw keys before and after, 0 added, 0 removed, no collision |
+| **P5** contract corpus unmoved (73/18/39/145) | **held** — 18 raw keys before and after, 0 added, 0 removed, no normalisation collision; the loader's own pinned counts (73 modules, 18 selected, 39 v1, 145 rejected) are unedited and pass in the workspace run |
 | **P6** both runs exit 0, 185 units, BEFORE reproduces the baseline byte for byte | **held** — §5 |
 | the 12 `unknown_alias: … \`result\`` leaves are removed | **3 of 12** — L19383, L19391, L19398. §3 |
 | the six retired leak leaves convert from withdrawal to discharge | **3 of 6** — L19384, L19392, **L19399**, each `Mixed` → `Released`. §3 |
@@ -304,14 +304,23 @@ sites. Net −2 in that unit, no verdict move.
 
 The other 85 removals are the repair working as intended: a binding an unrelated
 refusal used to destroy now survives, and the release or guard that reads it
-resolves. Sixteen of the removed leaves are in the two functions §3 discusses.
-The full leaf-level list is in [`logs/census.txt`](logs/census.txt); nothing is
-summarised away into a count there.
+resolves. Three of them are the flagship function's L19383 / L19391 / L19398
+(§3); the other three in that unit are `input_chunk_write_header` L18990 and
+L18993 (`meta`) and `update_logs_tag_records_metrics` L17819 (`tag_sds`).
+`flb_input_chunk_map`'s L18929 leaf is **unmoved**, exactly as predicted: that
+body contains `&direct_routes`, so premise 2 removes the name from the frame set
+and the full poison still applies there. The full leaf-level list is in
+[`logs/census.txt`](logs/census.txt); nothing is summarised away into a count
+there.
 
 ### 4.2 The `unsupported` −8, itemised
 
 `unsupported` was predicted unchanged to within ±5. Eight leaves left, and none
-of them is a refusal that stopped being raised where it is reached:
+of them is a refusal that stopped being raised where it is reached. The one
+`Unsupported` the prediction named as the way this number could move —
+`alias set exceeded 8 targets and was widened`, whose alias sets can differ now
+that fewer bindings are poisoned — contributed **zero**: that description does
+not appear in the census's inventory deltas at all.
 
 **Seven are `nullable resource X used by a non-null contract`** —
 `buckets` ×3 (`cmt_histogram.c`), `context` ×1 (`cmt_encode_splunk_hec.c`),
@@ -470,16 +479,53 @@ with `git checkout HEAD -- <paths>`, both verified with `git status`.
 | step | result |
 |---|---|
 | `git submodule update --init --recursive` | run **first**, before either audit — the `libevent` pin gate fires at the *end* of a run, and a first BEFORE attempt was discarded for exactly that reason (§5) |
-| `cargo test --workspace` | **GATE_TESTS** |
+| `cargo test --workspace` | **3,953 passed, 0 failed, 8 ignored** in one complete `--no-fail-fast` pass over all 205 test targets ([`logs/workspace-tests.txt.gz`](logs/workspace-tests.txt.gz)). Two earlier passes each tripped one constraint-16 row and aborted; see below |
 | `cargo fmt --all -- --check` | **clean** |
 | `cargo clippy --all-targets -- -D warnings` | **clean**, zero warnings |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | **GATE_PROBE1** |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | **GATE_PROBE2** |
-| `python3 scripts/check_lean_audits.py` | **GATE_LEAN** |
-| `python3 -m unittest discover -s scripts/tests` | **GATE_PYTHON** |
-| corpus audits | **both exit 0**, zero gateway failures in all six scopes, 185 units, 136 reporting units with **0** custody summary conflicts |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0**, first invocation |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0**, first invocation |
+| `python3 scripts/check_lean_audits.py` | **104 Lean audits**, all passed ([`logs/lean-audits-summary.txt`](logs/lean-audits-summary.txt), full transcript [`logs/lean-audits.txt.gz`](logs/lean-audits.txt.gz)); placeholder-free, no project axioms |
+| `python3 -m unittest discover -s scripts/tests` | **192 passed, 1 failed** — see §6.2; the failure is the acceptance-matrix tripwire firing by design ([`logs/python-tests.txt`](logs/python-tests.txt)) |
+| corpus audits | **both exit 0**, zero gateway failures in all six scopes, 185 units, **136** reporting units each reporting `0 custody summary conflict(s)` |
 
-GATE_FLAKE
+### 6.1 Constraint 16, recorded honestly
+
+The machine carried **concurrent workspace
+test runs from parallel cards** throughout this session — load average 33–38 for
+most of it, eight simultaneous `cargo test` trees at the peak — which is exactly
+the band constraint 16 records ("measured failing at load 50 and passing at load
+37 on the same binary"). Two named rows tripped, one per earlier pass, and
+**both pass in isolation on the same binary**:
+
+| row | how it failed | in isolation |
+|---|---|---|
+| `confined_process_execution::a_confined_fixture_cannot_write_outside_the_admitted_paths` | `Io(Broken pipe)` where `Terminated` is expected — constraint 16's own signature for this row | `cargo test -p qcore-verifier-host --test confined_process_execution -- --test-threads=1`: **12 passed, 0 failed** |
+| `cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets` | the wall-clock row, at load ≈37 | `-- --exact --test-threads=1`: **1 passed, 0 failed** |
+
+Neither row is weakened, changed or skipped, and neither is touched by this
+card: both live in `qcore-verifier-host` / `qcore-compiler`'s provider surface,
+which this card does not edit. The **complete** `--no-fail-fast` pass above,
+taken as the parallel load drained, carries **zero** failures of any kind
+including those two. Both probes exited 0 on their first invocation, run after
+the audits and the tests rather than concurrently with them.
+
+### 6.2 The one Python failure is a tripwire firing by design, and it is the integrator's to clear
+
+
+`test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried`
+fails with `['14.0.0', 103] != ['14.0.0', 104]`. That assertion compares the
+**committed** `docs/reviews/r0_3/acceptance_matrix.json` against the value the
+generator derives from the live `proof/Audit*.lean` glob. This card lands
+`proof/AuditRefusedWrites.lean`, so the derived count moves 103 → **104** and the
+committed matrix is one behind — which is exactly what the row exists to detect
+and is the same shape as constraint 24's sidecar tripwire.
+
+It is **not** repaired here, deliberately: the acceptance matrix is the
+integrator's to reconcile, and constraint 25 governs how (`section_ownership`;
+whole-file regeneration must not clobber later reconciliations). Reported as a
+finding, not absorbed. The reconciliation is `validation.lean_audits`
+103 → 104 plus `AuditRefusedWrites.lean` in `validation.lean_audit_files`; the
+`qcore-schemas` Rust API stays 14.0.0.
 
 Provider packages were **built** for the audit route (`providers/package.py
 build`, `qcore-schemas` 14.0.0, exit 0) and are otherwise untouched: constraint
@@ -487,7 +533,7 @@ build`, `qcore-schemas` 14.0.0, exit 0) and are otherwise untouched: constraint
 a `qcore-schemas` major bump, and this card makes neither. No provider source,
 manifest template or schema version is edited.
 
-### 6.1 Pinned expectations moved, deliberately
+### 6.3 Pinned expectations moved, deliberately
 
 Three workspace tests were re-pinned, each argued in place and none weakening a
 gate. All three are the same shape: an `unknown_alias` that was an artefact of
@@ -618,7 +664,7 @@ frame premise rests on.
 
 | file | what |
 |---|---|
-| `crates/qcore-c-gateway/src/legacy_c.rs` | `RefusedWrites`, `may_write_names`, `frame_protected_locals`, `is_plain_name_place`, `Parser::refused_writes`, the `writes` field on `LegacyInstruction::Unknown` at all 35 construction sites, the sixth element of `typed_access_facts`, and the bounded poison in `transfer` |
+| `crates/qcore-c-gateway/src/legacy_c.rs` | `RefusedWrites`, `may_write_names`, `frame_protected_locals`, `is_plain_name_place`, `Parser::refused_writes`, the `writes` field on `LegacyInstruction::Unknown` at every construction site (bounded at all 21 inside `classify_simple`, `Unbounded` at the other 13 — the two malformed for-loop clauses, the eight refused conditions, `goto`, the label and the `break`/`continue` refusals), the sixth element of `typed_access_facts`, and the bounded poison in `transfer` |
 | `crates/qcore-c-gateway/src/legacy_neutral.rs` | one pattern gains `..` |
 | `crates/qcore-c-gateway/tests/unit/legacy_c.rs` | three new tests; one assertion re-pinned (§6.1) |
 | `crates/qcore-c-gateway/tests/c03_neutral_frame_recursion_probe.rs`, `.../publication_custody.rs` | one assertion each, re-pinned (§6.1) |
@@ -670,7 +716,18 @@ archive is touched. The facts to reconcile, all measured and all in this report:
    The refusal itself is never weakened: the `Unsupported` diagnostic, the
    `unmodeled` path flag and the `Unknown` function status are untouched, which
    is what makes it impossible for this rule to promote anything.*
-7. **Three workspace assertions re-pinned**, §6.1, each argued and none weakening
+7. **Three workspace assertions re-pinned**, §6.3, each argued and none weakening
    a gate.
-8. **Six follow-ons open** (§8), of which `AOM-POISON-CONDITION-FRAME` is the
-   direct successor and carries the measured witness line.
+8. **One acceptance-matrix reconciliation is owed** and is deliberately not made
+   here (§6.2): `validation.lean_audits` 103 → **104**, plus
+   `AuditRefusedWrites.lean` in `validation.lean_audit_files`. Until it lands,
+   `test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`
+   fails — by design, as the row's own docstring says. Constraint 25 governs how
+   the regeneration is done.
+9. **Gate numbers for the ledger:** **3,953** workspace tests passed (0 failed, 8
+   ignored, one complete `--no-fail-fast` pass over 205 targets) · **104 Lean
+   audits** · **192** Python (1 failing by design, item 8) · both probes exit 0 ·
+   fmt/clippy clean · both corpus audits exit 0. Provider tests are carried
+   unchanged from the preceding checkpoint; no provider surface is edited.
+10. **Six follow-ons open** (§8), of which `AOM-POISON-CONDITION-FRAME` is the
+    direct successor and carries the measured witness line.
