@@ -349,6 +349,40 @@ full suite.
 
 ## Increment records
 
+REGION-CREDIT-JOINS (2026-09-12, wave 28): the composition gap two wave-27
+reports named from opposite sides — `CT23-T07-SEAM` and
+`REGION-CREDIT-WITH-JOINS` — closed as the minimal honest composition, making
+CT22's scenario ("quant opening discards parent-local unused credit after
+joins", expected Accept) expressible end to end for the first time. A
+`source.epoch.tasks.v1` entry may now write, after every spawn and join of its
+task scope, one `error region … catch (E) quant open … { discharge …; }` whose
+body is narrowed to the parent's own quantities (`credit N;`, `effort N;`, the
+decided `qcore_check(false, E);` edge — a region acquisition is refused by
+name, `REGION-JOINS-DUTIES`): the sealed pack carries no duty and exactly the
+parent's unused credit, which the discharge abandons as the kernel's own
+explicit `AbandonCredit`, decided by the **unedited**
+`qcore_core::error_region::analyze_error_regions` at its own `Q303`–`Q309`
+codes (constraint 15l reached from a second route). "After joins" is derived
+from the checked task IR — a spawn or join span following the region refuses at
+`Q600` — and the published `abandoned_credit` is cross-checked against an
+independent fold before publication. The region is blanked from the task half
+exactly as the plan is, so it erases from emission: emitted C, source map and
+reference observation measured byte-identical with and without it, and every
+pre-existing composed module publishes `region: None` with unchanged
+certificates. Zero new codes (two condition widenings stated in §L21: `Q302`'s
+shape conditions from this route, `Q600`'s after-joins reconciliation), zero
+new reserved words (census vacuous — every word already reserved, the shape
+already parsed), and `epoch_accounting`, `epoch_credit_recovery` and
+`region_task_credit` all untouched (constraint 15j honored; the declarative
+route keeps its refusal). 13 new Rust tests
+(`compiler/tests/region_credit_joins.rs` 9, frontend 4), eight fixtures parked
+at `compiler/tests/fixtures/epoch_credit/CT22/` outside the CT corpus, and 14
+audited Lean theorems in the new `QCore.RegionCreditJoins`
+(`AuditRegionCreditJoins.lean`, audits 114 → **115**, no project axiom). CT
+manifest untouched — CT22 mapping is the wire lane's; CT25 stays inexpressible
+with its gap narrowed to `REGION-JOINS-DUTIES`. Checkpoint and boundaries:
+`docs/reports/region-credit-joins/README.md`.
+
 Wave 27 close (2026-09-12): **six pieces** merged one at a time under the
 failure-gated chain, each under its own green gate — `CT23-CREDIT-ERROR-PATH`,
 `DOCS-COMPACT-3` (the recurring three-file compaction *plus* a user-directed

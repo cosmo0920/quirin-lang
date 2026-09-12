@@ -5,13 +5,14 @@
 //! ledger derived from the checked task IR, the agreement relation between the
 //! plan's rows and that ledger, and the grammar's own refusals.
 use qcore_core::epoch_accounting::{ResultDisposal, TaskResult};
+use qcore_core::error_region::RegionOp;
 use qcore_core::resource_flow::Quantity;
 use qcore_core::task_execution::{CheckedTaskModule, check_task_module};
 use qcore_frontend::frontend::{SourceProgram, elaborate_source, parse_source_program};
 use qcore_frontend::source_epoch::{EFFORT_AXIS, MEMORY_AXIS};
 use qcore_frontend::source_epoch_tasks::{
-    ComposedCapture, DisposalSource, LoweredComposedEpoch, has_composed_epoch,
-    lower_composed_epoch, split_composed_epoch,
+    ComposedCapture, ComposedRegion, DisposalSource, LoweredComposedEpoch, has_composed_epoch,
+    lower_composed_epoch, read_composed_region, split_composed_epoch,
 };
 use qcore_frontend::source_tasks::lower_source_tasks;
 
@@ -66,7 +67,7 @@ fn parse(source: &str) -> SourceProgram {
 /// core checker takes over.
 fn compose(source: &str) -> Result<(LoweredComposedEpoch, CheckedTaskModule), Vec<String>> {
     let parsed = parse(source);
-    let split = split_composed_epoch(&parsed, "main").map_err(|errors| {
+    let split = split_composed_epoch(&parsed, "main", None).map_err(|errors| {
         errors
             .into_iter()
             .map(|error| error.message)
@@ -144,7 +145,7 @@ fn route_detection_needs_both_halves_and_claims_neither_alone() {
 fn the_split_blanks_the_plan_and_preserves_every_byte_offset() {
     let source = composed_source();
     let parsed = parse(&source);
-    let split = split_composed_epoch(&parsed, "main").expect("the module splits");
+    let split = split_composed_epoch(&parsed, "main", None).expect("the module splits");
     assert_eq!(
         split.task_source.len(),
         source.len(),
@@ -644,5 +645,225 @@ fn the_error_clause_refuses_the_forms_it_cannot_represent() {
             "            error(move);\n            error(close);\n"
         ))
         .contains("declares `error` at most once")
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Card `REGION-CREDIT-JOINS`: the composed region reader.
+// ---------------------------------------------------------------------------
+
+/// A minimal composed module whose task scope carries the given region text.
+/// The reader is syntactic — it does not need the module to check — so the
+/// shapes below exercise exactly the reader's own rules.
+fn region_module(region: &str) -> String {
+    format!(
+        r#"import std.concurrency;
+concurrency checked;
+error Failure {{ Failed; }}
+fn main() -> i32 {{
+    thread scope plan epoch {{
+        bound 1 effort 1;
+    }}
+    thread scope s {{
+{region}
+        return 0;
+    }}
+}}
+"#
+    )
+}
+
+const REGION: &str = r#"        error region R {
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }"#;
+
+fn read(source: &str) -> Result<Option<ComposedRegion>, Vec<String>> {
+    let parsed = parse(source);
+    read_composed_region(&parsed, "main").map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| format!("{}: {}", error.code, error.message))
+            .collect()
+    })
+}
+
+/// The reader hands the unedited model exactly the written statements: the
+/// parent's quantities, the decided edge, one opening clause, one discharge —
+/// and its own independent fold of the remainder, which the driver cross-checks
+/// against the model's trace before publishing either.
+#[test]
+fn the_composed_region_reader_reads_the_parents_epilogue() {
+    let region = read(&region_module(REGION))
+        .expect("the region reads")
+        .expect("the region is found");
+    assert_eq!(region.raised, "Failure");
+    assert_eq!(region.remainder, Some(3));
+    assert!(region.declared_errors.contains("Failure"));
+    let [
+        RegionOp::ErrorRegion {
+            region: name,
+            body,
+            catches,
+        },
+    ] = region.operations.as_slice()
+    else {
+        panic!("one region operation");
+    };
+    assert_eq!(name, "R");
+    assert_eq!(
+        body.as_slice(),
+        [
+            RegionOp::AddStrictCredit(5),
+            RegionOp::SpendStrictCredit(2),
+            RegionOp::Raise("Failure".to_owned()),
+        ]
+    );
+    assert_eq!(catches.len(), 1);
+    assert_eq!(
+        catches[0].handler.as_slice(),
+        [RegionOp::Discharge("pack".to_owned())]
+    );
+
+    // A module without a region reads `None` — the control that keeps every
+    // existing composed module untouched.
+    assert_eq!(read(&region_module("        effort_free();")), Ok(None));
+}
+
+/// The reader's own placement and shape refusals, each on `Q302` with the rule
+/// it enforces named in the message.
+#[test]
+fn the_region_reader_refuses_placement_and_shape() {
+    let refusal =
+        |source: &str| -> String { read(source).expect_err("the shape is refused").remove(0) };
+
+    // At the entry's top level rather than inside the task scope.
+    let top_level = r#"import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+fn main() -> i32 {
+    thread scope plan epoch {
+        bound 1 effort 1;
+    }
+    error region R {
+        credit 5;
+        qcore_check(false, Failure);
+    } catch (Failure) quant open R as pack {
+        discharge pack;
+    }
+    thread scope s {
+        return 0;
+    }
+}
+"#;
+    assert!(refusal(top_level).contains("direct statement of the entry's task scope"));
+
+    // In a worker: a spawned worker is a first-order leaf function.
+    let in_worker = format!(
+        r#"import std.concurrency;
+concurrency checked;
+error Failure {{ Failed; }}
+fn worker() -> i32 {{
+{REGION}
+    return 0;
+}}
+fn main() -> i32 {{
+    thread scope plan epoch {{
+        bound 1 effort 1;
+    }}
+    thread scope s {{
+        return 0;
+    }}
+}}
+"#
+    );
+    assert!(refusal(&in_worker).contains("first-order leaf"));
+
+    // Two regions.
+    assert!(
+        refusal(&region_module(&format!("{REGION}\n{REGION}")))
+            .contains("at most one `error region`")
+    );
+
+    // A body statement outside the admitted set, and the acquisition refusal
+    // by its follow-on name.
+    assert!(
+        refusal(&region_module(
+            "        error region R {\n            drop x;\n            qcore_check(false, \
+             Failure);\n        } catch (Failure) quant open R as pack {\n            discharge \
+             pack;\n        }"
+        ))
+        .contains("REGION-JOINS-DUTIES")
+    );
+
+    // No decided edge.
+    assert!(
+        refusal(&region_module(
+            "        error region R {\n            credit 5;\n        } catch (Failure) quant \
+             open R as pack {\n            discharge pack;\n        }"
+        ))
+        .contains("REGION-NORMAL-EXIT")
+    );
+
+    // A raise the one clause does not catch.
+    let mismatched = r#"import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+error Other { Case; }
+fn main() -> i32 {
+    thread scope plan epoch {
+        bound 1 effort 1;
+    }
+    thread scope s {
+        error region R {
+            credit 5;
+            qcore_check(false, Other);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return 0;
+    }
+}
+"#;
+    assert!(refusal(mismatched).contains("REGION-PROPAGATE"));
+
+    // A handler statement other than the discharge.
+    assert!(
+        refusal(&region_module(
+            "        error region R {\n            credit 5;\n            qcore_check(false, \
+             Failure);\n        } catch (Failure) quant open R as pack {\n            discharge \
+             pack;\n            credit 1;\n        }"
+        ))
+        .contains("REGION-HANDLER-BODY")
+    );
+}
+
+/// The split blanks the region exactly as it blanks the plan: every byte
+/// offset preserved, and the reparsed task half carries no region at all.
+#[test]
+fn the_split_blanks_the_region_and_preserves_every_byte_offset() {
+    let source = region_module(REGION);
+    let parsed = parse(&source);
+    let region = read_composed_region(&parsed, "main")
+        .expect("the region reads")
+        .expect("the region is found");
+    let split =
+        split_composed_epoch(&parsed, "main", Some(region.span)).expect("the module splits");
+    assert_eq!(split.task_source.len(), source.len());
+    assert!(
+        split.task_source[region.span.start..region.span.end]
+            .chars()
+            .all(|c| c == ' ' || c == '\n'),
+        "the region range is blank"
+    );
+    let reparsed = parse(&split.task_source);
+    assert!(
+        read_composed_region(&reparsed, "main")
+            .expect("the blanked text reads")
+            .is_none(),
+        "no region survives the blanking"
     );
 }

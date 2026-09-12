@@ -1,0 +1,48 @@
+import std.concurrency;
+concurrency checked;
+error Failure { Failed; }
+
+// CT22 -- "Quant opening discards parent-local unused credit after joins",
+// expected Accept (card REGION-CREDIT-JOINS).
+//
+// The plan grants the worker's credit; the parent spawns and joins its one
+// child; and only then -- with no child live and no child holding any grant --
+// the parent's own error region credits 5, spends 2 and takes its decided
+// error edge. The sealed pack carries no duty and remainder 3, the catch's
+// quant open binds it as a linear capability, and the discharge abandons
+// exactly that parent-local unused credit: an explicit AbandonCredit event,
+// never an omission. The region erases from emission (constraint 15l), so the
+// program this module runs is byte-for-byte the one without the region.
+fn worker(value: i32) -> own<Buffer> effects { alloc, throws<AllocError> } {
+    let buffer = qcore_buffer_new(value)?;
+    return move buffer;
+}
+fn main() -> i32 effects { throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope worker {
+            copy;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let value = 42;
+    thread scope s {
+        let handle = spawn s worker(copy value)?;
+        let returned = join move handle?;
+        let answer = qcore_buffer_read(returned);
+        drop returned;
+        error region R {
+            credit 5;
+            effort 2;
+            qcore_check(false, Failure);
+        } catch (Failure) quant open R as pack {
+            discharge pack;
+        }
+        return answer;
+    }
+}

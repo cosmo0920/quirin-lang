@@ -142,6 +142,7 @@ import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.SourceRecord
 import QCore.QuantRegionSource
+import QCore.RegionCreditJoins
 import QCore.LoopBudget
 import QCore.StdString
 import QCore.StringSliceIo

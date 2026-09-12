@@ -81,6 +81,7 @@ use crate::source_epoch::{
     EpochSourceTask, ErrorArmClause, LoweredEpochModule, both, error_arm, failure, header_tokens,
     integer, memory, name, parse_error_arm, resolve_error_arm, symbol, word, work,
 };
+use qcore_core::error_region::{QuantOpen as RegionQuantOpen, RegionCatchClause, RegionOp};
 use qcore_core::prelude::concurrency::epoch_accounting::{
     EpochTask, EpochTaskId, FlatEpochProgram, OverheadBasis, ResultDisposal, RuntimeOverhead,
     TaskResult,
@@ -216,14 +217,27 @@ fn entry_body<'a>(
 /// scope; the check that it is the only one is made by re-detecting the route on
 /// the blanked text rather than by scanning for a second marker, so a marker
 /// this function did not remove cannot be missed.
+///
+/// `region_span` is the entry's validated `error region` statement, when
+/// [`read_composed_region`] found one (card `REGION-CREDIT-JOINS`). It is
+/// blanked exactly as the plan is — offsets preserved, so every span the task
+/// route reports still points at the original file — because the region, like
+/// the plan, **erases from emission** (constraint 15l): its body admits no
+/// statement the task program performs, so the task half the scoped-task route
+/// compiles is byte-for-byte the program the entry runs.
 pub fn split_composed_epoch(
     source: &SourceProgram,
     entry: &str,
+    region_span: Option<Span>,
 ) -> Result<ComposedSplit, Vec<SourceDiagnostic>> {
-    split(source, entry).map_err(|diagnostic| vec![diagnostic])
+    split(source, entry, region_span).map_err(|diagnostic| vec![diagnostic])
 }
 
-fn split(source: &SourceProgram, entry: &str) -> Result<ComposedSplit, SourceDiagnostic> {
+fn split(
+    source: &SourceProgram,
+    entry: &str,
+    region_span: Option<Span>,
+) -> Result<ComposedSplit, SourceDiagnostic> {
     let (_, body) = entry_body(source, entry)?;
     let Some(first) = body.statements.first() else {
         return Err(failure(
@@ -250,11 +264,17 @@ fn split(source: &SourceProgram, entry: &str) -> Result<ComposedSplit, SourceDia
     }
     let plan_span = first.span;
     let mut task_source = source.source().to_owned();
-    let blank: String = task_source.as_bytes()[plan_span.start..plan_span.end]
-        .iter()
-        .map(|byte| if *byte == b'\n' { '\n' } else { ' ' })
-        .collect();
-    task_source.replace_range(plan_span.start..plan_span.end, &blank);
+    let blank_range = |text: &mut String, span: Span| {
+        let blank: String = text.as_bytes()[span.start..span.end]
+            .iter()
+            .map(|byte| if *byte == b'\n' { '\n' } else { ' ' })
+            .collect();
+        text.replace_range(span.start..span.end, &blank);
+    };
+    blank_range(&mut task_source, plan_span);
+    if let Some(region) = region_span {
+        blank_range(&mut task_source, region);
+    }
     let reparsed = parse_source_program(&task_source)
         .map_err(|error| failure(error.span, error.message.clone()))?;
     if crate::source_epoch::has_source_epoch(&reparsed) {
@@ -281,6 +301,320 @@ fn split(source: &SourceProgram, entry: &str) -> Result<ComposedSplit, SourceDia
         plan_span,
         task_source,
     })
+}
+
+/// The creator's own quantitative epilogue: one `error region … catch (E)
+/// quant open … { discharge …; }` statement written **after every spawn and
+/// join** of the composed entry's task scope (card `REGION-CREDIT-JOINS`).
+///
+/// The body admits the parent-local quantities and the decided error edge and
+/// **nothing else** — `credit N;`, `effort N;`, `qcore_check(false, ERROR);` —
+/// so the region contributes no statement the task program performs and erases
+/// from emission exactly as the plan does. In particular a region
+/// **acquisition** is refused rather than admitted: the scoped-task route's
+/// resources are buffers with their own custody model, and sealing one into a
+/// cleanup pack would need an emission for the discharge's releases that this
+/// composition does not have (follow-on `REGION-JOINS-DUTIES`). The pack a
+/// composed region seals therefore carries **no duty** — only the credit
+/// remainder — which is why the one thing its opening can discard is the
+/// parent-local unused credit. That is CT22's scenario, stated as a shape.
+///
+/// Everything semantic is the unedited [`qcore_core::error_region`] model's to
+/// decide; the caller hands it `operations` whole. This reader owns only the
+/// shape, under constraint 15l's rule: shape refusals on `Q302`, an undeclared
+/// error type on `Q300`, and every pack obligation on the model's own
+/// `Q303`–`Q309`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComposedRegion {
+    /// The whole statement's extent — the blanked range, and where the model's
+    /// refusals are attributed.
+    pub span: Span,
+    /// Exactly one [`RegionOp::ErrorRegion`], built from the model's own
+    /// constructors.
+    pub operations: Vec<RegionOp>,
+    /// The declared error the region raises and catches.
+    pub raised: String,
+    /// The reader's own fold of the body's `credit`/`effort` quantities — the
+    /// remainder the sealed pack will carry. `None` when the fold itself
+    /// overflows or underflows, in which case the model refuses first
+    /// (`CreditOverflow`/`InsufficientCredit`) and this figure is never
+    /// published. The driver cross-checks the model's abandoned quantity
+    /// against this independent computation before publishing either.
+    pub remainder: Option<u64>,
+    /// The module's declared nominal error type names, for the model's
+    /// declaration and effect rows. Derived from the declarations rather than
+    /// from the entry's written `effects` row: a caught error never leaves the
+    /// entry, so it is not an entry effect (the `REGION-EFFECT-ROW` boundary,
+    /// reached from a second route).
+    pub declared_errors: BTreeSet<String>,
+}
+
+/// Find and read the composed entry's `error region` statement, if any.
+///
+/// Returns `Ok(None)` exactly when the program contains **no** `error region`
+/// statement anywhere. A region anywhere it is not admitted — in a worker, at
+/// the entry's top level, nested inside another statement, or more than once —
+/// is a refusal, never a silent skip: a skipped region would stay in the task
+/// half and refuse there with a message about the task profile rather than
+/// about the composition.
+pub fn read_composed_region(
+    source: &SourceProgram,
+    entry: &str,
+) -> Result<Option<ComposedRegion>, Vec<SourceDiagnostic>> {
+    composed_region(source, entry).map_err(|diagnostic| vec![diagnostic])
+}
+
+fn composed_region(
+    source: &SourceProgram,
+    entry: &str,
+) -> Result<Option<ComposedRegion>, SourceDiagnostic> {
+    let mut found: Vec<(&str, &Located<StatementKind>)> = Vec::new();
+    for declaration in &source.declarations {
+        if let Some(body) = &declaration.value.body {
+            collect_region_statements(&declaration.value.name, body, &mut found);
+        }
+    }
+    let Some((owner, statement)) = found.first().copied() else {
+        return Ok(None);
+    };
+    if found.len() > 1 {
+        return Err(region_shape(
+            found[1].1.span,
+            "source.epoch.tasks.v1 admits at most one `error region` per module in this \
+             revision, exactly as the sequential route does (follow-on `REGION-MULTIPLE`)",
+        ));
+    }
+    if owner != entry {
+        return Err(region_shape(
+            statement.span,
+            "a spawned worker is a first-order leaf function and models no error region; \
+             source.epoch.tasks.v1 reads an `error region` in the creator's own task scope only \
+             (card `REGION-CREDIT-JOINS`)",
+        ));
+    }
+    let (_, body) = entry_body(source, entry)?;
+    let direct_child_of_task_scope = body.statements.iter().skip(1).any(|candidate| {
+        matches!(&candidate.value, StatementKind::ThreadScope { body, .. }
+            if body.statements.iter().any(|child| child.span == statement.span))
+    });
+    if !direct_child_of_task_scope {
+        return Err(region_shape(
+            statement.span,
+            "the composed region is the parent's own epilogue, written as a direct statement of \
+             the entry's task scope after every spawn and join; source.epoch.tasks.v1 reads it \
+             nowhere else (card `REGION-CREDIT-JOINS`)",
+        ));
+    }
+    read_region_statement(source, statement).map(Some)
+}
+
+fn collect_region_statements<'a>(
+    owner: &'a str,
+    block: &'a SourceBlock,
+    found: &mut Vec<(&'a str, &'a Located<StatementKind>)>,
+) {
+    for statement in &block.statements {
+        if matches!(statement.value, StatementKind::ErrorRegion { .. }) {
+            found.push((owner, statement));
+        }
+        for child in statement.value.nested_blocks() {
+            collect_region_statements(owner, child, found);
+        }
+    }
+}
+
+fn read_region_statement(
+    source: &SourceProgram,
+    statement: &Located<StatementKind>,
+) -> Result<ComposedRegion, SourceDiagnostic> {
+    let span = statement.span;
+    let StatementKind::ErrorRegion {
+        name: region_name,
+        blocks,
+        catch_bindings,
+    } = &statement.value
+    else {
+        unreachable!("the caller found an error region statement");
+    };
+    let clauses = crate::source_region::read_catch_headers(source, blocks, catch_bindings, span)?;
+    let [clause] = clauses.as_slice() else {
+        return Err(region_shape(
+            span,
+            "source.epoch.tasks.v1 admits exactly one `catch` clause per region, exactly as the \
+             sequential route does: the error-region model is path-sensitive, so a clause the \
+             region's decided path does not reach is one the model does not decide (follow-on \
+             `REGION-MULTIPLE-CATCH`)",
+        ));
+    };
+    let declared_errors: BTreeSet<String> = source
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.kind == DeclarationKind::ErrorType)
+        .map(|declaration| declaration.value.name.clone())
+        .collect();
+    if !declared_errors.contains(&clause.error) {
+        return Err(unknown_error(clause.span, &clause.error));
+    }
+    let mut region_body = Vec::new();
+    let mut raised: Option<String> = None;
+    let mut remainder: Option<u64> = Some(0);
+    for body_statement in &blocks[0].statements {
+        if raised.is_some() {
+            return Err(region_shape(
+                body_statement.span,
+                "the region's error edge is decided at check time, so nothing after it runs; the \
+                 composed region refuses an unreachable statement rather than emitting one",
+            ));
+        }
+        let admitted_set = "statement is not in the composed region body: after every join the \
+                            body admits the parent's own quantities and the decided error edge \
+                            only — `credit N;`, `effort N;` and `qcore_check(false, ERROR);`. A \
+                            region acquisition has no task-route resource to hold and is refused \
+                            rather than approximated (follow-on `REGION-JOINS-DUTIES`)";
+        if !matches!(body_statement.value, StatementKind::Expression) {
+            return Err(region_shape(body_statement.span, admitted_set));
+        }
+        let tokens = header_tokens(source, body_statement.span);
+        if let Some(amount) = region_quantity(&tokens, crate::source_region::CREDIT_KEYWORD) {
+            remainder = remainder.and_then(|held| held.checked_add(amount));
+            region_body.push(RegionOp::AddStrictCredit(amount));
+        } else if let Some(amount) = region_quantity(&tokens, crate::source_region::EFFORT_KEYWORD)
+        {
+            remainder = remainder.and_then(|held| held.checked_sub(amount));
+            region_body.push(RegionOp::SpendStrictCredit(amount));
+        } else if let Some((passes, error)) = region_check(&tokens) {
+            if passes {
+                return Err(region_shape(
+                    body_statement.span,
+                    "the composed region reads `qcore_check(false, ERROR);` as its decided error \
+                     edge; a check decided to pass has no edge to model and is refused rather \
+                     than emitted as a dead branch",
+                ));
+            }
+            if !declared_errors.contains(&error) {
+                return Err(unknown_error(body_statement.span, &error));
+            }
+            region_body.push(RegionOp::Raise(error.clone()));
+            raised = Some(error);
+        } else {
+            return Err(region_shape(body_statement.span, admitted_set));
+        }
+    }
+    let Some(raised) = raised else {
+        return Err(region_shape(
+            span,
+            "a composed region body ends in its decided error edge, \
+             `qcore_check(false, ERROR);`: a region that exits normally reaches no catch clause, \
+             so the model decides none of the clause's obligations (follow-on \
+             `REGION-NORMAL-EXIT`)",
+        ));
+    };
+    if clause.error != raised {
+        return Err(region_shape(
+            span,
+            format!(
+                "the region raises `{raised}` and its one catch clause names `{}`, so the raise \
+                 is uncaught; no error leaves a composed region in this revision (follow-on \
+                 `REGION-PROPAGATE`)",
+                clause.error
+            ),
+        ));
+    }
+    let mut handler = Vec::new();
+    for handler_statement in &blocks[1].statements {
+        match &handler_statement.value {
+            StatementKind::Discharge {
+                binding: Some(binding),
+            } => handler.push(RegionOp::Discharge(binding.clone())),
+            _ => {
+                return Err(region_shape(
+                    handler_statement.span,
+                    "a composed region's handler admits `discharge CAPABILITY;` only in this \
+                     revision (follow-on `REGION-HANDLER-BODY`)",
+                ));
+            }
+        }
+    }
+    let quant_open = match (&clause.opened_region, &clause.binding) {
+        (Some(region), Some(binding)) => Some(RegionQuantOpen {
+            region: region.clone(),
+            binding: binding.clone(),
+        }),
+        _ => None,
+    };
+    Ok(ComposedRegion {
+        span,
+        operations: vec![RegionOp::ErrorRegion {
+            region: region_name.clone(),
+            body: region_body,
+            catches: vec![RegionCatchClause {
+                error: clause.error.clone(),
+                quant_open,
+                handler,
+            }],
+        }],
+        raised,
+        remainder,
+        declared_errors,
+    })
+}
+
+/// A shape refusal of the composed region reader. Always `Q302`, under
+/// constraint 15l's rule: every condition here is a shape condition of the
+/// `ErrorRegion` pass's own generic presentation code, reached from a second
+/// route (the `SOCKET-EVENT-COMPOSE` precedent).
+fn region_shape(span: Span, message: impl Into<String>) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: "Q302",
+        pass: SemanticPass::ErrorRegion,
+        span,
+        message: message.into(),
+    }
+}
+
+/// An undeclared error type named by the region. `Q300`, the typed-error
+/// band's own condition, exactly as the sequential route reports it.
+fn unknown_error(span: Span, error: &str) -> SourceDiagnostic {
+    SourceDiagnostic {
+        code: "Q300",
+        pass: SemanticPass::TypedErrors,
+        span,
+        message: format!("unknown error type `{error}`"),
+    }
+}
+
+/// `credit N;` / `effort N;` — the same three-token shape the sequential
+/// route's reader accepts, read from this route's own statement tokens.
+fn region_quantity(tokens: &[Token], keyword: &str) -> Option<u64> {
+    match tokens {
+        [first, second, third]
+            if word(Some(first), keyword) && symbol(Some(third), Symbol::Semicolon) =>
+        {
+            integer(Some(second))
+        }
+        _ => None,
+    }
+}
+
+/// `qcore_check(true|false, ERROR);` — the decided edge, as written.
+fn region_check(tokens: &[Token]) -> Option<(bool, String)> {
+    match tokens {
+        [call, open, passes, comma, error, close, semicolon]
+            if word(Some(call), "qcore_check")
+                && symbol(Some(open), Symbol::LeftParen)
+                && symbol(Some(comma), Symbol::Comma)
+                && symbol(Some(close), Symbol::RightParen)
+                && symbol(Some(semicolon), Symbol::Semicolon) =>
+        {
+            let passes = match name(Some(passes))? {
+                "true" => true,
+                "false" => false,
+                _ => return None,
+            };
+            Some((passes, name(Some(error))?.to_owned()))
+        }
+        _ => None,
+    }
 }
 
 /// Read the epoch's spawn sites out of the checked task IR.
