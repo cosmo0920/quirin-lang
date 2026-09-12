@@ -2259,6 +2259,9 @@ stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
                                                     (* STRING-CONCAT *)
           | "let", NAME, [ ":", "string" ], "=", "borrow_utf8", "(", NAME, ")", ";"
                                                     (* STRING-CONCAT *)
+          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8",
+            "(", NAME, ",", OPERAND, ",", OPERAND, ")", ";"
+                                                    (* CT07-SLICE-PERMISSIONS *)
           | BUFFER-STMT                             (* STRING-CONCAT *)
           | "print", RENDERING, OPERAND, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
@@ -2307,6 +2310,25 @@ directions are refusals at check time; there is no run-time scan and no failure
 arm. A borrow contributes an ordinary `Read` to the cycle-3 ownership operation
 list, so borrowing a released buffer is that checker's own refusal rather than a
 rule this grammar adds.
+
+**A borrow lends a range** (card `CT07-SLICE-PERMISSIONS`). The three-argument
+form names the bytes `[LOW, HIGH)`, with both bounds resolved by the **same**
+operand rule a slice bound is and checked against the extent the acquisition
+declared (`0 <= low <= high <= extent`). The arity is **one or three and
+nothing between**: a range needs both of its ends, so a two-argument spelling
+has no reading and keeps refusing by shape. The one-argument form *is* the
+three-argument one at `[0, extent)` — not an abbreviation of it but the same
+rule at its degenerate bound, measured as an identical certificate and
+byte-identical emitted C. What the range changes is the window's **content**
+rather than its extent: a write is refused when its byte lies inside a live
+loan and **admitted when it lies outside every one of them**, so two disjoint
+permissions over one buffer are expressible and their disjointness is decided
+(`max low < min high`) rather than assumed. A release is still refused for any
+live loan however narrow, because it ends the storage all of them address, and
+the UTF-8 decision is made on the lent bytes — so a range whose end splits a
+code point is refused by that decision rather than by a new one. There is no
+**write** lend: the owner keeps the write authority over every byte it did not
+lend.
 
 A bound is a check-time constant, so `0 <= low <= high <= len(s)` and both UTF-8
 code-point boundaries are decided before emission and this profile has no

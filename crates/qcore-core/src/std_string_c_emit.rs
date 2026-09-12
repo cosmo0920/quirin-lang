@@ -388,7 +388,9 @@ pub fn emit_string_c11(
             // the checker proved. No copy, no allocation, no validation at run
             // time: the UTF-8 decision was made at check time out of the
             // buffer's write history.
-            StringEvent::Borrow { binding, buffer } => {
+            StringEvent::Borrow {
+                binding, buffer, ..
+            } => {
                 let Some(record) = certificate
                     .borrows
                     .iter()
@@ -397,10 +399,21 @@ pub fn emit_string_c11(
                     return Err(StringEmissionRefusal::UnplaceableView { event: index });
                 };
                 let emitted = view_name(binding);
+                // Card `CT07-SLICE-PERMISSIONS`: a sub-extent loan is the same
+                // pointer displaced by the offset the checker decided, and the
+                // displacement is written **only** when there is one — so a
+                // whole-extent borrow emits the byte-identical initialiser it
+                // emitted before ranges existed, and no program written before
+                // this card changes by a character.
+                let base = std_buffer_c_emit::buffer_name(buffer);
+                let pointer = if record.view.offset == 0 {
+                    base
+                } else {
+                    format!("{base} + {}u", record.view.offset)
+                };
                 let _ = writeln!(
                     source,
-                    "    qcore_string_view {emitted} = {{ {}, (size_t) {}u }};",
-                    std_buffer_c_emit::buffer_name(buffer),
+                    "    qcore_string_view {emitted} = {{ {pointer}, (size_t) {}u }};",
                     record.view.len
                 );
                 views.insert(binding.clone(), emitted.clone());

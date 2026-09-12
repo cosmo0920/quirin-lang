@@ -67,7 +67,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ownership::{self, OwnershipError, OwnershipOp};
-use crate::std_buffer::{BufferAccess, BufferEvaluation, BufferEvent, BufferProgram};
+use crate::std_buffer::{
+    BufferAccess, BufferEvaluation, BufferEvent, BufferOperand, BufferProgram,
+};
 use crate::std_io::{
     Level, ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line, rendered_text_line,
 };
@@ -234,7 +236,22 @@ pub enum StringEvent {
     /// view creates and discharges no custody; what it does create is a
     /// **window** in which the buffer may not be mutated or released, ending at
     /// the last statement that reads the view or anything derived from it.
-    Borrow { binding: String, buffer: String },
+    ///
+    /// `range` is card `CT07-SLICE-PERMISSIONS`'s addition: `None` is the
+    /// whole-extent form `borrow_utf8(BUFFER)` this route has always had, and
+    /// `Some((low, high))` is `borrow_utf8(BUFFER, LOW, HIGH)`, a **sub-extent**
+    /// loan. The two are one construct rather than two: a whole-extent borrow
+    /// *is* the range `[0, extent)`, so the window, the UTF-8 decision and the
+    /// exclusion rule are stated once, over a range, and the pre-card spelling
+    /// is their degenerate case. What the range buys is that the exclusion
+    /// becomes **range-wise**: a write into the borrowed bytes is refused and a
+    /// write outside them is admitted, which is the first form in this language
+    /// that lends part of a resource rather than all of it.
+    Borrow {
+        binding: String,
+        buffer: String,
+        range: Option<(StringOperand, StringOperand)>,
+    },
     /// A `source.buffer.v1` statement, embedded unchanged (card
     /// `STRING-CONCAT`). Its bytes, bounds, extent and custody are decided by
     /// [`crate::std_buffer`]'s own published rules, so a composed module cannot
@@ -347,8 +364,39 @@ pub struct BorrowRecord {
     pub buffer: String,
     pub binding: String,
     pub through: usize,
-    /// The view the borrow yields: the whole buffer, validated as UTF-8.
+    /// The **first byte** of the buffer this loan covers (card
+    /// `CT07-SLICE-PERMISSIONS`). `0` for the whole-extent form.
+    pub low: u32,
+    /// One past the **last byte** this loan covers. The buffer's extent for the
+    /// whole-extent form, which is why that form is the degenerate case of this
+    /// one rather than a second rule: `low == 0 && high == extent`.
+    pub high: u32,
+    /// The view the borrow yields: the borrowed range, validated as UTF-8.
+    /// `view.offset == low` and `view.len == high - low` hold for every record,
+    /// so a reader checks the loan's footprint against the view it produced
+    /// rather than being told they agree.
     pub view: StringViewRecord,
+}
+
+/// **Do two half-open byte ranges share a byte?** (card
+/// `CT07-SLICE-PERMISSIONS`.)
+///
+/// `[low_a, high_a)` and `[low_b, high_b)` intersect exactly when
+/// `max(low_a, low_b) < min(high_a, high_b)`. This is an **equality with the
+/// set-theoretic question**, not an approximation of it — every bound on this
+/// route is a check-time constant, so "provably disjoint" and "disjoint" are
+/// the same predicate and there is no third answer to fall closed to.
+/// `QCore.SlicePermissions.overlaps_iff_a_shared_byte` is that statement.
+///
+/// An **empty** range shares no byte with anything, itself included: `low >= high`
+/// makes the maximum at least the minimum. That is a consequence rather than a
+/// special case, and it is why `borrow_utf8(b, 2, 2)` excludes no write.
+///
+/// The one-byte write `b[i] = v` enters here as `[i, i + 1)`, which is what
+/// makes "this write is inside that loan" one question rather than two.
+#[must_use]
+pub fn ranges_overlap(low_a: u32, high_a: u32, low_b: u32, high_b: u32) -> bool {
+    low_a.max(low_b) < high_a.min(high_b)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -577,8 +625,31 @@ pub enum StringError {
     /// `Q052`: that code belongs to a second semantic pass, and §L21 forbids a
     /// pass taking another's code even where the condition reads alike.
     NotABuffer { event: usize, name: String },
+    /// `Q077`: the **bound** of a sub-extent borrow (card
+    /// `CT07-SLICE-PERMISSIONS`) — `0 <= low <= high <= extent` is violated.
+    ///
+    /// This band's own shape-or-bound code, and deliberately **not** `Q071`:
+    /// that condition is a bound on a *view*, stated in the view's own
+    /// coordinates and decided against `len(s)`, whereas this one is a bound on
+    /// an owned **buffer**, decided against the extent its acquisition
+    /// declared. The two read alike from a distance and name different things,
+    /// which is the `Q076`-rather-than-`Q069` precedent (`STRING-SLICE-IO`) and
+    /// the `Q079`-rather-than-`Q070` precedent (`STRING-CONCAT`).
+    BorrowRange {
+        event: usize,
+        buffer: String,
+        low: i32,
+        high: i32,
+        extent: u32,
+    },
     /// `Q078`: the **borrow discipline** — a store into, or a release of, a
     /// buffer inside a live borrow's window.
+    ///
+    /// Since card `CT07-SLICE-PERMISSIONS` the store arm is **range-wise**: it
+    /// reports a write whose byte lies inside the loan's `[low, high)`, and a
+    /// write outside every live loan of that buffer is admitted. The release
+    /// arm is not range-wise and must not become one — a release ends the whole
+    /// storage, so it conflicts with every live loan however narrow.
     BorrowExclusion {
         event: usize,
         buffer: String,
@@ -587,6 +658,12 @@ pub enum StringError {
         /// What the offending statement did: `"write a byte of"` or
         /// `"release"`.
         action: &'static str,
+        /// The loan's footprint, and whether it covers the buffer's whole
+        /// extent. A whole-extent loan reports the message this route reported
+        /// before sub-extent lending existed, byte for byte.
+        low: u32,
+        high: u32,
+        whole: bool,
     },
     /// `Q078`: a refusal reported by the **inherited, unedited** ownership
     /// checker over this composed entry's buffer operations — a leak, a double
@@ -613,7 +690,7 @@ impl StringError {
             Self::CrossesBoundary { .. } => "Q072",
             Self::EffectNotDeclared { .. } => "Q073",
             Self::NotRenderableText { .. } => "Q076",
-            Self::Composition { .. } | Self::NotABuffer { .. } => "Q077",
+            Self::Composition { .. } | Self::NotABuffer { .. } | Self::BorrowRange { .. } => "Q077",
             Self::BorrowExclusion { .. } | Self::Custody { .. } => "Q078",
             Self::BufferNotUtf8 { .. } => "Q079",
         }
@@ -632,6 +709,7 @@ impl StringError {
             | Self::NotRenderableText { event, .. }
             | Self::Composition { event, .. }
             | Self::NotABuffer { event, .. }
+            | Self::BorrowRange { event, .. }
             | Self::BorrowExclusion { event, .. }
             | Self::Custody { event, .. }
             | Self::BufferNotUtf8 { event, .. } => *event,
@@ -703,19 +781,59 @@ impl fmt::Display for StringError {
                  views the bytes of a `std.buffer` acquisition, and a string view has nothing to \
                  borrow from"
             ),
+            Self::BorrowRange {
+                buffer,
+                low,
+                high,
+                extent,
+                ..
+            } => write!(
+                f,
+                "`borrow_utf8({buffer}, {low}, {high})` is not a range of `{buffer}`, whose \
+                 declared extent is {extent} bytes; `source.string.v1` lends a sub-extent only \
+                 when `0 <= low <= high <= extent`, and decides it at check time, so this is a \
+                 refusal and not a run-time trap"
+            ),
             Self::BorrowExclusion {
                 buffer,
                 view,
                 through,
                 action,
+                low,
+                high,
+                whole,
                 ..
-            } => write!(
-                f,
-                "this statement would {action} `{buffer}` while `{view}` borrows it; a \
-                 `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer it \
-                 addresses may not be written or released until the last statement that reads the \
-                 view or anything derived from it (statement {through} of this entry)"
-            ),
+            } => {
+                write!(
+                    f,
+                    "this statement would {action} `{buffer}` while `{view}` borrows it; a \
+                     `borrow_utf8` view is immutable UTF-8 for its whole lifetime, so the buffer \
+                     it addresses may not be written or released until the last statement that \
+                     reads the view or anything derived from it (statement {through} of this \
+                     entry)"
+                )?;
+                // A whole-extent loan reports exactly the sentence this route
+                // reported before sub-extent lending existed. A narrower one
+                // says which bytes it holds, because the useful next question
+                // for its reader is *which* write would have been admitted.
+                if !whole {
+                    match *action {
+                        "release" => write!(
+                            f,
+                            "; `{view}` borrows only bytes [{low}, {high}) of `{buffer}`, but a \
+                             release ends the whole storage, so it conflicts with every live \
+                             borrow however narrow"
+                        )?,
+                        _ => write!(
+                            f,
+                            "; `{view}` borrows bytes [{low}, {high}) of `{buffer}` and this \
+                             write is inside that range — a write outside every live borrow's \
+                             range is admitted"
+                        )?,
+                    }
+                }
+                Ok(())
+            }
             Self::Custody { error, .. } => write!(
                 f,
                 "the checked ownership discipline refuses this program: {error}"
@@ -1069,6 +1187,24 @@ fn admit_slice(
     Ok((source, derived, low, high))
 }
 
+/// The byte index a `source.buffer.v1` operand denotes, **if this route can
+/// decide it** (card `CT07-SLICE-PERMISSIONS`).
+///
+/// `None` means "not a non-negative check-time constant of this entry", and
+/// every caller must read it as *not provably disjoint from anything* rather
+/// than as an absence of conflict. It is deliberately a separate reader from
+/// [`Evaluation::operand`]: this one answers a question about a **write's
+/// footprint** and may not report a refusal, because the statement it is asked
+/// about has not been judged yet — `source.buffer.v1`'s own model judges it a
+/// few lines later and reports the operand refusal in its own words.
+fn buffer_constant(evaluation: &Evaluation<'_>, operand: &BufferOperand) -> Option<u32> {
+    let value = match operand {
+        BufferOperand::Literal(value) => *value,
+        BufferOperand::Scalar(name) => *evaluation.buffer.scalars.get(name)?,
+    };
+    u32::try_from(value).ok()
+}
+
 /// Where a [`TextOperand`] was written, which decides only **which code a name
 /// with no view refuses at** (card `STRING-CONCAT`).
 ///
@@ -1255,8 +1391,26 @@ pub fn check_string_program(
     let mut flushes = 0usize;
     let mut renderings = BTreeSet::new();
     let mut returned = false;
-    /// `(buffer, view, through)` for every borrow whose window has not closed.
-    type LiveBorrow = (String, String, usize);
+    /// One loan whose window has not closed: which buffer it holds, which view
+    /// names it, when the window ends — and, since card
+    /// `CT07-SLICE-PERMISSIONS`, **which bytes it covers**.
+    ///
+    /// The range is read out of the view's own `{offset, len}` rather than
+    /// carried beside it, which is what makes a slice of a loan a loan of
+    /// exactly the bytes that slice addresses: `admit_slice` already computes
+    /// `offset + low` and `high - low`, so there is no second arithmetic to
+    /// disagree with the first.
+    struct LiveBorrow {
+        buffer: String,
+        view: String,
+        through: usize,
+        low: u32,
+        high: u32,
+        /// Whether this loan covers the buffer's whole declared extent. Carried
+        /// so a whole-extent loan's refusal reads exactly as it read before
+        /// sub-extent lending existed.
+        whole: bool,
+    }
     let mut live: Vec<LiveBorrow> = Vec::new();
 
     if !errors.is_empty() {
@@ -1270,7 +1424,7 @@ pub fn check_string_program(
         // and `let s = borrow_utf8(b); b[0] = 65; print s;` refused — the same
         // two statements, in the order that decides whether the view the
         // program renders is the view the checker validated.
-        live.retain(|(_, _, through)| *through >= index);
+        live.retain(|loan| loan.through >= index);
         if returned {
             errors.push(StringError::Shape {
                 event: index,
@@ -1321,11 +1475,21 @@ pub fn check_string_program(
                 // window extends through every view derived from it, rather
                 // than by a separate reachability pass that could disagree.
                 if let StringStorage::Buffer(buffer) = &derived.storage {
-                    live.push((
-                        buffer.clone(),
-                        binding.clone(),
-                        last_use.get(binding).copied().unwrap_or(index),
-                    ));
+                    // Card `CT07-SLICE-PERMISSIONS`: the derived loan covers
+                    // exactly the bytes the derived view addresses, which are a
+                    // **subset** of its source's — so slicing a loan narrows a
+                    // permission the entry already holds rather than taking a
+                    // second one, and a write the source loan excluded stays
+                    // excluded only while the source loan is itself live.
+                    let extent = evaluation.buffer.extents.get(buffer).copied();
+                    live.push(LiveBorrow {
+                        buffer: buffer.clone(),
+                        view: binding.clone(),
+                        through: last_use.get(binding).copied().unwrap_or(index),
+                        low: derived.offset,
+                        high: derived.offset + derived.len,
+                        whole: derived.offset == 0 && Some(derived.len) == extent,
+                    });
                 }
                 evaluation.views.insert(binding.clone(), derived.clone());
                 views.push((binding.clone(), derived.clone()));
@@ -1343,7 +1507,11 @@ pub fn check_string_program(
             // obligations decided here — the bytes are validated as UTF-8 out
             // of the buffer's own write history, and the window in which the
             // buffer may not change opens.
-            StringEvent::Borrow { binding, buffer } => {
+            StringEvent::Borrow {
+                binding,
+                buffer,
+                range,
+            } => {
                 let Some(bytes) = evaluation.buffer.contents.get(buffer).cloned() else {
                     errors.push(StringError::NotABuffer {
                         event: index,
@@ -1352,7 +1520,59 @@ pub fn check_string_program(
                     register_refused_view(&mut evaluation, binding);
                     continue;
                 };
-                if let Err(error) = std::str::from_utf8(&bytes) {
+                // `as` is exact: an extent is at most `MAX_EXTENT`, and
+                // `contents` is exactly that many bytes.
+                let extent = bytes.len() as u32;
+                // Card `CT07-SLICE-PERMISSIONS`. The whole-extent form is
+                // `[0, extent)` — written here once, so that everything below
+                // this point is stated about a range and the pre-card spelling
+                // is that statement's degenerate case rather than a second path
+                // through the checker.
+                let (low, high) = match range {
+                    Option::None => (0u32, extent),
+                    Some((low, high)) => {
+                        // The bounds are resolved by the **same** operand rule a
+                        // slice bound is: an integer literal, or a name this
+                        // entry bound to one. A buffer or a string at a bound
+                        // position is `Q072`, exactly where it is at every other
+                        // scalar position on this route.
+                        let low = evaluation.operand(index, low);
+                        let high = evaluation.operand(index, high);
+                        let (low, high) = match (low, high) {
+                            (Ok(low), Ok(high)) => (low, high),
+                            (low, high) => {
+                                errors.extend(low.err());
+                                errors.extend(high.err());
+                                register_refused_view(&mut evaluation, binding);
+                                continue;
+                            }
+                        };
+                        let length =
+                            i32::try_from(extent).expect("an extent is bounded by MAX_EXTENT");
+                        if low < 0 || high < low || high > length {
+                            errors.push(StringError::BorrowRange {
+                                event: index,
+                                buffer: buffer.clone(),
+                                low,
+                                high,
+                                extent,
+                            });
+                            register_refused_view(&mut evaluation, binding);
+                            continue;
+                        }
+                        // Both bounds were checked before either was used as an
+                        // offset, so neither conversion below can be out of
+                        // range.
+                        (low as u32, high as u32)
+                    }
+                };
+                // The UTF-8 decision is made on **the bytes this loan views**
+                // and no others, which is what makes a range whose ends split a
+                // code point refuse: the bytes it would view are then
+                // ill-formed, and `Q079`'s condition is reached without being
+                // widened. For the whole-extent form this is the pre-card
+                // decision over the pre-card bytes, `at` included.
+                if let Err(error) = std::str::from_utf8(&bytes[low as usize..high as usize]) {
                     errors.push(StringError::BufferNotUtf8 {
                         event: index,
                         buffer: buffer.clone(),
@@ -1364,11 +1584,17 @@ pub fn check_string_program(
                 let through = last_use.get(binding).copied().unwrap_or(index);
                 let record = StringViewRecord {
                     storage: StringStorage::Buffer(buffer.clone()),
-                    offset: 0,
-                    // `as` is exact: an extent is at most `MAX_EXTENT`.
-                    len: bytes.len() as u32,
+                    offset: low,
+                    len: high - low,
                 };
-                live.push((buffer.clone(), binding.clone(), through));
+                live.push(LiveBorrow {
+                    buffer: buffer.clone(),
+                    view: binding.clone(),
+                    through,
+                    low,
+                    high,
+                    whole: low == 0 && high == extent,
+                });
                 evaluation.views.insert(binding.clone(), record.clone());
                 views.push((binding.clone(), record.clone()));
                 borrows.push(BorrowRecord {
@@ -1376,6 +1602,8 @@ pub fn check_string_program(
                     buffer: buffer.clone(),
                     binding: binding.clone(),
                     through,
+                    low,
+                    high,
                     view: record,
                 });
             }
@@ -1495,21 +1723,59 @@ pub fn check_string_program(
             // live borrow should say that rather than report a byte it never
             // wrote.
             StringEvent::Buffer(buffer_event) => {
-                let excluded = match buffer_event {
-                    BufferEvent::Store { name, .. } => Some((name, "write a byte of")),
-                    BufferEvent::Release { name } => Some((name, "release")),
+                // Card `CT07-SLICE-PERMISSIONS`: the decision is **range-wise**
+                // for a write and **whole-buffer** for a release, and the two
+                // are different because the operations are.
+                //
+                // A write touches one byte, so it conflicts with a loan exactly
+                // when that byte is inside the loan — `ranges_overlap` over
+                // `[i, i + 1)`. A write outside every live loan is admitted,
+                // and that admission is this card: two disjoint ranges of one
+                // buffer can now be held by two parties at once, one reading
+                // and one writing, with the disjointness *decided* rather than
+                // assumed.
+                //
+                // A release ends the storage every loan addresses, so it stays
+                // refused for any live loan however narrow. Making that arm
+                // range-wise would let a program free the bytes a live view
+                // reads, which is the one thing the window exists to prevent.
+                let conflict = match buffer_event {
+                    BufferEvent::Store {
+                        name, index: at, ..
+                    } => {
+                        // A byte this route cannot resolve to a constant is
+                        // **not provably disjoint** from anything, so it
+                        // conflicts with every live loan of the buffer. That is
+                        // the fail-closed direction, and it is reachable only
+                        // through a program `source.buffer.v1` refuses anyway —
+                        // kept because the exclusion runs first and a decision
+                        // that fell through here would be an admission.
+                        let written = buffer_constant(&evaluation, at);
+                        live.iter()
+                            .find(|loan| {
+                                loan.buffer == *name
+                                    && written.is_none_or(|byte| {
+                                        ranges_overlap(loan.low, loan.high, byte, byte + 1)
+                                    })
+                            })
+                            .map(|loan| (loan, "write a byte of"))
+                    }
+                    BufferEvent::Release { name } => live
+                        .iter()
+                        .find(|loan| loan.buffer == *name)
+                        .map(|loan| (loan, "release")),
                     _ => Option::None,
                 };
-                if let Some((name, action)) = excluded
-                    && let Some((buffer, view, through)) =
-                        live.iter().find(|(buffer, _, _)| buffer == name)
-                {
+                if let Some((loan, action)) = conflict {
                     errors.push(StringError::BorrowExclusion {
                         event: index,
-                        buffer: buffer.clone(),
-                        view: view.clone(),
-                        through: *through,
+                        buffer: loan.buffer.clone(),
+                        view: loan.view.clone(),
+                        through: loan.through,
                         action,
+                        low: loan.low,
+                        high: loan.high,
+                        whole: loan.whole,
                     });
                     continue;
                 }
