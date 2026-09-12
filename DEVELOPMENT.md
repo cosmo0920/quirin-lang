@@ -349,6 +349,59 @@ full suite.
 
 ## Increment records
 
+Wave 30, card `CT-PROOF-LEG-2` (2026-09-13): the **second proof-stage
+capability**, on the CT01 precedent — delivered without flipping the row: the
+manifest, the acceptance matrix, `acceptance.json` and `ct_corpus.rs` are
+untouched, proof still reads 1 of 42, and the exact proposed flip terms
+(manifest record, `PROOF_GATED_CASES` row, stage-evidence record with its
+`supersedes` target — card T00's frozen `coverage.json`, the record currently
+holding the case) are in the report's §7
+(`docs/reports/ct-proof-leg-2/README.md`). The case is **CT37** (*child
+returns allocation and finishes early; allocation remains live in completion
+capsule*), chosen by a measured survey of all 42 mapped cases: it is the one
+remaining accept-mode case whose **default reference run both derives into
+the F02 alphabet and itself exhibits its scenario** — CT03's run carries
+writes the alphabet refuses, CT12/CT14's default traces are event-for-event
+CT01's own, the failure-arm cases (CT13/CT15) and error-outcome cases
+(CT16/CT17/CT20) have no admitted rendering of their defining events, CT49's
+ObsReordering sibling has no case transcription, and CT50's address-reuse crux
+is invisible to the reference alphabet (each rejection stated with its ground
+in the report §1). The Lean side (`proof/QCore/Ct37CompletionCapsule.lean`,
+audit `AuditCt37CompletionCapsule`, Lean audits 118 → **119**) proves the
+scenario property on the case's own trace terms: a total decision procedure
+`dischargesCompletionCapsule` with meaning theorems for arbitrary traces (the
+child's whole program order is allocate-then-finish carrying the very
+generation its only allocation created; the moved generation is released
+exactly once, by the parent, after the join and after the allocation's own
+payload is read back out of the capsule), the kernel-checked acceptance of the
+new `referenceRun` transcription, the **symbolic closure**
+`relate referenceRun observed = 0 → dischargesCompletionCapsule observed =
+true`, six named refusal mutants and the transcription pin
+`mixTrace referenceRun = 17239871955803798867`. The genuinely new proof work
+over CT01: the scenario's defining fact — the child's completion **precedes
+the parent's join** — crosses actors, so the procedure carries a positional
+clause (`returnPrecedesTheJoin`) and the closure extracts `checkOrder`'s
+completion-before-join conjunct from the relation's own order admission,
+restating the sixteen-flag list definitionally (`rfl`) rather than editing
+`TaskTraceRelation`. The named host-unconditional runner
+(`compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape`,
+plus the six-mutant refusing twin) compiles CT37's own fixture through the
+real pipeline, checks the derived events against the transcription event for
+event, recomputes the digest with wrapping `u64` arithmetic, runs the same
+procedure and requires the production `relate` to admit the artifact's
+rendering. Boundaries stated, not implied: **no native refinement is
+claimed** (the emitted C stays covered only by the `native_task_scenarios`
+observations; the profile's "native refinement remains open" stands), and the
+Lean–Rust tie is F02's checked-digest transcription agreement, not a verified
+extraction. Axiom surface within `propext`/`Classical.choice`/`Quot.sound`.
+`git diff` over `crates/` and `compiler/src/` is empty, zero new codes, zero
+reserved words; gate at the card tip 4,447 workspace tests (baseline 4,445 +
+2; constraint 16's wall-clock row tripped under external load ~45 and was
+re-verified green in isolation at load ~32, both facts recorded), fmt/clippy
+clean, both probes exit 0, `Passed 119 Lean audits`, Python 192/193 with the
+standing lean-count tripwire disclosed for the integrator's regeneration.
+Evidence: `docs/reports/ct-proof-leg-2/README.md`.
+
 Wave 30, card `CT24-CLEANUP-PREEMPTED` (2026-09-13): the preempted-cleanup
 refusal CT24 names is now attributable to its own construct. The wave-26 CT
 lane measured CT24's distinguishing fixture unwritable — an early exit (`?` or

@@ -4,6 +4,7 @@ import QCore.CtReasons
 import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
 import QCore.Ct01OwnedTransfer
+import QCore.Ct37CompletionCapsule
 import QCore.ConcurrencyPrelude
 import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness
