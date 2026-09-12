@@ -45,7 +45,9 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
-use crate::std_buffer::{BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT};
+use crate::std_buffer::{
+    self, BufferCertificate, BufferEvent, BufferOperand, BufferProgram, MAX_EXTENT,
+};
 use crate::std_io::StdIoEvent;
 use crate::std_io_c_emit;
 
@@ -134,18 +136,17 @@ static int32_t qcore_bytes_load(const unsigned char *bytes, size_t extent, size_
 fn buffer_prelude(program: &BufferProgram) -> String {
     let mut prelude = String::from(BUFFER_PRELUDE_HEADER);
     prelude.push_str(BUFFER_PRELUDE_LIFETIME);
-    if program
-        .events
-        .iter()
-        .any(|event| matches!(event, BufferEvent::Store { .. }))
-    {
+    // The scan is over every event at **every depth**: a program whose only
+    // byte write is inside a `for` body still writes one, and emitting no
+    // writer for it would not compile.
+    if std_buffer::any_event(&program.events, |event| {
+        matches!(event, BufferEvent::Store { .. })
+    }) {
         prelude.push_str(BUFFER_PRELUDE_STORE);
     }
-    if program
-        .events
-        .iter()
-        .any(|event| matches!(event, BufferEvent::Load { .. }))
-    {
+    if std_buffer::any_event(&program.events, |event| {
+        matches!(event, BufferEvent::Load { .. })
+    }) {
         prelude.push_str(BUFFER_PRELUDE_LOAD);
     }
     prelude
@@ -178,16 +179,22 @@ pub fn interpret_buffer_program(
     program: &BufferProgram,
     certificate: &BufferCertificate,
 ) -> Result<Vec<String>, BufferEmissionRefusal> {
-    let produced = program
-        .events
-        .iter()
-        .filter(|event| {
-            matches!(
-                event,
-                BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
-            )
-        })
-        .count();
+    /// How many lines this sequence produces when it runs — a `for` body's
+    /// lines counted once per iteration, because that is how many times they
+    /// are written.
+    fn produced_lines(events: &[BufferEvent]) -> usize {
+        events
+            .iter()
+            .map(|event| match event {
+                BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. }) => 1,
+                BufferEvent::Repeat { count, body, .. } => {
+                    (*count as usize).saturating_mul(produced_lines(body))
+                }
+                _ => 0,
+            })
+            .sum()
+    }
+    let produced = produced_lines(&program.events);
     if produced != certificate.lines.len() {
         return Err(BufferEmissionRefusal::CertificateDisagrees);
     }
@@ -237,12 +244,55 @@ pub fn emit_buffer_c11(
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
     let mut extents: BTreeMap<String, u32> = BTreeMap::new();
 
-    for (index, event) in program.events.iter().enumerate() {
+    emit_events(
+        &program.events,
+        "    ",
+        0,
+        true,
+        &mut scalars,
+        &mut extents,
+        &mut source,
+    )?;
+
+    Ok(BufferCEmission {
+        source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
+    })
+}
+
+/// Emit one sequence of events at `indent`.
+///
+/// Recursive because of the bounded counted loop (card `LOOP-V1`), and the
+/// recursion is the whole of what emitting a loop costs: a `for` body is
+/// emitted **once**, inside a real C `for` statement, rather than once per
+/// iteration.
+///
+/// That is a deliberate asymmetry with the *checking* route, which runs the body
+/// once per iteration, and both halves are right for their own reason. The
+/// checker needs each iteration's exact values, because the certificate
+/// publishes them and the evidence is a byte comparison. The emitted C needs
+/// none of that: it needs to be the program a C reader would have written, and
+/// it needs to stay one program rather than growing linearly in a number that
+/// can reach [`qcore_core::source_loop::MAX_ITERATIONS`]. Emitting the loop also
+/// makes the native run a **check** of the unrolling rather than a restatement
+/// of it: the C computes the index itself, so an unrolled reference observation
+/// that disagreed with a rolled native one would show up as a byte difference.
+#[allow(clippy::too_many_arguments)]
+fn emit_events(
+    events: &[BufferEvent],
+    indent: &str,
+    attributed: usize,
+    top_level: bool,
+    scalars: &mut BTreeMap<String, String>,
+    extents: &mut BTreeMap<String, u32>,
+    source: &mut String,
+) -> Result<(), BufferEmissionRefusal> {
+    for (position, event) in events.iter().enumerate() {
+        let index = if top_level { position } else { attributed };
         match event {
             BufferEvent::Bind { binding, value } => {
                 let _ = writeln!(
                     source,
-                    "    int32_t {} = INT32_C({value});",
+                    "{indent}int32_t {} = INT32_C({value});",
                     scalar_name(binding)
                 );
                 scalars.insert(binding.clone(), scalar_name(binding));
@@ -251,7 +301,7 @@ pub fn emit_buffer_c11(
                 debug_assert!(*extent > 0 && *extent <= MAX_EXTENT);
                 let _ = writeln!(
                     source,
-                    "    unsigned char *{} = qcore_bytes_new((size_t) {extent}u);",
+                    "{indent}unsigned char *{} = qcore_bytes_new((size_t) {extent}u);",
                     buffer_name(name)
                 );
                 extents.insert(name.clone(), *extent);
@@ -264,11 +314,11 @@ pub fn emit_buffer_c11(
                 let Some(extent) = extents.get(name).copied() else {
                     return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
                 };
-                let at = operand_expression(&scalars, index, at)?;
-                let value = operand_expression(&scalars, index, value)?;
+                let at = operand_expression(scalars, index, at)?;
+                let value = operand_expression(scalars, index, value)?;
                 let _ = writeln!(
                     source,
-                    "    qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
+                    "{indent}qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
                     buffer_name(name)
                 );
             }
@@ -280,10 +330,11 @@ pub fn emit_buffer_c11(
                 let Some(extent) = extents.get(name).copied() else {
                     return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
                 };
-                let at = operand_expression(&scalars, index, at)?;
+                let at = operand_expression(scalars, index, at)?;
                 let _ = writeln!(
                     source,
-                    "    int32_t {} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) ({at}));",
+                    "{indent}int32_t {} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) \
+                     ({at}));",
                     scalar_name(binding),
                     buffer_name(name)
                 );
@@ -300,13 +351,39 @@ pub fn emit_buffer_c11(
                 // a `calloc`ed block carries no queryable size in portable C.
                 let _ = writeln!(
                     source,
-                    "    int32_t {} = INT32_C({extent});",
+                    "{indent}int32_t {} = INT32_C({extent});",
                     scalar_name(binding)
                 );
                 scalars.insert(binding.clone(), scalar_name(binding));
             }
             BufferEvent::Release { name } => {
-                let _ = writeln!(source, "    qcore_bytes_drop({});", buffer_name(name));
+                let _ = writeln!(source, "{indent}qcore_bytes_drop({});", buffer_name(name));
+            }
+            BufferEvent::Repeat {
+                variable,
+                count,
+                body,
+            } => {
+                // A real C `for`. The index is a C variable the emitted program
+                // computes itself, so every index expression inside the body is
+                // written in terms of it rather than of a number the checker
+                // substituted.
+                let name = scalar_name(variable);
+                let _ = writeln!(
+                    source,
+                    "{indent}for (int32_t {name} = INT32_C(0); {name} < INT32_C({count}); \
+                     {name} += INT32_C(1)) {{"
+                );
+                let outer_scalars: Vec<String> = scalars.keys().cloned().collect();
+                let outer_extents: Vec<String> = extents.keys().cloned().collect();
+                scalars.insert(variable.clone(), name);
+                let inner = format!("{indent}    ");
+                emit_events(body, &inner, index, false, scalars, extents, source)?;
+                // The body's declarations do not outlive the C block either, so
+                // the emitter's environment is scoped exactly as the model's is.
+                scalars.retain(|key, _| outer_scalars.contains(key));
+                extents.retain(|key, _| outer_extents.contains(key));
+                let _ = writeln!(source, "{indent}}}");
             }
             BufferEvent::Line(line) => {
                 // The rendering itself — the conversion, the level tag, the
@@ -314,9 +391,9 @@ pub fn emit_buffer_c11(
                 // emitter and nowhere else, so this route renders one way with
                 // it rather than in a way that happens to agree.
                 let identities = BTreeMap::new();
-                match std_io_c_emit::event_statement(line, &scalars, &identities) {
+                match std_io_c_emit::event_statement(line, scalars, &identities) {
                     Ok(Some(statement)) => {
-                        let _ = writeln!(source, "    {statement}");
+                        let _ = writeln!(source, "{indent}{statement}");
                     }
                     Ok(None) => {}
                     Err(name) => {
@@ -327,10 +404,7 @@ pub fn emit_buffer_c11(
             BufferEvent::Return => {}
         }
     }
-
-    Ok(BufferCEmission {
-        source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
-    })
+    Ok(())
 }
 
 /// The file-scope text `source.buffer.v1` contributes to a program it is part
