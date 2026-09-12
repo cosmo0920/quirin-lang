@@ -88,7 +88,12 @@ requirements that are part of the gate.
   and stay open with exact test-name discharge conditions
   (`docs/reports/windows-native-sockets-harness/README.md`), and four tests keep
   `runs_sanitized` in their names while their Windows arm claims no sanitizer
-  coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
+  coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`). Wave 26 adds
+  `SOCKET-INET-WINDOWS-RUN` on the same footing: the two declared-address
+  examples' MSVC rows are written and wired through
+  `tests/support/windows_c.rs::run_msvc`, and the discharge condition is those
+  test names passing on a Windows host — no such run has happened, so no claim
+  is made (`docs/reports/socket-inet-addresses/README.md`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
   Linux-only, so leak detection stays a Linux observation), and Apple Clang
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.
@@ -99,7 +104,9 @@ requirements that are part of the gate.
   ran green on the user's macOS environment — the exact run that residual
   named as its discharge. Scope: Apple ASan/UBSan and byte comparison; no
   LSan claim. `SOCKET-V1-APPLE-RUN` remains open until a macOS run at or
-  after the socket card (`47712702`) covers `std_socket`'s native tests.
+  after the socket card (`47712702`) covers `std_socket`'s native tests, and
+  wave 26 adds `SOCKET-INET-APPLE-RUN` beside it for the declared-address
+  examples (`docs/reports/socket-inet-addresses/README.md`).
 - **Linux:** the sanitizer, mapping (`MAP_FIXED_NOREPLACE`) and OS-endpoint
   observations are Linux-only by scope, not by omission.
 
