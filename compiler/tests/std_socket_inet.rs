@@ -769,7 +769,7 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
         let borrowed: Vec<&Token> = tokens.iter().collect();
         for start in 0..borrowed.len() {
             if address_host_span(&borrowed[start..]).is_some() {
-                hits.push(path.display().to_string());
+                hits.push(path.to_owned());
             }
         }
     }
@@ -778,12 +778,8 @@ fn this_card_reserves_no_word_and_its_address_rule_collides_with_nothing() {
     assert_eq!(
         hits,
         vec![
-            root.join("examples/sockets/inet_v4_echo.qcore")
-                .display()
-                .to_string(),
-            root.join("examples/sockets/inet_v6_echo.qcore")
-                .display()
-                .to_string(),
+            root.join("examples/sockets/inet_v4_echo.qcore"),
+            root.join("examples/sockets/inet_v6_echo.qcore"),
         ],
         "the address host rule must claim a span only inside this card's own examples"
     );

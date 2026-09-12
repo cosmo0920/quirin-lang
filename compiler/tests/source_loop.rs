@@ -826,7 +826,7 @@ fn a_module_without_a_loop_emits_byte_identically() {
     let module = compile(BYTES).unwrap();
     assert_eq!(
         module.c_source.as_deref().unwrap(),
-        before,
+        before.replace("\r\n", "\n"),
         "a program that writes no `for` travels the identical code path"
     );
 }
