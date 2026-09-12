@@ -116,6 +116,7 @@ EVIDENCE_FILES = [
     "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
     "docs/reports/ct22-wire/ct_stage_evidence.json",
     "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
+    "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

@@ -182,10 +182,18 @@ const SEQUENTIAL_SANITIZED_CASES: &[&str] = &["CT07", "CT09"];
 /// reference run and its admitted renderings; native execution stays covered
 /// by observation only, and a grown proof numerator is evidence about the
 /// case's artifact, not language conformance.
-const PROOF_GATED_CASES: &[(&str, &str)] = &[(
-    "CT01",
-    "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
-)];
+const PROOF_GATED_CASES: &[(&str, &str)] = &[
+    (
+        "CT01",
+        "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
+    ),
+    // Card `CT-PROOF-LEG-2`: CT37's completion-capsule procedure
+    // (QCore.Ct37CompletionCapsule, AuditCt37CompletionCapsule.lean).
+    (
+        "CT37",
+        "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
+    ),
+];
 /// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
 /// published credit quantities wholesale because an epoch that merely checks
 /// has measured nothing. CT23 (cards `CT23-CREDIT-ERROR-PATH` and
@@ -377,6 +385,8 @@ const RUNNER_REGISTRY: &[&str] = &[
     // Lean-proved decision procedure (host-unconditional; the theorems
     // themselves are checked by the standing Lean audit gate).
     "compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape",
+    // Card `CT-PROOF-LEG-2`: CT37's proof-stage runner, the same shape.
+    "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -3173,7 +3183,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 14] = [
+const EVIDENCE_FILES: [&str; 15] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3188,6 +3198,7 @@ const EVIDENCE_FILES: [&str; 14] = [
     "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
     "docs/reports/ct22-wire/ct_stage_evidence.json",
     "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
+    "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

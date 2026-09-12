@@ -3233,7 +3233,10 @@
           "status": "not_applicable"
         },
         "proof": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
+          "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+          "observations": 1
         }
       },
       "evidence_target": "linux"

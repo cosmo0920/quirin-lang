@@ -1,0 +1,104 @@
+{
+ "schema_version": 1,
+ "card": "CT-PROOF-LEG-2",
+ "generated": "2026-09-13",
+ "report": "docs/reports/ct-proof-leg-2/README.md",
+ "purpose": "The integrator flip of CT37 proof stage: the manifest second executed proof row, superseding card T00 archived stage evidence for CT37 without editing that frozen file (constraint 21). Every other stage row is carried from T00 record unchanged; only proof moves, on the named workspace test the capability card landed.",
+ "derivation_rule": "A stage is executed only where a named workspace test runs it on the case own artifact. compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape lowers CT37 fixture through the real pipeline, asserts the artifact equals the Lean transcription event for event, recomputes the proved digest and runs the same total decision procedure the theorems cover, with the F02 relation required to admit the rendering. The theorem covers the checked artifact reference run and every rendering the relation admits; native execution stays covered by observation only, and a grown proof numerator is evidence about this case artifact, not language conformance (constraint 23).",
+ "mapped_case_stage_matrix": {
+  "CT37": {
+   "supersedes": "docs/reports/remaining-t00/coverage.json",
+   "harness_verdict_mode": "native_task_scenarios",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "parse_source_program via compile_files"
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "elaborate_source via compile_files"
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks::lower_source_tasks; every mapped case is a `concurrency checked;` task module"
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::task_execution::check_task_module (Q600). CT02/CT19 are REJECTED here, not by the type checker"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable",
+     "note": "compile_task_source never calls synthesize_semantics/check_whole_program (crates/qcore-verification/src/driver.rs:1100-1212). The sequential resource CFG is not run on this fixture."
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable",
+     "note": "compile_task_source returns reference_observation: None (driver.rs:1211). The harness asserts this for CT01/CT12/CT15."
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_execution::execute_task_module[_with_worker_allocations]; root outcome, task count, join flags and owned results pinned"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "qcore_core::task_c_emit::emit_task_c11 via module.c_source"
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_task_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "host_gate": [
+      "linux"
+     ],
+     "observations": 1,
+     "note": "clang -std=c11 -pthread -Wall -Wextra -Werror + run; stdout compared to render_task_observation(reference), stderr compared to a pinned transcript. Verified load-bearing: QCORE_CLANG=/nonexistent fails the harness."
+    },
+    "native_sanitized": {
+     "status": "recorded_not_gated",
+     "record": "docs/reports/w6-completed-child-custody/README.md",
+     "note": "ASan/UBSan/LSan transcript in a report; no workspace test compiles this fixture with -fsanitize. The CT harness uses no sanitizer flags."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable",
+     "note": "CT is the QCore-source corpus; no C-twin stage exists in the manifest schema"
+    },
+    "proof": {
+     "status": "executed",
+     "executor": "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
+     "artifact": "compiler/tests/fixtures/ct/CT37/case.qcore",
+     "observations": 1,
+     "note": "the artifact checked against the Lean-proved total decision procedure dischargesCompletionCapsule (QCore.Ct37CompletionCapsule, AuditCt37CompletionCapsule.lean); reference-run discharge and admitted renderings covered, completion strictly before the join in every admitted rendering, native execution deliberately not covered (observation only)"
+    },
+    "aux:sequential_control": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::ct37_retains_sequential_transferred_payload_control",
+     "note": "separate fixture fixtures/task_worker_allocations/sequential_completion_payload.qcore; exercises the SEQUENTIAL CFG reference execution, not CT37/case.qcore"
+    }
+   }
+  }
+ }
+}
