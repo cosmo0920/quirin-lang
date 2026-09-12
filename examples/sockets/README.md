@@ -63,6 +63,9 @@ Both programs write the same two lines — the byte the echo returned, rendered
 twice. These blocks are read out of this file by
 `compiler/tests/std_socket.rs::the_readme_transcript_is_the_real_one` and
 compared with what the pipeline really produces, so they cannot drift.
+`compiler/tests/examples_suite.rs` reads the same two blocks under the same
+markers and holds the table above to the directory — every program indexed,
+every row a file that exists — without building either program a second time.
 
 <!-- transcript: tcp_echo -->
 ```text
@@ -110,8 +113,13 @@ compared with what the pipeline really produces, so they cannot drift.
   constants (`SOCKET-STRING-PAYLOAD`).
 * No `std.buffer` payload — a module that both buffers and sockets stays with the
   buffer route and keeps that route's refusal (`SOCKET-BUFFER-PAYLOAD`).
-* No composition with `source.event.v1` — registering a socket with the reactor
-  is `SOCKET-EVENT-COMPOSE`.
+* No registration with `source.event.v1` **in these two programs**. That
+  composition is no longer a gap: card `SOCKET-EVENT-COMPOSE` landed it, a
+  module that both dispatches and sockets now reaches *this* route, which models
+  both, and the published example is
+  [`../events/socket_server.qcore`](../events/socket_server.qcore) — indexed on
+  the events page because that is where a reader comes for "how do I wait on
+  readiness".
 * No non-blocking mode, no socket options, no shutdown, no `SO_REUSEADDR`, no
   IPv6, and no concurrency: `source.socket.v1` is single-threaded and a module
   that sockets and spawns keeps its `Q600`.

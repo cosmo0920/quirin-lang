@@ -156,6 +156,87 @@ fn the_contracted_examples_are_refused_by_the_driver_rather_than_admitted() {
     }
 }
 
+/// Every `quirin` command line any family page publishes names a file that
+/// exists, and every published `quirin check` really checks (card
+/// `EXAMPLES-SUITE-WIRE`, wave 26).
+///
+/// The pages added after wave 21 print driver command lines of their own —
+/// `examples/sockets/README.md` and `examples/http/README.md` each open their
+/// "Building and running" section with one — and until now nothing ran them. A
+/// page that tells a reader to type something is worth exactly as much as the
+/// last time somebody typed it.
+///
+/// The pages are read off disk rather than `include_str!`'d one by one, for the
+/// same reason the suite's directory scan exists: a list cannot notice a page
+/// nobody added it to.
+#[test]
+fn every_published_driver_command_line_names_a_real_file_and_works() {
+    let root = examples().parent().unwrap().to_owned();
+    let mut checked = 0;
+    let mut emitted = 0;
+    let mut pages: Vec<PathBuf> = std::fs::read_dir(examples())
+        .expect("examples/ is readable")
+        .map(|entry| entry.expect("a readable entry").path())
+        .filter(|path| path.is_dir())
+        .map(|path| path.join("README.md"))
+        .collect();
+    pages.sort();
+    pages.push(examples().join("README.md"));
+
+    for page in pages {
+        let text = std::fs::read_to_string(&page)
+            .unwrap_or_else(|_| panic!("{} is readable", page.display()));
+        for line in text.lines().map(str::trim) {
+            let Some(rest) = line.strip_prefix("quirin ") else {
+                continue;
+            };
+            let mut words = rest.split_whitespace();
+            let (Some(verb), Some(argument)) = (words.next(), words.next()) else {
+                continue;
+            };
+            if !argument.ends_with(".qcore") {
+                continue;
+            }
+            let source = root.join(argument);
+            assert!(
+                source.exists(),
+                "{} publishes `{line}`, whose input does not exist",
+                page.display()
+            );
+            match verb {
+                "check" => {
+                    let output = check(&[source]);
+                    assert!(
+                        output.status.success(),
+                        "{} publishes `{line}`, which fails: {}",
+                        page.display(),
+                        String::from_utf8_lossy(&output.stderr)
+                    );
+                    checked += 1;
+                }
+                "emit" => emitted += 1,
+                _ => {}
+            }
+        }
+    }
+    // Non-vacuous, and the counts are the measurement rather than a guard: six
+    // pages publish a `quirin check` line and six publish a `quirin emit` line —
+    // stdio, pipes, branching, unsafe-linkage, sockets and http. All six checks
+    // pass; none of the six was executed by anything before this test. A page
+    // that adds or drops a command line moves these numbers, which is the moment
+    // to look at it.
+    assert_eq!(checked, 6, "published `quirin check` command lines");
+    assert_eq!(emitted, 6, "published `quirin emit` command lines");
+    // The one command line this scan deliberately does not run is
+    // `unsafe-linkage`'s `--native-library` form, whose second word is a flag:
+    // the two tests above it execute that one and compare its whole stdout.
+    assert!(
+        std::fs::read_to_string(examples().join("unsafe-linkage/README.md"))
+            .unwrap()
+            .contains("quirin check --native-library")
+    );
+}
+
 /// The emit half of the published command lines, for one example, end to end.
 #[test]
 fn the_published_emit_command_produces_a_translation_unit() {

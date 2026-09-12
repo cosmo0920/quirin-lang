@@ -9,8 +9,14 @@
 //! README publishes is read out of the file and compared with a real run, so
 //! the documentation cannot drift silently in either direction.
 //!
-//! Five families are covered here — standard IO, pipes, branching, declared
-//! extern calls and unsafe linkage. For each example this file establishes:
+//! Five families were covered when this file was written — standard IO, pipes,
+//! branching, declared extern calls and unsafe linkage. Card
+//! `EXAMPLES-SUITE-WIRE` (wave 26) added section 6, which brings **every**
+//! published family under the same page-level standard and publishes one new
+//! family, `examples/loops`. Read that section's own note for what it adds and,
+//! as importantly, what it deliberately does not build a second time.
+//!
+//! For each example in the first five families this file establishes:
 //!
 //! 1. it **checks**, and takes the route its README says it takes;
 //! 2. its emitted C compiles under `-Wall -Wextra -Werror -pedantic` and runs
@@ -256,7 +262,14 @@ fn projections(module: &CompiledModule) -> (Vec<String>, Vec<String>) {
 ///
 /// Extracting rather than restating is the whole point: an edit to either the
 /// page or the program that the other does not follow fails a test.
+///
+/// Newline-agnostic (card `WINDOWS-NATIVE-SOCKETS-HARNESS`'s recorded
+/// precedent, applied here by `EXAMPLES-SUITE-WIRE`): a checkout may hold these
+/// files with CRLF endings, and neither the marker's own line terminator nor a
+/// line's `\r` is part of the published block. On a Unix checkout the
+/// normalisation is the identity, so nothing this file already pinned moves.
 fn block(readme: &str, marker: &str) -> String {
+    let readme = readme.replace("\r\n", "\n");
     let tail = readme
         .split_once(&format!("<!-- {marker} -->\n"))
         .unwrap_or_else(|| panic!("the README no longer carries the marker `{marker}`"))
@@ -1188,4 +1201,546 @@ fn a_manifest_that_does_not_load_refuses_the_module() {
     )
     .expect("the published manifest loads");
     assert_eq!(sharpened.declared_assumptions().len(), 5);
+}
+
+// ---------------------------------------------------------------------------
+// 6. The newer families — strings, sockets, http, events, loops
+//    (card `EXAMPLES-SUITE-WIRE`, wave 26)
+// ---------------------------------------------------------------------------
+//
+// Three follow-ons said the same thing: `examples/strings`, `examples/http` and
+// `examples/sockets` are each verified by their own card's test file rather than
+// by this one, whose list is explicit rather than a directory scan. That is not
+// a gap in what those files check — each already compiles its programs through
+// the real pipeline, builds the emitted C under `-Werror`-class flags, runs it
+// under the sanitizers and byte-compares both streams. The gap is what this
+// suite adds *beyond* a per-card test:
+//
+//   1. **A directory scan.** Every `.qcore` program in a family directory is
+//      indexed on that family's page, and every `.qcore` a page names exists.
+//      An explicit list cannot notice a file nobody added it to — which is
+//      exactly how `examples/sockets/` came to be published without a row in
+//      `examples/README.md` until the HTTP card added one.
+//   2. **Marked transcript extraction, in one place.** Every published
+//      transcript is read out of its page under the same
+//      `<!-- transcript: NAME stream -->` convention and compared with the
+//      pipeline's own reference execution.
+//   3. **A route assertion per program**, so a page that says which route its
+//      program takes is checked rather than believed.
+//
+// **The sanitized native runs are not duplicated.** Where a card's test file
+// already builds and runs a program, this suite compares the *page* with the
+// *model* and stops there; the card's file compares the model with the machine.
+// Together they close the triangle — page = model = native run — and each build
+// happens once. `examples/loops/` is the exception, because it is new here and
+// no other file owns it: this suite performs its native run, exactly as it does
+// for the five wave-21 families. `examples/threads` remains
+// `thread_examples.rs`'s in every respect, as it was in wave 21.
+
+const STRINGS_README: &str = include_str!("../../examples/strings/README.md");
+const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
+const HTTP_README: &str = include_str!("../../examples/http/README.md");
+const EVENTS_README: &str = include_str!("../../examples/events/README.md");
+const LOOPS_README: &str = include_str!("../../examples/loops/README.md");
+const INDEX_README: &str = include_str!("../../examples/README.md");
+
+const STATUS_LINE: &str = include_str!("../../examples/strings/status_line.qcore");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qcore");
+const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
+const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
+const EXCHANGE: &str = include_str!("../../examples/http/exchange.qcore");
+const RAW_REQUEST: &str = include_str!("../../examples/http/raw_request.qcore");
+const SELF_PIPE: &str = include_str!("../../examples/events/self_pipe.qcore");
+const WAKE_PAYLOAD: &str = include_str!("../../examples/events/wake_payload.qcore");
+const WRITE_INTEREST: &str = include_str!("../../examples/events/write_interest.qcore");
+const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qcore");
+const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qcore");
+const CYCLE12: &str = include_str!("../../examples/cycle12.qcore");
+
+/// `examples/`, on disk. The scan below is the point: a constant list cannot
+/// notice a program nobody added to it.
+fn examples_root() -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .expect("the crate directory has a parent")
+        .join("examples")
+}
+
+/// The family directories, sorted — every directory directly under `examples/`.
+fn family_directories() -> Vec<String> {
+    let mut families: Vec<String> = std::fs::read_dir(examples_root())
+        .expect("examples/ is readable")
+        .map(|entry| entry.expect("a readable entry"))
+        .filter(|entry| entry.file_type().expect("a file type").is_dir())
+        .map(|entry| entry.file_name().to_string_lossy().into_owned())
+        .collect();
+    families.sort();
+    families
+}
+
+/// The `.qcore` programs one family directory publishes, sorted. Not recursive:
+/// `examples/extern/contracts/` holds a declared contract module, which is a
+/// support file rather than a published program, and its page says so.
+fn published_programs(family: &str) -> Vec<String> {
+    let mut programs: Vec<String> = std::fs::read_dir(examples_root().join(family))
+        .expect("a family directory is readable")
+        .map(|entry| entry.expect("a readable entry"))
+        .filter(|entry| entry.file_type().expect("a file type").is_file())
+        .map(|entry| entry.file_name().to_string_lossy().into_owned())
+        .filter(|name| name.ends_with(".qcore"))
+        .collect();
+    programs.sort();
+    programs
+}
+
+/// Every markdown link target in `page` that ends with `suffix`.
+fn link_targets(page: &str, suffix: &str) -> Vec<String> {
+    let mut targets = Vec::new();
+    let mut rest = page;
+    while let Some((_, tail)) = rest.split_once("](") {
+        match tail.split_once(')') {
+            Some((target, after)) => {
+                if target.ends_with(suffix) && !target.contains(char::is_whitespace) {
+                    targets.push(target.to_owned());
+                }
+                rest = after;
+            }
+            None => break,
+        }
+    }
+    targets
+}
+
+/// Every published program is indexed on its own family page, and every
+/// `.qcore` a family page links exists.
+///
+/// This is the check an explicit list cannot make. `examples/sockets/` was
+/// published with no row in `examples/README.md` at all until the HTTP card
+/// noticed and added two; nothing failed in the meantime.
+#[test]
+fn every_published_program_is_indexed_and_every_indexed_program_exists() {
+    let families = family_directories();
+    assert!(
+        families.len() >= 11,
+        "the scan found no families: {families:?}"
+    );
+    for family in &families {
+        let page_path = examples_root().join(family).join("README.md");
+        let page = std::fs::read_to_string(&page_path)
+            .unwrap_or_else(|_| panic!("examples/{family}/ publishes no README.md"));
+        let programs = published_programs(family);
+        assert!(
+            !programs.is_empty(),
+            "examples/{family}/ publishes no program"
+        );
+        for program in &programs {
+            assert!(
+                link_targets(&page, ".qcore")
+                    .iter()
+                    .any(|target| target == program || target.ends_with(&format!("/{program}"))),
+                "examples/{family}/{program} is published but its page does not link it"
+            );
+        }
+        for target in link_targets(&page, ".qcore") {
+            let resolved = examples_root().join(family).join(&target);
+            assert!(
+                resolved.exists(),
+                "examples/{family}/README.md links `{target}`, which does not exist"
+            );
+        }
+    }
+}
+
+/// And the top-level index names every family directory and only real ones.
+#[test]
+fn the_examples_index_names_every_family_and_only_real_ones() {
+    for family in family_directories() {
+        assert!(
+            INDEX_README.contains(&format!("]({family}/)")),
+            "examples/README.md does not index the `{family}/` family"
+        );
+    }
+    for target in link_targets(INDEX_README, "/") {
+        assert!(
+            examples_root().join(target.trim_end_matches('/')).is_dir(),
+            "examples/README.md links `{target}`, which is not a directory"
+        );
+    }
+    // Non-vacuous in the other direction: the index links files too, and each
+    // of those exists as well.
+    for target in link_targets(INDEX_README, ".qcore") {
+        assert!(
+            examples_root().join(&target).exists(),
+            "examples/README.md links `{target}`, which does not exist"
+        );
+    }
+}
+
+/// Each newer family's programs take the route its page names.
+#[test]
+fn the_newer_families_take_the_routes_their_pages_say_they_take() {
+    for (name, source, profile) in [
+        (
+            "strings/status_line.qcore",
+            STATUS_LINE,
+            SourceExecutionProfile::StandardStringV1,
+        ),
+        (
+            "strings/computed_length.qcore",
+            COMPUTED_LENGTH,
+            SourceExecutionProfile::StandardStringV1,
+        ),
+        (
+            "sockets/tcp_echo.qcore",
+            TCP_ECHO,
+            SourceExecutionProfile::StandardSocketV1,
+        ),
+        (
+            "sockets/udp_echo.qcore",
+            UDP_ECHO,
+            SourceExecutionProfile::StandardSocketV1,
+        ),
+        (
+            "http/exchange.qcore",
+            EXCHANGE,
+            SourceExecutionProfile::StandardHttpV1,
+        ),
+        // The page's own contrast: the hand-written twin is **not** on the HTTP
+        // route, because nothing in it declares a message.
+        (
+            "http/raw_request.qcore",
+            RAW_REQUEST,
+            SourceExecutionProfile::StandardSocketV1,
+        ),
+        (
+            "events/self_pipe.qcore",
+            SELF_PIPE,
+            SourceExecutionProfile::EventV1,
+        ),
+        (
+            "events/wake_payload.qcore",
+            WAKE_PAYLOAD,
+            SourceExecutionProfile::EventV1,
+        ),
+        (
+            "events/write_interest.qcore",
+            WRITE_INTEREST,
+            SourceExecutionProfile::EventV1,
+        ),
+        // And the composed one is the socket route's, which models both halves —
+        // the events page says exactly that.
+        (
+            "events/socket_server.qcore",
+            SOCKET_SERVER,
+            SourceExecutionProfile::StandardSocketV1,
+        ),
+        (
+            "loops/buffer_copy.qcore",
+            BUFFER_COPY,
+            SourceExecutionProfile::StandardBufferV1,
+        ),
+        (
+            "cycle12.qcore",
+            CYCLE12,
+            SourceExecutionProfile::SequentialCleanupV1,
+        ),
+    ] {
+        let module = plain(name, source);
+        assert_eq!(module.execution_profile, profile, "{name}");
+    }
+}
+
+/// The one published program that deliberately emits nothing, and the index
+/// sentence that says so.
+#[test]
+fn the_check_only_example_is_the_only_one_that_emits_no_c() {
+    let write_interest = plain("events/write_interest.qcore", WRITE_INTEREST);
+    assert!(
+        write_interest.c_source.is_none(),
+        "the event route's write arm is checked and not executed"
+    );
+    assert!(write_interest.extern_observation.is_none());
+    assert!(INDEX_README.contains("events/write_interest.qcore"));
+
+    // Every other program in every family this file names does emit C. The
+    // threads family is `thread_examples.rs`'s and is not read here.
+    for (name, source) in [
+        ("strings/status_line.qcore", STATUS_LINE),
+        ("strings/computed_length.qcore", COMPUTED_LENGTH),
+        ("sockets/tcp_echo.qcore", TCP_ECHO),
+        ("sockets/udp_echo.qcore", UDP_ECHO),
+        ("http/exchange.qcore", EXCHANGE),
+        ("http/raw_request.qcore", RAW_REQUEST),
+        ("events/self_pipe.qcore", SELF_PIPE),
+        ("events/wake_payload.qcore", WAKE_PAYLOAD),
+        ("events/socket_server.qcore", SOCKET_SERVER),
+        ("loops/buffer_copy.qcore", BUFFER_COPY),
+        ("cycle12.qcore", CYCLE12),
+    ] {
+        assert!(
+            plain(name, source).c_source.is_some(),
+            "examples/{name} emits no C"
+        );
+    }
+}
+
+/// Every transcript the newer pages publish is the projection its program's
+/// reference execution computes, read out of the page under the shared marker
+/// convention.
+///
+/// No program is built here. The card test files listed on each page perform
+/// the sanitized native run and compare it with this same reference execution;
+/// this test compares the *page* with it. Page = model = machine, with each
+/// build performed once.
+#[test]
+fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
+    for (name, source, readme, out_marker, err_marker) in [
+        (
+            "strings/status_line.qcore",
+            STATUS_LINE,
+            STRINGS_README,
+            "transcript: status_line stdout",
+            None,
+        ),
+        (
+            "sockets/tcp_echo.qcore",
+            TCP_ECHO,
+            SOCKETS_README,
+            "transcript: tcp_echo",
+            None,
+        ),
+        (
+            "sockets/udp_echo.qcore",
+            UDP_ECHO,
+            SOCKETS_README,
+            "transcript: udp_echo",
+            None,
+        ),
+        (
+            "http/exchange.qcore",
+            EXCHANGE,
+            HTTP_README,
+            "transcript: exchange",
+            None,
+        ),
+        (
+            "http/raw_request.qcore",
+            RAW_REQUEST,
+            HTTP_README,
+            "transcript: raw_request",
+            None,
+        ),
+        (
+            "events/self_pipe.qcore",
+            SELF_PIPE,
+            EVENTS_README,
+            "transcript: self_pipe stdout",
+            None,
+        ),
+        (
+            "events/wake_payload.qcore",
+            WAKE_PAYLOAD,
+            EVENTS_README,
+            "transcript: wake_payload stdout",
+            Some("transcript: wake_payload stderr"),
+        ),
+        (
+            "events/socket_server.qcore",
+            SOCKET_SERVER,
+            EVENTS_README,
+            "transcript: socket_server stdout",
+            None,
+        ),
+        (
+            "loops/buffer_copy.qcore",
+            BUFFER_COPY,
+            LOOPS_README,
+            "transcript: buffer_copy stdout",
+            Some("transcript: buffer_copy stderr"),
+        ),
+    ] {
+        let module = plain(name, source);
+        let (out, err) = projections(&module);
+        assert!(!out.is_empty(), "{name}: nothing to compare");
+        assert_eq!(out, documented(readme, out_marker), "{name}: stdout");
+        match err_marker {
+            Some(marker) => assert_eq!(err, documented(readme, marker), "{name}: stderr"),
+            None => assert!(
+                err.is_empty(),
+                "{name}: the page publishes no stderr transcript, so there must be none"
+            ),
+        }
+    }
+
+    // `computed_length.qcore` is the one page that shows its transcript with the
+    // carriage returns removed, and says so in the sentence above the block: the
+    // program writes a CRLF-framed head, and a `\r` is not something a reader
+    // can see. Compared with the `\r`s stripped from the *projection* rather
+    // than with the page's claim weakened — and the presence of those `\r`s is
+    // asserted right here so the strip cannot hide their loss.
+    let computed = plain("strings/computed_length.qcore", COMPUTED_LENGTH);
+    let (out, err) = projections(&computed);
+    assert!(err.is_empty());
+    assert!(
+        out.iter().filter(|line| line.ends_with('\r')).count() == 4,
+        "the head this program writes is CRLF-framed: {out:?}"
+    );
+    let shown: Vec<String> = out
+        .iter()
+        .map(|line| line.trim_end_matches('\r').to_owned())
+        .collect();
+    assert_eq!(
+        shown,
+        documented(STRINGS_README, "transcript: computed_length stdout")
+    );
+}
+
+/// The extraction above would notice a truncated or misaddressed block.
+#[test]
+fn the_newer_transcript_checks_would_notice_a_changed_line() {
+    for (readme, marker, first) in [
+        (
+            STRINGS_README,
+            "transcript: status_line stdout",
+            "HTTP/1.1 200 OK",
+        ),
+        (
+            STRINGS_README,
+            "transcript: computed_length stdout",
+            "HTTP/1.1 200 OK",
+        ),
+        (SOCKETS_README, "transcript: tcp_echo", "101"),
+        (SOCKETS_README, "transcript: udp_echo", "101"),
+        (HTTP_README, "transcript: exchange", "200"),
+        (HTTP_README, "transcript: raw_request", "204"),
+        (
+            EVENTS_README,
+            "transcript: self_pipe stdout",
+            "QCORE_EVENT_OPEN",
+        ),
+        (
+            EVENTS_README,
+            "transcript: wake_payload stdout",
+            "QCORE_EVENT_OPEN",
+        ),
+        (
+            EVENTS_README,
+            "transcript: wake_payload stderr",
+            "[INFO] 72",
+        ),
+        (EVENTS_README, "transcript: socket_server stdout", "81"),
+        (LOOPS_README, "transcript: buffer_copy stdout", "0"),
+        (LOOPS_README, "transcript: buffer_copy stderr", "[INFO] 4"),
+    ] {
+        let lines = documented(readme, marker);
+        assert!(!lines.is_empty(), "`{marker}` extracted nothing");
+        assert_eq!(lines[0], first, "`{marker}` extracted the wrong block");
+    }
+}
+
+// --- examples/loops — the native half, which this suite owns. ---
+
+/// The loop example builds and runs under the sanitizers, and both its streams
+/// equal the reference execution's projection.
+///
+/// A **positive** leak control: the program allocates two buffers and releases
+/// both, and one of the four writes into the second is performed only by the
+/// loop body. A loop that ran past an end, or a release that went missing,
+/// would be an ASan or LSan finding rather than a passing test.
+#[test]
+fn the_loop_example_runs_clean_and_matches_its_reference_execution() {
+    let module = plain("loops/buffer_copy.qcore", BUFFER_COPY);
+    let (expected_out, expected_err) = projections(&module);
+    let (out, err) = run("buffer-copy", module.c_source.as_deref().unwrap(), &[]);
+    assert_eq!(out, expected_out, "buffer_copy: stdout");
+    assert_eq!(err, expected_err, "buffer_copy: stderr");
+    assert_eq!(
+        out,
+        documented(LOOPS_README, "transcript: buffer_copy stdout")
+    );
+    assert_eq!(
+        err,
+        documented(LOOPS_README, "transcript: buffer_copy stderr")
+    );
+}
+
+/// The page's claim about the emitted C, read out of the page: a real `for`
+/// loop whose body is written once rather than once per iteration. That is what
+/// makes the run above a check of the unrolling rather than a restatement of it.
+#[test]
+fn the_loop_page_publishes_the_c_the_backend_really_writes() {
+    let module = plain("loops/buffer_copy.qcore", BUFFER_COPY);
+    let c = module.c_source.as_deref().unwrap();
+    let published = block(LOOPS_README, "emitted: copy-loop");
+    let published = published.trim_end();
+    assert!(
+        c.contains(published),
+        "the page publishes a line the backend does not write: {published}"
+    );
+    // Non-vacuous, and the point: the copy's store is emitted **once**, so the
+    // four iterations are the C's own rather than four copies of a statement.
+    assert_eq!(
+        c.matches("qcore_bytes_store(b_dst,").count(),
+        1,
+        "the loop body is emitted once:\n{c}"
+    );
+    // And the reference execution unrolled it: seven stdout lines from two
+    // loops plus four reads, none of which the C writes literally.
+    assert_eq!(projections(&module).0.len(), 7);
+}
+
+/// The refused program the loops page publishes, compiled, and the diagnostic it
+/// quotes, compared with the real one — span caret included.
+#[test]
+fn the_documented_zero_bound_refusal_is_the_refusal_the_compiler_gives() {
+    let program = block(LOOPS_README, "refusal: Q098");
+    assert!(program.contains("for i in 0..0 {"), "{program}");
+    assert_eq!(refusal_codes(&program, None), ["Q098"]);
+    assert_eq!(
+        refusal(&program, None),
+        vec![
+            block(LOOPS_README, "diagnostic: Q098")
+                .trim_end()
+                .to_owned()
+        ],
+        "the page quotes a diagnostic the compiler does not give"
+    );
+    // Non-vacuous: the same program with a bound of one is admitted, so what the
+    // page pins is the zero rather than the shape.
+    let one = program.replace("0..0", "0..1");
+    compile_named("one.qcore", &one, None).expect("a bound of one is a loop");
+}
+
+/// The three refusals the page names beside it, and the one it says is not this
+/// route's.
+#[test]
+fn the_loop_refusals_the_page_names_beside_it_hold() {
+    let body = |statement: &str| {
+        format!(
+            "import std.buffer;\n\
+             \n\
+             fn main() -> unit effects {{ alloc, mut }} {{\n    \
+                 let b = bytes(4);\n    \
+                 for i in 0..4 {{\n        {statement}\n    }}\n    \
+                 drop b;\n    \
+                 return;\n\
+             }}\n"
+        )
+    };
+    assert_eq!(refusal_codes(&body("break;"), None), ["Q097"]);
+    assert_eq!(refusal_codes(&body("return;"), None), ["Q097"]);
+    // An acquisition the body does not release: this route's own `Q099`, and
+    // then the unedited ownership checker's `Q054` behind it.
+    assert_eq!(
+        refusal_codes(&body("let t = bytes(2);"), None),
+        ["Q099", "Q054"]
+    );
+    // And the index is body-local, so naming it afterwards is an unknown name
+    // rather than anything this route decides — which is what the page says.
+    let after = "import std.buffer;\nimport std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..4 {\n        b[i] = 1;\n    }\n    print dec i;\n    drop b;\n    return;\n}\n";
+    assert_eq!(refusal_codes(after, None), ["Q013"]);
+    // Every code the page's table names is one the page also spells.
+    for code in ["Q097", "Q098", "Q099", "Q054", "Q013"] {
+        assert!(LOOPS_README.contains(code), "the page does not name {code}");
+    }
 }

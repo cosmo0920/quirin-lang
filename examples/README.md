@@ -1,11 +1,16 @@
 # Examples
 
 Runnable QCore programs, one directory per feature family. Every program in
-these directories compiles through the real pipeline, emits C11 that builds
-under `-Wall -Wextra -Werror`, and runs under the sanitizers in a workspace
-test that compares its output with the reference execution — and every
-transcript printed in a README is read out of that file by the test, so no page
+these directories compiles through the real pipeline; every program that emits C
+has that C built under `-Wall -Wextra -Werror` and run under the sanitizers in a
+workspace test that compares its output with the reference execution — and every
+transcript printed in a README is read out of that file by a test, so no page
 here can drift from what its programs do.
+
+One published program deliberately emits nothing:
+[`events/write_interest.qcore`](events/write_interest.qcore) is the event
+route's check-only arm, accepted and checked in full but not executed, and its
+page says so. It is the only one.
 
 | Directory | Family | Route |
 |---|---|---|
@@ -19,31 +24,36 @@ here can drift from what its programs do.
 | [strings/](strings/) | Immutable UTF-8 views, slices, text reaching a stream, and text a program computes | `source.string.v1` |
 | [sockets/](sockets/) | Checked TCP and UDP over loopback, both ends in one program | `source.socket.v1` |
 | [http/](http/) | A checked, executed HTTP/1.1 subset, and the same bytes written by hand | `source.http.v1`, `source.socket.v1` |
+| [loops/](loops/) | The bounded counted loop `for i in 0..n`, and the bulk buffer copy it was landed for | `source.loop.v1` on `source.buffer.v1` |
 
-Run everything the first five directories claim:
+`compiler/tests/examples_suite.rs` holds **every** directory in the table above
+to one standard: each published program has a row on its family page, each row
+names a file that exists, and each transcript a page prints is read out of that
+page and compared with the pipeline's own reference execution. Run it, with the
+driver checks beside it:
 
 ```sh
 cargo test -p qcore-compiler --test examples_suite
 cargo test -p qcorec --test examples_cli
 ```
 
-and the threading examples:
+The sanitized native runs are each owned by one test file — the suite runs the
+ones no other file does and references the rest rather than building them twice:
 
-```sh
-cargo test -p qcore-compiler --test thread_examples
-```
+| Directory | Native runner |
+|---|---|
+| stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/ | `cargo test -p qcore-compiler --test examples_suite` |
+| threads/ | `cargo test -p qcore-compiler --test thread_examples` |
+| events/ | `cargo test -p qcore-compiler --test std_event` (`self_pipe`, `write_interest`), `--test compose_event_lines` (`wake_payload`), `--test socket_event_compose` (`socket_server`) |
+| strings/ | `cargo test -p qcore-compiler --test string_slice_io` (`status_line`), `--test string_concat` (`computed_length`) |
+| sockets/ | `cargo test -p qcore-compiler --test std_socket` |
+| http/ | `cargo test -p qcore-compiler --test std_http` |
 
-and the event examples:
-
-```sh
-cargo test -p qcore-compiler --test std_event
-```
-
-and the string example:
-
-```sh
-cargo test -p qcore-compiler --test string_slice_io
-```
+One file here belongs to no family: [`cycle12.qcore`](cycle12.qcore) predates
+the directories and is the smallest sequential-cleanup program in the tree —
+one acquisition, one check, one release. It has no page of its own and claims
+none of the guarantees the table above does; the suite holds it to one thing
+only, that it still checks.
 
 Two things worth knowing before reading any of them:
 

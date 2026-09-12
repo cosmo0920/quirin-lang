@@ -51,6 +51,7 @@ fn main() -> i32 effects { io } {
 This example explicitly selects `log_level trace`, so the diagnostic logger
 renders the retained event observation on standard output:
 
+<!-- transcript: self_pipe stdout -->
 ```text
 QCORE_EVENT_OPEN
 QCORE_EVENT_ENDPOINTS 0 1
@@ -113,6 +114,7 @@ value is one the program itself put on the wire.
 Two streams, and no order is claimed between them. Standard output carries the
 explicitly selected system trace:
 
+<!-- transcript: wake_payload stdout -->
 ```text
 QCORE_EVENT_OPEN
 QCORE_EVENT_ENDPOINTS 0 1
@@ -131,6 +133,7 @@ QCORE_EVENT_RESULT 0
 
 and standard error carries the two source-authored lines:
 
+<!-- transcript: wake_payload stderr -->
 ```text
 [INFO] 72
 [INFO] 0x00000069
@@ -189,6 +192,7 @@ pipeline rule above binds it like the rest.
 
 It writes:
 
+<!-- transcript: socket_server stdout -->
 ```text
 81
 0x00000051
@@ -290,6 +294,11 @@ cargo test -p qcore-compiler --test std_event
 cargo test -p qcore-compiler --test compose_event_lines
 cargo test -p qcore-compiler --test socket_event_compose
 ```
+
+`compiler/tests/examples_suite.rs` adds the page-level half and builds nothing a
+second time: it reads each transcript on this page out of its marked block and
+compares it with the reference execution, and it holds the table above to the
+directory — every program indexed, every row a file that exists.
 
 The first target runs `self_pipe.qcore`; the second runs `wake_payload.qcore`
 and compares **both** streams — the selected system trace on stdout and the two
