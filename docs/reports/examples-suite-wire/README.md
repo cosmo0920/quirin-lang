@@ -280,8 +280,10 @@ initialised at the pinned revision `d82464a2…`, `$HOME/.elan/bin` on `PATH`.
 | Gate step | Result |
 |---|---|
 | `git submodule update --init --recursive` | `third_party/libevent` at `d82464a277d0f42703702c4dfd9af6af38595a83`, the pinned revision |
-| `cargo test --workspace` | **4,003 passed, 1 failed, 8 ignored** across 186 test binaries — the one failure is the constraint-16 row below; **4,004 pass** with it re-run in isolation |
+| `cargo test --workspace` | stopped early — **4,003 passed, 1 failed, 8 ignored** across 186 test binaries, then cargo's default fail-fast ended the run at the constraint-16 row below, before the `qcorec` targets |
+| `cargo test --workspace --no-fail-fast` | **4,099 passed, 1 failed, 8 ignored** across **206** test binaries — the one failure is a *different* constraint-16 row; **4,100 pass** with it re-run in isolation |
 | *(constraint 16)* `cargo test -p qcore-verifier-host --test confined_process_execution -- --test-threads=1` | **12 passed, 0 failed**, exit 0 |
+| *(constraint 16)* `cargo test -p qcore-verifier-host --test enforced_process_limits -- --test-threads=1` | **12 passed, 0 failed**, exit 0 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean, exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
@@ -289,9 +291,8 @@ initialised at the pinned revision `d82464a2…`, `$HOME/.elan/bin` on `PATH`.
 | `python3 scripts/check_lean_audits.py` | **107 Lean audits passed**, exit 0 — unchanged by this card |
 | `python3 -m unittest` over `scripts/tests` (21 modules, two batches) | **114 + 79 = 193 passed**, exit 0 — run for completeness; no script is touched |
 
-**The one failure is a recorded one, and it is reported rather than absorbed.**
-`a_confined_fixture_cannot_write_outside_the_admitted_paths` failed under the
-full workspace run with
+**Two recorded flakes tripped, on two runs, and both are reported rather than
+absorbed.** Each failed with character-for-character the same assertion:
 
 ```text
 assertion `left == right` failed: Broken pipe (os error 32)
@@ -299,11 +300,31 @@ assertion `left == right` failed: Broken pipe (os error 32)
  right: Terminated
 ```
 
-which is character-for-character the third row of standing constraint 16
-(P02-FLAKE): "the confined-fixture write test (`Io(Broken pipe)` under load)".
-It passes in isolation, with all twelve tests of its binary, on the same binary
-and the same tree. Nothing about it was weakened, and no other constraint-16 row
-tripped.
+* The first run's was `a_confined_fixture_cannot_write_outside_the_admitted_paths`
+  — standing constraint 16's third row, "the confined-fixture write test
+  (`Io(Broken pipe)` under load)".
+* The second run's was `enforced_process_limits::a_declared_process_limit_stops_the_fixture_from_forking`
+  — the `RLIMIT_NPROC` conformance row, constraint 16's first, which "counts
+  every process of the real UID". Its sibling
+  `memory_growth_beyond_the_declared_limit_is_bounded` is constraint 16's fifth
+  row and is recorded with exactly this `Io(Broken pipe)` shape; this is the
+  same binary under the same load.
+
+Each passes in isolation, with all twelve tests of its binary, on the same
+binary and the same tree, and **the other one passed on the run where its
+neighbour failed** — which is the load-sensitivity the constraint describes
+rather than a defect either run found. Nothing about either was weakened. The
+three remaining constraint-16 rows did not trip.
+
+**A second finding about the gate itself, not about this card.** The standing
+per-change gate's `cargo test --workspace` has cargo's default fail-fast, so the
+first run ended at `qcore-verifier-host` and **never reached the `qcorec`
+targets at all** — including `examples_cli.rs`, which this card edits. The
+number that gate prints is therefore a lower bound whenever any row flakes. The
+`--no-fail-fast` run above is the one whose 206 binaries cover the workspace;
+both runs are reported so the difference is visible. Whether the standing gate
+should carry `--no-fail-fast` is a question for `AGENTS.md`'s owner, which this
+card is not (follow-on `GATE-NO-FAIL-FAST`).
 
 `AGENTS.md`'s headline row reads 3,580 workspace tests at the wave-23
 fixed-scalar checkpoint; waves 24 and 25 have grown it since. The figure this
@@ -314,9 +335,10 @@ the merged tree's at `e26bb0c3`, above the ledger's 95 for the same reason.
 **Corpus neutrality** is by construction: this card adds no checker code, no
 contract module and no analysis route, so the 185-unit corpus baseline, the
 **272** leak diagnostics (standing constraint 7), the **72**-module contract
-corpus and the CT mapping are untouched. Constraint 16's five load- or
-parallelism-sensitive rows were not tripped; no provider file is touched, so
-constraint 18 is not engaged.
+corpus and the CT mapping are untouched. Two of constraint 16's five load- or
+parallelism-sensitive rows tripped and were verified in isolation as that
+constraint prescribes (above); no provider file is touched, so constraint 18 is
+not engaged.
 
 Every pre-existing example program is byte-identical — `git diff --stat` over
 `examples/` shows five README files and nothing else, beside the new
@@ -344,9 +366,14 @@ Named, not silently deferred.
    Nothing checks that those targets exist. A test that runs
    `cargo test --list` per target, or reads the file names out of
    `compiler/tests/`, would close it; it was out of this card's scope.
-4. **`EXAMPLES-ERROR-REGION`** (pre-existing, unchanged) — typed recoverable
+4. **`GATE-NO-FAIL-FAST`** — the standing gate's `cargo test --workspace` stops
+   at the first failing binary, so a single constraint-16 flake silently hides
+   every target after it in crate order. This card's first run hid the whole
+   `qcorec` crate, `examples_cli.rs` included. The fix is one flag; the decision
+   is `AGENTS.md`'s owner's. §8 records both runs so the gap is visible.
+5. **`EXAMPLES-ERROR-REGION`** (pre-existing, unchanged) — typed recoverable
    errors and checked cleanup still have no family directory.
-5. **`STD-BUFFER-EXAMPLE`** (pre-existing) — **not** closed by this card, and
+6. **`STD-BUFFER-EXAMPLE`** (pre-existing) — **not** closed by this card, and
    the distinction matters. `examples/loops/buffer_copy.qcore` is a *loop*
    example that happens to run on the buffer route; it shows a fill and a copy
    and nothing else of `source.buffer.v1`. A buffer family page would be about
