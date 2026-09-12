@@ -1216,7 +1216,13 @@ pub fn check_event_source_program(
 }
 
 /// The operation index a reactor diagnostic names.
-fn reactor_operation(diagnostic: &EventDiagnostic) -> usize {
+///
+/// Published rather than private since card `SOCKET-EVENT-COMPOSE`: a second
+/// route projects onto the same reactor model and has to attribute the same
+/// diagnostics to its own statements, and attributing them by a second copy of
+/// this match would be two implementations of one mapping.
+#[must_use]
+pub fn reactor_operation(diagnostic: &EventDiagnostic) -> usize {
     match diagnostic {
         EventDiagnostic::L00InvalidLifecycle { operation }
         | EventDiagnostic::L01UseAfterFree { operation }

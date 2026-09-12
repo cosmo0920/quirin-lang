@@ -278,6 +278,80 @@ static int qcore_socket_wait_readable(qcore_socket_fd endpoint)
     return (set[0].revents & QCORE_SOCKET_POLLIN) != 0 ? 0 : 1;
 }
 
+/* The largest number of sockets one dispatch turn may watch at once.
+ *
+ * The checker refuses a program that would hold more registrations than this, so
+ * the array below is sized for a bound no admitted program crosses and a defect
+ * in the checker overflows nothing. It is the same discipline
+ * QCORE_SOCKET_MAX_PAYLOAD applies to a payload. */
+#define QCORE_SOCKET_MAX_WATCHED 16
+
+/* One dispatch turn of a checked socket program (card SOCKET-EVENT-COMPOSE).
+ *
+ * `set` is the sockets the checked program has registered with its reactor, in
+ * registration order, and `expected` is the index of the one this turn DECLARES
+ * will be ready — or a negative number for a turn declared to report nothing.
+ *
+ * There is no run-time registry, and that is the honest shape rather than a
+ * shortcut: the checker knows the watched set at every turn, so the reactor an
+ * emitted program runs IS the declared registration set, materialised here.
+ *
+ * The declaration is CHECKED and never trusted, exactly as a receive's payload
+ * is. Three results, so a failed run says which: 0 the reported set is the
+ * declared one, 1 a transport failure or a bounded timeout, 2 the reported set
+ * disagrees with the declaration. A kernel that reports a different set
+ * therefore fails the run rather than producing a differently shaped
+ * observation.
+ *
+ * An idle turn waits zero milliseconds. It is a claim that nothing is ready
+ * NOW, and under the checked history nothing this program committed can make a
+ * watched socket ready while the program itself is between statements, so
+ * waiting longer would test nothing and cost the bounded timeout. */
+QCORE_SOCKET_UNUSED static int qcore_socket_dispatch(const qcore_socket_fd *set,
+                                                     size_t count, long expected)
+{
+    qcore_socket_pollfd watched[QCORE_SOCKET_MAX_WATCHED];
+    size_t index;
+    int result;
+    int ready = 0;
+    long ready_index = -1;
+    if (count > (size_t) QCORE_SOCKET_MAX_WATCHED) {
+        return 1;
+    }
+    if (count == 0) {
+        /* WSAPoll refuses a zero-length set, and poll(2) with no descriptors is
+         * only a sleep, so the answer is decided here: a turn over no
+         * registration reports nothing. */
+        return expected < 0 ? 0 : 2;
+    }
+    memset(watched, 0, sizeof watched);
+    for (index = 0; index < count; ++index) {
+        watched[index].fd = set[index];
+        watched[index].events = QCORE_SOCKET_POLLIN;
+        watched[index].revents = 0;
+    }
+#if defined(QCORE_SOCKET_POSIX)
+    result = poll(watched, (nfds_t) count,
+                  expected < 0 ? 0 : QCORE_SOCKET_TIMEOUT_MS);
+#else
+    result = WSAPoll(watched, (ULONG) count,
+                     expected < 0 ? 0 : QCORE_SOCKET_TIMEOUT_MS);
+#endif
+    if (result < 0) {
+        return 1;
+    }
+    for (index = 0; index < count; ++index) {
+        if ((watched[index].revents & QCORE_SOCKET_POLLIN) != 0) {
+            ready += 1;
+            ready_index = (long) index;
+        }
+    }
+    if (expected < 0) {
+        return ready == 0 ? 0 : 2;
+    }
+    return (ready == 1 && ready_index == expected) ? 0 : 2;
+}
+
 /* Commit `length` declared bytes to the peer of a connected stream socket.
  *
  * The loop exists because send(2) may accept fewer bytes than offered. It is

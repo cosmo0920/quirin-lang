@@ -86,6 +86,15 @@ pub const STATUS_RECV: i32 = 87;
 /// rather than trusted.
 pub const STATUS_PAYLOAD: i32 = 88;
 pub const STATUS_CLOSE: i32 = 89;
+/// A dispatch turn's wait failed or expired (card `SOCKET-EVENT-COMPOSE`).
+pub const STATUS_DISPATCH: i32 = 90;
+/// A dispatch turn's wait reported a ready set that is **not** the one the
+/// checked program declared.
+///
+/// The declaration is checked rather than trusted, exactly as a receive's
+/// payload is: a kernel that reports a different set fails the run instead of
+/// producing a differently shaped observation.
+pub const STATUS_READY: i32 = 91;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SocketEmissionRefusal {
@@ -409,6 +418,11 @@ pub fn entry_parts(
 
     let mut source = String::new();
     let mut scalars: BTreeMap<String, String> = BTreeMap::new();
+    // The currently-watched registrations, in registration order. The checker
+    // walks the same two statements in the same order, so the set this backend
+    // materialises at a turn is the set `SocketDispatchTurn::watched` publishes
+    // — one order, read twice, rather than two orders that agree.
+    let mut watched: Vec<(String, String)> = Vec::new();
 
     for (index, statement) in program.statements.iter().enumerate() {
         match statement {
@@ -588,6 +602,64 @@ pub fn entry_parts(
                     Err(name) => {
                         return Err(SocketEmissionRefusal::Unbound { event: index, name });
                     }
+                }
+            }
+            // The reactor context and the registrations emit **nothing**, and
+            // that is the composition's honest shape rather than an omission.
+            // The watched set is a fact the checker knows at every turn, so the
+            // reactor an emitted program runs *is* the declared registration
+            // set, materialised as the `poll` set below. There is no run-time
+            // registry to create, add to, delete from or free — which is also
+            // why none of these four derives an effect.
+            SocketStatement::ReactorOpen | SocketStatement::ReactorClose => {}
+            SocketStatement::Watch {
+                registration,
+                socket,
+                ..
+            } => {
+                watched.push((registration.clone(), socket.clone()));
+            }
+            SocketStatement::Unwatch { registration } => {
+                watched.retain(|(name, _)| name != registration);
+            }
+            SocketStatement::Dispatch { ready } => {
+                let expected = match ready {
+                    None => -1i64,
+                    Some(name) => {
+                        let Some(position) =
+                            watched.iter().position(|(watched, _)| watched == name)
+                        else {
+                            return Err(SocketEmissionRefusal::Unbound {
+                                event: index,
+                                name: name.clone(),
+                            });
+                        };
+                        i64::try_from(position).unwrap_or(-1)
+                    }
+                };
+                if watched.is_empty() {
+                    let _ = writeln!(
+                        source,
+                        "    {{\n        \
+                         int outcome = qcore_socket_dispatch(NULL, 0u, {expected});\n        \
+                         if (outcome == 2) {{\n            return {STATUS_READY};\n        }}\n        \
+                         if (outcome != 0) {{\n            return {STATUS_DISPATCH};\n        }}\n    }}"
+                    );
+                } else {
+                    let set = watched
+                        .iter()
+                        .map(|(_, socket)| socket_name(socket))
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    let count = watched.len();
+                    let _ = writeln!(
+                        source,
+                        "    {{\n        \
+                         qcore_socket_fd set[] = {{ {set} }};\n        \
+                         int outcome = qcore_socket_dispatch(set, {count}u, {expected});\n        \
+                         if (outcome == 2) {{\n            return {STATUS_READY};\n        }}\n        \
+                         if (outcome != 0) {{\n            return {STATUS_DISPATCH};\n        }}\n    }}"
+                    );
                 }
             }
             SocketStatement::Return => {}

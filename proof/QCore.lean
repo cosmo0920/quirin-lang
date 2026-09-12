@@ -142,5 +142,6 @@ import QCore.StringSliceIo
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.StdHttp
+import QCore.SocketEventCompose
 
 /-! The executable formal core of QCore-C revision 0.1. -/

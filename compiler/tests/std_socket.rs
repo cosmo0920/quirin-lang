@@ -989,28 +989,40 @@ fn a_module_that_buffers_and_sockets_stays_with_the_buffer_route() {
 }
 
 #[test]
-fn a_module_that_dispatches_and_sockets_stays_with_the_event_route() {
+fn a_module_that_dispatches_and_sockets_reaches_this_route_and_is_now_admitted() {
+    // **Rewritten by card `SOCKET-EVENT-COMPOSE`**, which retires the follow-on
+    // this test's earlier form named. Before it, a module that both dispatched
+    // and socketed stayed with `source.event.v1` and kept that route's refusal;
+    // it now reaches this route, which models both — the registration half
+    // through the *unedited* reactor model, the custody half through the
+    // *unedited* ownership checker. The precedent is
+    // `COMPOSE-EVENT-LINES`'s own rewrite of
+    // `a_module_that_both_dispatches_and_prints_stays_with_this_route…`.
     let source = source_lines(&[
         "import std.event;",
         "import std.socket;",
         "",
-        "fn main() -> i32 effects { io, alloc } {",
+        "fn main() -> unit effects { io, alloc } {",
         "    event open;",
         "    let a = udp;",
         "    bind a;",
-        "    close a;",
+        "    let b = udp;",
+        "    bind b;",
+        "    watch inbox b read;",
+        "    sendto a b [81];",
+        "    dispatch ready inbox;",
+        "    recvfrom b 1;",
+        "    unwatch inbox;",
         "    event close;",
-        "    return 0;",
+        "    close b;",
+        "    close a;",
+        "    return;",
         "}",
     ]);
-    let codes = codes(&source);
-    assert!(
-        codes.iter().all(|code| code == "Q058" || code == "Q074"),
-        "the event route must keep its own refusals (`SOCKET-EVENT-COMPOSE`): {codes:?}"
-    );
-    assert!(
-        !codes.iter().any(|code| code.starts_with("Q08")),
-        "no socket-band code may be issued for a module this route never received: {codes:?}"
+    let module = compile(&source).expect("the composed module must be admitted");
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::StandardSocketV1
     );
 }
 
