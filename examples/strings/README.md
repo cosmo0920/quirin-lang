@@ -62,8 +62,14 @@ under `-Wall -Wextra -Werror -pedantic`, runs it under ASan/UBSan/LSan, and
 compares both streams with the reference execution and with the transcript
 below, which it reads out of this file.
 
+`compiler/tests/examples_suite.rs` adds the page-level half, without building
+either program a second time: it reads each transcript below out of its marked
+block and compares it with the reference execution, and it holds the table above
+to the directory — every program indexed, every row a file that exists.
+
 ## Transcript — `status_line.qcore`
 
+<!-- transcript: status_line stdout -->
 ```text
 HTTP/1.1 200 OK
 Content-Type: text/plain; charset=utf-8
@@ -81,6 +87,7 @@ Each head line ends with a carriage return the program wrote and a line feed the
 sink's framing supplied, so the head below is CRLF-framed. The `11` is derived
 from the content and appears nowhere in the source.
 
+<!-- transcript: computed_length stdout -->
 ```text
 HTTP/1.1 200 OK
 Content-Type: application/json

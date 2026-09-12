@@ -1,0 +1,62 @@
+// `source.loop.v1` — the checked bounded counted loop, on the route that has a
+// consumer for it (card `LOOP-V1`).
+//
+// `STD-BUFFER-COPY` was recorded by card `STD-BUFFER` as "a bulk copy between
+// two buffers. Needs no new custody shape, but needs the loop or the bulk
+// operation the flat route has no statement for". This program is that copy,
+// and it adds no byte statement: the read and the write below are
+// `source.buffer.v1`'s own `src[i]` and `dst[i] = v`. What the loop adds is
+// that they run four times with a different index each time.
+//
+// Every index is decided at check time. The bound is `extent(src)`, a number
+// the checker reads out of the ownership ledger's own footprint, so all four
+// accesses are proved in range before a byte of C is emitted — and the emitted
+// C is a real `for` loop rather than an unrolled body, so the native run is a
+// check of that unrolling rather than a restatement of it.
+
+import std.buffer;
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let src = bytes(4);
+    src[0] = 81;
+    src[1] = 67;
+    src[2] = 111;
+    src[3] = 114;
+
+    let dst = bytes(4);
+    let n = extent(src);
+
+    // The payoff. `i` and `v` are both body-local: naming either after the
+    // loop refuses, exactly as an `if` arm's bindings do.
+    for i in 0..n {
+        let v = src[i];
+        dst[i] = v;
+    }
+
+    // A second loop over a literal bound, writing lines rather than bytes. The
+    // index is an ordinary integer scalar, so rendering it needs no new operand
+    // form: `source.std-io.v1`'s existing one already denotes it.
+    for k in 0..3 {
+        print dec k;
+    }
+
+    let a = dst[0];
+    let b = dst[1];
+    let c = dst[2];
+    let d = dst[3];
+    print dec a;
+    print dec b;
+    print dec c;
+    print dec d;
+
+    // The bound, on the logger's stream, so this example writes both.
+    log info dec n;
+    flush;
+
+    drop src;
+    drop dst;
+    return;
+}

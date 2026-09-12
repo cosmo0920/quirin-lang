@@ -161,7 +161,9 @@ claimed by this card (`HTTP-V1-WINDOWS-RUN`, `HTTP-V1-APPLE-RUN`).
 These blocks are read out of this file by
 `compiler/tests/std_http.rs::the_readme_transcript_is_the_real_one` and compared
 with what the pipeline really produces, so the page cannot drift from the
-programs.
+programs. `compiler/tests/examples_suite.rs` reads the same blocks under the
+same markers and holds the table above to the directory — every program indexed,
+every row a file that exists — without building either program a second time.
 
 <!-- transcript: exchange -->
 ```text
