@@ -814,14 +814,15 @@ fn the_published_example_runs_and_matches_its_readme_transcript() {
     let transcript = STRINGS_README
         .split("## Transcript")
         .nth(1)
-        .and_then(|tail| tail.split("```text\n").nth(1))
+        .and_then(|tail| tail.split("```text").nth(1))
         .and_then(|tail| tail.split("```").next())
         .expect("the README publishes a transcript");
-    let published: Vec<&str> = transcript
-        .strip_suffix('\n')
-        .unwrap_or(transcript)
-        .split('\n')
-        .collect();
+    // Newline-agnostic on purpose (card `WINDOWS-NATIVE-SOCKETS-HARNESS`): a
+    // Windows checkout may hold this file with CRLF endings, and neither the
+    // opening fence's terminator nor a line's own `\r` is part of the published
+    // transcript. `skip(1)` drops the remainder of the fence's own line, which
+    // is what splitting on a spelled-out `"```text\n"` used to drop.
+    let published: Vec<&str> = transcript.lines().skip(1).collect();
     assert_eq!(published, out);
 }
 
