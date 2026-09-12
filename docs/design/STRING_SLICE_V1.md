@@ -215,6 +215,30 @@ Three rules the borrow rests on, each measured:
    acquisition and release contribute to, so borrowing a released buffer is that
    checker's own `UseAfterDrop` rather than a rule this card wrote.
 
+**A borrow lends a range (card `CT07-SLICE-PERMISSIONS`).**
+`borrow_utf8(NAME, LOW, HIGH)` views the bytes `[LOW, HIGH)`, and the
+whole-extent spelling is that form at `[0, extent)` rather than a second
+construct — measured as an identical certificate, an identical observation and
+byte-identical emitted C. Rule 1 is unchanged except that the decision is made
+on **the lent bytes**, which is why a range whose end splits a code point is
+refused by the existing UTF-8 decision rather than by a new rule; rule 3 is
+unchanged entirely. Rule 2 gains a second dimension and loses none: the
+exclusion is still the same interval of statement indices, and **within** it a
+write is refused when its byte lies inside a live loan and admitted when it lies
+outside every one of them. That admission is the point — it is what makes two
+disjoint permissions over one buffer expressible — and the disjointness is
+decided rather than assumed, `max low < min high` being the set-theoretic
+question itself because every bound here is a check-time constant. Three
+asymmetries are deliberate. A **release** is refused for any live loan however
+narrow, because it ends the storage all of them address. An index the route
+cannot resolve to a constant is *not provably disjoint* and conflicts with every
+live loan. And two overlapping **borrows** are not refused at all: both are
+immutable views, they conflict on nothing, and a slice of a borrow is a fully
+overlapping second borrow of the same buffer by construction. There is no
+**write** lend — the owner keeps the write authority over every byte it did not
+lend — which is why rule 2's exactness argument survives untouched and a `for`
+beside a loan is still refused. The follow-on is `SLICE-PERMISSIONS-WRITE-LEND`.
+
 ## 6. C11 lowering and ABI boundary
 
 The internal C11 representation should be an aggregate equivalent to:

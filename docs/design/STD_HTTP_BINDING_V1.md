@@ -104,9 +104,14 @@ What it would need, none of which exists today:
 * **growth.** `STD-BUFFER-GROW` names the missing custody shape (an acquisition
   that replaces a live one). A body of unknown length needs it.
 * **recoverable allocation failure**, `STD-BUFFER-ALLOC-FAILURE`.
-* **sub-ranges.** `STD-BUFFER-SLICE` needs the ownership IR's borrow nodes to
-  carry a footprint fraction, which they do not. Every header field is a
-  sub-range.
+* **sub-ranges.** `STD-BUFFER-SLICE` is **retired in part** by card
+  `CT07-SLICE-PERMISSIONS`: `borrow_utf8(NAME, LOW, HIGH)` lends a read
+  sub-range, and the blocker recorded here — a footprint fraction in the
+  ownership IR's borrow nodes — was measured not to be what that direction
+  needed. Every header field is a sub-range, and a *read* of one is now
+  expressible; what is not is a **write** lend
+  (`SLICE-PERMISSIONS-WRITE-LEND`), and a parser reads its sub-ranges at
+  varying indices anyway, which is the bullet above.
 * **concurrency at the boundary.** Extern calls stay refused in concurrent
   contexts (`Q026`-class), and a server is concurrent.
 

@@ -1,0 +1,87 @@
+Card CT07-SLICE-PERMISSIONS — constraint-14 keyword census
+==========================================================
+
+Result: ZERO new reserved words, ZERO new tokens, and zero existing files whose
+meaning changes.
+
+The card adds a three-argument spelling of an operation that already exists.
+`borrow_utf8` has been a CONTEXTUAL clause word since card STRING-CONCAT — it is
+skipped by name resolution only where it is immediately followed by `(` — and
+the range's two bounds are separated by `,` and closed by `)`, both of which the
+lexer has always produced. There is therefore nothing to reserve and no token to
+add, and this census exists to check that claim rather than to choose a word.
+
+Scope: every `.qcore`/`.qc` file on disk — 435 at census time, 437 after this
+card's two new fixtures.
+
+Reproduce from the repository root:
+
+    find . -path ./.git -prune -o \( -name '*.qcore' -o -name '*.qc' \) -print | wc -l
+
+    grep -rn --include='*.qcore' --include='*.qc' -E 'borrow_utf8\s*\([^)]*,' .
+
+    grep -rho --include='*.qcore' --include='*.qc' \
+      -E '\b(lend|slice|range|borrow_utf8|split|part|window|sub|low|high)\b' . \
+      | sort | uniq -c | sort -rn
+
+    grep -rn --include='*.qcore' --include='*.qc' \
+      -E '\b(lend|range|low|high|part|sub|window)\b' . | grep -v '//'
+
+
+1. The load-bearing measurement: no existing file spells the new arity
+-----------------------------------------------------------------------
+
+    borrow_utf8( … , … )   in .qcore/.qc   ->   0 occurrences
+
+Every `borrow_utf8` on disk before this card is the one-argument form, in eight
+files (examples/strings/computed_length.qcore, compiler/tests/fixtures/
+std_string/composed.qcore and the CT06/CT11 case and control fixtures). So no
+shipped program's meaning changes, and the two-argument spelling — which has no
+reading, a range needing both of its ends — keeps refusing by shape exactly
+where card STRING-CONCAT pinned it (`a_two_argument_bridge_still_refuses_by_shape`,
+and STRING-CONCAT's own `a_malformed_bridge_refuses_by_shape`, both green).
+
+
+2. Bare-word occurrences of every word a range surface might have wanted
+------------------------------------------------------------------------
+
+Recorded so that a later card that DOES need a word does not re-derive them.
+
+     21  slice          <- in `//` comments only
+     10  borrow_utf8    <- the eight files of §1
+      5  window         <- in `//` comments only
+      4  part           <- REJECTED as a spelling: see below
+      4  low            <- in `//` comments only
+      2  sub            <- in `//` comments only
+      2  range          <- in `//` comments only
+      2  high           <- in `//` comments only
+      1  lend           <- in a `//` comment only
+
+Only one of these occurs in QCore *source* position rather than inside a
+comment:
+
+    compiler/tests/fixtures/std_string/silent.qcore:12:    let part = text[0:2];
+    compiler/tests/fixtures/std_string/silent.qcore:13:    let n = len(part);
+
+`part` is a BINDING name in a shipped, pinned fixture, so reserving it would
+refuse that file at `Q013` — the same shape that kept `buffer` out (555
+occurrences, card STD-BUFFER), `join` out (207, card STRING-CONCAT) and `in` out
+of the global set (card LOOP-V1). This card reserves nothing, so the collision
+is recorded rather than acted on; a later `SLICE-PERMISSIONS-WRITE-LEND` that
+wants a statement word should start from this table and not from `part`.
+
+`lend`, `range`, `low`, `high`, `sub` and `window` are free at zero source-position
+occurrences and are recorded as available.
+
+
+3. What did not have to be checked, and why
+--------------------------------------------
+
+The two whole-token-stream route selectors constraint 14 names —
+`module_imports::concurrency_span` and `source_tasks::has_source_tasks` — are
+untouched: this card adds no binding form and no new spelling either could see.
+Route selection itself is unchanged in both directions: the condition remains
+`has_source_string_bridge`, which reads `borrow_utf8` followed by `(` and knows
+nothing about the arity, so a module that holds a buffer without spelling the
+bridge still keeps `source.buffer.v1` (STRING-CONCAT's
+`the_bridge_selects_the_string_route_and_a_buffer_without_it_does_not`, green).

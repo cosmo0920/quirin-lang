@@ -1,0 +1,33 @@
+// The other direction: a write into a range that **overlaps** a live loan
+// (card `CT07-SLICE-PERMISSIONS`).
+//
+// This is the same program as `disjoint_halves.qcore` with one byte moved.
+// `store[1] = 88;` writes byte 1, which lies inside `head`'s `[0, 2)`, so the
+// two ranges overlap on exactly one byte and the write is refused at `Q078`
+// naming that footprint. Nothing else about the program changed, which is what
+// makes the refusal a statement about the overlap rather than about writing a
+// borrowed buffer at all.
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let store = bytes(6);
+    store[0] = 97;
+    store[1] = 98;
+    store[2] = 99;
+    store[3] = 100;
+    store[4] = 101;
+    store[5] = 102;
+
+    let head = borrow_utf8(store, 0, 2);
+    let tail = borrow_utf8(store, 4, 6);
+
+    store[1] = 88;
+
+    print head;
+    print tail;
+
+    drop store;
+    return;
+}

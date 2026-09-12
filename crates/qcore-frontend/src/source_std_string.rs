@@ -887,18 +887,65 @@ fn lower_let(
             ));
             return None;
         };
-        if !symbol(window, value + 3, Symbol::RightParen) || !ends_with_semicolon(window, value + 4)
-        {
-            diagnostics.push(diagnostic(
-                "Q077",
-                span,
-                "this `borrow_utf8(…)` is not closed",
-            ));
-            return None;
-        }
+        // Card `CT07-SLICE-PERMISSIONS`: `borrow_utf8(NAME, LOW, HIGH)` lends a
+        // **sub-extent**. The arity is exactly one or three and nothing between:
+        // a two-argument spelling has no reading — a range needs both ends —
+        // and it keeps refusing by shape where it always did.
+        let range = if symbol(window, value + 3, Symbol::Comma) {
+            let Some((low, after_low)) = operand(window, value + 4) else {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    "`borrow_utf8(NAME, LOW, HIGH)` bounds the lent range with an integer literal \
+                     or a name this entry bound to one",
+                ));
+                return None;
+            };
+            if !symbol(window, after_low, Symbol::Comma) {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    "`borrow_utf8(NAME, LOW, HIGH)` lends a range and needs both of its ends",
+                ));
+                return None;
+            }
+            let Some((high, after_high)) = operand(window, after_low + 1) else {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    "`borrow_utf8(NAME, LOW, HIGH)` bounds the lent range with an integer literal \
+                     or a name this entry bound to one",
+                ));
+                return None;
+            };
+            if !symbol(window, after_high, Symbol::RightParen)
+                || !ends_with_semicolon(window, after_high + 1)
+            {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    "this `borrow_utf8(…)` is not closed",
+                ));
+                return None;
+            }
+            Some((low, high))
+        } else {
+            if !symbol(window, value + 3, Symbol::RightParen)
+                || !ends_with_semicolon(window, value + 4)
+            {
+                diagnostics.push(diagnostic(
+                    "Q077",
+                    span,
+                    "this `borrow_utf8(…)` is not closed",
+                ));
+                return None;
+            }
+            None
+        };
         return Some(StringEvent::Borrow {
             binding,
             buffer: buffer.to_owned(),
+            range,
         });
     }
 

@@ -145,6 +145,7 @@ import QCore.LoopBudget
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat
+import QCore.SlicePermissions
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.SocketInetAddresses
