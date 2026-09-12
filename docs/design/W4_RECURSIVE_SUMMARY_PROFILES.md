@@ -137,8 +137,9 @@ strongly connected component `C` of the call graph:
 
 ### 4.3 Why the optimistic start is admissible **only** at the neutral element
 
-The standing instruction in `CLAUDE.md` — *do not accept an assume-guarantee
-fixed point for a recursive component* — is preserved by this design, and the
+The standing instruction in `AGENTS.md` (constraint 4) — *do not accept an
+assume-guarantee fixed point for a recursive component* — is preserved by this
+design, and the
 probe measures precisely why it must be.
 
 **Measured counterexample (probe:
@@ -172,7 +173,7 @@ higher element has:
 1. `N(m)` states **no precondition**. Every formal is `Borrowed`, so the
    assumption installs no entry resource and asserts no non-nullness; it
    therefore cannot delete a failure path, which is the specific hazard
-   `CLAUDE.md` names. Measured: a caller passing a null constant to a neutral
+   `AGENTS.md`'s constraint 4 names. Measured: a caller passing a null constant to a neutral
    recursive callee stays `Safe`, and the callee's own body validated with no
    formal bound.
 2. `N(m)` is a conjunction of **negative, prefix-closed** facts (N-prefix).

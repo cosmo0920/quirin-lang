@@ -349,6 +349,31 @@ full suite.
 
 ## Increment records
 
+Worktree submodule diagnostic (2026-09-12, post-wave-27 close, `1e1916b4`
+merged at `e552e59c`): the two checkout-reading `profile_loader` tests
+(`declared_pins_match_the_checkouts_and_the_retained_rust_constant`,
+`f9_and_f10_missing_files_and_digest_drift_reject_the_inventory`) gain a shared
+precondition requiring the Libevent submodule's own `.git` entry before any git
+query runs. In a fresh worktree the submodule directory exists but is empty and
+`git -C <dir> rev-parse HEAD` answers from the *superproject*, so the pin check
+reported a `SourceRevisionMismatch` against whatever commit the repository was
+on — a misleading invariant-5 alarm for a checkout that was merely
+uninitialised. The tests still **fail** in that state (the repository's
+convention; nothing skips), now naming the uninitialised submodule and the fix
+command; both directions were measured (empty directory swapped in → the new
+message; initialised checkout → all 18 tests pass), the pin assertion itself is
+unedited, and `f7_and_f8_pin_failures_reject_the_checkout` keeps the
+`SourceRevisionMismatch` arm exactly as it was. **DECIDES — discharges**
+residual `DOCS-COMPACT-3-WORKTREE-SUBMODULE`
+(`docs/reports/docs-compact-3/README.md` §11.1, recorded there frozen; the
+discharge is recorded here per constraint 21). The same change also corrects
+the two stale `CLAUDE.md` attributions of constraint 4's assume-guarantee rule
+in `docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md` to `AGENTS.md` (residual
+`DOCS-COMPACT-2-W4-DESIGN-POINTER`, likewise **discharged**). Gate at the fix's
+own tip (pre-close base `27100414`): 4,349 workspace tests, 8 ignored,
+`--no-fail-fast`, fmt/clippy clean, both probes exit 0, "Passed 113 Lean
+audits" (the close's 114th, `AuditSourceCoordinate`, was not yet on that base).
+
 Wave 27 close (2026-09-12): **six pieces** merged one at a time under the
 failure-gated chain, each under its own green gate — `CT23-CREDIT-ERROR-PATH`,
 `DOCS-COMPACT-3` (the recurring three-file compaction *plus* a user-directed
