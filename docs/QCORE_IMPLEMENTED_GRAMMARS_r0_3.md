@@ -1262,15 +1262,47 @@ than the grant is refused at `Q636`. Restoration does **not** reduce
 re-grants restored credit is `CT23-RESTORE-REUSE`. See
 [the error-path record](reports/ct23-credit-error-path/README.md).
 
+**The region epilogue** (card `REGION-CREDIT-JOINS`, wave 28) is the composed
+entry's one optional `error region` statement — CT22's scenario, *"quant
+opening discards parent-local unused credit after joins"*, made expressible:
+
+```ebnf
+region_epilogue = "error", "region", NAME, "{",
+                    { "credit", NAT, ";" | "effort", NAT, ";" },
+                    "qcore_check", "(", "false", ",", ERROR, ")", ";",
+                  "}",
+                  "catch", "(", ERROR, ")",
+                  [ "quant", "open", NAME, "as", BINDING ],
+                  "{", { "discharge", BINDING, ";" }, "}" ;
+```
+
+It is admitted only as a direct statement of the entry's task scope, **after
+every spawn and join** — an ordering derived from the checked task IR's own
+spans, refused at `Q600` when false in either direction — and its body is
+narrowed to the parent's own quantities: a region **acquisition** is refused
+(`REGION-JOINS-DUTIES`), because a task-route resource has its own custody
+model and the region **erases from emission** exactly as the plan does
+(constraint 15l): the emitted C, the source map and the reference observation
+are byte-identical with and without it. The sealed pack therefore carries no
+duty and exactly the remainder of the written `credit`/`effort` fold, the one
+quantity the opening's `discharge` may discard — the kernel's own explicit
+`AbandonCredit`, checked by the **unedited**
+`qcore_core::error_region::analyze_error_regions` and published as
+`ComposedRegionEvidence::abandoned_credit` only after the driver re-derives it
+from an independent fold. Shape refusals are `Q302` and an undeclared error is
+`Q300`, per §L21; every pack obligation keeps the model's own `Q303`–`Q309`.
+See [the composition record](reports/region-credit-joins/README.md).
+
 Refused at `Q600`, each with a named follow-on: shared storage cells and
 `read`/`write` clauses (`T08-COMPOSE-SHARED`), read-loan captures
 (`T08-COMPOSE-LOAN`), a mutex generation anywhere in the composed body
 (`T08-COMPOSE-GUARD`, ranked or not), a joined owned result the creator hands on
 rather than releasing or keeping (`T08-COMPOSE-RESULT-REUSE`), a plan that is
-not the entry's first statement, and a second epoch scope. The profile's own
-refusals still come from the core's `Q630`-`Q641` band. Emission and reference
-execution are the scoped-task route's own, byte for byte; the epoch is
-check-only on top. See
+not the entry's first statement, a second epoch scope, and a spawn or join
+whose span follows the region epilogue (`REGION-CREDIT-JOINS`). The profile's
+own refusals still come from the core's `Q630`-`Q641` band. Emission and
+reference execution are the scoped-task route's own, byte for byte; the epoch
+and the region epilogue are check-only on top. See
 [the composition record](reports/remaining-t08-compose/README.md).
 
 ## G02g. Rendered lines: `std.fmt`, `std.io` and `std.logger`
