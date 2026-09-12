@@ -938,7 +938,7 @@ pub fn check_buffer_program(
     // `LOOP-UNROLL-BUDGET` replaces the rescan with `ownership::peak_live_axis`,
     // one pass taking the maximum of the values the run passes through — the
     // **same number** by definition, pinned by
-    // `the_one_pass_peak_is_the_number_a_full_prefix_scan_gives`, and 0.20 s at
+    // `the_one_pass_peak_is_the_number_a_full_prefix_scan_gives`, and 0.39 s at
     // the same bound. It is what makes the absolute ceiling defensible at 4096.
     let peak_live_bytes = ownership::peak_live_axis(&operations, BYTE_AXIS);
 

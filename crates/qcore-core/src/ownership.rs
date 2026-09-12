@@ -607,7 +607,8 @@ pub fn execute_ownership(operations: &[OwnershipOp]) -> Result<OwnershipState, O
 /// acquisitions — but each of those prefixes was still re-executed from the
 /// start, so a body acquiring once per iteration cost a quadratic number of
 /// ownership steps. Measured at a bound of 1024 that was **56.4 s** of check
-/// time against **0.20 s** for this one pass, and it is the measurement that
+/// time against **0.39 s** for this one pass (0.20 s with the computation
+/// removed entirely, which lower-bounds it), and it is the measurement that
 /// makes `source.loop.v1`'s absolute ceiling defensible at 4096 rather than
 /// 1024.
 #[must_use]

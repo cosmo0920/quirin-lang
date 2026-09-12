@@ -197,22 +197,27 @@ pub fn read_loop_attribute(
              anything further in it is refused rather than partly read",
         ));
     }
-    // The declared numeral's *value* is the bound band's business, decided
-    // against the ceiling by the core. A limit of 0 or 1 licenses no bound at
-    // all — `#bound < 1` admits nothing, since a bound of zero is already
-    // refused — and is reported as the same condition for the same reason.
-    if limit < 2 || limit > i64::from(MAX_DECLARED_LIMIT) {
-        let refusal = if limit > i64::from(MAX_DECLARED_LIMIT) {
-            BoundRefusal::LicenseAboveCeiling {
+    // The declared numeral's *value* is the bound band's business and is
+    // reported at `Q098` rather than here. Two values are decidable from the
+    // clause list **alone**, before any loop is read: one above the ceiling, and
+    // one (`#bound < 0`, `#bound < 1`) that licenses no bound at all, since the
+    // construct counts at least one iteration. Neither names a bound, because
+    // the reader has not read one.
+    if limit > i64::from(MAX_DECLARED_LIMIT) {
+        return Err(refusal_diagnostic(
+            &LoopRefusal::Bound(BoundRefusal::LicenseAboveCeiling {
                 limit: u32::try_from(limit).unwrap_or(u32::MAX),
-            }
-        } else {
-            BoundRefusal::LicenseViolated {
-                bound: 1,
+            }),
+            span,
+        ));
+    }
+    if limit < 2 {
+        return Err(refusal_diagnostic(
+            &LoopRefusal::Bound(BoundRefusal::LicenseLicensesNothing {
                 limit: u32::try_from(limit.max(0)).unwrap_or(0),
-            }
-        };
-        return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
+            }),
+            span,
+        ));
     }
     Ok(UnrollLicense {
         limit: u32::try_from(limit).expect("the limit is inside 2..=MAX_DECLARED_LIMIT"),

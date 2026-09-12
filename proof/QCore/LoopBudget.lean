@@ -41,7 +41,7 @@ is the repair the cost measurement forced, stated abstractly over any stepper
 and any measure: the maximum a run passes through is the maximum over its
 prefixes, so replacing a prefix rescan with one pass changes no number. It is
 what took the worst measured check of a 1024-iteration acquire/release body from
-56.4 s to 0.20 s, and so what keeps the ceiling defensible at 4096.
+56.4 s to 0.39 s, and so what keeps the ceiling defensible at 4096.
 
 What is **not** proved here: that the Rust reader extracts a clause list
 faithfully from source tokens (a tested Rust boundary, the family's standing

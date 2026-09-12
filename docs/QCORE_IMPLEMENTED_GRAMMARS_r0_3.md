@@ -2457,10 +2457,13 @@ callback body (`EVENT-CALLBACK-BODY`), an executable write interest
 ## G07.12. The checked bounded counted loop (`source.loop.v1`)
 
 Card `LOOP-V1` implements this consumer grammar (diagnostics `Q097`–`Q099`, spec
-§L21). It is a **control shape**, not a bundled module: it needs no `import`,
-exactly as `source.branch.v1`'s `if` does, and a route admits it the way a route
-admits `if`. **v1 admits it on `source.buffer.v1` only**; every other route keeps
-the refusal it already had (`LOOP-ROUTE-WIDENING`).
+§L21); card `LOOP-UNROLL-BUDGET` adds the `attr` production and the three-layer
+budget below, **allocating no code** — each of its refusals is a condition of
+`Q097` or `Q098`. It is a **control shape**, not a bundled module: it needs no
+`import`, exactly as `source.branch.v1`'s `if` does, and a route admits it the
+way a route admits `if`. **v1 admits it on `source.buffer.v1` only**; every
+other route keeps the refusal it already had (`LOOP-ROUTE-WIDENING`), and a
+clause list reaching one of those routes is refused at that route's own code.
 
 ```ebnf
 stmt   = [ attr ], "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}" ;
@@ -2489,7 +2492,9 @@ BOUND  = INTEGER | NAME ;
   ceiling rather than a default with a longer spelling. Because `#bound < N`
   licenses bounds up to `N - 1`, the largest condition the construct admits is
   `#bound < 4097`, and that is the one that licenses a traversal of the largest
-  buffer `source.buffer.v1` admits.
+  buffer `source.buffer.v1` admits. A condition **no** bound can satisfy —
+  `#bound < 1`, `#bound < 0` — refuses from the clause list alone, before any
+  loop is read, and names no bound.
 
   The attribute raises the **per-loop bound and nothing else**: the entry's
   unrolled-event budget of 8192 is untouched, so a nest of licensed loops is

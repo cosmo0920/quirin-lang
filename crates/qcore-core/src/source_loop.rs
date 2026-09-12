@@ -296,6 +296,13 @@ pub enum BoundRefusal {
     /// Layer three: the declaration is present and this loop's bound does not
     /// satisfy it. The declaration is checked, not trusted.
     LicenseViolated { bound: u32, limit: u32 },
+    /// A declared condition no bound at all can satisfy — `#bound < 0` or
+    /// `#bound < 1`, when the construct counts at least one iteration.
+    ///
+    /// Reported **without** looking at the loop, because it is a fact about the
+    /// clause list alone: reporting it as a violated condition would have to
+    /// name a bound, and the reader has not read one yet.
+    LicenseLicensesNothing { limit: u32 },
 }
 
 impl std::fmt::Display for BoundRefusal {
@@ -349,6 +356,12 @@ impl std::fmt::Display for BoundRefusal {
                 "`[| #unroll, where #bound < {limit} |]` licenses a bound below {limit} and this \
                  loop counts {bound}; the declared condition is checked against the bound the \
                  checker computes rather than taken on trust"
+            ),
+            Self::LicenseLicensesNothing { limit } => write!(
+                f,
+                "`#bound < {limit}` licenses no bound at all — `source.loop.v1` counts at least \
+                 one iteration — so this clause list refuses the loop it was written to permit; \
+                 the smallest condition that licenses anything is `#bound < 2`"
             ),
         }
     }

@@ -1,0 +1,400 @@
+test the_capability_derives_exactly_one_obligation_and_refuses_every_other_task ... ok
+test checker_and_schema_version_fields_are_bound_and_unsupported_versions_reject ... ok
+test legacy_v1_evidence_is_preserved_as_non_certifying ... ok
+test a_forged_witness_with_a_recomputed_binding_is_refused_in_both_directions ... ok
+test echoed_labels_and_semantically_wrong_paths_leave_the_obligation_unknown ... ok
+test oversized_and_degenerate_evidence_is_bounded_and_never_panics ... ok
+test mismatched_permuted_and_foreign_obligation_identifiers_reject ... ok
+test a_duplicated_witness_never_covers_a_second_obligation ... ok
+test substituted_source_projections_and_declared_assumptions_reject ... ok
+test analyzed_scope_and_imported_function_set_retire_the_task_and_its_witness ... ok
+test no_summary_or_evidence_cache_survives_a_semantically_changed_input ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
+
+     Running tests/source_effect_obligations.rs (target/debug/deps/source_effect_obligations-bc52da43d9c4d019)
+
+running 6 tests
+test a_provider_cannot_remove_or_substitute_a_requested_obligation ... ok
+test indirect_calls_and_callback_fields_stay_unknown ... ok
+test unreachable_statements_are_imported_and_unmodeled_dead_code_fails_closed ... ok
+test scope_exclusions_leave_definitions_outside_the_derived_inventory ... ok
+test deleting_a_lifecycle_relevant_statement_changes_the_derived_obligation_set ... ok
+test nested_calls_in_returns_arguments_conditions_and_initializers_stay_unknown ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.02s
+
+     Running tests/source_profile_boundary.rs (target/debug/deps/source_profile_boundary-a9dc51c7905ff292)
+
+running 6 tests
+test direct_profiles_reject_ambiguous_or_malformed_audited_inventories ... ok
+test direct_profiles_reject_vacuous_or_undocumented_witness_checks ... ok
+test a_failed_required_witness_or_source_identity_never_returns_partial_evidence ... ok
+test valid_declared_digest_and_substring_witnesses_keep_exact_inventory ... ok
+test directly_constructed_digest_witness_requires_an_audited_file ... ok
+test json_loader_and_direct_derivation_agree_on_witness_structure ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/teardown_prerequisites.rs (target/debug/deps/teardown_prerequisites-ceeaf408fedf719c)
+
+running 5 tests
+test the_unlink_task_can_be_named_and_re_established ... ok
+test the_destructor_task_can_be_named_and_re_established ... ok
+test every_teardown_prerequisite_field_is_load_bearing ... ok
+test all_four_memory_close_dependencies_are_now_nameable ... ok
+test a_moved_teardown_input_retires_its_prerequisite_identity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.68s
+
+     Running tests/teardown_source.rs (target/debug/deps/teardown_source-f4838e18ac6e01a7)
+
+running 7 tests
+test the_core_admits_only_its_own_destructor_reading ... ok
+test a_false_contract_is_not_bought_by_a_correct_reading ... ok
+test a_projection_carries_exactly_one_obligation_of_its_own_family ... ok
+test the_core_admits_only_its_own_unlink_reading ... ok
+test unmodeled_bodies_keep_their_functions_unknown_at_import ... ok
+test changed_inputs_produce_different_tasks_and_cross_task_witnesses_refuse ... ok
+test incompatible_targets_and_inventories_refuse_derivation ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.99s
+
+     Running tests/unsupported_close_composition_mutations.rs (target/debug/deps/unsupported_close_composition_mutations-3da68c380e734049)
+
+running 10 tests
+test every_clause_of_the_composition_contract_is_load_bearing ... ok
+test the_importer_refuses_a_malformed_question_before_importing ... ok
+test every_figure_of_a_proposed_reading_is_refused ... ok
+test a_falsified_prerequisite_contract_refuses_at_evaluation ... ok
+test the_probe_selection_is_bound_and_load_bearing ... ok
+test a_foreign_family_or_task_binding_is_refused ... ok
+test an_unread_build_option_retires_the_task ... ok
+test every_prerequisite_forgery_is_refused ... ok
+test every_nested_question_substitution_is_refused has been running for over 60 seconds
+test the_symbolic_class_refuses_every_split_of_its_domain has been running for over 60 seconds
+test the_symbolic_class_refuses_every_split_of_its_domain ... ok
+test every_nested_question_substitution_is_refused ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 73.28s
+
+     Running tests/unsupported_close_composition_source.rs (target/debug/deps/unsupported_close_composition_source-1b9ed8e05a4e749e)
+
+running 15 tests
+test write_the_provider_fixture ... ok
+test the_task_derives_exactly_one_composition_obligation ... ok
+test the_task_binds_exactly_the_named_inputs_with_distinct_digests ... ok
+test the_question_carries_no_body_probe_or_derivation_of_its_own ... ok
+test the_bound_nested_question_carries_both_derivations ... ok
+test the_request_carries_the_question_and_no_composed_or_prerequisite_result ... ok
+test the_prerequisite_is_re_established_at_every_level ... ok
+test the_core_reads_the_symbolic_class_and_withholds_its_conclusion ... ok
+test an_admitted_proposal_still_publishes_unknown ... ok
+test the_one_member_prerequisite_sets_distinctness_rule_is_vacuous ... ok
+test the_published_premises_are_the_union_of_the_component_and_this_routes_own ... ok
+test the_checker_admits_its_own_reading_and_refuses_a_foreign_task ... ok
+test the_derivation_is_deterministic ... ok
+test the_prerequisite_is_checked_over_this_very_unit ... ok
+test the_prerequisite_identity_is_the_whole_triple ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.57s
+
+     Running unittests src/lib.rs (target/debug/deps/qcore_verifier_host-9d975ad11ccbb39e)
+
+running 30 tests
+test confinement::tests::handled_rights_track_the_probed_abi ... ok
+test confinement::tests::no_class_grants_write_and_execute_together_and_none_grants_refer ... ok
+test confinement::tests::the_package_root_is_the_first_admitted_entry_and_the_policy_adds_nothing_implicitly ... ok
+test execution_policy::tests::a_named_base_expands_to_the_same_policy_a_rust_caller_would_build ... ok
+test embedded_template::tests::absent_ambiguous_truncated_and_corrupt_envelopes_refuse ... ok
+test execution_policy::tests::a_relative_admitted_path_is_refused ... ok
+test embedded_template::tests::a_digest_edit_is_refused_as_the_substituted_field ... ok
+test execution_policy::tests::a_confining_selection_without_a_policy_is_refused ... ok
+test confinement::tests::a_lower_abi_records_the_rights_it_cannot_gate ... ok
+test embedded_template::tests::an_unmodified_package_binds ... ok
+test execution_policy::tests::an_unsupported_version_is_refused_rather_than_guessed ... ok
+test execution_policy::tests::the_recorded_default_is_the_historical_unenforcing_profile ... ok
+test process_quota::tests::a_profile_that_installs_no_quota_has_no_role_for_the_quota_kind ... ok
+test process_quota::tests::an_override_can_only_force_a_mechanism_unavailable ... ok
+test process_quota::tests::an_unknown_kind_has_no_role_under_any_profile ... ok
+test execution_policy::tests::the_written_form_round_trips ... ok
+test process_quota::tests::only_the_confining_profile_installs_a_per_execution_quota ... ok
+test process_quota::tests::the_quota_kind_is_never_confused_with_the_per_uid_rlimit_kind ... ok
+test process_quota::tests::the_refusals_name_the_kind_and_the_profile_that_would_enforce_it ... ok
+test tests::conflicting_assumptions_make_composition_unknown ... ok
+test executable_identity::tests::an_unlink_and_recreate_is_refused_as_a_replaced_path ... ok
+test executable_identity::tests::an_in_place_rewrite_is_refused_as_changed_content ... ok
+test executable_identity::tests::opening_a_directory_as_an_executable_fails ... ok
+test executable_identity::tests::a_stripped_envelope_is_refused_before_the_template_check ... ok
+test executable_identity::tests::an_unchanged_executable_revalidates ... ok
+test execution_policy::tests::a_policy_under_a_non_confining_profile_is_refused_in_the_other_direction ... ok
+test executable_identity::tests::a_directory_in_place_of_the_executable_is_refused ... ok
+test executable_identity::tests::a_removed_executable_is_refused ... ok
+test embedded_template::tests::an_oversized_payload_refuses_without_parsing ... ok
+test embedded_template::tests::every_declared_field_class_is_bound ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/composition_relation.rs (target/debug/deps/composition_relation-86a54d55ef846c4f)
+
+running 24 tests
+test a_safe_verdict_without_a_certificate_never_composes ... ok
+test conflicting_premises_do_not_merge ... ok
+test a_provider_that_never_answered_is_not_an_empty_requirement ... ok
+test a_component_without_a_task_leaves_the_composite_with_no_bounds ... ok
+test certificates_over_different_units_do_not_merge ... ok
+test a_recomposed_composite_is_still_measured_against_the_required_set ... ok
+test a_composite_publishes_the_tightest_bounds_envelope ... ok
+test certificates_of_two_capabilities_over_one_unit_merge ... ok
+test disjoint_providers_merge_over_the_exact_core_required_set ... ok
+test a_composite_publishes_the_union_of_its_components_coverage_and_provenance ... ok
+test an_empty_required_set_is_never_composed_safe ... ok
+test a_single_component_composite_still_publishes_its_certificate ... ok
+test composition_cannot_republish_an_unchecked_unsafe_label ... ok
+test coverage_beyond_the_required_set_is_refused ... ok
+test composing_a_composite_publishes_the_same_merge_as_composing_the_parts ... ok
+test a_provider_allegation_is_never_composed_into_a_checked_violation ... ok
+test duplicate_evidence_is_not_counted_twice ... ok
+test only_a_safe_outcome_contributes_its_composite ... ok
+test one_obligation_discharged_under_two_bounds_does_not_merge ... ok
+test re_submitting_one_composite_adds_coverage_for_nobody ... ok
+test an_unknown_or_failed_provider_leaves_its_obligations_uncovered ... ok
+test a_composite_publishes_the_union_of_its_components_premises ... ok
+test regrouping_cannot_hide_a_conflict_from_the_merge_rules ... ok
+test the_bounds_envelope_is_the_tightest_of_every_kind ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/confined_process_execution.rs (target/debug/deps/confined_process_execution-39b6b4f02e4bba85)
+
+running 12 tests
+test the_default_profile_still_confines_nothing ... ok
+test an_absent_admitted_path_grants_nothing_and_is_recorded ... ok
+test an_uninstallable_policy_is_refused_before_spawning ... ok
+test a_policy_under_a_non_confining_profile_is_refused ... ok
+test a_confining_profile_without_a_policy_is_refused_before_spawning ... ok
+test the_package_root_is_admitted_read_and_execute_only ... ok
+test the_evidence_records_the_achieved_confinement_and_its_boundary ... ok
+test the_confined_profile_composes_with_the_limit_profile ... ok
+test an_admitted_path_still_works_under_confinement ... ok
+test a_confined_fixture_cannot_write_outside_the_admitted_paths ... ok
+test a_confined_fixture_cannot_read_outside_the_admitted_paths ... ok
+test a_confined_fixture_cannot_reach_a_listening_localhost_server ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/diagnostic_attribution.rs (target/debug/deps/diagnostic_attribution-240179cfa2df2ca2)
+
+running 5 tests
+test a_valid_diagnostic_never_supplies_missing_evidence_authority ... ok
+test maximum_valid_plugin_and_local_component_lengths_are_accepted ... ok
+test invalid_codes_are_rejected_before_v1_verdict_handling ... ok
+test exact_selected_provider_and_ascii_local_codes_are_preserved ... ok
+test invalid_codes_are_rejected_before_v2_verdict_handling ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 12 tests
+test the_enforceable_kind_inventory_is_explicit ... ok
+test the_default_profile_is_the_unenforced_legacy_one ... ok
+test an_undeclared_cpu_budget_is_derived_and_labeled ... ok
+test the_profile_is_target_qualified ... ok
+test output_flooding_beyond_the_cap_is_bounded ... ok
+test a_well_behaved_provider_completes_under_the_enforced_profile ... ok
+test a_declared_but_unenforceable_limit_kind_is_refused ... ok
+test memory_growth_beyond_the_declared_limit_is_bounded ... ok
+test a_wall_clock_hang_is_killed_within_tolerance ... ok
+test a_cpu_spin_is_killed_by_the_declared_cpu_limit ... ok
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+test descendants_do_not_outlive_the_execution ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.80s
+
+     Running tests/execution_quota.rs (target/debug/deps/execution_quota-b1e85762cb833eed)
+
+running 13 tests
+test the_availability_override_is_one_directional ... ok
+test only_the_confining_profile_accepts_the_quota_kind ... ok
+test a_written_selection_reaches_the_provider ... ok
+test both_enforcing_profiles_are_target_qualified ... ok
+test a_zero_quota_is_refused ... ok
+test a_forced_unavailable_quota_mechanism_refuses_before_spawning ... ok
+test a_declared_quota_is_refused_off_linux ... ok
+test a_kernel_that_denies_user_namespaces_refuses_the_confined_profile ... ok
+test a_missing_confinement_mechanism_refuses_before_spawning ... ok
+test a_forced_override_never_weakens_an_execution ... ok
+test the_same_fixture_without_a_declared_quota_installs_none ... ok
+test the_quota_binds_without_depending_on_the_accounts_process_count ... ok
+test a_declared_quota_bounds_a_fork_storm_in_this_execution_only ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.04s
+
+     Running tests/package_identity.rs (target/debug/deps/package_identity-81ecacefdbad9de6)
+
+running 10 tests
+test applying_an_execution_policy_does_not_verify_a_package ... ok
+test a_substituted_package_is_unknown_through_a_registry ... ok
+test an_unverified_provider_carries_no_identity_to_recheck ... ok
+test a_byte_identical_replacement_is_still_refused ... ok
+test an_in_place_rewrite_is_refused_at_the_next_spawn ... ok
+test a_removed_executable_is_refused_at_the_next_spawn ... ok
+test a_replaced_executable_is_refused_at_the_next_spawn ... ok
+test a_differently_templated_but_valid_package_is_refused_at_spawn ... ok
+test a_symbolic_entrypoint_is_checked_where_it_is_executed ... ok
+test a_verified_package_answers_and_records_its_residual_window ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 3 tests
+test zero_provider_registry_is_independent_and_fail_closed ... ok
+test standalone_host_refuses_v1_assertions_with_empty_and_nonempty_coverage ... ok
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.73s
+
+     Running unittests src/main.rs (target/debug/deps/quirin-0c0c8d98f141a168)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli.rs (target/debug/deps/cli-93190c91e5d13ec4)
+
+running 9 tests
+test plugin_discovery_errors_are_reported_without_builtin_fallback ... ok
+test cli_checks_contracts_and_refuses_standalone_emit_without_overwriting_output ... ok
+test core_cli_works_without_clang ... ok
+test the_cli_reads_the_include_texts_a_manifest_declares ... ok
+test the_cli_reads_the_exported_header_a_manifest_names ... ok
+test the_cli_prints_the_artifact_a_waiver_was_waived_from ... ok
+test cli_names_owned_profile_and_emits_real_buffer_transfer ... ok
+test cli_recovery_joins_first_child_after_second_creation_fails ... ok
+test cli_checks_emits_and_executes_native_source_tasks ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/examples_cli.rs (target/debug/deps/examples_cli-8e19485289a8c628)
+
+running 5 tests
+test the_published_emit_command_produces_a_translation_unit ... ok
+test the_page_publishes_the_premises_the_driver_prints ... ok
+test selecting_the_published_manifest_names_the_build_the_waiver_came_from ... ok
+test the_contracted_examples_are_refused_by_the_driver_rather_than_admitted ... ok
+test every_example_the_pages_say_checks_through_the_driver_does ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/plugin_packages.rs (target/debug/deps/plugin_packages-750ca2b1c57e3716)
+
+running 7 tests
+test package_symlinks_cannot_escape_the_package_root ... ok
+test package_tampering_never_updates_the_selection_file ... ok
+test configured_source_scope_dispatches_only_the_enabled_process ... ok
+test invalid_configuration_has_no_default_registry_fallback ... ok
+test the_execution_profile_is_explicit_configuration_and_defaults_to_the_legacy_one ... ok
+test package_selection_is_explicit_pinned_and_reversible ... ok
+test discovery_order_is_independent_of_selection_order ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+   Doc-tests qcore_audit
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_c_gateway
+
+running 17 tests
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 169) - compile fail ... ok
+test crates/qcore-c-gateway/src/teardown_source.rs - teardown_source::ListUnlinkSourceImport (line 38) - compile fail ... ok
+test crates/qcore-c-gateway/src/call_use_source.rs - call_use_source::FileAttemptSourceImport (line 40) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source.rs - typed_source::SourceSummary (line 163) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 17) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 177) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkSourceSummary (line 171) - compile fail ... ok
+test crates/qcore-c-gateway/src/composition_source.rs - composition_source::UnsupportedCloseSourceImport (line 1418) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 255) - compile fail ... ok
+test crates/qcore-c-gateway/src/teardown_source.rs - teardown_source::FieldDestructorSourceImport (line 91) - compile fail ... ok
+test crates/qcore-c-gateway/src/composition_source.rs - composition_source::CompositionSourceImport (line 168) - compile fail ... ok
+test crates/qcore-c-gateway/src/composition_source.rs - composition_source::FilesystemChunkCloseSourceImport (line 1139) - compile fail ... ok
+test crates/qcore-c-gateway/src/typed_source_match.rs - typed_source_match::TypedBodyComparison (line 25) - compile fail ... ok
+test crates/qcore-c-gateway/src/boolean_source.rs - boolean_source::ChunkFrameSummary (line 249) - compile fail ... ok
+test crates/qcore-c-gateway/src/counter_source.rs - counter_source::CounterSourceImport (line 31) - compile fail ... ok
+test crates/qcore-c-gateway/src/cleanup_replay_source.rs - cleanup_replay_source::CleanupReplaySourceImport (line 56) - compile fail ... ok
+test crates/qcore-c-gateway/src/composition_source.rs - composition_source::MemoryCloseSourceImport (line 810) - compile fail ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+   Doc-tests qcore_compiler
+
+running 3 tests
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 14) - compile fail ... ok
+test compiler/src/verifier_plugins/chunkio/chunk_source.rs - verifier_plugins::chunkio::chunk_source::ChunkSourceSummary (line 19) - compile fail ... ok
+test compiler/src/typed_source_match.rs - typed_source_match::SourceMatch (line 22) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+   Doc-tests qcore_contract
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_core
+
+running 3 tests
+test crates/qcore-core/src/region_task_credit.rs - region_task_credit (line 42) ... ok
+test crates/qcore-core/src/prelude.rs - prelude::concurrency (line 23) ... ok
+test crates/qcore-core/src/scoped_tasks.rs - scoped_tasks (line 26) ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test crates/qcore-core/src/obs_reordering.rs - obs_reordering::AdmittedReordering (line 187) - compile fail ... ok
+test crates/qcore-core/src/task_trace_relation.rs - task_trace_relation::AdmittedCausalOrder (line 469) - compile fail ... ok
+test crates/qcore-core/src/task_execution.rs - task_execution::CheckedTaskModule (line 216) - compile fail ... ok
+test crates/qcore-core/src/composed_tasks.rs - composed_tasks::CheckedComposedTaskModule (line 243) - compile fail ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+all doctests ran in 0.45s; merged doctests compilation took 0.40s
+   Doc-tests qcore_frontend
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_schemas
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests qcore_verification
+
+running 1 test
+test crates/qcore-verification/src/reactor_source.rs - reactor_source::ReactorProgramImport (line 78) - compile fail ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+   Doc-tests qcore_verifier_host
+
+running 1 test
+test crates/qcore-verifier-host/src/lib.rs - UnverifiedProvider (line 1041) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+test crates/qcore-verifier-host/src/lib.rs - UnverifiedProvider (line 1033) - compile fail ... ok
+test crates/qcore-verifier-host/src/lib.rs - UnverifiedProvider (line 1023) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+all doctests ran in 0.48s; merged doctests compilation took 0.43s

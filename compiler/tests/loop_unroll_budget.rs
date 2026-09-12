@@ -534,6 +534,31 @@ fn a_refused_clause_list_suppresses_the_budget_decision_and_nothing_else() {
     assert!(messages(&still_checked).contains("LOOP-BREAK"));
 }
 
+/// A condition no bound can satisfy is refused **from the clause list alone**,
+/// before any loop is read — so the message names the list rather than a bound
+/// the reader has not read yet. `source.loop.v1` counts at least one iteration,
+/// so `#bound < 1` and `#bound < 0` license nothing.
+#[test]
+fn a_condition_no_bound_can_satisfy_refuses_without_naming_one() {
+    for limit in ["0", "1"] {
+        let source = module(
+            "alloc, mut",
+            &[
+                "let b = bytes(4);",
+                &format!("[| #unroll, where #bound < {limit} |]"),
+                "for i in 0..5 { b[0] = 1; }",
+                "drop b;",
+                "return;",
+            ],
+        );
+        assert_eq!(codes(&source), ["Q098"], "{limit}");
+        let message = messages(&source);
+        assert!(message.contains("licenses no bound at all"), "{message}");
+        // And it does not claim anything about this loop's own count.
+        assert!(!message.contains("counts 5"), "{message}");
+    }
+}
+
 #[test]
 fn a_limit_the_reader_would_have_to_compute_refuses() {
     let source = module(
@@ -614,6 +639,28 @@ fn an_unterminated_clause_list_is_a_parse_failure() {
         ],
     );
     assert_eq!(codes(&source), ["Q000"]);
+}
+
+// --- Route admission, measured. -------------------------------------------
+
+/// The attribute is read by the **one** route that admits the loop. Every other
+/// route's outcome is measured and pinned rather than widened, the
+/// `LOOP-ROUTE-WIDENING` precedent: a clause list reaches a reader that does not
+/// model it and is refused at that route's own code, beside the refusal the
+/// `for` after it already had.
+///
+/// One cosmetic finding, recorded rather than chased into another route's
+/// reader: `source.std-io.v1`'s generic message is built from the statement's
+/// head *word*, and an attribute's head is a symbol, so the message reads
+/// ``` `` is not a statement `source.std-io.v1` models ```. The code and the
+/// refusal are right and the empty name is not
+/// (`LOOP-ATTRIBUTE-FOREIGN-ROUTE-MESSAGE`).
+#[test]
+fn a_route_that_does_not_admit_the_loop_refuses_the_attribute_at_its_own_code() {
+    let standard_io = "import std.fmt;\nimport std.io;\n\nfn main() -> unit effects { io } {\n    [| #unroll, where #bound < 1024 |]\n    for i in 0..3 { print dec i; }\n    return;\n}\n";
+    assert_eq!(codes(standard_io), ["Q030", "Q030"]);
+    let sequential = "fn main() -> i32 {\n    [| #unroll, where #bound < 1024 |]\n    for i in 0..3 { }\n    return 0;\n}\n";
+    assert!(codes(sequential).contains(&"Q500".to_owned()));
 }
 
 // --- Erasure. --------------------------------------------------------------

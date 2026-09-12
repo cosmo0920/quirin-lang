@@ -1,0 +1,71 @@
+LOOP-UNROLL-BUDGET — closing gate
+=================================
+
+Worktree cut from main e26bb0c3 (the wave-25 close).
+Submodule: third_party/libevent at d82464a277d0f42703702c4dfd9af6af38595a83
+(git submodule update --init --recursive, run in this worktree).
+
+Each step's exit status was written to its own file with `echo $? >`
+(measure/gate.sh and the *.exitcode files beside it in the worktree-private
+measure/ directory), so no shell wrapper stands between the process and the
+recorded number.
+
+  cargo test --workspace --no-fail-fast          exit 0
+  cargo fmt --all -- --check                     exit 0
+  cargo clippy --all-targets -- -D warnings      exit 0
+  cargo run -p qcore-compiler --example reevaluation_probe      exit 0
+  cargo run -p qcore-compiler --example reevaluation_followup   exit 0
+  python3 scripts/check_lean_audits.py           exit 0
+  python3 -m unittest discover -s scripts/tests  exit 1  (expected, see below)
+
+Workspace tests
+---------------
+  4,118 passed, 0 failed, 8 ignored, across 207 suites reporting
+  "test result: ok".  Zero "test result: FAILED" lines in the log.
+  The run reached and finished its final phase (the merged doctests).
+
+  Reconciliation: AGENTS.md's wave-25 close records 4,089 workspace tests
+  with 8 ignored.  4,089 + 29 = 4,118, and 29 is exactly this card's new
+  suite (compiler/tests/loop_unroll_budget.rs).  No other count moved.
+
+  Per-card suites:
+    cargo test -p qcore-compiler --test loop_unroll_budget   29 passed
+    cargo test -p qcore-compiler --test source_loop          39 passed
+    cargo test -p qcore-compiler --test std_buffer           52 passed
+
+Lean
+----
+  Passed 108 Lean audits (107 before this card).
+  One new audit file, proof/AuditLoopBudget.lean, 22 audited entries.
+  No new axiom: every entry depends on nothing, or only on propext and
+  Quot.sound.
+
+The one expected failure
+------------------------
+  scripts/tests' test_the_derived_facts_are_recomputed_rather_than_carried
+  fails on validation.lean_audits:
+
+    AssertionError: Lists differ: ['14.0.0', 107] != ['14.0.0', 108]
+
+  The committed docs/reviews/r0_3/acceptance_matrix.json carries 107 and the
+  tree now produces 108.  The delta is entirely this card's one new audit
+  file.  This card's brief forbids editing the acceptance matrix, so the
+  derived row is deliberately left stale for the wave integrator to
+  regenerate — the same handling every wave's derived sections receive, and
+  the same one card LOOP-V1 recorded.
+
+Constraint 16
+-------------
+  None of the five load-sensitive provider/host rows tripped.  No assertion
+  was weakened and no test was re-run in isolation to obtain a pass.
+
+Environment
+-----------
+  Two earlier gate runs were stopped deliberately because a source edit
+  landed under them (a numeric correction to three doc comments, and the
+  LicenseLicensesNothing refusal).  A run with a source change under it is
+  not a measurement; no number above comes from either of them.
+
+  Two sibling agents ran their own full gates against neighbouring worktrees
+  for most of this run, and the host was under memory pressure, so
+  wall-clock timings are not comparable with a quiet run.
