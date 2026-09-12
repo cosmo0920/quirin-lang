@@ -396,9 +396,11 @@ Lean–Rust tie is F02's checked-digest transcription agreement, not a verified
 extraction. Axiom surface within `propext`/`Classical.choice`/`Quot.sound`.
 `git diff` over `crates/` and `compiler/src/` is empty, zero new codes, zero
 reserved words; gate at the card tip 4,447 workspace tests (baseline 4,445 +
-2), fmt/clippy clean, both probes exit 0, `Passed 119 Lean audits`, Python
-192/193 with the standing lean-count tripwire disclosed for the integrator's
-regeneration. Evidence: `docs/reports/ct-proof-leg-2/README.md`.
+2; constraint 16's wall-clock row tripped under external load ~45 and was
+re-verified green in isolation at load ~32, both facts recorded), fmt/clippy
+clean, both probes exit 0, `Passed 119 Lean audits`, Python 192/193 with the
+standing lean-count tripwire disclosed for the integrator's regeneration.
+Evidence: `docs/reports/ct-proof-leg-2/README.md`.
 
 Wave 29 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,

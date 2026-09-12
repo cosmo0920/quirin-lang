@@ -332,15 +332,15 @@ conformance (constraint 23's spirit applies to this denominator too).
 
 ## 8. Gate
 
-Run at the card tip on Linux, after the same disk-bound configuration the
-CT01 card recorded for this worktree host
-(`CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0`,
-debug-info emission off; no test, pin or assertion edited to obtain the
-results).
+Run at the card tip on Linux, under default cargo configuration (no test, pin
+or assertion edited to obtain the results). The host was under heavy external
+load throughout — other worktrees' gates on the shared machine, load average
+in the mid-30s to mid-40s — which is disclosed because it is exactly the
+regime constraint 16 records for its wall-clock row.
 
 | Check | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | **4,447 passed / 0 failed / 8 ignored** (exit 0; wave-29 baseline 4,445 + this card's 2). Constraint-16 rows: see the disclosure under the table |
+| `cargo test --workspace --no-fail-fast` | **219 suite summaries: 4,446 passed / 1 failed / 8 ignored** (wave-29 baseline 4,445 + this card's 2 = 4,447 total). The one failure is constraint 16's named wall-clock row, re-verified green in isolation — §8.2 records both facts |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean (exit 0) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -358,6 +358,20 @@ deliberately left stale for the wave integrator to regenerate — the handling
 every audit-adding card's delta receives (the `CT01-PROOF-LEG`,
 `AGGREGATES-V1` and `LOOP-V1` reports record the same shape). The delta is
 entirely this card's one audit file.
+
+### 8.2 The one tripped constraint-16 row, both facts recorded
+
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets` — the wall-clock row
+constraint 16 records as *measured failing at load 50 and passing at load 37
+on the same binary* — failed under the concurrent workspace run
+(`assertion failed: elapsed < Duration::from_millis(500)`) with the host load
+average at ~45, and failed once more in an immediate isolated retry at load
+~45.6, exactly its recorded band. Re-verified **green in isolation** once the
+external load fell to ~32 (`test result: ok. 1 passed`, same binary, nothing
+edited). `--no-fail-fast` did its job: every suite after the failing binary
+still ran, so the numbers above are a measurement, not a lower bound
+(`GATE-NO-FAIL-FAST`). Raw logs: worktree-private
+`measure/ct-proof-leg-2-workspace-tests.log`.
 
 ## 9. Follow-ons
 
