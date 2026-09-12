@@ -349,6 +349,60 @@ full suite.
 
 ## Increment records
 
+Wave 28, card `CT-WIRE-LANE-2` (2026-09-12): the second CT mapping lane, on the
+wave-26 precedent, converting the wave-27 capability cards into manifest rows.
+CT coverage moves **36/50 → 41/50 mapped** (unmapped 14 → 9), harness-gated
+sanitized-native evidence **5 of 36 → 7 of 41**, proof **0 of 41** — by
+**mapping, not conformance** (constraint 23), and with nothing semantic
+changed: `git diff` over `crates/` and `compiler/src/` is empty, no diagnostic
+code is allocated (the `Q-NAMESPACE-DECISION` ice box needed nothing) and no
+word is reserved. Five cases map. **CT07** and **CT09** are the sequential
+route's first *accepted* cases, under a new `sequential_sanitized` verdict mode
+whose runner builds one binary from the case's own emitted C under
+ASan/UBSan (LSan on Linux) and compares both streams byte for byte with the
+route's checked observation: CT07 is `CT07-SLICE-PERMISSIONS`'s
+disjoint-halves program, mapped with the boundary that card's §8 required
+stated — one permission is a **read** loan and the other is the owner's
+retained write authority, not two write lends
+(`SLICE-PERMISSIONS-WRITE-LEND` stays open) — and CT09 is `AGGREGATES-V1`'s
+three-field record program, its access proof checked and its **layout** leg an
+executed sanitized byte-comparison *observation*, never a proof
+(`AGGREGATE-CT09-LAYOUT` honoured; `proof` stays `unassessed`). **CT08** maps
+on the Reject arm of its expected text (the overlap decided at check time,
+`["Q078"]` naming the footprint; the analyzer-`unknown` arm is not claimed) and
+**CT21** on `QUANT-REGION-SOURCE`'s undischarged cleanup pack (`["Q305"]`, the
+discharge control admitted, the unopened control refused `["Q306"]`), retiring
+the archived *"no source path emits `RegionOp::QuantOpen`"* reason. **CT23**
+lands on a new `composed_epoch` route — grown as a new route rather than by
+widening the check-only `epoch` route, so that route's structural-absence
+statements stay true — under the `epoch_credit_split` verdict mode
+`CT23-CT-MAPPING` proposed: the exact `["Q635"]` cascade of `error(close);`
+abandoning a child's granted credit on the creator's own error edge, plus every
+admitting control's published split compared wholesale (`restored + spent =
+credit`, including `partial.qcore`'s real componentwise division) and the
+`["Q636"]` mint refusal; the parked fixtures moved from
+`compiler/tests/fixtures/epoch_credit/CT23/` into the CT tree with the card's
+own test repointed, and `ct_corpus.rs`'s pinned tables grown deliberately.
+**CT22 is deliberately not mapped**: the credit half is re-measured to accept
+(`AbandonCredit(3)`, explicit) and the narrowed *"after joins"* reason is
+published as this lane's own labelled row per `QUANT-REGION-SOURCE` §5
+(`REGION-CREDIT-WITH-JOINS`), without coordinating with the parallel card that
+owns the composition. The wave-26 lane's CT07/CT08 rows are retired by
+declaration in this lane's record — the earlier record keeps its bytes
+(constraint 21) — and two Python tests that pinned tree facts are updated with
+no assertion weakened. Checkpoint at the card tip: 4,376 workspace tests
+(8 ignored; the count is unchanged from the wave-27 close because the five new
+cases run inside `ct_corpus.rs`'s existing test functions — 4,375 passed in
+the single `--no-fail-fast` run and the one that did not,
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets` under concurrent suite
+load, is a recorded constraint-16 row verified passing in isolation), 193
+Python, **114 Lean audits** (unchanged — the lane adds no Lean), both
+reevaluation examples exit 0, fmt/clippy clean, provider 122 carried (no
+provider file touched). Nothing is promoted: the corpus baseline
+stays `docs/reports/gateway-c-location/artifacts/` with leak **266**, the
+contract corpus 73 modules, full language conformance **false**. Evidence:
+`docs/reports/ct-wire-lane-2/README.md` and its `ct_stage_evidence.json`.
+
 Wave 27 close (2026-09-12): **six pieces** merged one at a time under the
 failure-gated chain, each under its own green gate — `CT23-CREDIT-ERROR-PATH`,
 `DOCS-COMPACT-3` (the recurring three-file compaction *plus* a user-directed
