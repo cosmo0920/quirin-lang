@@ -1015,13 +1015,14 @@
    "docs/reports/wave13-ct34/ct_stage_evidence.json",
    "docs/reports/remaining-ct34-sanitized/ct_stage_evidence.json",
    "docs/reports/wave17-ct40/ct_stage_evidence.json",
-   "docs/reports/ct-wire-lane/ct_stage_evidence.json"
+   "docs/reports/ct-wire-lane/ct_stage_evidence.json",
+   "docs/reports/ct-wire-lane-2/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 36,
-   "unmapped": 14
+   "mapped": 41,
+   "unmapped": 9
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1067,6 +1068,13 @@
     "macos"
    ],
    "parse": [
+    "any"
+   ],
+   "sequential_reference_execution": [
+    "linux",
+    "macos"
+   ],
+   "sequential_whole_program": [
     "any"
    ],
    "task_ledger_check": [
@@ -1116,6 +1124,12 @@
     "clang",
     "none"
    ],
+   "sequential_reference_execution": [
+    "none"
+   ],
+   "sequential_whole_program": [
+    "none"
+   ],
    "task_ledger_check": [
     "none"
    ],
@@ -1131,80 +1145,82 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 36
+    "executed": 41
    },
    "elaborate": {
-    "executed": 33,
+    "executed": 38,
     "not_applicable": 3
    },
    "task_lowering": {
-    "executed": 17,
-    "not_applicable": 19
+    "executed": 18,
+    "not_applicable": 23
    },
    "task_ledger_check": {
-    "executed": 16,
-    "not_applicable": 20
+    "executed": 17,
+    "not_applicable": 24
    },
    "mutex_lowering": {
     "executed": 10,
-    "not_applicable": 26
+    "not_applicable": 31
    },
    "mutex_invariant_check": {
     "executed": 10,
-    "not_applicable": 26
+    "not_applicable": 31
    },
    "epoch_lowering": {
-    "executed": 4,
-    "not_applicable": 32
+    "executed": 5,
+    "not_applicable": 36
    },
    "epoch_bound_check": {
-    "executed": 4,
-    "not_applicable": 32
+    "executed": 5,
+    "not_applicable": 36
    },
    "sequential_whole_program": {
-    "not_applicable": 36
+    "executed": 2,
+    "not_applicable": 39
    },
    "sequential_reference_execution": {
-    "not_applicable": 36
+    "executed": 2,
+    "not_applicable": 39
    },
    "task_reference_execution": {
     "executed": 12,
-    "not_applicable": 24
+    "not_applicable": 29
    },
    "mutex_reference_execution": {
     "executed": 2,
-    "not_applicable": 34
+    "not_applicable": 39
    },
    "c_emission": {
-    "executed": 14,
-    "not_applicable": 22
+    "executed": 16,
+    "not_applicable": 25
    },
    "native_execution": {
-    "executed": 14,
-    "not_applicable": 22
+    "executed": 16,
+    "not_applicable": 25
    },
    "native_sanitized": {
-    "executed": 5,
+    "executed": 7,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 19
+    "unassessed": 22
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 33
+    "not_applicable": 38
    },
    "proof": {
-    "unassessed": 36
+    "unassessed": 41
    }
   },
   "depth_profile": {
-   "elaborate": 2,
+   "elaborate": 4,
    "epoch_bound_check": 4,
    "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "native_execution": 9,
-   "native_sanitized": 5,
-   "task_ledger_check": 4,
+   "native_sanitized": 7,
+   "task_ledger_check": 5,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1214,6 +1230,9 @@
    "CT04": "task_ledger_check",
    "CT05": "task_ledger_check",
    "CT06": "elaborate",
+   "CT07": "native_sanitized",
+   "CT08": "elaborate",
+   "CT09": "native_sanitized",
    "CT11": "elaborate",
    "CT12": "native_execution",
    "CT13": "native_execution",
@@ -1224,6 +1243,8 @@
    "CT18": "task_lowering",
    "CT19": "task_ledger_check",
    "CT20": "native_execution",
+   "CT21": "elaborate",
+   "CT23": "task_ledger_check",
    "CT26": "native_sanitized",
    "CT27": "mutex_invariant_check",
    "CT28": "mutex_invariant_check",
@@ -1246,19 +1267,21 @@
    "CT50": "native_execution"
   },
   "observation_counts": {
-   "c_emission": 30,
-   "elaborate": 33,
-   "epoch_bound_check": 4,
-   "epoch_lowering": 4,
+   "c_emission": 32,
+   "elaborate": 38,
+   "epoch_bound_check": 5,
+   "epoch_lowering": 5,
    "legacy_c_twin": 4,
    "mutex_invariant_check": 10,
    "mutex_lowering": 10,
    "mutex_reference_execution": 2,
-   "native_execution": 45,
-   "native_sanitized": 26,
-   "parse": 36,
-   "task_ledger_check": 16,
-   "task_lowering": 17,
+   "native_execution": 47,
+   "native_sanitized": 28,
+   "parse": 41,
+   "sequential_reference_execution": 2,
+   "sequential_whole_program": 2,
+   "task_ledger_check": 17,
+   "task_lowering": 18,
    "task_reference_execution": 27
   },
   "ct_rows": [
@@ -1805,201 +1828,289 @@
    },
    {
     "id": "CT07",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Accept with bounds/disjointness proof",
-    "current_bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
-    "current_bucket_source": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "no array types, indexing or disjointness in source",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "sequential_sanitized",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "Indexed arrays, check-time bounds (Q053) and a counted loop (card LOOP-V1) all exist now, so the archived `no array types, indexing or disjointness in source` is half retired. What is missing is the surface that lends a sub-extent of a buffer to a second party - unit F1 of docs/design/DISJOINT_FOOTPRINT_PROFILE.md - so `mutated independently` has no source form and a sequential mapping would answer a different question.",
-    "blocker_superseded_by": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane): Q053 on an out-of-extent index, Q097 on a loop range whose low end is not 0; follow-on CT07-SLICE-PERMISSIONS"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise borrow_utf8(NAME, LOW, HIGH): two immutable loans of [0, 2) and [4, 6) of one six-byte owned buffer live at once while the owner writes bytes 2 and 3 between them, the writes admitted because disjointness is decided at check time (max low < min high, the set-theoretic question itself since every bound is a check-time constant) and read back by a third view in the sanitized native run. Boundary, stated as narrowly as it is true: one of the two disjoint permissions is a READ loan and the other is the owner's retained write authority - disjoint permission over two ranges of one array, NOT two parties each holding write authority over their own range. A write lend is unlanded residual SLICE-PERMISSIONS-WRITE-LEND, and this mapping claims nothing about it. Bounds are the out_of_extent control's check-time Q077 refusal; disjointness is the overlapping control's Q078 refusal, which is CT08's own case shape."
    },
    {
     "id": "CT08",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject or analyzer potential/unknown",
-    "current_bucket": "blocked-on-slice-permission-surface (bounds decided, disjointness not)",
-    "current_bucket_source": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "as CT07; also wants an `unknown` verdict the harness lacks",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT08/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT08/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "As CT07: every index is decided at check time and refused out of extent, but nothing in any source route lends a range, so no route computes a relation between two ranges. The archived note that the harness has no `unknown` verdict also stands - `Unknown` belongs to the gateway's vocabulary, not to the source harness's accept/reject.",
-    "blocker_superseded_by": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/ct-wire-lane/README.md (wave-26 CT lane), measured on the same buffer surface as CT07; follow-on CT07-SLICE-PERMISSIONS"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "elaborate",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "semantic_profile": "StandardStringV1 with card CT07-SLICE-PERMISSIONS's range-wise exclusion, taking the REJECT arm of the case's expected text: a write whose one-byte range [1, 2) overlaps a live loan's [0, 2) on exactly one byte is refused at Q078 naming the footprint that decided it, with the overlap decided at check time by max low < min high. The boundary control moves the byte outside both ranges and is admitted (CT07's own case shape); the attribution control runs the identical write with no live loan and is admitted. The `analyzer potential/unknown` arm is not claimed: Unknown remains the gateway's verdict vocabulary, and the source harness's is accept/reject."
    },
    {
     "id": "CT09",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Accept only after layout/access proof",
-    "current_bucket": "blocked-on-unimplemented-syntax",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "no struct/field access in source",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "sequential_sanitized",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_sequential_sanitized",
+      "artifact": "compiler/tests/fixtures/ct/CT09/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "semantic_profile": "StandardBufferV1 with source.record.v1 (card AGGREGATES-V1): three declared record fields constructed with three different check-time-constant values, all three read back and printed, plus a second value of the same type read in another order. The ACCESS proof is supplied - construction totality, projection soundness and distinctness are checked, and the bad_field control refuses a read outside the declaration at Q052 - but the LAYOUT leg is an executed sanitized byte-comparison OBSERVATION, not a proof (AGGREGATE-CT09-LAYOUT): that a C compiler's designated initializer and member reads agree with the model is cross-checked by the per-stream comparison of the case's own emitted C under ASan/UBSan/LSan, nothing proves it, and the proof stage stays unassessed. A record is a plain value of scalars with no custody; nothing here measures aggregates holding resources, nested aggregates, or concurrent field access."
    },
    {
     "id": "CT10",
@@ -3058,74 +3169,84 @@
    },
    {
     "id": "CT21",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "blocked-on-W3/W4",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "blocked-on-W3/W4",
-    "blocker": "no source path emits RegionOp::QuantOpen",
-    "bucket_changed_since_batch2": false,
+    "route": "sequential",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": null,
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT21/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT21/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "elaborate",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "semantic_profile": "SequentialCleanupV1 with source.region.v1 (card QUANT-REGION-SOURCE), the first source path to RegionOp::QuantOpen. A region acquires one resource and raises, so the error edge seals a cleanup pack holding one live duty - positive access permission; `quant open R as pack` binds it as a linear capability and the handler leaves without the one `discharge pack;` that must consume it. Refused by the unedited qcore_core::error_region model at Q305. The attribution control adds the discharge and is admitted (and emits); the boundary control never opens the pack and is refused by the neighbouring Q306 rule, so neither way of discarding live custody is writable. This route has no joins and no credit: what is measured is the access permission the pack holds, on one flat sequential entry."
    },
    {
     "id": "CT22",
     "mapping_status": "unmapped",
     "expected": "Accept",
-    "current_bucket": "blocked-on-W3/W4",
-    "current_bucket_source": "t00-archive",
+    "current_bucket": "blocked-on-joins-composition (credit abandonment measured, joins not on this route)",
+    "current_bucket_source": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
     "archived_bucket": "blocked-on-W3/W4",
     "blocker": "as CT21; also needs credits",
     "bucket_changed_since_batch2": false,
@@ -3182,71 +3303,96 @@
       "status": "unexecuted"
      }
     },
-    "deepest_executed_stage": null
+    "deepest_executed_stage": null,
+    "blocker_current": "The credit half of the scenario is writable and accepts: a discharge abandons the region's unused credit as an explicit AbandonCredit event, measured on the region flagship fixture. The `after joins` half is not expressible - source.region.v1 rides the flat sequential route, which has no tasks and no join - so the scenario needs the region's credit and the task route's joins in one program, which no route composes today.",
+    "blocker_superseded_by": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/ct-wire-lane-2/README.md (wave-28 CT lane): compiler/tests/quant_region.rs::ct22_a_discharge_abandons_the_regions_unused_credit, run on this tree over compiler/tests/fixtures/region/discharged_pack.qcore; the gap is docs/reports/quant-region-source/README.md section 5's REGION-CREDIT-WITH-JOINS"
    },
    {
     "id": "CT23",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "blocked-on-unimplemented-syntax",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "blocked-on-unimplemented-syntax",
-    "blocker": "quantitative credits are not in any executable subset",
-    "bucket_changed_since_batch2": false,
+    "route": "composed_epoch",
+    "harness_verdict_mode": "epoch_credit_split",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT23/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
+    "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE and CT23-CREDIT-ERROR-PATH): a flat-epoch plan over a real checked scoped-task region whose creator holds both derived error edges - the creation can fail and the join can observe a raised child, the edge on which the child existed and held the grant. The plan's error(close); declares that the creator's own error edge abandons the credit the epoch granted the creation, and is refused with the exact cascade [Q635] naming the task and the abandoned figure. Four admitting controls pin the published credit split on every disposition (restored + spent = credit, including a real componentwise division), and the minted control pins the Q636 mint refusal. Every quantity is a DECLARED figure under the four unchanged FlatEpochBoundV1 premises: the derived half is the error-edge shape, the declared half is the disposition, and no credit is derived from any execution. The epoch half emits nothing; the emitted C is the task route's own, byte-identical whatever the error arm says, and no native or sanitizer evidence is claimed."
    },
    {
     "id": "CT24",
@@ -5680,9 +5826,8 @@
    "cases_stopping_at_source_rejection": 2
   },
   "unmapped_bucket_counts": {
-   "blocked-on-slice-permission-surface (bounds decided, disjointness not)": 2,
-   "blocked-on-unimplemented-syntax": 3,
-   "blocked-on-W3/W4": 2,
+   "blocked-on-unimplemented-syntax": 1,
+   "blocked-on-joins-composition (credit abandonment measured, joins not on this route)": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "ambiguous (partially unblocked)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 2,
@@ -5691,13 +5836,8 @@
    "DECIDABLE-NOW (coarser reason)": 1
   },
   "unmapped_label_sources": {
-   "CT07": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-   "CT08": "docs/reports/ct-wire-lane/ct_stage_evidence.json",
-   "CT09": "t00-archive",
    "CT10": "t00-archive",
-   "CT21": "t00-archive",
-   "CT22": "t00-archive",
-   "CT23": "t00-archive",
+   "CT22": "docs/reports/ct-wire-lane-2/ct_stage_evidence.json",
    "CT24": "t00-archive",
    "CT25": "t00-archive",
    "CT41": "docs/reports/wave17-ct40/ct_stage_evidence.json",
@@ -5833,11 +5973,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Wave-27 close, 2026-09-12: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate - CT23-CREDIT-ERROR-PATH, DOCS-COMPACT-3 (the recurring three-file compaction plus a user-directed examples style pass), AGGREGATES-V1, QUANT-REGION-SOURCE, CT07-SLICE-PERMISSIONS and the arbiter GATEWAY-C-LOCATION - reconciled onto one measured standing gate at the integration tip baadb564; 8 ignored. The wave's language head is the FIRST SOURCE-LEVEL AGGREGATE TYPE: source.record.v1 lands `type NAME { FIELD: i32, ... }`, its construction and its field read on source.buffer.v1, emitting real C structs with one distinctly named member per field and byte-compared against a sanitized native run. Beside it source.region.v1 gives the kernel's quantitative region its first source path with the sealed CleanupPack bound as a LINEAR capability consumed exactly once and the admitted region ERASING to byte-identical C; EpochCreditRecoveryV1 checks the creator's own error edges (restored + spent = credit componentwise, restored <= credit, and restored_credits + spent_credits = granted_credits <= allocation), abandonment and minting both REFUSALS; and borrow_utf8(NAME, LOW, HIGH) lends a RANGE so two disjoint permissions over one buffer are expressible and the disjointness is DECIDED (max low < min high, proved to be the set-theoretic question itself). THREE RECORDED BLOCKERS WERE MEASURED FALSE, each differently: STD-BUFFER-SLICE's footprint-fraction sentence is about the WRITE direction, so it is retired IN PART and the fraction is SLICE-PERMISSIONS-WRITE-LEND's; RegionOp::QuantOpen, the operation VARIANT, is unreachable from a valid program BY DESIGN (REGION-QUANTOPEN-OP-VARIANT); and the obvious spelling `record` was rejected ON EVIDENCE because an archived one-line probe is pinned to Q000 by two frozen reports (constraint 21), the syntax renamed rather than the pin edited. ZERO reserved words and ZERO new diagnostic codes across the whole wave: every refusal is a stated condition extension under the Q-NAMESPACE-DECISION ice box, run four times on four bands (Q630/Q635/Q636/Q641; Q051/Q052/Q053; Q302 with Q303-Q309 reached from a second route; Q077/Q078), INCLUDING BY THE LANGUAGE HEAD ITSELF. DOCS-COMPACT-3 honoured the cadence three waves on - 39 standing constraints in, 39 out, zero dropped, zero renumbered, 37 bodies byte-identical - refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the user's examples style pass with byte identity measured per file and EXAMPLES-STYLE-SLICE-FANOUT left for the user's decision. THE WAVE RAN ONE ARBITER AND ITS RE-PIN IS PRESENTATION-ONLY: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows and keeps the preprocessed L-number INTERNAL by the user's ruling; the BEFORE run reproduces the preceding baseline's diagnostics.json and chunk-contracts.json BYTE FOR BYTE and the AFTER run differs in attribution presentation alone. The corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with EVERY FIGURE UNCHANGED - 185 units 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only, 4,834 projected functions 150/84/4,600, LEAK 266, unknown_alias 4,344, unsupported 49,773, all 54,383 diagnostic rows keeping their (function, preprocessed line, category) - zero verdict moves, zero leaf-set moves, zero STOP findings, so constraint 7 gains no sixth move and every preceding archive stays frozen (constraint 21). CT coverage is UNCHANGED at 36/50 mapped, 14 unmapped, sanitized-native 5 of 36 and proof 0 of 36: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is recorded as CAPABILITY in the cards' own reports - a capability is not a mapping (constraint 23). Constraint 15h is AMENDED on the slice card's own proposal; three new standing constraints land in merge order (15j the epoch credit law with Q637 deliberately not extended, 15k the v1 record's measured field-custody answer, 15l the erasing region and its two do-not-repair rules) beside 12a in the compile-task/source-transport block for the arbiter's anti-forgery rule. Lean audits 110 -> 114 (+AuditSourceRecord, +AuditQuantRegionSource, +AuditSlicePermissions, +AuditSourceCoordinate; the epoch card added 17 theorems inside an existing audit, which is why five cards produced four files), read from the text line 'Passed 114 Lean audits' rather than from an exit code, per that script's own behaviour. Provider 122 CARRIED - no provider source, manifest template or qcore-schemas version changed this wave (qcore-schemas stays 14.0.0), so constraint 18's rebuild-and-verify obligation is not engaged. Nothing is promoted, and full language conformance stays false. Evidence: docs/reports/ct23-credit-error-path/README.md, docs/reports/docs-compact-3/README.md, docs/reports/aggregates-v1/README.md, docs/reports/quant-region-source/README.md, docs/reports/ct07-slice-permissions/README.md, docs/reports/gateway-c-location/README.md.",
-  "workspace_tests": 4376,
+  "note": "Wave-28 close, 2026-09-12: THREE cards merged one at a time under the failure-gated chain, each under its own green gate - EXAMPLES-AGGREGATES, REGION-CREDIT-JOINS and CT-WIRE-LANE-2 - reconciled onto one measured standing gate at the integration tip 71574edc. The wave's head is CT COVERAGE: CT-WIRE-LANE-2 maps CT07, CT08, CT09, CT21 and CT23 (36/50 -> 41/50 mapped, 9 unmapped), with sanitized-native 5 of 36 -> 7 of 41 BY REAL EXECUTION (run_sequential_sanitized compiles and runs CT07's and CT09's own emitted C under ASan/UBSan/LSan) and proof 0 of 41. A grown denominator is mapping, not conformance (constraint 23): CT07's semantic profile states the read-loan/retained-write boundary (the write lend is SLICE-PERMISSIONS-WRITE-LEND, unlanded), CT09's layout leg is an executed OBSERVATION with its proof stage unassessed (AGGREGATE-CT09-LAYOUT honoured), CT23 lands on the new composed_epoch route with the epoch_credit_split verdict mode and its fixtures moved into fixtures/ct/ with the pinned tables grown deliberately. CT22 is NOT mapped and its reason is NARROWED in the lane's own stage-evidence record (blocked-on-joins-composition), because the same wave made the scenario EXPRESSIBLE: REGION-CREDIT-JOINS composes source.region.v1's quant open onto source.epoch.tasks.v1 after every spawn and join - three unedited checkers, a duty-free pack, AbandonCredit publishing the parent-local unused credit re-derived from an independent fold, the region ERASING from emission - proven by region_credit_joins.rs::ct22_the_opening_discards_the_parents_unused_credit_after_all_joins; a capability is not a mapping, and CT22-CT-MAPPING is the named follow-on. CT25 is deliberately not claimed (REGION-JOINS-DUTIES). EXAMPLES-AGGREGATES publishes examples/records/ as the TWELFTH family under the suite's directory-scan standard - point.qcore is CT09's scenario as a published program with NO buffer prelude in its emitted C (constraint 15k's conditional-prelude fact published for the first time), pixel_writes.qcore keeps records beside a real buffer that still owes its drop (Q054) - with no crate-source change. ZERO reserved words and ZERO new diagnostic codes across the wave (Q302/Q600 condition widenings stated in section L21); one standing constraint lands, 15m (the composed region: duty-free pack, after every join, unedited checkers). The wave ran NO ARBITER - no gateway, contract, audit or provider source file was touched - so the corpus rows are CARRIED from the wave-27 gateway-c-location baseline and labelled carried: 185 units 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only, leak 266, unknown_alias 4,344, unsupported 49,773, zero verdict moves. Lean audits 114 -> 115 (+AuditRegionCreditJoins, 14 theorems; EXAMPLES-AGGREGATES and CT-WIRE-LANE-2 add none), read from the text line 'Passed 115 Lean audits'. Provider 122 CARRIED - no provider source, manifest template or qcore-schemas version changed (qcore-schemas stays 14.0.0), constraint 18 not engaged. Two constraint-16 load rows tripped under concurrent suites during integration and were re-verified green in isolation, both facts recorded per that constraint. Nothing is promoted, and full language conformance stays false. Evidence: docs/reports/examples-aggregates/README.md, docs/reports/region-credit-joins/README.md, docs/reports/ct-wire-lane-2/README.md.",
+  "workspace_tests": 4392,
   "provider_tests": 122,
   "python_evidence_validator_tests": 193,
-  "lean_audits": 114,
+  "lean_audits": 115,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -5924,6 +6064,7 @@
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
    "AuditRefusedWrites.lean",
+   "AuditRegionCreditJoins.lean",
    "AuditRegionTaskCredit.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",
@@ -5960,7 +6101,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/wave27-close/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave28-close/gate.json)"
  },
  "named_followups": [
   {

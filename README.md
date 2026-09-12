@@ -100,10 +100,10 @@ cycle's fail-closed gates. A provisional `Unsafe` is never presented as an
 upstream defect. Coverage is not safety coverage, and unknowns stay in the
 denominator.
 
-The conformance-case corpus stands at **36 of 50 mapped**, with 14 unmapped.
+The conformance-case corpus stands at **41 of 50 mapped**, with 9 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
-means the harness now runs it, not that anything new was proved. Of the 36
-mapped, 5 carry a sanitized native run and 0 carry a proof stage.
+means the harness now runs it, not that anything new was proved. Of the 41
+mapped, 7 carry a sanitized native run and 0 carry a proof stage.
 
 Verdict vocabulary, invariants, per-increment evidence and the full cycle
 narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
@@ -143,7 +143,8 @@ cargo build --bin quirin
 ```
 
 [`examples/`](examples/README.md) publishes one directory per feature family —
-eleven of them, from `print` lines to a checked HTTP exchange — each program
+twelve of them, from `print` lines to a checked HTTP exchange and the first
+aggregate type — each program
 built, run and byte-compared by the suite, with the family pages carrying the
 transcripts and the boundaries.
 

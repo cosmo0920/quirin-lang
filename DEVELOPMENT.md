@@ -349,6 +349,33 @@ full suite.
 
 ## Increment records
 
+Wave 28 close (2026-09-12): **three cards** merged one at a time under the
+failure-gated chain — `EXAMPLES-AGGREGATES`, `REGION-CREDIT-JOINS` and
+`CT-WIRE-LANE-2` — reconciled at integration tip `71574edc`. The wave's head is
+**CT coverage**: 36/50 → **41/50 mapped** (CT07, CT08, CT09, CT21, CT23), 9
+unmapped, sanitized-native 5 of 36 → **7 of 41 by real execution**, proof 0 of
+41; a grown denominator is mapping, not conformance (constraint 23). CT22 is
+**expressible but deliberately not mapped**: `REGION-CREDIT-JOINS` composes the
+quant open onto the epoch task route after every join (three unedited checkers,
+a duty-free pack, the region erasing from emission, `AbandonCredit` publishing
+the parent-local unused credit), the lane publishes the **narrowed** reason in
+its own record, and `CT22-CT-MAPPING` is the named follow-on — a capability is
+not a mapping. `examples/records/` lands as the **twelfth** published family
+under the suite's directory-scan standard. Zero reserved words, zero new
+diagnostic codes (`Q302`/`Q600` condition widenings, §L21); standing constraint
+**15m** records the composed region's two premises. **No arbiter ran** — no
+gateway, contract, audit or provider file was touched — so the corpus rows are
+carried from the wave-27 `gateway-c-location` baseline, every figure unchanged
+(leak 266). Lean audits 114 → **115** (`+AuditRegionCreditJoins`). Merged gate
+at the close tip: 4,392 workspace tests (8 ignored, `--no-fail-fast`), 122
+provider (carried), 193 Python, both probes exit 0, fmt/clippy clean
+(`docs/reports/wave28-close/gate.json`); two constraint-16 load rows tripped
+under concurrent suites during integration and were re-verified green in
+isolation, both facts recorded. The acceptance matrix's derived rows are
+regenerated through `build_matrix.py --gate` (hand-kept sections carried, the
+derived-fact tripwire green again). Nothing is promoted; full language
+conformance stays **false**.
+
 Wave 28, card `CT-WIRE-LANE-2` (2026-09-12): the second CT mapping lane, on the
 wave-26 precedent, converting the wave-27 capability cards into manifest rows.
 CT coverage moves **36/50 → 41/50 mapped** (unmapped 14 → 9), harness-gated

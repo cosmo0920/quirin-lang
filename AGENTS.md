@@ -65,32 +65,27 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-27 close. The **corpus baseline moves to
-`docs/reports/gateway-c-location/artifacts/`**, and the move is
-**presentation-only**. Wave 27 ran one arbiter, `GATEWAY-C-LOCATION`: its BEFORE
-run reproduces the preceding baseline's `diagnostics.json` and
-`chunk-contracts.json` **byte for byte**, and its AFTER run differs from that in
-attribution *presentation* alone — **zero verdict moves, zero leaf-set moves,
-zero STOP findings**, every figure below unchanged on every count. What moved is
-what a diagnostic **presents**: 54,371 rows gained an `origin` naming the
-original, pre-preprocessing `file:line`; 266 descriptions had their site
-rewritten (exactly the 266 leak leaves — the only category present here whose
-text names a site); 178 unit rows gained an `origin_coordinates` account; and two
-envelope keys changed. The preprocessed `L`-number stays the **internal**
-coordinate — pin identity, leaf identity, certificate comparability — by the
-user's ruling, not by omission (`GATEWAY-LOCATION-INTERNAL-CHANNELS`). Every
-preceding corpus archive stays frozen (constraint 21):
+Headline numbers at the wave-28 close. The **corpus baseline remains
+`docs/reports/gateway-c-location/artifacts/`** (the wave-27 presentation-only
+re-pin: 54,371 rows carry an `origin` naming the original pre-preprocessing
+`file:line`, while the preprocessed `L`-number stays the **internal** coordinate
+for pin identity, leaf identity and certificate comparability, by the user's
+ruling — `GATEWAY-LOCATION-INTERNAL-CHANNELS`). Wave 28 ran **no arbiter** —
+none of its three cards touched a gateway, contract, audit or provider source
+file — so the corpus rows below are **carried** from the wave-27 measurement
+and labelled carried, not presented as a fresh run. Every preceding corpus
+archive stays frozen (constraint 21):
 `docs/reports/wave23-c-operations/artifacts/` and the attributed AFTER runs
 chained beneath it — `aom-destroy-siblings` (wave 23), `aom-binding-poison`
-(wave 25), now `gateway-c-location` (wave 27):
+(wave 25), `gateway-c-location` (wave 27):
 
 | Measure | Value |
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-27 presentation re-pin, as are `unknown_alias` **4,344** and `unsupported` **49,773**, with all 54,383 diagnostic rows keeping their `(function, preprocessed line, category)`). The authoritative artifacts are `docs/reports/gateway-c-location/artifacts/`, where a diagnostic row now carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
-| CT01–CT50 conformance | **36/50 mapped**, 14 unmapped; sanitized-native 5 of 36, proof 0 of 36. Wave 27 mapped **nothing** and edited no manifest row: CT08, CT09, CT21, CT22 and CT23 gained *capability* — their archived reasons are retired or narrowed in the cards' own reports and `ct_stage_evidence.json` proposals — and a capability is not a mapping (constraint 23) |
+| CT01–CT50 conformance | **41/50 mapped**, 9 unmapped; sanitized-native **7 of 41** (the two new legs by real execution: `run_sequential_sanitized` compiles and runs CT07's and CT09's own emitted C under ASan/UBSan/LSan), proof 0 of 41. Wave 28 (`CT-WIRE-LANE-2`) mapped **CT07, CT08, CT09, CT21 and CT23** — CT07 with its semantic profile stating the read-loan/retained-write boundary, CT09 with the layout leg an executed *observation* and its `proof` stage `unassessed`, CT23 on the new `composed_epoch` route with the `epoch_credit_split` verdict mode — and published CT22's **narrowed** reason (`blocked-on-joins-composition`; the same wave's `REGION-CREDIT-JOINS` made the scenario *expressible*, and a capability is not a mapping). A grown denominator is mapping, not conformance (constraint 23) |
 | Contract corpus | **73 modules** |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 4,376 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **114 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave27-close/gate.json`, measured at the integration tip over the six merged pieces; each card's own gate is in its report) |
+| Merged gate | 4,392 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **115 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave28-close/gate.json`, measured at the integration tip over the three merged cards; each card's own gate is in its report; two constraint-16 load rows re-verified in isolation during integration, both facts recorded) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -777,6 +772,26 @@ pointer is the card that established it; read it before deviating.
     that reaches a matching clause, so a clause on a path the region does not take
     is a clause **nothing decides**, and admitting one would be silent rather than
     fail-closed (invariant 1). `quant-region-source`.
+15m. **A composed region on the epoch task route opens a duty-free pack, and it
+    opens it after every join.** `REGION-CREDIT-JOINS` (wave 28) lets a
+    `source.epoch.tasks.v1` entry carry one `error region … catch (E) quant open
+    … { discharge …; }` whose `AbandonCredit` publishes the parent-local unused
+    credit — CT22's scenario, expressible end to end. Two premises must survive
+    refactors, both refusals today: the composed body admits **no acquisition**
+    (`Q302` by name — a pack with duties is `REGION-JOINS-DUTIES`, the unlanded
+    remainder that is also CT25's gap), and every `TrySpawn`/`Join` span of the
+    checked task IR must **precede** the region (`Q600` in both directions —
+    children live at the opening is `CheckedRegionTaskCreditV1`'s discipline,
+    which still has no source route, `REGION-JOINS-T07`). The region is blanked
+    from the task half exactly as the plan is, **erases from emission** (emitted
+    C, source map and reference observation measured byte-identical with and
+    without it), and the three composed checkers — the scoped-task route,
+    `check_flat_epoch` + `EpochCreditRecoveryV1`, `analyze_error_regions` — are
+    **unedited**, each refusing at its own codes. The published
+    `abandoned_credit` is re-derived from an independent fold before
+    publication; the declarative epoch route gains no error path
+    (constraint 15j's shape). Zero new codes: `Q302` and `Q600` condition
+    widenings, stated in §L21. `region-credit-joins`.
 
 **Providers, packages and limits**
 
