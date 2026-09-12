@@ -349,6 +349,46 @@ full suite.
 
 ## Increment records
 
+Wave 29 close (2026-09-13): **six cards** merged one at a time under the
+failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,
+`REGION-JOINS-DUTIES`, `SLICE-PERMISSIONS-WRITE-LEND` and the arbiter
+`W29-CORPUS-CONTRACTS` — plus the user's Windows test fixes merged mid-chain.
+The wave's head is the manifest's **first executed proof row**: CT01's
+scenario property proved in Lean of the checked artifact's reference run and
+its admitted renderings, bound to the case's own fixture by a named
+host-unconditional test, native execution deliberately observation-only —
+**proof 0 of 41 → 1 of 42**, gated by the pinned fail-closed
+`PROOF_GATED_CASES` table, the stage evidence superseding card T00's frozen
+archive from its own record (constraint 21). CT coverage 41/50 → **42/50**
+(`CT22-WIRE`, on `REGION-CREDIT-JOINS`' evidence, the wave-28 narrowed reason
+retired in its own record); sanitized-native 7 of 42. The language head is the
+**write lend** (`lend(BUFFER, LOW, HIGH)`): write authority over a half-open
+byte range, decided by the lend-extended cycle-3 ownership IR — the
+`LendRange` footprint fraction `STD-BUFFER-SLICE` predicted — with constraint
+15h amended on the card's own proposal; beside it `REGION-JOINS-DUTIES`
+deliberately supersedes 15m's duty-free premise (amended on its proposal),
+landing CT25's duty half. `CT47-COPY-CAPTURE` re-attributes the spawn
+boundary: a `copy` of `own<Buffer>` refuses at `Q600` from the transferability
+judgment naming the missing contract instead of the `Q500` backend catch-all
+(kept as the unreachable fail-closed backstop), the refused set proved
+unchanged in Lean. The wave ran **one arbiter**, deciding-direction only:
+two faithful size-query contracts (corpus 73 → **74**), BEFORE run
+byte-identical to the wave-27 baseline, AFTER run removing exactly thirteen
+`unsupported` uncontracted-call leaves (49,773 → **49,760**), leak **266
+unmoved** (no fifth move), zero status moves, nothing promoted; the corpus
+baseline moves to `docs/reports/w29-corpus-contracts/artifacts/`. Zero
+reserved words (`lend` contextual, censused +0) and zero new diagnostic codes
+across the wave. Lean audits 115 → **118**. Merged gate at the close tip:
+4,445 workspace tests (8 ignored, `--no-fail-fast`), 122 provider (carried),
+193 Python, both probes exit 0, fmt/clippy clean
+(`docs/reports/wave29-close/gate.json`); constraint-16 load rows that tripped
+under concurrent suites were re-verified in isolation, both facts recorded
+each time. The acceptance matrix is regenerated through `build_matrix.py
+--gate` (hand-kept sections carried; the derived-fact tripwire and the CT
+chain both green at the close tip). `DOCS-COMPACT-4` is due on the standing
+cadence and now has waves 27–29 as material. Nothing is promoted; full
+language conformance stays **false**.
+
 W29-CORPUS-CONTRACTS (2026-09-12, wave 29): the wave's one arbiter card —
 additional `Unknown`-class leaves of the pinned 185-unit corpus decided by
 declaring **faithful** contracts, on the PROD-CONTRACTS → NEIGHBOURS → AOM

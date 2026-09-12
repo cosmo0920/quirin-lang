@@ -65,8 +65,7 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-28 close, with wave 29's arbiter re-pin applied
-to the corpus and contract rows. The **corpus baseline is
+Headline numbers at the wave-29 close. The **corpus baseline is
 `docs/reports/w29-corpus-contracts/artifacts/`** (wave 29's arbiter card
 `W29-CORPUS-CONTRACTS`: two faithful size-query contracts decide exactly
 thirteen `unsupported` uncontracted-call leaves in the unit that defines the
@@ -85,10 +84,10 @@ attributed AFTER runs chained beneath it — `aom-destroy-siblings` (wave 23),
 | Measure | Value |
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at both the wave-27 presentation re-pin and the wave-29 arbiter re-pin, as is `unknown_alias` **4,344**). `unsupported` **49,760** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; zero leaves added, one unit changed). The authoritative artifacts are `docs/reports/w29-corpus-contracts/artifacts/`; a diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
-| CT01–CT50 conformance | **41/50 mapped**, 9 unmapped; sanitized-native **7 of 41** (the two new legs by real execution: `run_sequential_sanitized` compiles and runs CT07's and CT09's own emitted C under ASan/UBSan/LSan), proof 0 of 41. Wave 28 (`CT-WIRE-LANE-2`) mapped **CT07, CT08, CT09, CT21 and CT23** — CT07 with its semantic profile stating the read-loan/retained-write boundary, CT09 with the layout leg an executed *observation* and its `proof` stage `unassessed`, CT23 on the new `composed_epoch` route with the `epoch_credit_split` verdict mode — and published CT22's **narrowed** reason (`blocked-on-joins-composition`; the same wave's `REGION-CREDIT-JOINS` made the scenario *expressible*, and a capability is not a mapping). A grown denominator is mapping, not conformance (constraint 23) |
+| CT01–CT50 conformance | **42/50 mapped**, 8 unmapped; sanitized-native **7 of 42**; **proof 1 of 42** — the manifest's first executed proof row (wave 29, `CT01-PROOF-LEG`): CT01's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings, bound to the case by `ct01_proof_leg.rs`'s named test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and the stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record. A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 4,392 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **115 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave28-close/gate.json`, measured at the integration tip over the three merged cards; each card's own gate is in its report; two constraint-16 load rows re-verified in isolation during integration, both facts recorded) |
+| Merged gate | 4,445 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **118 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave29-close/gate.json`, measured at the integration tip over the six merged cards plus the user's Windows fixes; each card's own gate is in its report; constraint-16 load rows that tripped under concurrent suites were re-verified in isolation, both facts recorded each time) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -656,16 +655,36 @@ pointer is the card that established it; read it before deviating.
     are deliberately **not** refused: both are immutable, they conflict on
     nothing, and a slice of a loan is a fully overlapping second loan of the same
     buffer by construction, so refusing overlap would refuse the mechanism this
-    constraint already rests on. There is **no write lend** — the owner keeps the
-    write authority over every byte it did not lend — which is why the window's
-    exactness argument survives and a `for` beside a loan still refuses
-    (`STRING-CONCAT-LOOP-WINDOW`, re-measured rather than assumed: a range narrows
-    *which* writes conflict and says nothing about *when* a statement runs). The
-    recorded blocker `STD-BUFFER-SLICE` ("needs the ownership IR's borrow nodes to
-    carry a footprint fraction") was measured to be about the **write** direction:
-    the ownership IR is untouched here, a `borrow_utf8` contributing an ordinary
-    `Read` as it always did, and the fraction is what
-    `SLICE-PERMISSIONS-WRITE-LEND` needs. `ct07-slice-permissions`.
+    constraint already rests on. There **is now a write lend** — landed by the
+    card the old "no write lend" sentence's own residual named
+    (`SLICE-PERMISSIONS-WRITE-LEND`, wave 29), superseding that sentence
+    **deliberately** — on the **uncomposed buffer route only**:
+    `let NAME = lend(BUFFER, LOW, HIGH);` transfers write authority over
+    `[LOW, HIGH)` for the loan's lexical window, decided by the lend-extended
+    cycle-3 ownership IR rather than by a route rule — a `LendRange` borrow node
+    carries the half-open byte interval `STD-BUFFER-SLICE` predicted (that
+    recorded blocker was measured to be about the **write** direction, and this
+    is it) — and the IR decides that two live lends are admitted exactly when
+    their ranges are disjoint, that an owner access is refused exactly where its
+    stated footprint meets a live lend and admitted outside every one (reads
+    included; an extent query's empty footprint meets nothing), that an access
+    through a loan must state a rebased footprint inside the lend (rangeless
+    conflicts with everything, `WRITE-LEND-COMPUTED-INDEX`), and that a release
+    under any live lend refuses however narrow, by the existing drop rule. **Do
+    not move these rules out of the IR into a route, and do not give the release
+    arm a range.** On the composed string route every sentence of this
+    constraint stands unchanged: a `lend(…)` beside `borrow_utf8`'s read loans
+    refuses by name at `Q077` (`SLICE-PERMISSIONS-COMPOSED-LEND`), so the
+    window-exactness argument and the `for` refusal at `Q068` are untouched
+    there (`STRING-CONCAT-LOOP-WINDOW` re-measured, not assumed). On the buffer
+    route the exactness premise is defended by three refusals that must survive
+    refactors: a `for` in an entry that lends (`SLICE-PERMISSIONS-LOOP-WINDOW`),
+    a crossed pair of lend windows (`SLICE-PERMISSIONS-CROSSED-WINDOWS`), and an
+    acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`). The lend's bound
+    tier is the loop bound's (`WRITE-LEND-BOUND-FROM-BYTE`); a loan is never
+    released and never re-lent; and a module with no lend builds the custody
+    operation list it always built. `ct07-slice-permissions`,
+    `slice-permissions-write-lend`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
@@ -775,26 +794,44 @@ pointer is the card that established it; read it before deviating.
     that reaches a matching clause, so a clause on a path the region does not take
     is a clause **nothing decides**, and admitting one would be silent rather than
     fail-closed (invariant 1). `quant-region-source`.
-15m. **A composed region on the epoch task route opens a duty-free pack, and it
-    opens it after every join.** `REGION-CREDIT-JOINS` (wave 28) lets a
-    `source.epoch.tasks.v1` entry carry one `error region … catch (E) quant open
-    … { discharge …; }` whose `AbandonCredit` publishes the parent-local unused
-    credit — CT22's scenario, expressible end to end. Two premises must survive
-    refactors, both refusals today: the composed body admits **no acquisition**
-    (`Q302` by name — a pack with duties is `REGION-JOINS-DUTIES`, the unlanded
-    remainder that is also CT25's gap), and every `TrySpawn`/`Join` span of the
-    checked task IR must **precede** the region (`Q600` in both directions —
-    children live at the opening is `CheckedRegionTaskCreditV1`'s discipline,
-    which still has no source route, `REGION-JOINS-T07`). The region is blanked
-    from the task half exactly as the plan is, **erases from emission** (emitted
-    C, source map and reference observation measured byte-identical with and
-    without it), and the three composed checkers — the scoped-task route,
-    `check_flat_epoch` + `EpochCreditRecoveryV1`, `analyze_error_regions` — are
-    **unedited**, each refusing at its own codes. The published
-    `abandoned_credit` is re-derived from an independent fold before
-    publication; the declarative epoch route gains no error path
-    (constraint 15j's shape). Zero new codes: `Q302` and `Q600` condition
-    widenings, stated in §L21. `region-credit-joins`.
+15m. **A composed region on the epoch task route opens its pack after every
+    join, and the pack's duties are the parent's own owners.**
+    `REGION-CREDIT-JOINS` (wave 28) let a `source.epoch.tasks.v1` entry carry
+    one `error region … catch (E) quant open … { discharge …; }` whose
+    `AbandonCredit` publishes the parent-local unused credit — CT22's scenario.
+    `REGION-JOINS-DUTIES` (wave 29) **deliberately superseded** the duty-free
+    premise this constraint recorded: the composed body also admits the task
+    route's own acquisition and release — `let NAME = qcore_buffer_new(INT)?;`
+    sealing a real `Destroy` duty, `drop NAME;` of a region owner erasing one —
+    and the discharge destroys the remaining owners in reverse acquisition
+    order, CT25's duty half. Premises that must survive refactors, each a
+    refusal today: every `TrySpawn`/`Join` span of the checked task IR
+    **precedes** the region (`Q600` in both directions — children live at the
+    opening stays `CheckedRegionTaskCreditV1`'s territory, `REGION-JOINS-T07`);
+    the region **erases into its straight-line twin** — a duty-free region
+    blanks completely (emitted C, source map and reference observation
+    byte-identical with and without it, the wave-28 measurement kept), and a
+    duty-carrying one keeps its acquisitions and body releases at their own
+    byte offsets in the task half with one `drop NAME;` per remaining duty
+    written into the blanked space after them, first-fit, newlines never
+    crossed, refusing when it does not fit (`REGION-JOINS-ERASURE-FIT`) — so
+    the three composed checkers (the scoped-task route, `check_flat_epoch` +
+    `EpochCreditRecoveryV1`, `analyze_error_regions`) stay **unedited**, each
+    refusing at its own codes. **Do not re-implement a custody rule beside the
+    erasure**: two simultaneously live owners refuse at the task route's
+    existing custody `Q600`, because the second acquisition's `?` failure edge
+    discards the first — the erased program's real leak path
+    (`REGION-JOINS-MULTI-OWNER`) — and teaching the erasure control flow to
+    "repair" that would invalidate the one-path premise the erasure rests on.
+    Both published figures are re-derived before publication —
+    `abandoned_credit` against the reader's quantity fold, `released` against
+    its duty fold, over the model's own cleanup trace. A region owner's name is
+    the region's own (a collision with an entry binding refuses, since the
+    erasure flattens the body's block into the task scope), the sequential
+    `qcore_acquire` spelling names no task-route resource and stays refused,
+    and the declarative epoch route gains no error path (constraint 15j's
+    shape). Zero new codes: `Q302` condition widenings, stated in §L21.
+    `region-credit-joins`, `region-joins-duties`.
 
 **Providers, packages and limits**
 
