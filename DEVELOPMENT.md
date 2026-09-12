@@ -349,6 +349,38 @@ full suite.
 
 ## Increment records
 
+Wave 29, card `CT01-PROOF-LEG` (2026-09-12): the first **proof-stage
+capability** for a mapped CT case, delivered without flipping the row — the
+manifest and the acceptance matrix are untouched, proof still reads 0 of 41,
+and the exact proposed stage-record terms are in the report's §6 for the
+integrator (`docs/reports/ct01-proof-leg/README.md`). The Lean side
+(`proof/QCore/Ct01OwnedTransfer.lean`, audit `AuditCt01OwnedTransfer`, Lean
+audits 115 → **116**) proves CT01's scenario property on the case's own trace
+terms: a total decision procedure `dischargesOwnedTransfer` with meaning
+theorems for arbitrary traces (the parent performs exactly allocate, spawn,
+join, read, drop, complete in that order; the moved generation is released
+exactly once, by the parent, after the join; the child's only completion
+returns the generation the parent's only allocation created), the
+kernel-checked acceptance of `TaskTraceRelation.roundTrip` — F02's recorded
+transcription of CT01's reference run — the **symbolic closure**
+`relate roundTrip observed = 0 → dischargesOwnedTransfer observed = true` over
+arbitrary admitted renderings, five named refusal mutants, and the
+transcription pin `mixTrace roundTrip = 13023433800416048247`. The named
+host-unconditional runner
+(`compiler/tests/ct01_proof_leg.rs::ct01_artifact_is_the_lean_proved_owned_transfer_shape`)
+compiles CT01's own fixture through the real pipeline, checks the derived
+reference events against the recorded F02 fixture trace event for event,
+recomputes the Lean-proved digest from the artifact with wrapping `u64`
+arithmetic, runs the same total decision procedure, and re-checks the five
+mutants on the refusing side. Boundaries stated, not implied: **no native
+refinement is claimed** (the emitted C stays covered only by
+`run_native_owned_transfer`'s byte comparison and F02's relation checks), and
+the Lean–Rust tie is F02's checked-digest transcription agreement, not a
+verified extraction. Two registered instances (`ReflBEq`/`LawfulBEq` for the
+F02 alphabet) were added in the new module; `TaskTraceRelation.lean` itself is
+untouched, `git diff` over `crates/` and `compiler/src/` is empty, no
+diagnostic code is allocated and no word is reserved.
+
 Wave 28 close (2026-09-12): **three cards** merged one at a time under the
 failure-gated chain — `EXAMPLES-AGGREGATES`, `REGION-CREDIT-JOINS` and
 `CT-WIRE-LANE-2` — reconciled at integration tip `71574edc`. The wave's head is
