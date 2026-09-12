@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "card": "CT-WIRE-LANE-3",
+  "generated": "2026-09-13",
+  "report": "docs/reports/ct-wire-lane-3/README.md",
+  "purpose": "Per-stage executed evidence for the one case the wave-31 CT lane mapped (CT25), in the shape the earlier per-card records use so scripts/ct_stage_summary.py merges it with them, plus the published measurement for the one case the lane examined and deliberately left unmapped (CT24).",
+  "derivation_rule": "A stage is `executed` only where a named workspace test runs it on the case's own artifact. CT25's task_lowering and task_ledger_check read executed on an ACCEPTED fixture for the same structural reason CT22's do: the composed route lowers and checks both halves before anything downstream can be published, and here the case is admitted, so every stage of the composed pipeline demonstrably ran. c_emission and native_execution read `unassessed` rather than `not_applicable` or `executed`, deliberately: the admitted module really emits the task route's own C (the runner asserts c_source is present), but no runner of this harness executes that emission or runs a binary built from it, so the stages are open items, never claims and never structurally absent (follow-on CT-COMPOSED-NATIVE, named by the wave-29 lane and unchanged).",
+  "route": "One route, one case mapped. CT25 is the third case on the `composed_epoch` route (source.epoch.tasks.v1, cards T08-COMPOSE, CT23-CREDIT-ERROR-PATH, REGION-CREDIT-JOINS, REGION-JOINS-DUTIES and REGION-JOINS-LOAN), the route's second ACCEPTED one and its first ADOPTING one. This lane adds no checker rule, no diagnostic code, no lowering and no model: the only Rust is harness wiring in compiler/tests/ct_corpus.rs (the epoch_credit_split verdict mode widened for the adopting shape -- the pinned evidence gains the region's released duty list and the derived capture list, and the duty premise splits into the duty-free and adopting arms -- with its pinned tables grown deliberately) plus the fixture move of compiler/tests/fixtures/epoch_credit/CT25_LOAN/ into compiler/tests/fixtures/ct/CT25/ with compiler/tests/region_joins_loan.rs repointed at it -- the CT22/CT23 precedent, exactly as card REGION-JOINS-LOAN's own section 7 prescribed -- and one new refusing control fixture (before_join.qcore) materializing the in-memory placement mutation that card measured.",
+  "why_this_case_maps_now": {
+    "CT25": "Card T00's archived reason -- `joins now exist; loan expiry does not` -- dissolved in two named halves, each a capability card's own landing: REGION-JOINS-DUTIES (wave 29) gave `cleanup destroys owner` a referent on the composed route (a region acquisition seals a real Destroy duty and the discharge destroys the remaining owners, erased into real `drop NAME;` statements after every join), and REGION-JOINS-LOAN (wave 30) gave `loan expiry` one (a worker captures a counted read share of a creator owner, admitted because the lender on this route is always the creator and creator-scope bytes are outside the epoch allocation; the share returns at the join under the unedited task ledger; the adoption `move owner;` takes the live owner's duty into the pack). Every word of `cleanup destroys owner after joins and loan expiry` is therefore a checked fact with a named carrier: `cleanup destroys owner` by the model's own Destroy on the discharge, made real by the erasure and published as released = [owner], re-derived from the model's cleanup trace and cross-checked against the reader's duty fold; `after joins` by the wave-28 span rule, Q600 in both directions when false, re-asserted by the runner on the published ledger; `and loan expiry` by the derived capture [[read]], the ledger's own reclamation at the join, and the after-joins ordering, with both false directions measured as refusals (LoanOutstanding while the share is out; the erased pre-spawn drop leaving no owned buffer to lend). Mapped exactly as docs/reports/region-joins-loan/README.md section 7 prescribed for a lane taking the row, citing the loan case as the scenario's referent."
+  },
+  "what_the_mapping_does_not_claim": {
+    "CT25": "The region's credit quantities are WRITTEN statements folded at check time, not measurements of any execution, and the epoch's four FlatEpochBoundV1 premises are carried unchanged. No write loan and no non-creator lender exist (the task route executes read own<Buffer> share captures only); the epoch bound is not moved by the loan or the adoption (REGION-JOINS-EPOCH-AXIS, re-measured by the capability card: certificates byte-identical). A region entered with live children stays refused (REGION-JOINS-T07). The region erases from emission -- measured byte-for-byte against a hand-written twin by compiler/tests/region_joins_loan.rs, not re-measured here. No native, sanitizer or proof evidence is claimed: the capability card's native counting-allocator run carries no sanitizer, so a lane may not read sanitized-native from it (constraint 23), and no harness runner executes the case's emission, so the emission and native stages read unassessed -- open items, not claims. Sanitized-native stays 7 of 43, proof 2 of 43."
+  },
+  "unmapped_reasons_provenance": "This lane publishes no unmapped-case bucket rows and declares no retirement, and both silences are deliberate. CT25's label was archive-held (t00-archive, `ambiguous (partially unblocked)`: `joins now exist; loan expiry does not`): no CT lane record ever published an unmapped_reasons row for it -- the wave-29 and wave-30 NARROWED reasons live in the REGION-JOINS-DUTIES and REGION-JOINS-LOAN reports' prose, not in any stage-evidence record -- so there is no row for the retirement mechanism to name (a retirement naming a record that holds no row is refused as stale, and one declared against the archive is refused as vacuous, by both derivations). Mapping the case removes it from the unmapped set and the archive label stops resolving, exactly as CT21's and CT06's archive-held rows left in earlier waves. CT24 was examined and left unmapped; publishing a labelled row for it would move the text of a derived, test-compared matrix field (newly_decidable_not_mapped_reasons, whose keys are [CT24, CT47]) -- the exact trap the wave-26 lane measured -- so the measurement is published below and in acceptance.json's hand-kept reasons instead, and CT24 keeps card T00's DECIDABLE-NOW bucket: re-verification reaching the same bucket is the record saying the label holds.",
+  "cases_examined_and_left_unmapped": {
+    "CT24": "Re-measured on this tree (wave 31), on both routes the scenario could name, and left unmapped with the classification unchanged: card T00's `DECIDABLE-NOW (with a distinguishing fixture)` bucket holds. (1) The checked task route: the wave-30 card CT24-CLEANUP-PREEMPTED re-attributed the preempting refusal, and this lane re-measured its shape through the real pipeline -- a `?` inside `thread scope` with the child unjoined and holding `read buffer share 512` refuses Q600 with `ScopeBusy(5): cleanup preempted -- this exit would run the frame's cleanup over resource 1 while task(s) [2] still hold a read share of it, destroying the owner before the child's join; the scope refuses the exit with that loan outstanding`. The message names the construct, but the route's checked semantics executes NO destroy at scope exit (releases are explicit drops; an exit holding an owner is refused as a discard), so the `cleanup` the message names is the exit that WOULD run cleanup -- the wave-30 card's own published boundary. (2) The composed epoch route, where CT25's EXECUTED cleanup-destroy lives: an adopting region placed between the spawn and the join refuses Q600 with the ledger's own `LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] }` -- a real destroy-before-join refusal of the erased cleanup release -- and one placed before the spawn refuses Q600 (`slot 5 is not an owned buffer this task may lend`). But the refusal is not attributable to the destroy: removing exactly the adoption leaves every such placement refused too (the duty-free twin refuses at the wave-28 span rule or as a discard), because a region before a join is refused for its PLACEMENT whatever its duties -- the same preemption the wave-26 lane measured, one route over. No control can isolate the construct CT24 names, and mapping the exit shape instead would give CT24's `cleanup` a different referent from CT25's within one scenario pair. Constraint-25 consequence also measured, not assumed (measure/ct24_constraint25_probe.py): mapping CT24 moves the derived newly_decidable_not_mapped_reasons key set from [CT24, CT47] to [CT47], puts check_matrix_ct_reasons red against the committed matrix, and flags both hand-kept acceptance.json halves -- so a future lane mapping CT24 must regenerate the matrix through the standing generator and edit both hand-kept halves in the same change. The honest residual is unchanged: a cleanup/task composition in which an executed scope-exit destroy meets a live loan (the wave-30 card's CT24-CLEANUP-TASK-COMPOSITION naming), or a deliberate decision that the preemption is the answer -- not taken here."
+  },
+  "lean_is_not_applicable": "Judged not applicable on the grounds every mapping lane since wave 26 has recorded: this lane adds no checker rule, no diagnostic code, no lowering and no model. The capability cards carry their own audited Lean (QCore.RegionJoinsDuties, wave 29; QCore.RegionJoinsLoan, 16 theorems including the_cleanup_destroys_the_lent_owner_after_joins_and_expiry, audits 118 -> 119 at that card); this lane adds fixtures, harness pins for the widened verdict mode, and the manifest row those derive. `proof` stays `unassessed` for CT25; no theorem is bound to any CT fixture (T00.7 remains open, proof 2 of 43: CT01 and CT37 only).",
+  "sanitized_native_growth": "None. The sanitizer gate is unchanged at 7, now of 43 (CT03, CT07, CT09, CT17, CT26, CT34, CT49): CT25's admitted module emits the task route's own C, but no harness runner compiles or runs that emission, so its c_emission, native_execution and native_sanitized stages all read unassessed and nothing is added to the gate. The capability card's native counting-allocator run (region_joins_loan.rs::the_native_run_frees_the_lent_owner) is real native evidence for the capability but carries no sanitizer and is not a runner of this harness, so it claims nothing here. A grown denominator is mapping, not conformance.",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT25"
+    ],
+    "mapped_before": 42,
+    "mapped_after": 43,
+    "unmapped_after": 7,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 1,
+    "source_compilations_of_control_artifacts": 7,
+    "accepted_controls": 1,
+    "rejected_controls": 6,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT25": {
+      "harness_verdict_mode": "epoch_credit_split",
+      "manifest_evidence_target": "linux",
+      "measured_splits": {
+        "granted": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "case.qcore": {
+          "restored": {},
+          "spent": {
+            "effort": 100,
+            "memory": 4096
+          },
+          "abandoned_credit": 3,
+          "released": [
+            "owner"
+          ],
+          "captures": [
+            [
+              "read"
+            ]
+          ]
+        },
+        "adopted_then_dropped.qcore": {
+          "restored": {},
+          "spent": {
+            "effort": 100,
+            "memory": 4096
+          },
+          "abandoned_credit": 3,
+          "released": []
+        }
+      },
+      "measured_premises": {
+        "adopting_pack": "the published region operations hold one RegionOp::ErrorRegion whose body carries exactly one Acquire (the adoption of `owner`, handed to the unedited model as the pack acquisition it is) beside AddStrictCredit(5), SpendStrictCredit(2) and the decided Raise -- one body Acquire per released owner, re-asserted by the runner on the published object",
+        "released_duties": "the region evidence's released list is [owner] -- read out of the model's own cleanup trace and cross-checked by the driver against the reader's independent duty fold before publication -- and the frame-rule control's is [], so the destroyed owner is attributable to the adoption",
+        "loan": "the checked task ledger's one row derives captures [read] from the IR's ScalarOperand::Loan, reconciled against the declared `read;` clause, and the declared rows carry the same list -- the owner IS lent, which is what makes `loan expiry` a fact rather than a word",
+        "after_joins_and_expiry": "the checked task ledger holds one row and its span ends before the region statement's span begins, re-asserted by the runner on the published object; the share returns at that join under the unedited ledger, so the erased destruction is ordered after the expiry, and both false directions are pinned refusing controls (live_share_drop.qcore, before_join.qcore)"
+      },
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1,
+          "note": "The composed route lowers and checks its task half before anything is published; the case is admitted, so both task stages demonstrably ran -- the same derivation rule CT22 and CT23 recorded."
+        },
+        "task_ledger_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1
+        },
+        "mutex_lowering": {
+          "status": "not_applicable"
+        },
+        "mutex_invariant_check": {
+          "status": "not_applicable"
+        },
+        "epoch_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1
+        },
+        "epoch_bound_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "not_applicable"
+        },
+        "c_emission": {
+          "status": "unassessed"
+        },
+        "native_execution": {
+          "status": "unassessed"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      }
+    }
+  }
+}

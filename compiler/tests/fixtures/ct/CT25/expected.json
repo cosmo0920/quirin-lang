@@ -1,0 +1,103 @@
+{
+  "id": "CT25",
+  "verdict": "epoch_credit_split",
+  "entry": null,
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "epoch_lowering",
+    "task_lowering",
+    "task_ledger_check",
+    "epoch_bound_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.epoch.tasks.v1 (cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): the parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins -- the loan expires there, under the unedited task ledger's own share return -- and only then does its error region adopt the owner (`move owner;`), credit 5, spend 2 and take its decided edge; the catch's `quant open R as pack` binds the sealed pack and `discharge pack;` destroys the adopted owner and abandons the parent-local remainder 3. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact: `cleanup destroys owner` by the model's own Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (released = [owner], re-derived from the model's cleanup trace and cross-checked against the reader's duty fold); `after joins` by the Q600 refusal when false plus the span assertion on the published ledger; `and loan expiry` by the derived capture list [[read]] (the owner IS lent), the ledger's own reclamation at the join, and the ordering after-joins-therefore-after-expiry, with the pre-expiry destruction a measured refusal (LoanOutstanding, live_share_drop.qcore) and the pre-loan one too (before_join.qcore). The runner compares the published split, abandoned figure, released duty list and capture lists wholesale, and re-asserts the adopting-pack premise (exactly one body Acquire per released owner) and the span premise on the published objects. No native, sanitizer or proof evidence is claimed: the admitted module emits the task route's own C that no harness runner executes (CT-COMPOSED-NATIVE).",
+  "epoch_credit_split": {
+    "execution_profile": "ComposedEpochTasksV1",
+    "diagnostic_sequence": [],
+    "granted": {
+      "effort": 100,
+      "memory": 4096
+    },
+    "restored": {},
+    "spent": {
+      "effort": 100,
+      "memory": 4096
+    },
+    "abandoned": 3,
+    "released": [
+      "owner"
+    ],
+    "captures": [
+      [
+        "read"
+      ]
+    ],
+    "controls": [
+      {
+        "source": "adopted_then_dropped.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "restored": {},
+        "spent": {
+          "effort": 100,
+          "memory": 4096
+        },
+        "abandoned": 3,
+        "released": [],
+        "note": "The frame rule through the adoption: the adopted owner is released in the region body, so its duty never reaches the pack -- the discharge destroys nothing (released = []) and abandons only the remainder. This is what keeps the case's released owner attributable to the adoption the discharge really destroyed rather than to the route."
+      },
+      {
+        "source": "live_share_drop.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q600"
+        ],
+        "note": "The loan-expiry premise, false in the written direction: the drop of the owner stands between the spawn and the join, while the read share is still out. Refused by the unedited task ledger's own custody rule (LoanOutstanding), no rule of the region cards -- destroying the lent owner before the loan expires is a gate, not a convention."
+      },
+      {
+        "source": "before_join.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q600"
+        ],
+        "note": "The ordering premise, false in the region direction: the whole adopting region stands before the spawn and the join, so its erased `drop owner;` destroys the owner before the loan is even made -- refused by the unedited task route over the erased program (the lend finds no owned buffer to lend). Materialized by card CT-WIRE-LANE-3 from the in-memory mutation region_joins_loan.rs measured."
+      },
+      {
+        "source": "adopt_unknown.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "The adoption reader's own shape gate: `move reader;` names a binding the entry does not make, refused by name (card REGION-JOINS-LOAN)."
+      },
+      {
+        "source": "adopt_twice.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q302"
+        ],
+        "note": "One owner taken twice through the adoption shape, refused -- the pack is linear and a duty is sealed once."
+      },
+      {
+        "source": "adopt_scalar.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q500"
+        ],
+        "note": "An adopted i32: the reader admits the shape and the unedited task route refuses the erased `drop` at its own executable-subset gate (`drop requires an owned buffer`) -- custody is not re-implemented beside the erasure (constraint 15m)."
+      },
+      {
+        "source": "adopt_and_acquire.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q600"
+        ],
+        "note": "A region acquisition beside an adopted owner: the acquisition's `?` failure edge discards the live adopted owner in the erased program, refused at the task route's existing custody Q600 (REGION-JOINS-MULTI-OWNER, unchanged)."
+      }
+    ]
+  }
+}

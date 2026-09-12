@@ -349,6 +349,49 @@ full suite.
 
 ## Increment records
 
+Wave 31, card `CT-WIRE-LANE-3` (2026-09-13): the CT lane taking the two
+decisions waves 29–30 made ready. **CT25 mapped, 42/50 → 43/50** — *"Cleanup
+destroys owner after joins and loan expiry"*, expected Accept, the
+`composed_epoch` route's second accepted case and its first **adopting** one,
+mapped exactly as `docs/reports/region-joins-loan/README.md` §7 prescribed:
+the fixtures moved from `epoch_credit/CT25_LOAN/` into
+`compiler/tests/fixtures/ct/CT25/` with `region_joins_loan.rs` repointed (11
+tests green on the moved bytes), one new refusing control
+(`before_join.qcore`, `["Q600"]`) materializing the in-memory placement
+mutation, and the `epoch_credit_split` verdict mode widened for the adopting
+shape — the pinned evidence gains the region's **released duty list**
+(`["owner"]`, compared wholesale against the driver's re-derived publication)
+and the **derived capture list** (`[["read"]]`, against both the ledger and
+the declared rows), and the duty premise splits in two (no released owner ⇒
+CT22's duty-free no-`Acquire` assertion byte-for-byte; released owners ⇒
+exactly one published body `Acquire` per released owner, the adoptions).
+Every word of the scenario is a checked fact of an unedited model, stated
+rule-by-rule in the semantic profile; the case's emission/native stages read
+`unassessed` beside CT22's (`CT-COMPOSED-NATIVE` unchanged), sanitized-native
+stays 7 of 43 and proof 2 of 43. **CT24 examined and withdrawn** with the
+measurement published (the wave-26 mechanism): on the composed route — the
+only route with an executed cleanup-destroy — a region before the join is
+refused for its placement whatever its duties (adopting: the ledger's own
+`LoanOutstanding` / a lend of the destroyed owner; duty-free: still refused),
+so no control can isolate the destroy and the wave-9 attribution rule fails;
+on the task route the wave-30 attributed `ScopeBusy` message names the
+construct but the route executes no destroy at scope exit, and mapping there
+would give CT24's "cleanup" a different referent from CT25's in one scenario
+pair. The constraint-25 trap was **measured, not assumed**
+(`measure/ct24_constraint25_probe.py`): mapping CT24 moves the derived
+reasons map's keys to `["CT47"]` and reddens `check_matrix_ct_reasons`
+against a matrix this lane did not regenerate — published in the record so a
+future lane inherits a measurement. No retirement is declared for CT25,
+correctly: its label was archive-held (no lane record ever carried a row), so
+mapping removes it from the tally with nothing to retire, like CT21/CT06.
+Zero new Q codes, zero reserved words, no crate-source change;
+`EVIDENCE_FILES` 16 → 17 in both lists plus `derived_from`;
+`acceptance.json` regenerated through `--write` with the hand-kept note's
+stale "proof 0 of 42" refreshed to 2 of 43 and the CT24 reason re-measured;
+Python pins 8 → 7 updated, suite **200 OK** (193 at the wave-30 close plus
+the post-close `check_lean_audits` hardening's 7). Report and stage-evidence
+record: `docs/reports/ct-wire-lane-3/`.
+
 Worktree census hygiene (2026-09-13, post-wave-30 close): the
 `SOCKET-INET-ADDRESSES` census test
 (`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)
