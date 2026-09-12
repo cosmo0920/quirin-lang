@@ -32,8 +32,7 @@ use qcore_core::typed_errors::EffectRow;
 /// Two write lends of disjoint halves, mutated independently while both are
 /// live — the shape CT07's missing half asks for, kept as a file so a lane can
 /// point at the program rather than at a string in a test.
-const DISJOINT_WRITE_HALVES: &str =
-    include_str!("fixtures/write_lend/disjoint_write_halves.qcore");
+const DISJOINT_WRITE_HALVES: &str = include_str!("fixtures/write_lend/disjoint_write_halves.qcore");
 /// The same program with one bound of the second lend moved from 4 to 3, so
 /// the two ranges share exactly byte 3 — this card's control.
 const OVERLAPPING_LENDS: &str = include_str!("fixtures/write_lend/overlapping_lends.qcore");
@@ -321,10 +320,7 @@ fn a_lend_emits_a_displaced_const_pointer_and_accesses_in_the_loans_own_coordina
         .c_source
         .expect("an executable module emits C");
     // The displacement is written once, at the lend; a lend at 0 emits none.
-    assert!(
-        c.contains("unsigned char *const l_left = b_store;"),
-        "{c}"
-    );
+    assert!(c.contains("unsigned char *const l_left = b_store;"), "{c}");
     assert!(
         c.contains("unsigned char *const l_right = b_store + 4u;"),
         "{c}"
