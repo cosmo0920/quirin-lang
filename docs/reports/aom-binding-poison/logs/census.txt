@@ -1,0 +1,201 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 266 -> 266 (+0)
+  unknown_alias: 4421 -> 4344 (-77)
+  unsupported: 49781 -> 49773 (-8)
+units with diagnostic-count changes: 26
+  chunkio/cio_file_unix.c: {'unknown_alias': -4}
+  chunkio/cio_memfs.c: {'unknown_alias': -4, 'unsupported': -1}
+  chunkio/cio_scan.c: {'unknown_alias': -2}
+  chunkio/cio_stream.c: {'unknown_alias': -6}
+  cmetrics/cmt_encode_influx.c: {'unknown_alias': -1}
+  cmetrics/cmt_encode_opentelemetry.c: {'unknown_alias': -2, 'unsupported': -1}
+  cmetrics/cmt_encode_opentelemetry_batch.c: {'unknown_alias': -2}
+  cmetrics/cmt_encode_prometheus_remote_write.c: {'unknown_alias': -3}
+  cmetrics/cmt_encode_splunk_hec.c: {'unknown_alias': -6, 'unsupported': -1}
+  cmetrics/cmt_exp_histogram.c: {'unknown_alias': -8}
+  cmetrics/cmt_histogram.c: {'unknown_alias': -4, 'unsupported': -3}
+  ctraces/ctr_attributes.c: {'unknown_alias': -2}
+  ctraces/ctr_encode_opentelemetry.c: {'unknown_alias': -7}
+  ctraces/ctr_id.c: {'unknown_alias': -4}
+  ctraces/ctr_resource.c: {'unknown_alias': -1}
+  ctraces/ctr_scope.c: {'unknown_alias': -3, 'unsupported': -1}
+  fluent-bit-chunk/flb_input_chunk.c: {'unknown_alias': -6}
+  librdkafka/rdbuf.c: {'unknown_alias': -1, 'unsupported': -1}
+  librdkafka/rdkafka_sasl_oauthbearer.c: {'unknown_alias': -1}
+  librdkafka/rdunittest_msgset_errors.c: {'unknown_alias': -1}
+  monkey-libevent/mk_core/mk_event.c: {'unknown_alias': -3}
+  monkey-libevent/mk_core/mk_iov.c: {'unknown_alias': -1}
+  monkey-libevent/mk_core/mk_memory.c: {'unknown_alias': -1}
+  monkey-libevent/mk_core/mk_string.c: {'unknown_alias': -1}
+  monkey-libevent/mk_server/mk_http_parser.c: {'unknown_alias': -2}
+  monkey-libevent/mk_server/mk_lib.c: {'unknown_alias': -1}
+description inventory deltas:
+  unknown_alias / 'unresolved resource identity `attr`': 3 -> 2 (-1)
+  unknown_alias / 'unresolved resource identity `batches`': 5 -> 3 (-2)
+  unknown_alias / 'unresolved resource identity `bucket_array`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `buckets`': 4 -> 1 (-3)
+  unknown_alias / 'unresolved resource identity `buf`': 30 -> 26 (-4)
+  unknown_alias / 'unresolved resource identity `cid`': 3 -> 1 (-2)
+  unknown_alias / 'unresolved resource identity `claims_json`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `context`': 14 -> 12 (-2)
+  unknown_alias / 'unresolved resource identity `ctx`': 61 -> 60 (-1)
+  unknown_alias / 'unresolved resource identity `esc_buf`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `index`': 4 -> 3 (-1)
+  unknown_alias / 'unresolved resource identity `ins_scope`': 4 -> 1 (-3)
+  unknown_alias / 'unresolved resource identity `instrumentation_scope`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `iov`': 2 -> 1 (-1)
+  unknown_alias / 'unresolved resource identity `label_list`': 3 -> 1 (-2)
+  unknown_alias / 'unresolved resource identity `loop`': 4 -> 1 (-3)
+  unknown_alias / 'unresolved resource identity `meta`': 5 -> 3 (-2)
+  unknown_alias / 'unresolved resource identity `mf`': 8 -> 4 (-4)
+  unknown_alias / 'unresolved resource identity `new_negative_buckets`': 2 -> 0 (-2)
+  unknown_alias / 'unresolved resource identity `new_positive_buckets`': 7 -> 1 (-6)
+  unknown_alias / 'unresolved resource identity `p`': 12 -> 5 (-7)
+  unknown_alias / 'unresolved resource identity `pass`': 5 -> 4 (-1)
+  unknown_alias / 'unresolved resource identity `path`': 18 -> 14 (-4)
+  unknown_alias / 'unresolved resource identity `query_buffer`': 6 -> 4 (-2)
+  unknown_alias / 'unresolved resource identity `records_buf`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `req`': 2 -> 1 (-1)
+  unknown_alias / 'unresolved resource identity `res`': 12 -> 10 (-2)
+  unknown_alias / 'unresolved resource identity `resource_span`': 5 -> 4 (-1)
+  unknown_alias / 'unresolved resource identity `resource`': 7 -> 6 (-1)
+  unknown_alias / 'unresolved resource identity `result`': 195 -> 190 (-5)
+  unknown_alias / 'unresolved resource identity `scope_span`': 5 -> 4 (-1)
+  unknown_alias / 'unresolved resource identity `source_type`': 3 -> 2 (-1)
+  unknown_alias / 'unresolved resource identity `source`': 4 -> 3 (-1)
+  unknown_alias / 'unresolved resource identity `span`': 7 -> 6 (-1)
+  unknown_alias / 'unresolved resource identity `tag_sds`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `tmp_buf`': 1 -> 0 (-1)
+  unknown_alias / 'unresolved resource identity `value_list`': 2 -> 1 (-1)
+  unknown_alias / 'unresolved resource identity `value`': 27 -> 25 (-2)
+  unsupported / 'call to uncontracted function `rd_slice_read`': 11 -> 10 (-1)
+  unsupported / 'nullable resource `buckets` used by a non-null contract': 3 -> 0 (-3)
+  unsupported / 'nullable resource `context` used by a non-null contract': 2 -> 1 (-1)
+  unsupported / 'nullable resource `ins_scope` used by a non-null contract': 1 -> 0 (-1)
+  unsupported / 'nullable resource `mf` used by a non-null contract': 1 -> 0 (-1)
+  unsupported / 'nullable resource `resource_metrics` used by a non-null contract': 1 -> 0 (-1)
+leaf-level diff, per changed unit:
+  UNIT chunkio/cio_file_unix.c
+    -1 cio_file_native_compose_path L3203 unknown_alias: unresolved resource identity `path`
+    -1 cio_file_native_compose_path L3206 unknown_alias: unresolved resource identity `path`
+    -1 cio_file_native_lookup_group L3120 unknown_alias: unresolved resource identity `query_buffer`
+    -1 cio_file_native_lookup_user L3079 unknown_alias: unresolved resource identity `query_buffer`
+  UNIT chunkio/cio_memfs.c
+    -1 cio_memfs_open L2150 unknown_alias: unresolved resource identity `mf`
+    -1 cio_memfs_open L2157 unknown_alias: unresolved resource identity `mf`
+    -1 cio_memfs_open L2158 unknown_alias: unresolved resource identity `mf`
+    -1 cio_memfs_open L2164 unknown_alias: unresolved resource identity `mf`
+    -1 cio_memfs_open L2164 unsupported: nullable resource `mf` used by a non-null contract
+  UNIT chunkio/cio_scan.c
+    -1 cio_scan_stream_files L2269 unknown_alias: unresolved resource identity `path`
+    -1 cio_scan_stream_files L2275 unknown_alias: unresolved resource identity `path`
+  UNIT chunkio/cio_stream.c
+    -1 check_stream_path L2137 unknown_alias: unresolved resource identity `p`
+    -1 check_stream_path L2145 unknown_alias: unresolved resource identity `p`
+    -1 check_stream_path L2149 unknown_alias: unresolved resource identity `p`
+    -1 check_stream_path L2153 unknown_alias: unresolved resource identity `p`
+    -1 get_stream_path L2118 unknown_alias: unresolved resource identity `p`
+    -1 get_stream_path L2121 unknown_alias: unresolved resource identity `p`
+  UNIT cmetrics/cmt_encode_influx.c
+    -1 append_string L5802 unknown_alias: unresolved resource identity `esc_buf`
+  UNIT cmetrics/cmt_encode_opentelemetry.c
+    -1 cmt_encode_opentelemetry_create L9533 unknown_alias: unresolved resource identity `result`
+    -1 initialize_resource_metrics L8050 unsupported: nullable resource `resource_metrics` used by a non-null contract
+    -1 otlp_any_value_initialize L7686 unknown_alias: unresolved resource identity `value`
+  UNIT cmetrics/cmt_encode_opentelemetry_batch.c
+    -1 cmt_encode_opentelemetry_split_payload L6990 unknown_alias: unresolved resource identity `batches`
+    -1 empty_batches_create L7094 unknown_alias: unresolved resource identity `batches`
+  UNIT cmetrics/cmt_encode_prometheus_remote_write.c
+    -1 set_up_time_series_for_label_set L6798 unknown_alias: unresolved resource identity `label_list`
+    -1 set_up_time_series_for_label_set L6817 unknown_alias: unresolved resource identity `label_list`
+    -1 set_up_time_series_for_label_set L6818 unknown_alias: unresolved resource identity `value_list`
+  UNIT cmetrics/cmt_encode_splunk_hec.c
+    -1 format_context_common L5733 unknown_alias: unresolved resource identity `index`
+    -1 format_context_common L5746 unknown_alias: unresolved resource identity `source`
+    -1 format_context_common L5759 unknown_alias: unresolved resource identity `source_type`
+    -1 initialize_splunk_hec_context L6088 unknown_alias: unresolved resource identity `result`
+    -1 initialize_splunk_hec_context L6089 unknown_alias: unresolved resource identity `context`
+    -1 initialize_splunk_hec_context L6090 unsupported: nullable resource `context` used by a non-null contract
+    -1 initialize_splunk_hec_context L6090 unknown_alias: unresolved resource identity `context`
+  UNIT cmetrics/cmt_exp_histogram.c
+    -1 cmt_exp_histogram_set_default L5843 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5844 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5852 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5853 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5858 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5859 unknown_alias: unresolved resource identity `new_positive_buckets`
+    -1 cmt_exp_histogram_set_default L5861 unknown_alias: unresolved resource identity `new_negative_buckets`
+    -1 cmt_exp_histogram_set_default L5862 unknown_alias: unresolved resource identity `new_negative_buckets`
+  UNIT cmetrics/cmt_histogram.c
+    -1 cmt_histogram_buckets_create L5503 unknown_alias: unresolved resource identity `bucket_array`
+    -1 cmt_histogram_buckets_create_size L5485 unknown_alias: unresolved resource identity `buckets`
+    -1 cmt_histogram_buckets_create_size L5485 unsupported: nullable resource `buckets` used by a non-null contract
+    -1 cmt_histogram_buckets_exponential_create L5575 unknown_alias: unresolved resource identity `buckets`
+    -1 cmt_histogram_buckets_exponential_create L5575 unsupported: nullable resource `buckets` used by a non-null contract
+    -1 cmt_histogram_buckets_linear_create L5540 unsupported: nullable resource `buckets` used by a non-null contract
+    -1 cmt_histogram_buckets_linear_create L5540 unknown_alias: unresolved resource identity `buckets`
+  UNIT ctraces/ctr_attributes.c
+    -1 ctr_attributes_create L6771 unknown_alias: unresolved resource identity `attr`
+    -1 ctr_attributes_create L6774 unknown_alias: unresolved resource identity `attr`
+  UNIT ctraces/ctr_encode_opentelemetry.c
+    -1 initialize_export_service_request L9322 unknown_alias: unresolved resource identity `req`
+    -1 initialize_instrumentation_scope L9182 unknown_alias: unresolved resource identity `instrumentation_scope`
+    -1 initialize_resource L8901 unknown_alias: unresolved resource identity `resource`
+    -1 initialize_resource_span L9283 unknown_alias: unresolved resource identity `resource_span`
+    -1 initialize_scope_span L9227 unknown_alias: unresolved resource identity `scope_span`
+    -1 initialize_span L9143 unknown_alias: unresolved resource identity `span`
+    -1 otlp_any_value_initialize L8683 unknown_alias: unresolved resource identity `value`
+  UNIT ctraces/ctr_id.c
+    -1 ctr_id_create L6801 unknown_alias: unresolved resource identity `cid`
+    -1 ctr_id_create L6804 unknown_alias: unresolved resource identity `cid`
+    -1 ctr_id_create_random L6775 unknown_alias: unresolved resource identity `buf`
+    -1 ctr_id_create_random L6779 unknown_alias: unresolved resource identity `buf`
+  UNIT ctraces/ctr_resource.c
+    +1 ctr_resource_create L6774 unknown_alias: unresolved resource identity `attr`
+    -1 ctr_resource_create L6774 unknown_alias: unresolved resource identity `res`
+    -1 ctr_resource_create L6775 unknown_alias: unresolved resource identity `res`
+  UNIT ctraces/ctr_scope.c
+    -1 ctr_instrumentation_scope_create L6827 unknown_alias: unresolved resource identity `ins_scope`
+    -1 ctr_instrumentation_scope_create L6828 unknown_alias: unresolved resource identity `ins_scope`
+    -1 ctr_instrumentation_scope_create L6829 unknown_alias: unresolved resource identity `ins_scope`
+    -1 ctr_instrumentation_scope_create L6829 unsupported: nullable resource `ins_scope` used by a non-null contract
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_get_direct_routes L19383 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19391 unknown_alias: unresolved resource identity `result`
+    -1 flb_input_chunk_get_direct_routes L19398 unknown_alias: unresolved resource identity `result`
+    -1 input_chunk_write_header L18990 unknown_alias: unresolved resource identity `meta`
+    -1 input_chunk_write_header L18993 unknown_alias: unresolved resource identity `meta`
+    -1 update_logs_tag_records_metrics L17819 unknown_alias: unresolved resource identity `tag_sds`
+  UNIT librdkafka/rdbuf.c
+    -1 do_unittest_write_read_payload_correctness L4152 unknown_alias: unresolved resource identity `pass`
+    -1 do_unittest_write_read_payload_correctness L4156 unsupported: call to uncontracted function `rd_slice_read`
+  UNIT librdkafka/rdkafka_sasl_oauthbearer.c
+    -1 create_jws_compact_serialization L20596 unknown_alias: unresolved resource identity `claims_json`
+  UNIT librdkafka/rdunittest_msgset_errors.c
+    -1 ut_build_valid_msgset_v2 L19807 unknown_alias: unresolved resource identity `records_buf`
+  UNIT monkey-libevent/mk_core/mk_event.c
+    -1 mk_event_loop_create L3605 unknown_alias: unresolved resource identity `loop`
+    -1 mk_event_loop_create L3608 unknown_alias: unresolved resource identity `loop`
+    -1 mk_event_loop_create L3610 unknown_alias: unresolved resource identity `loop`
+  UNIT monkey-libevent/mk_core/mk_iov.c
+    -1 mk_iov_create L2114 unknown_alias: unresolved resource identity `iov`
+  UNIT monkey-libevent/mk_core/mk_memory.c
+    -1 mk_ptr_to_buf L1845 unknown_alias: unresolved resource identity `buf`
+  UNIT monkey-libevent/mk_core/mk_string.c
+    -1 mk_string_dup L2188 unknown_alias: unresolved resource identity `p`
+  UNIT monkey-libevent/mk_server/mk_http_parser.c
+    -1 cb_debug_chunk_complete L5790 unknown_alias: unresolved resource identity `buf`
+    -1 mk_http_parser_chunked_decode L5941 unknown_alias: unresolved resource identity `tmp_buf`
+  UNIT monkey-libevent/mk_server/mk_lib.c
+    -1 mk_create L6473 unknown_alias: unresolved resource identity `ctx`
+leaves added: 1; leaves removed: 86

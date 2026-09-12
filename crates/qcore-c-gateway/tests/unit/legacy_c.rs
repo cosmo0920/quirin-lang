@@ -344,9 +344,10 @@ fn a_refused_statement_reads_its_write_positions_and_defaults_to_written() {
 /// refused statement says.
 #[test]
 fn only_automatic_locals_whose_address_is_never_taken_are_spared() {
-    let unit = "int global ; void subject ( void ) { int a ; int b ; static int c ; int d ; f ( & d ) ; }"
-        .split_whitespace()
-        .collect::<Vec<_>>();
+    let unit =
+        "int global ; void subject ( void ) { int a ; int b ; static int c ; int d ; f ( & d ) ; }"
+            .split_whitespace()
+            .collect::<Vec<_>>();
     let body = &unit[unit.iter().position(|text| *text == "{").unwrap() + 1..unit.len() - 1];
     let formals = BTreeSet::from(["formal".to_owned()]);
     let protected = frame_protected_locals(&unit, body, &formals);
@@ -396,9 +397,8 @@ fn an_unrelated_refusal_no_longer_poisons_a_binding_it_cannot_write() {
     );
 
     // A refused statement that *writes* the name poisons it exactly as before.
-    let written = analyze(
-        "void subject(void) { void *p = q_alloc(); p = opaque_pair()->value; q_free(p); }",
-    );
+    let written =
+        analyze("void subject(void) { void *p = q_alloc(); p = opaque_pair()->value; q_free(p); }");
     assert!(
         has(&written, |kind| matches!(
             kind,
