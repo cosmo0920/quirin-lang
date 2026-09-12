@@ -2463,7 +2463,8 @@ admits `if`. **v1 admits it on `source.buffer.v1` only**; every other route keep
 the refusal it already had (`LOOP-ROUTE-WIDENING`).
 
 ```ebnf
-stmt   = "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}" ;
+stmt   = [ attr ], "for", NAME, "in", "0", "..", BOUND, "{", { stmt }, "}" ;
+attr   = "[|", "#", "unroll", ",", "where", "#", "bound", "<", INTEGER, "|]" ;
 BOUND  = INTEGER | NAME ;
 ```
 
@@ -2472,6 +2473,36 @@ BOUND  = INTEGER | NAME ;
   A bound read out of a byte is refused (`Q098`, `LOOP-BOUND-FROM-BYTE`), and so
   is a bound of zero, a negative bound, a bound above 4096, and an entry whose
   unrolled event total is above 8192.
+* **The bound is held to a three-layer budget** (card `LOOP-UNROLL-BUDGET`).
+  Layer one is the **absolute ceiling**, 4096, which no declaration may raise.
+  Layer two is the **default budget**, 256: a `for` with no `attr` may count at
+  most that many iterations, and one above it refuses at `Q098` with the clause
+  list that would license it **written into the message**. Layer three is the
+  `attr` itself — one statement-adjacent clause list licensing the single `for`
+  that follows it.
+
+  The declaration is **checked, never trusted**. The checker compares the
+  loop's own check-time bound against the condition and refuses a loop that
+  violates it, naming both numbers; `#bound < N` is strict, so `N` itself is not
+  licensed. A declared `N` that would license a bound above the ceiling refuses
+  **before** this loop's bound is looked at, which is what keeps the ceiling a
+  ceiling rather than a default with a longer spelling. Because `#bound < N`
+  licenses bounds up to `N - 1`, the largest condition the construct admits is
+  `#bound < 4097`, and that is the one that licenses a traversal of the largest
+  buffer `source.buffer.v1` admits.
+
+  The attribute raises the **per-loop bound and nothing else**: the entry's
+  unrolled-event budget of 8192 is untouched, so a nest of licensed loops is
+  still refused by what the checking route actually costs. A clause list outside
+  the form above, one before a statement that is not a `for`, a second one in a
+  row and a dangling one all refuse at `Q097`; an *unterminated* one is a `Q000`
+  parse failure. A clause list the reader could not read suppresses the budget
+  decision, so one mistake produces one refusal.
+
+  **The attribute erases.** It governs the checker's budget and appears nowhere
+  in the emitted C: an attributed and an unattributed program of the same
+  admitted bound emit byte-identical C, and the licence changes no published
+  value in the certificate either.
 * **The low end is the written-out `0`.** A range with another low end refuses
   at `Q097` rather than being silently re-based (`LOOP-RANGE-LOW`).
 * **`NAME` is a scalar binding scoped to the body**, taking `0, 1, …, BOUND-1`

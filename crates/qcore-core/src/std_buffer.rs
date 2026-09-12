@@ -82,9 +82,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use crate::ownership::{self, Footprint, OwnershipError, OwnershipOp, ResourceId};
-use crate::source_loop::{
-    self, BoundRefusal, LoopRefusal, MAX_ITERATIONS, MAX_UNROLLED_EVENTS, peak_candidate_prefixes,
-};
+use crate::source_loop::{self, BoundRefusal, LoopRefusal, MAX_ITERATIONS, MAX_UNROLLED_EVENTS};
 use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
 use crate::typed_errors::{Effect, EffectRow};
 
@@ -928,23 +926,21 @@ pub fn check_buffer_program(
     }
 
     // The peak live byte total, taken from the ownership state's own footprint
-    // after each prefix rather than counted here. `execute_ownership` is used
-    // instead of `check_ownership` because a prefix legitimately has live
-    // resources; the exit rule is the call above.
+    // as the operations run rather than counted here.
     //
-    // Only the prefixes that can *be* the maximum are evaluated, which is the
-    // empty one and each one ending in an acquisition: the live footprint grows
-    // at an `Acquire` and nowhere else, so this is the same number a scan of
-    // every prefix gives (`peak_candidate_prefixes`, card `LOOP-V1`, pinned by
-    // `the_peak_is_the_same_number_a_full_prefix_scan_gives`). The narrowing is
-    // what keeps the peak of an unrolled body linear in the number of
-    // acquisitions rather than quadratic in the number of events.
-    let mut peak_live_bytes = 0u64;
-    for length in peak_candidate_prefixes(&operations) {
-        if let Ok(state) = ownership::execute_ownership(&operations[..length]) {
-            peak_live_bytes = peak_live_bytes.max(state.live().get(BYTE_AXIS));
-        }
-    }
+    // Card `LOOP-V1` narrowed a scan of every prefix to the prefixes that can
+    // *be* the maximum — the empty one and each one ending in an acquisition,
+    // because the live footprint grows at an `Acquire` and nowhere else
+    // (`peak_candidate_prefixes`). That is linear in the number of
+    // acquisitions, but each of those prefixes was still **re-executed from the
+    // start**, so a loop body acquiring once per iteration paid a quadratic
+    // number of ownership steps: measured at a bound of 1024, 56.4 s. Card
+    // `LOOP-UNROLL-BUDGET` replaces the rescan with `ownership::peak_live_axis`,
+    // one pass taking the maximum of the values the run passes through — the
+    // **same number** by definition, pinned by
+    // `the_one_pass_peak_is_the_number_a_full_prefix_scan_gives`, and 0.20 s at
+    // the same bound. It is what makes the absolute ceiling defensible at 4096.
+    let peak_live_bytes = ownership::peak_live_axis(&operations, BYTE_AXIS);
 
     // --- Half two: the values. ---
     let mut run = ValueRun {

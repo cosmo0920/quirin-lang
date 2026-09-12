@@ -2,9 +2,26 @@
 //! loop (card `LOOP-V1`).
 //!
 //! ```text
-//! stmt  ::= "for" NAME "in" "0" ".." BOUND "{" stmt* "}"
+//! stmt  ::= [attr] "for" NAME "in" "0" ".." BOUND "{" stmt* "}"
+//! attr  ::= "[|" "#" "unroll" "," "where" "#" "bound" "<" INTEGER "|]"
 //! BOUND ::= INTEGER | NAME
 //! ```
+//!
+//! # The unrolling attribute (card `LOOP-UNROLL-BUDGET`)
+//!
+//! `attr` is a **statement-adjacent** clause list: it licenses the single `for`
+//! immediately following it and nothing else. Its brackets are the **existing**
+//! `[|`/`|]` of the quant-index type's readable alias, borrowed rather than
+//! invented; its `#` is a new one-byte token, promoted from a lexer error on
+//! card `OR-AND-LOWERING`'s precedent for `^`, and census-clean at **zero**
+//! occurrences in code position across every `.qcore`/`.qc` file in the tree.
+//! The head is recognised as `[|` **followed by `#`**, so
+//! `quant[| n where n := 5 |]` — eight code occurrences in the pinned corpus —
+//! is untouched.
+//!
+//! The three-layer decision the clause list feeds is
+//! [`qcore_core::source_loop::admit_unroll`]'s and is stated there. This module
+//! reads the list and nothing else.
 //!
 //! # One reserved word, zero new tokens, and one contextual clause word
 //!
@@ -50,7 +67,10 @@
 
 use std::collections::BTreeMap;
 
-use qcore_core::source_loop::{BoundRefusal, LoopRefusal, MAX_ITERATIONS};
+use qcore_core::source_loop::{
+    BoundRefusal, LoopBudget, LoopRefusal, MAX_DECLARED_LIMIT, MAX_ITERATIONS, UnrollLicense,
+    budget_refusal,
+};
 
 use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind,
@@ -63,6 +83,141 @@ pub const FOR_KEYWORD: &str = "for";
 /// The range clause word. **Contextual**, never globally reserved — see the
 /// module header for the census site that forbids a global reservation.
 pub const IN_KEYWORD: &str = "in";
+
+/// The attribute's own clause word: `[| #unroll, … |]` (card
+/// `LOOP-UNROLL-BUDGET`).
+///
+/// Census-clean at **zero** occurrences anywhere in the repository — no
+/// `.qcore`/`.qc` file, in code or in comment text, and no Rust string literal.
+/// It is nevertheless **not** in `is_reserved_source_word`, because it needs no
+/// reservation: a `[| … |]` clause list contributes no referenced name at all
+/// (`frontend::lexical_references`), so a program may still bind `unroll`.
+pub const UNROLL_CLAUSE: &str = "unroll";
+
+/// The condition clause's introducer, `where`. **Contextual**, and deliberately
+/// not reserved: the constraint-14 census found it **eight** times in code
+/// position inside `quant<n where n := 5>` clauses of the pinned corpus, which
+/// is the `len`/`in` shape again, and the answer is the same one — the word is
+/// read only inside this clause list and is an ordinary word everywhere else.
+pub const WHERE_CLAUSE: &str = "where";
+
+/// The quantity the condition constrains, `#bound`. The word `bound` is
+/// **already** globally reserved (the epoch profile's `bound N effort M;`
+/// declaration clause), so this card reserves nothing new for it; the `#`
+/// marker is what distinguishes the attribute's use from that one.
+pub const BOUND_CLAUSE: &str = "bound";
+
+/// The attribute's clause-list tokens: everything from `[|` through `|]`.
+#[must_use]
+pub fn attribute_window(tokens: &[Token], span: Span) -> Vec<&Token> {
+    tokens
+        .iter()
+        .filter(|token| span.start <= token.span.start && token.span.end <= span.end)
+        .collect()
+}
+
+/// Read one `[| #unroll, where #bound < N |]` clause list.
+///
+/// Every refusal here is a **shape** refusal and lands at `Q097`, a condition
+/// extension of the band card `LOOP-V1` allocated, per the standing Q-space
+/// note (`Q-NAMESPACE-DECISION`): a new refusal is a new condition of an
+/// existing code, never a new code. The one exception is the declared numeral
+/// itself — a value problem is the *bound* band's, `Q098`, and is decided by
+/// [`qcore_core::source_loop::admit_unroll`] rather than here.
+///
+/// The `where` clause is **required**. `[| #unroll |]` alone would have to mean
+/// "license up to the ceiling", which is a declaration with nothing in it to
+/// check — and the whole point of the form is that the condition a programmer
+/// writes is compared against the bound the checker computes.
+pub fn read_loop_attribute(
+    window: &[&Token],
+    span: Span,
+) -> Result<UnrollLicense, SourceDiagnostic> {
+    let shape = |message: &str| diagnostic("Q097", span, message.to_owned());
+
+    if !symbol(window, 0, Symbol::QuantOpen) || !symbol(window, 1, Symbol::Hash) {
+        return Err(shape(
+            "`source.loop.v1` reads an unrolling attribute as `[| #unroll, where #bound < N |]`",
+        ));
+    }
+    match word(window, 2) {
+        Some(UNROLL_CLAUSE) => {}
+        Some(other) => {
+            return Err(diagnostic(
+                "Q097",
+                span,
+                format!(
+                    "`#{other}` is not a clause `source.loop.v1` reads; the one attribute this \
+                     revision spells is `[| #unroll, where #bound < N |]`, and an unknown clause \
+                     word is refused rather than ignored"
+                ),
+            ));
+        }
+        None => {
+            return Err(shape(
+                "`source.loop.v1` reads an unrolling attribute as `[| #unroll, where #bound < N \
+                 |]`; `#` must be followed by a clause word",
+            ));
+        }
+    }
+    if !symbol(window, 3, Symbol::Comma) {
+        return Err(shape(
+            "`[| #unroll |]` licenses nothing, because there is no condition in it to check \
+             against the bound the checker computes; `source.loop.v1` requires the full form \
+             `[| #unroll, where #bound < N |]`",
+        ));
+    }
+    if word(window, 4) != Some(WHERE_CLAUSE) {
+        return Err(shape(
+            "`source.loop.v1` introduces the attribute's condition with `where`: \
+             `[| #unroll, where #bound < N |]`",
+        ));
+    }
+    if !symbol(window, 5, Symbol::Hash) || word(window, 6) != Some(BOUND_CLAUSE) {
+        return Err(shape(
+            "the only quantity `source.loop.v1`'s attribute constrains is the loop's bound, \
+             written `#bound`: `[| #unroll, where #bound < N |]`",
+        ));
+    }
+    if !symbol(window, 7, Symbol::Less) {
+        return Err(shape(
+            "`source.loop.v1`'s attribute states a strict upper bound, `#bound < N`; `<` is the \
+             one comparison it reads, so the licensed bounds are exactly `1 … N-1`",
+        ));
+    }
+    let Some(limit) = integer(window, 8) else {
+        return Err(shape(
+            "`#bound < N` names N as an integer literal written at the site; a licence the \
+             checker has to compute is not one a reader can check against the loop",
+        ));
+    };
+    if !symbol(window, 9, Symbol::QuantClose) || window.len() != 10 {
+        return Err(shape(
+            "`source.loop.v1` reads exactly `[| #unroll, where #bound < N |]`; a clause list with \
+             anything further in it is refused rather than partly read",
+        ));
+    }
+    // The declared numeral's *value* is the bound band's business, decided
+    // against the ceiling by the core. A limit of 0 or 1 licenses no bound at
+    // all — `#bound < 1` admits nothing, since a bound of zero is already
+    // refused — and is reported as the same condition for the same reason.
+    if limit < 2 || limit > i64::from(MAX_DECLARED_LIMIT) {
+        let refusal = if limit > i64::from(MAX_DECLARED_LIMIT) {
+            BoundRefusal::LicenseAboveCeiling {
+                limit: u32::try_from(limit).unwrap_or(u32::MAX),
+            }
+        } else {
+            BoundRefusal::LicenseViolated {
+                bound: 1,
+                limit: u32::try_from(limit.max(0)).unwrap_or(0),
+            }
+        };
+        return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
+    }
+    Ok(UnrollLicense {
+        limit: u32::try_from(limit).expect("the limit is inside 2..=MAX_DECLARED_LIMIT"),
+    })
+}
 
 /// A read `for NAME in 0..BOUND` header.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -131,10 +286,15 @@ fn integer(window: &[&Token], cursor: usize) -> Option<i64> {
 /// `source.branch.v1` established for a condition and `source.buffer.v1` for an
 /// index — and it is what `STD-BUFFER-COPY` needs, because a copy's length is
 /// usually a name.
+/// `budget` carries the `[| #unroll, where #bound < N |]` clause list immediately
+/// preceding this statement, if one was written and read. Card `LOOP-UNROLL-BUDGET`'s
+/// three-layer budget is applied after the bound is known and **before** the
+/// body is looked at, so an over-budget loop costs the checking route nothing.
 pub fn read_loop_header(
     window: &[&Token],
     span: Span,
     constants: &BTreeMap<String, i32>,
+    budget: LoopBudget,
 ) -> Result<LoopHeader, SourceDiagnostic> {
     if word(window, 0) != Some(FOR_KEYWORD) {
         return Err(diagnostic(
@@ -229,9 +389,16 @@ pub fn read_loop_header(
         return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
     }
 
+    let count = u32::try_from(bound).expect("the bound is inside 1..=MAX_ITERATIONS");
+    // Card `LOOP-UNROLL-BUDGET`: the three-layer decision, taken by the core
+    // over two numbers and reported at this band's own `Q098`.
+    if let Some(refusal) = budget_refusal(count, budget) {
+        return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
+    }
+
     Ok(LoopHeader {
         variable: variable.to_owned(),
-        count: u32::try_from(bound).expect("the bound is inside 1..=MAX_ITERATIONS"),
+        count,
     })
 }
 

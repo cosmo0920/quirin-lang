@@ -228,6 +228,23 @@ pub enum StatementKind {
         binding: String,
         body: SourceBlock,
     },
+    /// `[| #unroll, where #bound < N |]` — one statement-adjacent clause list,
+    /// licensing the `for` statement that follows it (card
+    /// `LOOP-UNROLL-BUDGET`).
+    ///
+    /// It is its **own statement** rather than a field of [`Self::For`], and
+    /// both halves of that are deliberate. A separate statement keeps the
+    /// `for` statement's own token window unchanged, so every position
+    /// `LOOP-V1` reads by index — the binder at 1, the contextual `in` at 2 —
+    /// still holds; and it gives the reader a place to refuse an attribute that
+    /// licenses nothing, which is what a dangling attribute and an attribute
+    /// before some other statement are.
+    ///
+    /// The parser records no clause at all: the clause list is read out of the
+    /// statement's own byte-span token window by `crate::source_loop`, exactly
+    /// as every other route reads its own statements. This variant exists for
+    /// *position*, not for semantics.
+    LoopAttribute,
     Return,
     Raise,
     Break,
@@ -1302,6 +1319,27 @@ impl<'a> SourceParser<'a> {
         if self.word(start, "while") {
             return self.single_body_statement(start, limit, |body| StatementKind::While { body });
         }
+        // Card `LOOP-UNROLL-BUDGET`. `[| #` at a statement head is the
+        // unrolling attribute's clause list. The recognition takes **both**
+        // tokens on purpose: `[|` alone is the quant-index type's readable
+        // opener (`quant[| n where n := 5 |]`, eight code occurrences in the
+        // pinned corpus), and requiring the `#` claims only the shape the
+        // census found nowhere at all. The list is consumed here and read by
+        // `crate::source_loop`; a list that licenses nothing is refused there,
+        // at `Q097`, rather than here at `Q000`.
+        if self.symbol(start, Symbol::QuantOpen) && self.symbol(start + 1, Symbol::Hash) {
+            let mut cursor = start + 1;
+            while cursor < limit && !self.symbol(cursor, Symbol::QuantClose) {
+                cursor += 1;
+            }
+            if cursor >= limit {
+                // An *unterminated* list is a parse failure, where a
+                // *malformed* one is this construct's own refusal: there is no
+                // statement here to attribute a diagnostic to.
+                return Err(self.error(start, "expected `|]` closing an attribute clause list"));
+            }
+            return Ok(self.located_statement(start, cursor + 1, StatementKind::LoopAttribute));
+        }
         // Card `LOOP-V1`. `for` is census-clean across every `.qcore`/`.qc`
         // file in the tree (zero occurrences outside `//` comments), so this
         // head claims a statement shape that previously did not parse at all.
@@ -1710,6 +1748,16 @@ impl<'a> SourceParser<'a> {
     }
 
     fn is_statement_start(&self, index: usize) -> bool {
+        // Card `LOOP-UNROLL-BUDGET`: an unrolling attribute begins a statement,
+        // so a structured statement's body ends where one starts. Measured
+        // load-bearing for the same reason `for` itself was: without this row
+        // `last_top_level_block` runs past an attributed loop that follows a
+        // block and claims that loop's body as the earlier statement's.
+        // **Both** tokens are required, so the quant-index type's `[|` opener
+        // is untouched.
+        if self.symbol(index, Symbol::QuantOpen) && self.symbol(index + 1, Symbol::Hash) {
+            return true;
+        }
         matches!(
             self.word_value(index),
             Some(
@@ -2606,6 +2654,18 @@ fn lexical_references(
     statement: &Located<StatementKind>,
     lexical_tokens: &[Token],
 ) -> BTreeSet<String> {
+    // Card `LOOP-UNROLL-BUDGET`: every word inside `[| #unroll, where #bound <
+    // N |]` is a clause word of the attribute grammar and none of them is a
+    // reference to a binding, so the list contributes no referenced name at
+    // all. That is what keeps `unroll` and `where` out of
+    // `is_reserved_source_word` — the constraint-14 census found `where` eight
+    // times in code position inside `quant<n where n := 5>` clauses of the
+    // pinned corpus, and a global reservation would change how a corpus this
+    // card may not touch resolves a name. `bound` is already reserved and is
+    // reused rather than respelled.
+    if matches!(statement.value, StatementKind::LoopAttribute) {
+        return BTreeSet::new();
+    }
     let mut tokens = lexical_tokens
         .iter()
         .filter(|token| {
@@ -3019,6 +3079,10 @@ fn statement_metadata(statement: &StatementKind) -> (Option<&str>, Option<&str>,
         // is introduced into the body's scope by `elaborate_block`, which reads
         // it off the variant.
         StatementKind::For { .. } => (None, None, SemanticPass::Loop),
+        // Card `LOOP-UNROLL-BUDGET`: the unrolling attribute is the loop pass's
+        // statement too — it licenses a loop and nothing else, and its refusals
+        // are conditions of that pass's existing `Q097` and `Q098`.
+        StatementKind::LoopAttribute => (None, None, SemanticPass::Loop),
         StatementKind::Return => (None, None, SemanticPass::OrdinaryTypes),
         StatementKind::Raise => (None, None, SemanticPass::TypedErrors),
         StatementKind::Break | StatementKind::Continue => (None, None, SemanticPass::ResourceFlow),

@@ -334,12 +334,18 @@ fn a_bound_above_the_iteration_maximum_refuses_rather_than_truncating() {
     assert!(messages(&source).contains(&MAX_ITERATIONS.to_string()));
 }
 
+/// **Amended by card `LOOP-UNROLL-BUDGET`**, which is the one test of this
+/// suite whose fixture that card changed: the bound is above the default
+/// unrolling budget, so it now carries the attribute that licenses it. The
+/// claim is unchanged — the largest bound the construct models is admitted —
+/// and what moved is that reaching it is now something a program **declares**.
 #[test]
 fn the_largest_admitted_bound_is_admitted() {
     let source = module(
         "alloc, mut",
         &[
             "let b = bytes(1);",
+            &format!("[| #unroll, where #bound < {} |]", MAX_ITERATIONS + 1),
             &format!("for i in 0..{MAX_ITERATIONS} {{ b[0] = 1; }}"),
             "drop b;",
             "return;",
