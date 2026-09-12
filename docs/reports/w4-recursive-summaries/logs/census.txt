@@ -1,0 +1,18 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  leak: 266 -> 266 (+0)
+  unknown_alias: 4344 -> 4344 (+0)
+  unsupported: 49760 -> 49760 (+0)
+units with diagnostic-count changes: 0
+description inventory deltas:
+leaf-level diff, per changed unit:
+leaves added: 0; leaves removed: 0

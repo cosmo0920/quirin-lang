@@ -1,0 +1,16 @@
+schema_version: 2
+archived: docs/reports/w29-corpus-contracts/artifacts
+measured: measure/runs/after
+--- chunk-contracts
+    results: 96 -> 96 (+0 -0 ~0)
+    backend_teardown: 21 -> 21 (+0 -0 ~0)
+--- contracts
+    sources: 19 -> 19 (+0 -0 ~0)
+    manifest.modules: 19 -> 19 (+0 -0 ~0)
+    audit_selection.libraries: 5 -> 5 (+0 -0 ~0)
+--- diagnostics
+    units: 185 -> 185 (+0 -0 ~0)
+--- source
+    envelope: {"compile_entry": {"after": "{'command': '/usr/bin/clang -DMK_EVENT_LOOP_LIBEVENT -DMK_HAVE_ACCEPT4 -DMK_HAVE_BACKTRACE -DMK_HAVE_EVENTFD -DMK_HAVE_MEMMEM -DMK_HAVE_MEMRCHR -DMK_HAVE_STAT_H -DMK_HAVE_SYS_UIO_H -DMK_HAVE_TIMERFD_CREATE -DMK_HAVE_UNISTD_H -DMK_HAVE_VALGRIND -DMK_THREADS_POSIX -I/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a34fba7055c858fd7/build/cycle19/clang-pin/mon
+--- source-effects
+    results: 96 -> 96 (+0 -0 ~3)

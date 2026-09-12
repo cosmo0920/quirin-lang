@@ -349,6 +349,50 @@ full suite.
 
 ## Increment records
 
+W4-RECURSIVE-SUMMARIES (2026-09-13, wave 30): the wave's one arbiter card. Its
+brief asked for the design's bounded first unit — the neutral-element
+fixed-point start for recursive components
+(`docs/design/W4_RECURSIVE_SUMMARY_PROFILES.md` §4.2–§4.3) — and the measured
+disposition is that the unit was **already landed**: C03-NFR implemented units
+U1/U2/U3/U7 (`legacy_neutral.rs`, the descent to the greatest post-fixed
+point, certificate rederivation inside `check_legacy_safety_certificate`,
+self-dependent record hygiene), and W4-EXPR-POS plus REACH-GATE carried its
+corpus reach to the measured frontier — **1 of 46** recursive components
+(`digits10`), closed at the sound-admission frontier (`C03-NFR-REACH`),
+recorded here as `W4-RECSUM-ALREADY-LANDED` so the ledger does not
+double-count the route. The card lands the one leg the design still owed: the
+§4.3 soundness induction itself, `QCore.NeutralPrefixPreservation` (six
+audited declarations, Lean audits 118 → **119**) — per-frame validation under
+the all-neutral assumption map propagates to **every finite execution
+prefix**, completed and still-running inner calls alike
+(`neutral_prefix_preservation`, the N-prefix preservation argument), while the
+same per-frame discipline for an assumed *effect* constrains no divergent
+prefix (`an_assumed_effect_appears_in_no_divergent_prefix`, the measured
+`purge`/`mint` counterexample compositionally) and a returned prefix does
+discharge it (probe row 17 in the model) — and proposes the constraint-4
+amendment recording the neutral-element exception with its two load-bearing
+premises (no precondition, so no failure path can be deleted; negative
+prefix-closed facts, so soundness is a prefix induction rather than a rank),
+for the integrator to adopt (`W4-RECSUM-CONSTRAINT-4`). The arbiter runs, on a
+fresh Clang pin: BEFORE byte-identical to
+`docs/reports/w29-corpus-contracts/artifacts/` in `diagnostics.json` and
+`chunk-contracts.json` (raw and canonical, SHA-256 `8662337d…` /
+`c4f438e4…`), AFTER byte-identical to BEFORE in **all five artifacts** — the
+card changes no analysis input, so the two counted runs are a run-to-run
+determinism measurement of the pinned route — leak **266 unmoved** (no fifth
+move), `unknown_alias` **4,344 unmoved**, `unsupported` **49,760 unmoved**,
+zero unit and zero function status moves, zero leaves added or removed,
+nothing promoted; in particular no recursive component's function flips
+`Unknown` → `Safe`, because no new component validates. Contract corpus stays
+74; no Rust source, contract, manifest, schema or test pin moved; no new Q
+code. Gate: **4,445 workspace tests, 0 failed, 8 ignored** across 218
+binaries under `--no-fail-fast` (a first concurrent attempt was killed by the
+environment mid-suite at 54 binaries, every completed binary green —
+discarded, recorded, not counted), fmt/clippy clean, both probes exit 0,
+**Passed 119 Lean audits**, Python 193 with the one disclosed derived-facts
+tripwire (`lean_audits: 118 != 119`, constraint 25's usual wave-close
+reconciliation). Evidence: `docs/reports/w4-recursive-summaries/README.md`.
+
 Wave 29 close (2026-09-13): **six cards** merged one at a time under the
 failure-gated chain — `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG`,
 `REGION-JOINS-DUTIES`, `SLICE-PERMISSIONS-WRITE-LEND` and the arbiter

@@ -1,0 +1,5 @@
+FAIL: test_the_derived_facts_are_recomputed_rather_than_carried (test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried)
+----------------------------------------------------------------------
+Ran 193 tests in 18.426s
+
+FAILED (failures=1)

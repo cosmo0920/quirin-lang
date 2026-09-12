@@ -31,14 +31,14 @@ the wave-29 baseline's `diagnostics.json` and `chunk-contracts.json` **byte
 for byte** (§4), and the AFTER run is byte-identical to the BEFORE run in all
 five artifacts (§5): this card changes no Rust, no contract, no manifest and
 no analysis input, so the two counted runs executed the same binary
-(SHA-256 `«BIN_SHA»`) over the same bytes, and their identity is a
+(SHA-256 `494dcea85999ae80…`) over the same bytes, and their identity is a
 run-to-run determinism measurement rather than a vacuous diff. The corpus
 contains **no recursive component the neutral route newly reaches** — the
 reach stands where REACH-GATE measured and closed it, **1 of 46 components**
 (`digits10`), and that boundary is this card's publishable measurement (§6).
 
 Lean audits **118 → 119** (`AuditNeutralPrefixPreservation.lean`, six
-declarations, §3). No new Q code, no schema change, no new reason string, no
+declarations, §2.1). No new Q code, no schema change, no new reason string, no
 keyword, no provider change. Contract corpus stays **74 modules**.
 
 ---
@@ -175,7 +175,7 @@ SHA-256 `cd137e6988413ecb…`, **1,415 entries**, `/usr/bin/clang` spelled
 (Ubuntu clang 21.1.8). Both counted runs: exit 0, zero gateway failures, all
 six scopes summing to 185 units. One binary, built once in this worktree and
 executed from worktree-private `measure/bin/` (never from `target/`):
-SHA-256 `«BIN_SHA»`.
+SHA-256 `494dcea85999ae80…`.
 
 ## 4. The BEFORE run reproduces the wave-29 baseline byte for byte
 
@@ -195,11 +195,29 @@ untouched (constraint 21):
 
 | artifact | archived baseline | BEFORE run |
 |---|---|---|
-| `diagnostics.json` | `«DIAG_SHA»` | **identical** (raw and canonical) |
-| `chunk-contracts.json` | `«CHUNK_SHA»` | **identical** (raw and canonical) |
-| `source.json`, `source-effects.json`, `contracts.json` | — | «RESIDUE» |
+| `diagnostics.json` | `8662337d256d0f7a…` | **identical** (raw and canonical) |
+| `chunk-contracts.json` | `c4f438e4ed3dab3c…` | **identical** (raw and canonical) |
+| `source.json`, `source-effects.json`, `contracts.json` | — | differ: the checkout-root and identity-digest class every prior re-pin has recorded |
 
-«DIFF_BEFORE_SUMMARY»
+and `diff_artifacts.py --archived docs/reports/w29-corpus-contracts/artifacts`
+([`logs/diff-summary-before.txt`](logs/diff-summary-before.txt),
+[`artifacts/diff-baseline-to-before.json.gz`](artifacts/diff-baseline-to-before.json.gz))
+itemises **zero** differences in every section that carries a verdict:
+
+```
+--- chunk-contracts: results 96/96 +0 -0 ~0;  backend_teardown 21/21 +0 -0 ~0
+--- contracts:       sources 19/19, manifest 19/19, audit_selection 5/5
+--- diagnostics:     units 185/185, +0 -0 ~0
+--- source:          envelope key `compile_entry`
+--- source-effects:  results 96/96, 3 result rows changed
+```
+
+The residues are the classes every prior re-pin has recorded — this
+worktree's absolute path differs from wave 29's — and both counted runs of
+this card are byte-identical to each other in **all five** artifacts (§5),
+so the class is located entirely between checkouts, not between runs. Both
+counted runs: exit 0, zero gateway failures, six scopes summing to 185 units
+(31 + 17 + 94 + 13 + 1 + 29), per-scope lines identical.
 
 ## 5. BEFORE → AFTER: the identity is a determinism measurement
 
@@ -215,8 +233,22 @@ determinism** of the pinned route, and the measured answer is exact:
 [`census.py`](census.py), transcript [`logs/census.txt`](logs/census.txt):
 
 ```
-«CENSUS»
+units: 185 -> 185;  unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834;  function status moves: 0
+leak: 266 -> 266 (+0);  unknown_alias: 4344 -> 4344 (+0);  unsupported: 49760 -> 49760 (+0)
+units with diagnostic-count changes: 0
+leaves added: 0; leaves removed: 0
 ```
+
+The BEFORE → AFTER itemizer
+([`logs/diff-summary-before-to-after.txt`](logs/diff-summary-before-to-after.txt))
+reports zero differences in every section of all five artifacts, and the
+baseline → AFTER itemizer
+([`logs/diff-summary-after.txt`](logs/diff-summary-after.txt),
+[`artifacts/diff-baseline-to-after.json.gz`](artifacts/diff-baseline-to-after.json.gz))
+carries exactly the checkout-root residue of §4 and nothing else.
 
 ### 5.1 The pin statements
 
@@ -256,15 +288,33 @@ here.
 
 | step | result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | «TESTS» |
-| `cargo fmt --all -- --check` | «FMT» |
-| `cargo clippy --all-targets -- -D warnings` | «CLIPPY» |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | «PROBE» |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | «FOLLOWUP» |
-| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | «LEAN» |
-| `python3 -m unittest discover -s scripts/tests` | «PYTHON» |
+| `cargo test --workspace --no-fail-fast` | **4,445 passed, 0 failed, 8 ignored** across 218 test binaries, exit 0 ([`logs/workspace-tests.txt.gz`](logs/workspace-tests.txt.gz)) — the wave-29 close's own count; this card adds no test function, and no constraint-16 load row tripped in the counted run |
+| `cargo fmt --all -- --check` | clean |
+| `cargo clippy --all-targets -- -D warnings` | clean, exit **0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **Passed 119 Lean audits** (118 → 119: `AuditNeutralPrefixPreservation.lean`), no warning, exit **0** — read from the text line, per the standing environment note ([`logs/lean-audits-summary.txt`](logs/lean-audits-summary.txt)) |
+| `python3 -m unittest discover -s scripts/tests` | 193 tests, **1 expected failure** — §7.1 |
 
-«GATE_NOTES»
+### 7.1 The disclosed Lean tripwire
+
+`test_the_derived_facts_are_recomputed_rather_than_carried` reports
+`lean_audits: 118 != 119` — the derived-value tripwire working as designed:
+this card adds one audited Lean module and may not edit the acceptance
+matrix. The same one-line reconciliation every wave's new audit file receives
+(constraint 25, on the SLICE-PERMISSIONS-WRITE-LEND precedent). The other 192
+Python tests pass ([`logs/python-tests.txt`](logs/python-tests.txt)).
+
+### 7.2 Measurement hygiene
+
+One environment event, recorded rather than hidden: a **first** workspace
+test invocation was launched concurrently with the BEFORE corpus run and the
+probe builds, and the shell was killed externally at 54 of ~215 test binaries
+(exit 144, every completed binary green, one process-transport row past its
+60-second mark under the combined load). Nothing was counted from it; the
+gate row above is the re-run taken with nothing else on the machine. This is
+an environment-class event about one process execution, not evidence about
+the tree.
 
 Provider code and packages are unchanged; the five packages were **built**
 for the audit route (the pinned route selects the ChunkIO package through
@@ -300,6 +350,6 @@ byte-identical in verdict content to `docs/reports/w29-corpus-contracts/`'s
 differ only in the recorded checkout-root/identity-digest class); every
 predecessor stays frozen (constraint 21). **Not one ledger corpus figure
 changes.** Lean audits 118 → 119. The one derived acceptance-matrix fact that
-moves is `validation.lean_audits` — §7's disclosed tripwire, the usual
+moves is `validation.lean_audits` — §7.1's disclosed tripwire, the usual
 one-line wave-close reconciliation (constraint 25). The constraint-4
 amendment of §2.2 awaits adoption.
