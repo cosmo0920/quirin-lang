@@ -69,13 +69,13 @@ Headline numbers at the wave-26 close. The **corpus baseline is still
 `docs/reports/wave23-c-operations/artifacts/`** — no arbiter since has re-pinned
 it — with the attributed AFTER runs chained beneath it:
 `docs/reports/aom-destroy-siblings/artifacts/` (wave 23) and
-`docs/reports/aom-binding-poison/artifacts/` (wave 25), which is still the run
-the corpus rows below are read from. Wave 26 ran **no arbiter**: not one of its
-five cards touched a gateway, contract, audit or provider file, so the corpus
-rows are **carried** from that wave-25 measurement rather than re-measured, and
-they are labelled as carried rather than presented as a fresh run. What did move
-this wave is the CT row (by **mapping**, not conformance — constraint 23) and
-the gate row. Every preceding corpus archive stays frozen (constraint 21):
+`docs/reports/aom-binding-poison/artifacts/` (wave 25), the run the corpus rows
+below are read from. Wave 26 ran **no arbiter** — not one of its five cards
+touched a gateway, contract, audit or provider file — so those rows are
+**carried** from the wave-25 measurement and labelled carried, not presented as
+a fresh run. Only the CT row (by **mapping**, not conformance — constraint 23)
+and the gate row moved. Every preceding corpus archive stays frozen
+(constraint 21):
 
 | Measure | Value |
 |---|---|
@@ -216,12 +216,11 @@ pointer is the card that established it; read it before deviating.
    L19544, is on the success path where no destroy call runs, so it **stands**,
    the function keeps its leak and its provisional `Unsafe`, and the pin reads
    266 rather than 265. Nothing is promoted by any of the four: zero unit status
-   moves, zero function status moves. There is **no fifth move**: at the wave-25
-   re-measurement the L19399 leaf that wave 23 decided by *withdrawal* is decided
-   instead by the **discharging** arm of the same
-   `flb_input_chunk_destroy_direct_routes` contract — its first firing anywhere
-   in the pinned corpus — which is a strictly better answer to the same question
-   and changes no count, the pin still reading **266** with not one leak leaf
+   moves, zero function status moves. There is **no fifth move** — at the
+   wave-25 re-measurement the L19399 leaf wave 23 decided by *withdrawal* is
+   decided instead by the **discharging** arm of that same contract, its first
+   firing anywhere in the pinned corpus: a strictly better answer to the same
+   question, changing no count, the pin still **266** with not one leak leaf
    added or removed. `remaining-o04-b08`, `corpus-repin`,
    `remaining-constructor-residuals` §6.4, `wave17-corpus`,
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
@@ -327,76 +326,84 @@ pointer is the card that established it; read it before deviating.
     compilation inputs (`Q014`/`Q015` refuse before checking each file). The
     task profile keeps its separate `concurrency checked;` marker.
     `core-concurrency-prelude`.
-14. New keywords are a recorded compatibility hazard and must be checked
-    against every fixture: T03-F added five reserved words, T08-EPOCH-SRC eight
-    (with `work` renamed `effort` rather than editing the pinned golden
-    surface), `source.extern-call.v1` added `succeeds`, STD-MODULES added eight
-    (`print`, `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`), and the
-    quiet-emission amendment added `trace`, `debug`, and the explicit
-    system-trace `log_level` declaration after a full fixture
-    census. The already-reserved `error` keyword is accepted contextually as a
-    logger level only after `log`; it was not removed from the global keyword
-    set. EXTERN-MODES deliberately added **none**:
-    `move NAME` spells all four departing modes and the declaration decides
-    which ran. `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
-    `wave17-std-modules`, `remaining-extern-modes`. `NATIVE-LIBRARY-SOURCE-BINDING`
-    also added **none**: `extern library NAME;` reuses `extern` and `library`,
-    claiming only the two-word sequence at declaration position, which was a
-    `Q000` parse failure before. Its census found the two whole-token-stream
-    route selectors — `module_imports::concurrency_span` and
-    `source_tasks::has_source_tasks` — and **excluded binding spans from both**,
-    so a library named `spawn`, `join`, `qcore_buffer_new`, `qcore_buffer_read`,
-    `qcore_buffer_write` or `qcore_error_payload` cannot select a route from its
-    own spelling. Do not remove that exclusion. `native-library-source-binding`.
-    `QUIRIN-SOCKET-V1` added **ten** — `tcp`, `udp`, `bind`, `listen`, `connect`,
-    `accept`, `send`, `recv`, `sendto`, `recvfrom` — each a clause word in a
-    statement and never a reference, each measured load-bearing, and all ten
-    census-clean across every `.qcore`/`.qc` fixture (412 files) and every Rust
-    string literal (41,529). `let`, `close` and `return` are reused rather than
-    respelled, which is why the release is `close NAME;`. Two candidate spellings
-    were **rejected by the census** and must stay rejected: `stream` occurs as a
-    contract `extern fn` parameter name (shielded only by the following `:`), and
-    `socket` would name a transport the route deliberately makes explicit at
-    creation. `quirin-socket-v1`. `LOOP-V1` added **one** — `for`, census-clean
-    at zero code occurrences across all 418 `.qcore`/`.qc` files — and **zero**
-    new tokens, `..` being two existing `Dot` tokens. **`in` is deliberately not
-    reserved**: the census found it as a genuine reference inside the pinned
-    contract corpus (`ensures normal resource_borrowed(in);`), exactly the shape
-    that kept `len` out of the global list, so it takes that card's narrow
-    contextual rule instead. Do not promote it to the global set.
-    `SOCKET-EVENT-COMPOSE` and `STRING-CONCAT` each added **none**, both censuses
-    run rather than assumed. `SOCKET-INET-ADDRESSES` added **none and changed no
-    lexer rule**: a declared address (`bind S 127.0.0.1:8080;`,
-    `connect C [::1]:8080;`) is read back out of the tokens the existing lexer
-    already produces — a dotted quad is `Float Dot Float` because `127.0` is a
-    float spelling, `::` is the existing atomic `ColonColon`, and `[|` still wins
-    over `[` by longest match, so the `[| |]` and `..` golden surfaces are
-    untouched. An address position is told from a name position by the one fact
-    that **every address of this route spells a port**, so its token run carries a
-    `:`; the run's tokens must be lexically adjacent. Its one name-resolution
-    exclusion is **the address reader itself** — `source_socket::address_host_span`
-    returns the token range of a statement's address *host*, deliberately leaving
-    the **port** outside it so a port name stays a genuine reference — and the
-    census measures it claiming a span in **no** `.qcore`/`.qc` file of this
-    repository outside the card's own two examples. `LOOP-UNROLL-BUDGET` added
-    **no reserved word at all** — a first for this family — and **one new token**,
-    `#`, promoted from a lexer error on `OR-AND-LOWERING`'s precedent for `^` and
-    census-clean at **zero** code occurrences across 422 `.qcore`/`.qc` files. It
-    reserves nothing because a `[| … |]` clause list contributes **no referenced
-    name**: `frontend::lexical_references` returns the empty set for the attribute
-    statement, so `unroll` and `where` stay contextual and `let unroll = 1;` is
-    still a program. That matters most for `where`, which the census found **eight**
-    times in code — every one of them inside a quantitative index type whose
-    readable alias is spelled `quant[| n where n := 5 |]`, the very brackets this
-    attribute borrows. The disambiguation therefore takes **two** tokens (a
-    statement head is `[|` *followed by* `#`) and the alias's continued behaviour is
-    **re-measured**, not asserted; `#` is also still not an identifier character, so
-    the scoped-name premise behind `c#0` survives. `HTTP-V1-COMPUTED-LENGTH` and
-    `CT-WIRE-LANE` each added **none**, both censuses run rather than assumed, and
-    `EXAMPLES-SUITE-WIRE` does not engage this constraint at all — it reserves no
-    word and touches no crate source. `loop-v1`, `socket-event-compose`,
-    `string-concat`, `socket-inet-addresses`, `loop-unroll-budget`,
-    `http-v1-computed-length`.
+14. New keywords are a recorded compatibility hazard: every candidate is
+    **censused against every fixture** before it is reserved, and the census is
+    run rather than assumed. The ledger, in card order:
+    * **Reserving cards.** T03-F **+5**; T08-EPOCH-SRC **+8** (with `work`
+      renamed `effort` rather than editing the pinned golden surface);
+      `source.extern-call.v1` **+1** (`succeeds`); STD-MODULES **+8** (`print`,
+      `log`, `flush`, `dec`, `hex`, `info`, `warn`, `fatal`); the
+      quiet-emission amendment **+2** (`trace`, `debug`) plus the explicit
+      system-trace `log_level` declaration, after a full fixture census. The
+      already-reserved `error` keyword is accepted contextually as a logger
+      level **only after `log`**; it was not removed from the global keyword set.
+    * `QUIRIN-SOCKET-V1` **+10** — `tcp`, `udp`, `bind`, `listen`, `connect`,
+      `accept`, `send`, `recv`, `sendto`, `recvfrom` — each a clause word in a
+      statement and never a reference, each measured load-bearing, all ten
+      census-clean across every `.qcore`/`.qc` fixture (412 files) and every
+      Rust string literal (41,529). `let`, `close` and `return` are reused
+      rather than respelled, which is why the release is `close NAME;`. Two
+      candidate spellings were **rejected by the census and must stay
+      rejected**: `stream` (a contract `extern fn` parameter name, shielded
+      only by the following `:`) and `socket` (it would name a transport the
+      route deliberately makes explicit at creation).
+    * `LOOP-V1` **+1** (`for`, census-clean at zero code occurrences across all
+      418 `.qcore`/`.qc` files) and **no new token**, `..` being two existing
+      `Dot` tokens. **`in` is deliberately not reserved**: the census found it
+      as a genuine reference inside the pinned contract corpus
+      (`ensures normal resource_borrowed(in);`), exactly the shape that kept
+      `len` out of the global list, so it takes that card's narrow contextual
+      rule instead. Do not promote it to the global set.
+    * `LOOP-UNROLL-BUDGET` **+0 words — a first for this family — and +1
+      token**, `#`, promoted from a lexer error on `OR-AND-LOWERING`'s
+      precedent for `^` and census-clean at **zero** code occurrences across
+      422 `.qcore`/`.qc` files. It reserves nothing because a `[| … |]` clause
+      list contributes **no referenced name** —
+      `frontend::lexical_references` returns the empty set for the attribute
+      statement — so `unroll` and `where` stay contextual and
+      `let unroll = 1;` is still a program. That matters most for `where`,
+      which the census found **eight** times in code, every one inside a
+      quantitative index type whose readable alias is spelled
+      `quant[| n where n := 5 |]` — the very brackets this attribute borrows.
+      The disambiguation therefore takes **two** tokens (a statement head is
+      `[|` *followed by* `#`), the alias's continued behaviour is
+      **re-measured** rather than asserted, and `#` is still not an identifier
+      character, so the scoped-name premise behind `c#0` survives.
+    * `NATIVE-LIBRARY-SOURCE-BINDING` **+0**: `extern library NAME;` reuses
+      `extern` and `library`, claiming only the two-word sequence at
+      declaration position, which was a `Q000` parse failure before. Its census
+      found the two whole-token-stream route selectors —
+      `module_imports::concurrency_span` and `source_tasks::has_source_tasks` —
+      and **excluded binding spans from both**, so a library named `spawn`,
+      `join`, `qcore_buffer_new`, `qcore_buffer_read`, `qcore_buffer_write` or
+      `qcore_error_payload` cannot select a route from its own spelling. **Do
+      not remove that exclusion.**
+    * `SOCKET-INET-ADDRESSES` **+0, and no lexer rule changed**: a declared
+      address (`bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`) is read back
+      out of the tokens the existing lexer already produces — a dotted quad is
+      `Float Dot Float` because `127.0` is a float spelling, `::` is the
+      existing atomic `ColonColon`, and `[|` still wins over `[` by longest
+      match, so the `[| |]` and `..` golden surfaces are untouched. An address
+      position is told from a name position by the one fact that **every
+      address of this route spells a port**, so its token run carries a `:`;
+      the run's tokens must be lexically adjacent. Its one name-resolution
+      exclusion is **the address reader itself** —
+      `source_socket::address_host_span` returns the token range of a
+      statement's address *host*, deliberately leaving the **port** outside it
+      so a port name stays a genuine reference — and the census measures it
+      claiming a span in **no** `.qcore`/`.qc` file of this repository outside
+      the card's own two examples.
+    * **+0, censused not assumed:** EXTERN-MODES (`move NAME` spells all four
+      departing modes and the declaration decides which ran),
+      `SOCKET-EVENT-COMPOSE`, `STRING-CONCAT`, `HTTP-V1-COMPUTED-LENGTH`,
+      `CT-WIRE-LANE`. `EXAMPLES-SUITE-WIRE` does not engage this constraint at
+      all: it reserves no word and touches no crate source.
+
+    `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
+    `wave17-std-modules`, `remaining-extern-modes`,
+    `native-library-source-binding`, `quirin-socket-v1`, `loop-v1`,
+    `socket-event-compose`, `string-concat`, `socket-inet-addresses`,
+    `loop-unroll-budget`, `http-v1-computed-length`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -733,11 +740,11 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
   `analyze_unrestricted_c11` / `validate_unrestricted_c11`.
 - CLI (binary `quirin`, crate `qcorec`): `quirin check <file>`,
   `quirin emit -o out.c <file>`,
-  `quirin plugins list|inspect <id>|verify <package>|enable|disable`;
-  configured audits run as `quirin-audit CONFIG.json` (crate `qcore-audit`).
-- Configured audits: `qcore-audit CONFIG.json`;
-  `scripts/prepare_cycle19_clang_audit.py`,
-  `scripts/prepare_cmetrics_clang_audit.py`,
+  `quirin plugins list|inspect <id>|verify <package>|enable|disable`.
+- Configured audits: `quirin-audit CONFIG.json` — the binary of crate
+  `qcore-audit`, whose package and library names are unchanged. Inputs are
+  prepared by `scripts/prepare_cycle19_clang_audit.py`,
+  `scripts/prepare_cmetrics_clang_audit.py` and
   `scripts/prepare_libevent_core_audit.py`.
 - Published examples: `examples/README.md` indexes one directory per family —
   `stdio`, `pipes`, `branching`, `extern`, `unsafe-linkage`, `threads`,
@@ -746,12 +753,16 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
   HTTP/1.1 subset, beside the same bytes written by hand) and `loops`. Every
   program compiles through the real pipeline and is byte-compared against its
   reference execution by a workspace test. Since card `EXAMPLES-SUITE-WIRE` all
-  **eleven** families are held to one standard by `compiler/tests/examples_suite.rs`,
-  which reaches them by **directory scan** rather than by a hand-kept list — so a
-  new family is covered structurally rather than by an author's diligence — while
-  `examples/{strings,sockets,http}` keep their own card test files' sanitized
-  native runs unedited beside it (`STRING-SLICE-IO-EXAMPLE-SUITE`,
-  `HTTP-V1-EXAMPLE-SUITE` and `LOOP-EXAMPLE` all closed there).
+  **eleven** families are held to one standard by
+  `compiler/tests/examples_suite.rs`, which reaches them by **directory scan**
+  rather than a hand-kept list — so a new family is covered structurally rather
+  than by an author's diligence — while `examples/{strings,sockets,http}` keep
+  their own card test files' sanitized native runs unedited beside it
+  (`STRING-SLICE-IO-EXAMPLE-SUITE`, `HTTP-V1-EXAMPLE-SUITE` and `LOOP-EXAMPLE`
+  all closed there). The index also records the family's **spelling rule** —
+  *pipe the flow, parenthesize the assembly* — under which `examples/events/`
+  keeps its own standing pipes-only rule and `examples/{pipes,stdio}` stay as
+  the deliberate piped/unpiped twins (`docs-compact-3`).
 - Native threading examples: `examples/threads/README.md` (`cl.exe`);
   `build-windows.ps1 -Run` emits, builds and runs the copied-worker,
   owned-buffer and shared-reader examples into `target/thread-examples/`.
@@ -764,26 +775,25 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
 Authority is `docs/QCORE_SPEC_r0_3.md` §L21 (ownership by semantic pass) —
 this table is a summary of it, not a second allocation.
 
-**Q-space note — `Q-NAMESPACE-DECISION`, an open decision deferred to the
-icebox.** The `Q000`–`Q099` route-code space is **exhausted**: `Q077`–`Q079`
-(`STRING-CONCAT`) and `Q097`–`Q099` (`LOOP-V1`) were the last two pools and are
-now spent, so there is no free range left below `Q100`. The next allocation
-therefore needs a §L21 namespace decision rather than a range — candidates being
-to open `Q101`/`Q102`/`Q104`+ around the legacy three-digit bands, or to take a
-new prefix. **By user direction (2026-09-12) that decision is in the ice box**,
-on the stated ground that naming collisions happen easily; it is recorded here
-as an open decision named `Q-NAMESPACE-DECISION`, **not** as a rule, and it is
-integrator/spec work when it is taken up. Its operative consequence until then:
-**no card allocates new `Q` codes.** A new refusal lands as a **condition
-extension of an existing band**, on the `SOCKET-EVENT-COMPOSE` /
+**Q-space note — `Q-NAMESPACE-DECISION`, an open decision in the ice box.** The
+`Q000`–`Q099` route-code space is **exhausted**: `Q077`–`Q079` (`STRING-CONCAT`)
+and `Q097`–`Q099` (`LOOP-V1`) were the last two pools and are spent, so no free
+range is left below `Q100`. The next allocation needs a §L21 namespace decision
+rather than a range — candidates: open `Q101`/`Q102`/`Q104`+ around the legacy
+three-digit bands, or take a new prefix. **By user direction (2026-09-12) that
+decision is iceboxed**, on the stated ground that naming collisions happen
+easily; it is recorded as an open decision, **not** a rule, and is
+integrator/spec work when taken up. Operative consequence until then: **no card
+allocates new `Q` codes.** A new refusal lands as a **condition extension of an
+existing band**, on the `SOCKET-EVENT-COMPOSE` /
 `NATIVE-LIBRARY-HEADER-DECORATION` precedent — the same condition reached by a
 new route — with the widening stated in §L21 and in the card's report rather
 than taken silently. Constraint 1 is unchanged: a code is still allocated to a
-condition, still stable, and still may not be reused by a second pass. Wave 26
-ran that consequence three times without strain — `LOOP-UNROLL-BUDGET`
-(`Q097`/`Q098`), `HTTP-V1-COMPUTED-LENGTH` (`Q090`/`Q093`/`Q094`) and
-`SOCKET-INET-ADDRESSES` (inside the `Q080`–`Q089` band, widening `Q084`'s
-condition) — each stating its widening in both places and allocating nothing.
+condition, still stable, still not reusable by a second pass. Wave 26 ran the
+consequence three times without strain — `LOOP-UNROLL-BUDGET` (`Q097`/`Q098`),
+`HTTP-V1-COMPUTED-LENGTH` (`Q090`/`Q093`/`Q094`) and `SOCKET-INET-ADDRESSES`
+(widening `Q084` inside `Q080`–`Q089`) — each stating its widening in both
+places and allocating nothing.
 
 | Codes | Owning pass | Meaning |
 |---|---|---|
@@ -801,10 +811,10 @@ condition) — each stating its widening in both places and allocating nothing.
 | `Q050` | `ComposedTasks` | `source.std-io-tasks.v1`: the composed task/std-io route's own refusals — a worker-body line now admissible where `qcore.obs-reordering.v1` covers it (constraint 15a) |
 | `Q051`–`Q057` | `StandardBuffer` | `source.buffer.v1`: the owned extent-carrying byte buffer (`bytes`, `[i]`, `extent`, `drop`) |
 | `Q058`–`Q062`, `Q074` | `Event` | `source.event.v1` in two bands: the checked event vocabulary over the reactor/descriptor custody models, `Q061` the determinism boundary (`Q058`–`Q062`); its composition with the source line vocabulary (`print`, `log`, `flush`) and that composition's one value form, `let NAME = dispatch ready E;` (`Q074`, relocated from `Q065` at integration) |
-| `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` in three bands: the immutable UTF-8 `{ptr, len}` string view behind `std.string` — entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, and the declared `effects` row (`Q068`–`Q073`, relocated from `Q065`–`Q070` at integration); its composition with the output modules — `print TEXT;` and `log LEVEL TEXT;` over a quoted literal, a bound string or one inline slice — where `Q075` is the text line's shape and `Q076` a text operand naming no string this entry bound (`Q075`–`Q076`, card `STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool); and **computed text** (`Q077`–`Q079`, card `STRING-CONCAT`, reassigned to the same pass) — `concat(…)` over check-time-known pieces into a new static payload, `dec(NAME)`/`hex(NAME)` for the text of a bound integer, and `borrow_utf8(NAME)` bridging an owned `std.buffer` into an immutable view, where `Q077` is the band's shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window together with the inherited ownership checker's own refusal, and `Q079` the **static UTF-8 decision** on a buffer's write history |
-| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — entry shape, the operand rule, the transport state machine, the inherited custody refusal, byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), the crossing boundary, the `effects` row, the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Since card `SOCKET-EVENT-COMPOSE` the row also covers the **reactor composition** — a checked socket registered with `source.event.v1`'s reactor — which allocates **no code**: a registration's refusals land on `Q080` (shape, including crossed spans), `Q081` (a name at a registration position), `Q082` (a socket in no state this program can make ready), `Q083` (whose condition is **widened** from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value), `Q085` (a turn the committed history does not decide, including a two-member ready set) and `Q087`. Since card `SOCKET-INET-ADDRESSES` the row also covers **declared IPv4 and IPv6 addresses with ports** — `bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`, `sendto U ADDRESS […];` — which likewise allocates **no code**: a spelling that is not an address lands on `Q080`, a port naming nothing on `Q081`, a family mismatch or a second bind of one address on `Q082`, a socket at a port position on `Q086`, and a target address no bind of this program declares (or one naming a kernel-chosen port) on `Q085` as the external-peer refusal. One condition is **widened**: `Q084`'s, from a byte/payload-length/receive-count range to those and a **port** range |
-| `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (whose signature condition is a declared `Content-Length` that is not the literal content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`). Since card `HTTP-V1-COMPUTED-LENGTH` a header value or a content may be a **computed** value — a quoted token, a name this entry bound to text, a `concat(…)` of check-time-known pieces, or `dec(NAME)`/`hex(NAME)` — which allocates **no code** and widens no gate: every component is resolved to bytes *before* `admit_field` and `admit_framing` run, so `Q093`'s equality is still decided rather than trusted (constraint 15f). The conditions widened are `Q090`'s (a malformed `concat`/`len`, a composition of fewer than two pieces, a composed payload above the 4096-byte bound, a selector without its operand, a value name rebound) and `Q094`'s (a component, piece or `len` operand naming a binding of the other kind). The field **name** stays a written token |
-| `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`). Card `LOOP-UNROLL-BUDGET` widens two of the three conditions and allocates **no code**: `Q097` also covers the **shape** of the statement-adjacent `[| #unroll, where #bound < N |]` clause list and a list that licenses nothing (before a non-`for`, doubled, or dangling; an *unterminated* list stays a `Q000` parse failure), and `Q098` becomes the **three-layer budget** — an absolute ceiling of 4096 no declaration may raise, a default budget of 256 an unattributed `for` is held to (refusing *with the licensing clause list written into the message*), and a licence that is **checked, never trusted**, a declared `N` above the ceiling refusing before this loop's bound is read. The licence **erases from emission**: an attributed and an unattributed program of the same admitted bound emit byte-identical C |
+| `Q068`–`Q073`, `Q075`–`Q079` | `StandardString` | `source.string.v1` behind `std.string`, three bands. `Q068`–`Q073` (relocated from `Q065`–`Q070` at integration) the immutable UTF-8 `{ptr, len}` view: entry shape, an undecidable slice bound, a quoted token that does not decode, a bound out of range or off a code-point boundary, a string at a position it may not cross, the declared `effects` row. `Q075`–`Q076` (`STRING-SLICE-IO`, which returned `Q077`–`Q079` to the pool) text reaching a stream: `Q075` the line's shape, `Q076` a text operand naming no string this entry bound. `Q077`–`Q079` (`STRING-CONCAT`, reassigned to this pass) **computed text** — `concat(…)`, `dec`/`hex`, `borrow_utf8`: `Q077` shape and bound refusals **including an embedded `source.buffer.v1` statement carrying that route's own message under this pass's code**, `Q078` the borrow-exclusion window with the inherited ownership checker's own refusal, `Q079` the **static UTF-8 decision** on a buffer's write history |
+| `Q080`–`Q089` | `StandardSocket` | `source.socket.v1`: the `std.socket` bundled module's checked TCP and UDP surface over loopback — `Q080` entry shape, `Q081` the operand rule, `Q082` the transport state machine, `Q083` the inherited custody refusal, `Q084` byte/payload/count ranges, `Q085` the **determinism boundary** (a receive the program's own committed history does not satisfy), `Q086` the crossing boundary, `Q087` the `effects` row, `Q088`/`Q089` the certificate recheck and the backend refusal. Band assigned by the integrator before the card, with `Q075`–`Q079` held for a sibling card. Two later cards extend the row and **allocate no code**, landing on `Q080`–`Q082` and `Q085`–`Q087`: `SOCKET-EVENT-COMPOSE`, the **reactor composition** (a checked socket registered with `source.event.v1`'s reactor), and `SOCKET-INET-ADDRESSES`, **declared IPv4/IPv6 addresses with ports** (`bind S 127.0.0.1:8080;`, `connect C [::1]:8080;`, `sendto U ADDRESS […];`), whose external-peer refusal is `Q085`. Each **widens one condition**, stated here and in §L21 (constraint 1): `Q083`'s from "the inherited ownership checker refused" to "an inherited, unedited **custody model** refused", so a reactor `L00`–`L12` diagnostic lands there carrying its own value; and `Q084`'s from a byte/payload-length/receive-count range to those and a **port** range. Per-condition mapping in §L21 |
+| `Q090`–`Q096` | `StandardHttp` | `source.http.v1`: the `std.http` bundled module's checked HTTP/1.1 message subset — `Q090` entry and statement shape, `Q091` the start line, `Q092` header fields (including the required single `Host` and the `CR`/`LF` exclusion that makes the constructed framing unforgeable, so header injection is not expressible), `Q093` framing (signature condition: a declared `Content-Length` that is not the content's byte count), `Q094` a name at a message position that is not one, `Q095` the **inherited, unedited** `source.socket.v1` refusal carrying that checker's own error value, `Q096` an undeclared derived effect. Band pre-assigned as `Q090`–`Q099`; `Q097`–`Q099` unused and returned to the pool (`HTTP-QUIRIN-V1`). Card `HTTP-V1-COMPUTED-LENGTH` admits a **computed** header value or content — a quoted token, a name this entry bound to text, a `concat(…)` of check-time-known pieces, or `dec(NAME)`/`hex(NAME)` — allocating **no code** and widening no gate, since every component is resolved to bytes *before* `admit_field` and `admit_framing` run and `Q093`'s equality stays decided rather than trusted (constraint 15f). It widens `Q090`'s condition (a malformed `concat`/`len`, a composition of fewer than two pieces, a composed payload above the 4096-byte bound, a selector without its operand, a value name rebound) and `Q094`'s (a component, piece or `len` operand naming a binding of the other kind). The field **name** stays a written token |
+| `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`). Card `LOOP-UNROLL-BUDGET` widens two conditions and allocates **no code**: `Q097` also covers the statement-adjacent `[| #unroll, where #bound < N |]` clause list's **shape** and a list that licenses nothing (before a non-`for`, doubled, or dangling; an *unterminated* list stays a `Q000` parse failure), and `Q098` becomes the **three-layer budget** — an absolute ceiling of 4096 no declaration may raise, a default budget of 256 an unattributed `for` is held to (refusing *with the licensing clause list written into the message*), and a licence that is **checked, never trusted**, a declared `N` above the ceiling refusing before this loop's bound is read. The licence **erases from emission**: attributed and unattributed programs of the same admitted bound emit byte-identical C |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
 | `Q300`, `Q302` | `TypedErrors`, `ErrorRegion` | typed errors; error region |
