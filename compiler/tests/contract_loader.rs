@@ -44,8 +44,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // (`fluent_bit/input_chunk_destroy_direct_routes.qcore`), which decides one
     // of the two siblings that card deliberately left undeclared; 18 -> 19 by
     // card W29-CORPUS-CONTRACTS (`fluent_bit/input_chunk_sizes.qcore`), whose
-    // two borrowed/none size queries decide thirteen uncontracted-call leaves.
-    assert_eq!(contracts.source_assumptions().len(), 19);
+    // two borrowed/none size queries decide thirteen uncontracted-call leaves;
+    // 19 -> 21 by card W31-CORPUS-CONTRACTS-2 (`chunkio/chunk_sizes.qcore` and
+    // `fluent_bit/input_chunk_total_size.qcore`), the two size-sibling
+    // declarations that card's predecessor named and declined, each landed on
+    // its own pinned-body reading.
+    assert_eq!(contracts.source_assumptions().len(), 21);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -457,8 +461,9 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF; 15 -> 16 by card
     // ABI-TYPEDEF-ADDRESS-OF-MEMBER; 16 -> 17 by card
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED; 17 -> 18 by card
-    // AOM-DESTROY-SIBLINGS; 18 -> 19 by card W29-CORPUS-CONTRACTS.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 19);
+    // AOM-DESTROY-SIBLINGS; 18 -> 19 by card W29-CORPUS-CONTRACTS; 19 -> 21 by
+    // card W31-CORPUS-CONTRACTS-2.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 21);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -685,11 +690,17 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // (`fluent_bit/input_chunk_sizes.qcore`'s `flb_input_chunk_get_size` and
     // `flb_input_chunk_get_real_size`, two read-only size queries declared
     // borrowed/none against their pinned bodies).
-    // The rejected count is unchanged in all nine cases, because every added
+    // 19 -> 21 and 41 -> 43 by card W31-CORPUS-CONTRACTS-2
+    // (`chunkio/chunk_sizes.qcore`'s `cio_chunk_get_content_size` and
+    // `fluent_bit/input_chunk_total_size.qcore`'s
+    // `flb_input_chunk_total_size`, the two size-sibling read-only queries
+    // W29's named non-declarations pointed at, declared borrowed/none against
+    // their own pinned bodies).
+    // The rejected count is unchanged in all ten cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (19, 41, 145)
+        (21, 43, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

@@ -1,0 +1,121 @@
+module contract;
+
+// Fluent Bit input-instance total chunk size — resource-projection vocabulary v1.
+//
+// Card W31-CORPUS-CONTRACTS-2. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// The body was read at Fluent Bit
+// `66910c10a4d7eafa810b84229cf2dcf7b0f26f97` and is cited by line. The C
+// declaration in force is `include/fluent-bit/flb_input_chunk.h:174`:
+//
+//     size_t flb_input_chunk_total_size(struct flb_input_instance *in);
+//
+// `size_t` resolves to `unsigned long` on the LP64 model the audited targets
+// use, so `usize` is an admissible spelling of the result under the
+// declared-ABI agreement gate (standing constraint 8); the parameter is one
+// object-pointer level, spelled `ptr<mut, u8>` as every object pointer of this
+// vocabulary is. Note the receiver is the input INSTANCE, not an input chunk —
+// this is the aggregate query over the instance's stream.
+//
+// ## `flb_input_chunk_total_size`, read from `src/flb_input_chunk.c:2947-2955`
+//
+//     size_t flb_input_chunk_total_size(struct flb_input_instance *in)
+//     {
+//         size_t total = 0;
+//         struct flb_storage_input *storage;
+//
+//         storage = (struct flb_storage_input *) in->storage;
+//         total = cio_stream_size_chunks_up(storage->stream);
+//         return total;
+//     }
+//
+// That is the whole body: one field read (through a cast the projection
+// cannot model but this READING can — the cast reinterprets a `void *` field,
+// it neither allocates nor releases), one call, one scalar return. The one
+// callee was read too:
+//
+//   * `cio_stream_size_chunks_up(storage->stream)`
+//     (`lib/chunkio/include/chunkio/cio_stream.h:41`;
+//     `lib/chunkio/src/cio_stream.c:258-276`) walks the stream's `chunks_up`
+//     list with `mk_list_foreach`/`mk_list_entry` (pointer arithmetic, no
+//     allocation), calls `cio_chunk_get_content_size` on each chunk — the
+//     read-only query `chunkio/chunk_sizes.qcore` declares on this same card,
+//     read at `lib/chunkio/src/cio_chunk.c:315-334`: an error-field reset and
+//     backend length-field reads, nothing allocated, freed or stored — and
+//     sums the non-negative results into a local. Nothing is allocated, freed,
+//     stored or published on any path of either body.
+//
+// This module resolves the size-query member of card W29-CORPUS-CONTRACTS'
+// named non-declaration `W29-SIZE-SIBLINGS-UNDECLARED` for exactly one
+// sibling: that follow-on's stated reason was that each sibling needs its own
+// body reading because several mutate residency state. This one does NOT — the
+// reading above finds no residency transition, no `cio_chunk_up`/`down`, no
+// list relink — so the obstruction dissolves for this callee, and the
+// declaration rests on this module's own reading rather than on its declared
+// neighbours' shape (the unfaithful-declaration defect card P07 recorded is
+// exactly what this sentence exists to rule out).
+//
+// ## Which mode is faithful
+//
+// On every path the caller keeps exactly the obligations it had before the
+// call: `resource_borrowed(in)` states that, and it is the only v1 parameter
+// mode with that caller-side effect (`owned` demands live custody, `consumed`
+// transfers, `released` discharges, `out` creates custody at a destination,
+// `stored` transfers under an owner and `removed` detaches from one). The
+// walked chunks' error-field resets are writes into the instance's own object
+// graph and move no custody, exactly as `input_chunk_write_header`'s writes
+// through `chunk` did not (`fluent_bit/input_chunk_helpers.qcore`).
+//
+// The RESULT is a byte count, a value with no identity:
+// `resource_return_none()`.
+//
+// The declaration says nothing about `in` being non-null — the body
+// dereferences it unconditionally, but `resource_borrowed` imposes NO non-null
+// precondition, which is the weaker statement and deliberately so: a mode that
+// demanded entry custody would delete the caller's failure paths. This is the
+// same position `fluent_bit/input_chunk_sizes.qcore` records for its two
+// receivers.
+//
+// ## Why this function is declared although the analysed unit defines it
+//
+// `src/flb_input_chunk.c` is itself a unit of the pinned corpus, so this is
+// the arrangement cards PROD-CONTRACTS, NEIGHBOURS,
+// ADDRESS-OF-MEMBER-DESTROY-UNDECLARED, AOM-DESTROY-SIBLINGS and
+// W29-CORPUS-CONTRACTS already established: a declared contract ALWAYS wins
+// over a W4-inferred summary, a disagreement is reported as a
+// `SummaryConflict` diagnostic and never silently resolved
+// (`crates/qcore-c-gateway/src/legacy_summary.rs`), and declaring a defined
+// function does not stop the unit analysing that function's own body — it
+// only fixes what its CALLERS may assume.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **Nothing about the returned value's meaning.** Chunks whose content
+//     size reports non-positive are skipped by the summing loop; whether the
+//     total is exact is value semantics, outside a custody projection.
+//   * **Nothing about which chunks are up.** Membership of `chunks_up` is
+//     chunk-residency state (`chunkio/chunk_residency.qcore` declares the
+//     explicit residency entry points; this module declares nothing about
+//     residency).
+//   * **Nothing about retention.** Whether any other object holds `in` or its
+//     interior pointers is the unmodeled retention this corpus records as
+//     B03/R13 and is not decided here.
+//   * **The remaining size siblings stay undeclared.**
+//     `flb_input_chunk_is_up`, `flb_input_chunk_set_up` and
+//     `input_chunk_metadata_view` were each read on this card and are NOT
+//     declared here — the first two are residency wrappers whose faithful
+//     declarations exist but belong with the residency family's own module,
+//     and the third publishes a borrowed view of the chunk's mapped metadata
+//     through an out-parameter, a shape the v1 vocabulary has nowhere to
+//     carry. Named `W31-SIZE-SIBLINGS-REMAINDER` in the card report.
+
+// --- the instance's total enqueued bytes, summed over its up chunks ---------
+extern fn flb_input_chunk_total_size(in: ptr<mut, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(in);
+    ensures normal resource_return_none();
+};
