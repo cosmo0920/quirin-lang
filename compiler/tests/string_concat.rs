@@ -16,6 +16,10 @@ mod windows_c;
 use qcore_compiler::{CompileOptions, SourceExecutionProfile, SourceFile, compile_files};
 use qcore_core::std_string::StringStorage;
 
+const COMPOSED: &str = include_str!("fixtures/std_string/composed.qcore");
+const COMPUTED_LENGTH: &str = include_str!("../../examples/strings/computed_length.qcore");
+const STRINGS_README: &str = include_str!("../../examples/strings/README.md");
+
 fn options() -> CompileOptions {
     CompileOptions {
         entry: None,
@@ -66,6 +70,108 @@ fn module(body: &[&str]) -> String {
     source.push("}".to_owned());
     source.push(String::new());
     source.join("\n")
+}
+
+/// Split a captured stream into lines on `\n` **without stripping a carriage
+/// return**.
+///
+/// `str::lines` removes a `\r` that precedes the `\n`, which is exactly the byte
+/// this card's published example writes: its head lines are CRLF-framed, the
+/// program supplying the `\r` and the sink's line discipline the `\n`. Comparing
+/// through `lines()` would hide the difference between a conformant head and a
+/// bare-LF one, so the comparison is made on the bytes the program wrote.
+fn split_lines(stream: &str) -> Vec<String> {
+    let stream = stream.strip_suffix('\n').unwrap_or(stream);
+    if stream.is_empty() {
+        return Vec::new();
+    }
+    stream.split('\n').map(ToOwned::to_owned).collect()
+}
+
+/// Compile and run the emitted C under ASan/UBSan (plus LSan where the platform
+/// provides it), returning `(stdout lines, stderr lines)`.
+///
+/// **The leak control here is positive**, unlike the two string cards before
+/// this one: a composed program acquires a buffer, so LSan has something to
+/// find. Had the release been lost — or had the borrow window been wrong in the
+/// permissive direction and let a release happen early — LSan or ASan would say
+/// so rather than these tests passing. ASan is load-bearing too: a borrowed view
+/// is a pointer and a length into a `calloc`ed block, and an off-by-one would be
+/// a real out-of-bounds read that `fwrite` would actually perform.
+fn run_native(source: &str, _label: &str) -> (Vec<String>, Vec<String>) {
+    #[cfg(target_os = "windows")]
+    {
+        let run = windows_c::run(source, None, &[]);
+        assert!(
+            run.status.success(),
+            "emitted program failed:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = split_lines(&String::from_utf8(run.stdout).unwrap());
+        let err = split_lines(&String::from_utf8(run.stderr).unwrap());
+        (out, err)
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        use std::process::Command;
+        let directory = std::env::temp_dir().join(format!(
+            "qcore-string-concat-{_label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&directory).unwrap();
+        let generated = directory.join("generated.c");
+        let binary = directory.join("generated");
+        std::fs::write(&generated, source).unwrap();
+        let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+        let compile = Command::new(&compiler)
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-g",
+                "-O0",
+                "-fsanitize=address,undefined",
+                "-fno-omit-frame-pointer",
+            ])
+            .arg(&generated)
+            .arg("-o")
+            .arg(&binary)
+            .output()
+            .unwrap();
+        assert!(
+            compile.status.success(),
+            "C compiler rejected the emitted program:\n{}",
+            String::from_utf8_lossy(&compile.stderr)
+        );
+        let run = Command::new(&binary)
+            .env(
+                "ASAN_OPTIONS",
+                if cfg!(target_os = "macos") {
+                    "detect_leaks=0:halt_on_error=1"
+                } else {
+                    "detect_leaks=1:halt_on_error=1"
+                },
+            )
+            .env("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+            .output()
+            .unwrap();
+        assert!(
+            run.status.success(),
+            "emitted program failed under ASan/UBSan/LSan:\n{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let out = split_lines(&String::from_utf8(run.stdout).unwrap());
+        let err = split_lines(&String::from_utf8(run.stderr).unwrap());
+        std::fs::remove_dir_all(directory).unwrap();
+        (out, err)
+    }
 }
 
 /// The reference observation of an accepted module, as `"<stream>: <line>"`.
@@ -911,6 +1017,98 @@ fn the_two_contextual_words_are_reserved_nowhere() {
         ["out: 1", "out: 2", "out: ok"],
         "both words are ordinary binding names away from a `(`"
     );
+}
+
+// --- 8. Native agreement, with a positive leak control. ---
+
+#[test]
+fn the_emitted_composed_program_matches_the_reference_per_stream() {
+    let module = compile(COMPOSED).unwrap();
+    let observation = module.extern_observation.as_deref().unwrap();
+    let expected_out: Vec<&str> = observation
+        .iter()
+        .filter_map(|line| line.strip_prefix("out: "))
+        .collect();
+    let expected_err: Vec<&str> = observation
+        .iter()
+        .filter_map(|line| line.strip_prefix("err: "))
+        .collect();
+
+    let (out, err) = run_native(module.c_source.as_deref().unwrap(), "composed");
+    // Per stream, and no cross-stream order is asserted: C gives none between
+    // two separately buffered streams.
+    assert_eq!(out, expected_out);
+    assert_eq!(err, expected_err);
+    assert!(
+        out.iter().any(|line| line == "ok!"),
+        "the borrowed view's bytes are read out of the heap block the program filled: {out:?}"
+    );
+}
+
+#[test]
+fn the_published_computed_length_example_runs_and_matches_its_readme_transcript() {
+    let module = compile(COMPUTED_LENGTH).unwrap();
+    let observation = module.extern_observation.as_deref().unwrap();
+    let expected_out: Vec<&str> = observation
+        .iter()
+        .filter_map(|line| line.strip_prefix("out: "))
+        .collect();
+
+    let (out, err) = run_native(module.c_source.as_deref().unwrap(), "computed-length");
+    assert_eq!(out, expected_out);
+    assert!(err.is_empty(), "the example writes no logger line: {err:?}");
+
+    // The head this program writes is CRLF-framed: the program supplies the
+    // carriage return and the sink's line discipline supplies the line feed.
+    // Asserted on the raw bytes rather than on the line-split view, because the
+    // `\r` is exactly what a line split would hide.
+    assert_eq!(
+        out[2].as_bytes(),
+        b"Content-Length: 11\r",
+        "the computed header line is CRLF-terminated"
+    );
+    assert_eq!(out[4], "{\"ok\":true}");
+
+    // The transcript is read out of the README rather than restated here, so
+    // the page cannot drift from what the program does — after stripping the
+    // carriage returns the page does not show.
+    let transcript = STRINGS_README
+        .split("## Transcript")
+        .nth(2)
+        .and_then(|tail| tail.split("```text\n").nth(1))
+        .and_then(|tail| tail.split("```").next())
+        .expect("the README publishes a transcript for the computed-length example");
+    let published: Vec<&str> = transcript
+        .strip_suffix('\n')
+        .unwrap_or(transcript)
+        .split('\n')
+        .collect();
+    let rendered: Vec<String> = out
+        .iter()
+        .map(|line| line.trim_end_matches('\r').to_owned())
+        .collect();
+    assert_eq!(published, rendered);
+}
+
+#[test]
+fn the_computed_length_is_the_length_of_the_content_it_declares() {
+    // The card's payoff, as an equation over the program's own certificate: the
+    // number in the header line is the byte count of the content line, and
+    // neither was written twice in the source.
+    let module = compile(COMPUTED_LENGTH).unwrap();
+    let observation = module.extern_observation.as_deref().unwrap();
+    let content = observation
+        .last()
+        .and_then(|line| line.strip_prefix("out: "))
+        .expect("the example renders its content last");
+    let declared = observation
+        .iter()
+        .find_map(|line| line.strip_prefix("out: Content-Length: "))
+        .expect("the example renders a declared length")
+        .trim_end_matches('\r')
+        .parse::<usize>()
+        .expect("a declared length is digits");
+    assert_eq!(declared, content.len());
 }
 
 #[test]

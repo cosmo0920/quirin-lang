@@ -23,12 +23,27 @@
 > a file naming **both** can render it, which is what §7 asked for. Evidence:
 > `docs/reports/string-slice-io/README.md`.
 >
-> Still **proposed and unimplemented**: §5's buffer borrow and freeze
-> (`STRING-SLICE-BUFFER-BORROW`), §6's extern/native-library **crossing**, which
-> stays refused (`STRING-SLICE-ABI`), §3.7's equality/ordering/hashing/search
-> operations, and the separate mutable byte slice (`BYTE-SLICE-CAP`). No
-> conformance claim is made: this is one bounded source profile, not
-> revision-0.3 source-language conformance.
+> §5's **buffer borrow is implemented** by card `STRING-CONCAT`
+> (`Q077`–`Q079`, the same pass's third band), together with §9's
+> `STRING-SLICE-CONCAT`: a module naming `std.string` and `std.buffer` may write
+> `let s = borrow_utf8(b);` to view an owned buffer's bytes as an immutable
+> UTF-8 string — validity decided **statically**, out of the buffer's own write
+> history, with a mutation-exclusion window that runs to the last statement
+> reading the view or anything derived from it — and any module naming
+> `std.string` may write `let s = concat(PIECE, …);` to compose two or more
+> **check-time-known** pieces into a new static payload, one of which may be
+> `dec(NAME)`/`hex(NAME)`, the text of a bound integer. A composition allocates
+> nothing and copies nothing at run time; its length is the sum of its pieces'
+> lengths and is a check-time constant, which is what makes a **computed
+> `Content-Length`** decidable. Evidence:
+> `docs/reports/string-concat/README.md`.
+>
+> Still **proposed and unimplemented**: §5's **freeze** (`STRING-SLICE-FREEZE`),
+> §6's extern/native-library **crossing**, which stays refused
+> (`STRING-SLICE-ABI`), §3.7's equality/ordering/hashing/search operations, and
+> the separate mutable byte slice (`BYTE-SLICE-CAP`). No conformance claim is
+> made: this is one bounded source profile, not revision-0.3 source-language
+> conformance.
 
 ## 1. Decision
 
@@ -168,6 +183,38 @@ conversion must choose and prove one of these operations:
 Neither conversion is part of this amendment. A byte buffer's extent is not
 evidence of UTF-8 validity or immutability.
 
+**Implemented (card `STRING-CONCAT`), and the choice is the first of the two.**
+`borrow_utf8(NAME)` is implemented and `freeze_utf8` is **not**, for a reason
+this section can now state rather than leave open: an owned string is a new
+custody shape, and v1's string value has nowhere to carry it. A view is
+`{storage, offset, len}`; an owned one would need a fourth component for a
+release to discharge, would make every slice of it a view of storage that can
+end, and would need a `drop` on a *string*. The borrow reaches every byte the
+freeze would, because a composition (§9's `STRING-SLICE-CONCAT`, landed by the
+same card) already copies a borrowed view's bytes into static storage when a
+program needs them to outlive the buffer. The follow-on is
+`STRING-SLICE-FREEZE`, and what it must add is stated there.
+
+Three rules the borrow rests on, each measured:
+
+1. **The UTF-8 validation is static.** `source.buffer.v1` admits only constant
+   bytes written at constant indices, so a buffer's contents are a check-time
+   value and the validity question is decided by running a decision on it —
+   before emission, with no run-time scan and no failure arm. That is the first
+   of the two arms §2 permits, applied to the bridge. A buffer whose contents
+   vary is the follow-on `STRING-SLICE-BORROW-VARYING`.
+2. **The mutation exclusion is an interval of statement indices**, from the
+   borrow to the last statement that reads the view or **anything derived from
+   it**. A store into, or a release of, the buffer inside that interval is
+   refused; one after it is admitted. The interval is exact rather than
+   conservative because the route is one flat statement sequence: there is no
+   branch to make a later index unreachable and no loop to make an earlier one
+   run again.
+3. **A borrow creates and discharges no custody.** It contributes an
+   `OwnershipOp::Read` to the same cycle-3 operation list the buffer's
+   acquisition and release contribute to, so borrowing a released buffer is that
+   checker's own `UseAfterDrop` rather than a rule this card wrote.
+
 ## 6. C11 lowering and ABI boundary
 
 The internal C11 representation should be an aggregate equivalent to:
@@ -255,9 +302,22 @@ may become `Safe` merely because a token now parses as a string value.
   `{ptr, len}` C11 emission, and zero-allocation evidence — a certificate whose
   slice records carry the §4 arithmetic, and an emitted-program tripwire that
   finds no allocator, copier or scanner call.
-- `STRING-SLICE-BUFFER-BORROW`: checked UTF-8 borrowing/freezing from
-  `std.buffer` with custody and mutation exclusion. Until it lands, a module that
-  does both stays on the buffer route and keeps that route's refusal.
+- ~~`STRING-SLICE-BUFFER-BORROW`~~: **landed** by card `STRING-CONCAT`, as
+  `borrow_utf8` only — see §5 for the three rules it rests on and for why the
+  freeze is a separate follow-on. A module that holds a buffer *without*
+  spelling the bridge still stays on the buffer route and keeps that route's
+  refusal: the bridge construct is the whole of the route-selection change.
+- `STRING-SLICE-FREEZE`: `freeze_utf8(own buffer) -> own string`. It needs a
+  custody component on the string value, a release operation spelled on a
+  *string*, and a lifetime rule for every view sliced out of one — none of which
+  v1's `{storage, offset, len}` view can carry. The borrow plus a composition
+  reaches every byte it would, so nothing is blocked on it.
+- `STRING-SLICE-BORROW-VARYING`: a borrow of a buffer whose contents are not a
+  check-time value. v1 decides UTF-8 validity statically out of the buffer's own
+  write history, which is exact for the only buffers `source.buffer.v1` admits;
+  a varying buffer needs a run-time validation and a checked failure arm, which
+  is the second of the two arms §2 permits and the same wall
+  `STD-BUFFER-VARYING-INDEX` names.
 - `STRING-SLICE-VARYING-INDEX`: a slice bound that is not a check-time constant.
   v1 decides every bound statically and refuses anything else by name (`Q069`);
   admitting a varying bound needs a relational domain over indices and a checked
@@ -276,11 +336,36 @@ may become `Safe` merely because a token now parses as a string value.
   one, so a program can render text it wrote and not text it computed
   (`STRING-SLICE-CONCAT`).
 - `STRING-SLICE-ABI`: extent- and lifetime-carrying extern/native-library ABI.
-- `STRING-SLICE-CONCAT`: a string a program **computes** rather than writes.
-  Every payload v1 can render is a literal or a slice of one, which is enough
-  for a fixed protocol head and not enough for a header whose value is a number.
-  It needs a building operation, which needs storage a program owns, which is
-  `STRING-SLICE-BUFFER-BORROW`'s question first.
+- ~~`STRING-SLICE-CONCAT`~~: **landed** by card `STRING-CONCAT`, and the
+  dependency this entry recorded was **dissolved by measurement rather than
+  discharged**. It read: "It needs a building operation, which needs storage a
+  program owns, which is `STRING-SLICE-BUFFER-BORROW`'s question first." That
+  premise is false for the operation v1 wants. Every piece a `concat` can take is
+  check-time-known, so the *compiler* holds the composed bytes and the result is
+  a new **static** payload of the emitted program — storage no program owns, no
+  allocation, no copy at run time, no custody and no lifetime rule. The two
+  operations landed together because one card was assigned both, not because
+  either needed the other.
+
+  The surface is `let NAME = concat(PIECE, …);` over two or more pieces, each a
+  quoted literal, a string this entry bound, one inline slice of one, or
+  `dec(NAME)`/`hex(NAME)` for the **text of a check-time-constant integer** —
+  the one scalar-to-text direction this profile has, producing exactly the bytes
+  `print dec NAME;` writes because both go through one rendering function. The
+  result's length is the sum of its pieces' lengths and is itself a check-time
+  constant, which is precisely what makes a `Content-Length` a program *derives*
+  as decidable as one it writes.
+
+  The alternative was measured and named rather than left implicit:
+  materialising into an owned buffer at run time would add an allocation, a copy
+  and a custody obligation to an operation whose result the compiler already
+  holds, and would make `len` of the result a run-time quantity — the one
+  property the operation exists to preserve. It is the follow-on
+  `STRING-SLICE-CONCAT-RUNTIME`, and it becomes necessary exactly when a piece
+  is not check-time-known.
+- `STRING-SLICE-CONCAT-RUNTIME`: a composition with a piece the compiler cannot
+  evaluate. It needs storage the program owns, an `Alloc` effect the row states
+  honestly, a release, and a length that is no longer a constant.
 - `BYTE-SLICE-CAP`: a separate mutable `{ptr,len,cap}` byte-slice profile; it
   must not retroactively add `cap` to immutable strings without ABI evidence.
 

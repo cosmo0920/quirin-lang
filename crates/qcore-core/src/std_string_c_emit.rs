@@ -87,13 +87,23 @@ pub const STRING_PRELUDE_HEADER: &str = r#"
    taken; if it ever fired, that would be a defect in the checker. */
 "#;
 
-/// The view type and the slice helper: amendment §6's aggregate, verbatim, and
-/// §4's arithmetic, verbatim.
-pub const STRING_PRELUDE: &str = r#"typedef struct {
+/// The view type: amendment §6's aggregate, verbatim.
+pub const STRING_PRELUDE_VIEW: &str = r#"typedef struct {
     const unsigned char *ptr;
     size_t len;
 } qcore_string_view;
+"#;
 
+/// The slice helper: §4's arithmetic, verbatim.
+///
+/// Emitted **only for a program that slices at run time** (card
+/// `STRING-CONCAT`). A `concat` piece written as a slice is composed at check
+/// time and calls nothing, so a program whose only slices are pieces would
+/// otherwise carry a helper it never uses — and the emitted C is built with
+/// `-Wall -Wextra -Werror`, where an unused `static` function is an error. This
+/// is `source.buffer.v1`'s own selective-prelude constraint, which that route
+/// recorded in its prelude comment for exactly this reason.
+pub const STRING_PRELUDE_SLICE: &str = r#"
 static qcore_string_view qcore_string_slice(qcore_string_view s, size_t low, size_t high)
 {
     qcore_string_view derived;
@@ -267,28 +277,15 @@ pub fn emit_string_c11(
                     }
                 }
             },
-            // Card `STRING-CONCAT`. A composed payload consumes every view and
-            // every scalar it was built from, and an embedded buffer statement
-            // consumes the buffer it names and the operands it indexes with.
-            StringEvent::Concat { pieces, .. } => {
-                for piece in pieces {
-                    match piece {
-                        StringPiece::Text(TextOperand::Literal(_)) => {}
-                        StringPiece::Text(TextOperand::Name(name))
-                        | StringPiece::Scalar { name, .. } => {
-                            consumed.insert(name.clone(), true);
-                        }
-                        StringPiece::Text(TextOperand::Slice { name, low, high }) => {
-                            consumed.insert(name.clone(), true);
-                            for operand in [low, high] {
-                                if let StringOperand::Scalar(scalar) = operand {
-                                    consumed.insert(scalar.clone(), true);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // Card `STRING-CONCAT`. A `concat` piece is **deliberately not a
+            // consumer**: the composition happens at check time, so the emitted
+            // program never reads the piece's view or scalar — it reads the
+            // composed static array. A binding whose only reader is a
+            // composition is therefore `(void)`-discarded, which is the honest
+            // record of what the emitted program does with it. An embedded
+            // buffer statement, by contrast, is emitted, so it consumes the
+            // buffer it names and the operands it indexes with.
+            StringEvent::Concat { .. } => {}
             StringEvent::Borrow { buffer, .. } => {
                 consumed.insert(buffer.clone(), true);
             }
@@ -573,8 +570,27 @@ pub fn preamble(program: &StringProgram, certificate: &StringCertificate) -> Vec
     fragments.push(Fragment::new(
         Section::Prelude,
         "string.prelude",
-        STRING_PRELUDE,
+        STRING_PRELUDE_VIEW,
     ));
+    // Only a program that derives a view at run time carries the helper that
+    // does it. Both forms that call it are here, and a `concat` piece is
+    // deliberately not one of them.
+    if program.events.iter().any(|event| {
+        matches!(
+            event,
+            StringEvent::Slice { .. }
+                | StringEvent::Text {
+                    operand: TextOperand::Slice { .. },
+                    ..
+                }
+        )
+    }) {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "string.prelude_slice",
+            STRING_PRELUDE_SLICE,
+        ));
+    }
     let buffer_event = |matcher: fn(&BufferEvent) -> bool| {
         program.events.iter().any(|event| match event {
             StringEvent::Buffer(buffer_event) => matcher(buffer_event),
@@ -591,9 +607,30 @@ pub fn preamble(program: &StringProgram, certificate: &StringCertificate) -> Vec
             ),
         ));
     }
+    // Only the literals the emitted program **addresses**. A literal written as
+    // a `concat` piece is read by the checker and folded into the composed
+    // payload, so the emitted program never names it — and an unreferenced
+    // file-scope `static const` array is an error under `-Wall -Wextra
+    // -Werror`. The array names carry their pool index, so skipping one
+    // renumbers nothing and every surviving name is the name it always had.
+    let mut referenced = std::collections::BTreeSet::new();
+    for event in &program.events {
+        match event {
+            StringEvent::Literal { literal, .. }
+            | StringEvent::Text {
+                operand: TextOperand::Literal(literal),
+                ..
+            } => {
+                referenced.insert(*literal);
+            }
+            _ => {}
+        }
+    }
     let mut payloads = String::from("\n");
     for (index, payload) in program.literals.iter().enumerate() {
-        payloads.push_str(&payload_definition(&literal_name(index), payload));
+        if referenced.contains(&index) {
+            payloads.push_str(&payload_definition(&literal_name(index), payload));
+        }
     }
     for (index, payload) in certificate.composed.iter().enumerate() {
         payloads.push_str(&payload_definition(&composed_name(index), payload));

@@ -2233,19 +2233,26 @@ That target grammar is neither a parser generator input already used by the comp
 The revision-0.3 [string-view amendment](design/STRING_SLICE_V1.md) requires an
 explicit, file-local `import std.string;` for string capabilities. Card
 `STRING-SLICE` registers that module and implements this consumer grammar
-(diagnostics `Q068`–`Q073`, spec §L21), and card `STRING-SLICE-IO` adds the two
+(diagnostics `Q068`–`Q073`, spec §L21), card `STRING-SLICE-IO` adds the two
 rendered-text statements marked below (`Q075`–`Q076`, the same pass's second
-band):
+band), and card `STRING-CONCAT` adds the composition, the `std.buffer` bridge
+and the embedded buffer statements (`Q077`–`Q079`, the third band):
 
 ```ebnf
 module    = { import }, { error-decl | entry } ;
-import    = "import", ( "std.string" | "std.fmt" | "std.io" | "std.logger" ), ";" ;
+import    = "import", ( "std.string" | "std.buffer" | "std.fmt"
+                      | "std.io" | "std.logger" ), ";" ;
 entry     = "fn", NAME, "(", ")", "->", "unit",
             [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ], "{", { stmt }, "}" ;
 stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
           | "let", NAME, "=", [ "-" ], INTEGER, ";"
           | "let", NAME, "=", "len", "(", NAME, ")", ";"
           | "let", NAME, [ ":", "string" ], "=", NAME, "[", OPERAND, ":", OPERAND, "]", ";"
+          | "let", NAME, [ ":", "string" ], "=", "concat", "(", PIECE, { ",", PIECE }, ")", ";"
+                                                    (* STRING-CONCAT *)
+          | "let", NAME, [ ":", "string" ], "=", "borrow_utf8", "(", NAME, ")", ";"
+                                                    (* STRING-CONCAT *)
+          | BUFFER-STMT                             (* STRING-CONCAT *)
           | "print", RENDERING, OPERAND, ";"
           | "log", LEVEL, RENDERING, OPERAND, ";"
           | "print", TEXT, ";"                      (* STRING-SLICE-IO *)
@@ -2255,15 +2262,44 @@ stmt      = "let", NAME, [ ":", "string" ], "=", STRING-TOKEN, ";"
           | "return", ";" ;
 OPERAND   = [ "-" ], INTEGER | NAME ;
 TEXT      = STRING-TOKEN | NAME | NAME, "[", OPERAND, ":", OPERAND, "]" ;
+PIECE     = TEXT | RENDERING, "(", NAME, ")" ;
 EFFECT    = "io" | "alloc" | "mut" ;
 ```
 
+`BUFFER-STMT` is `source.buffer.v1`'s own statement grammar (§G02k), **read by
+that route's own reader** (`source_std_buffer::buffer_statement`), so a byte
+write this route admits is byte for byte the statement that route would have
+produced and a shape one accepts and the other refuses is not expressible. A
+composed module is one that **acquires** a buffer: a module with no `bytes(N)`
+in its entry embeds no buffer statement at all, which is what keeps every
+program written before card `STRING-CONCAT` on the code path it was on.
+
 `STRING-TOKEN` is the existing lexer's retained string token; this grammar adds
-no token and **reserves no word**. `len` is contextual — the word is a clause
-word only where it is immediately followed by `(` — and `string` appears only in
-a type ascription. A quoted token in *declaration metadata*, such as a
-`verify scope` entry's plugin version or profile, is not a statement and
-acquires no import requirement.
+no token and **reserves no word**. `len`, `concat` and `borrow_utf8` are
+contextual — each is a clause word only where it is immediately followed by
+`(` — and `string` appears only in a type ascription. `dec` and `hex` need no
+rule, having been reserved words since `STD-MODULES`. A quoted token in
+*declaration metadata*, such as a `verify scope` entry's plugin version or
+profile, is not a statement and acquires no import requirement.
+
+**Composition (`concat`) is static.** Every `PIECE` is check-time-known, so the
+compiler computes the result's bytes and it becomes a new `static const` payload
+of the emitted program: no allocation, no run-time copy, no custody, and a
+length that is the sum of the pieces' lengths and is itself a check-time
+constant. A `RENDERING "(" NAME ")"` piece is the **text of a bound integer**,
+produced by the same rendering function `print dec NAME;` renders with, so the
+two spellings of a number cannot disagree. Two pieces are the minimum: a
+composition of one is that piece, and is refused.
+
+**The bridge (`borrow_utf8`) is checked twice.** Its UTF-8 validity is decided
+**statically**, out of the buffer's own write history — `source.buffer.v1`
+admits only constant bytes at constant indices — and the buffer may not be
+written or released inside the borrow's **window**, which runs from the borrow
+to the last statement that reads the view or anything derived from it. Both
+directions are refusals at check time; there is no run-time scan and no failure
+arm. A borrow contributes an ordinary `Read` to the cycle-3 ownership operation
+list, so borrowing a released buffer is that checker's own refusal rather than a
+rule this grammar adds.
 
 A bound is a check-time constant, so `0 <= low <= high <= len(s)` and both UTF-8
 code-point boundaries are decided before emission and this profile has no
@@ -2291,9 +2327,11 @@ refusal, and a bare name is admitted as text only inside a module already on
 this route.
 
 What remains outside every grammar in this document, each a named follow-on:
-converting a `std.buffer` value to a string, transporting a string at an
-extern/native-library ABI, comparing or searching strings, a single-index access
-into a string, and the separate mutable `{ptr, len, cap}` byte slice.
+**freezing** a `std.buffer` value into an owned string (the borrow landed; the
+freeze needs a custody component the view has nowhere to carry), transporting a
+string at an extern/native-library ABI, comparing or searching strings, a
+single-index access into a string, a composition with a piece the compiler
+cannot evaluate, and the separate mutable `{ptr, len, cap}` byte slice.
 
 ## G07.10. A checked HTTP/1.1 message subset (`source.http.v1`)
 
