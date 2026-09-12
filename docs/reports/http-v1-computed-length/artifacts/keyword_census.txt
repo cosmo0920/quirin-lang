@@ -1,0 +1,38 @@
+=== corpus size ===
+.qcore/.qc files: 427
+tracked .rs files: 582
+
+=== the global reserved-word list is unchanged ===
+reserved words in is_reserved_source_word, before: 111
+reserved words in is_reserved_source_word, after:  111
+HTTP_KEYWORDS arity: HTTP_KEYWORDS: [&str; 4]
+
+=== the words this card reads at new positions ===
+concat       bare-word occurrences in .qcore/.qc (comments stripped): 11
+concat       "concat(" shape in .qcore/.qc (comments stripped):          11
+len          bare-word occurrences in .qcore/.qc (comments stripped): 20
+len          "len(" shape in .qcore/.qc (comments stripped):          16
+dec          bare-word occurrences in .qcore/.qc (comments stripped): 91
+dec          "dec(" shape in .qcore/.qc (comments stripped):          8
+hex          bare-word occurrences in .qcore/.qc (comments stripped): 19
+hex          "hex(" shape in .qcore/.qc (comments stripped):          0
+
+=== the contextual rule is one predicate, consulted once ===
+crates/qcore-frontend/src/frontend.rs:2706:            crate::source_std_string::is_string_clause_word(word, next.map(|t| &t.kind));
+crates/qcore-frontend/src/source_http.rs:29://! through that route's own [`is_string_clause_word`] / [`is_length_query`]
+crates/qcore-frontend/src/source_http.rs:82:use crate::source_std_string::{CONCAT_KEYWORD, is_length_query, is_string_clause_word};
+crates/qcore-frontend/src/source_http.rs:187:        Some(CONCAT_KEYWORD) => is_string_clause_word(CONCAT_KEYWORD, after),
+crates/qcore-frontend/src/source_http.rs:573:            if is_string_clause_word(CONCAT_KEYWORD, window.get(4).map(|token| &token.kind)) =>
+crates/qcore-frontend/src/source_std_string.rs: fn is_string_clause_word(word: &str, next: Option<&TokenKind>) -> bool {
+crates/qcore-frontend/src/source_std_string.rs:349:    if head == CONCAT_KEYWORD && is_string_clause_word(head, after) {
+crates/qcore-frontend/src/source_std_string.rs:352:    if head == BORROW_UTF8_KEYWORD && is_string_clause_word(head, after) {
+crates/qcore-frontend/src/source_std_string.rs:880:        && is_string_clause_word(head, window.get(value + 1).map(|token| &token.kind))
+crates/qcore-frontend/src/source_std_string.rs:909:        && is_string_clause_word(head, window.get(value + 1).map(|token| &token.kind))
+
+=== candidate spellings this card considered and did NOT take ===
+length     bare-word occurrences in .qcore/.qc source: 11
+size       bare-word occurrences in .qcore/.qc source: 96
+body       bare-word occurrences in .qcore/.qc source: 34
+value      bare-word occurrences in .qcore/.qc source: 271
+render     bare-word occurrences in .qcore/.qc source: 0
+format     bare-word occurrences in .qcore/.qc source: 8

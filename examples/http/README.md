@@ -1,20 +1,23 @@
 # `source.http.v1` examples — a checked, executed HTTP/1.1 subset in pure Quirin
 
-Two published programs. Both are written entirely in Quirin source, lowered to
+Three published programs. All are written entirely in Quirin source, lowered to
 self-contained C11 by the existing backend, and **run** under ASan/UBSan/LSan
 with their output byte-compared against the compiler's own reference execution.
-Neither links a library, declares an extern function or reads a manifest: the
+None links a library, declares an extern function or reads a manifest: the
 whole transport is the embedded shim `crates/qcore-core/src/qcore_socket_compat.h`
 and the whole HTTP implementation is a byte sequence the compiler constructed.
 
-Card `HTTP-QUIRIN-V1`; the evidence package is
-`docs/reports/http-quirin-v1/README.md`, the checked model is
+Cards `HTTP-QUIRIN-V1` and `HTTP-V1-COMPUTED-LENGTH`; the evidence packages are
+`docs/reports/http-quirin-v1/README.md` and
+`docs/reports/http-v1-computed-length/README.md`, the checked model is
 `crates/qcore-core/src/std_http.rs`, and the tests that hold these files to the
-`examples/threads` standard are in `compiler/tests/std_http.rs`.
+`examples/threads` standard are in `compiler/tests/std_http.rs` and
+`compiler/tests/http_computed_length.rs`.
 
 | File | Route | What it shows |
 |---|---|---|
 | [`exchange.qcore`](exchange.qcore) | `source.http.v1` | a **declared** request and response: the compiler builds and checks the wire bytes |
+| [`computed_length.qcore`](computed_length.qcore) | `source.http.v1` | a `Content-Length` the program **computes** over a composed body — and the same compile-time equality holding over it |
 | [`raw_request.qcore`](raw_request.qcore) | `source.socket.v1` | the same kind of bytes **written by hand** as a string payload — and what the compiler then does *not* know |
 
 ## What is being claimed, and what is not
@@ -44,7 +47,7 @@ rule into a compiler rule:
 | **no component may carry a `CR` or an `LF`** | `Q092` | every component |
 | a request carries exactly one `Host` field (RFC 9112 §3.2) | `Q092` | `header` |
 | a `Connection` option is one v1's transport actually honours | `Q092` | `header` |
-| **a declared `Content-Length` equals the content's byte count** | `Q093` | `header` + `content` |
+| **a declared `Content-Length` equals the content's byte count** — whether it was written or **computed** | `Q093` | `header` + `content` |
 | content with no declared length, a duplicate length, and any `Transfer-Encoding` | `Q093` | `header` + `content` |
 
 The `CR`/`LF` rule is the load-bearing one. No source program writes a `CRLF`:
@@ -79,6 +82,47 @@ Content-Length: 6
 Connection: close
 
 hello\n
+```
+
+## The `Content-Length` the program works out
+
+`computed_length.qcore` is the second half of the same idea, and it is card
+`HTTP-V1-COMPUTED-LENGTH`. In `exchange.qcore` the length is a token the author
+wrote and the compiler checks. Here it is a number the compiler **derived**:
+
+```qcore
+let count = 3;
+let body = concat("{\"items\":", dec(count), "}\n");
+let length = len(body);
+header rs "Content-Length" dec(length);
+content rs body;
+```
+
+Every piece of that composition is check-time-known — a quoted token is decoded
+by the compiler, `dec(count)` is the digits of a check-time constant — so the
+composed bytes and their length are the compiler's own (standing constraint
+15h) — so they are folded into the **message's own** `static const unsigned char`
+array at check time, with no allocation, no run-time copy and no separate
+composed object in the emitted program at all. **The `Content-Length` equality is
+therefore still decided, not assumed:** write `dec(count)` in that header instead
+of `dec(length)` and the program is refused at `Q093`.
+
+The `CR`/`LF` wall is unchanged and applies to composed bytes exactly as to
+written ones — `concat("text/plain", "\r\nX-Injected: 1")` at a field value
+refuses at `Q092` — so header injection stays unexpressible however the value
+was built. A component value may be a quoted token, a name this entry bound to
+text, or `dec(NAME)`/`hex(NAME)`; the **field name** stays a written token.
+
+Its wire response, read out of the certificate:
+
+<!-- transcript: wire-computed-rs -->
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 12
+Connection: close
+
+{"items":3}\n
 ```
 
 ## Both ends are in one program
@@ -123,6 +167,12 @@ programs.
 ```text
 200
 6
+```
+
+<!-- transcript: computed_length -->
+```text
+3
+12
 ```
 
 <!-- transcript: raw_request -->
@@ -171,7 +221,9 @@ Each of these is a named follow-on with a recorded blocker, not an oversight.
 
 | Missing | Follow-on | Why |
 |---|---|---|
-| a `Content-Length` of a **computed** value | `STRING-SLICE-CONCAT` | v1 has no computed text at all: every payload is a literal or a slice of one. A length that is a number the program worked out needs a building operation, which needs storage the program owns |
+| a **field name** that is a computed value | `HTTP-V1-COMPUTED-FIELD-NAME` | the value beside it is computable (`HTTP-V1-COMPUTED-LENGTH`); the name is still a written token, because a `token` is this module's own syntax |
+| a component whose bytes the compiler **cannot** evaluate | `STRING-SLICE-CONCAT-RUNTIME` | that is the point at which the `Content-Length` equality stops being decidable. v1 composes only check-time-known pieces |
+| a **slice** of a bound view beside HTTP | `HTTP-V1-STRING-COMPOSE` | this route admits a bound view, a composition and a rendering at a component, and nothing else of `source.string.v1` |
 | reading a message out of **unknown** input | `HTTP-V1-PARSE` | received bytes are verified against a declared expectation. Parsing needs a varying-value tier — a loop over an index the checker cannot fix — which no route in this language has |
 | chunked transfer coding | `HTTP-V1-CHUNKED` | v1 frames every message by `Content-Length`; a `Transfer-Encoding` field refuses at `Q093` |
 | persistent connections and pipelining | `HTTP-V1-PERSISTENT` | the emitted exchange closes after one message pair, so a `Connection` option other than `close` would be a claim the transport does not honour |

@@ -9,13 +9,32 @@
 //!               ["effects" "{" EFFECT {"," EFFECT} "}"] "{" stmt* "}"
 //! stmt      ::= "let" NAME "=" "request" STRING STRING STRING ";"
 //!             | "let" NAME "=" "response" STRING INTEGER STRING ";"
-//!             | "header" NAME STRING STRING ";"
-//!             | "content" NAME STRING ";"
+//!             | "header" NAME STRING VALUE ";"
+//!             | "content" NAME VALUE ";"
 //!             | "let" NAME "=" STRING ";"            -- a bound string view
+//!             | "let" NAME "=" "concat" "(" VALUE {"," VALUE} ")" ";"
+//!             | "let" NAME "=" "len" "(" NAME ")" ";"
 //!             | "send" NAME NAME ";"                 -- a message or a view
 //!             | "recv" NAME NAME ";"                 -- verified against one
 //!             | <every `source.socket.v1` statement, unchanged>
+//! VALUE     ::= STRING                               -- this module's syntax
+//!             | NAME                                 -- text this entry bound
+//!             | ("dec" | "hex") "(" NAME ")"         -- a bound integer's text
 //! ```
+//!
+//! # Computed components (card `HTTP-V1-COMPUTED-LENGTH`)
+//!
+//! The last four productions are this card's, and they add **no reserved word**.
+//! `concat` and `len` are `source.string.v1`'s **contextual** clause words, read
+//! through that route's own [`is_string_clause_word`] / [`is_length_query`]
+//! predicates rather than a second copy, so the two routes cannot drift about
+//! what `concat(` means; `dec` and `hex` have been reserved since `STD-MODULES`.
+//!
+//! They also change **no route selection**: [`has_source_http`] still reads
+//! exactly `request`/`response`/`header`/`content`, so a module that composes
+//! text without declaring a message reaches `source.string.v1` byte for byte as
+//! before, and the two constructs are admitted here only because the module is
+//! already this route's for another reason.
 //!
 //! # Four reserved words, and the census that chose them
 //!
@@ -60,7 +79,9 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_socket::SocketLowering;
-use qcore_core::std_http::{HttpField, HttpProgram, HttpStart, HttpStatement};
+use crate::source_std_string::{CONCAT_KEYWORD, is_length_query, is_string_clause_word};
+use qcore_core::std_http::{HttpPiece, HttpProgram, HttpStart, HttpStatement};
+use qcore_core::std_io::Rendering;
 use qcore_core::std_socket::SocketStatement;
 use qcore_core::std_string::decode_string_literal;
 use qcore_core::typed_errors::EffectRow;
@@ -147,6 +168,26 @@ pub enum HttpUse {
     Header,
     /// `content NAME "…";`
     Content,
+}
+
+/// Whether this `let` binds a value this route **computes**: a `concat(…)`
+/// composition or a `len(…)` (card `HTTP-V1-COMPUTED-LENGTH`).
+///
+/// Deliberately **not** part of [`http_use`]: route selection is unchanged by
+/// this card. `concat` and `len` are `source.string.v1`'s vocabulary, so a
+/// module that composes text without declaring a message still reaches the
+/// string route exactly as it did — the two constructs are admitted *here* only
+/// because the module is already this route's for another reason.
+fn is_computed_binding(window: &[&Token]) -> bool {
+    if word(window, 0) != Some("let") || !symbol(window, 2, Symbol::Equal) {
+        return false;
+    }
+    let after = window.get(4).map(|token| &token.kind);
+    match word(window, 3) {
+        Some(CONCAT_KEYWORD) => is_string_clause_word(CONCAT_KEYWORD, after),
+        Some(head) => is_length_query(head, after),
+        None => false,
+    }
 }
 
 fn http_use(window: &[&Token]) -> Option<HttpUse> {
@@ -319,6 +360,91 @@ fn text_string(
     }
 }
 
+/// Read one **component value** at `cursor`, returning it and the cursor just
+/// past it (card `HTTP-V1-COMPUTED-LENGTH`).
+///
+/// Three forms, and every one of them is check-time-known — which is why a
+/// computed component changes nothing about what the RFC 9112 gates decide:
+///
+/// * `"…"` — a quoted token, this module's own syntax, constructing no `string`
+///   value (constraint 15f, `STRING_SLICE_V1.md` §2). The only form card
+///   `HTTP-QUIRIN-V1` admitted;
+/// * `NAME` — text this entry bound with `let NAME = "…";` or
+///   `let NAME = concat(…);`;
+/// * `dec(NAME)` / `hex(NAME)` — the text of a bound integer, the one
+///   scalar-to-text direction the language has, and the piece that makes a
+///   computed `Content-Length` expressible.
+///
+/// They are the **same three** a `source.string.v1` `concat` piece takes, minus
+/// that route's inline slice: slicing beside HTTP stays the named follow-on
+/// `HTTP-V1-STRING-COMPOSE`, so a spelling this route admits is a spelling that
+/// route admits too.
+fn piece(
+    window: &[&Token],
+    span: Span,
+    cursor: usize,
+    what: &str,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<(HttpPiece, usize)> {
+    if let Some(raw) = literal_text(window, cursor) {
+        return match decode_string_literal(raw) {
+            Ok(bytes) => Some((HttpPiece::Literal(bytes), cursor + 1)),
+            Err(refusal) => {
+                diagnostics.push(diagnostic("Q090", span, refusal.to_string()));
+                None
+            }
+        };
+    }
+    let Some(head) = word(window, cursor) else {
+        diagnostics.push(diagnostic(
+            "Q090",
+            span,
+            format!(
+                "`source.http.v1` spells a {what} as one quoted token, a name this entry bound to \
+                 text, or `dec(NAME)`/`hex(NAME)` for the text of a bound integer"
+            ),
+        ));
+        return None;
+    };
+    if let Some(rendering) = Rendering::parse(head) {
+        if !symbol(window, cursor + 1, Symbol::LeftParen) {
+            diagnostics.push(diagnostic(
+                "Q090",
+                span,
+                format!(
+                    "`{head}` renders a bound integer as text and is spelled `{head}(NAME)`; a \
+                     rendering selector is not a {what} on its own"
+                ),
+            ));
+            return None;
+        }
+        let Some(name) = word(window, cursor + 2) else {
+            diagnostics.push(diagnostic(
+                "Q090",
+                span,
+                "`dec(NAME)` and `hex(NAME)` name the bound integer whose text they compose",
+            ));
+            return None;
+        };
+        if !symbol(window, cursor + 3, Symbol::RightParen) {
+            diagnostics.push(diagnostic(
+                "Q090",
+                span,
+                "this rendering piece is not closed",
+            ));
+            return None;
+        }
+        return Some((
+            HttpPiece::Scalar {
+                rendering,
+                name: name.to_owned(),
+            },
+            cursor + 4,
+        ));
+    }
+    Some((HttpPiece::Name(head.to_owned()), cursor + 1))
+}
+
 /// The entry's declared `effects { … }` row. An absent suffix is the empty row,
 /// which admits nothing, so the opt-in stays visible.
 fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, SourceDiagnostic> {
@@ -437,6 +563,57 @@ fn lower_let(
                 },
             })
         }
+        // `let NAME = concat ( PIECE { "," PIECE } ) ;` — **text this entry
+        // computes rather than writes** (card `HTTP-V1-COMPUTED-LENGTH`).
+        //
+        // The clause word is `source.string.v1`'s own and is read with that
+        // route's own contextual predicate, so a spelling one route reads as a
+        // composition the other cannot read as a reference.
+        Some(CONCAT_KEYWORD)
+            if is_string_clause_word(CONCAT_KEYWORD, window.get(4).map(|token| &token.kind)) =>
+        {
+            let mut pieces = Vec::new();
+            let mut cursor = 5;
+            loop {
+                let (part, next) = piece(window, span, cursor, "`concat` piece", diagnostics)?;
+                pieces.push(part);
+                cursor = next;
+                if symbol(window, cursor, Symbol::Comma) {
+                    cursor += 1;
+                    continue;
+                }
+                break;
+            }
+            if !symbol(window, cursor, Symbol::RightParen)
+                || !ends_with_semicolon(window, cursor + 1)
+            {
+                diagnostics.push(diagnostic("Q090", span, "this `concat(…)` is not closed"));
+                return None;
+            }
+            Some(HttpStatement::Compose {
+                binding: binding.to_owned(),
+                pieces,
+            })
+        }
+        // `let NAME = len ( NAME ) ;` — the byte count of a bound text value.
+        Some(head) if is_length_query(head, window.get(4).map(|token| &token.kind)) => {
+            let Some(name) = word(window, 5) else {
+                diagnostics.push(diagnostic(
+                    "Q090",
+                    span,
+                    "`len(NAME)` names the text whose byte length it binds",
+                ));
+                return None;
+            };
+            if !symbol(window, 6, Symbol::RightParen) || !ends_with_semicolon(window, 7) {
+                diagnostics.push(diagnostic("Q090", span, "this `len(…)` is not closed"));
+                return None;
+            }
+            Some(HttpStatement::Length {
+                binding: binding.to_owned(),
+                name: name.to_owned(),
+            })
+        }
         // `let NAME = "…";` — a bound string view, usable as a payload.
         _ if literal_text(window, 3).is_some() => {
             let bytes = text(window, span, 3, "string literal", diagnostics)?;
@@ -550,15 +727,22 @@ pub fn lower_source_http(
         let window = window(tokens, span);
         let head = word(&window, 0).unwrap_or_default();
         let lowered = match head {
+            // `header NAME "Field-Name" VALUE;`. The **field name** stays a
+            // quoted token — a `token` is this route's own syntax and a
+            // computed field name would be a different card — and the **value**
+            // is any component value (card `HTTP-V1-COMPUTED-LENGTH`).
             HEADER_KEYWORD => {
                 let message = word(&window, 1).map(str::to_owned);
                 let name = text_string(&window, span, 2, "field name", &mut diagnostics);
-                let value = text_string(&window, span, 3, "field value", &mut diagnostics);
+                let value = piece(&window, span, 3, "field value", &mut diagnostics);
                 match (message, name, value) {
-                    (Some(message), Some(name), Some(value)) if ends_with_semicolon(&window, 4) => {
+                    (Some(message), Some(name), Some((value, next)))
+                        if ends_with_semicolon(&window, next) =>
+                    {
                         Some(HttpStatement::Header {
                             message,
-                            field: HttpField { name, value },
+                            name,
+                            value,
                         })
                     }
                     (Some(_), Some(_), Some(_)) => {
@@ -566,7 +750,8 @@ pub fn lower_source_http(
                             "Q090",
                             span,
                             "`source.http.v1` spells a header field as \
-                             `header NAME \"Field-Name\" \"field value\";`",
+                             `header NAME \"Field-Name\" VALUE;`, where the value is a quoted \
+                             token, a name this entry bound to text, or `dec(NAME)`/`hex(NAME)`",
                         ));
                         None
                     }
@@ -575,16 +760,18 @@ pub fn lower_source_http(
             }
             CONTENT_KEYWORD => {
                 let message = word(&window, 1).map(str::to_owned);
-                let bytes = text(&window, span, 2, "content", &mut diagnostics);
-                match (message, bytes) {
-                    (Some(message), Some(bytes)) if ends_with_semicolon(&window, 3) => {
-                        Some(HttpStatement::Content { message, bytes })
+                let value = piece(&window, span, 2, "content", &mut diagnostics);
+                match (message, value) {
+                    (Some(message), Some((value, next))) if ends_with_semicolon(&window, next) => {
+                        Some(HttpStatement::Content { message, value })
                     }
                     (Some(_), Some(_)) => {
                         diagnostics.push(diagnostic(
                             "Q090",
                             span,
-                            "`source.http.v1` spells message content as `content NAME \"…\";`",
+                            "`source.http.v1` spells message content as `content NAME VALUE;`, \
+                             where the value is a quoted token, a name this entry bound to text, \
+                             or `dec(NAME)`/`hex(NAME)`",
                         ));
                         None
                     }
@@ -605,14 +792,19 @@ pub fn lower_source_http(
                     receive: head == "recv",
                 })
             }
-            "let" if http_use(&window).is_some() || literal_text(&window, 3).is_some() => {
+            "let"
+                if http_use(&window).is_some()
+                    || literal_text(&window, 3).is_some()
+                    || is_computed_binding(&window) =>
+            {
                 let before = diagnostics.len();
                 let lowered = lower_let(&window, span, &mut diagnostics);
                 if lowered.is_none() && diagnostics.len() == before {
                     diagnostics.push(diagnostic(
                         "Q090",
                         span,
-                        "`source.http.v1` binds a request, a response or a quoted string view",
+                        "`source.http.v1` binds a request, a response, a quoted string view, a \
+                         `concat(…)` composition or a `len(…)`",
                     ));
                 }
                 lowered

@@ -1,0 +1,46 @@
+--- card emission ---
+library/contract mode supports checking declarations and bodies; standalone C emission requires an executable module
+  (not emittable: examples/events/write_interest.qcore)
+--- reverting this card's two source files to origin/main ---
+--- baseline emission ---
+examples/http/computed_length.qcore:41:5: Q090: `source.socket.v1` binds an integer literal, `tcp`, `udp`, `accept NAME`, `recv NAME` or `recvfrom NAME`; nothing else
+    let body = concat("{\"items\":", dec(count), "}\n");
+    ^
+examples/http/computed_length.qcore:45:5: Q090: `source.socket.v1` binds an integer literal, `tcp`, `udp`, `accept NAME`, `recv NAME` or `recvfrom NAME`; nothing else
+    let length = len(body);
+    ^
+examples/http/computed_length.qcore:49:5: Q090: `source.socket.v1` binds an integer literal, `tcp`, `udp`, `accept NAME`, `recv NAME` or `recvfrom NAME`; nothing else
+    let agent = concat("quirin/", "0.4");
+    ^
+examples/http/computed_length.qcore:53:5: Q090: `source.http.v1` spells a field value as one quoted token
+    header rq "User-Agent" agent;
+    ^
+examples/http/computed_length.qcore:62:5: Q090: `source.http.v1` spells a field value as one quoted token
+    header rs "Content-Length" dec(length);
+    ^
+examples/http/computed_length.qcore:64:5: Q090: `source.http.v1` spells a content as one quoted token
+    content rs body;
+    ^
+  (not emittable: examples/http/computed_length.qcore)
+library/contract mode supports checking declarations and bodies; standalone C emission requires an executable module
+  (not emittable: examples/events/write_interest.qcore)
+--- restoring ---
+--- diff ---
+examples_http_exchange.qcore: byte-identical
+examples_http_raw_request.qcore: byte-identical
+examples_http_computed_length.qcore: NOT EMITTABLE BY THE BASELINE (new with this card)
+examples_sockets_tcp_echo.qcore: byte-identical
+examples_sockets_udp_echo.qcore: byte-identical
+examples_strings_status_line.qcore: byte-identical
+examples_strings_computed_length.qcore: byte-identical
+examples_events_self_pipe.qcore: byte-identical
+examples_events_socket_server.qcore: byte-identical
+examples_events_wake_payload.qcore: byte-identical
+examples_events_write_interest.qcore: NOT EMITTABLE BY THE BASELINE (new with this card)
+
+
+NOTE ON `write_interest.qcore`: it emits nothing on EITHER side. It is
+`SOCKET-EVENT-COMPOSE`'s `accept_check_only` arm — a `write` interest is checked
+in full and makes the module emit no C — so "not emittable by the baseline" there
+is that program's own published behaviour, unchanged by this card, and not a
+difference. Every other program of every route this card touches is byte-identical.
