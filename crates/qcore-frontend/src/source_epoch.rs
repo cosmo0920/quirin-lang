@@ -73,6 +73,10 @@ use qcore_core::prelude::concurrency::epoch_accounting::{
     EpochDiagnostic, EpochTask, EpochTaskId, FlatEpochProgram, OverheadBasis, ResultDisposal,
     RuntimeOverhead, SharedCellId, SharedStorageCell, TaskResult, UnsupportedEpochShape,
 };
+use qcore_core::prelude::concurrency::epoch_credit_recovery::{
+    CreationErrorArm, CreationErrorEdges, EpochCreditDiagnostic, EpochCreditRecoveryPlan,
+    ErrorArmCredit,
+};
 use qcore_core::resource_flow::Quantity;
 
 /// Every byte figure of this profile lands on one axis, and every work figure
@@ -114,6 +118,18 @@ pub struct LoweredEpochModule {
     /// `bound effort as latency;`, if the module asked for one. The driver must
     /// put this to `epoch_wall_clock_bound`; it is never granted here.
     pub latency_claim: Option<Span>,
+    /// The error path over this epoch's credits: one arm per task, in task
+    /// order (card `CT23-CREDIT-ERROR-PATH`). On **this** route every arm's
+    /// [`CreationErrorEdges`] is empty, because a declared worker is not a
+    /// creation the creator could fail to make; a row that nevertheless spells
+    /// `error(…)` therefore reaches
+    /// [`EpochCreditDiagnostic::ErrorArmWithoutErrorEdge`] from the core's own
+    /// band, which is where that boundary belongs. The composed route
+    /// (`source.epoch.tasks.v1`) fills the edges from the checked task IR.
+    pub recovery: EpochCreditRecoveryPlan,
+    /// Where each task's `error(…)` clause was written, for locating a credit
+    /// refusal at the clause rather than at the row header.
+    pub error_arm_spans: BTreeMap<EpochTaskId, Span>,
 }
 
 impl LoweredEpochModule {
@@ -127,6 +143,39 @@ impl LoweredEpochModule {
             span,
             // `Display` already prefixes the code and the presentation boundary
             // adds it again; carry the structured refusal only.
+            message: format!("{diagnostic:?}"),
+        }
+    }
+
+    /// Present one error-path credit refusal at its own source span, under the
+    /// code the core assigns it. The code is the core's; only the location is
+    /// added, exactly as in [`Self::locate`].
+    ///
+    /// A refusal naming a task lands on that task's `error(…)` clause when the
+    /// row wrote one, and on the row header otherwise — the same rule
+    /// [`Self::span_of`] uses, one level finer.
+    pub fn locate_credit(&self, diagnostic: &EpochCreditDiagnostic) -> SourceDiagnostic {
+        use EpochCreditDiagnostic as D;
+        let task = match diagnostic {
+            D::UnknownTask { task }
+            | D::DuplicateArm { task }
+            | D::ErrorArmWithoutErrorEdge { task }
+            | D::CreditAbandonedAtErrorArm { task, .. }
+            | D::RestoredCreditExceedsGrant { task, .. } => Some(task),
+            D::ArmCountMismatch { .. } | D::Arithmetic { .. } => None,
+        };
+        let span = task
+            .and_then(|task| {
+                self.error_arm_spans
+                    .get(task)
+                    .or_else(|| self.task_spans.get(task))
+                    .copied()
+            })
+            .unwrap_or(self.scope_span);
+        SourceDiagnostic {
+            code: diagnostic.code(),
+            pass: SemanticPass::Concurrency,
+            span,
             message: format!("{diagnostic:?}"),
         }
     }
@@ -221,6 +270,105 @@ pub(crate) fn header_tokens(source: &SourceProgram, span: Span) -> Vec<Token> {
     tokens
 }
 
+/// An `error(…)` clause as written, before the row's own `credit` is known.
+///
+/// The clause and the credit may be written in either order, so `error(move);`
+/// — "restore the whole grant" — cannot be turned into a quantity until the row
+/// is complete. [`resolve_error_arm`] does that.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ErrorArmClause {
+    /// `error(move);` — the whole grant returns to the epoch.
+    RestoreAll,
+    /// `error(move BYTES effort UNITS);` — that much returns and the rest is
+    /// spent. Restoring more than the grant is the mint direction and is refused
+    /// by the core (`Q636`), not here: the figure is admitted as written and
+    /// compared against the grant the epoch actually makes.
+    Restore { bytes: u64, units: u64 },
+    /// `error(drop);` — the creator's failure handling spends the whole grant.
+    SpendAll,
+    /// `error(close);` — neither restored nor spent. Represented so the core
+    /// refuses it (`Q635`) rather than the case being one nobody checks, exactly
+    /// as `join(close);` is represented for a result.
+    Abandon,
+}
+
+/// `error(move|drop|close);`, or `error(move BYTES effort UNITS);`.
+///
+/// **No word here is new** (constraint 14): `error`, `move`, `drop`, `close` and
+/// `effort` are all already reserved — the first four by the language, the fifth
+/// by `T08-EPOCH-SRC` — so this clause reserves nothing and the fixture census
+/// it would otherwise require is vacuous.
+pub(crate) fn parse_error_arm(
+    tokens: &[Token],
+    span: Span,
+) -> Result<ErrorArmClause, SourceDiagnostic> {
+    if tokens.len() == 5
+        && symbol(tokens.get(1), Symbol::LeftParen)
+        && symbol(tokens.get(3), Symbol::RightParen)
+        && symbol(tokens.get(4), Symbol::Semicolon)
+    {
+        return match name(tokens.get(2)) {
+            Some("move") => Ok(ErrorArmClause::RestoreAll),
+            Some("drop") => Ok(ErrorArmClause::SpendAll),
+            Some("close") => Ok(ErrorArmClause::Abandon),
+            _ => Err(error_arm_form(span)),
+        };
+    }
+    if tokens.len() == 8
+        && symbol(tokens.get(1), Symbol::LeftParen)
+        && word(tokens.get(2), "move")
+        && word(tokens.get(4), "effort")
+        && symbol(tokens.get(6), Symbol::RightParen)
+        && symbol(tokens.get(7), Symbol::Semicolon)
+        && let (Some(bytes), Some(units)) = (integer(tokens.get(3)), integer(tokens.get(5)))
+    {
+        return Ok(ErrorArmClause::Restore { bytes, units });
+    }
+    Err(error_arm_form(span))
+}
+
+pub(crate) fn error_arm_form(span: Span) -> SourceDiagnostic {
+    failure(
+        span,
+        "the creator's error path over this row's credit is exactly `error(move);`, \
+         `error(move BYTES effort UNITS);`, `error(drop);` or `error(close);`",
+    )
+}
+
+/// Resolve a written clause against the grant the row declares. `error(move);`
+/// with no figures is the full rollback, so it *is* the grant; every other form
+/// carries its own figures or none.
+pub(crate) fn resolve_error_arm(
+    clause: ErrorArmClause,
+    credit: (u64, u64),
+    span: Span,
+) -> Result<ErrorArmCredit, SourceDiagnostic> {
+    Ok(match clause {
+        ErrorArmClause::RestoreAll => ErrorArmCredit::RestoredToEpoch {
+            restored: both(credit.0, credit.1, span)?,
+        },
+        ErrorArmClause::Restore { bytes, units } => ErrorArmCredit::RestoredToEpoch {
+            restored: both(bytes, units, span)?,
+        },
+        ErrorArmClause::SpendAll => ErrorArmCredit::SpentByCreator,
+        ErrorArmClause::Abandon => ErrorArmCredit::AbandonedAtErrorArm,
+    })
+}
+
+/// One task's error arm, with the edges the route supplies. The pure route
+/// supplies none; the composed route derives both from the checked task IR.
+pub(crate) fn error_arm(
+    task: EpochTaskId,
+    edges: CreationErrorEdges,
+    declared: Option<ErrorArmCredit>,
+) -> CreationErrorArm {
+    CreationErrorArm {
+        task,
+        edges,
+        declared,
+    }
+}
+
 pub(crate) fn memory(bytes: u64) -> Quantity {
     Quantity::single(MEMORY_AXIS, bytes)
 }
@@ -249,6 +397,9 @@ struct Lowering {
     allocation: Option<Quantity>,
     overhead: Option<RuntimeOverhead>,
     latency_claim: Option<Span>,
+    /// One error arm per worker, in worker order (card `CT23-CREDIT-ERROR-PATH`).
+    recovery: Vec<CreationErrorArm>,
+    error_arm_spans: BTreeMap<EpochTaskId, Span>,
     next_cell: SharedCellId,
     next_task: EpochTaskId,
 }
@@ -408,6 +559,10 @@ fn lower(
         cell_spans: state.cell_spans,
         scope_span: scope_statement.span,
         latency_claim: state.latency_claim,
+        recovery: EpochCreditRecoveryPlan {
+            arms: state.recovery,
+        },
+        error_arm_spans: state.error_arm_spans,
     })
 }
 
@@ -578,6 +733,7 @@ struct WorkerClauses {
     credit: Option<(u64, u64)>,
     retained: Option<u64>,
     join: Option<ResultDisposal>,
+    error_arm: Option<(ErrorArmClause, Span)>,
 }
 
 fn lower_worker(
@@ -622,6 +778,26 @@ fn lower_worker(
         }
         (None, _) => TaskResult::ReleasedInWorker,
     };
+    // The error path over this row's credit. A declared worker has no creation
+    // the creator could fail to make, so the edges stay empty here and a spelled
+    // `error(…)` reaches the core's own `ErrorArmWithoutErrorEdge` refusal;
+    // an elided one declares nothing about a path and spends the grant, which is
+    // the accounting every epoch written before card `CT23-CREDIT-ERROR-PATH`
+    // already had.
+    let declared = match clauses.error_arm {
+        None => None,
+        Some((clause, clause_span)) => {
+            state.error_arm_spans.insert(task, clause_span);
+            Some(resolve_error_arm(
+                clause,
+                (credit_bytes, credit_work),
+                clause_span,
+            )?)
+        }
+    };
+    state
+        .recovery
+        .push(error_arm(task, CreationErrorEdges::default(), declared));
     state.tasks.push(EpochTask {
         task,
         shared_entry: clauses.shared_entry,
@@ -716,6 +892,10 @@ fn lower_worker_clause(
             };
             set_once(&mut clauses.join, disposal, span, "join")
         }
+        Some("error") => {
+            let clause = parse_error_arm(&tokens, span)?;
+            set_once(&mut clauses.error_arm, (clause, span), span, "error")
+        }
         _ => Err(unknown_clause(span)),
     }
 }
@@ -724,7 +904,8 @@ fn unknown_clause(span: Span) -> SourceDiagnostic {
     failure(
         span,
         "a worker admits `read NAME;`, `write NAME;`, `peak BYTES;`, `effort UNITS;`, \
-         `credit BYTES effort UNITS;`, `retained BYTES;` and one `join(move|drop|close);` only",
+         `credit BYTES effort UNITS;`, `retained BYTES;`, one `join(move|drop|close);` and one \
+         `error(move|drop|close);` only",
     )
 }
 

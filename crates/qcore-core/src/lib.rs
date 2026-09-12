@@ -161,6 +161,7 @@ pub mod chunk_lifecycle;
 pub mod resource_accounting;
 
 pub mod epoch_accounting;
+pub mod epoch_credit_recovery;
 
 pub mod event_reactor;
 

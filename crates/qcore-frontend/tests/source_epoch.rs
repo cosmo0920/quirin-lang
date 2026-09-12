@@ -274,6 +274,77 @@ fn forms_the_grammar_cannot_represent_are_refused_here() {
     }
 }
 
+/// Card `CT23-CREDIT-ERROR-PATH`: this route lowers an error arm per worker,
+/// and its arms carry **no** error edges. A declared worker is not a creation
+/// the creator could fail to make, so the boundary is stated by the core's own
+/// `ErrorArmWithoutErrorEdge` rather than by this grammar refusing the word —
+/// the same T03 discipline `join(close);` follows.
+#[test]
+fn the_declarative_route_lowers_an_arm_per_worker_and_gives_it_no_error_edge() {
+    use qcore_core::epoch_credit_recovery::{
+        ErrorArmCredit, check_epoch_credit_recovery, recheck_epoch_credit_recovery,
+    };
+
+    let lowered = lower(EPOCH).expect("the module lowers");
+    assert_eq!(
+        lowered.recovery.arms.len(),
+        lowered.program.tasks.len(),
+        "one arm per declared worker"
+    );
+    assert!(
+        lowered
+            .recovery
+            .arms
+            .iter()
+            .all(|arm| !arm.edges.any() && arm.declared.is_none()),
+        "a declared worker has no creation to fail and declares no arm"
+    );
+    // The elided plan is admitted and publishes an all-spent split: exactly the
+    // accounting this route had before the card.
+    let certificate = check_epoch_credit_recovery(&lowered.program, &lowered.recovery)
+        .expect("an all-elided plan is admitted");
+    assert_eq!(certificate.restored_credits, Quantity::zero());
+    assert_eq!(
+        certificate.spent_credits,
+        check_flat_epoch(&lowered.program)
+            .expect("the epoch is admitted")
+            .granted_credits
+    );
+    assert!(
+        recheck_epoch_credit_recovery(&lowered.program, &lowered.recovery, &certificate).is_ok()
+    );
+
+    // A spelled clause lowers — the grammar admits it — and is then refused by
+    // the core, which is where the boundary belongs.
+    let spelled = EPOCH.replace("join(move);\n", "join(move);\nerror(move);\n");
+    assert_ne!(spelled, EPOCH, "the substitution must have applied");
+    let lowered = lower(&spelled).expect("the clause lowers");
+    let arm = lowered
+        .recovery
+        .arms
+        .iter()
+        .find(|arm| arm.declared.is_some())
+        .expect("the spelled row carries a declared arm");
+    assert!(matches!(
+        arm.declared,
+        Some(ErrorArmCredit::RestoredToEpoch { .. })
+    ));
+    assert!(!arm.edges.any());
+    let refusal = check_epoch_credit_recovery(&lowered.program, &lowered.recovery)
+        .expect_err("an arm without an edge is refused");
+    assert_eq!(
+        refusal.iter().map(|d| d.code()).collect::<Vec<_>>(),
+        vec!["Q630"]
+    );
+    // The refusal is attributed to the clause that caused it, not to the row.
+    let located = lowered.locate_credit(&refusal[0]);
+    assert_eq!(located.code, "Q630");
+    assert_eq!(
+        located.span, lowered.error_arm_spans[&arm.task],
+        "a credit refusal lands on the `error(…)` clause"
+    );
+}
+
 #[test]
 fn route_detection_is_syntactic_and_does_not_claim_other_modules() {
     let task_module = "import std.concurrency;\nfn main() -> unit {\n\

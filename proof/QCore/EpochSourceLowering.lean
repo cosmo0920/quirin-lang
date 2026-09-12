@@ -893,4 +893,302 @@ theorem the_owned_composition_is_admitted :
     Admitted (composeDecl 65536 1000 512 128 [(ownedRow, ownedSpawn)]) := by
   decide
 
+/-! ## The error path over the epoch's credits (card `CT23-CREDIT-ERROR-PATH`)
+
+`FlatEpochBoundV1` grants every task a `credit` out of the epoch's allocation and
+models exactly one way out of the epoch: every task created, every task joined,
+the exit reached. It says nothing about the creator's **own error edges** — the
+creation that failed, and the join that observed a raised child — so a plan
+cannot say what becomes of a grant on them. That is CT23's recorded gap.
+
+The model below is the transcription of `qcore_core::epoch_credit_recovery`. It
+is a *sibling* of the accounting above and a client of it: nothing here changes
+`admits`, `lower` or any quantity the epoch publishes, and the corollary at the
+end is what makes that safe — the credit committed on every error edge is no
+larger than the granted total the epoch already bounds.
+
+**The accounting law.** For every task of an admitted plan
+`restored + spent = credit` and `restored ≤ credit` on both axes, and over the
+epoch `restoredTotal + spentTotal = grantedTotal`. Both directions are refusals:
+abandonment (neither restored nor spent) is the **leak**, and a restoration
+larger than its grant is the **mint**. -/
+
+/-- Which of the creator's own error edges exist over one creation. Derived from
+the checked task IR by the composed route, never declared; the purely
+declarative route has neither, because a declared worker is not a creation the
+creator could fail to make. -/
+structure ErrorEdges where
+  creationFailure : Bool
+  joinFailure : Bool
+  deriving DecidableEq, Repr
+
+def ErrorEdges.any (edges : ErrorEdges) : Bool :=
+  edges.creationFailure || edges.joinFailure
+
+/-- What the creator's error edge does with the credit granted to one creation.
+There is no fourth case: a grant either comes back or is consumed, and the claim
+that it does neither is `abandoned`, which is always refused — exactly as
+`Disposal.close` is for a retained result. -/
+inductive ArmCredit where
+  /-- The creator's failure handling spends the whole grant. -/
+  | spent
+  /-- This much of the grant returns to the epoch; the remainder is spent. -/
+  | restored (bytes effort : Nat)
+  /-- Neither restored nor spent. Always refused. -/
+  | abandoned
+  deriving DecidableEq, Repr
+
+/-- One creation's error arm. `declared = none` is an **elided** arm, which means
+`spent`; the distinction is kept because a *declared* arm over a creation with no
+error edge is a refusal and an elided one is not. -/
+structure Arm where
+  creditBytes : Nat
+  creditEffort : Nat
+  edges : ErrorEdges
+  declared : Option ArmCredit
+  deriving Repr
+
+def Arm.disposition (arm : Arm) : ArmCredit :=
+  arm.declared.getD .spent
+
+/-- What this arm returns to the epoch. An abandoned grant returns nothing, and
+is refused before any total is taken. -/
+def Arm.restoredBytes (arm : Arm) : Nat :=
+  match arm.disposition with
+  | .restored bytes _ => bytes
+  | _ => 0
+
+def Arm.restoredEffort (arm : Arm) : Nat :=
+  match arm.disposition with
+  | .restored _ effort => effort
+  | _ => 0
+
+/-- What the creator's failure handling spends of this grant. -/
+def Arm.spentBytes (arm : Arm) : Nat :=
+  arm.creditBytes - arm.restoredBytes
+
+def Arm.spentEffort (arm : Arm) : Nat :=
+  arm.creditEffort - arm.restoredEffort
+
+def armAdmits (arm : Arm) : Bool :=
+  (match arm.declared with
+   | some _ => arm.edges.any
+   | none => true)
+    && (match arm.disposition with
+        | .abandoned => false
+        | .spent => true
+        | .restored bytes effort =>
+            decide (bytes ≤ arm.creditBytes) && decide (effort ≤ arm.creditEffort))
+
+def planAdmits (arms : List Arm) : Bool :=
+  arms.all armAdmits
+
+abbrev PlanAdmitted (arms : List Arm) : Prop := planAdmits arms = true
+
+def grantedBytes : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.creditBytes + grantedBytes rest
+
+def grantedEffort : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.creditEffort + grantedEffort rest
+
+def restoredTotalBytes : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.restoredBytes + restoredTotalBytes rest
+
+def restoredTotalEffort : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.restoredEffort + restoredTotalEffort rest
+
+def spentTotalBytes : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.spentBytes + spentTotalBytes rest
+
+def spentTotalEffort : List Arm → Nat
+  | [] => 0
+  | arm :: rest => arm.spentEffort + spentTotalEffort rest
+
+-- ---------------------------------------------------------------------------
+-- The law, per arm.
+-- ---------------------------------------------------------------------------
+
+/-- **No mint**, per arm and per axis: an admitted arm never returns more than
+the epoch granted it. -/
+theorem an_admitted_arm_restores_no_more_than_its_grant {arm : Arm}
+    (admitted : armAdmits arm = true) :
+    arm.restoredBytes ≤ arm.creditBytes ∧ arm.restoredEffort ≤ arm.creditEffort := by
+  unfold armAdmits at admitted
+  cases disposition : arm.disposition with
+  | spent => simp [Arm.restoredBytes, Arm.restoredEffort, disposition]
+  | abandoned => simp [Arm.restoredBytes, Arm.restoredEffort, disposition]
+  | restored bytes effort =>
+      simp [disposition, Bool.and_eq_true] at admitted
+      simp [Arm.restoredBytes, Arm.restoredEffort, disposition]
+      exact ⟨admitted.2.1, admitted.2.2⟩
+
+/-- **No leak**, per arm and per axis: an admitted arm's grant splits into the
+part that returns and the part that is spent, and the two add back to it. -/
+theorem an_admitted_arm_conserves_its_grant {arm : Arm}
+    (admitted : armAdmits arm = true) :
+    arm.restoredBytes + arm.spentBytes = arm.creditBytes ∧
+      arm.restoredEffort + arm.spentEffort = arm.creditEffort := by
+  obtain ⟨bytes, effort⟩ := an_admitted_arm_restores_no_more_than_its_grant admitted
+  simp only [Arm.spentBytes, Arm.spentEffort]
+  exact ⟨by omega, by omega⟩
+
+/-- Abandonment is the leak, and it is never admitted. -/
+theorem an_abandoned_grant_is_not_admitted {arm : Arm}
+    (abandoned : arm.declared = some .abandoned) : armAdmits arm = false := by
+  simp [armAdmits, Arm.disposition, abandoned]
+
+/-- An arm *declared* for a creation the creator has no error edge over disposes
+of a grant on a path the program does not have. This is what the purely
+declarative route receives. -/
+theorem a_declared_arm_without_an_error_edge_is_not_admitted {arm : Arm}
+    (declared : arm.declared ≠ none) (edges : arm.edges.any = false) :
+    armAdmits arm = false := by
+  cases spelled : arm.declared with
+  | none => exact absurd spelled declared
+  | some _ => simp [armAdmits, spelled, edges]
+
+/-- An **elided** arm declares nothing about a path, is always admitted, and
+spends its whole grant — which is exactly the accounting the epoch had before
+this section existed. -/
+theorem an_elided_arm_is_admitted_and_spends_its_whole_grant {arm : Arm}
+    (elided : arm.declared = none) :
+    armAdmits arm = true ∧ arm.restoredBytes = 0 ∧ arm.spentBytes = arm.creditBytes := by
+  refine ⟨by simp [armAdmits, Arm.disposition, elided], ?_, ?_⟩ <;>
+    simp [Arm.restoredBytes, Arm.spentBytes, Arm.disposition, elided]
+
+/-- Restoring nothing is spending everything: the two spellings produce the same
+figures, so `error(drop);` and `error(move 0 effort 0);` are one claim. -/
+theorem restoring_nothing_is_spending_everything
+    {creditBytes creditEffort : Nat} {edges : ErrorEdges} :
+    (Arm.mk creditBytes creditEffort edges (some (.restored 0 0))).restoredBytes =
+        (Arm.mk creditBytes creditEffort edges (some .spent)).restoredBytes ∧
+      (Arm.mk creditBytes creditEffort edges (some (.restored 0 0))).spentBytes =
+        (Arm.mk creditBytes creditEffort edges (some .spent)).spentBytes := by
+  constructor <;> simp [Arm.restoredBytes, Arm.spentBytes, Arm.disposition]
+
+-- ---------------------------------------------------------------------------
+-- The law, over the whole epoch.
+-- ---------------------------------------------------------------------------
+
+theorem a_member_of_an_admitted_plan_is_admitted {arms : List Arm} {arm : Arm}
+    (admitted : PlanAdmitted arms) (mem : arm ∈ arms) : armAdmits arm = true :=
+  (List.all_eq_true.mp admitted) arm mem
+
+/-- **The accounting law.** Over an admitted plan the restored and the spent
+totals add back to the granted total, on both axes. Credits are neither leaked
+nor minted by the creator's error edges. -/
+theorem an_admitted_plan_conserves_the_granted_total {arms : List Arm}
+    (admitted : PlanAdmitted arms) :
+    restoredTotalBytes arms + spentTotalBytes arms = grantedBytes arms ∧
+      restoredTotalEffort arms + spentTotalEffort arms = grantedEffort arms := by
+  induction arms with
+  | nil => simp [restoredTotalBytes, spentTotalBytes, grantedBytes,
+      restoredTotalEffort, spentTotalEffort, grantedEffort]
+  | cons arm rest ih =>
+      have head : armAdmits arm = true :=
+        a_member_of_an_admitted_plan_is_admitted admitted (List.mem_cons_self ..)
+      have tail : PlanAdmitted rest :=
+        List.all_eq_true.mpr fun value mem =>
+          a_member_of_an_admitted_plan_is_admitted admitted (List.mem_cons_of_mem _ mem)
+      obtain ⟨bytes, effort⟩ := an_admitted_arm_conserves_its_grant head
+      obtain ⟨restBytes, restEffort⟩ := ih tail
+      constructor
+      · simp [restoredTotalBytes, spentTotalBytes, grantedBytes]
+        omega
+      · simp [restoredTotalEffort, spentTotalEffort, grantedEffort]
+        omega
+
+/-- **The corollary that makes the error path safe without a second bound.** The
+credit committed on the all-error path is the spent total, and it never exceeds
+the granted total — which `check_flat_epoch` has already bounded by the
+allocation (`Q637`). So no admitted error edge can exceed the epoch's allocation,
+and no allocation check is added for it. -/
+theorem the_error_arm_commits_no_more_than_the_granted_total {arms : List Arm}
+    (admitted : PlanAdmitted arms) :
+    spentTotalBytes arms ≤ grantedBytes arms ∧
+      spentTotalEffort arms ≤ grantedEffort arms := by
+  obtain ⟨bytes, effort⟩ := an_admitted_plan_conserves_the_granted_total admitted
+  exact ⟨by omega, by omega⟩
+
+/-- The mint direction over the whole epoch: an admitted plan never returns more
+credit to the epoch than the epoch granted. -/
+theorem an_admitted_plan_restores_no_more_than_it_granted {arms : List Arm}
+    (admitted : PlanAdmitted arms) :
+    restoredTotalBytes arms ≤ grantedBytes arms ∧
+      restoredTotalEffort arms ≤ grantedEffort arms := by
+  obtain ⟨bytes, effort⟩ := an_admitted_plan_conserves_the_granted_total admitted
+  exact ⟨by omega, by omega⟩
+
+/-- A plan carrying one abandoned arm is not admitted, however many of its other
+arms are: one leak is enough. -/
+theorem a_plan_with_an_abandoned_arm_is_not_admitted {arms : List Arm} {arm : Arm}
+    (mem : arm ∈ arms) (abandoned : arm.declared = some .abandoned) :
+    planAdmits arms = false := by
+  cases decision : planAdmits arms with
+  | false => rfl
+  | true =>
+      have admitted := a_member_of_an_admitted_plan_is_admitted (arms := arms) decision mem
+      rw [an_abandoned_grant_is_not_admitted abandoned] at admitted
+      exact absurd admitted (by simp)
+
+-- ---------------------------------------------------------------------------
+-- Non-vacuity, and the refusals on concrete arms.
+-- ---------------------------------------------------------------------------
+
+/-- The edges the composed route derives for the card's own CT23 fixture: the
+creation can fail, and the join can observe a raised child. -/
+def bothEdges : ErrorEdges := ⟨true, true⟩
+
+/-- The edges the purely declarative route has: none. -/
+def noEdges : ErrorEdges := ⟨false, false⟩
+
+def restoredArm : Arm := ⟨4096, 100, bothEdges, some (.restored 4096 100)⟩
+def partialArm : Arm := ⟨4096, 100, bothEdges, some (.restored 1024 25)⟩
+def spentArm : Arm := ⟨4096, 100, bothEdges, some .spent⟩
+def elidedArm : Arm := ⟨4096, 100, bothEdges, none⟩
+def abandonedArm : Arm := ⟨4096, 100, bothEdges, some .abandoned⟩
+def mintedBytesArm : Arm := ⟨4096, 100, bothEdges, some (.restored 4097 100)⟩
+def mintedEffortArm : Arm := ⟨4096, 100, bothEdges, some (.restored 4096 101)⟩
+def declarativeArm : Arm := ⟨4096, 100, noEdges, some .spent⟩
+
+/-- Non-vacuity: four concrete plans **are** admitted, so the refusals below are
+not proved against a predicate that refuses everything. -/
+theorem the_worked_plans_are_admitted :
+    PlanAdmitted [restoredArm] ∧ PlanAdmitted [partialArm] ∧
+      PlanAdmitted [spentArm, elidedArm] ∧ PlanAdmitted [] := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-- And their figures are the ones the Rust checker publishes. -/
+theorem the_worked_plans_publish_their_split :
+    restoredTotalBytes [partialArm] = 1024 ∧ spentTotalBytes [partialArm] = 3072 ∧
+      restoredTotalEffort [partialArm] = 25 ∧ spentTotalEffort [partialArm] = 75 ∧
+      grantedBytes [partialArm] = 4096 := by
+  refine ⟨by decide, by decide, by decide, by decide, by decide⟩
+
+/-- **The CT23 refusal**, on a concrete arm: the creator's own error edge
+abandons the credit the epoch granted a child that existed and held it. -/
+theorem the_abandoning_plan_is_refused : planAdmits [abandonedArm] = false := by
+  decide
+
+/-- The mint refusal, on each axis independently. -/
+theorem an_over_restoring_plan_is_refused :
+    planAdmits [mintedBytesArm] = false ∧ planAdmits [mintedEffortArm] = false := by
+  refine ⟨by decide, by decide⟩
+
+/-- The declarative route's boundary, on a concrete arm: a spelled disposition
+over a worker that is a declaration rather than a creation. -/
+theorem a_declarative_arm_is_refused : planAdmits [declarativeArm] = false := by
+  decide
+
+/-- Eliding the arm over that same declaration is admitted: an elided arm claims
+nothing about a path. -/
+theorem an_elided_declarative_arm_is_admitted :
+    PlanAdmitted [⟨4096, 100, noEdges, none⟩] := by
+  decide
+
 end QCore.EpochSourceLowering

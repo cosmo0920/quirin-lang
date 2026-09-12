@@ -12,7 +12,8 @@ use qcore_core::cleanup_lowering::{
 };
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::prelude::concurrency::{
-    epoch_accounting, mutex_c_emit, mutex_invariant, task_c_emit, task_execution,
+    epoch_accounting, epoch_credit_recovery, mutex_c_emit, mutex_invariant, task_c_emit,
+    task_execution,
 };
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
@@ -378,6 +379,12 @@ pub struct CheckedMutexGuardModule {
 pub struct CheckedEpochModule {
     pub lowered: qcore_frontend::source_epoch::LoweredEpochModule,
     pub certificate: epoch_accounting::EpochBoundCertificate,
+    /// The error path over this epoch's credits, published **beside** the bound
+    /// rather than inside it (card `CT23-CREDIT-ERROR-PATH`). On this route
+    /// every arm is elided — a declared worker is not a creation the creator
+    /// could fail to make — so the split is always "everything spent", which is
+    /// exactly the accounting this route had before the card.
+    pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
 }
 
 /// A checked `source.epoch.tasks.v1` module: one flat-epoch plan and the real
@@ -394,6 +401,11 @@ pub struct ComposedEpochModule {
     pub tasks: task_execution::CheckedTaskModule,
     pub composed: qcore_frontend::source_epoch_tasks::LoweredComposedEpoch,
     pub certificate: epoch_accounting::EpochBoundCertificate,
+    /// The error path over this epoch's credits (card `CT23-CREDIT-ERROR-PATH`):
+    /// for every creation, how much of its grant the creator's own error edges
+    /// return to the epoch and how much its failure handling spends. Published
+    /// beside the bound, never inside it — the bound is unchanged by it.
+    pub credit_recovery: epoch_credit_recovery::EpochCreditRecoveryCertificate,
     /// The scoped-task profile the task half executes under, kept because the
     /// composed label would otherwise hide whether the region moves owned
     /// Buffers or only copies scalars.
@@ -5437,6 +5449,31 @@ fn compile_epoch_source(
     // schedule model here, so the request is refused (`Q639`) after the bound
     // was derived: the epoch may be perfectly well accounted and the time
     // claim still not follow from it.
+    // The error path over the epoch's credits, checked by the core's own
+    // sibling module and re-derived before it is published, exactly as the bound
+    // is (card `CT23-CREDIT-ERROR-PATH`). On this route the arms carry no error
+    // edges, because a declared worker is not a creation the creator could fail
+    // to make: an elided arm spends its grant and changes nothing, and a spelled
+    // `error(…)` is refused by the core at `Q630`.
+    let credit_recovery =
+        epoch_credit_recovery::check_epoch_credit_recovery(&lowered.program, &lowered.recovery)
+            .map_err(|diagnostics| {
+                diagnostics
+                    .iter()
+                    .map(|diagnostic| map_diagnostic(lowered.locate_credit(diagnostic), ranges))
+                    .collect::<Vec<_>>()
+            })?;
+    epoch_credit_recovery::recheck_epoch_credit_recovery(
+        &lowered.program,
+        &lowered.recovery,
+        &credit_recovery,
+    )
+    .map_err(|errors| {
+        vec![plain_diagnostic(
+            "Q600",
+            format!("flat-epoch credit split failed independent recheck: {errors:?}"),
+        )]
+    })?;
     if lowered.latency_claim.is_some() {
         let Err(refusal) = epoch_accounting::epoch_wall_clock_bound(&certificate) else {
             unreachable!("a wall-clock bound is never available in this profile")
@@ -5455,6 +5492,7 @@ fn compile_epoch_source(
         checked: CheckedSourceModule::CheckedEpochBound(Box::new(CheckedEpochModule {
             lowered,
             certificate,
+            credit_recovery,
         })),
         execution_profile: SourceExecutionProfile::FlatEpochBoundV1,
         declaration_count: typed.declarations.len(),
@@ -5563,6 +5601,31 @@ fn compile_composed_epoch_source(
             )]
         },
     )?;
+    // The error path over the epoch's credits (card `CT23-CREDIT-ERROR-PATH`).
+    // The *edges* in this plan were derived from the checked task IR and the
+    // *dispositions* were declared, so the refusals below are about a path the
+    // checked region really has. Re-derived before publication, as the bound is.
+    let credit_recovery = epoch_credit_recovery::check_epoch_credit_recovery(
+        &composed.plan.program,
+        &composed.plan.recovery,
+    )
+    .map_err(|diagnostics| {
+        diagnostics
+            .iter()
+            .map(|diagnostic| map_diagnostic(composed.plan.locate_credit(diagnostic), ranges))
+            .collect::<Vec<_>>()
+    })?;
+    epoch_credit_recovery::recheck_epoch_credit_recovery(
+        &composed.plan.program,
+        &composed.plan.recovery,
+        &credit_recovery,
+    )
+    .map_err(|errors| {
+        vec![plain_diagnostic(
+            "Q600",
+            format!("composed epoch credit split failed independent recheck: {errors:?}"),
+        )]
+    })?;
     if composed.plan.latency_claim.is_some() {
         let Err(refusal) = epoch_accounting::epoch_wall_clock_bound(&certificate) else {
             unreachable!("a wall-clock bound is never available in this profile")
@@ -5574,6 +5637,7 @@ fn compile_composed_epoch_source(
             tasks: *tasks,
             composed,
             certificate,
+            credit_recovery,
             task_profile: task_module.execution_profile,
         })),
         execution_profile: SourceExecutionProfile::ComposedEpochTasksV1,

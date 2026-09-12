@@ -1150,7 +1150,10 @@ clause       = "read", NAME, ";" | "write", NAME, ";"
              | "credit", NAT, "effort", NAT, ";"
              | "retained", NAT, ";"
              | "join", "(", ( "move" | "drop" | "close" ), ")", ";"
+             | error_arm
              | worker ;
+error_arm    = "error", "(", ( "move" | "drop" | "close" ), ")", ";"
+             | "error", "(", "move", NAT, "effort", NAT, ")", ";" ;
 ```
 
 Two axes are declared: `memory` carries every byte figure and `effort` carries
@@ -1184,6 +1187,15 @@ and the driver puts it to `epoch_wall_clock_bound`, which always refuses
 (`Q639`). This profile has no schedule model, so no quantity it derives is ever
 a time.
 
+`error_arm` declares what the **creator's own error edges** do with the credit
+granted to that worker (card `CT23-CREDIT-ERROR-PATH`,
+`qcore_core::epoch_credit_recovery`). It reserves no new word: `error`, `move`,
+`drop`, `close` and `effort` are all already reserved. On **this** route it is
+always refused, at `Q630`, because a declared worker is not a creation the
+creator could fail to make — the refusal comes from the core's own band, not
+from this grammar pretending the word is unknown. Its meaning is given in §G02f,
+where the creator's error edges exist and are derived.
+
 Every quantity here is a **declared premise** of `FlatEpochBoundV1`
 (`DeclaredTaskFootprints`, `DeclaredRuntimeOverhead`,
 `DisjointSharedStorageCells`, `NoScheduleModel`); nothing on this route imports
@@ -1210,7 +1222,8 @@ clause         = "move", ";" | "copy", ";"
                | "peak", NAT, ";" | "effort", NAT, ";"
                | "credit", NAT, "effort", NAT, ";"
                | "retained", NAT, ";"
-               | [ "join", "(", ( "move" | "drop" | "close" ), ")", ";" ] ;
+               | [ "join", "(", ( "move" | "drop" | "close" ), ")", ";" ]
+               | [ error_arm ] ;                            (* G02e's *)
 ```
 
 `WORKER` names a source function the region spawns. Rows naming `WORKER`, in
@@ -1231,6 +1244,23 @@ No byte or work figure is derivable: this backend's `Buffer` carries no extent
 (`TryAllocateBuffer` takes an initial scalar value, not a size) and the profile
 has no cost model, so `peak`, `effort`, `credit`, `bound` and `overhead` stay
 declared premises exactly as in G02e.
+
+The `error_arm` clause is **optional**, at most once per row, and declares what
+the creator's own error edges do with that row's grant
+(card `CT23-CREDIT-ERROR-PATH`, checked by `EpochCreditRecoveryV1` beside the
+bound): `error(move);` returns the whole grant to the epoch,
+`error(move BYTES effort UNITS);` returns that much and spends the rest,
+`error(drop);` spends all of it, and `error(close);` is the representable claim
+that it is neither returned nor spent — refused at `Q635`. An elided clause is
+`error(drop);`, so every module written before the clause existed keeps a
+byte-identical certificate and byte-identical emitted C. The *edges* are
+**derived**, never declared: every `TrySpawn` carries a `spawn_error` successor,
+and a join edge exists exactly where a `TryOutcome` eliminates that creation's
+join outcome, which is to say where the child can actually raise. Restoring more
+than the grant is refused at `Q636`. Restoration does **not** reduce
+`granted_credits` and therefore relaxes no `Q637`: an epoch whose recovery path
+re-grants restored credit is `CT23-RESTORE-REUSE`. See
+[the error-path record](reports/ct23-credit-error-path/README.md).
 
 Refused at `Q600`, each with a named follow-on: shared storage cells and
 `read`/`write` clauses (`T08-COMPOSE-SHARED`), read-loan captures
