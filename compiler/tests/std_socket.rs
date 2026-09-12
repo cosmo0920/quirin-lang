@@ -22,6 +22,10 @@ use qcore_core::std_io::Stream;
 use qcore_core::std_socket::{SocketError, SocketKind};
 use qcore_core::typed_errors::Effect;
 
+#[cfg(target_os = "windows")]
+#[path = "../../tests/support/windows_c.rs"]
+mod windows_c;
+
 const TCP_ECHO: &str = include_str!("../../examples/sockets/tcp_echo.qcore");
 const UDP_ECHO: &str = include_str!("../../examples/sockets/udp_echo.qcore");
 const SOCKETS_README: &str = include_str!("../../examples/sockets/README.md");
@@ -1220,5 +1224,64 @@ mod native {
         let compiled = compile(TCP_ECHO).expect("admitted");
         let source = compiled.c_source.as_deref().expect("emitted");
         assert_eq!(run(source), run(source));
+    }
+}
+
+/// Native Winsock evidence for follow-on card `SOCKET-V1-WINDOWS-RUN`.
+///
+/// This is intentionally separate from the sanitized POSIX module: MSVC is a
+/// native execution and byte-comparison claim, not a sanitizer claim. The
+/// shared harness additionally refuses unless Visual Studio's real `cl.exe`
+/// was selected.
+#[cfg(target_os = "windows")]
+mod native_windows {
+    use super::{TCP_ECHO, UDP_ECHO, compile, windows_c};
+
+    fn reference(source: &str) -> (String, String) {
+        let compiled = compile(source).expect("the published socket example must be admitted");
+        let expected = compiled
+            .extern_observation
+            .as_deref()
+            .expect("a reference observation")
+            .iter()
+            .filter_map(|record| record.strip_prefix("out: "))
+            .map(|line| format!("{line}\n"))
+            .collect::<String>();
+        let emitted = compiled.c_source.expect("the socket route must emit C11");
+        assert!(
+            emitted.contains("#pragma comment(lib, \"ws2_32.lib\")"),
+            "the emitted Windows arm must carry its own Winsock link dependency"
+        );
+        (emitted, expected)
+    }
+
+    fn run(source: &str) -> String {
+        let output = windows_c::run_msvc(source, None, &[]);
+        assert!(
+            output.status.success(),
+            "the emitted Winsock program failed with {}:\n{}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(output.stderr.is_empty(), "the Winsock run wrote stderr");
+        String::from_utf8(output.stdout).expect("the emitted program writes UTF-8")
+    }
+
+    #[test]
+    fn the_tcp_example_runs_under_cl_and_writes_the_reference_observation() {
+        let (emitted, expected) = reference(TCP_ECHO);
+        assert_eq!(run(&emitted), expected);
+    }
+
+    #[test]
+    fn the_udp_example_runs_under_cl_and_writes_the_reference_observation() {
+        let (emitted, expected) = reference(UDP_ECHO);
+        assert_eq!(run(&emitted), expected);
+    }
+
+    #[test]
+    fn two_windows_runs_of_one_program_write_identical_bytes() {
+        let (emitted, _) = reference(TCP_ECHO);
+        assert_eq!(run(&emitted), run(&emitted));
     }
 }
