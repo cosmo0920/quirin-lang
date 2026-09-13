@@ -6,6 +6,39 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Wave 32 close (2026-09-14): **seven cards** merged one at a time under the
+failure-gated chain. **No arbiter ran** — not one card touched a gateway,
+contract, audit or provider source file — so every corpus row is **carried**
+from the wave-31 baseline (leak 272, `unknown_alias` 4,208, `unsupported`
+50,150, corpus 76, zero status moves). CT coverage 43/50 → **45/50** (CT47 and
+CT44, each mapped after measuring its scenario's untranslatable words rather
+than inheriting an archived blocker); sanitized-native 7 → **9 of 45** through
+a composed-epoch native runner whose every arm was falsified before it was
+believed, and whose author deliberately **understated** — leaving the rows
+`unassessed` and publishing the coupled edit — because derivation and manifest
+must move in one change. **The proof axis deliberately did not move**:
+`PROOF-LEG-BATCH` withdrew both its rows on measuring that CT01, CT12 and CT14
+are one byte-identical fixture, so the rows would have been vacuous under
+constraint 23 and would have reported five rows over three artifacts against
+invariant 2 — proof stays **3 of 45**, with tripwires that fire when they
+genuinely reopen. **The integrator's honesty debt was paid**:
+`TRACE-ALPHABET-LEASE-BOUNDARY` proved and exercised the wave-31 union's
+refusal arm, and two of that residual's assumptions came back **false** — the
+arm is reachable today, and dropping rather than refusing would have been an
+**admitting** mistake. Standing constraint **15n** records the rule.
+`MUTEX-SHARE-CROSS` landed CT46's composition on the mutex route with all
+sixteen refusals test-driven and +0 reserved words. `W32-RECONCILE-SWEEP`
+addressed a defect in the integrator's own process reported three waves
+running: 77 items across 20 cards, every verdict measured against the tree,
+three unapplied found — and the two follow-ons *about* losing follow-ons found
+tracked nowhere at all. Its remedy is mechanical (`scripts/reconciliation_sweep.py`,
+Python 200 → **227**) and deliberately **decides nothing**. Two integrator
+errors were caught by the wave's own cards and repaired. Lean audits 125 →
+**127**. Merged gate at the close tip: 4,534 workspace tests (0 failed, 8
+ignored, `--no-fail-fast`), 122 provider (carried), 227 Python, both probes
+exit 0, fmt/clippy clean (`docs/reports/wave32-close/gate.json`). Nothing is
+promoted; full language conformance stays **false**.
+
 `W32-RECONCILE-SWEEP` — the integrator's own reconciliation lists, measured and
 made mechanical (2026-09-14, mid-wave 32; **no arbiter run, no corpus row
 touched**). A defect in the *integrator's* process had been reported three
