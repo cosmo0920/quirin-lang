@@ -495,29 +495,25 @@ not one. The audit count is expected unchanged at `C-GATEWAY-WAVE`'s 123.
   the two old-table rows and the certificate-replay pin.
 * `crates/qcore-c-gateway/tests/prod_contracts.rs`,
   `crates/qcore-c-gateway/tests/neighbours.rs` — manifest count 19 → 21.
-* `crates/qcore-c-gateway/tests/std_socket_inet.rs` — inherited worktree
-  census hygiene (§10).
 * `docs/reports/w31-corpus-contracts-2/` — this report and its evidence, all
   re-measured against the moved baseline.
 * `docs/development/increments/wave-31.md` — one increment paragraph;
   `AGENTS.md` — headline numbers (corpus row, contract corpus, baseline
   pointer), per the sync rule.
 
-## 10. Inherited alongside the card: worktree census hygiene
+## 10. One inherited change that turned out not to be this card's
 
-The card's interrupted first attempt also fixed an environment-shape defect it
-tripped over, committed on its branch and merged here. The
-`SOCKET-INET-ADDRESSES` census test
-(`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)
-walked the repository root recursively and, when run from the **primary
-checkout**, recursed into `.claude/worktrees/*` — sibling checkouts of this
-same repository — finding their copies of the two published examples and
-failing against the pinned two-file expectation. The walker now skips any
-subdirectory carrying its own `.git` entry (a nested git worktree or embedded
-checkout is another tree, not this one), the same environment-shape family as
-the wave-29 submodule-diagnostic precondition. The census itself is
-unweakened: over one checkout's tree it visits exactly the files it always
-visited, and the >400-file floor and the two-example pin are untouched.
+The interrupted first attempt also fixed an environment-shape defect it
+tripped over — the `SOCKET-INET-ADDRESSES` census test
+(`compiler/tests/std_socket_inet.rs`) recursing into `.claude/worktrees/*`,
+sibling checkouts of this same repository, when run from the **primary
+checkout**, and failing against its pinned two-file expectation. That commit
+(`469f6509`) was merged onto this branch with the rest of the predecessor's
+work, **and it is already on `main`** — the user landed it independently
+before `C-GATEWAY-WAVE`. It therefore contributes **nothing** to this card's
+diff (`git diff 2492825b HEAD -- compiler/tests/std_socket_inet.rs` is empty),
+carries no increment paragraph of this card's, and is recorded here only so
+the merge's provenance is not mistaken for new work.
 
 ---
 

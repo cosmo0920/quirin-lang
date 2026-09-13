@@ -55,10 +55,8 @@ promoted; three of five artifacts byte-identical between the two runs, both
 runs one binary (`959a487f…`), exit 0, 185 units, zero gateway failures,
 per-scope lines byte-identical. Contract corpus **74 → 76 modules**,
 manifest-selected **19 → 21**, v1 declarations **41 → 43**, each pin updated
-deliberately. No Rust source change apart from an inherited census-walker
-hygiene fix (the `SOCKET-INET-ADDRESSES` census now skips sibling checkouts
-carrying their own `.git` entry, unweakened over one tree), no new Q code, no
-Lean module (declarative inputs only, the W29 precedent), no provider change.
+deliberately. No Rust source change, no new Q code, no Lean module
+(declarative inputs only, the W29 precedent), no provider change.
 Gate: see `docs/reports/w31-corpus-contracts-2/README.md` §6. Baseline
 proposed to move to `docs/reports/w31-corpus-contracts-2/artifacts/`, every
 predecessor frozen.
