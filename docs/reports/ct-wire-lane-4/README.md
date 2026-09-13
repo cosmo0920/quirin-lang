@@ -354,6 +354,35 @@ regenerating the *unmodified* committed `named_followups` produced
 `39 → 40` (`measure/constraint25_probe.py` stage 5 and the first committed
 regeneration), and appending the two rows then produced `40 → 42`.
 
+### 6.2 Why the matrix's line diff is large, and what that itself measured
+
+The committed matrix's **serialization** also changes, so `git diff` reports
+roughly the whole file. This is a **restoration, not a reformat by this lane**,
+and tracing it produced a second finding, which is why it is recorded here
+rather than waved past. The generator has written `indent=1, ensure_ascii=False`
+since card `HYGIENE-16` changed it from `indent=2, ensure_ascii=True`
+(`d31a8dc3`). Measured across the history of the committed file:
+
+| Revision | Matches generator format? |
+|---|---|
+| `d31a8dc3` (HYGIENE-16) | **yes** — `indent=1` |
+| `b5838915` (*"Matrix: regenerate derived rows at the five-card tip"*) | **yes** |
+| `8bf7fd33` (wave-31 close) | **yes** |
+| `1c7d8e45` (this card's base) | **no** — `indent=2`, the pre-HYGIENE-16 format |
+
+So the file was written by its own generator through the wave-31 close, and
+commit `1c7d8e45` rewrote it **outside** the generator — which is the same
+commit that added a `named_followups` row and left `dimensions.named_followups`
+stale at 39. One hand edit, two consequences: a desynchronised derived count and
+a whole-file reformat away from the generator's output. Both are repaired by
+this lane's regeneration, and both are folded into
+**`D02-DIMENSIONS-FOLLOWUP-COUNT`** (§9), whose statement is therefore *"a hand
+edit to this file drifts it from its generator"* rather than only *"a count can
+go stale"*. The semantic scope is unaffected and was verified on **parsed JSON**,
+not on lines: `measure/verify_matrix.py` compares the committed baseline
+(byte-identical to `1c7d8e45`'s file, checked) against the regenerated one
+section by section, and reports exactly the three movers above.
+
 ## 7. Pinned tables, stage evidence and the derived numbers
 
 Grown deliberately (invariant 5), each stated in the commit message:
@@ -450,7 +479,7 @@ the manifest and say in the text that they were.
 
 | Id | What |
 |---|---|
-| `D02-DIMENSIONS-FOLLOWUP-COUNT` | **New, and repaired here rather than only named.** The committed matrix's `dimensions.named_followups` read 39 against 40 rows on disk, because commit `1c7d8e45` added a `named_followups` row without the derived count beside it. This lane's regeneration corrects it (to 42, the two rows in this table included). The follow-on is the general shape, which stands after the repair: `dimensions` is derived while `named_followups`, `requirements` and the rest are carried, so **any** hand edit to a carried section silently desynchronises its count until someone regenerates, and nothing checks the pair in between. Discharge: a check comparing each derived dimension against the section it counts — HYGIENE-14's repair of the bucket tally, one field over — or a stated decision that the counts are advisory between regenerations. |
+| `D02-DIMENSIONS-FOLLOWUP-COUNT` | **New, and repaired here rather than only named.** Commit `1c7d8e45` edited `acceptance_matrix.json` **outside its generator**, with two measured consequences: `dimensions.named_followups` read 39 against 40 rows actually on disk, and the whole file was reserialized to the pre-`HYGIENE-16` `indent=2` format (§6.2 traces both). This lane's regeneration repairs both. The follow-on is the general shape, which stands after the repair: `dimensions` is derived while `named_followups`, `requirements` and the rest are carried, so **any** hand edit to a carried section can silently desynchronise a derived count *and* drift the file's format, with nothing checking either between regenerations — and the next regenerating lane then inherits an unreviewably large diff, as this one did. Discharge: a check comparing each derived dimension against the section it counts (HYGIENE-14's repair of the bucket tally, one field over) plus a format assertion, or a stated decision that hand edits to this file are expected and the counts advisory between regenerations. |
 | `CT47-WRITE-CAPTURE-UNEXERCISED` | **New** (`STABILITY-REEVAL` §1). The `write` capture mode parses and has no lowering; its refusal moved from the `Q500` catch-all to the judgment's `WriteCaptureUnimplemented` arm in wave 29, and no fixture in this corpus drives that arm. Discharge: a fixture that produces the shape, or a statement that the keyword is withdrawn. |
 | `CT24-CLEANUP-TASK-COMPOSITION` | Unchanged, lane 3's. CT24 still needs a cleanup/task composition in which an executed scope-exit destroy meets a live loan. A lane taking it inherits lane 3's §4.1 measurement **and** this lane's §6.1 finding that the regeneration must pass the committed gate file relatively. |
 | `T00.7` | Unchanged and open for both new cases: no theorem is bound to either CT fixture. Proof stays 3 of 45. |
