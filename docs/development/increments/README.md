@@ -21,10 +21,10 @@ dates. Current agent rules and headline status live in
 
 ## Adding a record
 
-Current record file: [wave-31.md](wave-31.md). Prepend one paragraph per
+Current record file: [wave-32.md](wave-32.md). Prepend one paragraph per
 new increment below the checkpoint notice and above the migrated section.
-Keep that increment's evidence and boundaries together. Start `wave-32.md`
-when wave 32 begins and update this pointer and the wave table; do not rename
+Keep that increment's evidence and boundaries together. Start `wave-33.md`
+when wave 33 begins and update this pointer and the wave table; do not rename
 old files. Main headline changes still belong in `AGENTS.md`.
 
 For a worktree created before this split, compare its `DEVELOPMENT.md` changes
@@ -36,6 +36,7 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
+| 32 | [Wave 32 records](wave-32.md) |
 | 31 | [Wave 31 records](wave-31.md) |
 | 30 | [Wave 30 records](wave-30.md) |
 | 29 | [Wave 29 records](wave-29.md) |
