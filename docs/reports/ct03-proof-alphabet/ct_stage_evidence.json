@@ -1,0 +1,96 @@
+{
+ "schema_version": 1,
+ "card": "CT03-PROOF-ALPHABET",
+ "generated": "2026-09-13",
+ "report": "docs/reports/ct03-proof-alphabet/README.md",
+ "purpose": "The integrator flip of CT03 proof stage: the manifest third executed proof row, superseding the wave-3 CT-integration record for CT03 without editing it (constraint 21). Every other stage row is carried from that record unchanged; only proof moves, on the named workspace test the capability card landed.",
+ "derivation_rule": "A stage is executed only where a named workspace test runs it on the case own artifact. compiler/tests/ct03_proof_leg.rs lowers CT03 fixture through the real pipeline and checks the artifact against the Lean-proved procedure over the extended alphabet. A grown proof numerator is evidence about this case artifact, not language conformance (constraint 23).",
+ "mapped_case_stage_matrix": {
+  "CT03": {
+   "supersedes": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+   "harness_verdict_mode": "native_heap_scenarios",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 1
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 1
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 1,
+     "note": "qcore_frontend::source_tasks lowering of `read PLACE share N` captures and `qcore_buffer_write`, reached through compile_files."
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 1,
+     "note": "qcore_core::scoped_tasks all-paths check, reached through compile_files; the harness asserts SourceExecutionProfile::ScopedReadSharesV1 so another route cannot satisfy the case."
+    },
+    "mutex_lowering": {
+     "status": "not_applicable"
+    },
+    "mutex_invariant_check": {
+     "status": "not_applicable"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable"
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable"
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 3,
+     "note": "execute_task_module_with_worker_allocations on the checked task IR, once per fixed schedule; it never reads the emitted C."
+    },
+    "mutex_reference_execution": {
+     "status": "not_applicable"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 3,
+     "note": "one emitted module, compiled once per schedule."
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 3,
+     "note": "the emitted C compiled and run once per schedule; stdout equals the reference observation line for line on the two completing schedules, and the trapped-abort schedule pins what its truncated observation must not contain."
+    },
+    "native_sanitized": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 3,
+     "note": "ASan + UBSan on every schedule; LeakSanitizer on every schedule whose exit code is 0. Gated by the harness, not a transcript."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable"
+    },
+    "proof": {
+     "status": "executed",
+     "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+     "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+     "observations": 1,
+     "note": "the artifact checked against the Lean-proved decision procedure of QCore.Ct03ReadShares over the CT03-PROOF-ALPHABET extension of the F02 relation (QCore.TaskTraceWrites), registered in AuditCt03ReadShares.lean; reference run decided by kernel and every admitted rendering covered by the symbolic closure. The alphabet extension is proved CONSERVATIVE (write_free_traces_relate_exactly_as_before) and no existing digest moved. Native execution deliberately not covered (observation only); typed error outcomes remain outside the alphabet."
+    }
+   }
+  }
+ }
+}

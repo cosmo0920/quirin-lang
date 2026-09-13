@@ -368,7 +368,10 @@
           "status": "not_applicable"
         },
         "proof": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+          "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+          "observations": 1
         }
       },
       "evidence_target": "linux"
