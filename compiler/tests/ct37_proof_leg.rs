@@ -78,6 +78,11 @@ fn encode_event(event: &ObservedEvent) -> u64 {
             buffer,
             value,
         } => 5 + 16 * (task + 8 * (buffer + 64 * natural(*value))),
+        ObservedEvent::Written {
+            task,
+            buffer,
+            value,
+        } => 11 + 16 * (task + 8 * (buffer + 64 * natural(*value))),
         ObservedEvent::Dropped { task, buffer } => 6 + 16 * (task + 8 * buffer),
         ObservedEvent::Loaned { borrower, buffer } => 7 + 16 * (borrower + 8 * buffer),
         ObservedEvent::Returned { borrower, buffer } => 8 + 16 * (borrower + 8 * buffer),

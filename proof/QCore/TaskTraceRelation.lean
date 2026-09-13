@@ -30,6 +30,12 @@ What this file does **not** establish: that a Lean theorem proves the Rust
 implementation correct, that a native execution took the order it rendered, or
 anything about C programs outside this profile. Native trace replay is not
 general C refinement.
+
+Since card `CT03-PROOF-ALPHABET` the production alphabet also carries the T05
+Buffer write; `QCore.TaskTraceWrites` transcribes that extended relation and
+proves it conservative over this module — this file's alphabet, relation and
+pins are unchanged and remain the transcription of the relation's restriction
+to the write-free sublanguage.
 -/
 
 namespace QCore.TaskTraceRelation
