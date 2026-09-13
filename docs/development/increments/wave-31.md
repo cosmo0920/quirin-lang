@@ -6,6 +6,28 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+C gateway scalar writes, expression frames and conditional custody (2026-09-13):
+`C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and
+bounded `AOM-POISON-CONDITION-FRAME` repairs, and an acyclic conditional-identity
+capability for `AOM-DESTROY-JOINED-PROVENANCE`. Scalar writes forget stale branch
+facts, including the production `flag = !0` case exposed during the staged
+review; complete expression refusals spare only positively unwritable automatic
+bindings; a guarded release may settle a known local acquisition while retaining
+the lookup's `UnknownAlias`. Unshadowed, non-address-taken locals and shallow
+release contracts bound that last rule; the production `input_chunk_get` residual
+remains open. Sixteen abstract Lean rule theorems carry explicit extraction,
+contract and no-UB premises; no whole-C correctness claim is made. The preceding
+worktree sweep retains all four secondary checkouts because each has unique
+unmerged work, and verifies the existing recovery hashes. Fresh BEFORE reproduces
+the wave-30 diagnostic and chunk-contract archives byte for byte; the five staged
+measurements, every changed leaf, provisional diagnostic boundaries and new
+baseline are owned by `docs/reports/c-gateway-wave/`. Final gate: **4,484** workspace
+tests (0 failed, 8 ignored, `--no-fail-fast`), **200** Python tests, **123** Lean
+audits, both probes exit 0, fmt/clippy clean; provider 122 carried unchanged.
+The sandbox failure, its green outside-sandbox repeat and the final source's
+separate green repeat are all retained. Contracts remain 74, CT mapping remains
+42/50 (proof 2 of 42), and full language conformance remains false.
+
 Documentation structure and bounded retrieval (2026-09-13): the main guides
 adopt the compact-context reading strategy, and `DEVELOPMENT.md` becomes a
 table of contents over focused setup, layout, cycle-evidence and increment

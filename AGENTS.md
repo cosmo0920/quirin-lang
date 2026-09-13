@@ -101,35 +101,24 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-30 close. The **corpus baseline is
-`docs/reports/w4-recursive-summaries/artifacts/`** — wave 30's arbiter,
-`W4-RECURSIVE-SUMMARIES`, ran the protocol as a **determinism measurement**:
-its BEFORE run reproduces the wave-29 `w29-corpus-contracts`
-`diagnostics.json` and `chunk-contracts.json` **byte for byte**, and its AFTER
-run is byte-identical to its own BEFORE in all five artifacts, because the
-card changes no analysis input — the neutral-element unit it was chartered to
-land was **measured already landed** (card C03-NFR, recorded as
-`W4-RECSUM-ALREADY-LANDED` so the route is not double-counted), and what it
-lands is the design's owed §4.3 soundness induction in Lean plus the amended
-constraint 4 below. Wave 29's arbiter facts stand beneath it (two faithful
-size-query contracts deciding exactly thirteen `unsupported` leaves). The wave-27
-presentation facts carry forward: 54,371 rows carry an `origin` naming the
-original pre-preprocessing `file:line`, while the preprocessed `L`-number
-stays the **internal** coordinate for pin identity, leaf identity and
-certificate comparability, by the user's ruling
-(`GATEWAY-LOCATION-INTERNAL-CHANNELS`). Every preceding corpus archive stays
-frozen (constraint 21): `docs/reports/wave23-c-operations/artifacts/` and the
-attributed AFTER runs chained beneath it — `aom-destroy-siblings` (wave 23),
-`aom-binding-poison` (wave 25), `gateway-c-location` (wave 27),
-`w29-corpus-contracts` (wave 29), `w4-recursive-summaries` (wave 30):
+Headline numbers after `C-GATEWAY-WAVE` (2026-09-13). The **corpus baseline is
+`docs/reports/c-gateway-wave/artifacts/`**. Its fresh BEFORE reproduces wave 30's
+`w4-recursive-summaries` diagnostic and chunk-contract archives byte for byte;
+the final five-artifact comparison, staged leaf attribution and gate are in
+`docs/reports/c-gateway-wave/`. All earlier archives remain frozen (constraint
+21), including `wave23-c-operations`, `aom-destroy-siblings`, `aom-binding-poison`,
+`gateway-c-location`, `w29-corpus-contracts` and `w4-recursive-summaries`.
+Diagnostics retain two coordinates: the presented original `file:line` and the
+internal preprocessed line used for pin, leaf and certificate identity
+(`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at both the wave-27 presentation re-pin and the wave-29 arbiter re-pin, as is `unknown_alias` **4,344**). `unsupported` **49,760** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; zero leaves added, one unit changed). A diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions. 4,834 projected functions: **146 Safe / 85 provisional Unsafe / 4,603 Unknown**; four scalar counter helpers withdraw Safe → Unknown, and one constant-loop abstraction exposes a provisional repeated release (five function moves, all named in `c-gateway-wave`). `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272: six added, none withdrawn; constraint 7), `unknown_alias` **4,208**, `unsupported` **50,155**, `double_release` **1**. Provisional findings remain subject to the report's coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
 | CT01–CT50 conformance | **42/50 mapped**, 8 unmapped; sanitized-native **7 of 42**; **proof 2 of 42** — CT01 (wave 29, `CT01-PROOF-LEG`) and CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | 4,466 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **121 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave30-close/gate.json`, measured at the integration tip over the six merged cards plus the sweep's salvage commit; each card's own gate is in its report; constraint-16 load rows that tripped under concurrent suites were re-verified in isolation, both facts recorded each time) |
+| Merged gate | **4,484 workspace tests (0 failed, 8 ignored)** · 122 provider (carried; unchanged) · **200 Python** · **123 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/c-gateway-wave/gate.json`; full `--no-fail-fast` run on the final source outside the sandbox, with earlier sandbox failures and the separate pre-review green run retained in `pre-final-gates.json`) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -242,16 +231,23 @@ pointer is the card that established it; read it before deviating.
 5a. A fixed C `sizeof`/`_Alignof` query's operand-class marker is **never a
     computed value**. Do not use normalized query tokens to construct a CFG or
     refine nullness. Scalar assignments forget old scalar facts; expression
-    mutations need modeled writes rather than a `NoOp`. `wave23-c-operations`.
+    mutations need modeled writes rather than a `NoOp`. Standalone declared
+    scalar increments/decrements and custody-neutral scalar assignments use
+    `ForgetScalar` when no precise value is modeled. This includes enum,
+    compound and scalar-field assignments: `flag = !0` must not retain an old
+    zero. Multiple scalar writes and expression-position assignments or
+    increments remain refused until their evaluation is modeled.
+    `wave23-c-operations`, `c-gateway-wave`.
 6. **C02-P-ALIAS-LEAK-ORDER:** `report_leaks` on intermediate iterates is
    scheduling-sensitive; a pre-pass keeps it scheduling-neutral with
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it
    incidentally. `remaining-c02-p-alias`, `remaining-borrow-liveness`,
    `remaining-hygiene-14`.
-7. Leak diagnostics are **266** across the pinned 185-unit corpus. A change
+7. Leak diagnostics are **272** across the pinned 185-unit corpus. A change
    that moves that number is a finding to attribute in the re-pin, not to
-   absorb. It has moved exactly four times, each deliberately and each either
-   in the *accusing* direction or by **deciding** a leaf.
+   absorb. Through wave 30 it had moved four times, each deliberately and each
+   either in the *accusing* direction or by **deciding** a leaf. The current
+   six-row increase is attributed after that historical chain below.
    271 → 272 (wave 17): `flb_input_chunk_get_direct_routes` L19399,
    accusing, on a function and a unit already `Unsafe`, held provisional as
    `CONSTRUCTOR-RESIDUALS-LEAK-271`. 272 → 273 (wave 20): `input_chunk_get`
@@ -278,12 +274,11 @@ pointer is the card that established it; read it before deviating.
    L19544, is on the success path where no destroy call runs, so it **stands**,
    the function keeps its leak and its provisional `Unsafe`, and the pin reads
    266 rather than 265. Nothing is promoted by any of the four: zero unit status
-   moves, zero function status moves. There is **no fifth move** — at the
-   wave-25 re-measurement the L19399 leaf wave 23 decided by *withdrawal* is
-   decided instead by the **discharging** arm of that same contract, its first
+   moves, zero function status moves. At the wave-25 re-measurement there was
+   **no fifth move**: the L19399 leaf wave 23 decided by *withdrawal* is decided instead by the **discharging** arm of that same contract, its first
    firing anywhere in the pinned corpus: a strictly better answer to the same
    question, changing no count, the pin still **266** with not one leak leaf
-   added or removed. There is **no sixth move** either: the wave-27 arbiter
+   added or removed. The wave-27 arbiter also made **no further move**: it
    re-pinned *presentation* only, and the 266 leak rows are exactly the 266 whose
    description text was rewritten — each verified to be the substitution of the
    **site alone**, the text on both sides of the phrase byte-identical. A leak
@@ -293,6 +288,14 @@ pointer is the card that established it; read it before deviating.
    `wave20-abi-address-of-member`, `wave20-corpus`, `wave22-aom-destroy`,
    `wave22-corpus`, `aom-destroy-siblings` §6 and §6.1,
    `aom-binding-poison` Headline and §5.2, `gateway-c-location` §5.3.
+   The current `C-GATEWAY-WAVE` re-pin advances **266 → 272**: six added
+   provisional leak leaves, no baseline leak leaf withdrawn. Two arise from
+   complete-expression frames and four from nullness refinement; every site is
+   listed in `docs/reports/c-gateway-wave/README.md`'s final measured result.
+   Four intermediate missing leaves were restored by the scalar-assignment
+   repair before publication. The original worklist schedule is retained;
+   neither the leak rows nor the new constant-loop repeated-release row is a
+   validated upstream defect claim.
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
@@ -355,13 +358,17 @@ pointer is the card that established it; read it before deviating.
     recognised all three premises: a plain name, an automatic object of this
     body whose address is never taken, and no write position for that name in
     the refused text. The allow-list is built **positively**, so an
-    unrecognised place is always poisoned, and every refusal that does not stand
-    for one complete statement — every condition, every control-flow refusal —
-    **keeps the blanket poison** (`AOM-POISON-CONDITION-FRAME`). The refusal
-    itself is never weakened: the `Unsupported` diagnostic, the `unmodeled` path
-    flag and the `Unknown` function status are untouched, which is what makes it
-    impossible for this rule to promote anything — measured as zero unit and
-    zero function status moves, and a leak pin that does not move. The frame
+    unrecognised place is always poisoned. A parser-delimited complete
+    condition or return expression now carries its own write frame; a
+    structural control-flow failure without complete expression text **keeps
+    the blanket poison**. Prefix mutation through parentheses is a write
+    (`++(p)` must not spare `p`). The refusal
+    itself is never weakened: the `Unsupported` diagnostic and `unmodeled`
+    path flag are retained, which prevents this rule from certifying a refused
+    function. Exposing an additional violation can make its status provisional
+    `Unsafe`. Wave 25 measured
+    zero unit/function status moves and an unchanged leak pin; the condition
+    extension's separate measurements are in `c-gateway-wave`. The frame
     premise is the ordinary C object model under the **no-undefined-behaviour**
     reading (`AOM-POISON-NO-UB`), and the declaration reader
     (`publication::body_declarations`) over-approximates in the direction that
@@ -370,7 +377,23 @@ pointer is the card that established it; read it before deviating.
     (`AOM-POISON-DECLARATION-READER`). Do not widen `may_write_names` without
     measuring: sparing a binding can **unmask** a stale scalar fact a `NoOp`
     mutation left behind (`AOM-POISON-NOOP-INCREMENT`, constraint 5a's already
-    recorded hazard). `aom-binding-poison`.
+    recorded hazard). `aom-binding-poison`, `c-gateway-wave`.
+10b. **Non-nullness does not establish lookup identity.** A null guard on an
+    unknown binding may narrow only that binding; it must retain its identity
+    refusal and may not remove resources or refine another alias. Conditional
+    provenance is derived separately from the custody worklist, over acyclic
+    CFGs only, for unshadowed automatic locals whose addresses are never taken:
+    a name denotes a local site on every path where that site
+    exists. An absent predecessor is neutral; present predecessors intersect.
+    No caller custody is seeded, calls forget prior relations, and cyclic CFGs
+    derive no facts. A conditional shallow release may settle a known local
+    site's disposition only under the checked premises in
+    `legacy_joined_provenance::release_site`, retaining the lookup's
+    `UnknownAlias` and every other uncertainty. Never apply it to overwritten
+    live acquisitions, unresolved prior effects, child/reallocation relations,
+    or additional failed call premises. This does not close the production
+    `input_chunk_get` residual: its address-taken binding crosses other refused
+    operations. `c-gateway-wave`.
 
 **Compile-task identity and source transport**
 

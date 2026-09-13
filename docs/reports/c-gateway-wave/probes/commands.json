@@ -1,0 +1,98 @@
+{
+  "decode_histogram_points": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "decode_exponential_histogram_data_point": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+      "decode_exponential_histogram_data_point"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "decode_histogram_data_point": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "decode_summary_data_point": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/cmetrics/src/cmt_decode_opentelemetry.c",
+      "decode_summary_data_point"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "rd_kafka_jwt_b64_decode_payload": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/rdkafka_sasl_oauthbearer_oidc.c",
+      "rd_kafka_jwt_b64_decode_payload"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "rd_kafka_snappy_java_uncompress": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/lib/librdkafka-2.15.0/src/snappy.c",
+      "rd_kafka_snappy_java_uncompress"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "input_chunk_get": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/target/debug/examples/alias_aggregate_probe",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-production/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/src/flb_input_chunk.c",
+      "input_chunk_get"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  },
+  "mk_server_listen_init": {
+    "command": [
+      "target/debug/examples/alias_aggregate_probe",
+      "build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "build/cycle19/c-gateway-wave-pin/monkey/monkey-source/mk_server/mk_server.c",
+      "mk_server_listen_init"
+    ],
+    "exit": 0,
+    "environment": {
+      "QCORE_CLANG": "/usr/bin/clang"
+    }
+  }
+}

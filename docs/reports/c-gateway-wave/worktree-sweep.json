@@ -1,0 +1,68 @@
+{
+  "date": "2026-09-13",
+  "previous_sweep": "docs/plans/resume-2026-09-13/sweep.json",
+  "removed": [],
+  "worktrees": [
+    {
+      "path": ".",
+      "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "status": "",
+      "main_head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "main_only_and_worktree_only": "0\t0",
+      "decision": "retain",
+      "reason": "primary implementation checkout",
+      "locked": false
+    },
+    {
+      "path": ".claude/worktrees/agent-a0f14b595495fba8a",
+      "head": "0e6043ce1c557646318674448b7fcc33460538b7",
+      "status": "",
+      "main_head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "main_only_and_worktree_only": "4\t1",
+      "decision": "retain",
+      "reason": "unique unmerged implementation; not obsolete",
+      "locked": false
+    },
+    {
+      "path": ".claude/worktrees/agent-a56d2b9c03bea3365",
+      "head": "d616512b771997bf06a4f60a26c418b6adb218b9",
+      "status": "M AGENTS.md\n M DEVELOPMENT.md\n M compiler/tests/contract_loader.rs\n M compiler/tests/qcore_contract_corpus.rs\n M contract/cycle19-resource-contracts.json\n?? docs/reports/w31-corpus-contracts-2/README.md\n?? docs/reports/w31-corpus-contracts-2/archive.sh\n?? docs/reports/w31-corpus-contracts-2/artifact-manifest.json\n?? docs/reports/w31-corpus-contracts-2/artifacts/chunk-contracts.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/contracts.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/diagnostics.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/diff-baseline-to-after.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/diff-baseline-to-before.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/diff-before-to-after.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/source-effects.json.gz\n?? docs/reports/w31-corpus-contracts-2/artifacts/source.json.gz\n?? docs/reports/w31-corpus-contracts-2/byte_identity.py\n?? docs/reports/w31-corpus-contracts-2/census.py\n?? docs/reports/w31-corpus-contracts-2/gzip_before.py\n?? docs/reports/w31-corpus-contracts-2/headline.py\n?? docs/reports/w31-corpus-contracts-2/logs/audit-after.txt.gz\n?? docs/reports/w31-corpus-contracts-2/logs/audit-before.txt.gz\n?? docs/reports/w31-corpus-contracts-2/logs/byte-identity-before-to-after.txt\n?? docs/reports/w31-corpus-contracts-2/logs/byte-identity-before.txt\n?? docs/reports/w31-corpus-contracts-2/logs/census.txt\n?? docs/reports/w31-corpus-contracts-2/logs/diff-summary-after.txt\n?? docs/reports/w31-corpus-contracts-2/logs/diff-summary-before-to-after.txt\n?? docs/reports/w31-corpus-contracts-2/logs/diff-summary-before.txt\n?? docs/reports/w31-corpus-contracts-2/logs/workspace-tests-run1-pins-red.txt.gz\n?? docs/reports/w31-corpus-contracts-2/manifest.py\n?? docs/reports/w31-corpus-contracts-2/prepare-pin.sh\n?? docs/reports/w31-corpus-contracts-2/run-audit.sh\n?? docs/reports/w31-corpus-contracts-2/summarise_diff.py",
+      "main_head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "main_only_and_worktree_only": "4\t1",
+      "decision": "retain",
+      "reason": "unique unmerged implementation; not obsolete",
+      "locked": true
+    },
+    {
+      "path": ".claude/worktrees/agent-a86de3e1a59ff9d7f",
+      "head": "5667267881c54ce24e2ef0052afb0914f6ac2a87",
+      "status": "",
+      "main_head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "main_only_and_worktree_only": "4\t1",
+      "decision": "retain",
+      "reason": "unique unmerged implementation; not obsolete",
+      "locked": false
+    },
+    {
+      "path": ".claude/worktrees/vibrant-curie-9f9380",
+      "head": "b8a9311f7719ee8f3231277ee73cca8fdcc65789",
+      "status": "",
+      "main_head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+      "main_only_and_worktree_only": "2\t2",
+      "decision": "retain",
+      "reason": "unique unmerged implementation; not obsolete",
+      "locked": false
+    }
+  ],
+  "recovery_hash_checks": {
+    "untracked.tar.gz": true,
+    "staged.patch": true,
+    "tracked.patch": true,
+    "ignored-measure.tar.gz": true
+  },
+  "notes": [
+    "Six obsolete worktrees were already removed in the previous sweep.",
+    "No other checkout directories were found; .sweep-backups is recovery data.",
+    "No branch, lock, pending work or recovery archive was removed."
+  ]
+}

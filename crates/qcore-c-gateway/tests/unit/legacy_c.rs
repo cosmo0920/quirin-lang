@@ -1247,6 +1247,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         // CTWIN-PUBLISH / CTWIN-RESIDUALS fact is empty and the may-alias
         // pre-pass measures exactly what it measured before those cards.
         publications: PublicationFacts::default(),
+        conditional_names: BTreeSet::new(),
     }
 }
 
@@ -1421,4 +1422,371 @@ fn an_indirect_release_place_records_no_release() {
         released_names(&instruction).is_empty(),
         "a member place is not a name this rule relates"
     );
+}
+
+#[test]
+fn scalar_increments_never_leave_a_stale_zero_branch_fact() {
+    for mutation in [
+        "n++",
+        "++n",
+        "n--",
+        "--n",
+        "++(n)",
+        "((n))--",
+        "n = !0",
+        "n += 1",
+        "n = 1 + 2",
+    ] {
+        let summary = analyze(&format!(
+            "void subject(void) {{ int n = 0; {mutation}; if (n) {{ void *p = q_alloc(); }} }}"
+        ));
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
+            "{mutation}: {:?}",
+            summary.diagnostics
+        );
+        let clean = analyze(&format!(
+            "void subject(void) {{ int n = 0; {mutation}; void *p = q_alloc(); q_free(p); }}"
+        ));
+        assert_eq!(
+            clean.status,
+            AnalysisStatus::Safe,
+            "{mutation}: {:?}",
+            clean.diagnostics
+        );
+    }
+}
+
+#[test]
+fn scalar_assignment_effects_survive_unrelated_condition_frames() {
+    for mutation in ["n = !0", "n = ON", "n = s->value", "n += s->value"] {
+        let source = format!(
+            "enum flag {{ ON = 1 }}; struct scalar {{ int value; }}; void subject(struct scalar *s) {{ int n = 0; {mutation}; if (external()) {{ }} if (n) {{ void *p = q_alloc(); }} }}"
+        );
+        let summary = analyze(&source);
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
+            "{mutation}: {:?}",
+            summary.diagnostics
+        );
+    }
+    for expression in ["n = 1", "n += 1", "n >>= 1", "n = (m = 1)"] {
+        let summary = analyze(&format!(
+            "void subject(void) {{ int n = 0; int m = 0; if ({expression}) {{ }} if (n) {{ void *p = q_alloc(); }} }}"
+        ));
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Unsupported { .. }
+            )),
+            "{expression}"
+        );
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Leak { .. }
+            )),
+            "{expression}: {:?}",
+            summary.diagnostics
+        );
+    }
+}
+
+#[test]
+fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
+    for body in [
+        "int n = 0; int m = 0; m = n++;",
+        "int n = 0; if (n++) {}",
+        "int n = 0; while (n++) {}",
+        "int n = 0; for (; n++; ) {}",
+        "int n = 0; do {} while (n++);",
+        "int n = 0; switch(n++) { default: break; }",
+        "int n = 0; return n++;",
+        "char *p = q_alloc(); p++; q_free(p);",
+        "int n = 0; consume(n++);",
+    ] {
+        let summary = analyze(&format!("int subject(void) {{ {body} }}"));
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Unsupported { .. }
+            )),
+            "{body}: {:?}",
+            summary.diagnostics
+        );
+    }
+}
+
+#[test]
+fn complete_refused_control_expressions_preserve_unwritten_automatic_bindings() {
+    for expression in [
+        "if (opaque()) {}",
+        "while (opaque()) { break; }",
+        "for (; opaque(); ) { break; }",
+        "do {} while (opaque());",
+        "switch (opaque()) { default: break; }",
+        "switch (0) { case sizeof(struct Pair): break; }",
+    ] {
+        let summary = analyze(&format!(
+            "struct Pair {{ int x; }}; void subject(void) {{ void *p = q_alloc(); {expression} q_free(p); q_free(p); }}"
+        ));
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Unsupported { .. }
+            )),
+            "{expression}"
+        );
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::DoubleRelease { .. }
+            )),
+            "{expression}: {:?}",
+            summary.diagnostics
+        );
+        assert!(
+            !has(
+                &summary,
+                |kind| matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p")
+            ),
+            "{expression}"
+        );
+    }
+    let returned = analyze("int subject(void) { void *p = q_alloc(); return opaque(); }");
+    assert!(has(&returned, |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Unsupported { .. }
+    )));
+    assert!(has(&returned, |kind| matches!(
+        kind,
+        LegacyDiagnosticKind::Leak { .. }
+    )));
+}
+
+#[test]
+fn refused_control_expressions_still_poison_written_or_reachable_slots() {
+    for (setup, expression) in [
+        ("", "if ((p = opaque())) {}"),
+        ("", "if (++(p)) {}"),
+        ("", "if (--((p))) {}"),
+        ("", "if (((p))++) {}"),
+        ("void **slot = &p;", "if (opaque(slot)) {}"),
+    ] {
+        let summary = analyze(&format!(
+            "void subject(void) {{ char *p = q_alloc(); {setup} {expression} q_free(p); }}"
+        ));
+        assert!(
+            has(
+                &summary,
+                |kind| matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p")
+            ),
+            "{expression}: {:?}",
+            summary.diagnostics
+        );
+        assert_ne!(summary.status, AnalysisStatus::Safe);
+    }
+    for declaration in ["void *p;", "static void *p;"] {
+        let source = if declaration.starts_with("static") {
+            format!(
+                "void subject(void) {{ {declaration} p = q_alloc(); if (opaque()) {{}} q_free(p); }}"
+            )
+        } else {
+            format!(
+                "{declaration} void subject(void) {{ p = q_alloc(); if (opaque()) {{}} q_free(p); }}"
+            )
+        };
+        assert_ne!(analyze(&source).status, AnalysisStatus::Safe);
+    }
+    let malformed = analyze("void subject(void) { void *p = q_alloc(); goto missing; q_free(p); }");
+    assert!(has(
+        &malformed,
+        |kind| matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == "p")
+    ));
+}
+
+#[test]
+fn joined_lookup_and_acquisition_release_only_the_conditional_known_site() {
+    for release in ["q_free(p);", "void *r = p; q_free(r);"] {
+        let source = format!(
+            "extern void *external; void subject(void) {{ void *p = external; if (!p) {{ p = q_maybe_alloc(); if (!p) return; }} {release} }}"
+        );
+        let summary = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_NULLABLE]),
+        )
+        .unwrap();
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Unknown,
+            "{:?}",
+            summary.diagnostics
+        );
+        assert!(has(&summary, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::UnknownAlias { .. }
+        )));
+        assert!(
+            summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Released),
+            "{release}: {:?}",
+            summary.exits
+        );
+        assert!(
+            !summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Mixed),
+            "{release}: {:?}",
+            summary.exits
+        );
+    }
+}
+
+#[test]
+fn an_overwritten_live_acquisition_is_not_a_conditional_lookup_acquisition() {
+    for body in [
+        "void *p = q_maybe_alloc(); if (!p) return; if (flag) p = external; if (!p) return; q_free(p);",
+        "void *p = external; if (flag) { p = q_maybe_alloc(); if (!p) return; } q_free(p);",
+        "void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } p = external; if (!p) return; q_free(p);",
+        "void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } while (flag) { flag = 0; } q_free(p);",
+    ] {
+        let source = format!("extern void *external; void subject(int flag) {{ {body} }}");
+        let summary = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_NULLABLE]),
+        )
+        .unwrap();
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
+        assert!(
+            summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Mixed),
+            "{body}: {:?}",
+            summary.exits
+        );
+    }
+}
+
+#[test]
+fn unknown_identity_null_refinement_never_erases_a_resource() {
+    for targets in [BTreeSet::new(), BTreeSet::from([1]), BTreeSet::from([1, 2])] {
+        let mut state = AbstractState::default();
+        state.resources.insert(1, LIVE);
+        state.resources.insert(2, RELEASED);
+        state.pointers.insert(
+            "p".into(),
+            AbstractPointer {
+                targets,
+                unknown: true,
+                may_be_null: true,
+            },
+        );
+        let before = state.clone();
+        assert!(matches!(
+            refine_pointer_null(&mut state, "p", false),
+            PointerRefinement::Unknown
+        ));
+        assert_eq!(state.resources, before.resources);
+        assert!(state.pointers["p"].unknown);
+        assert!(!state.pointers["p"].may_be_null);
+        assert!(matches!(
+            refine_pointer_null(&mut state, "p", true),
+            PointerRefinement::Unknown
+        ));
+        assert_eq!(state.resources, before.resources);
+        assert!(state.pointers["p"].targets.is_empty());
+    }
+}
+
+#[test]
+fn scalar_mutation_and_conditional_release_are_rederived_through_clang() {
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    let safe_source = "void *q_alloc(void); void q_free(void *); void subject(void) { int n = 0; n++; if (n) { void *p = q_alloc(); q_free(p); } }";
+    let safe_unit = C11TranslationUnit {
+        source: safe_source,
+        ..C11TranslationUnit::default()
+    };
+    let UnrestrictedLegacyResult::Safe(certificate) =
+        analyze_unrestricted_c11(&safe_unit, "subject", &contracts()).unwrap()
+    else {
+        panic!("scalar cleanup must certify")
+    };
+    check_legacy_safety_certificate(&certificate).unwrap();
+    let leaky_source = safe_source.replace("q_alloc(); q_free(p);", "q_alloc();");
+    let leaky_unit = C11TranslationUnit {
+        source: &leaky_source,
+        ..C11TranslationUnit::default()
+    };
+    assert!(!matches!(
+        analyze_unrestricted_c11(&leaky_unit, "subject", &contracts()).unwrap(),
+        UnrestrictedLegacyResult::Safe(_)
+    ));
+    let source = "extern void *external; void *q_maybe_alloc(void); void q_free(void *); void subject(void) { void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } q_free(p); }";
+    let unit = C11TranslationUnit {
+        source,
+        ..C11TranslationUnit::default()
+    };
+    let UnrestrictedLegacyResult::Unknown {
+        partial: Some(summary),
+        ..
+    } = analyze_unrestricted_c11(&unit, "subject", &fixture_contracts(&[Q_BASE, Q_NULLABLE]))
+        .unwrap()
+    else {
+        panic!("lookup identity must remain Unknown")
+    };
+    assert!(
+        summary
+            .functions
+            .get("subject")
+            .unwrap()
+            .exits
+            .iter()
+            .flat_map(|exit| &exit.sites)
+            .any(|site| site.disposition == SiteDisposition::Released)
+    );
+}
+
+#[test]
+fn conditional_provenance_excludes_shadowed_and_address_taken_names() {
+    for body in [
+        "void *p = external; if (!p) { void *p = q_maybe_alloc(); if (!p) return; } q_free(p);",
+        "void *p = external; void **slot = &p; if (!p) { p = q_maybe_alloc(); if (!p) return; } q_free(p);",
+    ] {
+        let source = format!("extern void *external; void subject(void) {{ {body} }}");
+        let summary = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_NULLABLE]),
+        )
+        .unwrap();
+        assert!(!summary.cfg.conditional_names.contains("p"));
+        assert!(
+            !summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Released),
+            "{body}: {:?}",
+            summary.exits
+        );
+        assert_ne!(summary.status, AnalysisStatus::Safe);
+    }
 }

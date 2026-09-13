@@ -1,0 +1,105 @@
+{
+  "before": {
+    "units": 185,
+    "functions": 4834,
+    "unit_statuses": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4600,
+      "Safe": 150,
+      "Unsafe": 84
+    },
+    "diagnostics": {
+      "leak": 266,
+      "unknown_alias": 4344,
+      "unsupported": 49760
+    }
+  },
+  "scalar": {
+    "units": 185,
+    "functions": 4834,
+    "unit_statuses": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4604,
+      "Safe": 146,
+      "Unsafe": 84
+    },
+    "diagnostics": {
+      "leak": 266,
+      "unknown_alias": 4339,
+      "unsupported": 50160
+    }
+  },
+  "frame": {
+    "units": 185,
+    "functions": 4834,
+    "unit_statuses": {
+      "Unknown": 138,
+      "Unsafe": 41,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4604,
+      "Safe": 146,
+      "Unsafe": 84
+    },
+    "diagnostics": {
+      "double_release": 1,
+      "leak": 264,
+      "unknown_alias": 4167,
+      "unsupported": 50047
+    }
+  },
+  "joined": {
+    "units": 185,
+    "functions": 4834,
+    "unit_statuses": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4603,
+      "Safe": 146,
+      "Unsafe": 85
+    },
+    "diagnostics": {
+      "double_release": 1,
+      "leak": 268,
+      "unknown_alias": 4163,
+      "unsupported": 50046
+    }
+  },
+  "after": {
+    "units": 185,
+    "functions": 4834,
+    "unit_statuses": {
+      "Unknown": 137,
+      "Unsafe": 42,
+      "data_only": 4,
+      "Safe": 2
+    },
+    "function_statuses": {
+      "Unknown": 4603,
+      "Safe": 146,
+      "Unsafe": 85
+    },
+    "diagnostics": {
+      "double_release": 1,
+      "leak": 272,
+      "unknown_alias": 4208,
+      "unsupported": 50155
+    }
+  }
+}
