@@ -238,6 +238,21 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
 /// must publish exactly that duty as a body `Acquire` — the adoption, checked
 /// on the published operations rather than trusted.
 const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT25"];
+/// Card `CT-COMPOSED-NATIVE` (wave 32), discharging the follow-on CT22 and
+/// CT25 named by their own `unassessed` emission and native rows: the
+/// composed-epoch cases whose **own** emitted C this harness really compiles
+/// and runs. Pinned and fail-closed on the `SEQUENTIAL_SANITIZED_CASES` /
+/// `PROOF_GATED_CASES` precedent — a case outside this table is never compiled
+/// or run by `run_composed_native`, and the table and the fixtures'
+/// `composed_native` blocks must agree in both directions, so neither a block
+/// without a table entry nor a table entry without a block can exist.
+///
+/// CT23 is deliberately absent and must stay absent: it is the route's
+/// refusal, so `compile_files` never reaches the backend on it and there is no
+/// emission of its own to run. That is a *stated* reason, not a sweep — its
+/// `c_emission`/`native_execution` rows are `not_applicable` for exactly that
+/// reason and this card does not touch them.
+const COMPOSED_NATIVE_CASES: &[&str] = &["CT22", "CT25"];
 /// The case whose native evidence is compared **up to a declared partial
 /// order** rather than byte for byte (card `CT-WIRE-LANE`, wave 26). Exactly
 /// one, and its own controls pin both boundaries: a program with no worker-body
@@ -420,6 +435,14 @@ const RUNNER_REGISTRY: &[&str] = &[
     "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
     // Card `CT03-PROOF-ALPHABET`: CT03's proof-stage runner, the same shape.
     "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+    // Card `CT-COMPOSED-NATIVE` (wave 32): the composed-epoch accept runner —
+    // one sanitized compile-and-run of the case's own emitted C, its standard
+    // output compared byte for byte with the reference observation of the
+    // module's own checked task half. Registered here deliberately, which is
+    // what makes the name legal for a manifest stage entry to cite; the stage
+    // rows that cite it are the integrator's lockstep edit with
+    // `derive_stage_plan`'s composed-epoch arm, per this card's boundary.
+    "compiler/tests/ct_corpus.rs::run_composed_native",
 ];
 /// The only external tools a stage entry may be gated on. A `tool_gate` is not
 /// a `host_gate`: the C-twin stages run on every target this workspace builds
@@ -430,7 +453,9 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
-const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT07", "CT09", "CT17", "CT26", "CT34", "CT49"];
+const SANITIZED_GATED_CASES: &[&str] = &[
+    "CT03", "CT07", "CT09", "CT17", "CT22", "CT25", "CT26", "CT34", "CT49",
+];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
 /// never `executed`.
@@ -563,6 +588,8 @@ struct ExpectedCase {
     sequential_sanitized: Option<SequentialSanitized>,
     #[serde(default)]
     epoch_credit_split: Option<EpochCreditSplit>,
+    #[serde(default)]
+    composed_native: Option<ComposedNative>,
     #[serde(default)]
     epoch_bound_figures: Option<EpochBoundFigures>,
     #[serde(default)]
@@ -884,6 +911,49 @@ struct EpochCreditSplit {
     #[serde(default)]
     captures: Option<Vec<Vec<String>>>,
     controls: Vec<CreditControl>,
+}
+
+/// A composed-epoch **accept** case's native evidence (card
+/// `CT-COMPOSED-NATIVE`, wave 32). The follow-on `CT22-WIRE` named and
+/// `CT-WIRE-LANE-3` repeated is exactly this: an admitted `composed_epoch`
+/// module really emits the task route's own C, and until this card no harness
+/// runner compiled or ran it, so the emission and native stages were open
+/// items.
+///
+/// What is compared, and it is one thing: the **standard output of the
+/// sanitized binary built from this case's own emitted C** against
+/// `render_task_observation` of the reference execution of **this same
+/// module's own checked task half** (`ComposedEpochModule::tasks`, the
+/// unedited `qcore_core::task_execution` interpreter). The rendering is also
+/// pinned line by line here, so the comparison is against a stated transcript
+/// rather than against whatever the two sides happen to agree on — the
+/// `sequential_sanitized` discipline, one route over.
+///
+/// What it is **not**: the region and the flat-epoch plan erase from emission,
+/// so no byte of this run is evidence about a credit quantity, an abandoned
+/// remainder or an epoch bound. Those are check-time folds, measured by
+/// `epoch_credit_split` and by nothing else. This run observes the program the
+/// composed module lowers to, which is precisely why a discharge that lost an
+/// adopted duty would show up here (the destroy is a real emitted
+/// `qcore_buffer_drop`) while a mis-stated credit would not.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ComposedNative {
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    /// The reference observation of the module's own checked task half, pinned
+    /// line by line. This is the comparison basis, so it is stated rather than
+    /// read off the model at run time.
+    declared_observation: Vec<String>,
+    /// The reference run's root outcome, as the `i32` the entry returns.
+    root_outcome_i32: i32,
+    /// How many task observations that run produced — the parent plus its
+    /// children — so a reference run that silently lost a task would not still
+    /// match a shorter transcript.
+    reference_tasks: usize,
+    #[allow(dead_code)]
+    note: String,
 }
 
 #[derive(Deserialize)]
@@ -1407,15 +1477,53 @@ fn derive_stage_plan(
         }
     }
     // Card `CT22-WIRE`. An *admitted* composed-epoch module really emits the
-    // task route's own C (the runner asserts `c_source` is present), but no
-    // runner of this harness executes that emission or runs a binary from it
-    // today, so the two stages are open items rather than structurally absent:
-    // `unassessed`, exactly as `native_sanitized` already reads on this route.
-    // A refused composed-epoch fixture keeps `not_applicable` — its refusal
-    // provably never reaches the backend.
+    // task route's own C (the runner asserts `c_source` is present), so the two
+    // stages are open items rather than structurally absent: `unassessed`,
+    // exactly as `native_sanitized` already reads on this route. A refused
+    // composed-epoch fixture keeps `not_applicable` — its refusal provably never
+    // reaches the backend.
+    //
+    // Card `CT-COMPOSED-NATIVE` (wave 32) **supplies the missing runner**:
+    // `run_composed_native` now compiles and runs every
+    // `COMPOSED_NATIVE_CASES` entry's own emitted C under the platform
+    // sanitizers on Linux and macOS, on every `cargo test` of this workspace,
+    // and compares its standard output byte for byte with the reference
+    // execution of that module's own checked task half. These three rows
+    // therefore **understate** what this harness executes today, which is the
+    // safe direction and never the claiming one.
+    //
+    // They are deliberately not moved here. A stage status is checked against
+    // `docs/reevaluation/ct_manifest.json` for exact equality, so the derivation
+    // and the manifest rows must move in **one** change, and the manifest is
+    // outside that card's boundary (the CT numerators it feeds —
+    // sanitized-native `7 of 43` → `9 of 43` — are the integrator's wave-wide
+    // reconciliation). Writing the `executed` arm here with the rows still
+    // reading `unassessed` would leave an arm no test drives, which is a stated
+    // boundary rather than a verified rule. The exact coupled edit is published
+    // in `docs/reports/ct-composed-native/README.md` §4 for the integrator:
+    // this block gains a `COMPOSED_NATIVE_CASES` arm crediting
+    // `run_composed_native` with `c_emission` on all three hosts and
+    // `native_execution`/`native_sanitized` on `["linux", "macos"]`, the case
+    // ids join `SANITIZED_GATED_CASES`, and CT22/CT25's three manifest rows are
+    // rewritten to match. CT23 moves in neither: it is the route's refusal.
     if route == "composed_epoch" && !refused {
-        plan.insert("c_emission", StagePlan::absent("unassessed"));
-        plan.insert("native_execution", StagePlan::absent("unassessed"));
+        // Integrator, wave 32: the coupled edit card `CT-COMPOSED-NATIVE`
+        // published in its report §4, applied together with the manifest rows
+        // it names so the derivation and the record move in one change.
+        if COMPOSED_NATIVE_CASES.contains(&case_id) {
+            let runner = "compiler/tests/ct_corpus.rs::run_composed_native";
+            plan.insert(
+                "c_emission",
+                StagePlan::executed(runner, 1, Some(vec!["linux", "macos", "windows"])),
+            );
+            plan.insert(
+                "native_execution",
+                StagePlan::executed(runner, 1, Some(vec!["linux", "macos"])),
+            );
+        } else {
+            plan.insert("c_emission", StagePlan::absent("unassessed"));
+            plan.insert("native_execution", StagePlan::absent("unassessed"));
+        }
     }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
@@ -1484,6 +1592,14 @@ fn derive_stage_plan(
                         format!("compiler/tests/fixtures/ct/{case_id}/{}", control.source),
                     )
                 }
+                // Card `CT-COMPOSED-NATIVE`: the composed-epoch mode has no
+                // `deep` runner and no sanitized control — its own runner
+                // compiles and runs the case's emitted C under the sanitizers.
+                (None, None) if COMPOSED_NATIVE_CASES.contains(&case_id) => StagePlan::executed(
+                    "compiler/tests/ct_corpus.rs::run_composed_native",
+                    1,
+                    Some(vec!["linux", "macos"]),
+                ),
                 _ => panic!(
                     "{case_id}: a gated sanitized case has exactly one runner that compiles \
                      and runs it under the sanitizers"
@@ -1669,6 +1785,32 @@ fn run_mapped_case(case: &ManifestCase) {
         "{}: composed-epoch credit-split evidence is pinned to its own case set",
         case.id
     );
+    // Card `CT-COMPOSED-NATIVE`: the native block and the pinned table must
+    // agree in both directions, so a fixture cannot buy itself a compile-and-run
+    // and the table cannot name a case with nothing to run. A composed-epoch
+    // *refusal* carries neither: it never reaches the backend, so there is no
+    // emission of its own to execute.
+    assert_eq!(
+        expected.composed_native.is_some(),
+        COMPOSED_NATIVE_CASES.contains(&case.id.as_str()),
+        "{}: composed-epoch native evidence is pinned to its own case set",
+        case.id
+    );
+    if expected.composed_native.is_some() {
+        let split = expected.epoch_credit_split.as_ref().unwrap_or_else(|| {
+            panic!(
+                "{}: a composed-epoch native case is a composed-epoch case, so it \
+                 carries the credit-split evidence too",
+                case.id
+            )
+        });
+        assert!(
+            split.diagnostic_sequence.is_empty(),
+            "{}: only an admitted composed-epoch module emits C a runner could \
+             compile and run",
+            case.id
+        );
+    }
     assert_eq!(
         expected.epoch_reject.is_some(),
         EPOCH_REJECT_CASES.contains(&case.id.as_str()),
@@ -3260,7 +3402,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 19] = [
+const EVIDENCE_FILES: [&str; 20] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3279,6 +3421,7 @@ const EVIDENCE_FILES: [&str; 19] = [
     "docs/reports/ct07-write-remap/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
     "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
+    "docs/reports/ct-composed-native/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
 ];
 
@@ -4887,6 +5030,166 @@ fn run_sequential_sanitized(
     fs::remove_dir_all(&build).unwrap();
 }
 
+/// Card `CT-COMPOSED-NATIVE` (wave 32): the composed-epoch accept runner, and
+/// the discharge of the `CT-COMPOSED-NATIVE` follow-on that `CT22-WIRE` §8 and
+/// `CT-WIRE-LANE-3` §8 both name. One compile-and-run of **this case's own
+/// emitted C**, on the `run_sequential_sanitized` shape.
+///
+/// The comparison basis is the module's **own** checked task half. A composed
+/// module publishes no reference observation of its own (which is why its
+/// route vocabulary has no reference-execution stage), but it does carry the
+/// `CheckedTaskModule` the unedited `qcore_core::task_execution` interpreter
+/// takes, so the reference run here is that interpreter's — no second
+/// interpreter, and nothing hand-built. The fixture pins that rendering line
+/// by line, so the native bytes are compared against a *stated* transcript.
+///
+/// **Observed, not proved** (the `STABILITY-REEVAL` discipline). What one
+/// successful run establishes: on this host, with this C compiler, under these
+/// sanitizers, the emitted program's standard output was byte-identical to the
+/// checked task half's reference transcript, it wrote nothing to standard
+/// error, and it exited 0. What it does not establish: that the emission is
+/// correct on inputs, schedules or hosts this run did not take; that any
+/// credit, abandoned remainder or epoch bound is right (the region and the
+/// plan erase from emission, so no byte here is evidence about them); or any
+/// theorem about either side — the case's `proof` stage stays `unassessed`.
+/// A single scheduling of one program is an observation of that scheduling.
+///
+/// Host gating is recorded exactly, and it is two different gates. The
+/// emission is reached on every host this workspace builds for (the runner
+/// asserts `c_source` before it looks at the platform). The compile-and-run is
+/// Unix-only — `linux` and `macos`, the `deep_gate` every sanitized runner in
+/// this file carries. Leak detection is narrower still: Apple's ASan ships no
+/// LSan, so `detect_leaks=1` is a **Linux** observation and macOS runs the
+/// same binary with leak checking off. A reader must not take the macOS run
+/// as evidence that the discharge's destroy reclaimed anything.
+fn run_composed_native(
+    case_id: &str,
+    expected: &ExpectedCase,
+    module: &qcore_compiler::CompiledModule,
+) {
+    use qcore_core::scoped_tasks::TaskOutcome;
+    use qcore_core::task_execution::{
+        TaskExecutionScript, execute_task_module, render_task_observation,
+    };
+
+    let native = expected
+        .composed_native
+        .as_ref()
+        .unwrap_or_else(|| panic!("{case_id}: a table-listed native case pins its own evidence"));
+    let composed = module
+        .checked
+        .as_composed_epoch_tasks()
+        .unwrap_or_else(|| panic!("{case_id}: the checked artifact variant is explicit"));
+
+    // The reference side: the unedited interpreter over this module's own
+    // checked task half, on the all-success script. Nothing is injected — the
+    // scenario's evidence is the ordinary run, and the refusing controls of
+    // the credit-split mode are what bound the other directions.
+    let reference = execute_task_module(&composed.tasks, &TaskExecutionScript::default())
+        .unwrap_or_else(|error| panic!("{case_id}: the checked task half must execute: {error:?}"));
+    assert_eq!(
+        reference.root_outcome,
+        TaskOutcome::I32(native.root_outcome_i32),
+        "{case_id}: the reference run's root outcome is the pinned one"
+    );
+    assert_eq!(
+        reference.tasks.len(),
+        native.reference_tasks,
+        "{case_id}: the reference run observed the pinned number of tasks"
+    );
+    let rendered = render_task_observation(&reference);
+    assert_eq!(
+        rendered.lines().collect::<Vec<_>>(),
+        native.declared_observation,
+        "{case_id}: the reference transcript drifted from the pinned rendering"
+    );
+
+    // The emission is reached on every host; only the compile-and-run is gated.
+    let c = module
+        .c_source
+        .as_deref()
+        .unwrap_or_else(|| panic!("{case_id}: the composed route emits the task route's own C"));
+    if !cfg!(any(target_os = "linux", target_os = "macos")) {
+        eprintln!(
+            "{case_id}: emitted; Unix sanitizer evidence unexecuted on this host \
+             (manifest evidence_target=linux)"
+        );
+        return;
+    }
+
+    use std::process::Command;
+    use std::sync::atomic::{AtomicU64, Ordering};
+    static NEXT: AtomicU64 = AtomicU64::new(0);
+    let build = std::env::temp_dir().join(format!(
+        "qcore-ct-composed-{case_id}-{}-{}",
+        std::process::id(),
+        NEXT.fetch_add(1, Ordering::Relaxed)
+    ));
+    fs::create_dir_all(&build).unwrap();
+    let generated = build.join("module.c");
+    // The typed diagnostic stream is what carries the task transcript, so the
+    // emitted C is opted into the maintained stdout sink exactly as every other
+    // native runner in this file does. The sink is the only addition: the
+    // module's own bytes are otherwise compiled as emitted.
+    fs::write(&generated, diagnostic_sink::instrument(c)).unwrap();
+    let compiler = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "cc".to_owned());
+    let mut command = Command::new(&compiler);
+    command.args(&native.sanitizer_flags);
+    if cfg!(target_os = "macos") {
+        // The emitted threads backend resolves `<threads.h>` against the same
+        // pthread-backed compatibility surface the other native runners use.
+        command.arg("-I").arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/fixtures/apple-threads"
+        ));
+    }
+    let compiled = command
+        .arg(&generated)
+        .arg("-o")
+        .arg(build.join("module"))
+        .output()
+        .unwrap();
+    assert!(
+        compiled.status.success(),
+        "{case_id}: C compiler rejected the composed module's emitted program:\n{}",
+        String::from_utf8_lossy(&compiled.stderr)
+    );
+    // Apple's AddressSanitizer ships no leak detector, so leak checking stays a
+    // Linux observation — the standing platform boundary, stated rather than
+    // silently inherited.
+    let asan_options = if cfg!(target_os = "macos") {
+        "detect_leaks=0:halt_on_error=1".to_owned()
+    } else {
+        native.asan_options.clone()
+    };
+    let run = Command::new(build.join("module"))
+        .env("ASAN_OPTIONS", asan_options)
+        .env("UBSAN_OPTIONS", &native.ubsan_options)
+        .output()
+        .unwrap();
+    assert!(
+        run.status.success(),
+        "{case_id}: the emitted program failed under the platform sanitizers:\n{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    assert_eq!(
+        String::from_utf8(run.stdout.clone()).expect("the transcript is UTF-8"),
+        rendered,
+        "{case_id}: the native run's standard output is compared byte for byte \
+         with the checked task half's own reference transcript"
+    );
+    // Nothing else may appear: the sanitizers report on standard error, so an
+    // empty stream is part of what the successful run says. On Linux that
+    // includes LSan's silence, which is the only sense in which this run
+    // observes that what the module allocated was released.
+    assert!(
+        run.stderr.is_empty(),
+        "{case_id}: the emitted program writes nothing to standard error:\n{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    fs::remove_dir_all(&build).unwrap();
+}
+
 /// Every nonzero axis of a published credit quantity, keyed by axis. Rebuilt
 /// wholesale from the certificate, exactly as `epoch_certificate_figures`
 /// does, so a fixture cannot pin only the axes that suit it.
@@ -5080,7 +5383,17 @@ fn run_epoch_credit_split(
                 "{case_id}: every task-ledger span precedes the region statement"
             );
         }
+        // Card `CT-COMPOSED-NATIVE` (wave 32). Everything above is a fact about
+        // *checked* objects; this is the one step that runs anything.
+        if COMPOSED_NATIVE_CASES.contains(&case_id) {
+            run_composed_native(case_id, expected, &module);
+        }
     } else {
+        assert!(
+            !COMPOSED_NATIVE_CASES.contains(&case_id),
+            "{case_id}: a refused composed-epoch fixture emits nothing, so no \
+             runner can execute its own artifact"
+        );
         let diagnostics = match result {
             Err(diagnostics) => diagnostics,
             Ok(_) => panic!("{case_id}: expected rejection but the checker accepted the fixture"),

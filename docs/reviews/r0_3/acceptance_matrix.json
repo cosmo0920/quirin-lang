@@ -1023,6 +1023,7 @@
    "docs/reports/ct07-write-remap/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
    "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
+   "docs/reports/ct-composed-native/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-4/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
@@ -1205,20 +1206,18 @@
     "not_applicable": 43
    },
    "c_emission": {
-    "executed": 16,
-    "not_applicable": 27,
-    "unassessed": 2
+    "executed": 18,
+    "not_applicable": 27
    },
    "native_execution": {
-    "executed": 16,
-    "not_applicable": 27,
-    "unassessed": 2
+    "executed": 18,
+    "not_applicable": 27
    },
    "native_sanitized": {
-    "executed": 7,
+    "executed": 9,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 26
+    "unassessed": 24
    },
    "legacy_c_twin": {
     "executed": 3,
@@ -1235,9 +1234,9 @@
    "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "native_execution": 7,
-   "native_sanitized": 6,
+   "native_sanitized": 8,
    "proof": 3,
-   "task_ledger_check": 9,
+   "task_ledger_check": 7,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1261,9 +1260,9 @@
    "CT19": "task_ledger_check",
    "CT20": "native_execution",
    "CT21": "elaborate",
-   "CT22": "task_ledger_check",
+   "CT22": "native_sanitized",
    "CT23": "task_ledger_check",
-   "CT25": "task_ledger_check",
+   "CT25": "native_sanitized",
    "CT26": "native_sanitized",
    "CT27": "mutex_invariant_check",
    "CT28": "mutex_invariant_check",
@@ -1288,7 +1287,7 @@
    "CT50": "native_execution"
   },
   "observation_counts": {
-   "c_emission": 32,
+   "c_emission": 34,
    "elaborate": 42,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
@@ -1296,8 +1295,8 @@
    "mutex_invariant_check": 10,
    "mutex_lowering": 10,
    "mutex_reference_execution": 2,
-   "native_execution": 47,
-   "native_sanitized": 28,
+   "native_execution": 49,
+   "native_sanitized": 30,
    "parse": 45,
    "proof": 3,
    "sequential_reference_execution": 2,
@@ -3335,13 +3334,35 @@
       "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
       "status": "not_applicable"
@@ -3351,8 +3372,8 @@
      }
     },
     "auxiliary_executed_stages": {},
-    "deepest_executed_stage": "task_ledger_check",
-    "stage_evidence_record": "docs/reports/ct22-wire/ct_stage_evidence.json",
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/ct-composed-native/ct_stage_evidence.json",
     "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE and REGION-CREDIT-JOINS): a flat-epoch plan over a real checked scoped-task region whose parent writes, after its one spawn and its one join, an error region that credits 5, spends 2 and takes its decided error edge; the catch's `quant open R as pack` binds the sealed pack as a linear capability and `discharge pack;` abandons exactly the parent-local remainder 3, the kernel's own explicit AbandonCredit decided by the unedited qcore_core::error_region model. ADMITTED, with the composed premises stated: the pack is DUTY-FREE (the composed body admits no acquisition - REGION-JOINS-DUTIES refuses one at Q302 - so the one thing the opening can discard is the parent-local remainder), and ALL JOINS PRECEDE THE REGION (every TrySpawn/Join span of the checked task IR precedes the region statement, refused at Q600 in both directions when false, so no child exists and no child holds any grant at the opening). The published abandoned_credit is re-derived by the driver from an independent fold of the written statements before publication, and the harness compares the whole published split - granted/restored/spent under the four unchanged FlatEpochBoundV1 premises, plus the abandoned figure - wholesale. The region erases from emission and the epoch charges no axis for the parent-local strict credit (REGION-JOINS-EPOCH-AXIS); no native or sanitizer evidence is claimed, and the region's credit quantities are written statements, not measurements of any execution."
    },
    {
@@ -3571,13 +3592,35 @@
       "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
       "status": "not_applicable"
@@ -3587,8 +3630,8 @@
      }
     },
     "auxiliary_executed_stages": {},
-    "deepest_executed_stage": "task_ledger_check",
-    "stage_evidence_record": "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/ct-composed-native/ct_stage_evidence.json",
     "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): a flat-epoch plan over a real checked scoped-task region whose parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins, and only then writes an error region that ADOPTS the owner (`move owner;`), credits 5, spends 2 and takes its decided error edge; the catch's `quant open R as pack` binds the sealed pack as a linear capability and `discharge pack;` destroys the adopted owner and abandons exactly the parent-local remainder 3 -- the unedited qcore_core::error_region model's own Destroy and AbandonCredit on the discharge. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact, each carried by a named rule: CLEANUP DESTROYS OWNER by the model's Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (the discharge's `drop owner;` is written into the region's blanks after every join, where the unedited task route checks it; the published `released = [owner]` is read out of the model's own cleanup trace and cross-checked against the reader's independent duty fold before publication); AFTER JOINS by the wave-28 span rule (every TrySpawn/Join span of the checked task IR precedes the region statement, refused at Q600 in both directions when false) re-asserted on the published ledger; AND LOAN EXPIRY by three facts of unedited models -- the owner IS lent (the derived capture list is [[read]], from the checked IR's ScalarOperand::Loan, reconciled against the declared `read;` clause), the share RETURNS AT THE JOIN (the task ledger's own reclamation), and the destruction is ORDERED AFTER the expiry because the joins precede the region -- while the pre-expiry destruction is a measured refusal (the ledger's own LoanOutstanding, live_share_drop.qcore) and so is the pre-loan one (the erased drop before the spawn leaves no owned buffer to lend, before_join.qcore). The runner compares the whole published evidence wholesale -- the credit-recovery split under the four unchanged FlatEpochBoundV1 premises, the abandoned figure, the released duty list and both capture lists -- and re-asserts the adopting-pack premise (exactly one published body Acquire per released owner) and the span premise on the published objects. BOUNDARIES: both write authorities and the loan live in one entry's task scope -- the lender on this route is always the creator (REGION-JOINS-LOAN's discharge of T08-COMPOSE-LOAN) and creator-scope bytes are outside the epoch allocation (REGION-JOINS-EPOCH-AXIS, re-measured by that card: certificates byte-identical with and without the loan and the adoption). The region erases from emission (measured byte-for-byte against a hand-written twin by compiler/tests/region_joins_loan.rs, not re-measured here); the region's credit quantities are written statements, not measurements of any execution; and no native, sanitizer or proof evidence is claimed -- the capability card's native counting-allocator run carries no sanitizer, so none is readable from it (constraint 23), and the emission/native stages read unassessed (CT-COMPOSED-NATIVE)."
    },
    {

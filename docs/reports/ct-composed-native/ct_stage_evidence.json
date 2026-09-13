@@ -1,0 +1,215 @@
+{
+ "schema_version": 1,
+ "card": "CT-COMPOSED-NATIVE",
+ "generated": "2026-09-14",
+ "report": "docs/reports/ct-composed-native/README.md",
+ "purpose": "The integrator half of card CT-COMPOSED-NATIVE coupled edit: the composed-epoch route gains a runner that really compiles and runs an admitted case own emitted C, so CT22 and CT25 three emission/native rows move from unassessed to executed. Published as a superseding record per constraint 21 - the ct22-wire and ct-wire-lane-3 records keep their bytes. CT23 is deliberately absent: it is the route refusal and never reaches the backend.",
+ "derivation_rule": "A stage is executed only where a named workspace test runs it on the case own artifact. run_composed_native does so on every cargo test of this workspace; each of its arms was falsified before being believed (corrupt the pinned transcript, suffix the byte expectation, append a leaking constructor). A native run is an observation, never a proof.",
+ "mapped_case_stage_matrix": {
+  "CT22": {
+   "supersedes": "docs/reports/ct22-wire/ct_stage_evidence.json",
+   "harness_verdict_mode": "epoch_credit_split",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1,
+     "note": "The composed route lowers and checks its task half before anything is published; the case is admitted, so both task stages demonstrably ran \u2014 the same derivation rule CT23 recorded from the refusing side."
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1
+    },
+    "mutex_lowering": {
+     "status": "not_applicable"
+    },
+    "mutex_invariant_check": {
+     "status": "not_applicable"
+    },
+    "epoch_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1
+    },
+    "epoch_bound_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1,
+     "note": "The bound and credit-recovery certificates are measured elsewhere to be byte-identical with and without the region (region_credit_joins.rs::the_epoch_certificates_are_unmoved_by_the_region); the runner here compares the published credit-recovery split wholesale."
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable"
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable"
+    },
+    "task_reference_execution": {
+     "status": "not_applicable"
+    },
+    "mutex_reference_execution": {
+     "status": "not_applicable"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos",
+      "windows"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "native_sanitized": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable"
+    },
+    "proof": {
+     "status": "unassessed"
+    }
+   }
+  },
+  "CT25": {
+   "supersedes": "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
+   "harness_verdict_mode": "epoch_credit_split",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1,
+     "note": "The composed route lowers and checks its task half before anything is published; the case is admitted, so both task stages demonstrably ran -- the same derivation rule CT22 and CT23 recorded."
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1
+    },
+    "mutex_lowering": {
+     "status": "not_applicable"
+    },
+    "mutex_invariant_check": {
+     "status": "not_applicable"
+    },
+    "epoch_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1
+    },
+    "epoch_bound_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable"
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable"
+    },
+    "task_reference_execution": {
+     "status": "not_applicable"
+    },
+    "mutex_reference_execution": {
+     "status": "not_applicable"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos",
+      "windows"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "native_sanitized": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+     "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+     "observations": 1,
+     "host_gate": [
+      "linux",
+      "macos"
+     ],
+     "note": "card CT-COMPOSED-NATIVE: the runner compiles this case own emitted C under the platform sanitizers and compares its stdout byte for byte with the reference execution of the module own checked task half; leak detection is the Linux arm only (Apple ASan ships no LSan). Observed, never proved: one scheduling, one host, one compiler, the all-success script, and no credit quantity - the region and plan erase from emission."
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable"
+    },
+    "proof": {
+     "status": "unassessed"
+    }
+   }
+  }
+ }
+}

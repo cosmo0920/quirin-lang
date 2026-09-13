@@ -13,16 +13,32 @@ after a measurement that found **both** of card T00's archived blockers for it
 obsolete.
 
 CT coverage moves **43/50 → 45/50** mapped, unmapped **7 → 5**. Harness-gated
-sanitized-native stays **7, now of 45**. Proof stays **3 of 45** (CT01, CT03,
-CT37). A grown denominator is mapping, not conformance (constraint 23).
+sanitized-native stays **9, now of 45** — unmoved by this card, the 7 → 9 being
+card `CT-COMPOSED-NATIVE`'s, merged in mid-card (see the base note below).
+Proof stays **3 of 45** (CT01, CT03, CT37). A grown denominator is mapping, not conformance (constraint 23).
 
 Base: `main` at `1c7d8e45` (the wave-31 close plus the `STABILITY-REEVAL`
-commit), with `origin/main` at `6caea680` merged in mid-card — that commit
-created `docs/development/increments/wave-32.md` and moved the index's
-current-record pointer, which this card had already done by hand on finding the
-file absent; resolved by keeping upstream's index wording verbatim and this
-card's paragraph in the upstream-created file. Branch:
-`worktree-agent-a37c7fabef385fed7` in an isolated worktree.
+commit), with `origin/main` merged in **twice** mid-card, both reconciled here
+rather than left for the integrator:
+
+* `6caea680` created `docs/development/increments/wave-32.md` and moved the
+  index's current-record pointer, which this card had already done by hand on
+  finding the file absent. Resolved by keeping upstream's index wording
+  verbatim and this card's paragraph in the upstream-created file.
+* `87b4df00` brought three wave-32 cards — `DOCS-COMPACT-5`,
+  `CT-COMPOSED-NATIVE` and `PROOF-LEG-BATCH`. Four conflicts, all in files this
+  card also touches: both `EVIDENCE_FILES` lists (both sides append one record;
+  **both kept**, main's first, and the Rust array length re-pinned 18 → **20**),
+  `wave-32.md` (both sides prepend; both kept, this card's paragraph newest and
+  main's layout otherwise untouched) and `acceptance.json` (taken from main
+  wholesale, then this card's hand-kept edits **re-applied against that text**
+  and the derived half regenerated, so nothing is carried across the merge).
+  `CT-COMPOSED-NATIVE` is what moves sanitized-native 7 → 9; this card's two
+  cases move only the denominator. The manifest auto-merged cleanly — that
+  card touches CT22/CT25's stage rows and this one adds CT44/CT47 — and the
+  matrix was regenerated after, on the same terms as §6.1.
+
+Branch: `worktree-agent-a37c7fabef385fed7` in an isolated worktree.
 
 **Nothing is promoted, and nothing semantic changed.** `git diff` over
 `crates/` and `compiler/src/` is empty for this card: the only Rust is harness
@@ -444,7 +460,7 @@ depth_profile     elaborate 4, epoch_bound_check 4, legacy_c_twin 3,
                   mutex_invariant_check 8, native_execution 7,
                   native_sanitized 6, proof 3, task_ledger_check 9,
                   task_lowering 1
-native_sanitized  gated 7 of 45 · proof executed 3 (CT01, CT03, CT37)
+native_sanitized  gated 9 of 45 · proof executed 3 (CT01, CT03, CT37)
 unmapped_label_sources   3 of 5 lane-measured (CT41/CT42 wave 17, CT46 wave 13);
                          2 still t00-archive (CT10, CT24)
 ```
@@ -470,8 +486,9 @@ the manifest and say in the text that they were.
   freely duplicable and resource-bearing; the fixture demonstrates the rule at
   the boundary, not the combination.
 * **No native, sanitizer or proof evidence for either case.** Both fixtures are
-  refusals that reach no backend. Sanitized-native stays 7 of 45, proof 3 of
-  45, `T00.7` open for both.
+  refusals that reach no backend. This card moves neither figure: sanitized-native
+  is 9 of 45 and proof 3 of 45, and the 7 → 9 is card `CT-COMPOSED-NATIVE`'s.
+  `T00.7` open for both.
 * **The audited Lean proves the model, not these fixtures.** §5.
 * **`write` captures stay unexercised.** §5, `CT47-WRITE-CAPTURE-UNEXERCISED`.
 * **CT24's classification did not move**, and neither did any other unmapped
@@ -518,7 +535,8 @@ Files this lane owns and changed:
   pointer and wave table updated per that file's own instruction.
 
 **Not** changed, and left for the integrator: `AGENTS.md`'s headline numbers
-(CT row `43/50 → 45/50` mapped, sanitized-native `7 of 43 → 7 of 45`, proof
+(CT row `43/50 → 45/50` mapped, sanitized-native `9 of 43 → 9 of 45` — the
+numerator is `CT-COMPOSED-NATIVE`'s, the denominator this card's — proof
 `3 of 43 → 3 of 45`, gate numbers) and `README.md`.
 
 ## 11. Gate
