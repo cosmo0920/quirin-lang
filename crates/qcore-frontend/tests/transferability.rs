@@ -145,8 +145,8 @@ fn the_controls_check() {
 /// change, not an accident.
 const COPY_OF_BUFFER: &str = "the transferability judgment refuses this capture: no transfer or \
      share contract admits `copy` of `own<Buffer>` across a spawn boundary; `own<Buffer>` \
-     crosses only under `move` (custody transferred to the worker) or `read PLACE share N` \
-     (a counted read share)";
+     crosses only under `move` (custody transferred to the worker), `read PLACE share N` \
+     (a counted read share), or `lend PLACE LOW..HIGH` (a disjoint range write lease)";
 const LEND_TO_OWN: &str = "the transferability judgment refuses this capture: `read ... share \
      ...` of `own<Buffer>` is an admitted transfer, but it delivers `borrow<Buffer>` and the \
      worker declares it receives `own<Buffer>`";
@@ -155,8 +155,8 @@ const MOVE_TO_LOAN_PARAMETER: &str = "the transferability judgment refuses this 
      declares it receives `borrow<Buffer>`";
 const WRITE_OF_BUFFER: &str = "the transferability judgment refuses this capture: a `write` \
      capture names no transfer or share contract — no kind crosses a spawn boundary under it; \
-     `own<Buffer>` crosses only under `move` (custody transferred to the worker) or `read PLACE \
-     share N` (a counted read share)";
+     `own<Buffer>` crosses only under `move` (custody transferred to the worker), `read PLACE \
+     share N` (a counted read share), or `lend PLACE LOW..HIGH` (a disjoint range write lease)";
 const MOVE_OF_I32: &str = "the transferability judgment refuses this capture: no transfer or \
      share contract admits `move` of `i32` across a spawn boundary; `i32` crosses only under \
      `copy` (an independent duplicate; no custody crosses)";
@@ -297,7 +297,7 @@ fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
         .expect_err("a modeless capture must not parse");
     assert_eq!(
         parse_error.message,
-        "capture requires copy, move, read ... share, or write"
+        "capture requires copy, move, read ... share, lend ... LOW..HIGH, or write"
     );
     // Shape 2: the bit-copy of an owned handle, refused by the judgment at
     // the boundary — no longer by the backend.

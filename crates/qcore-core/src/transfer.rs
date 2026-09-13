@@ -118,6 +118,10 @@ pub enum TransferKind {
     OwnedBuffer,
     /// A scoped read loan of a Buffer someone else still owns.
     ReadLoan,
+    /// A scoped range write lease of a Buffer someone else still owns (card
+    /// `WRITE-LEND-TASKS`). Like a loan it is the *product* of a crossing,
+    /// never a source of one.
+    WriteLease,
     /// A `thread scope` region.
     ThreadScope,
     /// A `spawn` handle, joinable by its creator only.
@@ -144,11 +148,12 @@ impl TransferKind {
     /// Exhaustiveness of the judgment is checked against this list, so an
     /// added constructor that no arm handles is a compile error here and a
     /// test failure in the totality tests.
-    pub const ALL: [TransferKind; 13] = [
+    pub const ALL: [TransferKind; 14] = [
         TransferKind::Unit,
         TransferKind::I32,
         TransferKind::OwnedBuffer,
         TransferKind::ReadLoan,
+        TransferKind::WriteLease,
         TransferKind::ThreadScope,
         TransferKind::TaskHandle,
         TransferKind::TaskResult,
@@ -218,15 +223,24 @@ pub enum TransferMode {
     Lend,
     /// `write PLACE`
     Write,
+    /// `lend PLACE LOW..HIGH` (card `WRITE-LEND-TASKS`): a range write lend.
+    /// Distinct from [`TransferMode::Write`] on purpose — the plain `write`
+    /// capture still parses, still has no lowering, and is still refused by
+    /// name for every kind, so CT47's pinned refusal is untouched. The ranged
+    /// form is a different request: it names the exact bytes whose write
+    /// authority crosses, which is what makes the disjointness question
+    /// decidable at the boundary.
+    LendWrite,
 }
 
 impl TransferMode {
     /// Every constructor, in the parser's keyword order.
-    pub const ALL: [TransferMode; 4] = [
+    pub const ALL: [TransferMode; 5] = [
         TransferMode::Copy,
         TransferMode::Move,
         TransferMode::Lend,
         TransferMode::Write,
+        TransferMode::LendWrite,
     ];
 }
 
@@ -248,6 +262,14 @@ pub enum ShareProtocol {
     /// removing it. No implemented capture mode produces this protocol; see
     /// [`SharingGap`].
     CheckedMutex,
+    /// Disjoint range write leases (card `WRITE-LEND-TASKS`): each holder
+    /// receives write authority over its own byte range, the ranges are
+    /// pairwise disjoint by the wave-29 overlap decision, and the owner holds
+    /// no whole-payload authority — read included — while any lease is out.
+    /// This protocol makes concurrent mutation safe by **partitioning** the
+    /// bytes, where [`ShareProtocol::CountedReadShares`] removes mutation and
+    /// [`ShareProtocol::CheckedMutex`] would order it.
+    DisjointWriteLeases,
 }
 
 /// Why a kind cannot cross a boundary.
@@ -272,11 +294,17 @@ pub enum TransferClass {
     Duplicated,
     /// Crosses by move, consuming the parent binding. Sharing — the parent
     /// keeping it while a child also reaches it — is admitted only under the
-    /// named protocol, and refused outright when that field is `None`.
+    /// named protocols, and refused outright where a field is `None`:
+    /// `shareable_under` is the read-sharing discipline (CT46's "Sync"
+    /// direction), and `mutably_shareable_under` (card `WRITE-LEND-TASKS`)
+    /// the discipline under which more than one party may hold **write**
+    /// authority at once — by partitioning the bytes, never by trusting a
+    /// schedule.
     ///
     /// This is CT46's "Send but not Sync" class.
     MovedOnly {
         shareable_under: Option<ShareProtocol>,
+        mutably_shareable_under: Option<ShareProtocol>,
     },
     /// Does not cross in any direction.
     Never(NotTransferable),
@@ -298,7 +326,24 @@ impl TransferClass {
     /// `None` because duplication leaves nothing shared.
     pub fn shareable_under(self) -> Option<ShareProtocol> {
         match self {
-            TransferClass::MovedOnly { shareable_under } => shareable_under,
+            TransferClass::MovedOnly {
+                shareable_under, ..
+            } => shareable_under,
+            TransferClass::Duplicated | TransferClass::Never(_) => None,
+        }
+    }
+
+    /// The protocol under which more than one party may hold **write**
+    /// authority over this kind at once, if any (card `WRITE-LEND-TASKS`).
+    /// Distinct from [`Self::shareable_under`] on purpose: read sharing
+    /// removes mutation for the window, mutable sharing partitions the bytes,
+    /// and a consumer must be able to ask for exactly one of them.
+    pub fn mutably_shareable_under(self) -> Option<ShareProtocol> {
+        match self {
+            TransferClass::MovedOnly {
+                mutably_shareable_under,
+                ..
+            } => mutably_shareable_under,
             TransferClass::Duplicated | TransferClass::Never(_) => None,
         }
     }
@@ -320,14 +365,22 @@ pub const fn transferable(kind: TransferKind) -> TransferClass {
         // any property of the value.
         TransferKind::Unit => TransferClass::Never(NotTransferable::ResultPositionOnly),
 
-        // CT46's subject kind: affine custody that moves, and is shared only
-        // under the counted-read-share protocol.
+        // CT46's subject kind: affine custody that moves, shared for reading
+        // only under the counted-read-share protocol, and shared for writing
+        // only under the disjoint-range-lease protocol (card
+        // `WRITE-LEND-TASKS`) — whose gates are the ledger's: nonempty
+        // pairwise-disjoint ranges by the wave-29 overlap decision, at most
+        // `MAX_WRITERS` holders, and no whole-payload authority for anyone —
+        // the owner's read included — while any lease is out.
         TransferKind::OwnedBuffer => TransferClass::MovedOnly {
             shareable_under: Some(ShareProtocol::CountedReadShares),
+            mutably_shareable_under: Some(ShareProtocol::DisjointWriteLeases),
         },
 
-        // A loan is the product of lending, never a source of it.
+        // A loan is the product of lending, never a source of it; a lease is
+        // the product of leasing, on the same footing.
         TransferKind::ReadLoan => TransferClass::Never(NotTransferable::NotAValue),
+        TransferKind::WriteLease => TransferClass::Never(NotTransferable::NotAValue),
 
         // Bound to the frame that created them, and owing it a duty.
         TransferKind::ThreadScope
@@ -390,6 +443,13 @@ pub enum AdmittedTransfer {
     /// The child receives read authority under the named protocol; the parent
     /// keeps the binding and gets the authority back at join.
     LendShare(ShareProtocol),
+    /// The child receives write authority over a declared byte range under
+    /// the named protocol (card `WRITE-LEND-TASKS`); the parent keeps the
+    /// binding, holds no whole-payload authority while the lease is out, and
+    /// gets the authority back at join. The range itself is not the
+    /// judgment's business — which bytes, and whether they are disjoint from
+    /// every outstanding lease, is the ledger's decision by the wave-29 rule.
+    LendWriteRange(ShareProtocol),
 }
 
 /// Why a capture is refused.
@@ -428,19 +488,31 @@ pub const fn admits(
         TransferClass::Never(reason) => Err(TransferRefusal::KindNotTransferable(reason)),
         TransferClass::Duplicated => match mode {
             TransferMode::Copy => Ok(AdmittedTransfer::Duplicate),
-            // Moving or lending a duplicated kind is not a custody question:
-            // there is no custody. The mode simply does not apply.
-            TransferMode::Move | TransferMode::Lend | TransferMode::Write => {
-                Err(TransferRefusal::ModeNotAdmittedForKind)
-            }
+            // Moving, lending or leasing a duplicated kind is not a custody
+            // question: there is no custody. The mode simply does not apply.
+            TransferMode::Move
+            | TransferMode::Lend
+            | TransferMode::Write
+            | TransferMode::LendWrite => Err(TransferRefusal::ModeNotAdmittedForKind),
         },
-        TransferClass::MovedOnly { shareable_under } => match mode {
+        TransferClass::MovedOnly {
+            shareable_under,
+            mutably_shareable_under,
+        } => match mode {
             TransferMode::Move => Ok(AdmittedTransfer::MoveCustody),
             TransferMode::Lend => match shareable_under {
                 Some(protocol) => Ok(AdmittedTransfer::LendShare(protocol)),
                 None => Err(TransferRefusal::ProtocolUnavailable(
                     ShareProtocol::CheckedMutex,
                 )),
+            },
+            // A range write lend is admitted exactly under the kind's
+            // mutable-sharing protocol (card `WRITE-LEND-TASKS`); a kind
+            // with none refuses for the mode, because no protocol would
+            // ever admit it.
+            TransferMode::LendWrite => match mutably_shareable_under {
+                Some(protocol) => Ok(AdmittedTransfer::LendWriteRange(protocol)),
+                None => Err(TransferRefusal::ModeNotAdmittedForKind),
             },
             // Copying affine custody would duplicate an identity.
             TransferMode::Copy | TransferMode::Write => {
@@ -467,6 +539,10 @@ pub const fn received_kind(source: TransferKind, admitted: AdmittedTransfer) -> 
         AdmittedTransfer::MoveCustody => source,
         // Read authority arrives as a loan, whatever it was lent from.
         AdmittedTransfer::LendShare(_) => TransferKind::ReadLoan,
+        // Range write authority arrives as a lease, whatever it was leased
+        // from — the second place where the parent's kind and the worker's
+        // declared parameter kind differ on purpose.
+        AdmittedTransfer::LendWriteRange(_) => TransferKind::WriteLease,
     }
 }
 

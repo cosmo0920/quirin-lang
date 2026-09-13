@@ -454,7 +454,13 @@ pub fn reference_trace(
                     task: *task,
                     outcome: outcome(o, index)?,
                 },
-                TaskEvent::BufferWritten { .. } => {
+                // The T05 Buffer write and the WRITE-LEND-TASKS lease events
+                // are outside this relation's pre-T05 observable alphabet, so
+                // an observation containing one is refused rather than
+                // encoded — never silently dropped.
+                TaskEvent::BufferWritten { .. }
+                | TaskEvent::BufferLeased { .. }
+                | TaskEvent::BufferLeaseReturned { .. } => {
                     return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
                 }
             })

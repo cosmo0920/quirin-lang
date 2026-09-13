@@ -12,7 +12,7 @@
 mod tasks;
 pub use tasks::{
     ResolvedTaskCapture, ResolvedTaskExpression, ResolvedTaskExpressionKind, ResolvedTaskPlace,
-    SourceCaptureMode, SourceIndexExpression, SourcePlace, SourceShareExpression,
+    SourceCaptureMode, SourceIndexExpression, SourceLeaseBound, SourcePlace, SourceShareExpression,
     SourceTaskCapture, SourceTaskExpression, SourceTaskExpressionKind,
 };
 
@@ -2902,9 +2902,28 @@ fn lexical_references(
         // census already recorded the bare word free in source position.
         let lend_clause =
             crate::source_std_buffer::is_lend_clause_word(word, next.map(|t| &t.kind));
+        // Card `WRITE-LEND-TASKS` widens the same rule to the **capture**
+        // position: `lend` as the first word of a spawn capture
+        // (`spawn s w(lend PLACE LOW..HIGH)`). Three positive premises, so an
+        // unrecognised `lend` is still collected: the statement spells `spawn`
+        // before this token, the word stands immediately after `(` or `,`,
+        // and a name follows it. The census found `lend` in that position in
+        // no file of this repository — before this card it was a parse
+        // failure — and the place name after it *is* a reference and still
+        // resolves normally.
+        let lend_capture = word == "lend"
+            && matches!(
+                previous.map(|token| &token.kind),
+                Some(TokenKind::Symbol(Symbol::LeftParen | Symbol::Comma))
+            )
+            && matches!(next.map(|token| &token.kind), Some(TokenKind::Word(_)))
+            && tokens[..index]
+                .iter()
+                .any(|token| matches!(&token.kind, TokenKind::Word(w) if w == "spawn"));
         if body_binder
             || length_query
             || lend_clause
+            || lend_capture
             || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),

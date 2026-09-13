@@ -33,18 +33,22 @@ fn scalar(value: &ScalarOperand) -> String {
         ScalarOperand::I32(value) if *value < 0 => format!("(-INT32_C({}))", -value),
         ScalarOperand::I32(value) => format!("INT32_C({value})"),
         ScalarOperand::Slot(slot) => format!("s_{slot}.value.scalar"),
-        ScalarOperand::Move(_) | ScalarOperand::Loan { .. } => {
+        ScalarOperand::Move(_) | ScalarOperand::Loan { .. } | ScalarOperand::Lease { .. } => {
             unreachable!("checked scalar operand is neither owned nor lent")
         }
     }
 }
 
-/// A move and a loan both hand the callee the same pointer value — which is
-/// what makes two borrowers of one allocation two readers of one object rather
-/// than two copies. They differ only in what the *caller* keeps, which
+/// A move, a loan and a lease all hand the callee the same pointer value —
+/// which is what makes two borrowers of one allocation two readers of one
+/// object rather than two copies, and two lease holders two writers-in-waiting
+/// of one object. They differ only in what the *caller* keeps, which
 /// `consume` decides.
 fn self_value(operand: &ScalarOperand) -> String {
-    if let ScalarOperand::Move(slot) | ScalarOperand::Loan { slot, .. } = operand {
+    if let ScalarOperand::Move(slot)
+    | ScalarOperand::Loan { slot, .. }
+    | ScalarOperand::Lease { slot, .. } = operand
+    {
         format!("s_{slot}.value")
     } else {
         format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand))
@@ -269,6 +273,29 @@ pub fn emit_task_c11_with_source_lines(
                 _ => None,
             })
             .collect::<BTreeMap<_, _>>();
+        // The write-side mirror (card `WRITE-LEND-TASKS`): the leases each
+        // creation opened, so the join can announce their return.
+        let leases_by_handle = function
+            .blocks
+            .values()
+            .filter_map(|block| match &block.terminator.kind {
+                TerminatorKind::TrySpawn {
+                    arguments,
+                    handle_slot,
+                    ..
+                } => Some((
+                    *handle_slot,
+                    arguments
+                        .iter()
+                        .filter_map(|argument| match argument {
+                            ScalarOperand::Lease { slot, .. } => Some(*slot),
+                            _ => None,
+                        })
+                        .collect::<Vec<_>>(),
+                )),
+                _ => None,
+            })
+            .collect::<BTreeMap<_, _>>();
         writeln!(source, "    goto qcore_block_{};", function.entry).unwrap();
         for (block_id, block) in &function.blocks {
             writeln!(source, "qcore_block_{block_id}: ;").unwrap();
@@ -337,8 +364,9 @@ pub fn emit_task_c11_with_source_lines(
                         // collection: a join that does not return closes no
                         // loan, here or in the model.
                         let lent = loans_by_handle.get(handle).cloned().unwrap_or_default();
+                        let leased = leases_by_handle.get(handle).cloned().unwrap_or_default();
                         source.push_str("    {\n");
-                        if !lent.is_empty() {
+                        if !lent.is_empty() || !leased.is_empty() {
                             writeln!(
                                 source,
                                 "        uint64_t borrower = s_{handle}.handle->identity;"
@@ -364,6 +392,14 @@ pub fn emit_task_c11_with_source_lines(
                             writeln!(
                                 source,
                                 "        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_RETURN, borrower, {generation}, INT64_C(0), (const char *)0);"
+                            )
+                            .unwrap();
+                        }
+                        for leased_slot in leased {
+                            let generation = format!("s_{leased_slot}.value.buffer->generation");
+                            writeln!(
+                                source,
+                                "        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LEASE_RETURN, borrower, {generation}, INT64_C(0), (const char *)0);"
                             )
                             .unwrap();
                         }
@@ -416,6 +452,22 @@ pub fn emit_task_c11_with_source_lines(
                             )
                             .unwrap();
                         }
+                        // A lease line carries its byte range packed into the
+                        // event's value field: `low` in the high 32 bits,
+                        // `high` in the low 32 — both bounds are check-time
+                        // constants no larger than the payload's 4 bytes, so
+                        // the packing is exact and the adapter unpacks it for
+                        // the `QCORE_BUFFER_LEASE` rendering.
+                        if let ScalarOperand::Lease { slot, low, high } = argument {
+                            let borrower = format!("s_{handle_slot}.handle->identity");
+                            let generation = format!("s_{slot}.value.buffer->generation");
+                            let packed = (low << 32) | high;
+                            writeln!(
+                                source,
+                                "        qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_TASK_LEASE, {borrower}, {generation}, INT64_C({packed}), (const char *)0);"
+                            )
+                            .unwrap();
+                        }
                     }
                     writeln!(source, "        goto qcore_block_{success};\n    }}").unwrap();
                 }
@@ -446,6 +498,9 @@ pub fn emit_task_c11_with_source_lines(
                         ScalarType::OwnedBuffer => 2,
                         ScalarType::ReadLoan => {
                             unreachable!("a checked result is never a read loan")
+                        }
+                        ScalarType::WriteLease => {
+                            unreachable!("a checked result is never a write lease")
                         }
                     };
                     writeln!(

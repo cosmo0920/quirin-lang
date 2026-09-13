@@ -1,7 +1,8 @@
 //! Card `CT46-SENDSYNC`: the transferability judgment.
 //!
 //! These tests pin totality over the kind vocabulary, the per-kind
-//! classification, the whole 13 x 4 admission matrix, and the two negative
+//! classification, the whole 14 x 5 admission matrix (13 x 4 before card
+//! `WRITE-LEND-TASKS` grew both vocabularies by one), and the two negative
 //! properties that make the judgment worth having: it never admits a kind
 //! whose class refuses it, and no mode anywhere requests the mutex protocol.
 
@@ -19,7 +20,7 @@ fn kind_inventory_is_complete_and_duplicate_free() {
         assert!(seen.insert(kind), "duplicate kind in ALL: {kind:?}");
     }
     assert_eq!(seen.len(), TransferKind::ALL.len());
-    assert_eq!(TransferKind::ALL.len(), 13);
+    assert_eq!(TransferKind::ALL.len(), 14);
 }
 
 #[test]
@@ -37,7 +38,7 @@ fn mode_inventory_is_complete_and_duplicate_free() {
     for mode in TransferMode::ALL {
         assert!(seen.insert(mode), "duplicate mode in ALL: {mode:?}");
     }
-    assert_eq!(seen.len(), 4);
+    assert_eq!(seen.len(), 5);
 }
 
 /// The judgment is total: it answers for every kind, and `of_declared_type`
@@ -54,9 +55,13 @@ fn judgment_is_total_over_both_vocabularies() {
                 assert!(class.sendable());
                 assert_eq!(class.shareable_under(), None);
             }
-            TransferClass::MovedOnly { shareable_under } => {
+            TransferClass::MovedOnly {
+                shareable_under,
+                mutably_shareable_under,
+            } => {
                 assert!(class.sendable());
                 assert_eq!(class.shareable_under(), shareable_under);
+                assert_eq!(class.mutably_shareable_under(), mutably_shareable_under);
             }
             TransferClass::Never(_) => {
                 assert!(!class.sendable());
@@ -84,9 +89,11 @@ fn per_kind_classification_is_pinned() {
             TransferKind::OwnedBuffer,
             MovedOnly {
                 shareable_under: Some(ShareProtocol::CountedReadShares),
+                mutably_shareable_under: Some(ShareProtocol::DisjointWriteLeases),
             },
         ),
         (TransferKind::ReadLoan, Never(NotAValue)),
+        (TransferKind::WriteLease, Never(NotAValue)),
         (TransferKind::ThreadScope, Never(OwedToCreatingFrame)),
         (TransferKind::TaskHandle, Never(OwedToCreatingFrame)),
         (TransferKind::TaskResult, Never(OwedToCreatingFrame)),
@@ -136,8 +143,8 @@ fn send_and_sync_directions_separate_exactly_one_kind() {
     );
 }
 
-/// The whole 13 x 4 admission matrix, written out. Three cells admit; the
-/// other 49 refuse, each with its own reason.
+/// The whole 14 x 5 admission matrix, written out. Four cells admit; the
+/// other 66 refuse, each with its own reason.
 #[test]
 fn admission_matrix_is_pinned() {
     use TransferMode::*;
@@ -153,8 +160,9 @@ fn admission_matrix_is_pinned() {
             (TransferKind::I32, Copy),
             (TransferKind::OwnedBuffer, Move),
             (TransferKind::OwnedBuffer, Lend),
+            (TransferKind::OwnedBuffer, LendWrite),
         ],
-        "exactly the three admitted capture forms"
+        "exactly the four admitted capture forms"
     );
     assert_eq!(
         admits(TransferKind::I32, Copy),
@@ -168,6 +176,12 @@ fn admission_matrix_is_pinned() {
         admits(TransferKind::OwnedBuffer, Lend),
         Ok(AdmittedTransfer::LendShare(
             ShareProtocol::CountedReadShares
+        ))
+    );
+    assert_eq!(
+        admits(TransferKind::OwnedBuffer, LendWrite),
+        Ok(AdmittedTransfer::LendWriteRange(
+            ShareProtocol::DisjointWriteLeases
         ))
     );
 
@@ -185,6 +199,11 @@ fn admission_matrix_is_pinned() {
     assert_eq!(admits(TransferKind::I32, Move), Err(ModeNotAdmittedForKind));
     assert_eq!(admits(TransferKind::I32, Lend), Err(ModeNotAdmittedForKind));
     assert_eq!(
+        admits(TransferKind::I32, LendWrite),
+        Err(ModeNotAdmittedForKind),
+        "a duplicated kind has no bytes whose write authority could cross"
+    );
+    assert_eq!(
         admits(TransferKind::OwnedBuffer, Copy),
         Err(ModeNotAdmittedForKind),
         "copying affine custody would duplicate an identity"
@@ -196,7 +215,7 @@ fn admission_matrix_is_pinned() {
         let TransferClass::Never(reason) = transferable(kind) else {
             continue;
         };
-        for mode in [Copy, Move, Lend] {
+        for mode in [Copy, Move, Lend, LendWrite] {
             assert_eq!(
                 admits(kind, mode),
                 Err(KindNotTransferable(reason)),
@@ -250,6 +269,13 @@ fn admission_never_contradicts_the_class() {
                         "{kind:?} lent under a protocol its class does not name"
                     );
                 }
+                Ok(AdmittedTransfer::LendWriteRange(protocol)) => {
+                    assert_eq!(
+                        class.mutably_shareable_under(),
+                        Some(protocol),
+                        "{kind:?} write-leased under a protocol its class does not name"
+                    );
+                }
                 Err(_) => {}
             }
             // An admission implies the class is sendable, always.
@@ -280,10 +306,18 @@ fn received_kind_is_pinned() {
         TransferKind::ReadLoan,
         "lending an owned Buffer delivers a loan, never a Buffer"
     );
+    assert_eq!(
+        received_kind(
+            TransferKind::OwnedBuffer,
+            AdmittedTransfer::LendWriteRange(ShareProtocol::DisjointWriteLeases)
+        ),
+        TransferKind::WriteLease,
+        "write-leasing an owned Buffer delivers a lease, never a Buffer"
+    );
 }
 
-/// The whole three-way boundary decision: 13 x 4 x 13 = 676 cells, of which
-/// exactly three admit. This is the function the frontend cross-checks
+/// The whole three-way boundary decision: 14 x 5 x 14 = 980 cells, of which
+/// exactly four admit. This is the function the frontend cross-checks
 /// against, so its admitted set is the load-bearing claim.
 #[test]
 fn capture_admission_matrix_is_pinned() {
@@ -312,8 +346,13 @@ fn capture_admission_matrix_is_pinned() {
                 TransferMode::Lend,
                 TransferKind::ReadLoan
             ),
+            (
+                TransferKind::OwnedBuffer,
+                TransferMode::LendWrite,
+                TransferKind::WriteLease
+            ),
         ],
-        "exactly the three admitted capture forms, and nothing else in 676 cells"
+        "exactly the four admitted capture forms, and nothing else in 980 cells"
     );
 }
 

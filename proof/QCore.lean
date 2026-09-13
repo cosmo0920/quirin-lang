@@ -155,6 +155,7 @@ import QCore.StringSliceIo
 import QCore.StringConcat
 import QCore.SlicePermissions
 import QCore.WriteLend
+import QCore.WriteLendTasks
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.SocketInetAddresses

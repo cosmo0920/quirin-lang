@@ -56,6 +56,31 @@ pub const FULL_READ_AUTHORITY: u32 = crate::concurrency::FULL_ACCESS as u32;
 /// an unmodelled case.
 pub const MAX_READERS: usize = 2;
 
+/// The number of simultaneous range write leases this profile admits for one
+/// resource (card `WRITE-LEND-TASKS`). The card's deliverable is two workers
+/// each holding write authority over its own disjoint byte range; a third is a
+/// represented refusal, exactly as [`MAX_READERS`] bounds the read side.
+pub const MAX_WRITERS: usize = 2;
+
+/// A half-open byte interval `[low, high)` on a resource's own axis — the
+/// footprint of one range write lease (card `WRITE-LEND-TASKS`). The interval
+/// vocabulary is the wave-29 write lend's (`ownership::BorrowKind::MutableRange`),
+/// and the overlap question is decided by **calling**
+/// [`crate::ownership::axes_overlap`] rather than restating it, so the
+/// sequential lend and the task-crossing lease cannot drift apart.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct LeaseRange {
+    pub low: u64,
+    pub high: u64,
+}
+
+impl LeaseRange {
+    /// Whether two leases share a byte — the wave-29 rule, reused.
+    pub fn overlaps(self, other: LeaseRange) -> bool {
+        crate::ownership::axes_overlap(self.low, self.high, other.low, other.high)
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TaskState {
     Active,
@@ -90,6 +115,18 @@ pub enum ResourceState {
     Loaned {
         owner: TaskId,
         shares: Vec<(ShareHolder, u32)>,
+    },
+    /// A resource with outstanding range write leases (card
+    /// `WRITE-LEND-TASKS`). `owner` never stops owning it, but while any lease
+    /// is out **nobody** — the owner included — holds whole-payload authority:
+    /// the owner's read, write, release, move and further lending are all
+    /// refused, because each of those footprints is the whole payload and any
+    /// nonempty lease overlaps it. `leases` is ordered, has no repeated
+    /// holder, every range is nonempty, and the ranges are pairwise disjoint —
+    /// decided by the wave-29 overlap rule, never re-implemented.
+    WriteLeased {
+        owner: TaskId,
+        leases: Vec<(ShareHolder, LeaseRange)>,
     },
 }
 
@@ -195,6 +232,40 @@ pub enum TaskLedgerError {
     /// The loaned resource is not in the state the handle recorded, so the join
     /// cannot close the loan. The ledger is left unchanged.
     LoanNotOutstanding(ResourceId),
+    /// Exclusive or read use was attempted while range write leases are
+    /// outstanding (card `WRITE-LEND-TASKS`). Not a custody complaint: the
+    /// owner still owns the resource. `ranges` are the byte intervals that
+    /// have not come back and `holders` the committed lease holders, so the
+    /// refusal names exactly which bytes are still another party's to write.
+    LeaseOutstanding {
+        resource: ResourceId,
+        ranges: Vec<LeaseRange>,
+        holders: Vec<TaskId>,
+    },
+    /// A second write lease would share a byte with one already outstanding.
+    /// The overlap is the wave-29 decision (`max low < min high`), and the
+    /// refusal names both ranges. The complete request is refused; no
+    /// narrowed lease is granted.
+    OverlappingLeases {
+        resource: ResourceId,
+        requested: LeaseRange,
+        held: LeaseRange,
+    },
+    /// An empty range is not a write lease: it would carry no authority
+    /// across the boundary, so the crossing is refused rather than admitted
+    /// vacuously.
+    InvalidLease {
+        resource: ResourceId,
+        requested: LeaseRange,
+    },
+    /// More simultaneous lease holders than [`MAX_WRITERS`].
+    TooManyWriters {
+        resource: ResourceId,
+        limit: usize,
+    },
+    /// The leased resource is not in the state the handle recorded, so the
+    /// join cannot close the lease. The ledger is left unchanged.
+    LeaseNotOutstanding(ResourceId),
     /// A join for this handle already failed. The child was never observed to
     /// finish, so nothing it holds may be reclaimed and the handle stays
     /// outstanding forever.
@@ -241,6 +312,10 @@ struct Reservation {
     /// each share to the owner exactly as it restores moves; commit rebinds the
     /// pending holder to the child without transferring custody.
     loans: Vec<(ResourceId, u32)>,
+    /// Range write leases parked for this creation (card `WRITE-LEND-TASKS`),
+    /// on exactly the loans' footing: rollback returns each lease to the owner
+    /// exactly, commit rebinds the pending holder to the child.
+    leases: Vec<(ResourceId, LeaseRange)>,
     state: ReservationState,
 }
 
@@ -252,6 +327,9 @@ struct Handle {
     consumed: bool,
     /// Read shares this creation opened. Only a successful join returns them.
     loans: Vec<(ResourceId, u32)>,
+    /// Range write leases this creation opened. Only a successful join
+    /// returns them — the lease's whole lifetime is spawn..join.
+    leases: Vec<(ResourceId, LeaseRange)>,
     /// A join that did not observe the child finish. The handle stays
     /// outstanding and unconsumed, so its scope can never exit.
     failed: bool,
@@ -315,14 +393,70 @@ impl ScopedTaskLedger {
 
     fn outstanding(&self, resource: ResourceId) -> Result<(), TaskLedgerError> {
         let lent = self.lent_share(resource);
-        if lent == 0 {
-            return Ok(());
+        if lent != 0 {
+            return Err(TaskLedgerError::LoanOutstanding {
+                resource,
+                outstanding: lent,
+                borrowers: self.loan_borrowers(resource),
+            });
         }
-        Err(TaskLedgerError::LoanOutstanding {
-            resource,
-            outstanding: lent,
-            borrowers: self.loan_borrowers(resource),
-        })
+        let ranges = self.leased_ranges(resource);
+        if !ranges.is_empty() {
+            return Err(TaskLedgerError::LeaseOutstanding {
+                resource,
+                ranges,
+                holders: self.lease_holders(resource),
+            });
+        }
+        Ok(())
+    }
+
+    /// The outstanding write-leased ranges of one resource, in holder order:
+    /// empty when no lease is out, and exactly the bytes that must come back
+    /// before whole-payload authority is reconstructed.
+    pub fn leased_ranges(&self, resource: ResourceId) -> Vec<LeaseRange> {
+        match self.resources.get(&resource) {
+            Some(ResourceState::WriteLeased { leases, .. }) => {
+                leases.iter().map(|(_, range)| *range).collect()
+            }
+            _ => Vec::new(),
+        }
+    }
+
+    /// The committed lease holders of this resource, in identity order. A
+    /// pending creation is deliberately not a holder: it may never become one.
+    pub fn lease_holders(&self, resource: ResourceId) -> Vec<TaskId> {
+        match self.resources.get(&resource) {
+            Some(ResourceState::WriteLeased { leases, .. }) => leases
+                .iter()
+                .filter_map(|(holder, _)| match holder {
+                    ShareHolder::Borrower(task) => Some(*task),
+                    ShareHolder::Pending(_) => None,
+                })
+                .collect(),
+            _ => Vec::new(),
+        }
+    }
+
+    /// The range this task's committed lease holds of this resource, if any.
+    pub fn held_lease(&self, task: TaskId, resource: ResourceId) -> Option<LeaseRange> {
+        match self.resources.get(&resource) {
+            Some(ResourceState::WriteLeased { leases, .. }) => leases
+                .iter()
+                .find(|(holder, _)| *holder == ShareHolder::Borrower(task))
+                .map(|(_, range)| *range),
+            _ => None,
+        }
+    }
+
+    /// Every resource with an outstanding range write lease, in identity order.
+    pub fn outstanding_write_leases(&self) -> Vec<ResourceId> {
+        self.resources
+            .iter()
+            .filter_map(|(&resource, state)| {
+                matches!(state, ResourceState::WriteLeased { .. }).then_some(resource)
+            })
+            .collect()
     }
 
     fn transaction<T>(
@@ -429,6 +563,17 @@ impl ScopedTaskLedger {
                 }
                 refused
             }
+            // A write-leased resource is readable by **nobody** (card
+            // `WRITE-LEND-TASKS`): the owner's read footprint is the whole
+            // payload and any nonempty lease overlaps it, and a lease holder
+            // holds write authority over its own bytes, not a whole-payload
+            // read this route could express. The refusal names the leases so
+            // the exit says whose bytes are still out.
+            Some(ResourceState::WriteLeased { .. }) => Err(TaskLedgerError::LeaseOutstanding {
+                resource,
+                ranges: self.leased_ranges(resource),
+                holders: self.lease_holders(resource),
+            }),
             _ => refused,
         }
     }
@@ -544,6 +689,32 @@ impl ScopedTaskLedger {
         resources: &[ResourceId],
         loans: &[(ResourceId, u32)],
     ) -> Result<(), TaskLedgerError> {
+        self.reserve_with_transfers(creator, scope, reservation, resources, loans, &[])
+    }
+
+    /// Reserve an ordered move list, an ordered list of read shares and an
+    /// ordered list of range write leases before attempting the external spawn
+    /// (card `WRITE-LEND-TASKS`). A lease is on exactly the loans' footing: it
+    /// leaves the owner as a *pending* lease which grants nobody anything, a
+    /// failed creation returns it exactly, and only the creator's successful
+    /// join reclaims it — the lease's whole lifetime is spawn..join.
+    ///
+    /// A lease is admitted while the resource already has outstanding leases,
+    /// so long as the creator is its owner, the range is nonempty, the range
+    /// is **disjoint from every outstanding lease** — the wave-29 overlap rule
+    /// ([`crate::ownership::axes_overlap`]), reused rather than re-implemented
+    /// — and the resource does not exceed [`MAX_WRITERS`] simultaneous
+    /// holders. A read share and a write lease of one resource never coexist:
+    /// either request beside the other is refused naming what is out.
+    pub fn reserve_with_transfers(
+        &mut self,
+        creator: TaskId,
+        scope: ScopeId,
+        reservation: ReservationId,
+        resources: &[ResourceId],
+        loans: &[(ResourceId, u32)],
+        leases: &[(ResourceId, LeaseRange)],
+    ) -> Result<(), TaskLedgerError> {
         self.transaction(|ledger| {
             ledger.owned_scope(creator, scope)?;
             if ledger.tasks[&creator].scopes.last() != Some(&scope) {
@@ -556,6 +727,7 @@ impl ScopedTaskLedger {
                 .iter()
                 .copied()
                 .chain(loans.iter().map(|(resource, _)| *resource))
+                .chain(leases.iter().map(|(resource, _)| *resource))
                 .collect::<Vec<ResourceId>>();
             unique(&parked)?;
             for &resource in resources {
@@ -563,6 +735,9 @@ impl ScopedTaskLedger {
             }
             for &(resource, share) in loans {
                 ledger.lend(creator, resource, ShareHolder::Pending(reservation), share)?;
+            }
+            for &(resource, range) in leases {
+                ledger.lease(creator, resource, ShareHolder::Pending(reservation), range)?;
             }
             for &resource in resources {
                 ledger.resources.insert(
@@ -577,6 +752,7 @@ impl ScopedTaskLedger {
                     scope,
                     resources: resources.to_vec(),
                     loans: loans.to_vec(),
+                    leases: leases.to_vec(),
                     state: ReservationState::Pending,
                 },
             );
@@ -605,6 +781,17 @@ impl ScopedTaskLedger {
                 Vec::new()
             }
             Some(ResourceState::Loaned { owner, shares }) if *owner == creator => shares.clone(),
+            // A read share grants whole-payload read authority, and any
+            // nonempty write lease overlaps that footprint — so lending for
+            // read while a write lease is out is refused with the lease named
+            // (card `WRITE-LEND-TASKS`), never admitted beside it.
+            Some(ResourceState::WriteLeased { owner, .. }) if *owner == creator => {
+                return Err(TaskLedgerError::LeaseOutstanding {
+                    resource,
+                    ranges: self.leased_ranges(resource),
+                    holders: self.lease_holders(resource),
+                });
+            }
             _ => {
                 return Err(TaskLedgerError::NotCustodian {
                     task: creator,
@@ -679,6 +866,116 @@ impl ScopedTaskLedger {
         Ok(())
     }
 
+    /// Record one nonempty, pairwise-disjoint range write lease against a live
+    /// resource this task owns (card `WRITE-LEND-TASKS`). Every admission rule
+    /// is checked before anything is written, so a refused lease leaves the
+    /// ledger exactly as it was. The disjointness decision is
+    /// [`LeaseRange::overlaps`] — the wave-29 rule, called rather than
+    /// restated.
+    fn lease(
+        &mut self,
+        creator: TaskId,
+        resource: ResourceId,
+        holder: ShareHolder,
+        range: LeaseRange,
+    ) -> Result<(), TaskLedgerError> {
+        if range.low >= range.high {
+            return Err(TaskLedgerError::InvalidLease {
+                resource,
+                requested: range,
+            });
+        }
+        let mut leases = match self.resources.get(&resource) {
+            Some(ResourceState::Live(Custodian::Task(custodian))) if *custodian == creator => {
+                Vec::new()
+            }
+            Some(ResourceState::WriteLeased { owner, leases }) if *owner == creator => {
+                leases.clone()
+            }
+            // A write lease and a read share of one resource never coexist: a
+            // read share grants whole-payload read authority and any nonempty
+            // lease overlaps that footprint. The refusal names the shares
+            // that are out rather than falling to a custody complaint.
+            Some(ResourceState::Loaned { owner, .. }) if *owner == creator => {
+                return Err(TaskLedgerError::LoanOutstanding {
+                    resource,
+                    outstanding: self.lent_share(resource),
+                    borrowers: self.loan_borrowers(resource),
+                });
+            }
+            _ => {
+                return Err(TaskLedgerError::NotCustodian {
+                    task: creator,
+                    resource,
+                });
+            }
+        };
+        if leases.len() >= MAX_WRITERS {
+            return Err(TaskLedgerError::TooManyWriters {
+                resource,
+                limit: MAX_WRITERS,
+            });
+        }
+        if let Some(&(_, held)) = leases.iter().find(|(_, held)| held.overlaps(range)) {
+            return Err(TaskLedgerError::OverlappingLeases {
+                resource,
+                requested: range,
+                held,
+            });
+        }
+        if leases.iter().any(|(existing, _)| *existing == holder) {
+            return Err(TaskLedgerError::DuplicateCapture(resource));
+        }
+        leases.push((holder, range));
+        leases.sort();
+        self.resources.insert(
+            resource,
+            ResourceState::WriteLeased {
+                owner: creator,
+                leases,
+            },
+        );
+        Ok(())
+    }
+
+    /// Return one recorded lease. The resource becomes exclusively the owner's
+    /// again exactly when the last lease comes back.
+    fn reclaim_lease(
+        &mut self,
+        owner: TaskId,
+        resource: ResourceId,
+        holder: ShareHolder,
+        range: LeaseRange,
+    ) -> Result<(), TaskLedgerError> {
+        let Some(ResourceState::WriteLeased {
+            owner: recorded,
+            leases,
+        }) = self.resources.get(&resource)
+        else {
+            return Err(TaskLedgerError::LeaseNotOutstanding(resource));
+        };
+        if *recorded != owner || !leases.contains(&(holder, range)) {
+            return Err(TaskLedgerError::LeaseNotOutstanding(resource));
+        }
+        let remaining = leases
+            .iter()
+            .filter(|entry| **entry != (holder, range))
+            .cloned()
+            .collect::<Vec<_>>();
+        self.resources.insert(
+            resource,
+            if remaining.is_empty() {
+                ResourceState::Live(Custodian::Task(owner))
+            } else {
+                ResourceState::WriteLeased {
+                    owner,
+                    leases: remaining,
+                }
+            },
+        );
+        Ok(())
+    }
+
     /// Failed spawn restores only this reservation; earlier siblings persist,
     /// including a share another creation still holds. A creation that did not
     /// happen lent nothing, so its pending share returns to the owner exactly.
@@ -691,6 +988,14 @@ impl ScopedTaskLedger {
             let record = ledger.pending(creator, reservation)?.clone();
             for &(resource, share) in &record.loans {
                 ledger.reclaim(creator, resource, ShareHolder::Pending(reservation), share)?;
+            }
+            for &(resource, range) in &record.leases {
+                ledger.reclaim_lease(
+                    creator,
+                    resource,
+                    ShareHolder::Pending(reservation),
+                    range,
+                )?;
             }
             for resource in &record.resources {
                 ledger
@@ -726,6 +1031,7 @@ impl ScopedTaskLedger {
                     child,
                     consumed: false,
                     loans: reservation_record.loans.clone(),
+                    leases: reservation_record.leases.clone(),
                     failed: false,
                 },
             );
@@ -739,6 +1045,17 @@ impl ScopedTaskLedger {
             for (resource, share) in reservation_record.loans {
                 ledger.reclaim(creator, resource, ShareHolder::Pending(reservation), share)?;
                 ledger.lend(creator, resource, ShareHolder::Borrower(child), share)?;
+            }
+            // A pending lease becomes the child's lease, on the same footing:
+            // exactly the reserved bytes change holder.
+            for (resource, range) in reservation_record.leases {
+                ledger.reclaim_lease(
+                    creator,
+                    resource,
+                    ShareHolder::Pending(reservation),
+                    range,
+                )?;
+                ledger.lease(creator, resource, ShareHolder::Borrower(child), range)?;
             }
             ledger.reservations.get_mut(&reservation).unwrap().state =
                 ReservationState::Committed { child, handle };
@@ -850,6 +1167,19 @@ impl ScopedTaskLedger {
                     resource,
                     ShareHolder::Borrower(record.child),
                     share,
+                )?;
+            }
+            // Returning the leases is part of the same transaction as
+            // collecting the capsule, exactly as for shares: a lease the
+            // ledger cannot account for aborts the join. A lease held by a
+            // *sibling* is untouched, so a join reconstructs whole-payload
+            // authority only when it returned the last outstanding lease.
+            for &(resource, range) in &record.leases {
+                ledger.reclaim_lease(
+                    creator,
+                    resource,
+                    ShareHolder::Borrower(record.child),
+                    range,
                 )?;
             }
             let task = ledger.tasks.get_mut(&record.child).unwrap();
@@ -1726,5 +2056,208 @@ mod tests {
                 l.reserve_with_loans(stranger, 11, 21 + stranger, &[], &[(7, 1)])
             });
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Card `WRITE-LEND-TASKS`: range write leases.
+    // -----------------------------------------------------------------------
+
+    const LEFT: LeaseRange = LeaseRange { low: 0, high: 2 };
+    const RIGHT: LeaseRange = LeaseRange { low: 2, high: 4 };
+
+    /// Lease `range` of resource 7 to a fresh child, in one step.
+    fn lease_to(
+        ledger: &mut ScopedTaskLedger,
+        reservation: u64,
+        child: u64,
+        handle: u64,
+        range: LeaseRange,
+    ) {
+        ledger
+            .reserve_with_transfers(0, 10, reservation, &[], &[], &[(7, range)])
+            .unwrap();
+        ledger.commit(0, reservation, child, handle).unwrap();
+    }
+
+    /// The whole lease lifecycle: a pending lease grants nobody anything and a
+    /// failed creation returns it exactly; a committed lease suspends the
+    /// owner's write, read, release and further transfers; two disjoint
+    /// leases are both out at once; and only each creator join returns its
+    /// lease — the owner's whole-payload authority is reconstructed exactly
+    /// when the last one comes back.
+    #[test]
+    fn a_write_lease_transfers_authority_for_exactly_the_spawn_to_join_window() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        let before = ledger.clone();
+        ledger
+            .reserve_with_transfers(0, 10, 20, &[], &[], &[(7, LEFT)])
+            .unwrap();
+        // The reservation window grants nobody anything, read included.
+        assert!(ledger.read_resource(0, 7).is_err());
+        ledger.rollback(0, 20).unwrap();
+        assert_eq!(
+            ledger.resource_state(7),
+            before.resource_state(7),
+            "a creation that never happened leased nothing"
+        );
+
+        lease_to(&mut ledger, 21, 1, 31, LEFT);
+        lease_to(&mut ledger, 22, 2, 32, RIGHT);
+        assert_eq!(ledger.leased_ranges(7), [LEFT, RIGHT]);
+        assert_eq!(ledger.lease_holders(7), [1, 2]);
+        assert_eq!(ledger.held_lease(1, 7), Some(LEFT));
+        assert_eq!(ledger.outstanding_write_leases(), [7]);
+
+        // The transfer: no whole-payload authority for anyone while any lease
+        // is out — the owner's write, read, release, move and read-lend are
+        // all refused naming the leases.
+        let suspended = TaskLedgerError::LeaseOutstanding {
+            resource: 7,
+            ranges: vec![LEFT, RIGHT],
+            holders: vec![1, 2],
+        };
+        assert_eq!(ledger.use_resource(0, 7).unwrap_err(), suspended);
+        assert_eq!(ledger.read_resource(0, 7).unwrap_err(), suspended);
+        rejected(&mut ledger, &suspended, |l| l.drop_resource(0, 7));
+        rejected(&mut ledger, &suspended, |l| l.reserve(0, 10, 23, &[7]));
+        rejected(&mut ledger, &suspended, |l| {
+            l.reserve_with_loans(0, 10, 23, &[], &[(7, HALF)])
+        });
+
+        // Only each creator join returns its lease; a sibling's stays out.
+        ledger.complete(1, TaskOutcome::I32(1), &[]).unwrap();
+        ledger.complete(2, TaskOutcome::I32(1), &[]).unwrap();
+        ledger.join(0, 31).unwrap();
+        assert_eq!(ledger.leased_ranges(7), [RIGHT]);
+        assert!(ledger.use_resource(0, 7).is_err());
+        ledger.join(0, 32).unwrap();
+        // The last lease back reconstructs whole-payload authority exactly.
+        ledger.use_resource(0, 7).unwrap();
+        ledger.read_resource(0, 7).unwrap();
+        ledger.drop_resource(0, 7).unwrap();
+        ledger.exit_scope(0, 10).unwrap();
+    }
+
+    /// The exclusivity rule is the wave-29 disjointness question: one shared
+    /// byte refuses naming both ranges, adjacency is disjoint and admitted,
+    /// an empty range is not a lease, and a third simultaneous holder is a
+    /// represented refusal.
+    #[test]
+    fn a_second_lease_is_admitted_exactly_when_disjoint() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lease_to(&mut ledger, 20, 1, 30, LEFT);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::OverlappingLeases {
+                resource: 7,
+                requested: LeaseRange { low: 1, high: 3 },
+                held: LEFT,
+            },
+            |l| {
+                l.reserve_with_transfers(
+                    0,
+                    10,
+                    21,
+                    &[],
+                    &[],
+                    &[(7, LeaseRange { low: 1, high: 3 })],
+                )
+            },
+        );
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::InvalidLease {
+                resource: 7,
+                requested: LeaseRange { low: 3, high: 3 },
+            },
+            |l| {
+                l.reserve_with_transfers(
+                    0,
+                    10,
+                    21,
+                    &[],
+                    &[],
+                    &[(7, LeaseRange { low: 3, high: 3 })],
+                )
+            },
+        );
+        // Adjacent is disjoint: [0,2) and [2,4) share no byte.
+        lease_to(&mut ledger, 22, 2, 32, RIGHT);
+        // A third simultaneous holder is refused by count, before any range
+        // is compared — the write-side MAX_READERS.
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::TooManyWriters {
+                resource: 7,
+                limit: MAX_WRITERS,
+            },
+            |l| {
+                l.reserve_with_transfers(
+                    0,
+                    10,
+                    23,
+                    &[],
+                    &[],
+                    &[(7, LeaseRange { low: 4, high: 5 })],
+                )
+            },
+        );
+    }
+
+    /// A read share and a write lease of one resource never coexist, in
+    /// either order: the refusal names what is out rather than falling to a
+    /// custody complaint, and a lease is never taken from a non-owner.
+    #[test]
+    fn read_shares_and_write_leases_of_one_resource_never_coexist() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lend_to(&mut ledger, 20, 1, 30, HALF);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::LoanOutstanding {
+                resource: 7,
+                outstanding: HALF,
+                borrowers: vec![1],
+            },
+            |l| l.reserve_with_transfers(0, 10, 21, &[], &[], &[(7, LEFT)]),
+        );
+        ledger.complete(1, TaskOutcome::I32(1), &[]).unwrap();
+        ledger.join(0, 30).unwrap();
+        lease_to(&mut ledger, 22, 2, 32, LEFT);
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::LeaseOutstanding {
+                resource: 7,
+                ranges: vec![LEFT],
+                holders: vec![2],
+            },
+            |l| l.reserve_with_loans(0, 10, 23, &[], &[(7, 1)]),
+        );
+        // Only the owner leases: a borrower cannot lease onward, a stranger
+        // cannot lease at all.
+        ledger.enter_scope(2, 11).unwrap();
+        rejected(
+            &mut ledger,
+            &TaskLedgerError::NotCustodian {
+                task: 2,
+                resource: 7,
+            },
+            |l| l.reserve_with_transfers(2, 11, 24, &[], &[], &[(7, RIGHT)]),
+        );
+    }
+
+    /// Sequential exclusivity is temporal, exactly as on the read side: once
+    /// a lease is back, the same bytes lease again.
+    #[test]
+    fn a_returned_lease_frees_its_bytes_for_the_next_creation() {
+        let mut ledger = opened();
+        ledger.acquire(0, 7).unwrap();
+        lease_to(&mut ledger, 20, 1, 30, LEFT);
+        ledger.complete(1, TaskOutcome::Unit, &[]).unwrap();
+        ledger.join(0, 30).unwrap();
+        lease_to(&mut ledger, 21, 2, 31, LEFT);
+        assert_eq!(ledger.lease_holders(7), [2]);
     }
 }
