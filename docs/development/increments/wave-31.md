@@ -6,6 +6,64 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Write lends crossing the spawn boundary (2026-09-13): `WRITE-LEND-TASKS` lands
+the task-crossing half the residual `SLICE-PERMISSIONS-WRITE-LEND` named —
+"both parties are one sequential entry's bindings" — and the direction CT10's
+rejection needs. A spawn capture `lend PLACE LOW..HIGH` delivers an ungraded
+`lend<Buffer>` worker parameter: a **range write lease**, write authority over
+`[LOW, HIGH)` of an owned Buffer's payload (`BUFFER_PAYLOAD_BYTES = 4`, the
+`int32_t`'s real bytes) transferred to one worker for exactly spawn..join. The
+rules live in the scoped-task ledger's new `ResourceState::WriteLeased` and
+every layer inherits them: two leases are admitted exactly when disjoint —
+decided by `ownership::axes_overlap`, made `pub` and called rather than restated
+— the owner holds no whole-payload authority (read included) while any lease is
+out, an empty lease refuses (a deliberate divergence from the sequential lend's
+empty admission, in the refusing direction), `MAX_WRITERS = 2`, read shares and
+leases never coexist, and only the creator's join reclaims. The transferability
+judgment gains its fourth row (`TransferMode::LendWrite`,
+`ShareProtocol::DisjointWriteLeases`, delivered `TransferKind::WriteLease`;
+`TransferClass::MovedOnly` gains `mutably_shareable_under`), with the plain
+`write` capture's pinned refusal re-decided untouched over the grown 14 x 5 x 14
+matrices. Zero new codes (two condition widenings stated in spec §L21: `Q600`
+boundary and ledger, `Q020` parameter), zero reserved words (`lend` contextual
+in two new positions, censused over 487 fixture files), zero tokens. The
+exclusivity statement is audited:
+`QCore.WriteLendTasks.no_byte_has_two_write_authorities` — at any point of any
+spawn/join interleaving (reachability over admitted ledger opens and closes) no
+byte has two write authorities, owner-versus-holder and holder-versus-holder in
+one count — backing the judgment's new admitting arm as `LeaseObligation` (Lean
+audits 123 → **124**, `AuditWriteLendTasks.lean`). 17 end-to-end tests in
+`compiler/tests/write_lend_tasks.rs` (the two-worker disjoint fixture with its
+pinned lease trace, all four card refusals — overlap, owner write, release
+before the join, varying bound — plus kind mismatches, a third holder, mixing,
+temporal reuse, and one ASan/UBSan/LSan native run: two threads holding leases
+of one allocation counted once); 4 ledger rows and re-pinned transfer matrices
+in `qcore-core`. Scope honesty: the worker **holds** and does not yet
+**exercise** the authority — no operation admits a lease in a worker body — so
+no two-threads-mutating claim is made; that is the flagship residual
+`WRITE-LEND-TASKS-EXERCISE`, beside `-EXTENT`, `-VARYING-BOUND`, `-EPOCH`, `-F1`,
+`-WINDOWS-RUN` and `-PRELUDE-FRAGMENT`. CT07's recorded sequential-only boundary
+is now dischargeable and CT10's concurrency half now exists at byte granularity
+(readiness statements, no mapping; manifest and matrix untouched). Deliberate
+pin updates disclosed: the transferability message texts, the capture
+grammar-gate message, the task-parameter message, the transfer matrix pins, and
+— found by the recovery gate rather than predicted — the **two F02 generated-C
+digests**, whose fourth recorded move follows from the shared diagnostic
+prelude's two new kinds reaching every task program; no pre-existing program's
+printed bytes move, and F02's relation and refusal assertions are untouched and
+green against fresh native runs. The card was written on `469f6509`, interrupted
+mid-gate by a model usage limit, and recovered onto `2492825b` by a second
+agent, which reconciled only `DEVELOPMENT.md` (the documentation split had
+turned its increment section into a table of contents), repaired the digest pins
+and re-measured every gate row. Final gate: **4,505** workspace tests (0 failed,
+8 ignored, `--no-fail-fast`), **200** Python tests with the one expected
+`lean_audits: 123 != 124` tripwire left for the integrator, **124** Lean audits,
+both probes exit 0, fmt/clippy clean; measured while two other worktrees ran
+their own workspace suites, an earlier run under that load tripping
+constraint 16's `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` row,
+which the recorded run passes. Evidence:
+`docs/reports/write-lend-tasks/README.md`.
+
 C gateway scalar writes, expression frames and conditional custody (2026-09-13):
 `C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and
 bounded `AOM-POISON-CONDITION-FRAME` repairs, and an acyclic conditional-identity

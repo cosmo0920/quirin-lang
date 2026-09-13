@@ -6,8 +6,24 @@ task-crossing remainder"* — and the direction CT10's rejection shape needs:
 **two workers each holding write authority over disjoint byte ranges of one
 buffer across the spawn boundary**.
 
-Base: `origin/main` at `469f6509` (post-wave-30), isolated worktree, branch
-`worktree-agent-a0f14b595495fba8a`.
+Base: written on `origin/main` at `469f6509` (post-wave-30) in worktree branch
+`worktree-agent-a0f14b595495fba8a`; **interrupted mid-gate by a model usage
+limit** and recovered by a second agent, which merged that branch forward onto
+`origin/main` at `2492825b` (post-`C-GATEWAY-WAVE`, post-documentation-split) in
+worktree branch `worktree-agent-a363912ff53d7642f` and ran the gate there. The
+merge touched one file — `DEVELOPMENT.md`, whose "Increment records" section had
+become a table of contents over `docs/development/increments/` while this card
+was interrupted — so this card's increment paragraph lands in
+`docs/development/increments/wave-31.md`, newest first, and not inline. The
+merge reconciled no source, test, Lean or report content — every other path
+merged clean, and `cargo check --workspace --all-targets` was clean at the merge
+commit before any gate step ran. What the recovery then *changed* is exactly one
+thing, and it came out of the gate rather than out of the merge: the two F02
+generated-C digest pins of §6, which the first agent's compatibility claim had
+asserted without measuring. The Lean-audit count in §7 and §11 is the
+**recovered** one (123 → 124, `C-GATEWAY-WAVE` having landed sixteen audits
+after the first agent measured 121 → 122); §11 records what the second agent
+measured, not what the first predicted.
 
 **What landed, in one sentence.** A spawn capture `lend PLACE LOW..HIGH`
 delivering an ungraded `lend<Buffer>` worker parameter — a **range write
@@ -23,7 +39,7 @@ transferability judgment as its fourth row, and proved exclusive in Lean:
 
 Zero new diagnostic codes (the Q-space icebox is untouched; two condition
 widenings stated in spec §L21 and §4 below), zero new reserved words, zero
-new tokens. Lean audits 121 → **122** (`AuditWriteLendTasks.lean`).
+new tokens. Lean audits 123 → **124** (`AuditWriteLendTasks.lean`).
 
 ---
 
@@ -183,6 +199,10 @@ weakened, every update strengthens or extends a message):**
   backstop; its message text was widened to name the fourth admitted form.
   CT47's evidence about it ("kept as backstop") is intact; the text change
   is this card's and is disclosed here.
+* `compiler/tests/f02_trace_relation.rs`: the two generated-C digest pins
+  moved, the fourth recorded move of that pair — §6 carries the measurement,
+  the reason and the precedent. Found by the recovery gate, not by the first
+  agent, whose run never reached that target.
 
 ## 5. The judgment: a fourth row, with `write` untouched
 
@@ -212,15 +232,35 @@ enumeration, disagreement refuses) covers the new row unchanged.
   `epoch_tasks_source`, `obs_reordering`, `task_io_compose`,
   `thread_examples` — all green in the workspace run (§11).
 * A module with no lease travels identical code paths: the lowering's new
-  arms are behind the new capture/type spellings, the ledger's new state is
+  arms are behind the new capture/type spellings, and the ledger's new state is
   reachable only through `reserve_with_transfers`'s lease list
-  (`reserve_with_loans` delegates with an empty one), and the emitted C of
-  every pre-existing program is byte-identical **except** for the shared
-  diagnostic prelude, which gains two enum members and two adapter cases
-  (`QCORE_DIAG_TASK_LEASE`, `QCORE_DIAG_TASK_LEASE_RETURN`). No pre-existing
-  program's **output** changes by a byte: the new kinds are logged by no old
-  program, and the examples suite (byte-comparing every published program's
-  execution) runs green.
+  (`reserve_with_loans` delegates with an empty one).
+* **The one global emission change, and the pin it moves — measured at the
+  recovery, not predicted.** The shared diagnostic prelude gains two enum
+  members and two adapter cases (`QCORE_DIAG_TASK_LEASE`,
+  `QCORE_DIAG_TASK_LEASE_RETURN`), and that prelude is emitted into **every**
+  task program, so the generated C of every pre-existing task program moves by
+  exactly that text. Two pins bind that text — `f02_trace_relation.rs`'s
+  `ROUND_TRIP_C_DIGEST` and `CONCURRENT_C_DIGEST`, the repository's **only** C
+  digest pins (`grep -rl c_digest` over every test tree finds one file) — and
+  both are **deliberately re-pinned** here: `6524b41d0ccb910f` →
+  `6df369991465940e` and `0719a8dcb0192e7e` → `0da423be2f16b8bb`, with the
+  reason recorded in the pins' own comment block beside the three moves before
+  it. This is the **fourth** recorded move of these two pins and it is the
+  established practice for a deliberate emission change on this route (commit
+  `4fd92e51`, "re-pin its emission digests"; card `TRACE-STDIO`, the third).
+  Constraint 5 is satisfied by disclosure, not bypassed: nothing is weakened and
+  no expectation is deleted. **The first agent asserted this compatibility claim
+  without measuring it** — it was interrupted before its workspace run reached
+  the F02 target — so the claim is corrected here rather than carried.
+* **No pre-existing program's printed bytes change.** That is the claim the
+  digest move does *not* touch, and it is measured rather than argued: the new
+  kinds are logged by no old program; `parse_observed_trace` reads the same
+  lines; F02's relation assertions (`is_reference_order`, the reference
+  positions, and both refusal codes of
+  `a_causally_impossible_native_rendering_would_be_refused`) are **untouched**
+  and pass against fresh native runs in this same change; and the examples
+  suite, which byte-compares every published program's *execution*, runs green.
 * The reference interpreter and the native runtime announce the same lease
   events at the same points (creation commit; successful join), so the
   trace vocabulary stays one vocabulary. The F02 trace relation refuses the
@@ -237,7 +277,7 @@ enumeration, disagreement refuses) covers the new row unchanged.
 whole-project axiom closure) and `proof/AuditWriteLendTasks.lean` — **17
 declarations audited by name**, placeholder-free, no project axiom, every
 closure within `{propext, Classical.choice, Quot.sound}`. Lean audits
-121 → **122**.
+123 → **124**.
 
 * **The exclusivity theorem the card names**:
   `no_byte_has_two_write_authorities` — for every ledger state reachable by
@@ -321,6 +361,7 @@ untouched. What it supplies:
 | `WRITE-LEND-TASKS-EPOCH` | a lease capture on the composed epoch route, refused by name | a measured residency rule for a leased range against the epoch's allocation axis |
 | `WRITE-LEND-TASKS-F1` | the interval lives in the scoped-task ledger, not yet in `DisjointFootprintsV1`'s derived footprints | the F1 wiring: the capture's range as a `DeriveSlice` onto that checker, discharging its `DeclaredFootprintShape` premise for this shape |
 | `WRITE-LEND-TASKS-WINDOWS-RUN` | the native test ran the Linux arm in this worktree; macOS compiles the same test file | the `STRING-CONCAT-WINDOWS-RUN` precedent for the task emission under MSVC |
+| `WRITE-LEND-TASKS-PRELUDE-FRAGMENT` | the two lease kinds are added to the shared diagnostic prelude **unconditionally**, so every task program's generated C moves and §6's two digest pins move with it. Constraint 15e's `io_emit` precedent — a second prelude fragment inserted only into a program that needs it, "which is what keeps every other emitted program byte-identical" — was **not** applied here | make the two enum members and their two adapter cases a fragment emitted only into a program that opens a lease, then re-measure: the two F02 digests should return to `6524b41d0ccb910f` / `0719a8dcb0192e7e` and the card's own program keep its trace. Weigh it against the cost the fragment pattern has here that it does not have in `io_emit`: this prelude's kind enum is one closed vocabulary, and splitting it conditionally makes the emitted enum differ between programs |
 
 ## 10. Keyword census (standing constraint 14)
 
@@ -346,31 +387,54 @@ file outside `third_party/` (487 files).
 
 ## 11. Gate
 
-Run in this worktree on `origin/main` at `469f6509` plus this card, with
-`$HOME/.elan/bin` on `PATH` for the Lean row and the submodule initialised
-before the workspace run.
+**This is the recovery agent's measurement**, run in worktree branch
+`worktree-agent-a363912ff53d7642f` on `origin/main` at `2492825b` plus this
+card, with `$HOME/.elan/bin` on `PATH` for the Lean row and the submodule
+initialised before the workspace run. The first agent published no workspace
+number — it was interrupted before its run finished — so every row below is a
+fresh measurement, and the F02 digest repair of §6 is in the tree for all of
+them.
 
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | ok — `third_party/libevent` at `d82464a2` |
-| `cargo test --workspace --no-fail-fast` | see the final report row — recorded verbatim at close |
+| `cargo test --workspace --no-fail-fast` | **4,505 passed; 0 failed; 8 ignored**, exit 0 (main's `C-GATEWAY-WAVE` measured 4,484; this card adds 21 — its 17 end-to-end tests plus 4 ledger rows) |
 | `cargo fmt --all -- --check` | exit 0 |
 | `cargo clippy --all-targets -- -D warnings` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
-| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **Passed 122 Lean audits** (121 → 122: `AuditWriteLendTasks.lean`), no warning, exit 0 |
-| `python3 -m unittest discover -s scripts/tests` | 200 tests, **1 expected failure** — §11.1 |
-| `compiler/tests/write_lend_tasks.rs` | **17 passed, 0 failed** (16 checked + 1 sanitized native run) |
-| `crates/qcore-core --lib` (incl. 4 new ledger rows, re-pinned transfer matrices) | all passed |
-| `crates/qcore-frontend` tests (incl. `transferability`, `read_loans`) | all passed |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **Passed 124 Lean audits** (123 → 124: `AuditWriteLendTasks.lean`), no warning, exit 0 |
+| `python3 -m unittest discover -s scripts/tests` | Ran 200 tests, **1 expected failure** — §11.1 |
+| `compiler/tests/write_lend_tasks.rs` | **17 passed; 0 failed** (16 checked + 1 ASan/UBSan/LSan native run) |
+| `compiler/tests/f02_trace_relation.rs` (the re-pinned digests, §6) | 4 passed, 0 failed |
 
 ### 11.1 One expected Python failure, left for the integrator
 
 `test_the_derived_facts_are_recomputed_rather_than_carried` reports
-`lean_audits: 121 != 122` — the derived-value tripwire working as designed:
-this card adds one audited Lean module and may not edit the acceptance
-matrix. The same one-line reconciliation every wave's new audit file
-receives (constraint 25). The other 199 Python tests pass.
+`AssertionError: Lists differ: ['14.0.0', 123] != ['14.0.0', 124]` — the
+derived-value tripwire working as designed: this card adds one audited Lean
+module and may not edit the acceptance matrix. The same one-line reconciliation
+every wave's new audit file receives (constraint 25). The other 199 Python
+tests pass.
+
+### 11.1a Machine load during the measurement, disclosed
+
+The recovery gate ran on a machine where **two other worktrees were running
+their own `cargo test --workspace` concurrently** (the integrator's and a third
+lane's, both confirmed by `/proc/<pid>/cwd`). That is exactly the condition
+standing constraint 16 names, and it is disclosed rather than smoothed over.
+
+Both facts, in order. **An earlier run under that load did trip one
+constraint-16 row**: `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+failed its wall-clock assertion (`elapsed < Duration::from_millis(500)`,
+`cycle20_verifier_plugins.rs:794`) — the row constraint 16 records as measured
+failing at load 50 and passing at load 37 on the same binary. **The recorded
+run above passed it**, under the same concurrent load and with no isolation
+needed, so no isolated re-verification was required and none is claimed. The
+other four constraint-16 rows never tripped in either run. The earlier run's
+*other* two failures were not load at all — they were the F02 digest pins of
+§6, a real consequence of this card that the first agent never measured, and
+they are repaired rather than attributed to load.
 
 ### 11.2 Measurement hygiene
 
@@ -412,7 +476,7 @@ This card may not edit `AGENTS.md`, `README.md` or the acceptance matrix.
 
 2. **`AGENTS.md`**: the `Q020`/`Q021` and `Q600` namespace rows should
    record the two condition widenings (authority: spec §L21, updated by
-   this card); the headline Lean-audit number moves 121 → 122; the ledger's
+   this card); the headline Lean-audit number moves 123 → 124; the ledger's
    standing-constraint inventory gains the 15h append above if adopted.
 
 3. **The derived `lean_audits` count** moves by one — §11.1's tripwire, the
@@ -442,7 +506,9 @@ This card may not edit `AGENTS.md`, `README.md` or the acceptance matrix.
    * `qcore_verification`: `SourceExecutionProfile::ScopedWriteLeasesV1`.
    * The emitted diagnostic prelude gains two enum members and two adapter
      cases; `task_trace_relation` refuses the two new trace lines as
-     outside its pre-T05 alphabet.
+     outside its pre-T05 alphabet. **This moves the two F02 generated-C
+     digest pins** (§6), the repository's only such pins — a deliberate,
+     fourth recorded move, disclosed in the pins' own comment block.
 
 5. **CT07's mapping and CT10's reason row** may be updated per §8 by a
    lane, never by this card.
