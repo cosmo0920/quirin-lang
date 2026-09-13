@@ -1,10 +1,12 @@
 //! Card `CT46-SENDSYNC`: the transferability judgment.
 //!
 //! These tests pin totality over the kind vocabulary, the per-kind
-//! classification, the whole 14 x 5 admission matrix (13 x 4 before card
-//! `WRITE-LEND-TASKS` grew both vocabularies by one), and the two negative
-//! properties that make the judgment worth having: it never admits a kind
-//! whose class refuses it, and no mode anywhere requests the mutex protocol.
+//! classification, the whole 16 x 6 admission matrix (13 x 4 before card
+//! `WRITE-LEND-TASKS` grew both vocabularies by one, and 14 x 5 before card
+//! `MUTEX-SHARE-CROSS` grew them by two and one), and the negative properties
+//! that make the judgment worth having: it never admits a kind whose class
+//! refuses it, each sharing protocol is reachable by exactly one mode, and no
+//! kind is *lent* under the mutex protocol.
 
 use super::*;
 
@@ -20,7 +22,10 @@ fn kind_inventory_is_complete_and_duplicate_free() {
         assert!(seen.insert(kind), "duplicate kind in ALL: {kind:?}");
     }
     assert_eq!(seen.len(), TransferKind::ALL.len());
-    assert_eq!(TransferKind::ALL.len(), 14);
+    // Card `MUTEX-SHARE-CROSS`: 14 -> 16, adding the checked-mutex route's
+    // payload (`ProtectedResource`) and what a mutex-mediated crossing
+    // delivers (`MutexShare`).
+    assert_eq!(TransferKind::ALL.len(), 16);
 }
 
 #[test]
@@ -38,7 +43,8 @@ fn mode_inventory_is_complete_and_duplicate_free() {
     for mode in TransferMode::ALL {
         assert!(seen.insert(mode), "duplicate mode in ALL: {mode:?}");
     }
-    assert_eq!(seen.len(), 5);
+    // Card `MUTEX-SHARE-CROSS`: 5 -> 6, adding `share PLACE under MUTEX`.
+    assert_eq!(seen.len(), 6);
 }
 
 /// The judgment is total: it answers for every kind, and `of_declared_type`
@@ -99,6 +105,14 @@ fn per_kind_classification_is_pinned() {
         (TransferKind::TaskResult, Never(OwedToCreatingFrame)),
         (TransferKind::ErrorValue, Never(OwedToCreatingFrame)),
         (TransferKind::KnownErrorTag, Never(OwedToCreatingFrame)),
+        (
+            TransferKind::ProtectedResource,
+            MovedOnly {
+                shareable_under: Some(ShareProtocol::CheckedMutex),
+                mutably_shareable_under: Some(ShareProtocol::CheckedMutex),
+            },
+        ),
+        (TransferKind::MutexShare, Never(NotAValue)),
         (TransferKind::MutexGeneration, Never(NotAValue)),
         (TransferKind::Guard, Never(NotAValue)),
         (TransferKind::ProtectedFact, Never(NotAValue)),
@@ -121,8 +135,15 @@ fn send_and_sync_directions_separate_exactly_one_kind() {
         .collect();
     assert_eq!(
         sendable,
-        vec![TransferKind::I32, TransferKind::OwnedBuffer],
-        "only a scalar and a Buffer cross carrying anything"
+        vec![
+            TransferKind::I32,
+            TransferKind::OwnedBuffer,
+            // Card `MUTEX-SHARE-CROSS`: the checked-mutex route's payload is
+            // the second sendable kind. Custody of it really moves in the
+            // model, over a derivable synchronization edge.
+            TransferKind::ProtectedResource,
+        ],
+        "a scalar, a Buffer and a protected resource cross carrying something"
     );
 
     let shareable: Vec<_> = TransferKind::ALL
@@ -131,15 +152,25 @@ fn send_and_sync_directions_separate_exactly_one_kind() {
         .collect();
     assert_eq!(
         shareable,
-        vec![TransferKind::OwnedBuffer],
-        "the Buffer is the only kind a protocol can share"
+        vec![TransferKind::OwnedBuffer, TransferKind::ProtectedResource],
+        "two kinds a protocol can share, and they share under different ones"
     );
 
-    // The CT46 shape itself: Send, not freely Sync, shareable only under a
-    // named protocol that removes mutation.
+    // The CT46 shape itself, now in both of its forms — and the point of the
+    // pin is that the two protocols are *different*. The Buffer shares by
+    // removing mutation; the protected resource shares by ordering it.
     assert_eq!(
         transferable(TransferKind::OwnedBuffer).shareable_under(),
         Some(ShareProtocol::CountedReadShares)
+    );
+    assert_eq!(
+        transferable(TransferKind::ProtectedResource).shareable_under(),
+        Some(ShareProtocol::CheckedMutex)
+    );
+    assert_ne!(
+        transferable(TransferKind::OwnedBuffer).shareable_under(),
+        transferable(TransferKind::ProtectedResource).shareable_under(),
+        "the two sharing disciplines must not become interchangeable"
     );
 }
 
@@ -161,8 +192,39 @@ fn admission_matrix_is_pinned() {
             (TransferKind::OwnedBuffer, Move),
             (TransferKind::OwnedBuffer, Lend),
             (TransferKind::OwnedBuffer, LendWrite),
+            // Card `MUTEX-SHARE-CROSS`: the fifth and sixth cells. The move
+            // arm has no source spelling on the checked-mutex route today and
+            // is a stated boundary, not an exercised admission.
+            (TransferKind::ProtectedResource, Move),
+            (TransferKind::ProtectedResource, ShareUnderMutex),
         ],
-        "exactly the four admitted capture forms"
+        "exactly the six admitted capture forms"
+    );
+    assert_eq!(
+        admits(TransferKind::ProtectedResource, ShareUnderMutex),
+        Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex))
+    );
+    // The cross-protocol refusals, which are what "refuses when it crosses any
+    // other way" means: each sharing mode requests one named protocol, and a
+    // kind sharing under a different one refuses with that one named.
+    assert_eq!(
+        admits(TransferKind::OwnedBuffer, ShareUnderMutex),
+        Err(ProtocolUnavailable(ShareProtocol::CountedReadShares)),
+        "an own<Buffer> has no mutex to cross under; it shares by removing mutation"
+    );
+    assert_eq!(
+        admits(TransferKind::ProtectedResource, Lend),
+        Err(ProtocolUnavailable(ShareProtocol::CheckedMutex)),
+        "a protected resource does not cross as a counted read share"
+    );
+    assert_eq!(
+        admits(TransferKind::ProtectedResource, LendWrite),
+        Err(ProtocolUnavailable(ShareProtocol::CheckedMutex)),
+        "nor as a disjoint byte partition"
+    );
+    assert_eq!(
+        admits(TransferKind::ProtectedResource, Copy),
+        Err(ModeNotAdmittedForKind)
     );
     assert_eq!(
         admits(TransferKind::I32, Copy),
@@ -215,7 +277,7 @@ fn admission_matrix_is_pinned() {
         let TransferClass::Never(reason) = transferable(kind) else {
             continue;
         };
-        for mode in [Copy, Move, Lend, LendWrite] {
+        for mode in [Copy, Move, Lend, LendWrite, ShareUnderMutex] {
             assert_eq!(
                 admits(kind, mode),
                 Err(KindNotTransferable(reason)),
@@ -276,6 +338,22 @@ fn admission_never_contradicts_the_class() {
                         "{kind:?} write-leased under a protocol its class does not name"
                     );
                 }
+                // Card `MUTEX-SHARE-CROSS`: a mutex-mediated crossing is
+                // admitted only under the protocol the class names in *both*
+                // sharing directions, because a guard holder may read and
+                // write the same bytes.
+                Ok(AdmittedTransfer::ShareUnderMutex(protocol)) => {
+                    assert_eq!(
+                        class.shareable_under(),
+                        Some(protocol),
+                        "{kind:?} mutex-shared under a protocol its class does not name"
+                    );
+                    assert_eq!(
+                        class.mutably_shareable_under(),
+                        Some(protocol),
+                        "{kind:?} mutex-shared for reading but not for writing"
+                    );
+                }
                 Err(_) => {}
             }
             // An admission implies the class is sendable, always.
@@ -316,9 +394,10 @@ fn received_kind_is_pinned() {
     );
 }
 
-/// The whole three-way boundary decision: 14 x 5 x 14 = 980 cells, of which
-/// exactly four admit. This is the function the frontend cross-checks
-/// against, so its admitted set is the load-bearing claim.
+/// The whole three-way boundary decision: 16 x 6 x 16 = 1,536 cells, of which
+/// exactly six admit (980 and four before card `MUTEX-SHARE-CROSS`). This is
+/// the function the frontend cross-checks against, so its admitted set is the
+/// load-bearing claim.
 #[test]
 fn capture_admission_matrix_is_pinned() {
     let admitted: Vec<_> = TransferKind::ALL
@@ -351,8 +430,23 @@ fn capture_admission_matrix_is_pinned() {
                 TransferMode::LendWrite,
                 TransferKind::WriteLease
             ),
+            // Card `MUTEX-SHARE-CROSS`. The move arm is admitted by the class
+            // and has no source spelling on the checked-mutex route, so it is
+            // a stated boundary rather than an exercised admission; the mutex
+            // crossing below is this card's subject, and what it delivers is a
+            // `MutexShare` — never the payload itself.
+            (
+                TransferKind::ProtectedResource,
+                TransferMode::Move,
+                TransferKind::ProtectedResource
+            ),
+            (
+                TransferKind::ProtectedResource,
+                TransferMode::ShareUnderMutex,
+                TransferKind::MutexShare
+            ),
         ],
-        "exactly the four admitted capture forms, and nothing else in 980 cells"
+        "exactly the six admitted capture forms, and nothing else in 1,536 cells"
     );
 }
 
@@ -413,11 +507,20 @@ fn capture_admission_refines_kind_admission() {
     }
 }
 
-/// The recorded gap: the mutex protocol is named by the judgment and
-/// requestable by nothing. This pins the honest boundary CT46 closes at, so
-/// that adding a mutex-mediated capture mode later must update this test.
+/// Card `MUTEX-SHARE-CROSS`, the headline pin, **moved deliberately**.
+///
+/// Card `CT46-SENDSYNC` pinned the opposite of this test: the mutex protocol
+/// was named by the judgment and requestable by nothing, and that test said in
+/// its own doc comment that "adding a mutex-mediated capture mode later must
+/// update this test". This card adds that mode, so the test is updated rather
+/// than deleted, and it now pins the two facts that replaced the one it
+/// pinned: the protocol is requestable for exactly one kind, and by exactly
+/// one mode.
 #[test]
-fn the_mutex_protocol_is_named_and_unreachable() {
+fn the_mutex_protocol_is_requestable_for_exactly_one_kind() {
+    // The half that stays open, unchanged and still `false`: the *task*
+    // route's Buffer has no mutex to cross under. Residual
+    // `MUTEX-SHARE-CROSS-TASK-BUFFER`.
     assert_eq!(
         MUTEX_SHARING_GAP,
         SharingGap {
@@ -426,21 +529,85 @@ fn the_mutex_protocol_is_named_and_unreachable() {
             requestable: false,
         }
     );
+    // The half this card closes.
+    assert_eq!(
+        MUTEX_SHARE_CROSSING,
+        SharingGap {
+            kind: TransferKind::ProtectedResource,
+            protocol: ShareProtocol::CheckedMutex,
+            requestable: true,
+        }
+    );
 
-    // Quantified: no (kind, mode) pair anywhere yields the mutex protocol,
-    // either as an admission or as the class's sharing discipline.
+    // Quantified, in both directions, so neither constant can drift away from
+    // the judgment: exactly one kind shares under the mutex protocol, and
+    // exactly one (kind, mode) pair anywhere in the matrix yields it.
+    let mutex_shared: Vec<_> = TransferKind::ALL
+        .into_iter()
+        .filter(|kind| transferable(*kind).shareable_under() == Some(ShareProtocol::CheckedMutex))
+        .collect();
+    assert_eq!(mutex_shared, vec![MUTEX_SHARE_CROSSING.kind]);
+
+    let mutex_admitted: Vec<_> = TransferKind::ALL
+        .into_iter()
+        .flat_map(|kind| TransferMode::ALL.map(move |mode| (kind, mode)))
+        .filter(|(kind, mode)| {
+            matches!(
+                admits(*kind, *mode),
+                Ok(AdmittedTransfer::ShareUnderMutex(
+                    ShareProtocol::CheckedMutex
+                ))
+            )
+        })
+        .collect();
+    assert_eq!(
+        mutex_admitted,
+        vec![(
+            MUTEX_SHARE_CROSSING.kind,
+            ShareProtocol::CheckedMutex.requested_by()
+        )],
+        "the mutex protocol is reachable by exactly one capture form"
+    );
+
+    // The old shape specifically, and it still holds: no kind is *lent* under
+    // the mutex protocol. A mutex-mediated crossing is its own admitted
+    // transfer, not a read lend wearing the mutex's name — which is what keeps
+    // the read-share route's ledger rules from being asked to carry a mutex.
     for kind in TransferKind::ALL {
-        assert_ne!(
-            transferable(kind).shareable_under(),
-            Some(ShareProtocol::CheckedMutex),
-            "{kind:?} claims mutex sharing"
-        );
         for mode in TransferMode::ALL {
             assert_ne!(
                 admits(kind, mode),
                 Ok(AdmittedTransfer::LendShare(ShareProtocol::CheckedMutex)),
-                "{kind:?} under {mode:?} admitted mutex sharing"
+                "{kind:?} under {mode:?} lent under a mutex"
             );
+        }
+    }
+
+    // Every protocol is requested by exactly one mode, and no other mode
+    // anywhere in the matrix can reach it. This is the property that makes
+    // "refuses when it crosses any other way" quantified rather than
+    // exemplified.
+    for protocol in ShareProtocol::ALL {
+        let requester = protocol.requested_by();
+        for mode in TransferMode::ALL {
+            if mode == requester {
+                continue;
+            }
+            for kind in TransferKind::ALL {
+                if let Ok(admitted) = admits(kind, mode) {
+                    let named = match admitted {
+                        AdmittedTransfer::LendShare(p)
+                        | AdmittedTransfer::LendWriteRange(p)
+                        | AdmittedTransfer::ShareUnderMutex(p) => Some(p),
+                        AdmittedTransfer::Duplicate | AdmittedTransfer::MoveCustody => None,
+                    };
+                    assert_ne!(
+                        named,
+                        Some(protocol),
+                        "{kind:?} reached {protocol:?} through {mode:?}, not {requester:?}"
+                    );
+                }
+            }
         }
     }
 }
