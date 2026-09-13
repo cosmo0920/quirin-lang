@@ -458,12 +458,19 @@ Both derivations agree, independently
 ct_mapped 45   ct_unmapped 5
 depth_profile     elaborate 4, epoch_bound_check 4, legacy_c_twin 3,
                   mutex_invariant_check 8, native_execution 7,
-                  native_sanitized 6, proof 3, task_ledger_check 9,
+                  native_sanitized 8, proof 3, task_ledger_check 7,
                   task_lowering 1
 native_sanitized  gated 9 of 45 · proof executed 3 (CT01, CT03, CT37)
 unmapped_label_sources   3 of 5 lane-measured (CT41/CT42 wave 17, CT46 wave 13);
                          2 still t00-archive (CT10, CT24)
 ```
+
+Read **after** the second merge, so `native_sanitized 8` and
+`task_ledger_check 7` in the depth profile already carry
+`CT-COMPOSED-NATIVE`'s effect: CT22 and CT25 moved up from `task_ledger_check`
+to `native_sanitized` when that card gave them native runs, and this card's two
+refusals landed at `task_ledger_check` — net `9 → 7` there and `6 → 8` beside
+it. None of that is this card's claim; only the two new rows are.
 
 `acceptance.json` is regenerated through the recorded mechanism
 (`ct_stage_summary.py --write`), with `derived_from` grown by this record, the
@@ -547,7 +554,7 @@ Run in this worktree on `main` at `1c7d8e45` plus this card, with
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | ok — `third_party/libevent` at `d82464a2`, before the workspace run |
-| `cargo test --workspace --no-fail-fast` | **4,511 passed / 0 failed / 8 ignored** across 223 result lines, exit 0, in the single run (§11.1) |
+| `cargo test --workspace --no-fail-fast` | **4,513 passed / 0 failed / 8 ignored** across 224 result lines, exit 0, in the single run (§11.1) |
 | `cargo fmt --all -- --check` | exit 0 |
 | `cargo clippy --all-targets -- -D warnings` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
@@ -559,18 +566,24 @@ Run in this worktree on `main` at `1c7d8e45` plus this card, with
 
 ### 11.1 The workspace row
 
-**No constraint-16 row tripped**, so no isolation re-run was owed — stated
-because it could easily have gone the other way: the run executed under heavy
-contention from sibling worktree gates (load average peaking near 27), which is
-exactly the condition under which those five load-sensitive rows fail. All
-4,511 tests passed in the single `--no-fail-fast` run
-(`measure/workspace-tests.log`, worktree-private); the tally is computed from
-the 223 per-binary summaries rather than read off the tail.
+Run **twice**: once at the card tip before the second merge (4,511 passed / 0
+failed / 8 ignored across 223 summaries, exit 0) and again on the **merged**
+tree, which is the row in the table above. Both are reported; the second is the
+one that counts.
 
-The wave-31 close measured 4,466 (8 ignored); the intervening cards account for
-the difference, and **this card adds no test function** — its two new cases run
-inside `ct_corpus.rs`'s existing five tests, whose own assertions grew. The
-`providers/` workspace is untouched and its 122-test checkpoint is carried, not
-rerun (constraint 18 owes nothing: no provider, schema or template changed).
-**No arbiter was run**, per the wave's instruction, so no corpus number in this
-report is a fresh measurement — all are carried.
+**No constraint-16 row tripped in either run**, so no isolation re-run was owed
+— stated because it could easily have gone the other way, and did for a sibling
+card the same night: both runs executed under heavy contention from concurrent
+worktree gates, the second with load average peaking near **38**, which is
+exactly the condition under which those five load-sensitive rows fail. All
+4,513 tests passed in the single `--no-fail-fast` run
+(`measure/workspace-tests.log`, worktree-private); the tally is computed from
+the 224 per-binary summaries rather than read off the tail.
+
+The wave-31 close measured 4,466 (8 ignored); the intervening wave-32 cards
+account for the difference, and **this card adds no test function** — its two
+new cases run inside `ct_corpus.rs`'s existing five tests, whose own assertions
+grew. The `providers/` workspace is untouched and its 122-test checkpoint is
+carried, not rerun (constraint 18 owes nothing: no provider, schema or template
+changed). **No arbiter was run**, per the wave's instruction, so no corpus
+number in this report is a fresh measurement — all are carried.
