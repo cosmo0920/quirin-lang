@@ -56,10 +56,14 @@ runs one binary (`959a487f…`), exit 0, 185 units, zero gateway failures,
 per-scope lines byte-identical. Contract corpus **74 → 76 modules**,
 manifest-selected **19 → 21**, v1 declarations **41 → 43**, each pin updated
 deliberately. No Rust source change, no new Q code, no Lean module
-(declarative inputs only, the W29 precedent), no provider change.
-Gate: see `docs/reports/w31-corpus-contracts-2/README.md` §6. Baseline
-proposed to move to `docs/reports/w31-corpus-contracts-2/artifacts/`, every
-predecessor frozen.
+(declarative inputs only, the W29 precedent), no provider change. Gate at the
+final tree: **4,484** workspace tests (0 failed, 8 ignored, `--no-fail-fast`,
+223 binaries), **200** Python tests, **123** Lean audits, both probes exit 0,
+fmt/clippy clean — the same figures `C-GATEWAY-WAVE` measured, reached under
+**disclosed** sibling-worktree load (up to five concurrent `cargo test` runs)
+with none of constraint 16's five load-sensitive rows tripped, so none was
+re-verified in isolation. Baseline proposed to move to
+`docs/reports/w31-corpus-contracts-2/artifacts/`, every predecessor frozen.
 
 C gateway scalar writes, expression frames and conditional custody (2026-09-13):
 `C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and

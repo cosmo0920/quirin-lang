@@ -105,9 +105,10 @@ substantially and moved **nothing** in this card's candidate neighbourhood:
 So the recomputed prediction is the original one restated on the new totals,
 and the **measured outcome is also the same**: the same five leaves, at the
 same functions and the same internal lines, with the same origins and the same
-zero movement everywhere else. Two independent analyses, four months of
-gateway rules apart, decide this declaration's footprint identically. That is
-a result worth stating plainly, and it is a **stability observation about this
+zero movement everywhere else. Two analyses — one on either side of a gateway
+change that rewrote scalar-fact invalidation, refusal framing and conditional
+custody — decide this declaration's footprint identically. That is a result
+worth stating plainly, and it is a **stability observation about this
 neighbourhood**, not a general claim about the gateway change.
 
 The one substantive thing it changes about the card's own story: the
@@ -431,19 +432,29 @@ and every pin updated.
 
 | step | result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | **GATE_TESTS** |
-| `cargo fmt --all -- --check` | **GATE_FMT** |
-| `cargo clippy --all-targets -- -D warnings` | **GATE_CLIPPY** |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | **GATE_PROBE** |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | **GATE_FOLLOWUP** |
-| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **GATE_LEAN** |
-| `python3 -m unittest discover -s scripts/tests` | **GATE_PYTHON** |
+| `cargo test --workspace --no-fail-fast` | **4,484 passed, 0 failed, 8 ignored** across 223 test binaries, exit 0 |
+| `cargo fmt --all -- --check` | clean, exit 0 (no output) |
+| `cargo clippy --all-targets -- -D warnings` | clean, exit 0 (zero warnings, zero errors) |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **`Passed 123 Lean audits`**, exit 0 (read by its own text line; unchanged from `C-GATEWAY-WAVE`'s 123, as §8 expected) |
+| `python3 -m unittest discover -s scripts/tests` | **`Ran 200 tests … OK`**, exit 0 |
 
 Provider code and packages are unchanged; the ledger's 122 provider tests are
 carried from the preceding checkpoint. The five packages were **built** for
 the audit route (the pinned route selects the ChunkIO package through
 `QCORE_CHUNKIO_PACKAGE`), but no template and no `qcore-schemas` version
 moved, so constraint 18's rebuild-and-verify obligation is not engaged.
+
+**Disclosed measurement condition.** The counted workspace run overlapped
+other `cargo test --workspace --no-fail-fast` runs in sibling worktrees of the
+same machine (up to five concurrent cargo test processes were observed) —
+exactly the load condition constraint 16's five rows are sensitive to. That is
+recorded rather than hidden. **None of the five tripped**: the run finished
+with zero failures and a total of 4,484 passed / 8 ignored, the same figures
+`C-GATEWAY-WAVE` measured on a quiet machine, so no row needed re-verification
+in isolation and none was re-run. The only cost of the contention was wall
+clock.
 
 ---
 
