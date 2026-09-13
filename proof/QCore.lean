@@ -4,8 +4,10 @@ import QCore.BucketTally
 import QCore.CtReasons
 import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
+import QCore.TaskTraceWrites
 import QCore.Ct01OwnedTransfer
 import QCore.Ct37CompletionCapsule
+import QCore.Ct03ReadShares
 import QCore.ConcurrencyPrelude
 import QCore.BooleanFieldUnit
 import QCore.SourceProfileWitness
