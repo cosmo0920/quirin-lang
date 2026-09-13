@@ -6,6 +6,42 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Wave 31 close (2026-09-13): **six cards** merged one at a time under the
+failure-gated chain — `C-GATEWAY-WAVE` (landed on main directly),
+`CT42-PROTOCOL-CELL`, `CT-WIRE-LANE-3`, `WRITE-LEND-TASKS`,
+`W31-CORPUS-CONTRACTS-2` and `CT03-PROOF-ALPHABET`. The wave ran **two
+arbiters**, a first, and the second's BEFORE run reproduces the first's
+`diagnostics.json` and `chunk-contracts.json` **byte for byte**, which is
+what isolates its delta: the gateway repairs moved the baseline (leak
+266 → **272**, `unknown_alias` **4,208**, `unsupported` 50,155, five function
+moves, each attributed) and the two declared size contracts then removed
+exactly five `unsupported` leaves (**50,150**) with leak, `unknown_alias` and
+`double_release` all unmoved, zero status moves, corpus 74 → **76**. The
+**proof axis reached three of 43**: `CT03-PROOF-ALPHABET` is the first leg
+needing the F02 relation's own alphabet to grow — by the Buffer write, proved
+**conservative** (`write_free_traces_relate_exactly_as_before`) with digest
+stability measured *structurally*, the whole diff across the pin-carrying
+files removing three lines of index bookkeeping and editing no digest. CT
+coverage 42/50 → **43/50** (`CT-WIRE-LANE-3`: CT25 mapped, CT24 examined and
+withdrawn with its constraint-25 trap measured). The language head is
+`WRITE-LEND-TASKS` — write authority over disjoint ranges crossing the spawn
+boundary, proved by `no_byte_has_two_write_authorities` over every reachable
+point of every interleaving, with the honest flagship residual that a worker
+*holds* but does not *exercise*, and two generated-C digests re-pinned
+deliberately (the fourth recorded move, no printed byte moved).
+`CT42-PROTOCOL-CELL` found the cell notion already declared at model level and
+landed the missing derivation. Zero reserved words, zero new codes. Lean
+audits 122 → **125**. One integration finding: the write-lend and CT03 merge
+was a **semantic** conflict — one card refuses all three new trace events, the
+other admits the Buffer write and had deleted the refusal variant — resolved
+as the true union (write encoded, both lease events still refused through a
+restored `UnsupportedObservedEvent`), since either side alone would have
+refused a proved-admissible event or silently dropped an unmodelled one.
+Merged gate at the close tip: 4,511 workspace tests (0 failed, 8 ignored,
+`--no-fail-fast`), 122 provider (carried), 200 Python, both probes exit 0,
+fmt/clippy clean (`docs/reports/wave31-close/gate.json`). Nothing is promoted;
+full language conformance stays **false**.
+
 The F02 alphabet grown by the Buffer write, and CT03's proof leg (2026-09-13):
 `CT03-PROOF-ALPHABET` delivers the **third** proof-stage capability, and the one
 the `CT-PROOF-LEG-2` survey showed required growing the F02 trace alphabet —

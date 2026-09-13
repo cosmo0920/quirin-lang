@@ -1021,7 +1021,8 @@
    "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
    "docs/reports/ct07-write-remap/ct_stage_evidence.json",
-   "docs/reports/ct-wire-lane-3/ct_stage_evidence.json"
+   "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
+   "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
@@ -1223,8 +1224,8 @@
     "not_applicable": 40
    },
    "proof": {
-    "executed": 2,
-    "unassessed": 41
+    "executed": 3,
+    "unassessed": 40
    }
   },
   "depth_profile": {
@@ -1233,15 +1234,15 @@
    "legacy_c_twin": 3,
    "mutex_invariant_check": 8,
    "native_execution": 7,
-   "native_sanitized": 7,
-   "proof": 2,
+   "native_sanitized": 6,
+   "proof": 3,
    "task_ledger_check": 7,
    "task_lowering": 1
   },
   "case_depth": {
    "CT01": "proof",
    "CT02": "task_ledger_check",
-   "CT03": "native_sanitized",
+   "CT03": "proof",
    "CT04": "task_ledger_check",
    "CT05": "task_ledger_check",
    "CT06": "elaborate",
@@ -1295,7 +1296,7 @@
    "native_execution": 47,
    "native_sanitized": 28,
    "parse": 43,
-   "proof": 2,
+   "proof": 3,
    "sequential_reference_execution": 2,
    "sequential_whole_program": 2,
    "task_ledger_check": 19,
@@ -1511,7 +1512,7 @@
     "route": "task",
     "harness_verdict_mode": "native_heap_scenarios",
     "manifest_evidence_target": "linux",
-    "source_reject_controls_executed": 0,
+    "source_reject_controls_executed": null,
     "epoch_controls_executed": null,
     "legacy_c_controls_executed": null,
     "stage_derived_status": {
@@ -1605,12 +1606,15 @@
       "status": "not_applicable"
      },
      "proof": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+      "artifact": "compiler/tests/fixtures/ct/CT03/case.qcore",
+      "observations": 1
      }
     },
     "auxiliary_executed_stages": {},
-    "deepest_executed_stage": "native_sanitized",
-    "stage_evidence_record": "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
+    "deepest_executed_stage": "proof",
+    "stage_evidence_record": "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
     "semantic_profile": "ScopedReadSharesV1: one owned Buffer lent to two children with complementary halves of the 1024-unit read authority, both reading it while the parent also reads it, and Buffer writes on either side of the lending window because a write demands reconstructed exclusive authority. Executed from the fixture: parse, elaborate, lower, all-paths task-IR check, reference execution, C11 emission, and three fixed Linux schedules whose emitted C runs under ASan/UBSan/LSan with a heap witness recording every Buffer by address - one object allocated and released exactly once across two live borrowers, a refused second creation returning only its own share, and a refused join returning none and reclaiming nothing. The complementary refusals are mapped as CT04 and CT05. This is not evidence about arbitrary schedules, other targets or the C memory model; ThreadSanitizer does not intercept C11 thrd_create, so data-race freedom rests on the checker's no-write-while-shared rule. The lending budget is over authority handed out, not a separation-logic fraction; disjoint slicing, write shares, more than two readers, byte accounting and nested workers stay refused."
    },
    {
@@ -6042,11 +6046,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "C-GATEWAY-WAVE final source, 2026-09-13: 4484 workspace tests passed, 0 failed, 8 ignored with --no-fail-fast outside the sandbox; 200 Python tests, 123 Lean audits, both probes exit 0, fmt/clippy clean. Earlier sandbox/environment failures and the pre-hardening green run are preserved in pre-final-gates.json. Provider 122 carried from wave 30; provider/schema/package inputs unchanged. Corpus results and remaining production boundaries are in this report.",
-  "workspace_tests": 4484,
+  "note": "Wave-31 close, 2026-09-13: SIX cards, merged one at a time under the failure-gated chain - the user's own C-GATEWAY-WAVE (landed directly on main), CT42-PROTOCOL-CELL, CT-WIRE-LANE-3, WRITE-LEND-TASKS, W31-CORPUS-CONTRACTS-2 and CT03-PROOF-ALPHABET - reconciled onto one measured standing gate at the integration tip. THE WAVE RAN TWO ARBITERS, a first: C-GATEWAY-WAVE implements the selected AOM-POISON-NOOP-INCREMENT and bounded AOM-POISON-CONDITION-FRAME repairs plus an acyclic conditional-identity capability, moving the baseline to docs/reports/c-gateway-wave/ with leak 266 -> 272 (six added, none withdrawn), unknown_alias 4,208, unsupported 50,155 and five function moves, all deliberate and attributed in that report; W31-CORPUS-CONTRACTS-2 then declares two faithful size contracts (chunkio/chunk_sizes.qcore, fluent_bit/input_chunk_total_size.qcore; corpus 74 -> 76) whose BEFORE run reproduces the c-gateway-wave diagnostics.json and chunk-contracts.json BYTE FOR BYTE - which is what isolates its delta - and whose AFTER removes exactly five unsupported leaves (50,155 -> 50,150) with leak 272, unknown_alias 4,208 and double_release 1 all UNMOVED, zero unit and zero function moves, nothing promoted. Its published prediction comparison is a finding in its own right: the gateway change moved corpus totals substantially yet moved NOTHING in the candidate neighbourhood - the four candidate leaves, all 127 leaf lines of their carrying functions and all six sibling leaves byte-identical across both baselines - so both predictions agree and both measured outcomes agree leaf for leaf. THE PROOF AXIS REACHED THREE: CT03-PROOF-ALPHABET is the first leg needing the F02 relation's own alphabet to grow, by the Buffer write, proved CONSERVATIVE (write_free_traces_relate_exactly_as_before, plus relate_ and mixTrace_agrees_on_the_embedded_alphabet) with digest stability measured STRUCTURALLY - the whole diff across the pin-carrying files removes three lines of index bookkeeping and edits no digest, census or edge count - so proof 2 of 43 -> 3 of 43 under the pinned fail-closed PROOF_GATED_CASES table. CT coverage 42/50 -> 43/50: CT-WIRE-LANE-3 mapped CT25 (cleanup destroys owner after joins AND loan expiry, every word carried by an unedited model's checked fact) and EXAMINED CT24 AND WITHDREW IT with the measurement published, including the constraint-25 derived-map trap measured rather than assumed. The language head is WRITE-LEND-TASKS: write authority over disjoint byte ranges crossing the spawn boundary, admitted only through the transferability judgment with disjointness DECIDED by the wave-29 rule called rather than re-implemented, proved by QCore.WriteLendTasks.no_byte_has_two_write_authorities over every reachable point of every spawn/join interleaving; its flagship residual is honest - the worker HOLDS but does not EXERCISE, so no two-threads-mutating claim is made - and it deliberately re-pinned two generated-C digests (the fourth recorded move of that pair, on the TRACE-STDIO precedent) because the shared diagnostic prelude gained two kinds, with NO printed byte moved. CT42-PROTOCOL-CELL found the protocol-cell notion already real and DECLARED at model level (Q664, protocol_cells) and landed the missing half: cells DERIVED from admitted socket programs, projected onto the unedited footprint checker. Zero reserved words and zero new diagnostic codes across the whole wave. Lean audits 122 -> 125. Provider 122 CARRIED (qcore-schemas stays 14.0.0). One integration finding worth recording: the WRITE-LEND-TASKS and CT03-PROOF-ALPHABET merge produced a SEMANTIC conflict rather than a textual one - one card refuses all three new trace events, the other admits the Buffer write and had deleted the refusal variant - resolved as the true union (the write encoded, both lease events still refused through a restored UnsupportedObservedEvent), because either side alone would have refused a proved-admissible event or silently dropped an unmodelled one. Constraint-16 load rows that tripped under concurrent suites were re-verified green in isolation, both facts recorded each time. Nothing is promoted, and full language conformance stays false. Evidence: docs/reports/c-gateway-wave/README.md, docs/reports/ct42-protocol-cell/README.md, docs/reports/ct-wire-lane-3/README.md, docs/reports/write-lend-tasks/README.md, docs/reports/w31-corpus-contracts-2/README.md, docs/reports/ct03-proof-alphabet/README.md.",
+  "workspace_tests": 4511,
   "provider_tests": 122,
   "python_evidence_validator_tests": 200,
-  "lean_audits": 124,
+  "lean_audits": 125,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6073,6 +6077,7 @@
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
    "AuditCt01OwnedTransfer.lean",
+   "AuditCt03ReadShares.lean",
    "AuditCt37CompletionCapsule.lean",
    "AuditCtReasons.lean",
    "AuditCycle10.lean",
@@ -6179,7 +6184,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave31-close/gate.json)"
  },
  "named_followups": [
   {
