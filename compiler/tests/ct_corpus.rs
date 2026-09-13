@@ -445,7 +445,9 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// The sanitizer gate (T00.3). A case may claim `native_sanitized: executed`
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
-const SANITIZED_GATED_CASES: &[&str] = &["CT03", "CT07", "CT09", "CT17", "CT26", "CT34", "CT49"];
+const SANITIZED_GATED_CASES: &[&str] = &[
+    "CT03", "CT07", "CT09", "CT17", "CT22", "CT25", "CT26", "CT34", "CT49",
+];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
 /// never `executed`.
@@ -1497,8 +1499,23 @@ fn derive_stage_plan(
     // ids join `SANITIZED_GATED_CASES`, and CT22/CT25's three manifest rows are
     // rewritten to match. CT23 moves in neither: it is the route's refusal.
     if route == "composed_epoch" && !refused {
-        plan.insert("c_emission", StagePlan::absent("unassessed"));
-        plan.insert("native_execution", StagePlan::absent("unassessed"));
+        // Integrator, wave 32: the coupled edit card `CT-COMPOSED-NATIVE`
+        // published in its report §4, applied together with the manifest rows
+        // it names so the derivation and the record move in one change.
+        if COMPOSED_NATIVE_CASES.contains(&case_id) {
+            let runner = "compiler/tests/ct_corpus.rs::run_composed_native";
+            plan.insert(
+                "c_emission",
+                StagePlan::executed(runner, 1, Some(vec!["linux", "macos", "windows"])),
+            );
+            plan.insert(
+                "native_execution",
+                StagePlan::executed(runner, 1, Some(vec!["linux", "macos"])),
+            );
+        } else {
+            plan.insert("c_emission", StagePlan::absent("unassessed"));
+            plan.insert("native_execution", StagePlan::absent("unassessed"));
+        }
     }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
@@ -1567,6 +1584,14 @@ fn derive_stage_plan(
                         format!("compiler/tests/fixtures/ct/{case_id}/{}", control.source),
                     )
                 }
+                // Card `CT-COMPOSED-NATIVE`: the composed-epoch mode has no
+                // `deep` runner and no sanitized control — its own runner
+                // compiles and runs the case's emitted C under the sanitizers.
+                (None, None) if COMPOSED_NATIVE_CASES.contains(&case_id) => StagePlan::executed(
+                    "compiler/tests/ct_corpus.rs::run_composed_native",
+                    1,
+                    Some(vec!["linux", "macos"]),
+                ),
                 _ => panic!(
                     "{case_id}: a gated sanitized case has exactly one runner that compiles \
                      and runs it under the sanitizers"
@@ -3369,7 +3394,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 18] = [
+const EVIDENCE_FILES: [&str; 19] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3388,6 +3413,7 @@ const EVIDENCE_FILES: [&str; 18] = [
     "docs/reports/ct07-write-remap/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
     "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
+    "docs/reports/ct-composed-native/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

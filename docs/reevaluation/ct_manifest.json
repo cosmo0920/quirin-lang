@@ -2009,13 +2009,35 @@
           "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ]
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT22/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
         },
         "legacy_c_twin": {
           "status": "not_applicable"
@@ -2238,13 +2260,35 @@
           "status": "not_applicable"
         },
         "c_emission": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ]
         },
         "native_execution": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
         },
         "native_sanitized": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_composed_native",
+          "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
         },
         "legacy_c_twin": {
           "status": "not_applicable"

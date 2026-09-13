@@ -110,7 +110,7 @@ denominator.
 The conformance-case corpus stands at **43 of 50 mapped**, with 7 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
 means the harness now runs it, not that anything new was proved. Of the 43
-mapped, 7 carry a sanitized native run and 3 carry a proof stage — CT01, CT37
+mapped, 9 carry a sanitized native run and 3 carry a proof stage — CT01, CT37
 and CT03, each a scenario property proved in Lean of the checked artifact's
 reference run and its admitted renderings, with native execution still
 covered by observation only.

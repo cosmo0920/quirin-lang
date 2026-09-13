@@ -11,7 +11,10 @@
     "epoch_lowering",
     "task_lowering",
     "task_ledger_check",
-    "epoch_bound_check"
+    "epoch_bound_check",
+    "c_emission",
+    "native_execution",
+    "native_sanitized"
   ],
   "evidence_target": "linux",
   "notes": "source.epoch.tasks.v1 (cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): the parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins -- the loan expires there, under the unedited task ledger's own share return -- and only then does its error region adopt the owner (`move owner;`), credit 5, spend 2 and take its decided edge; the catch's `quant open R as pack` binds the sealed pack and `discharge pack;` destroys the adopted owner and abandons the parent-local remainder 3. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact: `cleanup destroys owner` by the model's own Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (released = [owner], re-derived from the model's cleanup trace and cross-checked against the reader's duty fold); `after joins` by the Q600 refusal when false plus the span assertion on the published ledger; `and loan expiry` by the derived capture list [[read]] (the owner IS lent), the ledger's own reclamation at the join, and the ordering after-joins-therefore-after-expiry, with the pre-expiry destruction a measured refusal (LoanOutstanding, live_share_drop.qcore) and the pre-loan one too (before_join.qcore). The runner compares the published split, abandoned figure, released duty list and capture lists wholesale, and re-asserts the adopting-pack premise (exactly one body Acquire per released owner) and the span premise on the published objects. The composed module publishes no reference observation of its own, which is why card CT-COMPOSED-NATIVE (wave 32) compares the emitted program against the reference execution of this module's own checked task half instead: that run is real native and sanitizer evidence about the emitted program (see composed_native below), and it remains no proof evidence and no evidence whatever about the credit quantities, which erase from emission.",

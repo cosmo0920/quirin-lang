@@ -270,7 +270,8 @@
       "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
       "docs/reports/ct07-write-remap/ct_stage_evidence.json",
       "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
-      "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json"
+      "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
+      "docs/reports/ct-composed-native/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
@@ -322,20 +323,18 @@
         "not_applicable": 41
       },
       "c_emission": {
-        "executed": 16,
-        "not_applicable": 25,
-        "unassessed": 2
+        "executed": 18,
+        "not_applicable": 25
       },
       "native_execution": {
-        "executed": 16,
-        "not_applicable": 25,
-        "unassessed": 2
+        "executed": 18,
+        "not_applicable": 25
       },
       "native_sanitized": {
-        "executed": 7,
+        "executed": 9,
         "not_applicable": 7,
         "recorded_not_gated": 5,
-        "unassessed": 24
+        "unassessed": 22
       },
       "legacy_c_twin": {
         "executed": 3,
@@ -352,13 +351,13 @@
       "legacy_c_twin": 3,
       "mutex_invariant_check": 8,
       "native_execution": 7,
-      "native_sanitized": 6,
+      "native_sanitized": 8,
       "proof": 3,
-      "task_ledger_check": 7,
+      "task_ledger_check": 5,
       "task_lowering": 1
     },
     "observation_counts": {
-      "c_emission": 32,
+      "c_emission": 34,
       "elaborate": 40,
       "epoch_bound_check": 7,
       "epoch_lowering": 7,
@@ -366,8 +365,8 @@
       "mutex_invariant_check": 10,
       "mutex_lowering": 10,
       "mutex_reference_execution": 2,
-      "native_execution": 47,
-      "native_sanitized": 28,
+      "native_execution": 49,
+      "native_sanitized": 30,
       "parse": 43,
       "proof": 3,
       "sequential_reference_execution": 2,
@@ -488,9 +487,9 @@
       "CT19": "task_ledger_check",
       "CT20": "native_execution",
       "CT21": "elaborate",
-      "CT22": "task_ledger_check",
+      "CT22": "native_sanitized",
       "CT23": "task_ledger_check",
-      "CT25": "task_ledger_check",
+      "CT25": "native_sanitized",
       "CT26": "native_sanitized",
       "CT27": "mutex_invariant_check",
       "CT28": "mutex_invariant_check",
