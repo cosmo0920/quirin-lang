@@ -44,7 +44,8 @@ fn fixtures() -> PathBuf {
 fn fixture(name: &str) -> SourceFile {
     let path = fixtures().join(name);
     let source = std::fs::read_to_string(&path)
-        .unwrap_or_else(|error| panic!("fixture {} is readable: {error}", path.display()));
+        .unwrap_or_else(|error| panic!("fixture {} is readable: {error}", path.display()))
+        .replace("\r\n", "\n");
     SourceFile {
         path: format!("compiler/tests/fixtures/epoch_credit/CT25_LOAN/{name}"),
         source,
