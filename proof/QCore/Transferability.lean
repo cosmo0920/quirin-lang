@@ -1,6 +1,7 @@
 import QCore.ScopedTasks
 import QCore.ReadShare
 import QCore.WriteLendTasks
+import QCore.MutexShareCross
 
 /-! Which kinds may cross a task-creation boundary (card `CT46-SENDSYNC`).
 
@@ -8,11 +9,12 @@ Model of `qcore_core::transfer`. Two things are established, and nothing else.
 
 1. **The judgment is total and closed.** Every constructor of the boundary
    kind vocabulary, of the declared-type tag set and of the capture-mode set
-   has exactly one answer, `admits` is decided on the whole 14 x 5 product and
-   `admitsCapture` on the whole 14 x 5 x 14 product (13 x 4 x 13 before card
-   `WRITE-LEND-TASKS` grew both vocabularies by one). There is no fallback arm
-   and no residual case, so a kind nobody classified cannot slip through as an
-   unlisted default.
+   has exactly one answer, `admits` is decided on the whole 16 x 6 product and
+   `admitsCapture` on the whole 16 x 6 x 16 product (13 x 4 x 13 originally,
+   14 x 5 x 14 after card `WRITE-LEND-TASKS` grew both vocabularies by one,
+   and 16 x 6 x 16 after card `MUTEX-SHARE-CROSS` grew them by two and one).
+   There is no fallback arm and no residual case, so a kind nobody classified
+   cannot slip through as an unlisted default.
 
 2. **Each admitting arm is backed by a ledger rule that is already proved.**
    The obligations below are *statements about the existing ledgers*, not new
@@ -21,15 +23,25 @@ Model of `qcore_core::transfer`. Two things are established, and nothing else.
    `reserved_resource_is_unavailable_to_parent`, and the lend arm's by
    `QCore.ReadShare.an_outstanding_share_suspends_exclusive_authority`, and
    (card `WRITE-LEND-TASKS`) the write-lease arm's by
-   `QCore.WriteLendTasks.no_byte_has_two_write_authorities`. The
-   judgment does not establish those rules; it records which rule answers for
-   which kind, and the theorems here check that the recording is accurate.
+   `QCore.WriteLendTasks.no_byte_has_two_write_authorities`, and (card
+   `MUTEX-SHARE-CROSS`) the mutex-share arm's by
+   `QCore.MutexShareCross.aSharedPayloadIsReachableOnlyThroughTheProtocol`.
+   The judgment does not establish those rules; it records which rule answers
+   for which kind, and the theorems here check that the recording is accurate.
+
+Card `MUTEX-SHARE-CROSS` closes half of the gap CT46 named. The
+mutex-mediated *capture* now exists, for `Kind.protectedResource` and that
+kind alone, so this file's old `noModeRequestsTheMutexProtocol` is replaced by
+`theMutexProtocolIsReachableForExactlyOneKind` and
+`eachProtocolIsRequestedByExactlyOneMode`. The half that stays open is the
+task route's `ownedBuffer`, which has no mutex to cross under and refuses with
+its own discipline named (`theTaskBuffersMutexGapStaysOpen`).
 
 What is deliberately **not** here: any claim of data-race freedom, any
-source-to-native refinement, any statement about C layout, and any admission of
-mutex-mediated sharing. `ShareProtocol.checkedMutex` is named so that the gap
-CT46 asks about is a decidable proposition (`noModeRequestsTheMutexProtocol`)
-rather than an omission. -/
+source-to-native refinement, and any statement about C layout. Nor is the
+word *verified* this file's — the classification is all that is decided here,
+and whether a named generation exists and protects the payload is the source
+route's gate, with the protocol's own soundness in `QCore.MutexShareCross`. -/
 
 namespace QCore.Transferability
 
@@ -50,6 +62,14 @@ inductive Kind where
   | taskResult
   | errorValue
   | knownErrorTag
+  /-- The checked-mutex route's `protected N` payload (card
+  `MUTEX-SHARE-CROSS`): CT46's subject. Sendable, and shareable only under a
+  verified mutex protocol. -/
+  | protectedResource
+  /-- What a mutex-mediated crossing delivers: the right to reach the payload
+  under the declared generation, and nothing else. The product of a crossing,
+  never a source of one. -/
+  | mutexShare
   | mutexGeneration
   | guard
   | protectedFact
@@ -61,8 +81,8 @@ against this list, so a constructor missing from it is caught by
 `kindInventoryIsComplete`. -/
 def allKinds : List Kind :=
   [.unit, .i32, .ownedBuffer, .readLoan, .writeLease, .threadScope, .taskHandle,
-   .taskResult, .errorValue, .knownErrorTag, .mutexGeneration, .guard,
-   .protectedFact, .unmodeled]
+   .taskResult, .errorValue, .knownErrorTag, .protectedResource, .mutexShare,
+   .mutexGeneration, .guard, .protectedFact, .unmodeled]
 
 /-- The declared-type tag set of the source grammar: fifteen tags, of which
 this profile elaborates spellings under three. -/
@@ -75,7 +95,7 @@ def allTags : List DeclaredTag :=
   [.atomic, .named, .tuple, .array, .slice, .pointer, .owned, .borrow,
    .quant, .accessQuant, .result, .function, .never, .task, .mutex]
 
-/-- The five capture keywords the parser accepts. `write` parses and has never
+/-- The six capture keywords the parser accepts. `write` parses and has never
 had a lowering, so it appears as a mode the judgment refuses for every kind
 rather than as a mode that silently does not exist; `lendWrite` (card
 `WRITE-LEND-TASKS`, spelled `lend PLACE LOW..HIGH`) is deliberately distinct
@@ -86,13 +106,18 @@ inductive Mode where
   | lend
   | write
   | lendWrite
+  /-- `share PLACE under MUTEX` (card `MUTEX-SHARE-CROSS`): the crossing CT46
+  asks for. The only mode that requests `checkedMutex`. -/
+  | shareUnderMutex
   deriving DecidableEq, Repr
 
-def allModes : List Mode := [.copy, .move, .lend, .write, .lendWrite]
+def allModes : List Mode :=
+  [.copy, .move, .lend, .write, .lendWrite, .shareUnderMutex]
 
 /-- A discipline under which a kind that is not freely shareable may still be
 reached by more than one task. `countedReadShares` removes mutation for the
-window; `checkedMutex` would order it instead, and no mode produces it;
+window; `checkedMutex` **orders** it instead, so a guard holder may read and
+write bytes another task will later reach (card `MUTEX-SHARE-CROSS`);
 `disjointWriteLeases` (card `WRITE-LEND-TASKS`) **partitions the bytes**, so
 each party mutates only its own disjoint range. -/
 inductive Protocol where
@@ -100,6 +125,18 @@ inductive Protocol where
   | checkedMutex
   | disjointWriteLeases
   deriving DecidableEq, Repr
+
+/-- The sharing mode that requests a protocol, and only that protocol (card
+`MUTEX-SHARE-CROSS`). Stating the correspondence as a function is what lets
+the judgment be written once: a sharing mode is admitted exactly when the
+kind's own sharing discipline is the protocol that mode requests. -/
+def requestedBy : Protocol → Mode
+  | .countedReadShares => .lend
+  | .checkedMutex => .shareUnderMutex
+  | .disjointWriteLeases => .lendWrite
+
+def allProtocols : List Protocol :=
+  [.countedReadShares, .checkedMutex, .disjointWriteLeases]
 
 /-- Why a kind does not cross. -/
 inductive NotTransferable where
@@ -125,6 +162,10 @@ inductive Transfer where
   | moveCustody
   | lendShare (protocol : Protocol)
   | lendWriteRange (protocol : Protocol)
+  /-- Card `MUTEX-SHARE-CROSS`: the child may reach the payload under the named
+  protocol, and only under it. Nothing is duplicated, no custody crosses, and
+  no authority is parked with the child. -/
+  | shareUnderMutex (protocol : Protocol)
   deriving DecidableEq, Repr
 
 /-! ### The judgment -/
@@ -141,6 +182,8 @@ def transferable : Kind → Class
   | .taskResult => .never .owedToCreatingFrame
   | .errorValue => .never .owedToCreatingFrame
   | .knownErrorTag => .never .owedToCreatingFrame
+  | .protectedResource => .movedOnly (some .checkedMutex) (some .checkedMutex)
+  | .mutexShare => .never .notAValue
   | .mutexGeneration => .never .notAValue
   | .guard => .never .notAValue
   | .protectedFact => .never .notAValue
@@ -206,12 +249,18 @@ def admits (k : Kind) (m : Mode) : Option Transfer :=
       | _ => none
     | .movedOnly p q => match m with
       | .move => some .moveCustody
+      -- Card `MUTEX-SHARE-CROSS`: each sharing mode requests one named
+      -- protocol and is admitted exactly when the kind's own discipline is
+      -- that protocol. A kind sharing under a different one refuses.
       | .lend => match p with
-        | some protocol => some (.lendShare protocol)
-        | none => none
+        | some .countedReadShares => some (.lendShare .countedReadShares)
+        | _ => none
+      | .shareUnderMutex => match p with
+        | some .checkedMutex => some (.shareUnderMutex .checkedMutex)
+        | _ => none
       | .lendWrite => match q with
-        | some protocol => some (.lendWriteRange protocol)
-        | none => none
+        | some .disjointWriteLeases => some (.lendWriteRange .disjointWriteLeases)
+        | _ => none
       | _ => none
 
 /-- What the child ends up holding. Lending delivers a loan, whatever it was
@@ -222,6 +271,16 @@ def receivedKind (source : Kind) : Transfer → Kind
   | .moveCustody => source
   | .lendShare _ => .readLoan
   | .lendWriteRange _ => .writeLease
+  | .shareUnderMutex _ => .mutexShare
+
+/-- The protocol an admitted transfer names, if it names one (card
+`MUTEX-SHARE-CROSS`). A duplicate and a move name none: nothing is shared. -/
+def protocolOf : Transfer → Option Protocol
+  | .duplicate => none
+  | .moveCustody => none
+  | .lendShare p => some p
+  | .lendWriteRange p => some p
+  | .shareUnderMutex p => some p
 
 /-- The whole boundary decision: the parent holds `place`, the capture asks for
 `mode`, and the worker declares it receives `parameter`. All three must agree. -/
@@ -241,7 +300,7 @@ theorem kindInventoryIsComplete : ∀ k : Kind, k ∈ allKinds := by
 
 theorem kindInventoryHasNoDuplicates : allKinds.Nodup := by decide
 
-theorem kindInventoryHasFourteenEntries : allKinds.length = 14 := by decide
+theorem kindInventoryHasSixteenEntries : allKinds.length = 16 := by decide
 
 theorem tagInventoryIsComplete : ∀ t : DeclaredTag, t ∈ allTags := by
   intro t; cases t <;> simp [allTags]
@@ -253,7 +312,7 @@ theorem tagInventoryHasFifteenEntries : allTags.length = 15 := by decide
 theorem modeInventoryIsComplete : ∀ m : Mode, m ∈ allModes := by
   intro m; cases m <;> simp [allModes]
 
-theorem modeInventoryHasFiveEntries : allModes.length = 5 := by decide
+theorem modeInventoryHasSixEntries : allModes.length = 6 := by decide
 
 /-- Totality of the declared-tag map: every tag lands on a classified kind. -/
 theorem everyTagMapsIntoTheVocabulary (t : DeclaredTag) : ofDeclaredTag t ∈ allKinds :=
@@ -281,6 +340,8 @@ theorem theClassificationIsPinned :
        (.taskResult, .never .owedToCreatingFrame),
        (.errorValue, .never .owedToCreatingFrame),
        (.knownErrorTag, .never .owedToCreatingFrame),
+       (.protectedResource, .movedOnly (some .checkedMutex) (some .checkedMutex)),
+       (.mutexShare, .never .notAValue),
        (.mutexGeneration, .never .notAValue),
        (.guard, .never .notAValue),
        (.protectedFact, .never .notAValue),
@@ -290,18 +351,24 @@ theorem theClassificationIsPinned :
 exactly one of them is shareable under a protocol: that one is the Buffer, the
 "Send but not Sync" kind the case is about. -/
 theorem exactlyOneKindIsSendableButNotFreelyShareable :
-    allKinds.filter (fun k => sendable (transferable k)) = [.i32, .ownedBuffer] ∧
-      allKinds.filter (fun k => (shareableUnder (transferable k)).isSome) = [.ownedBuffer] ∧
-      shareableUnder (transferable .ownedBuffer) = some .countedReadShares := by
-  refine ⟨by decide, by decide, by decide⟩
+    allKinds.filter (fun k => sendable (transferable k))
+        = [.i32, .ownedBuffer, .protectedResource] ∧
+      allKinds.filter (fun k => (shareableUnder (transferable k)).isSome)
+        = [.ownedBuffer, .protectedResource] ∧
+      shareableUnder (transferable .ownedBuffer) = some .countedReadShares ∧
+      shareableUnder (transferable .protectedResource) = some .checkedMutex ∧
+      shareableUnder (transferable .ownedBuffer)
+        ≠ shareableUnder (transferable .protectedResource) := by
+  refine ⟨by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Card `WRITE-LEND-TASKS`: the mutable-sharing direction separates exactly
 the same kind, under exactly the byte-partitioning protocol. -/
 theorem exactlyOneKindIsMutablyShareable :
     allKinds.filter (fun k => (mutablyShareableUnder (transferable k)).isSome)
-        = [.ownedBuffer] ∧
-      mutablyShareableUnder (transferable .ownedBuffer) = some .disjointWriteLeases := by
-  refine ⟨by decide, by decide⟩
+        = [.ownedBuffer, .protectedResource] ∧
+      mutablyShareableUnder (transferable .ownedBuffer) = some .disjointWriteLeases ∧
+      mutablyShareableUnder (transferable .protectedResource) = some .checkedMutex := by
+  refine ⟨by decide, by decide, by decide⟩
 
 /-- Guards, facts and mutex generations never cross, in any mode, for one
 reason. This is the arm CT46's "shared wrapper" vocabulary lands on. -/
@@ -311,18 +378,19 @@ theorem guardsFactsAndMutexesNeverCross :
 
 /-! ### The admission matrices, decided whole -/
 
-/-- The 14 x 5 kind/mode matrix: exactly four cells admit. -/
+/-- The 16 x 6 kind/mode matrix: exactly six cells admit. -/
 theorem theAdmissionMatrixIsPinned :
     (allKinds.flatMap (fun k => allModes.map (fun m => (k, m)))).filter
         (fun p => (admits p.1 p.2).isSome) =
       [(.i32, .copy), (.ownedBuffer, .move), (.ownedBuffer, .lend),
-       (.ownedBuffer, .lendWrite)] := by decide
+       (.ownedBuffer, .lendWrite), (.protectedResource, .move),
+       (.protectedResource, .shareUnderMutex)] := by decide
 
 /-- A `write` capture is refused for every kind, the admitted ones included. -/
 theorem noKindAdmitsAWriteCapture : ∀ k ∈ allKinds, admits k .write = none := by decide
 
 set_option maxRecDepth 16000 in
-/-- The 14 x 5 x 14 boundary matrix: exactly four cells admit out of 980. -/
+/-- The 16 x 6 x 16 boundary matrix: exactly six cells admit out of 1,536. -/
 theorem theCaptureMatrixIsPinned :
     (allKinds.flatMap (fun place =>
       allModes.flatMap (fun mode =>
@@ -331,7 +399,9 @@ theorem theCaptureMatrixIsPinned :
       [(.i32, .copy, .i32),
        (.ownedBuffer, .move, .ownedBuffer),
        (.ownedBuffer, .lend, .readLoan),
-       (.ownedBuffer, .lendWrite, .writeLease)] := by decide
+       (.ownedBuffer, .lendWrite, .writeLease),
+       (.protectedResource, .move, .protectedResource),
+       (.protectedResource, .shareUnderMutex, .mutexShare)] := by decide
 
 set_option maxRecDepth 16000 in
 /-- The boundary decision never admits more than the kind judgment, and what it
@@ -357,35 +427,63 @@ theorem refusalIsExactlyNonAdmission :
 /-- An admitted lend names exactly the protocol its class names. -/
 theorem anAdmittedLendNamesItsClassProtocol :
     ∀ k ∈ allKinds, ∀ m ∈ allModes,
-      ∀ p ∈ [Protocol.countedReadShares, Protocol.checkedMutex],
+      ∀ p ∈ [Protocol.countedReadShares, .checkedMutex, .disjointWriteLeases],
         admits k m = some (.lendShare p) →
           shareableUnder (transferable k) = some p := by decide
 
-/-! ### The recorded gap CT46 closes at
+/-! ### The gap CT46 closes at, and the half card `MUTEX-SHARE-CROSS` closes
 
-`checkedMutex` is the discipline CT46 asks for. It is named by the judgment
-and produced by nothing, which is exactly the residue: the classification half
-of CT46 exists, the capture form does not. -/
+`checkedMutex` is the discipline CT46 asks for. Card `CT46-SENDSYNC` named it
+and produced it from nothing, and this section's theorem was
+`noModeRequestsTheMutexProtocol`. Card `MUTEX-SHARE-CROSS` supplies the capture
+mode, for `protectedResource` and for that kind alone, so the theorem is
+**replaced** by the two facts that took its place: the protocol is requested by
+exactly one mode, and reachable for exactly one kind. The task route's
+`ownedBuffer` still has no mutex to cross under, which is the half that stays
+open (`MUTEX-SHARE-CROSS-TASK-BUFFER`). -/
 
-/-- No kind is shareable under the mutex protocol, and no (kind, mode) pair
-admits a mutex-mediated lend. Decided over the whole matrix, so this cannot
-drift as a comment could. -/
-theorem noModeRequestsTheMutexProtocol :
-    (∀ k ∈ allKinds, shareableUnder (transferable k) ≠ some .checkedMutex) ∧
-      (∀ k ∈ allKinds, mutablyShareableUnder (transferable k) ≠ some .checkedMutex) ∧
+/-- Every protocol is requested by exactly one mode, and no other mode anywhere
+in the matrix reaches it. This is the property that makes "refuses when it
+crosses any other way" quantified rather than exemplified: the disciplines are
+not interchangeable, so a payload cannot cross under a protocol that does not
+govern it. -/
+theorem eachProtocolIsRequestedByExactlyOneMode :
+    ∀ p ∈ [Protocol.countedReadShares, .checkedMutex, .disjointWriteLeases],
+      ∀ k ∈ allKinds, ∀ m ∈ allModes,
+        ((admits k m).bind protocolOf = some p) → m = requestedBy p := by decide
+
+/-- The mutex protocol is reachable for exactly one kind, by exactly one mode,
+and it delivers a mutex share rather than a loan or a lease. No kind is *lent*
+under a mutex — card `CT46-SENDSYNC`'s shape survives, which is what keeps the
+read-share ledger from being asked to carry a mutex. -/
+theorem theMutexProtocolIsReachableForExactlyOneKind :
+    allKinds.filter (fun k => shareableUnder (transferable k) = some .checkedMutex)
+        = [.protectedResource] ∧
+      (allKinds.flatMap (fun k => allModes.map (fun m => (k, m)))).filter
+          (fun q => admits q.1 q.2 = some (.shareUnderMutex .checkedMutex))
+        = [(.protectedResource, .shareUnderMutex)] ∧
       (∀ k ∈ allKinds, ∀ m ∈ allModes,
         admits k m ≠ some (.lendShare .checkedMutex) ∧
           admits k m ≠ some (.lendWriteRange .checkedMutex)) := by
   refine ⟨by decide, by decide, by decide⟩
 
-/-- The gap is about a kind that really is sendable and really is shareable
-under some *other* protocol — otherwise it would be an uninteresting refusal
-rather than CT46's question. -/
-theorem theGapKindIsSendableAndOtherwiseShareable :
+/-- The half that stays open, stated so it cannot be quietly assumed closed:
+the task route's Buffer really is sendable and really is shareable, under a
+protocol that is **not** the mutex — so a `share ... under ...` of it does not
+admit. The refusal's *reason* is pinned in the refusal section below. -/
+theorem theTaskBuffersMutexGapStaysOpen :
     sendable (transferable .ownedBuffer) = true ∧
+      (shareableUnder (transferable .ownedBuffer)).isSome ∧
       shareableUnder (transferable .ownedBuffer) ≠ some .checkedMutex ∧
-      (shareableUnder (transferable .ownedBuffer)).isSome := by
-  refine ⟨by decide, by decide, by decide⟩
+      admits .ownedBuffer .shareUnderMutex = none := by
+  refine ⟨by decide, by decide, by decide, by decide⟩
+
+/-- The mirror image: the mutex payload does not admit either lend family, so
+neither sharing route can be reached by spelling the other. -/
+theorem theMutexPayloadRefusesBothLendFamilies :
+    admits .protectedResource .lend = none ∧
+      admits .protectedResource .lendWrite = none := by
+  refine ⟨by decide, by decide⟩
 
 /-! ### The refusal reasons, decided beside the admissions
     (card `CT47-COPY-CAPTURE`)
@@ -425,10 +523,16 @@ def refuse (k : Kind) (m : Mode) : Option Refusal :=
     | .movedOnly p q => match m with
       | .move => none
       | .lend => match p with
-        | some _ => none
+        | some .countedReadShares => none
+        | some other => some (.protocolUnavailable other)
+        | none => some (.protocolUnavailable .checkedMutex)
+      | .shareUnderMutex => match p with
+        | some .checkedMutex => none
+        | some other => some (.protocolUnavailable other)
         | none => some (.protocolUnavailable .checkedMutex)
       | .lendWrite => match q with
-        | some _ => none
+        | some .disjointWriteLeases => none
+        | some other => some (.protocolUnavailable other)
         | none => some .modeNotAdmittedForKind
       | _ => some .modeNotAdmittedForKind
 
@@ -440,14 +544,14 @@ def refuseCapture (place : Kind) (mode : Mode) (parameter : Kind) : Option Refus
   | none => refuse place mode
   | some t => if receivedKind place t = parameter then none else some .receivedKindMismatch
 
-/-- Refusal and admission partition the 13 x 4 matrix: every cell is decided,
+/-- Refusal and admission partition the 16 x 6 matrix: every cell is decided,
 and decided exactly once. This is what makes moving the refusal's attribution
 (card `CT47-COPY-CAPTURE`) incapable of moving the refused set. -/
 theorem refusalComplementsAdmission :
     ∀ k ∈ allKinds, ∀ m ∈ allModes, (refuse k m).isSome = (admits k m).isNone := by decide
 
 set_option maxRecDepth 8000 in
-/-- The same partition over the whole 13 x 4 x 13 boundary matrix. -/
+/-- The same partition over the whole 16 x 6 x 16 boundary matrix. -/
 theorem theBoundaryIsDecidedExactlyOnce :
     ∀ place ∈ allKinds, ∀ mode ∈ allModes, ∀ parameter ∈ allKinds,
       (refuseCapture place mode parameter).isSome =
@@ -462,7 +566,7 @@ theorem aWriteCaptureIsRefusedByName :
 non-write mode, so the boundary message can name the kind's rule rather than a
 generic subset. -/
 theorem aNeverKindRefusesWithItsClassReason :
-    ∀ k ∈ allKinds, ∀ m ∈ [Mode.copy, .move, .lend, .lendWrite],
+    ∀ k ∈ allKinds, ∀ m ∈ [Mode.copy, .move, .lend, .lendWrite, .shareUnderMutex],
       ∀ reason ∈ [NotTransferable.notAValue, .owedToCreatingFrame,
                   .unmodeledType, .resultPositionOnly],
         transferable k = .never reason → refuse k m = some (.kindNotTransferable reason) := by
@@ -476,6 +580,35 @@ statement. -/
 theorem copyOfTheOwnedBufferIsRefusedForItsMode :
     refuse .ownedBuffer .copy = some .modeNotAdmittedForKind ∧
       sendable (transferable .ownedBuffer) = true := ⟨rfl, rfl⟩
+
+/-- Card `MUTEX-SHARE-CROSS`: **a cross-protocol request refuses with the
+protocol the kind actually carries, named.** That is what makes the refusal
+usable — a reader is told which discipline governs the payload, not merely that
+this one does not. Both directions are pinned, so neither sharing route can be
+reached by spelling the other, and the mutex payload's own cross-requests
+refuse too. -/
+theorem aCrossProtocolRequestNamesTheKindsOwnProtocol :
+    refuse .ownedBuffer .shareUnderMutex
+        = some (.protocolUnavailable .countedReadShares) ∧
+      refuse .protectedResource .lend = some (.protocolUnavailable .checkedMutex) ∧
+      refuse .protectedResource .lendWrite = some (.protocolUnavailable .checkedMutex) := by
+  refine ⟨by decide, by decide, by decide⟩
+
+/-- **CT46's cell**, the admitting one, stated beside CT47's refusing cell
+above. The mutex payload crosses under the mutex mode, delivering a mutex share
+— and the same payload refuses under every other mode of the matrix, which is
+"accept only through verified mutex protocol" as a decision rather than a
+convention. The word *verified* is not this theorem's: the classification is
+all that is decided here, and the protocol's verification is
+`QCore.MutexShareCross`. -/
+theorem theMutexPayloadCrossesOnlyUnderTheMutexMode :
+    admitsCapture .protectedResource .shareUnderMutex .mutexShare
+        = some (.shareUnderMutex .checkedMutex) ∧
+      allModes.filter (fun m => (admits .protectedResource m).isSome)
+        = [.move, .shareUnderMutex] ∧
+      (∀ parameter ∈ allKinds, parameter ≠ Kind.mutexShare →
+        admitsCapture .protectedResource .shareUnderMutex parameter = none) := by
+  refine ⟨by decide, by decide, by decide⟩
 
 /-- The two delivered-kind mismatches the boundary can spell: a lend delivered
 as custody and a move delivered as a loan. Both transfers are admitted; the
@@ -556,6 +689,12 @@ def Backed : Transfer → Prop
   | .lendWriteRange .disjointWriteLeases => LeaseObligation
   | .lendWriteRange .countedReadShares => False
   | .lendWriteRange .checkedMutex => False
+  -- Card `MUTEX-SHARE-CROSS`: the mutex-mediated crossing's rule, in the same
+  -- record-which-rule-answers discipline as the three arms above. The other
+  -- two protocols map to `False` because no kind shares under them this way.
+  | .shareUnderMutex .checkedMutex => MutexShareCross.MutexShareObligation
+  | .shareUnderMutex .countedReadShares => False
+  | .shareUnderMutex .disjointWriteLeases => False
 
 /-- Every admitting arm of the judgment is backed by an obligation that holds.
 Stated over the whole matrix: whichever cell admits, the corresponding rule is
@@ -571,6 +710,7 @@ theorem everyAdmittedTransferIsBacked :
       | exact moveObligationHolds
       | exact lendObligationHolds
       | exact leaseObligationHolds
+      | exact MutexShareCross.mutexShareObligationHolds
 
 /-- The refusing arms carry no obligation, because they admit nothing at all —
 so the judgment never leans on a rule it did not name. -/

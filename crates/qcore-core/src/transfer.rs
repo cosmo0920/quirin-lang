@@ -65,6 +65,16 @@
 //!   ends, and an error value's payload is taken exactly once. Sending any of
 //!   them would move a duty out of the frame that owes it.
 //!
+//! * **`protected N` — moved, shared only under a verified mutex** (card
+//!   `MUTEX-SHARE-CROSS`). The checked-mutex route's payload, and the second
+//!   "Send but not Sync" kind. Custody moves, because the model has
+//!   `TransferCustody` admitted only over a *derivable* synchronization edge.
+//!   Sharing is admitted under [`ShareProtocol::CheckedMutex`] in **both**
+//!   directions — a guard holder may read and write the same bytes another
+//!   task will later reach — and that is sound not because this module says so
+//!   but because `mutex_invariant`'s own rule leaves a protected footprint no
+//!   unguarded access at all. See [`MUTEX_SHARE_CROSSING`].
+//!
 //! * **Mutex generations, guards and guard-scoped facts — not values at all.**
 //!   These have no denotation in the value grammar. A mutex generation fixes
 //!   its protected footprint at creation and parks the creator's full share
@@ -72,8 +82,9 @@
 //!   minted fresh by each `Lock` and its binder is body-local, so it cannot be
 //!   named at a creation site outside its own section. A fact is guard-scoped
 //!   and each assertion mints a fresh identity, so a fact that outlived its
-//!   guard is already refused. This is the arm CT46 cares about most, and it
-//!   is a **represented refusal**: see [`ShareProtocol::CheckedMutex`].
+//!   guard is already refused. The *wrapper* is what CT46 cares about most,
+//!   and it stays a non-value: what crosses under card `MUTEX-SHARE-CROSS` is
+//!   the payload the generation protects, never the generation itself.
 //!
 //! * **Every other declared type form — unmodeled.** The declared-type
 //!   grammar has fifteen tags (`SourceTypeKind`); this profile elaborates
@@ -95,9 +106,14 @@
 //! Nothing here is a data-race proof, a native-refinement claim, or a
 //! statement about C layout. It says which kinds the implemented rules already
 //! govern well enough to let cross a boundary, and names the rule for each.
-//! In particular it does **not** supply a mutex-mediated capture: no capture
-//! mode produces [`ShareProtocol::CheckedMutex`], and that is recorded as a
-//! refusal rather than an omission precisely so the gap is nameable.
+//! Card `MUTEX-SHARE-CROSS` supplies the mutex-mediated capture this module
+//! once recorded as missing, for [`TransferKind::ProtectedResource`] and for
+//! that kind alone. The judgment's part of it is the classification — *may
+//! this kind cross this way* — and nothing more: whether the named generation
+//! exists, protects this very payload and verifies is decided against the
+//! unedited checker at the crossing. The task route's `own<Buffer>` still has
+//! no mutex to cross under, so [`MUTEX_SHARING_GAP`] stays open and stays
+//! `false`.
 
 /// Every kind of thing a name can denote at a task-creation boundary in the
 /// implemented source language.
@@ -132,6 +148,23 @@ pub enum TransferKind {
     ErrorValue,
     /// A single known error tag.
     KnownErrorTag,
+    /// A resource declared by `let r = protected N;` on the checked-mutex
+    /// route (card `MUTEX-SHARE-CROSS`). This is CT46's payload: custody of it
+    /// really does move between tasks in the model
+    /// (`mutex_invariant::canTransfer`, over a derivable synchronization
+    /// witness), and two tasks may reach it at once **only** under a verified
+    /// mutex protocol — never by a counted read share and never by a byte
+    /// partition. So it is "Send but not Sync" with
+    /// [`ShareProtocol::CheckedMutex`] as its one sharing discipline, in both
+    /// the read and the write direction: ordering mutation is exactly what a
+    /// mutex does that the other two protocols do not.
+    ProtectedResource,
+    /// What a mutex-mediated crossing delivers (card `MUTEX-SHARE-CROSS`): the
+    /// right to reach a protected resource in the child, and only under a
+    /// guard of the declared generation. Like [`TransferKind::ReadLoan`] and
+    /// [`TransferKind::WriteLease`] it is the **product** of a crossing and
+    /// never a source of one.
+    MutexShare,
     /// A mutex generation declared by `let m = mutex guards r;`.
     MutexGeneration,
     /// A guard minted by one `with lock` acquisition.
@@ -148,7 +181,7 @@ impl TransferKind {
     /// Exhaustiveness of the judgment is checked against this list, so an
     /// added constructor that no arm handles is a compile error here and a
     /// test failure in the totality tests.
-    pub const ALL: [TransferKind; 14] = [
+    pub const ALL: [TransferKind; 16] = [
         TransferKind::Unit,
         TransferKind::I32,
         TransferKind::OwnedBuffer,
@@ -159,6 +192,8 @@ impl TransferKind {
         TransferKind::TaskResult,
         TransferKind::ErrorValue,
         TransferKind::KnownErrorTag,
+        TransferKind::ProtectedResource,
+        TransferKind::MutexShare,
         TransferKind::MutexGeneration,
         TransferKind::Guard,
         TransferKind::ProtectedFact,
@@ -231,26 +266,63 @@ pub enum TransferMode {
     /// authority crosses, which is what makes the disjointness question
     /// decidable at the boundary.
     LendWrite,
+    /// `share PLACE under MUTEX` (card `MUTEX-SHARE-CROSS`): the crossing CT46
+    /// asks for. The capture names the payload **and** the protocol that
+    /// protects it, so the request is explicit at the source rather than
+    /// inferred from what happens to be in scope. It is the only mode that
+    /// requests [`ShareProtocol::CheckedMutex`], and — unlike every other
+    /// sharing mode — the protocol it names is *verified* rather than assumed:
+    /// see [`MUTEX_SHARE_CROSSING`].
+    ShareUnderMutex,
 }
 
 impl TransferMode {
     /// Every constructor, in the parser's keyword order.
-    pub const ALL: [TransferMode; 5] = [
+    pub const ALL: [TransferMode; 6] = [
         TransferMode::Copy,
         TransferMode::Move,
         TransferMode::Lend,
         TransferMode::Write,
         TransferMode::LendWrite,
+        TransferMode::ShareUnderMutex,
     ];
+}
+
+impl ShareProtocol {
+    /// Every constructor, in declaration order.
+    pub const ALL: [ShareProtocol; 3] = [
+        ShareProtocol::CountedReadShares,
+        ShareProtocol::CheckedMutex,
+        ShareProtocol::DisjointWriteLeases,
+    ];
+
+    /// The sharing mode that requests this protocol, and only this protocol.
+    ///
+    /// Card `MUTEX-SHARE-CROSS` states the correspondence as a function so the
+    /// judgment can be written once: **a sharing mode is admitted exactly when
+    /// the kind's own sharing discipline is the protocol that mode requests.**
+    /// Before this card the read-lend arm accepted whatever protocol the kind
+    /// happened to name, which was harmless only because one kind shared at
+    /// all; with two sharing disciplines in each direction it would have let a
+    /// `read … share N` capture of a mutex-protected payload through under the
+    /// mutex's name. It cannot now: the protocols are compared.
+    pub const fn requested_by(self) -> TransferMode {
+        match self {
+            ShareProtocol::CountedReadShares => TransferMode::Lend,
+            ShareProtocol::CheckedMutex => TransferMode::ShareUnderMutex,
+            ShareProtocol::DisjointWriteLeases => TransferMode::LendWrite,
+        }
+    }
 }
 
 /// A discipline under which a kind that is not freely shareable may
 /// nevertheless be reached by more than one task.
 ///
-/// A protocol is named here only when the checker actually decides it. The
-/// mutex variant is a **represented refusal**: it names the discipline CT46
-/// asks for, and no capture mode produces it, so a module that needs it is
-/// refused by name rather than accepted for the wrong reason.
+/// A protocol is named here only when the checker actually decides it, and
+/// each one is requested by exactly one capture mode
+/// ([`ShareProtocol::requested_by`]) — so a kind whose discipline is one
+/// protocol refuses a mode that requests another, with its own discipline
+/// named. That is what keeps the three from being interchangeable.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ShareProtocol {
     /// Counted read shares: a positive share out of a fixed authority budget,
@@ -258,9 +330,14 @@ pub enum ShareProtocol {
     /// protocol makes sharing safe by removing mutation for the window, so it
     /// admits readers only.
     CountedReadShares,
-    /// Mutex-mediated shared access, which would order mutation instead of
-    /// removing it. No implemented capture mode produces this protocol; see
-    /// [`SharingGap`].
+    /// Mutex-mediated shared access (card `MUTEX-SHARE-CROSS`): the protocol
+    /// **orders** mutation instead of removing it, so a guard holder may read
+    /// *and* write the very same bytes another task will later reach. It is
+    /// the only protocol admitted in both sharing directions, and the only one
+    /// whose verification is a separate question from its classification — the
+    /// generation must exist and protect this very payload. Requested by
+    /// [`TransferMode::ShareUnderMutex`] and by nothing else; see
+    /// [`MUTEX_SHARE_CROSSING`].
     CheckedMutex,
     /// Disjoint range write leases (card `WRITE-LEND-TASKS`): each holder
     /// receives write authority over its own byte range, the ranges are
@@ -378,9 +455,29 @@ pub const fn transferable(kind: TransferKind) -> TransferClass {
         },
 
         // A loan is the product of lending, never a source of it; a lease is
-        // the product of leasing, on the same footing.
+        // the product of leasing, on the same footing; a mutex share is the
+        // product of a mutex-mediated crossing, on the same footing again.
         TransferKind::ReadLoan => TransferClass::Never(NotTransferable::NotAValue),
         TransferKind::WriteLease => TransferClass::Never(NotTransferable::NotAValue),
+        TransferKind::MutexShare => TransferClass::Never(NotTransferable::NotAValue),
+
+        // Card `MUTEX-SHARE-CROSS`: CT46's payload. Custody moves — the model
+        // has `TransferCustody`, admitted only over a *derivable*
+        // synchronization edge, never a caller-supplied flag. Sharing is
+        // admitted only under `CheckedMutex`, in **both** directions, because a
+        // mutex orders mutation instead of removing it (`CountedReadShares`)
+        // or partitioning it (`DisjointWriteLeases`): a holder of the guard may
+        // read *and* write the very same bytes another task will later reach.
+        // What makes that sound is not this classification but the checked
+        // model's own rule — a footprint a live generation protects has no
+        // unguarded access at all (`canAccessUnguarded` requires
+        // `protectorOf f` to be `none`) — which is the rule the Lean theorem
+        // `aSharedPayloadIsReachableOnlyThroughTheProtocol` lifts to every
+        // point of every interleaving.
+        TransferKind::ProtectedResource => TransferClass::MovedOnly {
+            shareable_under: Some(ShareProtocol::CheckedMutex),
+            mutably_shareable_under: Some(ShareProtocol::CheckedMutex),
+        },
 
         // Bound to the frame that created them, and owing it a duty.
         TransferKind::ThreadScope
@@ -450,6 +547,14 @@ pub enum AdmittedTransfer {
     /// judgment's business — which bytes, and whether they are disjoint from
     /// every outstanding lease, is the ledger's decision by the wave-29 rule.
     LendWriteRange(ShareProtocol),
+    /// The child may reach the payload under the named protocol, and only
+    /// under it (card `MUTEX-SHARE-CROSS`). Nothing is duplicated, no custody
+    /// crosses, and no authority is parked with the child: what crosses is the
+    /// right to *acquire* the declared generation and reach the payload inside
+    /// the section that acquisition opens. The parent keeps its binding and is
+    /// held to the same rule for the whole time — which is why this is the one
+    /// admitted transfer under which both parties may write the same bytes.
+    ShareUnderMutex(ShareProtocol),
 }
 
 /// Why a capture is refused.
@@ -474,7 +579,8 @@ pub enum TransferRefusal {
 
 /// **The operational judgment.** Given a kind and the mode a capture asks
 /// for, decide. Total over [`TransferKind`] x [`TransferMode`] — all
-/// 13 x 4 = 52 pairs.
+/// 16 x 6 = 96 pairs (13 x 4 originally; 14 x 5 after card
+/// `WRITE-LEND-TASKS`).
 pub const fn admits(
     kind: TransferKind,
     mode: TransferMode,
@@ -488,30 +594,62 @@ pub const fn admits(
         TransferClass::Never(reason) => Err(TransferRefusal::KindNotTransferable(reason)),
         TransferClass::Duplicated => match mode {
             TransferMode::Copy => Ok(AdmittedTransfer::Duplicate),
-            // Moving, lending or leasing a duplicated kind is not a custody
-            // question: there is no custody. The mode simply does not apply.
+            // Moving, lending, leasing or mutex-sharing a duplicated kind is
+            // not a custody question: there is no custody. The mode simply
+            // does not apply.
             TransferMode::Move
             | TransferMode::Lend
             | TransferMode::Write
-            | TransferMode::LendWrite => Err(TransferRefusal::ModeNotAdmittedForKind),
+            | TransferMode::LendWrite
+            | TransferMode::ShareUnderMutex => Err(TransferRefusal::ModeNotAdmittedForKind),
         },
         TransferClass::MovedOnly {
             shareable_under,
             mutably_shareable_under,
         } => match mode {
             TransferMode::Move => Ok(AdmittedTransfer::MoveCustody),
+            // Card `MUTEX-SHARE-CROSS`: a sharing mode is admitted exactly
+            // when the kind's own sharing discipline **is** the protocol that
+            // mode requests. A kind that shares under a different protocol
+            // refuses with that protocol named, which is what keeps the
+            // disciplines from being interchangeable: an `own<Buffer>` may not
+            // cross under a mutex (it shares by removing mutation), and a
+            // `protected N` resource may not cross as a counted read share (it
+            // shares by ordering mutation). Before this card the arm took
+            // whatever protocol the kind named.
             TransferMode::Lend => match shareable_under {
-                Some(protocol) => Ok(AdmittedTransfer::LendShare(protocol)),
+                Some(ShareProtocol::CountedReadShares) => Ok(AdmittedTransfer::LendShare(
+                    ShareProtocol::CountedReadShares,
+                )),
+                Some(other) => Err(TransferRefusal::ProtocolUnavailable(other)),
                 None => Err(TransferRefusal::ProtocolUnavailable(
                     ShareProtocol::CheckedMutex,
                 )),
             },
-            // A range write lend is admitted exactly under the kind's
-            // mutable-sharing protocol (card `WRITE-LEND-TASKS`); a kind
-            // with none refuses for the mode, because no protocol would
+            // A mutex-mediated crossing is admitted exactly when the kind's
+            // read-sharing discipline is the checked mutex. The admission is
+            // the *classification* half only: whether the named generation
+            // exists, protects this very payload, and verifies is decided by
+            // the unedited mutex checker at the crossing (`MUTEX_SHARE_CROSSING`).
+            TransferMode::ShareUnderMutex => match shareable_under {
+                Some(ShareProtocol::CheckedMutex) => Ok(AdmittedTransfer::ShareUnderMutex(
+                    ShareProtocol::CheckedMutex,
+                )),
+                Some(other) => Err(TransferRefusal::ProtocolUnavailable(other)),
+                None => Err(TransferRefusal::ProtocolUnavailable(
+                    ShareProtocol::CheckedMutex,
+                )),
+            },
+            // A range write lend is admitted exactly under the byte-partition
+            // protocol (card `WRITE-LEND-TASKS`); a kind whose mutable sharing
+            // is some other discipline refuses with that discipline named, and
+            // a kind with none refuses for the mode, because no protocol would
             // ever admit it.
             TransferMode::LendWrite => match mutably_shareable_under {
-                Some(protocol) => Ok(AdmittedTransfer::LendWriteRange(protocol)),
+                Some(ShareProtocol::DisjointWriteLeases) => Ok(AdmittedTransfer::LendWriteRange(
+                    ShareProtocol::DisjointWriteLeases,
+                )),
+                Some(other) => Err(TransferRefusal::ProtocolUnavailable(other)),
                 None => Err(TransferRefusal::ModeNotAdmittedForKind),
             },
             // Copying affine custody would duplicate an identity.
@@ -543,6 +681,11 @@ pub const fn received_kind(source: TransferKind, admitted: AdmittedTransfer) -> 
         // from — the second place where the parent's kind and the worker's
         // declared parameter kind differ on purpose.
         AdmittedTransfer::LendWriteRange(_) => TransferKind::WriteLease,
+        // A mutex-mediated crossing arrives as a mutex share — the third place
+        // where the parent's kind and what the child receives differ on
+        // purpose. The parent keeps `protected N`; the child receives the
+        // right to reach it under the declared generation, and nothing else.
+        AdmittedTransfer::ShareUnderMutex(_) => TransferKind::MutexShare,
     }
 }
 
@@ -592,14 +735,43 @@ pub struct SharingGap {
     pub requestable: bool,
 }
 
-/// The one recorded sharing gap. `requestable` is `false`, and a test pins
-/// that no `(kind, mode)` pair anywhere in the judgment yields
-/// [`ShareProtocol::CheckedMutex`], so this constant cannot drift away from
-/// the judgment silently.
+/// The sharing gap **that remains open**, and is narrower than it was.
+///
+/// Card `CT46-SENDSYNC` recorded this as the whole gap: the task route's
+/// [`TransferKind::OwnedBuffer`] is sendable-but-not-freely-shareable, a mutex
+/// is the discipline that would let two tasks mutate it, and no capture mode
+/// could request one. Card `MUTEX-SHARE-CROSS` supplies the capture mode — but
+/// **not for this kind**. The task route has no mutex at all, so an
+/// `own<Buffer>` still shares only by removing mutation, and
+/// `admits(OwnedBuffer, ShareUnderMutex)` refuses with `CountedReadShares`
+/// named. `requestable` therefore stays `false`, deliberately, and the residual
+/// is `MUTEX-SHARE-CROSS-TASK-BUFFER`.
 pub const MUTEX_SHARING_GAP: SharingGap = SharingGap {
     kind: TransferKind::OwnedBuffer,
     protocol: ShareProtocol::CheckedMutex,
     requestable: false,
+};
+
+/// The half card `MUTEX-SHARE-CROSS` closes: CT46's composition, as data.
+///
+/// [`TransferKind::ProtectedResource`] is the checked-mutex route's payload —
+/// sendable (custody moves over a derivable synchronization edge) and not
+/// freely shareable — and `share PLACE under MUTEX` is a capture mode that
+/// requests [`ShareProtocol::CheckedMutex`] for it. So `requestable` is `true`,
+/// and a test pins that the judgment agrees: the pair
+/// `(ProtectedResource, ShareUnderMutex)` admits, and it is the **only** pair
+/// anywhere in the matrix that yields the mutex protocol.
+///
+/// Requestable is not the same as granted. The judgment answers the
+/// classification question only — *may this kind cross this way at all* — and
+/// deliberately cannot see whether the generation the capture names exists,
+/// protects this very payload, or verifies. Those are decided at the crossing
+/// against the **unedited** `CheckedMutexInvariantV1` checker, and a capture
+/// whose protocol is absent, mismatched or unverified refuses there.
+pub const MUTEX_SHARE_CROSSING: SharingGap = SharingGap {
+    kind: TransferKind::ProtectedResource,
+    protocol: ShareProtocol::CheckedMutex,
+    requestable: true,
 };
 
 #[cfg(test)]

@@ -537,6 +537,9 @@ fn main() -> unit {
         thread scope c {                // one child task, joined at `}`
             with lock m as gc { read buf with gc; }
         }
+        thread scope d share buf under m {   // CT46's declared crossing
+            with lock m as gd { read buf with gd; }
+        }
     }                                   // scope exit destroys m, then buf
 }
 ```
@@ -553,6 +556,8 @@ outer       = "let" , NAME , "=" , "protected" , NAT , ";"
             | "wait" , NAME , ";"
             | "use" , NAME , ";"
             | "thread" , "scope" , NAME , "{" , { child } , "}"
+            | "thread" , "scope" , NAME , "share" , NAME , "under" , NAME ,
+              "{" , { child } , "}"
             | "with" , "lock" , NAME , "as" , NAME , "{" , { inner } , "}" ;
 inner       = "open" , NAME , ";"
             | "close" , NAME , [ "unchanged" ] , ";"
@@ -564,6 +569,8 @@ inner       = "open" , NAME , ";"
             | "use" , NAME , ";"
             | "wait" , NAME , ";"
             | "thread" , "scope" , NAME , "{" , { child } , "}"
+            | "thread" , "scope" , NAME , "share" , NAME , "under" , NAME ,
+              "{" , { child } , "}"
             | "raise" , NAME , "::" , NAME , ";" ;
 child       = (* any `outer` or `inner` form except a declaration and except
                  `drop`; a child inherits the enclosing critical section

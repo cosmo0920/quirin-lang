@@ -7,20 +7,23 @@ import QCore.Transferability
 --
 -- Outside every statement below and recorded in
 -- `docs/reports/remaining-ct46-sendsync/README.md`: data-race freedom,
--- source-to-native refinement, C layout, and any admission of mutex-mediated
--- sharing. The ledger rules the admitting arms name are proved in
--- `QCore.ScopedTasks` and `QCore.ReadShare`, not here.
+-- source-to-native refinement and C layout. Mutex-mediated sharing was on
+-- that list too until card `MUTEX-SHARE-CROSS` (wave 32) admitted it for
+-- `Kind.protectedResource` alone; its own surface is
+-- `AuditMutexShareCross.lean`. The rules the admitting arms name are proved
+-- in `QCore.ScopedTasks`, `QCore.ReadShare`, `QCore.WriteLendTasks` and
+-- `QCore.MutexShareCross`, not here.
 
 -- The three vocabularies are closed and the inventories the quantified
 -- statements range over really are complete.
 #print axioms QCore.Transferability.kindInventoryIsComplete
 #print axioms QCore.Transferability.kindInventoryHasNoDuplicates
-#print axioms QCore.Transferability.kindInventoryHasFourteenEntries
+#print axioms QCore.Transferability.kindInventoryHasSixteenEntries
 #print axioms QCore.Transferability.tagInventoryIsComplete
 #print axioms QCore.Transferability.tagInventoryHasNoDuplicates
 #print axioms QCore.Transferability.tagInventoryHasFifteenEntries
 #print axioms QCore.Transferability.modeInventoryIsComplete
-#print axioms QCore.Transferability.modeInventoryHasFiveEntries
+#print axioms QCore.Transferability.modeInventoryHasSixEntries
 
 -- Totality over the declared-type grammar, and its deliberate conservatism: a
 -- one-token tag never claims sendability, because only the elaborated spelling
@@ -28,16 +31,20 @@ import QCore.Transferability
 #print axioms QCore.Transferability.everyTagMapsIntoTheVocabulary
 #print axioms QCore.Transferability.noDeclaredTagIsSendableOnItsOwn
 
--- The classification itself, and CT46's two directions. Exactly one kind is
--- sendable but not freely shareable, and it is the owned Buffer; the "shared
--- wrapper" vocabulary — guards, facts, mutex generations — never crosses.
+-- The classification itself, and CT46's two directions. Two kinds are
+-- sendable but not freely shareable — the owned Buffer and (card
+-- `MUTEX-SHARE-CROSS`) the checked-mutex route's protected payload — and they
+-- share under *different* protocols, which is what keeps the disciplines from
+-- being interchangeable. The "shared wrapper" vocabulary — guards, facts,
+-- mutex generations — still never crosses.
 #print axioms QCore.Transferability.theClassificationIsPinned
 #print axioms QCore.Transferability.exactlyOneKindIsSendableButNotFreelyShareable
 #print axioms QCore.Transferability.guardsFactsAndMutexesNeverCross
 
--- Both admission matrices decided whole: 14 x 5 and 14 x 5 x 14 since card
--- `WRITE-LEND-TASKS` (13 x 4 x 13 before it), four admitting cells each,
--- with the write keyword refused for every kind.
+-- Both admission matrices decided whole: 16 x 6 and 16 x 6 x 16 since card
+-- `MUTEX-SHARE-CROSS` (14 x 5 x 14 after `WRITE-LEND-TASKS`, 13 x 4 x 13
+-- before it), six admitting cells each, with the write keyword still refused
+-- for every kind.
 #print axioms QCore.Transferability.theAdmissionMatrixIsPinned
 #print axioms QCore.Transferability.noKindAdmitsAWriteCapture
 #print axioms QCore.Transferability.theCaptureMatrixIsPinned
@@ -50,12 +57,16 @@ import QCore.Transferability
 #print axioms QCore.Transferability.refusalIsExactlyNonAdmission
 #print axioms QCore.Transferability.anAdmittedLendNamesItsClassProtocol
 
--- The recorded gap. `checkedMutex` is named by the judgment and produced by
--- nothing, over the whole matrix — and the kind it would apply to really is
--- the sendable, otherwise-shareable one, so the gap is CT46's question rather
--- than an uninteresting refusal.
-#print axioms QCore.Transferability.noModeRequestsTheMutexProtocol
-#print axioms QCore.Transferability.theGapKindIsSendableAndOtherwiseShareable
+-- The recorded gap, **half closed by card `MUTEX-SHARE-CROSS`** (wave 32).
+-- `noModeRequestsTheMutexProtocol` and `theGapKindIsSendableAndOtherwiseShareable`
+-- were this section's two entries; a mutex-mediated capture mode now exists,
+-- for `Kind.protectedResource` and that kind alone, so they are replaced by
+-- their two successors rather than deleted. The task route's `ownedBuffer`
+-- still has no mutex to cross under, which is the half that stays open
+-- (`MUTEX-SHARE-CROSS-TASK-BUFFER`). The card's own surface is in
+-- `AuditMutexShareCross.lean`.
+#print axioms QCore.Transferability.theMutexProtocolIsReachableForExactlyOneKind
+#print axioms QCore.Transferability.theTaskBuffersMutexGapStaysOpen
 
 -- Card `CT47-COPY-CAPTURE`: the refusal reasons, decided beside the
 -- admissions. Refusal and admission partition both matrices — every cell
@@ -83,10 +94,12 @@ import QCore.Transferability
 #print axioms QCore.Transferability.duplicationCarriesNoCustody
 
 -- Card `WRITE-LEND-TASKS`: the judgment's fourth admissible row. The grown
--- vocabularies stay decided whole (both matrices re-pinned above at 14 x 5
--- and 14 x 5 x 14, with `write` still refused by name for every kind); the
--- mutable-sharing direction separates exactly the Buffer, under exactly the
--- byte-partitioning protocol; and the lease arm is backed by the write-lease
+-- vocabularies stay decided whole (both matrices re-pinned above, with
+-- `write` still refused by name for every kind); the mutable-sharing
+-- direction separates the Buffer under the byte-partitioning protocol and
+-- (card `MUTEX-SHARE-CROSS`) the protected payload under the mutex, since a
+-- guard holder may write bytes another task will later reach; and the lease
+-- arm is backed by the write-lease
 -- ledger model's own exclusivity theorem — no byte has two write authorities
 -- at any point of the interleaving.
 #print axioms QCore.Transferability.mutablyShareableUnder
