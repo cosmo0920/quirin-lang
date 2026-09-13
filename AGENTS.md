@@ -14,32 +14,32 @@ full build/validation instructions are divided under `docs/development/`.
 **Sync rule (steady state since card DOCS-COMPACT, 2026-09-10).** Status
 *history* lives under `docs/development/increments/`, indexed by
 `DEVELOPMENT.md#increment-records` — one paragraph per increment, nowhere else.
-This file carries only the compact ledger, the hard
-invariants, the standing subsystem constraints, the per-change gate and the
-entry points. A new increment therefore adds **one** paragraph to
-the **current record file named by** `docs/development/increments/README.md`,
-newest first, and updates this file's headline numbers (and, if it lands a
-standing "when touching X, do not Y" rule, adds it to the constraints section
-below), and leaves `README.md` alone. Do not reintroduce per-increment
-chronicles here or in `CLAUDE.md`. A recurring compaction pass over these three
-files runs every 2–3 waves; the cadence rule is in `CLAUDE.md`.
+This file carries only the compact ledger, the hard invariants, the standing
+subsystem constraints, the per-change gate and the entry points. A new
+increment therefore adds **one** paragraph, newest first, to the **current
+record file named by** `docs/development/increments/README.md`, updates that
+index when a new wave file opens, updates this file's headline numbers (and, if
+it lands a standing "when touching X, do not Y" rule, adds it to the
+constraints section below), and leaves `README.md` alone. Do not reintroduce
+per-increment chronicles here, in `CLAUDE.md` or in the root table of contents.
+A recurring compaction pass over these three files runs every 2–3 waves; the
+cadence rule is in `CLAUDE.md`.
 
 ## Documentation retrieval and compact context
 
 Use `DEVELOPMENT.md` as a table of contents, then read the relevant setup,
-layout, cycle-evidence or increment page. The increment index names the current
-record file and every historical wave. Update that index when a new wave file
-opens; do not append narratives to the root table of contents. Historical
-counts and old instructions describe their checkpoints, not current status.
-This file remains the authority for agent rules; each report owns its own
-evidence, and frozen reports stay untouched.
+layout, cycle-evidence or increment page; the increment index names the current
+record file and every historical wave. Historical counts and old instructions
+describe their checkpoints, not current status. This file remains the authority
+for agent rules; each report owns its own evidence, and frozen reports stay
+untouched.
 
-Retrieve headings and matching card names before reading long bodies. Use
-`rg -n` with an exact card, symbol or heading in the relevant directory, then
-read the surrounding section. Select relevant keys from large JSON records
-(for example `named_followups` and `section_ownership`) instead of dumping a
-whole matrix. Keep raw logs in each worktree's `measure/` or `private/`; return
-commands, exits, counts and log paths, then fetch failure context only as needed.
+Retrieve headings and matching card names before reading long bodies: `rg -n`
+with an exact card, symbol or heading in the relevant directory, then read the
+surrounding section. Select relevant keys from large JSON records (for example
+`named_followups` and `section_ownership`) instead of dumping a whole matrix.
+Return commands, exits, counts and log paths — raw logs stay worktree-private
+per `CLAUDE.md`'s hygiene rule — and fetch failure context only as needed.
 
 A delegated brief supplies the task, worktree, declared base and HEAD, owned
 and planned paths, topic, applicable rule references, report sections and exact
@@ -49,10 +49,10 @@ need the union of their path and topic rules. Unknown relevance requires more
 authoritative reading, never silent omission. Navigation is not a substitute
 for reading all applicable standing constraints before editing.
 
-For documentation maintenance, preserve historical text and evidence links;
-keep one current authority for each rule. New history pages should stay below
+For documentation maintenance, preserve historical text and evidence links and
+keep one current authority for each rule; new history pages should stay below
 32 KiB where a complete record boundary permits it. Measure startup guidance,
-cumulative retrieval and unique source bytes separately. Byte counts are not
+cumulative retrieval and unique source bytes separately: byte counts are not
 token billing, and a smaller index alone does not reduce this file's startup
 cost. The measured restart plan and remaining packet/router work are in
 `docs/plans/resume-2026-09-13/README.md`; the development split's preservation
@@ -79,7 +79,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `crates/qcore-frontend/` | L1 front end: `lexer`, `parser`, `check`, `quant_index`, `frontend` elaboration and source lowering. Depends on `qcore-core` only |
 | `crates/qcore-contract/` | L1 contract machinery: total-or-reject loader, observation and declared chunk-path policy evaluation. Depends on core/frontend/schemas |
 | `crates/qcore-schemas/` | L0 published schema surface (Rust API **14.0.0**): plugin protocol v1 types, resource-contract data model, mechanism vocabulary, source-identity records, `reason` category vocabulary. Serde types only; a test forbids workspace dependencies |
-| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its four load-bearing modules: `crates/qcore-c-gateway/src/legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `crates/qcore-c-gateway/src/legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `crates/qcore-c-gateway/src/typed_source.rs` (opaque typed C path import and source def/use), and since wave 27 `crates/qcore-c-gateway/src/legacy_location.rs` (the presentation-only preprocessed → original `file:line` map — constraint 12a) |
+| `crates/qcore-c-gateway/` | L2 existing-C analyzer, custody summary inference, Clang discovery, typed-AST transport and opaque Boolean-field source imports; depends only on contract/schemas plus serialization. Its six load-bearing modules, all under `crates/qcore-c-gateway/src/`: `legacy_c.rs` (generic unrestricted-C checker — Clang gateway, CFG, resource abstract interpretation, certificate recheck; contracts enter via `ResourceContracts`), `legacy_summary.rs` (W4 interprocedural custody summary inference: SCC-ordered derivation, validation by re-analysis, declared-contract precedence — constraint 4), `typed_source.rs` (opaque typed C path import and source def/use), and, added by the waves their constraints name, `legacy_location.rs` (wave 27, the presentation-only preprocessed → original `file:line` map — constraint 12a), `legacy_neutral.rs` (C03-NFR, the neutral-element route for undeclared recursive components — constraint 4) and `legacy_joined_provenance.rs` (wave 31, the acyclic conditional-provenance pre-pass — constraint 10b) |
 | `crates/qcore-verifier-host/` | L2 generic registry (0.4.0), source-scope resolution, bounded process transport, execution profiles, v1/v2 firewall and composition; depends only on frontend/schemas workspace crates |
 | `crates/qcore-verification/` | Trusted adapter (0.4.0): explicit-registry source driver, generic model/source imports, core-derived obligations, lifecycle/observation witness replay and scope dispatch; depends on core/frontend/contract/schemas/gateway/host, never providers |
 | `crates/qcore-audit/` | L3 configured audit driver: compile-database ingestion, compile-task identity, source selection, per-unit projection and reports over W2 profiles/W1 contracts. Links no provider module |
@@ -87,7 +87,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/` facades | `compiler/src/verifier_plugin.rs` is the compatibility facade for the host and first-party adapters; `compiler/src/verifier_plugins/{libevent,chunkio}/` are the in-process first-party providers (Libevent/Monkey, ChunkIO); `compiler/src/external_{integration,source}.rs` are compatibility facades plus Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**74 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**76 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -102,16 +102,15 @@ Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
 Headline numbers after `W31-CORPUS-CONTRACTS-2` (2026-09-13). The **corpus
-baseline is `docs/reports/w31-corpus-contracts-2/artifacts/`** — wave 31's
-second arbiter, which lands the two size-sibling contracts wave 29 named and
-declined (`chunkio/chunk_sizes.qcore`, `fluent_bit/input_chunk_total_size.qcore`)
-and moves exactly five `unsupported` leaves, all attributed. Its fresh BEFORE
-reproduces `c-gateway-wave`'s own `diagnostics.json` and `chunk-contracts.json`
-byte for byte, which is what isolates that delta from the gateway change
-beneath it. `C-GATEWAY-WAVE`'s facts stand underneath: its BEFORE reproduced
-wave 30's `w4-recursive-summaries` archives byte for byte, and its staged leaf
-attribution, six new provisional leak rows, five function moves and gate are in
-`docs/reports/c-gateway-wave/`. All earlier archives remain frozen (constraint
+baseline is `docs/reports/w31-corpus-contracts-2/artifacts/`** — the second of
+wave 31's **two arbiters**, a first for one wave. The chain is what makes each
+delta attributable: `C-GATEWAY-WAVE`'s BEFORE reproduced wave 30's
+`w4-recursive-summaries` archives byte for byte, and the second arbiter's fresh
+BEFORE reproduces `c-gateway-wave`'s own `diagnostics.json` and
+`chunk-contracts.json` byte for byte, which isolates its movement from the
+gateway change beneath it. Each arbiter's leaf attribution and gate are in its
+own report (`docs/reports/c-gateway-wave/`,
+`docs/reports/w31-corpus-contracts-2/`). All earlier archives remain frozen (constraint
 21), including `wave23-c-operations`, `aom-destroy-siblings`, `aom-binding-poison`,
 `gateway-c-location`, `w29-corpus-contracts`, `w4-recursive-summaries` and
 `c-gateway-wave`. Diagnostics retain two coordinates: the presented original
@@ -121,7 +120,7 @@ certificate identity (`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
 | Measure | Value |
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions at either wave-31 arbiter. 4,834 projected functions: **146 Safe / 85 provisional Unsafe / 4,603 Unknown**; at `C-GATEWAY-WAVE` four scalar counter helpers withdrew Safe → Unknown and one constant-loop abstraction exposed a provisional repeated release (five function moves, all named in that report), and `W31-CORPUS-CONTRACTS-2` moved **zero** functions and zero units. `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272 at `C-GATEWAY-WAVE`: six added, none withdrawn; constraint 7 — **unmoved** at the `W31-CORPUS-CONTRACTS-2` arbiter re-pin, as are `unknown_alias` **4,208** and `double_release` **1**). `unsupported` **50,150** (50,155 → 50,150 at wave 31's second arbiter: the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size`, decided by the two declared contracts, plus the one argument-expression refusal the second declaration retires at its chained-actual site, attributed leaf by leaf in `docs/reports/w31-corpus-contracts-2/README.md` §5; zero leaves added, two units changed). Provisional findings remain subject to the reports' coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
-| CT01–CT50 conformance | **43/50 mapped**, 7 unmapped; sanitized-native **7 of 43**; **proof 3 of 43** — CT01 (wave 29, `CT01-PROOF-LEG`), CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases) and CT03 (wave 31, `CT03-PROOF-ALPHABET`, the first leg to need the F02 alphabet itself to grow — by the Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
+| CT01–CT50 conformance | **43/50 mapped**, 7 unmapped; sanitized-native **7 of 43**; **proof 3 of 43** — CT01 (wave 29, `CT01-PROOF-LEG`), CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases) and CT03 (wave 31, `CT03-PROOF-ALPHABET`, the first leg to need the F02 alphabet itself to grow — by the Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved — while the *sibling* arm of that same alphabet decision, the two lease events still refused, is **observed and not proved**: no test drives a lease-carrying reference run into it, so the green suites are evidence about the paths they took, and the risk is bounded by direction alone because the arm refuses rather than admits (`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`, the occasioning case for `CLAUDE.md`'s `STABILITY-REEVAL` cadence)): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **76 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`; 74 → 76 at wave 31: `chunkio/chunk_sizes.qcore` and `fluent_bit/input_chunk_total_size.qcore`, each deliberate; resource-v1 declarations 39 → 41 → 43, manifest-selected modules 18 → 19 → 21) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
 | Merged gate | **4,511 workspace tests (0 failed, 8 ignored)** · 122 provider (carried; unchanged) · **200 Python** · **125 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave31-close/gate.json`, measured at the integration tip over the wave's six merged cards; each card's own gate is in its report, and constraint-16 load rows that tripped under concurrent sibling suites were re-verified in isolation with both facts recorded) |
@@ -140,7 +139,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-39 entries) plus each report's own follow-on list; per-card evidence in
+40 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table; trust/verdict rules and
@@ -571,11 +570,21 @@ pointer is the card that established it; read it before deviating.
       route selection claims only the `lend(` call shape, and the read card's
       census had already recorded the word free and reserved it for this card
       (census archived with reproduction commands).
-      `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3` and `GATEWAY-C-LOCATION` do not
-      engage this constraint at all: none reserves a word, and the first two
-      touch no crate source. Nor do waves 28–29's `EXAMPLES-AGGREGATES`,
-      `CT47-COPY-CAPTURE`, `CT22-WIRE`, `CT01-PROOF-LEG` and
-      `W29-CORPUS-CONTRACTS`: none reserves a word or moves the lexer.
+    * `WRITE-LEND-TASKS` **+0 words, one contextual clause word reused**: the
+      wave-29 `lend` is recognised in two further positions that refused before
+      the card — immediately before `<Buffer>` in a task parameter type, and as
+      a capture's first word inside a spawn's argument list — so `lend` stays
+      contextual and no global reservation is taken.
+    * **Cards that do not engage this constraint at all** — none reserves a
+      word or moves the lexer, and the documentation cards touch no crate
+      source: `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3`, `GATEWAY-C-LOCATION`;
+      waves 28–29's `EXAMPLES-AGGREGATES`, `CT47-COPY-CAPTURE`, `CT22-WIRE`,
+      `CT01-PROOF-LEG` and `W29-CORPUS-CONTRACTS`; wave 30's `DOCS-COMPACT-4`,
+      `CT24-CLEANUP-PREEMPTED`, `CT-PROOF-LEG-2`, `REGION-JOINS-LOAN`,
+      `CT07-WRITE-REMAP` and `W4-RECURSIVE-SUMMARIES`; and wave 31's
+      `C-GATEWAY-WAVE`, `CT42-PROTOCOL-CELL`, `CT-WIRE-LANE-3`,
+      `W31-CORPUS-CONTRACTS-2` and `CT03-PROOF-ALPHABET`. Both waves closed at
+      **zero reserved words**.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
@@ -584,7 +593,7 @@ pointer is the card that established it; read it before deviating.
     `loop-unroll-budget`, `http-v1-computed-length`, `aggregates-v1`,
     `quant-region-source`, `ct07-slice-permissions`, `ct23-credit-error-path`,
     `region-credit-joins`, `region-joins-duties`,
-    `slice-permissions-write-lend`.
+    `slice-permissions-write-lend`, `write-lend-tasks`.
 15. Lock ranks and protection growth are **opt-in** disciplines: unranked
     modules stay byte-identical, and a rank is a declared position, not an
     assumption. `remaining-ct33-ranks`, `remaining-ct34-growth`.
@@ -782,8 +791,35 @@ pointer is the card that established it; read it before deviating.
     acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`). The lend's bound
     tier is the loop bound's (`WRITE-LEND-BOUND-FROM-BYTE`); a loan is never
     released and never re-lent; and a module with no lend builds the custody
-    operation list it always built. `ct07-slice-permissions`,
-    `slice-permissions-write-lend`.
+    operation list it always built.
+    **Appended, card `WRITE-LEND-TASKS` (wave 31; it supersedes nothing above,
+    discharging the sibling residual the wave-29 card named).** The write lend
+    now also **crosses the spawn boundary**, as a range write lease:
+    `lend PLACE LOW..HIGH` in a spawn capture transfers write authority over
+    `[LOW, HIGH)` of an owned Buffer's payload (`BUFFER_PAYLOAD_BYTES = 4`, the
+    `int32_t`'s real bytes) to one worker for exactly spawn..join, decided by
+    the **lease-extended scoped-task ledger** (`ResourceState::WriteLeased`)
+    rather than by a route rule. The disjointness decision is
+    `ownership::axes_overlap` — made `pub` and **called** by
+    `scoped_tasks::LeaseRange::overlaps`; do not re-implement it in the ledger
+    and do not move it out of the IR. Three rules must survive refactors: the
+    owner holds **no** whole-payload authority, read included, while any lease
+    is out (stricter than both the read-share route and the sequential lend's
+    per-byte exclusion, because the owner's only spellable footprint here is
+    the whole payload); an **empty** lease refuses (`InvalidLease`) where the
+    sequential empty lend admits, the crossing of no authority being vacuous
+    and failing closed; and only the creator's join reclaims a lease, in the
+    same transaction that collects the capsule. The judgment's mode is
+    `LendWrite`, deliberately distinct from the still-refused `write` capture
+    (`aWriteCaptureIsRefusedByName` re-decided over the grown matrices), and
+    exclusivity is audited as
+    `QCore.WriteLendTasks.no_byte_has_two_write_authorities`. **No operation
+    admits a lease in a worker body** — the authority is held and enforced, not
+    exercised, which is a measured boundary and not a claim about two threads
+    mutating (`WRITE-LEND-TASKS-EXERCISE`); do not add one without landing its
+    checker rule, emission and sanitized native comparison together.
+    `ct07-slice-permissions`, `slice-permissions-write-lend`,
+    `write-lend-tasks`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
@@ -1008,7 +1044,7 @@ pointer is the card that established it; read it before deviating.
 23. CT coverage grows by **mapping, not conformance**. A grown denominator is
     not new conformance, and a grown proof numerator is evidence about one
     case's artifact: the sanitized-native and proof counts are the ledger row's
-    (7 of 42 and 1 of 42 at the wave-29 close — read them there, not here), and
+    (7 of 43 and 3 of 43 at the wave-31 close — read them there, not here), and
     a stage may read `executed` only where a named workspace test runs it on the
     case's own artifact. A mapping lane retires an earlier lane's
     unmapped-bucket row by declaring `retired_unmapped_reasons` in **its own**
@@ -1036,7 +1072,7 @@ pointer is the card that established it; read it before deviating.
     from a **frozen** archive rather than from disk
     (`corpus.contract_modules_per_directory`, `corpus.contract_clause_pin`, both
     from card B00's ledger) and therefore describe the 59-module checkpoint
-    beside a live corpus (74 at wave 29) — recorded as
+    beside a live corpus (76 at wave 31) — recorded as
     `D02-B00-LEDGER-SNAPSHOT`, to be repaired by
     publishing provenance beside them, never by editing the archive.
     `wave9-gen-reason`, `wave17-gen-ctreasons`, `wave17-corpus`.
@@ -1160,8 +1196,8 @@ existing band**, on the `SOCKET-EVENT-COMPOSE` /
 `NATIVE-LIBRARY-HEADER-DECORATION` precedent — the same condition reached by a
 new route — with the widening stated in §L21 and in the card's report rather
 than taken silently. Constraint 1 is unchanged: a code is still allocated to a
-condition, still stable, still not reusable by a second pass. **Waves 26–29 ran
-the consequence eleven times, on eight bands, without strain** — wave 26:
+condition, still stable, still not reusable by a second pass. **Waves 26–31 ran
+the consequence thirteen times, on nine bands, without strain** — wave 26:
 `LOOP-UNROLL-BUDGET` (`Q097`/`Q098`), `HTTP-V1-COMPUTED-LENGTH`
 (`Q090`/`Q093`/`Q094`), `SOCKET-INET-ADDRESSES` (widening `Q084` inside
 `Q080`–`Q089`); wave 27: `CT23-CREDIT-ERROR-PATH` (`Q630`/`Q635`/`Q636`/`Q641`),
@@ -1170,18 +1206,22 @@ aggregate type, taking a condition extension rather than a pass of its own),
 `QUANT-REGION-SOURCE` (`Q302`, and `Q303`–`Q309` reached from a second route),
 `CT07-SLICE-PERMISSIONS` (`Q077`/`Q078`); wave 28: `REGION-CREDIT-JOINS`
 (`Q302`); wave 29: `CT47-COPY-CAPTURE` (`Q600`), `REGION-JOINS-DUTIES`
-(`Q302`) and `SLICE-PERMISSIONS-WRITE-LEND` (`Q051`–`Q055`, `Q077`) — each
-stating its widening in §L21 and in its report and allocating nothing.
-`GATEWAY-C-LOCATION` allocated nothing either and is not an instance of the
-rule: fixing where a diagnostic is *attributed* is not a code change
-(constraint 1).
+(`Q302`) and `SLICE-PERMISSIONS-WRITE-LEND` (`Q051`–`Q055`, `Q077`); wave 30:
+`REGION-JOINS-LOAN` (`Q302` a fourth time, plus the one deliberate `Q600`
+**narrowing**); wave 31: `WRITE-LEND-TASKS` (`Q020` and `Q600`, the ninth
+band) — each stating its widening in §L21 and in its report and allocating
+nothing. Three cards allocated nothing either and are **not** instances of the
+rule: `GATEWAY-C-LOCATION` and `CT24-CLEANUP-PREEMPTED`, because fixing where a
+diagnostic is *attributed* is not a code change (constraint 1), and
+`CT42-PROTOCOL-CELL`, which reaches the footprint checker's existing `Q664`
+condition from a new deriver without widening it.
 
 | Codes | Owning pass | Meaning |
 |---|---|---|
 | `Q000` | `NameResolution` (per file) | input file does not parse as a QCore declaration |
 | `Q001`, `Q016` | `Index` | index/quant presentation; dimension/axis validity and quant-index type resolution |
 | `Q010`–`Q015` | `NameResolution` | duplicates, unknown name, `Q014` unknown imported module, `Q015` concurrency without its file-local import |
-| `Q020`, `Q021` | `OrdinaryTypes` | unsupported ordinary construct / task-route source-contract gate; sequential whole-program contract gate. **Route-specific, not to be unified** (constraint 2) |
+| `Q020`, `Q021` | `OrdinaryTypes` | unsupported ordinary construct / task-route source-contract gate; sequential whole-program contract gate. **Route-specific, not to be unified** (constraint 2). Card `WRITE-LEND-TASKS` (wave 31) widens `Q020`'s task-parameter condition and **allocates no code**: the admitted worker parameter types grow by the ungraded `lend<Buffer>` range write lease, receivable only from a `lend PLACE LOW..HIGH` capture, with the place/parameter agreement check covering the new pair exactly as it covers `borrow<Buffer>`; `lend` stays contextual (constraints 14 and 15h) |
 | `Q022`–`Q027` | `ExternCall` | admission and bridging of `source.extern-call.v1` declared extern calls |
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
@@ -1198,10 +1238,10 @@ rule: fixing where a diagnostic is *attributed* is not a code change
 | `Q097`–`Q099` | `Loop` | `source.loop.v1`: the counted `for NAME in 0..BOUND { … }` loop, admitted on `source.buffer.v1` only — `Q097` the loop's **shape** (a header outside that form, a low end not the written-out `0`, a `break`/`continue`/`return` in the body, a body binding shadowing one the entry made), `Q098` the **bound** (not a check-time constant the lowering can compute, zero, negative, above `MAX_ITERATIONS`, or an entry above `MAX_UNROLLED_EVENTS` unrolled), `Q099` one iteration of the body is not the **identity** on custody. A separate pass on the `IF-STATEMENT` precedent: a control shape, not a capability of a bundled module. The band `HTTP-QUIRIN-V1` returned to the pool, now spent (`LOOP-V1`). Card `LOOP-UNROLL-BUDGET` widens two conditions and allocates **no code**: `Q097` also covers the statement-adjacent `[| #unroll, where #bound < N |]` clause list's **shape** and a list that licenses nothing (before a non-`for`, doubled, or dangling; an *unterminated* list stays a `Q000` parse failure), and `Q098` becomes the **three-layer budget** — an absolute ceiling of 4096 no declaration may raise, a default budget of 256 an unattributed `for` is held to (refusing *with the licensing clause list written into the message*), and a licence that is **checked, never trusted**, a declared `N` above the ceiling refusing before this loop's bound is read. The licence **erases from emission**: attributed and unattributed programs of the same admitted bound emit byte-identical C |
 | `Q100`, `Q103` | `Usage`, `Ownership` | usage grade; ownership |
 | `Q200`, `Q202` | `ResourceFlow`, `CleanupLowering` | resource flow; cleanup lowering and reference interpretation |
-| `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend. `REGION-CREDIT-JOINS` (wave 28) and `REGION-JOINS-DUTIES` (wave 29) widen `Q302`'s composed-route condition a second and a third time — the region on the epoch task route after every join, then its sealed pack carrying real duties, constraint 15m's admitted set — each stated in §L21, each allocating nothing |
+| `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend. `REGION-CREDIT-JOINS` (wave 28), `REGION-JOINS-DUTIES` (wave 29) and `REGION-JOINS-LOAN` (wave 30) widen `Q302`'s composed-route condition a second, third and fourth time — the region on the epoch task route after every join, then its sealed pack carrying real duties, then the **adoption** `move NAME;` beside a worker's counted read share (with an adopted name the entry does not bind, and one owner taken twice through either shape, as that card's own `Q302` conditions) — constraint 15m's admitted set, each stated in §L21, each allocating nothing |
 | `Q400`, `Q401`, `Q403` | driver invocation | no inputs; missing/ambiguous entry; `--entry` against a library module |
 | `Q500` | `CEmission` | construct the reduced C11 CFG cannot encode |
-| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile; since `CT47-COPY-CAPTURE` (wave 29) also the transferability judgment's refusal of a task-creation capture — attributed at the crossing construct, naming the missing transfer/share contract — a condition widening stated in §L21, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop) |
+| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile. Four later cards move this row and **allocate nothing**, each stated in §L21: `REGION-CREDIT-JOINS` (wave 28) widens the composed-route reconciliation condition — a spawn or join whose span follows the entry's `error region` is refused, the ordering derived from the checked task IR and never declared; `CT47-COPY-CAPTURE` (wave 29) widens the boundary condition — the transferability judgment's refusal of a task-creation capture, attributed at the crossing construct and naming the missing transfer/share contract, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop); `REGION-JOINS-LOAN` (wave 30) **narrows** one condition deliberately and widens none, discharging the composed epoch route's blanket refusal of read-loan captures (`T08-COMPOSE-LOAN`, constraint 15m); and `WRITE-LEND-TASKS` (wave 31) widens the boundary and scoped-task conditions three ways on the `CT47-COPY-CAPTURE` precedent — the judgment's grown vocabulary (`TransferMode::LendWrite`, the delivered `lend<Buffer>`, `ShareProtocol::DisjointWriteLeases`), the lease's check-time bound decisions (a varying bound, an empty range, a range past `BUFFER_PAYLOAD_BYTES`), and the ledger's own `OverlappingLeases` / `LeaseOutstanding` / `InvalidLease` / `TooManyWriters` arriving through the unedited `check_task_module` (constraint 15h). `CT24-CLEANUP-PREEMPTED` (wave 30) moves no code and widens no condition: the `ScopeBusy` refusal is rendered from the exit rule's own loan backstop, same code, same span, same refused set |
 | `Q610`–`Q627` | `Concurrency` | `CheckedMutexInvariantV1`; `Q624`/`Q625` opt-in lock ranks, `Q626`/`Q627` opt-in protection growth |
 | `Q630`–`Q641` | `Concurrency` | `FlatEpochBoundV1` flat-epoch accounting (`source.epoch.bound.v1`), and its sibling `EpochCreditRecoveryV1` — the error path over the same epoch's credits, reached from source by `source.epoch.tasks.v1`'s `error(move\|drop\|close);` row clause (card `CT23-CREDIT-ERROR-PATH`). The same pass and the same quantities, so it **extends four of this band's conditions and takes no code of its own**: `Q630` a plan that does not describe its epoch (including a clause on the declarative route, which has no error edge), `Q635` credit **abandoned** at the creator's error edge, `Q636` a restoration larger than its grant, `Q641` the error path's arithmetic. `Q637` is deliberately **not** extended (constraint 15j) |
 | `Q650`–`Q667` | `Concurrency` | `DisjointFootprintsV1` disjoint footprints |
