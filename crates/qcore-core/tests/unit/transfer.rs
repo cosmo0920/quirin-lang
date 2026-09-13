@@ -202,7 +202,9 @@ fn admission_matrix_is_pinned() {
     );
     assert_eq!(
         admits(TransferKind::ProtectedResource, ShareUnderMutex),
-        Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex))
+        Ok(AdmittedTransfer::ShareUnderMutex(
+            ShareProtocol::CheckedMutex
+        ))
     );
     // The cross-protocol refusals, which are what "refuses when it crosses any
     // other way" means: each sharing mode requests one named protocol, and a

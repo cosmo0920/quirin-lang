@@ -845,6 +845,9 @@ fn main() -> unit {
         thread scope c {
             with lock m as gc { read buf with gc; }
         }
+        thread scope d share buf under m {
+            with lock m as gd { read buf with gd; }
+        }
     }
 }
 "#;

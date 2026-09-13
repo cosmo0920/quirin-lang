@@ -35,8 +35,11 @@ fn lower(source: &str) -> Result<LoweredMutexModule, Vec<(String, String)>> {
             .map(|d| (d.code.to_owned(), d.message))
             .collect::<Vec<_>>()
     })?;
-    lower_source_mutex(&parsed, &typed, "main")
-        .map_err(|d| d.into_iter().map(|d| (d.code.to_owned(), d.message)).collect())
+    lower_source_mutex(&parsed, &typed, "main").map_err(|d| {
+        d.into_iter()
+            .map(|d| (d.code.to_owned(), d.message))
+            .collect()
+    })
 }
 
 /// The whole route: lower, then check with the **unedited** core.
@@ -56,8 +59,7 @@ fn checked(source: &str) -> Result<LoweredMutexModule, Vec<(String, String)>> {
 
 fn refusal(source: &str) -> (String, String) {
     checked(source)
-        .err()
-        .expect("this program must be refused")
+        .expect_err("this program must be refused")
         .remove(0)
 }
 
@@ -312,7 +314,10 @@ fn a_declaring_child_may_not_borrow_a_resource_it_did_not_declare() {
            { with lock n as gc { let b = borrow other with gc; drop b; } }",
     ));
     assert_eq!(code, "Q600");
-    assert!(message.contains("`other` was not shared with it"), "{message}");
+    assert!(
+        message.contains("`other` was not shared with it"),
+        "{message}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -398,10 +403,25 @@ fn the_clause_words_were_already_reserved_and_claim_only_this_position() {
 /// under one — residual `MUTEX-SHARE-CROSS-TASK-BUFFER`.
 #[test]
 fn the_crossing_is_requestable_for_the_protected_payload_and_for_nothing_else() {
-    assert!(MUTEX_SHARE_CROSSING.requestable);
-    assert_eq!(MUTEX_SHARE_CROSSING.kind, TransferKind::ProtectedResource);
-    assert!(
-        !MUTEX_SHARING_GAP.requestable,
+    // Compared as whole values rather than field-by-field: these are `const`,
+    // so a bare `assert!` on one field is decided at compile time and clippy is
+    // right to refuse it. Comparing the structs also pins more.
+    assert_eq!(
+        MUTEX_SHARE_CROSSING,
+        qcore_core::transfer::SharingGap {
+            kind: TransferKind::ProtectedResource,
+            protocol: ShareProtocol::CheckedMutex,
+            requestable: true,
+        },
+        "the half this card closes"
+    );
+    assert_eq!(
+        MUTEX_SHARING_GAP,
+        qcore_core::transfer::SharingGap {
+            kind: TransferKind::OwnedBuffer,
+            protocol: ShareProtocol::CheckedMutex,
+            requestable: false,
+        },
         "the task route's Buffer still has no mutex to cross under"
     );
     assert_eq!(
@@ -432,8 +452,7 @@ fn the_task_routes_spawn_still_refuses_a_mutex_generation() {
          fn main() -> unit { thread scope s { let buf = protected 4; \
          let m = mutex guards buf; let h = spawn s worker(copy buf); } }";
     let codes: Vec<_> = lower(source)
-        .err()
-        .expect("still refused")
+        .expect_err("still refused")
         .into_iter()
         .map(|(code, _)| code)
         .collect();

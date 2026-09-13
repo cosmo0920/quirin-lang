@@ -95,7 +95,7 @@ def allTags : List DeclaredTag :=
   [.atomic, .named, .tuple, .array, .slice, .pointer, .owned, .borrow,
    .quant, .accessQuant, .result, .function, .never, .task, .mutex]
 
-/-- The five capture keywords the parser accepts. `write` parses and has never
+/-- The six capture keywords the parser accepts. `write` parses and has never
 had a lowering, so it appears as a mode the judgment refuses for every kind
 rather than as a mode that silently does not exist; `lendWrite` (card
 `WRITE-LEND-TASKS`, spelled `lend PLACE LOW..HIGH`) is deliberately distinct
@@ -116,7 +116,8 @@ def allModes : List Mode :=
 
 /-- A discipline under which a kind that is not freely shareable may still be
 reached by more than one task. `countedReadShares` removes mutation for the
-window; `checkedMutex` would order it instead, and no mode produces it;
+window; `checkedMutex` **orders** it instead, so a guard holder may read and
+write bytes another task will later reach (card `MUTEX-SHARE-CROSS`);
 `disjointWriteLeases` (card `WRITE-LEND-TASKS`) **partitions the bytes**, so
 each party mutates only its own disjoint range. -/
 inductive Protocol where
@@ -377,7 +378,7 @@ theorem guardsFactsAndMutexesNeverCross :
 
 /-! ### The admission matrices, decided whole -/
 
-/-- The 14 x 5 kind/mode matrix: exactly four cells admit. -/
+/-- The 16 x 6 kind/mode matrix: exactly six cells admit. -/
 theorem theAdmissionMatrixIsPinned :
     (allKinds.flatMap (fun k => allModes.map (fun m => (k, m)))).filter
         (fun p => (admits p.1 p.2).isSome) =
@@ -389,7 +390,7 @@ theorem theAdmissionMatrixIsPinned :
 theorem noKindAdmitsAWriteCapture : ∀ k ∈ allKinds, admits k .write = none := by decide
 
 set_option maxRecDepth 16000 in
-/-- The 14 x 5 x 14 boundary matrix: exactly four cells admit out of 980. -/
+/-- The 16 x 6 x 16 boundary matrix: exactly six cells admit out of 1,536. -/
 theorem theCaptureMatrixIsPinned :
     (allKinds.flatMap (fun place =>
       allModes.flatMap (fun mode =>
@@ -543,14 +544,14 @@ def refuseCapture (place : Kind) (mode : Mode) (parameter : Kind) : Option Refus
   | none => refuse place mode
   | some t => if receivedKind place t = parameter then none else some .receivedKindMismatch
 
-/-- Refusal and admission partition the 13 x 4 matrix: every cell is decided,
+/-- Refusal and admission partition the 16 x 6 matrix: every cell is decided,
 and decided exactly once. This is what makes moving the refusal's attribution
 (card `CT47-COPY-CAPTURE`) incapable of moving the refused set. -/
 theorem refusalComplementsAdmission :
     ∀ k ∈ allKinds, ∀ m ∈ allModes, (refuse k m).isSome = (admits k m).isNone := by decide
 
 set_option maxRecDepth 8000 in
-/-- The same partition over the whole 13 x 4 x 13 boundary matrix. -/
+/-- The same partition over the whole 16 x 6 x 16 boundary matrix. -/
 theorem theBoundaryIsDecidedExactlyOnce :
     ∀ place ∈ allKinds, ∀ mode ∈ allModes, ∀ parameter ∈ allKinds,
       (refuseCapture place mode parameter).isSome =

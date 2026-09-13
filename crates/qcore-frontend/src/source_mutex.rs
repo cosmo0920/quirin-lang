@@ -22,6 +22,8 @@
 //!               | "wait" NAME ";"                          -- announced acquisition
 //!               | "use" NAME ";"
 //!               | "thread" "scope" NAME "{" child* "}"     -- one child task, joined here
+//!               | "thread" "scope" NAME "share" NAME "under" NAME "{" child* "}"
+//!                                                          -- a declared crossing
 //!               | "with" "lock" NAME "as" NAME "{" inner* "}"
 //! inner       ::= "open" NAME ";" | "close" NAME ";" | "close" NAME "unchanged" ";"
 //!               | "grow" NAME "guards" NAME ";"           -- protection growth
@@ -32,6 +34,8 @@
 //!               | "wait" NAME ";"
 //!               | "thread" "scope" NAME "{" child* "}"
 //!               | "thread" "scope" NAME "under" NAME "{" child* "}" -- guard-local
+//!               | "thread" "scope" NAME "share" NAME "under" NAME "{" child* "}"
+//!                                                          -- a declared crossing
 //!               | "raise" NAME "::" NAME ";"               -- typed-error exit, last only
 //! child       ::= any `outer` or `inner` form except a declaration and except
 //!                 `drop`; a child task inherits the enclosing critical
@@ -107,6 +111,37 @@
 //! guard-local child can do is whatever this profile does not model: it may not
 //! touch a declared resource at all. The admission is about the *join*, not
 //! about giving the child authority.
+//!
+//! Card MUTEX-SHARE-CROSS adds the last of these opt-in forms, and it is CT46's
+//! composition: `thread scope c share buf under m { … }` **declares** that a
+//! `protected N` payload crosses into this child, and that the mutex generation
+//! `m` is the protocol under which it may be reached. The three child-task
+//! headers are told apart by one token at a fixed position — nothing, `under`
+//! for the guard-local join, `share` for a declared crossing — so a child
+//! without the clause lowers exactly as it did.
+//!
+//! The decision is deliberately split three ways and must stay split.
+//! *Classification* is `qcore_core::transfer`'s: its fifth admissible row
+//! (`ProtectedResource` under `ShareUnderMutex`, delivering a mutex share)
+//! answers whether this kind crosses this way at all, and refuses a generation,
+//! a guard or a fact at the payload position by name. The *protocol* gates are
+//! this lowering's, because the judgment cannot see a generation's declared
+//! footprint: the named generation must exist (absent) and must protect this
+//! very payload (mismatched). And *verification* is the core's own — a child
+//! that reaches the payload outside a section of that generation is refused by
+//! the rule that a protected footprint has no unguarded access at all, reported
+//! under the core's `Q611`. No rule of the mutex checker is re-implemented here.
+//!
+//! Beside them the declaration is **load-bearing**: a declaring child reaches
+//! the payload it named and no other declared resource (`Frame::admits_reach`,
+//! applied at every resource-resolution site). Like the rank and growth
+//! disciplines this is opt-in and refuses only — a child with no clause is
+//! unaffected, and a reach this rule allows still faces the core's guard rules
+//! unchanged. The soundness statement is `QCore.MutexShareCross`: at every
+//! point of every interleaving, an admitted reach of a protected payload names
+//! a guard its own task holds over that payload's protector. Bounded to one
+//! wrapper, one payload, one mutex and no nesting; a multi-task mutex trace
+//! still receives no C (`MUTEX-SHARE-CROSS-EMISSION`).
 //!
 //! What this lowering does **not** establish: source-to-trace refinement, the
 //! real C layout of the declared intervals (`DeclaredFootprintShape`), or the
@@ -1254,7 +1289,10 @@ fn lower_declared_share<'a>(
         ));
     }
     let Some(resource_name) = name(header.get(4)) else {
-        return Err(failure(span, "a declared crossing names the payload it shares"));
+        return Err(failure(
+            span,
+            "a declared crossing names the payload it shares",
+        ));
     };
     let Some(mutex_name) = name(header.get(6)) else {
         return Err(failure(
@@ -1276,7 +1314,11 @@ fn lower_declared_share<'a>(
     } else {
         TransferKind::Unmodeled
     };
-    match admits_capture(place, TransferMode::ShareUnderMutex, TransferKind::MutexShare) {
+    match admits_capture(
+        place,
+        TransferMode::ShareUnderMutex,
+        TransferKind::MutexShare,
+    ) {
         Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex)) => {}
         Ok(other) => {
             return Err(failure(

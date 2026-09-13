@@ -82,8 +82,9 @@
 //!   minted fresh by each `Lock` and its binder is body-local, so it cannot be
 //!   named at a creation site outside its own section. A fact is guard-scoped
 //!   and each assertion mints a fresh identity, so a fact that outlived its
-//!   guard is already refused. This is the arm CT46 cares about most, and it
-//!   is a **represented refusal**: see [`ShareProtocol::CheckedMutex`].
+//!   guard is already refused. The *wrapper* is what CT46 cares about most,
+//!   and it stays a non-value: what crosses under card `MUTEX-SHARE-CROSS` is
+//!   the payload the generation protects, never the generation itself.
 //!
 //! * **Every other declared type form — unmodeled.** The declared-type
 //!   grammar has fifteen tags (`SourceTypeKind`); this profile elaborates
@@ -317,10 +318,11 @@ impl ShareProtocol {
 /// A discipline under which a kind that is not freely shareable may
 /// nevertheless be reached by more than one task.
 ///
-/// A protocol is named here only when the checker actually decides it. The
-/// mutex variant is a **represented refusal**: it names the discipline CT46
-/// asks for, and no capture mode produces it, so a module that needs it is
-/// refused by name rather than accepted for the wrong reason.
+/// A protocol is named here only when the checker actually decides it, and
+/// each one is requested by exactly one capture mode
+/// ([`ShareProtocol::requested_by`]) — so a kind whose discipline is one
+/// protocol refuses a mode that requests another, with its own discipline
+/// named. That is what keeps the three from being interchangeable.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ShareProtocol {
     /// Counted read shares: a positive share out of a fixed authority budget,
@@ -328,9 +330,14 @@ pub enum ShareProtocol {
     /// protocol makes sharing safe by removing mutation for the window, so it
     /// admits readers only.
     CountedReadShares,
-    /// Mutex-mediated shared access, which would order mutation instead of
-    /// removing it. No implemented capture mode produces this protocol; see
-    /// [`SharingGap`].
+    /// Mutex-mediated shared access (card `MUTEX-SHARE-CROSS`): the protocol
+    /// **orders** mutation instead of removing it, so a guard holder may read
+    /// *and* write the very same bytes another task will later reach. It is
+    /// the only protocol admitted in both sharing directions, and the only one
+    /// whose verification is a separate question from its classification — the
+    /// generation must exist and protect this very payload. Requested by
+    /// [`TransferMode::ShareUnderMutex`] and by nothing else; see
+    /// [`MUTEX_SHARE_CROSSING`].
     CheckedMutex,
     /// Disjoint range write leases (card `WRITE-LEND-TASKS`): each holder
     /// receives write authority over its own byte range, the ranges are
@@ -572,7 +579,8 @@ pub enum TransferRefusal {
 
 /// **The operational judgment.** Given a kind and the mode a capture asks
 /// for, decide. Total over [`TransferKind`] x [`TransferMode`] — all
-/// 13 x 4 = 52 pairs.
+/// 16 x 6 = 96 pairs (13 x 4 originally; 14 x 5 after card
+/// `WRITE-LEND-TASKS`).
 pub const fn admits(
     kind: TransferKind,
     mode: TransferMode,
@@ -624,9 +632,9 @@ pub const fn admits(
             // exists, protects this very payload, and verifies is decided by
             // the unedited mutex checker at the crossing (`MUTEX_SHARE_CROSSING`).
             TransferMode::ShareUnderMutex => match shareable_under {
-                Some(ShareProtocol::CheckedMutex) => {
-                    Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex))
-                }
+                Some(ShareProtocol::CheckedMutex) => Ok(AdmittedTransfer::ShareUnderMutex(
+                    ShareProtocol::CheckedMutex,
+                )),
                 Some(other) => Err(TransferRefusal::ProtocolUnavailable(other)),
                 None => Err(TransferRefusal::ProtocolUnavailable(
                     ShareProtocol::CheckedMutex,
