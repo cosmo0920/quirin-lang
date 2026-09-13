@@ -1,0 +1,31 @@
+import std.concurrency;
+concurrency checked;
+
+// CT47 control -- the TRANSFER contract supplied, admitted. The first of the
+// two contracts the case's refusal message names ("`move` (custody
+// transferred to the worker)"), delivered to a worker that declares the
+// received kind. It checks and takes ScopedOwnedTasksV1.
+//
+// Together with read_share.qcore this is the attribution: the case names two
+// contracts as the ones this kind carries, and supplying either one of them
+// -- and nothing else about the program -- admits it.
+fn taker(payload: own<Buffer> use one) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  drop payload;
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s taker(move buffer) {
+      Result::Ok { value: handle } => {
+        let seen = join move handle?;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

@@ -123,7 +123,7 @@ const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
     "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
     "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
-    "CT39", "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
+    "CT39", "CT40", "CT43", "CT44", "CT45", "CT47", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -150,10 +150,18 @@ const MUTEX_REJECT_CASES: &[&str] = &[
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
 const MUTEX_SANITIZED_CASE: &str = "CT26";
-/// Task-route rejection cases (cards T05 and T06). Same discipline as the mutex
+/// Task-route rejection cases (cards T05 and T06; CT44 and CT47 added by card
+/// `CT-WIRE-LANE-4`, wave 32). Same discipline as the mutex
 /// rejections: the exact ordered code vector plus at least one control that
 /// isolates the refused element from the surrounding program.
-const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18"];
+///
+/// The two wave-32 additions each carry more than the minimum, because each
+/// maps a case whose scenario has a word this language gives no referent:
+/// CT47 supplies **every** contract its refusal message enumerates and pins the
+/// modeless shape's grammar refusal beside them, and CT44 pins both disjuncts
+/// of its scenario plus two accepted controls that separate the refused
+/// construct from its position in both directions.
+const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18", "CT44", "CT47"];
 /// `sequential`-route rejection cases (card `CT-WIRE-LANE`, wave 26). The same
 /// discipline one route over: the exact ordered code vector plus controls that
 /// keep the refusal from being vacuous. These are the first mapped cases on the
@@ -3252,7 +3260,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 18] = [
+const EVIDENCE_FILES: [&str; 19] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3271,6 +3279,7 @@ const EVIDENCE_FILES: [&str; 18] = [
     "docs/reports/ct07-write-remap/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
     "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
+    "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -4569,6 +4578,11 @@ fn execution_profile(label: &str) -> qcore_compiler::SourceExecutionProfile {
         "ScopedReadLoansV1" => Profile::ScopedReadLoansV1,
         "ScopedReadSharesV1" => Profile::ScopedReadSharesV1,
         "ScopedErrorPayloadV1" => Profile::ScopedErrorPayloadV1,
+        // Card `CT-WIRE-LANE-4` (wave 32): CT47's third accepted control
+        // supplies `lend PLACE LOW..HIGH`, the last of the three contracts its
+        // refusal message enumerates, and that control is published under this
+        // profile (card `WRITE-LEND-TASKS`).
+        "ScopedWriteLeasesV1" => Profile::ScopedWriteLeasesV1,
         "CheckedMutexGuardsV1" => Profile::CheckedMutexGuardsV1,
         "StandardBufferV1" => Profile::StandardBufferV1,
         "StandardStringV1" => Profile::StandardStringV1,

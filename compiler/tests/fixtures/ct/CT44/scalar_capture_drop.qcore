@@ -1,0 +1,33 @@
+import std.concurrency;
+concurrency checked;
+
+// CT44 control -- the same destruction in the SAME position, with no capture
+// of the buffer out. Admitted, ScopedOwnedTasksV1.
+//
+// The worker here captures a scalar by `copy`, so the spawn is live and
+// unjoined across the `drop buffer;` exactly as in case.qcore, and the
+// destruction still precedes the join. It checks. So the case's Q600 is keyed
+// to the CAPTURE -- the outstanding read share this frame lent -- and not to
+// destroying a resource while some child is live, nor to the statement's
+// position on its own. Together with drop_after_join.qcore this separates the
+// construct from its position in both directions.
+fn counter(value: i32) -> i32 {
+  return value;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  let seed = 3;
+  thread scope s {
+    match spawn s counter(copy seed) {
+      Result::Ok { value: handle } => {
+        drop buffer;
+        let seen = join move handle?;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

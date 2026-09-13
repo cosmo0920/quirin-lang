@@ -336,10 +336,16 @@ class SummaryTest(unittest.TestCase):
             )
 
     def test_an_unclassified_unmapped_case_fails_closed(self):
-        """A hole is refused rather than counted as a zero."""
+        """A hole is refused rather than counted as a zero.
+
+        The case this removes is a tree fact, not the assertion: it must be one
+        the manifest still leaves unmapped, or the removal is invisible. It read
+        CT44 until card `CT-WIRE-LANE-4` (wave 32) mapped that case, and reads
+        CT10 -- still unmapped, still archive-held -- since.
+        """
         coverage = json.loads((ROOT / summary.TRIAGE).read_text())
         coverage["unmapped_triage"]["cases"] = [
-            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT44"
+            case for case in coverage["unmapped_triage"]["cases"] if case["id"] != "CT10"
         ]
         with MutableRoot() as scratch:
             scratch.write_triage(coverage)
@@ -680,7 +686,10 @@ class SummaryTest(unittest.TestCase):
             labels = summary.unmapped_labels(scratch.directory)
             self.assertEqual(labels["CT41"]["archived_label"], "invented-archive-label")
             self.assertNotEqual(labels["CT41"]["label"], "invented-archive-label")
-            self.assertEqual(labels["CT44"]["label_source"], summary.ARCHIVE_SOURCE)
+            # A tree fact: the case named here must be one no lane measured, so
+            # it must still be unmapped and still archive-held. CT44 until card
+            # `CT-WIRE-LANE-4` (wave 32) mapped it; CT10 since.
+            self.assertEqual(labels["CT10"]["label_source"], summary.ARCHIVE_SOURCE)
             # A mapped case has no label at all, whatever the archive says about
             # it: CT40 keeps its archived row and its retired lane row, and
             # neither reaches the published map.
@@ -909,18 +918,22 @@ class SummaryTest(unittest.TestCase):
         """
         with MutableRoot() as scratch:
             acceptance = scratch.read_acceptance()
-            acceptance["ct_evidence"]["unmapped_label_sources"]["CT44"] = (
+            # The two ids are a tree fact: they must be cases the manifest still
+            # leaves unmapped. They read CT44 and CT47 until card
+            # `CT-WIRE-LANE-4` (wave 32) mapped both, and read CT10 and CT24 --
+            # the two still archive-held -- since.
+            acceptance["ct_evidence"]["unmapped_label_sources"]["CT10"] = (
                 "docs/reports/remaining-t00/README.md"
             )
-            acceptance["ct_evidence"]["unmapped_label_sources"]["CT47"] = self.WAVE9
+            acceptance["ct_evidence"]["unmapped_label_sources"]["CT24"] = self.WAVE9
             scratch.write_acceptance(acceptance)
             problems = summary.check_label_sources(scratch.directory)
             self.assertEqual(
                 problems,
                 [
-                    "acceptance.json labels CT44 from docs/reports/remaining-t00/README.md, "
+                    "acceptance.json labels CT10 from docs/reports/remaining-t00/README.md, "
                     "which is not a CT stage-evidence record",
-                    "acceptance.json labels CT47 from %s, which records no bucket for that case"
+                    "acceptance.json labels CT24 from %s, which records no bucket for that case"
                     % self.WAVE9,
                 ],
             )
@@ -933,7 +946,11 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 7)
+            # The scratch tally's sum is the unmapped count on disk: 8 until the
+            # wave-31 lane mapped CT25, 7 until card `CT-WIRE-LANE-4` (wave 32)
+            # mapped CT44 and CT47, 5 since. A tree fact, not a loosened
+            # assertion -- relabelling one row still moves no total.
+            self.assertEqual(sum(counts.values()), 5)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),

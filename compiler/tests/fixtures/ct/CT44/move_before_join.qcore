@@ -1,0 +1,47 @@
+import std.concurrency;
+concurrency checked;
+
+// CT44 control -- the scenario's SECOND disjunct, refused. "Environment moves
+// before join": the parent does not destroy the lent buffer, it TRANSFERS it,
+// handing custody to a second worker under `move` while the first worker's
+// read share is still out and unjoined. Refused at Q600 with the same
+// LoanOutstanding, attributed to the moving statement.
+//
+// This is why the case's mapping covers the disjunction rather than half of
+// it, and it is the direct measurement of card T00's archived claim that
+// "environment moves before join has no source form" -- a claim true at T00's
+// checkpoint, where share captures did not lower at all, and false here.
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn taker(payload: own<Buffer> use one) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  drop payload;
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(read buffer share FULL) {
+      Result::Ok { value: handle } => {
+        match spawn s taker(move buffer) {
+          Result::Ok { value: second } => {
+            let a = join move handle?;
+            let b = join move second?;
+            return a;
+          }
+          Result::Err { error: refused } => {
+            let a = join move handle?;
+            drop buffer;
+            return a;
+          }
+        }
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}
