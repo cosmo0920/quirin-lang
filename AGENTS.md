@@ -51,7 +51,7 @@ numbered bounded "cycles" recorded under `docs/cycles/`.
 | `compiler/src/` facades | `compiler/src/verifier_plugin.rs` is the compatibility facade for the host and first-party adapters; `compiler/src/verifier_plugins/{libevent,chunkio}/` are the in-process first-party providers (Libevent/Monkey, ChunkIO); `compiler/src/external_{integration,source}.rs` are compatibility facades plus Monkey-specific composition |
 | `compiler/examples/cycle19_fluent_bit_libraries_audit.rs` | Production audit orchestration for the pinned Fluent Bit corpus |
 | `providers/` | Separate six-member Cargo workspace (five `qcore-provider-*` packages plus the `conformance` harness), excluded from the core workspace. Artifact crates depend only on `qcore-schemas` and serialization; `providers/package.py` builds, verifies and archives the installable packages |
-| `contract/qcore/` | Declarative `.qcore` contract corpus (**74 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
+| `contract/qcore/` | Declarative `.qcore` contract corpus (**76 modules**); counts pinned by `compiler/tests/qcore_contract_corpus.rs` |
 | `proof/` | Lean 4 executable core and safety theorems; `Audit*.lean` print axiom surfaces |
 | `docs/cycles/` | Per-cycle requirement/acceptance records (`CYCLE_2` … `CYCLE_20`) |
 | `docs/reports/` | Archived evidence packages (pinned audits, observations, triage) — one directory per card |
@@ -65,17 +65,22 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers at the wave-30 close. The **corpus baseline is
-`docs/reports/w4-recursive-summaries/artifacts/`** — wave 30's arbiter,
-`W4-RECURSIVE-SUMMARIES`, ran the protocol as a **determinism measurement**:
-its BEFORE run reproduces the wave-29 `w29-corpus-contracts`
-`diagnostics.json` and `chunk-contracts.json` **byte for byte**, and its AFTER
-run is byte-identical to its own BEFORE in all five artifacts, because the
-card changes no analysis input — the neutral-element unit it was chartered to
-land was **measured already landed** (card C03-NFR, recorded as
-`W4-RECSUM-ALREADY-LANDED` so the route is not double-counted), and what it
-lands is the design's owed §4.3 soundness induction in Lean plus the amended
-constraint 4 below. Wave 29's arbiter facts stand beneath it (two faithful
+Headline numbers at the wave-30 close, with wave 31's arbiter movement
+applied. The **corpus baseline is
+`docs/reports/w31-corpus-contracts-2/artifacts/`** — wave 31's arbiter,
+`W31-CORPUS-CONTRACTS-2`, took wave 29's two named non-declarations on their
+stated terms: it resolves `W29-CONTENT-SIZE-UNDECLARED` with the ChunkIO-side
+module that follow-on asked for (`chunkio/chunk_sizes.qcore`,
+`cio_chunk_get_content_size`), resolves `W29-SIZE-SIBLINGS-UNDECLARED` for
+the one sibling whose pinned body mutates no residency state
+(`fluent_bit/input_chunk_total_size.qcore`, `flb_input_chunk_total_size`),
+and upholds the remainder with readings and measurements
+(`W31-SIZE-SIBLINGS-REMAINDER`). Its BEFORE run reproduces the wave-30
+`w4-recursive-summaries` `diagnostics.json` and `chunk-contracts.json`
+**byte for byte**, and its AFTER moves exactly five `unsupported` leaves, all
+attributed. Wave 30's arbiter facts stand beneath it (the neutral-element
+unit measured already landed, the §4.3 soundness induction in Lean, the
+amended constraint 4 below), and wave 29's beneath that (two faithful
 size-query contracts deciding exactly thirteen `unsupported` leaves). The wave-27
 presentation facts carry forward: 54,371 rows carry an `origin` naming the
 original pre-preprocessing `file:line`, while the preprocessed `L`-number
@@ -85,13 +90,14 @@ certificate comparability, by the user's ruling
 frozen (constraint 21): `docs/reports/wave23-c-operations/artifacts/` and the
 attributed AFTER runs chained beneath it — `aom-destroy-siblings` (wave 23),
 `aom-binding-poison` (wave 25), `gateway-c-location` (wave 27),
-`w29-corpus-contracts` (wave 29), `w4-recursive-summaries` (wave 30):
+`w29-corpus-contracts` (wave 29), `w4-recursive-summaries` (wave 30),
+`w31-corpus-contracts-2` (wave 31):
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at both the wave-27 presentation re-pin and the wave-29 arbiter re-pin, as is `unknown_alias` **4,344**). `unsupported` **49,760** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; zero leaves added, one unit changed). A diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — nothing promoted, zero unit and zero function status moves; 4,834 projected functions (150 Safe / 84 provisional Unsafe / 4,600 Unknown incl. `flb_input_chunk_create` function-level **Safe**), leak **266** (271 → 272 → 273 → 272 → 266, each deliberate; see constraint 7 — **unmoved** at the wave-27 presentation re-pin and the wave-29 and wave-31 arbiter re-pins, as is `unknown_alias` **4,344**). `unsupported` **49,755** (49,773 → 49,760 at wave 29: exactly the thirteen `call to uncontracted function` leaves naming `flb_input_chunk_get_size`/`flb_input_chunk_get_real_size`, decided by the two declared contracts of `fluent_bit/input_chunk_sizes.qcore` and attributed leaf by leaf in `docs/reports/w29-corpus-contracts/README.md` §5; 49,760 → 49,755 at wave 31: the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size` plus the one argument-expression refusal the second declaration retires at its chained-actual site, attributed leaf by leaf in `docs/reports/w31-corpus-contracts-2/README.md` §5; zero leaves added, two units changed). A diagnostic row carries **two** coordinates: `line`, the internal preprocessed position every pinned comparison is keyed on and which has not moved, and `origin`, the original `file:line` its text presents |
 | CT01–CT50 conformance | **42/50 mapped**, 8 unmapped; sanitized-native **7 of 42**; **proof 2 of 42** — CT01 (wave 29, `CT01-PROOF-LEG`) and CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
-| Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
+| Contract corpus | **76 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`; 74 → 76 at wave 31: `chunkio/chunk_sizes.qcore` and `fluent_bit/input_chunk_total_size.qcore`, each deliberate; resource-v1 declarations 41 → 43, manifest-selected modules 19 → 21) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
 | Merged gate | 4,466 workspace tests (8 ignored) · 122 provider (carried; unchanged) · 193 Python · **121 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/wave30-close/gate.json`, measured at the integration tip over the six merged cards plus the sweep's salvage commit; each card's own gate is in its report; constraint-16 load rows that tripped under concurrent suites were re-verified in isolation, both facts recorded each time) |
 | Full language conformance | **false** |

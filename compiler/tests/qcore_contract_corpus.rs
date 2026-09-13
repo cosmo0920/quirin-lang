@@ -39,11 +39,7 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // faithful modes, the same reading `fluent_bit/input_chunk_sizes.qcore`
     // recorded for its wrapper. This lands the ChunkIO-side module card
     // W29-CORPUS-CONTRACTS' `W29-CONTENT-SIZE-UNDECLARED` asked for.
-    (
-        "chunkio/chunk_sizes.qcore",
-        "cio_chunk_get_content_size",
-        3,
-    ),
+    ("chunkio/chunk_sizes.qcore", "cio_chunk_get_content_size", 3),
     (
         "chunkio/constructor_failure_observation.qcore",
         "native_constructor_failure_observation",

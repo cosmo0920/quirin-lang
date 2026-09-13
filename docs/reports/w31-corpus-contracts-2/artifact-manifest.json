@@ -1,0 +1,50 @@
+{
+ "card": "W31-CORPUS-CONTRACTS-2",
+ "note": "uncompressed digests of both counted runs' artifacts, the archived AFTER set (compressed and uncompressed), the single measured binary and the pinned compile database. This card changes no Rust, so the BEFORE and AFTER runs executed the same binary; the only input difference is the contract manifest and the two modules it selects. The BEFORE set is not archived because its diagnostics and chunk-contracts are byte-identical to docs/reports/w4-recursive-summaries/artifacts, which is not touched, and the run-to-run identity of source, source-effects and chunk-contracts is measured in logs/byte-identity-before-to-after.txt.",
+ "binaries": {
+  "measure/bin/audit": "7457fd5313645bf949f148ca622a03d8fff95cbb72dd46f3ad84a936e632ccb7"
+ },
+ "compile_database": {
+  "path": "build/cycle19/clang-pin/fluent-bit-clang-source/build/compile_commands.json",
+  "sha256": "f512e80eeb9ebb05281978a2cb009e2311153ba5a8df95fd78a448d46f1a8ac4",
+  "entries": 1415
+ },
+ "runs": {
+  "before": {
+   "diagnostics": "8662337d256d0f7a7d76c7966c1f8bc37c22937a6e0adc7b3b275388f1118a0d",
+   "source": "7961a915a8fc85d1f0525b5522f78ddc94d097e803f1608e0b03a9624e881423",
+   "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+   "source-effects": "3027d45e9683d440d485a753e4df1020dbf3dd2ace12376c893b815610939ab4",
+   "contracts": "d98586c70ede70c45d314a6a282f100e2f5a801464dd5ccea4b7f6c8a57b54e4"
+  },
+  "after": {
+   "diagnostics": "92b7b27f38a175a31b1a00710c571a14ac58c36c70ea22929d06a83b35299ba4",
+   "source": "7961a915a8fc85d1f0525b5522f78ddc94d097e803f1608e0b03a9624e881423",
+   "chunk-contracts": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+   "source-effects": "3027d45e9683d440d485a753e4df1020dbf3dd2ace12376c893b815610939ab4",
+   "contracts": "e7cdfb12f9181db6e01a6fe5e6ac829e63dfc20514cf9560a895007e6e7223ec"
+  }
+ },
+ "archived": {
+  "diagnostics": {
+   "compressed_sha256": "61bedf1b489e271ff18dea5ed36e015b5a008a5e0b4250f4b77934068dfcf50c",
+   "uncompressed_sha256": "92b7b27f38a175a31b1a00710c571a14ac58c36c70ea22929d06a83b35299ba4"
+  },
+  "source": {
+   "compressed_sha256": "3d8b216a6e4f69de4d67d0d2614b33e88c8c8df5b42f453e2a77ce32744b4cf7",
+   "uncompressed_sha256": "7961a915a8fc85d1f0525b5522f78ddc94d097e803f1608e0b03a9624e881423"
+  },
+  "chunk-contracts": {
+   "compressed_sha256": "2538cf7392bcd71428e744435cb21f0065e7ad4e0e67d5c9d6c14b2d4ce8d8ab",
+   "uncompressed_sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+  },
+  "source-effects": {
+   "compressed_sha256": "6299155623d1761240a04912c6f78f87c1e7e9f8066e1f6859c527909f89766a",
+   "uncompressed_sha256": "3027d45e9683d440d485a753e4df1020dbf3dd2ace12376c893b815610939ab4"
+  },
+  "contracts": {
+   "compressed_sha256": "edf76a8c5fd66e6e1281ea1d6821876d016725dcffca5c5566733be657e57d12",
+   "uncompressed_sha256": "e7cdfb12f9181db6e01a6fe5e6ac829e63dfc20514cf9560a895007e6e7223ec"
+  }
+ }
+}

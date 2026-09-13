@@ -349,6 +349,50 @@ full suite.
 
 ## Increment records
 
+W31-CORPUS-CONTRACTS-2 (2026-09-13, wave 31): the wave's one arbiter card, on
+W29-CORPUS-CONTRACTS' exact pattern, taking that card's two named
+non-declarations on their own stated terms. `W29-CONTENT-SIZE-UNDECLARED`
+(whose stated obstruction was module scope, not semantics) is **resolved** by
+`contract/qcore/chunkio/chunk_sizes.qcore` — `cio_chunk_get_content_size`,
+read at the pinned checkout (`lib/chunkio/src/cio_chunk.c:315-334`: an
+error-field reset and backend length-field reads, nothing allocated, freed or
+stored), declared borrowed with a custody-free `isize` result.
+`W29-SIZE-SIBLINGS-UNDECLARED` is resolved for **exactly one** sibling, the
+one whose body mutates no residency state:
+`contract/qcore/fluent_bit/input_chunk_total_size.qcore` —
+`flb_input_chunk_total_size` (`src/flb_input_chunk.c:2947-2955`: one cast
+field read, one call to the read-only walk `cio_stream_size_chunks_up`, one
+scalar `usize` return) — and **upheld** for the remainder with readings and
+measurements (`W31-SIZE-SIBLINGS-REMAINDER`: `is_up`/`set_up` are a residency
+pair belonging to the residency family's module, `input_chunk_metadata_view`
+publishes a borrowed view through an out-parameter the v1 vocabulary has
+nowhere to carry). The arbiter runs, on a fresh Clang pin: BEFORE
+byte-identical to `docs/reports/w4-recursive-summaries/artifacts/` in
+`diagnostics.json` and `chunk-contracts.json` (raw and canonical, SHA-256
+`8662337d…` / `c4f438e4…`); AFTER moves **five** `unsupported` leaves and
+nothing else — the four uncontracted-call leaves naming the two declared
+callees (`cio_stream_size_chunks_up` L2280, `flb_input_chunk_map` L18822,
+`flb_input_chunk_set_limits` L19889, `flb_input_chunk_set_up_down` L19957)
+plus one **attributed deviation from the committed prediction, in the
+deciding direction**: L19962, the chained-actual site
+`flb_input_chunk_total_size(ic->in)` at `:3118`, whose argument-expression
+refusal retires because the declared contract lets the
+ABI-TYPEDEF-ADDRESS-OF-MEMBER admission resolve the member actual — the
+prediction had bounded the move at −4 to −2 and said that leaf would stay.
+`unsupported` 49,760 → **49,755**; leak **266 unmoved** (no fifth move),
+`unknown_alias` **4,344 unmoved** (zero replacement refusals appeared —
+every actual resolved, including the two the prediction flagged as chancy);
+zero unit and zero function status moves, zero reason-code moves, zero
+leaves added, zero `SummaryConflict`, nothing promoted; three of five
+artifacts byte-identical between the two runs, both runs one binary
+(`7457fd53…`), exit 0, 185 units, zero gateway failures. Contract corpus
+**74 → 76 modules**, manifest-selected **19 → 21**, v1 declarations
+**41 → 43**, each pin updated deliberately. No Rust source change, no new Q
+code, no Lean module (declarative inputs only, the W29 precedent), no
+provider change. Gate: see `docs/reports/w31-corpus-contracts-2/README.md`
+§6. Baseline proposed to move to
+`docs/reports/w31-corpus-contracts-2/artifacts/`, every predecessor frozen.
+
 Worktree census hygiene (2026-09-13, post-wave-30 close): the
 `SOCKET-INET-ADDRESSES` census test
 (`std_socket_inet.rs::this_card_reserves_no_word_and_its_address_rule_collides_with_nothing`)

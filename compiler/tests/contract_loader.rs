@@ -158,6 +158,16 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // projection.
         ("flb_input_chunk_get_size", 1),
         ("flb_input_chunk_get_real_size", 1),
+        // Card W31-CORPUS-CONTRACTS-2 adds two more, listed explicitly for
+        // the same reason and in the same shape: every parameter borrowed, no
+        // result custody. Both are the size-sibling read-only queries card
+        // W29-CORPUS-CONTRACTS named and declined
+        // (`lib/chunkio/src/cio_chunk.c:315-334`,
+        // `src/flb_input_chunk.c:2947-2955`); the first spells its `ssize_t`
+        // result `isize` and the second its `size_t` result `usize` under the
+        // LP64 declared-ABI projection.
+        ("cio_chunk_get_content_size", 1),
+        ("flb_input_chunk_total_size", 1),
     ] {
         old.insert_contract(
             name,
@@ -614,7 +624,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `fluent_bit/input_chunk_sizes.qcore`, entirely v1 and manifest-selected
     // — two read-only size queries declared borrowed/none against their
     // pinned bodies.
-    assert_eq!(modules.len(), 74, "corpus module count");
+    // 74 -> 76: card W31-CORPUS-CONTRACTS-2 adds `chunkio/chunk_sizes.qcore`
+    // and `fluent_bit/input_chunk_total_size.qcore`, both entirely v1 and
+    // both manifest-selected — the two size-sibling read-only queries the
+    // previous arbiter named and declined, each declared borrowed/none
+    // against its own pinned body.
+    assert_eq!(modules.len(), 76, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
