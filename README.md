@@ -107,9 +107,9 @@ cycle's fail-closed gates. A provisional `Unsafe` is never presented as an
 upstream defect. Coverage is not safety coverage, and unknowns stay in the
 denominator.
 
-The conformance-case corpus stands at **42 of 50 mapped**, with 8 unmapped.
+The conformance-case corpus stands at **43 of 50 mapped**, with 7 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
-means the harness now runs it, not that anything new was proved. Of the 42
+means the harness now runs it, not that anything new was proved. Of the 43
 mapped, 7 carry a sanitized native run and 2 carry a proof stage — CT01 and
 CT37, each a scenario property proved in Lean of the checked artifact's
 reference run and its admitted renderings, with native execution still
