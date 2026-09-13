@@ -5,6 +5,7 @@ import QCore.CtReasons
 import QCore.ProcessQuotaPlan
 import QCore.TaskTraceRelation
 import QCore.TaskTraceWrites
+import QCore.TaskTraceLeaseBoundary
 import QCore.Ct01OwnedTransfer
 import QCore.Ct37CompletionCapsule
 import QCore.Ct03ReadShares

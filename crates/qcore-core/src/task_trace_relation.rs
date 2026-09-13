@@ -399,6 +399,13 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
 /// admitted rendering here, and neither do card `WRITE-LEND-TASKS`'s range
 /// write lease events, so an observation carrying one of those is refused
 /// rather than encoded — never silently dropped.
+///
+/// The `index` each variant carries is the **offending event's own** position
+/// in the observation, and the first such position; proved as
+/// `QCore.TaskTraceLeaseBoundary.refusal_points_at_a_refused_event` and
+/// `…refusal_is_the_first`, and exercised on a real reference run by
+/// `compiler/tests/trace_alphabet_lease_boundary.rs` (card
+/// `TRACE-ALPHABET-LEASE-BOUNDARY`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ReferenceTraceError {
     UnsupportedOutcome { index: usize },
@@ -427,8 +434,11 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
 }
 
 /// The reference run's own rendering, in the observable alphabet. An event the
-/// alphabet cannot express (a T06 error payload) refuses the whole
-/// observation; nothing outside the admitted path is encoded.
+/// alphabet cannot express — a T06 error payload, or a `WRITE-LEND-TASKS` range
+/// write lease — refuses the whole observation; nothing outside the admitted
+/// path is encoded. On success the result is, position for position, the
+/// per-event encoding of the input
+/// (`QCore.TaskTraceLeaseBoundary.encoding_is_positionwise`).
 pub fn reference_trace(
     observation: &TaskExecutionObservation,
 ) -> Result<Vec<ObservedEvent>, ReferenceTraceError> {
@@ -489,19 +499,43 @@ pub fn reference_trace(
                 // alphabet: an observation containing one is refused here
                 // rather than encoded — never silently dropped.
                 //
-                // UNPROVEN, and deliberately recorded as such
-                // (`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`): this arm was
-                // written at integration to resolve a semantic conflict
-                // between the two cards, and it is **unexercised** — no test
-                // in the workspace drives a lease-carrying reference run into
-                // `reference_trace`, so the suites that pass over this file
-                // are evidence about the paths they take, not about this arm.
-                // CT03's conservativity theorems cover the *write* side of
-                // this boundary only. What bounds the risk is direction: the
-                // arm refuses rather than admits. Do not read its greenness
-                // as verification, and discharge it by proving the lease
-                // boundary in Lean, by exercising it, or by showing it
-                // unreachable — whichever the measurement supports.
+                // Proved and exercised by card `TRACE-ALPHABET-LEASE-BOUNDARY`
+                // (wave 32), which discharged the residual
+                // `TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED` that recorded this
+                // arm as an unproven integration-time resolution:
+                //
+                // * `compiler/tests/trace_alphabet_lease_boundary.rs` drives a
+                //   **real** lease-carrying reference run — card
+                //   `WRITE-LEND-TASKS`' own admitted flagship — into this
+                //   function, so the arm is reachable today and the refusal is
+                //   pinned rather than assumed. Each of its five tests was
+                //   shown non-vacuous by mutating this arm.
+                // * `QCore.TaskTraceLeaseBoundary` proves the boundary:
+                //   `succeeds_iff_no_event_is_refusable` (no lease slips
+                //   through, on any shape of run, and the refusal blocks
+                //   nothing else), `encoding_is_positionwise` with
+                //   `encoding_preserves_length` (the formal content of "never
+                //   silently dropped"), and `refusal_points_at_a_refused_event`
+                //   with `refusal_is_the_first` (the index below is the
+                //   offending event's own, and the first such).
+                //
+                // **Do not turn this refusal into a drop.** Measured, and
+                // proved as `the_dropped_encoding_would_have_been_admitted`:
+                // the flagship's lease-free remainder is not a lossy trace but
+                // an *admitted* one — `AdmittedCausalOrder::declare` accepts it
+                // as a causal order for a run in which two workers held
+                // outstanding write authority the order never mentions. So
+                // dropping is a move in the admitting direction, which
+                // invariant 1 forbids; refusing only blocks a comparison.
+                //
+                // What stays open is the forward question, narrowed to
+                // `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`: whether the
+                // observable alphabet should grow to carry leases once
+                // `WRITE-LEND-TASKS-EXERCISE` makes a worker exercise its
+                // authority. Growing it takes CT03's method — a conservativity
+                // theorem plus a rule shown non-vacuous in both directions —
+                // whose second half is unavailable while no worker-side range
+                // write exists to admit or refuse.
                 TaskEvent::BufferWritten {
                     task,
                     buffer,
