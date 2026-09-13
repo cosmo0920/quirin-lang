@@ -1,0 +1,5 @@
+diagnostics      differs   8662337d256d0f7a / 92b7b27f38a175a3
+source           IDENTICAL 7961a915a8fc85d1 / 7961a915a8fc85d1
+chunk-contracts  IDENTICAL c4f438e4ed3dab3c / c4f438e4ed3dab3c
+source-effects   IDENTICAL 3027d45e9683d440 / 3027d45e9683d440
+contracts        differs   d98586c70ede70c4 / e7cdfb12f9181db6

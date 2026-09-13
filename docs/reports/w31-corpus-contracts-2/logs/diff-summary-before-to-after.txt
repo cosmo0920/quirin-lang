@@ -1,0 +1,17 @@
+schema_version: 2
+archived: measure/before-as-archive
+measured: measure/runs/after
+--- chunk-contracts
+    results: 96 -> 96 (+0 -0 ~0)
+    backend_teardown: 21 -> 21 (+0 -0 ~0)
+--- contracts
+    sources: 19 -> 21 (+2 -0 ~0)
+    manifest.modules: 19 -> 21 (+2 -0 ~0)
+    audit_selection.libraries: 5 -> 5 (+0 -0 ~0)
+    sources.added: ['qcore/chunkio/chunk_sizes.qcore', 'qcore/fluent_bit/input_chunk_total_size.qcore']
+--- diagnostics
+    units: 185 -> 185 (+0 -0 ~2)
+    envelope: {"diagnostic_counts": {"after": "{'leak': 266, 'unknown_alias': 4344, 'unsupported': 49755}", "before": "{'leak': 266, 'unknown_alias': 4344, 'unsupported': 49760}"}}
+--- source
+--- source-effects
+    results: 96 -> 96 (+0 -0 ~0)
