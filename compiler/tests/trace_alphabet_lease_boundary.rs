@@ -39,16 +39,19 @@
 //!   `ObservedEvent` having no lease constructor (a type-level fact, recorded
 //!   in the card report rather than assertable here).
 //!
-//! The Lean twin of the boundary is `QCore.TaskTraceLeaseBoundary`, whose
-//! `lease_free_observations_encode_exactly_as_before` is to the *observation*
-//! alphabet what CT03's `write_free_traces_relate_exactly_as_before` is to the
-//! observable one.
+//! The Lean twin of the boundary is `QCore.TaskTraceLeaseBoundary`, which is to
+//! the *observation* alphabet what CT03's `QCore.TaskTraceWrites` is to the
+//! observable one: `succeeds_iff_no_event_is_refusable` proves the crossing
+//! exact in both directions, `encoding_is_positionwise` with
+//! `encoding_preserves_length` proves "never silently dropped", and
+//! `refusal_points_at_a_refused_event` with `refusal_is_the_first` proves the
+//! index pinned below is the offending event's own rather than a coincidence.
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::scoped_tasks::TaskOutcome;
 use qcore_core::task_execution::{
-    TaskEvent, TaskExecutionObservation, TaskExecutionScript, TaskObservation,
-    execute_task_module, render_task_observation,
+    TaskEvent, TaskExecutionObservation, TaskExecutionScript, TaskObservation, execute_task_module,
+    render_task_observation,
 };
 use qcore_core::task_trace_relation::{
     AdmittedCausalOrder, ReferenceTraceError, TraceDeriveError, parse_observed_trace,
@@ -250,13 +253,10 @@ fn the_lease_boundary_refuses_rather_than_dropping_the_event() {
 
     let shared = reference_run(DISJOINT_READ_SHARES);
     assert!(
-        !shared
-            .events
-            .iter()
-            .any(|event| matches!(
-                event,
-                TaskEvent::BufferLeased { .. } | TaskEvent::BufferLeaseReturned { .. }
-            )),
+        !shared.events.iter().any(|event| matches!(
+            event,
+            TaskEvent::BufferLeased { .. } | TaskEvent::BufferLeaseReturned { .. }
+        )),
         "the control program must carry no lease event"
     );
     let encoded = reference_trace(&shared).expect("a lease-free reference run encodes");
