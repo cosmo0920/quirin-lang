@@ -53,7 +53,7 @@ guessed. Capabilities are opt-in per file through the `std` module family:
 | `std.concurrency` | scoped tasks, checked mutexes, epoch bounds, disjoint footprints |
 | `std.fmt` / `std.io` / `std.logger` | rendered `print`, `log`, `flush` lines and declared log levels |
 | `std.extern` (plus `std.extern.unsafe`) | bounded declared extern calls; adding the second import is explicit unchecked linkage, scalars only, every pointer refused |
-| `std.buffer` | the owned, extent-carrying byte buffer; plain-value **record** types over it (`type Name { field: i32, … }`, construction and field read); and the range **write lend** — `lend(b, lo, hi)` hands write authority over a byte range to a loan, two loans admitted exactly when their ranges are disjoint |
+| `std.buffer` | the owned, extent-carrying byte buffer; plain-value **record** types over it (`type Name { field: i32, … }`, construction and field read); and the range **write lend** — `lend(b, lo, hi)` hands write authority over a byte range to a loan, two loans admitted exactly when their ranges are disjoint, and, with `std.concurrency`, a lease of such a range crosses the spawn boundary to one worker for exactly spawn..join (held and enforced there; no worker operation exercises it yet) |
 | `std.string` | immutable UTF-8 `{ptr, len}` string views, and text the compiler **composes**: `concat(…)` of check-time-known pieces into static storage, `dec`/`hex` of a bound integer, `borrow_utf8` bridging an owned buffer — whole-extent or a declared byte range |
 | `std.event` | the checked event/reactor surface over descriptor custody |
 | `std.socket` | checked TCP and UDP over loopback, both ends in one program — including **declared** IPv4/IPv6 addresses with ports, resolved at check time against this program's own binds |
@@ -115,8 +115,9 @@ and CT03, each a scenario property proved in Lean of the checked artifact's
 reference run and its admitted renderings, with native execution still
 covered by observation only.
 
-Verdict vocabulary, invariants, per-increment evidence and the full cycle
-narratives are in [DEVELOPMENT.md](DEVELOPMENT.md) and
+Verdict vocabulary and the hard invariants are in [`AGENTS.md`](AGENTS.md);
+per-increment evidence and the full cycle narratives are reached through the
+[development table of contents](DEVELOPMENT.md) and
 [`docs/reports/`](docs/reports/).
 
 ## Quick start
