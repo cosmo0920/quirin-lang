@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-13",
+  "main_head": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+  "integration_head": "b8a9311f7719ee8f3231277ee73cca8fdcc65789",
+  "policy": "Remove only clean ancestor checkouts. Keep all branches and four pending worktrees. Preserve measure/private/build; discard only regenerable target, proof/.lake and Python bytecode caches. Archives are local ignored recovery files, not included in the Git push.",
+  "removed_worktrees": [
+    {
+      "path": ".claude/worktrees/agent-a50095313616f5e4a",
+      "head": "2670bfaa0521cf2883aa9998dc230b364d75f662",
+      "branch": "worktree-agent-a50095313616f5e4a",
+      "contained_in": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+      "archive": "private/worktree-sweep-2026-09-13/agent-a50095313616f5e4a.tar.gz",
+      "archived_directories": [
+        "measure"
+      ],
+      "archive_members": 5,
+      "archive_bytes": 82619,
+      "archive_sha256": "594bb1e82880d81e6d0b33ed004cfb06e6b48817c83a21b0af037fd6c4c733a5",
+      "status": "removed"
+    },
+    {
+      "path": ".claude/worktrees/agent-a7ff6154ee76e76bf",
+      "head": "5f6f94ab5a8a54775dbb1c444c3e52261d6c7572",
+      "branch": "worktree-agent-a7ff6154ee76e76bf",
+      "contained_in": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+      "archive": "private/worktree-sweep-2026-09-13/agent-a7ff6154ee76e76bf.tar.gz",
+      "archived_directories": [
+        "measure"
+      ],
+      "archive_members": 9,
+      "archive_bytes": 210361,
+      "archive_sha256": "00dd7ad1e1f3e5d23454b15982dab7ff18e93b9467aff899b4e0b67387f5da13",
+      "status": "removed"
+    },
+    {
+      "path": ".claude/worktrees/agent-a8c5f623cda3030bb",
+      "head": "48ba8286db5b06a6609f58626c1722de8181c7fd",
+      "branch": "worktree-agent-a8c5f623cda3030bb",
+      "contained_in": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+      "archive": "private/worktree-sweep-2026-09-13/agent-a8c5f623cda3030bb.tar.gz",
+      "archived_directories": [
+        "measure",
+        "build"
+      ],
+      "archive_members": 22552,
+      "archive_bytes": 236937402,
+      "archive_sha256": "554ff9001b74d183d726f484e508bdcf2a4162bf8d4a80a40005379390190d74",
+      "status": "removed"
+    },
+    {
+      "path": ".claude/worktrees/agent-ae5dc083212e99d45",
+      "head": "7e3265d79631951866828c12a8cbaa48d7f8ce76",
+      "branch": "worktree-agent-ae5dc083212e99d45",
+      "contained_in": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+      "archive": "private/worktree-sweep-2026-09-13/agent-ae5dc083212e99d45.tar.gz",
+      "archived_directories": [
+        "measure"
+      ],
+      "archive_members": 6,
+      "archive_bytes": 146730,
+      "archive_sha256": "75ed853cd91e34fb1c7624a2a5f7e9f5ebdd4cda8270b7697d946a8817ad2b1e",
+      "status": "removed"
+    },
+    {
+      "path": ".claude/worktrees/agent-aec1c5f7a9965434a",
+      "head": "4cdbabfefc925cf9e58030f515a2932de98a39cf",
+      "branch": "worktree-agent-aec1c5f7a9965434a",
+      "contained_in": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+      "archive": "private/worktree-sweep-2026-09-13/agent-aec1c5f7a9965434a.tar.gz",
+      "archived_directories": [
+        "measure"
+      ],
+      "archive_members": 5,
+      "archive_bytes": 79002,
+      "archive_sha256": "77602bddad0447078227cac4da05fbc623f913b5ce01a88ebfb2895d034edd7b",
+      "status": "removed"
+    },
+    {
+      "path": ".claude/worktrees/agent-aa7f0452464002289",
+      "head": "1382a3c5d922d2a27a97881baf858d64e5b52ddc",
+      "branch": "worktree-agent-aa7f0452464002289",
+      "contained_in": "b8a9311f7719ee8f3231277ee73cca8fdcc65789",
+      "archive": "private/worktree-sweep-2026-09-13/agent-aa7f0452464002289.tar.gz",
+      "archived_directories": [
+        "measure"
+      ],
+      "archive_members": 20,
+      "archive_bytes": 94015,
+      "archive_sha256": "365987baaee374dce09c62d579ccf3df61405c61121f523866d81c00f4c54aa2",
+      "status": "removed"
+    }
+  ],
+  "remaining_worktrees": [
+    ".",
+    ".claude/worktrees/agent-a0f14b595495fba8a",
+    ".claude/worktrees/agent-a56d2b9c03bea3365",
+    ".claude/worktrees/agent-a86de3e1a59ff9d7f",
+    ".claude/worktrees/vibrant-curie-9f9380"
+  ]
+}
