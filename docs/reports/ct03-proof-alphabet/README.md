@@ -19,7 +19,12 @@ every EVIDENCE_FILES list are untouched.** CT03's `proof` row still reads
 with the exact terms in §7; until then the honest statement is *the
 capability exists and is gate-checked, the stage evidence is proposed*.
 
-Base: `main` at `469f6509` (the wave-30 close plus the census fix).
+Base: `main` at `2492825b` (`C-GATEWAY-WAVE`, the wave-31 integration tip). The
+card was written against `469f6509` and interrupted by a model usage limit
+before its close; the resumed run merged that work onto `2492825b` and
+**re-measured the whole gate there** — §8 is the tip measurement, not the
+earlier one, and its Lean and Python counts moved with the base rather than with
+this card.
 
 ---
 
@@ -148,6 +153,21 @@ assumed**:
 | CT01/CT37 Lean trace digests | `13023433800416048247`, `17239871955803798867` | identical (runner pins unmoved) |
 | F02 generated-C digests (`f02_trace_relation.rs`) | `6524b41d0ccb910f`, `0719a8dcb0192e7e` | identical — emission untouched; all four native tests green |
 
+The table's strongest form is structural, and was re-verified at the resumed
+run's tip: **not one pinned constant was edited.** `git diff` over the three
+pin-carrying test files (`crates/qcore-core/tests/task_trace_relation.rs`,
+`compiler/tests/ct01_proof_leg.rs`, `compiler/tests/ct37_proof_leg.rs`) removes
+exactly **three lines** — `assert_eq!(parsed.len(), 13);`, `parsed[12],` and
+`assert_eq!(parsed[7].actor(), None);`, all three the parser round-trip
+inventory's 13 → 14 index shift — and **no removed line carries a digest, a
+census, an admitted count or an edge count**. Every pin therefore stands at its
+pre-card value by inspection, and every test carrying one is green in the §8
+run. The digest argument is likewise structural as well as proved: `encode_event`
+uses codes `1`–`10` with stride `16`, so `Written => 11 + 16 * (…)` occupies a
+previously unused code and no existing event's contribution to the fold moves —
+which is exactly what `mixTrace_agrees_on_the_embedded_alphabet` states as a
+theorem.
+
 Two test files were **edited, deliberately and disclosed**: the three
 `encode_event` transcriptions gained the `Written => 11 + …` arm their now
 non-exhaustive matches require (changing nothing they encode), and the parser
@@ -166,7 +186,8 @@ relation, worker-body trace lines, or either premise the declaration rests on.
 
 On the CT01/CT37 pattern, over the extended alphabet. New module (audited by
 `proof/AuditCt03ReadShares.lean` together with `TaskTraceWrites`; Lean audits
-121 → **122**), containing:
+123 → **124** at this card's base — the card's own contribution is one audit,
+§8), containing:
 
 * **`referenceRun`** — the transcription of CT03's nineteen-event reference
   trace (allocate payload `1`; write `42`; spawn/lend twice; three reads of
@@ -283,15 +304,16 @@ and by measurement.
 | Check | Result |
 |---|---|
 | `proof/QCore/TaskTraceWrites.lean`, `proof/QCore/Ct03ReadShares.lean` under `-DwarningAsError=true` | clean |
-| `AuditCt03ReadShares` axiom surface | `propext` / `Classical.choice` / `Quot.sound` only; digest pin and non-vacuity theorems `propext`-only; projection theorems axiom-free |
+| `AuditCt03ReadShares` axiom surface (26 theorems, measured in the §8 run) | within the `AuditAll` allow-list throughout: no printed dependency lies outside `propext` / `Classical.choice` / `Quot.sound`. `ct03_trace_digest` and the three projection theorems **depend on no axioms at all**; `ct03_reference_run_is_an_admitted_causal_order`, `ct03_reference_run_discharges_the_shared_reads`, `mixTrace_agrees_on_the_embedded_alphabet` and both non-vacuity theorems are `propext`-only; the two conservativity theorems carry all three |
 | `ct03_artifact_is_the_lean_proved_shared_reads_shape` | green: artifact = `referenceRun` transcription, digest = `9638775376944872586`, procedure accepts, relation admits |
 | `the_procedure_refuses_the_lean_named_mutations` | green: all seven mutants refused |
 | F02 harness (23 tests incl. every digest/census/edge pin) | green, no pin moved |
 | F02 native suite (4 tests, Clang, generated-C digest pins) | green, no pin moved |
 | CT01/CT37 proof legs | green, digest pins unmoved |
 
-Raw gate logs: worktree-private `measure/ct03-proof-alphabet-*.log`. The full
-gate table is in §8.
+Every row above was re-run at the resumed tip (`2492825b` + this card) inside the
+§8 workspace run, which is green end to end. Raw gate logs: worktree-private
+`measure/gate-*.log`. The full gate table is in §8.
 
 ## 6. The withdrawal that did not happen
 
@@ -360,8 +382,26 @@ non-proof stage row carried unchanged, and the `proof` row:
 ```
 
 plus the matrix regeneration through the standing generator with hand-kept
-sections carried (constraint 25) and the headline `proof 2 of N → 3 of N`
-wherever the close reconciles it (`AGENTS.md` ledger).
+sections carried (constraint 25), and `validation.lean_audits` regenerated
+123 → 124 (§8.1).
+
+**(d) The headline numbers, stated against the denominator at the flip.** This
+card moves the proof **numerator by exactly one** and moves the denominator
+**not at all** — it maps no case, and the manifest is untouched. Measured at
+this card's base `2492825b`, `ct_manifest.json` holds **42 mapped / 8 unmapped**
+and `AGENTS.md` reads `proof 2 of 42`, so the flip there reads **`proof 3 of
+42`**. A parallel wave-31 lane maps **CT25**; that lane was not merged at this
+card's base (CT25's `mapping_status` is still `unmapped` here, verified rather
+than assumed). If it merges first, the denominator the integrator reconciles is
+**43** and the same flip reads **`proof 2 of 43` → `proof 3 of 43`**, with
+sanitized-native carried at its own value. The two lanes touch disjoint manifest
+rows — CT25's and CT03's — and this card edits neither, so they compose in
+either merge order. No route claim is made about CT25 here (at this base its
+`route` is `null`); if its lane maps it onto the task route, the alphabet
+extension is safe for it by the conservativity theorem rather than by
+coincidence: a write-free run relates exactly as before. Per constraint 23, a
+grown denominator is mapping rather than conformance, and a grown proof
+numerator is evidence about one case's artifact.
 
 Suggested reading of the flipped row: *proof — the scenario property proved
 of the checked artifact's reference run and its admitted renderings under the
@@ -372,30 +412,48 @@ too).
 
 ## 8. Gate
 
-Run at the card tip on Linux, under default cargo configuration (no test, pin
-or assertion edited to obtain the results; the two disclosed test-file edits
-are §1.3's).
+Run at the resumed card tip on Linux, over base `2492825b`, under default cargo
+configuration (no test, pin or assertion edited to obtain the results; the two
+disclosed test-file edits are §1.3's).
 
 | Check | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see the close-out numbers recorded below |
-| `cargo fmt --all -- --check` | clean |
+| `cargo test --workspace --no-fail-fast` | **4,490 passed · 0 failed · 8 ignored**, 224 binaries, exit 0 |
+| `cargo fmt --all -- --check` | clean (exit 0) |
 | `cargo clippy --all-targets -- -D warnings` | clean (exit 0) |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
 | `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
-| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | Passed 122 Lean audits |
-| `python3 -m unittest discover -s scripts/tests` | **199 of 200 green** (the suite grew past its wave-30 count of 193 before this card); the one failure is the standard expected tripwire, §8.1 |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | `Passed 124 Lean audits` |
+| `python3 -m unittest discover -s scripts/tests` | **199 of 200 green**; the one failure is the standard expected tripwire, §8.1 |
+
+**No constraint-16 row tripped**, so no isolation re-verification was needed;
+both facts are reported as required. The workspace count is the wave-31
+integration tip's own **4,484** plus exactly this card's **six** new tests (the
+two `ct03_proof_leg.rs` tests and the four write-aware F02 harness tests of
+§1.3) — the delta is accounted for test by test, not merely plausible.
+
+The earlier interrupted run measured this gate at base `469f6509` and recorded
+`Passed 122 Lean audits` with 199 of 200 Python tests. Both counts moved with the
+**base**, not with this card: `C-GATEWAY-WAVE` landed one audit of its own
+(122 → 123 before this card) and the Python suite reached 200 there. This card's
+own contribution to each is unchanged at **+1 audit and +0 Python tests**.
 
 ### 8.1 The one expected failure
 
 `scripts/tests`'
 `test_the_derived_facts_are_recomputed_rather_than_carried` trips on
-`validation.lean_audits`, which moves 121 → **122**. This card's brief forbids
-editing `docs/reviews/r0_3/acceptance_matrix.json`, so the derived row is
-deliberately left stale for the wave integrator to regenerate — the handling
-every audit-adding card's delta receives (`CT01-PROOF-LEG` and
-`CT-PROOF-LEG-2` record the same shape). The delta is entirely this card's
-one audit file.
+`validation.lean_audits`, which moves 123 → **124**:
+
+```
+AssertionError: Lists differ: ['14.0.0', 123] != ['14.0.0', 124]
+```
+
+This card's brief forbids editing `docs/reviews/r0_3/acceptance_matrix.json`, so
+the derived row is deliberately left stale for the wave integrator to regenerate
+— the handling every audit-adding card's delta receives (`CT01-PROOF-LEG` and
+`CT-PROOF-LEG-2` record the same shape). The delta is entirely this card's one
+audit file, `proof/AuditCt03ReadShares.lean`; the other 199 tests are green, and
+no test was edited or skipped to reach that number.
 
 ## 9. Follow-ons
 

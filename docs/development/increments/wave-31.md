@@ -6,6 +6,53 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+The F02 alphabet grown by the Buffer write, and CT03's proof leg (2026-09-13):
+`CT03-PROOF-ALPHABET` delivers the **third** proof-stage capability, and the one
+the `CT-PROOF-LEG-2` survey showed required growing the F02 trace alphabet —
+CT03's reference run carries the T05 Buffer write, which
+`AdmittedCausalOrder::derive` refused outright. Half one is the **conservative
+alphabet extension**: `ObservedEvent::Written` in the production relation
+(`crates/qcore-core/src/task_trace_relation.rs`, the only production file the
+card touches) reading the `QCORE_BUFFER_WRITE` line the renderers already print,
+with the payload conjunct split per generation so a never-written generation
+keeps *exactly* the pinned rule and a written one takes the established-value
+walk; `TRACE_RELATION_IDENTITY` deliberately stays v1, because no recorded
+evidence is reinterpreted. `QCore.TaskTraceWrites` transcribes the extended
+relation and proves it conservative for **arbitrary** traces —
+`relate_agrees_on_the_embedded_alphabet` (conjunct for conjunct over the
+embedding), `write_free_traces_relate_exactly_as_before` (a trace without
+`written` relates exactly as before), `mixTrace_agrees_on_the_embedded_alphabet`
+(`written` takes the previously unused code `11`, so the digest domain grows
+moving no existing digest) and `the_pinned_domain_one_verdicts_are_carried` (a
+pinned verdict digest re-derived from the old theorem alone). Digest stability
+was **measured, not assumed**: across the F02 harness, the native suite and the
+CT01/CT37 runners, **not one pinned constant was edited** — the whole diff over
+those files removes three lines, all of them the parser round-trip inventory's
+13 → 14 index shift — and every pin-carrying test is green. Half two is CT03's
+proof leg on the CT01/CT37 pattern over the extended alphabet:
+`QCore.Ct03ReadShares` with the nineteen-event `referenceRun` proved a declared
+admitted causal order (the derivation that refused before), the total decision
+procedure `dischargesSharedReads` with per-borrower positional window clauses,
+arbitrary-trace meaning theorems (both writes are the parent's and sit on either
+side of the lending window; each borrower reads strictly inside its own window;
+reads report the written value rather than the allocation's payload — 42 ≠ 1,
+the T05 crux), kernel-checked acceptance, the digest pin `9638775376944872586`,
+the symbolic closure `every_admitted_rendering_discharges_the_shared_reads` over
+all admitted renderings, and seven refused mutants; the host-unconditional
+runner `compiler/tests/ct03_proof_leg.rs` binds the theorems to CT03's own
+artifact. One new audit registers both modules (`AuditCt03ReadShares.lean`,
+**123 → 124**). The manifest, matrix, `acceptance.json`, `ct_corpus.rs` and every
+`EVIDENCE_FILES` list are untouched; CT03's `proof` row still reads `unassessed`
+and the proposed flip terms are in the report. Final gate: **4,490** workspace
+tests (0 failed, 8 ignored, `--no-fail-fast`, no constraint-16 row tripped), 199
+of **200** Python tests — the one failure the standard `lean_audits` derived-row
+tripwire this card may not regenerate — **124** Lean audits, both probes exit 0,
+fmt/clippy clean. Native execution stays observation-only and typed error
+outcomes remain outside the alphabet. CT mapping is unmoved at 42/50 (proof
+**2 of 42** until the integrator flips), contracts remain 74, and full language
+conformance remains false. Evidence:
+`docs/reports/ct03-proof-alphabet/README.md`.
+
 C gateway scalar writes, expression frames and conditional custody (2026-09-13):
 `C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and
 bounded `AOM-POISON-CONDITION-FRAME` repairs, and an acyclic conditional-identity
