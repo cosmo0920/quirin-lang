@@ -1,4 +1,5 @@
 //! Real typed C import → packaged ChunkIO process → trusted contract replay.
+#![cfg(unix)]
 #[path = "../../../crates/qcore-verification/tests/fixtures/boolean_source.rs"]
 mod fixture;
 use fixture::*;

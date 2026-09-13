@@ -65,7 +65,7 @@ diff_artifacts = load_tool()
 
 def unpack(archive, target):
     """Decompress an archived artifact set under the file names a run produces."""
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     for stem, entry in manifest.items():
         blob = gzip.decompress((archive / f"{stem}.json.gz").read_bytes())
         (target / entry["produced_file"]).write_bytes(blob)
@@ -88,7 +88,7 @@ def run_tool(archived, measured, output):
         text=True,
     )
     assert completed.returncode == 0, completed.stderr
-    return json.loads(output.read_text())
+    return json.loads(output.read_text(encoding="utf-8"))
 
 
 def read_diff(path):

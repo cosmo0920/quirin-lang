@@ -1,5 +1,6 @@
 //! Real typed C import → packaged ChunkIO process → trusted contract replay
 //! for the unsigned counter capability.
+#![cfg(unix)]
 #[path = "../../../crates/qcore-verification/tests/fixtures/counter_source.rs"]
 mod fixture;
 use fixture::*;

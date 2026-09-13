@@ -71,7 +71,7 @@ def load_measured(directory, name):
     path = directory / name
     if not path.exists():
         return None
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def row_key(row):
@@ -349,7 +349,7 @@ def main():
     report["artifacts"][CONTRACTS_STEM] = entry
     text = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if arguments.output:
-        arguments.output.write_text(text)
+        arguments.output.write_text(text, encoding="utf-8")
     else:
         print(text, end="")
 

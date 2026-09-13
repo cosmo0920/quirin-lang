@@ -152,7 +152,7 @@ GATE_KEYS = [
 
 
 def read_json(rel):
-    return json.loads((ROOT / rel).read_text())
+    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
 
 
 if not PREVIOUS.is_file():
@@ -163,7 +163,7 @@ if not PREVIOUS.is_file():
         "refuses to write a matrix that would silently drop them. Restore the file (git "
         "checkout docs/reviews/r0_3/acceptance_matrix.json) or pass --previous PATH."
     )
-previous = json.loads(PREVIOUS.read_text())
+previous = json.loads(PREVIOUS.read_text(encoding="utf-8"))
 
 MISSING = [key for key, (owner, _) in SECTION_OWNERS.items() if owner != DERIVED and key not in previous]
 if MISSING:
@@ -176,7 +176,7 @@ def carried(key):
 
 gate_path = option("--gate")
 if gate_path:
-    supplied = json.loads(pathlib.Path(gate_path).read_text())
+    supplied = json.loads(pathlib.Path(gate_path).read_text(encoding="utf-8"))
     unknown = sorted(set(supplied) - set(GATE_KEYS))
     if unknown:
         sys.exit(f"--gate {gate_path} carries unknown key(s) {unknown}; expected {GATE_KEYS}")
@@ -215,14 +215,16 @@ b00 = read_json("docs/reports/remaining-b00/ledger.json")
 contract_modules = len(list((ROOT / "contract/qcore").glob("*/*.qcore")))
 lean_audit_files = sorted(p.name for p in (ROOT / "proof").glob("Audit*.lean"))
 
-workspace_toml = (ROOT / "Cargo.toml").read_text()
+workspace_toml = (ROOT / "Cargo.toml").read_text(encoding="utf-8")
 members = re.findall(r'"([^"]+)"', workspace_toml.split("members = [", 1)[1].split("]", 1)[0])
-provider_toml = (ROOT / "providers/Cargo.toml").read_text()
+provider_toml = (ROOT / "providers/Cargo.toml").read_text(encoding="utf-8")
 provider_members = re.findall(
     r'"([^"]+)"', provider_toml.split("members = [", 1)[1].split("]", 1)[0]
 )
 schemas_version = re.search(
-    r'^version\s*=\s*"([^"]+)"', (ROOT / "crates/qcore-schemas/Cargo.toml").read_text(), re.M
+    r'^version\s*=\s*"([^"]+)"',
+    (ROOT / "crates/qcore-schemas/Cargo.toml").read_text(encoding="utf-8"),
+    re.M,
 ).group(1)
 
 # Provider package versions come from the manifest template embedded in each
@@ -231,7 +233,7 @@ schemas_version = re.search(
 # Cargo.toml, which carries a different version.
 provider_packages = {}
 for template in sorted((ROOT / "providers").glob("qcore-provider-*/provider-template.json")):
-    declared = json.loads(template.read_text())
+    declared = json.loads(template.read_text(encoding="utf-8"))
     provider_packages[declared["plugin_id"]] = declared["package_version"]
 assert provider_packages, "no provider manifest template found under providers/"
 
@@ -664,7 +666,9 @@ OUT.parent.mkdir(parents=True, exist_ok=True)
 # verbatim would have reformatted all 11,798 lines and buried its real change.
 # Card HYGIENE-16 moves the writer to the committed byte form rather than the
 # file to the writer's, so a regeneration is now reviewable as its own diff.
-OUT.write_text(json.dumps(matrix, indent=1, ensure_ascii=False) + "\n")
+OUT.write_text(
+    json.dumps(matrix, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
+)
 print("wrote", OUT)
 print("carried hand-maintained sections from", PREVIOUS)
 print("gate provenance:", GATE_PROVENANCE)

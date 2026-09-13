@@ -79,12 +79,12 @@ def generate(out, previous=None, extra=()):
 def generate_ok(test, out, previous=None, extra=()):
     finished = generate(out, previous, extra)
     test.assertEqual(finished.returncode, 0, finished.stderr)
-    return json.loads(pathlib.Path(out).read_text())
+    return json.loads(pathlib.Path(out).read_text(encoding="utf-8"))
 
 
 class BuildMatrixSections(unittest.TestCase):
     def test_regeneration_preserves_the_sections_the_generator_does_not_own(self):
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             out = pathlib.Path(scratch) / "acceptance_matrix.json"
             produced = generate_ok(self, out)
@@ -142,19 +142,21 @@ class BuildMatrixSections(unittest.TestCase):
 
     def test_the_derived_facts_are_recomputed_rather_than_carried(self):
         """The committed matrix carries stale derived values; they must move."""
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             out = pathlib.Path(scratch) / "acceptance_matrix.json"
             produced = generate_ok(self, out)
         schemas_version = next(
             line.split('"')[1]
-            for line in (ROOT / "crates/qcore-schemas/Cargo.toml").read_text().splitlines()
+            for line in (ROOT / "crates/qcore-schemas/Cargo.toml")
+            .read_text(encoding="utf-8")
+            .splitlines()
             if line.startswith("version")
         )
         self.assertEqual(produced["versions"]["qcore_schemas_rust_api"], schemas_version)
         packages = {}
         for template in sorted((ROOT / "providers").glob("qcore-provider-*/provider-template.json")):
-            declared = json.loads(template.read_text())
+            declared = json.loads(template.read_text(encoding="utf-8"))
             packages[declared["plugin_id"]] = declared["package_version"]
         self.assertEqual(produced["versions"]["provider_packages"], packages)
         self.assertEqual(
@@ -205,7 +207,8 @@ class BuildMatrixSections(unittest.TestCase):
                         "cargo_clippy": "clean",
                         "standing_gate": "passed",
                     }
-                )
+                ),
+                encoding="utf-8",
             )
             supplied = generate_ok(self, scratch / "supplied.json", extra=["--gate", str(gate)])
         self.assertEqual(supplied["validation"]["workspace_tests"], 1234)
@@ -218,7 +221,7 @@ class BuildMatrixSections(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
             gate = scratch / "gate.json"
-            gate.write_text(json.dumps({"workspace_tests": 1234}))
+            gate.write_text(json.dumps({"workspace_tests": 1234}), encoding="utf-8")
             finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("missing", finished.stderr + finished.stdout)
@@ -241,7 +244,8 @@ class BuildMatrixSections(unittest.TestCase):
                         "standing_gate": "passed",
                         "invented_gate": 1,
                     }
-                )
+                ),
+                encoding="utf-8",
             )
             finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
         self.assertNotEqual(finished.returncode, 0)
@@ -257,46 +261,46 @@ class BuildMatrixSections(unittest.TestCase):
         self.assertFalse(out.exists())
 
     def test_a_previous_matrix_missing_a_carried_section_refuses(self):
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         del committed["named_followups"]
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
             previous = scratch / "previous.json"
-            previous.write_text(json.dumps(committed))
+            previous.write_text(json.dumps(committed), encoding="utf-8")
             finished = generate(scratch / "out.json", previous=previous)
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("named_followups", finished.stderr + finished.stdout)
 
     def test_a_widened_support_vocabulary_refuses(self):
         """The header publishes the vocabulary the rows are validated against."""
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         committed["header"]["support_status_vocabulary"]["probably_fine"] = "invented"
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
             previous = scratch / "previous.json"
-            previous.write_text(json.dumps(committed))
+            previous.write_text(json.dumps(committed), encoding="utf-8")
             finished = generate(scratch / "out.json", previous=previous)
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("support_status_vocabulary", finished.stderr + finished.stdout)
 
     def test_a_carried_requirement_row_with_an_invented_status_refuses(self):
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         committed["requirements"][0]["support"]["model"]["status"] = "mostly_executed"
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
             previous = scratch / "previous.json"
-            previous.write_text(json.dumps(committed))
+            previous.write_text(json.dumps(committed), encoding="utf-8")
             finished = generate(scratch / "out.json", previous=previous)
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("mostly_executed", finished.stderr + finished.stdout)
 
     def test_a_carried_requirement_row_missing_an_evidence_class_refuses(self):
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         del committed["requirements"][0]["support"]["observation"]
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
             previous = scratch / "previous.json"
-            previous.write_text(json.dumps(committed))
+            previous.write_text(json.dumps(committed), encoding="utf-8")
             finished = generate(scratch / "out.json", previous=previous)
         self.assertNotEqual(finished.returncode, 0)
 
@@ -313,7 +317,7 @@ class BuildMatrixSections(unittest.TestCase):
         instead of on a defect. Nothing here names a case id or a count — both
         sides are read at run time.
         """
-        committed = json.loads(COMMITTED.read_text())
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             out = pathlib.Path(scratch) / "acceptance_matrix.json"
             produced = generate_ok(self, out)
@@ -369,7 +373,7 @@ class BuildMatrixSections(unittest.TestCase):
                     "newly_decidable_not_mapped_reasons": {"_note": "hand-maintained"},
                 }
             }
-            matrix.write_text(json.dumps(carried, indent=1) + "\n")
+            matrix.write_text(json.dumps(carried, indent=1) + "\n", encoding="utf-8")
             for command in (
                 ["git", "init", "-q"],
                 ["git", "add", "-A"],
@@ -382,7 +386,7 @@ class BuildMatrixSections(unittest.TestCase):
             ):
                 subprocess.run(command, cwd=scratch, check=True, capture_output=True)
             # The state after this card: the generator emits the key itself.
-            matrix.write_text(json.dumps(carried, indent=1) + "\n")
+            matrix.write_text(json.dumps(carried, indent=1) + "\n", encoding="utf-8")
             finished = subprocess.run(
                 [sys.executable, "-B", str(scratch / "docs/reports/wave16-corpus/readd_ct_reasons.py")],
                 capture_output=True,
@@ -401,7 +405,7 @@ class BuildMatrixSections(unittest.TestCase):
                 text=True,
             )
             self.assertEqual(finished.returncode, 0, finished.stderr)
-            produced = json.loads(out.read_text())
+            produced = json.loads(out.read_text(encoding="utf-8"))
         self.assertEqual(produced["validation"]["workspace_tests"], 4242)
         self.assertIn("positionally", produced["validation"]["measurement_provenance"])
 

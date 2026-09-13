@@ -100,7 +100,7 @@ def read_document(path: pathlib.Path):
 
 def unpack(archive: pathlib.Path, target: pathlib.Path):
     """Decompress an archived artifact set under the file names a run produces."""
-    manifest = json.loads((archive / "manifest.json").read_text())
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
     for stem, entry in manifest.items():
         blob = gzip.decompress((archive / f"{stem}.json.gz").read_bytes())
         (target / entry["produced_file"]).write_bytes(blob)
@@ -119,7 +119,7 @@ def regenerate(before: pathlib.Path, after: pathlib.Path):
         )
         if finished.returncode != 0:
             raise SystemExit("%s failed on %s -> %s: %s" % (TOOL, before, after, finished.stderr))
-        return json.loads(output.read_text())
+        return json.loads(output.read_text(encoding="utf-8"))
 
 
 def without_backfill(document):
@@ -173,8 +173,10 @@ def backfill(path: pathlib.Path, original):
             "tool": "docs/reports/corpus-repin/diff_artifacts.py",
             "tool_section_schema": 2,
             "document_schema_version_unchanged": original["schema_version"],
-            "inputs": {"archived": original["archived"], "measured": str(
-                after.relative_to(ROOT))},
+            "inputs": {
+                "archived": original["archived"],
+                "measured": after.relative_to(ROOT).as_posix(),
+            },
             "original_commit": ORIGINAL_COMMIT,
             "original_sha256": digest(serialize(original)),
             "verification": (

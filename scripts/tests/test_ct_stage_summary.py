@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 def load_manifest():
-    return json.loads((ROOT / summary.MANIFEST).read_text())
+    return json.loads((ROOT / summary.MANIFEST).read_text(encoding="utf-8"))
 
 
 class MutableRoot:
@@ -51,29 +51,40 @@ class MutableRoot:
         shutil.rmtree(self.directory, ignore_errors=True)
 
     def write_manifest(self, manifest):
-        (self.directory / summary.MANIFEST).write_text(json.dumps(manifest, indent=2) + "\n")
+        (self.directory / summary.MANIFEST).write_text(
+            json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+        )
 
     def read_evidence(self, relative):
-        return json.loads((self.directory / relative).read_text())
+        return json.loads((self.directory / relative).read_text(encoding="utf-8"))
 
     def write_evidence(self, relative, data):
-        (self.directory / relative).write_text(json.dumps(data, indent=2) + "\n")
+        (self.directory / relative).write_text(
+            json.dumps(data, indent=2) + "\n", encoding="utf-8"
+        )
 
     def read_acceptance(self):
-        return json.loads((self.directory / summary.ACCEPTANCE).read_text())
+        return json.loads(
+            (self.directory / summary.ACCEPTANCE).read_text(encoding="utf-8")
+        )
 
     def write_acceptance(self, acceptance):
-        (self.directory / summary.ACCEPTANCE).write_text(json.dumps(acceptance, indent=2) + "\n")
+        (self.directory / summary.ACCEPTANCE).write_text(
+            json.dumps(acceptance, indent=2) + "\n", encoding="utf-8"
+        )
 
     def write_triage(self, coverage):
-        (self.directory / summary.TRIAGE).write_text(json.dumps(coverage, indent=2) + "\n")
+        (self.directory / summary.TRIAGE).write_text(
+            json.dumps(coverage, indent=2) + "\n", encoding="utf-8"
+        )
 
     def read_matrix(self):
-        return json.loads((self.directory / summary.MATRIX).read_text())
+        return json.loads((self.directory / summary.MATRIX).read_text(encoding="utf-8"))
 
     def write_matrix(self, matrix):
         (self.directory / summary.MATRIX).write_text(
-            json.dumps(matrix, indent=1, ensure_ascii=False) + "\n"
+            json.dumps(matrix, indent=1, ensure_ascii=False) + "\n",
+            encoding="utf-8",
         )
 
     def write_matrix_reasons(self, reasons):
@@ -264,7 +275,7 @@ class SummaryTest(unittest.TestCase):
                 text=True,
             )
             self.assertEqual(finished.returncode, 0, finished.stderr)
-            section = json.loads(out.read_text())["ct_conformance"]
+            section = json.loads(out.read_text(encoding="utf-8"))["ct_conformance"]
         self.assertTrue(section["generator_status"].startswith("regenerating:"))
         rows = {row["id"]: row for row in section["ct_rows"]}
         self.assertEqual(len(rows), 50)
