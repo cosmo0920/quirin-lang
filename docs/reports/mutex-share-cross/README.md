@@ -292,16 +292,20 @@ rather than asserted (§5's `Q013` row).
 For a future mapping lane. **This card maps nothing**: it edits neither
 `docs/reevaluation/ct_manifest.json` nor `docs/reviews/r0_3/acceptance_matrix.json`,
 and touches no fixture under `compiler/tests/fixtures/ct/` — a parallel lane
-owns that tree. CT46's manifest reason recorded the blocker as *"the mutex
-ledger and the task ledger compose today by mutual exclusion rather than over a
-capture, so no source text can ask for mutex-mediated sharing across a task
-boundary"* (open card `CT46-MUTEX-CAPTURE`). What a lane can now claim:
+owns that tree. The manifest records CT46's remaining obstacle as
+`CT46-MUTEX-CAPTURE`, in these words:
 
-* **The blocker sentence is discharged.** Source text can now ask for
-  mutex-mediated sharing across a task boundary:
-  `thread scope c share buf under m { … }`. The composition is over a
-  **declared crossing** judged by `qcore_core::transfer`, not over mutual
-  exclusion.
+> the mutex ledger and the task ledger compose today by mutual exclusion rather
+> than over a capture, so no source text can ask for mutex-mediated sharing
+> across a task boundary and CT46's accept half is unwritable
+
+What a lane can now claim:
+
+* **That sentence is discharged, clause by clause.** The two ledgers no longer
+  compose by mutual exclusion alone: source text can ask for mutex-mediated
+  sharing across a task boundary — `thread scope c share buf under m { … }` —
+  over a **declared crossing** judged by `qcore_core::transfer`. CT46's accept
+  half is **writable**, and §2 is the program that writes it.
 * **The accept half** — *"Accept only through verified mutex protocol"* — has
   a fixture shape and an audited soundness statement: the flagship program of
   §2, checking end to end, with both tasks reaching the payload and every reach
@@ -374,6 +378,14 @@ and no expectation is deleted.**
 * No `Q` code moved, no message of any pre-existing route changed, no fixture
   edited, no frozen archive touched.
 
+**Two earlier card reports still name the superseded theorems and are
+deliberately left alone** — `docs/reports/remaining-ct46-sendsync/README.md`
+(§297, §299, §361) and `docs/reports/write-lend-tasks/README.md` (§310). Those
+are frozen evidence packages describing their own recorded dates, and standing
+constraint 21 forbids editing an archive in place; the supersession is
+published *here*, beside them, which is the established practice. A reader
+following either pointer should land on this section.
+
 ## 13. Integrator reconciliation list
 
 This card may not edit `AGENTS.md`, `README.md` or the acceptance matrix.
@@ -425,4 +437,54 @@ Run in worktree `worktree-agent-a18bfaba15868e7a9` on `origin/main` at
 `1c7d8e45` plus this card, with `$HOME/.elan/bin` on `PATH` for the Lean row
 and the submodule initialised before the workspace run.
 
-<!-- GATE TABLE INSERTED BELOW -->
+| Step | Result |
+|---|---|
+| `git submodule update --init --recursive` | ok — `third_party/libevent` at `d82464a2` |
+| `cargo test --workspace --no-fail-fast` | **4,527 passed; 0 failed; 8 ignored**, exit 0, across 226 targets. **This card adds exactly 16**, all in `crates/qcore-frontend/tests/mutex_share_cross.rs` — counted, not inferred: `git diff 1c7d8e45 HEAD` adds no `#[test]` anywhere else, the transfer-matrix and `source_mutex` changes being edits to existing tests. The base was not separately measured by this agent, so the 22-test gap against wave 31's published 4,505 spans this card **plus** whatever `STABILITY-REEVAL` (`1c7d8e45`) added after that close; an integrator with a base measurement should attribute the remaining 6 there |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | **`Passed 126 Lean audits`** (125 → 126: `AuditMutexShareCross.lean`), no warning, exit 0 |
+| `python3 -m unittest discover -s scripts/tests` | Ran 200 tests, **1 expected failure** — §14.2 |
+
+### 14.1 Machine load during the measurement, disclosed
+
+Standing constraint 16 names five load- or parallelism-sensitive rows, so the
+conditions of the run are reported rather than smoothed over. **Up to four
+worktrees were running their own `cargo test --workspace` concurrently** for
+most of this measurement — confirmed by inspecting the running test binaries'
+paths, which named `agent-a04e244941ca6603b`, `agent-a37c7fabef385fed7` and
+`agent-af3821b3f3f8c120e` beside this one. Several gateway route-parity and
+composition-mutation targets logged cargo's "has been running for over 60
+seconds" notice under that contention.
+
+**Both facts, in order.** Under that load **not one of constraint 16's five
+rows tripped**, `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+included: the run above is a single uninterrupted
+`cargo test --workspace --no-fail-fast` that ended `0 failed` with exit 0. **No
+isolated re-verification was required and none is claimed.** `--no-fail-fast`
+was used as the wave-26 close requires (`GATE-NO-FAIL-FAST`), so the 4,527 is a
+measurement rather than a lower bound — no failing binary could have hidden the
+targets after it in crate order.
+
+Two earlier attempts at this run were **deliberately killed by this agent**,
+not by any failure: each was invalidated mid-flight by a source edit of this
+card's own (the route's grammar header, then §12's payload-classification fix).
+Neither produced a published number, and the table above is the first and only
+completed run of the final tree.
+
+### 14.2 The one expected Python failure, left for the integrator
+
+`test_the_derived_facts_are_recomputed_rather_than_carried` reports
+`AssertionError: Lists differ: ['14.0.0', 125] != ['14.0.0', 126]` — the
+derived-value tripwire working as designed: this card adds one audited Lean
+module and **may not edit the acceptance matrix**. It is the same one-line
+reconciliation every wave's new audit file receives (constraint 25), and the
+`WRITE-LEND-TASKS` report records the identical failure for the identical
+reason. The other **199** Python tests pass.
+
+### 14.3 Measurement hygiene
+
+Census and gate logs are worktree-private under `measure/` (gitignored), never
+under `target/` and never in the shared session scratchpad.
