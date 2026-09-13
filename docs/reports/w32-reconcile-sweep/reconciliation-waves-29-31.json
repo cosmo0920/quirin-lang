@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "card": "W32-RECONCILE-SWEEP",
+  "wave": 32,
+  "note": "Retrospective reconciliation record for waves 29-31 and wave 32 so far, built by card W32-RECONCILE-SWEEP. Every verdict was MEASURED against the tree at this card's tip - the target file grepped for the proposed text or its effect - never inferred from the report's own claim. This record is evidence that the items were worked, not that the tool checked them: scripts/reconciliation_sweep.py --check verifies only that every swept item carries a verdict.",
+  "cards": [
+    "ct01-proof-leg",
+    "ct03-proof-alphabet",
+    "ct07-write-remap",
+    "ct22-wire",
+    "ct24-cleanup-preempted",
+    "ct42-protocol-cell",
+    "ct47-copy-capture",
+    "ct-proof-leg-2",
+    "ct-wire-lane-3",
+    "region-joins-duties",
+    "region-joins-loan",
+    "slice-permissions-write-lend",
+    "w29-corpus-contracts",
+    "w31-corpus-contracts-2",
+    "w4-recursive-summaries",
+    "write-lend-tasks",
+    "c-gateway-wave",
+    "development-docs-structure",
+    "docs-compact-4",
+    "docs-compact-5"
+  ],
+  "no_section": {
+    "ct07-write-remap": "no integrator-addressed section; its section 6 Follow-ons is the card's own residual list, and its one integrator-relevant observation (ct_corpus.rs's stale 'proof 0 of 42' doc comment) was repaired by CT-WIRE-LANE-3 - verified: the comment now reads current",
+    "ct24-cleanup-preempted": "no integrator-addressed section; the card moved no code, widened no condition and edited its own files only. AGENTS.md's Q600 row records it as such",
+    "ct42-protocol-cell": "no integrator-addressed section; its section 6 named follow-ons, CT42-MAP included, are a lane's work and live in its own report per the ledger rule",
+    "ct47-copy-capture": "no integrator-addressed section: the card applied its own AGENTS.md Q600 summary row and acceptance.json reason row - verified present, which is why DOCS-COMPACT-4-TABLE-SYNC names it as the ONE card of four that did not slip",
+    "c-gateway-wave": "the user's own card, landed directly on main; its baseline move and corpus figures are in AGENTS.md's chain and corpus row - verified",
+    "development-docs-structure": "a tooling commit (c05b2c4b), not a delegated card. It has an increment paragraph (docs/development/increments/wave-31.md line 323) but no integrator section; its one recorded non-reconciliation - the matrix's Lean-audit tripwire - was closed at the wave-31 close. Whether a tooling commit that publishes a report owes an increment paragraph under the sync rule is flagged as an integrator decision in this card's report",
+    "docs-compact-4": "no integrator-addressed section; the pass applies its own findings, and its one follow-on DOCS-COMPACT-4-TABLE-SYNC reached no tracker until this card put it in DOCS-COMPACT-O"
+  },
+  "verdicts": {
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#1": {
+      "verdict": "noted",
+      "note": "section preamble; the record it introduces is item 2"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#2": {
+      "verdict": "applied",
+      "note": "CT01 proof row present in ct_manifest.json; measured: scripts/ct_stage_summary.py . --check green, proof depth 3 (CT01, CT03, CT37)"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#3": {
+      "verdict": "applied",
+      "note": "CT01's manifest proof row carries no host_gate and no tool_gate"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#4": {
+      "verdict": "noted",
+      "note": "section preamble for the harness edits below"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#1": {
+      "verdict": "noted",
+      "note": "section preamble; the record it introduces is item 2"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#2": {
+      "verdict": "applied",
+      "note": "CT37 proof row present in ct_manifest.json; measured: scripts/ct_stage_summary.py . --check green, proof depth 3 (CT01, CT03, CT37)"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#3": {
+      "verdict": "applied",
+      "note": "CT37's manifest proof row carries no host_gate and no tool_gate"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#4": {
+      "verdict": "noted",
+      "note": "section preamble for the harness edits below"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#5": {
+      "verdict": "applied",
+      "note": "compiler/tests/ct_corpus.rs PROOF_GATED_CASES lines 190-208 and RUNNER_REGISTRY line 410"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#6": {
+      "verdict": "applied",
+      "note": "AGENTS.md CT row now reads proof 3 of 43, CT01 named; wave-29 close set 1 of 41"
+    },
+    "ct01-proof-leg#proposed-proof-stage-evidence-the-integrator-s-flip#7": {
+      "verdict": "applied",
+      "note": "AGENTS.md CT row carries the suggested reading nearly verbatim ('native execution deliberately observation-only')"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#5": {
+      "verdict": "applied",
+      "note": "CT37 row in compiler/tests/ct_corpus.rs PROOF_GATED_CASES lines 190-208 and RUNNER_REGISTRY line 410"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#6": {
+      "verdict": "applied",
+      "note": "the CT37 PROOF_GATED_CASES entry is present verbatim"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#7": {
+      "verdict": "noted",
+      "note": "no edit requested; derive_stage_plan reads the table"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#8": {
+      "verdict": "applied",
+      "note": "docs/reports/ct-proof-leg-2/ct_stage_evidence.json exists; T00's coverage.json unedited (constraint 21)"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#9": {
+      "verdict": "applied",
+      "note": "the proof row with its note is in that stage-evidence record"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#10": {
+      "verdict": "applied",
+      "note": "matrix regenerated at the wave-30 close (248dbc51); AGENTS.md carried proof 2"
+    },
+    "ct-proof-leg-2#proposed-proof-stage-evidence-the-integrator-s-flip#11": {
+      "verdict": "applied",
+      "note": "the suggested reading is in AGENTS.md's CT row"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#1": {
+      "verdict": "noted",
+      "note": "section preamble"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#2": {
+      "verdict": "noted",
+      "note": "sub-heading introducing the manifest record of item 3"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#3": {
+      "verdict": "applied",
+      "note": "CT03 proof row present; measured: scripts/ct_stage_summary.py . --check green, proof depth 3 (CT01, CT03, CT37)"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#4": {
+      "verdict": "applied",
+      "note": "CT03's manifest proof row carries no host_gate, no tool_gate"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#5": {
+      "verdict": "noted",
+      "note": "sub-heading introducing the table row of item 6"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#6": {
+      "verdict": "applied",
+      "note": "the CT03 entry with its comment block is in compiler/tests/ct_corpus.rs PROOF_GATED_CASES lines 190-208 and RUNNER_REGISTRY line 410"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#7": {
+      "verdict": "noted",
+      "note": "no edit requested; the existing proof arm reads the table"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#8": {
+      "verdict": "applied",
+      "note": "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json exists; the wave-3 CT record is superseded, not edited"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#9": {
+      "verdict": "applied",
+      "note": "the proof row with its long note is in that record"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#10": {
+      "verdict": "applied",
+      "note": "matrix validation.lean_audits is 125 against 125 Audit*.lean on disk"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#11": {
+      "verdict": "applied",
+      "note": "AGENTS.md CT row: 43/50 mapped, sanitized-native 7 of 43, proof 3 of 43"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#12": {
+      "verdict": "noted",
+      "note": "merge-order statement; both lanes are merged and the manifest check is green"
+    },
+    "ct03-proof-alphabet#proposed-proof-stage-evidence-the-integrator-s-flip#13": {
+      "verdict": "applied",
+      "note": "the suggested reading is in AGENTS.md's CT row"
+    },
+    "ct22-wire#integrator-carry-list#1": {
+      "verdict": "noted",
+      "note": "section preamble"
+    },
+    "ct22-wire#integrator-carry-list#2": {
+      "verdict": "noted",
+      "note": "the lane's own commit; CT22 is mapped in ct_manifest.json"
+    },
+    "ct22-wire#integrator-carry-list#3": {
+      "verdict": "noted",
+      "note": "the lane's own commit; ct_corpus.rs carries the widened mode and tables"
+    },
+    "ct22-wire#integrator-carry-list#4": {
+      "verdict": "noted",
+      "note": "the lane's own commit; compiler/tests/fixtures/ct/CT22/ exists"
+    },
+    "ct22-wire#integrator-carry-list#5": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the fixture path resolves"
+    },
+    "ct22-wire#integrator-carry-list#6": {
+      "verdict": "noted",
+      "note": "the lane's own commit; its record is in EVIDENCE_FILES"
+    },
+    "ct22-wire#integrator-carry-list#7": {
+      "verdict": "noted",
+      "note": "the lane's own commit"
+    },
+    "ct22-wire#integrator-carry-list#8": {
+      "verdict": "noted",
+      "note": "the lane's own commit; ct_stage_summary.py . --check is green"
+    },
+    "ct22-wire#integrator-carry-list#9": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the report and its stage evidence exist"
+    },
+    "ct22-wire#integrator-carry-list#10": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the wave-29 increment paragraph is present"
+    },
+    "ct-wire-lane-3#integrator-carry-list#1": {
+      "verdict": "noted",
+      "note": "section preamble"
+    },
+    "ct-wire-lane-3#integrator-carry-list#2": {
+      "verdict": "noted",
+      "note": "the lane's own commit; CT25 is mapped in ct_manifest.json"
+    },
+    "ct-wire-lane-3#integrator-carry-list#3": {
+      "verdict": "noted",
+      "note": "the lane's own commit; ct_corpus.rs carries the widened mode and tables"
+    },
+    "ct-wire-lane-3#integrator-carry-list#4": {
+      "verdict": "noted",
+      "note": "the lane's own commit; compiler/tests/fixtures/ct/CT25/ exists"
+    },
+    "ct-wire-lane-3#integrator-carry-list#5": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the fixture path resolves"
+    },
+    "ct-wire-lane-3#integrator-carry-list#6": {
+      "verdict": "noted",
+      "note": "the lane's own commit; its record is in EVIDENCE_FILES"
+    },
+    "ct-wire-lane-3#integrator-carry-list#7": {
+      "verdict": "noted",
+      "note": "the lane's own commit"
+    },
+    "ct-wire-lane-3#integrator-carry-list#8": {
+      "verdict": "noted",
+      "note": "the lane's own commit; ct_stage_summary.py . --check is green"
+    },
+    "ct-wire-lane-3#integrator-carry-list#9": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the report and its stage evidence exist"
+    },
+    "ct-wire-lane-3#integrator-carry-list#10": {
+      "verdict": "noted",
+      "note": "the lane's own commit; the wave-31 increment paragraph is present"
+    },
+    "ct22-wire#integrator-carry-list#11": {
+      "verdict": "applied",
+      "note": "superseded in place by wave 31's 43/50: AGENTS.md CT row and README.md line 110 both read 43 of 50 mapped, 7 sanitized-native, 3 proof; matrix regenerated at the wave-29 close (30aee0b2)"
+    },
+    "ct-wire-lane-3#integrator-carry-list#11": {
+      "verdict": "applied",
+      "note": "AGENTS.md CT row 43/50 with sanitized-native 7 of 43; README.md line 110 agrees; matrix regenerated at the wave-31 close (8bf7fd33)"
+    },
+    "region-joins-duties#proposed-amendment-text-for-standing-constraint-15m#1": {
+      "verdict": "noted",
+      "note": "instruction sentence introducing the block quote"
+    },
+    "region-joins-duties#proposed-amendment-text-for-standing-constraint-15m#2": {
+      "verdict": "superseded",
+      "note": "REGION-JOINS-LOAN (wave 30) rewrote the same constraint; AGENTS.md 15m carries the LOAN text, which quotes the DUTIES text and supersedes two of its sentences by design"
+    },
+    "region-joins-loan#proposed-amendment-text-for-standing-constraint-15m#1": {
+      "verdict": "noted",
+      "note": "instruction sentence introducing the block quote"
+    },
+    "region-joins-loan#proposed-amendment-text-for-standing-constraint-15m#2": {
+      "verdict": "applied",
+      "note": "AGENTS.md lines 932-987 carry the proposed 15m text; spot-checked phrases REGION-JOINS-EPOCH-AXIS, REGION-JOINS-MULTI-OWNER and the acquired/adopted two-arm rule all present"
+    },
+    "slice-permissions-write-lend#one-expected-python-failure-left-for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "matrix validation.lean_audits tracks the tree (125 = 125 Audit*.lean); the wave-29 close regenerated it"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "section preamble naming the card's boundary"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "introduces the amendment quoted in item 3"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "AGENTS.md 15h line 767 onward: the old 'no write lend' sentence is gone and the LendRange, WRITE-LEND-COMPUTED-INDEX, SLICE-PERMISSIONS-COMPOSED-LEND and SLICE-PERMISSIONS-CROSSED-WINDOWS clauses are present"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "AGENTS.md Q051-Q057 row carries the five widenings and the Q068-Q079 row the Q077 one"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "matrix lean_audits derived and current"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#6": {
+      "verdict": "noted",
+      "note": "informational API inventory; the workspace builds and the only exhaustive match named (whole_program.rs) compiles"
+    },
+    "slice-permissions-write-lend#integrator-reconciliation-list#7": {
+      "verdict": "applied",
+      "note": "CT07-WRITE-REMAP (wave 30) did exactly this, on its own stage-evidence record"
+    },
+    "write-lend-tasks#one-expected-python-failure-left-for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "matrix validation.lean_audits is 125 against 125 files; python suite green at this tip"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "section preamble naming the card's boundary"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#2": {
+      "verdict": "noted",
+      "note": "introduces the append quoted in item 3"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#3": {
+      "verdict": "applied",
+      "note": "landed LATE, by DOCS-COMPACT-5 (wave 32) as a pure insert into 15h - unlanded for a whole wave; this is DOCS-COMPACT-5-RECONCILIATION-LIST's concrete casualty and the occasion for this card"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#4": {
+      "verdict": "applied",
+      "note": "AGENTS.md Q020/Q021 and Q600 rows carry the widenings (landed by DOCS-COMPACT-5, drift 8); the Lean headline is 125"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "matrix lean_audits derived and current"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#6": {
+      "verdict": "noted",
+      "note": "informational API inventory; the two F02 digest pins it warns about are re-pinned in the card's own commit"
+    },
+    "write-lend-tasks#integrator-reconciliation-list#7": {
+      "verdict": "deferred",
+      "note": "explicitly a lane's work, not the integrator's. CT07 is mapped and CT10 unmapped; no lane has taken section 8's readiness. Carried as CT10 readiness for a future CT wiring lane"
+    },
+    "w29-corpus-contracts#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "superseded in place by two later arbiters: AGENTS.md names w31-corpus-contracts-2/artifacts/ as the baseline and lists w29-corpus-contracts among the frozen predecessors"
+    },
+    "w31-corpus-contracts-2#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "AGENTS.md lines 104-120 name this baseline and the full frozen chain; the corpus row carries unsupported 50,150, leak 272, unknown_alias 4,208, double_release 1 and contract corpus 76"
+    },
+    "w4-recursive-summaries#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "AGENTS.md lists w4-recursive-summaries among the frozen archives and no corpus figure moved for it; the constraint-4 amendment of section 2.2 is landed at AGENTS.md lines 212-224 ('above the neutral element', with the two premises and the prefix-preservation theorem named)"
+    },
+    "docs-compact-5#the-unapplied-integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "acted on by this card: scripts/reconciliation_sweep.py plus its close rule in CLAUDE.md make the step mechanical, and DOCS-COMPACT-O in the matrix now carries the passes 4 and 5 residual names"
+    }
+  }
+}

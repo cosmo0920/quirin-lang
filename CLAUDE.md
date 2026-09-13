@@ -85,6 +85,38 @@ the operational guidance that is in neither of those.
   it, exercise it, or state it as a measured boundary). Postponement is a valid
   outcome and must be recorded as one; what is forbidden is letting an
   observation stand where the text implies a proof.
+- **Work every card's integrator reconciliation list at the wave close, and
+  leave the record that you did** (card `W32-RECONCILE-SWEEP`, wave 32,
+  discharging `DOCS-COMPACT-5-RECONCILIATION-LIST`). Cards close with a section
+  addressed to the integrator — "Integrator reconciliation list", "For the
+  integrator", "Integrator carry list", "Proposed amendment text for standing
+  constraint N", "Proposed proof-stage evidence (the integrator's flip)". Three
+  consecutive closes (waves 29, 30, 31) applied those sections' **headline
+  numbers** and left the rest, costing one entire unlanded standing-constraint
+  amendment. Two prior findings asked for more care and were skipped, because
+  advice is skippable; the step is therefore mechanical:
+
+  ```sh
+  python3 scripts/reconciliation_sweep.py . --since <previous close> \
+      --check docs/reports/wave<N>-close/reconciliation.json
+  python3 scripts/reconciliation_sweep.py . --cards <the wave's cards> --residuals
+  ```
+
+  The close **writes** `docs/reports/wave<N>-close/reconciliation.json` beside
+  its `gate.json`: one entry per swept item, verdict `applied` / `declined` /
+  `superseded` / `deferred` / `noted`, every non-`applied` verdict carrying its
+  ground, and a `no_section` reason for any swept card the sweep found nothing
+  in (checked both ways, so it cannot wave away a card that does have one).
+  `--residuals` lists the residual names the wave's reports introduced that
+  reach no tracker, which is the same defect's other half — `DOCS-COMPACT-4`'s
+  and `DOCS-COMPACT-5`'s own findings about this process were themselves in
+  that untracked set for two waves. **The tool decides nothing.** A green
+  `--check` means every item carries a recorded human verdict, never that any
+  item was applied; only a person can measure the tree against a paragraph of
+  English, and a reconciliation record that says `applied` without saying where
+  is worth no more than silence. An amendment lands **in the words the card
+  proposed** or is recorded `declined` with its ground — never silently
+  softened while being "reconciled" (invariant 1).
 
 ## Worktree and measurement hygiene
 

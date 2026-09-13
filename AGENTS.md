@@ -1192,6 +1192,12 @@ and ChunkIO lock theorem remain usable. `docs/reports/w7-lean-ci/README.md`,
   prepared by `scripts/prepare_cycle19_clang_audit.py`,
   `scripts/prepare_cmetrics_clang_audit.py` and
   `scripts/prepare_libevent_core_audit.py`.
+- Wave close: `scripts/reconciliation_sweep.py` sweeps each merged card's
+  integrator-addressed section into individually addressable items and
+  `--check`s the close's own `docs/reports/wave<N>-close/reconciliation.json`
+  for a verdict on every one; `--residuals` lists residual names the wave's
+  reports introduced that no tracker mentions. It decides nothing — see
+  `CLAUDE.md`'s close rule and `docs/reports/w32-reconcile-sweep/README.md`.
 - Published examples: `examples/README.md` indexes one directory per family —
   `stdio`, `pipes`, `branching`, `extern`, `unsafe-linkage`, `threads`,
   `events`, `strings` (text reaching a stream), `sockets` (checked TCP/UDP over

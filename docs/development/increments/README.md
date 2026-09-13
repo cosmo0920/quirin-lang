@@ -22,8 +22,9 @@ dates. Current agent rules and headline status live in
 ## Adding a record
 
 Current record file: [wave-32.md](wave-32.md). Prepend one paragraph per
-new increment below the checkpoint notice and above the migrated section.
-Keep that increment's evidence and boundaries together. Start the next wave's
+new increment below the checkpoint notice — and, in a record file that carries
+a `<!-- migrated-section -->` block, above that block; the current file need not
+have one. Keep that increment's evidence and boundaries together. Start the next wave's
 file when that wave begins and update this pointer and the wave table; do not
 rename old files. Main headline changes still belong in `AGENTS.md`.
 
