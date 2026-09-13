@@ -19,6 +19,14 @@ tests with the one pre-existing matrix tripwire still failing (121 audits
 pinned versus 122 present). This validates the documentation/cleanup operation,
 not the four pending implementation tips or an aggregate wave close.
 
+Documentation follow-up: the retrieval strategy is now part of the main
+guides, and `DEVELOPMENT.md` is the table of contents for the split
+`docs/development/` tree. Preservation and size evidence is in
+`docs/reports/development-docs-structure/`. This implements development
+navigation; C1's automated packets and C3's always-loaded constraint routing
+remain planned. The baseline JSON files below remain measurement-time
+snapshots and are not rewritten to describe the new documents.
+
 ## 1. Recovery inventory
 
 The reproducible Git snapshot is [worktrees.json](worktrees.json). Recheck
@@ -103,6 +111,12 @@ All cards overlap `DEVELOPMENT.md`; the proof cards also overlap
 `proof/QCore.lean`. Corpus close-out touches `AGENTS.md` and contract pins.
 These are integrator-owned reconciliation points. The semantic R3/R4 overlap
 requires review even if Git reports no textual conflict.
+
+After the development-document split, each pending card still carries the old
+monolithic `DEVELOPMENT.md`. Compare that file against the card's recorded base
+and transplant its new paragraphs into the current record file named by
+`docs/development/increments/README.md`. Preserve the compact root index during
+merge reconciliation; do not restore the old monolith from a source branch.
 
 ### First resumed validation
 

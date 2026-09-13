@@ -7,20 +7,56 @@
 
 Compressed project state for LLM agents; this file is the source of truth for
 agents. Humans should read [README.md](README.md) for the summary and
-[DEVELOPMENT.md](DEVELOPMENT.md) for implementation and status detail —
+[DEVELOPMENT.md](DEVELOPMENT.md) for the development table of contents —
 repository layout, cycle records, per-increment evidence narratives and the
-full build/validation instructions.
+full build/validation instructions are divided under `docs/development/`.
 
 **Sync rule (steady state since card DOCS-COMPACT, 2026-09-10).** Status
-*history* lives in `DEVELOPMENT.md`'s "Increment records" — one paragraph per
-increment, nowhere else. This file carries only the compact ledger, the hard
+*history* lives under `docs/development/increments/`, indexed by
+`DEVELOPMENT.md#increment-records` — one paragraph per increment, nowhere else.
+This file carries only the compact ledger, the hard
 invariants, the standing subsystem constraints, the per-change gate and the
 entry points. A new increment therefore adds **one** paragraph to
-`DEVELOPMENT.md`, updates this file's headline numbers (and, if it lands a
+the **current record file named by** `docs/development/increments/README.md`,
+newest first, and updates this file's headline numbers (and, if it lands a
 standing "when touching X, do not Y" rule, adds it to the constraints section
 below), and leaves `README.md` alone. Do not reintroduce per-increment
 chronicles here or in `CLAUDE.md`. A recurring compaction pass over these three
 files runs every 2–3 waves; the cadence rule is in `CLAUDE.md`.
+
+## Documentation retrieval and compact context
+
+Use `DEVELOPMENT.md` as a table of contents, then read the relevant setup,
+layout, cycle-evidence or increment page. The increment index names the current
+record file and every historical wave. Update that index when a new wave file
+opens; do not append narratives to the root table of contents. Historical
+counts and old instructions describe their checkpoints, not current status.
+This file remains the authority for agent rules; each report owns its own
+evidence, and frozen reports stay untouched.
+
+Retrieve headings and matching card names before reading long bodies. Use
+`rg -n` with an exact card, symbol or heading in the relevant directory, then
+read the surrounding section. Select relevant keys from large JSON records
+(for example `named_followups` and `section_ownership`) instead of dumping a
+whole matrix. Keep raw logs in each worktree's `measure/` or `private/`; return
+commands, exits, counts and log paths, then fetch failure context only as needed.
+
+A delegated brief supplies the task, worktree, declared base and HEAD, owned
+and planned paths, topic, applicable rule references, report sections and exact
+checks. Relevance includes **committed changes since the base**, staged and
+unstaged edits, renamed/deleted/untracked paths and planned edits. Shared files
+need the union of their path and topic rules. Unknown relevance requires more
+authoritative reading, never silent omission. Navigation is not a substitute
+for reading all applicable standing constraints before editing.
+
+For documentation maintenance, preserve historical text and evidence links;
+keep one current authority for each rule. New history pages should stay below
+32 KiB where a complete record boundary permits it. Measure startup guidance,
+cumulative retrieval and unique source bytes separately. Byte counts are not
+token billing, and a smaller index alone does not reduce this file's startup
+cost. The measured restart plan and remaining packet/router work are in
+`docs/plans/resume-2026-09-13/README.md`; the development split's preservation
+evidence is in `docs/reports/development-docs-structure/`.
 
 ## What this project is
 
@@ -106,8 +142,8 @@ only, the core **refuses all v1 `Safe` proposals** including empty scopes, and
 unchecked `Unsafe` proposals downgrade to `Unknown` (`QP010`).
 
 Where the detail lives, and the only places to look for it: per-increment
-history in `DEVELOPMENT.md` → "Increment records" (every wave and card
-paragraph, in order, each keeping its own checkpoint and boundaries); open
+history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
+and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
 39 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
