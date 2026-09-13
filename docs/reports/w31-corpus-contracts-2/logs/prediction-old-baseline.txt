@@ -1,0 +1,152 @@
+archive: docs/reports/w4-recursive-summaries/artifacts/diagnostics.json.gz
+units: 185
+unit status histogram: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+projected functions: 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+corpus diagnostic counts:
+  leak: 266
+  unknown_alias: 4344
+  unsupported: 49760
+
+=== leaves whose description names a declared callee ===
+  chunkio/cio_stream.c :: cio_stream_size_chunks_up L2280 origin=cio_stream.c:268 [unsupported] call to uncontracted function `cio_chunk_get_content_size`
+  fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_map L18822 origin=flb_input_chunk.c:1606 [unsupported] call to uncontracted function `cio_chunk_get_content_size`
+  fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_set_limits L19889 origin=flb_input_chunk.c:2974 [unsupported] call to uncontracted function `flb_input_chunk_total_size`
+  fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_set_up_down L19957 origin=flb_input_chunk.c:3108 [unsupported] call to uncontracted function `flb_input_chunk_total_size`
+  TOTAL: 4
+
+=== every leaf inside the functions that hold those leaves ===
+  --- chunkio/cio_stream.c :: cio_stream_size_chunks_up  status=Unknown
+      L2278 origin=cio_stream.c:265 [unsupported] indirect memory access is outside the resource projection
+      L2278 origin=cio_stream.c:265 [unsupported] unmodeled call, aggregate or indirect access in for-loop condition
+      L2279 origin=cio_stream.c:266 [unsupported] braced initializer, expression, or declaration is not modeled
+      L2280 origin=cio_stream.c:268 [unsupported] call to uncontracted function `cio_chunk_get_content_size`
+      L2284 origin=cio_stream.c:272 [unsupported] unrecognized assignment destination
+      L2286 origin=cio_stream.c:275 [unknown_alias] unresolved resource identity `total`
+  --- fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_map  status=Unknown
+      L18753 origin=flb_input_chunk.c:1496 [unsupported] indirect memory access is outside the resource projection
+      L18754 origin=flb_input_chunk.c:1497 [unknown_alias] unresolved resource identity `ic`
+      L18755 origin=flb_input_chunk.c:1498 [unknown_alias] unresolved resource identity `ic`
+      L18756 origin=flb_input_chunk.c:1500 [unsupported] indirect memory access is outside the resource projection
+      L18759 origin=flb_input_chunk.c:1503 [unknown_alias] unresolved resource identity `ic`
+      L18762 origin=flb_input_chunk.c:1507 [unsupported] indirect memory access is outside the resource projection
+      L18763 origin=flb_input_chunk.c:1508 [unknown_alias] unresolved resource identity `ic`
+      L18768 origin=flb_input_chunk.c:1514 [unknown_alias] unresolved resource identity `chunk`
+      L18769 origin=flb_input_chunk.c:1515 [unknown_alias] unresolved resource identity `ic`
+      L18772 origin=flb_input_chunk.c:1519 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18773 origin=flb_input_chunk.c:1521 [unsupported] call to uncontracted function `flb_mp_validate_log_chunk`
+      L18776 origin=flb_input_chunk.c:1525 [unsupported] indirect memory access is outside the resource projection
+      L18776 origin=flb_input_chunk.c:1525 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18777 origin=flb_input_chunk.c:1528 [unsupported] indirect memory access is outside the resource projection
+      L18778 origin=flb_input_chunk.c:1529 [unknown_alias] unresolved resource identity `ic`
+      L18782 origin=flb_input_chunk.c:1533 [unsupported] indirect memory access is outside the resource projection
+      L18782 origin=flb_input_chunk.c:1533 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18783 origin=flb_input_chunk.c:1540 [unsupported] call to uncontracted function `cio_chunk_write_at`
+      L18786 origin=flb_input_chunk.c:1543 [unsupported] indirect memory access is outside the resource projection
+      L18786 origin=flb_input_chunk.c:1543 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18787 origin=flb_input_chunk.c:1548 [unsupported] indirect memory access is outside the resource projection
+      L18788 origin=flb_input_chunk.c:1549 [unknown_alias] unresolved resource identity `ic`
+      L18793 origin=flb_input_chunk.c:1554 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18794 origin=flb_input_chunk.c:1555 [unsupported] call to uncontracted function `flb_mp_validate_metric_chunk`
+      L18797 origin=flb_input_chunk.c:1558 [unsupported] indirect memory access is outside the resource projection
+      L18797 origin=flb_input_chunk.c:1558 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18798 origin=flb_input_chunk.c:1561 [unsupported] indirect memory access is outside the resource projection
+      L18799 origin=flb_input_chunk.c:1562 [unknown_alias] unresolved resource identity `ic`
+      L18803 origin=flb_input_chunk.c:1566 [unsupported] indirect memory access is outside the resource projection
+      L18803 origin=flb_input_chunk.c:1566 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18804 origin=flb_input_chunk.c:1573 [unsupported] call to uncontracted function `cio_chunk_write_at`
+      L18807 origin=flb_input_chunk.c:1576 [unsupported] indirect memory access is outside the resource projection
+      L18807 origin=flb_input_chunk.c:1576 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18808 origin=flb_input_chunk.c:1581 [unsupported] indirect memory access is outside the resource projection
+      L18809 origin=flb_input_chunk.c:1582 [unknown_alias] unresolved resource identity `ic`
+      L18814 origin=flb_input_chunk.c:1588 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18816 origin=flb_input_chunk.c:1593 [unknown_alias] unresolved resource identity `records`
+      L18817 origin=flb_input_chunk.c:1594 [unsupported] indirect memory access is outside the resource projection
+      L18817 origin=flb_input_chunk.c:1594 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18818 origin=flb_input_chunk.c:1597 [unsupported] indirect memory access is outside the resource projection
+      L18819 origin=flb_input_chunk.c:1598 [unknown_alias] unresolved resource identity `ic`
+      L18822 origin=flb_input_chunk.c:1606 [unsupported] call to uncontracted function `cio_chunk_get_content_size`
+      L18824 origin=flb_input_chunk.c:1608 [unsupported] indirect memory access is outside the resource projection
+      L18825 origin=flb_input_chunk.c:1609 [unknown_alias] unresolved resource identity `ic`
+      L18829 origin=flb_input_chunk.c:1613 [unsupported] call to uncontracted function `cio_chunk_write_at`
+      L18831 origin=flb_input_chunk.c:1617 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18832 origin=flb_input_chunk.c:1618 [unsupported] call to uncontracted function `flb_mp_count_log_records`
+      L18835 origin=flb_input_chunk.c:1621 [unknown_alias] unresolved resource identity `ic`
+      L18837 origin=flb_input_chunk.c:1627 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18838 origin=flb_input_chunk.c:1629 [unsupported] call to uncontracted function `cfl_time_now`
+      L18839 origin=flb_input_chunk.c:1632 [unsupported] braced initializer, expression, or declaration is not modeled
+      L18841 origin=flb_input_chunk.c:1636 [unsupported] braced initializer, expression, or declaration is not modeled
+      L18843 origin=flb_input_chunk.c:1638 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18844 origin=flb_input_chunk.c:1639 [unsupported] indirect memory access is outside the resource projection
+      L18846 origin=flb_input_chunk.c:1643 [unsupported] indirect memory access is outside the resource projection
+      L18847 origin=flb_input_chunk.c:1644 [unsupported] indirect memory access is outside the resource projection
+      L18849 origin=flb_input_chunk.c:1649 [unsupported] call to uncontracted function `flb_input_chunk_get_tag`
+      L18852 origin=flb_input_chunk.c:1652 [unsupported] indirect memory access is outside the resource projection
+      L18853 origin=flb_input_chunk.c:1653 [unknown_alias] unresolved resource identity `ic`
+      L18861 origin=flb_input_chunk.c:1662 [unsupported] call to uncontracted function `flb_input_chunk_get_direct_routes`
+      L18868 origin=flb_input_chunk.c:1669 [unsupported] indirect memory access is outside the resource projection
+      L18873 origin=flb_input_chunk.c:1674 [unsupported] indirect memory access is outside the resource projection
+      L18873 origin=flb_input_chunk.c:1674 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18877 origin=flb_input_chunk.c:1681 [unsupported] indirect memory access is outside the resource projection
+      L18878 origin=flb_input_chunk.c:1682 [unsupported] indirect memory access is outside the resource projection
+      L18879 origin=flb_input_chunk.c:1683 [unsupported] indirect memory access is outside the resource projection
+      L18881 origin=flb_input_chunk.c:1685 [unsupported] call to uncontracted function `strlen`
+      L18883 origin=flb_input_chunk.c:1687 [unknown_alias] unresolved resource identity `direct_matches`
+      L18884 origin=flb_input_chunk.c:1688 [unknown_alias] unresolved resource identity `direct_matches`
+      L18888 origin=flb_input_chunk.c:1693 [unknown_alias] unresolved resource identity `direct_matches`
+      L18889 origin=flb_input_chunk.c:1694 [unknown_alias] unresolved resource identity `direct_matches`
+      L18892 origin=flb_input_chunk.c:1698 [unknown_alias] unresolved resource identity `direct_missing`
+      L18893 origin=flb_input_chunk.c:1699 [unsupported] indirect memory access is outside the resource projection
+      L18899 origin=flb_input_chunk.c:1705 [unsupported] indirect memory access is outside the resource projection
+      L18904 origin=flb_input_chunk.c:1710 [unknown_alias] unresolved resource identity `direct_matches`
+      L18905 origin=flb_input_chunk.c:1711 [unknown_alias] unresolved resource identity `direct_matches`
+      L18912 origin=flb_input_chunk.c:1719 [unsupported] indirect memory access is outside the resource projection
+      L18917 origin=flb_input_chunk.c:1725 [unknown_alias] unresolved resource identity `direct_matches`
+      L18922 origin=flb_input_chunk.c:1730 [unsupported] indirect memory access is outside the resource projection
+      L18922 origin=flb_input_chunk.c:1730 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18926 origin=flb_input_chunk.c:1739 [unsupported] indirect memory access is outside the resource projection
+      L18926 origin=flb_input_chunk.c:1739 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18928 origin=flb_input_chunk.c:1744 [unknown_alias] unresolved resource identity `direct_routes`
+      L18929 origin=flb_input_chunk.c:1745 [unknown_alias] unresolved resource identity `direct_routes`
+      L18935 origin=flb_input_chunk.c:1752 [unsupported] indirect memory access is outside the resource projection
+      L18936 origin=flb_input_chunk.c:1753 [unknown_alias] unresolved resource identity `ic`
+      L18939 origin=flb_input_chunk.c:1757 [unknown_alias] unresolved resource identity `direct_loaded`
+      L18940 origin=flb_input_chunk.c:1758 [unknown_alias] unresolved resource identity `ic`
+      L18941 origin=flb_input_chunk.c:1759 [unknown_alias] unresolved resource identity `has_routes`
+      L18945 origin=flb_input_chunk.c:1764 [unknown_alias] unresolved resource identity `has_routes`
+      L18946 origin=flb_input_chunk.c:1765 [unsupported] indirect memory access is outside the resource projection
+      L18946 origin=flb_input_chunk.c:1765 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L18947 origin=flb_input_chunk.c:1768 [unknown_alias] unresolved resource identity `ic`
+      L18948 origin=flb_input_chunk.c:1769 [unknown_alias] unresolved resource identity `has_routes`
+      L18952 origin=flb_input_chunk.c:1775 [unsupported] indirect memory access is outside the resource projection
+      L18953 origin=flb_input_chunk.c:1777 [unsupported] call to uncontracted function `flb_input_chunk_update_output_instances`
+      L18954 origin=flb_input_chunk.c:1779 [unknown_alias] unresolved resource identity `ic`
+      L18954 origin=flb_input_chunk.c:1779 [unsupported] nullable resource `ic` used by a non-null contract
+  --- fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_set_limits  status=Unknown
+      L19889 origin=flb_input_chunk.c:2974 [unsupported] call to uncontracted function `flb_input_chunk_total_size`
+      L19890 origin=flb_input_chunk.c:2977 [unsupported] indirect memory access is outside the resource projection
+      L19892 origin=flb_input_chunk.c:2981 [unsupported] indirect memory access is outside the resource projection
+      L19894 origin=flb_input_chunk.c:2989 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L19898 origin=flb_input_chunk.c:2993 [unsupported] indirect memory access is outside the resource projection
+      L19901 origin=flb_input_chunk.c:2996 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L19905 origin=flb_input_chunk.c:3000 [unsupported] indirect memory access is outside the resource projection
+      L19908 origin=flb_input_chunk.c:3006 [unsupported] call to uncontracted function `flb_input_rate_gate_maybe_resume`
+      L19909 origin=flb_input_chunk.c:3009 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L19916 origin=flb_input_chunk.c:3018 [unsupported] call to uncontracted function `flb_input_resume`
+      L19918 origin=flb_input_chunk.c:3021 [unsupported] indirect memory access is outside the resource projection
+      L19921 origin=flb_input_chunk.c:3027 [unsupported] indirect memory access is outside the resource projection
+  --- fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_set_up_down  status=Unknown
+      L19957 origin=flb_input_chunk.c:3108 [unsupported] call to uncontracted function `flb_input_chunk_total_size`
+      L19958 origin=flb_input_chunk.c:3111 [unsupported] indirect memory access is outside the resource projection
+      L19959 origin=flb_input_chunk.c:3113 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L19960 origin=flb_input_chunk.c:3114 [unsupported] unmodeled call, aggregate or indirect access in branch condition
+      L19962 origin=flb_input_chunk.c:3118 [unsupported] indirect memory access is outside the resource projection
+      L19963 origin=flb_input_chunk.c:3119 [unsupported] indirect memory access is outside the resource projection
+
+=== sibling-callee leaves (for the upheld non-declarations) ===
+  flb_input_chunk_set_up: fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_destroy L19716 origin=flb_input_chunk.c:2714 [unsupported] call to uncontracted function `flb_input_chunk_set_up`
+  flb_input_chunk_is_up: fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_destroy L19737 origin=flb_input_chunk.c:2748 [unsupported] call to uncontracted function `flb_input_chunk_is_up`
+  input_chunk_metadata_view: fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_get_direct_routes L19328 origin=flb_input_chunk.c:2230 [unsupported] call to uncontracted function `input_chunk_metadata_view`
+  input_chunk_metadata_view: fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_get_tag L20494 origin=flb_input_chunk.c:3905 [unsupported] call to uncontracted function `input_chunk_metadata_view`
+  input_chunk_metadata_view: fluent-bit-chunk/flb_input_chunk.c :: flb_input_chunk_has_direct_routes L19263 origin=flb_input_chunk.c:2156 [unsupported] call to uncontracted function `input_chunk_metadata_view`
+  flb_input_chunk_is_up: fluent-bit-chunk/flb_input_chunk.c :: input_chunk_append_raw L20103 origin=flb_input_chunk.c:3316 [unsupported] call to uncontracted function `flb_input_chunk_is_up`
+  sibling totals: {'flb_input_chunk_is_up': 2, 'flb_input_chunk_set_up': 1, 'input_chunk_metadata_view': 3}

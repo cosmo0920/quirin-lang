@@ -101,24 +101,30 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers after `C-GATEWAY-WAVE` (2026-09-13). The **corpus baseline is
-`docs/reports/c-gateway-wave/artifacts/`**. Its fresh BEFORE reproduces wave 30's
-`w4-recursive-summaries` diagnostic and chunk-contract archives byte for byte;
-the final five-artifact comparison, staged leaf attribution and gate are in
+Headline numbers after `W31-CORPUS-CONTRACTS-2` (2026-09-13). The **corpus
+baseline is `docs/reports/w31-corpus-contracts-2/artifacts/`** — wave 31's
+second arbiter, which lands the two size-sibling contracts wave 29 named and
+declined (`chunkio/chunk_sizes.qcore`, `fluent_bit/input_chunk_total_size.qcore`)
+and moves exactly five `unsupported` leaves, all attributed. Its fresh BEFORE
+reproduces `c-gateway-wave`'s own `diagnostics.json` and `chunk-contracts.json`
+byte for byte, which is what isolates that delta from the gateway change
+beneath it. `C-GATEWAY-WAVE`'s facts stand underneath: its BEFORE reproduced
+wave 30's `w4-recursive-summaries` archives byte for byte, and its staged leaf
+attribution, six new provisional leak rows, five function moves and gate are in
 `docs/reports/c-gateway-wave/`. All earlier archives remain frozen (constraint
 21), including `wave23-c-operations`, `aom-destroy-siblings`, `aom-binding-poison`,
-`gateway-c-location`, `w29-corpus-contracts` and `w4-recursive-summaries`.
-Diagnostics retain two coordinates: the presented original `file:line` and the
-internal preprocessed line used for pin, leaf and certificate identity
-(`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
+`gateway-c-location`, `w29-corpus-contracts`, `w4-recursive-summaries` and
+`c-gateway-wave`. Diagnostics retain two coordinates: the presented original
+`file:line` and the internal preprocessed line used for pin, leaf and
+certificate identity (`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions. 4,834 projected functions: **146 Safe / 85 provisional Unsafe / 4,603 Unknown**; four scalar counter helpers withdraw Safe → Unknown, and one constant-loop abstraction exposes a provisional repeated release (five function moves, all named in `c-gateway-wave`). `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272: six added, none withdrawn; constraint 7), `unknown_alias` **4,208**, `unsupported` **50,155**, `double_release` **1**. Provisional findings remain subject to the report's coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions at either wave-31 arbiter. 4,834 projected functions: **146 Safe / 85 provisional Unsafe / 4,603 Unknown**; at `C-GATEWAY-WAVE` four scalar counter helpers withdrew Safe → Unknown and one constant-loop abstraction exposed a provisional repeated release (five function moves, all named in that report), and `W31-CORPUS-CONTRACTS-2` moved **zero** functions and zero units. `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272 at `C-GATEWAY-WAVE`: six added, none withdrawn; constraint 7 — **unmoved** at the `W31-CORPUS-CONTRACTS-2` arbiter re-pin, as are `unknown_alias` **4,208** and `double_release` **1**). `unsupported` **50,150** (50,155 → 50,150 at wave 31's second arbiter: the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size`, decided by the two declared contracts, plus the one argument-expression refusal the second declaration retires at its chained-actual site, attributed leaf by leaf in `docs/reports/w31-corpus-contracts-2/README.md` §5; zero leaves added, two units changed). Provisional findings remain subject to the reports' coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
 | CT01–CT50 conformance | **43/50 mapped**, 7 unmapped; sanitized-native **7 of 43**; **proof 2 of 43** — CT01 (wave 29, `CT01-PROOF-LEG`) and CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
-| Contract corpus | **74 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`, deliberate; resource-v1 declarations 39 → 41, manifest-selected modules 18 → 19) |
+| Contract corpus | **76 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`; 74 → 76 at wave 31: `chunkio/chunk_sizes.qcore` and `fluent_bit/input_chunk_total_size.qcore`, each deliberate; resource-v1 declarations 39 → 41 → 43, manifest-selected modules 18 → 19 → 21) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | **4,484 workspace tests (0 failed, 8 ignored)** · 122 provider (carried; unchanged) · **200 Python** · **123 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/c-gateway-wave/gate.json`; full `--no-fail-fast` run on the final source outside the sandbox, with earlier sandbox failures and the separate pre-review green run retained in `pre-final-gates.json`) |
+| Merged gate | **4,484 workspace tests (0 failed, 8 ignored)** · 122 provider (carried; unchanged) · **200 Python** · **123 Lean audits** · both probes exit 0 · fmt/clippy clean (`docs/reports/w31-corpus-contracts-2/README.md` §6, re-measured at the wave-31 arbiter tip; the same figures `C-GATEWAY-WAVE` measured, reached under disclosed sibling-worktree load with none of constraint 16's five rows tripped. `C-GATEWAY-WAVE`'s own run, its sandbox failures and its separate pre-review green run stay in `docs/reports/c-gateway-wave/{gate.json,pre-final-gates.json}`) |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded

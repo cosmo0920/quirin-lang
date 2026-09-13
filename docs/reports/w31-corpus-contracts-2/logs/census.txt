@@ -1,0 +1,31 @@
+units: 185 -> 185
+units added: []
+units removed: []
+unit status before: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status after : {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+unit status moves: 0
+NEWLY SURFACED PROVISIONAL UNSAFE UNITS: 0
+unit reason_code moves: 0
+projected functions: 4834 -> 4834
+function status moves: 0
+corpus diagnostic counts:
+  double_release: 1 -> 1 (+0)
+  leak: 272 -> 272 (+0)
+  unknown_alias: 4208 -> 4208 (+0)
+  unsupported: 50155 -> 50150 (-5)
+units with diagnostic-count changes: 2
+  chunkio/cio_stream.c: {'unsupported': -1}
+  fluent-bit-chunk/flb_input_chunk.c: {'unsupported': -4}
+description inventory deltas:
+  unsupported / 'call to uncontracted function `cio_chunk_get_content_size`': 2 -> 0 (-2)
+  unsupported / 'call to uncontracted function `flb_input_chunk_total_size`': 2 -> 0 (-2)
+  unsupported / 'indirect memory access is outside the resource projection': 18556 -> 18555 (-1)
+leaf-level diff, per changed unit:
+  UNIT chunkio/cio_stream.c
+    -1 cio_stream_size_chunks_up L2280 unsupported: call to uncontracted function `cio_chunk_get_content_size`
+  UNIT fluent-bit-chunk/flb_input_chunk.c
+    -1 flb_input_chunk_map L18822 unsupported: call to uncontracted function `cio_chunk_get_content_size`
+    -1 flb_input_chunk_set_limits L19889 unsupported: call to uncontracted function `flb_input_chunk_total_size`
+    -1 flb_input_chunk_set_up_down L19957 unsupported: call to uncontracted function `flb_input_chunk_total_size`
+    -1 flb_input_chunk_set_up_down L19962 unsupported: indirect memory access is outside the resource projection
+leaves added: 0; leaves removed: 5

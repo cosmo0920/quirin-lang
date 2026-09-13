@@ -29,6 +29,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/chunk_residency.qcore", "cio_chunk_is_up", 3),
     ("chunkio/chunk_residency.qcore", "cio_chunk_up_force", 3),
     ("chunkio/chunk_residency.qcore", "cio_chunk_down", 3),
+    // Card W31-CORPUS-CONTRACTS-2: the corpus moves 74 -> 76 modules with this
+    // file and `fluent_bit/input_chunk_total_size.qcore`, and the resource-v1
+    // declaration count 41 -> 43. Deliberate; see
+    // `docs/reports/w31-corpus-contracts-2/README.md`. The body
+    // (`lib/chunkio/src/cio_chunk.c:315-334` at the pinned checkout) is a pure
+    // size query — an error-field reset and backend length-field reads — so
+    // `resource_borrowed(ch)` and `resource_return_none()` are the only
+    // faithful modes, the same reading `fluent_bit/input_chunk_sizes.qcore`
+    // recorded for its wrapper. This lands the ChunkIO-side module card
+    // W29-CORPUS-CONTRACTS' `W29-CONTENT-SIZE-UNDECLARED` asked for.
+    ("chunkio/chunk_sizes.qcore", "cio_chunk_get_content_size", 3),
     (
         "chunkio/constructor_failure_observation.qcore",
         "native_constructor_failure_observation",
@@ -310,6 +321,19 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "flb_input_chunk_get_real_size",
         3,
     ),
+    // Card W31-CORPUS-CONTRACTS-2: the aggregate size query over the input
+    // INSTANCE (`src/flb_input_chunk.c:2947-2955` at the pinned checkout): one
+    // cast field read, one call to the read-only ChunkIO walk
+    // `cio_stream_size_chunks_up` (`lib/chunkio/src/cio_stream.c:258-276`),
+    // one scalar return. `resource_borrowed(in)` / `resource_return_none()`
+    // on this module's own body reading — the residency-mutating siblings
+    // W29-SIZE-SIBLINGS-UNDECLARED also named stay undeclared. `size_t`
+    // spells `usize` under the LP64 declared-ABI projection.
+    (
+        "fluent_bit/input_chunk_total_size.qcore",
+        "flb_input_chunk_total_size",
+        3,
+    ),
     ("fluent_bit/logging.qcore", "flb_log_check", 3),
     // Card CONSTRUCTOR-RESIDUALS: the corpus moves 67 -> 68 modules with
     // `libc/errno.qcore`, and this module gains one declaration. Deliberate;
@@ -563,8 +587,13 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // measured payoff zero. 73 -> 74 by card W29-CORPUS-CONTRACTS' deliberate
     // addition of `fluent_bit/input_chunk_sizes.qcore`, whose two read-only
     // size queries decide the thirteen standing uncontracted-call refusals
-    // that named them inside the unit that defines them.
-    assert_eq!(sources.len(), 74, "unexpected contract corpus size");
+    // that named them inside the unit that defines them. 74 -> 76 by card
+    // W31-CORPUS-CONTRACTS-2's deliberate addition of
+    // `chunkio/chunk_sizes.qcore` and
+    // `fluent_bit/input_chunk_total_size.qcore`, the two size-sibling
+    // declarations W29's named non-declarations pointed at, each read against
+    // its own pinned body.
+    assert_eq!(sources.len(), 76, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

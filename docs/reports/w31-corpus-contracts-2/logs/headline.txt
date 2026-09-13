@@ -1,0 +1,30 @@
+== measure/runs/before
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 146, 'Unknown': 4603, 'Unsafe': 85}
+   diagnostics         : {'double_release': 1, 'leak': 272, 'unknown_alias': 4208, 'unsupported': 50155}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
+== measure/runs/after
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 146, 'Unknown': 4603, 'Unsafe': 85}
+   diagnostics         : {'double_release': 1, 'leak': 272, 'unknown_alias': 4208, 'unsupported': 50150}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
+== docs/reports/c-gateway-wave/artifacts/diagnostics.json.gz
+   units               : 185  {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+   projected functions : 4834  {'Safe': 146, 'Unknown': 4603, 'Unsafe': 85}
+   diagnostics         : {'double_release': 1, 'leak': 272, 'unknown_alias': 4208, 'unsupported': 50155}
+   chunkio             : {'Unknown': 11, 'Unsafe': 2}
+   cmetrics            : {'Unknown': 15, 'Unsafe': 16}
+   ctraces             : {'Safe': 1, 'Unknown': 13, 'Unsafe': 2, 'data_only': 1}
+   fluent-bit-chunk    : {'Unsafe': 1}
+   librdkafka          : {'Unknown': 81, 'Unsafe': 10, 'data_only': 3}
+   monkey-libevent     : {'Safe': 1, 'Unknown': 17, 'Unsafe': 11}
