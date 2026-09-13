@@ -985,6 +985,46 @@ pointer is the card that established it; read it before deviating.
     shape). Zero new codes: `Q302` condition widenings and the one stated
     `Q600` narrowing, in §L21. `region-credit-joins`, `region-joins-duties`,
     `region-joins-loan`.
+15n. **The F02 trace boundary refuses a range write lease, and refusing is the
+    measured answer — do not turn it into a drop.** `reference_trace` crosses
+    from the reference run's observation alphabet
+    (`qcore_core::task_execution::TaskEvent`) into the F02 observable alphabet
+    (`ObservedEvent`). Card `CT03-PROOF-ALPHABET` grew the observable side by
+    the T05 Buffer write and proved that conservative; card `WRITE-LEND-TASKS`
+    added two range-write-lease constructors to the observation side, and they
+    stay **outside** the observable alphabet. `TRACE-ALPHABET-LEASE-BOUNDARY`
+    (wave 32) discharged the residual that recorded the arm as an unproven,
+    unexercised integration-time resolution. Three facts must survive
+    refactors. **First, the arm is reachable today** — card
+    `WRITE-LEND-TASKS`' own admitted flagship produces a reference run whose
+    third event is a `BufferLeased`, so this is a live path and not a
+    defensive one; `compiler/tests/trace_alphabet_lease_boundary.rs` drives it
+    and every one of its five tests was shown non-vacuous by mutating the arm.
+    **Second, dropping is an *admitting* mistake, not a lossy one**: the
+    flagship's lease-free remainder is a trace `AdmittedCausalOrder::declare`
+    **accepts**, as a causal order for a run in which two workers held
+    outstanding write authority the order never mentions — measured, and proved
+    as `QCore.TaskTraceLeaseBoundary.the_dropped_encoding_would_have_been_admitted`.
+    A `filter` in place of the `return Err` therefore moves in the direction
+    invariant 1 forbids. **Third, the index a refusal carries is the offending
+    event's own position and the first such** — proved
+    (`refusal_points_at_a_refused_event`, `refusal_is_the_first`), so the Rust
+    pin `index: 2` is an instance rather than a coincidence; and on success the
+    encoding is positionwise, which is the formal content of "never silently
+    dropped" (`encoding_is_positionwise`, `encoding_preserves_length`). The two
+    other construction routes into `AdmittedCausalOrder` cannot carry a lease
+    at all: `parse_observed_trace` has no tag for the rendered lease lines, and
+    `declare` takes `Vec<ObservedEvent>`, which has no lease constructor. What
+    is **not** decided is the forward question
+    (`TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`): whether the observable alphabet
+    should grow to carry leases once `WRITE-LEND-TASKS-EXERCISE` makes a worker
+    exercise its authority. Growing it takes **CT03's method** — a
+    conservativity theorem plus a rule shown non-vacuous in both directions —
+    and that second half is unavailable while no worker-side range write exists
+    to admit or refuse. Until then, write-lend programs sit outside F02
+    relational comparison by construction, their native evidence being
+    sanitizer and allocation-count rather than a trace relation.
+    `trace-alphabet-lease-boundary`, `ct03-proof-alphabet`, `write-lend-tasks`.
 
 **Providers, packages and limits**
 
