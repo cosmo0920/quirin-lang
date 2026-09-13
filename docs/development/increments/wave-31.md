@@ -53,6 +53,84 @@ outcomes remain outside the alphabet. CT mapping is unmoved at 42/50 (proof
 conformance remains false. Evidence:
 `docs/reports/ct03-proof-alphabet/README.md`.
 
+Wave 31, card `CT-WIRE-LANE-3` (2026-09-13): the CT lane taking the two
+decisions waves 29–30 made ready. **CT25 mapped, 42/50 → 43/50** — *"Cleanup
+destroys owner after joins and loan expiry"*, expected Accept, the
+`composed_epoch` route's second accepted case and its first **adopting** one,
+mapped exactly as `docs/reports/region-joins-loan/README.md` §7 prescribed:
+the fixtures moved from `epoch_credit/CT25_LOAN/` into
+`compiler/tests/fixtures/ct/CT25/` with `region_joins_loan.rs` repointed (11
+tests green on the moved bytes), one new refusing control
+(`before_join.qcore`, `["Q600"]`) materializing the in-memory placement
+mutation, and the `epoch_credit_split` verdict mode widened for the adopting
+shape — the pinned evidence gains the region's **released duty list**
+(`["owner"]`, compared wholesale against the driver's re-derived publication)
+and the **derived capture list** (`[["read"]]`, against both the ledger and
+the declared rows), and the duty premise splits in two (no released owner ⇒
+CT22's duty-free no-`Acquire` assertion byte-for-byte; released owners ⇒
+exactly one published body `Acquire` per released owner, the adoptions).
+Every word of the scenario is a checked fact of an unedited model, stated
+rule-by-rule in the semantic profile; the case's emission/native stages read
+`unassessed` beside CT22's (`CT-COMPOSED-NATIVE` unchanged), sanitized-native
+stays 7 of 43 and proof 2 of 43. **CT24 examined and withdrawn** with the
+measurement published (the wave-26 mechanism): on the composed route — the
+only route with an executed cleanup-destroy — a region before the join is
+refused for its placement whatever its duties (adopting: the ledger's own
+`LoanOutstanding` / a lend of the destroyed owner; duty-free: still refused),
+so no control can isolate the destroy and the wave-9 attribution rule fails;
+on the task route the wave-30 attributed `ScopeBusy` message names the
+construct but the route executes no destroy at scope exit, and mapping there
+would give CT24's "cleanup" a different referent from CT25's in one scenario
+pair. The constraint-25 trap was **measured, not assumed**
+(`measure/ct24_constraint25_probe.py`): mapping CT24 moves the derived
+reasons map's keys to `["CT47"]` and reddens `check_matrix_ct_reasons`
+against a matrix this lane did not regenerate — published in the record so a
+future lane inherits a measurement. No retirement is declared for CT25,
+correctly: its label was archive-held (no lane record ever carried a row), so
+mapping removes it from the tally with nothing to retire, like CT21/CT06.
+Zero new Q codes, zero reserved words, no crate-source change;
+`EVIDENCE_FILES` 16 → 17 in both lists plus `derived_from`;
+`acceptance.json` regenerated through `--write` with the hand-kept note's
+stale "proof 0 of 42" refreshed to 2 of 43 and the CT24 reason re-measured;
+Python pins 8 → 7 updated, suite **200 OK** (193 at the wave-30 close plus
+the post-close `check_lean_audits` hardening's 7). Report and stage-evidence
+record: `docs/reports/ct-wire-lane-3/`.
+
+Wave 31, card `CT42-PROTOCOL-CELL` (2026-09-13): the exploratory
+shared-protocol-cell card, closed as **survey plus the bounded F4 slice**
+rather than withdrawal. The survey found the cell notion already real at
+model level, *declared*: `disjoint_footprint` carries the identity
+(`Descriptor { descriptor, cell }`), the refusal (`SharedProtocolCell`,
+`Q664`) and the `DeclaredProtocolCellIdentity` premise, while
+`source.socket.v1`'s completed connection is the one source shape with two
+descriptor-valued names over one shared logical state — its cross-name
+refusals pre-exist, but the shared state had no identity (mutual `peer`
+references). What landed is the derivation that connects them:
+`qcore_core::socket_footprint` derives protocol cells from an **admitted**
+socket program (fail-closed — a refused program derives nothing; the
+`connect` target read from the checker's own `resolve_addresses`, descriptors
+numbered identically to the certificate's), giving each completed connection
+one cell with two custodians and every other socket a singleton, then
+projects one `DeclareDescriptorAlias` per socket onto the **unedited**
+footprint checker, where the pair is refused at the existing `Q664` and the
+listener decides disjoint. Zero new codes, zero reserved words, no emission,
+checker or route-selection file touched (byte-identity structural). Lean:
+`QCore.SocketFootprint` (freshness invariant, pairing theorems, composition
+with `decideDisjoint`; audits 121 → **122**, `propext`/`Quot.sound` only).
+Deliberate boundaries, each named in the report: a datagram pair is not a
+cell (`CT42-CELL-UDP-QUEUE`), the pending phase stays the transport
+checker's (`CT42-CELL-PENDING-PHASE`), no dup-like source form exists
+(`CT42-CELL-DUP-SOURCE`), the derived-premise narrowing needs a T09 edit
+(`CT42-CELL-DERIVED-PREMISE`). CT42 stays **unmapped** — manifest, matrix
+and CT fixtures untouched; the wave-17 C-twin blocker
+(`CT-CTWIN-DESCRIPTOR`) stands; the readiness statement and the mapping
+lane's two candidate arms are `docs/reports/ct42-protocol-cell/README.md`
+§5. Card gate: 4,473 workspace tests (0 failed, 8 ignored,
+`--no-fail-fast`), fmt/clippy clean, both probes exit 0, `Passed 122 Lean
+audits`, and the Python row 199 OK of 200 with the one failure being the
+disclosed lean-audit matrix tripwire (the committed matrix pins 121 audits;
+regeneration is the integrator's, constraint 25).
+
 C gateway scalar writes, expression frames and conditional custody (2026-09-13):
 `C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and
 bounded `AOM-POISON-CONDITION-FRAME` repairs, and an acyclic conditional-identity

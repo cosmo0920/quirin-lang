@@ -706,8 +706,8 @@ class SummaryTest(unittest.TestCase):
     def test_a_measured_label_wins_over_the_archive_and_says_so(self):
         """The resolution rule, on the real tree.
 
-        Three of the eight unmapped cases carry a lane's measured bucket; the
-        other five still read card T00's 2026-09-07 analysis, and the published
+        Three of the seven unmapped cases carry a lane's measured bucket; the
+        other four still read card T00's 2026-09-07 analysis, and the published
         source is what makes the difference legible.
         """
         labels = summary.unmapped_labels(ROOT)
@@ -740,6 +740,12 @@ class SummaryTest(unittest.TestCase):
         # mapping it simply removed it from the tally — no lane row existed to
         # retire, exactly as CT06's archived row left in wave 26.
         self.assertNotIn("CT21", labels)
+        # CT25 took the same archive-held exit one wave later (card
+        # CT-WIRE-LANE-3, wave 31): its `joins now exist; loan expiry does not`
+        # reason only ever lived in T00's archive and in the wave-29/30
+        # capability reports' prose, never in a lane record, so the mapping
+        # removed it from the tally with nothing to retire.
+        self.assertNotIn("CT25", labels)
         self.assertEqual(labels["CT46"]["label"], "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)")
         self.assertEqual(
             labels["CT46"]["archived_label"], "blocked-on-unimplemented-syntax (no mutex value)"
@@ -927,7 +933,7 @@ class SummaryTest(unittest.TestCase):
             counts = summary.unmapped_bucket_counts(scratch.directory)
             self.assertIn("a relabelled bucket", counts)
             self.assertNotIn("blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)", counts)
-            self.assertEqual(sum(counts.values()), 8)
+            self.assertEqual(sum(counts.values()), 7)
             self.assertIn(
                 "acceptance.json `unmapped_bucket_counts` is not what the manifest derives",
                 summary.check_acceptance(scratch.directory),
