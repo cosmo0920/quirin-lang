@@ -1,5 +1,5 @@
-diagnostics      raw IDENTICAL   canonical IDENTICAL   8662337d256d0f7a / 8662337d256d0f7a
-source           raw differs   canonical differs   943debc4f1a1b06d / 7961a915a8fc85d1
+diagnostics      raw IDENTICAL   canonical IDENTICAL   4fea48c688ff0aa9 / 4fea48c688ff0aa9
+source           raw differs   canonical differs   ae38f6c93dfbe341 / e42fe7a9c40af1ca
 chunk-contracts  raw IDENTICAL   canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
-source-effects   raw differs   canonical differs   b0025a6492d384c6 / 3027d45e9683d440
-contracts        raw differs   canonical differs   cb9c0670ac532027 / d98586c70ede70c4
+source-effects   raw differs   canonical differs   0bda08ad86da01b1 / e3fb5b62ece6a8a3
+contracts        raw differs   canonical differs   c37f823af0dfd5ef / 10183bf06e75bf94

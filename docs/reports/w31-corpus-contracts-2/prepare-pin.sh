@@ -5,7 +5,7 @@
 # copied into <source>/build/compile_commands.json, which the preparation
 # script does not create and which the pinned route reads.
 set -eu
-WT=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a56d2b9c03bea3365
+WT=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afee9ca14eea086a7
 PIN="$WT/build/cycle19/clang-pin"
 cd "$WT"
 python3 -B scripts/prepare_cycle19_clang_audit.py \

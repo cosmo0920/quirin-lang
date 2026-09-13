@@ -31,7 +31,7 @@ document = {
     "runs executed the same binary; the only input difference is the contract "
     "manifest and the two modules it selects. The BEFORE set is not archived "
     "because its diagnostics and chunk-contracts are byte-identical to "
-    "docs/reports/w4-recursive-summaries/artifacts, which is not touched, and "
+    "docs/reports/c-gateway-wave/artifacts, which is not touched, and "
     "the run-to-run identity of source, source-effects and chunk-contracts is "
     "measured in logs/byte-identity-before-to-after.txt.",
     "binaries": {},

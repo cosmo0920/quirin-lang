@@ -1,9 +1,12 @@
 """Uncompressed SHA-256 of each archived baseline artifact against the produced run.
 
 Card W31-CORPUS-CONTRACTS-2 (wave 31). The authoritative baseline is card
-W4-RECURSIVE-SUMMARIES' archive — the run the tip's leak pin of 266, its
-`unsupported` 49,760 and its 74-module contract corpus describe. The chain
-beneath it — `docs/reports/w29-corpus-contracts/`,
+C-GATEWAY-WAVE's archive — the run the tip's leak pin of 272, `unknown_alias`
+4,208, `unsupported` 50,155, `double_release` 1 and 74-module contract corpus
+describe. It supersedes the wave-30 `w4-recursive-summaries` archive this
+card's interrupted first attempt targeted; the gateway change landed while
+this card was down. The chain beneath it —
+`docs/reports/w4-recursive-summaries/`, `docs/reports/w29-corpus-contracts/`,
 `docs/reports/gateway-c-location/`, `docs/reports/aom-binding-poison/`,
 `docs/reports/aom-destroy-siblings/`, `docs/reports/wave23-c-operations/` —
 stays frozen and is not touched (standing constraint 21).
@@ -15,8 +18,10 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-ARCHIVE = ROOT / "docs/reports/w4-recursive-summaries/artifacts"
+ARCHIVE = ROOT / "docs/reports/c-gateway-wave/artifacts"
 RUN = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "measure/runs/before"
+if len(sys.argv) > 2:
+    ARCHIVE = pathlib.Path(sys.argv[2])
 
 PAIRS = {
     "diagnostics": "resource-diagnostics.json",

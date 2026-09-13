@@ -11,7 +11,7 @@ measured: measure/runs/after
     sources.added: ['qcore/chunkio/chunk_sizes.qcore', 'qcore/fluent_bit/input_chunk_total_size.qcore']
 --- diagnostics
     units: 185 -> 185 (+0 -0 ~2)
-    envelope: {"diagnostic_counts": {"after": "{'leak': 266, 'unknown_alias': 4344, 'unsupported': 49755}", "before": "{'leak': 266, 'unknown_alias': 4344, 'unsupported': 49760}"}}
+    envelope: {"diagnostic_counts": {"after": "{'double_release': 1, 'leak': 272, 'unknown_alias': 4208, 'unsupported': 50150}", "before": "{'double_release': 1, 'leak': 272, 'unknown_alias': 4208, 'unsupported': 50155}"}}
 --- source
 --- source-effects
     results: 96 -> 96 (+0 -0 ~0)

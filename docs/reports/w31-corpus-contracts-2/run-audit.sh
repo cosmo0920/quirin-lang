@@ -13,7 +13,7 @@
 set -eu
 OUT="$1"
 BIN="$2"
-WT=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a56d2b9c03bea3365
+WT=/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-afee9ca14eea086a7
 PIN="$WT/build/cycle19/clang-pin"
 mkdir -p "$WT/measure/runs/$OUT"
 cd "$WT"

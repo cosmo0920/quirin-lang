@@ -6,6 +6,63 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+W31-CORPUS-CONTRACTS-2 (2026-09-13, wave 31): the wave's second arbiter card,
+on W29-CORPUS-CONTRACTS' exact pattern, taking that card's two named
+non-declarations on their own stated terms. `W29-CONTENT-SIZE-UNDECLARED`
+(whose stated obstruction was module scope, not semantics) is **resolved** by
+`contract/qcore/chunkio/chunk_sizes.qcore` — `cio_chunk_get_content_size`,
+read at the pinned checkout (`lib/chunkio/src/cio_chunk.c:315-334`: an
+error-field reset and backend length-field reads, nothing allocated, freed or
+stored), declared borrowed with a custody-free `isize` result.
+`W29-SIZE-SIBLINGS-UNDECLARED` is resolved for **exactly one** sibling, the
+one whose body mutates no residency state:
+`contract/qcore/fluent_bit/input_chunk_total_size.qcore` —
+`flb_input_chunk_total_size` (`src/flb_input_chunk.c:2947-2955`: one cast
+field read, one call to the read-only walk `cio_stream_size_chunks_up`, one
+scalar `usize` return) — and **upheld** for the remainder with readings and
+measurements (`W31-SIZE-SIBLINGS-REMAINDER`). The card was interrupted
+mid-run by a model usage limit and its **entire measurement was redone**
+after the user's own `C-GATEWAY-WAVE` moved the corpus baseline: the
+prediction was recomputed against `docs/reports/c-gateway-wave/artifacts/`
+and committed before any AFTER run existed, and that recomputation is itself
+a finding — the gateway change moved the corpus totals substantially
+(leak 266 → 272, `unknown_alias` 4,344 → 4,208, `unsupported` 49,760 →
+50,155, five function status moves) and moved **nothing** in this card's
+candidate neighbourhood, the four candidate leaves, all 127 leaf lines of
+their four carrying functions and all six sibling-callee leaves being
+byte-identical between the two baselines, so the two predictions agree. The
+arbiter runs, on a fresh Clang pin: BEFORE byte-identical to
+`docs/reports/c-gateway-wave/artifacts/` in `diagnostics.json` and
+`chunk-contracts.json` (raw and canonical, SHA-256 `4fea48c6…` /
+`c4f438e4…`), which is what proves the AFTER delta isolates this card's own
+change; AFTER moves **five** `unsupported` leaves and nothing else — the four
+uncontracted-call leaves naming the two declared callees
+(`cio_stream_size_chunks_up` L2280, `flb_input_chunk_map` L18822,
+`flb_input_chunk_set_limits` L19889, `flb_input_chunk_set_up_down` L19957)
+plus one **attributed deviation from the committed prediction, in the
+deciding direction**: L19962, the chained-actual site
+`flb_input_chunk_total_size(ic->in)` at `:3118`, whose argument-expression
+refusal retires because the declared contract lets the
+ABI-TYPEDEF-ADDRESS-OF-MEMBER admission resolve the member actual — the
+recomputed prediction had again bounded the move at −4 to −2 and declined to
+promote the first attempt's observation of that leaf to an expectation, so
+the same mechanism is now measured twice under two different analyses.
+`unsupported` 50,155 → **50,150**; leak **272 unmoved** (this card adds no
+move to constraint 7's history), `unknown_alias` **4,208 unmoved**,
+`double_release` **1 unmoved**; zero unit and zero function status moves,
+zero reason-code moves, zero leaves added, zero `SummaryConflict`, nothing
+promoted; three of five artifacts byte-identical between the two runs, both
+runs one binary (`959a487f…`), exit 0, 185 units, zero gateway failures,
+per-scope lines byte-identical. Contract corpus **74 → 76 modules**,
+manifest-selected **19 → 21**, v1 declarations **41 → 43**, each pin updated
+deliberately. No Rust source change apart from an inherited census-walker
+hygiene fix (the `SOCKET-INET-ADDRESSES` census now skips sibling checkouts
+carrying their own `.git` entry, unweakened over one tree), no new Q code, no
+Lean module (declarative inputs only, the W29 precedent), no provider change.
+Gate: see `docs/reports/w31-corpus-contracts-2/README.md` §6. Baseline
+proposed to move to `docs/reports/w31-corpus-contracts-2/artifacts/`, every
+predecessor frozen.
+
 C gateway scalar writes, expression frames and conditional custody (2026-09-13):
 `C-GATEWAY-WAVE` implements the selected `AOM-POISON-NOOP-INCREMENT` and
 bounded `AOM-POISON-CONDITION-FRAME` repairs, and an acyclic conditional-identity
