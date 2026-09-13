@@ -87,6 +87,7 @@ import QCore.Compiler
 import QCore.Concurrency
 import QCore.LifetimeCorrespondence
 import QCore.MutexInvariant
+import QCore.MutexShareCross
 import QCore.DisjointFootprint
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
