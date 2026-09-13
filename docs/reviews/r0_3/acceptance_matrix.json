@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 40
+  "named_followups": 42
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1023,13 +1023,14 @@
    "docs/reports/ct07-write-remap/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
    "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
-   "docs/reports/ct-composed-native/ct_stage_evidence.json"
+   "docs/reports/ct-composed-native/ct_stage_evidence.json",
+   "docs/reports/ct-wire-lane-4/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 43,
-   "unmapped": 7
+   "mapped": 45,
+   "unmapped": 5
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1158,73 +1159,73 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 43
+    "executed": 45
    },
    "elaborate": {
-    "executed": 40,
+    "executed": 42,
     "not_applicable": 3
    },
    "task_lowering": {
-    "executed": 20,
+    "executed": 22,
     "not_applicable": 23
    },
    "task_ledger_check": {
-    "executed": 19,
+    "executed": 21,
     "not_applicable": 24
    },
    "mutex_lowering": {
     "executed": 10,
-    "not_applicable": 33
+    "not_applicable": 35
    },
    "mutex_invariant_check": {
     "executed": 10,
-    "not_applicable": 33
+    "not_applicable": 35
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 36
+    "not_applicable": 38
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 36
+    "not_applicable": 38
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 41
+    "not_applicable": 43
    },
    "sequential_reference_execution": {
     "executed": 2,
-    "not_applicable": 41
+    "not_applicable": 43
    },
    "task_reference_execution": {
     "executed": 12,
-    "not_applicable": 31
+    "not_applicable": 33
    },
    "mutex_reference_execution": {
     "executed": 2,
-    "not_applicable": 41
+    "not_applicable": 43
    },
    "c_emission": {
     "executed": 18,
-    "not_applicable": 25
+    "not_applicable": 27
    },
    "native_execution": {
     "executed": 18,
-    "not_applicable": 25
+    "not_applicable": 27
    },
    "native_sanitized": {
     "executed": 9,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 22
+    "unassessed": 24
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 40
+    "not_applicable": 42
    },
    "proof": {
     "executed": 3,
-    "unassessed": 40
+    "unassessed": 42
    }
   },
   "depth_profile": {
@@ -1235,7 +1236,7 @@
    "native_execution": 7,
    "native_sanitized": 8,
    "proof": 3,
-   "task_ledger_check": 5,
+   "task_ledger_check": 7,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1278,14 +1279,16 @@
    "CT39": "epoch_bound_check",
    "CT40": "legacy_c_twin",
    "CT43": "legacy_c_twin",
+   "CT44": "task_ledger_check",
    "CT45": "legacy_c_twin",
+   "CT47": "task_ledger_check",
    "CT48": "mutex_invariant_check",
    "CT49": "native_sanitized",
    "CT50": "native_execution"
   },
   "observation_counts": {
    "c_emission": 34,
-   "elaborate": 40,
+   "elaborate": 42,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
@@ -1294,12 +1297,12 @@
    "mutex_reference_execution": 2,
    "native_execution": 49,
    "native_sanitized": 30,
-   "parse": 43,
+   "parse": 45,
    "proof": 3,
    "sequential_reference_execution": 2,
    "sequential_whole_program": 2,
-   "task_ledger_check": 19,
-   "task_lowering": 20,
+   "task_ledger_check": 21,
+   "task_lowering": 22,
    "task_reference_execution": 27
   },
   "ct_rows": [
@@ -5336,67 +5339,83 @@
    },
    {
     "id": "CT44",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject",
-    "current_bucket": "ambiguous",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "ambiguous",
-    "blocker": "the available rejection is about the handle, not about a capture whose environment expires",
-    "bucket_changed_since_batch2": false,
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT44/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
+    "semantic_profile": "ScopedReadLoansV1 (cards T05 and WRITE-LEND-TASKS) over the checked scoped-task ledger. CT44's scenario is `Stack capture expires or environment moves before join`, expected Reject, and the case is REFUSED with each word carried by a named rule of an unedited model except one, stated as a boundary below. CAPTURE by the checked task IR's own loan: the parent lends `read buffer share FULL` at the spawn and the refusal names the resource, the outstanding amount and the BORROWING TASK -- LoanOutstanding { resource: 1, outstanding: 1024, borrowers: [2] } -- which is the capture, not the handle, and is card T00's archived blocker for this case (`the available rejection is about the handle, not about a capture whose environment expires`) measured obsolete on this tree. EXPIRES by the written `drop buffer;` statement, whose executed meaning on this route is a real destruction: the identical program with that statement after the join is ADMITTED (drop_after_join.qcore, ScopedReadLoansV1). BEFORE JOIN because that relative position is exactly what moves the verdict, pinned in both directions -- the same destruction in the same position with a scalar capture instead of the buffer's share also checks (scalar_capture_drop.qcore, ScopedOwnedTasksV1), so the refusal is keyed to the capture and not to destroying while a child runs, nor to the position alone. OR ENVIRONMENT MOVES by the scenario's second disjunct, which has the source form card T00 recorded it lacked (`captures are copied into a checked environment, so environment moves before join has no source form` -- true at T00's checkpoint, where share captures did not lower at all, and false here): `move buffer` handing custody to a second worker while the first share is out, refused at the same Q600 LoanOutstanding, attributed to the moving statement (move_before_join.qcore). The frame's own expiry is pinned as a fourth control rather than as the case -- a bare return out of the thread scope with the share out, refused at Q600 ScopeBusy whose message names the frame -- because card CT-WIRE-LANE-3 (wave 31) recorded that the task route executes no destroy at scope exit, so the case is written instead on the statement whose executed meaning an admitting control demonstrates. BOUNDARY: the captured storage is a HEAP buffer bound to a parent-frame local; this language has no stack-allocated capturable resource, so `stack` has NO REFERENT and the case is mapped on the frame-owned-resource shape, on the CT06 precedent for an inexpressible vehicle. What carries the hazard is that `thread scope` IS the scoped-thread construct and the ledger refuses exactly the expiry or transfer of the captured resource before the join. No native, sanitizer or proof evidence is claimed: the fixture is a refusal that reaches no backend."
    },
    {
     "id": "CT45",
@@ -5555,67 +5574,83 @@
    },
    {
     "id": "CT47",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Reject automatic cross-thread acceptance",
-    "current_bucket": "DECIDABLE-NOW (coarser reason)",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "DECIDABLE-NOW (coarser reason)",
-    "blocker": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
-    "bucket_changed_since_batch2": true,
+    "route": "task",
+    "harness_verdict_mode": "reject",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT47/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
+    "semantic_profile": "The transferability judgment (qcore_core::transfer, cards CT46-SENDSYNC and CT47-COPY-CAPTURE) over ScopedOwnedTasksV1's checked spawn boundary. CT47's scenario is `Raw pointer is Copy but no transfer/share contract exists`, expected `Reject automatic cross-thread acceptance`, and the case is REFUSED with each word carried by a named rule of an unedited model except one, stated as a boundary below. BUT NO TRANSFER/SHARE CONTRACT EXISTS by the judgment itself: the capture `spawn s reader(copy buffer)` is refused at Q600, attributed to the capture span at the crossing construct, with a message that names the missing contract and enumerates the three this kind does carry (`move`, `read PLACE share N`, `lend PLACE LOW..HIGH`). IS COPY at the MODE level: `copy` is this route's bit-duplication mode and the judgment classifies `own<Buffer>` as SENDABLE, so the refusal is for the mode and not a vacuous `this kind never crosses` -- the audited theorem QCore.Transferability.copyOfTheOwnedBufferIsRefusedForItsMode pins exactly that cell, and theBoundaryIsDecidedExactlyOnce pins that refusal and admission partition the whole 13 x 4 x 13 boundary matrix. REJECT AUTOMATIC ACCEPTANCE in two measured halves: the explicit request is refused by the judgment (the case), and the automatic form is not spellable at all -- a capture with no declared mode does not parse (Q000, the grammar, byte-identical to the wave-26 measurement), pinned as modeless.qcore. The attribution is complete rather than illustrative: all three contracts the message enumerates are supplied by accepted controls (move_transfer.qcore ScopedOwnedTasksV1, read_share.qcore ScopedReadSharesV1, write_lease.qcore ScopedWriteLeasesV1) and every one of them admits the program. BOUNDARIES: this language has no raw pointer type -- DeclaredTypeTag::Pointer is Unmodeled and a declared pointer parameter refuses long before a capture is considered -- so `raw pointer` has NO REFERENT and the bit-copy of an owned handle is the nearest expressible shape (the CT06 precedent, whose `same pointer` scenario is mapped on a {ptr, len} view with `pointer values the language gives no type remain outside this route` published in its own profile). Relatedly, no QCore type is both freely duplicable and resource-bearing, because resource kinds are linear, so the dangerous COMBINATION the scenario names is prevented by the type system and this fixture demonstrates the rule at the boundary rather than the combination itself. Before card CT47-COPY-CAPTURE (wave 29) this same shape fell through to the C backend's Q500 executable-subset catch-all, which is why the wave-26 CT lane measured it and declined to map. No native, sanitizer or proof evidence is claimed for this artifact: the fixture is a refusal that reaches no backend, and the Lean theorems prove the model's judgment rather than this case's fixture (T00.7 stays open; proof stays 3 of 45)."
    },
    {
     "id": "CT48",
@@ -5941,22 +5976,17 @@
    "blocked-on-unimplemented-syntax": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 2,
-   "ambiguous": 1,
-   "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1,
-   "DECIDABLE-NOW (coarser reason)": 1
+   "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1
   },
   "unmapped_label_sources": {
    "CT10": "t00-archive",
    "CT24": "t00-archive",
    "CT41": "docs/reports/wave17-ct40/ct_stage_evidence.json",
    "CT42": "docs/reports/wave17-ct40/ct_stage_evidence.json",
-   "CT44": "t00-archive",
-   "CT46": "docs/reports/wave13-ct34/ct_stage_evidence.json",
-   "CT47": "t00-archive"
+   "CT46": "docs/reports/wave13-ct34/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [
-   "CT24",
-   "CT47"
+   "CT24"
   ],
   "newly_decidable_not_mapped_reasons": {
    "_derivation": "derived by docs/reports/remaining-d02/build_matrix.py through scripts/ct_stage_summary.py::newly_decidable_reasons (card GEN-CTREASONS, follow-on D02-GEN-CTREASONS): one row per id in newly_decidable_not_mapped, carrying that case's resolved bucket label and reason — the newest CT lane record that measured it, else card T00's frozen archive — and the record that decided them. A hand edit here is overwritten on the next regeneration, and scripts/ct_stage_summary.py --check refuses a committed row the derivation cannot produce as well as a derived row the file does not carry. The carry-forward step docs/reports/wave16-corpus/readd_ct_reasons.py is retired by this key existing: its own assertion refuses to run once the generator emits it.",
@@ -5964,12 +5994,6 @@
     "label": "DECIDABLE-NOW (with a distinguishing fixture)",
     "label_source": "t00-archive",
     "reason": "resolved: joins exist, and scope-exit cleanup is a distinct mechanism from an explicit drop",
-    "measured_by": "t00-archive"
-   },
-   "CT47": {
-    "label": "DECIDABLE-NOW (coarser reason)",
-    "label_source": "t00-archive",
-    "reason": "resolved: a real cross-thread boundary now exists and refuses a raw pointer",
     "measured_by": "t00-archive"
    }
   },
@@ -6093,7 +6117,7 @@
   "workspace_tests": 4511,
   "provider_tests": 122,
   "python_evidence_validator_tests": 200,
-  "lean_audits": 126,
+  "lean_audits": 127,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6160,6 +6184,7 @@
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMutexInvariant.lean",
+   "AuditMutexShareCross.lean",
    "AuditNativeLibrary.lean",
    "AuditNativeLibraryContract.lean",
    "AuditNativeLibraryHeader.lean",
@@ -6228,7 +6253,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave31-close/gate.json)"
  },
  "named_followups": [
   {
@@ -6464,6 +6489,20 @@
    "title": "The recurring three-file compaction is on cadence; residuals from the third pass",
    "why": "The cadence rule in CLAUDE.md compacts AGENTS.md, CLAUDE.md and README.md every 2-3 waves. DOCS-COMPACT (wave 16) and DOCS-COMPACT-2 (wave 23) are the precedents; DOCS-COMPACT-3 ran after wave 26 - three waves on, the cadence honoured - and records the NEXT PASS AS DUE AROUND WAVE 29. The load-bearing check is the standing-constraint inventory, verified MECHANICALLY rather than by reading: 39 entries before, 39 after, zero dropped, zero added, ZERO RENUMBERED, with 37 bodies byte-identical after whitespace normalisation and the two reworded ones (constraint 7's leak narrative, constraint 14's keyword ledger) argued clause by clause; 6 hard invariants identical; 87 evidence pointers in and 87 out; 93 diagnostic codes in and 94 out, none lost and Q088 gained by becoming individually searchable. Renumbering was ruled out TWICE, once by the inventory and once by a census finding six Rust files that cite AGENTS.md constraints BY NUMBER. AGENTS.md gained 10 lines while LOSING 796 bytes, which is the honest shape of the pass - constraint 14 became a per-card ledger, more lines and far less re-reading - and constraints 15e-15i were read line by line and DELIBERATELY NOT COMPACTED, because nearly every sentence is a rule, a 'do not' or a named residual whose only other home is a card report. README.md was REFRESHED rather than compacted, to the full route surface it had fallen behind (std.socket including declared addresses, std.http, the string composition band, the counted loop and its checked-never-trusted unroll licence, the reactor composition, and the CT row in the ledger's own vocabulary). ONE DRIFT WAS CORRECTED: the entry points listed the configured-audit command twice, once wrongly as `qcore-audit CONFIG.json`; crates/qcore-audit/Cargo.toml declares the binary `quirin-audit`, and qcore-audit is the PACKAGE AND LIBRARY name, unchanged by the Quirin rename - a documentation drift, not a rename. Every other headline number was re-read from its source and AGREED with what the wave-26 close set. New: DOCS-COMPACT-3-WORKTREE-SUBMODULE - in a fresh worktree with third_party/libevent uninitialised, profile_loader's pin check reports the SUPERPROJECT's HEAD as the submodule's `actual` revision, so the failure reads as a pin violation by whatever commit is at HEAD (here, the card's own documentation commit). The pin is intact and the test is correct to fail; only the message misleads, and a one-line 'is the submodule initialised?' precondition would turn a scary diagnostic into an accurate one. Not fixed by a card that touches no test, and filed for a separate session. Carried: DOCS-COMPACT-2-W4-DESIGN-POINTER (see LOADER-ABI-O) and the observation that AGENTS.md is AT ITS FLOOR for this method - three passes in, the remaining large entries are rule text whose only other home is their card reports, so a fourth pass should expect to find its material in whatever waves 27-29 append and should NOT cut to hit a number. The examples spelling rule this card also carried is in EXAMPLES-SUITE-O, with its one open case EXAMPLES-STYLE-SLICE-FANOUT.",
    "source": "docs/reports/docs-compact-3/README.md"
+  },
+  {
+   "id": "D02-DIMENSIONS-FOLLOWUP-COUNT",
+   "title": "A hand edit to a carried matrix section can leave the derived count beside it stale",
+   "why": "Measured by card CT-WIRE-LANE-4 (wave 32) while taking constraint 25's clobber question seriously rather than assuming it. The committed matrix's dimensions.named_followups read 39 against 40 rows actually present in the carried named_followups section: commit 1c7d8e45 added the TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED row by hand and did not move the derived count beside it, so the file was INTERNALLY INCONSISTENT between regenerations and nothing checked the pair. Tracing that produced a second consequence of the same edit: the file was also reserialized to the pre-HYGIENE-16 indent=2 format, having matched the generator's own indent=1 output at d31a8dc3, b5838915 and the wave-31 close -- so commit 1c7d8e45 wrote this file OUTSIDE ITS GENERATOR, and the next regenerating lane inherits an unreviewably large whole-file diff, as CT-WIRE-LANE-4 did. This lane's regeneration repairs both. The general shape stands as the residual: `dimensions` is DERIVED (`counted from the emitted rows`) while `named_followups`, `requirements` and the other hand-maintained sections are CARRIED, so any hand edit to a carried section can silently desynchronise a derived count and drift the file's format, with nothing checking either in between. Discharge: a check that compares each derived dimension against the carried section it counts -- the same shape as HYGIENE-14's repair of the bucket tally -- plus a format assertion, or a stated decision that hand edits are expected here and the counts advisory between regenerations.",
+   "source": "docs/reports/ct-wire-lane-4/README.md",
+   "recorded_by": "CT-WIRE-LANE-4"
+  },
+  {
+   "id": "CT47-WRITE-CAPTURE-UNEXERCISED",
+   "title": "The `write` capture mode's refusal arm is held unexercised, and no fixture drives it",
+   "why": "Found by card CT-WIRE-LANE-4 (wave 32) while applying the STABILITY-REEVAL discipline to its own mapping, and STATED AS A BOUNDARY rather than repaired. `write` is the fourth capture mode the task grammar spells; it has no lowering, and card CT47-COPY-CAPTURE (wave 29) moved its refusal off the C backend's Q500 executable-subset catch-all onto the transferability judgment's own WriteCaptureUnimplemented arm. That arm is covered by the judgment's Lean partition (aWriteCaptureIsRefusedByName, over every kind) and by crates/qcore-frontend/tests/transferability.rs, but NO CT fixture produces the shape, and this lane's CT47 mapping -- which supplies every OTHER mode as an accepted or refusing control -- deliberately does not add one, because `write` names no contract to supply and would contribute a fourth refusing control that isolates nothing. So the keyword's status is unchanged since wave 29: it parses, it refuses, and the CT corpus says nothing about it. Discharge: a fixture that drives the arm through the corpus, or a stated decision to withdraw the keyword from the grammar.",
+   "source": "docs/reports/ct-wire-lane-4/README.md",
+   "recorded_by": "CT-WIRE-LANE-4"
   },
   {
    "id": "TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED",

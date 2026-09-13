@@ -1,0 +1,33 @@
+import std.concurrency;
+concurrency checked;
+
+// CT47 control -- the AUTOMATIC half of "reject automatic cross-thread
+// acceptance", refused. The identical program with the capture's mode simply
+// omitted does not parse: this route spells no modeless capture form at all,
+// so there is no acceptance for the checker to grant automatically and none
+// to withdraw. Q000, the grammar, byte-identical to the shape the wave-26 CT
+// lane measured and untouched by card CT47-COPY-CAPTURE.
+//
+// This control is pinned as a REFUSAL and deliberately not as the case: a
+// parse failure is a statement about the surface, and the case's own evidence
+// is the semantic judgment one layer in.
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(buffer) {
+      Result::Ok { value: handle } => {
+        let seen = join move handle?;
+        drop buffer;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

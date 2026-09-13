@@ -1,0 +1,44 @@
+import std.concurrency;
+concurrency checked;
+
+// CT47 -- "Raw pointer is Copy but no transfer/share contract exists",
+// expected "Reject automatic cross-thread acceptance". Mapped by card
+// CT-WIRE-LANE-4 (wave 32) on the readiness statement of card
+// CT47-COPY-CAPTURE (wave 29, docs/reports/ct47-copy-capture/README.md
+// section 6), which moved this capture's refusal off the C backend's Q500
+// executable-subset catch-all and onto the transferability judgment's own
+// Q600 at the crossing construct.
+//
+// The capture asks for exactly the bit-copy the scenario's premise names, of
+// a kind the judgment classifies as SENDABLE -- so the refusal is for the
+// MODE, not a vacuous "this kind never crosses" -- and the message names the
+// missing transfer or share contract together with the contracts the kind
+// does carry. All three named contracts are supplied by the three accepted
+// controls beside this file, and supplying any one of them is what flips the
+// verdict.
+//
+// BOUNDARY, published rather than papered over: this language has no raw
+// pointer type (DeclaredTypeTag::Pointer is Unmodeled and a declared pointer
+// parameter refuses long before a capture is considered), so `raw pointer`
+// has no referent here and the bit-copy of an owned handle is the nearest
+// expressible shape. See docs/reports/ct-wire-lane-4/README.md section 3.
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(copy buffer) {
+      Result::Ok { value: handle } => {
+        let seen = join move handle?;
+        drop buffer;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

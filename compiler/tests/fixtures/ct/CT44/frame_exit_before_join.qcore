@@ -1,0 +1,37 @@
+import std.concurrency;
+concurrency checked;
+
+// CT44 control -- the frame's OWN expiry, refused. No destruction is written
+// at all: the parent simply leaves, returning out of the thread scope while
+// the worker still holds the read share it lent. Refused at Q600, and the
+// message names the frame ("ScopeBusy(5): cleanup preempted -- this exit would
+// run the frame's cleanup over resource 1 while task(s) [2] still hold a read
+// share of it, destroying the owner before the child's join").
+//
+// Pinned as a control and deliberately not as the case. Card CT-WIRE-LANE-3
+// (wave 31) examined this exact refusal for CT24 and declined to map on it,
+// because the checked task route executes no destroy at scope exit, so the
+// "cleanup" its message invokes is a counterfactual rather than a fact of the
+// tree. That objection is about the word CT24 names and not about the word
+// CT44 names -- a frame really does end here, and its ending really is what
+// the ledger refuses -- but the case is written on the statement whose
+// executed meaning the admitting control demonstrates, which is the stronger
+// form. Both readings are pinned, and neither rests on the other.
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(read buffer share FULL) {
+      Result::Ok { value: handle } => {
+        return 0;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

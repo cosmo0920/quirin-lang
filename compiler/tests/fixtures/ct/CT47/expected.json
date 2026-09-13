@@ -1,0 +1,57 @@
+{
+  "id": "CT47",
+  "verdict": "reject",
+  "entry": null,
+  "diagnostics": [
+    {
+      "code": "Q600",
+      "message_contains": "no transfer or share contract admits `copy` of `own<Buffer>` across a spawn boundary"
+    }
+  ],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "task_lowering",
+    "task_ledger_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "The transferability judgment (qcore_core::transfer, cards CT46-SENDSYNC and CT47-COPY-CAPTURE), mapped by CT-WIRE-LANE-4 (wave 32) on that card's own readiness statement. The capture asks for exactly the bit-copy the scenario's premise names, and the judgment refuses it AT THE CROSSING CONSTRUCT with a message naming the missing transfer or share contract plus the three contracts this kind does carry. The refusal is for the MODE, not the kind: `own<Buffer>` is classified sendable, which is what the audited Lean theorem QCore.Transferability.copyOfTheOwnedBufferIsRefusedForItsMode pins as CT47's own cell, so this is not a vacuous `the profile cannot express this at all`. Before card CT47-COPY-CAPTURE the same shape fell through to the C backend's Q500 executable-subset catch-all, which is why the wave-26 CT lane measured it and refused to map on it. Three accepted controls supply the three named contracts - `move` (ScopedOwnedTasksV1), `read PLACE share N` (ScopedReadSharesV1) and `lend PLACE LOW..HIGH` (ScopedWriteLeasesV1) - and every one of them admits the program, so the Q600 is the absence of a contract for `copy` rather than an inability of this value to cross. A fourth control pins the AUTOMATIC half of the expectation: the same capture with no mode at all does not parse (Q000, the grammar, untouched), so this route spells no automatic cross-thread acceptance for the checker to grant. BOUNDARY: this language has no raw pointer type (DeclaredTypeTag::Pointer is Unmodeled and a declared pointer parameter refuses long before a capture is considered), so `raw pointer` has no referent and the bit-copy of an owned handle is the nearest expressible shape; and no QCore type is both freely duplicable and resource-bearing, so the combination the scenario names is prevented by the type system, with this fixture demonstrating the rule at the boundary rather than the combination itself (docs/reports/ct-wire-lane-4/README.md section 3). No native, sanitizer or proof evidence is claimed for this fixture: it is a refusal that reaches no backend, and the Lean theorem proves the model's judgment rather than this case's artifact.",
+  "source_reject": {
+    "diagnostic_sequence": [
+      "Q600"
+    ],
+    "controls": [
+      {
+        "source": "move_transfer.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedOwnedTasksV1",
+        "note": "The first contract the refusal names, supplied: `move` (custody transferred to the worker), delivered to a worker declaring the received kind. Checks."
+      },
+      {
+        "source": "read_share.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedReadSharesV1",
+        "note": "The second contract the refusal names, supplied: `read PLACE share N`, a counted read share. Byte-identical to the case but for the capture's mode. Checks."
+      },
+      {
+        "source": "write_lease.qcore",
+        "expectation": "accept",
+        "diagnostic_sequence": [],
+        "execution_profile": "ScopedWriteLeasesV1",
+        "note": "The third and last contract the refusal names, supplied: `lend PLACE LOW..HIGH`, a disjoint range write lease (card CT07-SLICE-PERMISSIONS). Checks. The refusal enumerates the contracts and every one of them admits, which is what makes the attribution complete rather than illustrative."
+      },
+      {
+        "source": "modeless.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": [
+          "Q000"
+        ],
+        "note": "The AUTOMATIC half of `reject automatic cross-thread acceptance`: the same capture with its mode omitted does not parse, so there is no automatic acceptance to withdraw. Q000, the grammar, byte-identical to the wave-26 measurement and untouched by card CT47-COPY-CAPTURE. Pinned as a control and not as the case, because a parse failure is a statement about the surface and the case's evidence is the semantic judgment one layer in."
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+import std.concurrency;
+concurrency checked;
+
+// CT47 control -- the third named contract supplied, admitted. The case's
+// refusal message names exactly three contracts this kind carries, and this
+// is the last of them ("`lend PLACE LOW..HIGH` (a disjoint range write
+// lease)", card CT07-SLICE-PERMISSIONS, wave 27). It checks and takes
+// ScopedWriteLeasesV1.
+//
+// With move_transfer.qcore and read_share.qcore this completes the
+// attribution: the refusal enumerates the contracts, every one of them is
+// supplied here, and every one of them admits the program -- so the case's
+// Q600 is the absence of a contract for `copy`, not an inability of this
+// value to cross.
+fn writer(half: lend<Buffer>) -> i32 {
+  return 1;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s writer(lend buffer 0..2) {
+      Result::Ok { value: handle } => {
+        let seen = join move handle?;
+        drop buffer;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}

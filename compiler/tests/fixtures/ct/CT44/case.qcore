@@ -1,0 +1,45 @@
+import std.concurrency;
+concurrency checked;
+
+// CT44 -- "Stack capture expires or environment moves before join", expected
+// Reject. Mapped by card CT-WIRE-LANE-4 (wave 32).
+//
+// The parent lends the worker a read share of the buffer its own frame owns,
+// and then destroys that buffer while the worker is still live and unjoined:
+// the capture's environment expires before the join. Refused at Q600 with the
+// checked task ledger's own LoanOutstanding, attributed to the `drop buffer;`
+// statement and naming the resource, the outstanding amount and the BORROWING
+// TASK -- the capture, not the handle.
+//
+// Card T00's archived blocker for this case read "the available rejection is
+// about the handle, not about a capture whose environment expires ... captures
+// are copied into a checked environment, so `environment moves before join`
+// has no source form". Both halves are measured obsolete on this tree: the
+// rejection beside this comment is about the capture, and the scenario's
+// second disjunct has the source form pinned in move_before_join.qcore.
+//
+// BOUNDARY, published rather than papered over: the captured storage is a HEAP
+// buffer bound to a parent-frame local. This language has no stack-allocated
+// capturable resource, so the word "stack" has no referent and the case is
+// mapped on the frame-owned-resource shape. See
+// docs/reports/ct-wire-lane-4/README.md section 4.
+fn reader(payload: borrow<Buffer>) -> i32 {
+  let seen = qcore_buffer_read(payload);
+  return seen;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(7)?;
+  thread scope s {
+    match spawn s reader(read buffer share FULL) {
+      Result::Ok { value: handle } => {
+        drop buffer;
+        let seen = join move handle?;
+        return seen;
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 1;
+      }
+    }
+  }
+}
