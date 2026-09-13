@@ -23,9 +23,9 @@ dates. Current agent rules and headline status live in
 
 Current record file: [wave-32.md](wave-32.md). Prepend one paragraph per
 new increment below the checkpoint notice and above the migrated section.
-Keep that increment's evidence and boundaries together. Start `wave-33.md`
-when wave 33 begins and update this pointer and the wave table; do not rename
-old files. Main headline changes still belong in `AGENTS.md`.
+Keep that increment's evidence and boundaries together. Start the next wave's
+file when that wave begins and update this pointer and the wave table; do not
+rename old files. Main headline changes still belong in `AGENTS.md`.
 
 For a worktree created before this split, compare its `DEVELOPMENT.md` changes
 against that card's recorded base. Move only its new increment paragraphs to
