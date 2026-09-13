@@ -1345,6 +1345,36 @@ fn read_locals(
     true
 }
 
+/// Plain-name provenance cannot distinguish shadowed bindings. Reuse the
+/// existing total-or-reject declaration reader, counting declaration runs
+/// separately so same-type shadowing is excluded too. This admits no access.
+pub(crate) fn unique_local_names(model: &TypedAccessModel, body: &[&str]) -> BTreeSet<String> {
+    let mut seen = BTreeSet::new();
+    let mut repeated = BTreeSet::new();
+    for start in 0..body.len() {
+        if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
+            continue;
+        }
+        if !is_declaration_candidate(body, start) {
+            continue;
+        }
+        let Some(end) = statement_end(body, start) else {
+            return BTreeSet::new();
+        };
+        let mut names = BTreeMap::new();
+        if !read_declaration(model, &body[start..end], &mut names) {
+            return BTreeSet::new();
+        }
+        for name in names.into_keys() {
+            if !seen.insert(name.clone()) {
+                repeated.insert(name);
+            }
+        }
+    }
+    seen.retain(|name| !repeated.contains(name));
+    seen
+}
+
 fn read_declaration(
     model: &TypedAccessModel,
     declaration: &[&str],

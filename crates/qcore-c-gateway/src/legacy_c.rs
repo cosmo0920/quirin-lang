@@ -7,6 +7,9 @@
 //! aggregate/indexed accesses and ambiguous expression forms without a model
 //! remain unsupported; symbolic resource place spelling is not access proof.
 
+#[path = "legacy_joined_provenance.rs"]
+mod joined_provenance;
+
 #[path = "legacy_out_alias.rs"]
 mod out_alias;
 
@@ -196,6 +199,12 @@ pub enum LegacyInstruction {
         /// answer.
         alias_read: Option<AliasPeers>,
     },
+    /// Forget a declared scalar's old branch fact after a modeled write.
+    /// An absent binding admits both scalar branches and carries no pointer
+    /// identity. Resource obligations are retained independently.
+    ForgetScalar {
+        destination: String,
+    },
     /// A store into an admitted field of an aggregate this function tracks
     /// whose stored value carries no tracked identity (O00 blocker B08): a
     /// scalar expression into a scalar member, or a declared pointer this
@@ -214,7 +223,7 @@ pub enum LegacyInstruction {
         description: String,
         /// Card **AOM-BINDING-POISON**: what this refusal is allowed to do to
         /// the *binding* environment. [`RefusedWrites::Unbounded`] is the
-        /// pre-repair answer and the answer every construct-level refusal
+        /// pre-repair answer and the answer every structural control-flow refusal
         /// keeps; see [`RefusedWrites`] for the premises the bounded answer
         /// rests on.
         writes: RefusedWrites,
@@ -243,14 +252,11 @@ pub enum RefusedWrites {
     /// does **not** stand for exactly one statement whose complete token text
     /// was read into it — a `goto` to an unresolved label, a malformed
     /// for-loop clause, a break or continue outside its construct, a duplicate
-    /// or stray label, and every refused `return`, branch, loop, `switch` or
-    /// `case` *condition*, whose node stands for an expression the builder
-    /// classified without handing its tokens to
-    /// [`Parser::classify_simple`].
+    /// or stray label. A parser-delimited complete condition or return
+    /// expression now carries its own bounded frame (AOM-POISON-CONDITION-FRAME).
     Unbounded,
-    /// This refusal stands for exactly one statement — or one for-loop init or
-    /// increment clause — whose **complete** token text
-    /// [`Parser::classify_simple`] read, and the set carried here is the
+    /// This refusal stands for one statement, for-loop clause, or complete
+    /// condition/return expression whose **complete** token text the parser read, and the set carried here is the
     /// explicit, closed list of places it **spares**. Everything not in it,
     /// including every place this projection has not bound yet, is poisoned
     /// exactly as before.
@@ -336,7 +342,11 @@ fn may_write_names(texts: &[&str]) -> BTreeSet<String> {
         if !is_identifier(text) {
             continue;
         }
-        if index >= 2 && matches!(&texts[index - 2..index], ["+", "+"] | ["-", "-"]) {
+        let mut prefix = index;
+        while prefix > 0 && texts[prefix - 1] == "(" {
+            prefix -= 1;
+        }
+        if prefix >= 2 && matches!(&texts[prefix - 2..prefix], ["+", "+"] | ["-", "-"]) {
             written.insert((*text).to_owned());
             continue;
         }
@@ -460,6 +470,9 @@ pub struct LegacyCfg {
     /// Card **CTWIN-RESIDUALS** groups the three facts that travel together;
     /// `destinations` is card CTWIN-PUBLISH's original set.
     pub publications: PublicationFacts,
+    /// Unshadowed automatic local names, never address-taken, eligible for
+    /// the bounded conditional-provenance analysis. Derived from source.
+    pub conditional_names: BTreeSet<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1797,7 +1810,20 @@ pub(crate) fn build_function_cfg(
                 function: function.to_owned(),
                 line: failure_line.max(line),
             })?;
-    Ok(CfgBuilder::build(function, &statements, publications))
+    let mut cfg = CfgBuilder::build(function, &statements, publications);
+    if let Some(body_end) = matching(tokens, body_start, "{", "}") {
+        let body = tokens[body_start + 1..body_end]
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let unique = crate::typed_field_access::unique_local_names(&parser.typed_model, &body);
+        cfg.conditional_names = unique
+            .intersection(&parser.frame_protected)
+            .filter(|name| !parser.formal_parameters.contains(*name))
+            .cloned()
+            .collect();
+    }
+    Ok(cfg)
 }
 
 /// The callees `contracts` declares a variadic data tail for (card O04-TRACE).
@@ -2731,6 +2757,7 @@ enum Statement {
     If {
         line: usize,
         condition_supported: bool,
+        writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         /// C02-P-ALIAS: the pointer-inequality guard this condition expresses,
         /// when it relates two names the may-alias rule relates. Consulted only
@@ -2742,6 +2769,7 @@ enum Statement {
     While {
         line: usize,
         condition_supported: bool,
+        writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
     },
@@ -2750,6 +2778,7 @@ enum Statement {
         init: Option<Box<(LegacyInstruction, usize)>>,
         condition_always_true: bool,
         condition_supported: bool,
+        writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         increment: Option<Box<(LegacyInstruction, usize)>>,
         body: Vec<Statement>,
@@ -2757,17 +2786,20 @@ enum Statement {
     DoWhile {
         line: usize,
         condition_supported: bool,
+        writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
     },
     Switch {
         line: usize,
         expression_supported: bool,
+        writes: RefusedWrites,
         body: Vec<Statement>,
     },
     Case {
         line: usize,
         expression_supported: bool,
+        writes: RefusedWrites,
         is_default: bool,
     },
     Label {
@@ -2787,6 +2819,7 @@ enum Statement {
     Return {
         line: usize,
         expression_supported: bool,
+        writes: RefusedWrites,
         returned_place: Option<String>,
     },
 }
@@ -2853,8 +2886,8 @@ impl Parser<'_> {
     /// statement, which is exactly [`Self::classify_simple`]'s contract with
     /// its callers — the statement walker hands it a whole
     /// `consume_to_semicolon` run, and the `for` walker a whole init or
-    /// increment clause. Every refusal raised anywhere else keeps
-    /// [`RefusedWrites::Unbounded`].
+    /// increment clause. The delimited condition/return expression reader also
+    /// uses this rule; structural control-flow failures remain unbounded.
     fn refused_writes(&self, texts: &[&str]) -> RefusedWrites {
         let written = may_write_names(texts);
         RefusedWrites::Sparing(
@@ -2864,6 +2897,44 @@ impl Parser<'_> {
                 .cloned()
                 .collect(),
         )
+    }
+
+    /// The complete expression was delimited by the parser; malformed
+    /// control flow never reaches this constructor.
+    fn expression_writes(&self, tokens: &[Token]) -> RefusedWrites {
+        self.refused_writes(
+            &tokens
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>(),
+        )
+    }
+
+    /// Custody-neutral scalar syntax can still overwrite a branch fact.
+    /// Keep a single recognized scalar write; refuse multiple writes rather
+    /// than silently retaining either old value.
+    fn scalar_effect(&self, texts: &[&str]) -> LegacyInstruction {
+        let written = may_write_names(texts)
+            .into_iter()
+            .filter(|name| {
+                crate::typed_field_access::is_scalar_initializer(
+                    name,
+                    &["1"],
+                    &self.typed_model,
+                    &self.typed_types,
+                )
+            })
+            .collect::<Vec<_>>();
+        match written.as_slice() {
+            [] => LegacyInstruction::NoOp,
+            [destination] => LegacyInstruction::ForgetScalar {
+                destination: destination.clone(),
+            },
+            _ => LegacyInstruction::Unknown {
+                description: "multiple scalar writes in one expression are not modeled".into(),
+                writes: self.refused_writes(texts),
+            },
+        }
     }
 
     /// Whether one expression position is resource-neutral.
@@ -2882,6 +2953,26 @@ impl Parser<'_> {
     /// of the access-chain family reads the difference; every other family
     /// decides identically in both roles.
     fn supported_expression(&self, tokens: &[Token], role: ExpressionRole) -> bool {
+        // Expression-position writes need an evaluation model. In particular
+        // a condition must not erase an increment into a neutral CFG node.
+        if tokens.windows(2).any(|pair| {
+            matches!(
+                (pair[0].text.as_str(), pair[1].text.as_str()),
+                ("+", "+") | ("-", "-")
+            )
+        }) {
+            return false;
+        }
+        if tokens.iter().enumerate().any(|(i, token)| {
+            let previous = i.checked_sub(1).map(|p| tokens[p].text.as_str());
+            token.text == "="
+                && tokens.get(i + 1).is_none_or(|t| t.text != "=")
+                && (!matches!(previous, Some("=" | "!" | "<" | ">"))
+                    || (matches!(previous, Some("<" | ">"))
+                        && i.checked_sub(2).map(|p| tokens[p].text.as_str()) == previous))
+        }) {
+            return false;
+        }
         if supported_neutral_expression(tokens) {
             return true;
         }
@@ -3114,6 +3205,7 @@ impl Parser<'_> {
                 };
                 Ok(Statement::If {
                     line,
+                    writes: self.expression_writes(&condition),
                     condition_supported: self
                         .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
@@ -3128,6 +3220,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
                     line,
+                    writes: self.expression_writes(&condition),
                     condition_supported: self
                         .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
@@ -3165,6 +3258,7 @@ impl Parser<'_> {
                     .then(|| Box::new((self.classify_simple(&increment), line)));
                 Ok(Statement::For {
                     line,
+                    writes: self.expression_writes(&condition),
                     init,
                     condition_always_true: condition.is_empty(),
                     condition_supported: self
@@ -3188,6 +3282,7 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::DoWhile {
                     line,
+                    writes: self.expression_writes(&condition),
                     condition_supported: self
                         .supported_expression(&condition, ExpressionRole::Decides),
                     null_condition: self.null_condition(&condition),
@@ -3200,6 +3295,7 @@ impl Parser<'_> {
                 let body = self.parse_statement_body()?;
                 Ok(Statement::Switch {
                     line,
+                    writes: self.expression_writes(&expression),
                     expression_supported: self
                         .supported_expression(&expression, ExpressionRole::Decides),
                     body,
@@ -3210,6 +3306,7 @@ impl Parser<'_> {
                 let expression = self.consume_to_colon()?;
                 Ok(Statement::Case {
                     line,
+                    writes: self.expression_writes(&expression),
                     // A `case` label is an integer constant expression: no call and
                     // no member access can appear in one, so the typed admission
                     // would be inert here. The strict lexical predicate is kept
@@ -3226,6 +3323,7 @@ impl Parser<'_> {
                 self.cursor += 1;
                 Ok(Statement::Case {
                     line,
+                    writes: RefusedWrites::Unbounded,
                     expression_supported: true,
                     is_default: true,
                 })
@@ -3268,6 +3366,7 @@ impl Parser<'_> {
                     .collect::<Vec<_>>();
                 Ok(Statement::Return {
                     line,
+                    writes: self.expression_writes(&expression),
                     expression_supported: self
                         .supported_expression(&expression, ExpressionRole::Returned),
                     returned_place: canonical_place(&texts),
@@ -3440,6 +3539,34 @@ impl Parser<'_> {
                 writes: self.refused_writes(&texts),
             };
         }
+        // AOM-POISON-NOOP-INCREMENT: even a custody-neutral scalar write
+        // must forget its old value. Otherwise `n = 0; n++; if (n)` drops
+        // a reachable branch. Admit only a complete unary statement over a
+        // declared scalar; nested writes and pointer arithmetic stay refused.
+        if has_increment {
+            let expression = strip_parentheses(&texts);
+            let operand = match expression {
+                ["+", "+", rest @ ..] | ["-", "-", rest @ ..] => Some(rest),
+                [rest @ .., "+", "+"] | [rest @ .., "-", "-"] => Some(rest),
+                _ => None,
+            };
+            if let Some([name]) = operand.map(strip_parentheses)
+                && crate::typed_field_access::is_scalar_initializer(
+                    name,
+                    &["1"],
+                    &self.typed_model,
+                    &self.typed_types,
+                )
+            {
+                return LegacyInstruction::ForgetScalar {
+                    destination: (*name).to_owned(),
+                };
+            }
+            return LegacyInstruction::Unknown {
+                description: "unmodeled increment or decrement expression".into(),
+                writes: self.refused_writes(&texts),
+            };
+        }
         // Fixed scalar queries are data, but their numerical result is not
         // modeled. Overwrite any old scalar/null fact with OpaqueValue rather
         // than leaving it stale or binding the predicate's marker as a value.
@@ -3468,7 +3595,7 @@ impl Parser<'_> {
         }
         // One typed exception to the lexical indirect-access gate below: a
         // direct scalar-field access whose declared types make it
-        // custody-neutral is a no-op for this projection. The whitelist is
+        // custody-neutral. Scalar destinations still lose their old facts. The whitelist is
         // conjunctive and every one of its premises is checked against
         // declarations read from this same translation unit; see
         // [`crate::typed_field_access`]. It runs after the formal-mutation and
@@ -3481,7 +3608,7 @@ impl Parser<'_> {
                 &self.typed_types,
             )
         {
-            return LegacyInstruction::NoOp;
+            return self.scalar_effect(&texts);
         }
         // O04/C02-P: the borrowed pointer-field actuals of a contracted call,
         // and an assignment whose whole right-hand side is one admitted direct
@@ -4023,10 +4150,8 @@ impl Parser<'_> {
         // O04: a statement over declared scalars, enumeration constants and
         // numeric literals alone is custody-neutral — this projection tracks
         // pointer identities, and a declared scalar is never bound to one. It
-        // is consulted only where the existing modeling would otherwise report
-        // an unresolved alias or refuse the statement, so every value fact the
-        // importer already derives (`flag = 0` binding a definitely-null place,
-        // and every variable-to-variable alias) is preserved exactly.
+        // retains explicit zero assignments and variable-to-variable aliases;
+        // every other admitted scalar write forgets its old branch fact.
         let scalar_only = !contains_call(tokens)
             && crate::typed_field_access::is_scalar_only_noop(
                 &texts,
@@ -4070,7 +4195,7 @@ impl Parser<'_> {
         if let Some(equal) = assignment {
             let Some(destination) = direct_assignment_destination(&texts[..equal]) else {
                 if scalar_only {
-                    return LegacyInstruction::NoOp;
+                    return self.scalar_effect(&texts);
                 }
                 return LegacyInstruction::Unknown {
                     description: "unrecognized assignment destination".to_owned(),
@@ -4097,7 +4222,7 @@ impl Parser<'_> {
                 // An enumeration constant names no place this projection can
                 // ever bind, so aliasing it only reports an unresolved alias.
                 if scalar_only && self.typed_model.is_enum_constant(&source) {
-                    return LegacyInstruction::NoOp;
+                    return self.scalar_effect(&texts);
                 }
                 return LegacyInstruction::Alias {
                     destination: destination.to_owned(),
@@ -4105,7 +4230,7 @@ impl Parser<'_> {
                 };
             }
             if scalar_only {
-                return LegacyInstruction::NoOp;
+                return self.scalar_effect(&texts);
             }
             return LegacyInstruction::Unknown {
                 description: "unsupported assignment expression".to_owned(),
@@ -4660,6 +4785,7 @@ impl CfgBuilder {
             entry,
             nodes: builder.nodes,
             publications,
+            conditional_names: BTreeSet::new(),
         }
     }
 
@@ -4684,6 +4810,7 @@ impl CfgBuilder {
             Statement::Block(statements) => self.compile_sequence(statements, continuation),
             Statement::Return {
                 line,
+                writes,
                 expression_supported,
                 returned_place,
             } => {
@@ -4692,7 +4819,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in return expression"
                                 .to_owned(),
-                        writes: RefusedWrites::Unbounded,
+                        writes: writes.clone(),
                     }
                 } else if let Some(source) = returned_place {
                     LegacyInstruction::EscapeIfOwned {
@@ -4705,6 +4832,7 @@ impl CfgBuilder {
             }
             Statement::If {
                 line,
+                writes,
                 condition_supported,
                 null_condition,
                 distinct_condition,
@@ -4735,13 +4863,14 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in branch condition"
                                 .to_owned(),
-                        writes: RefusedWrites::Unbounded,
+                        writes: writes.clone(),
                     }
                 };
                 self.push(instruction, vec![then_entry, else_entry], *line, false)
             }
             Statement::While {
                 line,
+                writes,
                 condition_supported,
                 null_condition,
                 body,
@@ -4758,7 +4887,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in loop condition"
                                 .to_owned(),
-                        writes: RefusedWrites::Unbounded,
+                        writes: writes.clone(),
                     }
                 };
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -4772,6 +4901,7 @@ impl CfgBuilder {
             }
             Statement::For {
                 line,
+                writes,
                 init,
                 condition_always_true,
                 condition_supported,
@@ -4782,6 +4912,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
+                    writes,
                     "unmodeled call, aggregate or indirect access in for-loop condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -4806,6 +4937,7 @@ impl CfgBuilder {
             }
             Statement::DoWhile {
                 line,
+                writes,
                 condition_supported,
                 null_condition,
                 body,
@@ -4813,6 +4945,7 @@ impl CfgBuilder {
                 let instruction = branch_instruction(
                     *condition_supported,
                     null_condition,
+                    writes,
                     "unmodeled call, aggregate or indirect access in do-while condition",
                 );
                 let header = self.push(instruction, Vec::new(), *line, false);
@@ -4826,6 +4959,7 @@ impl CfgBuilder {
             }
             Statement::Switch {
                 line,
+                writes,
                 expression_supported,
                 body,
             } => {
@@ -4847,13 +4981,14 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in switch expression"
                                 .to_owned(),
-                        writes: RefusedWrites::Unbounded,
+                        writes: writes.clone(),
                     }
                 };
                 self.push(instruction, successors, *line, false)
             }
             Statement::Case {
                 line,
+                writes,
                 expression_supported,
                 is_default,
             } => {
@@ -4864,7 +4999,7 @@ impl CfgBuilder {
                         description:
                             "unmodeled call, aggregate or indirect access in case expression"
                                 .to_owned(),
-                        writes: RefusedWrites::Unbounded,
+                        writes: writes.clone(),
                     }
                 };
                 let entry = self.push(instruction, vec![continuation], *line, false);
@@ -4952,6 +5087,7 @@ impl CfgBuilder {
 fn branch_instruction(
     condition_supported: bool,
     null_condition: &Option<PointerNullCondition>,
+    writes: &RefusedWrites,
     unsupported_description: &str,
 ) -> LegacyInstruction {
     if let Some(condition) = null_condition {
@@ -4964,7 +5100,7 @@ fn branch_instruction(
     } else {
         LegacyInstruction::Unknown {
             description: unsupported_description.to_owned(),
-            writes: RefusedWrites::Unbounded,
+            writes: writes.clone(),
         }
     }
 }
@@ -5169,6 +5305,7 @@ fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
         LegacyInstruction::ContractCall {
             destination,
@@ -5942,6 +6079,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // C02-P-ALIAS: computed once, before the custody work list starts, and only
     // read below. See [`alias_facts`].
     let alias = alias_facts(&cfg);
+    let joined = joined_provenance::derive(&cfg);
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
@@ -5967,6 +6105,7 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
+        let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -5979,6 +6118,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // A path that reached a refusal supports no per-exit custody claim.
         // Recorded before the local diagnostics are merged, so the flag tracks
         // *this* node rather than anything reported elsewhere in the function.
+        joined_provenance::finish_release(conditional_release, &mut output, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -6065,6 +6205,7 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
+        let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         let mut output = transfer(
             &cfg.function,
             node,
@@ -6074,6 +6215,7 @@ pub(crate) fn analyze_cfg_with_entry(
             &alias[node_id],
             &mut ignored,
         );
+        joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         observations.push(observe_exit(node, &output, entry_custody));
         exits.push(observe_residual(
@@ -6238,6 +6380,7 @@ fn transfer(
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
         LegacyInstruction::ContractCall { destination, .. } => destination.as_deref(),
         _ => None,
@@ -6711,6 +6854,9 @@ fn transfer(
                 },
             );
         }
+        LegacyInstruction::ForgetScalar { destination } => {
+            state.pointers.remove(destination);
+        }
         LegacyInstruction::AggregateStore { place } => {
             // The stored value carries no tracked identity, so the member binds
             // nothing. Whatever it previously linked is unlinked below, which
@@ -6775,10 +6921,9 @@ fn transfer(
             // was. What is bounded is the collateral damage to *bindings*.
             //
             // `Unbounded` is the pre-repair behaviour and the answer for every
-            // refusal that does not stand for one complete statement. A
-            // `Mentions` refusal spares exactly the bindings whose place is a
-            // plain automatic name of this body, never address-taken, that the
-            // refused text does not mention; see [`RefusedWrites`].
+            // refusal that has no complete expression or statement text. A
+            // `Sparing` refusal preserves only plain automatic names of this
+            // body, never address-taken, that the refused text cannot write; see [`RefusedWrites`].
             for (place, pointer) in state.pointers.iter_mut() {
                 if writes.poisons(place) {
                     pointer.unknown = true;
@@ -7591,6 +7736,17 @@ fn refine_pointer_null(
         return PointerRefinement::Refined;
     };
     if pointer.unknown || pointer.targets.len() > 1 {
+        // Nullness is independent of identity. A guard narrows its own
+        // binding, never another alias or a resource's existence. Keep the
+        // identity refusal and every obligation on both edges.
+        let narrowed = state.pointers.get_mut(source).expect("existing binding");
+        if assume_null {
+            narrowed.targets.clear();
+            narrowed.unknown = false;
+            narrowed.may_be_null = true;
+        } else {
+            narrowed.may_be_null = false;
+        }
         return PointerRefinement::Unknown;
     }
     let Some(site) = pointer.targets.iter().next().copied() else {

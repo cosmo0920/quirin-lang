@@ -1,0 +1,22 @@
+{
+  "source_commit": "1e56ba3bbb9085e649db07247162c6d54f1dc6f7",
+  "complete_original_reconstructed": true,
+  "source_bytes": 362048,
+  "new_root_index_bytes": 6966,
+  "root_read_bytes_reduction_percent": 98.08,
+  "migrated_payload_pages": 41,
+  "additional_directory_index_pages": 1,
+  "largest_migrated_payload_bytes": 20742,
+  "largest_child_page_bytes": 21199,
+  "rebased_original_relative_link_occurrences": 68,
+  "original_relative_link_occurrences_still_resolved": 70,
+  "current_build_command_updates": 2,
+  "current_cli_binary_name_updates": 3,
+  "original_heading_lines_retained_in_root": 28,
+  "standing_constraints_byte_identical": 44,
+  "hard_invariants_gate_and_lean_hygiene_byte_identical": true,
+  "local_links_checked": 353,
+  "all_payload_pages_reachable": true,
+  "all_development_pages_reachable_from_root": 42,
+  "measurement_scope": "UTF-8 document bytes only. This reduces the root guide read and provides smaller on-demand pages. It does not claim lower total repository storage, automatic AGENTS context, runtime token counts or billing savings."
+}

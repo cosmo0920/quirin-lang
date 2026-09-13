@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-13",
+  "base_head": "1e56ba3bbb9085e649db07247162c6d54f1dc6f7",
+  "scope": "Documentation restructure working tree on this base; compiler, contracts, Lean sources, acceptance matrix and all 44 standing constraints unchanged. Required tests ran on Linux outside the managed ptrace sandbox.",
+  "all_checks_green": false,
+  "known_baseline_failure": "Python derived-facts tripwire: acceptance matrix pins 121 Lean audits while 122 are present, reproduced on the parent before this documentation change. No pin or test weakened.",
+  "submodule": "third_party/libevent was already initialized and pinned; unchanged.",
+  "checks": [
+    {
+      "name": "workspace",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0,
+      "seconds": 847.24,
+      "log": "docs/reports/development-docs-structure/logs/workspace.log.gz",
+      "log_sha256": "8d5aaa81e2ecfeecb5c91ffd85f55107615a34e3459c323b39a978a63fa99ad8",
+      "archive_sha256": "19a8b5a35dcf1bd306d00bb6448eef70589f74a00d5857d52892f8afd3ffcec9",
+      "counts": {
+        "passed": 4473,
+        "failed": 0,
+        "ignored": 8,
+        "result_groups": 221
+      }
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 1.72,
+      "log": "docs/reports/development-docs-structure/logs/fmt.log.gz",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.21,
+      "log": "docs/reports/development-docs-structure/logs/clippy.log.gz",
+      "log_sha256": "a5f4c585ee974ca44916ac30a98bbc189e067a7e0a6bc6d2e8d6bc525be724af",
+      "archive_sha256": "0964c207edd2e43a938361c555e36eb95d4661319d16b5b9880c8e1b275b3750"
+    },
+    {
+      "name": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit_code": 0,
+      "seconds": 0.11,
+      "log": "docs/reports/development-docs-structure/logs/probe.log.gz",
+      "log_sha256": "c16e3c98ebd9b8a477e119806fab5f66f314fbdf92dd192a3a2c23255be367c9",
+      "archive_sha256": "810d5bba6facd639dcbcbba6dd7200351fce9c9bd7b1d0869fc27533480331dd"
+    },
+    {
+      "name": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit_code": 0,
+      "seconds": 0.41,
+      "log": "docs/reports/development-docs-structure/logs/followup.log.gz",
+      "log_sha256": "281e516f5e74441f302b3907abadd6844ff622762065926368244681f644a299",
+      "archive_sha256": "c8507c78f35ac31490ff78408ad56c45d586eccee169985bb0f845f30c08801d"
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit_code": 0,
+      "seconds": 5.05,
+      "log": "docs/reports/development-docs-structure/logs/lean.log.gz",
+      "log_sha256": "410754ef251fd164326bd9727fc24c488b4bb9ad20e5915dbbf3cad51fcbc46a",
+      "archive_sha256": "a3983c41849452889b7951a42c27297059b44ed688c3b7c6f5e32e73bf146d03",
+      "passed_audits": 122
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit_code": 1,
+      "seconds": 11.74,
+      "log": "docs/reports/development-docs-structure/logs/python.log.gz",
+      "log_sha256": "105bb8c1adf0bf5b729182356196693135d1bfa5b3f172409e4037cc2efe4a78",
+      "archive_sha256": "62bd13798fc50c4a2f80e9cf0719aa3ba28674ba34ac3ad804825e7edd671895",
+      "tests_run": 200,
+      "failure_headers": [
+        "FAIL: test_the_derived_facts_are_recomputed_rather_than_carried (test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried)"
+      ]
+    }
+  ],
+  "documentation_checks": {
+    "command": [
+      "python3",
+      "docs/reports/development-docs-structure/verify.py"
+    ],
+    "exit_code": 0,
+    "matches_preservation_json": true,
+    "git_diff_check_exit_code": 0,
+    "review": "Two Sol/medium agents independently reviewed authority, preservation and navigation; all reported material corrections resolved."
+  }
+}

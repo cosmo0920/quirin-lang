@@ -1,0 +1,858 @@
+{
+  "schema_version": 1,
+  "source_commit": "1e56ba3bbb9085e649db07247162c6d54f1dc6f7",
+  "source_path": "DEVELOPMENT.md",
+  "source_bytes": 362048,
+  "source_sha256": "05c1c0dc160a732e74ddb00bf57d99450f4b12414529ee906deb3cc35f339c2e",
+  "original_preamble": "# QCore-C development notes\n\nThis file holds the implementation and status detail that used to live in\n`README.md`: cycle records, workstream and evidence narratives, corpus and\naudit specifics, the repository layout, and the full build/validation\ninstructions. [`README.md`](README.md) is the short human summary and\n[`AGENTS.md`](AGENTS.md) is the compressed ledger for AI agents.\n\n",
+  "note": "Migration-time evidence, not current status or a constraint router. Restore declared presentation changes, then concatenate payloads in source-line order after original_preamble to reconstruct the complete original file. New records belong outside the migrated checkpoint markers. Future intentional document revisions do not rewrite this historical report.",
+  "parts": [
+    {
+      "path": "docs/development/references.md",
+      "first_source_line": 9,
+      "last_source_line": 22,
+      "source_sha256": "7a3b88c3968d15ba8d8dab5a0a0231c2b50fbcb1a3a0592c3133a9748f219a23",
+      "payload_sha256": "7aa4313e3e64f5dc10079ad0024a139f3f6dbee4e9efa9a0ce9899416af3f4f8",
+      "source_bytes": 802,
+      "payload_bytes": 804,
+      "transforms": [
+        {
+          "old": "](docs/QCORE_SPEC_r0_3.md)",
+          "new": "](../QCORE_SPEC_r0_3.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/QCORE_CONTRACT_SPEC_r0_3.md)",
+          "new": "](../QCORE_CONTRACT_SPEC_r0_3.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)",
+          "new": "](../QCORE_IMPLEMENTED_GRAMMARS_r0_3.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reviews/r0_3/REVIEW.md)",
+          "new": "](../reviews/r0_3/REVIEW.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/CYCLE19_BUILD_INPUTS.md)",
+          "new": "](../CYCLE19_BUILD_INPUTS.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](editors/emacs/README.md)",
+          "new": "](../../editors/emacs/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](AGENTS.md)",
+          "new": "](../../AGENTS.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        }
+      ]
+    },
+    {
+      "path": "docs/development/repository-layout.md",
+      "first_source_line": 23,
+      "last_source_line": 44,
+      "source_sha256": "2e779d129e53fbfbcb821600f8cbd47c4ffdbfbe3c416565a69b86e54457d78a",
+      "payload_sha256": "b24f7a8dd9e15d3791e4c6ef5932e649d35b9ff02e08e7fa37dece3a2c7970fd",
+      "source_bytes": 1979,
+      "payload_bytes": 2044,
+      "transforms": [
+        {
+          "old": "](compiler/)",
+          "new": "](../../compiler)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-verification/)",
+          "new": "](../../crates/qcore-verification)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-core/)",
+          "new": "](../../crates/qcore-core)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-frontend/)",
+          "new": "](../../crates/qcore-frontend)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-contract/)",
+          "new": "](../../crates/qcore-contract)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-schemas/)",
+          "new": "](../../crates/qcore-schemas)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcore-verifier-host/)",
+          "new": "](../../crates/qcore-verifier-host)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](crates/qcorec/)",
+          "new": "](../../crates/qcorec)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](proof/)",
+          "new": "](../../proof)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](contract/qcore/README.md)",
+          "new": "](../../contract/qcore/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/)",
+          "new": "](..)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "CLI binary `qcorec` over",
+          "new": "CLI binary `quirin` (crate `qcorec`) over",
+          "count": 1,
+          "reason": "current CLI binary is quirin; package name qcorec is preserved"
+        },
+        {
+          "old": "CLI binary `qcorec`\n",
+          "new": "CLI binary `quirin`\n",
+          "count": 1,
+          "reason": "current CLI binary is quirin; package name qcorec is preserved"
+        }
+      ]
+    },
+    {
+      "path": "docs/development/cycle-status.md",
+      "first_source_line": 45,
+      "last_source_line": 230,
+      "source_sha256": "e1ee6100cb0c59f1c7278c196889b7eca2311b948acfa9da60c2516b494bb8ab",
+      "payload_sha256": "fcdcaf81dd07ba124cd5294ea3987cb44c1a84062da76c5eeb9323fd08918059",
+      "source_bytes": 12681,
+      "payload_bytes": 12589,
+      "transforms": [
+        {
+          "old": "](docs/cycles/)",
+          "new": "](../cycles)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_17.md)",
+          "new": "](../cycles/CYCLE_17.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_18.md)",
+          "new": "](../cycles/CYCLE_18.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_18_LIBEVENT_VALIDATION.md)",
+          "new": "](../cycles/CYCLE_18_LIBEVENT_VALIDATION.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_19.md)",
+          "new": "](../cycles/CYCLE_19.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md)",
+          "new": "](../cycles/CYCLE_19_FLUENT_BIT_LIBRARIES_VALIDATION.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/)",
+          "new": "](../reports)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-native-teardown/README.md)",
+          "new": "](../reports/cycle19-native-teardown/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-constructor-failures/README.md)",
+          "new": "](../reports/cycle19-constructor-failures/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-unsupported-close/README.md)",
+          "new": "](../reports/cycle19-unsupported-close/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-nested-unsupported/README.md)",
+          "new": "](../reports/cycle19-nested-unsupported/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-unsupported-constructors/README.md)",
+          "new": "](../reports/cycle19-unsupported-constructors/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-os/README.md)",
+          "new": "](../reports/cycle19-file-os/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-tree/README.md)",
+          "new": "](../reports/cycle19-file-tree/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-constructor-failures/README.md)",
+          "new": "](../reports/cycle19-file-constructor-failures/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-os-constructors/README.md)",
+          "new": "](../reports/cycle19-file-os-constructors/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-existing/README.md)",
+          "new": "](../reports/cycle19-file-existing/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-transitions/README.md)",
+          "new": "](../reports/cycle19-file-transitions/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-sync-failures/README.md)",
+          "new": "](../reports/cycle19-file-sync-failures/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-unmap-failures/README.md)",
+          "new": "](../reports/cycle19-file-unmap-failures/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/cycle19-file-descriptor-failures/README.md)",
+          "new": "](../reports/cycle19-file-descriptor-failures/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/cycles/CYCLE_20.md)",
+          "new": "](../cycles/CYCLE_20.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w3-evidence-v2/README.md)",
+          "new": "](../reports/w3-evidence-v2/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w3-verifier-host/README.md)",
+          "new": "](../reports/w3-verifier-host/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/REEVALUATION_SPEC.md)",
+          "new": "](../REEVALUATION_SPEC.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/REEVALUATION_FOLLOWUP.md)",
+          "new": "](../REEVALUATION_FOLLOWUP.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/GENERALIZATION_PLAN.md)",
+          "new": "](../GENERALIZATION_PLAN.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w0-schema-crate/README.md)",
+          "new": "](../reports/w0-schema-crate/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w1-contract-crate/README.md)",
+          "new": "](../reports/w1-contract-crate/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w1-literal-sites/README.md)",
+          "new": "](../reports/w1-literal-sites/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w1-clause-vocabulary/README.md)",
+          "new": "](../reports/w1-clause-vocabulary/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-ct-harness/README.md)",
+          "new": "](../reports/w6-ct-harness/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-ct-batch-2/README.md)",
+          "new": "](../reports/w6-ct-batch-2/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-native-source-tasks/README.md)",
+          "new": "](../reports/w6-native-source-tasks/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-task-recovery/README.md)",
+          "new": "](../reports/w6-task-recovery/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-owned-source-tasks/README.md)",
+          "new": "](../reports/w6-owned-source-tasks/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-handler-rethrow/README.md)",
+          "new": "](../reports/w6-handler-rethrow/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-reused-address/README.md)",
+          "new": "](../reports/w6-reused-address/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w6-worker-allocation/README.md)",
+          "new": "](../reports/w6-worker-allocation/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w4-custody-inference/README.md)",
+          "new": "](../reports/w4-custody-inference/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w4-custody-extensions/README.md)",
+          "new": "](../reports/w4-custody-extensions/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w4-gateway-crate/README.md)",
+          "new": "](../reports/w4-gateway-crate/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/QCORE_MODULE_MODES.md)",
+          "new": "](../QCORE_MODULE_MODES.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/QTT_ALIGNMENT.md)",
+          "new": "](../QTT_ALIGNMENT.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/ROADMAP_AFTER_CYCLE_9.md)",
+          "new": "](../ROADMAP_AFTER_CYCLE_9.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        }
+      ]
+    },
+    {
+      "path": "docs/development/build-and-test.md",
+      "first_source_line": 231,
+      "last_source_line": 349,
+      "source_sha256": "54cdde34df5c66a785293ea212ab726612f40120e40f150f1f14cc5e4af3f447",
+      "payload_sha256": "c4d3b0f291e7da87501f69a26f1069475acd7419849f46a8c6402bfb133fb706",
+      "source_bytes": 5773,
+      "payload_bytes": 5805,
+      "transforms": [
+        {
+          "old": "](examples/threads/README.md)",
+          "new": "](../../examples/threads/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/windows-c11-threads/README.md)",
+          "new": "](../reports/windows-c11-threads/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/windows-vs2026/README.md)",
+          "new": "](../reports/windows-vs2026/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "cargo test --workspace\n",
+          "new": "cargo test --workspace --no-fail-fast\n",
+          "count": 2,
+          "reason": "bring two current build examples into agreement with the existing standing gate"
+        },
+        {
+          "old": "`qcorec check` / `qcorec emit`",
+          "new": "`quirin check` / `quirin emit`",
+          "count": 1,
+          "reason": "current CLI binary is quirin; package name qcorec is preserved"
+        }
+      ]
+    },
+    {
+      "path": "docs/development/increments/README.md",
+      "first_source_line": 350,
+      "last_source_line": 351,
+      "source_sha256": "5eadfbe5c10206580371933bd3c59c203428db9fe6e471a85277ad41c98b20b4",
+      "payload_sha256": "5eadfbe5c10206580371933bd3c59c203428db9fe6e471a85277ad41c98b20b4",
+      "source_bytes": 22,
+      "payload_bytes": 22,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-31.md",
+      "first_source_line": 352,
+      "last_source_line": 403,
+      "source_sha256": "4e759f31b589d8a7dfaa1e63d54eb9dc78c2abef617b953a119faa9f7817d5c4",
+      "payload_sha256": "4e759f31b589d8a7dfaa1e63d54eb9dc78c2abef617b953a119faa9f7817d5c4",
+      "source_bytes": 3531,
+      "payload_bytes": 3531,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-30.md",
+      "first_source_line": 404,
+      "last_source_line": 689,
+      "source_sha256": "fdb1e5239c428384dd263b3f333d7ebbcccf3c7a89385514106a768a976073d6",
+      "payload_sha256": "fdb1e5239c428384dd263b3f333d7ebbcccf3c7a89385514106a768a976073d6",
+      "source_bytes": 20435,
+      "payload_bytes": 20435,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-29.md",
+      "first_source_line": 690,
+      "last_source_line": 949,
+      "source_sha256": "950930fe875fada3d4d02f5a12df3b3c1f3d9c048fa7c669234d89bca7825423",
+      "payload_sha256": "950930fe875fada3d4d02f5a12df3b3c1f3d9c048fa7c669234d89bca7825423",
+      "source_bytes": 18442,
+      "payload_bytes": 18442,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-28.md",
+      "first_source_line": 950,
+      "last_source_line": 1123,
+      "source_sha256": "80a7a827822f88c6f6bebc23fa18c09a21079bc0213dcba3d7feb9f9fc83a437",
+      "payload_sha256": "80a7a827822f88c6f6bebc23fa18c09a21079bc0213dcba3d7feb9f9fc83a437",
+      "source_bytes": 12547,
+      "payload_bytes": 12547,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-27.md",
+      "first_source_line": 1124,
+      "last_source_line": 1224,
+      "source_sha256": "d8fe0b3970eecdca7db1e63c48a1648dec31bf8dd506b1b3725669fe20e1f97e",
+      "payload_sha256": "d8fe0b3970eecdca7db1e63c48a1648dec31bf8dd506b1b3725669fe20e1f97e",
+      "source_bytes": 7765,
+      "payload_bytes": 7765,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-26.md",
+      "first_source_line": 1225,
+      "last_source_line": 1332,
+      "source_sha256": "bc072c0f13e415708dea8ef9a85d09673adb8c8e897fa5a550d946e6a7aaa92c",
+      "payload_sha256": "bc072c0f13e415708dea8ef9a85d09673adb8c8e897fa5a550d946e6a7aaa92c",
+      "source_bytes": 8182,
+      "payload_bytes": 8182,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-25.md",
+      "first_source_line": 1333,
+      "last_source_line": 1453,
+      "source_sha256": "ac9af23316f5932220de7ba66000c754054d510a2ba8905ce08e4b600fa132f8",
+      "payload_sha256": "ac9af23316f5932220de7ba66000c754054d510a2ba8905ce08e4b600fa132f8",
+      "source_bytes": 10192,
+      "payload_bytes": 10192,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-24.md",
+      "first_source_line": 1454,
+      "last_source_line": 1569,
+      "source_sha256": "04b72ea244319e8100ffdc31b1ddd9467c3acc2551439a56788f3a8f3717418b",
+      "payload_sha256": "04b72ea244319e8100ffdc31b1ddd9467c3acc2551439a56788f3a8f3717418b",
+      "source_bytes": 9296,
+      "payload_bytes": 9296,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-23.md",
+      "first_source_line": 1570,
+      "last_source_line": 1717,
+      "source_sha256": "aac1f480b533a273ed2bfcdeecc79b20203c6128396e93a7921e4331389e89a4",
+      "payload_sha256": "aac1f480b533a273ed2bfcdeecc79b20203c6128396e93a7921e4331389e89a4",
+      "source_bytes": 14285,
+      "payload_bytes": 14285,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-22.md",
+      "first_source_line": 1718,
+      "last_source_line": 1769,
+      "source_sha256": "8c689b2b4c1dfd3a8452405f8e8e39a125401f7b58b68758b7369b3afd3e7fb7",
+      "payload_sha256": "8c689b2b4c1dfd3a8452405f8e8e39a125401f7b58b68758b7369b3afd3e7fb7",
+      "source_bytes": 3309,
+      "payload_bytes": 3309,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-21.md",
+      "first_source_line": 1770,
+      "last_source_line": 1820,
+      "source_sha256": "d78f22ba637328f00a7a2b62c1726b2406cc9ae44d705c3a0f812e53f7cde959",
+      "payload_sha256": "d78f22ba637328f00a7a2b62c1726b2406cc9ae44d705c3a0f812e53f7cde959",
+      "source_bytes": 3085,
+      "payload_bytes": 3085,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-20.md",
+      "first_source_line": 1821,
+      "last_source_line": 1867,
+      "source_sha256": "0ed546685c977b766b5957755852d541f42233a10d3be56b7667d1bb2e3c236f",
+      "payload_sha256": "0ed546685c977b766b5957755852d541f42233a10d3be56b7667d1bb2e3c236f",
+      "source_bytes": 2967,
+      "payload_bytes": 2967,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-19.md",
+      "first_source_line": 1868,
+      "last_source_line": 1960,
+      "source_sha256": "99f417b4330297b669b53716cb8bb59e65fe08c7c60a292200b4d334cfe45672",
+      "payload_sha256": "99f417b4330297b669b53716cb8bb59e65fe08c7c60a292200b4d334cfe45672",
+      "source_bytes": 6141,
+      "payload_bytes": 6141,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-18.md",
+      "first_source_line": 1961,
+      "last_source_line": 2020,
+      "source_sha256": "6e399fb736d75ffc072ec165476fd75ed9f9ef3fedf693d07d27c555a2a0a81e",
+      "payload_sha256": "6e399fb736d75ffc072ec165476fd75ed9f9ef3fedf693d07d27c555a2a0a81e",
+      "source_bytes": 4157,
+      "payload_bytes": 4157,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/source-and-platform-notes.md",
+      "first_source_line": 2021,
+      "last_source_line": 2152,
+      "source_sha256": "1c45b558141752266e5115c3dd6f4547778f319017ebae22a76cfe40ecc5e8d5",
+      "payload_sha256": "1c45b558141752266e5115c3dd6f4547778f319017ebae22a76cfe40ecc5e8d5",
+      "source_bytes": 8641,
+      "payload_bytes": 8641,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/early-integration.md",
+      "first_source_line": 2153,
+      "last_source_line": 2439,
+      "source_sha256": "c64ced8d93c3ab9ea68addefe82935b89a98538414975468230cf5ec64b3094a",
+      "payload_sha256": "50cb12fd5865e2e0f5dfaa4503e3d3b3309d80605711ab27300e9294a314880b",
+      "source_bytes": 19003,
+      "payload_bytes": 19005,
+      "transforms": [
+        {
+          "old": "](docs/reports/w7-lean-ci/README.md)",
+          "new": "](../../reports/w7-lean-ci/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        },
+        {
+          "old": "](docs/reports/w7-generic-lean-names/README.md)",
+          "new": "](../../reports/w7-generic-lean-names/README.md)",
+          "count": 1,
+          "reason": "relative link rebased to the same repository target"
+        }
+      ]
+    },
+    {
+      "path": "docs/development/increments/early-tasks-and-audits.md",
+      "first_source_line": 2440,
+      "last_source_line": 2728,
+      "source_sha256": "74d8d8a46f6fb5f6414af818892d13dfaddbeb2c97681d8e320656b00f93fccc",
+      "payload_sha256": "74d8d8a46f6fb5f6414af818892d13dfaddbeb2c97681d8e320656b00f93fccc",
+      "source_bytes": 20742,
+      "payload_bytes": 20742,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/waves-03-04.md",
+      "first_source_line": 2729,
+      "last_source_line": 2897,
+      "source_sha256": "e88cbdbf890c0f63bf39f094bbda4699fd3b93410f885809c754190642f8ef56",
+      "payload_sha256": "e88cbdbf890c0f63bf39f094bbda4699fd3b93410f885809c754190642f8ef56",
+      "source_bytes": 11432,
+      "payload_bytes": 11432,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-05.md",
+      "first_source_line": 2898,
+      "last_source_line": 3005,
+      "source_sha256": "0ddcb5c99fb9b5cc09aab88df31879413aa5ad960bc3c1edfd8001f847159dd2",
+      "payload_sha256": "0ddcb5c99fb9b5cc09aab88df31879413aa5ad960bc3c1edfd8001f847159dd2",
+      "source_bytes": 7540,
+      "payload_bytes": 7540,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-06.md",
+      "first_source_line": 3006,
+      "last_source_line": 3074,
+      "source_sha256": "4f6135ddeaf10bd5345d1c0eeb507c34d651b082963be2d961f54224b11370db",
+      "payload_sha256": "4f6135ddeaf10bd5345d1c0eeb507c34d651b082963be2d961f54224b11370db",
+      "source_bytes": 4729,
+      "payload_bytes": 4729,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-07.md",
+      "first_source_line": 3075,
+      "last_source_line": 3154,
+      "source_sha256": "fed8ae9f3cd6c6e8e97c96aa30e42d083f965fedecd7473289ba56229bc2a309",
+      "payload_sha256": "fed8ae9f3cd6c6e8e97c96aa30e42d083f965fedecd7473289ba56229bc2a309",
+      "source_bytes": 5601,
+      "payload_bytes": 5601,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-08.md",
+      "first_source_line": 3155,
+      "last_source_line": 3222,
+      "source_sha256": "97c5a9aaead28748e83b13e504f73e70acb6842d32c53e216aed69f989b1595b",
+      "payload_sha256": "97c5a9aaead28748e83b13e504f73e70acb6842d32c53e216aed69f989b1595b",
+      "source_bytes": 4611,
+      "payload_bytes": 4611,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-09.md",
+      "first_source_line": 3223,
+      "last_source_line": 3308,
+      "source_sha256": "b7b02fa79c91c751cafcbe43951b3df774a36aeb44ec425db78633d4354a7ddf",
+      "payload_sha256": "b7b02fa79c91c751cafcbe43951b3df774a36aeb44ec425db78633d4354a7ddf",
+      "source_bytes": 5821,
+      "payload_bytes": 5821,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-10.md",
+      "first_source_line": 3309,
+      "last_source_line": 3391,
+      "source_sha256": "48e38b49032ef33695be321be470d4244f0dd0c0eee4bd1fec6bb3b006b70117",
+      "payload_sha256": "48e38b49032ef33695be321be470d4244f0dd0c0eee4bd1fec6bb3b006b70117",
+      "source_bytes": 5619,
+      "payload_bytes": 5619,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-11.md",
+      "first_source_line": 3392,
+      "last_source_line": 3460,
+      "source_sha256": "6c085e0d12336e3bdeb4a8705200cc0c414b6f4f1e56a666ad740e1ed86092ce",
+      "payload_sha256": "6c085e0d12336e3bdeb4a8705200cc0c414b6f4f1e56a666ad740e1ed86092ce",
+      "source_bytes": 4497,
+      "payload_bytes": 4497,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-12.md",
+      "first_source_line": 3461,
+      "last_source_line": 3528,
+      "source_sha256": "f2e972531b47468f82959ea284836b464542736c39147c6ec65f216f2207044f",
+      "payload_sha256": "f2e972531b47468f82959ea284836b464542736c39147c6ec65f216f2207044f",
+      "source_bytes": 4609,
+      "payload_bytes": 4609,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-13.md",
+      "first_source_line": 3529,
+      "last_source_line": 3605,
+      "source_sha256": "56ab3332ac0253560d5bc15ede34361510e9a4830a2756ea0638bda331cae418",
+      "payload_sha256": "56ab3332ac0253560d5bc15ede34361510e9a4830a2756ea0638bda331cae418",
+      "source_bytes": 5097,
+      "payload_bytes": 5097,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-14.md",
+      "first_source_line": 3606,
+      "last_source_line": 3677,
+      "source_sha256": "1add84c6ad42e6120be2938a81e513e15ab20b6fccf0102fe1d036d654072750",
+      "payload_sha256": "1add84c6ad42e6120be2938a81e513e15ab20b6fccf0102fe1d036d654072750",
+      "source_bytes": 4769,
+      "payload_bytes": 4769,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-15.md",
+      "first_source_line": 3678,
+      "last_source_line": 3749,
+      "source_sha256": "9ae625387fa74789e2394739eeb8adc68d634e675407b780689852808dc689d3",
+      "payload_sha256": "9ae625387fa74789e2394739eeb8adc68d634e675407b780689852808dc689d3",
+      "source_bytes": 4607,
+      "payload_bytes": 4607,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-16.md",
+      "first_source_line": 3750,
+      "last_source_line": 3952,
+      "source_sha256": "526f85913ca581adbd186ceeb6d012e0dd0302b0208a6bee33bbafed2cd013fa",
+      "payload_sha256": "526f85913ca581adbd186ceeb6d012e0dd0302b0208a6bee33bbafed2cd013fa",
+      "source_bytes": 14651,
+      "payload_bytes": 14651,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/wave-17.md",
+      "first_source_line": 3953,
+      "last_source_line": 4225,
+      "source_sha256": "f5e3e88c5f42491a738f59d6b5010045b6c8dc1edc486100ab3183edf53b3ffe",
+      "payload_sha256": "f5e3e88c5f42491a738f59d6b5010045b6c8dc1edc486100ab3183edf53b3ffe",
+      "source_bytes": 19857,
+      "payload_bytes": 19857,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/legacy/cycles-and-teardown.md",
+      "first_source_line": 4226,
+      "last_source_line": 4466,
+      "source_sha256": "8d2ba77a20543915deb9edb3ca3dd64373d697f91995f0d8124f3844b43af18e",
+      "payload_sha256": "8d2ba77a20543915deb9edb3ca3dd64373d697f91995f0d8124f3844b43af18e",
+      "source_bytes": 17797,
+      "payload_bytes": 17797,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/legacy/identity-and-diagnostics.md",
+      "first_source_line": 4467,
+      "last_source_line": 4722,
+      "source_sha256": "2230b1773a83b677b09998c44ad1f6b445100779531322464fac5c6f07aa5e21",
+      "payload_sha256": "2230b1773a83b677b09998c44ad1f6b445100779531322464fac5c6f07aa5e21",
+      "source_bytes": 17636,
+      "payload_bytes": 17636,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/legacy/mutex-and-scalars.md",
+      "first_source_line": 4723,
+      "last_source_line": 4838,
+      "source_sha256": "a668e3a51805aef5f4b8b9de8537b20ff9aaff952e3fdf51a6c22739f7213836",
+      "payload_sha256": "a668e3a51805aef5f4b8b9de8537b20ff9aaff952e3fdf51a6c22739f7213836",
+      "source_bytes": 8291,
+      "payload_bytes": 8291,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/legacy/remaining-work.md",
+      "first_source_line": 4839,
+      "last_source_line": 5069,
+      "source_sha256": "d0e69ba8a52878a337575036692c7ccd978506e27f8c92b2a02743c1c852b531",
+      "payload_sha256": "d0e69ba8a52878a337575036692c7ccd978506e27f8c92b2a02743c1c852b531",
+      "source_bytes": 15849,
+      "payload_bytes": 15849,
+      "transforms": []
+    },
+    {
+      "path": "docs/development/increments/legacy/operational-notes.md",
+      "first_source_line": 5070,
+      "last_source_line": 5145,
+      "source_sha256": "8be56fafee9929cebfa7a529b8cdd4e8b9b587c2e4005c81282ed672b84340ec",
+      "payload_sha256": "8be56fafee9929cebfa7a529b8cdd4e8b9b587c2e4005c81282ed672b84340ec",
+      "source_bytes": 4674,
+      "payload_bytes": 4674,
+      "transforms": []
+    }
+  ]
+}

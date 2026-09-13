@@ -1,0 +1,112 @@
+{
+  "counts_before": {
+    "double_release": 1,
+    "leak": 264,
+    "unknown_alias": 4167,
+    "unsupported": 50047
+  },
+  "counts_after": {
+    "double_release": 1,
+    "leak": 268,
+    "unknown_alias": 4163,
+    "unsupported": 50046
+  },
+  "units": [
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c"
+      ],
+      "before": "Unknown",
+      "after": "Unsafe"
+    }
+  ],
+  "functions": [
+    {
+      "key": [
+        "cmetrics",
+        "cmt_decode_prometheus_remote_write.c",
+        "decode_histogram_points"
+      ],
+      "before": "Unknown",
+      "after": "Unsafe"
+    }
+  ],
+  "removed": [
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point",
+      7870,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_data_point",
+      7755,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6856,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "librdkafka",
+      "cJSON.c",
+      "print",
+      2277,
+      "unknown_alias",
+      "unresolved resource identity `printed`"
+    ],
+    [
+      "librdkafka",
+      "cJSON.c",
+      "print",
+      2279,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ]
+  ],
+  "added": [
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point",
+      7914,
+      "leak",
+      "live obligation acquired at cmt_decode_opentelemetry.c:1048"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_data_point",
+      7787,
+      "leak",
+      "live obligation acquired at cmt_decode_opentelemetry.c:899"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6903,
+      "leak",
+      "live obligation acquired at cmt_decode_prometheus_remote_write.c:513"
+    ],
+    [
+      "librdkafka",
+      "snappy.c",
+      "rd_kafka_snappy_java_uncompress",
+      20499,
+      "leak",
+      "live obligation acquired at snappy.c:1705"
+    ]
+  ],
+  "meaning": "Diagnostic occurrences; Unsafe remains provisional. Coordinates are internal preprocessed lines."
+}

@@ -237,6 +237,7 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             alias_read.is_some()
         ),
         LegacyInstruction::AggregateStore { place } => format!("AggregateStore {place}"),
+        LegacyInstruction::ForgetScalar { destination } => format!("ForgetScalar {destination}"),
         LegacyInstruction::Unknown { description, .. } => format!("Unknown: {description}"),
         LegacyInstruction::NoOp => "NoOp".to_owned(),
     }

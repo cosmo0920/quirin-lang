@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "status": "Dispatch templates; assessments already ran, implementation ownership must be assigned before reuse. Recheck live state and read complete applicable rules.",
+  "common": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "fork_turns": "none",
+    "required_read": [
+      "Applicable AGENTS.md and nested guidance, including all global invariants, gate, archive and verdict rules",
+      "CLAUDE.md: Worktree and measurement hygiene"
+    ],
+    "return_format": [
+      "HEAD and dirty state",
+      "Changed paths",
+      "Commands, exits and measured counts",
+      "Private log paths",
+      "Unresolved failures and exact next action"
+    ],
+    "coordination": "One assigned worker per tree. No shared matrix/status edits or merges. Integrator schedules full gates serially. Do not drop mandatory context to meet a size target. Recheck ownership/session evidence before mutating a historically locked checkout; read-only review can continue."
+  },
+  "tasks": [
+    {
+      "card": "R1 CT-WIRE-LANE-3",
+      "worktree": ".claude/worktrees/vibrant-curie-9f9380",
+      "expected_head": "b8a9311f7719ee8f3231277ee73cca8fdcc65789",
+      "scope_for_review": [
+        "compiler/tests/ct_corpus.rs",
+        "compiler/tests/fixtures/ct/CT25/",
+        "compiler/tests/region_joins_loan.rs",
+        "scripts/ct_stage_summary.py"
+      ],
+      "additional_constraint_ids": [
+        "15m",
+        "16",
+        "21",
+        "23",
+        "25"
+      ],
+      "report_read": "docs/reports/ct-wire-lane-3/README.md sections 5, 7, 9",
+      "next_action": "Rerun the exact mapped-case CT test outside the ptrace sandbox. A preserved native executable reports LeakSanitizer cannot run under ptrace; outside-sandbox attempt was interrupted, with no passing result. Current results: CT 4/5; region 11/11; stage 54/54; matrix 14/15 (121 vs 122 audits). Retain assertions/sanitizers. Then finish fresh gate and hand off for reconciliation.",
+      "routing_note": "Review the union of merge-base-to-HEAD changes, staged/unstaged changes, renamed/deleted/untracked paths and planned paths; scope_for_review is a starting set, not an exhaustive constraint filter."
+    },
+    {
+      "card": "R2 W31-CORPUS-CONTRACTS-2",
+      "worktree": ".claude/worktrees/agent-a56d2b9c03bea3365",
+      "expected_head": "d616512b771997bf06a4f60a26c418b6adb218b9",
+      "scope_for_review": [
+        "contract/qcore/",
+        "contract/cycle19-resource-contracts.json",
+        "compiler/tests/contract_loader.rs",
+        "compiler/tests/qcore_contract_corpus.rs",
+        "docs/reports/w31-corpus-contracts-2/"
+      ],
+      "additional_constraint_ids": [
+        "4",
+        "7",
+        "8",
+        "9",
+        "16",
+        "21",
+        "22",
+        "25"
+      ],
+      "report_read": "docs/reports/w31-corpus-contracts-2/README.md, especially gate placeholders",
+      "next_action": "Keep five tracked edits and 28 untracked files. Verify manifest and leaf attribution against wave-30 baseline. Rerun recorded process-limit failure in isolation. Complete six GATE placeholders and missing gate evidence, then hand off reviewed WIP. Claims 49760 -> 49755 unsupported and no status/leak/alias moves remain unverified in this restart.",
+      "routing_note": "Review the union of merge-base-to-HEAD changes, staged/unstaged changes, renamed/deleted/untracked paths and planned paths; scope_for_review is a starting set, not an exhaustive constraint filter."
+    },
+    {
+      "card": "R3 CT03-PROOF-ALPHABET",
+      "worktree": ".claude/worktrees/agent-a86de3e1a59ff9d7f",
+      "expected_head": "5667267881c54ce24e2ef0052afb0914f6ac2a87",
+      "scope_for_review": [
+        "crates/qcore-core/src/task_trace_relation.rs",
+        "proof/",
+        "docs/reports/ct03-proof-alphabet/"
+      ],
+      "additional_constraint_ids": [
+        "15a",
+        "16",
+        "21",
+        "23",
+        "25",
+        "28"
+      ],
+      "report_read": "docs/reports/ct03-proof-alphabet/README.md sections 7, 8, 9",
+      "next_action": "Recover full-suite failure evidence and rerun confined fixture test in isolation. Fill missing close-out evidence in a new record as appropriate. Validate host-unconditional proof test and proposed row against digest relation. Do not flip integrator-owned proof stage yet. Coordinate task_trace_relation edits with R4.",
+      "routing_note": "Review the union of merge-base-to-HEAD changes, staged/unstaged changes, renamed/deleted/untracked paths and planned paths; scope_for_review is a starting set, not an exhaustive constraint filter."
+    },
+    {
+      "card": "R4 WRITE-LEND-TASKS",
+      "worktree": ".claude/worktrees/agent-a0f14b595495fba8a",
+      "expected_head": "0e6043ce1c557646318674448b7fcc33460538b7",
+      "scope_for_review": [
+        "crates/qcore-core/",
+        "crates/qcore-frontend/",
+        "compiler/tests/write_lend_tasks.rs",
+        "proof/",
+        "docs/reports/write-lend-tasks/"
+      ],
+      "additional_constraint_ids": [
+        "1",
+        "2",
+        "13",
+        "14",
+        "15h",
+        "16",
+        "21",
+        "23",
+        "28"
+      ],
+      "report_read": "docs/reports/write-lend-tasks/README.md sections 11, 12",
+      "next_action": "Full gate evidence is missing; report assertions alone do not suffice. Read changed paths from git diff against merge base, then relevant source only. Review task_trace_relation overlap with R3: preserve BufferWritten admission and refusal of unmodeled lease events. Schedule and record full gate; hand off constraint/code-condition amendments to integrator.",
+      "routing_note": "Review the union of merge-base-to-HEAD changes, staged/unstaged changes, renamed/deleted/untracked paths and planned paths; scope_for_review is a starting set, not an exhaustive constraint filter."
+    }
+  ]
+}
