@@ -334,11 +334,24 @@ boundary"* (open card `CT46-MUTEX-CAPTURE`). What a lane can now claim:
 * `crates/qcore-frontend/src/source_mutex.rs` — `DeclaredShare`,
   `Frame::{shared, admits_reach}`, `lower_declared_share`, the header form.
 * `crates/qcore-frontend/tests/mutex_share_cross.rs` — **16 tests**, §6.
+* `crates/qcore-frontend/tests/source_mutex.rs` — three lines: the documented
+  grammar example gains a declared crossing, in step with the doc below.
+  Keeping those two in sync is exactly what
+  `the_documented_grammar_example_checks` exists for; the other 74 tests of
+  that file are untouched and pass unchanged.
 * `proof/QCore/MutexShareCross.lean`, `proof/AuditMutexShareCross.lean`,
   `proof/QCore/Transferability.lean`, `proof/AuditTransferability.lean`,
   `proof/QCore.lean` — §7.
 * `docs/QCORE_SPEC_r0_3.md` §L21 `Q6xx` row — the condition widening, stated.
-* `docs/development/increments/wave-32.md` (new; index pointer updated).
+* `docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md` §G02c — the clause in both EBNF
+  productions and in the worked example.
+* `docs/development/increments/wave-32.md` (new; index pointer and wave table
+  updated in `docs/development/increments/README.md`).
+
+Nothing else is touched: **no** gateway, contract, audit or provider file, no
+fixture under `compiler/tests/fixtures/ct/`, no frozen archive, and neither
+`ct_manifest.json` nor the acceptance matrix. The Cycle 19 corpus rows and the
+leak pin are untouched by construction, and this wave runs no arbiter.
 
 ## 12. Deliberate pin moves, disclosed
 

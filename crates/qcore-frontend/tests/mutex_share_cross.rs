@@ -270,6 +270,19 @@ fn the_judgment_decides_the_payload_before_the_protocol_gate_runs() {
         payload_at_protocol.contains("is not a mutex generation of this module"),
         "{payload_at_protocol}"
     );
+
+    // The payload position is classified from the payload name **alone**: a
+    // generation shared under something that is not a generation is still the
+    // non-value it is, not an unmodeled form. If the protocol name leaked into
+    // the payload's classification this would read `UnmodeledType`.
+    let (_, generation_under_payload) = refusal(&entry(&format!(
+        "{DECLARATIONS} thread scope c share m under buf {{ }}"
+    )));
+    assert!(
+        generation_under_payload.contains("KindNotTransferable(NotAValue)"),
+        "the payload's kind must not depend on the protocol name: \
+         {generation_under_payload}"
+    );
 }
 
 // ---------------------------------------------------------------------------

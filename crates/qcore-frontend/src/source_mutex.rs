@@ -1306,10 +1306,13 @@ fn lower_declared_share<'a>(
     // payload is classified as one, so `share m under m` refuses here with the
     // judgment's own reason rather than falling through to a protocol gate
     // that would have complained about the wrong thing.
+    // Classified from the payload name alone. The protocol name is a separate
+    // question and must not enter here, or a generation shared under something
+    // that is not a generation would be reported as an *unmodeled* form rather
+    // than as the non-value it is.
     let place = if state.resource_of.contains_key(resource_name) {
         TransferKind::ProtectedResource
-    } else if state.mutex_of.contains_key(mutex_name) && state.mutex_of.contains_key(resource_name)
-    {
+    } else if state.mutex_of.contains_key(resource_name) {
         TransferKind::MutexGeneration
     } else {
         TransferKind::Unmodeled
