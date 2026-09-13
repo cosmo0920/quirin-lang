@@ -857,5 +857,10 @@ fn the_modules_under_test_are_the_production_ones() {
     // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qcore` —
     // two read-only size queries declared borrowed/none against their pinned
     // bodies, again because the manifest grew and nothing measured here moved.
-    assert_eq!(contracts.source_assumptions().len(), 19);
+    // 19 -> 21 by card W31-CORPUS-CONTRACTS-2, which adds
+    // `chunkio/chunk_sizes.qcore` and
+    // `fluent_bit/input_chunk_total_size.qcore` — the two size-sibling
+    // read-only queries its predecessor named and declined — on the same
+    // grounds.
+    assert_eq!(contracts.source_assumptions().len(), 21);
 }

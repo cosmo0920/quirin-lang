@@ -1,0 +1,1525 @@
+{
+  "counts_before": {
+    "double_release": 1,
+    "leak": 268,
+    "unknown_alias": 4163,
+    "unsupported": 50046
+  },
+  "counts_after": {
+    "double_release": 1,
+    "leak": 272,
+    "unknown_alias": 4208,
+    "unsupported": 50155
+  },
+  "units": [],
+  "functions": [],
+  "removed": [
+    [
+      "chunkio",
+      "cio_file.c",
+      "get_available_size",
+      2958,
+      "unknown_alias",
+      "unresolved resource identity `av`"
+    ],
+    [
+      "ctraces",
+      "ctr_decode_opentelemetry.c",
+      "convert_array_value",
+      8638,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "ctraces",
+      "ctr_decode_opentelemetry.c",
+      "convert_kvlist_value",
+      8682,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "librdkafka",
+      "cJSON.c",
+      "utf16_literal_to_utf8",
+      1900,
+      "unknown_alias",
+      "unresolved resource identity `sequence_length`"
+    ],
+    [
+      "librdkafka",
+      "lz4.c",
+      "read_long_length_no_check",
+      1239,
+      "unknown_alias",
+      "unresolved resource identity `l`"
+    ],
+    [
+      "librdkafka",
+      "lz4.c",
+      "read_variable_length",
+      1337,
+      "unknown_alias",
+      "unresolved resource identity `length`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_weight_usable",
+      21718,
+      "unknown_alias",
+      "unresolved resource identity `weight`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_pop_serve0",
+      19943,
+      "unknown_alias",
+      "unresolved resource identity `is_locked`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_pop_serve0",
+      19949,
+      "unknown_alias",
+      "unresolved resource identity `is_locked`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "ut_build_record_v2",
+      19757,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "ut_build_valid_msgset_v2",
+      19812,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "snappy.c",
+      "find_match_length",
+      20029,
+      "unknown_alias",
+      "unresolved resource identity `matched`"
+    ],
+    [
+      "librdkafka",
+      "tinycthread_extra.c",
+      "cnd_timedwait_ms",
+      3008,
+      "unknown_alias",
+      "unresolved resource identity `continue_timedwait`"
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_http.c",
+      "mk_http_handler_read",
+      6304,
+      "unknown_alias",
+      "unresolved resource identity `total_bytes`"
+    ],
+    [
+      "monkey-libevent",
+      "mk_server/mk_net.c",
+      "mk_net_conn_write",
+      6113,
+      "unknown_alias",
+      "unresolved resource identity `total`"
+    ]
+  ],
+  "added": [
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_exponential_histogram_data_point",
+      8058,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_exponential_histogram_data_point",
+      8079,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_exponential_histogram_data_point",
+      8080,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point",
+      7846,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point",
+      7867,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_histogram_data_point",
+      7868,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_numerical_data_point",
+      7608,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_numerical_data_point",
+      7628,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_numerical_data_point",
+      7629,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_data_point",
+      7731,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_data_point",
+      7752,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_opentelemetry.c",
+      "decode_summary_data_point",
+      7753,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6809,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6830,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6831,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6835,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6840,
+      "leak",
+      "live obligation acquired at cmt_decode_prometheus_remote_write.c:513"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6845,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6853,
+      "leak",
+      "live obligation acquired at cmt_decode_prometheus_remote_write.c:513"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6872,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6880,
+      "leak",
+      "live obligation acquired at cmt_decode_prometheus_remote_write.c:513"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6893,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_histogram_points",
+      6901,
+      "leak",
+      "live obligation acquired at cmt_decode_prometheus_remote_write.c:513"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_numerical_samples",
+      6620,
+      "unknown_alias",
+      "unresolved resource identity `static_metric_detected`"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_numerical_samples",
+      6640,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_decode_prometheus_remote_write.c",
+      "decode_numerical_samples",
+      6641,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "cmetrics",
+      "cmt_encode_splunk_hec.c",
+      "initialize_splunk_hec_context",
+      6088,
+      "unknown_alias",
+      "unresolved resource identity `result`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18892,
+      "unknown_alias",
+      "unresolved resource identity `direct_missing`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18922,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18922,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18939,
+      "unknown_alias",
+      "unresolved resource identity `direct_loaded`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18945,
+      "unknown_alias",
+      "unresolved resource identity `has_routes`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18946,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18946,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18947,
+      "unknown_alias",
+      "unresolved resource identity `ic`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "flb_input_chunk_map",
+      18948,
+      "unknown_alias",
+      "unresolved resource identity `has_routes`"
+    ],
+    [
+      "fluent-bit-chunk",
+      "flb_input_chunk.c",
+      "get_input_chunk_record_count",
+      18008,
+      "unknown_alias",
+      "unresolved resource identity `set_down`"
+    ],
+    [
+      "librdkafka",
+      "lz4hc.c",
+      "LZ4HC_InsertAndGetWiderMatch",
+      723,
+      "unknown_alias",
+      "unresolved resource identity `matchLength`"
+    ],
+    [
+      "librdkafka",
+      "lz4hc.c",
+      "LZ4HC_InsertAndGetWiderMatch",
+      741,
+      "unknown_alias",
+      "unresolved resource identity `matchLength`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_consumer_close0",
+      23878,
+      "unknown_alias",
+      "unresolved resource identity `got_terminate`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23005,
+      "unknown_alias",
+      "unresolved resource identity `need_select`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23006,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_share_select_broker`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23007,
+      "unknown_alias",
+      "unresolved resource identity `selected_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23008,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23008,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23010,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka.c",
+      "rd_kafka_share_fetch_fanout_op",
+      23010,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_op_serve",
+      22612,
+      "unknown_alias",
+      "unresolved resource identity `updated`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_op_serve",
+      22613,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_fail`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_op_serve",
+      22613,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_update",
+      23950,
+      "unknown_alias",
+      "unresolved resource identity `needs_update`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_update",
+      23952,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_op_new0`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_update",
+      23953,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_broker_update",
+      23955,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_broker.c",
+      "rd_kafka_toppar_producer_serve",
+      23047,
+      "unknown_alias",
+      "unresolved resource identity `did_purge`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_coord.c",
+      "rd_kafka_coord_req_handle_FindCoordinator",
+      20336,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_feature.c",
+      "rd_kafka_features_check",
+      19822,
+      "unknown_alias",
+      "unresolved resource identity `fails`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20804,
+      "unknown_alias",
+      "unresolved resource identity `in_acquired_range`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20806,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20807,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_op_destroy`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20810,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20811,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20812,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20814,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20816,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20817,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20818,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20822,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_fetcher.c",
+      "rd_kafka_share_filter_acquired_records_and_update_ack_type",
+      20825,
+      "unsupported",
+      "call to uncontracted function `rd_list_add`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_idempotence.c",
+      "rd_kafka_idemp_drain_done",
+      20512,
+      "unknown_alias",
+      "unresolved resource identity `restart_tmr`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_idempotence.c",
+      "rd_kafka_idemp_drain_done",
+      20513,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_idemp_pid_timer_restart`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_idempotence.c",
+      "rd_kafka_idemp_drain_done",
+      20514,
+      "unknown_alias",
+      "unresolved resource identity `wakeup_brokers`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_idempotence.c",
+      "rd_kafka_idemp_drain_done",
+      20515,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_all_brokers_wakeup`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20434,
+      "unknown_alias",
+      "unresolved resource identity `has_learned_brokers`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20438,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20440,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20442,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20445,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20446,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in for-loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20447,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20453,
+      "unknown_alias",
+      "unresolved resource identity `purge_broker`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20455,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20458,
+      "unsupported",
+      "call to uncontracted function `rd_list_add`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20460,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in for-loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20461,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20463,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20465,
+      "unsupported",
+      "call to uncontracted function `rd_list_destroy`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_decommission_unavailable_brokers",
+      20466,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_all",
+      21149,
+      "unknown_alias",
+      "unresolved resource identity `destroy_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_all",
+      21150,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_all",
+      21150,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topic_ids",
+      21044,
+      "unknown_alias",
+      "unresolved resource identity `destroy_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topic_ids",
+      21045,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topic_ids",
+      21045,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      20997,
+      "unknown_alias",
+      "unresolved resource identity `destroy_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      20998,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      20998,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      21010,
+      "unknown_alias",
+      "unresolved resource identity `destroy_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      21011,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_refresh_topics",
+      21011,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_request",
+      21172,
+      "unknown_alias",
+      "unresolved resource identity `destroy_rkb`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_request",
+      21173,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_request",
+      21173,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_topic_match",
+      20886,
+      "unknown_alias",
+      "unresolved resource identity `matched`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_update_op",
+      21437,
+      "unknown_alias",
+      "unresolved resource identity `cache_updated`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_update_op",
+      21441,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_update_op",
+      21441,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_update_op",
+      21442,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_metadata_cache_propagate_changes`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_metadata.c",
+      "rd_kafka_metadata_update_op",
+      21443,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_metadata_cache_expiry_start`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24233,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24235,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24236,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24242,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24242,
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24242,
+      "unsupported",
+      "call to uncontracted function `fprintf`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24244,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24245,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24251,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24251,
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24251,
+      "unsupported",
+      "call to uncontracted function `fprintf`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24253,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24254,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24260,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24260,
+      "unsupported",
+      "braced initializer, expression, or declaration is not modeled"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24260,
+      "unsupported",
+      "call to uncontracted function `fprintf`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24262,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_mock_cluster_destroy`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24263,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_destroy`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock.c",
+      "ut_mock_txn_offset_is_aborted",
+      24264,
+      "unsupported",
+      "call to uncontracted function `fprintf`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock_sharegrp.c",
+      "rd_kafka_mock_sharegroup_collect_subscribed_topics",
+      22078,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_mock_sharegrp.c",
+      "rd_kafka_mock_sharegroup_member_subscribed_topic_names_set",
+      22040,
+      "unknown_alias",
+      "unresolved resource identity `found`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20863,
+      "unknown_alias",
+      "unresolved resource identity `internal_fallback`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20864,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20864,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20876,
+      "unknown_alias",
+      "unresolved resource identity `internal_fallback`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20877,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_broker_destroy_final`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_partition.c",
+      "rd_kafka_toppar_broker_delegate",
+      20877,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_apply",
+      20454,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_fix_offsets",
+      20470,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_purge0",
+      19798,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_queue.c",
+      "rd_kafka_q_purge_toppar_version",
+      19832,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_request.c",
+      "rd_kafka_handle_InitProducerId",
+      23963,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sasl_oauthbearer_oidc.c",
+      "rd_kafka_jwt_b64_decode_payload",
+      21305,
+      "unknown_alias",
+      "unresolved resource identity `payloads_start`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sasl_oauthbearer_oidc.c",
+      "rd_kafka_jwt_b64_decode_payload",
+      21309,
+      "unsupported",
+      "unsupported assignment expression"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "balance",
+      21903,
+      "unknown_alias",
+      "unresolved resource identity `leftoverUnassignedPartitions_allocated`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "balance",
+      21904,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "performReassignments",
+      21706,
+      "unknown_alias",
+      "unresolved resource identity `modified`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "performReassignments",
+      21782,
+      "unknown_alias",
+      "unresolved resource identity `found_rack`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "rd_kafka_sticky_assignor_assign_cb",
+      22307,
+      "unknown_alias",
+      "unresolved resource identity `remove_part`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_sticky_assignor.c",
+      "rd_kafka_sticky_assignor_assign_cb",
+      22308,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_topic_partition_list_del_by_idx`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20944,
+      "unknown_alias",
+      "unresolved resource identity `has_racks`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20945,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20952,
+      "unknown_alias",
+      "unresolved resource identity `has_racks`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20953,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20956,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20958,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20960,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20962,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20963,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in for-loop condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_topic.c",
+      "rd_kafka_topic_info_new_with_rack",
+      20964,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_handle_FindCoordinator",
+      21775,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in branch condition"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_idemp_state_change",
+      20587,
+      "unknown_alias",
+      "unresolved resource identity `set_result`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_idemp_state_change",
+      20588,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_txn_curr_api_set_result0`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_abort",
+      21622,
+      "unknown_alias",
+      "unresolved resource identity `clear_pending`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_abort",
+      21623,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_abort",
+      21624,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_txn_clear_pending_partitions`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_abort",
+      21625,
+      "unsupported",
+      "indirect memory access is outside the resource projection"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_transaction",
+      20946,
+      "unknown_alias",
+      "unresolved resource identity `wakeup_brokers`"
+    ],
+    [
+      "librdkafka",
+      "rdkafka_txnmgr.c",
+      "rd_kafka_txn_op_begin_transaction",
+      20947,
+      "unsupported",
+      "call to uncontracted function `rd_kafka_all_brokers_wakeup`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_all_error_types_with_valid",
+      20361,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "unittest_msgset_mixed_crc_success_decomp",
+      20092,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "ut_build_valid_msgset_v2",
+      19782,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "rdunittest_msgset_errors.c",
+      "ut_build_valid_msgset_v2",
+      19787,
+      "unknown_alias",
+      "unresolved resource identity `offset`"
+    ],
+    [
+      "librdkafka",
+      "snappy.c",
+      "append",
+      19808,
+      "unsupported",
+      "unmodeled call, aggregate or indirect access in loop condition"
+    ]
+  ],
+  "meaning": "Diagnostic occurrences; Unsafe remains provisional. Coordinates are internal preprocessed lines."
+}

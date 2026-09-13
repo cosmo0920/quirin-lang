@@ -1,0 +1,15 @@
+=== every leaf inside the functions that hold those leaves ===: IDENTICAL (127 lines)
+=== leaves whose description names a declared callee ===: IDENTICAL (6 lines)
+=== sibling-callee leaves (for the upheld non-declarations) ===: IDENTICAL (7 lines)
+header: DIFFERS
+  -old archive: docs/reports/w4-recursive-summaries/artifacts/diagnostics.json.gz
+  -old projected functions: 4834  {'Safe': 150, 'Unknown': 4600, 'Unsafe': 84}
+  -old leak: 266
+  -old unknown_alias: 4344
+  -old unsupported: 49760
+  +new archive: docs/reports/c-gateway-wave/artifacts/diagnostics.json.gz
+  +new projected functions: 4834  {'Safe': 146, 'Unknown': 4603, 'Unsafe': 85}
+  +new double_release: 1
+  +new leak: 272
+  +new unknown_alias: 4208
+  +new unsupported: 50155

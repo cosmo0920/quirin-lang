@@ -7,7 +7,10 @@ gate, entry points, Lean CI hygiene and diagnostics namespaces. Read its
 **standing subsystem constraints** — the "when touching X, do not Y" inventory —
 before editing the C gateway, the compile-task transport, the diagnostics
 tables, the concurrency routes or the provider host. Per-increment status
-history lives in `DEVELOPMENT.md`'s "Increment records". This file carries only
+history lives in `docs/development/increments/`, reached through
+`DEVELOPMENT.md#increment-records`. Follow `AGENTS.md`'s documentation-retrieval
+strategy: the root development guide is a table of contents, and setup,
+evidence and history pages are read on demand. This file carries only
 the operational guidance that is in neither of those.
 
 ## Working rules
@@ -31,9 +34,11 @@ the operational guidance that is in neither of those.
 - **Close a card with Rust plus audited Lean.** A card closes only with a Rust
   implementation and matching audited Lean modules registered in an
   `Audit*.lean`; Python artifacts are supplementary evidence, never the close.
-- **New status text goes in one place** — one paragraph in `DEVELOPMENT.md`'s
-  "Increment records", plus `AGENTS.md`'s headline numbers, per that file's sync
-  rule. Do not re-grow a per-increment chronicle here.
+- **New status text goes in one place** — one paragraph, newest first, in the
+  current record file named by `docs/development/increments/README.md`, plus
+  `AGENTS.md`'s headline numbers, per that file's sync rule. Update the index
+  when a new wave file opens. Do not re-grow a per-increment chronicle here
+  or in the root development table of contents.
 - **Compact these three files every 2–3 waves.** `AGENTS.md`, `CLAUDE.md` and
   `README.md` accrete: constraints restate their card reports, sections drift
   apart, README falls behind the ledger. A recurring compaction card
@@ -43,7 +48,9 @@ the operational guidance that is in neither of those.
   number from its source, inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
   hard invariant or evidence pointer may be dropped, and a fact that lives only
-  in these files moves to `DEVELOPMENT.md` verbatim rather than disappearing.
+  in these files moves verbatim into the development history indexed by
+  `DEVELOPMENT.md`, rather than disappearing. Historical copies are labelled
+  as checkpoints; they do not become a second current rule authority.
   Expect single-digit percentages: two passes in, these files are references
   rather than chronicles, and the rule exists to bound accretion, not to
   promise a shrinking file.

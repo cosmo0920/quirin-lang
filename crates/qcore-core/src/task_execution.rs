@@ -22,7 +22,7 @@
 //! raises them and holds nothing — and the task entry declares none, because it
 //! has no external custodian. Several payloads, borrowed payloads, scalar
 //! payloads and payload-carrying rethrow of a bound error stay outside.
-pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, MAX_READERS, ScopeId};
+pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, LeaseRange, MAX_READERS, MAX_WRITERS, ScopeId};
 use crate::scoped_tasks::{
     ResourceId, ResourceState, ScopedTaskLedger, TaskId, TaskLedgerError, TaskOutcome,
 };
@@ -35,6 +35,14 @@ pub const ALLOC_ERROR: &str = "AllocError";
 pub type TaskValueType = ScalarType;
 pub type TaskOperand = ScalarOperand;
 const MAX_CHECK_STATES: usize = 16_384;
+
+/// The byte extent of the one payload shape this route's Buffer has: a single
+/// `int32_t` (card `WRITE-LEND-TASKS`). A range write lease's bounds are
+/// decided against this extent, so the interval a worker holds names real
+/// bytes of the emitted `struct qcore_buffer`'s payload — never a declared
+/// axis with no memory behind it. A byte-extent buffer (`bytes(N)` crossing a
+/// spawn) is the named residual `WRITE-LEND-TASKS-EXTENT`.
+pub const BUFFER_PAYLOAD_BYTES: u64 = 4;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct TaskSpan {
@@ -50,6 +58,15 @@ pub enum ScalarType {
     /// value type: it cannot be a function result, an entry parameter, a copy
     /// source, a move source or a re-loan source.
     ReadLoan,
+    /// A scoped **range write lease** of a Buffer the creator keeps owning
+    /// (card `WRITE-LEND-TASKS`): write authority over `[low, high)` of the
+    /// payload's [`BUFFER_PAYLOAD_BYTES`], transferred to one worker for
+    /// spawn..join. Like a read loan it is not a value type — no result, no
+    /// entry parameter, no copy, move or re-lease source — and in this first
+    /// slice it also admits **no operation in the worker's body**: the
+    /// authority is held and enforced against the owner, and the worker-side
+    /// range write is the named residual `WRITE-LEND-TASKS-EXERCISE`.
+    WriteLease,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ScalarOperand {
@@ -64,6 +81,18 @@ pub enum ScalarOperand {
     Loan {
         slot: SlotId,
         share: u32,
+    },
+    /// Lease write authority over the bytes `[low, high)` of an owned
+    /// Buffer's payload to one child for the outstanding creation (card
+    /// `WRITE-LEND-TASKS`). The slot keeps its binding; only the range's
+    /// write authority leaves, and only the creator's successful join
+    /// returns it. The bounds are check-time constants of the crossing
+    /// construct; whether the range is disjoint from every outstanding
+    /// lease is the ledger's decision, by the wave-29 overlap rule.
+    Lease {
+        slot: SlotId,
+        low: u64,
+        high: u64,
     },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -271,6 +300,11 @@ enum AbstractValue {
     /// frame the lender is outside the frame entirely, so the identity is not
     /// registered in this frame's ledger and carries no discharge duty.
     Loan(ResourceId),
+    /// Range write authority over a resource this frame does not own (card
+    /// `WRITE-LEND-TASKS`). Like a loan it is unregistered in the frame's
+    /// ledger and carries no discharge duty; unlike a loan it is not even
+    /// readable — no operation of this slice admits it in a worker body.
+    Lease(ResourceId),
 }
 impl AbstractValue {
     fn ty(&self) -> ScalarType {
@@ -278,6 +312,7 @@ impl AbstractValue {
             Self::Scalar(ty) => *ty,
             Self::Owned(_) => ScalarType::OwnedBuffer,
             Self::Loan(_) => ScalarType::ReadLoan,
+            Self::Lease(_) => ScalarType::WriteLease,
         }
     }
     /// Owned identity only. A loan is never an owned identity, so it can never
@@ -288,11 +323,13 @@ impl AbstractValue {
             _ => None,
         }
     }
-    /// The identity a read is performed against, owned or borrowed.
+    /// The identity a read is performed against, owned or borrowed. A write
+    /// lease is deliberately not readable: it carries write authority over a
+    /// byte range, not a whole-payload read this route could express.
     fn readable(&self) -> Option<ResourceId> {
         match self {
             Self::Owned(id) | Self::Loan(id) => Some(*id),
-            Self::Scalar(_) => None,
+            Self::Scalar(_) | Self::Lease(_) => None,
         }
     }
 }
@@ -390,6 +427,31 @@ impl State {
                     "slot {slot} is not an owned buffer this task may lend"
                 )),
             },
+            // Leasing demands ownership; the bounds are re-decided here so a
+            // range no byte of the payload backs cannot reach the ledger, and
+            // the ledger separately decides disjointness against everything
+            // outstanding. A lease of anything but an owned buffer — a
+            // scalar, a loan, a lease — is refused: this profile has no
+            // transitive or nested leasing.
+            ScalarOperand::Lease { slot, low, high } => match self.slots.get(slot) {
+                Some(AbstractSlot::Value(AbstractValue::Owned(resource))) => {
+                    if *low >= *high {
+                        return Err(format!(
+                            "a write lease must cover at least one byte: [{low}, {high}) is empty"
+                        ));
+                    }
+                    if *high > BUFFER_PAYLOAD_BYTES {
+                        return Err(format!(
+                            "a write lease must stay inside the payload's {BUFFER_PAYLOAD_BYTES} \
+                             bytes: [{low}, {high}) ends past it"
+                        ));
+                    }
+                    Ok(AbstractValue::Lease(*resource))
+                }
+                _ => Err(format!(
+                    "slot {slot} is not an owned buffer this task may lease for writing"
+                )),
+            },
         }
     }
     fn take(&mut self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
@@ -467,6 +529,13 @@ impl State {
                 "return/error leaves resource {resource} lent to an unjoined child"
             ));
         }
+        // An outstanding write lease is the same unfinished duty on the write
+        // side: only the creator's join returns the leased bytes.
+        if let Some((resource, _)) = self.outstanding_leased_resource() {
+            return Err(format!(
+                "return/error leaves resource {resource} write-leased to an unjoined child"
+            ));
+        }
         for &resource in &self.resources {
             if Some(resource) != returned
                 && self.ledger.resource_state(resource) != Some(ResourceState::Dropped)
@@ -488,6 +557,15 @@ impl State {
             .iter()
             .find(|&&resource| self.ledger.lent_share(resource) > 0)
             .map(|&resource| (resource, self.ledger.loan_borrowers(resource)))
+    }
+    /// The write-side mirror of [`Self::outstanding_lent_resource`]: the first
+    /// frame resource with an outstanding range write lease, plus its holders
+    /// (card `WRITE-LEND-TASKS`).
+    fn outstanding_leased_resource(&self) -> Option<(ResourceId, Vec<TaskId>)> {
+        self.resources
+            .iter()
+            .find(|&&resource| !self.ledger.leased_ranges(resource).is_empty())
+            .map(|&resource| (resource, self.ledger.lease_holders(resource)))
     }
     /// Render a refused scope exit (card CT24-CLEANUP-PREEMPTED). The ledger's
     /// `ScopeBusy` obligation is neither weakened nor reordered — it still
@@ -695,11 +773,18 @@ fn check_function(
     }
     // A read loan is bound to the creation that opened it. Returning one would
     // outlive that creation's join, so it is refused at the type, before any
-    // path is explored.
+    // path is explored. A write lease is bound the same way, and refused the
+    // same way.
     if function.result == ScalarType::ReadLoan {
         return Err(fail(
             function.span,
             "a read loan cannot be a task function result".into(),
+        ));
+    }
+    if function.result == ScalarType::WriteLease {
+        return Err(fail(
+            function.span,
+            "a write lease cannot be a task function result".into(),
         ));
     }
     if id == module.entry
@@ -711,6 +796,17 @@ fn check_function(
         return Err(fail(
             function.span,
             "the task entry has no lender, so it cannot take a read loan".into(),
+        ));
+    }
+    if id == module.entry
+        && function
+            .parameters
+            .iter()
+            .any(|(_, kind)| *kind == ScalarType::WriteLease)
+    {
+        return Err(fail(
+            function.span,
+            "the task entry has no lessor, so it cannot take a write lease".into(),
         ));
     }
     let mut state = State {
@@ -736,11 +832,17 @@ fn check_function(
             }
             // A loan is not registered in this frame's ledger and is not an
             // `input`: the borrower owes nothing at exit, and no worker exit
-            // can report it as returned or dropped.
+            // can report it as returned or dropped. A lease is on the same
+            // footing.
             ScalarType::ReadLoan => {
                 let resource = state.next_id;
                 state.next_id += 1;
                 AbstractValue::Loan(resource)
+            }
+            ScalarType::WriteLease => {
+                let resource = state.next_id;
+                state.next_id += 1;
+                AbstractValue::Lease(resource)
             }
             ScalarType::I32 | ScalarType::Unit => AbstractValue::Scalar(ty),
         };
@@ -980,9 +1082,11 @@ fn check_function(
                     }
                     let mut resources = vec![];
                     let mut loans = vec![];
+                    let mut leases = vec![];
                     let mut captured = BTreeMap::new();
                     let mut consumed_slots = BTreeSet::new();
                     let mut lent_slots = BTreeSet::new();
+                    let mut leased_slots = BTreeSet::new();
                     for (index, (argument, (_, expected))) in
                         arguments.iter().zip(&callee.parameters).enumerate()
                     {
@@ -1000,14 +1104,29 @@ fn check_function(
                             resources.push(resource);
                             captured.insert(index, resource);
                         }
-                        if let AbstractValue::Loan(resource) = value {
+                        if let AbstractValue::Loan(resource) = &value {
                             let ScalarOperand::Loan { slot, share } = argument else {
                                 unreachable!()
                             };
                             if !lent_slots.insert(*slot) {
                                 return Err("duplicate read loan of one slot".into());
                             }
-                            loans.push((resource, *share));
+                            loans.push((*resource, *share));
+                        }
+                        if let AbstractValue::Lease(resource) = &value {
+                            let ScalarOperand::Lease { slot, low, high } = argument else {
+                                unreachable!()
+                            };
+                            if !leased_slots.insert(*slot) {
+                                return Err("duplicate write lease of one slot".into());
+                            }
+                            leases.push((
+                                *resource,
+                                LeaseRange {
+                                    low: *low,
+                                    high: *high,
+                                },
+                            ));
                         }
                     }
                     // The card's bounds, enforced structurally rather than
@@ -1017,6 +1136,22 @@ fn check_function(
                     if loans.len() > 1 {
                         return Err(
                             "this profile admits at most one read loan per task creation".into(),
+                        );
+                    }
+                    // Card `WRITE-LEND-TASKS`'s bounds, on the loans' pattern:
+                    // one lease per creation, one write-leased resource at a
+                    // time, and no mixing of the two transfer families across
+                    // outstanding creations. Which *ranges* may be out at once
+                    // is the ledger's decision, by the wave-29 overlap rule.
+                    if leases.len() > 1 {
+                        return Err(
+                            "this profile admits at most one write lease per task creation".into(),
+                        );
+                    }
+                    if !loans.is_empty() && !leases.is_empty() {
+                        return Err(
+                            "one creation cannot both lend a read share and lease a write range"
+                                .into(),
                         );
                     }
                     if loans.iter().any(|(resource, _)| {
@@ -1031,17 +1166,45 @@ fn check_function(
                                 .into(),
                         );
                     }
+                    if leases.iter().any(|(resource, _)| {
+                        state
+                            .ledger
+                            .outstanding_write_leases()
+                            .iter()
+                            .any(|outstanding| outstanding != resource)
+                    }) {
+                        return Err(
+                            "this profile admits at most one write-leased resource at a time"
+                                .into(),
+                        );
+                    }
+                    if (!leases.is_empty() && !state.ledger.outstanding_loans().is_empty())
+                        || (!loans.is_empty()
+                            && !state.ledger.outstanding_write_leases().is_empty())
+                    {
+                        return Err(
+                            "this profile does not mix outstanding read loans and write \
+                                    leases"
+                                .into(),
+                        );
+                    }
                     if resources
                         .iter()
                         .any(|resource| loans.iter().any(|(lent, _)| lent == resource))
                     {
                         return Err("one creation cannot both move and lend a resource".into());
                     }
+                    if resources
+                        .iter()
+                        .any(|resource| leases.iter().any(|(leased, _)| leased == resource))
+                    {
+                        return Err("one creation cannot both move and lease a resource".into());
+                    }
                     let reservation = state.next_id;
                     state.next_id += 1;
                     state
                         .ledger
-                        .reserve_with_loans(0, *scope, reservation, &resources, &loans)
+                        .reserve_with_transfers(0, *scope, reservation, &resources, &loans, &leases)
                         .map_err(|e| format!("{e:?}"))?;
                     let mut failed = state.clone();
                     failed
@@ -1132,6 +1295,9 @@ fn check_function(
                                 ),
                                 ScalarType::ReadLoan => {
                                     return Err("a read loan is not a worker outcome".into());
+                                }
+                                ScalarType::WriteLease => {
+                                    return Err("a write lease is not a worker outcome".into());
                                 }
                             }
                         };

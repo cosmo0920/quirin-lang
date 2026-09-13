@@ -1,0 +1,91 @@
+{
+  "before": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/audit-before",
+      "--pinned-evidence",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/before/monkey-source.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/before/resource-diagnostics.json"
+    ],
+    "binary_sha256": "dedd7d219e85125518d6a05c162faf15450fb1912e1405edd9ca31d81239670b",
+    "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+    "compile_database_entries": 1415,
+    "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+    "package": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "source_input": "HistoricalStdin",
+    "exit": 0,
+    "receipt_provenance": "Completed exec process exit; before/scalar/frame predate the receipt helper, final used run_audit.py."
+  },
+  "scalar": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/audit-scalar",
+      "--pinned-evidence",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/scalar/monkey-source.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/scalar/resource-diagnostics.json"
+    ],
+    "binary_sha256": "1a5199c7ec1607a55c59ba642ad84e5556049a5f45892073b3ee8cffdb94ae87",
+    "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+    "compile_database_entries": 1415,
+    "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+    "package": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "source_input": "HistoricalStdin",
+    "exit": 0,
+    "receipt_provenance": "Completed exec process exit; before/scalar/frame predate the receipt helper, final used run_audit.py."
+  },
+  "frame": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/audit-frame",
+      "--pinned-evidence",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/frame/monkey-source.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/frame/resource-diagnostics.json"
+    ],
+    "binary_sha256": "8494185f5e64f7b9e894c6dca4c87a9f8a206c52a08ed7ad92a6fe67c105dbcb",
+    "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+    "compile_database_entries": 1415,
+    "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+    "package": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "source_input": "HistoricalStdin",
+    "exit": 0,
+    "receipt_provenance": "Completed exec process exit; before/scalar/frame predate the receipt helper, final used run_audit.py."
+  },
+  "joined": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/audit-final",
+      "--pinned-evidence",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/final/monkey-source.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/final/resource-diagnostics.json"
+    ],
+    "binary_sha256": "c2439a6caf4b8345b2d8f1bb25a589c6f7218b2a6b5f060fe1833a14ea9e4e16",
+    "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+    "compile_database_entries": 1415,
+    "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+    "package": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "source_input": "HistoricalStdin",
+    "exit": 0,
+    "receipt_provenance": "Completed exec process exit; before/scalar/frame predate the receipt helper, final used run_audit.py."
+  },
+  "after": {
+    "command": [
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/audit-hardened",
+      "--pinned-evidence",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source",
+      "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin/monkey/monkey-build/compile_commands.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/hardened/monkey-source.json",
+      "/home/cosmo/Documents/GitHub/qcore-c/measure/c-gateway-wave/hardened/resource-diagnostics.json"
+    ],
+    "binary_sha256": "79ab14c11d48a1be6210764015f0587a5cc8b5a2f8779283ef236acbba70297f",
+    "compile_database_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+    "compile_database_entries": 1415,
+    "head": "c05b2c4b81c6d99352aa23fa401bb7504e7da863",
+    "package": "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/provider-packages-wave20/qcore.chunkio",
+    "source_input": "HistoricalStdin",
+    "exit": 0
+  }
+}

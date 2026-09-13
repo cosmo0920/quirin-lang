@@ -1,3 +1,4 @@
+import QCore.CGatewayRefinements
 import QCore.FixedScalarQuery
 import QCore.BucketTally
 import QCore.CtReasons
@@ -154,11 +155,13 @@ import QCore.StringSliceIo
 import QCore.StringConcat
 import QCore.SlicePermissions
 import QCore.WriteLend
+import QCore.WriteLendTasks
 import QCore.ComposeEventLines
 import QCore.StdSocket
 import QCore.SocketInetAddresses
 import QCore.StdHttp
 import QCore.HttpComputedLength
 import QCore.SocketEventCompose
+import QCore.SocketFootprint
 
 /-! The executable formal core of QCore-C revision 0.1. -/

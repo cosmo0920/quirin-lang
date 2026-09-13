@@ -1,0 +1,9 @@
+{
+  "crates/qcore-c-gateway/src/legacy_c.rs": "4d408f5ed2fc0966bda4cca6a0d9ffcf97bd2887aa5095c910cb4a42de3e7f70",
+  "crates/qcore-c-gateway/src/legacy_joined_provenance.rs": "cedefec0ef7572316318a03b7c2e572b6caefebf935f96f519aeba6b3940de17",
+  "crates/qcore-c-gateway/src/typed_field_access.rs": "210b386e299bbaebc9cc461a6f914f5745ca03ca6d43ed423d0e824cd70531f8",
+  "crates/qcore-c-gateway/src/legacy_recursion.rs": "af0d1e156a65e8b369dbdd723b403878b54cd9df22eab6de641a9ebcd3590342",
+  "crates/qcore-c-gateway/tests/unit/legacy_c.rs": "5f16cb6d7fb770fd7fbbe389f7924c6828140607fe20d441b35a8edfb1a637ef",
+  "proof/QCore/CGatewayRefinements.lean": "a44cfc80722a3a9c6fa78d646dbedbb592629ab22bbfe560b5f5a3ca178af590",
+  "proof/AuditCGatewayRefinements.lean": "89325504b96525fd6062b5b99e6fb97a79f6d02c9ec5d727ffc003d7b655ad3a"
+}

@@ -736,11 +736,14 @@ Small, continuous, do-with-adjacent-work:
   in `AGENTS.md` since card DOCS-COMPACT, 2026-09-10): `AGENTS.md` is the
   compressed agent briefing (status ledger, invariants, standing constraints,
   per-change gate) and the source of truth for agents, imported by `CLAUDE.md`;
-  `README.md` is the decompressed human document. A workstream that changes
-  project status (verdict counts, gate closures, crate layout) adds one
-  paragraph to `DEVELOPMENT.md`'s "Increment records" and updates `AGENTS.md`'s
-  headline numbers in the same change; `README.md` is refreshed by the
-  recurring documentation-compaction card rather than per increment.
+  `README.md` is the human overview. `DEVELOPMENT.md` is now the compact table
+  of contents for focused guides and history under `docs/development/`.
+  A workstream that changes project status (verdict counts, gate closures,
+  crate layout) adds one paragraph, newest first, to the current record file
+  named by `docs/development/increments/README.md` and updates `AGENTS.md`'s
+  headline numbers in the same change. Update the history index when opening
+  a new wave file. `README.md` is refreshed by documentation maintenance
+  rather than per increment; archived reports keep their original wording.
 
 ## 5. Sequencing summary
 

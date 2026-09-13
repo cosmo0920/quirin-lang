@@ -5,6 +5,11 @@ error Failure { Failed; }
 // CT25 -- "Cleanup destroys owner after joins and loan expiry", expected
 // Accept (card REGION-JOINS-LOAN, wave 30, discharging T08-COMPOSE-LOAN and
 // the REGION-JOINS-LOAN residual of docs/reports/region-joins-duties).
+// Mapped by card CT-WIRE-LANE-3 (wave 31): moved here from
+// compiler/tests/fixtures/epoch_credit/CT25_LOAN/ per that capability card's
+// own section 7 -- the CT22/CT23 fixture-move precedent -- with
+// compiler/tests/region_joins_loan.rs repointed at this directory, so one
+// program is the evidence in both places.
 //
 // The parent owns `owner` and lends the worker a counted read share of it at
 // the spawn (`read owner share FULL`), declared in the plan as the place-free

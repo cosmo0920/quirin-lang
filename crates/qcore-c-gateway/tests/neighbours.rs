@@ -856,6 +856,10 @@ fn the_modules_under_test_are_the_production_ones() {
     // declaration of a function this very unit defines. 18 -> 19 by card
     // W29-CORPUS-CONTRACTS, which adds `fluent_bit/input_chunk_sizes.qcore` —
     // a fifth and sixth declaration of functions this very unit defines,
-    // under the same declaration-beats-summary arrangement.
-    assert_eq!(contracts.source_assumptions().len(), 19);
+    // under the same declaration-beats-summary arrangement. 19 -> 21 by card
+    // W31-CORPUS-CONTRACTS-2, which adds `chunkio/chunk_sizes.qcore` and
+    // `fluent_bit/input_chunk_total_size.qcore` — the latter a seventh
+    // declaration of a function this very unit defines, on the same
+    // arrangement.
+    assert_eq!(contracts.source_assumptions().len(), 21);
 }

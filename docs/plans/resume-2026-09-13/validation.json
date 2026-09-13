@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-13",
+  "tested_code_head": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+  "scope": "Primary checkout with planning/sweep documentation added; no compiler, proof, contract, status-ledger or acceptance-matrix changes. Linux validation ran outside the managed ptrace sandbox.",
+  "result": "Standing commands completed; Python retains the pre-existing derived Lean audit-count mismatch (121 pinned, 122 present). This is not an all-green gate or wave close.",
+  "checks": [
+    {
+      "name": "workspace",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--no-fail-fast"
+      ],
+      "exit_code": 0,
+      "seconds": 890.73,
+      "log": "private/worktree-sweep-2026-09-13/gate/workspace.log",
+      "sha256": "cfbfd231c3c573595e4cf44c8c0940fd3b24ce705a25dfc3a37ddfddc9a3e8c3",
+      "counts": {
+        "passed": 4473,
+        "failed": 0,
+        "ignored": 8,
+        "result_groups": 221
+      }
+    },
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 2.02,
+      "log": "private/worktree-sweep-2026-09-13/gate/fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 12.96,
+      "log": "private/worktree-sweep-2026-09-13/gate/clippy.log",
+      "sha256": "b76e90ea4b5b40a1b7cdd6f29addef2b8f2905547205a0d61624c6c9c112368b"
+    },
+    {
+      "name": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit_code": 0,
+      "seconds": 0.11,
+      "log": "private/worktree-sweep-2026-09-13/gate/probe.log",
+      "sha256": "8f7a44586051adcbc226242fb15646dfcfc27e97426b5fb4825bf72f157fbb67"
+    },
+    {
+      "name": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit_code": 0,
+      "seconds": 0.41,
+      "log": "private/worktree-sweep-2026-09-13/gate/followup.log",
+      "sha256": "281e516f5e74441f302b3907abadd6844ff622762065926368244681f644a299"
+    },
+    {
+      "name": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit_code": 0,
+      "seconds": 15.69,
+      "log": "private/worktree-sweep-2026-09-13/gate/lean.log",
+      "sha256": "de53f65b23ebafee64055d4f20355e64115c50f8e280449201b2030be5d3e74f",
+      "passed_audits": 122
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit_code": 1,
+      "seconds": 12.19,
+      "log": "private/worktree-sweep-2026-09-13/gate/python.log",
+      "sha256": "d614ff0dcbaca883097cd69d78a345fbeb140fbc0d1f4b2b58aab6720d4b4d58",
+      "tests_run": 200,
+      "failure_headers": [
+        "FAIL: test_the_derived_facts_are_recomputed_rather_than_carried (test_build_matrix_sections.BuildMatrixSections.test_the_derived_facts_are_recomputed_rather_than_carried)"
+      ]
+    }
+  ],
+  "artifact_checks": [
+    "Verified six obsolete paths removed and their six branch references retained",
+    "Verified main and four pending implementation worktrees remain",
+    "Verified recovery archive checksums and critical logs",
+    "Verified planning JSON, source hashes, local links and whitespace",
+    "No pending build/measure/private symlinks resolve into removed worktrees"
+  ]
+}

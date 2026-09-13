@@ -1,0 +1,17 @@
+BEFORE scopes: 6  units summing to 185
+  cmetrics: 31 unit(s), 540 source function(s), 539 projected; 0 data-only, 0 Safe, 16 Unsafe, 15 Unknown, 0 gateway failure(s)
+  ctraces: 17 unit(s), 274 source function(s), 273 projected; 1 data-only, 1 Safe, 2 Unsafe, 13 Unknown, 0 gateway failure(s)
+  librdkafka: 94 unit(s), 3556 source function(s), 3489 projected; 3 data-only, 0 Safe, 10 Unsafe, 81 Unknown, 0 gateway failure(s)
+  chunkio: 13 unit(s), 126 source function(s), 123 projected; 0 data-only, 0 Safe, 2 Unsafe, 11 Unknown, 0 gateway failure(s)
+  fluent-bit-chunk: 1 unit(s), 66 source function(s), 64 projected; 0 data-only, 0 Safe, 1 Unsafe, 0 Unknown, 0 gateway failure(s)
+  monkey-libevent: 29 unit(s), 359 source function(s), 346 projected; 0 data-only, 1 Safe, 11 Unsafe, 17 Unknown, 0 gateway failure(s)
+AFTER  scopes: 6  units summing to 185
+  cmetrics: 31 unit(s), 540 source function(s), 539 projected; 0 data-only, 0 Safe, 16 Unsafe, 15 Unknown, 0 gateway failure(s)
+  ctraces: 17 unit(s), 274 source function(s), 273 projected; 1 data-only, 1 Safe, 2 Unsafe, 13 Unknown, 0 gateway failure(s)
+  librdkafka: 94 unit(s), 3556 source function(s), 3489 projected; 3 data-only, 0 Safe, 10 Unsafe, 81 Unknown, 0 gateway failure(s)
+  chunkio: 13 unit(s), 126 source function(s), 123 projected; 0 data-only, 0 Safe, 2 Unsafe, 11 Unknown, 0 gateway failure(s)
+  fluent-bit-chunk: 1 unit(s), 66 source function(s), 64 projected; 0 data-only, 0 Safe, 1 Unsafe, 0 Unknown, 0 gateway failure(s)
+  monkey-libevent: 29 unit(s), 359 source function(s), 346 projected; 0 data-only, 1 Safe, 11 Unsafe, 17 Unknown, 0 gateway failure(s)
+per-scope lines IDENTICAL: True
+before: ['AUDIT_EXIT=0']  total gateway failures = 0
+after: ['AUDIT_EXIT=0']  total gateway failures = 0

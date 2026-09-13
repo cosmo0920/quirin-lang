@@ -124,6 +124,12 @@ enum Scalar {
     /// `borrow<Buffer>`: a scoped read loan. Only a worker parameter can have
     /// this type, and only a `read … share FULL` capture can produce one.
     ReadLoan,
+    /// `lend<Buffer>`: a scoped range write lease (card `WRITE-LEND-TASKS`).
+    /// Only a worker parameter can have this type, and only a
+    /// `lend PLACE LOW..HIGH` capture can produce one. `lend` stays
+    /// contextual: it is recognised only immediately before `<Buffer>` in a
+    /// task parameter type, a spelling that refused before this card.
+    WriteLease,
     I32,
     Unit,
 }
@@ -145,6 +151,14 @@ fn scalar(tokens: &[Token]) -> Option<Scalar> {
                 && symbol(Some(gt), Symbol::Greater) =>
         {
             Some(Scalar::ReadLoan)
+        }
+        [lend, lt, buffer, gt]
+            if word(Some(lend), "lend")
+                && symbol(Some(lt), Symbol::Less)
+                && word(Some(buffer), "Buffer")
+                && symbol(Some(gt), Symbol::Greater) =>
+        {
+            Some(Scalar::WriteLease)
         }
         [t] if word(Some(t), "i32") => Some(Scalar::I32),
         [t] if word(Some(t), "unit") => Some(Scalar::Unit),
@@ -307,9 +321,20 @@ fn signature(
             // may read it any number of times and may do nothing else with it.
             // Grading loan reads is deliberately left open.
             Scalar::ReadLoan
+        } else if group.len() == 6
+            && scalar(&group[2..6]) == Some(Scalar::WriteLease)
+            && parameter.usage.is_none()
+        {
+            // A write lease carries no usage grade either: in this first
+            // slice the holder performs no operation on it at all — the
+            // authority is held and enforced against the owner, and the
+            // worker-side range write is the named residual
+            // `WRITE-LEND-TASKS-EXERCISE`.
+            Scalar::WriteLease
         } else {
             return Err(bad(
-                "task parameters require i32, own<Buffer> use one, or an ungraded borrow<Buffer>",
+                "task parameters require i32, own<Buffer> use one, an ungraded borrow<Buffer>, \
+                 or an ungraded lend<Buffer>",
             ));
         };
         parameters.push((parameter.symbol, parameter.name.clone(), kind));
@@ -324,7 +349,7 @@ fn signature(
         .find_map(|(i, t)| word(Some(t), "effects").then_some(i))
         .unwrap_or(tokens.len());
     let result = scalar(&tokens[close + 2..result_end])
-        .filter(|kind| *kind != Scalar::ReadLoan)
+        .filter(|kind| *kind != Scalar::ReadLoan && *kind != Scalar::WriteLease)
         .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?;
     let mut cursor = result_end;
     let mut effects = ParsedEffects::default();
@@ -443,6 +468,7 @@ impl Scalar {
         match self {
             Self::OwnedBuffer => ScalarType::OwnedBuffer,
             Self::ReadLoan => ScalarType::ReadLoan,
+            Self::WriteLease => ScalarType::WriteLease,
             Self::I32 => ScalarType::I32,
             Self::Unit => ScalarType::Unit,
         }
@@ -506,6 +532,36 @@ fn core_span(span: Span) -> TaskSpan {
     }
 }
 
+/// Evaluate one bound of a `lend PLACE LOW..HIGH` capture (card
+/// `WRITE-LEND-TASKS`). The bound tier is deliberately the narrowest of the
+/// family: an integer literal only, because the crossing's custody projection
+/// must *state* the lease's footprint and the disjointness question must be
+/// decided at check time. A name is refused here as a **varying bound** — by
+/// its own spelling, at the boundary, not as a parse failure — and the
+/// widening to a constant-binding tier is the named residual
+/// `WRITE-LEND-TASKS-VARYING-BOUND`.
+fn lease_bound_value(bound: &Located<SourceLeaseBound>) -> Result<u64, SourceDiagnostic> {
+    match &bound.value {
+        SourceLeaseBound::Integer(digits) => digits.parse::<u64>().map_err(|_| {
+            failure(
+                bound.span,
+                SemanticPass::Concurrency,
+                "a write lend bound must be a decimal byte offset",
+            )
+        }),
+        SourceLeaseBound::Name(name) => Err(failure(
+            bound.span,
+            SemanticPass::Concurrency,
+            format!(
+                "`{name}` is not a bound this crossing can decide: a write lend's range is \
+                 decided at check time, from integer literals, so the disjointness of two \
+                 workers' ranges is a decision rather than a premise; a varying bound is \
+                 the named residual `WRITE-LEND-TASKS-VARYING-BOUND`"
+            ),
+        )),
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Card CT46-SENDSYNC: the transferability judgment, consulted redundantly.
 //
@@ -527,6 +583,7 @@ fn transfer_kind(scalar: Scalar) -> qcore_core::transfer::TransferKind {
         Scalar::Unit => TransferKind::Unit,
         Scalar::OwnedBuffer => TransferKind::OwnedBuffer,
         Scalar::ReadLoan => TransferKind::ReadLoan,
+        Scalar::WriteLease => TransferKind::WriteLease,
     }
 }
 
@@ -560,6 +617,7 @@ fn transfer_mode(mode: &SourceCaptureMode) -> qcore_core::transfer::TransferMode
         SourceCaptureMode::Move => TransferMode::Move,
         SourceCaptureMode::Read { .. } => TransferMode::Lend,
         SourceCaptureMode::Write => TransferMode::Write,
+        SourceCaptureMode::LendWrite { .. } => TransferMode::LendWrite,
     }
 }
 
@@ -588,6 +646,7 @@ fn scalar_spelling(scalar: Scalar) -> &'static str {
         Scalar::Unit => "`unit`",
         Scalar::OwnedBuffer => "`own<Buffer>`",
         Scalar::ReadLoan => "`borrow<Buffer>`",
+        Scalar::WriteLease => "`lend<Buffer>`",
     }
 }
 
@@ -599,6 +658,7 @@ fn mode_spelling(mode: &SourceCaptureMode) -> &'static str {
         SourceCaptureMode::Move => "`move`",
         SourceCaptureMode::Read { .. } => "`read ... share ...`",
         SourceCaptureMode::Write => "`write`",
+        SourceCaptureMode::LendWrite { .. } => "`lend ... LOW..HIGH`",
     }
 }
 
@@ -611,13 +671,20 @@ fn admitted_contracts(scalar: Scalar) -> &'static str {
         TransferClass::Duplicated => "`copy` (an independent duplicate; no custody crosses)",
         TransferClass::MovedOnly {
             shareable_under: Some(ShareProtocol::CountedReadShares),
+            mutably_shareable_under: Some(ShareProtocol::DisjointWriteLeases),
+        } => {
+            "`move` (custody transferred to the worker), `read PLACE share N` \
+             (a counted read share), or `lend PLACE LOW..HIGH` (a disjoint \
+             range write lease)"
+        }
+        TransferClass::MovedOnly {
+            shareable_under: Some(ShareProtocol::CountedReadShares),
+            mutably_shareable_under: _,
         } => {
             "`move` (custody transferred to the worker) or `read PLACE share N` \
              (a counted read share)"
         }
-        TransferClass::MovedOnly { shareable_under: _ } => {
-            "`move` (custody transferred to the worker)"
-        }
+        TransferClass::MovedOnly { .. } => "`move` (custody transferred to the worker)",
         TransferClass::Never(_) => "no transfer or share contract at all",
     }
 }
@@ -657,6 +724,7 @@ fn transfer_refusal_message(
                     Ok(admitted) => {
                         match qcore_core::transfer::received_kind(transfer_kind(place), admitted) {
                             TransferKind::ReadLoan => "`borrow<Buffer>`",
+                            TransferKind::WriteLease => "`lend<Buffer>`",
                             _ => kind,
                         }
                     }
@@ -688,6 +756,8 @@ enum EnumeratedCapture {
     Copy,
     Move,
     Lend,
+    /// A range write lend (card `WRITE-LEND-TASKS`).
+    LendWrite,
 }
 
 impl EnumeratedCapture {
@@ -700,6 +770,9 @@ impl EnumeratedCapture {
             EnumeratedCapture::Move => AdmittedTransfer::MoveCustody,
             EnumeratedCapture::Lend => {
                 AdmittedTransfer::LendShare(ShareProtocol::CountedReadShares)
+            }
+            EnumeratedCapture::LendWrite => {
+                AdmittedTransfer::LendWriteRange(ShareProtocol::DisjointWriteLeases)
             }
         }
     }
@@ -1624,16 +1697,20 @@ impl<'a> Builder<'a> {
         }
         let mut arguments = Vec::new();
         let mut loans = 0usize;
+        let mut leases = 0usize;
         for (capture, (_, _, parameter_type)) in captures.iter().zip(&signature.parameters) {
             let (symbol, kind) = self.lookup_place(&capture.place)?;
             // A read loan is the one capture whose place type and parameter
             // type differ on purpose: the lender keeps `own<Buffer>` and the
-            // borrower receives `borrow<Buffer>`.
-            let place_type = if *parameter_type == Scalar::ReadLoan {
-                Scalar::OwnedBuffer
-            } else {
-                *parameter_type
-            };
+            // borrower receives `borrow<Buffer>`. A write lease (card
+            // `WRITE-LEND-TASKS`) is the second: the lessor keeps
+            // `own<Buffer>` and the worker receives `lend<Buffer>`.
+            let place_type =
+                if *parameter_type == Scalar::ReadLoan || *parameter_type == Scalar::WriteLease {
+                    Scalar::OwnedBuffer
+                } else {
+                    *parameter_type
+                };
             // Card CT46-SENDSYNC. A non-scalar binding has no transferable
             // kind, and the check just below already refuses it. This guard
             // states that agreement rather than assuming it: if the judgment
@@ -1669,6 +1746,9 @@ impl<'a> Builder<'a> {
                 (SourceCaptureMode::Copy, Scalar::I32) => Some(EnumeratedCapture::Copy),
                 (SourceCaptureMode::Move, Scalar::OwnedBuffer) => Some(EnumeratedCapture::Move),
                 (SourceCaptureMode::Read { .. }, Scalar::ReadLoan) => Some(EnumeratedCapture::Lend),
+                (SourceCaptureMode::LendWrite { .. }, Scalar::WriteLease) => {
+                    Some(EnumeratedCapture::LendWrite)
+                }
                 _ => None,
             };
             // Both must agree, on the verdict and on which transfer it is.
@@ -1720,10 +1800,52 @@ impl<'a> Builder<'a> {
                         share: read_share(&share.value, share.span)?,
                     }
                 }
+                Some(EnumeratedCapture::LendWrite) => {
+                    // The range the worker receives. Whether it is disjoint
+                    // from every outstanding lease is the ledger's decision,
+                    // on the path that reaches this creation, by the wave-29
+                    // overlap rule; the two decisions made *here* are the
+                    // check-time ones — the bounds are literals, the range is
+                    // nonempty, and it names bytes the payload has.
+                    let SourceCaptureMode::LendWrite { low, high } = &capture.mode else {
+                        // Unreachable: only a `lend` capture enumerates as a
+                        // write lend. Refused rather than panicked on.
+                        return Err(self.bad(capture.span, "a write lend capture without bounds"));
+                    };
+                    let low_value = lease_bound_value(low)?;
+                    let high_value = lease_bound_value(high)?;
+                    if low_value >= high_value {
+                        return Err(failure(
+                            capture.span,
+                            SemanticPass::Concurrency,
+                            format!(
+                                "a write lend must cover at least one byte: \
+                                 [{low_value}, {high_value}) is empty"
+                            ),
+                        ));
+                    }
+                    if high_value > qcore_core::task_execution::BUFFER_PAYLOAD_BYTES {
+                        return Err(failure(
+                            capture.span,
+                            SemanticPass::Concurrency,
+                            format!(
+                                "a write lend must stay inside the payload's {} bytes: \
+                                 [{low_value}, {high_value}) ends past it",
+                                qcore_core::task_execution::BUFFER_PAYLOAD_BYTES
+                            ),
+                        ));
+                    }
+                    leases += 1;
+                    ScalarOperand::Lease {
+                        slot: symbol.0 as usize,
+                        low: low_value,
+                        high: high_value,
+                    }
+                }
                 None => {
                     return Err(self.bad(
                         capture.span,
-                        "only copy i32, move own<Buffer> and read own<Buffer> share FULL captures are executable",
+                        "only copy i32, move own<Buffer>, read own<Buffer> share FULL and lend own<Buffer> LOW..HIGH captures are executable",
                     ));
                 }
             };
@@ -1733,6 +1855,18 @@ impl<'a> Builder<'a> {
             return Err(self.bad(
                 span,
                 "this profile admits at most one read loan per task creation",
+            ));
+        }
+        if leases > 1 {
+            return Err(self.bad(
+                span,
+                "this profile admits at most one write lease per task creation",
+            ));
+        }
+        if loans != 0 && leases != 0 {
+            return Err(self.bad(
+                span,
+                "one creation cannot both lend a read share and lease a write range",
             ));
         }
         Ok((scope_id, arguments))

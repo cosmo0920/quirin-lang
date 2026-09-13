@@ -64,8 +64,20 @@ const COMPILE_FLAGS: [&str; 7] = [
 // Quiet-emission repair (2026-09-11): these now bind the emitted C plus the
 // explicit typed stdout sink, the exact translation unit executed below.
 // Fresh native evidence: docs/reports/native-observation-repair/native-runs.json.
-const ROUND_TRIP_C_DIGEST: &str = "6524b41d0ccb910f";
-const CONCURRENT_C_DIGEST: &str = "0719a8dcb0192e7e";
+// Deliberate pin update (card `WRITE-LEND-TASKS`, 2026-09-13) — the **fourth**
+// recorded move of these two pins, on the `TRACE-STDIO` precedent above. The
+// shared diagnostic prelude gained two enum members and two adapter cases
+// (`QCORE_DIAG_TASK_LEASE`, `QCORE_DIAG_TASK_LEASE_RETURN`, the range write
+// lease's crossing and its return at the join), and that prelude is emitted
+// into every task program, so the generated C of these two pre-existing
+// programs moved by exactly that text. **Neither program's printed bytes
+// moved**: no old program logs either new kind, `parse_observed_trace` reads
+// the same lines, the relation below is re-verified against fresh native runs
+// in this same change, and the `is_reference_order` and refusal-code
+// assertions are untouched. The record is
+// `docs/reports/write-lend-tasks/README.md` §6.
+const ROUND_TRIP_C_DIGEST: &str = "6df369991465940e";
+const CONCURRENT_C_DIGEST: &str = "0da423be2f16b8bb";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 

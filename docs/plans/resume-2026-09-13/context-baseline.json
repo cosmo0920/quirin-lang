@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "main_head": "622f2a5dbe99e4e08d264b8f7de961fdcea43f1b",
+  "measurement": "UTF-8 bytes, whitespace words and lines; bytes/4 is a heuristic, not actual token or billing measurement. Runtime prompt injection, caching and deduplication are not measured.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 98715,
+      "words_whitespace": 13169,
+      "lines": 1154,
+      "sha256": "52208c55f8ecd02f1e4a5444f19a1fa081044742fe4872e30b36413fb46b5ee4",
+      "tokens_bytes_div_4_estimate": 24678.75
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 8063,
+      "words_whitespace": 1031,
+      "lines": 133,
+      "sha256": "a6d80624529801fe7c14396894ea1d0c903e5c83a64fc205abf8f01b7e1a2a48",
+      "tokens_bytes_div_4_estimate": 2015.75
+    },
+    {
+      "path": "DEVELOPMENT.md",
+      "bytes": 362048,
+      "words_whitespace": 46939,
+      "lines": 5145,
+      "sha256": "05c1c0dc160a732e74ddb00bf57d99450f4b12414529ee906deb3cc35f339c2e",
+      "tokens_bytes_div_4_estimate": 90512.0
+    },
+    {
+      "path": "README.md",
+      "bytes": 11253,
+      "words_whitespace": 1506,
+      "lines": 191,
+      "sha256": "12c393d8751a849448c7b1e37caa0e5cd1375a4e4e18f5da0d6e0da6f6288b31",
+      "tokens_bytes_div_4_estimate": 2813.25
+    },
+    {
+      "path": "docs/reviews/r0_3/acceptance_matrix.json",
+      "bytes": 449331,
+      "words_whitespace": 49276,
+      "lines": 6388,
+      "sha256": "d90ad04cac8844576ad86c7fcebb0ea7e5a3989ed7a7469be3a2422343ce41de",
+      "tokens_bytes_div_4_estimate": 112332.75
+    },
+    {
+      "path": "docs/reevaluation/ct_manifest.json",
+      "bytes": 177029,
+      "words_whitespace": 14722,
+      "lines": 4223,
+      "sha256": "83f195b7c2e986c2219f27e2dd7ab14760bd988813ee0ef5ad4ab99d026068f3",
+      "tokens_bytes_div_4_estimate": 44257.25
+    },
+    {
+      "path": "docs/reviews/r0_3/acceptance.json",
+      "bytes": 39279,
+      "words_whitespace": 4070,
+      "lines": 623,
+      "sha256": "f1bf4a9372d7e573bc7d64ca918fe8a36964051d396676c03d0e23aef931eba5",
+      "tokens_bytes_div_4_estimate": 9819.75
+    }
+  ]
+}

@@ -121,9 +121,9 @@ use serde::Deserialize;
 /// `mapping_status: "mapped"`; everything else must still read `unmapped`.
 const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
-    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT26", "CT27",
-    "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38", "CT39",
-    "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
+    "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
+    "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
+    "CT39", "CT40", "CT43", "CT45", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -210,8 +210,19 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
 /// discharge` after every join, whose published evidence — the credit-recovery
 /// split and the region's re-derived `abandoned_credit` — is compared
 /// wholesale, with the duty-free pack and the join-before-region span fact
-/// re-asserted on the published objects.
-const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23"];
+/// re-asserted on the published objects. CT25 (cards `REGION-JOINS-DUTIES`,
+/// `REGION-JOINS-LOAN` and `CT-WIRE-LANE-3`, wave 31) is the mode's second
+/// accepted case and its first **adopting** one: the parent lends the worker a
+/// counted read share of its own owner, joins — the loan expires there, under
+/// the unedited task ledger — and only then does its region adopt the owner
+/// (`move owner;`) and its discharge destroy it, abandoning the remainder. The
+/// widened mode pins the region evidence's `released` duty list and the
+/// derived capture list beside the credit split, and the duty premise splits
+/// in two: a case pinning no released owner keeps CT22's duty-free-pack
+/// assertion (no `Acquire` in the published body), while a case pinning one
+/// must publish exactly that duty as a body `Acquire` — the adoption, checked
+/// on the published operations rather than trusted.
+const EPOCH_CREDIT_SPLIT_CASES: &[&str] = &["CT22", "CT23", "CT25"];
 /// The case whose native evidence is compared **up to a declared partial
 /// order** rather than byte for byte (card `CT-WIRE-LANE`, wave 26). Exactly
 /// one, and its own controls pin both boundaries: a program with no worker-body
@@ -839,6 +850,22 @@ struct EpochCreditSplit {
     /// region's — an acceptance with nothing measured would map nothing.
     #[serde(default)]
     abandoned: Option<u64>,
+    /// Accepted case only (card `CT-WIRE-LANE-3`): the owners the discharge
+    /// destroyed, by binding name in destruction order — compared wholesale
+    /// against the region evidence's own re-derived `released` list. Empty
+    /// for the duty-free shape (CT22), whose case then keeps the no-`Acquire`
+    /// premise; non-empty for the adopting shape (CT25), whose published body
+    /// must carry exactly that many `Acquire` operations — the adoptions.
+    #[serde(default)]
+    released: Vec<String>,
+    /// Accepted case only (card `CT-WIRE-LANE-3`): the derived capture list of
+    /// each task-ledger row, in row order, rendered as the plan's own clause
+    /// words (`copy`/`move`/`read`). Pinned where the scenario's words hang on
+    /// a capture — CT25's *loan expiry* is real only if the capture really is
+    /// a loan — and compared against both the checked ledger and the declared
+    /// rows, which the route has already reconciled elementwise.
+    #[serde(default)]
+    captures: Option<Vec<Vec<String>>>,
     controls: Vec<CreditControl>,
 }
 
@@ -860,6 +887,13 @@ struct CreditControl {
     /// (card `CT22-WIRE`). Absent for every refused control.
     #[serde(default)]
     abandoned: Option<u64>,
+    /// An accepted control that writes a region also pins the released duty
+    /// list its region publishes (card `CT-WIRE-LANE-3`) — empty where the
+    /// duty never reaches the pack, as in the body-release frame-rule control
+    /// — so the case's released owner stays attributable to the adoption the
+    /// discharge really destroyed. Empty for a refused control.
+    #[serde(default)]
+    released: Vec<String>,
     #[allow(dead_code)]
     note: String,
 }
@@ -2089,6 +2123,11 @@ fn run_mapped_case(case: &ManifestCase) {
                 "{}: a refused case publishes no split of its own",
                 case.id
             );
+            assert!(
+                split.released.is_empty() && split.captures.is_none(),
+                "{}: a refused case publishes no region duties and no captures",
+                case.id
+            );
         }
         assert!(
             !split.granted.is_empty(),
@@ -2140,6 +2179,15 @@ fn run_mapped_case(case: &ManifestCase) {
                          the grant",
                         case.id, control.source
                     );
+                    // Card `CT-WIRE-LANE-3`: a released duty is region
+                    // evidence, so a control that publishes no region cannot
+                    // pin one.
+                    assert!(
+                        control.abandoned.is_some() || control.released.is_empty(),
+                        "{}: control {} pins released duties but publishes no region",
+                        case.id,
+                        control.source
+                    );
                 }
                 "reject" => {
                     assert!(
@@ -2150,7 +2198,8 @@ fn run_mapped_case(case: &ManifestCase) {
                     assert!(
                         control.restored.is_empty()
                             && control.spent.is_empty()
-                            && control.abandoned.is_none(),
+                            && control.abandoned.is_none()
+                            && control.released.is_empty(),
                         "{}: a refused control publishes no split and no region figure",
                         case.id
                     );
@@ -3051,15 +3100,21 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// a real compiled and sanitizer-run control (card `CT34-SANITIZED`), CT49
 /// sixteen sanitized runs of its own emitted C (card `CT-WIRE-LANE`), and CT07
 /// and CT09 one sanitized run each of their own emitted C (card
-/// `CT-WIRE-LANE-2`), so harness-gated sanitized-native evidence is 7 of 42 —
-/// CT03, CT07, CT09, CT17, CT26, CT34 and CT49 — and proof stays 0 of 42.
+/// `CT-WIRE-LANE-2`), so harness-gated sanitized-native evidence is 7 of 43 —
+/// CT03, CT07, CT09, CT17, CT26, CT34 and CT49 — and proof is 2 of 43 (CT01
+/// and CT37, cards `CT01-PROOF-LEG` and `CT-PROOF-LEG-2`; this sentence read
+/// "0 of 42" until card `CT-WIRE-LANE-3`, the staleness the `CT07-WRITE-REMAP`
+/// report §6 observed in passing).
 /// CT06, CT08, CT11 and CT21 add none: their fixtures are refusals that emit
 /// nothing, and CT23's is too. CT22 (card `CT22-WIRE`, wave 29) adds none
 /// either, deliberately: its admitted module emits the task route's own C,
 /// but no runner of this harness executes that emission today, so its
-/// emission and native stages read `unassessed` — open items, not claims.
-/// Mapping is not conformance: the wave-29 denominator grew by one accepted
-/// composed-epoch program that contributes no sanitizer evidence.
+/// emission and native stages read `unassessed` — open items, not claims —
+/// and CT25 (card `CT-WIRE-LANE-3`, wave 31) sits on exactly that footing
+/// beside it, its `CT-COMPOSED-NATIVE` follow-on already named.
+/// Mapping is not conformance: the wave-29 and wave-31 denominators each grew
+/// by one accepted composed-epoch program that contributes no sanitizer
+/// evidence.
 /// This test exists so the counts are visible and any drift is a deliberate
 /// edit, not an accident.
 #[test]
@@ -3188,7 +3243,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 16] = [
+const EVIDENCE_FILES: [&str; 17] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3205,6 +3260,7 @@ const EVIDENCE_FILES: [&str; 16] = [
     "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
     "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
     "docs/reports/ct07-write-remap/ct_stage_evidence.json",
+    "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -4902,22 +4958,94 @@ fn run_epoch_credit_split(
             split.abandoned.expect("an accepted case pins its figure"),
             "{case_id}: the abandoned parent-local credit is the pinned figure"
         );
-        // Premise one, on the published operations: the pack is duty-free —
-        // the body holds quantities and the decided edge only, so the one
-        // thing the discharge can discard is the parent-local remainder.
+        // The released duty list (card `CT-WIRE-LANE-3`): the owners the
+        // discharge destroyed, re-derived by the driver from the model's own
+        // cleanup trace, compared wholesale against the pin — empty for the
+        // duty-free shape, the adopted owner for CT25's.
+        assert_eq!(
+            region.released, split.released,
+            "{case_id}: the discharge destroys exactly the pinned owners, in \
+             destruction order"
+        );
+        // Premise one, on the published operations. Two accepted shapes (card
+        // `CT-WIRE-LANE-3`): a case pinning no released owner keeps CT22's
+        // duty-free premise — the body holds quantities and the decided edge
+        // only, so the one thing the discharge can discard is the parent-local
+        // remainder. A case pinning released owners is the adopting shape:
+        // its published body must carry exactly that many `Acquire`
+        // operations — the adoptions handed to the unedited model as the pack
+        // acquisitions they are — so `cleanup destroys owner` is a fact of the
+        // published object, not of the fixture's comment.
         use qcore_core::error_region::RegionOp;
         let [RegionOp::ErrorRegion { body, .. }] = region.operations.as_slice() else {
             panic!("{case_id}: exactly one region operation is published");
         };
-        assert!(
-            body.iter()
-                .all(|op| !matches!(op, RegionOp::Acquire { .. })),
-            "{case_id}: the composed region body holds no acquisition, so the \
-             sealed pack carries no duty"
-        );
+        let acquisitions = body
+            .iter()
+            .filter(|op| matches!(op, RegionOp::Acquire { .. }))
+            .count();
+        if split.released.is_empty() {
+            assert_eq!(
+                acquisitions, 0,
+                "{case_id}: the composed region body holds no acquisition, so \
+                 the sealed pack carries no duty"
+            );
+        } else {
+            assert_eq!(
+                acquisitions,
+                split.released.len(),
+                "{case_id}: every owner the discharge destroys is a duty the \
+                 published body sealed into the pack, and nothing else is"
+            );
+        }
+        // The derived capture list (card `CT-WIRE-LANE-3`): pinned where the
+        // scenario's words hang on a capture. CT25's `loan expiry` is real
+        // only if the capture really is a loan, so the pin is compared against
+        // both the checked ledger and the declared rows the route has already
+        // reconciled elementwise.
+        if let Some(pinned) = &split.captures {
+            use qcore_frontend::source_epoch_tasks::ComposedCapture;
+            let words = |captures: &[ComposedCapture]| {
+                captures
+                    .iter()
+                    .map(|capture| {
+                        match capture {
+                            ComposedCapture::Copy => "copy",
+                            ComposedCapture::Move => "move",
+                            ComposedCapture::Read => "read",
+                        }
+                        .to_owned()
+                    })
+                    .collect::<Vec<_>>()
+            };
+            let ledger: Vec<Vec<String>> = composed
+                .composed
+                .ledger
+                .iter()
+                .map(|row| words(&row.captures))
+                .collect();
+            assert_eq!(
+                &ledger, pinned,
+                "{case_id}: the checked ledger's derived captures are the pinned \
+                 list"
+            );
+            let rows: Vec<Vec<String>> = composed
+                .composed
+                .rows
+                .iter()
+                .map(|row| words(&row.captures))
+                .collect();
+            assert_eq!(
+                &rows, pinned,
+                "{case_id}: the declared rows carry the same captures the ledger \
+                 derived"
+            );
+        }
         // Premise two, on the checked task IR: every creation of the entry is
         // joined before the region statement begins, so no child exists and
-        // no child holds any grant at the opening.
+        // no child holds any grant at the opening — which, for a lent owner,
+        // is also the loan's expiry: the share returned at the join the span
+        // rule places before the region.
         assert!(
             !composed.composed.ledger.is_empty(),
             "{case_id}: the scenario's `after joins` needs at least one join"
@@ -5064,6 +5192,15 @@ fn run_epoch_credit_split(
                         assert_eq!(
                             region.abandoned_credit, figure,
                             "{case_id} control {}: published abandoned credit",
+                            control.source
+                        );
+                        // Card `CT-WIRE-LANE-3`: the control's released duty
+                        // list is compared wholesale too, so the case's
+                        // destroyed owner stays attributable to the adoption
+                        // — the frame-rule control's region publishes none.
+                        assert_eq!(
+                            region.released, control.released,
+                            "{case_id} control {}: published released duties",
                             control.source
                         );
                     }

@@ -33,12 +33,15 @@ use qcore_compiler::{
 use qcore_core::error_region::RegionOp;
 use qcore_frontend::source_epoch_tasks::ComposedCapture;
 
-/// The CT25 loan fixtures. They live **outside** `compiler/tests/fixtures/ct/`
-/// on purpose: `ct_corpus.rs` fails closed when an unmapped case already owns
-/// a fixture directory there, and this card does not edit the manifest. A CT
-/// lane that maps the case moves this directory — the CT22/CT23 precedent.
+/// The CT25 loan fixtures. Card `REGION-JOINS-LOAN` parked them under
+/// `compiler/tests/fixtures/epoch_credit/CT25_LOAN/` because `ct_corpus.rs`
+/// fails closed when an unmapped case owns a fixture directory under
+/// `fixtures/ct/`; card `CT-WIRE-LANE-3` (wave 31) mapped CT25 and moved the
+/// directory to `compiler/tests/fixtures/ct/CT25/` — the CT22/CT23 precedent —
+/// so one program is the evidence in both places, and this suite keeps running
+/// on the moved bytes.
 fn fixtures() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/epoch_credit/CT25_LOAN")
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ct/CT25")
 }
 
 fn fixture(name: &str) -> SourceFile {
@@ -47,7 +50,7 @@ fn fixture(name: &str) -> SourceFile {
         .unwrap_or_else(|error| panic!("fixture {} is readable: {error}", path.display()))
         .replace("\r\n", "\n");
     SourceFile {
-        path: format!("compiler/tests/fixtures/epoch_credit/CT25_LOAN/{name}"),
+        path: format!("compiler/tests/fixtures/ct/CT25/{name}"),
         source,
     }
 }

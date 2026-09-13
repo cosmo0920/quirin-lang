@@ -107,9 +107,9 @@ cycle's fail-closed gates. A provisional `Unsafe` is never presented as an
 upstream defect. Coverage is not safety coverage, and unknowns stay in the
 denominator.
 
-The conformance-case corpus stands at **42 of 50 mapped**, with 8 unmapped.
+The conformance-case corpus stands at **43 of 50 mapped**, with 7 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
-means the harness now runs it, not that anything new was proved. Of the 42
+means the harness now runs it, not that anything new was proved. Of the 43
 mapped, 7 carry a sanitized native run and 2 carry a proof stage — CT01 and
 CT37, each a scenario property proved in Lean of the checked artifact's
 reference run and its admitted renderings, with native execution still
@@ -173,10 +173,16 @@ layout are in [DEVELOPMENT.md](DEVELOPMENT.md#build-and-test).
 
 ## Documentation map
 
+Start with the development table of contents and open the topic or wave needed
+for the task. Historical pages retain their original checkpoints; current
+headline status and agent rules remain in `AGENTS.md`.
+
 | Read this | For |
 |---|---|
 | [`AGENTS.md`](AGENTS.md) | Working here as an AI agent: compressed status ledger, hard invariants, standing subsystem constraints, per-change gate |
-| [DEVELOPMENT.md](DEVELOPMENT.md) | Implementation and status detail: repository layout, cycle records, per-increment evidence, full build/validation instructions |
+| [DEVELOPMENT.md](DEVELOPMENT.md) | Development table of contents: setup, repository layout, cycle evidence and history |
+| [Build and test](docs/development/build-and-test.md) | Toolchains, Clang discovery, Lean invocation and Windows setup |
+| [Increment history](docs/development/increments/README.md) | Per-wave evidence narratives and the current record location; older guidance is clearly historical |
 | [`docs/QCORE_SPEC_r0_3.md`](docs/QCORE_SPEC_r0_3.md) | The normative specification, with [contract semantics](docs/QCORE_CONTRACT_SPEC_r0_3.md) and [implemented grammars](docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md) |
 | [`docs/GENERALIZATION_PLAN.md`](docs/GENERALIZATION_PLAN.md) | Where the project is going: generalizing the checker away from pinned source sets, decomposing the crate |
 | [`docs/reviews/r0_3/REVIEW.md`](docs/reviews/r0_3/REVIEW.md) | Implementation acceptance ledger for revision 0.3 |

@@ -1,0 +1,20 @@
+{
+  "note": "C-GATEWAY-WAVE final source, 2026-09-13: 4484 workspace tests passed, 0 failed, 8 ignored with --no-fail-fast outside the sandbox; 200 Python tests, 123 Lean audits, both probes exit 0, fmt/clippy clean. Earlier sandbox/environment failures and the pre-hardening green run are preserved in pre-final-gates.json. Provider 122 carried from wave 30; provider/schema/package inputs unchanged. Corpus results and remaining production boundaries are in this report.",
+  "workspace_tests": 4484,
+  "provider_tests": 122,
+  "python_evidence_validator_tests": 200,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "pass",
+  "workspace_exit": 0,
+  "workspace_failed": 0,
+  "workspace_ignored": 8,
+  "lean_audits": 123,
+  "lean_exit": 0,
+  "python_exit": 0,
+  "provider_measurement": "carried: docs/reports/wave30-close/gate.json; no provider or schema change",
+  "workspace_command": "cargo test --workspace --no-fail-fast -j 2",
+  "logs": "logs/"
+}

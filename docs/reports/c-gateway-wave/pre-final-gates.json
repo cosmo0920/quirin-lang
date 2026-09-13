@@ -1,0 +1,16 @@
+{
+  "sandboxed": {
+    "exit": 101,
+    "passed": 4388,
+    "failed": 94,
+    "ignored": 8,
+    "note": "78 failures carry the explicit ptrace/LSan message, 15 carry OS permission errors, and the CT manifest native-execution check receives exit 1. The full outside-sandbox repeat passes all 4,483 tests; no sanitizer was disabled. This initial run used an earlier source snapshot."
+  },
+  "outside_sandbox_before_last_review": {
+    "exit": 0,
+    "passed": 4483,
+    "failed": 0,
+    "ignored": 8,
+    "note": "Completed green on source preceding the final scalar-assignment hardening; superseded by final gate."
+  }
+}

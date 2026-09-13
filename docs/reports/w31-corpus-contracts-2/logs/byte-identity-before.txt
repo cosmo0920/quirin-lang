@@ -1,0 +1,5 @@
+diagnostics      raw IDENTICAL   canonical IDENTICAL   4fea48c688ff0aa9 / 4fea48c688ff0aa9
+source           raw differs   canonical differs   ae38f6c93dfbe341 / e42fe7a9c40af1ca
+chunk-contracts  raw IDENTICAL   canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+source-effects   raw differs   canonical differs   0bda08ad86da01b1 / e3fb5b62ece6a8a3
+contracts        raw differs   canonical differs   c37f823af0dfd5ef / 10183bf06e75bf94
