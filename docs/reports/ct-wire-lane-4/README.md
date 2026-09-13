@@ -17,7 +17,12 @@ sanitized-native stays **7, now of 45**. Proof stays **3 of 45** (CT01, CT03,
 CT37). A grown denominator is mapping, not conformance (constraint 23).
 
 Base: `main` at `1c7d8e45` (the wave-31 close plus the `STABILITY-REEVAL`
-commit). Branch: `worktree-agent-a37c7fabef385fed7` in an isolated worktree.
+commit), with `origin/main` at `6caea680` merged in mid-card — that commit
+created `docs/development/increments/wave-32.md` and moved the index's
+current-record pointer, which this card had already done by hand on finding the
+file absent; resolved by keeping upstream's index wording verbatim and this
+card's paragraph in the upstream-created file. Branch:
+`worktree-agent-a37c7fabef385fed7` in an isolated worktree.
 
 **Nothing is promoted, and nothing semantic changed.** `git diff` over
 `crates/` and `compiler/src/` is empty for this card: the only Rust is harness
@@ -524,12 +529,30 @@ Run in this worktree on `main` at `1c7d8e45` plus this card, with
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | ok — `third_party/libevent` at `d82464a2`, before the workspace run |
-| `cargo test --workspace --no-fail-fast` | see §11.1 |
-| `cargo fmt --all -- --check` | see §11.1 |
-| `cargo clippy --all-targets -- -D warnings` | see §11.1 |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | see §11.1 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | see §11.1 |
-| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | see §11.1 |
-| `python3 -m unittest discover -s scripts/tests` | see §11.1 |
-| `python3 scripts/ct_stage_summary.py . --check` | see §11.1 |
-| `cargo test -p qcore-compiler --test ct_corpus` | see §11.1 |
+| `cargo test --workspace --no-fail-fast` | **4,511 passed / 0 failed / 8 ignored** across 223 result lines, exit 0, in the single run (§11.1) |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | `Passed 125 Lean audits` (unchanged — this lane adds no Lean), exit 0, read from the text line |
+| `python3 -m unittest discover -s scripts/tests` | **200 tests, OK** — the wave-31 count, unchanged; this lane adds no test function and edits three tree-fact pins inside existing ones (§7) |
+| `python3 scripts/ct_stage_summary.py . --check` | exit 0, no DRIFT, `mapped 45 / unmapped 5` |
+| `cargo test -p qcore-compiler --test ct_corpus` | 5 passed |
+
+### 11.1 The workspace row
+
+**No constraint-16 row tripped**, so no isolation re-run was owed — stated
+because it could easily have gone the other way: the run executed under heavy
+contention from sibling worktree gates (load average peaking near 27), which is
+exactly the condition under which those five load-sensitive rows fail. All
+4,511 tests passed in the single `--no-fail-fast` run
+(`measure/workspace-tests.log`, worktree-private); the tally is computed from
+the 223 per-binary summaries rather than read off the tail.
+
+The wave-31 close measured 4,466 (8 ignored); the intervening cards account for
+the difference, and **this card adds no test function** — its two new cases run
+inside `ct_corpus.rs`'s existing five tests, whose own assertions grew. The
+`providers/` workspace is untouched and its 122-test checkpoint is carried, not
+rerun (constraint 18 owes nothing: no provider, schema or template changed).
+**No arbiter was run**, per the wave's instruction, so no corpus number in this
+report is a fresh measurement — all are carried.

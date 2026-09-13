@@ -13,8 +13,9 @@ concurrency checked;
 // a kind the judgment classifies as SENDABLE -- so the refusal is for the
 // MODE, not a vacuous "this kind never crosses" -- and the message names the
 // missing transfer or share contract together with the contracts the kind
-// does carry. Both named contracts are supplied by the two accepted controls
-// beside this file, and supplying either is what flips the verdict.
+// does carry. All three named contracts are supplied by the three accepted
+// controls beside this file, and supplying any one of them is what flips the
+// verdict.
 //
 // BOUNDARY, published rather than papered over: this language has no raw
 // pointer type (DeclaredTypeTag::Pointer is Unmodeled and a declared pointer
