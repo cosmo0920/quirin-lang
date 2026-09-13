@@ -47,10 +47,14 @@ and the proposed flip terms are in the report. Final gate: **4,490** workspace
 tests (0 failed, 8 ignored, `--no-fail-fast`, no constraint-16 row tripped), 199
 of **200** Python tests — the one failure the standard `lean_audits` derived-row
 tripwire this card may not regenerate — **124** Lean audits, both probes exit 0,
-fmt/clippy clean. Native execution stays observation-only and typed error
-outcomes remain outside the alphabet. CT mapping is unmoved at 42/50 (proof
-**2 of 42** until the integrator flips), contracts remain 74, and full language
-conformance remains false. Evidence:
+fmt/clippy clean. The whole gate was re-measured at the true tip after
+`CT-WIRE-LANE-3` (`0ef07ba9`) merged into the branch mid-close; that lane
+net-added no workspace test, so **4,490 = the 4,484 integration tip plus exactly
+this card's six**, decomposed test by test. Native execution stays
+observation-only and typed error outcomes remain outside the alphabet. This card
+maps no case, so CT mapping stays where `CT-WIRE-LANE-3` left it at **43/50**
+(proof **2 of 43** until the integrator flips CT03's row to 3 of 43), contracts
+remain 74, and full language conformance remains false. Evidence:
 `docs/reports/ct03-proof-alphabet/README.md`.
 
 Wave 31, card `CT-WIRE-LANE-3` (2026-09-13): the CT lane taking the two

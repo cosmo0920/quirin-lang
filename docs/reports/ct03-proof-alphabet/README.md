@@ -19,12 +19,11 @@ every EVIDENCE_FILES list are untouched.** CT03's `proof` row still reads
 with the exact terms in §7; until then the honest statement is *the
 capability exists and is gate-checked, the stage evidence is proposed*.
 
-Base: `main` at `2492825b` (`C-GATEWAY-WAVE`, the wave-31 integration tip). The
+Base: `main` at `0ef07ba9` (`CT-WIRE-LANE-3`, the wave-31 integration tip). The
 card was written against `469f6509` and interrupted by a model usage limit
-before its close; the resumed run merged that work onto `2492825b` and
-**re-measured the whole gate there** — §8 is the tip measurement, not the
-earlier one, and its Lean and Python counts moved with the base rather than with
-this card.
+before its close; the resumed run merged that work forward and **re-measured the
+whole gate at the tip** — §8 is the tip measurement, not the earlier one, and
+its Lean and Python counts moved with the base rather than with this card.
 
 ---
 
@@ -385,23 +384,25 @@ plus the matrix regeneration through the standing generator with hand-kept
 sections carried (constraint 25), and `validation.lean_audits` regenerated
 123 → 124 (§8.1).
 
-**(d) The headline numbers, stated against the denominator at the flip.** This
-card moves the proof **numerator by exactly one** and moves the denominator
-**not at all** — it maps no case, and the manifest is untouched. Measured at
-this card's base `2492825b`, `ct_manifest.json` holds **42 mapped / 8 unmapped**
-and `AGENTS.md` reads `proof 2 of 42`, so the flip there reads **`proof 3 of
-42`**. A parallel wave-31 lane maps **CT25**; that lane was not merged at this
-card's base (CT25's `mapping_status` is still `unmapped` here, verified rather
-than assumed). If it merges first, the denominator the integrator reconciles is
-**43** and the same flip reads **`proof 2 of 43` → `proof 3 of 43`**, with
-sanitized-native carried at its own value. The two lanes touch disjoint manifest
-rows — CT25's and CT03's — and this card edits neither, so they compose in
-either merge order. No route claim is made about CT25 here (at this base its
-`route` is `null`); if its lane maps it onto the task route, the alphabet
-extension is safe for it by the conservativity theorem rather than by
-coincidence: a write-free run relates exactly as before. Per constraint 23, a
-grown denominator is mapping rather than conformance, and a grown proof
-numerator is evidence about one case's artifact.
+**(d) The headline numbers.** This card moves the proof **numerator by exactly
+one** and moves the denominator **not at all** — it maps no case, and the
+manifest is untouched. The parallel lane `CT-WIRE-LANE-3`, which maps **CT25**,
+merged to `main` (`0ef07ba9`) while this card was being closed and **is merged
+into this branch**; the tip therefore holds **43 mapped / 7 unmapped**, and
+`AGENTS.md` reads `proof 2 of 43`. The flip accordingly reads **`proof 2 of 43`
+→ `proof 3 of 43`**, with the mapped denominator and sanitized-native (`7 of
+43`) both carried untouched.
+
+The two lanes compose in either merge order and were verified to: they touch
+disjoint manifest rows (CT25's and CT03's), this card edits neither, and the
+merge of `0ef07ba9` into this branch conflicted **only** in the wave-31
+increment file — a two-paragraph ordering, no shared code or evidence. CT25 is
+mapped onto the `composed_epoch` route, not the task route, so it does not
+reach the F02 relation at all; had it, the alphabet extension would be safe for
+it by the conservativity theorem rather than by coincidence, a write-free run
+relating exactly as before. Per constraint 23, a grown denominator is mapping
+rather than conformance, and a grown proof numerator is evidence about one
+case's artifact.
 
 Suggested reading of the flipped row: *proof — the scenario property proved
 of the checked artifact's reference run and its admitted renderings under the
@@ -412,9 +413,12 @@ too).
 
 ## 8. Gate
 
-Run at the resumed card tip on Linux, over base `2492825b`, under default cargo
+Run at the resumed card tip on Linux, over base `0ef07ba9`, under default cargo
 configuration (no test, pin or assertion edited to obtain the results; the two
-disclosed test-file edits are §1.3's).
+disclosed test-file edits are §1.3's). The gate was measured twice — once over
+`2492825b` and again in full after `CT-WIRE-LANE-3` merged into the branch
+mid-close. **Every row below is the second, tip measurement**, and every row was
+identical in both.
 
 | Check | Result |
 |---|---|
@@ -426,11 +430,15 @@ disclosed test-file edits are §1.3's).
 | `PATH="$HOME/.elan/bin:$PATH" python3 scripts/check_lean_audits.py` | `Passed 124 Lean audits` |
 | `python3 -m unittest discover -s scripts/tests` | **199 of 200 green**; the one failure is the standard expected tripwire, §8.1 |
 
-**No constraint-16 row tripped**, so no isolation re-verification was needed;
-both facts are reported as required. The workspace count is the wave-31
-integration tip's own **4,484** plus exactly this card's **six** new tests (the
-two `ct03_proof_leg.rs` tests and the four write-aware F02 harness tests of
-§1.3) — the delta is accounted for test by test, not merely plausible.
+**No constraint-16 row tripped in either run**, so no isolation re-verification
+was needed; both facts are reported as required. The workspace count is the
+wave-31 integration tip's own **4,484** plus exactly this card's **six** new
+tests (the two `ct03_proof_leg.rs` tests and the four write-aware F02 harness
+tests of §1.3) — the delta is accounted for test by test, not merely plausible.
+`CT-WIRE-LANE-3` net-added **no** workspace test (its `region_joins_loan.rs`
+binary reports 11 passed in both runs, its fixtures having moved rather than
+grown), which is why the same 4,490 holds over both bases and the decomposition
+is unaffected by the mid-close merge.
 
 The earlier interrupted run measured this gate at base `469f6509` and recorded
 `Passed 122 Lean audits` with 199 of 200 Python tests. Both counts moved with the
