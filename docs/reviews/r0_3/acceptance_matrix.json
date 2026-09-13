@@ -1020,13 +1020,14 @@
    "docs/reports/ct22-wire/ct_stage_evidence.json",
    "docs/reports/ct01-proof-leg/ct_stage_evidence.json",
    "docs/reports/ct-proof-leg-2/ct_stage_evidence.json",
-   "docs/reports/ct07-write-remap/ct_stage_evidence.json"
+   "docs/reports/ct07-write-remap/ct_stage_evidence.json",
+   "docs/reports/ct-wire-lane-3/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 42,
-   "unmapped": 8
+   "mapped": 43,
+   "unmapped": 7
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1155,75 +1156,75 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 42
+    "executed": 43
    },
    "elaborate": {
-    "executed": 39,
+    "executed": 40,
     "not_applicable": 3
    },
    "task_lowering": {
-    "executed": 19,
+    "executed": 20,
     "not_applicable": 23
    },
    "task_ledger_check": {
-    "executed": 18,
+    "executed": 19,
     "not_applicable": 24
    },
    "mutex_lowering": {
     "executed": 10,
-    "not_applicable": 32
+    "not_applicable": 33
    },
    "mutex_invariant_check": {
     "executed": 10,
-    "not_applicable": 32
+    "not_applicable": 33
    },
    "epoch_lowering": {
-    "executed": 6,
+    "executed": 7,
     "not_applicable": 36
    },
    "epoch_bound_check": {
-    "executed": 6,
+    "executed": 7,
     "not_applicable": 36
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 40
+    "not_applicable": 41
    },
    "sequential_reference_execution": {
     "executed": 2,
-    "not_applicable": 40
+    "not_applicable": 41
    },
    "task_reference_execution": {
     "executed": 12,
-    "not_applicable": 30
+    "not_applicable": 31
    },
    "mutex_reference_execution": {
     "executed": 2,
-    "not_applicable": 40
+    "not_applicable": 41
    },
    "c_emission": {
     "executed": 16,
     "not_applicable": 25,
-    "unassessed": 1
+    "unassessed": 2
    },
    "native_execution": {
     "executed": 16,
     "not_applicable": 25,
-    "unassessed": 1
+    "unassessed": 2
    },
    "native_sanitized": {
     "executed": 7,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 23
+    "unassessed": 24
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 39
+    "not_applicable": 40
    },
    "proof": {
     "executed": 2,
-    "unassessed": 40
+    "unassessed": 41
    }
   },
   "depth_profile": {
@@ -1234,7 +1235,7 @@
    "native_execution": 7,
    "native_sanitized": 7,
    "proof": 2,
-   "task_ledger_check": 6,
+   "task_ledger_check": 7,
    "task_lowering": 1
   },
   "case_depth": {
@@ -1260,6 +1261,7 @@
    "CT21": "elaborate",
    "CT22": "task_ledger_check",
    "CT23": "task_ledger_check",
+   "CT25": "task_ledger_check",
    "CT26": "native_sanitized",
    "CT27": "mutex_invariant_check",
    "CT28": "mutex_invariant_check",
@@ -1283,21 +1285,21 @@
   },
   "observation_counts": {
    "c_emission": 32,
-   "elaborate": 39,
-   "epoch_bound_check": 6,
-   "epoch_lowering": 6,
+   "elaborate": 40,
+   "epoch_bound_check": 7,
+   "epoch_lowering": 7,
    "legacy_c_twin": 4,
    "mutex_invariant_check": 10,
    "mutex_lowering": 10,
    "mutex_reference_execution": 2,
    "native_execution": 47,
    "native_sanitized": 28,
-   "parse": 42,
+   "parse": 43,
    "proof": 2,
    "sequential_reference_execution": 2,
    "sequential_whole_program": 2,
-   "task_ledger_check": 18,
-   "task_lowering": 19,
+   "task_ledger_check": 19,
+   "task_lowering": 20,
    "task_reference_execution": 27
   },
   "ct_rows": [
@@ -3498,67 +3500,89 @@
    },
    {
     "id": "CT25",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Accept",
-    "current_bucket": "ambiguous (partially unblocked)",
-    "current_bucket_source": "t00-archive",
-    "archived_bucket": "ambiguous (partially unblocked)",
-    "blocker": "joins now exist; loan expiry does not",
-    "bucket_changed_since_batch2": true,
+    "route": "composed_epoch",
+    "harness_verdict_mode": "epoch_credit_split",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT25/case.qcore",
+      "observations": 1
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "task_ledger_check",
+    "stage_evidence_record": "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
+    "semantic_profile": "ComposedEpochTasksV1 (source.epoch.tasks.v1, cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): a flat-epoch plan over a real checked scoped-task region whose parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins, and only then writes an error region that ADOPTS the owner (`move owner;`), credits 5, spends 2 and takes its decided error edge; the catch's `quant open R as pack` binds the sealed pack as a linear capability and `discharge pack;` destroys the adopted owner and abandons exactly the parent-local remainder 3 -- the unedited qcore_core::error_region model's own Destroy and AbandonCredit on the discharge. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact, each carried by a named rule: CLEANUP DESTROYS OWNER by the model's Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (the discharge's `drop owner;` is written into the region's blanks after every join, where the unedited task route checks it; the published `released = [owner]` is read out of the model's own cleanup trace and cross-checked against the reader's independent duty fold before publication); AFTER JOINS by the wave-28 span rule (every TrySpawn/Join span of the checked task IR precedes the region statement, refused at Q600 in both directions when false) re-asserted on the published ledger; AND LOAN EXPIRY by three facts of unedited models -- the owner IS lent (the derived capture list is [[read]], from the checked IR's ScalarOperand::Loan, reconciled against the declared `read;` clause), the share RETURNS AT THE JOIN (the task ledger's own reclamation), and the destruction is ORDERED AFTER the expiry because the joins precede the region -- while the pre-expiry destruction is a measured refusal (the ledger's own LoanOutstanding, live_share_drop.qcore) and so is the pre-loan one (the erased drop before the spawn leaves no owned buffer to lend, before_join.qcore). The runner compares the whole published evidence wholesale -- the credit-recovery split under the four unchanged FlatEpochBoundV1 premises, the abandoned figure, the released duty list and both capture lists -- and re-asserts the adopting-pack premise (exactly one published body Acquire per released owner) and the span premise on the published objects. BOUNDARIES: both write authorities and the loan live in one entry's task scope -- the lender on this route is always the creator (REGION-JOINS-LOAN's discharge of T08-COMPOSE-LOAN) and creator-scope bytes are outside the epoch allocation (REGION-JOINS-EPOCH-AXIS, re-measured by that card: certificates byte-identical with and without the loan and the adoption). The region erases from emission (measured byte-for-byte against a hand-written twin by compiler/tests/region_joins_loan.rs, not re-measured here); the region's credit quantities are written statements, not measurements of any execution; and no native, sanitizer or proof evidence is claimed -- the capability card's native counting-allocator run carries no sanitizer, so none is readable from it (constraint 23), and the emission/native stages read unassessed (CT-COMPOSED-NATIVE)."
    },
    {
     "id": "CT26",
@@ -5869,7 +5893,6 @@
   "unmapped_bucket_counts": {
    "blocked-on-unimplemented-syntax": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
-   "ambiguous (partially unblocked)": 1,
    "blocked-on-gateway-expressiveness (C-twin measured)": 2,
    "ambiguous": 1,
    "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1,
@@ -5878,7 +5901,6 @@
   "unmapped_label_sources": {
    "CT10": "t00-archive",
    "CT24": "t00-archive",
-   "CT25": "t00-archive",
    "CT41": "docs/reports/wave17-ct40/ct_stage_evidence.json",
    "CT42": "docs/reports/wave17-ct40/ct_stage_evidence.json",
    "CT44": "t00-archive",
@@ -5924,7 +5946,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 74,
+  "contract_modules": 76,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6024,7 +6046,7 @@
   "workspace_tests": 4484,
   "provider_tests": 122,
   "python_evidence_validator_tests": 200,
-  "lean_audits": 123,
+  "lean_audits": 124,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6148,7 +6170,8 @@
    "AuditUncheckedLinkage.lean",
    "AuditVariadicNested.lean",
    "AuditW4.lean",
-   "AuditWriteLend.lean"
+   "AuditWriteLend.lean",
+   "AuditWriteLendTasks.lean"
   ],
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,
@@ -6156,7 +6179,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/c-gateway-wave/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
