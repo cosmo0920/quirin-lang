@@ -328,7 +328,8 @@ fn capture_mode_and_parameter_type_must_agree() {
     );
     rejects(
         &READ_LOAN.replace("payload: borrow<Buffer>", "payload: borrow<Buffer> use one"),
-        "task parameters require i32, own<Buffer> use one, or an ungraded borrow<Buffer>",
+        "task parameters require i32, own<Buffer> use one, an ungraded borrow<Buffer>, or an \
+         ungraded lend<Buffer>",
     );
     // Only an owned Buffer can be lent: a scalar place is refused on the place
     // type, before the capture mode is even considered.

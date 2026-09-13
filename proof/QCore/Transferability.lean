@@ -1,5 +1,6 @@
 import QCore.ScopedTasks
 import QCore.ReadShare
+import QCore.WriteLendTasks
 
 /-! Which kinds may cross a task-creation boundary (card `CT46-SENDSYNC`).
 
@@ -7,8 +8,9 @@ Model of `qcore_core::transfer`. Two things are established, and nothing else.
 
 1. **The judgment is total and closed.** Every constructor of the boundary
    kind vocabulary, of the declared-type tag set and of the capture-mode set
-   has exactly one answer, `admits` is decided on the whole 13 x 4 product and
-   `admitsCapture` on the whole 13 x 4 x 13 product. There is no fallback arm
+   has exactly one answer, `admits` is decided on the whole 14 x 5 product and
+   `admitsCapture` on the whole 14 x 5 x 14 product (13 x 4 x 13 before card
+   `WRITE-LEND-TASKS` grew both vocabularies by one). There is no fallback arm
    and no residual case, so a kind nobody classified cannot slip through as an
    unlisted default.
 
@@ -17,7 +19,9 @@ Model of `qcore_core::transfer`. Two things are established, and nothing else.
    assumptions: the move arm's obligation is discharged by
    `QCore.ScopedTasks.rollback_restores_original_custody` together with
    `reserved_resource_is_unavailable_to_parent`, and the lend arm's by
-   `QCore.ReadShare.an_outstanding_share_suspends_exclusive_authority`. The
+   `QCore.ReadShare.an_outstanding_share_suspends_exclusive_authority`, and
+   (card `WRITE-LEND-TASKS`) the write-lease arm's by
+   `QCore.WriteLendTasks.no_byte_has_two_write_authorities`. The
    judgment does not establish those rules; it records which rule answers for
    which kind, and the theorems here check that the recording is accurate.
 
@@ -40,6 +44,7 @@ inductive Kind where
   | i32
   | ownedBuffer
   | readLoan
+  | writeLease
   | threadScope
   | taskHandle
   | taskResult
@@ -55,8 +60,9 @@ inductive Kind where
 against this list, so a constructor missing from it is caught by
 `kindInventoryIsComplete`. -/
 def allKinds : List Kind :=
-  [.unit, .i32, .ownedBuffer, .readLoan, .threadScope, .taskHandle, .taskResult,
-   .errorValue, .knownErrorTag, .mutexGeneration, .guard, .protectedFact, .unmodeled]
+  [.unit, .i32, .ownedBuffer, .readLoan, .writeLease, .threadScope, .taskHandle,
+   .taskResult, .errorValue, .knownErrorTag, .mutexGeneration, .guard,
+   .protectedFact, .unmodeled]
 
 /-- The declared-type tag set of the source grammar: fifteen tags, of which
 this profile elaborates spellings under three. -/
@@ -69,24 +75,30 @@ def allTags : List DeclaredTag :=
   [.atomic, .named, .tuple, .array, .slice, .pointer, .owned, .borrow,
    .quant, .accessQuant, .result, .function, .never, .task, .mutex]
 
-/-- The four capture keywords the parser accepts. `write` parses and has never
+/-- The five capture keywords the parser accepts. `write` parses and has never
 had a lowering, so it appears as a mode the judgment refuses for every kind
-rather than as a mode that silently does not exist. -/
+rather than as a mode that silently does not exist; `lendWrite` (card
+`WRITE-LEND-TASKS`, spelled `lend PLACE LOW..HIGH`) is deliberately distinct
+from it, so the pinned `write` refusal is untouched. -/
 inductive Mode where
   | copy
   | move
   | lend
   | write
+  | lendWrite
   deriving DecidableEq, Repr
 
-def allModes : List Mode := [.copy, .move, .lend, .write]
+def allModes : List Mode := [.copy, .move, .lend, .write, .lendWrite]
 
 /-- A discipline under which a kind that is not freely shareable may still be
 reached by more than one task. `countedReadShares` removes mutation for the
-window; `checkedMutex` would order it instead, and no mode produces it. -/
+window; `checkedMutex` would order it instead, and no mode produces it;
+`disjointWriteLeases` (card `WRITE-LEND-TASKS`) **partitions the bytes**, so
+each party mutates only its own disjoint range. -/
 inductive Protocol where
   | countedReadShares
   | checkedMutex
+  | disjointWriteLeases
   deriving DecidableEq, Repr
 
 /-- Why a kind does not cross. -/
@@ -97,11 +109,13 @@ inductive NotTransferable where
   | resultPositionOnly
   deriving DecidableEq, Repr
 
-/-- The transfer class of a kind. `movedOnly` with `some p` is CT46's
-"Send but not Sync, shareable under `p`" shape. -/
+/-- The transfer class of a kind. `movedOnly` with `some p` in its first field
+is CT46's "Send but not Sync, shareable under `p`" shape; the second field
+(card `WRITE-LEND-TASKS`) names the discipline under which more than one party
+may hold **write** authority at once, if any. -/
 inductive Class where
   | duplicated
-  | movedOnly (shareableUnder : Option Protocol)
+  | movedOnly (shareableUnder mutablyShareableUnder : Option Protocol)
   | never (reason : NotTransferable)
   deriving DecidableEq, Repr
 
@@ -110,6 +124,7 @@ inductive Transfer where
   | duplicate
   | moveCustody
   | lendShare (protocol : Protocol)
+  | lendWriteRange (protocol : Protocol)
   deriving DecidableEq, Repr
 
 /-! ### The judgment -/
@@ -118,8 +133,9 @@ inductive Transfer where
 def transferable : Kind → Class
   | .i32 => .duplicated
   | .unit => .never .resultPositionOnly
-  | .ownedBuffer => .movedOnly (some .countedReadShares)
+  | .ownedBuffer => .movedOnly (some .countedReadShares) (some .disjointWriteLeases)
   | .readLoan => .never .notAValue
+  | .writeLease => .never .notAValue
   | .threadScope => .never .owedToCreatingFrame
   | .taskHandle => .never .owedToCreatingFrame
   | .taskResult => .never .owedToCreatingFrame
@@ -134,7 +150,7 @@ def transferable : Kind → Class
 def sendable (c : Class) : Bool :=
   match c with
   | .duplicated => true
-  | .movedOnly _ => true
+  | .movedOnly _ _ => true
   | .never _ => false
 
 /-- The "Sync" direction: under which protocol may the parent keep it while a
@@ -142,7 +158,17 @@ child also reaches it? A duplicated kind answers `none` because duplication
 leaves nothing shared. -/
 def shareableUnder (c : Class) : Option Protocol :=
   match c with
-  | .movedOnly p => p
+  | .movedOnly p _ => p
+  | .duplicated => none
+  | .never _ => none
+
+/-- The mutable-sharing direction (card `WRITE-LEND-TASKS`): under which
+protocol may more than one party hold write authority at once? Distinct from
+`shareableUnder` on purpose - read sharing removes mutation, mutable sharing
+partitions the bytes, and a consumer must ask for exactly one of them. -/
+def mutablyShareableUnder (c : Class) : Option Protocol :=
+  match c with
+  | .movedOnly _ p => p
   | .duplicated => none
   | .never _ => none
 
@@ -178,10 +204,13 @@ def admits (k : Kind) (m : Mode) : Option Transfer :=
     | .duplicated => match m with
       | .copy => some .duplicate
       | _ => none
-    | .movedOnly p => match m with
+    | .movedOnly p q => match m with
       | .move => some .moveCustody
       | .lend => match p with
         | some protocol => some (.lendShare protocol)
+        | none => none
+      | .lendWrite => match q with
+        | some protocol => some (.lendWriteRange protocol)
         | none => none
       | _ => none
 
@@ -192,6 +221,7 @@ def receivedKind (source : Kind) : Transfer → Kind
   | .duplicate => source
   | .moveCustody => source
   | .lendShare _ => .readLoan
+  | .lendWriteRange _ => .writeLease
 
 /-- The whole boundary decision: the parent holds `place`, the capture asks for
 `mode`, and the worker declares it receives `parameter`. All three must agree. -/
@@ -211,7 +241,7 @@ theorem kindInventoryIsComplete : ∀ k : Kind, k ∈ allKinds := by
 
 theorem kindInventoryHasNoDuplicates : allKinds.Nodup := by decide
 
-theorem kindInventoryHasThirteenEntries : allKinds.length = 13 := by decide
+theorem kindInventoryHasFourteenEntries : allKinds.length = 14 := by decide
 
 theorem tagInventoryIsComplete : ∀ t : DeclaredTag, t ∈ allTags := by
   intro t; cases t <;> simp [allTags]
@@ -223,7 +253,7 @@ theorem tagInventoryHasFifteenEntries : allTags.length = 15 := by decide
 theorem modeInventoryIsComplete : ∀ m : Mode, m ∈ allModes := by
   intro m; cases m <;> simp [allModes]
 
-theorem modeInventoryHasFourEntries : allModes.length = 4 := by decide
+theorem modeInventoryHasFiveEntries : allModes.length = 5 := by decide
 
 /-- Totality of the declared-tag map: every tag lands on a classified kind. -/
 theorem everyTagMapsIntoTheVocabulary (t : DeclaredTag) : ofDeclaredTag t ∈ allKinds :=
@@ -242,8 +272,10 @@ theorem theClassificationIsPinned :
     allKinds.map (fun k => (k, transferable k)) =
       [(.unit, .never .resultPositionOnly),
        (.i32, .duplicated),
-       (.ownedBuffer, .movedOnly (some .countedReadShares)),
+       (.ownedBuffer,
+         .movedOnly (some .countedReadShares) (some .disjointWriteLeases)),
        (.readLoan, .never .notAValue),
+       (.writeLease, .never .notAValue),
        (.threadScope, .never .owedToCreatingFrame),
        (.taskHandle, .never .owedToCreatingFrame),
        (.taskResult, .never .owedToCreatingFrame),
@@ -263,6 +295,14 @@ theorem exactlyOneKindIsSendableButNotFreelyShareable :
       shareableUnder (transferable .ownedBuffer) = some .countedReadShares := by
   refine ⟨by decide, by decide, by decide⟩
 
+/-- Card `WRITE-LEND-TASKS`: the mutable-sharing direction separates exactly
+the same kind, under exactly the byte-partitioning protocol. -/
+theorem exactlyOneKindIsMutablyShareable :
+    allKinds.filter (fun k => (mutablyShareableUnder (transferable k)).isSome)
+        = [.ownedBuffer] ∧
+      mutablyShareableUnder (transferable .ownedBuffer) = some .disjointWriteLeases := by
+  refine ⟨by decide, by decide⟩
+
 /-- Guards, facts and mutex generations never cross, in any mode, for one
 reason. This is the arm CT46's "shared wrapper" vocabulary lands on. -/
 theorem guardsFactsAndMutexesNeverCross :
@@ -271,17 +311,18 @@ theorem guardsFactsAndMutexesNeverCross :
 
 /-! ### The admission matrices, decided whole -/
 
-/-- The 13 x 4 kind/mode matrix: exactly three cells admit. -/
+/-- The 14 x 5 kind/mode matrix: exactly four cells admit. -/
 theorem theAdmissionMatrixIsPinned :
     (allKinds.flatMap (fun k => allModes.map (fun m => (k, m)))).filter
         (fun p => (admits p.1 p.2).isSome) =
-      [(.i32, .copy), (.ownedBuffer, .move), (.ownedBuffer, .lend)] := by decide
+      [(.i32, .copy), (.ownedBuffer, .move), (.ownedBuffer, .lend),
+       (.ownedBuffer, .lendWrite)] := by decide
 
 /-- A `write` capture is refused for every kind, the admitted ones included. -/
 theorem noKindAdmitsAWriteCapture : ∀ k ∈ allKinds, admits k .write = none := by decide
 
-set_option maxRecDepth 8000 in
-/-- The 13 x 4 x 13 boundary matrix: exactly three cells admit out of 676. -/
+set_option maxRecDepth 16000 in
+/-- The 14 x 5 x 14 boundary matrix: exactly four cells admit out of 980. -/
 theorem theCaptureMatrixIsPinned :
     (allKinds.flatMap (fun place =>
       allModes.flatMap (fun mode =>
@@ -289,9 +330,10 @@ theorem theCaptureMatrixIsPinned :
         (fun t => (admitsCapture t.1 t.2.1 t.2.2).isSome) =
       [(.i32, .copy, .i32),
        (.ownedBuffer, .move, .ownedBuffer),
-       (.ownedBuffer, .lend, .readLoan)] := by decide
+       (.ownedBuffer, .lend, .readLoan),
+       (.ownedBuffer, .lendWrite, .writeLease)] := by decide
 
-set_option maxRecDepth 8000 in
+set_option maxRecDepth 16000 in
 /-- The boundary decision never admits more than the kind judgment, and what it
 admits is exactly what the kind judgment admitted. -/
 theorem captureAdmissionRefinesKindAdmission :
@@ -330,9 +372,11 @@ admits a mutex-mediated lend. Decided over the whole matrix, so this cannot
 drift as a comment could. -/
 theorem noModeRequestsTheMutexProtocol :
     (∀ k ∈ allKinds, shareableUnder (transferable k) ≠ some .checkedMutex) ∧
+      (∀ k ∈ allKinds, mutablyShareableUnder (transferable k) ≠ some .checkedMutex) ∧
       (∀ k ∈ allKinds, ∀ m ∈ allModes,
-        admits k m ≠ some (.lendShare .checkedMutex)) := by
-  refine ⟨by decide, by decide⟩
+        admits k m ≠ some (.lendShare .checkedMutex) ∧
+          admits k m ≠ some (.lendWriteRange .checkedMutex)) := by
+  refine ⟨by decide, by decide, by decide⟩
 
 /-- The gap is about a kind that really is sendable and really is shareable
 under some *other* protocol — otherwise it would be an uninteresting refusal
@@ -378,11 +422,14 @@ def refuse (k : Kind) (m : Mode) : Option Refusal :=
     | .duplicated => match m with
       | .copy => none
       | _ => some .modeNotAdmittedForKind
-    | .movedOnly p => match m with
+    | .movedOnly p q => match m with
       | .move => none
       | .lend => match p with
         | some _ => none
         | none => some (.protocolUnavailable .checkedMutex)
+      | .lendWrite => match q with
+        | some _ => none
+        | none => some .modeNotAdmittedForKind
       | _ => some .modeNotAdmittedForKind
 
 /-- The refusing half of the whole boundary decision: an admitted transfer
@@ -415,7 +462,7 @@ theorem aWriteCaptureIsRefusedByName :
 non-write mode, so the boundary message can name the kind's rule rather than a
 generic subset. -/
 theorem aNeverKindRefusesWithItsClassReason :
-    ∀ k ∈ allKinds, ∀ m ∈ [Mode.copy, .move, .lend],
+    ∀ k ∈ allKinds, ∀ m ∈ [Mode.copy, .move, .lend, .lendWrite],
       ∀ reason ∈ [NotTransferable.notAValue, .owedToCreatingFrame,
                   .unmodeledType, .resultPositionOnly],
         transferable k = .never reason → refuse k m = some (.kindNotTransferable reason) := by
@@ -466,6 +513,20 @@ theorem moveObligationHolds : MoveObligation :=
    fun checked phases resource member =>
      ScopedTasks.reserved_resource_is_unavailable_to_parent checked phases resource member⟩
 
+/-- The obligation a `lendWriteRange disjointWriteLeases` admission carries
+(card `WRITE-LEND-TASKS`): at any point of any spawn/join interleaving — any
+lease-ledger state reachable by admitted opens and closes — no byte has two
+write authorities: at most one outstanding lease holds it, and the owner is an
+authority exactly when nothing is outstanding. That is what makes concurrent
+mutation safe without a mutex: the protocol partitions the bytes. -/
+def LeaseObligation : Prop :=
+  ∀ {state : List WriteLendTasks.Lease}, WriteLendTasks.Reachable state →
+    ∀ byte : Nat, WriteLendTasks.writeAuthorities state byte ≤ 1
+
+/-- Discharged entirely by the write-lease ledger model's own theorem. -/
+theorem leaseObligationHolds : LeaseObligation :=
+  fun reachable byte => WriteLendTasks.no_byte_has_two_write_authorities reachable byte
+
 /-- The obligation a `lendShare countedReadShares` admission carries: while any
 share is outstanding, exclusive authority — and therefore the Buffer write and
 the release — is refused for everyone. That is what makes read sharing safe
@@ -491,6 +552,10 @@ def Backed : Transfer → Prop
   | .moveCustody => MoveObligation
   | .lendShare .countedReadShares => LendObligation
   | .lendShare .checkedMutex => False
+  | .lendShare .disjointWriteLeases => False
+  | .lendWriteRange .disjointWriteLeases => LeaseObligation
+  | .lendWriteRange .countedReadShares => False
+  | .lendWriteRange .checkedMutex => False
 
 /-- Every admitting arm of the judgment is backed by an obligation that holds.
 Stated over the whole matrix: whichever cell admits, the corresponding rule is
@@ -505,6 +570,7 @@ theorem everyAdmittedTransferIsBacked :
       | trivial
       | exact moveObligationHolds
       | exact lendObligationHolds
+      | exact leaseObligationHolds
 
 /-- The refusing arms carry no obligation, because they admit nothing at all —
 so the judgment never leans on a rule it did not name. -/

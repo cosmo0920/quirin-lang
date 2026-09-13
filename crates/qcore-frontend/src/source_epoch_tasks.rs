@@ -1013,6 +1013,18 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
                 // exclusion and the reclamation at the join are the unedited
                 // task ledger's rules on the task half.
                 ScalarOperand::Loan { .. } => ComposedCapture::Read,
+                // A range write lease (card `WRITE-LEND-TASKS`) is refused by
+                // name on the epoch composition until a card measures what a
+                // leased range's residency means against an epoch's
+                // allocation axis (`WRITE-LEND-TASKS-EPOCH`). Fail closed,
+                // never silently classified as a read.
+                ScalarOperand::Lease { .. } => {
+                    return Err(failure(
+                        span,
+                        "a range write lease has no composed epoch capture spelling yet: \
+                         `WRITE-LEND-TASKS-EPOCH` names the missing residency rule",
+                    ));
+                }
                 ScalarOperand::Unit | ScalarOperand::I32(_) => {
                     return Err(failure(
                         span,
