@@ -36,7 +36,17 @@ was a **semantic** conflict — one card refuses all three new trace events, the
 other admits the Buffer write and had deleted the refusal variant — resolved
 as the true union (write encoded, both lease events still refused through a
 restored `UnsupportedObservedEvent`), since either side alone would have
-refused a proved-admissible event or silently dropped an unmodelled one.
+refused a proved-admissible event or silently dropped an unmodelled one — but
+**that resolution is recorded as unproven, not as verified**: measured after
+the fact, `reference_trace` has no caller outside its own module and no test
+drives a lease-carrying reference run into it, so the two green suites are
+evidence about the paths they took and not about the arm, and CT03's
+conservativity theorems cover the *write* side of that boundary only. Risk is
+bounded by direction alone (the arm refuses rather than admits). Named
+`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`, with the in-code caveat at the arm
+itself, and it is the occasioning case for the new **every-2-wave
+`STABILITY-REEVAL`** cadence (`CLAUDE.md`): green tests are an observation,
+and an observation is not a proof.
 Merged gate at the close tip: 4,511 workspace tests (0 failed, 8 ignored,
 `--no-fail-fast`), 122 provider (carried), 200 Python, both probes exit 0,
 fmt/clippy clean (`docs/reports/wave31-close/gate.json`). Nothing is promoted;

@@ -488,6 +488,20 @@ pub fn reference_trace(
                 // refused. The WRITE-LEND-TASKS lease events stay outside the
                 // alphabet: an observation containing one is refused here
                 // rather than encoded — never silently dropped.
+                //
+                // UNPROVEN, and deliberately recorded as such
+                // (`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`): this arm was
+                // written at integration to resolve a semantic conflict
+                // between the two cards, and it is **unexercised** — no test
+                // in the workspace drives a lease-carrying reference run into
+                // `reference_trace`, so the suites that pass over this file
+                // are evidence about the paths they take, not about this arm.
+                // CT03's conservativity theorems cover the *write* side of
+                // this boundary only. What bounds the risk is direction: the
+                // arm refuses rather than admits. Do not read its greenness
+                // as verification, and discharge it by proving the lease
+                // boundary in Lean, by exercising it, or by showing it
+                // unreachable — whichever the measurement supports.
                 TaskEvent::BufferWritten {
                     task,
                     buffer,

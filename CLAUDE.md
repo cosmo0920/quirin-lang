@@ -54,6 +54,36 @@ the operational guidance that is in neither of those.
   Expect single-digit percentages: two passes in, these files are references
   rather than chronicles, and the rule exists to bound accretion, not to
   promise a shrinking file.
+- **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after
+  wave 31). Green tests are an *observation*, and an observation is not a
+  proof: a recurring **`STABILITY-REEVAL`** card (first due after wave 33)
+  asks, of the claims this project currently rests on, **under what conditions
+  each is unstable or unproven** — and it reports that as a finding rather
+  than as reassurance. The method, in the order that has caught the most:
+  1. **Hunt vacuous greenness.** For every fail-closed arm added or changed in
+     the last two waves, ask whether any test actually *drives* it. An arm no
+     test reaches is not verified by a green suite; the suite is evidence
+     about the paths it did take. Measure reachability (who calls the
+     function; does any fixture produce the refused shape) rather than
+     inferring it from the diff. The occasioning case:
+     `TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`, where a semantic union
+     resolved at integration was "verified" by two green suites that never
+     touched the arm in question.
+  2. **Separate the proved side from the observed side of a boundary.** A
+     theorem about one arm (CT03's write conservativity) says nothing about
+     its sibling arm (the lease refusal). Where a boundary is proved on one
+     side and observed on the other, say so in those words.
+  3. **Find semantic edits made without a card.** An integrator resolving a
+     merge, a hotfix, a "mechanical" rename: each can move meaning with no
+     report, no Lean parity and no residual name (invariant 6). These are the
+     hardest to see later precisely because nothing indexes them.
+  4. **Ask what a later card would do to the claim.** A rule that is correct
+     today because a construct is unreachable becomes load-bearing the moment
+     a queued card makes it reachable — name that card in the finding.
+  Every finding lands as a **named residual with a discharge condition** (prove
+  it, exercise it, or state it as a measured boundary). Postponement is a valid
+  outcome and must be recorded as one; what is forbidden is letting an
+  observation stand where the text implies a proof.
 
 ## Worktree and measurement hygiene
 
