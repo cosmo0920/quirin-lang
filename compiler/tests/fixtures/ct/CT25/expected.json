@@ -14,7 +14,7 @@
     "epoch_bound_check"
   ],
   "evidence_target": "linux",
-  "notes": "source.epoch.tasks.v1 (cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): the parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins -- the loan expires there, under the unedited task ledger's own share return -- and only then does its error region adopt the owner (`move owner;`), credit 5, spend 2 and take its decided edge; the catch's `quant open R as pack` binds the sealed pack and `discharge pack;` destroys the adopted owner and abandons the parent-local remainder 3. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact: `cleanup destroys owner` by the model's own Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (released = [owner], re-derived from the model's cleanup trace and cross-checked against the reader's duty fold); `after joins` by the Q600 refusal when false plus the span assertion on the published ledger; `and loan expiry` by the derived capture list [[read]] (the owner IS lent), the ledger's own reclamation at the join, and the ordering after-joins-therefore-after-expiry, with the pre-expiry destruction a measured refusal (LoanOutstanding, live_share_drop.qcore) and the pre-loan one too (before_join.qcore). The runner compares the published split, abandoned figure, released duty list and capture lists wholesale, and re-asserts the adopting-pack premise (exactly one body Acquire per released owner) and the span premise on the published objects. No native, sanitizer or proof evidence is claimed: the admitted module emits the task route's own C that no harness runner executes (CT-COMPOSED-NATIVE).",
+  "notes": "source.epoch.tasks.v1 (cards T08-COMPOSE, REGION-JOINS-DUTIES and REGION-JOINS-LOAN): the parent owns `owner`, lends the worker a counted read share of it at the spawn (`read owner share FULL`, declared in the plan as the place-free `read;` clause), joins -- the loan expires there, under the unedited task ledger's own share return -- and only then does its error region adopt the owner (`move owner;`), credit 5, spend 2 and take its decided edge; the catch's `quant open R as pack` binds the sealed pack and `discharge pack;` destroys the adopted owner and abandons the parent-local remainder 3. That is CT25's scenario, `cleanup destroys owner after joins and loan expiry`, expected Accept, and the case is ADMITTED with every word a checked fact: `cleanup destroys owner` by the model's own Destroy on the discharge of the opened pack, made a real emitted, custody-checked and reference-executed destruction by the erasure (released = [owner], re-derived from the model's cleanup trace and cross-checked against the reader's duty fold); `after joins` by the Q600 refusal when false plus the span assertion on the published ledger; `and loan expiry` by the derived capture list [[read]] (the owner IS lent), the ledger's own reclamation at the join, and the ordering after-joins-therefore-after-expiry, with the pre-expiry destruction a measured refusal (LoanOutstanding, live_share_drop.qcore) and the pre-loan one too (before_join.qcore). The runner compares the published split, abandoned figure, released duty list and capture lists wholesale, and re-asserts the adopting-pack premise (exactly one body Acquire per released owner) and the span premise on the published objects. The composed module publishes no reference observation of its own, which is why card CT-COMPOSED-NATIVE (wave 32) compares the emitted program against the reference execution of this module's own checked task half instead: that run is real native and sanitizer evidence about the emitted program (see composed_native below), and it remains no proof evidence and no evidence whatever about the credit quantities, which erase from emission.",
   "epoch_credit_split": {
     "execution_profile": "ComposedEpochTasksV1",
     "diagnostic_sequence": [],
@@ -99,5 +99,33 @@
         "note": "A region acquisition beside an adopted owner: the acquisition's `?` failure edge discards the live adopted owner in the erased program, refused at the task route's existing custody Q600 (REGION-JOINS-MULTI-OWNER, unchanged)."
       }
     ]
+  },
+  "composed_native": {
+    "sanitizer_flags": [
+      "-std=c11",
+      "-pthread",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-g",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined"
+    ],
+    "asan_options": "detect_leaks=1:halt_on_error=1",
+    "ubsan_options": "halt_on_error=1:print_stacktrace=1",
+    "declared_observation": [
+      "QCORE_BUFFER_ALLOC 0 1 42",
+      "QCORE_TASK_SPAWN 1 1",
+      "QCORE_BUFFER_LOAN 1 1",
+      "QCORE_BUFFER_READ 1 1 42",
+      "QCORE_TASK_RESULT 1 I32 42",
+      "QCORE_TASK_JOIN 1",
+      "QCORE_BUFFER_RETURN 1 1",
+      "QCORE_BUFFER_DROP 0 1",
+      "QCORE_TASK_RESULT 0 I32 1"
+    ],
+    "root_outcome_i32": 1,
+    "reference_tasks": 2,
+    "note": "Card CT-COMPOSED-NATIVE (wave 32), the same runner on the adopting shape. The case's own emitted C is compiled under ASan/UBSan (plus LSan on Linux) and run, and its standard output is compared byte for byte with render_task_observation of the reference execution of this module's own checked task half. The transcript carries the loan in the open: QCORE_BUFFER_LOAN at the spawn, QCORE_BUFFER_RETURN at the join, and only then QCORE_BUFFER_DROP 0 1 -- the destruction the discharge decided, executed after the join and after the loan's expiry, in the emitted program rather than in a model. OBSERVED, NOT PROVED: one successful run on one host with one compiler under these sanitizers. On Linux, LSan's silence observes that the one buffer this program allocates is released, which is the sense in which `cleanup destroys owner` is executed here; on macOS Apple's ASan ships no leak detector, so that arm makes no reclamation claim. It says nothing about schedules or hosts this run did not take, and nothing about the credit quantities, which erase from emission. The case's proof stage stays unassessed."
   }
 }
