@@ -1,5 +1,65 @@
 # W31-CORPUS-CONTRACTS-2 — prediction, written before the AFTER run
 
+> **Recomputed 2026-09-13 after the baseline moved.** Everything below the
+> horizontal rule is the ORIGINAL prediction, written against the wave-30
+> baseline `docs/reports/w4-recursive-summaries/artifacts/` before this card
+> was interrupted by a model usage limit. While it was down the user landed
+> their own wave-31 card `C-GATEWAY-WAVE` (`2492825b`), which changed gateway
+> analysis and **moved the corpus baseline** to
+> `docs/reports/c-gateway-wave/artifacts/`. The original prediction is kept
+> verbatim — a prediction is a commitment, not a draft — and the recomputation
+> against the new baseline is §0 below. Neither this file nor
+> `measure/runs/after` existed in its recomputed form before the recomputation
+> was committed.
+
+## 0. Recomputation against the `c-gateway-wave` baseline
+
+`measure/predict.py` runs the same three inventories over whichever archive it
+is given; `measure/prediction-comparison.txt` is the section-by-section
+comparison of the two runs. The result is a finding in its own right:
+
+**The gateway change moved the corpus totals substantially and moved nothing in
+this card's candidate neighbourhood.**
+
+| inventory | wave-30 baseline | `c-gateway-wave` baseline |
+|---|---|---|
+| unit histogram | 2 Safe / 42 Unsafe / 137 Unknown / 4 data-only | **identical** |
+| projected functions | 4,834 — 150 / 84 / 4,600 | 4,834 — **146 / 85 / 4,603** |
+| `leak` / `unknown_alias` / `unsupported` / `double_release` | 266 / 4,344 / 49,760 / — | **272 / 4,208 / 50,155 / 1** |
+| the 4 candidate leaves naming the two declared callees | 4, listed below | **byte-identical, same lines, same origins** |
+| every leaf of the 4 carrying functions (127 lines) | — | **byte-identical** |
+| the 6 sibling-callee leaves behind `W31-SIZE-SIBLINGS-REMAINDER` | 2 + 1 + 3 | **byte-identical** |
+
+So the original prediction's candidate set, its per-site reasoning and its
+per-site expectations all carry over **unchanged**, and the two predictions
+**agree**: the same four uncontracted-call leaves, the same two "chancy actual"
+sites (L2280, L19957), the same third call site at `:3118` whose L19962/L19963
+refusals are argument-expression refusals rather than callee leaves.
+
+The predicted movement is therefore the same, restated against the new totals:
+
+* `unsupported` **50,155 →** between 50,151 (−4) and 50,153 (−2), by item 1.
+* `leak` **272 unmoved**, `unknown_alias` **4,208** small-and-attributed,
+  `double_release` **1 unmoved** — items 2 and 3, restated on the new pins.
+  The `double_release` row is `C-GATEWAY-WAVE`'s own provisional
+  `rd_kafka_jwt_b64_decode_payload` finding under its named follow-on
+  `C-GATEWAY-CONSTANT-DO-WHILE`; this card declares nothing in librdkafka and
+  predicts no interaction with it.
+* Items 4, 5 and 6 unchanged: zero status moves of either kind, zero
+  `SummaryConflict`, `contracts.json` 19 → 21 and 41 → 43.
+
+One prediction is **added**, because the ground moved: the original run
+observed a fifth moved leaf (L19962, the chained-actual argument-expression
+refusal at `:3118`) as an attributed deviation in the deciding direction. That
+observation was made under the *old* analysis. It is **not** promoted to a
+prediction here — the honest statement is that the same mechanism is expected
+to apply, because the leaf's text, line and origin are byte-identical in the
+new baseline, so the range above is stated as −4 to −2 **on the same grounds as
+the original**, and a −5 result would again be an attributed deviation in the
+deciding direction rather than an expectation met.
+
+---
+
 Committed before `measure/runs/after` exists. The BEFORE run has started and
 its byte-identity against `docs/reports/w4-recursive-summaries/artifacts/` will
 be checked before any analysis input moves; the manifest edit selecting
