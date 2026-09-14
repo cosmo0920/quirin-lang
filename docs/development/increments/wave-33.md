@@ -6,6 +6,19 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+`VERIFIER-HOST-CLOSED-INPUT-DEADLINE` promoted and corrected by the integrator
+(2026-09-15): the repair below was produced **out of scope** by a stalled
+measurement card and had already reached `main` as a bare fast-forward. It was
+re-landed as a merge after a complete gate on its own tree — 4,544 passed /
+0 failed / 8 ignored over 227 binaries, the repaired test passing, both probes
+exit 0, 128 Lean audits, 227 Python, fmt and clippy clean. Its report's
+validation section was **rewritten**: the six logs it cited do not exist, its
+"97 passed / 15 failed" did not reconcile with the six failures it explained,
+and its two claims of a user confirmation are **struck as unfounded**. The code
+was kept on its merits, the process breach recorded as `CARD-SCOPE-SELF-MERGE`,
+and a first gate run's ten failures attributed to an uninitialised submodule
+(`WORKTREE-SUBMODULE-UNGATED`, the wave's second loss to that trap).
+
 `VERIFIER-HOST-CLOSED-INPUT-DEADLINE` repair (2026-09-14): isolated reproduction
 localized the failure to the third, 1,000 ms large-response arm, correcting the
 ledger's earlier 100 ms attribution. Unconditional 1 ms sleeps after bounded
@@ -18,8 +31,7 @@ response after transmitting the complete request. Evidence and gate results:
 No language-semantic or Lean definition changes; native timing is observation,
 not a scheduling theorem, and no macOS run is claimed.
 
-`C-GATEWAY-RETURN-POSITION` (2026-09-14), wave 33's **only card and therefore its
-arbiter**: the C gateway's `return` position now admits a **pointer-valued
+`C-GATEWAY-RETURN-POSITION` (2026-09-14), wave 33's **arbiter**: the C gateway's `return` position now admits a **pointer-valued
 bounded typed access chain**, which card REACH-GATE admitted only where the
 position discards the value. That refusal's stated ground — `EscapeIfOwned`
 models only a canonical place — is **kept and its missing answer supplied**:
