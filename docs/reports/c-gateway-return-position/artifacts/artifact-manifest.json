@@ -1,0 +1,65 @@
+{
+ "baseline": "docs/reports/w31-corpus-contracts-2/artifacts",
+ "before_reproduces_baseline": [
+  "diagnostics",
+  "chunk-contracts"
+ ],
+ "card": "C-GATEWAY-RETURN-POSITION",
+ "schema_version": 1,
+ "stages": {
+  "after": {
+   "chunk-contracts": {
+    "bytes": 4186178,
+    "gzip_sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0",
+    "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+   },
+   "contracts": {
+    "bytes": 101640,
+    "gzip_sha256": "78dd244e08caa8cae78f1c8b3ca9d6fd70f1adf0b7f1d105bcbd7ce19e5df038",
+    "sha256": "17fe29bdb44860d0dccad05af1124fd205368d8f85c9b0c712e897eaaadebcaa"
+   },
+   "diagnostics": {
+    "bytes": 13889078,
+    "gzip_sha256": "c3329db70f1f25293c3542d9af1e38dc6a606103960ec3f78950e32a77527fea",
+    "sha256": "695215f714319cf9c53cd2923ad956d77919c44c81b7da3120ca9166950ca786"
+   },
+   "source": {
+    "bytes": 1663934,
+    "gzip_sha256": "0a43a0afe60b22421c9eb4145348c5400b6e0d1e1cca01e0b647500098fe25e9",
+    "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529"
+   },
+   "source-effects": {
+    "bytes": 118505,
+    "gzip_sha256": "d04f3953796ffaaff043bf41bf199cc0b6a9332bb05e9c1c1cb5ce1299ecf423",
+    "sha256": "f1a3c275d5ea0f430d37cd0435e990160f31461b2d9c66203797badc9d3726d5"
+   }
+  },
+  "before": {
+   "chunk-contracts": {
+    "bytes": 4186178,
+    "gzip_sha256": "82a243238c20398e7d31f9c8825c753f776216b8297f6a67c47ca39b2cfff1e0",
+    "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980"
+   },
+   "contracts": {
+    "bytes": 101640,
+    "gzip_sha256": "78dd244e08caa8cae78f1c8b3ca9d6fd70f1adf0b7f1d105bcbd7ce19e5df038",
+    "sha256": "17fe29bdb44860d0dccad05af1124fd205368d8f85c9b0c712e897eaaadebcaa"
+   },
+   "diagnostics": {
+    "bytes": 13897519,
+    "gzip_sha256": "3bd00c975e8f3b752d1c7a309cce4b952bee59d8102b63ae8d719040b0602755",
+    "sha256": "ffe47fe666a76417378e405a9b5709eb8af70756377a37e599fab42b254e1533"
+   },
+   "source": {
+    "bytes": 1663934,
+    "gzip_sha256": "0a43a0afe60b22421c9eb4145348c5400b6e0d1e1cca01e0b647500098fe25e9",
+    "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529"
+   },
+   "source-effects": {
+    "bytes": 118505,
+    "gzip_sha256": "d04f3953796ffaaff043bf41bf199cc0b6a9332bb05e9c1c1cb5ce1299ecf423",
+    "sha256": "f1a3c275d5ea0f430d37cd0435e990160f31461b2d9c66203797badc9d3726d5"
+   }
+  }
+ }
+}

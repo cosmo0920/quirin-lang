@@ -1,0 +1,60 @@
+return-position leaves classified `call`: 335
+with an extractable callee name:        335
+
+not-otherwise-seen                   227   67.8%
+reported-uncontracted-elsewhere       94   28.1%
+declared-contract                     12    3.6%
+libc-or-compiler-builtin               2    0.6%
+
+--- not-otherwise-seen ---
+   cmetrics.c:205                             cmt_label_add                          cmt_labels_add_kv
+   cmt_cat.c:1103                             cmt_cat                                append_context
+   cmt_encode_opentelemetry.c:2490            append_attribute_to_data_point         append_attribute_to_numerical_data_point
+   cmt_encode_opentelemetry.c:2494            append_attribute_to_data_point         append_attribute_to_summary_data_point
+   cmt_encode_opentelemetry.c:2498            append_attribute_to_data_point         append_attribute_to_histogram_data_point
+   cmt_encode_opentelemetry.c:2502            append_attribute_to_data_point         append_attribute_to_exponential_histogram_data_point
+   cmt_encode_opentelemetry.c:2083            destroy_data_point                     destroy_numerical_data_point
+   cmt_encode_opentelemetry.c:2085            destroy_data_point                     destroy_summary_data_point
+--- reported-uncontracted-elsewhere ---
+   cmt_decode_msgpack.c:1722                  unpack_basic_type_values               cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:2128                  unpack_context_metrics                 cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:1550                  unpack_meta_labels                     cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:1540                  unpack_meta_static_labels              cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:620                   unpack_metric_labels                   cmt_mpack_unpack_array
+   cmt_histogram.c:91                         cmt_histogram_buckets_default_create   cmt_histogram_buckets_create_size
+   ctr_attributes.c:51                        ctr_attributes_count                   cfl_kvlist_count
+   ctr_attributes.c:81                        ctr_attributes_set_array               cfl_kvlist_insert_array
+--- declared-contract ---
+   cmt_decode_prometheus_remote_write.c:33    __cmt_allocator_alloc                  malloc
+   rdkafka.c:7128                             rd_kafka_mem_calloc                    rd_calloc
+   rdkafka.c:7124                             rd_kafka_mem_malloc                    rd_malloc
+   rdlist.c:81                                rd_list_alloc                          rd_malloc
+   flb_input_chunk.c:758                      flb_input_chunk_get_size               cio_chunk_get_content_size
+   flb_input_chunk.c:3130                     flb_input_chunk_is_up                  cio_chunk_is_up
+   mk_core/mk_event.c:223                     mk_event_backend                       _mk_event_backend
+   mk_core/mk_event.c:57                      mk_event_init                          _mk_event_init
+--- libc-or-compiler-builtin ---
+   cmt_atomic_clang.c:30                      cmt_atomic_compare_exchange            __atomic_compare_exchange
+   cmt_atomic_clang.c:41                      cmt_atomic_load                        __atomic_load_n
+
+most frequent callees in the 511 set:
+     9  LZ4_decompress_generic                       declared=False
+     6  strcmp                                       declared=False
+     5  cmt_mpack_unpack_array                       declared=False
+     5  ctr_mpack_unpack_array                       declared=False
+     5  setsockopt                                   declared=False
+     4  LZ4_decompress_unsafe_generic                declared=False
+     4  rd_kafka_admin_result_ret_groups             declared=False
+     4  rd_kafka_interceptor_method_add              declared=False
+     3  add_item_to_object                           declared=False
+     3  LZ4_compress_fast_continue                   declared=False
+     3  rd_kafka_error_new                           declared=False
+     3  rd_kafka_confval_set_type                    declared=False
+     3  rd_kafka_admin_result_ret_resources          declared=False
+     3  rd_kafka_admin_result_ret_topics             declared=False
+     3  rd_kafka_msg_partitioner_random              declared=False
+     3  rd_kafka_assignor_add                        declared=False
+     2  cfl_kvlist_count                             declared=False
+     2  ctr_attributes_set_array                     declared=False
+     2  ctr_attributes_set_bool                      declared=False
+     2  ctr_attributes_set_double                    declared=False

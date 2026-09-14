@@ -1,0 +1,1100 @@
+Passed Lean build in 49.6s
+'QCore.AggregateStore.a_double_store_never_discharges_the_first_identity' does not depend on any axioms
+'QCore.AggregateStore.a_double_store_changes_no_disposition' does not depend on any axioms
+'QCore.AggregateStore.the_store_whitelist_is_not_vacuous' does not depend on any axioms
+'QCore.AggregateStore.the_admitted_store_links' does not depend on any axioms
+'QCore.AggregateStore.one_refused_member_shape_flips_the_admitted_store' does not depend on any axioms
+'QCore.AggregateStore.one_unacquired_base_flips_the_admitted_store' does not depend on any axioms
+'QCore.AggregateStore.one_aliased_base_flips_the_admitted_store' does not depend on any axioms
+'QCore.AggregateStore.a_released_owner_flips_the_admitted_store' does not depend on any axioms
+'QCore.AggregateStore.a_caller_held_owner_flips_the_admitted_store' does not depend on any axioms
+'QCore.AggregateStore.an_opaque_member_store_is_admitted' does not depend on any axioms
+'QCore.AggregateStore.the_admitted_opaque_store_links' does not depend on any axioms
+'QCore.AggregateStore.the_opaque_member_does_not_require_an_exact_tag' does not depend on any axioms
+'QCore.AggregateStore.a_released_owner_flips_the_admitted_opaque_store' does not depend on any axioms
+'QCore.AggregateStore.a_caller_held_owner_flips_the_admitted_opaque_store' does not depend on any axioms
+'QCore.AggregateStore.the_member_classes_are_exclusive' does not depend on any axioms
+Passed AuditAggregateStore.lean (1/128) in 0.3s
+Passed AuditAll.lean (2/128) in 4.1s
+'QCore.Bitwise.the_two_groupings_are_distinct_trees' does not depend on any axioms
+Passed AuditBitwise.lean (3/128) in 0.3s
+'QCore.BorrowLiveness.the_refusable_statuses_are_exactly_released_and_released_with_escaped' does not depend on any axioms
+'QCore.BorrowLiveness.the_enumerated_domain_is_every_bitmap' does not depend on any axioms
+Passed AuditBorrowLiveness.lean (4/128) in 0.3s
+'QCore.BoundFieldRead.an_admitted_read_changes_no_disposition' does not depend on any axioms
+'QCore.BoundFieldRead.an_admitted_read_never_releases' does not depend on any axioms
+'QCore.BoundFieldRead.the_read_whitelist_is_not_vacuous' does not depend on any axioms
+'QCore.BoundFieldRead.the_admitted_read_denotes' does not depend on any axioms
+'QCore.BoundFieldRead.one_scalar_member_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.one_releasing_position_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.one_unacquired_base_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.one_aliased_base_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.a_released_owner_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.a_released_child_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.an_unlinked_member_flips_the_admitted_read' does not depend on any axioms
+'QCore.BoundFieldRead.the_borrowed_actual_route_is_not_vacuous' does not depend on any axioms
+'QCore.BoundFieldRead.one_opaque_member_flips_the_admitted_read' does not depend on any axioms
+Passed AuditBoundFieldRead.lean (5/128) in 0.3s
+'QCore.BranchArms.the_arm_exit_is_the_program_exit' does not depend on any axioms
+'QCore.BranchArms.interp_append' does not depend on any axioms
+'QCore.BranchArms.the_early_return_is_admitted' does not depend on any axioms
+'QCore.BranchArms.the_unhoisted_spelling_is_admitted_by_the_survivor_join' does not depend on any axioms
+'QCore.BranchArms.the_hoisted_program_observes_what_its_source_does' does not depend on any axioms
+'QCore.BranchArms.the_early_return_observes_its_own_exit' does not depend on any axioms
+'QCore.BranchArms.an_operation_after_a_returning_branch_refuses' does not depend on any axioms
+'QCore.BranchArms.a_leaking_survivor_refuses' does not depend on any axioms
+'QCore.BranchArms.refused_arm_shapes_are_exactly_these' does not depend on any axioms
+'QCore.BranchArms.admitted_arm_shapes_are_exactly_these' does not depend on any axioms
+Passed AuditBranchArms.lean (6/128) in 0.3s
+'QCore.BranchJoin.every_condition_has_a_value' does not depend on any axioms
+'QCore.BranchJoin.evaluation_is_state_free' does not depend on any axioms
+'QCore.BranchJoin.the_comparisons_are_the_relations' does not depend on any axioms
+'QCore.BranchJoin.the_join_of_two_survivors_is_their_common_state' does not depend on any axioms
+'QCore.BranchJoin.the_join_widens_neither_survivor' does not depend on any axioms
+'QCore.BranchJoin.a_returning_arm_does_not_constrain_the_join' does not depend on any axioms
+'QCore.BranchJoin.a_returning_else_arm_does_not_constrain_the_join' does not depend on any axioms
+'QCore.BranchJoin.a_branch_whose_arms_both_return_returns' does not depend on any axioms
+'QCore.BranchJoin.a_conditional_leak_refuses' does not depend on any axioms
+'QCore.BranchJoin.both_arms_releasing_is_admitted' does not depend on any axioms
+'QCore.BranchJoin.moving_in_one_arm_and_releasing_in_the_other_refuses' does not depend on any axioms
+'QCore.BranchJoin.a_leak_in_the_untaken_arm_refuses' does not depend on any axioms
+'QCore.BranchJoin.an_arm_return_joins_over_the_survivor' does not depend on any axioms
+'QCore.BranchJoin.an_arm_return_must_discharge_its_custody' does not depend on any axioms
+'QCore.BranchJoin.two_arms_cannot_spend_one_acquisition_identity' does not depend on any axioms
+'QCore.BranchJoin.refused_shapes_are_exactly_these' does not depend on any axioms
+'QCore.BranchJoin.the_observed_arm_is_the_one_the_condition_selects' does not depend on any axioms
+'QCore.BranchJoin.a_true_condition_observes_the_then_arm' does not depend on any axioms
+'QCore.BranchJoin.a_false_condition_observes_the_else_arm' does not depend on any axioms
+'QCore.BranchJoin.a_comparison_condition_selects_by_its_relation' does not depend on any axioms
+'QCore.BranchJoin.an_empty_arm_changes_nothing' does not depend on any axioms
+'QCore.BranchJoin.the_admitted_branch_observes_its_taken_arm' does not depend on any axioms
+'QCore.BranchJoin.the_branch_observes_what_its_hand_written_twin_does' does not depend on any axioms
+Passed AuditBranchJoin.lean (7/128) in 0.3s
+'QCore.BucketTally.the_archive_still_decides_ct44' does not depend on any axioms
+Passed AuditBucketTally.lean (8/128) in 0.3s
+'QCore.CGatewayRefinements.scalar_write_preserves_custody' does not depend on any axioms
+'QCore.CGatewayRefinements.incomplete_expression_spares_nothing' does not depend on any axioms
+'QCore.CGatewayRefinements.forgetting_relations_is_sound' does not depend on any axioms
+'QCore.CGatewayRefinements.nonnull_does_not_resolve_identity' does not depend on any axioms
+'QCore.CGatewayRefinements.null_alternative_has_no_target' does not depend on any axioms
+'QCore.CGatewayRefinements.a_conditional_discharge_does_not_certify_the_lookup' does not depend on any axioms
+Passed AuditCGatewayRefinements.lean (9/128) in 0.3s
+Passed AuditCProgram.lean (10/128) in 0.3s
+'QCore.CallUseAdmission.a_scan_loop_has_no_projection' does not depend on any axioms
+'QCore.CallUseAdmission.a_termination_has_no_projection' does not depend on any axioms
+'QCore.CallUseAdmission.an_expression_outside_the_vocabulary_has_no_projection' does not depend on any axioms
+Passed AuditCallUseAdmission.lean (11/128) in 0.3s
+'QCore.CapacityBoundary.the_mutation_matrix_is_not_vacuous' does not depend on any axioms
+Passed AuditCapacityBoundary.lean (12/128) in 0.3s
+'QCore.ChainedAccess.the_chain_rule_is_not_vacuous' does not depend on any axioms
+'QCore.ChainedAccess.one_union_link_flips_the_admitted_chain' does not depend on any axioms
+'QCore.ChainedAccess.the_bound_is_exactly_four' does not depend on any axioms
+Passed AuditChainedAccess.lean (13/128) in 0.3s
+'QCore.ChainedTailActual.the_widening_is_strict' does not depend on any axioms
+'QCore.ChainedTailActual.the_subject_site_is_admitted' does not depend on any axioms
+'QCore.ChainedTailActual.a_depth_one_scalar_chain_is_widened_the_same_way' does not depend on any axioms
+'QCore.ChainedTailActual.each_premise_is_load_bearing_on_the_subject' does not depend on any axioms
+Passed AuditChainedTailActual.lean (14/128) in 0.3s
+'QCore.ChunkIntegrityObservation.every_content_class_is_reachable' does not depend on any axioms
+'QCore.ChunkIntegrityObservation.an_injection_never_changes_the_derived_class' does not depend on any axioms
+'QCore.ChunkIntegrityObservation.the_corruption_codes_are_pairwise_distinct' does not depend on any axioms
+Passed AuditChunkIntegrityObservation.lean (15/128) in 0.2s
+'QCore.CleanupReplayAgreement.the_lattice_has_nine_constructors' does not depend on any axioms
+'QCore.CleanupReplayAgreement.the_nine_constructors_are_distinct' does not depend on any axioms
+'QCore.CleanupReplayAgreement.a_bare_return_has_no_projection' does not depend on any axioms
+'QCore.CleanupReplayAgreement.a_scan_loop_has_no_projection' does not depend on any axioms
+'QCore.CleanupReplayAgreement.a_termination_has_no_projection' does not depend on any axioms
+'QCore.CleanupReplayAgreement.an_expression_outside_the_vocabulary_has_no_projection' does not depend on any axioms
+'QCore.CleanupReplayAgreement.the_outcome_family_samples_four_prestates' does not depend on any axioms
+'QCore.CleanupReplayAgreement.the_delete_family_samples_five_prestates' does not depend on any axioms
+'QCore.CleanupReplayAgreement.each_sampled_domain_is_duplicate_free' does not depend on any axioms
+'QCore.CleanupReplayAgreement.the_domain_rule_is_not_vacuous' does not depend on any axioms
+Passed AuditCleanupReplayAgreement.lean (16/128) in 0.2s
+'QCore.CleanupVocabulary.the_sample_domain_is_inhabited_and_varied' does not depend on any axioms
+'QCore.CleanupVocabulary.spelling_is_injective_on_the_sample_domain' does not depend on any axioms
+Passed AuditCleanupVocabulary.lean (17/128) in 0.2s
+'QCore.ComposeEventLines.erase' does not depend on any axioms
+'QCore.ComposeEventLines.project' does not depend on any axioms
+'QCore.ComposeEventLines.a_line_erases_to_nothing' does not depend on any axioms
+'QCore.ComposeEventLines.eraseProgram_cons' does not depend on any axioms
+'QCore.ComposeEventLines.readySet' does not depend on any axioms
+'QCore.ComposeEventLines.ready_set_is_the_coarse_one' does not depend on any axioms
+Passed AuditComposeEventLines.lean (18/128) in 0.3s
+'QCore.ComposedStdIo.an_operand_is_a_literal_a_value_name_or_a_borrow' does not depend on any axioms
+'QCore.ComposedStdIo.the_composed_effect_row_is_the_union' does not depend on any axioms
+'QCore.ComposedStdIo.a_rendering_carries_no_premise' does not depend on any axioms
+'QCore.ComposedStdIo.the_payoff_fixture_carries_only_its_extern_premises' does not depend on any axioms
+Passed AuditComposedStdIo.lean (19/128) in 0.3s
+'QCore.ComposedTasks.a_line_in_a_worker_has_no_admitted_placement' does not depend on any axioms
+'QCore.ComposedTasks.a_line_in_the_parent_is_admitted' does not depend on any axioms
+'QCore.ComposedTasks.the_placements_are_exactly_these' does not depend on any axioms
+'QCore.ComposedTasks.the_streams_agree_with_the_std_io_route' does not depend on any axioms
+'QCore.ComposedTasks.print_never_writes_stderr' does not depend on any axioms
+'QCore.ComposedTasks.log_never_writes_stdout' does not depend on any axioms
+'QCore.ComposedTasks.a_barrier_publishes_no_line' does not depend on any axioms
+'QCore.ComposedTasks.an_operand_is_a_literal_or_a_scalar_name' does not depend on any axioms
+'QCore.ComposedTasks.a_rendering_reads_only_a_bound_name' does not depend on any axioms
+'QCore.ComposedTasks.a_program_of_no_lines_carries_nothing' does not depend on any axioms
+'QCore.ComposedTasks.writing_requires_io' does not depend on any axioms
+'QCore.ComposedTasks.a_barrier_still_carries_io' does not depend on any axioms
+Passed AuditComposedTasks.lean (20/128) in 0.2s
+'QCore.CompositionAdmission.the_distinctness_rule_is_decidable' does not depend on any axioms
+'QCore.CompositionAdmission.the_completeness_rule_is_decidable' does not depend on any axioms
+'QCore.CompositionAdmission.the_projection_determines_no_reading' does not depend on any axioms
+'QCore.CompositionAdmission.the_same_projection_is_refused_by_a_refusing_core' does not depend on any axioms
+'QCore.CompositionAdmission.the_outer_distinctness_rule_is_decidable' does not depend on any axioms
+'QCore.CompositionAdmission.the_file_close_question_nests_exactly_twice' does not depend on any axioms
+Passed AuditCompositionAdmission.lean (21/128) in 0.3s
+'QCore.ModuleImports.empty_imports_grant_no_concurrency' does not depend on any axioms
+'QCore.ModuleImports.duplicate_import_is_idempotent' does not depend on any axioms
+'QCore.ModuleImports.missing_required_capability_rejects' does not depend on any axioms
+'QCore.TaskExecution.failed_create_changes_no_handles' does not depend on any axioms
+Passed AuditConcurrencyPrelude.lean (22/128) in 0.3s
+'QCore.ConditionalGroupDepth.a_group_opens_at_the_entry_depth' does not depend on any axioms
+'QCore.ConditionalGroupDepth.other_is_the_identity' does not depend on any axioms
+'QCore.ConditionalGroupDepth.the_rule_balances_the_measured_shape' does not depend on any axioms
+'QCore.ConditionalGroupDepth.the_measured_shape_is_not_refused' does not depend on any axioms
+'QCore.ConditionalGroupDepth.the_rule_dominates_the_phantom_shape' does not depend on any axioms
+'QCore.ConditionalGroupDepth.an_elif_chain_is_decided_exactly' does not depend on any axioms
+'QCore.ConditionalGroupDepth.nested_groups_compose' does not depend on any axioms
+'QCore.ConditionalGroupDepth.the_domain_is_exhaustive' does not depend on any axioms
+'QCore.ConditionalGroupDepth.the_domain_checksum_is_pinned' does not depend on any axioms
+Passed AuditConditionalGroupDepth.lean (23/128) in 0.3s
+'QCore.Connectives.or_lowers_to_its_hand_written_chain' does not depend on any axioms
+'QCore.Connectives.and_lowers_to_its_hand_written_nesting' does not depend on any axioms
+'QCore.Connectives.the_two_connectives_nest_oppositely' does not depend on any axioms
+'QCore.Connectives.the_right_operand_of_an_or_lives_in_the_else_arm' does not depend on any axioms
+'QCore.Connectives.the_right_operand_of_an_and_lives_in_the_then_arm' does not depend on any axioms
+'QCore.Connectives.a_leaf_lowers_to_the_branch_it_already_was' does not depend on any axioms
+'QCore.Connectives.an_or_is_disjunction' does not depend on any axioms
+'QCore.Connectives.an_and_is_conjunction' does not depend on any axioms
+'QCore.Connectives.the_two_groupings_are_different_trees' does not depend on any axioms
+'QCore.Connectives.or_lowers_associatively' does not depend on any axioms
+'QCore.Connectives.and_lowers_associatively' does not depend on any axioms
+'QCore.Connectives.the_groupings_are_distinct_trees_that_lower_alike' does not depend on any axioms
+'QCore.Connectives.an_or_conditional_leak_refuses' does not depend on any axioms
+'QCore.Connectives.an_and_conditional_leak_refuses' does not depend on any axioms
+'QCore.Connectives.moving_in_one_arm_and_releasing_in_the_other_refuses_through_a_connective' does not depend on any axioms
+'QCore.Connectives.agreeing_arms_are_admitted_through_a_connective' does not depend on any axioms
+'QCore.Connectives.refused_connective_shapes_are_exactly_these' does not depend on any axioms
+'QCore.Connectives.the_connective_program_is_its_hand_written_twin' does not depend on any axioms
+Passed AuditConnectives.lean (24/128) in 0.3s
+'QCore.Ct01OwnedTransfer.parent_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct01OwnedTransfer.child_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct01OwnedTransfer.ct01_trace_digest' does not depend on any axioms
+Passed AuditCt01OwnedTransfer.lean (25/128) in 0.3s
+'QCore.Ct03ReadShares.parent_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct03ReadShares.childOne_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct03ReadShares.childTwo_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct03ReadShares.ct03_trace_digest' does not depend on any axioms
+Passed AuditCt03ReadShares.lean (26/128) in 0.3s
+'QCore.Ct37CompletionCapsule.parent_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct37CompletionCapsule.child_projection_of_the_reference' does not depend on any axioms
+'QCore.Ct37CompletionCapsule.ct37_trace_digest' does not depend on any axioms
+Passed AuditCt37CompletionCapsule.lean (27/128) in 0.2s
+'QCore.CtReasons.the_derived_list_is_ct24_and_ct47' does not depend on any axioms
+'QCore.CtReasons.the_ct11_row_is_refused' does not depend on any axioms
+'QCore.CtReasons.the_ct39_row_would_be_refused' does not depend on any axioms
+'QCore.CtReasons.the_committed_map_after_this_card_reports_nothing' does not depend on any axioms
+'QCore.CtReasons.mapping_ct24_retires_its_row' does not depend on any axioms
+Passed AuditCtReasons.lean (28/128) in 0.3s
+Passed AuditCycle10.lean (29/128) in 0.3s
+'QCore.Frontend.BodyScope.leaving_body_restores_outer' does not depend on any axioms
+'QCore.Frontend.BodyScope.binder_cannot_escape' does not depend on any axioms
+Passed AuditCycle11.lean (30/128) in 0.2s
+'QCore.Compiler.emitted_c11_matches_reference' does not depend on any axioms
+Passed AuditCycle12.lean (31/128) in 0.3s
+'QCore.TranslationValidation.validation_preserves_pass_boundary' does not depend on any axioms
+'QCore.TranslationValidation.validation_source_matches_cfg' does not depend on any axioms
+'QCore.TranslationValidation.validation_cfg_matches_target' does not depend on any axioms
+'QCore.TranslationValidation.validation_source_matches_target' does not depend on any axioms
+Passed AuditCycle13.lean (32/128) in 0.2s
+'QCore.OwnedTaskExecution.checked_buffer_identity_requires_bounded_components' does not depend on any axioms
+Passed AuditCycle14.lean (33/128) in 0.3s
+'QCore.AdvancedControl.cleanup_is_lifo' does not depend on any axioms
+'QCore.AdvancedControl.checked_owned_capture_is_one_shot' does not depend on any axioms
+'QCore.AdvancedControl.checked_owned_capture_is_consumed_once' does not depend on any axioms
+'QCore.AdvancedControl.checked_captures_are_unique' does not depend on any axioms
+Passed AuditCycle15.lean (34/128) in 0.3s
+'QCore.Metatheory.research_boundary_is_explicit' does not depend on any axioms
+Passed AuditCycle16.lean (35/128) in 0.3s
+'QCore.ResearchExtensions.checked_inference_is_principal' does not depend on any axioms
+'QCore.ResearchExtensions.principal_result_unique' does not depend on any axioms
+'QCore.ResearchExtensions.checked_loop_conserves_net' does not depend on any axioms
+'QCore.ResearchExtensions.checked_loop_scales_total' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_c11_is_race_free' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_c11_refines_source_observation' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_native_preserves_custody_and_cleanup' does not depend on any axioms
+'QCore.ResearchExtensions.accepted_native_has_native_platform_evidence' does not depend on any axioms
+'QCore.ResearchExtensions.composition_requires_matching_endpoint' does not depend on any axioms
+'QCore.ResearchExtensions.principalInference_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.generalNonzeroNetLoops_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.unrestrictedLegacyC_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.categoricalUnification_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.fullC11WeakMemory_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.nativeConcurrentBackend_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.combined_cycle17_certificate' does not depend on any axioms
+'QCore.ResearchExtensions.all_promoted_research_is_discharged' does not depend on any axioms
+'QCore.Metatheory.cycle17_research_boundary_is_discharged' does not depend on any axioms
+'QCore.ResearchExtensions.exact_count_retains_exact_net' does not depend on any axioms
+Passed AuditCycle17.lean (36/128) in 0.3s
+'QCore.EventDriven.accepted_lifecycles_are_well_formed' does not depend on any axioms
+'QCore.EventDriven.accepted_callback_has_live_declared_authority' does not depend on any axioms
+'QCore.EventDriven.accepted_same_base_callbacks_are_exclusive' does not depend on any axioms
+'QCore.EventDriven.accepted_cross_context_conflicts_are_ordered' does not depend on any axioms
+'QCore.EventDriven.accepted_close_authority_and_generations_are_unique' does not depend on any axioms
+'QCore.EventDriven.accepted_persistent_and_deferred_callbacks_preserve_custody' does not depend on any axioms
+'QCore.EventDriven.accepted_teardown_is_quiescent' does not depend on any axioms
+'QCore.EventDriven.accepted_cleanup_discharges_owned_resources_once' does not depend on any axioms
+'QCore.EventDriven.accepted_progress_claim_is_qualified_by_blocking' does not depend on any axioms
+'QCore.EventDriven.accepted_observation_refines_event_trace' does not depend on any axioms
+'QCore.EventDriven.combined_cycle18_safety' does not depend on any axioms
+Passed AuditCycle18.lean (37/128) in 0.3s
+'QCore.ChunkLifecycle.accepted_failed_replacement_preserves_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_successful_replacement_replaces_old' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_owner_teardown_discharges_stored_child' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_rejects_independent_child_destruction' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_aggregate_removal_restores_child_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_discharges_nested_backend' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_teardown_unlinks_and_balances_counter' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_wrapper_teardown_has_no_outstanding_custody' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_chunk_identities_are_unique' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_failed_open_has_no_residual_obligation' does not depend on any axioms
+'QCore.ChunkLifecycle.accepted_teardown_records_nested_order_and_partial_delete' does not depend on any axioms
+'QCore.ChunkLifecycle.combined_chunk_safety' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_successful_socketpair_creates_two_distinct_owned_descriptors' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_failed_socketpair_creates_no_custody' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_successful_close_discharges_once' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_failed_close_retains_custody' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_error_query_is_borrowed' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
+'QCore.DescriptorCustody.a_failed_legacy_close_record_is_refused' does not depend on any axioms
+'QCore.DescriptorCustody.the_returns_on_failure_record_is_refused' does not depend on any axioms
+'QCore.DescriptorCustody.close_relation_domain_size' does not depend on any axioms
+'QCore.DescriptorCustody.close_admission_domain_size' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_preserves_declared_control_edges' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_has_no_unresolved_jump' does not depend on any axioms
+'QCore.ControlFlow.accepted_import_edges_reference_known_nodes' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_balances_holders_and_containers' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_publication_and_reclamation_have_evidence' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_custody_has_no_live_obligation' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_summary_profile_is_pinned_and_scoped' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_library_source_contracts_are_checked' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_is_pinned_and_complete' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_chunk_import_composes_lifecycle_safety' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_callbacks_cover_failure_and_map_paths' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_observation_binds_backend_dispatcher_and_trace' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_event_build_matches_profile' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_source_is_pinned' does not depend on any axioms
+'QCore.ChunkSource.release_busy_error_path_preserves_state' does not depend on any axioms
+'QCore.ChunkSource.release_busy_success_path_clears_busy' does not depend on any axioms
+'QCore.QuantIndexBinding.accepted_value_fits_u128' does not depend on any axioms
+'QCore.DescriptorObservation.accepted_acquisition_advances_generation' does not depend on any axioms
+'QCore.DescriptorObservation.accepted_close_discharges_slot' does not depend on any axioms
+'QCore.CallbackBinding.accepted_read_appends_exact_symbol' does not depend on any axioms
+'QCore.CallbackBinding.accepted_release_requires_live_object' does not depend on any axioms
+'QCore.ChunkSource.frame_assignment_preserves_boolean_state' does not depend on any axioms
+'QCore.ChunkSource.unlock_reset_error_path_retains_metadata_write' does not depend on any axioms
+'QCore.ChunkSource.unlock_reset_success_path_clears_lock' does not depend on any axioms
+'QCore.CallbackSource.scan_without_fuel_stays_unknown' does not depend on any axioms
+'QCore.FieldDestructor.null_release_preserves_custody' does not depend on any axioms
+'QCore.FieldDestructor.accepted_release_was_live' does not depend on any axioms
+'QCore.MemoryClose.accepted_counter_uses_saved_context' does not depend on any axioms
+'QCore.MemoryClose.accepted_counter_requires_chunk_discharge' does not depend on any axioms
+'QCore.MemoryClose.empty_trace_preserves_state' does not depend on any axioms
+'QCore.CleanupOutcome.failure_does_not_establish_discharge' does not depend on any axioms
+'QCore.UnmapWrapper.failed_native_preserves_post_sync_state' does not depend on any axioms
+'QCore.UnmapWrapper.success_at_zero_rejected' does not depend on any axioms
+'QCore.UnmapWrapper.success_decrements_once' does not depend on any axioms
+'QCore.FileClose.backend_release_preserves_mapping' does not depend on any axioms
+'QCore.FileClose.backend_release_preserves_descriptor' does not depend on any axioms
+'QCore.FileClose.unresolved_mapping_survives_backend_release' does not depend on any axioms
+'QCore.FileClose.duplicate_backend_release_rejected' does not depend on any axioms
+'QCore.ShortCircuit.and_false_skips_right' does not depend on any axioms
+'QCore.ShortCircuit.or_true_skips_right' does not depend on any axioms
+'QCore.ShortCircuit.and_result_is_conjunction' does not depend on any axioms
+'QCore.ShortCircuit.or_result_is_disjunction' does not depend on any axioms
+'QCore.GuardedDelete.eligible_failure_is_reported' does not depend on any axioms
+'QCore.GuardedDelete.eligible_success_returns_zero' does not depend on any axioms
+'QCore.GuardedDelete.delete_preserves_record_and_path' does not depend on any axioms
+'QCore.FilesystemChunkClose.finish_preserves_backend_and_deletion' does not depend on any axioms
+'QCore.FilesystemChunkClose.finish_discharges_links_and_allocations' does not depend on any axioms
+'QCore.FilesystemChunkClose.finish_decrements_only_total' does not depend on any axioms
+'QCore.TeardownTraversal.empty_ring_has_no_child_call' does not depend on any axioms
+'QCore.TeardownTraversal.advance_uses_saved_successor' does not depend on any axioms
+'QCore.ParentTeardown.parent_free_preserves_child_obligations' does not depend on any axioms
+'QCore.ParentTeardown.parent_free_cannot_establish_nested_discharge' does not depend on any axioms
+'QCore.NestedCleanup.accepted_finish_preserves_residual_identities' does not depend on any axioms
+'QCore.NativeTeardownObservation.accepted_preserves_exact_generation_order' does not depend on any axioms
+'QCore.NativeTeardownObservation.accepted_has_no_duplicate_release' does not depend on any axioms
+'QCore.NativeTeardownObservation.accepted_releases_every_planned_generation' does not depend on any axioms
+'QCore.NativeTeardownObservation.accepted_conserves_release_count' does not depend on any axioms
+'QCore.NativeTeardownObservation.changed_release_order_rejected' does not depend on any axioms
+'QCore.UnsupportedClose.finish_preserves_backend_obligations' does not depend on any axioms
+'QCore.UnsupportedClose.finish_decrements_only_total' does not depend on any axioms
+'QCore.NativeTeardownObservation.rejected_constructor_returns_no_chunk' does not depend on any axioms
+'QCore.NativeTeardownObservation.rejected_constructor_preserves_native_outputs' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_preserves_witness_identity' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_success_has_absent_endpoint' does not depend on any axioms
+'QCore.NativeOsObservation.observation_does_not_promote_static_or_durability' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_teardown_releases_exact_generations' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_teardown_preserves_residual_identity' does not depend on any axioms
+'QCore.NativeOsObservation.live_residual_prevents_empty_terminal' does not depend on any axioms
+'QCore.NativeOsObservation.released_allocations_can_coexist_with_mapping_residual' does not depend on any axioms
+'QCore.NativeOsObservation.interrupted_prefix_cannot_claim_teardown' does not depend on any axioms
+'QCore.NativeOsObservation.completed_prefix_has_no_outstanding_generations' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_prefix_never_promotes_static' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_rollback_preserves_descriptor_identity' does not depend on any axioms
+'QCore.NativeOsObservation.null_constructor_does_not_erase_observed_descriptor' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_rollback_separately_releases_allocation_generations' does not depend on any axioms
+'QCore.NativeOsObservation.null_constructor_can_release_allocations_and_retain_descriptor' does not depend on any axioms
+'QCore.NativeOsObservation.readonly_empty_differs_from_short_header' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_existing_retains_bytes_and_identity' does not depend on any axioms
+'QCore.NativeOsObservation.accepted_existing_never_promotes_static_or_durability' does not depend on any axioms
+'QCore.NativeOsObservation.native_rollback_preserves_mapped_header' does not depend on any axioms
+'QCore.NativeOsObservation.native_append_preserves_lock_and_updates_lengths' does not depend on any axioms
+'QCore.NativeOsObservation.native_reload_advances_epoch_and_uses_header' does not depend on any axioms
+'QCore.NativeOsObservation.observed_rollback_reload_restores_appended_length' does not depend on any axioms
+'QCore.NativeOsObservation.observed_failed_sync_down_commit_does_not_prove_sync' does not depend on any axioms
+'QCore.NativeOsObservation.failed_unmap_preserves_file_state' does not depend on any axioms
+'QCore.NativeOsObservation.retry_after_failed_unmap_releases_same_epoch' does not depend on any axioms
+'QCore.NativeOsObservation.observed_sync_before_unmap_failure_changes_only_sync' does not depend on any axioms
+'QCore.SourceProfileWitness.accepted_profile_is_valid' does not depend on any axioms
+'QCore.SourceProfileWitness.accepted_witness_has_checked_file' does not depend on any axioms
+'QCore.ChunkSource.UnitResult.void_fallthrough_preserves_state' does not depend on any axioms
+'QCore.ChunkSource.UnitResult.return_stops_all_later_effects' does not depend on any axioms
+'QCore.ChunkSource.UnitResult.metadata_write_preserves_selected_field' does not depend on any axioms
+'QCore.ChunkSource.UnitResult.integer_fallthrough_is_still_rejected' does not depend on any axioms
+Passed AuditCycle19.lean (38/128) in 0.3s
+'QCore.VerifierPlugin.safe_without_evidence_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.invalid_envelope_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.missing_plugin_composition_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.rejected_proposal_is_unknown' does not depend on any axioms
+'QCore.VerifierPlugin.Composition.capabilities_of_one_artifact_share_a_unit' does not depend on any axioms
+'QCore.VerifierPlugin.Composition.distinct_artifacts_have_distinct_units' does not depend on any axioms
+'QCore.VerifierPlugin.Composition.recorded_runs_are_contagious' does not depend on any axioms
+'QCore.VerifierPlugin.Composition.every_count_kind_takes_the_minimum' does not depend on any axioms
+'QCore.VerifierPlugin.Composition.an_empty_composition_states_no_envelope' does not depend on any axioms
+'QCore.VerifierEvidenceV2.accepted_has_complete_nonempty_inventory' does not depend on any axioms
+'QCore.VerifierEvidenceV2.accepted_requires_observation_trust_and_bounds' does not depend on any axioms
+'QCore.VerifierEvidenceV2.explicit_refusal_is_preserved' does not depend on any axioms
+'QCore.VerifierEvidenceV2.absent_flag_names_conditional_trust' does not depend on any axioms
+Passed AuditCycle20.lean (39/128) in 0.3s
+'QCore.ErrorRegion.seal_is_path_specific' does not depend on any axioms
+'QCore.ErrorRegion.discharge_restores_region_baseline' does not depend on any axioms
+'QCore.ErrorRegion.discharge_is_reverse_acquisition_order' does not depend on any axioms
+'QCore.ErrorRegion.discharge_abandons_exactly_region_credit' does not depend on any axioms
+'QCore.ErrorRegion.cleanup_capability_consumed_exactly_once' does not depend on any axioms
+'QCore.ErrorRegion.live_obligations_cannot_be_abandoned' does not depend on any axioms
+'QCore.ErrorRegion.strict_credit_cannot_be_abandoned_on_normal_catch' does not depend on any axioms
+'QCore.ErrorRegion.partial_initialization_is_exact' does not depend on any axioms
+'QCore.ErrorRegion.nested_cleanup_order_is_deterministic' does not depend on any axioms
+Passed AuditCycle6.lean (40/128) in 0.3s
+'QCore.Lowering.error_edge_has_cleanup_label' does not depend on any axioms
+'QCore.Lowering.partial_initialization_gets_exact_cleanup' does not depend on any axioms
+'QCore.Lowering.cfg_c_simulation' does not depend on any axioms
+'QCore.Lowering.error_tag_and_cleanup_trace_are_preserved' does not depend on any axioms
+Passed AuditCycle7.lean (41/128) in 0.3s
+Passed AuditCycle8.lean (42/128) in 0.3s
+Passed AuditCycle9.lean (43/128) in 0.3s
+'QCore.DeclaredAbiAgreement.an_unsigned_long_admits_both_of_its_spellings' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.signedness_never_crosses' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.width_never_crosses' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.a_plain_char_admits_both_byte_spellings' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.constness_never_crosses' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.an_unreadable_projection_admits_nothing' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.a_nullary_contract_refuses_any_actual' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.the_refusal_vocabulary_has_eight_members' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.the_refusal_vocabulary_has_no_duplicates' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.a_prototype_and_its_definition_compose' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.two_agreeing_declarations_are_one' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.two_disagreeing_declarations_are_ambiguous' does not depend on any axioms
+'QCore.DeclaredAbiAgreement.disagreeing_results_are_ambiguous' does not depend on any axioms
+Passed AuditDeclaredAbiAgreement.lean (44/128) in 0.3s
+'QCore.DeclaredModeAgreement.resultAxis_symm' does not depend on any axioms
+'QCore.DeclaredModeAgreement.the_refusal_vocabulary_has_two_members' does not depend on any axioms
+'QCore.DeclaredModeAgreement.the_refusal_vocabulary_has_no_duplicates' does not depend on any axioms
+Passed AuditDeclaredModeAgreement.lean (45/128) in 0.3s
+'QCore.DenominatorCoverage.both_measured_causes_are_refused' does not depend on any axioms
+'QCore.DenominatorCoverage.the_covered_control_is_still_safe' does not depend on any axioms
+Passed AuditDenominatorCoverage.lean (46/128) in 0.2s
+'QCore.DereferencedResult.the_bare_subject_is_unaffected_by_the_new_premise' does not depend on any axioms
+'QCore.DereferencedResult.the_widening_is_strict' does not depend on any axioms
+'QCore.DereferencedResult.each_premise_is_load_bearing_on_the_subject' does not depend on any axioms
+'QCore.DereferencedResult.the_measured_fail_open_is_closed' does not depend on any axioms
+'QCore.DereferencedResult.the_control_is_unmoved' does not depend on any axioms
+Passed AuditDereferencedResult.lean (47/128) in 0.2s
+'QCore.DerivedTextAdmission.two_declared_files_with_equal_bytes_derive_equal_derived_identities' does not depend on any axioms
+'QCore.DerivedTextAdmission.a_declared_file_and_an_anonymous_text_derive_one_identity' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_base_identities_are_not_equal' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_historical_projection_is_not_collapsed' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_derived_identity_reads_only_the_text_and_the_recipe' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_recipe_field_separates_two_recipes' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_honest_proposal_is_admitted' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_honest_derivation_records_the_erasure' does not depend on any axioms
+'QCore.DerivedTextAdmission.the_refusals_are_not_vacuous' does not depend on any axioms
+Passed AuditDerivedTextAdmission.lean (48/128) in 0.3s
+Passed AuditDisjointFootprint.lean (49/128) in 0.3s
+'QCore.EnumerationAttribution.a_relabelled_header_is_not_main_source' does not depend on any axioms
+'QCore.EnumerationAttribution.name_attribution_counted_the_relabelled_header' does not depend on any axioms
+'QCore.EnumerationAttribution.a_relabelled_tail_is_main_source' does not depend on any axioms
+'QCore.EnumerationAttribution.name_attribution_dropped_the_relabelled_tail' does not depend on any axioms
+'QCore.EnumerationAttribution.the_two_rules_are_different' does not depend on any axioms
+'QCore.EnumerationAttribution.name_attribution_is_not_transport_independent' does not depend on any axioms
+'QCore.EnumerationAttribution.the_preamble_contributes_no_main_source_token' does not depend on any axioms
+'QCore.EnumerationAttribution.an_underflowing_stream_is_unbalanced' does not depend on any axioms
+'QCore.EnumerationAttribution.an_unclosed_stream_is_unbalanced' does not depend on any axioms
+'QCore.EnumerationAttribution.a_well_formed_stream_is_balanced' does not depend on any axioms
+'QCore.EnumerationAttribution.the_unbalanced_ground_says_nothing_about_the_source' does not depend on any axioms
+'QCore.EnumerationAttribution.the_two_subjects_are_distinct' does not depend on any axioms
+Passed AuditEnumerationAttribution.lean (50/128) in 0.3s
+'QCore.EpochAccounting.live_is_at_most_the_private_peak' does not depend on any axioms
+'QCore.EpochAccounting.credits_beyond_the_allocation_are_not_covered' does not depend on any axioms
+Passed AuditEpochAccounting.lean (51/128) in 0.3s
+'QCore.EpochSourceLowering.the_worked_plans_are_admitted' does not depend on any axioms
+'QCore.EpochSourceLowering.the_abandoning_plan_is_refused' does not depend on any axioms
+'QCore.EpochSourceLowering.an_over_restoring_plan_is_refused' does not depend on any axioms
+'QCore.EpochSourceLowering.a_declarative_arm_is_refused' does not depend on any axioms
+'QCore.EpochSourceLowering.an_elided_declarative_arm_is_admitted' does not depend on any axioms
+Passed AuditEpochSourceLowering.lean (52/128) in 0.3s
+Passed AuditErrorPayload.lean (53/128) in 0.3s
+'QCore.ExternCall.an_out_slot_carries_no_caller_custody' does not depend on any axioms
+'QCore.ExternCall.a_store_and_its_owner_both_carry_custody' does not depend on any axioms
+'QCore.ExternCall.every_derived_row_contains_io' does not depend on any axioms
+'QCore.ExternCall.a_release_carries_its_own_custody' does not depend on any axioms
+'QCore.ExternCall.a_reallocation_subject_carries_its_own_custody' does not depend on any axioms
+'QCore.ExternCall.refused_scalar_bindings_are_exactly_these' does not depend on any axioms
+'QCore.ExternCall.the_scalar_binding_table_is_inhabited' does not depend on any axioms
+'QCore.ExternCall.a_scalar_actual_carries_no_custody' does not depend on any axioms
+'QCore.ExternCall.a_scalar_chain_leaves_one_live_identity' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_extern_calls' does not depend on any axioms
+'QCore.ModuleImports.the_concurrency_import_alone_grants_no_extern_call' does not depend on any axioms
+Passed AuditExternCall.lean (54/128) in 0.3s
+'QCore.FixedScalarQuery.query_assignment_preserves_custody' does not depend on any axioms
+Passed AuditFixedScalarQuery.lean (55/128) in 0.3s
+'QCore.FrameHelperTask.derivation_is_a_function' does not depend on any axioms
+'QCore.FrameHelperTask.equal_digests_are_equal_tasks' does not depend on any axioms
+'QCore.FrameHelperTask.a_changed_summary_retires_the_task' does not depend on any axioms
+'QCore.FrameHelperTask.a_changed_import_identity_retires_the_task' does not depend on any axioms
+'QCore.FrameHelperTask.a_changed_contract_retires_the_task' does not depend on any axioms
+'QCore.FrameHelperTask.a_changed_binding_retires_the_task' does not depend on any axioms
+'QCore.FrameHelperTask.a_changed_profile_selection_retires_the_task' does not depend on any axioms
+'QCore.FrameHelperTask.every_bound_input_is_load_bearing' does not depend on any axioms
+'QCore.FrameHelperTask.the_obligation_identifier_does_not_read_the_bound_inputs' does not depend on any axioms
+'QCore.FrameHelperTask.the_real_chunkio_helper_is_derivable' does not depend on any axioms
+Passed AuditFrameHelperTask.lean (56/128) in 0.3s
+'QCore.DescriptorCustody.accepted_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
+'QCore.DescriptorCustody.accepted_monkey_descriptor_teardown_is_complete_and_unique' does not depend on any axioms
+'QCore.ExternalIntegration.accepted_monkey_composition_has_event_teardown' does not depend on any axioms
+Passed AuditGenericNames.lean (57/128) in 0.3s
+'QCore.HttpComputedLength.no_computed_statement_derives_an_effect' does not depend on any axioms
+'QCore.HttpComputedLength.the_added_statement_forms_are_exactly_two' does not depend on any axioms
+Passed AuditHttpComputedLength.lean (58/128) in 0.3s
+'QCore.Concurrency.LifetimeCorrespondence.domain_size' does not depend on any axioms
+'QCore.Concurrency.LifetimeCorrespondence.domain_trace_digest' does not depend on any axioms
+Passed AuditLifetimeCorrespondence.lean (59/128) in 0.3s
+'QCore.LiteralArgumentPremise.the_census_has_fifteen_call_sites' does not depend on any axioms
+'QCore.LiteralArgumentPremise.exactly_five_call_sites_satisfy_the_premise' does not depend on any axioms
+'QCore.LiteralArgumentPremise.exactly_ten_call_sites_are_withdrawn' does not depend on any axioms
+'QCore.LiteralArgumentPremise.borrowed_has_the_measured_effect' does not depend on any axioms
+'QCore.LiteralArgumentPremise.retention_does_not_change_the_caller_effect' does not depend on any axioms
+'QCore.LiteralArgumentPremise.the_premise_literal_is_the_zero_token' does not depend on any axioms
+'QCore.LiteralArgumentPremise.the_admitted_size_takes_the_reference_arm' does not depend on any axioms
+'QCore.LiteralArgumentPremise.a_positive_size_takes_the_copy_arm' does not depend on any axioms
+'QCore.LiteralArgumentPremise.the_two_arms_are_distinct' does not depend on any axioms
+Passed AuditLiteralArgumentPremise.lean (60/128) in 0.3s
+'QCore.LoopBudget.the_default_is_inside_the_ceiling' does not depend on any axioms
+'QCore.LoopBudget.the_largest_declaration_licenses_the_whole_ceiling' does not depend on any axioms
+'QCore.LoopBudget.nothing_above_the_largest_declaration_is_read' does not depend on any axioms
+'QCore.LoopBudget.the_budget_refuses_something_loop_v1_admitted' does not depend on any axioms
+'QCore.LoopBudget.a_declaration_recovers_it' does not depend on any axioms
+'QCore.LoopBudget.the_licence_erases_from_the_unrolling' does not depend on any axioms
+'QCore.LoopBudget.the_licence_moves_no_event' does not depend on any axioms
+'QCore.LoopBudget.the_licence_changes_no_cost' does not depend on any axioms
+'QCore.LoopBudget.an_attributed_program_unrolls_to_its_unattributed_one' does not depend on any axioms
+Passed AuditLoopBudget.lean (61/128) in 0.3s
+'QCore.MayAlias.rebinding_preserves_every_release' does not depend on any axioms
+Passed AuditMayAlias.lean (62/128) in 0.3s
+'QCore.MemberAddress.an_admitted_address_changes_no_disposition' does not depend on any axioms
+'QCore.MemberAddress.an_admitted_address_preserves_insulation' does not depend on any axioms
+'QCore.MemberAddress.the_address_whitelist_is_not_vacuous' does not depend on any axioms
+'QCore.MemberAddress.the_untracked_route_is_not_vacuous' does not depend on any axioms
+'QCore.MemberAddress.the_bound_address_is_handed' does not depend on any axioms
+'QCore.MemberAddress.the_untracked_address_needs_no_live_owner' does not depend on any axioms
+'QCore.MemberAddress.one_pointer_member_flips_the_admitted_address' does not depend on any axioms
+'QCore.MemberAddress.one_releasing_position_flips_the_admitted_address' does not depend on any axioms
+'QCore.MemberAddress.one_refused_base_flips_the_admitted_address' does not depend on any axioms
+'QCore.MemberAddress.one_partial_argument_flips_the_admitted_address' does not depend on any axioms
+'QCore.MemberAddress.a_released_owner_flips_the_bound_address' does not depend on any axioms
+'QCore.MemberAddress.an_ambiguous_owner_flips_the_bound_address' does not depend on any axioms
+'QCore.BoundFieldRead.an_exposed_base_never_admits_a_custody_read' does not depend on any axioms
+'QCore.BoundFieldRead.a_custody_read_releases_at_a_released_position' does not depend on any axioms
+'QCore.BoundFieldRead.a_custody_read_escapes_at_a_consumed_position' does not depend on any axioms
+'QCore.BoundFieldRead.the_custody_whitelist_is_not_vacuous' does not depend on any axioms
+'QCore.BoundFieldRead.the_uninsulated_custody_read_is_refused' does not depend on any axioms
+'QCore.BoundFieldRead.the_borrowed_half_refuses_the_custody_example' does not depend on any axioms
+'QCore.BoundFieldRead.one_scalar_member_flips_the_custody_read' does not depend on any axioms
+'QCore.BoundFieldRead.one_owned_position_flips_the_custody_read' does not depend on any axioms
+Passed AuditMemberAddress.lean (63/128) in 0.3s
+'QCore.MemberAddressReader.an_aggregate_definition_and_a_plain_typedef_of_one_name_retire_it' does not depend on any axioms
+Passed AuditMemberAddressReader.lean (64/128) in 0.3s
+'QCore.Concurrency.MutexInvariant.protected_shape_is_fixed' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.unsupported_synchronization_is_refused' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.typed_error_exit_obeys_the_normal_release_rule' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.destroyEffect_preserves_authority' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.scopeExit_destroys_generations_before_resources' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.checked_witness_ignores_the_declared_predicate' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.guard_local_join_effect_is_the_ordinary_join' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.guard_local_join_preserves_authority' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.guard_local_join_preserves_declared_shapes' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.guard_local_join_drops_nothing_the_invariant_needs' does not depend on any axioms
+'QCore.Concurrency.MutexInvariant.guard_local_join_completes_exactly_the_child' does not depend on any axioms
+Passed AuditMutexInvariant.lean (65/128) in 0.3s
+'QCore.MutexShareCross.MutexShareObligation' does not depend on any axioms
+'QCore.MutexShareCross.theCreatorAndTheChildAreHeldToOneRule' does not depend on any axioms
+Passed AuditMutexShareCross.lean (66/128) in 0.3s
+'QCore.NativeLibrary.the_binding_is_a_function' does not depend on any axioms
+'QCore.NativeLibrary.admission_is_deterministic' does not depend on any axioms
+Passed AuditNativeLibrary.lean (67/128) in 0.3s
+'QCore.NativeLibraryContract.an_unmanifested_contract_keeps_its_one_premise' does not depend on any axioms
+'QCore.NativeLibraryContract.a_manifest_bound_call_stacks_both_premises' does not depend on any axioms
+'QCore.NativeLibraryContract.a_resident_call_contributes_exactly_two_premises' does not depend on any axioms
+'QCore.NativeLibraryContract.a_contracted_residence_names_its_module' does not depend on any axioms
+'QCore.NativeLibraryContract.a_contract_less_residence_names_none' does not depend on any axioms
+'QCore.NativeLibraryContract.a_withdrawal_admits_nothing' does not depend on any axioms
+'QCore.NativeLibraryContract.a_withdrawal_publishes_no_premise' does not depend on any axioms
+'QCore.NativeLibraryContract.the_unmanifested_reading_is_always_admitted' does not depend on any axioms
+'QCore.NativeLibraryContract.the_binding_is_a_function' does not depend on any axioms
+'QCore.NativeLibraryContract.admission_is_deterministic' does not depend on any axioms
+Passed AuditNativeLibraryContract.lean (68/128) in 0.3s
+'QCore.NativeLibraryHeader.the_exact_width_names_are_single_readings' does not depend on any axioms
+'QCore.NativeLibraryHeader.the_open_width_names_are_the_lp64_pairs' does not depend on any axioms
+'QCore.NativeLibraryHeader.a_name_the_standard_leaves_open_is_absent' does not depend on any axioms
+Passed AuditNativeLibraryHeader.lean (69/128) in 0.3s
+'QCore.NativeLibraryHeaderDecoration.the_derivation_is_a_function_of_the_text' does not depend on any axioms
+Passed AuditNativeLibraryHeaderDecoration.lean (70/128) in 0.3s
+Passed AuditNativeLibrarySourceBinding.lean (71/128) in 0.3s
+'QCore.NeutralExpressionPosition.a_literal_is_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.an_enumeration_constant_is_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.a_declared_scalar_is_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.a_pointer_operand_is_never_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.the_digits10_return_expression_is_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.the_digits10_return_expression_refuses_without_its_contract' does not depend on any axioms
+'QCore.NeutralExpressionPosition.the_same_call_with_a_pointer_actual_refuses' does not depend on any axioms
+'QCore.NeutralExpressionPosition.a_releasing_callee_refuses' does not depend on any axioms
+'QCore.NeutralExpressionPosition.an_owned_result_refuses' does not depend on any axioms
+'QCore.NeutralExpressionPosition.four_nested_neutral_calls_are_admitted' does not depend on any axioms
+'QCore.NeutralExpressionPosition.five_nested_neutral_calls_refuse' does not depend on any axioms
+'QCore.NeutralExpressionPosition.an_unbound_base_reads_its_scalar_member' does not depend on any axioms
+'QCore.NeutralExpressionPosition.a_bound_base_never_reads_even_a_scalar_member' does not depend on any axioms
+'QCore.NeutralExpressionPosition.an_unmodelled_member_refuses' does not depend on any axioms
+'QCore.NeutralExpressionPosition.one_unadmitted_argument_refuses_the_whole_call' does not depend on any axioms
+Passed AuditNeutralExpressionPosition.lean (72/128) in 0.3s
+'QCore.NeutralFrameRecursion.every_published_member_validated_under_the_published_map' does not depend on any axioms
+'QCore.NeutralFrameRecursion.cascade_demotion_propagates_along_calls' does not depend on any axioms
+'QCore.NeutralFrameRecursion.neutral_claim_is_independent_of_returning' does not depend on any axioms
+'QCore.NeutralFrameRecursion.an_exit_claim_depends_on_returning' does not depend on any axioms
+'QCore.NeutralFrameRecursion.ranked_calls_are_well_founded' does not depend on any axioms
+Passed AuditNeutralFrameRecursion.lean (73/128) in 0.3s
+Passed AuditNeutralPrefixPreservation.lean (74/128) in 0.2s
+Passed AuditO05.lean (75/128) in 0.3s
+'QCore.ObsReordering.proj_nil' does not depend on any axioms
+'QCore.ObsReordering.windowEquiv_refl' does not depend on any axioms
+'QCore.ObsReordering.windowEquiv_symm' does not depend on any axioms
+'QCore.ObsReordering.windowEquiv_trans' does not depend on any axioms
+'QCore.ObsReordering.equiv_refl' does not depend on any axioms
+'QCore.ObsReordering.equiv_symm' does not depend on any axioms
+'QCore.ObsReordering.equiv_trans' does not depend on any axioms
+'QCore.ObsReordering.equiv_preserves_emitter_projection' does not depend on any axioms
+Passed AuditObsReordering.lean (76/128) in 0.3s
+Passed AuditOsEndpointPostState.lean (77/128) in 0.3s
+Passed AuditPackageIdentity.lean (78/128) in 0.3s
+'QCore.PackageTemplateBinding.every_field_is_bound' does not depend on any axioms
+'QCore.PackageTemplateBinding.the_template_digest_is_not_consulted' does not depend on any axioms
+Passed AuditPackageTemplateBinding.lean (79/128) in 0.3s
+'QCore.PipeDesugaring.the_argument_carrying_rewrite_contains_no_pipe' does not depend on any axioms
+'QCore.PipeDesugaring.rewrite_preserves_written_origins' does not depend on any axioms
+'QCore.PipeDesugaring.synthesized_tokens_are_anchored_at_the_pipe' does not depend on any axioms
+'QCore.PipeDesugaring.only_delimiters_are_synthesized_in_a_single_stage_pipeline' does not depend on any axioms
+'QCore.PipeDesugaring.the_touching_byte_is_covered_by_both_naive_windows' does not depend on any axioms
+'QCore.PipeDesugaring.the_landed_anchoring_separates_the_same_byte' does not depend on any axioms
+'QCore.PipeDesugaring.a_chain_synthesizes_only_delimiters_binders_and_temporaries' does not depend on any axioms
+'QCore.PipeDesugaring.a_chain_preserves_every_written_origin' does not depend on any axioms
+'QCore.PipeDesugaring.no_intrinsic_is_a_sink_or_operandless' does not depend on any axioms
+'QCore.PipeDesugaring.the_byte_reader_loses_the_desugared_statement' does not depend on any axioms
+'QCore.PipeDesugaring.the_byte_order_and_the_statement_order_differ' does not depend on any axioms
+'QCore.PipeDesugaring.the_statement_stage_table_is_exactly_three_heads' does not depend on any axioms
+'QCore.PipeDesugaring.the_release_is_the_only_keyword_shaped_head_in_the_table' does not depend on any axioms
+'QCore.PipeDesugaring.the_single_bar_is_reserved' does not depend on any axioms
+'QCore.PipeDesugaring.the_single_ampersand_is_reserved' does not depend on any axioms
+'QCore.PipeDesugaring.the_caret_is_reserved' does not depend on any axioms
+'QCore.PipeDesugaring.a_connective_inside_a_condition_is_admitted' does not depend on any axioms
+'QCore.PipeDesugaring.the_operator_family_is_exactly_as_declared' does not depend on any axioms
+'QCore.PipeDesugaring.the_quant_delimiters_are_untouched' does not depend on any axioms
+'QCore.PipeDesugaring.the_pipe_wins_by_longest_match' does not depend on any axioms
+'QCore.PipeDesugaring.the_or_wins_by_longest_match' does not depend on any axioms
+'QCore.PipeDesugaring.the_and_wins_by_longest_match' does not depend on any axioms
+'QCore.PipeDesugaring.the_two_byte_table_is_injective' does not depend on any axioms
+'QCore.PipeDesugaring.three_ampersands_are_and_then_reserved' does not depend on any axioms
+'QCore.PipeDesugaring.three_bars_are_or_then_reserved' does not depend on any axioms
+'QCore.PipeDesugaring.the_caret_never_absorbs_a_neighbour' does not depend on any axioms
+Passed AuditPipeDesugaring.lean (80/128) in 0.3s
+'QCore.ProcessQuotaPlan.the_recorded_default_is_the_unenforcing_profile' does not depend on any axioms
+'QCore.ProcessQuotaPlan.kind_spellings_are_pairwise_distinct' does not depend on any axioms
+'QCore.ProcessQuotaPlan.profile_names_are_pairwise_distinct' does not depend on any axioms
+'QCore.ProcessQuotaPlan.the_probe_can_only_force_a_mechanism_absent' does not depend on any axioms
+Passed AuditProcessQuotaPlan.lean (81/128) in 0.3s
+'QCore.ProtectionGrowthEmission.a_growth_statement_performs_no_mutex_operation' does not depend on any axioms
+Passed AuditProtectionGrowthEmission.lean (82/128) in 0.3s
+'QCore.PublicationCustody.a_store_of_a_body_acquired_identity_into_a_file_scope_object_is_refused' does not depend on any axioms
+'QCore.PublicationCustody.an_acquisition_bound_to_such_an_object_is_refused' does not depend on any axioms
+'QCore.PublicationCustody.a_custody_yielding_call_bound_to_such_an_object_is_refused' does not depend on any axioms
+'QCore.PublicationCustody.a_static_local_is_a_destination' does not depend on any axioms
+'QCore.PublicationCustody.a_wider_scan_only_adds_destinations' does not depend on any axioms
+'QCore.PublicationCustody.the_static_duration_conjunct_is_load_bearing' does not depend on any axioms
+'QCore.PublicationCustody.the_tracked_value_conjunct_is_load_bearing' does not depend on any axioms
+'QCore.PublicationCustody.the_scalar_exclusion_is_load_bearing' does not depend on any axioms
+'QCore.PublicationCustody.the_rule_both_refuses_and_admits' does not depend on any axioms
+'QCore.PublicationCustody.the_rule_reads_no_provenance' does not depend on any axioms
+'QCore.PublicationCustody.a_refused_helper_certifies_no_caller' does not depend on any axioms
+'QCore.PublicationCustody.a_non_publishing_helper_still_certifies_its_caller' does not depend on any axioms
+'QCore.PublicationCustody.an_out_slot_naming_such_an_object_is_refused' does not depend on any axioms
+'QCore.PublicationCustody.an_out_slot_naming_a_static_local_is_refused' does not depend on any axioms
+'QCore.PublicationCustody.an_out_slot_naming_an_ordinary_local_is_not_refused' does not depend on any axioms
+'QCore.PublicationCustody.the_drop_recognises_a_name_the_old_reader_hid' does not depend on any axioms
+'QCore.PublicationCustody.the_widened_rule_both_refuses_and_admits' does not depend on any axioms
+Passed AuditPublicationCustody.lean (83/128) in 0.3s
+'QCore.QuantRegionSource.sealed_pack_carries_the_bodys_duties' does not depend on any axioms
+'QCore.QuantRegionSource.sealed_pack_carries_the_regions_quantity' does not depend on any axioms
+'QCore.QuantRegionSource.a_handler_that_never_discharges_is_refused' does not depend on any axioms
+'QCore.QuantRegionSource.credit_contributes_no_duty' does not depend on any axioms
+'QCore.QuantRegionSource.effort_contributes_no_duty' does not depend on any axioms
+'QCore.QuantRegionSource.admitted_body_shapes_are_exactly_these' does not depend on any axioms
+'QCore.QuantRegionSource.admitted_handler_shapes_are_exactly_these' does not depend on any axioms
+Passed AuditQuantRegionSource.lean (84/128) in 0.3s
+'QCore.RawDirectiveLexing.classify_is_total' does not depend on any axioms
+'QCore.RawDirectiveLexing.classify_is_single_valued' does not depend on any axioms
+'QCore.RawDirectiveLexing.hash_at_line_start_is_a_directive' does not depend on any axioms
+'QCore.RawDirectiveLexing.hash_after_a_token_is_a_punctuator' does not depend on any axioms
+'QCore.RawDirectiveLexing.the_digest_domain_is_exhaustive' does not depend on any axioms
+Passed AuditRawDirectiveLexing.lean (85/128) in 0.3s
+Passed AuditReachGatePosition.lean (86/128) in 0.3s
+Passed AuditReadLoan.lean (87/128) in 0.3s
+Passed AuditReadShare.lean (88/128) in 0.3s
+'QCore.ReasonCarrier.the_text_route_is_the_unchanged_classification' does not depend on any axioms
+'QCore.ReasonCarrier.the_site_route_publishes_environment_unavailable' does not depend on any axioms
+'QCore.ReasonCarrier.an_unrecognised_text_still_publishes_no_category' does not depend on any axioms
+'QCore.ReasonCarrier.publication_is_single_valued' does not depend on any axioms
+'QCore.ReasonCarrier.the_text_route_can_publish_a_source_statement' does not depend on any axioms
+'QCore.ReasonCarrier.the_site_route_publishes_something' does not depend on any axioms
+'QCore.ReasonCarrier.publication_is_total' does not depend on any axioms
+Passed AuditReasonCarrier.lean (89/128) in 0.3s
+'QCore.ReasonCategory.all_has_no_duplicates' does not depend on any axioms
+'QCore.ReasonCategory.spellings_are_pairwise_distinct' does not depend on any axioms
+'QCore.ReasonCategory.environment_unavailable_says_nothing_about_the_source' does not depend on any axioms
+'QCore.ReasonCategory.an_environment_row_never_supports_unsafe' does not depend on any axioms
+'QCore.ReasonCategory.every_subject_is_reached' does not depend on any axioms
+'QCore.ReasonCategory.exactly_two_categories_describe_the_analysed_source' does not depend on any axioms
+'QCore.ReasonCategory.every_category_is_reached' does not depend on any axioms
+'QCore.ReasonCategory.classification_is_single_valued' does not depend on any axioms
+'QCore.ReasonCategory.every_known_input_classifies' does not depend on any axioms
+'QCore.ReasonCategory.an_unrecognised_reason_is_refused' does not depend on any axioms
+Passed AuditReasonCategory.lean (90/128) in 0.3s
+'QCore.RefusedWrites.the_poison_moves_no_resource_state' does not depend on any axioms
+'QCore.RefusedWrites.the_acquisition_survives_the_identifier_loop' does not depend on any axioms
+'QCore.RefusedWrites.the_address_taken_aggregate_does_not' does not depend on any axioms
+'QCore.RefusedWrites.the_written_member_is_still_poisoned' does not depend on any axioms
+'QCore.RefusedWrites.the_fixture_state_spares_exactly_one_binding' does not depend on any axioms
+Passed AuditRefusedWrites.lean (91/128) in 0.3s
+'QCore.RegionCreditJoins.admitted_parent_shapes_are_exactly_these' does not depend on any axioms
+'QCore.RegionCreditJoins.a_parent_local_body_builds_no_duty' does not depend on any axioms
+'QCore.RegionCreditJoins.the_pack_after_joins_holds_only_the_quantity' does not depend on any axioms
+'QCore.RegionCreditJoins.the_flagship_abandons_three' does not depend on any axioms
+'QCore.RegionCreditJoins.the_boundary_abandons_nothing' does not depend on any axioms
+Passed AuditRegionCreditJoins.lean (92/128) in 0.3s
+'QCore.RegionJoinsDuties.admitted_owner_shapes_are_exactly_these' does not depend on any axioms
+'QCore.RegionJoinsDuties.the_duty_free_sublanguage_is_unchanged' does not depend on any axioms
+'QCore.RegionJoinsDuties.the_pack_after_joins_carries_the_bodys_duties' does not depend on any axioms
+'QCore.RegionJoinsDuties.the_pack_still_carries_the_quantity' does not depend on any axioms
+'QCore.RegionJoinsDuties.the_cleanup_destroys_the_owners_after_the_joins' does not depend on any axioms
+'QCore.RegionJoinsDuties.a_handler_that_walks_away_from_a_duty_is_refused' does not depend on any axioms
+'QCore.RegionJoinsDuties.an_owner_moves_no_credit' does not depend on any axioms
+'QCore.RegionJoinsDuties.the_flagship_seals_one_owner_and_abandons_three' does not depend on any axioms
+'QCore.RegionJoinsDuties.a_body_release_erases_its_duty' does not depend on any axioms
+'QCore.RegionJoinsDuties.a_sequenced_body_leaves_the_second_owner' does not depend on any axioms
+'QCore.RegionJoinsDuties.two_owners_are_destroyed_last_first' does not depend on any axioms
+Passed AuditRegionJoinsDuties.lean (93/128) in 0.3s
+'QCore.RegionJoinsLoan.admitted_captures_are_exactly_these' does not depend on any axioms
+'QCore.RegionJoinsLoan.admitted_region_shapes_are_exactly_these' does not depend on any axioms
+'QCore.RegionJoinsLoan.an_adoption_is_an_acquisition_of_the_pack' does not depend on any axioms
+'QCore.RegionJoinsLoan.the_adoption_free_sublanguage_is_unchanged' does not depend on any axioms
+'QCore.RegionJoinsLoan.an_adoption_moves_no_credit' does not depend on any axioms
+'QCore.RegionJoinsLoan.the_flagship_adopts_one_owner_and_abandons_three' does not depend on any axioms
+'QCore.RegionJoinsLoan.an_adopted_owner_released_in_the_body_erases_its_duty' does not depend on any axioms
+'QCore.RegionJoinsLoan.an_adopted_and_an_acquired_duty_are_destroyed_last_first' does not depend on any axioms
+Passed AuditRegionJoinsLoan.lean (94/128) in 0.3s
+Passed AuditRegionTaskCredit.lean (95/128) in 0.3s
+'QCore.ReturnPositionEscape.an_admitted_chain_names_no_tracked_place' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.escaping_an_admitted_chain_changes_nothing' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_strict_answer_is_unchanged' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_widening_only_replaces_refusals' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_widening_never_creates_an_escape' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.an_unadmitted_expression_keeps_its_refusal' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_widening_reports_at_least_as_much' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_widening_is_accusing' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_accusing_direction_is_not_vacuous' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_two_answers_agree_on_every_admitted_chain' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.without_the_base_premise_the_answers_part' depends on axioms: [propext]
+'QCore.ReturnPositionEscape.the_parting_witness_is_never_admitted' depends on axioms: [propext]
+Passed AuditReturnPositionEscape.lean (96/128) in 0.3s
+Passed AuditSingleEmissionRoute.lean (97/128) in 0.3s
+'QCore.SlicePermissions.Range.contains' does not depend on any axioms
+'QCore.SlicePermissions.overlaps' does not depend on any axioms
+'QCore.SlicePermissions.writeRange' does not depend on any axioms
+'QCore.SlicePermissions.liveAt' does not depend on any axioms
+'QCore.SlicePermissions.excludedStore' does not depend on any axioms
+'QCore.SlicePermissions.excludedRelease' does not depend on any axioms
+'QCore.SlicePermissions.wholeRange' does not depend on any axioms
+'QCore.SlicePermissions.Loan.toBorrow' does not depend on any axioms
+'QCore.SlicePermissions.touchesRange' does not depend on any axioms
+'QCore.SlicePermissions.admitsRange' does not depend on any axioms
+'QCore.SlicePermissions.addedOperations' does not depend on any axioms
+'QCore.SlicePermissions.the_added_operation_is_exactly_one' does not depend on any axioms
+Passed AuditSlicePermissions.lean (98/128) in 0.3s
+'QCore.SocketEventCompose.a_registration_acquires_no_descriptor' does not depend on any axioms
+'QCore.SocketEventCompose.retiring_a_registration_releases_no_descriptor' does not depend on any axioms
+'QCore.SocketEventCompose.the_context_statements_move_no_custody' does not depend on any axioms
+'QCore.SocketEventCompose.a_watched_socket_is_still_held' does not depend on any axioms
+'QCore.SocketEventCompose.a_dispatch_turn_changes_no_custody' does not depend on any axioms
+'QCore.SocketEventCompose.a_dispatch_turn_changes_no_loan' does not depend on any axioms
+'QCore.SocketEventCompose.erasing_a_composed_program_leaves_its_transport' does not depend on any axioms
+'QCore.SocketEventCompose.a_turn_drains_nothing' does not depend on any axioms
+'QCore.SocketEventCompose.a_dispatch_turn_derives_io' does not depend on any axioms
+'QCore.SocketEventCompose.the_registration_statements_derive_nothing' does not depend on any axioms
+'QCore.SocketEventCompose.a_registration_needs_both_modules' does not depend on any axioms
+'QCore.SocketEventCompose.the_socket_module_alone_grants_no_registration' does not depend on any axioms
+'QCore.SocketEventCompose.the_event_module_alone_grants_no_registration' does not depend on any axioms
+'QCore.SocketEventCompose.code_that_registers_nothing_needs_neither' does not depend on any axioms
+Passed AuditSocketEventCompose.lean (99/128) in 0.2s
+'QCore.SocketFootprint.initial_is_bounded' does not depend on any axioms
+Passed AuditSocketFootprint.lean (100/128) in 0.3s
+'QCore.SocketInetAddresses.every_address_has_exactly_one_family' does not depend on any axioms
+'QCore.SocketInetAddresses.the_two_families_are_disjoint' does not depend on any axioms
+'QCore.SocketInetAddresses.an_implicit_bind_is_ipv4_loopback_on_a_kernel_chosen_port' does not depend on any axioms
+'QCore.SocketInetAddresses.no_bind_reaches_nothing' does not depend on any axioms
+'QCore.SocketInetAddresses.a_family_agrees_with_itself' does not depend on any axioms
+'QCore.SocketInetAddresses.the_families_never_stand_in_for_each_other' does not depend on any axioms
+'QCore.SocketInetAddresses.the_v6only_decision_is_made_explicitly_on_every_arm' does not depend on any axioms
+'QCore.SocketInetAddresses.the_v6only_decision_does_not_vary_by_arm' does not depend on any axioms
+'QCore.SocketInetAddresses.an_unsupported_family_yields_no_socket' does not depend on any axioms
+Passed AuditSocketInetAddresses.lean (101/128) in 0.3s
+'QCore.SourceCoordinate.the_primary_frame_presents_no_marker_spelling' does not depend on any axioms
+'QCore.SourceCoordinate.a_relabelled_header_presents_nothing' does not depend on any axioms
+'QCore.SourceCoordinate.a_relabelled_tail_stays_in_scope_and_presents_nothing' does not depend on any axioms
+'QCore.SourceCoordinate.an_agreeing_resync_sets_the_line' does not depend on any axioms
+'QCore.SourceCoordinate.the_name_comparison_is_load_bearing' does not depend on any axioms
+'QCore.SourceCoordinate.content_lines_advance_by_one' does not depend on any axioms
+'QCore.SourceCoordinate.content_before_the_opening_marker_presents_nothing' does not depend on any axioms
+'QCore.SourceCoordinate.an_underflowing_return_breaks_the_reader' does not depend on any axioms
+'QCore.SourceCoordinate.a_well_formed_return_does_not_break_the_reader' does not depend on any axioms
+'QCore.SourceCoordinate.every_location_refusal_says_nothing_about_the_source' does not depend on any axioms
+'QCore.SourceCoordinate.the_environment_subject_is_not_the_source_subject' does not depend on any axioms
+Passed AuditSourceCoordinate.lean (102/128) in 0.3s
+'QCore.SourceEnumeration.an_environment_ground_says_nothing_about_the_source' does not depend on any axioms
+'QCore.SourceEnumeration.a_token_stream_ground_names_the_analysed_source' does not depend on any axioms
+'QCore.SourceEnumeration.no_ground_is_both_environment_and_source' does not depend on any axioms
+'QCore.SourceEnumeration.both_subjects_are_reached' does not depend on any axioms
+'QCore.SourceEnumeration.the_declaration_contexts_are_exactly_these' does not depend on any axioms
+Passed AuditSourceEnumeration.lean (103/128) in 0.3s
+'QCore.SourceLoop.run_append' does not depend on any axioms
+'QCore.SourceLoop.running_the_unrolling_is_iterating_the_body' does not depend on any axioms
+'QCore.SourceLoop.a_loop_unrolls_to_its_body_repeated' does not depend on any axioms
+'QCore.SourceLoop.a_zero_bound_unrolls_to_nothing' does not depend on any axioms
+'QCore.SourceLoop.a_zero_bound_runs_no_event' does not depend on any axioms
+'QCore.SourceLoop.an_identity_body_iterates' does not depend on any axioms
+'QCore.SourceLoop.a_body_of_stores_and_lines_is_the_identity' does not depend on any axioms
+'QCore.SourceLoop.a_loop_free_item_unrolls_to_itself' does not depend on any axioms
+'QCore.SourceLoop.a_loop_is_the_one_item_that_is_not_loop_free' does not depend on any axioms
+Passed AuditSourceLoop.lean (104/128) in 0.3s
+'QCore.SourceRecord.a_record_item_presents_no_event' does not depend on any axioms
+'QCore.SourceRecord.a_field_read_presents_no_event' does not depend on any axioms
+'QCore.SourceRecord.a_record_only_program_presents_no_event' does not depend on any axioms
+'QCore.SourceRecord.a_record_only_program_leaves_the_ledger_unchanged' does not depend on any axioms
+'QCore.SourceRecord.a_record_item_is_not_record_free' does not depend on any axioms
+'QCore.SourceRecord.a_construction_derives_nothing' does not depend on any axioms
+'QCore.SourceRecord.a_field_read_derives_nothing' does not depend on any axioms
+'QCore.SourceRecord.an_acquisition_beside_it_still_derives_alloc' does not depend on any axioms
+Passed AuditSourceRecord.lean (105/128) in 0.3s
+'QCore.SourceRootAdmission.an_ordinary_root_resolves_below_the_checkout' does not depend on any axioms
+Passed AuditSourceRootAdmission.lean (106/128) in 0.3s
+'QCore.SourceValidation.declaration_validation_independent_of_uses' does not depend on any axioms
+'QCore.SourceValidation.accepted_declarations_are_valid' does not depend on any axioms
+Passed AuditSourceValidation.lean (107/128) in 0.2s
+'QCore.StdBuffer.a_store_moves_no_extent' does not depend on any axioms
+'QCore.StdBuffer.a_load_moves_no_extent' does not depend on any axioms
+'QCore.StdBuffer.an_extent_read_moves_no_extent' does not depend on any axioms
+'QCore.StdBuffer.a_line_moves_no_extent' does not depend on any axioms
+'QCore.StdBuffer.non_custody_events_leave_the_ledger_unchanged' does not depend on any axioms
+'QCore.StdBuffer.the_extent_range_is_bounded_at_both_ends' does not depend on any axioms
+'QCore.StdBuffer.an_empty_ledger_holds_no_bytes' does not depend on any axioms
+'QCore.StdBuffer.an_acquisition_adds_exactly_its_extent' does not depend on any axioms
+'QCore.StdBuffer.a_read_derives_nothing' does not depend on any axioms
+'QCore.StdBuffer.an_extent_read_derives_nothing' does not depend on any axioms
+'QCore.StdBuffer.the_operand_forms_are_exactly_two' does not depend on any axioms
+'QCore.StdBuffer.an_operand_is_never_a_custody_act' does not depend on any axioms
+'QCore.StdBuffer.the_buffer_module_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_buffer' does not depend on any axioms
+'QCore.ModuleImports.the_io_import_alone_grants_no_buffer' does not depend on any axioms
+'QCore.ModuleImports.the_buffer_import_alone_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.concurrency_grants_no_buffer_capability' does not depend on any axioms
+'QCore.ModuleImports.neither_extern_module_grants_the_buffer' does not depend on any axioms
+'QCore.ModuleImports.duplicate_buffer_import_is_idempotent' does not depend on any axioms
+Passed AuditStdBuffer.lean (108/128) in 0.2s
+'QCore.StdEvent.diagnosticEnabled' does not depend on any axioms
+'QCore.StdEvent.an_absent_log_level_is_quiet' does not depend on any axioms
+'QCore.StdEvent.trace_log_level_admits_every_level' does not depend on any axioms
+'QCore.StdEvent.readySet' does not depend on any axioms
+'QCore.StdEvent.project' does not depend on any axioms
+'QCore.StdEvent.a_wake_projects_to_nothing' does not depend on any axioms
+'QCore.StdEvent.a_watch_projects_to_the_reactor_registration' does not depend on any axioms
+'QCore.StdEvent.a_ready_turn_brackets_exactly_one_callback' does not depend on any axioms
+Passed AuditStdEvent.lean (109/128) in 0.2s
+'QCore.StdHttp.no_framing_byte_is_a_field_byte' does not depend on any axioms
+'QCore.StdHttp.no_http_statement_derives_an_effect' does not depend on any axioms
+'QCore.StdHttp.the_statement_forms_are_exactly_three' does not depend on any axioms
+'QCore.StdHttp.the_http_module_grants_neither_transport_nor_text' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_http' does not depend on any axioms
+'QCore.ModuleImports.the_http_import_alone_grants_no_socket' does not depend on any axioms
+'QCore.ModuleImports.the_http_module_is_independent_of_the_text_module' does not depend on any axioms
+'QCore.ModuleImports.the_http_import_alone_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.the_neighbouring_modules_grant_no_http' does not depend on any axioms
+'QCore.ModuleImports.concurrency_grants_no_http_capability' does not depend on any axioms
+'QCore.ModuleImports.neither_extern_module_grants_http' does not depend on any axioms
+'QCore.ModuleImports.duplicate_http_import_is_idempotent' does not depend on any axioms
+Passed AuditStdHttp.lean (110/128) in 0.3s
+'QCore.ModuleImports.empty_imports_grant_no_concurrency' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_extern_calls' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_output' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_logger' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_rendering' does not depend on any axioms
+'QCore.ModuleImports.the_concurrency_import_alone_grants_no_extern_call' does not depend on any axioms
+'QCore.ModuleImports.the_io_import_alone_grants_no_logging' does not depend on any axioms
+'QCore.ModuleImports.the_logger_import_alone_grants_no_output' does not depend on any axioms
+'QCore.ModuleImports.the_fmt_import_alone_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.neither_writer_grants_the_rendering' does not depend on any axioms
+'QCore.ModuleImports.concurrency_grants_no_output_capability' does not depend on any axioms
+'QCore.ModuleImports.duplicate_import_is_idempotent' does not depend on any axioms
+'QCore.ModuleImports.duplicate_io_import_is_idempotent' does not depend on any axioms
+'QCore.ModuleImports.missing_required_capability_rejects' does not depend on any axioms
+'QCore.StdIo.derived_row_is_io_or_empty' does not depend on any axioms
+'QCore.StdIo.a_bare_return_is_silent' does not depend on any axioms
+'QCore.StdIo.log_level_carries_io_without_a_source_line' does not depend on any axioms
+'QCore.StdIo.print_never_writes_stderr' does not depend on any axioms
+'QCore.StdIo.log_never_writes_stdout' does not depend on any axioms
+'QCore.StdIo.every_level_uses_one_stream' does not depend on any axioms
+'QCore.StdIo.streams_left_identity' does not depend on any axioms
+'QCore.StdIo.a_bare_barrier_writes_nothing' does not depend on any axioms
+'QCore.StdIo.the_barrier_still_carries_io' does not depend on any axioms
+'QCore.StdIo.no_module_substitutes_for_another' does not depend on any axioms
+'QCore.StdIo.a_route_without_a_custody_model_renders_no_borrow' does not depend on any axioms
+'QCore.StdIo.a_borrowed_render_reads_no_scalar' does not depend on any axioms
+'QCore.StdIo.a_scalar_render_reads_no_identity' does not depend on any axioms
+'QCore.StdIo.a_literal_render_reads_neither_environment' does not depend on any axioms
+'QCore.StdIo.the_operand_forms_are_exactly_these' does not depend on any axioms
+'QCore.StdIo.a_borrowed_render_still_carries_io' does not depend on any axioms
+'QCore.StdIo.a_borrowed_render_writes_one_line_on_its_own_stream' does not depend on any axioms
+Passed AuditStdIo.lean (111/128) in 0.3s
+'QCore.StdSocket.an_empty_ledger_holds_no_descriptors' does not depend on any axioms
+'QCore.StdSocket.transport_statements_leave_the_ledger_unchanged' does not depend on any axioms
+'QCore.StdSocket.a_datagram_receive_on_an_empty_queue_is_refused' does not depend on any axioms
+'QCore.StdSocket.an_admitted_datagram_receive_takes_the_head' does not depend on any axioms
+'QCore.StdSocket.a_creation_derives_alloc' does not depend on any axioms
+'QCore.StdSocket.a_close_derives_alloc' does not depend on any axioms
+'QCore.StdSocket.a_transfer_derives_io' does not depend on any axioms
+'QCore.StdSocket.a_binding_derives_nothing' does not depend on any axioms
+'QCore.StdSocket.the_operand_forms_are_exactly_two' does not depend on any axioms
+'QCore.StdSocket.an_operand_is_never_a_custody_act' does not depend on any axioms
+'QCore.StdSocket.the_socket_module_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_socket' does not depend on any axioms
+'QCore.ModuleImports.the_socket_import_alone_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.the_output_modules_grant_no_socket' does not depend on any axioms
+'QCore.ModuleImports.the_socket_module_is_independent_of_the_value_modules' does not depend on any axioms
+'QCore.ModuleImports.concurrency_grants_no_socket_capability' does not depend on any axioms
+'QCore.ModuleImports.neither_extern_module_grants_the_socket' does not depend on any axioms
+'QCore.ModuleImports.duplicate_socket_import_is_idempotent' does not depend on any axioms
+Passed AuditStdSocket.lean (112/128) in 0.2s
+'QCore.StdString.a_literal_view_has_the_payloads_length' does not depend on any axioms
+'QCore.StdString.an_embedded_nul_is_inside_the_length' does not depend on any axioms
+'QCore.StdString.a_derived_length_is_the_difference' does not depend on any axioms
+'QCore.StdString.a_derived_view_keeps_its_storage' does not depend on any axioms
+'QCore.StdString.a_derived_offset_is_the_source_plus_low' does not depend on any axioms
+'QCore.StdString.slicing_a_slice_keeps_the_original_storage' does not depend on any axioms
+'QCore.StdString.a_string_only_program_derives_nothing' does not depend on any axioms
+'QCore.StdString.only_a_line_derives_io' does not depend on any axioms
+'QCore.StdString.the_bound_forms_are_exactly_two' does not depend on any axioms
+'QCore.StdString.the_string_module_grants_no_stream' does not depend on any axioms
+'QCore.StdString.the_string_module_grants_no_buffer' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_string' does not depend on any axioms
+'QCore.ModuleImports.the_buffer_import_alone_grants_no_string' does not depend on any axioms
+'QCore.ModuleImports.the_string_import_alone_grants_no_buffer' does not depend on any axioms
+'QCore.ModuleImports.the_string_import_alone_grants_no_stream' does not depend on any axioms
+'QCore.ModuleImports.the_output_modules_grant_no_string' does not depend on any axioms
+'QCore.ModuleImports.concurrency_grants_no_string_capability' does not depend on any axioms
+'QCore.ModuleImports.neither_extern_module_grants_the_string' does not depend on any axioms
+'QCore.ModuleImports.duplicate_string_import_is_idempotent' does not depend on any axioms
+Passed AuditStdString.lean (113/128) in 0.3s
+'QCore.StringConcat.compose' does not depend on any axioms
+'QCore.StringConcat.pieceLens' does not depend on any axioms
+'QCore.StringConcat.composedView' does not depend on any axioms
+'QCore.StringConcat.extend' does not depend on any axioms
+'QCore.StringConcat.admitsConcat' does not depend on any axioms
+'QCore.StringConcat.leadLength' does not depend on any axioms
+'QCore.StringConcat.wellFormed' does not depend on any axioms
+'QCore.StringConcat.liveAt' does not depend on any axioms
+'QCore.StringConcat.excluded' does not depend on any axioms
+'QCore.StringConcat.touches' does not depend on any axioms
+'QCore.StringConcat.step' does not depend on any axioms
+'QCore.StringConcat.run' does not depend on any axioms
+'QCore.StringConcat.addedEffects' does not depend on any axioms
+'QCore.StringConcat.a_composition_addresses_none_of_its_pieces' does not depend on any axioms
+'QCore.StringConcat.the_empty_payload_is_well_formed' does not depend on any axioms
+'QCore.StringConcat.a_zeroed_buffer_is_well_formed' does not depend on any axioms
+'QCore.StringConcat.an_ascii_payload_is_well_formed' does not depend on any axioms
+'QCore.StringConcat.a_two_byte_code_point_is_well_formed' does not depend on any axioms
+'QCore.StringConcat.a_lone_continuation_byte_is_refused' does not depend on any axioms
+'QCore.StringConcat.a_truncated_sequence_is_refused' does not depend on any axioms
+'QCore.StringConcat.a_byte_outside_the_encoding_is_refused' does not depend on any axioms
+'QCore.StringConcat.a_dangling_lead_byte_is_refused' does not depend on any axioms
+'QCore.StringConcat.a_composition_derives_no_effect' does not depend on any axioms
+'QCore.StringConcat.a_borrow_derives_no_effect' does not depend on any axioms
+'QCore.StringConcat.a_view_carries_no_custody' does not depend on any axioms
+'QCore.StringConcat.the_added_operations_are_exactly_two' does not depend on any axioms
+Passed AuditStringConcat.lean (114/128) in 0.3s
+'QCore.StringSliceIo.written' does not depend on any axioms
+'QCore.StringSliceIo.erase' does not depend on any axioms
+'QCore.StringSliceIo.eraseProgram' does not depend on any axioms
+'QCore.StringSliceIo.composedEffects' does not depend on any axioms
+'QCore.StringSliceIo.a_text_line_derives_io' does not depend on any axioms
+'QCore.StringSliceIo.a_logged_line_carries_its_level_tag' does not depend on any axioms
+'QCore.StringSliceIo.no_level_tag_contains_a_newline' does not depend on any axioms
+'QCore.StringSliceIo.the_print_framing_contains_no_newline' does not depend on any axioms
+'QCore.StringSliceIo.the_empty_view_writes_only_the_framing' does not depend on any axioms
+'QCore.StringSliceIo.the_two_line_kinds_share_one_framing' does not depend on any axioms
+'QCore.StringSliceIo.every_byte_of_the_view_is_written' does not depend on any axioms
+'QCore.StringSliceIo.a_terminator_scan_would_write_fewer_bytes' does not depend on any axioms
+'QCore.StringSliceIo.an_embedded_nul_reaches_the_stream' does not depend on any axioms
+'QCore.StringSliceIo.the_text_operand_forms_are_exactly_three' does not depend on any axioms
+'QCore.StringSliceIo.a_text_line_names_no_rendering' does not depend on any axioms
+'QCore.StringSliceIo.a_text_line_needs_no_formatting_module' does not depend on any axioms
+'QCore.StringSliceIo.a_scalar_line_still_needs_the_formatting_module' does not depend on any axioms
+'QCore.StringSliceIo.the_output_imports_alone_still_grant_no_string' does not depend on any axioms
+'QCore.StringSliceIo.the_string_import_alone_still_grants_no_stream' does not depend on any axioms
+Passed AuditStringSliceIo.lean (115/128) in 0.3s
+'QCore.SymbolicClassAdmission.distinct_constants_reach_both_arms' does not depend on any axioms
+'QCore.SymbolicClassAdmission.an_admission_publishes_unknown' does not depend on any axioms
+'QCore.SymbolicClassAdmission.no_proposal_moves_the_conclusion' does not depend on any axioms
+'QCore.SymbolicClassAdmission.an_admission_never_permits_the_nested_discharge' does not depend on any axioms
+Passed AuditSymbolicClassAdmission.lean (116/128) in 0.3s
+'QCore.TaskExecution.checked_copy_preserves_ordered_values' does not depend on any axioms
+'QCore.TaskExecution.checked_copy_has_exact_parameter_types' does not depend on any axioms
+'QCore.TaskExecution.i32_representation_is_bounded' does not depend on any axioms
+'QCore.TaskExecution.failed_create_changes_no_handles' does not depend on any axioms
+'QCore.TaskExecution.failed_create_produces_no_handle' does not depend on any axioms
+'QCore.TaskExecution.normal_and_error_outcomes_are_distinct' does not depend on any axioms
+'QCore.TaskExecution.worker_error_tag_is_preserved' does not depend on any axioms
+'QCore.TaskExecution.outcome_discrimination_preserves_normal_value' does not depend on any axioms
+'QCore.TaskExecution.outcome_discrimination_preserves_exact_error' does not depend on any axioms
+'QCore.TaskExecution.consumed_result_cannot_be_discriminated_again' does not depend on any axioms
+'QCore.TaskExecution.failed_create_preserves_prior_sibling' does not depend on any axioms
+'QCore.TaskExecution.an_admitted_exit_is_never_attributed' does not depend on any axioms
+'QCore.TaskExecution.a_named_owner_is_a_lent_frame_resource' does not depend on any axioms
+Passed AuditTaskExecution.lean (117/128) in 0.3s
+'QCore.TaskTraceLeaseBoundary.encodeEventAt' does not depend on any axioms
+'QCore.TaskTraceLeaseBoundary.traceFrom' does not depend on any axioms
+'QCore.TaskTraceLeaseBoundary.referenceTrace' does not depend on any axioms
+'QCore.TaskTraceLeaseBoundary.Refusal.index' does not depend on any axioms
+'QCore.TaskTraceLeaseBoundary.the_flagship_run_is_refused_at_its_lease' does not depend on any axioms
+Passed AuditTaskTraceLeaseBoundary.lean (118/128) in 0.3s
+'QCore.TaskTraceRelation.domain_one_size' does not depend on any axioms
+'QCore.TaskTraceRelation.domain_two_size' does not depend on any axioms
+'QCore.TaskTraceRelation.domain_one_trace_digest' does not depend on any axioms
+'QCore.TaskTraceRelation.domain_two_trace_digest' does not depend on any axioms
+Passed AuditTaskTraceRelation.lean (119/128) in 0.3s
+'QCore.TeardownAdmission.a_changed_helper_changes_the_question' does not depend on any axioms
+'QCore.TeardownAdmission.a_changed_entry_changes_the_question' does not depend on any axioms
+'QCore.TeardownAdmission.a_changed_contract_changes_the_question' does not depend on any axioms
+'QCore.TeardownAdmission.the_declared_inventory_has_nine_realizable_states' does not depend on any axioms
+'QCore.TeardownAdmission.dropping_a_declared_field_shrinks_the_question' does not depend on any axioms
+'QCore.TeardownAdmission.a_state_naming_an_undeclared_field_is_unrealizable' does not depend on any axioms
+'QCore.TeardownAdmission.a_child_without_its_parent_is_unrealizable' does not depend on any axioms
+'QCore.TeardownAdmission.the_full_inventory_is_realizable' does not depend on any axioms
+'QCore.TeardownAdmission.the_unlink_family_admits_a_reading' does not depend on any axioms
+'QCore.TeardownAdmission.the_destructor_family_admits_a_reading' does not depend on any axioms
+'QCore.TeardownAdmission.a_destructor_reading_never_satisfies_the_unlink_checker' does not depend on any axioms
+'QCore.TeardownAdmission.an_unlink_reading_never_satisfies_the_destructor_checker' does not depend on any axioms
+Passed AuditTeardownAdmission.lean (120/128) in 0.3s
+'QCore.Transferability.kindInventoryHasNoDuplicates' does not depend on any axioms
+'QCore.Transferability.kindInventoryHasSixteenEntries' does not depend on any axioms
+'QCore.Transferability.tagInventoryHasNoDuplicates' does not depend on any axioms
+'QCore.Transferability.tagInventoryHasFifteenEntries' does not depend on any axioms
+'QCore.Transferability.modeInventoryHasSixEntries' does not depend on any axioms
+'QCore.Transferability.noDeclaredTagIsSendableOnItsOwn' does not depend on any axioms
+'QCore.Transferability.theClassificationIsPinned' does not depend on any axioms
+'QCore.Transferability.exactlyOneKindIsSendableButNotFreelyShareable' does not depend on any axioms
+'QCore.Transferability.duplicationCarriesNoCustody' does not depend on any axioms
+'QCore.Transferability.mutablyShareableUnder' does not depend on any axioms
+'QCore.Transferability.exactlyOneKindIsMutablyShareable' does not depend on any axioms
+Passed AuditTransferability.lean (121/128) in 0.3s
+Passed AuditTwoDerivationAdmission.lean (122/128) in 0.3s
+'QCore.TypedefProjection.a_function_pointer_is_not_any_other_target' does not depend on any axioms
+'QCore.TypedefProjection.an_untagged_aggregate_is_its_own_target' does not depend on any axioms
+'QCore.TypedefProjection.an_exhausted_depth_budget_is_unresolved' does not depend on any axioms
+'QCore.TypedefProjection.a_tagged_definition_composes_with_its_plain_typedef' does not depend on any axioms
+'QCore.TypedefProjection.an_untagged_definition_would_not_have_composed' does not depend on any axioms
+Passed AuditTypedefProjection.lean (123/128) in 0.3s
+'QCore.UncheckedLinkage.admission_is_deterministic' does not depend on any axioms
+'QCore.ModuleImports.empty_imports_grant_no_unchecked_linkage' does not depend on any axioms
+'QCore.ModuleImports.the_extern_import_alone_grants_no_waiver' does not depend on any axioms
+'QCore.ModuleImports.the_waiver_alone_grants_no_extern_call' does not depend on any axioms
+Passed AuditUncheckedLinkage.lean (124/128) in 0.3s
+'QCore.VariadicNested.a_nested_call_in_a_declared_tail_is_admitted' does not depend on any axioms
+'QCore.VariadicNested.a_nested_call_at_a_borrowed_parameter_is_admitted' does not depend on any axioms
+'QCore.VariadicNested.a_nested_call_at_a_custody_parameter_is_refused' does not depend on any axioms
+'QCore.VariadicNested.the_nested_premises_are_separately_load_bearing' does not depend on any axioms
+'QCore.VariadicNested.the_nested_contract_premises_are_separately_load_bearing' does not depend on any axioms
+'QCore.VariadicNested.a_data_tail_is_admitted' does not depend on any axioms
+'QCore.VariadicNested.the_tail_premises_are_separately_load_bearing' does not depend on any axioms
+'QCore.VariadicNested.an_empty_excess_still_needs_the_declaration' does not depend on any axioms
+'QCore.VariadicNested.the_witness_nested_contract_is_neutral' does not depend on any axioms
+Passed AuditVariadicNested.lean (125/128) in 0.3s
+'QCore.NullableRemoval.absent_alternative_never_carries_child_custody' does not depend on any axioms
+'QCore.NullableRemoval.unresolved_effect_preserves_abstract_custody' does not depend on any axioms
+'QCore.UnsignedCountdown.publish_by_mutual_rank_induction' does not depend on any axioms
+'QCore.TypedFieldAccess.the_whitelist_is_not_empty' does not depend on any axioms
+'QCore.ExitResiduals.the_actual_whitelist_is_not_empty' does not depend on any axioms
+'QCore.ExitResiduals.a_scalar_member_is_admitted_at_a_borrowed_position' does not depend on any axioms
+'QCore.ExitResiduals.close_preserves_precision' does not depend on any axioms
+'QCore.ExitResiduals.every_exit_answer_is_reachable' does not depend on any axioms
+Passed AuditW4.lean (126/128) in 0.3s
+'QCore.WriteLend.blocksLend' does not depend on any axioms
+'QCore.WriteLend.admitsLend' does not depend on any axioms
+'QCore.WriteLend.blocksOwner' does not depend on any axioms
+'QCore.WriteLend.ownerBlocked' does not depend on any axioms
+'QCore.WriteLend.rebase' does not depend on any axioms
+'QCore.WriteLend.hasLoan' does not depend on any axioms
+'QCore.WriteLend.openLend' does not depend on any axioms
+'QCore.WriteLend.confinedTo' does not depend on any axioms
+'QCore.WriteLend.addedOperations' does not depend on any axioms
+'QCore.WriteLend.the_added_operation_is_exactly_one' does not depend on any axioms
+Passed AuditWriteLend.lean (127/128) in 0.2s
+'QCore.WriteLendTasks.admitsLease' does not depend on any axioms
+'QCore.WriteLendTasks.openLease' does not depend on any axioms
+'QCore.WriteLendTasks.closeLease' does not depend on any axioms
+'QCore.WriteLendTasks.leasesHolding' does not depend on any axioms
+'QCore.WriteLendTasks.ownerMayWrite' does not depend on any axioms
+'QCore.WriteLendTasks.writeAuthorities' does not depend on any axioms
+'QCore.WriteLendTasks.addedSurface' does not depend on any axioms
+'QCore.WriteLendTasks.the_added_capture_is_exactly_one' does not depend on any axioms
+Passed AuditWriteLendTasks.lean (128/128) in 0.2s
+Passed 128 Lean audits

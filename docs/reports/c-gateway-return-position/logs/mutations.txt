@@ -1,0 +1,40 @@
+==============================================================
+MUTATION: M1 escape the canonical place instead of NoOp
+RESULT: GREEN  <-- VACUOUS ARM, the rule is unverified here
+==============================================================
+MUTATION: M2 never admit the pointer leaf in a return
+RESULT: RED (arm is driven) by:
+         an_admitted_return_beside_a_discharged_obligation_reports_nothing
+         an_admitted_return_reports_the_obligation_it_could_have_laundered
+         a_pointer_leaf_chain_is_admitted_in_a_return_at_every_depth
+         a_pointer_leaf_is_admitted_in_a_condition_and_in_a_return
+         a_pointer_leaf_return_escapes_nothing_it_could_own
+==============================================================
+MUTATION: M3 drop the strict-rule-first ordering
+RESULT: RED (arm is driven) by:
+         a_plain_canonical_place_still_escapes
+==============================================================
+MUTATION: M4 drop the !may_bind(base) base premise
+RESULT: RED (arm is driven) by:
+         a_bound_base_keeps_the_return_refusal
+         a_branch_condition_refuses_a_read_through_a_bound_base
+         a_chain_rooted_at_an_acquisition_keeps_the_return_refusal
+         an_admitted_base_is_never_a_modeled_call_actual
+         a_released_base_keeps_the_return_refusal
+         a_released_base_read_in_a_condition_keeps_its_refusal
+         the_adversarial_family_keeps_its_unknown_and_its_diagnostic
+==============================================================
+MUTATION: M5 = M4 + M1 (both premises of the escape argument removed)
+RESULT: RED (arm is driven) by:
+         a_bound_base_keeps_the_return_refusal
+         a_branch_condition_refuses_a_read_through_a_bound_base
+         a_chain_rooted_at_an_acquisition_keeps_the_return_refusal
+         an_admitted_base_is_never_a_modeled_call_actual
+         a_released_base_keeps_the_return_refusal
+         a_released_base_read_in_a_condition_keeps_its_refusal
+         the_adversarial_family_keeps_its_unknown_and_its_diagnostic
+==============================================================
+restored; re-verifying the tree
+test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.49s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.70s
