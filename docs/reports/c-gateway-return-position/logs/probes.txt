@@ -1,0 +1,3 @@
+reevaluation_probe    exit 0
+reevaluation_followup exit 0
+(full stdout is a JSON report; kept worktree-private per CLAUDE.md hygiene rule)

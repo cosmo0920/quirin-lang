@@ -1,0 +1,21 @@
+    Checking qcore-core v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-core)
+    Checking itoa v1.0.18
+    Checking memchr v2.8.3
+    Checking shlex v1.3.0
+    Checking find-msvc-tools v0.1.5
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking libc v0.2.189
+    Checking cc v1.2.50
+    Checking serde v1.0.229
+    Checking serde_json v1.0.151
+    Checking qcore-schemas v14.0.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-schemas)
+    Checking qcore-frontend v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-frontend)
+    Checking qcore-contract v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-contract)
+    Checking qcore-verifier-host v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-verifier-host)
+    Checking qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-c-gateway)
+    Checking qcore-verification v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-verification)
+    Checking qcore-audit v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcore-audit)
+    Checking qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/compiler)
+    Checking qcorec v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a310b80d397bfb2a1/crates/qcorec)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.38s

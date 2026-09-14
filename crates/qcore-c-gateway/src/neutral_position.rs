@@ -105,11 +105,25 @@
 //!   O04-READ-BOUND's *bound*-base reads stay refused here: their premise is a
 //!   flow-sensitive liveness revalidation that a condition, carrying no modeled
 //!   call, has nothing to attach to.
-//! * **the value is discarded.** A pointer leaf is admitted only for
-//!   [`ExpressionRole::Decides`]. A `return` expression keeps the strict
-//!   no-pointer rule, because its value flows to the caller and
-//!   `legacy_c`'s `EscapeIfOwned` models only a *canonical place*: a compound
-//!   return expression that produced a pointer would escape it unmodeled.
+//! * **the value is discarded, or it escapes nothing.** A pointer leaf was
+//!   originally admitted only for [`ExpressionRole::Decides`], the `return`
+//!   position keeping the strict no-pointer rule because its value flows to the
+//!   caller and `legacy_c`'s `EscapeIfOwned` models only a *canonical place*:
+//!   a compound return expression that produced a pointer would escape it
+//!   unmodeled. **Card C-GATEWAY-RETURN-POSITION amends that deliberately.**
+//!   The reasoning is kept and its answer is supplied rather than avoided: by
+//!   the base premise `!may_bind(base)`, no place along an admitted chain is a
+//!   place the projection binds, so the pointer a chain produces is not a
+//!   tracked identity and there is nothing for the exit to escape. Such a
+//!   `return` is therefore admitted and answered with `returned_place: None`,
+//!   which makes the node a `NoOp`; [`ExpressionRole::Returned`] carries the
+//!   argument and the obligation it places on `legacy_c`'s `return` parser.
+//!   What is *not* admitted is any widening of `EscapeIfOwned`: the discharging
+//!   direction is untouched, and a `return` of a plain canonical place keeps
+//!   exactly the escape it had. The admitted set in the two roles is now
+//!   **equal**, and that equality is the rule: the return position admits what
+//!   a condition position admits, and the difference between them — the
+//!   pointer the chain produces — escapes nothing.
 //! * **no assignment, no call argument, no address.** `&`, `*`, `[`, `]`, `{`,
 //!   `}`, `,` and `;` are refused by the operand walker, an assignment is
 //!   refused whenever a pointer leaf is in play, and an admitted call's
@@ -197,9 +211,41 @@ pub(crate) enum ExpressionRole {
     /// and returned to no caller.
     Decides,
     /// A `return` expression. The value flows to the caller, and `legacy_c`
-    /// models that escape only for a *canonical place*, so a pointer this rule
-    /// admitted inside a compound expression would leave unmodeled. The strict
-    /// no-pointer sentence of card W4-EXPR-POS is kept verbatim in this role.
+    /// models that escape only for a *canonical place*.
+    ///
+    /// Card W4-EXPR-POS's strict no-pointer sentence was kept verbatim in this
+    /// role until card **C-GATEWAY-RETURN-POSITION**, which amended it
+    /// deliberately. The two roles now admit the **same** expressions; what the
+    /// distinction still decides is what `legacy_c`'s `return` parser does with
+    /// the admission:
+    ///
+    /// * an expression the `Returned` rule admits keeps its
+    ///   `canonical_place` answer, so a `return p;` still escapes `p` exactly
+    ///   as before — the discharging direction is untouched by this card;
+    /// * an expression **only** the `Decides` rule admits is one whose value is
+    ///   a pointer read through an F4 chain, and the parser **must** answer it
+    ///   with `returned_place: None`, making the node a `NoOp`.
+    ///
+    /// That obligation is not a convenience. `canonical_place` would happily
+    /// spell `view->head->next`; answering with `EscapeIfOwned` on it would be
+    /// the *discharging* direction on a place the admission never established,
+    /// which invariant 1 forbids. It is sound to answer `None` because the F4
+    /// base premise is `!FunctionTypes::may_bind(base)`, while every tracked
+    /// `->` place the projection holds (card O04-B08's aggregate store) is
+    /// rooted at a body-acquired name, which `may_bind` reports bound by
+    /// construction — so no place along an admitted chain, at any depth, is a
+    /// place the projection binds.
+    ///
+    /// **Measured boundary (`RETURN-POSITION-ESCAPE-UNREACHABLE`).** Those two
+    /// facts together make the `None` answer *unobservable today*: an
+    /// `EscapeIfOwned` on an admitted chain would consult
+    /// `state.pointers` for a place that is never there, and act as a no-op.
+    /// The arm is therefore a **backstop against a future card that weakens the
+    /// base premise**, justified by the argument above and by
+    /// `QCore.ReturnPositionEscape`, not by a test that distinguishes it — a
+    /// mutation replacing it with `canonical_place(&texts)` leaves the suite
+    /// green, and that was measured rather than assumed. Do not read the green
+    /// suite as evidence for this arm; read the theorem.
     Returned,
 }
 

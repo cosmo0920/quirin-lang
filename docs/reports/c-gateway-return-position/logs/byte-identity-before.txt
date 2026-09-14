@@ -1,0 +1,11 @@
+archive: docs/reports/w31-corpus-contracts-2/artifacts
+run:     measure/c-gateway-return-position/runs/before
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   ffe47fe666a76417 / ffe47fe666a76417
+ source           raw differs    canonical differs     e42fe7a9c40af1ca / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     e3fb5b62ece6a8a3 / f1a3c275d5ea0f43
+ contracts        raw differs    canonical differs     dd1276cfa80f4850 / 17fe29bdb44860d0
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.

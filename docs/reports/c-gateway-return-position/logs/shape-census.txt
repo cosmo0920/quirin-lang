@@ -1,0 +1,80 @@
+return-only-blocked functions: 511
+return-position leaves in that set: 538
+resolved to pinned source: 538
+
+shape                             count     pct
+call                                335   62.3%
+field-chain                          75   13.9%
+other                                58   10.8%
+conditional-expression               28    5.2%
+return-not-complete-on-line          22    4.1%
+subscript                             6    1.1%
+cast                                  5    0.9%
+address-of                            5    0.9%
+origin-line-is-not-a-return           2    0.4%
+deref                                 1    0.2%
+plain-name                            1    0.2%
+
+--- call ---
+   cmetrics.c:205                     cmt_label_add                            return cmt_labels_add_kv(cmt->static_labels, key, val);
+   cmt_atomic_clang.c:30              cmt_atomic_compare_exchange              return __atomic_compare_exchange(storage, &old_value, &new_value, 0, _
+   cmt_atomic_clang.c:41              cmt_atomic_load                          return __atomic_load_n(storage, __ATOMIC_SEQ_CST);
+   cmt_cat.c:1103                     cmt_cat                                  return append_context(dst, src);
+   cmt_decode_msgpack.c:1722          unpack_basic_type_values                 return cmt_mpack_unpack_array(reader, unpack_metric_array_entry, conte
+   cmt_decode_msgpack.c:2128          unpack_context_metrics                   return cmt_mpack_unpack_array(reader, unpack_basic_type_entry, context
+--- field-chain ---
+   ctr_id.c:125                       ctr_id_get_buf                           return cid->buf;
+   ctr_resource.c:119                 ctr_resource_span_get_resource           return resource_span->resource;
+   rdhttp.c:356                       rd_http_req_get_code                     return hreq->hreq_code;
+   rdkafka.c:7281                     rd_kafka_Uuid_least_significant_bits     return uuid->least_significant_bits;
+   rdkafka.c:7286                     rd_kafka_Uuid_most_significant_bits      return uuid->most_significant_bits;
+   rdkafka.c:6292                     rd_kafka_name                            return rk->rk_name;
+--- other ---
+   cmt_metric.c:176                   cmt_metric_get_value_type                return (int) cmt_atomic_load(&metric->value_type);
+   cmt_metric.c:272                   cmt_metric_has_start_timestamp           return cmt_atomic_load(&metric->start_timestamp_set) != 0;
+   cJSON.c:96                         cJSON_GetErrorPtr                        return (const char*) (global_error.json + global_error.position);
+   cJSON.c:3034                       cJSON_IsArray                            return (item->type & 0xFF) == cJSON_Array;
+   cJSON.c:2995                       cJSON_IsBool                             return (item->type & (cJSON_True | cJSON_False)) != 0;
+   cJSON.c:2974                       cJSON_IsFalse                            return (item->type & 0xFF) == cJSON_False;
+--- conditional-expression ---
+   cJSON.c:1980                       cJSON_HasObjectItem                      return cJSON_GetObjectItem(object, string) ? 1 : 0;
+   rdkafka.c:6411                     rd_kafka_outq_len                        return rd_kafka_curr_msgs_cnt(rk) + rd_kafka_q_len(rk->rk_rep) + (rk->
+   rdkafka_admin.c:7898               rd_kafka_MemberDescription_copy          return rd_kafka_MemberDescription_new( src->client_id, src->consumer_i
+   rdkafka_aux.c:120                  rd_kafka_group_result_copy               return rd_kafka_group_result_new( groupres->group, -1, groupres->parti
+   rdkafka_broker.c:3186              rd_kafka_broker_destroy_error            return rd_kafka_terminating(rk) ? RD_KAFKA_RESP_ERR__DESTROY : RD_KAFK
+   rdkafka_cgrp.c:4580                rd_kafka_topic_partition_has_absolute_of return rktpar->offset >= 0 ? 1 : 0;
+--- return-not-complete-on-line ---
+   lz4.c:389                          LZ4_read16                               static U16 LZ4_read16(const void* ptr) { return ((const LZ4_unalign*)p
+   lz4.c:390                          LZ4_read32                               static U32 LZ4_read32(const void* ptr) { return ((const LZ4_unalign*)p
+   lz4.c:391                          LZ4_read_ARCH                            static reg_t LZ4_read_ARCH(const void* ptr) { return ((const LZ4_unali
+   lz4.c:736                          LZ4_sizeofState                          int LZ4_sizeofState(void) { return sizeof(LZ4_stream_t); }
+   lz4.c:2704                         LZ4_sizeofStreamState                    int LZ4_sizeofStreamState(void) { return sizeof(LZ4_stream_t); }
+   lz4hc.c:88                         LZ4HC_hashPtr                            static U32 LZ4HC_hashPtr(const void* ptr) { return HASH_FUNCTION(LZ4_r
+--- subscript ---
+   crc32c.c:223                       crc32c_shift                             return zeros[0][crc & 0xff] ^ zeros[1][(crc >> 8) & 0xff] ^ zeros[2][(
+   rdhdrhistogram.c:176               rd_hdr_getCountAtIndex                   return hdr->counts[rd_hdr_countsIndex(hdr, bucketIdx, subBucketIdx)];
+   rdkafka.c:6670                     rd_kafka_consumer_group_state_name       return rd_kafka_consumer_group_state_names[state];
+   rdkafka.c:6691                     rd_kafka_consumer_group_type_name        return rd_kafka_consumer_group_type_names[type];
+   rdkafka.c:3922                     rd_kafka_messages_get                    return messages->elems[index];
+   rdkafka_share_acknowledgement.c:1200 rd_kafka_share_partition_offsets_list_ge return list->elems[index];
+--- cast ---
+   lz4.c:2724                         LZ4_slideInputBuffer                     return (char *)(uptrval)((LZ4_stream_t*)state)->internal_donotuse.dict
+   rdkafka_mock.c:3410                rd_kafka_handle_mock_cluster             return (rd_kafka_mock_cluster_t *)rk->rk_mock.cluster;
+   rdkafka_mock.c:3406                rd_kafka_mock_cluster_handle             return (rd_kafka_t *)mcluster->rk;
+   rdmap.c:156                        rd_map_cnt                               return (size_t)rmap->rmap_cnt;
+   snappy.c:373                       available                                return (int) s->total;
+--- address-of ---
+   rdkafka_admin.c:7957               rd_kafka_MemberDescription_assignment    return &member->assignment;
+   rdkafka_admin.c:9140               rd_kafka_TopicDescription_topic_id       return &topicdesc->topic_id;
+   rdkafka_admin.c:5789               rd_kafka_UserScramCredentialsDescription return &description->credential_infos[idx];
+   rdkafka_conf.c:4955                rd_kafka_conf                            return &rk->rk_conf;
+   mk_server/mk_plugin.c:719          mk_plugin_time_now_human                 return &server->clock_context->log_current_time;
+--- origin-line-is-not-a-return ---
+   nanopb/pb_decode.c:628             decode_pointer_field                     PB_RETURN_ERROR(stream, "no malloc support");
+   nanopb/pb_decode.c:315             pb_skip_field                            default: PB_RETURN_ERROR(stream, "invalid wire_type");
+--- deref ---
+   cmt_decode_statsd.c:95             is_incremental                           return (*str == '+' || *str == '-');
+--- plain-name ---
+   rdkafka.c:7137                     rd_kafka_errno                           return errno;
+
+wrote measure/c-gateway-return-position/shape-census.json

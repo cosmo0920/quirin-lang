@@ -1,0 +1,39 @@
+callees of `return CALL(...)` leaves in the 511 set: 335
+
+defined-in-same-.c (W4-derivable)                      166   49.6%
+NOT defined in the unit .c (external; stays Unknown)    99   29.6%
+defined-in-same-.c, static (W4-derivable)               70   20.9%
+
+--- defined-in-same-.c (W4-derivable) ---
+   cmt_histogram.c:91                       cmt_histogram_buckets_default_create cmt_histogram_buckets_create_size
+   ctr_mpack_utils.c:207                    ctr_mpack_consume_int64_tag          ctr_mpack_consume_int_tag
+   ctr_mpack_utils.c:157                    ctr_mpack_consume_uint64_tag         ctr_mpack_consume_uint_tag
+   ctr_span.c:448                           ctr_span_event_add                   ctr_span_event_add_ts
+   ctr_span.c:166                           ctr_span_set_parent_span_id_with_cid ctr_span_set_parent_span_id
+   ctr_span.c:139                           ctr_span_set_span_id_with_cid        ctr_span_set_span_id
+   ctr_span.c:114                           ctr_span_set_trace_id_with_cid       ctr_span_set_trace_id
+   cJSON.c:2286                             cJSON_DetachItemFromArray            cJSON_DetachItemViaPointer
+   cJSON.c:2771                             cJSON_Duplicate                      cJSON_Duplicate_rec
+   cJSON.c:1224                             cJSON_Parse                          cJSON_ParseWithOpts
+--- NOT defined in the unit .c (external; stays Unknown) ---
+   cmetrics.c:205                           cmt_label_add                        cmt_labels_add_kv
+   cmt_atomic_clang.c:30                    cmt_atomic_compare_exchange          __atomic_compare_exchange
+   cmt_atomic_clang.c:41                    cmt_atomic_load                      __atomic_load_n
+   cmt_decode_msgpack.c:1722                unpack_basic_type_values             cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:2128                unpack_context_metrics               cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:1550                unpack_meta_labels                   cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:1540                unpack_meta_static_labels            cmt_mpack_unpack_array
+   cmt_decode_msgpack.c:620                 unpack_metric_labels                 cmt_mpack_unpack_array
+   cmt_decode_prometheus_remote_write.c:33  __cmt_allocator_alloc                malloc
+   cmt_metric.c:277                         cmt_metric_get_start_timestamp       cmt_atomic_load
+--- defined-in-same-.c, static (W4-derivable) ---
+   cmt_cat.c:1103                           cmt_cat                              append_context
+   cmt_encode_opentelemetry.c:2490          append_attribute_to_data_point       append_attribute_to_numerical_data_point
+   cmt_encode_opentelemetry.c:2494          append_attribute_to_data_point       append_attribute_to_summary_data_point
+   cmt_encode_opentelemetry.c:2498          append_attribute_to_data_point       append_attribute_to_histogram_data_point
+   cmt_encode_opentelemetry.c:2502          append_attribute_to_data_point       append_attribute_to_exponential_histogram_data_point
+   cmt_encode_opentelemetry.c:2083          destroy_data_point                   destroy_numerical_data_point
+   cmt_encode_opentelemetry.c:2085          destroy_data_point                   destroy_summary_data_point
+   cmt_encode_opentelemetry.c:2087          destroy_data_point                   destroy_histogram_data_point
+   cmt_encode_opentelemetry.c:2089          destroy_data_point                   destroy_exponential_histogram_data_point
+   ctr_encode_opentelemetry.c:539           set_attributes_from_ctr              ctr_kvlist_to_otlp_kvpair_list

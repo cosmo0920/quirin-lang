@@ -1,3 +1,4 @@
+import QCore.ReturnPositionEscape
 import QCore.CGatewayRefinements
 import QCore.FixedScalarQuery
 import QCore.BucketTally

@@ -211,9 +211,21 @@ fn the_chain_admission_reaches_every_value_discarding_position() {
 }
 
 /// The refined soundness sentence's second clause, measured: a chain whose leaf
-/// is a **pointer** is admitted exactly where the position discards the value.
+/// is a **pointer** is admitted where the position discards the value, and —
+/// since card C-GATEWAY-RETURN-POSITION — also in a `return`, where it escapes
+/// nothing.
+///
+/// **This expectation was re-pinned deliberately.** Card REACH-GATE pinned the
+/// two `return` bodies below as `Unknown` carrying [`RETURN`], on the stated
+/// ground that `EscapeIfOwned` models only a canonical place. Card
+/// C-GATEWAY-RETURN-POSITION supplies that reasoning's missing answer rather
+/// than loosening it: by the F4 base premise the chain names no place the
+/// projection binds, so the exit escapes nothing and the node is a `NoOp`. The
+/// old assertion is replaced by the *stronger* pair — admitted **and**
+/// escaping nothing — not deleted. The discharging direction is pinned
+/// separately by `a_pointer_leaf_return_escapes_nothing_it_could_own`.
 #[test]
-fn a_pointer_leaf_is_admitted_in_a_condition_and_refused_in_a_return() {
+fn a_pointer_leaf_is_admitted_in_a_condition_and_in_a_return() {
     if !clang_available() {
         return;
     }
@@ -235,13 +247,58 @@ fn a_pointer_leaf_is_admitted_in_a_condition_and_refused_in_a_return() {
          return view->kind ? view->head : view->tail; }",
     ] {
         let measured = run(returned);
-        assert_ne!(measured.status, AnalysisStatus::Safe, "{returned}");
+        assert_eq!(
+            measured.status,
+            AnalysisStatus::Safe,
+            "{returned}: diagnostics {:?}",
+            measured.diagnostics
+        );
         assert!(
-            measured.unsupported().contains(&RETURN.to_owned()),
-            "{returned}: the existing return refusal must be retained, got {:?}",
+            !measured.unsupported().contains(&RETURN.to_owned()),
+            "{returned}: the return refusal must be withdrawn, got {:?}",
             measured.unsupported()
         );
     }
+}
+
+/// The obligation `admits_only_untracked_returned_pointer` places on its
+/// caller, measured through the real gateway: an admitted pointer-leaf return
+/// must escape **nothing**.
+///
+/// This is the arm that would be wrong in the *discharging* direction, so it is
+/// pinned on a body that carries a live obligation the widened return could
+/// have discharged. `canonical_place` can spell `view->head->next`; if the
+/// parser answered with that instead of `None`, `EscapeIfOwned` would consult
+/// the projection for a place the admission never established. The leak below
+/// is what proves it did not: it is reported *because* the exit is now modeled,
+/// which is this card's accusing direction working.
+#[test]
+fn a_pointer_leaf_return_escapes_nothing_it_could_own() {
+    if !clang_available() {
+        return;
+    }
+    let measured = run(
+        "struct z_node *subject(struct z_view *view) { void *p; p = q_alloc(); \
+         return view->head->next; }",
+    );
+    assert!(
+        !measured.unsupported().contains(&RETURN.to_owned()),
+        "the return is admitted: {:?}",
+        measured.unsupported()
+    );
+    assert_eq!(
+        measured.leaks(),
+        1,
+        "the acquisition is live at the admitted exit and must be reported, \
+         not escaped through the returned chain: {:?}",
+        measured.diagnostics
+    );
+    assert_ne!(
+        measured.status,
+        AnalysisStatus::Safe,
+        "a body that leaks must not be Safe: {:?}",
+        measured.diagnostics
+    );
 }
 
 /// The C02 §2 hazard, in an expression position: a member read through a base

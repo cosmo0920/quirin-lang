@@ -1,0 +1,59 @@
+========================================================================
+HEADLINE COUNTS
+========================================================================
+category               before      after    delta
+double_release              1          1       +0
+leak                      272        272       +0
+unknown_alias            4208       4208       +0
+unsupported             50150      50117      -33
+TOTAL                   54631      54598      -33
+
+units: 185 -> 185   functions: 4834 -> 4834
+unit status before: {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+unit status after:  {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}
+function status before: {'Unknown': 4603, 'Safe': 146, 'Unsafe': 85}
+function status after:  {'Unknown': 4570, 'Safe': 179, 'Unsafe': 85}
+
+========================================================================
+STATUS MOVES (separate from leaf moves)
+========================================================================
+unit status moves: 0
+function status moves: 33
+   promotions to Safe:      33
+   withdrawals from Safe:   0
+   newly provisional Unsafe:0
+
+========================================================================
+LEAF MOVES
+========================================================================
+leaves added:   0
+leaves removed: 33
+
+removed, by description:
+       33  unmodeled call, aggregate or indirect access in return expression
+added, by description:
+
+every ADDED leaf that is not `unsupported` (the accusing moves):
+   count: 0
+   library        unit                         function                                     line category       origin
+
+every REMOVED leaf that is not `unsupported`:
+   count: 0
+
+========================================================================
+THE THREE-WAY SPLIT OF THE RETURN-ONLY-BLOCKED FUNCTIONS
+  (the card's honesty requirement: clearing a return refusal that
+   merely becomes a different refusal decides nothing)
+========================================================================
+baseline return-only-blocked functions: 511
+  (1) end with ZERO leaves:             33    6.5%
+  (2) EXCHANGE it for another leaf:      0    0.0%
+  (3) unmoved (return leaf remains):   478   93.5%
+
+what the exchanged functions now carry:
+
+of the functions that ended leaf-free, their AFTER status:
+   {'Safe': 33}
+NOTE: leaf-free is NOT Safe. Safe additionally requires every
+obligation discharged and full analysed coverage at the certificate
+gate (constraint 12); the histogram above is the measured answer.

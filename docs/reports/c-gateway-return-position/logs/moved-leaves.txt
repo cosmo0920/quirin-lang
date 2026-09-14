@@ -1,0 +1,39 @@
+library      unit                       function                                   origin                         C at that coordinate
+chunkio      cio_file.c                 cio_file_hash                              cio_file.c:1306                return (cf->map + 2);
+ctraces      ctr_resource.c             ctr_resource_span_get_resource             ctr_resource.c:119             return resource_span->resource;
+librdkafka   rdkafka_admin.c            rd_kafka_AclBinding_error                  rdkafka_admin.c:5362           return acl->error;
+librdkafka   rdkafka_admin.c            rd_kafka_AclBinding_host                   rdkafka_admin.c:5342           return acl->host;
+librdkafka   rdkafka_admin.c            rd_kafka_AclBinding_name                   rdkafka_admin.c:5334           return acl->name;
+librdkafka   rdkafka_admin.c            rd_kafka_AclBinding_principal              rdkafka_admin.c:5338           return acl->principal;
+librdkafka   rdkafka_admin.c            rd_kafka_AlterUserScramCredentials_result_ rdkafka_admin.c:6170           return response->error;
+librdkafka   rdkafka_admin.c            rd_kafka_AlterUserScramCredentials_result_ rdkafka_admin.c:6164           return response->user;
+librdkafka   rdkafka_admin.c            rd_kafka_ConfigResource_name               rdkafka_admin.c:3088           return config->name;
+librdkafka   rdkafka_admin.c            rd_kafka_ConsumerGroupDescription_error    rdkafka_admin.c:8099           return grpdesc->error;
+librdkafka   rdkafka_admin.c            rd_kafka_ConsumerGroupDescription_group_id rdkafka_admin.c:8094           return grpdesc->group_id;
+librdkafka   rdkafka_admin.c            rd_kafka_ConsumerGroupDescription_partitio rdkafka_admin.c:8111           return grpdesc->partition_assignor;
+librdkafka   rdkafka_admin.c            rd_kafka_ConsumerGroupListing_group_id     rdkafka_admin.c:7320           return grplist->group_id;
+librdkafka   rdkafka_admin.c            rd_kafka_DeleteAcls_result_response_error  rdkafka_admin.c:6571           return result_response->error;
+librdkafka   rdkafka_admin.c            rd_kafka_MemberDescription_client_id       rdkafka_admin.c:7937           return member->client_id;
+librdkafka   rdkafka_admin.c            rd_kafka_MemberDescription_consumer_id     rdkafka_admin.c:7947           return member->consumer_id;
+librdkafka   rdkafka_admin.c            rd_kafka_MemberDescription_group_instance_ rdkafka_admin.c:7942           return member->group_instance_id;
+librdkafka   rdkafka_admin.c            rd_kafka_MemberDescription_host            rdkafka_admin.c:7952           return member->host;
+librdkafka   rdkafka_admin.c            rd_kafka_MemberDescription_target_assignme rdkafka_admin.c:7967           return member->target_assignment;
+librdkafka   rdkafka_admin.c            rd_kafka_TopicDescription_error            rdkafka_admin.c:9135           return topicdesc->error;
+librdkafka   rdkafka_admin.c            rd_kafka_TopicDescription_name             rdkafka_admin.c:9125           return topicdesc->topic;
+librdkafka   rdkafka_admin.c            rd_kafka_UserScramCredentialsDescription_e rdkafka_admin.c:5777           return description->error;
+librdkafka   rdkafka_admin.c            rd_kafka_UserScramCredentialsDescription_u rdkafka_admin.c:5772           return description->user;
+librdkafka   rdkafka_aux.c              rd_kafka_acl_result_error                  rdkafka_aux.c:192              return aclres->error;
+librdkafka   rdkafka_aux.c              rd_kafka_group_result_error                rdkafka_aux.c:105              return groupres->error;
+librdkafka   rdkafka_aux.c              rd_kafka_group_result_name                 rdkafka_aux.c:110              return groupres->group;
+librdkafka   rdkafka_aux.c              rd_kafka_topic_partition_result_error      rdkafka_aux.c:364              return partition_result->error;
+librdkafka   rdkafka_aux.c              rd_kafka_topic_result_error_string         rdkafka_aux.c:42               return topicres->errstr;
+librdkafka   rdkafka_aux.c              rd_kafka_topic_result_name                 rdkafka_aux.c:47               return topicres->topic;
+librdkafka   rdkafka_cgrp.c             rd_kafka_consumer_group_metadata_group_id  rdkafka_cgrp.c:7791            return group_metadata->group_id;
+librdkafka   rdkafka_cgrp.c             rd_kafka_consumer_group_metadata_group_ins rdkafka_cgrp.c:7801            return group_metadata->group_instance_id;
+librdkafka   rdkafka_cgrp.c             rd_kafka_consumer_group_metadata_member_id rdkafka_cgrp.c:7796            return group_metadata->member_id;
+librdkafka   snappy.c                   writer_check_length                        snappy.c:496                   return w->op == w->op_limit;
+
+shape of every moved leaf:
+    31  pointer-valued `->` chain
+     1  other: (cf->map + 2)
+     1  other: w->op == w->op_limit
