@@ -3364,12 +3364,25 @@ impl Parser<'_> {
                     .iter()
                     .map(|token| token.text.as_str())
                     .collect::<Vec<_>>();
+                // Card C-GATEWAY-RETURN-POSITION. The strict `Returned` rule is
+                // asked first and its answer is never weakened; only when it
+                // refuses does the pointer-leaf widening get a say, and an
+                // expression it admits escapes **nothing** — see
+                // `neutral_position::admits_only_untracked_returned_pointer`
+                // for the argument and for why `returned_place` must be `None`
+                // here rather than whatever `canonical_place` would spell.
+                let strict = self.supported_expression(&expression, ExpressionRole::Returned);
+                let untracked_pointer =
+                    !strict && self.supported_expression(&expression, ExpressionRole::Decides);
                 Ok(Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
-                    expression_supported: self
-                        .supported_expression(&expression, ExpressionRole::Returned),
-                    returned_place: canonical_place(&texts),
+                    expression_supported: strict || untracked_pointer,
+                    returned_place: if untracked_pointer {
+                        None
+                    } else {
+                        canonical_place(&texts)
+                    },
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
