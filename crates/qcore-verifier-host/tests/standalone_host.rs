@@ -181,10 +181,8 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     // it stays alive beyond this deadline, so Timeout would still be wrong.
     manifest.limits.timeout_ms = 100;
     let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
-    assert!(matches!(
-        provider.verify(&request),
-        Err(ProviderFailure::Io(_))
-    ));
+    let result = provider.verify(&request);
+    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
     std::thread::sleep(Duration::from_millis(350));
     assert!(!package.join("live.marker").exists());
 
@@ -204,10 +202,13 @@ fn closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request() {
     .unwrap();
     write_script("exec 0<&-\n/bin/cat response.bin");
     manifest.limits.timeout_ms = 1000;
+    let provider = UnverifiedProvider::new(manifest.clone(), &package).unwrap();
+    let result = provider.verify(&request);
+    assert!(matches!(result, Err(ProviderFailure::Io(_))), "{result:?}");
+    // The same large response succeeds when the provider consumes the whole
+    // request. This also pins active-pipe progress within the unchanged budget.
+    write_script("/bin/cat > /dev/null\n/bin/cat response.bin");
     let provider = UnverifiedProvider::new(manifest, &package).unwrap();
-    assert!(matches!(
-        provider.verify(&request),
-        Err(ProviderFailure::Io(_))
-    ));
+    assert_eq!(provider.verify(&request), Ok(response));
     fs::remove_dir_all(package).unwrap();
 }

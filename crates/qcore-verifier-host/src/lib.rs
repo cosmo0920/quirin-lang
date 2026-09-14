@@ -1702,6 +1702,7 @@ impl ProcessProvider {
                 }
                 return Err(ProviderFailure::Timeout);
             }
+            let progress_before = (sent, output.len(), error_output.len());
             if let Some(input) = stdin.as_mut() {
                 match input.write(&frame[sent..]) {
                     Ok(0) => {
@@ -1748,7 +1749,14 @@ impl ProcessProvider {
                 }
                 return decode_protocol_frame(output, limit);
             }
-            thread::sleep(Duration::from_millis(1));
+            // Back off only when all pipes would block. Sleeping after each
+            // successful 8 KiB read imposes a throughput ceiling that can
+            // exhaust the deadline while a provider is actively responding.
+            // Each iteration still checks the deadline and services both
+            // output pipes once, so continuous output cannot starve either.
+            if progress_before == (sent, output.len(), error_output.len()) {
+                thread::sleep(Duration::from_millis(1));
+            }
         }
     }
 }

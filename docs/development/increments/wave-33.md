@@ -6,6 +6,18 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+`VERIFIER-HOST-CLOSED-INPUT-DEADLINE` repair (2026-09-14): isolated reproduction
+localized the failure to the third, 1,000 ms large-response arm, correcting the
+ledger's earlier 100 ms attribution. Unconditional 1 ms sleeps after bounded
+8 KiB reads throttle the 8 MiB response past that budget. The host now backs
+off only when no pipe makes byte progress, retaining deadline checks, bounded
+reads, incomplete-request rejection and process-group cleanup. Original
+assertions and deadlines remain; an added control must receive the exact same
+response after transmitting the complete request. Evidence and gate results:
+[repair report](../../reports/verifier-host-closed-input-deadline/README.md).
+No language-semantic or Lean definition changes; native timing is observation,
+not a scheduling theorem, and no macOS run is claimed.
+
 `C-GATEWAY-RETURN-POSITION` (2026-09-14), wave 33's **only card and therefore its
 arbiter**: the C gateway's `return` position now admits a **pointer-valued
 bounded typed access chain**, which card REACH-GATE admitted only where the
