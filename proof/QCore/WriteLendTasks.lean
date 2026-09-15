@@ -150,7 +150,7 @@ theorem reachable_states_are_pairwise_disjoint {s : List Lease}
       rename_i previous t holder r
       unfold openLease at step
       by_cases admitted : admitsLease previous r = true
-      · rw [if_pos admitted] at step
+      · rw [ite_eq_left admitted] at step
         cases step
         simp only [admitsLease, Bool.and_eq_true, List.all_eq_true,
           Bool.not_eq_true'] at admitted
@@ -159,7 +159,7 @@ theorem reachable_states_are_pairwise_disjoint {s : List Lease}
         show overlaps r lease.range = false
         rw [overlaps_symm]
         exact admitted.2 lease outstanding
-      · rw [if_neg admitted] at step
+      · rw [ite_eq_right admitted] at step
         simp at step
   | closed holder _ ih =>
       exact List.Pairwise.sublist List.filter_sublist ih

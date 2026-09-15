@@ -707,7 +707,7 @@ private theorem payloadFlag_embed (t : List BaseEvent) :
   have hwrite : (t.map embed).any (isWriteOf b) = false := by
     rw [any_map_embed (isWriteOf_embed b) t]
     exact List.any_eq_false.mpr fun e _ => by simp
-  rw [hwrite, if_neg Bool.false_ne_true, payloadOf_map_embed]
+  rw [hwrite, ite_eq_right Bool.false_ne_true, payloadOf_map_embed]
   cases TaskTraceRelation.payloadOf t b with
   | none => rfl
   | some payload => exact any_map_embed (fun e => by cases e <;> rfl) t
@@ -1090,7 +1090,7 @@ theorem positionsFrom_spec {p : Event → Bool} :
   | cons a rest ih =>
     intro k i h
     by_cases ha : p a
-    · simp only [positionsFrom, ha, if_true, List.mem_cons] at h
+    · simp only [positionsFrom, ha, ite_true, List.mem_cons] at h
       rcases h with rfl | h
       · exact ⟨Nat.le_refl i, a, by simp, ha⟩
       · obtain ⟨hk, e, he, hpe⟩ := ih h
@@ -1131,7 +1131,7 @@ theorem mem_positions_of_getElem? {p : Event → Bool} :
       have harith : k + (i' + 1) = (k + 1) + i' := by omega
       rw [harith]
       by_cases ha : p a
-      · simp only [positionsFrom, ha, if_true, List.mem_cons]
+      · simp only [positionsFrom, ha, ite_true, List.mem_cons]
         exact Or.inr this
       · simpa [positionsFrom, ha] using this
 
@@ -1425,7 +1425,7 @@ theorem admitted_traces_satisfy_the_order_constraints (reference observed : List
     (h : relate reference observed = 0) : checkOrder observed = 0 := by
   have attributable := admitted_traces_are_attributable reference observed h
   have distinct := admitted_traces_have_distinct_occurrences reference observed h
-  simp only [relate, attributable, distinct, Bool.false_eq_true, if_false] at h
+  simp only [relate, attributable, distinct, Bool.false_eq_true, ite_false] at h
   split at h
   · exact absurd h (by decide)
   · split at h

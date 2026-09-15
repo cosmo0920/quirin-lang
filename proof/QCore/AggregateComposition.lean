@@ -616,7 +616,7 @@ theorem a_structurally_malformed_program_is_unknown (p : Program)
     | nil => rw [h] at mem; cases mem
     | cons _ _ => rfl
   refine verdict_unknown_of_mem (r := r) ?_
-  simp only [refusals, nonempty, notEmpty, if_false, Bool.false_eq_true]
+  simp only [refusals, nonempty, notEmpty, ite_false, Bool.false_eq_true]
   exact mem
 
 /-- ... and it reports only its structural refusals: no semantic refusal can be

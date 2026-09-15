@@ -557,7 +557,7 @@ theorem adapter_totality (live : Ledger) (k : Callee) (departing : List Nat) (fr
       (∃ l, stepCall live k departing fresh succeeds = .errorExit l) := by
   unfold stepCall
   by_cases h : acquires k = true
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     cases succeeds with
     | false => exact Or.inr ⟨_, rfl⟩
     | true => exact Or.inl ⟨_, _, rfl⟩
@@ -626,7 +626,7 @@ theorem the_custody_delta_is_exactly_the_declared_one (live : Ledger) (k : Calle
   have surviving := base departing live kept present
   unfold stepCall
   by_cases h : acquires k = true
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     cases succeeds with
     | false => simpa using surviving
     | true => simp [List.mem_cons, surviving]
@@ -667,7 +667,7 @@ theorem a_departing_identity_does_not_survive (live : Ledger) (k : Callee)
   have gone := base departing live moved
   unfold stepCall
   by_cases h : acquires k = true
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     cases succeeds with
     | false => simpa using gone
     | true => simp [List.mem_cons, gone, Ne.symm distinct]
@@ -994,7 +994,7 @@ theorem reallocation_adapter_totality (live : Ledger) (subject fresh : Nat) (suc
       (∃ l, stepRealloc live subject fresh succeeds ds = some (.errorExit l)) := by
   unfold stepRealloc
   by_cases h : armAdmits live ds = true
-  · simp only [h, Bool.not_true, Bool.false_eq_true, if_false]
+  · simp only [h, Bool.not_true, Bool.false_eq_true, ite_false]
     cases succeeds with
     | false => exact Or.inr (Or.inr ⟨_, rfl⟩)
     | true => exact Or.inr (Or.inl ⟨_, _, rfl⟩)
@@ -1209,7 +1209,7 @@ theorem a_scalar_binding_introduces_no_identity (e : Env) (k : Callee)
   by_cases hb : bindsScalar k = true
   · by_cases hn : n ∈ e.live
     · simp [stepBind, hb, hn] at h
-    · simp only [stepBind, hb, hn, Bool.not_true, Bool.false_eq_true, if_false,
+    · simp only [stepBind, hb, hn, Bool.not_true, Bool.false_eq_true, ite_false,
         Option.some.injEq, List.elem_iff] at h
       subst h
       exact base departing e.live hx

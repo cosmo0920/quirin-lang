@@ -252,12 +252,12 @@ theorem every_admitted_rendering_discharges_the_owned_transfer
   have hlen : t.length = 7 := by
     have := admitted_traces_report_the_same_facts roundTrip t h
     simpa [roundTrip] using this
-  simp only [relate, hattr, hdup, Bool.false_eq_true, if_false] at h
+  simp only [relate, hattr, hdup, Bool.false_eq_true, ite_false] at h
   by_cases hmultiset : (t.length != roundTrip.length
       || t.any fun event => !roundTrip.contains event) = true
-  · rw [if_pos hmultiset] at h
+  · rw [ite_eq_left hmultiset] at h
     exact absurd h (by decide)
-  rw [if_neg hmultiset] at h
+  rw [ite_eq_right hmultiset] at h
   have hsub : ∀ e ∈ t, e ∈ roundTrip := by
     intro e he
     have hparts := Bool.or_eq_false_iff.mp (Bool.not_eq_true _ ▸ hmultiset :
@@ -267,9 +267,9 @@ theorem every_admitted_rendering_discharges_the_owned_transfer
     exact List.contains_iff_mem.mp (by simpa using this)
   by_cases hactors : ((sortNats (roundTrip.filterMap actorOf)).any
       fun actor => projection t actor != projection roundTrip actor) = true
-  · rw [if_pos hactors] at h
+  · rw [ite_eq_left hactors] at h
     exact absurd h (by decide)
-  rw [if_neg hactors] at h
+  rw [ite_eq_right hactors] at h
   have hprojections : projection t 0 = projection roundTrip 0 ∧
       projection t 1 = projection roundTrip 1 := by
     have hs : sortNats (roundTrip.filterMap actorOf) = [0, 1] := by decide

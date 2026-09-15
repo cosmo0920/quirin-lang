@@ -439,18 +439,11 @@ theorem agreement_is_declaration_equals_header (e : Entry) (ps : List AbiType)
     agrees e ps result = true ↔ e.parameters = ps ∧ e.result = result := by
   simp [agrees]
 
-/-! ## Determinism
+/-! ## Premise agreement
 
-The manifest binding and the admission it feeds are functions of their inputs,
-so a certificate rederivation repeats them and reproduces the premise that was
-published rather than believing it. -/
-
-theorem the_binding_is_a_function (m : Manifest) (symbol : String) :
-    m.binding symbol = m.binding symbol := rfl
-
-theorem admission_is_deterministic (m? : Option Manifest) (name : String)
-    (ps : List AbiType) (result : AbiType) :
-    admit m? name ps result = admit m? name ps result := rfl
+Binding and admission are pure functions in this model. The theorem below
+compares the premises of two admitted results; it does not prove that a Rust
+certificate consumer faithfully repeats either computation. -/
 
 /-- And the published premise is a function of the admission, so two
 rederivations of the same declaration publish the same premise. -/

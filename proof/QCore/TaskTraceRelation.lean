@@ -310,7 +310,7 @@ theorem admitted_traces_satisfy_the_order_constraints (reference observed : List
     (h : relate reference observed = 0) : checkOrder observed = 0 := by
   have attributable := admitted_traces_are_attributable reference observed h
   have distinct := admitted_traces_have_distinct_occurrences reference observed h
-  simp only [relate, attributable, distinct, Bool.false_eq_true, if_false] at h
+  simp only [relate, attributable, distinct, Bool.false_eq_true, ite_false] at h
   split at h
   · exact absurd h (by decide)
   · split at h

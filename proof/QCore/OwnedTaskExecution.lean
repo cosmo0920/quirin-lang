@@ -248,7 +248,7 @@ theorem reservation_blocks_parent_buffer_access
   split at checked
   · have held := checked_transfer_places_exact_resources checked capture.resource
     have selected : capture.resource ∈ captureResources captures := List.mem_map.mpr ⟨capture, member, rfl⟩
-    simp only [if_pos selected] at held
+    simp only [ite_eq_left selected] at held
     simp [readBuffer, binding, held]
   · contradiction
 

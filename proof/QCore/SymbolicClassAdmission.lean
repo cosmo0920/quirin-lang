@@ -94,8 +94,8 @@ theorem a_truth_test_is_decided_only_when_zero_is_excluded (e : Excluded) (b : B
     (h : decideTruth e = some b) : b = true ∧ inClass e 0 = false := by
   unfold decideTruth at h
   by_cases hz : e.memory ≠ 0 ∧ e.filesystem ≠ 0
-  · rw [if_pos hz] at h; cases h
-  · rw [if_neg hz] at h
+  · rw [ite_eq_left hz] at h; cases h
+  · rw [ite_eq_right hz] at h
     refine ⟨by cases h; rfl, ?_⟩
     by_cases hm : e.memory = 0
     · simp [inClass, hm]
@@ -125,9 +125,9 @@ theorem a_supported_kind_is_never_symbolic (e : Excluded) (v : Int)
     (h : v = e.memory ∨ v = e.filesystem) : classify e v ≠ Arm.symbolic := by
   unfold classify
   by_cases hm : v = e.memory
-  · rw [if_pos hm]; simp
+  · rw [ite_eq_left hm]; simp
   · have hf : v = e.filesystem := h.resolve_left hm
-    rw [if_neg hm, if_pos hf]; simp
+    rw [ite_eq_right hm, ite_eq_left hf]; simp
 
 /-- **Masquerade direction two.** No member of the symbolic class is ever
 classified onto a supported arm. -/
@@ -136,7 +136,7 @@ theorem a_symbolic_member_is_never_supported (e : Excluded) (v : Int)
     classify e v ≠ Arm.memory ∧ classify e v ≠ Arm.filesystem := by
   simp [inClass, Bool.and_eq_true] at h
   unfold classify
-  rw [if_neg h.1, if_neg h.2]
+  rw [ite_eq_right h.1, ite_eq_right h.2]
   exact ⟨by simp, by simp⟩
 
 /-- The symbolic arm is exactly the class, in both directions. -/
@@ -146,13 +146,13 @@ theorem the_symbolic_arm_is_exactly_the_class (e : Excluded) (v : Int) :
   constructor
   · intro h
     by_cases hm : v = e.memory
-    · rw [if_pos hm] at h; cases h
+    · rw [ite_eq_left hm] at h; cases h
     · by_cases hf : v = e.filesystem
-      · rw [if_neg hm, if_pos hf] at h; cases h
+      · rw [ite_eq_right hm, ite_eq_left hf] at h; cases h
       · simp [hm, hf]
   · intro h
     simp [Bool.and_eq_true] at h
-    rw [if_neg h.1, if_neg h.2]
+    rw [ite_eq_right h.1, ite_eq_right h.2]
 
 /-- **Collapsed constants make the classification non-total**: with one constant
 the filesystem arm is unreachable, so the two probes are required to differ.
@@ -161,17 +161,17 @@ theorem collapsed_constants_hide_the_filesystem_arm (e : Excluded)
     (h : e.memory = e.filesystem) (v : Int) : classify e v ≠ Arm.filesystem := by
   unfold classify
   by_cases hm : v = e.memory
-  · rw [if_pos hm]; simp
+  · rw [ite_eq_left hm]; simp
   · have hf : ¬ v = e.filesystem := by rw [← h]; exact hm
-    rw [if_neg hm, if_neg hf]; simp
+    rw [ite_eq_right hm, ite_eq_right hf]; simp
 
 /-- And with distinct constants both supported arms really are reachable, so the
 requirement is not a vacuous one. -/
 theorem distinct_constants_reach_both_arms (e : Excluded) (h : e.memory ≠ e.filesystem) :
     classify e e.memory = Arm.memory ∧ classify e e.filesystem = Arm.filesystem := by
   unfold classify
-  refine ⟨by rw [if_pos rfl], ?_⟩
-  rw [if_neg (Ne.symm h), if_pos rfl]
+  refine ⟨by rw [ite_eq_left rfl], ?_⟩
+  rw [ite_eq_right (Ne.symm h), ite_eq_left rfl]
 
 /-! ### The one composition prerequisite -/
 

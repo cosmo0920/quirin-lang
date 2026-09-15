@@ -230,11 +230,11 @@ theorem empty_means_no_direct_call {exempt : List Line} {index : Nat}
     intro l hl
     simp only [violations] at h
     by_cases hExempt : exempt.contains a = true
-    · rw [if_pos hExempt] at h
+    · rw [ite_eq_left hExempt] at h
       cases List.mem_cons.mp hl with
       | inl hEq => exact hEq ▸ Or.inl hExempt
       | inr hMem => exact ih h l hMem
-    · rw [if_neg hExempt] at h
+    · rw [ite_eq_right hExempt] at h
       cases hScan : scanLine a with
       | some s => rw [hScan] at h; simp at h
       | none =>
@@ -257,8 +257,8 @@ theorem no_direct_call_means_empty {exempt : List Line} {index : Nat}
       fun l hl => h l (List.mem_cons_of_mem a hl)
     simp only [violations]
     by_cases hExempt : exempt.contains a = true
-    · rw [if_pos hExempt]; exact ih hRest
-    · rw [if_neg hExempt]
+    · rw [ite_eq_left hExempt]; exact ih hRest
+    · rw [ite_eq_right hExempt]
       cases hHead with
       | inl hc => exact absurd hc hExempt
       | inr hScan => rw [hScan]; exact ih hRest

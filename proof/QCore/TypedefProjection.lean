@@ -210,8 +210,8 @@ theorem no_arithmetic_projection_admits_a_function_pointer
   show admits (if outer = 0 then some s else pointerProjection outer constPointee)
       AbiType.fnptr = false
   by_cases ho : outer = 0
-  · rw [if_pos ho]; simpa [admits] using h
-  · rw [if_neg ho]
+  · rw [ite_eq_left ho]; simpa [admits] using h
+  · rw [ite_eq_right ho]
     exact a_pointer_projection_never_admits_a_function_pointer outer constPointee
 
 /-! ### `ABI-FNPTR-DEPTH1` -/

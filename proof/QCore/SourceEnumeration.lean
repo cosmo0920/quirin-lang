@@ -257,13 +257,13 @@ theorem mem_dedup {name : Name} : ∀ names : List Name,
   | nil => simp [dedup]
   | cons head rest ih =>
       by_cases h : head ∈ dedup rest
-      · simp only [dedup, if_pos h, List.mem_cons]
+      · simp only [dedup, ite_eq_left h, List.mem_cons]
         constructor
         · exact fun member => Or.inr (ih.mp member)
         · rintro (rfl | member)
           · exact h
           · exact ih.mpr member
-      · simp only [dedup, if_neg h, List.mem_cons]
+      · simp only [dedup, ite_eq_right h, List.mem_cons]
         exact or_congr Iff.rfl ih
 
 /-- `enumerate_source_definitions`, over its three inputs: the historical raw

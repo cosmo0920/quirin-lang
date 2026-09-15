@@ -30,8 +30,11 @@ revision and still contains the source constructs the Cycle 18 model relies
 on; CI initializes the submodule before this gate. The Lean toolchain is
 selected through `proof/lean-toolchain` (install elan first). The audit runner
 starts Lake inside `proof`, builds incrementally, then runs every `Audit*.lean`
-with warnings treated as failures. It reports elapsed time every 15 seconds,
-limits the build to 600 seconds and each audit to 120 seconds, and stops the
+with warnings treated as failures. The QCore library build also treats warnings
+as errors. The pin is Lean 4.34.0; use `ite_eq_left`, `ite_eq_right`, `ite_true`
+and `ite_false` instead of the deprecated `if_*` names. The runner reports
+elapsed time every 15 seconds, limits the build to 600 seconds and each audit
+to 120 seconds, and stops the
 active process tree on timeout or Ctrl-C. Limits can be set with
 `--build-timeout`, `--audit-timeout`, and `--heartbeat`; `--verbose` shows Lake
 build commands. Use `--skip-build` only after a successful build of the current

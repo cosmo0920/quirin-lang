@@ -316,10 +316,10 @@ theorem firstDivergence_some (fs : List Field) (i t : Field → Nat) (f : Field)
   | nil => simp [firstDivergence]
   | cons g rest ih =>
     by_cases h : i g = t g
-    · simp only [firstDivergence, h, if_pos]
+    · simp only [firstDivergence, h, ite_eq_left]
       intro hs
       exact ⟨(ih hs).1, by simp [(ih hs).2]⟩
-    · simp only [firstDivergence, h, if_neg, not_false_iff]
+    · simp only [firstDivergence, h, ite_eq_right, not_false_iff]
       intro hs
       cases hs
       exact ⟨h, by simp⟩
@@ -371,7 +371,7 @@ theorem bind_eq_bound_iff (installed template : Manifest) (d : Nat) :
     · refine ⟨hd, ?_⟩
       have : firstDivergence allFields installed.value template.value = none := by
         revert h
-        simp only [bind, hd, ne_eq, not_true_eq_false, if_neg, not_false_iff]
+        simp only [bind, hd, ne_eq, not_true_eq_false, ite_eq_right, not_false_iff]
         cases hf : firstDivergence allFields installed.value template.value with
         | none => intro _; rfl
         | some f => simp
@@ -392,7 +392,7 @@ theorem divergent_names_a_real_divergence
   by_cases hd : installed.digest = d
   · have : firstDivergence allFields installed.value template.value = some f := by
       revert h
-      simp only [bind, hd, ne_eq, not_true_eq_false, if_neg, not_false_iff]
+      simp only [bind, hd, ne_eq, not_true_eq_false, ite_eq_right, not_false_iff]
       cases hf : firstDivergence allFields installed.value template.value with
       | none => simp
       | some g => intro hg; cases hg; rfl

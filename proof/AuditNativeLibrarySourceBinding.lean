@@ -12,7 +12,6 @@ import QCore.NativeLibrarySourceBinding
 #print axioms QCore.NativeLibrarySourceBinding.an_unknown_name_refuses
 #print axioms QCore.NativeLibrarySourceBinding.an_ambiguous_name_refuses
 #print axioms QCore.NativeLibrarySourceBinding.a_repeated_name_refuses
-#print axioms QCore.NativeLibrarySourceBinding.resolution_is_a_function
 
 -- **An unbound file is unchanged.** The card is opt-in: an empty binding list is
 -- the selection-wide view, and such a file is never owed a refusal.

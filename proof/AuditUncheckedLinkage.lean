@@ -53,7 +53,6 @@ import QCore.ModuleImports
 
 -- Admission and the premise it produces are functions of the declaration, so a
 -- rederivation reproduces the premise that was published.
-#print axioms QCore.UncheckedLinkage.admission_is_deterministic
 #print axioms QCore.UncheckedLinkage.the_premise_is_a_function_of_the_callee
 
 -- The file-local module gate is a second, independent opt-in: the waiver is

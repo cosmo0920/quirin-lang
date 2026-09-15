@@ -296,9 +296,9 @@ theorem step_preserves_accounted {state next : St} {op : Op}
         split at checked
         · cases checked
           by_cases zero : amount = 0
-          · simp only [accounted, frameTotal, zero, if_pos]
+          · simp only [accounted, frameTotal, zero, ite_eq_left]
             omega
-          · simp only [accounted, frameTotal, childTotal, if_neg zero]
+          · simp only [accounted, frameTotal, childTotal, ite_eq_right zero]
             omega
         · simp at checked
   | complete child unspent =>
@@ -468,7 +468,7 @@ theorem discharge_requires_every_join {state : St} {pack : Pack} {handle : Nat}
   have live : outstanding state (.join handle) = true := by
     simp only [outstanding, unjoined, Bool.not_false]
   have gate := gate_of_member present live (by intro resource h; cases h)
-  simp only [step, opened, gate, Bool.false_eq_true, if_false]
+  simp only [step, opened, gate, Bool.false_eq_true, ite_false]
 
 /-- The same for a read loan the region opened: read access held by somebody
 else is a duty, not spare credit. -/
@@ -480,7 +480,7 @@ theorem discharge_requires_every_loan_to_expire {state : St} {pack : Pack} {reso
   have live : outstanding state (.loanExpiry resource) = true := by
     simp only [outstanding, lent]
   have gate := gate_of_member present live (by intro other h; cases h)
-  simp only [step, opened, gate, Bool.false_eq_true, if_false]
+  simp only [step, opened, gate, Bool.false_eq_true, ite_false]
 
 /-- Acceptance 2, second clause: credit that is out with a child is not the
 parent's to abandon. -/
@@ -493,7 +493,7 @@ theorem a_parent_cannot_abandon_credit_held_by_a_child {state : St} {pack : Pack
   have live : outstanding state (.childCredit child) = true := by
     simp only [outstanding, held]
   have gate := gate_of_member present live (by intro resource h; cases h)
-  simp only [step, opened, gate, Bool.false_eq_true, if_false]
+  simp only [step, opened, gate, Bool.false_eq_true, ite_false]
 
 /-- A normal region exit is gated identically, so there is no exit at all that
 discards a live obligation. -/
@@ -574,7 +574,7 @@ theorem a_creation_records_every_duty_it_opens {state next : St}
       simp only [List.mem_cons, List.mem_append, List.mem_map]
       exact Or.inr (Or.inl (Or.inl ⟨resource, member, rfl⟩))
     · intro nonzero
-      simp only [List.mem_cons, List.mem_append, if_neg nonzero]
+      simp only [List.mem_cons, List.mem_append, ite_eq_right nonzero]
       exact Or.inr (Or.inl (Or.inr (by simp)))
   · simp at checked
 
@@ -589,7 +589,7 @@ theorem a_join_returns_exactly_the_unspent_child_credit {state next : St}
     (checked : step state (.joinChild child handle loans) = some next) :
     next.frames = { frame with allowable := frame.allowable + found } :: rest ∧
       next.children = remainder ∧ next.joined = handle :: state.joined := by
-  simp only [step, frames, fresh, held, Bool.false_eq_true, if_false] at checked
+  simp only [step, frames, fresh, held, Bool.false_eq_true, ite_false] at checked
   cases checked
   exact ⟨rfl, rfl, rfl⟩
 

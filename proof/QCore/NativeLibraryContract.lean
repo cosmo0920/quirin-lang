@@ -421,13 +421,7 @@ theorem a_slice_that_cannot_acquire_is_closed (identity : Identity) (ps : Premis
     closedCustody (fun _ => ⟨false, false⟩) ⟨identity, ps, none, entries⟩ = true := by
   simp [closedCustody]
 
-/-! ## Determinism and non-vacuity -/
-
-theorem the_binding_is_a_function (m : Manifest) (symbol : String) :
-    m.binding symbol = m.binding symbol := rfl
-
-theorem admission_is_deterministic (m? : Option Manifest) (d : Declaration) :
-    admit m? d = admit m? d := rfl
+/-! ## Non-vacuity -/
 
 /-- **A contract slice entry may declare a pointer**, which is the level's whole
 reason to exist: the contract-less entry gate of `QCore.NativeLibrary` refuses

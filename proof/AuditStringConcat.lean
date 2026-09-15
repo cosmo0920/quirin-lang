@@ -76,8 +76,8 @@ import QCore.StringConcat
 #print axioms QCore.StringConcat.neither_added_operation_derives_alloc
 #print axioms QCore.StringConcat.neither_added_operation_derives_mut
 
--- Why `freeze_utf8` is not here: a view has no custody component for a release
--- to discharge, and the added vocabulary is exactly two operations, written as
--- one list so a widening changes a theorem rather than slipping past.
-#print axioms QCore.StringConcat.a_view_carries_no_custody
+-- The view's equality is determined by its three components. This is a
+-- representation check, not an ownership theorem. The added vocabulary is
+-- exactly two operations.
+#print axioms QCore.StringConcat.views_equal_iff_components_equal
 #print axioms QCore.StringConcat.the_added_operations_are_exactly_two

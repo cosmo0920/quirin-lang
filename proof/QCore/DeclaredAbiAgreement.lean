@@ -248,7 +248,7 @@ theorem reading_a_first_declaration_never_admits {e : Environment} {n : Name}
       = none := by
   by_cases hp : e.poisoned = true
   · unfold applied withdrawal
-    simp only [hp, if_true]
+    simp only [hp, ite_true]
     cases e.contracts n with
     | none => simp
     | some k => simp

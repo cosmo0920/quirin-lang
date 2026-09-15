@@ -214,9 +214,9 @@ theorem guard_uses_are_uses :
       simp only [List.mem_map] at hc
       obtain ⟨d, hd, rfl⟩ := hc
       by_cases hdep : (deps op).contains d.operation
-      · simp only [hdep, if_true] at hu ⊢
+      · simp only [hdep, ite_true] at hu ⊢
         by_cases hg : isGuard op
-        · simp only [hg, if_true] at hu
+        · simp only [hg, ite_true] at hu
           simp only [List.mem_append, List.mem_singleton] at hu ⊢
           rcases hu with hu | hu
           · exact Or.inl (inv d hd u hu)

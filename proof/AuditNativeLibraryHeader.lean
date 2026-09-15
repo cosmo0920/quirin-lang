@@ -82,6 +82,5 @@ import QCore.NativeLibraryHeader
 #print axioms QCore.NativeLibraryHeader.an_arity_difference_disagrees
 #print axioms QCore.NativeLibraryHeader.an_internal_declaration_refuses_even_when_it_agrees
 
--- **Determinism and non-vacuity.**
-#print axioms QCore.NativeLibraryHeader.the_binding_is_a_function
+-- **Non-vacuity.**
 #print axioms QCore.NativeLibraryHeader.an_agreeing_binding_is_admitted

@@ -15,7 +15,6 @@ import QCore.BranchJoin
 -- the compiled program agree: a run-time-varying condition would leave "the"
 -- observation ill-defined.
 #print axioms QCore.BranchJoin.every_condition_has_a_value
-#print axioms QCore.BranchJoin.evaluation_is_state_free
 #print axioms QCore.BranchJoin.the_comparisons_are_the_relations
 
 -- 2. The join is agreement between the arms that *survive* to it, never

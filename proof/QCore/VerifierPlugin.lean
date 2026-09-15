@@ -413,7 +413,7 @@ theorem representative_is_every_component
   | cons head tail =>
     unfold representative at published
     by_cases uniform : tail.all (fun other => other == head) = true
-    · simp only [uniform, if_true, Option.some.injEq] at published
+    · simp only [uniform, ite_true, Option.some.injEq] at published
       cases published
       rcases List.mem_cons.mp member with rfl | inTail
       · rfl

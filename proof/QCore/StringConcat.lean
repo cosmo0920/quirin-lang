@@ -40,8 +40,9 @@ faithfully from source tokens, and that this model's `wellFormed` is full UTF-8
 validation — it decodes the lead/continuation structure and does not reject
 overlong forms or surrogates, which the Rust side rejects by delegating to the
 language's own decoder at the one point bytes enter the model. `freeze_utf8` is
-**not** modelled, because it is not implemented: `a_view_carries_no_custody`
-records why — v1's view has no custody field for a release to discharge. -/
+**not** modelled, because it is not implemented: v1's `View` declaration has
+no custody field for a release to discharge. `views_equal_iff_components_equal`
+characterizes equality of this representation; it is not an ownership theorem. -/
 
 namespace QCore.StringConcat
 
@@ -430,14 +431,15 @@ theorem neither_added_operation_derives_mut (added : Added) :
     Effect.mut ∉ addedEffects added := by
   cases added <;> simp [addedEffects]
 
-/-- **A view carries no custody identity, and that is why `freeze_utf8` is not
-here.** `QCore.StdString.View` is `{storage, offset, len}` and nothing else: an
-owned string would need a fourth component for a release to discharge, and every
-theorem above and in `QCore.StdString` would be a theorem about a different type.
-Stated as a structural fact so that adding one changes a theorem rather than
-slipping past. -/
-theorem a_view_carries_no_custody (view : View) :
-    view = { storage := view.storage, offset := view.offset, len := view.len } := rfl
+/-- These three components completely determine a view. This is a property
+of the representation, not a proof that arbitrary strings carry no custody.
+An additional independent field would invalidate the reverse implication. -/
+theorem views_equal_iff_components_equal (left right : View) :
+    left = right ↔ left.storage = right.storage ∧ left.offset = right.offset ∧
+      left.len = right.len := by
+  cases left
+  cases right
+  simp only [View.mk.injEq]
 
 /-- The added vocabulary is exactly two operations, written as one list so a
 widening changes a theorem rather than slipping past it — the

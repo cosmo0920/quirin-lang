@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-16",
+  "base_commit": "aeef9bbc352880085b7651552e2d9786f5bb4983",
+  "scope": "Proof statements, audit guard, Lean toolchain and deprecated lemma names; no Rust semantics changed",
+  "checks": [
+    {
+      "command": "git submodule update --init --recursive",
+      "exit": 0,
+      "log": null
+    },
+    {
+      "command": "cargo test --workspace --no-fail-fast",
+      "exit": 0,
+      "log": "private/lean-integrity-review/workspace-tests-unsandboxed.log"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit": 0,
+      "log": "private/lean-integrity-review/fmt.log"
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "exit": 0,
+      "log": "private/lean-integrity-review/clippy.log"
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+      "exit": 0,
+      "log": "private/lean-integrity-review/reevaluation-probe.log"
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit": 0,
+      "log": "private/lean-integrity-review/reevaluation-followup.log"
+    },
+    {
+      "command": "python3 scripts/check_lean_audits.py",
+      "exit": 0,
+      "log": "private/lean-integrity-review/audits-release.log"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/tests",
+      "exit": 0,
+      "log": "private/lean-integrity-review/python-tests.log"
+    },
+    {
+      "command": "lake -d proof lean proof/QCore.lean",
+      "exit": 0,
+      "log": "private/lean-integrity-review/user-command.log"
+    }
+  ],
+  "workspace": {
+    "passed": 4544,
+    "failed": 0,
+    "ignored": 8,
+    "test_binaries": 216,
+    "doc_test_summaries": 9,
+    "result_summaries": 227,
+    "doc_test_result_summaries": 11
+  },
+  "lean": {
+    "version": "4.34.0",
+    "audits": 128,
+    "axiom_checked_declarations": 42938,
+    "statement_checked_non_internal_public_theorems": 8884,
+    "warnings": 0,
+    "allowed_axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ]
+  },
+  "python": {
+    "passed": 227
+  },
+  "negative_controls": {
+    "self-equality": {
+      "exit": 1,
+      "expected_error": "theorem concludes only self-equality",
+      "matched": true
+    },
+    "assumed-conclusion": {
+      "exit": 1,
+      "expected_error": "theorem assumes its exact conclusion",
+      "matched": true
+    },
+    "if_pos": {
+      "exit": 1,
+      "deprecated": true
+    },
+    "ite_eq_left": {
+      "exit": 0,
+      "deprecated": false
+    },
+    "original-catch-statement": {
+      "exit": 1,
+      "matched": true
+    }
+  },
+  "deprecation_cleanup": {
+    "references": 144,
+    "modules": 33
+  },
+  "prior_environment_failures": [
+    {
+      "command": "git submodule update --init --recursive",
+      "exit": 128,
+      "reason": "sandbox disallowed Git submodule config write",
+      "resolution": "same command succeeded with writable Git metadata"
+    },
+    {
+      "command": "cargo test --workspace --no-fail-fast",
+      "exit": 130,
+      "reason": "interrupted after LeakSanitizer ptrace restriction failures",
+      "resolution": "complete unmodified gate rerun outside sandbox, exit 0"
+    }
+  ],
+  "raw_logs_policy": "Worktree-private, gitignored; these paths are local evidence, not archived logs",
+  "semantic_review_boundary": "LEAN-STATEMENT-SEMANTIC-REVIEW: statement shape checks do not establish arbitrary non-vacuity or Rust/model correspondence"
+}

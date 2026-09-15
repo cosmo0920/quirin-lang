@@ -122,7 +122,7 @@ def keys (fragments : List Fragment) : List String :=
 theorem dedupFrom_skips_seen {seen : List String} {f : Fragment}
     {rest : List Fragment} (h : f.key ∈ seen) :
     dedupFrom seen (f :: rest) = dedupFrom seen rest := by
-  simp only [dedupFrom, if_pos h]
+  simp only [dedupFrom, ite_eq_left h]
 
 /-- Every key the result carries was already in the input. -/
 theorem dedupFrom_key_mem {seen : List String} :
@@ -136,7 +136,7 @@ theorem dedupFrom_key_mem {seen : List String} :
     by_cases hs : a.key ∈ seen
     · rw [dedupFrom_skips_seen hs] at h
       exact List.mem_cons_of_mem a (ih h)
-    · simp only [dedupFrom, if_neg hs, List.mem_cons] at h
+    · simp only [dedupFrom, ite_eq_right hs, List.mem_cons] at h
       cases h with
       | inl hEq => exact hEq ▸ (by simp)
       | inr hMem => exact List.mem_cons_of_mem a (ih hMem)
@@ -153,7 +153,7 @@ theorem dedupFrom_avoids_seen {seen : List String} :
     by_cases hs : a.key ∈ seen
     · rw [dedupFrom_skips_seen hs] at h
       exact ih h
-    · simp only [dedupFrom, if_neg hs, List.mem_cons] at h
+    · simp only [dedupFrom, ite_eq_right hs, List.mem_cons] at h
       cases h with
       | inl hEq => exact hEq ▸ hs
       | inr hMem =>
@@ -170,7 +170,7 @@ theorem dedupFrom_keys_nodup {seen : List String} :
   | cons a rest ih =>
     by_cases hs : a.key ∈ seen
     · rw [dedupFrom_skips_seen hs]; exact ih
-    · simp only [dedupFrom, if_neg hs, keys, List.map_cons, List.nodup_cons]
+    · simp only [dedupFrom, ite_eq_right hs, keys, List.map_cons, List.nodup_cons]
       refine ⟨?_, ih⟩
       intro hMem
       obtain ⟨g, hg, hkey⟩ := List.mem_map.mp hMem
@@ -198,7 +198,7 @@ theorem dedupFrom_of_nodup_disjoint :
     have hHead : a.key ∉ seen := hSeen a (by simp)
     simp only [keys, List.map_cons, List.nodup_cons] at hNodup
     obtain ⟨hNotMem, hRest⟩ := hNodup
-    simp only [dedupFrom, if_neg hHead, List.cons.injEq, true_and]
+    simp only [dedupFrom, ite_eq_right hHead, List.cons.injEq, true_and]
     refine ih hRest ?_
     intro f hf hMem
     cases List.mem_cons.mp hMem with
@@ -249,9 +249,9 @@ theorem countOccurrences_append_le (needle a b : Text) :
   | cons c rest ih =>
     simp only [List.cons_append, countOccurrences]
     by_cases h : needle.isPrefixOf (c :: (rest ++ b)) = true
-    · simp only [h, if_pos]
+    · simp only [h, ite_eq_left]
       omega
-    · simp only [h, if_neg, Bool.not_eq_true] at *
+    · simp only [h, ite_eq_right, Bool.not_eq_true] at *
       exact ih
 
 /-- The entry signature occurs in the assembled text. Non-vacuity for the
@@ -332,9 +332,9 @@ theorem insertBySection_mem {f g : Fragment} {l : List Fragment} :
   | nil => simp [insertBySection]
   | cons a rest ih =>
     by_cases h : a.section_.rank ≤ f.section_.rank
-    · simp only [insertBySection, if_pos h, List.mem_cons, ih]
+    · simp only [insertBySection, ite_eq_left h, List.mem_cons, ih]
       exact or_left_comm
-    · simp only [insertBySection, if_neg h, List.mem_cons]
+    · simp only [insertBySection, ite_eq_right h, List.mem_cons]
 
 theorem sortBySection_mem {g : Fragment} :
     ∀ {l : List Fragment}, g ∈ sortBySection l ↔ g ∈ l := by

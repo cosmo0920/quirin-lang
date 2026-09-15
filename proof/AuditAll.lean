@@ -3,20 +3,66 @@ import QCore
 
 /-! Audit every declaration in the compiled QCore namespace, including private
 helpers. Per-cycle print audits remain useful evidence, but do not enumerate
-all project declarations. Only the standard logical axioms are allowed here. -/
+all project declarations. Only the standard logical axioms are allowed here.
 
-open Lean Elab Command in
+The statement check is deliberately narrow: syntactic identity of elaborated
+expressions, not a proof of non-vacuity or absence of contradictory premises.
+It does not unfold definitions to decide whether a hypothesis is the conclusion;
+that would also reject useful computation lemmas. Semantic review is still needed. -/
+
+open Lean Meta in
+private def statementIssue? (type : Expr) : MetaM (Option String) :=
+  forallTelescope type fun parameters conclusion => do
+    if conclusion.isAppOfArity ``Eq 3 &&
+        conclusion.getArg! 1 == conclusion.getArg! 2 then
+      return some "theorem concludes only self-equality"
+    for parameter in parameters do
+      if (← inferType parameter) == conclusion then
+        return some "theorem assumes its exact conclusion"
+    return none
+
+-- Exercise the detector on actual elaborated statements. Valid computational
+-- equalities and useful premise elimination must remain allowed.
+open Lean Elab Term in
+run_elab do
+  let cases := #[
+    ((← `(∀ n : Nat, n = n)), some "theorem concludes only self-equality"),
+    ((← `(∀ (n : Nat) (_h : n = 0), n = 0)),
+      some "theorem assumes its exact conclusion"),
+    ((← `(∀ n : Nat, n + 0 = n)), none),
+    ((← `(∀ (p q : Prop), p ∧ q → p)), none)]
+  for (stx, expected) in cases do
+    let type ← elabTerm stx none
+    synthesizeSyntheticMVarsNoPostponing
+    let type ← instantiateMVars type
+    let actual ← statementIssue? type
+    unless actual == expected do
+      throwError "statement detector regression: expected {expected}, got {actual}"
+
+open Lean Meta Elab Command in
 run_elab do
   let allowed := #[`propext, `Classical.choice, `Quot.sound]
   let environment ← getEnv
   let mut checked : Nat := 0
-  for (name, _) in environment.constants.toList do
+  let mut statements : Nat := 0
+  for (name, info) in environment.constants.toList do
     let text := name.toString
     if text.startsWith "QCore." || text.startsWith "_private.QCore." then
       checked := checked + 1
       for dependency in (← collectAxioms name) do
         unless allowed.contains dependency do
           throwError "{name} depends on forbidden axiom {dependency}"
+    -- Check public theorems with non-internal names only. Lean-generated
+    -- equality helpers contain intentional reflexivity; the axiom check covers them
+    -- and private declarations. No reduction/equality tactic is banned here.
+    if text.startsWith "QCore." && !name.isInternalDetail then
+      if let .thmInfo theoremInfo := info then
+        statements := statements + 1
+        if let some issue ← statementIssue? theoremInfo.type then
+          throwError "{name}: {issue}"
+  if statements == 0 then
+    throwError "QCore statement audit checked no theorems"
+  logInfo m!"QCore statement audit: {statements} public theorems checked for self-equality and exact assumed conclusions"
   if checked == 0 then
     throwError "QCore axiom audit checked no declarations"
   logInfo m!"QCore axiom audit: {checked} declarations checked; only standard logical axioms"

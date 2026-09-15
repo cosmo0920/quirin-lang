@@ -205,7 +205,7 @@ theorem step_adds_only_an_entering_spelling (reader : Reader) (marker : Marker) 
   obtain ⟨stack, broken⟩ := reader
   intro file hfile
   by_cases he : marker.enters
-  · simp only [step, he, if_pos] at hfile
+  · simp only [step, he, ite_eq_left] at hfile
     rw [mem_stackNames_cons] at hfile
     rcases hfile with h | h
     · simp only [OriginFile.name, Option.some.injEq] at h
@@ -219,7 +219,7 @@ theorem step_adds_only_an_entering_spelling (reader : Reader) (marker : Marker) 
           cases tail with
           | nil => simpa [step, he, hr] using hfile
           | cons outer rest =>
-              simp only [step, he, hr, Bool.false_eq_true, if_neg, if_pos,
+              simp only [step, he, hr, Bool.false_eq_true, ite_eq_right, ite_eq_left,
                 not_false_eq_true] at hfile
               rw [mem_stackNames_cons] at hfile
               rw [mem_stackNames_cons, mem_stackNames_cons]
@@ -227,7 +227,7 @@ theorem step_adds_only_an_entering_spelling (reader : Reader) (marker : Marker) 
     · cases stack with
       | nil => simp [step, he, hr, stackNames, OriginFile.name] at hfile
       | cons frame rest =>
-          simp only [step, he, hr, Bool.false_eq_true, if_neg, not_false_eq_true] at hfile
+          simp only [step, he, hr, Bool.false_eq_true, ite_eq_right, not_false_eq_true] at hfile
           rw [mem_stackNames_cons] at hfile
           rw [mem_stackNames_cons]
           exact hfile
@@ -250,7 +250,7 @@ theorem content_presents_a_stack_name (reader : Reader) (coordinate : Coordinate
   | cons frame rest =>
       by_cases hr : frame.relabelled
       · simp [content, hr] at hc
-      · simp only [content, hr, Bool.false_eq_true, if_neg, not_false_eq_true,
+      · simp only [content, hr, Bool.false_eq_true, ite_eq_right, not_false_eq_true,
           Option.some.injEq] at hc
         subst hc
         simp only [stackNames, List.filterMap_cons]

@@ -104,15 +104,9 @@ def revalidate (t : Task) (property subject : String) (evaluates : Bool)
 
 /-! ### Derivation is a function, and every bound input is load-bearing -/
 
-/-- Same bound inputs, same unit identity, same profile: the same task, and so
-the same identity. This is the property the Rust
-`derivation_is_a_function_of_its_inputs` test measures. -/
-theorem derivation_is_a_function (unit : UnitIdentity) (profile : String)
-    (inputs : BoundInputs) (property subject : String) :
-    prerequisiteIdentity { unit := unit, semanticProfile := profile, inputs := inputs }
-        property subject =
-      prerequisiteIdentity { unit := unit, semanticProfile := profile, inputs := inputs }
-        property subject := rfl
+/- `prerequisiteIdentity` is a pure function. Its self-equality says nothing
+about the Rust derivation; `derivation_is_a_function_of_its_inputs` remains a
+Rust observation. The sensitivity theorems below concern this model's inputs. -/
 
 theorem equal_digests_are_equal_tasks (left right : Task)
     (equal : taskDigest left = taskDigest right) : left = right := equal

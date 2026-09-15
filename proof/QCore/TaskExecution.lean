@@ -655,10 +655,10 @@ theorem a_named_owner_is_a_lent_frame_resource
   | cons head rest ih =>
     unfold outstandingLentResource at found
     by_cases lentHead : lent head > 0
-    · rw [if_pos lentHead] at found
+    · rw [ite_eq_left lentHead] at found
       cases found
       exact ⟨List.mem_cons_self, lentHead⟩
-    · rw [if_neg lentHead] at found
+    · rw [ite_eq_right lentHead] at found
       obtain ⟨member, positive⟩ := ih found
       exact ⟨List.mem_cons_of_mem head member, positive⟩
 
@@ -685,7 +685,7 @@ theorem an_unlent_frame_keeps_the_plain_refusal
     | nil => rfl
     | cons head rest ih =>
       unfold outstandingLentResource
-      rw [if_neg (by simp [unlent head List.mem_cons_self])]
+      rw [ite_eq_right (by simp [unlent head List.mem_cons_self])]
       exact ih fun resource member => unlent resource (List.mem_cons_of_mem head member)
   simp [scopeExit, empty]
 
@@ -703,8 +703,8 @@ theorem ct24s_cell_is_attributed_to_the_destroy_before_join
     | cons head rest ih =>
       unfold outstandingLentResource
       by_cases lentHead : lent head > 0
-      · exact ⟨head, by rw [if_pos lentHead]⟩
-      · rw [if_neg lentHead]
+      · exact ⟨head, by rw [ite_eq_left lentHead]⟩
+      · rw [ite_eq_right lentHead]
         cases List.mem_cons.mp member with
         | inl atHead => exact absurd (atHead ▸ outstanding) lentHead
         | inr inRest => exact ih inRest

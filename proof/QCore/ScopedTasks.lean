@@ -51,9 +51,9 @@ theorem transfer_preserves_live_identity_domain
     (after resource).isSome = (before resource).isSome := by
   rw [checked_transfer_places_exact_resources checked resource]
   by_cases member : resource ∈ resources
-  · rw [if_pos member, (checked_transfer_had_original_custody checked).2 resource member]
+  · rw [ite_eq_left member, (checked_transfer_had_original_custody checked).2 resource member]
     rfl
-  · rw [if_neg member]
+  · rw [ite_eq_right member]
 
 theorem transfer_preserves_unselected_resource
     {before after : Custody} {resources : List Nat} {expected destination : Custodian}
@@ -71,7 +71,7 @@ theorem rollback_restores_original_custody
     intro resource member
     simpa [member] using checked_transfer_places_exact_resources checked resource
   unfold transfer
-  rw [if_pos ⟨original.1, held⟩]
+  rw [ite_eq_left ⟨original.1, held⟩]
   congr 1
   funext resource
   by_cases member : resource ∈ resources
@@ -84,7 +84,7 @@ theorem reserved_resource_is_unavailable_to_parent
     (phases : Nat → Phase) (resource : Nat) (member : resource ∈ resources) :
     canUse phases reserved parent resource = false := by
   have held := checked_transfer_places_exact_resources checked resource
-  simp only [if_pos member] at held
+  simp only [ite_eq_left member] at held
   simp [canUse, held]
 
 theorem unjoined_capsule_is_unavailable_to_every_task

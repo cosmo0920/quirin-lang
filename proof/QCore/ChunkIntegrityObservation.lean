@@ -419,7 +419,7 @@ theorem no_arm_publishes_anything_but_an_observation {r : Record} {v : CaseVerdi
 theorem a_refused_record_publishes_nothing {r : Record} (h : accepted r = false) :
     validate r = none := by
   unfold validate
-  rw [if_neg (by simp [h])]
+  rw [ite_eq_right (by simp [h])]
 
 /-- A validated verdict carries both axes, so neither can be recovered from the
 other after the fact. -/
@@ -428,10 +428,10 @@ theorem a_verdict_carries_both_axes_separately {r : Record} {v : CaseVerdict}
     v.derivedClass = classify r.imageBefore ∧ v.injection = r.injection := by
   unfold validate at h
   by_cases accepted : accepted r = true
-  · rw [if_pos accepted] at h
+  · rw [ite_eq_left accepted] at h
     cases h
     exact ⟨rfl, rfl⟩
-  · rw [if_neg accepted] at h
+  · rw [ite_eq_right accepted] at h
     simp at h
 
 /-- A validated verdict's harness reclamation count equals the endpoints the

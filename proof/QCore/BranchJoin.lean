@@ -82,11 +82,9 @@ theorem every_condition_has_a_value (condition : Condition) :
   · exact Or.inr rfl
   · exact Or.inl rfl
 
-/-- The condition reads no state: evaluating it twice in different places gives
-the same answer. This is the property the single-observation certificate rests
-on, stated rather than assumed. -/
-theorem evaluation_is_state_free (condition : Condition) :
-    condition.evaluate = condition.evaluate := rfl
+/- `Condition` contains only literals and literal comparisons, and
+`Condition.evaluate` has no state input. State independence is a restriction of
+this model's vocabulary; self-equality of its result would add no evidence. -/
 
 theorem the_comparisons_are_the_relations (left right : Int) :
     (CompareOp.eq.apply left right = decide (left = right)) ∧
@@ -535,7 +533,7 @@ theorem runSeq_is_linear_on_branch_free (state : State) (sequence : Seq)
       simp only [Seq.branchFree, Bool.and_eq_true] at free
       by_cases returned : state.2.returned = true
       · simp [runSeq, runLinear, returned]
-      · simp only [runSeq, runLinear, if_neg returned,
+      · simp only [runSeq, runLinear, ite_eq_right returned,
           stepOp_is_linear_on_branch_free state head free.1]
         cases stepped : stepLinear state head with
         | error _ => rfl

@@ -166,11 +166,65 @@ theorem catch_removes_handled_throw_effect (error : ErrorName) (state : ExitStat
 def NormalLedger (exits : ExitMap) (ledger : Ledger) : Prop :=
   ∀ state ∈ exits .normal, state.ledger = ledger
 
+/-- Derive the joined ledger from the two incoming path classes. Neither
+premise mentions the result of `catchError`: ordinary normal exits agree, and
+matching error exits have discharged their local obligations to that baseline. -/
 theorem validated_catch_join_has_one_normal_ledger (error : ErrorName)
     (body : ExitMap) (ledger : Ledger)
-    (validated : NormalLedger (catchError error body) ledger) :
+    (normal : NormalLedger body ledger)
+    (recovered : ZeroLocalObligations ledger error body) :
     ∀ state ∈ catchError error body .normal, state.ledger = ledger := by
-  exact validated
+  intro state member
+  simp only [catchError, List.mem_append, List.mem_map] at member
+  rcases member with ordinary | ⟨caught, matching, rfl⟩
+  · exact normal state ordinary
+  · exact recovered caught matching
+
+/-- Both premises are necessary, not just sufficient. The catch retains the
+ordinary paths and the ledgers of the recovered paths. -/
+theorem catch_normal_ledger_iff_incoming_ledgers (error : ErrorName)
+    (body : ExitMap) (ledger : Ledger) :
+    NormalLedger (catchError error body) ledger ↔
+      NormalLedger body ledger ∧ ZeroLocalObligations ledger error body := by
+  constructor
+  · intro joined
+    constructor
+    · intro state member
+      exact joined state (by simp [catchError, member])
+    · intro state member
+      apply joined (removeHandled error state)
+      exact List.mem_append_right _ (List.mem_map.mpr ⟨state, member, rfl⟩)
+  · rintro ⟨normal, recovered⟩
+    exact validated_catch_join_has_one_normal_ledger error body ledger normal recovered
+
+/-- A nonempty ordinary path and a nonempty recovery path really join. -/
+theorem matching_incoming_ledgers_join (error : ErrorName) (ledger : Ledger) :
+    let state : ExitState := ⟨ledger, EffectRow.empty⟩
+    let body := append (singleton .normal state) (raise error state)
+    NormalLedger (catchError error body) ledger := by
+  intro state body
+  apply validated_catch_join_has_one_normal_ledger
+  · simp [NormalLedger, body, append, singleton, raise, state]
+  · simp [ZeroLocalObligations, body, append, singleton, raise, state]
+
+/-- The recovery premise cannot be dropped: a matching error retains a
+resource absent from the otherwise consistent normal baseline. -/
+theorem a_mismatched_recovery_ledger_does_not_join (error : ErrorName) :
+    let ordinary : ExitState := ⟨[], EffectRow.empty⟩
+    let caught : ExitState := ⟨[0], EffectRow.empty⟩
+    let body := append (singleton .normal ordinary) (raise error caught)
+    NormalLedger body [] ∧ ¬NormalLedger (catchError error body) [] := by
+  simp [NormalLedger, catchError, append, singleton, raise, removeHandled]
+
+/-- The normal premise cannot be dropped either, even when recovery has no
+remaining obligation. -/
+theorem a_mismatched_ordinary_ledger_does_not_join (error : ErrorName) :
+    let ordinary : ExitState := ⟨[0], EffectRow.empty⟩
+    let caught : ExitState := ⟨[], EffectRow.empty⟩
+    let body := append (singleton .normal ordinary) (raise error caught)
+    ZeroLocalObligations [] error body ∧ ¬NormalLedger (catchError error body) [] := by
+  simp [ZeroLocalObligations, NormalLedger, catchError, append, singleton, raise,
+    removeHandled]
 
 def AcceptedErrors (declared : ErrorName → Prop) (allowed : EffectRow)
     (exits : ExitMap) : Prop :=

@@ -532,7 +532,7 @@ theorem a_rendering_reads_only_an_earlier_binding (p : Program) (position : Nat)
         | none => simp [renderOperand, hv, hb, hlt, hn] at h
         | some n =>
           refine ⟨v, b, n, rfl, hb, hlt, hn, ?_⟩
-          simp only [renderOperand, hv, hb, if_pos hlt, hn, Option.map_some,
+          simp only [renderOperand, hv, hb, ite_eq_left hlt, hn, Option.map_some,
             Option.some.injEq] at h
           exact h.symm
       · simp [renderOperand, hv, hb, hlt] at h
@@ -564,7 +564,7 @@ theorem a_borrowed_render_reads_only_a_live_identity (p : Program) (position : N
   | some x =>
     by_cases hlive : x ∈ liveBefore p position
     · refine ⟨x, rfl, hlive, ?_⟩
-      simp only [renderOperand, hx, if_pos hlive, Option.some.injEq] at h
+      simp only [renderOperand, hx, ite_eq_left hlive, Option.some.injEq] at h
       exact h.symm
     · simp [renderOperand, hx, hlive] at h
 

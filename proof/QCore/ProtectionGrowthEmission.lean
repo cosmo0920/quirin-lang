@@ -321,7 +321,7 @@ theorem step_operations_are_the_events_own (cert : Certificate) (rendered : List
     | some mutex =>
       rw [hm] at produced
       by_cases h : admits cert index task guard f invariant mutex
-      · simp only [h, if_true] at produced
+      · simp only [h, ite_true] at produced
         cases produced
         rfl
       · simp only [h] at produced
@@ -445,7 +445,7 @@ theorem a_rendered_growth_was_admitted (cert : Certificate) (rendered : List Eve
   | some mutex =>
     rw [hm] at produced
     by_cases h : admits cert index task guard f invariant mutex
-    · simp only [h, if_true, Option.some.injEq] at produced
+    · simp only [h, ite_true, Option.some.injEq] at produced
       exact ⟨mutex, rfl, h, produced.symm⟩
     · simp only [h] at produced
       exact absurd produced (by simp)

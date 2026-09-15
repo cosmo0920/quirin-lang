@@ -133,11 +133,10 @@ def IntExpr.isLiteral : IntExpr → Bool
   | .lit _ => true
   | .bitwise _ _ _ => false
 
-theorem an_operand_has_exactly_one_value (expression : IntExpr) :
-    ∃ value, expression.evaluate = value := ⟨expression.evaluate, rfl⟩
-
-theorem evaluating_an_operand_reads_no_state (expression : IntExpr) :
-    expression.evaluate = expression.evaluate := rfl
+/- Totality and absence of state inputs are properties of the definitions
+above. Neither existentially naming `evaluate`'s result nor equating that result
+with itself supplies independent evidence. The fold/value correspondence below
+is the proof obligation connecting this tier to the branch model. -/
 
 /-- A condition of the widened tier: the two leaves card `IF-STATEMENT` shipped,
 with each comparison operand widened from a literal to the integer tier. -/
@@ -394,7 +393,7 @@ theorem the_lowering_is_the_truth_table
       cases hLeft : left.value with
       | false => simp [Tree.value, hLeft]
       | true =>
-          simp only [Tree.value, hLeft, Bool.true_and, if_true,
+          simp only [Tree.value, hLeft, Bool.true_and, ite_true,
             Connectives.only_observes_its_operation, ihRight]
   | or left right ihLeft ihRight =>
       rw [lower, ihLeft]

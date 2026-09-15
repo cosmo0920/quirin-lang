@@ -512,14 +512,10 @@ theorem an_internal_declaration_refuses_even_when_it_agrees :
       checkReading e (.declared ⟨some [.i32], [], false, false, false⟩) = none :=
   ⟨rfl, rfl⟩
 
-/-! ## Determinism -/
+/-! ## Non-vacuity
 
-/-- The binding is a function of the manifest's header identity, the supplied
-source and the entries — it reads nothing else, so a certificate consumer
-repeats it rather than believing it. -/
-theorem the_binding_is_a_function (header? : Option HeaderIdentity)
-    (source? : Option Source) (entries : List Entry) :
-    checkBinding header? source? entries = checkBinding header? source? entries := rfl
+`checkBinding` is a pure function of the header identity, source and entries.
+That type-level restriction is not an independent certificate-replay proof. -/
 
 /-- A complete agreeing binding, so nothing above is vacuous. -/
 theorem an_agreeing_binding_is_admitted :

@@ -40,7 +40,7 @@ theorem increment_then_decrement_conserves_counter {value maximum after : Nat}
   have exact := accepted_increment_exact accepted
   simp only [decrement]
   have valid : 0 < after ∧ after ≤ maximum := by omega
-  rw [if_pos valid]
+  rw [ite_eq_left valid]
   congr 1
   omega
 
@@ -53,7 +53,7 @@ theorem decrement_then_increment_conserves_counter {value maximum after : Nat}
   next bounds =>
     simp only [increment]
     have valid : after < maximum := by omega
-    rw [if_pos valid]
+    rw [ite_eq_left valid]
     congr 1
     omega
   next => contradiction

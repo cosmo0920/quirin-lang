@@ -198,11 +198,6 @@ theorem a_repeated_name_refuses (sel : Selection) (name : String) (m : Manifest)
     resolve sel [name, name] = .error (.repeated name) := by
   simp [resolve, resolve.go, one]
 
-/-- Resolution is deterministic: it is a function of the selection and the file's
-own list. -/
-theorem resolution_is_a_function (sel : Selection) (names : List String) :
-    resolve sel names = resolve sel names := rfl
-
 /-! ## An unbound file is unchanged -/
 
 /-- **The opt-in property.** A file that declares no binding gets the unbound

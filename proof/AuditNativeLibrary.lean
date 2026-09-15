@@ -48,10 +48,8 @@ import QCore.NativeLibrary
 #print axioms QCore.NativeLibrary.a_named_symbol_is_never_admitted_bare
 #print axioms QCore.NativeLibrary.agreement_is_declaration_equals_header
 
--- The binding, the admission and the premise it publishes are functions of their
--- inputs, so a certificate rederivation repeats them rather than believing them.
-#print axioms QCore.NativeLibrary.the_binding_is_a_function
-#print axioms QCore.NativeLibrary.admission_is_deterministic
+-- Two admitted results for the same model inputs publish the same premise.
+-- This does not prove that a Rust consumer faithfully rederives those inputs.
 #print axioms QCore.NativeLibrary.the_published_premise_is_a_function_of_the_admission
 
 -- The refusals above refuse something reachable: the manifest route admits, with

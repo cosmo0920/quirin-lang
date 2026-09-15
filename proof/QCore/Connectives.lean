@@ -28,7 +28,7 @@ over.** The right operand is the condition of a branch nested *inside an arm* of
 the left operand's branch, so it is reached on exactly one path
 (`the_right_operand_of_an_or_lives_in_the_else_arm` and its and-twin). It is not
 *observable*, because every leaf of the tier is a pure literal comparison —
-`BranchJoin.evaluation_is_state_free` — so a strict reading would compute the
+the constructors of `BranchJoin.Condition` — so a strict reading would compute the
 same answer. What would make the difference observable is a leaf that could do
 something, which is follow-on `IF-RUNTIME-CONDITION`.
 
@@ -206,7 +206,7 @@ theorem the_lowering_is_the_truth_table
       cases hLeft : left.value with
       | false => simp [Tree.value, hLeft]
       | true =>
-          simp only [Tree.value, hLeft, Bool.true_and, if_true, only_observes_its_operation,
+          simp only [Tree.value, hLeft, Bool.true_and, ite_true, only_observes_its_operation,
             ihRight]
   | or left right ihLeft ihRight =>
       rw [lower, ihLeft]

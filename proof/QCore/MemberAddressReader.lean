@@ -251,7 +251,7 @@ theorem the_widening_only_adds (m : Member)
     classifyMember m = AddressedMember.nonPointer := by
   by_cases hb : addressableBase m = true
   · simp [classifyMember, the_premise_only_adds m hb]
-  · simp only [classifyMemberBase, if_neg hb] at h
+  · simp only [classifyMemberBase, ite_eq_right hb] at h
     split at h <;> exact absurd h (by decide)
 
 /-- And no member became a *pointer* that was not one: the star count decides
@@ -263,16 +263,16 @@ theorem the_widening_moves_no_member_into_the_pointer_class (m : Member)
   · exfalso
     unfold classifyMember at h
     by_cases ha : addressable m = true
-    · rw [if_pos ha] at h
+    · rw [ite_eq_left ha] at h
       exact absurd h (by decide)
-    · rw [if_neg ha, if_pos zero] at h
+    · rw [ite_eq_right ha, ite_eq_left zero] at h
       exact absurd h (by decide)
   · have notBase : ¬ addressableBase m = true := by
       intro base
       exact zero (by
         simp only [addressableBase, Bool.and_eq_true] at base
         exact base.1.1.1)
-    simp only [classifyMemberBase, if_neg notBase, if_neg zero]
+    simp only [classifyMemberBase, ite_eq_right notBase, ite_eq_right zero]
 
 /-! ## The widening is strict, on each new shape separately -/
 
@@ -318,7 +318,7 @@ theorem a_declared_pointer_member_is_never_addressable (m : Member) (h : 0 < m.s
   have zero : ¬ (m.stars == 0) = true := by
     simp only [beq_iff_eq]
     omega
-  rw [classifyMember, if_neg notAddressable, if_neg zero] at admitted
+  rw [classifyMember, ite_eq_right notAddressable, ite_eq_right zero] at admitted
   exact absurd admitted (by decide)
 
 theorem a_pointer_typedef_member_is_never_addressable :
@@ -369,7 +369,7 @@ theorem an_addressable_member_is_never_linkable (m : Member)
   have positive : addressable m = true := by
     by_cases ha : addressable m = true
     · exact ha
-    · rw [classifyMember, if_neg ha] at h
+    · rw [classifyMember, ite_eq_right ha] at h
       split at h <;> exact absurd h (by decide)
   have zero : m.stars = 0 := an_addressable_member_has_no_declarator_star m positive
   simp [linkable, zero]

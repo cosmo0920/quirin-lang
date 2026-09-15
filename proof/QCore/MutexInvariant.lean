@@ -1290,7 +1290,7 @@ private theorem release_kills_the_guard {u t : State} {task : TaskId} {guard : G
   cases h : canRelease u task guard with
   | false => simp [step, h] at stepped
   | true =>
-      simp only [step, h, if_true, Option.some.injEq] at stepped
+      simp only [step, h, ite_true, Option.some.injEq] at stepped
       subst stepped
       simp [State.guardOf, releaseEffect, find_after_filter_ne u.guards guard]
 
@@ -1434,7 +1434,7 @@ theorem accepted_destruction_kills_the_resource {s next : State} {task : TaskId}
   cases h : canDestroy s task resource with
   | false => simp [step, h] at accepted
   | true =>
-      simp only [step, h, if_true, Option.some.injEq] at accepted
+      simp only [step, h, ite_true, Option.some.injEq] at accepted
       subst accepted
       refine ⟨List.mem_cons_self .., ?_⟩
       intro mem
@@ -1484,7 +1484,7 @@ theorem checked_and_declared_close_agree_on_effect {s t u : State} {task : TaskI
       cases hd : canClose s task guard inv with
       | false => simp [step, hd] at declared
       | true =>
-          simp only [step, hc, hd, if_true, Option.some.injEq] at checked declared
+          simp only [step, hc, hd, ite_true, Option.some.injEq] at checked declared
           exact checked ▸ declared ▸ rfl
 
 /-- A `check` that declares no predicate names none: the premise is dropped,
@@ -2289,14 +2289,14 @@ theorem runRanked_edges_increase_rank (rs : RankMap) :
             | lock task mutex guard =>
                 simp only [stepRanked] at hstep
                 by_cases hc : canLock s task mutex guard && rankAdmits rs s task mutex
-                · rw [if_pos hc] at hstep
+                · rw [ite_eq_left hc] at hstep
                   have admits : rankAdmits rs s task mutex = true :=
                     (Bool.and_eq_true _ _ |>.mp hc).2
                   have : p.2 = lockEdges s task mutex := by
                     simp only [Option.some.injEq] at hstep; rw [← hstep]
                   rw [this]
                   exact admitted_edges_increase_rank rs s task mutex admits
-                · rw [if_neg hc] at hstep; exact absurd hstep (by simp)
+                · rw [ite_eq_right hc] at hstep; exact absurd hstep (by simp)
             | _ =>
                 -- Every other event is `step` unchanged and contributes no
                 -- edge, so there is nothing to check.
@@ -2408,11 +2408,11 @@ theorem stepRanked_refines_step (rs : RankMap) (s : State) (e : Event) (next : S
   | lock task mutex guard =>
       simp only [stepRanked] at ranked
       by_cases hc : canLock s task mutex guard && rankAdmits rs s task mutex
-      · rw [if_pos hc] at ranked
+      · rw [ite_eq_left hc] at ranked
         simp only [Option.some.injEq, Prod.mk.injEq] at ranked
-        simp only [step, if_pos (Bool.and_eq_true _ _ |>.mp hc).1, Option.some.injEq]
+        simp only [step, ite_eq_left (Bool.and_eq_true _ _ |>.mp hc).1, Option.some.injEq]
         exact ranked.1
-      · rw [if_neg hc] at ranked; exact absurd ranked (by simp)
+      · rw [ite_eq_right hc] at ranked; exact absurd ranked (by simp)
   | _ =>
       simp only [stepRanked, Option.map_eq_some_iff] at ranked
       obtain ⟨w, hw, hp⟩ := ranked

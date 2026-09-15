@@ -546,12 +546,12 @@ theorem every_admitted_rendering_discharges_the_shared_reads
   have hlen : t.length = 19 := by
     have := admitted_traces_report_the_same_facts referenceRun t h
     simpa [referenceRun] using this
-  simp only [relate, hattr, hdup, Bool.false_eq_true, if_false] at h
+  simp only [relate, hattr, hdup, Bool.false_eq_true, ite_false] at h
   by_cases hmultiset : (t.length != referenceRun.length
       || t.any fun event => !referenceRun.contains event) = true
-  · rw [if_pos hmultiset] at h
+  · rw [ite_eq_left hmultiset] at h
     exact absurd h (by decide)
-  rw [if_neg hmultiset] at h
+  rw [ite_eq_right hmultiset] at h
   have hsub : ∀ e ∈ t, e ∈ referenceRun := by
     intro e he
     have hparts := Bool.or_eq_false_iff.mp (Bool.not_eq_true _ ▸ hmultiset :
@@ -561,9 +561,9 @@ theorem every_admitted_rendering_discharges_the_shared_reads
     exact List.contains_iff_mem.mp (by simpa using this)
   by_cases hactors : ((sortNats (referenceRun.filterMap actorOf)).any
       fun actor => projection t actor != projection referenceRun actor) = true
-  · rw [if_pos hactors] at h
+  · rw [ite_eq_left hactors] at h
     exact absurd h (by decide)
-  rw [if_neg hactors] at h
+  rw [ite_eq_right hactors] at h
   have hprojections : projection t 0 = projection referenceRun 0 ∧
       projection t 1 = projection referenceRun 1 ∧
       projection t 2 = projection referenceRun 2 := by

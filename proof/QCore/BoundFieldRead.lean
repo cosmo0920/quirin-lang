@@ -535,9 +535,9 @@ def admitsAnyRead (r : Read) (insulated : Bool) : Bool :=
 /-- Premise **F** is load-bearing: an exposed base keeps card O04-READ-BOUND's
     refusal in full, so nothing this card admits rests on an unproved frame
     condition. -/
-theorem an_exposed_base_never_admits_a_custody_read (r : Read)
-    (exposed : admitsCustodyRead r false = false) : admitsCustodyRead r false = false :=
-  exposed
+theorem an_exposed_base_never_admits_a_custody_read (r : Read) :
+    admitsCustodyRead r false = false := by
+  simp [admitsCustodyRead]
 
 theorem premise_f_is_required (r : Read) : admitsCustodyRead r false = false := by
   simp [admitsCustodyRead]

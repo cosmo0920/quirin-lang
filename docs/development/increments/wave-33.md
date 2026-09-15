@@ -6,6 +6,28 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Lean proof-integrity and warning maintenance (2026-09-16): the user-requested
+review found no forbidden axioms but did find vacuous statements; it now derives
+the exposed-base refusal without assuming it, derives the catch ledger from its
+two incoming path classes with necessity and nonempty counterexamples, replaces
+a view's eta self-equality with a three-component equality characterization,
+and removes ten literal self-equalities plus an existence-only theorem named as
+uniqueness. `AuditAll` retains the full axiom closure and adds a narrow
+self-equality/exact-assumed-conclusion check with admitting and refusing controls;
+8,884 public non-internal theorems and 42,938 declarations pass, without claiming
+exhaustive semantic review (`LEAN-STATEMENT-SEMANTIC-REVIEW`). Lean is pinned to
+4.34.0, 144 deprecated lemma uses in 33 modules are renamed, and library warnings
+now fail the build. The full standing gate passed: **4,544 Rust tests,
+0 failed, 8 ignored, 216 test executables / 227 result summaries; 128 Lean audits;
+227 Python tests;
+fmt/clippy clean; both probes exit 0**. The exact user command exits 0 with empty
+output; injected bad statements and a deprecated-lemma build fail as intended.
+The workspace gate required execution outside the sandbox for LeakSanitizer.
+No Rust implementation, model operation, corpus pin or conformance count changed;
+old reports remain frozen. Evidence and proof-API removals are in
+[the proof-integrity report](../../reports/lean-proof-integrity/README.md) and its
+[validation record](../../reports/lean-proof-integrity/validation.json).
+
 `VERIFIER-HOST-CLOSED-INPUT-DEADLINE` promoted and corrected by the integrator
 (2026-09-15): the repair below was produced **out of scope** by a stalled
 measurement card and had already reached `main` as a bare fast-forward. It was

@@ -12,9 +12,8 @@ import QCore.FrameHelperTask
 -- and exclusive access. Those stay the pinned contract's declared premises and
 -- the audit's own; the task publishes them as assumptions.
 
--- Derivation is a function of the five bound inputs, and every one of them is
--- load-bearing: moving any input alone gives a different task.
-#print axioms QCore.FrameHelperTask.derivation_is_a_function
+-- Every bound input is load-bearing in the model: moving any input alone
+-- gives a different task. Rust derivation repeatability is tested separately.
 #print axioms QCore.FrameHelperTask.equal_digests_are_equal_tasks
 #print axioms QCore.FrameHelperTask.a_changed_summary_retires_the_task
 #print axioms QCore.FrameHelperTask.a_changed_import_identity_retires_the_task

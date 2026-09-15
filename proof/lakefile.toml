@@ -4,4 +4,5 @@ defaultTargets = ["QCore"]
 
 [[lean_lib]]
 name = "QCore"
+leanOptions = { warningAsError = true }
 

@@ -19,11 +19,8 @@ import QCore.Bitwise
 #print axioms QCore.Bitwise.each_operator_is_commutative_and_associative
 #print axioms QCore.Bitwise.the_operators_do_not_commute_with_each_other
 
--- 2. The integer tier is total and state-free, which is what keeps card
--- `IF-STATEMENT`'s single-observation certificate intact: every operand has one
--- value and computing it reads nothing.
-#print axioms QCore.Bitwise.an_operand_has_exactly_one_value
-#print axioms QCore.Bitwise.evaluating_an_operand_reads_no_state
+-- 2. The closed integer tier and its evaluator have no state input. This is
+-- a vocabulary restriction; the fold/value correspondence below is audited.
 
 -- 3. Neutrality. Folding a condition's operands is value-preserving, which is
 -- what lets the model work over `BranchJoin.Condition` while the Rust carries

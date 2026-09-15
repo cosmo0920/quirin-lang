@@ -332,10 +332,10 @@ theorem an_unplaceable_kind_is_declared_and_has_no_role
   | cons e rest ih =>
     intro k h
     by_cases he : (role t p e.fst).isSome = true
-    · rw [firstUnplaceable, if_pos he] at h
+    · rw [firstUnplaceable, ite_eq_left he] at h
       obtain ⟨⟨v, hv⟩, hrole⟩ := ih k h
       exact ⟨⟨v, List.mem_cons_of_mem _ hv⟩, hrole⟩
-    · rw [firstUnplaceable, if_neg he] at h
+    · rw [firstUnplaceable, ite_eq_right he] at h
       have hk : e.fst = k := Option.some.inj h
       refine ⟨⟨e.snd, ?_⟩, ?_⟩
       · have : (k, e.snd) = e := by rw [← hk]
@@ -354,7 +354,7 @@ theorem a_zero_quota_kind_is_declared_and_is_a_quota
   | cons e rest ih =>
     intro k h
     by_cases he : (role t p e.fst == some Role.processQuota && e.snd == 0) = true
-    · rw [firstZeroQuota, if_pos he] at h
+    · rw [firstZeroQuota, ite_eq_left he] at h
       have hk : e.fst = k := Option.some.inj h
       have hq : role t p e.fst = some .processQuota := by
         have := (Bool.and_eq_true _ _).mp he
@@ -366,7 +366,7 @@ theorem a_zero_quota_kind_is_declared_and_is_a_quota
       have : e = (k, 0) := by
         rw [← hk, ← hz]
       exact this ▸ List.mem_cons_self ..
-    · rw [firstZeroQuota, if_neg he] at h
+    · rw [firstZeroQuota, ite_eq_right he] at h
       obtain ⟨hv, hrole⟩ := ih k h
       exact ⟨List.mem_cons_of_mem _ hv, hrole⟩
 
@@ -381,11 +381,11 @@ theorem no_unplaceable_kind_means_every_declared_kind_is_placed
   | cons e rest ih =>
     intro h k v hv
     by_cases he : (role t p e.fst).isSome = true
-    · rw [firstUnplaceable, if_pos he] at h
+    · rw [firstUnplaceable, ite_eq_left he] at h
       rcases List.mem_cons.mp hv with h1 | h2
       · subst h1; simpa using he
       · exact ih h k v h2
-    · rw [firstUnplaceable, if_neg he] at h
+    · rw [firstUnplaceable, ite_eq_right he] at h
       simp at h
 
 /-- The historical profile never refuses and never enforces: it names every
@@ -405,7 +405,7 @@ theorem an_enforced_plan_left_no_unplaceable_kind
     simpa using beq_eq_false_iff_ne.mpr hp
   cases hf : firstUnplaceable t p d with
   | none => rfl
-  | some k => rw [decide, if_neg (by simp [hpb]), hf] at h; exact absurd h (by simp)
+  | some k => rw [decide, ite_eq_right (by simp [hpb]), hf] at h; exact absurd h (by simp)
 
 /-- An enforcing profile that produced a plan found no zero quota. -/
 theorem an_enforced_plan_left_no_zero_quota
@@ -418,7 +418,7 @@ theorem an_enforced_plan_left_no_zero_quota
   cases hz : firstZeroQuota t p d with
   | none => rfl
   | some k =>
-    rw [decide, if_neg (by simp [hpb]), hnone, hz] at h
+    rw [decide, ite_eq_right (by simp [hpb]), hnone, hz] at h
     exact absurd h (by simp)
 
 /-- The two lists an enforced plan carries are exactly the declared kinds
@@ -432,7 +432,7 @@ theorem an_enforced_plan_is_the_declaration_split_by_role
     simpa using beq_eq_false_iff_ne.mpr hp
   have hnone := an_enforced_plan_left_no_unplaceable_kind t p d r q hp h
   have hzero := an_enforced_plan_left_no_zero_quota t p d r q hp h
-  rw [decide, if_neg (by simp [hpb]), hnone, hzero] at h
+  rw [decide, ite_eq_right (by simp [hpb]), hnone, hzero] at h
   exact ⟨(Outcome.enforced.inj h).1.symm, (Outcome.enforced.inj h).2.symm⟩
 
 /-- **Refusal completeness for the enforcing profiles.** Under a profile that is
@@ -448,16 +448,16 @@ theorem an_enforcing_profile_places_or_refuses_by_name
   cases hf : firstUnplaceable t p d with
   | some k =>
     refine Or.inr ⟨k, .noMechanism, ?_, ?_⟩
-    · rw [decide, if_neg (by simp [hpb]), hf]
+    · rw [decide, ite_eq_right (by simp [hpb]), hf]
     · exact (an_unplaceable_kind_is_declared_and_has_no_role t p d k hf).1
   | none =>
     cases hz : firstZeroQuota t p d with
     | some k =>
       refine Or.inr ⟨k, .zeroQuota, ?_, ?_⟩
-      · rw [decide, if_neg (by simp [hpb]), hf, hz]
+      · rw [decide, ite_eq_right (by simp [hpb]), hf, hz]
       · exact ⟨0, (a_zero_quota_kind_is_declared_and_is_a_quota t p d k hz).1⟩
     | none =>
-      exact Or.inl ⟨_, _, by rw [decide, if_neg (by simp [hpb]), hf, hz]⟩
+      exact Or.inl ⟨_, _, by rw [decide, ite_eq_right (by simp [hpb]), hf, hz]⟩
 
 /-- **An enforced plan covers every declared kind.** Every kind the manifest
 declared lands in one of the two mechanism lists, so an accepted plan drops
@@ -503,8 +503,8 @@ theorem an_enforced_plan_has_no_zero_quota
     | nil => simp at hmem
     | cons e rest ih =>
       by_cases he : (role t p e.fst == some Role.processQuota && e.snd == 0) = true
-      · rw [firstZeroQuota, if_pos he]; simp
-      · rw [firstZeroQuota, if_neg he]
+      · rw [firstZeroQuota, ite_eq_left he]; simp
+      · rw [firstZeroQuota, ite_eq_right he]
         rcases List.mem_cons.mp hmem with h1 | h2
         · exact absurd (by rw [← h1] at *; simp_all) he
         · exact ih h2
@@ -520,7 +520,7 @@ theorem off_linux_an_enforcing_profile_refuses_any_declaration
   cases d with
   | nil => exact absurd rfl hd
   | cons e rest =>
-    exact ⟨e.fst, by rw [decide, if_neg (by simp [hpb])]; simp [firstUnplaceable, role]⟩
+    exact ⟨e.fst, by rw [decide, ite_eq_right (by simp [hpb])]; simp [firstUnplaceable, role]⟩
 
 /-! ### The override's direction -/
 
@@ -548,9 +548,9 @@ theorem a_forced_probe_only_refuses
     (h : decideWithProbe t p .forcedUnavailable d = .enforced r q) :
     decide t p d = .enforced r q := by
   by_cases hq : p.installsQuota = true
-  · rw [decideWithProbe, if_pos (by simp [hq, Probe.refuses])] at h
+  · rw [decideWithProbe, ite_eq_left (by simp [hq, Probe.refuses])] at h
     exact absurd h (by simp)
-  · rw [decideWithProbe, if_neg (by simp [Bool.eq_false_iff.mp (by simpa using hq)])] at h
+  · rw [decideWithProbe, ite_eq_right (by simp [Bool.eq_false_iff.mp (by simpa using hq)])] at h
     exact h
 
 /-- Stated the other way: under a confining profile a forced probe always

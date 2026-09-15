@@ -279,7 +279,7 @@ private theorem admitted_parameters_are_all_data :
     · cases pointer : isPointer t with
       | true => simp [isUnit, pointer] at eq
       | false =>
-        simp only [isUnit, pointer, if_false, Bool.false_eq_true] at eq
+        simp only [isUnit, pointer, ite_false, Bool.false_eq_true] at eq
         cases inner : admitParamsFrom (i + 1) rest with
         | error e => simp [inner] at eq
         | ok rs =>
@@ -303,7 +303,7 @@ theorem an_admitted_unchecked_callee_carries_no_custody
     cases pointer : isPointer result with
     | true => simp [pointer] at admitted
     | false =>
-      simp only [pointer, if_false, Bool.false_eq_true, Except.ok.injEq] at admitted
+      simp only [pointer, ite_false, Bool.false_eq_true, Except.ok.injEq] at admitted
       subst admitted
       exact admitted_parameters_are_all_data 0 ps qs bridged
 
@@ -320,7 +320,7 @@ theorem an_admitted_unchecked_callee_acquires_nothing
     cases pointer : isPointer result with
     | true => simp [pointer] at admitted
     | false =>
-      simp only [pointer, if_false, Bool.false_eq_true, Except.ok.injEq] at admitted
+      simp only [pointer, ite_false, Bool.false_eq_true, Except.ok.injEq] at admitted
       subst admitted; rfl
 
 /-- And it really is marked as uncontracted, so `assumption_totality` applies to
@@ -336,7 +336,7 @@ theorem an_admitted_unchecked_callee_is_marked
     cases pointer : isPointer result with
     | true => simp [pointer] at admitted
     | false =>
-      simp only [pointer, if_false, Bool.false_eq_true, Except.ok.injEq] at admitted
+      simp only [pointer, ite_false, Bool.false_eq_true, Except.ok.injEq] at admitted
       subst admitted; rfl
 
 /-! ## The derived effect row is maximal -/
@@ -385,14 +385,10 @@ theorem the_whole_declared_row_admits_an_unchecked_call (k : Callee)
     admits ⟨true, true, true⟩ (derivedEffects k) = true := by
   simp [admits, derivedEffects, waived]
 
-/-! ## Determinism
+/-! ## Premise agreement
 
-Admission is a function of the declaration, so a certificate consumer repeats it
-rather than believing it — and so the premise a rederivation produces is the
-premise that was published. -/
-
-theorem admission_is_deterministic (name : String) (ps : List AbiType) (result : AbiType) :
-    unchecked name ps result = unchecked name ps result := rfl
+The model maps equal callees to equal premises. Admission is a pure function;
+that restriction does not independently prove Rust certificate replay. -/
 
 theorem the_premise_is_a_function_of_the_callee (j k : Callee) (same : j = k) :
     assumptionFor j = assumptionFor k := by rw [same]

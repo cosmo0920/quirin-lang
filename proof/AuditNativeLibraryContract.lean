@@ -54,11 +54,9 @@ import QCore.NativeLibraryContract
 #print axioms QCore.NativeLibraryContract.a_discharging_slice_is_closed
 #print axioms QCore.NativeLibraryContract.a_slice_that_cannot_acquire_is_closed
 
--- Determinism, and non-vacuity: the route admits something reachable, it is
+-- Non-vacuity: the route admits something reachable, it is
 -- exactly where a pointer symbol belongs, and an unbound symbol keeps the single
 -- premise beside it.
-#print axioms QCore.NativeLibraryContract.the_binding_is_a_function
-#print axioms QCore.NativeLibraryContract.admission_is_deterministic
 #print axioms QCore.NativeLibraryContract.a_pointer_symbol_binds_here_and_never_as_a_waiver
 #print axioms QCore.NativeLibraryContract.the_contract_slice_route_admits_and_stacks
 #print axioms QCore.NativeLibraryContract.an_unbound_symbol_keeps_the_single_premise
