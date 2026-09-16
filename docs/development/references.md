@@ -12,6 +12,9 @@
   Full language conformance is not claimed; revision 0.2 remains historical.
 - [Persistent Cycle 19 build inputs](../CYCLE19_BUILD_INPUTS.md) replaces
   ephemeral `/tmp` build paths for new audits.
+- [Fluent Bit system coverage card queue](../plans/fluent-bit-system-coverage/README.md)
+  defines prospective backlog, retry and engine follow-ons, priority and
+  acceptance boundaries for later waves.
 - [Emacs syntax highlighting](../../editors/emacs/README.md) covers current QCore
   source and contract syntax with the standalone `qcore-mode`.
 - Working with the repo as an AI agent? Start at [`AGENTS.md`](../../AGENTS.md) —

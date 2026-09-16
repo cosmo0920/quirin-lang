@@ -747,6 +747,12 @@ Small, continuous, do-with-adjacent-work:
 
 ## 5. Sequencing summary
 
+For later production coverage beyond the initial library slices, use the
+[Fluent Bit system coverage card queue](plans/fluent-bit-system-coverage/README.md).
+It orders a pinned-source census before backlog custody/accounting, retry
+lifetime and engine progress work, with prerequisites and bounded acceptance
+criteria. It supplements this plan; CT mapping does not certify those systems.
+
 ```
 W0 schema crate + CLI split
         │

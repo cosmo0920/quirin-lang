@@ -6,6 +6,22 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Fluent Bit system coverage planning review (2026-09-16): added the
+[prospective card queue](../../plans/fluent-bit-system-coverage/README.md),
+linked from the agent guide, generalization plan and development references.
+The queue requires a pinned-source census before backlog custody/accounting,
+retry lifetime and engine progress implementations, with priorities,
+dependencies, distinguishing controls and production evidence obligations;
+shutdown, worker queues, metrics/traces and durability remain separately scoped
+candidates. It distinguishes CT mapping from case-bound proof and production
+coverage, and work/resource bounds from fairness, latency and throughput.
+This is planning only: no implementation card closes, no CT or corpus count
+moves, and no upstream defect is asserted. Documentation and CT checks passed;
+the standing gate had one host timeout, reproduced once in isolation, with
+all other gate commands passing. The queue's validation section records
+`FB-PLAN-GATE-HOST-TIMEOUT`, its discharge condition and worktree-private logs;
+no host fix was folded into this planning task.
+
 Lean proof-integrity and warning maintenance (2026-09-16): the user-requested
 review found no forbidden axioms but did find vacuous statements; it now derives
 the exposed-base refusal without assuming it, derives the catch ledger from its

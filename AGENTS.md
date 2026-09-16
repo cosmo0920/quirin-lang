@@ -27,6 +27,10 @@ cadence rule is in `CLAUDE.md`.
 
 ## Documentation retrieval and compact context
 
+Prospective production-system cards and their relative priority live in
+`docs/plans/fluent-bit-system-coverage/README.md`; these supplement the named
+follow-ups, without changing CT coverage or assigning an implementation wave.
+
 Use `DEVELOPMENT.md` as a table of contents, then read the relevant setup,
 layout, cycle-evidence or increment page; the increment index names the current
 record file and every historical wave. Historical counts and old instructions
