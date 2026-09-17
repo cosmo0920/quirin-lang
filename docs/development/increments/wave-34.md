@@ -6,6 +6,72 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+`DOCS-COMPACT-6` (2026-09-17), the sixth three-file compaction pass, and the
+first whose finding is that the three files **understated** rather than
+accreted. Every headline number was re-read from its source and never from the
+file being compacted; **four were stale**: the corpus row's two *headline*
+figures (`179 Safe / 4,570 Unknown` and `unsupported` **50,117**, each
+contradicted by the narration in its own table cell, which already ended at the
+right value — the row appends each arbiter's delta without re-stating its
+opening number), Lean audits **128 → 129** and Python **227 → 229**. Verified
+unchanged: units 2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only,
+functions **186 / 85 / 4,563** of 4,834, leak **272**, `unknown_alias`
+**4,214**, `double_release` **1**, `unsupported` **50,106**, CT **45/50** with
+sanitized-native 9 and proof 3, contract corpus **76**, twelve example
+families. **Constraint inventory 47 in, 47 out** — identical labels, identical
+order, none dropped or renumbered, the six hard invariants byte-identical.
+`README.md` is **unchanged, measured rather than assumed**: every figure it
+states is current. Seven text residuals `STABILITY-REEVAL` #1 raised are
+discharged in the ledger's own words — the CT row's lease arm no longer calls
+`TRACE-ALPHABET-LEASE-BOUNDARY`'s discharged case "observed and not proved"
+(`LEDGER-CT-ROW-LEASE-ARM-STALE`); constraint 15n says **three of five** tests
+were shown non-vacuous, not five, publishing the per-mutation counts and naming
+the two that exercise neighbouring routes by construction
+(`LEASE-BOUNDARY-MUTATION-COUNT-OVERSTATED`); constraint 5b says its theorem is
+**conditional on `TrackedBasesAreBound`**, in the Lean module's own words, so
+the `may_bind` half reads as the premise it is
+(`RETURN-POSITION-SOUNDNESS-PREMISE-ELIDED`); constraint 28 gains the **two
+largest premises in the gateway** — faithful C token/type extraction and the
+Lean-model-to-Rust correspondence — with the repository map's `proof/` row
+carrying the same disclaimer, since **no extraction, refinement or simulation
+theorem exists in `proof/`** (`GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION`). All 25
+theorem-shaped citations in the three files resolve against `proof/`, **none
+dangling**, and none of the Lean 4.34 sweep's 13 removals is cited there; the
+two frozen reports that do cite the removed
+`QCore.BranchJoin.evaluation_is_state_free` are **named in the superseding
+report** rather than edited (constraint 21) — one of them, `wave19-if-statement`,
+was already listed, correcting the residual by half. Fifteen residual-shaped
+names reached no tracker: five registered as open work
+(`WRITE-LEND-WINDOWS-RUN`, `WRITE-LEND-TASKS-WINDOWS-RUN`,
+`SLICE-PERMISSIONS-COMPOSED-LEND`, `QUIRIN-ARM64-GATE`, `QUIRIN-ARM64-RUN`),
+nine classified as **rules the constraints impose rather than work anyone
+owes**, one already discharged — `named_followups` **74 → 80** through the
+generator with `--gate` re-supplied so `validation.measurement_provenance` was
+not downgraded, `dimensions.named_followups` derived to match. The wave-33
+record's **fused paragraph is re-separated with no word changed**, and its two
+"227 binaries" labels corrected to "216 test executables / 227 result
+summaries"; the four sites in the frozen wave-33 close take the residual's
+other branch, a provenance record published **beside** them
+(`binary-count-provenance.md`) tabulating what each figure counts, since
+216 + 11 doc-test summaries = 227 exactly. The merged-gate row and the
+arbiter-chain paragraph were **merged** — the chain stated one rule four times —
+and every fact removed was verified to survive in this history or in the
+matrix. Gate at this tip, submodule initialised first: **4,559 passed /
+0 failed / 8 ignored, 217 test executables / 228 result summaries**, 229 Python,
+**129** Lean audits, both probes exit 0, fmt/clippy clean. **The contested host
+row `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+was GREEN here**, against this card's own briefed expectation of a red row, and
+that is reported rather than smoothed: `STABILITY-REEVAL` #1 measured it red
+3/3 **in isolation**, so a row that fails alone and passes under load is the
+**inverse** of constraint 16's five and cannot be dispositioned by re-running
+it. The residual stays open and is recorded **beside** those five, carrying both
+measurements, with the consequence neither run alone supports — *neither a
+`0 failed` nor a `1 failed` settles it, so a gate report states which it saw*.
+Provider **122 carried and now qualified Unix** (`PROVIDER-CONFORMANCE-UNIX-ONLY`).
+Documentation only: no crate, proof, contract or script source changed, no
+frozen archive edited, no verdict, leaf or count moved. Evidence:
+[the compaction report](../../reports/docs-compact-6/README.md).
+
 `C-GATEWAY-RETURN-CALL-W4` (2026-09-17), wave 34's **arbiter**, landing the
 sub-shape wave 33's `C-GATEWAY-RETURN-POSITION` withdrew and **re-deriving the
 measurement that scheduled it, against the card**. The withdrawal rested on a

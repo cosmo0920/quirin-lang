@@ -53,8 +53,24 @@ The integer/condition vocabulary restrictions are now documented directly;
 other computational properties remain audited. The removed Lean names are
 intentional proof-API changes; no tautological compatibility aliases remain.
 
+**Two frozen reports cite `QCore.BranchJoin.evaluation_is_state_free` as a
+ground, and this pass removed it** (it was the literal self-equality
+`c.evaluate = c.evaluate := rfl`, so the removal lost nothing):
+[`wave19-or-and-lowering/README.md` §"literal comparison"](../wave19-or-and-lowering/README.md)
+and [`wave19-if-statement/README.md` §"The condition tier"](../wave19-if-statement/README.md).
+Both are named here rather than edited (constraint 21): a reader following
+either citation now lands on this record instead of on a theorem that no longer
+exists. What those reports say about the tier is unaffected — the property they
+appealed to holds by construction of the condition tier, which is why the
+theorem was vacuous — and only their appeal to that **name** is superseded.
+Added by card `DOCS-COMPACT-6` (wave 34), discharging
+`DANGLING-THEOREM-CITATION-AFTER-LEAN-SWEEP`; the same card resolved every
+theorem-shaped citation in `AGENTS.md`, `CLAUDE.md` and `README.md` against
+`proof/` and found **25 of 25 resolving, none dangling**.
+
 Relevant historical evidence: [bound custody reads](../remaining-o04-b09b10/README.md),
 [branching](../wave19-if-statement/README.md),
+[or/and lowering](../wave19-or-and-lowering/README.md),
 [bitwise conditions](../wave20-bitwise-conditions/README.md),
 [native artifact binding](../wave19-unsafe-linkage-artifact/README.md),
 [contract slices](../wave20-native-library-contract-slice/README.md),

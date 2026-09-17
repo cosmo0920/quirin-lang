@@ -43,6 +43,7 @@ No Rust implementation, model operation, corpus pin or conformance count changed
 old reports remain frozen. Evidence and proof-API removals are in
 [the proof-integrity report](../../reports/lean-proof-integrity/README.md) and its
 [validation record](../../reports/lean-proof-integrity/validation.json).
+
 Wave 33 close (2026-09-15): **two cards merged and one abandoned**, and the
 abandoned one is recorded rather than omitted. **One arbiter ran.**
 `C-GATEWAY-RETURN-POSITION` widened the C gateway's `return` position to admit a
@@ -95,7 +96,8 @@ hand edit — **repaired by regeneration through the generator, never by hand**
 (constraint 25). Four decisions are **deferred** and named rather than taken.
 Merged gate at the close tip, after `git submodule update --init --recursive`
 first (`WORKTREE-SUBMODULE-UNGATED`, which had already cost the wave two runs):
-**4,544 passed / 0 failed / 8 ignored across 227 binaries** under
+**4,544 passed / 0 failed / 8 ignored across 216 test executables / 227 result
+summaries** under
 `--no-fail-fast`, 122 provider **carried**, **227** Python, **128** Lean audits,
 both probes exit 0, fmt/clippy clean
 (`docs/reports/wave33-close/gate.json`) — **no constraint-16 load row tripped**,
@@ -107,7 +109,8 @@ Nothing is promoted; full language conformance stays **false**.
 (2026-09-15): the repair below was produced **out of scope** by a stalled
 measurement card and had already reached `main` as a bare fast-forward. It was
 re-landed as a merge after a complete gate on its own tree — 4,544 passed /
-0 failed / 8 ignored over 227 binaries, the repaired test passing, both probes
+0 failed / 8 ignored over 216 test executables / 227 result summaries, the
+repaired test passing, both probes
 exit 0, 128 Lean audits, 227 Python, fmt and clippy clean. Its report's
 validation section was **rewritten**: the six logs it cited do not exist, its
 "97 passed / 15 failed" did not reconcile with the six failures it explained,
