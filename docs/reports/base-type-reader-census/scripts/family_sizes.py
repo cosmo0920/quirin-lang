@@ -6,7 +6,21 @@ import pathlib
 import re
 
 INDIRECT = "indirect memory access is outside the resource projection"
-ROOT = pathlib.Path(__file__).resolve().parents[2]
+
+
+def _root():
+    """The repository root, found by walking up to the directory holding
+    AGENTS.md. A fixed parent depth would be wrong for the archived copy of
+    this script, which sits one level deeper than the worktree-private one it
+    was run from."""
+    here = pathlib.Path(__file__).resolve()
+    for parent in here.parents:
+        if (parent / "AGENTS.md").is_file():
+            return parent
+    raise SystemExit("cannot locate the repository root from %s" % here)
+
+
+ROOT = _root()
 
 
 def counts(raw):
