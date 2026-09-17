@@ -21,6 +21,13 @@ static void observe_mutex(const struct qcore_diagnostic_event *event)
     switch (event->kind) {
     case QCORE_DIAG_RESOURCE_ACQUIRE:
         (void)printf("resource %" PRIu64 " %" PRIu64 "\n", event->subject, event->related); return;
+    /* Card MUTEX-SHARE-CROSS-EMISSION: a fork/join trace's task structure.
+       Both lines carry parent and child, so the native line is the reference
+       interpreter's line and not a narrower rendering of it. */
+    case QCORE_DIAG_TASK_SPAWN:
+        (void)printf("spawn %" PRIu64 " %" PRIu64 "\n", event->subject, event->related); return;
+    case QCORE_DIAG_TASK_JOIN:
+        (void)printf("join %" PRIu64 " %" PRIu64 "\n", event->subject, event->related); return;
     case QCORE_DIAG_MUTEX_CREATE: label = "create"; break;
     case QCORE_DIAG_MUTEX_LOCK:
         (void)printf("lock %" PRIu64 " %" PRIu64 "\n", event->subject, event->related); return;

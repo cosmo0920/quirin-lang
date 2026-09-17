@@ -5896,21 +5896,25 @@ fn compile_mutex_source(
             "native checked mutex emission currently requires a Linux, macOS or Windows threads target",
         )]);
     }
-    // A checked trace carrying task structure is *checked* but has no native
-    // rendering: this backend emits one thread. The module is published without
-    // C, never with C the backend did not produce, and never as a silent
-    // success that dropped the task events.
-    let c_source = if mutex_c_emit::is_single_task_trace(&lowered.program) {
-        let emission =
-            mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(|refusal| {
-                vec![plain_diagnostic(
-                    "Q600",
-                    format!("the checked mutex backend refused this trace: {refusal:?}"),
-                )]
-            })?;
-        Some(emission.source)
-    } else {
-        None
+    // A checked trace is rendered when the backend has a rendering for its task
+    // structure and published without C when it does not. Card
+    // `MUTEX-SHARE-CROSS-EMISSION` gave the backend the second shape — a
+    // non-nested fork/join trace, which is what the declared crossing lowers to
+    // — so a trace outside *both* shapes still publishes no C, never C the
+    // backend did not produce and never a silent success that dropped events.
+    let c_source = match mutex_c_emit::classify_trace(&lowered.program) {
+        mutex_c_emit::TraceShape::SingleTask | mutex_c_emit::TraceShape::ForkJoin { .. } => {
+            let emission = mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(
+                |refusal| {
+                    vec![plain_diagnostic(
+                        "Q600",
+                        format!("the checked mutex backend refused this trace: {refusal:?}"),
+                    )]
+                },
+            )?;
+            Some(emission.source)
+        }
+        mutex_c_emit::TraceShape::Outside { .. } => None,
     };
     Ok(CompiledModule {
         checked,

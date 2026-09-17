@@ -102,6 +102,163 @@ pub fn is_single_task_trace(program: &MutexInvariantProgram) -> bool {
     })
 }
 
+/// One child of an admitted fork/join trace: the `Spawn` that creates it, the
+/// `Join` that reclaims it, and the half-open event range between them that is
+/// this child's entire contribution to the trace.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ChildSegment {
+    pub parent: TaskId,
+    pub child: TaskId,
+    /// Index of the `Spawn`.
+    pub spawn: usize,
+    /// Index of the matching `Join`.
+    pub join: usize,
+}
+
+/// How this backend renders a checked trace's task structure.
+///
+/// Card `MUTEX-SHARE-CROSS-EMISSION`. Classification is total and fail-closed:
+/// a trace that is neither of the two rendered shapes is
+/// [`TraceShape::Outside`] and carries the index of the first event that put it
+/// there, which is the index the refusal reports.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum TraceShape {
+    /// No task structure at all. The wave-`T03` single-thread rendering, byte
+    /// for byte what it has always been.
+    SingleTask,
+    /// Non-nested `Spawn`/`Join` pairs whose children's events are *contiguous*
+    /// between them, every other event belonging to the one root task. This is
+    /// what `source.mutex.guard.v1`'s declared crossing lowers to.
+    ForkJoin { children: Vec<ChildSegment> },
+    /// Outside this backend entirely.
+    Outside { event: usize },
+}
+
+/// Where a rendered object's *declaration* lives.
+///
+/// The single-task rendering declares its `mtx_t` and its resource pointers as
+/// automatic objects of `main`, exactly as it always did. A fork/join rendering
+/// cannot: the child runs in another function, so the same objects are declared
+/// at file scope and only their initialisation stays in `main`. Nothing else
+/// about a rendered event differs between the two, which is what keeps every
+/// previously emitted program byte-identical.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Placement {
+    Local,
+    FileScope,
+}
+
+/// The task that performs `event`, for the events this backend renders. `None`
+/// for the task-structure events, whose acting task is ambiguous by
+/// construction (a `Spawn` is performed by the parent *and* creates the child).
+fn event_task(event: &MutexInvariantEvent) -> Option<TaskId> {
+    match event {
+        MutexInvariantEvent::CreateMutex { task, .. }
+        | MutexInvariantEvent::DestroyMutex { task, .. }
+        | MutexInvariantEvent::Lock { task, .. }
+        | MutexInvariantEvent::Unlock { task, .. }
+        | MutexInvariantEvent::ErrorExit { task, .. }
+        | MutexInvariantEvent::OpenInvariant { task, .. }
+        | MutexInvariantEvent::CloseInvariant { task, .. }
+        | MutexInvariantEvent::Access { task, .. }
+        | MutexInvariantEvent::BorrowUnderGuard { task, .. }
+        | MutexInvariantEvent::EndBorrow { task, .. }
+        | MutexInvariantEvent::AssertFact { task, .. }
+        | MutexInvariantEvent::UseFact { task, .. }
+        | MutexInvariantEvent::GrowProtection { task, .. }
+        | MutexInvariantEvent::Destroy { task, .. } => Some(*task),
+        _ => None,
+    }
+}
+
+/// Classify a checked trace's task structure.
+///
+/// The admitted multi-task shape is deliberately narrow, and every bound below
+/// is a refusal rather than an approximation:
+///
+/// * **No nesting.** A `Spawn` inside an open child segment is outside
+///   (residual `MUTEX-SHARE-CROSS-MULTI` owns that question).
+/// * **Contiguity.** Every event between a `Spawn` and its matching `Join`
+///   belongs to that child. This is what makes the emitted rendering — parent
+///   creates the thread, then blocks in `thrd_join` — realise the *checked*
+///   order rather than some other interleaving of it.
+/// * **One root.** Every event outside a child segment belongs to the task the
+///   first `Spawn` names as parent.
+/// * **No typed-error exit in a child.** The model gives a child's exit status
+///   no meaning at the join, so rendering one would invent semantics
+///   (`MUTEX-SHARE-CROSS-EMISSION-CHILD-ERROR-EXIT`).
+/// * **No `GuardLocalJoin`, `TransferCustody` or `RegisterWaiter`**, anywhere —
+///   the pre-existing exclusions of [`is_single_task_trace`], unmoved.
+#[must_use]
+pub fn classify_trace(program: &MutexInvariantProgram) -> TraceShape {
+    if is_single_task_trace(program) {
+        return TraceShape::SingleTask;
+    }
+    let events = &program.events;
+    let mut children = Vec::new();
+    let mut root: Option<TaskId> = None;
+    let mut index = 0;
+    while index < events.len() {
+        match &events[index] {
+            MutexInvariantEvent::Spawn { parent, child } => {
+                if *root.get_or_insert(*parent) != *parent {
+                    return TraceShape::Outside { event: index };
+                }
+                let mut cursor = index + 1;
+                let end = loop {
+                    let Some(event) = events.get(cursor) else {
+                        // An unmatched spawn: reported at the spawn, which is
+                        // the event the trace cannot render.
+                        return TraceShape::Outside { event: index };
+                    };
+                    match event {
+                        MutexInvariantEvent::Join {
+                            parent: joined_parent,
+                            child: joined_child,
+                        } if joined_parent == parent && joined_child == child => break cursor,
+                        // A nested spawn, a mismatched join, a guard-local
+                        // join, a custody transfer, a registered waiter, or a
+                        // typed-error exit inside the child.
+                        MutexInvariantEvent::Spawn { .. }
+                        | MutexInvariantEvent::Join { .. }
+                        | MutexInvariantEvent::ErrorExit { .. } => {
+                            return TraceShape::Outside { event: cursor };
+                        }
+                        other => {
+                            if event_task(other) != Some(*child) {
+                                return TraceShape::Outside { event: cursor };
+                            }
+                        }
+                    }
+                    cursor += 1;
+                };
+                children.push(ChildSegment {
+                    parent: *parent,
+                    child: *child,
+                    spawn: index,
+                    join: end,
+                });
+                index = end + 1;
+            }
+            MutexInvariantEvent::Join { .. } => return TraceShape::Outside { event: index },
+            other => {
+                match event_task(other) {
+                    Some(task) => {
+                        if *root.get_or_insert(task) != task {
+                            return TraceShape::Outside { event: index };
+                        }
+                    }
+                    // A task-structure event this shape does not admit at all:
+                    // `GuardLocalJoin`, `TransferCustody`, `RegisterWaiter`.
+                    None => return TraceShape::Outside { event: index },
+                }
+                index += 1;
+            }
+        }
+    }
+    TraceShape::ForkJoin { children }
+}
+
 /// Byte written by the access at `index`. Deterministic and identical in both
 /// executions, so a mismatch is a real disagreement rather than noise.
 const fn fill_byte(index: usize) -> u32 {
@@ -207,6 +364,9 @@ pub fn interpret_mutex_program(
         return Err(MutexEmissionRefusal::UncheckedProfile);
     }
     let extents = resource_extents(program)?;
+    if let TraceShape::Outside { event } = classify_trace(program) {
+        return Err(MutexEmissionRefusal::UnsupportedEvent { event });
+    }
     let mut bytes: BTreeMap<SharedResourceId, Vec<u8>> = extents
         .iter()
         .map(|(resource, end)| (*resource, vec![0_u8; *end as usize]))
@@ -217,6 +377,18 @@ pub fn interpret_mutex_program(
     }
     for (index, event) in program.events.iter().enumerate() {
         match event {
+            // Card `MUTEX-SHARE-CROSS-EMISSION`. The classification above has
+            // already established that this pair is non-nested and that the
+            // child's events are exactly those between them, so the reference
+            // run needs no scheduler: the checked order *is* a total order, and
+            // the emitted program realises it by blocking the parent in
+            // `thrd_join` for the whole of the child's segment.
+            MutexInvariantEvent::Spawn { parent, child } => {
+                trace.push(format!("spawn {parent} {child}"));
+            }
+            MutexInvariantEvent::Join { parent, child } => {
+                trace.push(format!("join {parent} {child}"));
+            }
             MutexInvariantEvent::CreateMutex { mutex, .. } => {
                 trace.push(format!("create {mutex}"));
             }
@@ -325,7 +497,8 @@ static void qcore_fail(const char *what) {
 }
 "#;
 
-/// Emit single-threaded C11 for a checked trace.
+/// Emit C11 for a checked trace: one thread for a single-task trace, real
+/// `thrd_t` children for an admitted fork/join trace.
 pub fn emit_mutex_c11(
     program: &MutexInvariantProgram,
     certificate: &MutexInvariantCertificate,
@@ -334,6 +507,22 @@ pub fn emit_mutex_c11(
         return Err(MutexEmissionRefusal::UncheckedProfile);
     }
     let extents = resource_extents(program)?;
+    match classify_trace(program) {
+        TraceShape::SingleTask => emit_single_task(program, certificate, extents),
+        TraceShape::ForkJoin { children } => {
+            emit_fork_join(program, certificate, extents, &children)
+        }
+        TraceShape::Outside { event } => Err(MutexEmissionRefusal::UnsupportedEvent { event }),
+    }
+}
+
+/// The wave-`T03` rendering, unmoved: one thread, automatic `mtx_t` and
+/// resource pointers, every byte of previously emitted output preserved.
+fn emit_single_task(
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    extents: BTreeMap<SharedResourceId, u32>,
+) -> Result<MutexCEmission, MutexEmissionRefusal> {
     let mut source = String::new();
     for (resource, end) in &extents {
         writeln!(
@@ -346,14 +535,69 @@ pub fn emit_mutex_c11(
         .unwrap();
     }
     for (index, event) in program.events.iter().enumerate() {
-        match event {
-            MutexInvariantEvent::CreateMutex { mutex, .. } => writeln!(
+        render_event(
+            &mut source,
+            program,
+            certificate,
+            index,
+            event,
+            Placement::Local,
+        )?;
+    }
+    for resource in extents.keys() {
+        writeln!(source, "    free(r{resource});").unwrap();
+    }
+    Ok(MutexCEmission {
+        source: c_program::assemble(
+            &preamble(),
+            &c_program::Entry {
+                lead: String::new(),
+                brace: c_program::BraceStyle::KAndR,
+                // The exit status a typed-error exit set, carried across the
+                // releases the epilogue performs.
+                prologue: "    int qcore_exit = 0;\n".to_owned(),
+                body: source,
+                epilogue: "    return qcore_exit;\n}\n".to_owned(),
+            },
+        ),
+        resource_bytes: extents,
+    })
+}
+
+/// Render one checked event into `source`.
+///
+/// Shared verbatim by both placements: a rendered event's text depends on the
+/// event and on nothing else, except the two *declaration* sites a file-scope
+/// object cannot carry. That is the whole of the difference between the two
+/// backends, and it is why an admitted single-task program emits exactly the
+/// bytes it emitted before this card.
+fn render_event(
+    source: &mut String,
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    index: usize,
+    event: &MutexInvariantEvent,
+    placement: Placement,
+) -> Result<(), MutexEmissionRefusal> {
+    match event {
+        MutexInvariantEvent::CreateMutex { mutex, .. } => match placement {
+            Placement::Local => writeln!(
                 source,
                 "    mtx_t m{mutex};\n    \
                  if (mtx_init(&m{mutex}, mtx_plain) != thrd_success) qcore_fail(\"mtx_init\");\n    \
                  qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_MUTEX_CREATE, {mutex}, UINT64_C(0), INT64_C(0), (const char *)0);"
             )
             .unwrap(),
+            // The generation is declared at file scope so the child function
+            // can name it; the initialisation stays exactly where the checked
+            // trace puts it.
+            Placement::FileScope => writeln!(
+                source,
+                "    if (mtx_init(&m{mutex}, mtx_plain) != thrd_success) qcore_fail(\"mtx_init\");\n    \
+                 qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_MUTEX_CREATE, {mutex}, UINT64_C(0), INT64_C(0), (const char *)0);"
+            )
+            .unwrap(),
+        },
             MutexInvariantEvent::Lock { mutex, guard, .. } => writeln!(
                 source,
                 "    if (mtx_lock(&m{mutex}) != thrd_success) qcore_fail(\"mtx_lock\");\n    \
@@ -478,20 +722,144 @@ pub fn emit_mutex_c11(
                  qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_RELEASE, {resource}, UINT64_C(0), INT64_C(0), (const char *)0);"
             )
             .unwrap(),
-            _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
+        _ => return Err(MutexEmissionRefusal::UnsupportedEvent { event: index }),
+    }
+    Ok(())
+}
+
+/// The name of the C function carrying child task `child`'s segment.
+fn child_function(child: TaskId) -> String {
+    format!("qcore_mutex_task_{child}")
+}
+
+/// Render an admitted fork/join trace with real C11 threads.
+///
+/// Card `MUTEX-SHARE-CROSS-EMISSION`. What this rendering claims, stated before
+/// the code: the payload really crosses a thread boundary, and the generation
+/// protecting it is really acquired and released **by the child's own thread**
+/// through `mtx_lock`/`mtx_unlock`. What it does **not** claim is contention.
+/// The checked trace is a total order in which a child's events are contiguous,
+/// so the faithful realisation spawns the child and immediately joins it: the
+/// parent performs no trace event while the child runs. That is a property of
+/// the *checked* order, not a limitation worked around here — a rendering that
+/// let the parent run ahead would realise an order the checker never saw.
+/// Consequently no data-race evidence is available from this backend, and none
+/// is claimed anywhere (`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION`).
+fn emit_fork_join(
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    extents: BTreeMap<SharedResourceId, u32>,
+    children: &[ChildSegment],
+) -> Result<MutexCEmission, MutexEmissionRefusal> {
+    let mut file_scope = String::from(
+        "\n/* Card MUTEX-SHARE-CROSS-EMISSION: a checked fork/join mutex trace.\n   \
+         The generations and the protected allocations are declared here so a\n   \
+         child's own function can name them; every acquisition and release is\n   \
+         performed by the thread the checked trace says performs it. */\n",
+    );
+    for resource in extents.keys() {
+        writeln!(file_scope, "static unsigned char *r{resource};").unwrap();
+    }
+    let mut mutexes: Vec<MutexId> = program
+        .events
+        .iter()
+        .filter_map(|event| match event {
+            MutexInvariantEvent::CreateMutex { mutex, .. } => Some(*mutex),
+            _ => None,
+        })
+        .collect();
+    mutexes.sort_unstable();
+    mutexes.dedup();
+    for mutex in &mutexes {
+        writeln!(file_scope, "static mtx_t m{mutex};").unwrap();
+    }
+    // One function per child, in trace order, each carrying exactly the events
+    // the classification assigned to it.
+    for segment in children {
+        let mut body = String::new();
+        for index in (segment.spawn + 1)..segment.join {
+            render_event(
+                &mut body,
+                program,
+                certificate,
+                index,
+                &program.events[index],
+                Placement::FileScope,
+            )?;
         }
+        writeln!(
+            file_scope,
+            "\nstatic int {name}(void *qcore_task_arg)\n{{\n    \
+             (void)qcore_task_arg;\n{body}    return 0;\n}}",
+            name = child_function(segment.child)
+        )
+        .unwrap();
+    }
+
+    let mut source = String::new();
+    for (resource, end) in &extents {
+        writeln!(
+            source,
+            "    r{resource} = malloc({end});\n    \
+             if (r{resource} == NULL) qcore_fail(\"allocation\");\n    \
+             memset(r{resource}, 0, {end});\n    \
+             qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_ACQUIRE, {resource}, {end}, INT64_C(0), (const char *)0);"
+        )
+        .unwrap();
+    }
+    for child in children.iter().map(|segment| segment.child) {
+        writeln!(source, "    thrd_t qcore_thread_{child};").unwrap();
+    }
+    let mut index = 0;
+    while index < program.events.len() {
+        if let Some(segment) = children.iter().find(|segment| segment.spawn == index) {
+            let (parent, child) = (segment.parent, segment.child);
+            // The spawn is traced *before* the thread starts and the join
+            // *after* it has been reclaimed, so the emitted line order is the
+            // checked event order and not a race between two threads' writes.
+            writeln!(
+                source,
+                "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_SPAWN, {parent}, {child}, INT64_C(0), (const char *)0);\n    \
+                 if (thrd_create(&qcore_thread_{child}, {name}, (void *)0) != thrd_success) qcore_fail(\"thrd_create\");",
+                name = child_function(child)
+            )
+            .unwrap();
+            writeln!(
+                source,
+                "    {{ int qcore_task_result_{child} = 0;\n      \
+                 if (thrd_join(qcore_thread_{child}, &qcore_task_result_{child}) != thrd_success) qcore_fail(\"thrd_join\");\n      \
+                 if (qcore_task_result_{child} != 0) qcore_fail(\"child task\"); }}\n    \
+                 qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_JOIN, {parent}, {child}, INT64_C(0), (const char *)0);"
+            )
+            .unwrap();
+            index = segment.join + 1;
+            continue;
+        }
+        render_event(
+            &mut source,
+            program,
+            certificate,
+            index,
+            &program.events[index],
+            Placement::FileScope,
+        )?;
+        index += 1;
     }
     for resource in extents.keys() {
         writeln!(source, "    free(r{resource});").unwrap();
     }
+    let mut fragments = preamble();
+    fragments.push(Fragment::new(
+        Section::FileScope,
+        "mutex.fork_join",
+        &file_scope,
+    ));
     Ok(MutexCEmission {
         source: c_program::assemble(
-            &preamble(),
+            &fragments,
             &c_program::Entry {
                 lead: String::new(),
                 brace: c_program::BraceStyle::KAndR,
-                // The exit status a typed-error exit set, carried across the
-                // releases the epilogue performs.
                 prologue: "    int qcore_exit = 0;\n".to_owned(),
                 body: source,
                 epilogue: "    return qcore_exit;\n}\n".to_owned(),
