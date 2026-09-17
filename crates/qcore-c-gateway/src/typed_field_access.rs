@@ -635,6 +635,11 @@ impl TypedAccessModel {
                 continue;
             }
             let body = texts[index + 3..close].to_vec();
+            // Card C-GATEWAY-INDIRECT-CENSUS-2: measurement only, compiled out
+            // with the feature off, and taken before the reading rather than
+            // after, so a refused body is seen at all.
+            #[cfg(feature = "indirect-census")]
+            crate::indirect_census::record_body(tag, &body);
             if let Some(members) = self.read_record_body(&body) {
                 let entry = self.records.entry(tag.to_owned()).or_default();
                 entry.complete = true;

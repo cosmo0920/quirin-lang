@@ -161,6 +161,10 @@ pub struct Chain {
     /// Whether the base's declared type is a record pointer this reader
     /// committed to.
     pub base_record_pointer: bool,
+    /// The record tag the chain's LAST selection was resolved against, when the
+    /// reader committed to one. This is what lets the census join a refused
+    /// access to the record-body reading that refused its member.
+    pub tag: Option<String>,
     pub steps: Vec<Step>,
     pub depth: usize,
     pub member_class: MemberClass,
@@ -232,6 +236,58 @@ fn emit(leaf: &IndirectLeaf) {
         return;
     };
     if let Ok(line) = serde_json::to_string(leaf) {
+        let _ = writeln!(writer, "{line}");
+        let _ = writer.flush();
+    }
+}
+
+/// One record body the declaration reader met, and what it did with it.
+///
+/// `read_record_body` is **total-or-reject over the whole body**: a single
+/// token it will not parse — a function-pointer member's `(`, a bitfield's
+/// `:`, a nested anonymous aggregate's `{` — refuses the record entirely, so
+/// every member of it, including the plain scalars beside the offending one,
+/// becomes unclassifiable. The census records which token did it, because that
+/// is the difference between "this record is genuinely opaque" and "one member
+/// of it is, and the rest were collateral".
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct RecordBodyNote {
+    pub tag: String,
+    /// The first token of the body this reader refuses on, if any.
+    pub refused_on: Option<String>,
+    /// Tokens in the body, as a size axis.
+    pub body_tokens: usize,
+}
+
+static RECORDS: Mutex<Option<Option<BufWriter<File>>>> = Mutex::new(None);
+
+/// The environment variable naming the record-body census stream.
+pub const RECORD_CENSUS_PATH_VARIABLE: &str = "QCORE_INDIRECT_CENSUS_RECORDS";
+
+/// Record one record-body reading. A no-op unless the variable names a path.
+pub(crate) fn record_body(tag: &str, body: &[&str]) {
+    if std::env::var_os(RECORD_CENSUS_PATH_VARIABLE).is_none() {
+        return;
+    }
+    let note = RecordBodyNote {
+        tag: tag.to_owned(),
+        refused_on: body
+            .iter()
+            .find(|text| matches!(**text, "{" | "}" | "(" | ")" | ":" | "="))
+            .map(|text| (*text).to_owned()),
+        body_tokens: body.len(),
+    };
+    let Ok(mut guard) = RECORDS.lock() else {
+        return;
+    };
+    let opened = guard.get_or_insert_with(|| {
+        let path = std::env::var_os(RECORD_CENSUS_PATH_VARIABLE)?;
+        File::create(path).ok().map(BufWriter::new)
+    });
+    let Some(writer) = opened.as_mut() else {
+        return;
+    };
+    if let Ok(line) = serde_json::to_string(&note) {
         let _ = writeln!(writer, "{line}");
         let _ = writer.flush();
     }
@@ -349,6 +405,7 @@ fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain>
                     steps: vec![Step::Deref],
                     member_class: MemberClass::NoMember,
                     member: None,
+                    tag: None,
                 });
                 cursor += 2;
                 continue;
@@ -389,6 +446,7 @@ fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain>
                 steps: vec![step],
                 member_class: MemberClass::Unresolved,
                 member: None,
+                tag: None,
             });
         }
         cursor += 1;
@@ -435,6 +493,9 @@ fn walk(
         Some(DeclaredType::RecordPointer(_))
     );
     let mut member: Option<String> = None;
+    // The tag the LAST selection was resolved against, which is the record whose
+    // body reading decided the member's class.
+    let mut selected_tag: Option<String> = None;
     let mut member_class = MemberClass::NoMember;
     let mut at = cursor + 1;
     while let Some(&index) = window.get(at) {
@@ -449,6 +510,7 @@ fn walk(
                     break;
                 };
                 steps.push(Step::Arrow);
+                selected_tag = tag.clone();
                 (member_class, tag) = classify(context, tag.as_deref(), name);
                 member = Some((*name).to_owned());
                 at += 3;
@@ -461,6 +523,7 @@ fn walk(
                     break;
                 };
                 steps.push(Step::Dot);
+                selected_tag = tag.clone();
                 (member_class, tag) = classify(context, tag.as_deref(), name);
                 member = Some((*name).to_owned());
                 at += 2;
@@ -489,6 +552,7 @@ fn walk(
                 steps.push(Step::Subscript);
                 member = None;
                 member_class = MemberClass::NoMember;
+                selected_tag = None;
                 tag = None;
                 at = close + 1;
             }
@@ -506,6 +570,7 @@ fn walk(
         steps,
         member_class,
         member,
+        tag: selected_tag,
     };
     Some((chain, at.max(cursor + 1)))
 }
