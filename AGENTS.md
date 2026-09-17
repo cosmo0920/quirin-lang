@@ -152,7 +152,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**121** entries at the wave-35 close, which registered **28** names — 27 of the
+**128** entries after CARD-SCOPE-GUARD (wave 36; 121 at the wave-35 close), which registered **28** names — 27 of the
 62 its widened sweep returned, plus `DOCS-COMPACT-4-TABLE-SYNC` — and retired
 **10** as discharged by named cards; the section is *carried*,
 `dimensions.named_followups` is
