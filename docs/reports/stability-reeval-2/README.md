@@ -23,8 +23,16 @@ recur.
 
 ## 1. Tally over firing #1's 27 residuals
 
-**15 discharged · 3 partial · 10 open** at the base, as measured by this card's
-first run and spot-verified here. The open ten:
+**15 discharged · 3 partial · 10 open** at the base. **The split itself is
+CARRIED from this card's first run, not re-derived here**; what this run did is
+spot-verify four of its rows independently, each of which held:
+`CT-SHARED-FIXTURE-DISCLOSURE` still partial (`ct_manifest.json` contains the
+string `digest` **zero** times), the `MUTEX-SHARE-CROSS-ARMS` rows clean (both
+arms carry `// **Unreachable, and kept.**` in
+`crates/qcore-frontend/src/source_mutex.rs:1332` and `:1365`),
+`WAVE-33-DEFERRED-DECISIONS-UNTRACKED`'s retirement damaging (§1.2), and
+`FB-PLAN-GATE-HOST-TIMEOUT`'s plan text stale (§1.3). Four of 27 is a sample,
+and this report does not present it as more. The open ten:
 `RETURN-POSITION-ESCAPE-UNREACHABLE`,
 `RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS`,
 `LEASE-BOUNDARY-MUTATION-EVIDENCE-UNSHIPPED`,
@@ -505,7 +513,7 @@ formality.
 1. **Correct `AGENTS.md`'s Cycle 19 raw corpus row** from "44 corpus functions"
    and "21 sites" to **40** and **14**, the words card `JOINED-PROVENANCE-CYCLES`
    §11 item 2 asked to be applied (§2.1). Record the correction of
-   `wave35-close/reconciliation.json`'s verdict note **beside** it rather than
+   `docs/reports/wave35-close/reconciliation.json`'s verdict note **beside** it rather than
    editing that record silently.
 2. **Adopt the `--check` content arm** of §2.2, or record `declined` with its
    ground. This is the one finding here that mechanises a rule the project has
