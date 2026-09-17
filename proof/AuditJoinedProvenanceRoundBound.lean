@@ -3,7 +3,8 @@ import QCore.JoinedProvenanceRoundBound
 #print axioms QCore.JoinedProvenanceRoundBound.countB_mono
 #print axioms QCore.JoinedProvenanceRoundBound.countB_lt
 #print axioms QCore.JoinedProvenanceRoundBound.measure_le
-#print axioms QCore.JoinedProvenanceRoundBound.nameAt_index
+#print axioms QCore.JoinedProvenanceRoundBound.decode_index
+#print axioms QCore.JoinedProvenanceRoundBound.liveAt_mono
 #print axioms QCore.JoinedProvenanceRoundBound.descent_decreases_measure
 #print axioms QCore.JoinedProvenanceRoundBound.total_le_graphBudget
 #print axioms QCore.JoinedProvenanceRoundBound.sweep_decreases_total

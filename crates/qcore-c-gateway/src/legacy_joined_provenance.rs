@@ -251,16 +251,58 @@ fn outgoing(cfg: &LegacyCfg, node: usize, incoming: &Facts) -> Vec<Facts> {
         .collect()
 }
 
-/// The iteration bound. Exceeding it declines the whole function, exactly as
-/// this module did for every cyclic CFG before card JOINED-PROVENANCE-CYCLES.
+/// The sites this reachable subgraph creates. These, and the body's
+/// `conditional_names`, are the two finite universes one node's value ranges
+/// over, so they are what [`round_bound`] is computed from.
+fn created_sites(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> BTreeSet<usize> {
+    let mut sites = BTreeSet::new();
+    for &node in reachable {
+        match &cfg.nodes[node].instruction {
+            LegacyInstruction::Acquire { site, .. } => {
+                sites.insert(*site);
+            }
+            LegacyInstruction::ContractCall { produced_sites, .. } => {
+                sites.extend(produced_sites);
+            }
+            _ => {}
+        }
+    }
+    sites
+}
+
+/// **The proved iteration bound for this graph** — card
+/// JOINED-PROVENANCE-ROUND-BOUND, wave 37, superseding the flat
+/// `FIXED_POINT_ROUNDS = 64` card JOINED-PROVENANCE-CYCLES wrote.
 ///
-/// Card **JOINED-PROVENANCE-ROUND-BOUND** (wave 37) proved the iteration
-/// terminates — `QCore.JoinedProvenanceRoundBound.kleene_reaches_a_fixed_point`
-/// — and measured how many rounds the pinned corpus's cyclic functions
-/// actually take. The number below is unchanged by that card and is now a
-/// *measured* bound rather than a guess; the report's §4 states the proved
-/// bound it sits under and §3 the measurement that decided not to move it.
-const FIXED_POINT_ROUNDS: usize = 64;
+/// `QCore.JoinedProvenanceRoundBound.rounds_are_bounded_by_the_graph_budget`:
+/// one node's value ranges over a finite space — `top`, plus for each site
+/// either absence or a subset of the names — whose height is
+/// `1 + sites + sites * names`; the sweep only ever descends in it, so the
+/// whole vector descends and settles within
+/// `nodes * (1 + sites + sites * names)` rounds. A cap at or above that
+/// therefore **never declines**
+/// (`QCore.JoinedProvenanceRoundBound.a_cap_at_the_measure_settles`), which is
+/// what makes this a bound rather than a budget: reaching it would falsify the
+/// theorem, not merely cost a derivation.
+///
+/// What the old constant cost is measured, not argued: of the 159 sweeping
+/// visits in the pinned 185-unit corpus, **22 declined at 64** and every one of
+/// them settles by round 148 — and 9 of those 22, across 4 functions, publish
+/// facts on settling. The report's §3 carries the distribution and §5 the
+/// leaves that moved.
+///
+/// The one thing this does **not** buy is a cost guarantee: a graph that really
+/// approached its own bound would be very slow, and none in the pinned corpus
+/// comes near (`JOINED-PROVENANCE-BOUND-COST-UNMEASURED`). Declining remains
+/// sound whenever it happens — `claiming_nothing_is_sound` — so a saturated
+/// bound is a loss of derivation and never of soundness.
+fn round_bound(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> usize {
+    let sites = created_sites(cfg, reachable).len();
+    let names = cfg.conditional_names.len();
+    reachable
+        .len()
+        .saturating_mul(1usize.saturating_add(sites.saturating_mul(names.saturating_add(1))))
+}
 
 /// What one run of the iteration did — card **JOINED-PROVENANCE-ROUND-BOUND**.
 ///
@@ -391,7 +433,11 @@ fn acyclic_sites(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> BTreeSet<usize
 /// operands on every path into a loop.
 ///
 /// Iteration only ever weakens a claim, so declining early is always safe: a
-/// graph that has not settled within [`FIXED_POINT_ROUNDS`] derives nothing.
+/// graph that has not settled within [`round_bound`] derives nothing. Since
+/// card JOINED-PROVENANCE-ROUND-BOUND that cap is this graph's **proved**
+/// bound, so reaching it would falsify a theorem rather than merely exhaust a
+/// guess; the arm is retained because it is the only fail-closed answer if one
+/// ever did.
 fn fixed_point(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> Vec<Bindings> {
     let declined = vec![Bindings::new(); cfg.nodes.len()];
     let sites = acyclic_sites(cfg, reachable);
@@ -404,7 +450,7 @@ fn fixed_point(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> Vec<Bindings> {
         provenance_rounds::record(cfg, reachable, &sites, None);
         return declined;
     }
-    let settled = iterate(cfg, reachable, &sites, FIXED_POINT_ROUNDS);
+    let settled = iterate(cfg, reachable, &sites, round_bound(cfg, reachable));
     #[cfg(feature = "provenance-rounds-census")]
     provenance_rounds::record(cfg, reachable, &sites, Some(&settled));
     match settled {
@@ -542,6 +588,88 @@ mod tests {
         );
     }
 
+    /// A cyclic CFG whose acquisition is `chain` nodes upstream of the exit:
+    /// `0 -> 1 -> 2 -> {1, 3}` with a straight run of `chain` plain nodes
+    /// spliced before the exit. A Jacobi sweep moves information one edge per
+    /// round, so the rounds this graph needs grow with `chain` — which is how a
+    /// real body reaches 148 without being pathological.
+    fn long_cyclic_cfg(chain: usize) -> LegacyCfg {
+        let plain = |successors: Vec<usize>| LegacyCfgNode {
+            instruction: LegacyInstruction::NoOp,
+            successors,
+            line: 0,
+            is_exit: false,
+        };
+        let mut nodes = vec![plain(vec![1]), plain(vec![2]), plain(vec![1, 3])];
+        nodes[0].instruction = LegacyInstruction::Acquire {
+            destination: "p".to_string(),
+            site: 7,
+        };
+        for offset in 0..chain {
+            nodes.push(plain(vec![4 + offset]));
+        }
+        let last = nodes.len();
+        nodes.push(plain(Vec::new()));
+        nodes[last].successors = Vec::new();
+        nodes[last].is_exit = true;
+        LegacyCfg {
+            function: "subject".to_string(),
+            entry: 0,
+            nodes,
+            publications: PublicationFacts::default(),
+            conditional_names: BTreeSet::from(["p".to_string()]),
+        }
+    }
+
+    #[test]
+    fn a_graph_needing_more_than_sixty_four_rounds_now_derives_its_fact() {
+        // Card **JOINED-PROVENANCE-ROUND-BOUND**, the whole point of the bound
+        // change. This graph settles only past round 64, so the flat
+        // `FIXED_POINT_ROUNDS = 64` declined it and it derived nothing; the
+        // proved per-graph bound reaches its settling round, and the fact —
+        // which was always there to be had — is published.
+        let cfg = long_cyclic_cfg(120);
+        let reachable: BTreeSet<usize> = (0..cfg.nodes.len()).collect();
+        let sites = acyclic_sites(&cfg, &reachable);
+        let Settled::Converged { rounds, .. } =
+            iterate(&cfg, &reachable, &sites, round_bound(&cfg, &reachable))
+        else {
+            panic!("the proved bound must reach this graph's settling round");
+        };
+        assert!(
+            rounds > 64,
+            "this graph must need more than 64 rounds, not {rounds}"
+        );
+        assert_eq!(
+            iterate(&cfg, &reachable, &sites, 64),
+            Settled::Declined,
+            "the old flat cap must have declined it, or the test proves nothing"
+        );
+        let exit = cfg.nodes.len() - 1;
+        assert_eq!(
+            derive(&cfg)[exit].get(&7),
+            Some(&BTreeSet::from(["p".to_string()])),
+            "the raised bound must publish the fact the old cap lost"
+        );
+    }
+
+    #[test]
+    fn the_bound_is_the_proved_formula_and_grows_with_the_graph() {
+        // `nodes * (1 + sites + sites * names)`, the budget
+        // `QCore.JoinedProvenanceRoundBound.rounds_are_bounded_by_the_graph_budget`
+        // proves the sweep settles within. One site, one conditional name.
+        let cfg = long_cyclic_cfg(120);
+        let reachable: BTreeSet<usize> = (0..cfg.nodes.len()).collect();
+        assert_eq!(created_sites(&cfg, &reachable).len(), 1);
+        assert_eq!(cfg.conditional_names.len(), 1);
+        assert_eq!(round_bound(&cfg, &reachable), cfg.nodes.len() * (1 + 1 + 1));
+        // And it is strictly bigger for a bigger graph, which is what makes it
+        // a bound on this graph rather than a second constant.
+        let small = cyclic_cfg(0);
+        let small_reachable = BTreeSet::from([0, 1, 2, 3]);
+        assert!(round_bound(&small, &small_reachable) < round_bound(&cfg, &reachable));
+    }
+
     /// Card **JOINED-PROVENANCE-ROUND-BOUND**: the decline is observable.
     ///
     /// Before this card `fixed_point` returned an all-empty vector both when a
@@ -556,14 +684,14 @@ mod tests {
         let cfg = cyclic_cfg(0);
         let reachable = BTreeSet::from([0, 1, 2, 3]);
         let sites = acyclic_sites(&cfg, &reachable);
-        let Settled::Converged { rounds, solution } =
-            iterate(&cfg, &reachable, &sites, FIXED_POINT_ROUNDS)
+        let bound = round_bound(&cfg, &reachable);
+        let Settled::Converged { rounds, solution } = iterate(&cfg, &reachable, &sites, bound)
         else {
             panic!("this graph settles well inside the bound");
         };
         assert!(
-            (1..=FIXED_POINT_ROUNDS).contains(&rounds),
-            "settled at round {rounds}"
+            (1..=bound).contains(&rounds),
+            "settled at round {rounds} of {bound}"
         );
         assert_eq!(
             solution[3].get(&7),
@@ -580,7 +708,7 @@ mod tests {
         let reachable = BTreeSet::from([0, 1, 2, 3]);
         let sites = acyclic_sites(&cfg, &reachable);
         let Settled::Converged { rounds, .. } =
-            iterate(&cfg, &reachable, &sites, FIXED_POINT_ROUNDS)
+            iterate(&cfg, &reachable, &sites, round_bound(&cfg, &reachable))
         else {
             panic!("this graph settles well inside the bound");
         };

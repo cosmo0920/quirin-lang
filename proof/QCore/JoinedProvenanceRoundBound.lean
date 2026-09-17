@@ -120,11 +120,19 @@ inductive NodeValue where
   | top
   | reached (present : Nat → Bool) (names : Nat → Nat → Bool)
 
-/-- The name universe flattened to one index space, so that the pair count is
-the same `countB` as the site count. `sites * names` indices, decoded by
-division and remainder. -/
-def nameAt (names : Nat) (q : Nat → Nat → Bool) (i : Nat) : Bool :=
-  q (i / names) (i % names)
+/-- **An absent site claims everything.** A site not in `present` makes a
+vacuous claim — `soundAt` quantifies over `w.present site = true` — so *absence
+is the top element of that site's own lattice*, and the meet's `(false, true)`
+arm taking the other side's names is exactly "top meets anything to give
+anything".
+
+This is the correction the measure turns on, and it is not cosmetic: counting
+only the names literally stored would make a site's arrival — absent, with an
+empty stored name set, becoming present with a claim — **increase** the count,
+and the descent argument would be false as stated. Reading an absent site as
+claiming every name makes arrival a decrease, which is what it is. -/
+def liveAt (names : Nat) (p : Nat → Bool) (q : Nat → Nat → Bool) (i : Nat) : Bool :=
+  !p (i / names) || q (i / names) (i % names)
 
 /-- Everything one node can still lose: the top element itself, the sites it has
 yet to admit, and the name memberships it has yet to drop. -/
@@ -132,10 +140,10 @@ def nodeBudget (sites names : Nat) : Nat := 1 + sites + sites * names
 
 /-- How far one node still is from the bottom of its own descent. `top` is worth
 the whole budget; a reached value is worth the sites still absent plus the name
-memberships still live. -/
+memberships still live, an absent site counting as claiming all of them. -/
 def measure (sites names : Nat) : NodeValue → Nat
   | .top => nodeBudget sites names
-  | .reached p q => countB sites (fun s => !p s) + countB (sites * names) (nameAt names q)
+  | .reached p q => countB sites (fun s => !p s) + countB (sites * names) (liveAt names p q)
 
 theorem measure_le (sites names : Nat) (v : NodeValue) :
     measure sites names v ≤ nodeBudget sites names := by
@@ -143,13 +151,14 @@ theorem measure_le (sites names : Nat) (v : NodeValue) :
   | top => exact Nat.le_refl _
   | reached p q =>
     have h1 := countB_le sites (fun s => !p s)
-    have h2 := countB_le (sites * names) (nameAt names q)
+    have h2 := countB_le (sites * names) (liveAt names p q)
     simp only [measure, nodeBudget]
     omega
 
 /-- A **strict** descent of one node's value, with the witness that makes it
 strict. The three constructors are the only ways the round function can move a
-node: off the top, by admitting a site, or by dropping a name. -/
+node: off the top, by admitting a site, or by dropping a name at a site it
+already has. -/
 inductive Descends (sites names : Nat) : NodeValue → NodeValue → Prop where
   /-- A predecessor reached this node for the first time. -/
   | fromTop (p : Nat → Bool) (q : Nat → Nat → Bool) :
@@ -159,24 +168,53 @@ inductive Descends (sites names : Nat) : NodeValue → NodeValue → Prop where
       (namesShrank : ∀ s n, q s n = true → q' s n = true)
       (s : Nat) (hs : s < sites) (was : p' s = false) (now : p s = true) :
       Descends sites names (.reached p q) (.reached p' q')
-  /-- A name the meet's intersection dropped, every other component weakening. -/
+  /-- A name the meet's intersection dropped at a site this value has. The
+  site-present premise is what makes the drop a real loss: at an absent site
+  there is nothing to lose, the claim being vacuous either way. -/
   | name (p q p' q') (presentGrew : ∀ s, p' s = true → p s = true)
       (namesShrank : ∀ s n, q s n = true → q' s n = true)
-      (s n : Nat) (hs : s < sites) (hn : n < names) (hpos : 0 < names)
+      (s n : Nat) (hs : s < sites) (hn : n < names) (here : p s = true)
       (was : q s n = false) (now : q' s n = true) :
       Descends sites names (.reached p q) (.reached p' q')
 
 /-- The flattened index of `(s, n)`, and the two facts that make the decoding
-exact. `names` must be positive, which it is wherever a name witness exists. -/
-theorem nameAt_index (names : Nat) (q : Nat → Nat → Bool) (s n : Nat)
-    (hn : n < names) : nameAt names q (s * names + n) = q s n := by
+exact. `names` is positive wherever a name witness exists. -/
+theorem decode_index (names : Nat) (s n : Nat) (hn : n < names) :
+    (s * names + n) / names = s ∧ (s * names + n) % names = n := by
   have hpos : 0 < names := Nat.lt_of_le_of_lt (Nat.zero_le n) hn
-  have hdiv : (s * names + n) / names = s := by
-    rw [Nat.add_comm, Nat.add_mul_div_right _ _ hpos, Nat.div_eq_of_lt hn]
+  constructor
+  · rw [Nat.add_comm, Nat.add_mul_div_right _ _ hpos, Nat.div_eq_of_lt hn]
     omega
-  have hmod : (s * names + n) % names = n := by
-    rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hn]
-  simp [nameAt, hdiv, hmod]
+  · rw [Nat.add_comm, Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hn]
+
+theorem liveAt_index (names : Nat) (p : Nat → Bool) (q : Nat → Nat → Bool) (s n : Nat)
+    (hn : n < names) : liveAt names p q (s * names + n) = (!p s || q s n) := by
+  obtain ⟨hdiv, hmod⟩ := decode_index names s n hn
+  simp [liveAt, hdiv, hmod]
+
+/-- The absent-site count is monotone along a descent: present only grows. -/
+theorem absent_mono (p p' : Nat → Bool) (presentGrew : ∀ s, p' s = true → p s = true) :
+    ∀ i, (!p i) = true → (!p' i) = true := by
+  intro i hi
+  by_cases hp' : p' i = true
+  · simp [presentGrew i hp'] at hi
+  · simp_all
+
+/-- The live-name count is monotone along a descent, **because absence reads as
+the top**: a site the newer value has and the older had not contributes its real
+names on the left and every name on the right. -/
+theorem liveAt_mono (names : Nat) (p p' : Nat → Bool) (q q' : Nat → Nat → Bool)
+    (presentGrew : ∀ s, p' s = true → p s = true)
+    (namesShrank : ∀ s n, q s n = true → q' s n = true) :
+    ∀ i, liveAt names p q i = true → liveAt names p' q' i = true := by
+  intro i hi
+  simp only [liveAt, Bool.or_eq_true, Bool.not_eq_true'] at *
+  rcases hi with hp | hq
+  · left
+    by_cases hp' : p' (i / names) = true
+    · rw [presentGrew _ hp'] at hp; exact absurd hp (by simp)
+    · simp_all
+  · right; exact namesShrank _ _ hq
 
 /-- **Every strict descent strictly decreases the measure.** This is the whole
 content of "the iteration cannot run forever": the state space is finite, the
@@ -188,37 +226,32 @@ theorem descent_decreases_measure (sites names : Nat) (a b : NodeValue)
   cases d with
   | fromTop p q =>
     have h1 := countB_le sites (fun s => !p s)
-    have h2 := countB_le (sites * names) (nameAt names q)
+    have h2 := countB_le (sites * names) (liveAt names p q)
     simp only [measure, nodeBudget]
     omega
   | site p q p' q' presentGrew namesShrank s hs was now =>
-    have hsite : countB sites (fun s => !p s) < countB sites (fun s => !p' s) := by
-      refine countB_lt sites _ _ ?_ s hs (by simp [now]) (by simp [was])
-      intro i hi
-      by_cases hp' : p' i = true
-      · simp [presentGrew i hp'] at hi
-      · simp_all
+    have hsite : countB sites (fun s => !p s) < countB sites (fun s => !p' s) :=
+      countB_lt sites _ _ (absent_mono p p' presentGrew) s hs (by simp [now]) (by simp [was])
     have hname :
-        countB (sites * names) (nameAt names q) ≤ countB (sites * names) (nameAt names q') :=
-      countB_mono _ _ _ (fun i hi => namesShrank _ _ hi)
+        countB (sites * names) (liveAt names p q)
+          ≤ countB (sites * names) (liveAt names p' q') :=
+      countB_mono _ _ _ (liveAt_mono names p p' q q' presentGrew namesShrank)
     simp only [measure]
     omega
-  | name p q p' q' presentGrew namesShrank s n hs hn hpos was now =>
-    have hsite : countB sites (fun s => !p s) ≤ countB sites (fun s => !p' s) := by
-      refine countB_mono sites _ _ ?_
-      intro i hi
-      by_cases hp' : p' i = true
-      · simp [presentGrew i hp'] at hi
-      · simp_all
+  | name p q p' q' presentGrew namesShrank s n hs hn here was now =>
+    have hsite : countB sites (fun s => !p s) ≤ countB sites (fun s => !p' s) :=
+      countB_mono sites _ _ (absent_mono p p' presentGrew)
+    have hbound : s * names + n < sites * names := by
+      calc s * names + n < s * names + names := Nat.add_lt_add_left hn _
+        _ = (s + 1) * names := by rw [Nat.succ_mul]
+        _ ≤ sites * names := Nat.mul_le_mul_right _ hs
     have hname :
-        countB (sites * names) (nameAt names q) < countB (sites * names) (nameAt names q') := by
-      refine countB_lt (sites * names) _ _ (fun i hi => namesShrank _ _ hi)
-        (s * names + n) ?_ ?_ ?_
-      · calc s * names + n < s * names + names := Nat.add_lt_add_left hn _
-          _ = (s + 1) * names := by rw [Nat.succ_mul]
-          _ ≤ sites * names := Nat.mul_le_mul_right _ hs
-      · rw [nameAt_index names q s n hn]; exact was
-      · rw [nameAt_index names q' s n hn]; exact now
+        countB (sites * names) (liveAt names p q)
+          < countB (sites * names) (liveAt names p' q') := by
+      refine countB_lt (sites * names) _ _
+        (liveAt_mono names p p' q q' presentGrew namesShrank) (s * names + n) hbound ?_ ?_
+      · rw [liveAt_index names p q s n hn, here, was]; rfl
+      · rw [liveAt_index names p' q' s n hn, now]; simp
     simp only [measure]
     omega
 

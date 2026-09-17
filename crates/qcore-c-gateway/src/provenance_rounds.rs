@@ -20,9 +20,8 @@
 //! # Why a second sweep, and why the same one
 //!
 //! The question the card must answer is how many rounds a function *needs*,
-//! which is not observable from a run capped at
-//! [`FIXED_POINT_ROUNDS`]: a decline reports
-//! only that 64 was not enough. The census therefore runs
+//! which is not observable from a capped run: a decline reports only that the
+//! cap was not enough. The census therefore runs
 //! [`iterate`] again under a larger cap — the
 //! **same function** the analyzer runs, never a re-implementation that could
 //! drift from it — and records where that one settles. The production result is
@@ -36,7 +35,7 @@ use std::io::{BufWriter, Write};
 use std::sync::Mutex;
 use std::sync::atomic::{AtomicU64, Ordering};
 
-use super::{BTreeSet, FIXED_POINT_ROUNDS, LegacyCfg, LegacyInstruction, Settled, iterate};
+use super::{BTreeSet, LegacyCfg, Settled, created_sites, iterate, round_bound};
 
 /// What one sweep did, in the census's own serializable vocabulary.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
@@ -78,8 +77,8 @@ pub struct RoundsLeaf {
     /// The bound the card proves for this graph:
     /// `reachable * (1 + eligible_and_created * (1 + names))`, saturating.
     pub proved_bound: u128,
-    /// What the production sweep did, at [`FIXED_POINT_ROUNDS`]. `None` when
-    /// no sweep ran because no site was eligible.
+    /// What the production sweep did, at this graph's own [`round_bound`].
+    /// `None` when no sweep ran because no site was eligible.
     pub production: Option<Sweep>,
     /// What the same sweep does under the probe cap. `None` for the same
     /// reason.
@@ -145,14 +144,7 @@ pub(crate) fn record(
         return;
     }
     let cap = probe_cap();
-    let created = reachable
-        .iter()
-        .flat_map(|node| match &cfg.nodes[*node].instruction {
-            LegacyInstruction::Acquire { site, .. } => vec![*site],
-            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
-            _ => Vec::new(),
-        })
-        .collect::<BTreeSet<_>>();
+    let created = created_sites(cfg, reachable);
     let names = cfg.conditional_names.len() as u128;
     let leaf = RoundsLeaf {
         seq: SEQ.fetch_add(1, Ordering::Relaxed),
@@ -169,7 +161,7 @@ pub(crate) fn record(
         proved_bound: (reachable.len() as u128).saturating_mul(
             1u128.saturating_add((created.len() as u128).saturating_mul(1 + names)),
         ),
-        production: settled.map(|settled| summarize(settled, FIXED_POINT_ROUNDS)),
+        production: settled.map(|settled| summarize(settled, round_bound(cfg, reachable))),
         // The probe re-runs the analyzer's own sweep under a larger cap. Its
         // result is summarized and dropped: nothing downstream sees it.
         probe: settled.map(|_| summarize(&iterate(cfg, reachable, sites, cap), cap)),
