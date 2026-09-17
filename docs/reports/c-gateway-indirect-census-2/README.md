@@ -371,9 +371,13 @@ each tag gives the result that settles this card:
 | of the **13,396** leaves ending at an `Unresolved` member | leaves | share |
 |---|---:|---:|
 | **no record tag at all — the BASE's type was never committed** | **10,514** | **78.5%** |
-| a tag was committed; the record body was refused whole | 2,713 | 20.3% |
+| a tag was committed; the record body was refused whole on `{` | 2,367 | 17.7% |
+| a tag was committed; the record body was refused whole on `(` | 346 | 2.6% |
 | a tag was committed, the body read, the member simply in no class | 166 | 1.2% |
 | the record is never declared in the units that use it | 3 | 0.0% |
+
+(The four tagged rows sum to **2,882**, and 2,882 + 10,514 = 13,396; the two
+whole-body refusals sum to the **2,713** quoted below.)
 
 So the whole-body-refusal defect — real, and worth fixing on its own merits —
 accounts for **one fifth** of the unresolved members. Four fifths are blocked
@@ -625,10 +629,15 @@ written and nothing runs.
 * **`docs/development/increments/wave-36.md`.** One paragraph, prepended. The
   file already existed (wave 36 was opened at `60958bf0`); it was not created.
 * **`docs/reviews/r0_3/acceptance_matrix.json`.** Regenerated with
-  `python3 docs/reports/remaining-d02/build_matrix.py . --gate <the wave's gate>`;
-  see §12.2 for the one decision that needs you. **`named_followups` is carried
-  at 121 and this card retires none** — it is a measurement card and discharges
-  nothing.
+  `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/wave35-close/gate.json`
+  (the repo root is a positional argument; wave 36 has no close directory yet, so
+  wave 35's gate is the one that preserves provenance, exactly as
+  `C-GATEWAY-CONSTANT-DO-WHILE` used wave 33's). The regeneration is a
+  **byte-identical fixed point — zero insertions, zero deletions.** That is the
+  correct outcome: this card adds no Lean audit, no contract module and no
+  provider package, and **retires no `named_followup`**, so the file is committed
+  unchanged and is recorded here as *verified* rather than *edited*.
+  `named_followups` is carried at **121**.
 * **Nothing else.** This card owns no re-pin, moves no headline number in
   `AGENTS.md`'s ledger, adds no archive to constraint 21's frozen list and
   changes no corpus baseline. The baseline remains
