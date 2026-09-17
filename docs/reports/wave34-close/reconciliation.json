@@ -1,0 +1,164 @@
+{
+ "wave": 34,
+ "cards": [
+  "stability-reeval-1",
+  "c-gateway-return-call-w4",
+  "docs-compact-6"
+ ],
+ "note": "Wave-34 close reconciliation. THREE merged cards, swept with --since d3225f91 (the wave-33 close). Every verdict below was MEASURED AGAINST THE TREE - the target file grepped for the proposed text or its effect - and never inferred from the report's own claim that it had landed. That distinction earned its keep this wave: C-GATEWAY-RETURN-CALL-W4's item 5 asked for four residuals by name, DOCS-COMPACT-6 merged afterwards and moved named_followups 74 -> 80 WITHOUT them, and all four reached no tracker. The sweep's own --residuals pass names the same four independently. They are registered by this close (80 -> 84). One amendment is recorded `superseded` rather than `applied` because it did NOT land in the words proposed: the card's §11 item 3 transcribed '236 (70.5%)' against a 643 denominator, which is the brief's pre-landing 236/335 figure and is internally inconsistent (236/643 = 36.7%); the tree carries the card's OWN §3.3 measurement, 379/643 (58.9%). The meaning - a two-orders-of-magnitude gap between 'defined in this unit' and 'W4-derivable' - is preserved in both, and nothing was softened. THE STANDING GATE WAS MEASURED AND PASSES: 4,559 passed / 0 failed / 8 ignored over 217 test executables / 228 result summaries, fmt and clippy clean, both probes exit 0, 129 Lean audits, 229 Python - reproducing the DOCS-COMPACT-6 tip figures exactly and independently, so AGENTS.md's Merged gate row is confirmed rather than carried and this close does not edit it. Two earlier obstacles are reported rather than hidden (gate.json): the host filesystem was 100% full at first, failing every cargo invocation with ENOSPC, and the first completed attempt was SIGTERMed by this session's own ten-minute command timeout at 78 of 228 summaries - a partial suite is not a measurement, and no figure here comes from it. The close also registered ONE FINDING OF ITS OWN, PYTHON-EVIDENCE-SUITE-INTERMITTENT-ROW, taking named_followups to 85. No figure in this close is carried from another run and presented as this one's. The sweep tool decides nothing; every verdict here is a human one.",
+ "verdicts": {
+  "c-gateway-return-call-w4#for-the-integrator#1": {
+   "verdict": "noted",
+   "note": "The section's preamble sentence ('Land these in these words, or record a verdict with its ground'), not an amendment of its own. It states the W32-RECONCILE-SWEEP discipline, which this record applies to items 2-9.",
+   "where": null
+  },
+  "c-gateway-return-call-w4#for-the-integrator#2": {
+   "verdict": "applied",
+   "note": "Landed by DOCS-COMPACT-6 (20560db3), which re-read each number from source rather than from the file it was compacting. Every figure re-verified here against the arbiter's own artifacts rather than against either report.",
+   "where": "AGENTS.md:109 names docs/reports/c-gateway-return-call-w4/artifacts/ as the corpus baseline; AGENTS.md:130 carries 186 Safe / 85 provisional Unsafe / 4,563 Unknown over 4,834 projected functions, unsupported 50,106, unknown_alias 4,214, leak 272, double_release 1, unit statuses unmoved. VERIFIED against docs/reports/c-gateway-return-call-w4/artifacts/diagnostics.json.gz: diagnostic_counts = {double_release 1, leak 272, unknown_alias 4214, unsupported 50106}; 185 units = 2 Safe / 42 Unsafe / 137 Unknown / 4 data_only; 4,834 functions = 186 Safe / 85 Unsafe / 4,563 Unknown."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#3": {
+   "verdict": "applied",
+   "note": "Landed with the proposed sentence intact and then EXTENDED. The addition qualifies in the fail-closed direction - it records that admitting a previously unmodeled exit is a move in the accusing direction by construction, because report_leaks SKIPS an unmodeled exit, and that a future admission card reaching bodies that do retain should expect the pin to rise and must attribute it. That strengthens the constraint; nothing was softened, so this is `applied` and not `superseded` (invariant 1, CLAUDE.md's amendment rule).",
+   "where": "AGENTS.md:371-378, inside standing constraint 7: 'At the wave-34 `C-GATEWAY-RETURN-CALL-W4` arbiter the pin is **unmoved at 272** - the first gateway *admission* card in this chain to move no leak leaf in either direction.' followed by the allocator-wrapper ground and the accusing-direction qualification."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#4": {
+   "verdict": "superseded",
+   "note": "The amendment landed, but NOT in the words proposed, so it is recorded here rather than passed off as `applied`. The proposed sentence read '4 (0.6%) ... against 236 (70.5%) that are merely defined here' over a 643-leaf denominator. 236/643 is 36.7%, not 70.5%: the pair 236/335 (70.5%) is the BRIEF's figure over wave 33's pre-landing population, and the card's own §3.3 says so explicitly while publishing 379 of 643 (58.9%) for its own population. The tree carries the card's §3.3 measurement. Superseded by the card's own body, not by a later card. The conclusion is identical either way - §3.3: 'the gap between the two columns is two orders of magnitude either way' - so no meaning was lost and nothing was softened.",
+   "where": "AGENTS.md:244-255, inside standing constraint 4: '...Measured over the 643 `return CALL(...)` refusal leaves of the pinned corpus, on one population so the shares are comparable: **379 (58.9%) have a callee defined in the same `.c`**, but the callee's own body is `Safe` ... in **4 (0.6%)**; the other 375 are 366 `Unknown` and 9 `Unsafe` bodies, and 264 (41.1%) of the 643 are external.' Citation to `c-gateway-return-call-w4` §3.3 present at AGENTS.md:255."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#5": {
+   "verdict": "applied",
+   "note": "The pin update is in the tree and is reported rather than absorbed, as invariant 5 and CLAUDE.md working rule 1 require. It is not a weakening: the card measured that the STATEMENT form of the identical C was already `Safe` before the card, so the Unknown the row pinned was the return position's extra strictness and not a custody judgment, and the control is written into the test itself.",
+   "where": "crates/qcore-c-gateway/tests/neutral_expression_positions.rs:384, fn pointer_arithmetic_in_a_call_actual_agrees_with_the_statement_position (renamed from pointer_arithmetic_in_a_call_actual_stays_unknown). RE-RUN AND GREEN: the full workspace suite of this close's gate passed 4,559 tests with 0 failed, so the renamed test's `Safe` assertion is verified green here and not merely verified present in source."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#6": {
+   "verdict": "applied",
+   "note": "UNAPPLIED AT MERGE, applied by this close. This is the finding of the wave. The card asked for the four by name; DOCS-COMPACT-6 merged after it and moved named_followups 74 -> 80, but its six additions are WRITE-LEND-WINDOWS-RUN, WRITE-LEND-TASKS-WINDOWS-RUN, SLICE-PERMISSIONS-COMPOSED-LEND, QUIRIN-ARM64-GATE, QUIRIN-ARM64-RUN and CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK - none of them these. Independently confirmed by `python3 scripts/reconciliation_sweep.py . --cards ... --residuals`, which names all four as residual-shaped names in no tracker. Each entry's `why` is written from the card's own §10 discharge conditions, not summarised away.",
+   "where": "docs/reviews/r0_3/acceptance_matrix.json: named_followups 80 -> 84, appending RETURN-CALL-W4-REACH-BLOCKED, RETURN-CALL-SYNTHETIC-PLACE-PRESENTED, RETURN-CALL-NULLABLE-WRAPPER, RETURN-CALL-INCOMPLETE-LINE-455, via docs/reports/wave34-close/scripts/add_followups.py. dimensions.named_followups 80 -> 84 (derived, never hand-set - constraint 25). Confirmed a GENERATOR FIXED POINT: `python3 -B docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/wave33-close/gate.json` reproduces the appended file BYTE-IDENTICALLY, and a second run is byte-identical again. Diffed against the pre-append matrix: the ONLY sections that moved are named_followups and dimensions.named_followups. AGENTS.md:150 stated count updated 80 -> 84."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#7": {
+   "verdict": "applied",
+   "note": "Deferred while the gate was unmeasurable and APPLIED once it was. The card asked the close to regenerate the acceptance matrix carrying its own --gate rather than inheriting wave 33's, which the card had passed through deliberately so that its own change moved nothing else. This close measured a wave-34 gate and regenerated against it. The intermediate regeneration against wave33-close/gate.json - made while the gate was still blocked, to avoid putting a figure in the matrix that no command of this close had produced (invariant 2) - is superseded by this one.",
+   "where": "docs/reviews/r0_3/acceptance_matrix.json regenerated by `python3 -B docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/wave34-close/gate.json`. The matrix's `validation` section now carries this close's own gate note (it previously carried the wave-33 close's). Verified a BYTE-IDENTICAL GENERATOR FIXED POINT on a second consecutive run, and diffed against the pre-regeneration matrix: `validation` is the ONLY section that moved. gate.json conforms to the generator's nine-key schema - five figures it rejects as unknown keys (executables, summaries, failed, ignored, lean_audits) live in the note instead."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#8": {
+   "verdict": "applied",
+   "note": "The card flagged the row rather than editing it, on the ground that a card should not overwrite a wave-close row. DOCS-COMPACT-6 - a documentation card whose remit is exactly these three files - then rewrote it, and it is no longer two waves stale. Both qualifications the row now carries are substantive and were checked present, not assumed: the contested host row's outcome is STATED rather than treated as settled, and the provider 122 is marked carried-not-re-measured AND Unix-only.",
+   "where": "AGENTS.md:134, the Merged gate row: 4,559 passed / 0 failed / 8 ignored, 217 test executables / 228 result summaries, 122 provider (carried; Unix), 229 Python, 129 Lean audits, both probes exit 0, fmt/clippy clean, measured at the DOCS-COMPACT-6 tip. Lean 129 independently verified by count: 129 files matching proof/Audit*.lean."
+  },
+  "c-gateway-return-call-w4#for-the-integrator#9": {
+   "verdict": "noted",
+   "note": "Carried to the next STABILITY-REEVAL firing rather than acted on here. The card's point stands on its own evidence and is worth preserving as method: its mutation campaign found an arm its first test set could not distinguish from its negation, INVESTIGATED rather than filed it, and the shape it then found produced a false `Safe` (§8). That is the difference between 'report the unexercised arm' and 'investigate the uncaught mutation', and the second is the stronger move. STABILITY-REEVAL #2 is due after wave 35 by CLAUDE.md's every-2-waves cadence.",
+   "where": null
+  },
+  "docs-compact-6#for-the-integrator#1": {
+   "verdict": "deferred",
+   "note": "Both halves confirmed STILL UNDONE in the tree, and both are owned by other cards. The TRACKERS narrowing is unmade: scripts/reconciliation_sweep.py:247-252 still lists 'AGENTS.md' and 'CLAUDE.md' alongside the matrix, so a residual named only in a constraint still counts as tracked (RESIDUAL-NAMED-ONLY-IN-A-CONSTRAINT-IS-UNTRACKED-WORK). Card SWEEP-BLIND-SPOTS is doing that tooling half in parallel this wave, so this close deliberately does not race it; the manual enumeration was performed by hand here instead, and it found real work the tool cannot see (see `hand_sweep` below). Options (b)/(c) of VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED belong to card VERIFIER-HOST-CONTROL-BUDGET this wave.",
+   "where": null
+  },
+  "docs-compact-6#for-the-integrator#2": {
+   "verdict": "deferred",
+   "note": "Explicitly a disposition only a person can take - the card asks whether discharge option (a), taken in documentation, retires the residual by itself. This close does not take it, and notes that taking it would be premature while the row's disposition is owned by card VERIFIER-HOST-CONTROL-BUDGET this wave. The residual's matrix entry is left OPEN, which is the fail-closed reading. Recorded in `deferred_decisions` for the user.",
+   "where": null
+  },
+  "docs-compact-6#for-the-integrator#3": {
+   "verdict": "noted",
+   "note": "Both corrections CHECKED and both are right, and both run in the direction of LESS defect, so neither changes any verdict. The second was re-derived here arithmetically: STABILITY-REEVAL §4.4 says '227 binaries stands uncorrected in five places' and then enumerates the gate.json note + wave33-close/README.md:169,181,184 + wave-33.md:98,110 = 1 + 3 + 2 = SIX line-sites. The correction is published BESIDE the report in DOCS-COMPACT-6 §7 and STABILITY-REEVAL's own README is left unedited, which is the provenance-beside discipline constraint 21 asks for rather than an in-place edit of a merged card's record.",
+   "where": "docs/reports/docs-compact-6/README.md §7 (the wave-33 record repairs)."
+  },
+  "docs-compact-6#for-the-integrator#4": {
+   "verdict": "deferred",
+   "note": "A disposition only a person can take, in the card's own words. Not taken here. One of the nine was in fact registered as a tracker entry by the same card (CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK), which is the classification made explicit rather than assumed; the remaining classification question is left to the user. Recorded in `deferred_decisions`.",
+   "where": null
+  },
+  "docs-compact-6#for-the-integrator#5": {
+   "verdict": "applied",
+   "note": "The card asked for 'one sentence at a future close'; this is that close, so it is written here rather than deferred again. The failure mode is real and was re-verified in the file: the corpus row narrates each arbiter's DELTA without restating its opening number, so the row's headline figures can go stale while every clause of its own narration stays true - two of the four stale numbers DOCS-COMPACT-6 found were of that kind. The sentence is recorded in this close's README rather than added to the ledger row, because adding prose to that row is the accretion the compaction cadence exists to bound.",
+   "where": "docs/reports/wave34-close/README.md, section 'The corpus row's failure mode'."
+  },
+  "stability-reeval-1#for-the-integrator#1": {
+   "verdict": "noted",
+   "note": "The section's preamble ('An explicit reconciliation list, because §4.1 is a finding about this step being skipped'), not an amendment. Its point is honoured by this record existing and by every item below carrying a measured verdict.",
+   "where": null
+  },
+  "stability-reeval-1#for-the-integrator#2": {
+   "verdict": "applied",
+   "note": "Reported as done rather than proposed, and VERIFIED done rather than taken on trust. Spot-checked five of the 27 present as matrix entries by id: VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED, MUTEX-SHARE-CROSS-UNEXERCISED-ARMS, RETURN-POSITION-SOUNDNESS-PREMISE-ELIDED, LEDGER-CT-ROW-LEASE-ARM-STALE, GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION. D02-DIMENSIONS-FOLLOWUP-COUNT's `why` carries the amendment. The 47 -> 74 count was true at that card's merge; DOCS-COMPACT-6 then took it to 80 and this close to 84.",
+   "where": "docs/reviews/r0_3/acceptance_matrix.json named_followups; AGENTS.md:150 (the stated count, now 84)."
+  },
+  "stability-reeval-1#for-the-integrator#3": {
+   "verdict": "applied",
+   "note": "Landed by DOCS-COMPACT-6 as LEDGER-CT-ROW-LEASE-ARM-STALE. The contradiction is gone: the CT row no longer asserts the lease arm is 'observed and not proved' in the present tense while constraint 15n, in the same file, records its discharge. The row now says the arm WAS AT THE TIME observed and not proved, names wave 32's TRACE-ALPHABET-LEASE-BOUNDARY as discharging it, and carries the forward question that genuinely remains open.",
+   "where": "AGENTS.md:131, CT01-CT50 conformance row: '...was at the time **observed and not proved**, the occasioning case for `CLAUDE.md`'s `STABILITY-REEVAL` cadence; wave 32's `TRACE-ALPHABET-LEASE-BOUNDARY` **discharged** that residual and constraint 15n now carries the measured statement ... so this row no longer says \"no test drives it\" (the forward question ... stays open as `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`)'."
+  },
+  "stability-reeval-1#for-the-integrator#4": {
+   "verdict": "applied",
+   "note": "Landed by DOCS-COMPACT-6 as LEASE-BOUNDARY-MUTATION-COUNT-OVERSTATED. The overstatement is corrected in the accusing direction - the claim is now WEAKER than before and matches the measurement - which is the direction invariant 1 permits without further argument.",
+   "where": "AGENTS.md:1085, standing constraint 15n: 'and **three of its five tests** were shown non-vacuous by mutating the arm' (was: five of five)."
+  },
+  "stability-reeval-1#for-the-integrator#5": {
+   "verdict": "deferred",
+   "note": "NOT DECIDED HERE - the brief assigns the row's disposition to card VERIFIER-HOST-CONTROL-BUDGET this wave, and options (b)/(c) need code. What this close CAN now contribute is the one thing the residual demands of any gate report: it states which outcome it saw. `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` PASSED in this close's full --no-fail-fast run - the second full-suite observation agreeing with DOCS-COMPACT-6's, against STABILITY-REEVAL #1's deterministic 3/3 RED IN ISOLATION on the wave-33 tip. The row is therefore the INVERSE of constraint 16's five load-sensitive rows, which fail under load and pass in isolation, which is exactly why it is recorded beside those five rather than among them. This close did NOT re-measure it in isolation and adds no evidence about that direction. Weakening the assertion remains excluded.",
+   "where": null
+  },
+  "stability-reeval-1#for-the-integrator#6": {
+   "verdict": "deferred",
+   "note": "Out of this close's --since d3225f91 window, which covers wave 34 only; sweeping six wave-32 cards is a lane of its own and would be done against a base this record does not measure. Deferred with evidence that it is WORTH doing rather than as a formality: this close's hand sweep found MUTEX-SHARE-CROSS-MULTI, a residual named in the wave-32 card docs/reports/mutex-share-cross/README.md and cited again by STABILITY-REEVAL #1, reaching no tracker to this day - exactly the class §4.1 predicted a retrospective sweep would surface.",
+   "where": null
+  },
+  "stability-reeval-1#for-the-integrator#7": {
+   "verdict": "applied",
+   "note": "Both halves landed by DOCS-COMPACT-6 and both re-verified in the file here, the blank line with byte-level inspection rather than by eye, since its whole nature is that it is invisible until rendered.",
+   "where": "docs/development/increments/wave-33.md:46 now holds an empty line before 'Wave 33 close (2026-09-15):', so the two increment entries no longer render as one fused paragraph (checked with cat -A). The 216/227 pair is reconciled at wave-33.md:37, :99 and :112, each reading '216 test executables / 227 result summaries'; no occurrence of the bare '227 binaries' remains in that file. gate.json was NOT edited (constraint 21) - the provenance lives in docs/reports/wave33-close/binary-count-provenance.md."
+  },
+  "stability-reeval-1#for-the-integrator#8": {
+   "verdict": "superseded",
+   "note": "Split, because the two halves fared differently and reporting them together would hide one. Python 227 -> 229 APPLIED. Lean '128, unmoved' is SUPERSEDED: C-GATEWAY-RETURN-CALL-W4 merged after this card and added QCore.ReturnCallDesugaring, taking Lean audits to 129, which is what the ledger now carries - verified independently by counting 129 files matching proof/Audit*.lean rather than by reading either report. The 'workspace tests reported with one pre-existing failure' half is also superseded: DOCS-COMPACT-6's own full-suite run measured that row GREEN, and the ledger now states which outcome it saw instead of settling the question.",
+   "where": "AGENTS.md:134 (Merged gate row): 229 Python, 129 Lean audits, 4,559 passed / 0 failed / 8 ignored."
+  },
+  "stability-reeval-1#for-the-integrator#9": {
+   "verdict": "noted",
+   "note": "Registering them was the card's point - 'so they stop being invisible' - and that is done; deciding them is not this close's to do. All four are carried forward in `deferred_decisions` below, unchanged and undecided, together with the two new ones this wave raised. 37bc9004 remains a live instance of SYNC-RULE-TOOLING-COMMIT-SCOPE.",
+   "where": null
+  },
+  "stability-reeval-1#for-the-integrator#10": {
+   "verdict": "superseded",
+   "note": "The card observed CLAUDE.md was byte-identical to the wave-32 tip and that DOCS-COMPACT-6 was due 'around wave 34' by CLAUDE.md's own cadence text, and noted it did not run it. DOCS-COMPACT-6 then ran IN THE SAME WAVE, merging at 52920868 and rewriting CLAUDE.md (+11.87% - a growth the card argues is correcting understatement, which is itself one of this close's two new deferred decisions). The observation is therefore superseded by the event it predicted rather than declined.",
+   "where": "CLAUDE.md, rewritten by DOCS-COMPACT-6 (20560db3 / merge 52920868)."
+  },
+  "stability-reeval-1#for-the-integrator#11": {
+   "verdict": "noted",
+   "note": "Not an item. The sweep's parser captured the markdown horizontal rule ('---') that separates §9 from §10 of the report. Recorded with a verdict rather than dropped, so that the --check pass over this record cannot be made green by silently omitting an id the tool emitted. It carries no content and asks for nothing.",
+   "where": null
+  }
+ },
+ "no_section": {
+  "lean-proof-integrity": "Not a wave-34 card. A PRE-EXISTING card report whose directory the --since d3225f91 scan picked up because DOCS-COMPACT-6 appended 16 lines to it (20560db3, the only commit touching it in the window). Checked both ways rather than waved away: the file contains NO occurrence of 'integrator', 'reconciliation' or 'carry list' at all, and its headings are 'Findings and repairs', 'Regression boundary', 'Lean 4.34 warnings' and 'Validation'. There is no integrator-addressed section to sweep.",
+  "wave33-close": "Not a card. This is the PREVIOUS WAVE'S CLOSE RECORD, picked up because the --since window begins at the commit that created it. A close record addresses no integrator but itself. Checked both ways: it has no 'For the integrator' section; its §8 'Decisions surfaced, not taken' and §9 'For the next wave, noted and not acted on' are the forward-carrying sections, and their contents are carried in `deferred_decisions` below rather than lost."
+ },
+ "hand_sweep": {
+  "note": "`--residuals` has two known blind spots (STABILITY-REEVAL #1: SWEEP-RESIDUALS-SCANS-REPORTS-ONLY, RESIDUAL-NAMED-ONLY-IN-A-CONSTRAINT-IS-UNTRACKED-WORK): it scans only docs/reports/ and counts an AGENTS.md or CLAUDE.md mention as 'tracked'. Card SWEEP-BLIND-SPOTS is repairing the tool in parallel; this close did the check BY HAND, over the three cards' reports, docs/development/increments/wave-34.md, and every line AGENTS.md and CLAUDE.md GAINED since d3225f91. 55 distinct residual-shaped names in those sources are absent from named_followups; the great majority are CARD names (C-GATEWAY-*, CT-*, DOCS-COMPACT-*, REGION-*, W4-*, W32-*) or queued-card names, correctly absent. Two classes of genuine untracked work remain, and neither is visible to the tool.",
+  "tool_false_positives_classified": {
+   "FB-BACKLOG-ACCOUNTING, FB-ENGINE-PROGRESS, FB-RETRY-LIFETIME, FB-SYSTEM-CENSUS": "QUEUED CARD names, not residuals - column 1 of STABILITY-REEVAL #1 §5's table is headed 'Queued card'. Correctly absent from named_followups.",
+   "DOCS-COMPACT-1": "A past card name, cited in DOCS-COMPACT-6's opening sentence. Not a residual."
+  },
+  "genuine_untracked_found_by_hand": {
+   "MUTEX-SHARE-CROSS-MULTI": "Named in docs/reports/mutex-share-cross/README.md (a WAVE-32 card) and cited again by STABILITY-REEVAL #1 §5 as a rule a queued FB-SYSTEM-EXTENSIONS card would make load-bearing. Reaches no tracker. Wave-32 in origin, so it is reported here and left to the retrospective wave-32 sweep (item stability-reeval-1#6) rather than registered by a wave-34 close.",
+   "platform_residual_family": "The -WINDOWS-RUN / -APPLE-RUN family in CLAUDE.md's platform records is INCONSISTENTLY tracked after DOCS-COMPACT-6, which registered three of them (QUIRIN-ARM64-RUN, WRITE-LEND-WINDOWS-RUN, WRITE-LEND-TASKS-WINDOWS-RUN) and left the rest. Six that CLAUDE.md still describes as OPEN, each with an exact discharge condition, are absent from named_followups: HTTP-V1-WINDOWS-RUN, STRING-SLICE-IO-WINDOWS-RUN, SOCKET-INET-WINDOWS-RUN, SLICE-PERMISSIONS-WINDOWS-RUN, SOCKET-V1-APPLE-RUN, SOCKET-INET-APPLE-RUN. (EVENT-V1-APPLE-RUN and SOCKET-V1-WINDOWS-RUN are correctly absent - CLAUDE.md records both DISCHARGED. STRING-CONCAT-WINDOWS-RUN appears only as a cited precedent.) NOT registered by this close: DOCS-COMPACT-6's partial registration was a judgment about which platform residuals belong in the matrix, and completing or reversing it is a disposition for the user, recorded in `deferred_decisions`. This is the clearest live instance of RESIDUAL-NAMED-ONLY-IN-A-CONSTRAINT-IS-UNTRACKED-WORK: all six are named ONLY in a constraint file, which is exactly what the tool counts as tracked."
+  }
+ },
+ "deferred_decisions": {
+  "note": "Carried forward for the integrator and the user, not decided here. The first four are wave 33's, re-registered unchanged because none has been taken; the last three are this wave's. No verdict below should be read as a recommendation.",
+  "items": {
+   "MATRIX-UPDATED-STALE-AT-WAVE-27": "The acceptance matrix's `updated` field has read wave 27 since wave 27. Carried from the wave-33 close undecided.",
+   "CT10-REASON-ROW": "Carried from the wave-33 close undecided.",
+   "EXAMPLES-STYLE-SLICE-FANOUT": "Carried from the wave-33 close undecided.",
+   "SYNC-RULE-TOOLING-COMMIT-SCOPE": "Whether the sync rule binds a tooling commit that publishes under docs/reports/. Carried from the wave-33 close undecided; 37bc9004 ('Fix Windows coherence gates') remains a live instance, and STABILITY-REEVAL #1 §4.3 registered it as WINDOWS-COHERENCE-GATES-UNCARDED.",
+   "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK": "NEW this wave, raised for the user. DOCS-COMPACT-6 GREW the three files (CLAUDE.md +11.87%, AGENTS.md +4.26%, README.md 0%), above the single-digit expectation CLAUDE.md's cadence rule states, and argues the growth is correct because every prose defect STABILITY-REEVAL #1 named was a claim WEAKER than its evidence, and correcting an understatement costs words. The card amended the cadence rule to say a pass may legitimately grow a file. The question for the user: is compaction the right vehicle for correction work at all, or should a compaction pass be measured only on redundancy while corrections land as their own card? Both readings are defensible and the answer sets the rule for DOCS-COMPACT-7.",
+   "VERIFIER-HOST-ROW-DISPOSITION": "NEW this wave, NOTED NOT TAKEN - the brief assigns it to card VERIFIER-HOST-CONTROL-BUDGET this wave. VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED was measured RED 3/3 in isolation by STABILITY-REEVAL #1 and GREEN in DOCS-COMPACT-6's full suite - the inverse of constraint 16's five load-sensitive rows. DOCS-COMPACT-6 took discharge option (a) in documentation and recorded the row BESIDE the five rather than among them, leaving the matrix entry open; whether (a) alone retires the residual is the open question. This close adds NO observation: its gate never ran.",
+   "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED": "NEW this wave, from the hand sweep. Six open -WINDOWS-RUN/-APPLE-RUN residuals named in CLAUDE.md reach no tracker while three siblings were registered by DOCS-COMPACT-6. Either complete the registration or state the rule that keeps platform residuals out of the matrix; the present split is neither."
+  }
+ },
+ "gate": "MEASURED AND PASSING. See docs/reports/wave34-close/gate.json: 4,559 passed / 0 failed / 8 ignored over 217 test executables / 228 result summaries; fmt clean; clippy clean; reevaluation_probe and reevaluation_followup exit 0; 129 Lean audits; 229 Python tests OK. Measured at a300a39d WITH this close's own matrix and AGENTS.md changes in the tree."
+}
