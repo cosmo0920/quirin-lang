@@ -339,9 +339,16 @@ pointer is the card that established it; read it before deviating.
     never the one removed and the header node is retained, so the rule removes
     a path and never a destination, and no leaf's internal coordinate moves
     for an unrelated reason. And the rule does **not** generalise to
-    `while (1)` or `for (;;)`: modelling those exactly would remove an *exit*
+    `while (1)`: modelling that exactly would remove an *exit*
     edge, which is the accusing direction and needs its own Lean statement and
-    re-pin (`CONSTANT-DO-WHILE-OTHER-CONSTANTS`). The 32 `unmodeled call,
+    re-pin (`CONSTANT-DO-WHILE-OTHER-CONSTANTS`). A pre-existing route already
+    removes the **exit** edge for `for (;;)`: `condition.is_empty()` at
+    `legacy_c.rs:3312` sets `condition_always_true`, which `legacy_c.rs:5161`
+    uses to drop `continuation` from the header's successors. It is exact
+    (C11 §6.8.5.3) and `break` still reaches `continuation`, but it carries
+    neither a Lean statement nor a pin, and it is not owned by card
+    `C-GATEWAY-CONSTANT-DO-WHILE` (`FOREVER-FOR-EXIT-EDGE-UNOWNED`).
+    The 32 `unmodeled call,
     aggregate or indirect access in do-while condition` leaves are a different
     question and stay refused — measured unmoved at 32 across the re-pin.
     Proved as `QCore.ConstantDoWhile`: `constant_do_while_is_its_body` the
@@ -440,6 +447,11 @@ pointer is the card that established it; read it before deviating.
    unmodeled exit; a future admission card reaching bodies that do retain should
    expect the pin to rise, and that rise is a finding to attribute, not a
    regression. `c-gateway-return-call-w4` §5.
+   Card `W36-CORPUS-CONTRACTS-3` (wave 36) moved the number **not at all**:
+   272 → 272 across a re-pin that added six declared contracts and moved 21
+   function statuses. A declarative card that decides 204 uncontracted-call
+   leaves is therefore not automatically a leak-pin event, and the pin was
+   re-verified rather than re-derived.
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
@@ -469,6 +481,16 @@ pointer is the card that established it; read it before deviating.
    W4 derives no summary for. The scalar projection assumes the LP64 model of
    the audited targets and the reader has no target (`LOADER-ABI-LP64`).
    `remaining-loader-abi`, `remaining-loader-abi-modes`.
+   The mode gate's `SummaryConflict`-only arm for a **nullability
+   refinement** was exercised for the first time by a *declaration* rather
+   than by the corpus: card `W36-CORPUS-CONTRACTS-3`'s `rd_kafka_mem_free`
+   declares `Released{nullable}` where W4 derives `Released{nonnull}`, and
+   the declaration is the faithful one — `rd_free(NULL)` reaches
+   `free(NULL)`. The declaration governs every call site, the defining unit's
+   own function moves `Safe → Unknown`, and **that is the gate working**: a
+   disagreement is reported, never silently resolved, and declaring `nonnull`
+   to silence it would assert a precondition the body does not have
+   (constraint 4). `w36-corpus-contracts-3` §5.2.
 9. **A fixture prelude is not a production declaration.** A fixture result is
    a result *for that fixture's declarations*: card O04-B08's flagship
    aggregate store was measured never to reach production, because the real
@@ -730,6 +752,14 @@ pointer is the card that established it; read it before deviating.
       the card — immediately before `<Buffer>` in a task parameter type, and as
       a capture's first word inside a spawn's argument list — so `lend` stays
       contextual and no global reservation is taken.
+    * `WRITE-LEND-TASKS-EXERCISE` (wave 36) **+0 words and +0 tokens**, and the
+      census is a **pre-card** measurement taken at base `0a5c2ecc` rather than
+      a claim checked afterwards. The worker-side byte access takes **no new
+      word at all**: `qcore_buffer_write` and `qcore_buffer_read` are the
+      existing intrinsics, and the **arity** selects the lease form on the
+      `borrow_utf8` precedent (constraint 15h's own mechanism), censused at
+      **zero** occurrences of either new arity across **514** `.qcore`/`.qc`
+      fixtures, so no shipped program's meaning changes.
     * `MUTEX-SHARE-CROSS` **+0 reserved words, +0 tokens, +0 name-resolution
       exclusions** — the cleanest outcome in this ledger, and the card asked
       for this row three waves before it was written
@@ -763,7 +793,17 @@ pointer is the card that established it; read it before deviating.
       `C-GATEWAY-RETURN-CALL-W4` and `DOCS-COMPACT-6`; and **wave 35's seven**
       — `SWEEP-BLIND-SPOTS`, `WAVE-34-CLOSE`, `VERIFIER-HOST-CONTROL-BUDGET`,
       `CT-CTWIN-LANE`, `C-GATEWAY-CONSTANT-DO-WHILE`, `MUTEX-SHARE-CROSS-ARMS`
-      and `JOINED-PROVENANCE-CYCLES`. **This bullet said "every card of waves
+      and `JOINED-PROVENANCE-CYCLES`; and **wave 36's six of seven** —
+      `CARD-SCOPE-GUARD`, `W36-CORPUS-CONTRACTS-3`, `STABILITY-REEVAL` #2,
+      `C-GATEWAY-INDIRECT-CENSUS-2`, `JOINED-PROVENANCE-CALL-FRAMES` and
+      `MUTEX-SHARE-CROSS-EMISSION`, none of which reserves a word or moves the
+      lexer (the last changes only what an already-admitted program *emits*,
+      and the corpus card adds a `.qcore` contract module, which is no
+      source-language surface). Wave 36's **seventh**,
+      `WRITE-LEND-TASKS-EXERCISE`, is **not** here: it ran a census and belongs
+      in the `+0` family above, where its row stands — the
+      `MUTEX-SHARE-CROSS` distinction, applied rather than restated.
+      **This bullet said "every card of waves
       32, 33 and 34" over a list that named neither `PROOF-LEG-BATCH` nor
       `DOCS-COMPACT-5` nor `MUTEX-SHARE-CROSS`, and the universal was
       therefore false**; card `SWEEP-BLIND-SPOTS` measured that
@@ -1414,6 +1454,29 @@ pointer is the card that established it; read it before deviating.
     `verifier-host-control-budget` §5 and §7.1, `mutex-share-cross-arms` §10,
     `stability-reeval-1` §2.1 and §7.1, `docs-compact-6` §8,
     `c-gateway-return-call-w4`.
+    **A second, independent measurement of the same sixth row, by card
+    `W36-CORPUS-CONTRACTS-3` (wave 36).** The card proposed this row's
+    text as *adding* the row — "joins this list as its **sixth** row" — and
+    that half is **declined**, because the row had already been the sixth
+    since the wave-35 close and a list cannot gain the same member twice; the
+    card offered the alternative reading itself and asked only that the
+    measurement land somewhere either way. It lands here, in the card's own
+    numbers: `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+    (`crates/qcore-verifier-host/tests/standalone_host.rs:175`) asserts a
+    **one-second wall-clock bound** over an 8 MiB pipe write and a process
+    spawn against a 40 ms declared timeout, **failed once inside a full gate at
+    load average ~40 on 16 cores** with sibling cards building, and passed
+    **12 of 12** re-run in isolation at load 23.7 to 27.6. Verify it in
+    isolation; never weaken the bound. This is the row's **first** measurement
+    at the middle of the load range — wave 35 measured it at ≈100 and at ≈6.5 —
+    and it is post-`poll(2)`-repair, so the repair narrows the failure window
+    without closing it (`STANDALONE-HOST-CLOSED-INPUT-LOAD`).
+    A **seventh** row is separately named and deliberately not added, because
+    card `C-GATEWAY-INDIRECT-CENSUS-2` saw constraint 16's signature and family
+    on a test that is **none of the six**: `LOAD-SENSITIVE-ROW-UNNAMED`. Until
+    that test is identified and measured in isolation, this list is known
+    incomplete rather than assumed complete. `w36-corpus-contracts-3` §8.1,
+    `c-gateway-indirect-census-2` §10.1.
 17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
     acquisition and was deliberately not weakened, which is why
     `resource_stored` is checked but unreachable from a single source module.
