@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "card": "MUTEX-SHARE-CROSS-EMISSION",
+  "generated": "2026-09-18",
+  "report": "docs/reports/mutex-share-cross-emission/README.md",
+  "purpose": "Card MUTEX-SHARE-CROSS-EMISSION discharges the residual of the same name, named by card MUTEX-SHARE-CROSS (wave 32) and measured on a CT artifact by card CT-CTWIN-LANE (wave 35). The checked mutex backend now renders a non-nested fork/join trace with real C11 children, so CT46's four unassessed stages -- mutex_reference_execution, c_emission, native_execution and native_sanitized -- move to executed on the case's OWN artifact. Published as a superseding record per constraint 21: the ct-ctwin-lane record keeps its bytes and is not edited.",
+  "derivation_rule": "A stage is executed only where a named workspace test runs it on the case's own artifact. compiler/tests/ct_corpus.rs::run_mutex_crossing does so on every cargo test of this workspace: it asserts the emitted C's child function, thrd_create and thrd_join, checks that the creator's own body does not carry the child's critical section, compares interpret_mutex_program's observation against the pinned vector, and on Linux and macOS compiles that emitted C under ASan/UBSan/LSan and compares its standard output byte for byte with the same observation. Every arm was falsified by mutation before it was believed. A native run is an observation, never a proof.",
+  "route": "mutex_guard",
+  "what_this_does_not_claim": "Contention, a data race, or anything about the C memory model. The checked trace is a total order whose child segment is contiguous between the spawn and the join, so the faithful rendering creates the child thread and immediately joins it: the creator performs no trace event while the child runs. A rendering that let the creator run ahead would realise an order the checker never saw. The discriminating power of these rows is the byte-for-byte observation comparison plus the memory sanitizers (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION). TSan is not run anywhere in this repository and no TSan-shaped claim is made here. No Windows or Apple run is claimed: the sanitized rows are gated to linux/macos and only Linux was exercised (MUTEX-SHARE-CROSS-EMISSION-WINDOWS-RUN, MUTEX-SHARE-CROSS-EMISSION-APPLE-RUN).",
+  "sanitized_native_growth": "9 of 46 -> 10 of 46. CT46 joins SANITIZED_GATED_CASES. A moved numerator is evidence about one case's artifact, never conformance (constraint 23); the denominator does not move, because no case is mapped or unmapped by this card.",
+  "emission_boundary_that_survives": "The backend renders a NON-NESTED fork/join trace and nothing wider. A guard-local child (GuardLocalJoin), a nested spawn, a child's events interleaved with its parent's, a custody transfer, a registered waiter and a typed-error exit inside a child are each still outside, published without C. CT46's guard_local.qcore control pins that boundary on a shape reachable from source, so the surviving refusal is not vacuous.",
+  "mapped_case_stage_matrix": {
+    "CT46": {
+      "supersedes": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+      "harness_verdict_mode": "checked_mutex_crossing",
+      "manifest_evidence_target": "linux",
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "c_emission": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos",
+            "windows"
+          ]
+        },
+        "native_execution": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "native_sanitized": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1,
+          "host_gate": [
+            "linux",
+            "macos"
+          ]
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      }
+    }
+  }
+}

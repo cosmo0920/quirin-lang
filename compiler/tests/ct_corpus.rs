@@ -481,7 +481,13 @@ const TOOL_REGISTRY: &[&str] = &["clang"];
 /// only if a harness runner really compiles its emitted C with `-fsanitize=…`
 /// and runs it. Every other case's sanitizer evidence is a transcript.
 const SANITIZED_GATED_CASES: &[&str] = &[
-    "CT03", "CT07", "CT09", "CT17", "CT22", "CT25", "CT26", "CT34", "CT49",
+    // CT46 joins at card `MUTEX-SHARE-CROSS-EMISSION` (wave 36): the declared
+    // crossing's own emitted C is compiled under ASan/UBSan/LSan and run, and
+    // its standard output compared byte for byte with the reference
+    // interpreter's observation of the same checked trace. The numerator this
+    // moves is evidence about one case's artifact, never conformance
+    // (constraint 23).
+    "CT03", "CT07", "CT09", "CT17", "CT22", "CT25", "CT26", "CT34", "CT46", "CT49",
 ];
 /// Cases whose sanitizer evidence is an archived transcript that no workspace
 /// test re-runs. They must read `recorded_not_gated` with a `record` pointer,
@@ -1076,9 +1082,35 @@ struct CheckedMutexCrossing {
     /// Every access of the protected payload, in order, with whether it named a
     /// guard. Rebuilt whole from the event list.
     reaches: Vec<GuardedReach>,
-    /// The verbatim refusal `interpret_mutex_program` returns for this module.
-    emission_refusal: String,
+    /// Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36). The crossing's own
+    /// rendering: what the emitted C must contain, and the observation its
+    /// sanitized native run must reproduce byte for byte. This field **replaces**
+    /// wave 35's `emission_refusal`, which pinned the boundary the backend has
+    /// since crossed; the surviving boundary is pinned by the `accept_unrendered`
+    /// control instead, so the fixture still measures both directions.
+    emission: CrossingEmission,
     controls: Vec<MutexCrossingControl>,
+}
+
+/// The declared crossing's native evidence.
+#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[serde(deny_unknown_fields)]
+struct CrossingEmission {
+    /// Fragments of the emitted C that must be present. These are the ones that
+    /// make the crossing *real*: a child function, a `thrd_create` naming it, a
+    /// `thrd_join`, and the child's own `mtx_lock`/`mtx_unlock` pair.
+    emitted_c_contains: Vec<String>,
+    /// Text that must not appear **in `main`**: the child's critical section
+    /// runs in the child's own function, or the "crossing" would be a rendering
+    /// artefact rather than a thread boundary. Checked against the emitted text
+    /// from `int main(` onwards, which is exactly the creator's body.
+    main_excludes: Vec<String>,
+    sanitizer_flags: Vec<String>,
+    asan_options: String,
+    ubsan_options: String,
+    /// The observation `interpret_mutex_program` computes, which the sanitized
+    /// native run's standard output must equal line for line.
+    reference_observation: Vec<String>,
 }
 
 #[derive(Deserialize, PartialEq, Eq, Debug)]
@@ -1112,6 +1144,12 @@ struct MutexCrossingControl {
     /// `accept_emitting` only: the observation `interpret_mutex_program`
     /// computes from this control's own checked event list.
     reference_observation: Vec<String>,
+    /// `accept_unrendered` only (card `MUTEX-SHARE-CROSS-EMISSION`): the
+    /// verbatim refusal `interpret_mutex_program` returns for a control that
+    /// checks and is still outside **both** rendered shapes. This is where
+    /// wave 35's top-level `emission_refusal` pin went: the boundary is still
+    /// measured, on a neighbouring shape the backend really does refuse.
+    emission_refusal: Option<String>,
     #[allow(dead_code)]
     note: String,
 }
@@ -1420,6 +1458,11 @@ fn derive_stage_plan(
         "checked_mutex_sanitized" => {
             Some("compiler/tests/ct_corpus.rs::run_checked_mutex_sanitized")
         }
+        // Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36). The declared crossing
+        // now renders, so its runner really executes the reference, emission,
+        // native and sanitized stages on the case's **own** artifact — the
+        // same shape `checked_mutex_sanitized` has had since `CT34-SANITIZED`.
+        "checked_mutex_crossing" => Some("compiler/tests/ct_corpus.rs::run_mutex_crossing"),
         "reordering_partial_order" => {
             Some("compiler/tests/ct_corpus.rs::run_reordering_partial_order")
         }
@@ -1464,7 +1507,7 @@ fn derive_stage_plan(
                 .len();
             (runs, runs)
         }
-        "checked_mutex_sanitized" => (1, 1),
+        "checked_mutex_sanitized" | "checked_mutex_crossing" => (1, 1),
         // One reference execution; one compile and `runs` executions of the one
         // sanitized binary. The native count is read from the fixture rather
         // than typed in, on the same rule as every other mode here.
@@ -1500,6 +1543,7 @@ fn derive_stage_plan(
         verdict,
         "native_heap_scenarios"
             | "checked_mutex_sanitized"
+            | "checked_mutex_crossing"
             | "reordering_partial_order"
             | "sequential_sanitized"
     ) {
@@ -1629,24 +1673,16 @@ fn derive_stage_plan(
             plan.insert("native_execution", StagePlan::absent("unassessed"));
         }
     }
-    // Card `CT-CTWIN-LANE` (wave 35). A declared crossing is *admitted* and
-    // still reaches no backend: `compile_files` returns the module with
-    // `c_source: None` and `interpret_mutex_program` refuses its event list,
-    // because the `Spawn` the crossing introduces is outside the emitted
-    // subset. Both facts are asserted by `run_mutex_crossing` on this case's own
-    // fixture, so they are measured rather than assumed.
-    //
-    // These three read `unassessed` and not `not_applicable`: the `mutex_guard`
-    // vocabulary really has them (CT26 executes all three), so they are an open
-    // item a later card could close — card `MUTEX-SHARE-CROSS`'s own
-    // `MUTEX-SHARE-CROSS-EMISSION` residual — rather than structurally absent.
-    // `native_sanitized` reaches `unassessed` on its own below, by the route
-    // rule, and is deliberately not special-cased here.
-    if verdict == "checked_mutex_crossing" {
-        plan.insert("mutex_reference_execution", StagePlan::absent("unassessed"));
-        plan.insert("c_emission", StagePlan::absent("unassessed"));
-        plan.insert("native_execution", StagePlan::absent("unassessed"));
-    }
+    // Card `CT-CTWIN-LANE` (wave 35) planned a declared crossing's reference,
+    // emission and native stages as `unassessed`, because the crossing was
+    // *admitted* and still reached no backend: `compile_files` returned the
+    // module with `c_source: None` and `interpret_mutex_program` refused its
+    // event list at the `Spawn`. That block is **removed** by card
+    // `MUTEX-SHARE-CROSS-EMISSION` (wave 36) rather than edited around: the
+    // backend now renders a non-nested fork/join trace with real C11 children,
+    // so the three stages are planned by the ordinary `deep` machinery above,
+    // crediting `run_mutex_crossing` on the case's own artifact. The open item
+    // that block named is the residual this card discharges.
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
     if verdict == "accept"
@@ -2129,9 +2165,27 @@ fn run_mapped_case(case: &ManifestCase) {
              the crossing carries nothing",
             case.id
         );
+        // Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36) moved this pin from the
+        // case's own refusal to its rendering. The boundary is still pinned,
+        // never omitted — it is now the *surviving* one, on a control the
+        // backend really does refuse.
         assert!(
-            !crossing.emission_refusal.trim().is_empty(),
-            "{}: the emission boundary is pinned, never omitted",
+            !crossing.emission.reference_observation.is_empty()
+                && !crossing.emission.emitted_c_contains.is_empty()
+                && !crossing.emission.main_excludes.is_empty(),
+            "{}: the crossing's rendering is pinned, never omitted",
+            case.id
+        );
+        assert_eq!(
+            crossing
+                .controls
+                .iter()
+                .filter(|control| control.expectation == "accept_unrendered")
+                .count(),
+            1,
+            "{}: exactly one control pins the emission boundary that survives, \
+             so `the backend renders a crossing` is not read as `the backend \
+             renders every mutex trace`",
             case.id
         );
         assert_eq!(
@@ -2141,8 +2195,29 @@ fn run_mapped_case(case: &ManifestCase) {
                 .filter(|control| control.expectation == "accept_emitting")
                 .count(),
             1,
-            "{}: exactly one control pins the other side of the emission \
-             boundary, so the case's empty emission is attributable",
+            "{}: exactly one control pins the same route without the clause, so \
+             the case's thread boundary is attributable to the clause",
+            case.id
+        );
+        // The attribution is a real difference and not a restatement: the case
+        // carries task structure in its observation and the control does not.
+        let control_observation = &crossing
+            .controls
+            .iter()
+            .find(|control| control.expectation == "accept_emitting")
+            .expect("checked just above")
+            .reference_observation;
+        assert!(
+            crossing
+                .emission
+                .reference_observation
+                .iter()
+                .any(|line| line.starts_with("spawn "))
+                && !control_observation
+                    .iter()
+                    .any(|line| line.starts_with("spawn ")),
+            "{}: the crossing's observation carries the task structure its \
+             control's does not",
             case.id
         );
         assert!(
@@ -2164,6 +2239,22 @@ fn run_mapped_case(case: &ManifestCase) {
                         && !control.reference_observation.is_empty(),
                     "{}: the emitting control pins the observation that makes it \
                      the emission boundary",
+                    case.id
+                ),
+                // Card `MUTEX-SHARE-CROSS-EMISSION`: the surviving boundary's
+                // control is admitted and renders nothing, so it pins a refusal
+                // instead of an observation — the exact mirror of the emitting
+                // control above.
+                "accept_unrendered" => assert!(
+                    control.diagnostic_sequence.is_empty()
+                        && control.message_fragment.is_none()
+                        && control.reference_observation.is_empty()
+                        && control
+                            .emission_refusal
+                            .as_ref()
+                            .is_some_and(|refusal| !refusal.trim().is_empty()),
+                    "{}: the unrendered control pins the refusal that makes it \
+                     the surviving emission boundary",
                     case.id
                 ),
                 "reject" => assert!(
@@ -3658,7 +3749,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 21] = [
+const EVIDENCE_FILES: [&str; 22] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3684,6 +3775,11 @@ const EVIDENCE_FILES: [&str; 21] = [
     // retires wave 13's CT46 bucket row, by declaration rather than by editing
     // that record (constraint 21).
     "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+    // Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36): CT46's four unassessed
+    // stages move to executed, the backend having learned to render a
+    // non-nested fork/join trace. A superseding record per constraint 21 — the
+    // ct-ctwin-lane record keeps its bytes.
+    "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -4274,23 +4370,133 @@ fn run_mutex_crossing(
          protocol` means here"
     );
 
-    // The emission boundary, stated as a decision rather than left as silence.
+    // Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36) replaced wave 35's
+    // `c_source.is_none()` assertion — which carried the instruction to do so in
+    // its own failure message — with the positive one, in the same change as
+    // `derive_stage_plan`'s arm and this case's four manifest rows.
+    let c = module.c_source.as_deref().unwrap_or_else(|| {
+        panic!("{id}: the declared crossing renders C since card MUTEX-SHARE-CROSS-EMISSION")
+    });
+    for wanted in &crossing.emission.emitted_c_contains {
+        assert!(
+            c.contains(wanted.as_str()),
+            "{id}: emitted C is missing `{wanted}`, so the crossing is not the \
+             real thread boundary this case claims"
+        );
+    }
+    let creator_body = c
+        .split_once("int main(")
+        .unwrap_or_else(|| panic!("{id}: the emitted program has an entry point"))
+        .1;
+    for forbidden in &crossing.emission.main_excludes {
+        assert!(
+            !creator_body.contains(forbidden.as_str()),
+            "{id}: the creator's own body contains `{forbidden}`; the child's \
+             critical section must run in the child's own function, or the \
+             crossing is a rendering artefact and not a thread boundary"
+        );
+    }
+    // Card `MUTEX-SHARE-CROSS-EMISSION`, and this assertion exists **because a
+    // mutation escaped without it**. The native comparison below compares the
+    // program's *logged* event sequence, so deleting a real `mtx_lock` while
+    // keeping its log line, or moving a real `mtx_unlock` away from its log
+    // line, both produced a byte-identical run under the sanitizers. What ties
+    // a logged acquisition to a real one is that the emitter writes the
+    // operation and its log adjacently, in one statement — so that adjacency is
+    // what gets asserted, on the emitted text, rather than assumed.
+    let mut logged_sections = 0;
+    let lines: Vec<&str> = c.lines().collect();
+    for (index, line) in lines.iter().enumerate() {
+        if !line.contains("qcore_diagnostic_log(") {
+            continue;
+        }
+        let operation = if line.contains("QCORE_DIAG_MUTEX_LOCK") {
+            "mtx_lock(&m"
+        } else if line.contains("QCORE_DIAG_MUTEX_UNLOCK") {
+            "mtx_unlock(&m"
+        } else {
+            continue;
+        };
+        logged_sections += 1;
+        let previous = index
+            .checked_sub(1)
+            .and_then(|previous| lines.get(previous))
+            .copied()
+            .unwrap_or_default();
+        assert!(
+            previous.contains(operation),
+            "{id}: the logged mutex event on line {} is not immediately \
+             preceded by its own `{operation}…` call, so the observation this \
+             case compares would not witness the real operation",
+            index + 1
+        );
+    }
     assert!(
-        module.c_source.is_none(),
-        "{id}: this mapping claims no emission; if the backend has learned to \
-         render a crossing, the manifest's three `unassessed` stages move in the \
-         same change"
+        logged_sections >= 4,
+        "{id}: both tasks' critical sections are in the emitted text — the \
+         child's and the creator's, two acquisitions and two releases — or this \
+         adjacency check is passing vacuously"
     );
-    let refusal = qcore_core::mutex_c_emit::interpret_mutex_program(
+    let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
         &checked.lowered.program,
         &checked.certificate,
     )
-    .expect_err("a crossing is outside the emitted subset");
+    .unwrap_or_else(|refusal| {
+        panic!("{id}: a fork/join crossing is inside the emitted subset: {refusal:?}")
+    });
     assert_eq!(
-        format!("{refusal:?}"),
-        crossing.emission_refusal,
-        "{id}: the emission refusal is part of the measurement"
+        reference, crossing.emission.reference_observation,
+        "{id}: reference observation drifted from the pinned expectation"
     );
+    // The crossing is in the observation, not merely in the event list: the
+    // child's acquisition sits strictly between the spawn and the join.
+    let position = |needle: &str| {
+        reference
+            .iter()
+            .position(|line| line == needle)
+            .unwrap_or_else(|| panic!("{id}: `{needle}` is not in the observation"))
+    };
+    let (spawn, join) = (
+        position(&format!(
+            "spawn {} {}",
+            crossing.spawn.parent, crossing.spawn.child
+        )),
+        position(&format!(
+            "join {} {}",
+            crossing.join.parent, crossing.join.child
+        )),
+    );
+    assert!(
+        spawn < join,
+        "{id}: the creator joins the child it spawned, in that order"
+    );
+    assert!(
+        reference[spawn + 1..join]
+            .iter()
+            .any(|line| line.starts_with("lock ")),
+        "{id}: the child acquires the generation inside its own segment, which \
+         is what `only through a verified mutex protocol` means once the \
+         crossing really executes"
+    );
+    if cfg!(any(target_os = "linux", target_os = "macos")) {
+        assert_eq!(
+            sanitized_c_run(
+                &mutex_observation::instrument(c),
+                &crossing.emission.sanitizer_flags,
+                &crossing.emission.asan_options,
+                &crossing.emission.ubsan_options,
+            ),
+            reference,
+            "{id}: the emitted program's standard output is compared byte for \
+             byte with the reference interpreter's observation of the same \
+             checked trace"
+        );
+    } else {
+        eprintln!(
+            "{id}: emitted on this host; Unix sanitizer evidence unexecuted \
+             (manifest evidence_target=linux)"
+        );
+    }
 
     for control in &crossing.controls {
         let path = directory.join(&control.source);
@@ -4342,6 +4548,49 @@ fn run_mutex_crossing(
                     observation, control.reference_observation,
                     "{id} control {}: reference observation drifted from the \
                      pinned expectation",
+                    control.source
+                );
+            }
+            // Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36): the boundary the
+            // backend still does **not** cross, measured on a shape that is
+            // reachable from source so the refusal is not vacuous. A
+            // guard-local child is joined inside a critical section its parent
+            // holds, so the parent is not simply blocked for the whole of the
+            // child's segment and the fork/join rendering does not apply. The
+            // module checks; it is published without C.
+            "accept_unrendered" => {
+                let module = outcome.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {}: this control must be admitted, or the \
+                         surviving emission boundary attributes nothing:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                let checked = module
+                    .checked
+                    .as_checked_mutex_guards()
+                    .unwrap_or_else(|| panic!("{id} control {}: same route", control.source));
+                assert!(
+                    module.c_source.is_none(),
+                    "{id} control {}: a trace outside both rendered shapes is \
+                     published without C, never with C the backend did not produce",
+                    control.source
+                );
+                let refusal = qcore_core::mutex_c_emit::interpret_mutex_program(
+                    &checked.lowered.program,
+                    &checked.certificate,
+                )
+                .expect_err("this control is outside the emitted subset");
+                assert_eq!(
+                    Some(format!("{refusal:?}")),
+                    control.emission_refusal,
+                    "{id} control {}: the surviving emission refusal is part of \
+                     the measurement",
                     control.source
                 );
             }

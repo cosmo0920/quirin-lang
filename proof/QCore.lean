@@ -135,6 +135,7 @@ import QCore.NeutralExpressionPosition
 import QCore.ReachGatePosition
 import QCore.Transferability
 import QCore.LiteralArgumentPremise
+import QCore.MutexShareCrossEmission
 import QCore.ProtectionGrowthEmission
 import QCore.ChainedTailActual
 import QCore.DereferencedResult

@@ -307,6 +307,9 @@ fn compile_and_run(source: &str) {
                 "-O0",
                 "-fsanitize=address,undefined",
                 "-fno-omit-frame-pointer",
+                // Card `MUTEX-SHARE-CROSS-EMISSION`: a fork/join rendering
+                // links real C11 threads.
+                "-pthread",
             ])
             .arg(&source_path)
             .arg("-o")
@@ -824,4 +827,339 @@ fn an_unadmitted_protection_growth_is_refused_by_both_renderings() {
     // 4. The certificate the checker really issued still renders.
     assert!(emit_mutex_c11(&program, &certificate).is_ok());
     assert!(interpret_mutex_program(&program, &certificate).is_ok());
+}
+
+// ---------------------------------------------------------------------------
+// Card `MUTEX-SHARE-CROSS-EMISSION`: the fork/join rendering.
+//
+// The classification is the whole of the admission decision, so every one of
+// its refusing arms is driven here on a hand-built trace rather than left to
+// whatever shape a source fixture happens to produce. Each arm was shown
+// non-vacuous by mutation: the arm's own condition was inverted and the
+// corresponding row went red.
+
+/// CT46's shape, built by hand: a creator, one child that takes the generation
+/// itself, and the creator's own section after the join.
+fn fork_join_trace() -> MutexInvariantProgram {
+    let footprint = AccessFootprint::new(1, 0, 4);
+    MutexInvariantProgram {
+        initial_shares: vec![grant(1, 4)],
+        initial_custody: [(1, 0)].into_iter().collect(),
+        events: vec![
+            MutexInvariantEvent::CreateMutex {
+                task: 0,
+                mutex: 1,
+                protects: vec![footprint],
+                invariant: 1,
+            },
+            MutexInvariantEvent::Spawn {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::Lock {
+                task: 1,
+                mutex: 1,
+                guard: 1,
+            },
+            MutexInvariantEvent::OpenInvariant { task: 1, guard: 1 },
+            MutexInvariantEvent::Access {
+                task: 1,
+                footprint,
+                kind: AccessKind::Write,
+                guard: Some(1),
+            },
+            MutexInvariantEvent::CloseInvariant {
+                task: 1,
+                guard: 1,
+                witness: InvariantWitness::Declared { invariant: 1 },
+            },
+            MutexInvariantEvent::Unlock { task: 1, guard: 1 },
+            MutexInvariantEvent::Join {
+                parent: 0,
+                child: 1,
+            },
+            MutexInvariantEvent::Lock {
+                task: 0,
+                mutex: 1,
+                guard: 2,
+            },
+            MutexInvariantEvent::Access {
+                task: 0,
+                footprint,
+                kind: AccessKind::Read,
+                guard: Some(2),
+            },
+            MutexInvariantEvent::Unlock { task: 0, guard: 2 },
+            MutexInvariantEvent::DestroyMutex { task: 0, mutex: 1 },
+            MutexInvariantEvent::Destroy {
+                task: 0,
+                resource: 1,
+            },
+        ],
+        ..Default::default()
+    }
+}
+
+#[test]
+fn a_fork_join_trace_renders_a_real_child_thread_and_agrees_with_the_reference() {
+    use crate::mutex_c_emit::{
+        ChildSegment, TraceShape, classify_trace, emit_mutex_c11, interpret_mutex_program,
+    };
+
+    let program = fork_join_trace();
+    assert_eq!(
+        classify_trace(&program),
+        TraceShape::ForkJoin {
+            children: vec![ChildSegment {
+                parent: 0,
+                child: 1,
+                spawn: 1,
+                join: 7,
+            }]
+        }
+    );
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    let reference = interpret_mutex_program(&program, &certificate).unwrap();
+    // The child's acquisition and release both lie strictly inside its own
+    // segment: that is what makes this a crossing rather than a relabelling.
+    let at = |needle: &str| reference.iter().position(|line| line == needle).unwrap();
+    let (spawn, join) = (at("spawn 0 1"), at("join 0 1"));
+    assert!(spawn < at("lock 1 1"));
+    assert!(at("unlock 1") < join);
+    assert!(join < at("lock 1 2"));
+
+    let emission = emit_mutex_c11(&program, &certificate).unwrap();
+    let source = &emission.source;
+    assert!(source.contains("static int qcore_mutex_task_1(void *qcore_task_arg)"));
+    assert!(source.contains("thrd_create(&qcore_thread_1, qcore_mutex_task_1"));
+    assert!(source.contains("thrd_join(qcore_thread_1"));
+    // The generation and the protected allocation moved to file scope so the
+    // child can name them; both are still initialised in the creator.
+    assert!(source.contains("static mtx_t m1;"));
+    assert!(source.contains("static unsigned char *r1;"));
+    // The child's critical section is not in the creator's body.
+    let creator = source.split_once("int main(").unwrap().1;
+    assert!(!creator.contains("QCORE_DIAG_INVARIANT_OPEN"));
+    compile_and_run(source);
+}
+
+#[test]
+fn two_children_in_sequence_each_get_their_own_function_and_segment() {
+    use crate::mutex_c_emit::{ChildSegment, TraceShape, classify_trace, emit_mutex_c11};
+
+    let mut program = fork_join_trace();
+    let second: Vec<MutexInvariantEvent> = vec![
+        MutexInvariantEvent::Spawn {
+            parent: 0,
+            child: 2,
+        },
+        MutexInvariantEvent::Lock {
+            task: 2,
+            mutex: 1,
+            guard: 3,
+        },
+        MutexInvariantEvent::Unlock { task: 2, guard: 3 },
+        MutexInvariantEvent::Join {
+            parent: 0,
+            child: 2,
+        },
+    ];
+    // Inserted after the first child's join, so the two segments are siblings
+    // and not nested.
+    for (offset, event) in second.into_iter().enumerate() {
+        program.events.insert(8 + offset, event);
+    }
+    assert_eq!(
+        classify_trace(&program),
+        TraceShape::ForkJoin {
+            children: vec![
+                ChildSegment {
+                    parent: 0,
+                    child: 1,
+                    spawn: 1,
+                    join: 7,
+                },
+                ChildSegment {
+                    parent: 0,
+                    child: 2,
+                    spawn: 8,
+                    join: 11,
+                },
+            ]
+        }
+    );
+    let certificate = check_mutex_invariant_program(&fork_join_trace()).unwrap();
+    let source = emit_mutex_c11(&program, &certificate).unwrap().source;
+    for child in [1, 2] {
+        assert!(source.contains(&format!(
+            "static int qcore_mutex_task_{child}(void *qcore_task_arg)"
+        )));
+        assert!(source.contains(&format!("thrd_join(qcore_thread_{child}")));
+    }
+}
+
+#[test]
+fn every_way_out_of_the_fork_join_shape_is_refused_at_its_own_event() {
+    use crate::mutex_c_emit::{
+        MutexEmissionRefusal, TraceShape, classify_trace, emit_mutex_c11, interpret_mutex_program,
+    };
+    use crate::mutex_invariant::{SharedResourceId, SyncWitness};
+
+    let base = fork_join_trace();
+    let certificate = check_mutex_invariant_program(&base).unwrap();
+
+    // Each case: a description, the mutated trace, and the event index the
+    // refusal must name. A malformed *segment* is reported at its `Spawn`,
+    // which is the event whose rendering cannot be constructed; an event that
+    // is outside on its own is reported where it stands.
+    let mut cases: Vec<(&str, MutexInvariantProgram, usize)> = Vec::new();
+
+    let mut nested = base.clone();
+    nested.events.insert(
+        3,
+        MutexInvariantEvent::Spawn {
+            parent: 1,
+            child: 2,
+        },
+    );
+    cases.push(("a nested spawn inside an open segment", nested, 1));
+
+    // Two ways a spawn goes unjoined, and they reach *different* arms. Here the
+    // creator resumes its own work where the join should have been, so the
+    // segment-contiguity arm is what refuses.
+    let mut unmatched = base.clone();
+    unmatched.events.remove(7);
+    cases.push((
+        "a spawn whose creator resumes instead of joining",
+        unmatched,
+        1,
+    ));
+
+    // And here the trace simply ends inside the open segment, which is the only
+    // way to reach the end-of-events arm: nothing follows to be out of place.
+    let mut runs_off_the_end = base.clone();
+    runs_off_the_end.events.truncate(7);
+    cases.push((
+        "a spawn whose segment runs off the end of the trace",
+        runs_off_the_end,
+        1,
+    ));
+
+    let mut interleaved = base.clone();
+    interleaved.events.insert(
+        3,
+        MutexInvariantEvent::AssertFact {
+            task: 0,
+            guard: 1,
+            footprint: AccessFootprint::new(1, 0, 4),
+            fact: 1,
+        },
+    );
+    cases.push((
+        "the creator's own event between the spawn and the join",
+        interleaved,
+        1,
+    ));
+
+    let mut error_exit = base.clone();
+    error_exit.events.insert(
+        6,
+        MutexInvariantEvent::ErrorExit {
+            task: 1,
+            guard: 1,
+            exit: 3,
+        },
+    );
+    cases.push((
+        "a typed-error exit inside a child, whose status the model gives no \
+         meaning at the join",
+        error_exit,
+        1,
+    ));
+
+    let mut guard_local = base.clone();
+    guard_local.events[7] = MutexInvariantEvent::GuardLocalJoin {
+        parent: 0,
+        child: 1,
+        guard: 1,
+    };
+    cases.push(("a guard-local join in place of the join", guard_local, 1));
+
+    let mut custody = base.clone();
+    custody.events.insert(
+        3,
+        MutexInvariantEvent::TransferCustody {
+            from: 0,
+            to: 1,
+            resource: 1 as SharedResourceId,
+            via: SyncWitness::SpawnEdge { child: 1 },
+        },
+    );
+    cases.push(("a custody transfer inside a segment", custody, 1));
+
+    let mut waiter = base.clone();
+    waiter
+        .events
+        .insert(3, MutexInvariantEvent::RegisterWaiter { task: 1, mutex: 1 });
+    cases.push(("a registered waiter inside a segment", waiter, 1));
+
+    let mut wrong_child = base.clone();
+    wrong_child.events[7] = MutexInvariantEvent::Join {
+        parent: 0,
+        child: 9,
+    };
+    cases.push((
+        "a join naming a child this spawn did not create",
+        wrong_child,
+        1,
+    ));
+
+    // A join with no spawn at all, on an otherwise single-task trace — so the
+    // join really is the first thing wrong, rather than the first of several.
+    let mut stray_join = open_write_close();
+    stray_join.events.insert(
+        2,
+        MutexInvariantEvent::Join {
+            parent: 0,
+            child: 1,
+        },
+    );
+    cases.push(("a join with no spawn at all", stray_join, 2));
+
+    let mut second_root = base.clone();
+    second_root.events.insert(
+        8,
+        MutexInvariantEvent::AssertFact {
+            task: 7,
+            guard: 2,
+            footprint: AccessFootprint::new(1, 0, 4),
+            fact: 1,
+        },
+    );
+    cases.push((
+        "an event outside every segment belonging to a task that is not the root",
+        second_root,
+        8,
+    ));
+
+    for (description, program, event) in cases {
+        assert_eq!(
+            classify_trace(&program),
+            TraceShape::Outside { event },
+            "{description}: classification"
+        );
+        // The classification is a caller's guard, never a replacement for the
+        // gate: both the backend and the reference interpreter refuse it too,
+        // at the same index, so no route can render what neither admits.
+        assert_eq!(
+            emit_mutex_c11(&program, &certificate),
+            Err(MutexEmissionRefusal::UnsupportedEvent { event }),
+            "{description}: emission"
+        );
+        assert_eq!(
+            interpret_mutex_program(&program, &certificate),
+            Err(MutexEmissionRefusal::UnsupportedEvent { event }),
+            "{description}: reference execution"
+        );
+    }
 }

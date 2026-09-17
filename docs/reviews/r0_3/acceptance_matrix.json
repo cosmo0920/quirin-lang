@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 161
+  "named_followups": 165
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1025,7 +1025,8 @@
    "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
    "docs/reports/ct-composed-native/ct_stage_evidence.json",
    "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
-   "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
+   "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+   "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
@@ -1203,25 +1204,22 @@
     "not_applicable": 34
    },
    "mutex_reference_execution": {
-    "executed": 2,
-    "not_applicable": 43,
-    "unassessed": 1
+    "executed": 3,
+    "not_applicable": 43
    },
    "c_emission": {
-    "executed": 18,
-    "not_applicable": 27,
-    "unassessed": 1
+    "executed": 19,
+    "not_applicable": 27
    },
    "native_execution": {
-    "executed": 18,
-    "not_applicable": 27,
-    "unassessed": 1
+    "executed": 19,
+    "not_applicable": 27
    },
    "native_sanitized": {
-    "executed": 9,
+    "executed": 10,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 25
+    "unassessed": 24
    },
    "legacy_c_twin": {
     "executed": 3,
@@ -1236,9 +1234,9 @@
    "elaborate": 4,
    "epoch_bound_check": 4,
    "legacy_c_twin": 3,
-   "mutex_invariant_check": 9,
+   "mutex_invariant_check": 8,
    "native_execution": 7,
-   "native_sanitized": 8,
+   "native_sanitized": 9,
    "proof": 3,
    "task_ledger_check": 7,
    "task_lowering": 1
@@ -1285,23 +1283,23 @@
    "CT43": "legacy_c_twin",
    "CT44": "task_ledger_check",
    "CT45": "legacy_c_twin",
-   "CT46": "mutex_invariant_check",
+   "CT46": "native_sanitized",
    "CT47": "task_ledger_check",
    "CT48": "mutex_invariant_check",
    "CT49": "native_sanitized",
    "CT50": "native_execution"
   },
   "observation_counts": {
-   "c_emission": 34,
+   "c_emission": 35,
    "elaborate": 43,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
    "mutex_invariant_check": 11,
    "mutex_lowering": 11,
-   "mutex_reference_execution": 2,
-   "native_execution": 49,
-   "native_sanitized": 30,
+   "mutex_reference_execution": 3,
+   "native_execution": 50,
+   "native_sanitized": 31,
    "parse": 46,
    "proof": 3,
    "sequential_reference_execution": 2,
@@ -5567,16 +5565,45 @@
       "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "c_emission": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos",
+       "windows"
+      ]
      },
      "native_execution": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "native_sanitized": {
-      "status": "unassessed"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mutex_crossing",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1,
+      "host_gate": [
+       "linux",
+       "macos"
+      ]
      },
      "legacy_c_twin": {
       "status": "not_applicable"
@@ -5586,9 +5613,9 @@
      }
     },
     "auxiliary_executed_stages": {},
-    "deepest_executed_stage": "mutex_invariant_check",
-    "stage_evidence_record": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
-    "semantic_profile": "CheckedMutexGuardsV1: a `protected N` payload — the transferability judgment's TransferKind::ProtectedResource, sendable over a derivable synchronization edge and not freely shareable — declared to cross into a child task under the generation that protects it (TransferMode::ShareUnderMutex requesting ShareProtocol::CheckedMutex), with every reach of the payload by either task naming a guard. Checked only: the module is admitted and the C backend renders nothing for it, interpret_mutex_program refusing the Spawn the crossing introduces, so no emission, native or sanitized evidence is claimed. CT46's own words `wrapper` and `non-Sync but Send` have no referent in this language and are carried by the judgment's classification instead; the task route's own own<Buffer> still cannot request mutex mediation (MUTEX-SHARE-CROSS-TASK-BUFFER)."
+    "deepest_executed_stage": "native_sanitized",
+    "stage_evidence_record": "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
+    "semantic_profile": "CheckedMutexGuardsV1: a `protected N` payload -- the transferability judgment's TransferKind::ProtectedResource, sendable over a derivable synchronization edge and not freely shareable -- declared to cross into a child task under the generation that protects it (TransferMode::ShareUnderMutex requesting ShareProtocol::CheckedMutex), with every reach of the payload by either task naming a guard. Since card MUTEX-SHARE-CROSS-EMISSION (wave 36) the crossing also EXECUTES: the child is a real C11 thread that performs its own mtx_lock/mtx_unlock on the generation, and the emitted program's standard output is compared byte for byte under ASan/UBSan/LSan with interpret_mutex_program's observation of the same checked trace. The evidence is acquisition/release pairing across a real thread boundary and the validity of the protected allocation, on one Linux target. It is NOT evidence about contention or any data race: the checked trace is a total order whose child segment is contiguous, so the faithful rendering joins the child immediately and the creator performs no trace event while the child runs (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION); no TSan row exists anywhere in this repository. CT46's own words `wrapper` and `non-Sync but Send` have no referent in this language and are carried by the judgment's classification instead; the task route's own own<Buffer> still cannot request mutex mediation (MUTEX-SHARE-CROSS-TASK-BUFFER)."
    },
    {
     "id": "CT47",
@@ -6133,7 +6160,7 @@
   "workspace_tests": 4580,
   "provider_tests": 122,
   "python_evidence_validator_tests": 247,
-  "lean_audits": 133,
+  "lean_audits": 134,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6205,6 +6232,7 @@
    "AuditMutexInvariant.lean",
    "AuditMutexShareCross.lean",
    "AuditMutexShareCrossArms.lean",
+   "AuditMutexShareCrossEmission.lean",
    "AuditNativeLibrary.lean",
    "AuditNativeLibraryContract.lean",
    "AuditNativeLibraryHeader.lean",
@@ -6957,13 +6985,6 @@
    "recorded_by": "WAVE-35-CLOSE"
   },
   {
-   "id": "MUTEX-SHARE-CROSS-EMISSION",
-   "title": "The declared mutex crossing is checked and never executed - no C is emitted for any multi-task mutex trace",
-   "why": "Named by card MUTEX-SHARE-CROSS (wave 32) and carried verbatim in standing constraint 15o, landed by the wave-35 close. mutex_c_emit::is_single_task_trace gives NO C to any multi-task mutex trace, a pre-existing boundary that card did not move, so the crossing is CHECKED, NEVER EXECUTED and no native or data-race evidence may be claimed for it. Wave 35's CT-CTWIN-LANE made this MEASURED ON A CT ARTIFACT rather than inherited: CT46 is the corpus's first ADMITTED case that deliberately stops at the checker, the emission boundary pinned in both directions with a control that does render, which is why four of CT46's stages read `unassessed` and none reads `executed`. DISCHARGE: a C backend for multi-task mutex traces (real thrd_t plus the existing mtx_t emission), then a sanitized native run byte-compared against the reference interpreter, on the WRITE-LEND-TASKS native-run precedent - which would move CT46's four stages and take the sanitized-native numerator off 9 for the first time since wave 32. CT-CTWIN-LANE §9 item 5 states the three coupled edits that must land in ONE change or the harness refuses.",
-   "source": "docs/reports/mutex-share-cross/README.md",
-   "recorded_by": "WAVE-35-CLOSE"
-  },
-  {
    "id": "MUTEX-SHARE-CROSS-TASK-BUFFER",
    "title": "The task route's own<Buffer> still cannot cross under a mutex; MUTEX_SHARING_GAP stays false",
    "why": "The half of CT46's gap that card MUTEX-SHARE-CROSS (wave 32) left open and named: the TASK route has no mutex, so its own<Buffer> still cannot cross under one, and MUTEX_SHARING_GAP stays false - a fact standing constraint 15o now carries. Re-measured by wave 35's CT-CTWIN-LANE while mapping CT46: MUTEX_SHARING_GAP.requestable stays false in that lane's own stage evidence. DISCHARGE: a mutex for the task route - or a DECISION that the two routes' payloads stay distinct kinds, recorded as such. The second arm is a legitimate outcome and must be recorded rather than left implicit.",
@@ -7351,6 +7372,41 @@
    "title": "new, and a vacuity finding about this card's own work. The frame test inside `step` cannot currently fire through `derive`: `outgoing` applies the same `conditi",
    "why": "* **`CALL-FRAMES-ALLOWLIST-LOCAL-ONLY`** — **new, and a vacuity finding about this card's own work.** The frame test inside `step` cannot currently fire through `derive`: `outgoing` applies the same `conditional_names` membership test after **every** node, so every name reaching a call is already in the frame. The guard is therefore a *local* enforcement of the premise, driven by a direct `step` test (`a_call_forgets_a_name_the_frame_list_does_not_carry`) and by §5's mutation, but no CFG can present it with an unrecognised name today. It is kept deliberately — without it the arm's soundness would depend on a caller's ordering rather than on its own text, which is worse — and it is recorded rather than presented as verified-in-place. Discharge: either derive the invariant explicitly (assert it, or restrict the type) so the guard is provably redundant, or introduce a route that reaches `step` without `outgoing`'s filter and drive the arm from it.",
    "source": "docs/reports/joined-provenance-call-frames/README.md §7"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION",
+   "title": "The rendered crossing is a real thread boundary and a serial schedule; no contention or data-race evidence exists for it",
+   "why": "Card MUTEX-SHARE-CROSS-EMISSION (wave 36) renders a checked fork/join mutex trace with real thrd_t children, so CT46's payload is reached, and its generation acquired and released, by the child's own thread. What it does NOT produce is evidence about contention. The checked trace is a TOTAL ORDER whose child segment is contiguous between the spawn and the join, so the faithful rendering creates the child and immediately joins it: the creator performs no trace event while the child runs. That is proved, not asserted -- QCore.MutexShareCrossEmission.the_creator_performs_no_event_while_its_child_runs -- and it is a property of the checked order rather than a limitation worked around, because a rendering that let the creator run ahead would realise an order the checker never saw. Consequence, stated so no later reader over-reads the flipped CT46 rows: the sanitized native run witnesses acquisition/release pairing across a real thread boundary and the validity of the protected allocation, and nothing about the C memory model. TSan is not run anywhere in this repository and is measured non-functional on emitted task programs (docs/reports/remaining-t04/README.md: it does not intercept C11 thrd_create and a -fsanitize=thread build dies with SEGV), so the usual instrument is unavailable here as well. DISCHARGE: either a construct that lets two tasks' trace events genuinely interleave under the model -- which needs the model to admit a schedule it does not admit today -- together with a working race detector for the emitted C; or a DECISION, recorded as such, that this route's native evidence stays serial by construction. The second arm is a legitimate outcome and must be recorded rather than left implicit.",
+   "source": "docs/reports/mutex-share-cross-emission/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-EMISSION"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-EMISSION-LOGGED-SEQUENCE",
+   "title": "The native comparison compares the logged event sequence, not the C operations beneath it; three mutations escaped before the repair",
+   "why": "Measured by card MUTEX-SHARE-CROSS-EMISSION (wave 36) and published rather than smoothed over, because it is the STABILITY-REEVAL shape found inside the card's own new evidence. CT46's sanitized native run compares the emitted program's stdout byte for byte with interpret_mutex_program's observation, and that stdout is produced by the typed diagnostic sink -- so it is evidence about the LOGGED sequence. Three mutations of the emitted C therefore ran byte-identical, exit 0, clean under ASan/UBSan/LSan: (a) deleting the real mtx_lock while keeping its log line; (b) moving the real mtx_unlock away from its log line; (c) calling the child function directly instead of thrd_create. Two repairs landed in the same card rather than a caveat: run_mutex_crossing now asserts on the EMITTED TEXT that every logged mutex event is immediately preceded by its own mtx_lock/mtx_unlock call -- the adjacency one renderer writes, proved as QCore.MutexShareCrossEmission.a_logged_acquisition_is_preceded_by_a_real_one -- and the thread boundary is pinned by emitted_c_contains plus a main_excludes check. With those, (a), (b) and (c) go red. WHAT REMAINS: the adjacency check covers the mutex operations only. A dropped payload WRITE is caught for a different reason -- the following read's sum is computed by C and would move -- but that is an accident of this fixture's shape, not a rule, and no equivalent structural check exists for touch/log pairs. DISCHARGE: extend the adjacency assertion to every (operation, log) pair the emitter writes, and drive each with its own emitter mutation; or state the non-mutex pairs as a measured boundary with the reason each is caught by something else.",
+   "source": "docs/reports/mutex-share-cross-emission/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-EMISSION"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-EMISSION-CHILD-ERROR-EXIT",
+   "title": "A typed-error exit inside a child refuses, because the model gives a child's exit status no meaning at the join",
+   "why": "Card MUTEX-SHARE-CROSS-EMISSION (wave 36) admits a non-nested fork/join mutex trace and refuses one whose child segment carries a MutexInvariantEvent::ErrorExit, classified Outside at the segment's own Spawn. The ground is that CheckedMutexInvariantV1 gives a child's typed-error exit no meaning AT THE JOIN: the emitted child function would have to return a status, and the creator would have to do something with it, and neither is anything the model decides. Rendering one would therefore invent semantics, so the arm fails closed instead. The refusal is driven by a hand-built trace in crates/qcore-core/tests/unit/mutex_c_emit.rs and shown non-vacuous by mutation, and it is proved in QCore.MutexShareCrossEmission (a_child_error_exit_is_refused). Whether it is reachable from SOURCE was not measured: lower_child_task refuses a typed-error exit at a child's top level, so reaching it needs one inside a `with lock` in the child's body. DISCHARGE: give the model a meaning for a child's error exit at the join and render it, or measure the source-level reachability and record the arm as a justified backstop, as MUTEX-SHARE-CROSS-ARMS did for its arms C and D.",
+   "source": "docs/reports/mutex-share-cross-emission/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-EMISSION"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-EMISSION-WINDOWS-RUN",
+   "title": "CT46's fork/join rendering has had no MSVC run, and none is claimed",
+   "why": "Card MUTEX-SHARE-CROSS-EMISSION (wave 36) compiles and runs CT46's own emitted C under ASan/UBSan/LSan on LINUX only. The manifest's four flipped stages are gated linux/macos for the run and linux/macos/windows for the emission, exactly as the route's existing sanitized runner is, and the emitted program's thread operations go through the embedded c11_threads_compat.h whose Windows arm is the winpthreads subset. No cl.exe or clang-cl run of a fork/join mutex program has happened, so no Windows claim is made -- the SLICE-PERMISSIONS-WINDOWS-RUN / WRITE-LEND-TASKS-WINDOWS-RUN precedent, and MSVC ships no ASan/UBSan in this harness in any case. DISCHARGE: run compiler/tests/ct_corpus.rs::ct_manifest_and_fixture_set_agree_and_mapped_cases_execute on a Windows host with the emitted CT46 program compiled by cl.exe, and record the byte comparison; the sanitizer half stays unclaimed there by construction.",
+   "source": "docs/reports/mutex-share-cross-emission/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-EMISSION"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-EMISSION-APPLE-RUN",
+   "title": "CT46's fork/join rendering has had no macOS run, and none is claimed",
+   "why": "The Apple sibling of MUTEX-SHARE-CROSS-EMISSION-WINDOWS-RUN. Card MUTEX-SHARE-CROSS-EMISSION (wave 36) gates CT46's native and sanitized stages linux/macos and the harness compiles the same file on both, but only the Linux arm was exercised. The macOS arm additionally differs in two recorded ways: Apple's AddressSanitizer implements no LeakSanitizer, so the harness forces detect_leaks=0 there and the reclamation of the protected allocation would be unwitnessed; and C11 threads reach Apple Clang through the pthread-backed subset. DISCHARGE: run the CT corpus on a macOS host and record which half of the Linux evidence reproduces -- byte comparison yes, leak detection no, on the EVENT-V1-APPLE-RUN precedent.",
+   "source": "docs/reports/mutex-share-cross-emission/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-EMISSION"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

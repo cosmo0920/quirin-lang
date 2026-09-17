@@ -8,6 +8,9 @@
 #[path = "../../tests/support/windows_c.rs"]
 mod windows_c;
 
+#[path = "../../tests/support/mutex_observation.rs"]
+mod mutex_observation;
+
 use qcore_compiler::{CompileOptions, SourceFile, compile_files};
 use qcore_compiler::{ConcurrencyAssumption, ConcurrencyProfile, SourceExecutionProfile};
 #[cfg(not(target_os = "windows"))]
@@ -161,6 +164,10 @@ fn run_native(source: &str) -> Vec<String> {
                 "-O0",
                 "-fsanitize=address,undefined",
                 "-fno-omit-frame-pointer",
+                // Card `MUTEX-SHARE-CROSS-EMISSION`: a fork/join rendering
+                // links real C11 threads. Harmless for the single-thread
+                // programs this helper already compiled.
+                "-pthread",
             ])
             .arg(&path)
             .arg("-o")
@@ -280,11 +287,15 @@ fn a_checked_witness_module_drops_the_declared_premise_and_still_runs_natively()
     );
 }
 
-/// A module whose trace carries task structure is checked and published, but
-/// this backend emits one thread, so it renders no C. The module is published
-/// without C rather than with C the backend did not produce.
+/// A module whose trace carries fork/join task structure is checked, rendered
+/// with a real C11 child thread, and run against its own reference observation.
+///
+/// Before card `MUTEX-SHARE-CROSS-EMISSION` this test asserted the opposite —
+/// `c_source.is_none()` — because the backend emitted one thread. That pin was
+/// moved deliberately, and the boundary it used to guard is now asserted on a
+/// guard-local child by the test below, which is still outside both shapes.
 #[test]
-fn a_composed_child_task_module_checks_and_is_published_without_native_emission() {
+fn a_composed_child_task_module_checks_and_runs_natively_with_a_real_child_thread() {
     let source = "import std.concurrency; fn main() -> unit {\n\
          thread scope s {\n\
          let buf = protected 4;\n\
@@ -309,9 +320,71 @@ fn a_composed_child_task_module_checks_and_is_published_without_native_emission(
         "the child is created and joined by its creator"
     );
     assert_eq!(checked.certificate.destroyed_resources, vec![1]);
+    // Card `MUTEX-SHARE-CROSS-EMISSION` moved this pin **deliberately**: the
+    // backend has a rendering for a non-nested fork/join trace, so this module
+    // now emits, and the emitted program is run against its own reference
+    // observation below rather than merely asserted to exist.
+    let c = module
+        .c_source
+        .as_deref()
+        .expect("a fork/join trace renders since card MUTEX-SHARE-CROSS-EMISSION");
+    assert!(
+        c.contains("thrd_create(&qcore_thread_1, qcore_mutex_task_1"),
+        "the child is a real C11 thread, not an inlined segment"
+    );
+    let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
+        &checked.lowered.program,
+        &checked.certificate,
+    )
+    .expect("a fork/join trace is inside the emitted subset");
+    assert!(reference.contains(&"spawn 0 1".to_owned()));
+    assert!(reference.contains(&"join 0 1".to_owned()));
+    assert_eq!(
+        run_native(&mutex_observation::instrument(c)),
+        reference,
+        "native and reference observations must agree line for line"
+    );
+}
+
+/// The boundary that survives card `MUTEX-SHARE-CROSS-EMISSION`, asserted on a
+/// shape that is **reachable from source** so the refusal is not vacuous.
+///
+/// A guard-local child (`thread scope c under g`) lowers to `GuardLocalJoin`,
+/// which is outside both rendered shapes: the child is joined inside a critical
+/// section its parent holds, so the parent is not simply blocked for the whole
+/// of the child's segment. The module still checks, and is still published
+/// without C rather than with C the backend did not produce.
+#[test]
+fn a_guard_local_child_is_checked_and_still_published_without_native_emission() {
+    let source = "import std.concurrency; fn main() -> unit {\n\
+         thread scope s {\n\
+         let buf = protected 4;\n\
+         let m = mutex guards buf;\n\
+         with lock m as g {\n\
+         thread scope c under g { }\n\
+         read buf with g;\n\
+         }\n\
+         }\n\
+         }\n";
+    let module = compile(source).unwrap();
+    let checked = module.checked.as_checked_mutex_guards().unwrap();
+    assert_eq!(
+        qcore_core::mutex_c_emit::classify_trace(&checked.lowered.program),
+        qcore_core::mutex_c_emit::TraceShape::Outside { event: 2 },
+        "the guard-local join is the event that puts this trace outside, and \
+         the refusal names it"
+    );
     assert!(
         module.c_source.is_none(),
-        "the single-thread backend renders no program for a trace with task structure"
+        "a trace outside both rendered shapes is published without C"
+    );
+    assert_eq!(
+        qcore_core::mutex_c_emit::interpret_mutex_program(
+            &checked.lowered.program,
+            &checked.certificate,
+        ),
+        Err(qcore_core::mutex_c_emit::MutexEmissionRefusal::UnsupportedEvent { event: 2 }),
+        "the reference interpreter refuses exactly where the backend does"
     );
 }
 
