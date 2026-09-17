@@ -531,7 +531,20 @@ not.
    because it bounds what any future cover card may promise, the second because
    it is a live W4 defect with a concrete repair, the third because it is worth
    ~9 functions and ~130 leaves for one vocabulary addition.
-10. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
+10. **The acceptance matrix was deliberately NOT regenerated**, on
+    `W31-CORPUS-CONTRACTS-2`'s precedent — that card, the directly analogous
+    declarative arbiter, touched neither `acceptance_matrix.json` nor
+    `build_matrix.py`. `named_followups` is therefore still at **121** in the
+    tree and the eight names in §9 are carried by this report and the increment
+    record only, which is the half of the `DOCS-COMPACT-4`/`-5` defect the
+    `--residuals` sweep exists to catch. Two matrix fields worth a glance at the
+    close: `corpus.contract_modules_per_directory` and
+    `corpus.contract_clause_pin` are derived from card B00's **frozen** archive
+    and describe a 59-module checkpoint beside a corpus this card takes to 82 —
+    that divergence is the already-recorded `D02-B00-LEDGER-SNAPSHOT`
+    (constraint 25), it widens here, and it must be repaired by publishing
+    provenance beside them and **never** by editing the archive (constraint 21).
+11. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
     to six declared premises; the added `unknown_alias` leaves are
     `Unknown`-class evidence and not defect claims (invariant 2).
 
