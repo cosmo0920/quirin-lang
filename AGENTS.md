@@ -1623,19 +1623,19 @@ nothing. Three cards allocated nothing either and are **not** instances of the
 rule: `GATEWAY-C-LOCATION` and `CT24-CLEANUP-PREEMPTED`, because fixing where a
 diagnostic is *attributed* is not a code change (constraint 1), and
 `CT42-PROTOCOL-CELL`, which reaches the footprint checker's existing `Q664`
-condition from a new deriver without widening it. Wave 36's `WRITE-LEND-TASKS-EXERCISE` is the **fourteenth**, on the same two
+condition from a new deriver without widening it. Wave 36's
+`WRITE-LEND-TASKS-EXERCISE` is the **fourteenth**, on the same two
 bands wave 31 used (`Q020` and `Q600`, so no tenth band): the worker-side byte
 access lands entirely as condition extensions — the at-most-one-lease parameter
 rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
 the constant-index tier and the three authority rules on `Q600` — with the
 **arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
-word and takes no code. **Waves 32–34 allocated no
-code and ran no condition extension either**, so the count before it stood at
-thirteen:
-the two gateway arbiters `C-GATEWAY-RETURN-POSITION` and
+word and takes no code. **Waves 32–34 allocated no code and ran no condition
+extension either**, so the count before it stood at thirteen: the two gateway
+arbiters `C-GATEWAY-RETURN-POSITION` and
 `C-GATEWAY-RETURN-CALL-W4` move **gateway diagnostics**, which are categories
 rather than `Q` codes, so the icebox does not engage; and the remaining cards
-of those waves touch no diagnostic at all. The icebox has now held for nine
+of those waves touch no diagnostic at all. The icebox has now held for eleven
 waves without a card needing a range.
 
 | Codes | Owning pass | Meaning |
