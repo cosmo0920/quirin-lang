@@ -1,0 +1,99 @@
+{
+  "card": "C-GATEWAY-RETURN-CALL-W4",
+  "wave": 34,
+  "base": "c4b24a9b",
+  "measured": "2026-09-17",
+  "host": {
+    "platform": "linux",
+    "clang": "Ubuntu clang version 21.1.8",
+    "lean": "leanprover/lean4:v4.34.0",
+    "python": "3.14.4"
+  },
+  "standing_gate": {
+    "git_submodule_update": {
+      "exit": 0,
+      "note": "third_party/libevent at the pinned d82464a277d0f42703702c4dfd9af6af38595a83; run first, because the pin gate fires at the END of a corpus run"
+    },
+    "cargo_test_workspace_no_fail_fast": {
+      "passed": 4558,
+      "failed": 1,
+      "ignored": 8,
+      "exit": 101,
+      "known_failure": "closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request",
+      "known_failure_residual": "VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED",
+      "note": "The one failure is the registered wall-clock throughput row in qcore-verifier-host (crates/qcore-verifier-host/tests/standalone_host.rs:212), not this card's and not touched by it. The honest baseline figure for this host is 4,543 passed / 1 failed / 8 ignored; this card adds 15 tests (14 end-to-end + 1 white-box), so 4,543 + 15 = 4,558 exactly.",
+      "log": "measure/c-gateway-return-call-w4/workspace.log"
+    },
+    "cargo_fmt_all_check": { "exit": 0 },
+    "cargo_clippy_all_targets_deny_warnings": { "exit": 0 },
+    "reevaluation_probe": { "exit": 0 },
+    "reevaluation_followup": { "exit": 0 },
+    "check_lean_audits": {
+      "exit": 0,
+      "audits": 129,
+      "note": "127 -> 129 across waves 33-34; this card adds AuditReturnCallCustody.lean. Axiom surface propext + Quot.sound only.",
+      "log": "measure/c-gateway-return-call-w4/lean.log"
+    }
+  },
+  "additional": {
+    "python_unittest": {
+      "exit": 0,
+      "tests": 229,
+      "note": "Run as CI runs them (python3 -m unittest scripts.tests.<module>); scripts/tests has no __init__.py, so directory discovery does not work."
+    },
+    "provider_packages": {
+      "run": false,
+      "ground": "Constraint 18 requires a rebuild+verify after a change to the manifest template or to a qcore-schemas MAJOR version. This card changes neither: qcore-schemas stays 14.0.0 and no provider-template.json is touched. No provider crate is a dependency of qcore-c-gateway."
+    },
+    "gateway_crate_isolated": {
+      "passed": 1000,
+      "failed": 0,
+      "ignored": 7,
+      "note": "The crate this card changes, run on its own."
+    },
+    "mutation_campaign": {
+      "mutations": 7,
+      "caught": 7,
+      "log": "logs/mutations.txt"
+    }
+  },
+  "corpus_repin": {
+    "before_reproduces_baseline": true,
+    "baseline": "docs/reports/c-gateway-return-position/artifacts",
+    "verdict_bearing_identical": ["diagnostics", "chunk-contracts"],
+    "also_identical": ["source"],
+    "differ_in_both_runs": {
+      "artifacts": ["source-effects", "contracts"],
+      "note": "Identical digests in BEFORE and AFTER, so the difference is the checkout root and identity digests this chain has carried at every re-pin, not this card."
+    },
+    "counts": {
+      "leak": { "before": 272, "after": 272 },
+      "double_release": { "before": 1, "after": 1 },
+      "unknown_alias": { "before": 4208, "after": 4214 },
+      "unsupported": { "before": 50117, "after": 50106 }
+    },
+    "statuses": {
+      "units": { "before": { "Safe": 2, "Unsafe": 42, "Unknown": 137, "data_only": 4 }, "after": { "Safe": 2, "Unsafe": 42, "Unknown": 137, "data_only": 4 } },
+      "functions": { "before": { "Safe": 179, "Unsafe": 85, "Unknown": 4570 }, "after": { "Safe": 186, "Unsafe": 85, "Unknown": 4563 } }
+    },
+    "leaves": { "withdrawn": 17, "added": 12 },
+    "runs": { "seconds_each": 270 }
+  },
+  "pin_updates": [
+    {
+      "file": "crates/qcore-c-gateway/tests/neutral_expression_positions.rs",
+      "from": "pointer_arithmetic_in_a_call_actual_stays_unknown",
+      "to": "pointer_arithmetic_in_a_call_actual_agrees_with_the_statement_position",
+      "deliberate": true,
+      "ground": "The statement form of the identical C was measured already Safe BEFORE this card, so the Unknown this row pinned was the return position's extra strictness and not a custody judgment. The control is written into the test."
+    },
+    {
+      "file": "docs/reviews/r0_3/acceptance_matrix.json",
+      "field": "validation.lean_audits",
+      "from": 128,
+      "to": 129,
+      "deliberate": true,
+      "ground": "Derived field (constraint 25); regenerated with docs/reports/remaining-d02/build_matrix.py passing --gate docs/reports/wave33-close/gate.json so that ONLY the two derived Lean fields move and wave 33's gate provenance is preserved verbatim. The wave-34 close should regenerate with its own gate."
+    }
+  ]
+}

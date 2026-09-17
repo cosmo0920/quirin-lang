@@ -6117,7 +6117,7 @@
   "workspace_tests": 4544,
   "provider_tests": 122,
   "python_evidence_validator_tests": 227,
-  "lean_audits": 128,
+  "lean_audits": 129,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6214,6 +6214,7 @@
    "AuditRegionJoinsDuties.lean",
    "AuditRegionJoinsLoan.lean",
    "AuditRegionTaskCredit.lean",
+   "AuditReturnCallCustody.lean",
    "AuditReturnPositionEscape.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSlicePermissions.lean",

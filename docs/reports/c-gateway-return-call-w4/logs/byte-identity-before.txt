@@ -1,0 +1,11 @@
+archive: docs/reports/c-gateway-return-position/artifacts
+run:     measure/c-gateway-return-call-w4/runs/before
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   695215f714319cf9 / 695215f714319cf9
+ source           raw IDENTICAL  canonical IDENTICAL   ae38f6c93dfbe341 / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     f1a3c275d5ea0f43 / d593131e8d7eaec8
+ contracts        raw differs    canonical differs     17fe29bdb44860d0 / 919dd6dc6fa0b216
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.

@@ -1,0 +1,8 @@
+cJSON_Duplicate: shape=call callee=cJSON_Duplicate_rec callee_status=Unknown origin=cJSON.c:2771
+cJSON_Parse: shape=call callee=cJSON_ParseWithOpts callee_status=Unknown origin=cJSON.c:1224
+cmt_cat: shape=call callee=append_context callee_status=Unknown origin=cmt_cat.c:1103
+ctr_span_set_trace_id_with_cid: shape=not-a-complete-return-on-this-line callee=ctr_span_set_trace_id callee_status=Unknown origin=ctr_span.c:114
+destroy_data_point: shape=call callee=destroy_numerical_data_point callee_status=Unknown origin=cmt_encode_opentelemetry.c:2083
+destroy_data_point: shape=call callee=destroy_summary_data_point callee_status=Safe origin=cmt_encode_opentelemetry.c:2085
+destroy_data_point: shape=call callee=destroy_histogram_data_point callee_status=Unknown origin=cmt_encode_opentelemetry.c:2087
+destroy_data_point: shape=call callee=destroy_exponential_histogram_data_point callee_status=Unknown origin=cmt_encode_opentelemetry.c:2089

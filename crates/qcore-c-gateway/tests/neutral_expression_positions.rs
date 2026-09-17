@@ -361,25 +361,49 @@ fn a_dereference_in_a_return_expression_stays_unknown() {
     assert_eq!(run.status("dereferenced"), AnalysisStatus::Unknown);
 }
 
-/// Pointer arithmetic inside an otherwise admitted call actual. Measured
-/// boundary, recorded rather than assumed: a *bare* `(unsigned long)(p + n)`
-/// return carries no token the existing lexical predicate refuses, so it was
-/// admitted before this card and still is. What this card decides is the
-/// actual, where the C02 operand walker refuses `p` because it is not a
-/// declared scalar.
+/// Pointer arithmetic inside an otherwise admitted call actual.
+///
+/// **Deliberate pin update, card `C-GATEWAY-RETURN-CALL-W4`
+/// (`docs/reports/c-gateway-return-call-w4/README.md` §6).** This row asserted
+/// `Unknown`. It now asserts `Safe`, and the ground is measured rather than
+/// argued: the **statement** form of this identical C —
+/// `unsigned int t = digits10((unsigned long)(p + n)); return t;` — was
+/// **already `Safe` before that card**, so the `Unknown` this row pinned was the
+/// *return position's* extra strictness and not a custody judgment. The
+/// return-call admission is a desugaring of `return f(a);` into exactly that
+/// statement form, so the two positions now agree, and the second leg below
+/// publishes the control that makes the claim checkable instead of asserted.
+///
+/// What card W4-EXPR-POS measured here is **unchanged and still true**: the C02
+/// operand walker does refuse `p`, and the *neutral-expression* route still
+/// refuses this actual. That route is simply no longer the only way a `return`
+/// can be modeled. The neighbouring dereference and subscript rows are the
+/// evidence that nothing broader moved: both keep `Unknown`, because
+/// `classify_simple`'s own access gate refuses `*` and `[` where it admits `+`.
 #[test]
-fn pointer_arithmetic_in_a_call_actual_stays_unknown() {
+fn pointer_arithmetic_in_a_call_actual_agrees_with_the_statement_position() {
     if !clang_available() {
         return;
     }
-    let program = format!(
+    let returned = format!(
         "{DIGITS10}
         unsigned long offset(char *p, unsigned long n) {{
             return digits10((unsigned long) (p + n));
         }}"
     );
-    let run = run(&program);
-    assert_eq!(run.status("offset"), AnalysisStatus::Unknown);
+    assert_eq!(run(&returned).status("offset"), AnalysisStatus::Safe);
+
+    // The control the pin update rests on: the same C, written out. Its verdict
+    // predates this card, so if it ever moved, the alignment above would be
+    // resting on nothing and this assertion would say so.
+    let statement = format!(
+        "{DIGITS10}
+        unsigned long offset(char *p, unsigned long n) {{
+            unsigned int t = digits10((unsigned long) (p + n));
+            return t;
+        }}"
+    );
+    assert_eq!(run(&statement).status("offset"), AnalysisStatus::Safe);
 }
 
 /// A subscript in the same position.

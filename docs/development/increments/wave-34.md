@@ -6,6 +6,70 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+`C-GATEWAY-RETURN-CALL-W4` (2026-09-17), wave 34's **arbiter**, landing the
+sub-shape wave 33's `C-GATEWAY-RETURN-POSITION` withdrew and **re-deriving the
+measurement that scheduled it, against the card**. The withdrawal rested on a
+yield ground (12 of 335 callees declared) and a **soundness** ground (applying a
+callee's parameter custody at a return position would let a `Consumed`/`Released`
+mode discharge a live caller obligation, on a route whose `observe_exit` has no
+arm for a call result). Ground 2 is answered by a **rule**, not set aside: the
+admission is a *desugaring* — `return f(a);` lowers to the pair
+`PLACE = f(a); return PLACE;` the analyzer has decided since Cycle 9 — so no new
+`LegacyInstruction`, no new `ReturnedValue` constructor and no change to
+`observe_exit`, the summary validator or the certificate recheck. The result
+mode decides the rest, and the vocabulary is closed at three: `None` escapes
+nothing (accusing — `report_leaks` skips an *unmodeled* exit, so the blanket
+`Unknown` was hiding leaks), `Owned` escapes a site drawn fresh from the parser's
+monotone counter and so **discharges nothing prior**, and `Reallocated` is
+**refused by name** because its result carries the replaced parameter's
+obligation out of the exit — the case ground 2 was right about. `QCore.
+ReturnCallCustody` proves it, including the refusal's non-vacuity in constraint
+15n's shape (`a_reallocated_result_would_have_discharged_its_parameter`) and
+`only_reallocation_is_refused`, which closes the vocabulary to "admitted ⟺
+discharges nothing prior". Ground 1, re-derived rather than inherited (wave 33's
+own reach log used a classifier that read the original line for a refusal
+recorded at the preprocessed one; this one reads `origin`, wave 27's derived
+coordinate, and is **checked** against the leaves the run actually withdrew —
+catching one bug of its own before any number was read): the brief's correction
+that **236 of 335 (70.5%)** callees are "W4-derivable" measures **definedness,
+not derivability**. Constraint 4's second route publishes a summary only after
+`observations_match_contract` finds the callee's body fully modeled and
+defect-free; over the 643 `return CALL(...)` leaves of the pinned corpus that
+holds for **4 (0.6%)**, with 366 (56.9%) having a callee whose own body is
+`Unknown`. Of the **14** leaves withdrawn, **13 were decided by a declared
+`.qcore` contract and exactly 1 by the W4 route** — one of the four
+`destroy_data_point` fan-outs the brief named as exemplars. So wave 33's ground 1
+was substantially right and is recorded as such; the card is not the 236-leaf
+card its brief anticipated, and `RETURN-CALL-W4-REACH-BLOCKED` records that no
+such card is available on this route until those bodies are modeled. Corpus
+re-pin (BEFORE reproduces the baseline byte for byte in both verdict-bearing
+artifacts): **7 functions `Unknown` → `Safe`** (179 → 186), none withdrawn from
+`Safe`, none made provisional `Unsafe`, **zero unit moves**, leak pin
+**unmoved at 272** and `double_release` 1 unmoved — the first gateway admission
+card in this chain to move no leak leaf in either direction, the admitted exits
+being allocator wrappers that retain nothing. `unsupported` 50,117 → **50,106**
+(17 leaves withdrawn, of which 3 are second-order `call to uncontracted
+function` decisions); `unknown_alias` 4,208 → **4,214**, all twelve added leaves
+`Unknown`-class and in the accusing direction. Over the 478 functions blocked
+only by a return leaf the split is **7 leaf-free / 0 exchanged / 1 partial / 470
+unmoved** — wave 33's bucket (2) empty by construction, since a callee with no
+contract in force is not admitted at all. One pinned expectation moved
+**deliberately** and with its control written into the test:
+`pointer_arithmetic_in_a_call_actual_stays_unknown` becomes
+`…agrees_with_the_statement_position`, because the *statement* form of that
+identical C was measured **already `Safe` before this card** — the `Unknown` it
+pinned was the return position's extra strictness, not a custody judgment.
+Evidence: 14 end-to-end rows whose central property is an **equivalence** with
+the hand-written desugaring (an equivalence cannot be satisfied by refusing),
+one white-box site-counter row, and **7 of 7 mutations caught** — the seventh
+only after the initially uncaught whole-expression premise was investigated
+rather than filed as an unexercised arm, which found the shape that reaches past
+`classify_simple`'s own guard and measured it producing a **false `Safe`**.
+Residuals: `RETURN-CALL-W4-REACH-BLOCKED`,
+`RETURN-CALL-SYNTHETIC-PLACE-PRESENTED`, `RETURN-CALL-NULLABLE-WRAPPER`,
+`RETURN-CALL-INCOMPLETE-LINE-455`.
+`docs/reports/c-gateway-return-call-w4/README.md`.
+
 `STABILITY-REEVAL` #1 (2026-09-17), the **first firing of the recurring
 cadence** `CLAUDE.md` established by user direction on 2026-09-13, run over
 waves 32 and 33 from the wave-33 close `d3225f91`. It is an audit: no gate
