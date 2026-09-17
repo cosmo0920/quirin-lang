@@ -78,6 +78,16 @@ byte-identical** to what it emitted before this card; the only difference
 between the placements is the two declaration sites a file-scope object cannot
 carry.
 
+That last claim is **measured, not asserted**. Every line of emitted C comes from
+a string literal inside a `writeln!`, so the C-text literals of the base file
+(`b5cfc2cb`) and of this one were compared as sets: **all 18 base templates
+survive unchanged — none missing** — and the 7 new ones are each fork/join-only
+(`static mtx_t m{mutex};`, `static unsigned char *r{resource};`, the
+`Placement::FileScope` variants of `mtx_init` and `malloc`, the `thrd_t`
+declaration, and the spawn/join pair). Behaviourally the same claim is carried by
+the four single-task fixtures whose sanitized native runs and pinned `contains`
+assertions pass unmodified.
+
 CT46's emitted creator body and child function:
 
 ```c
