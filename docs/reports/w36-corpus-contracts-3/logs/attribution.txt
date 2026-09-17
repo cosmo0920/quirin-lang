@@ -1,0 +1,111 @@
+REMOVED 217   ADDED 128   NET -89
+
+=== REMOVED, by unit and callee ===
+     1  cmetrics/cmt_decode_msgpack.c                cfl_sds_destroy
+     2  cmetrics/cmt_decode_msgpack.c                cmt_destroy
+     1  cmetrics/cmt_decode_opentelemetry.c          cmt_destroy
+     3  cmetrics/cmt_decode_prometheus_remote_write.c cmt_destroy
+    15  cmetrics/cmt_decode_statsd.c                 cfl_sds_destroy
+     2  cmetrics/cmt_decode_statsd.c                 cmt_destroy
+     1  cmetrics/cmt_encode_influx.c                 cfl_sds_destroy
+     1  cmetrics/cmt_encode_opentelemetry.c          cfl_sds_destroy
+     3  cmetrics/cmt_encode_opentelemetry_batch.c    cfl_sds_destroy
+     3  cmetrics/cmt_encode_prometheus.c             cfl_sds_destroy
+     4  cmetrics/cmt_encode_prometheus_remote_write.c cfl_sds_destroy
+    11  cmetrics/cmt_encode_splunk_hec.c             cfl_sds_destroy
+     1  cmetrics/cmt_encode_text.c                   cfl_sds_destroy
+     1  cmetrics/cmt_mpack_utils.c                   cfl_sds_destroy
+     5  ctraces/ctr_decode_msgpack.c                 cfl_sds_destroy
+     1  ctraces/ctr_decode_msgpack.c                 ctr_destroy
+     6  ctraces/ctr_decode_opentelemetry.c           ctr_destroy
+     1  ctraces/ctr_encode_msgpack.c                 cfl_sds_destroy
+     1  ctraces/ctr_encode_opentelemetry.c           cfl_sds_destroy
+     6  ctraces/ctr_encode_text.c                    cfl_sds_destroy
+     1  ctraces/ctr_id.c                             (other unsupported: unmodeled increment or decrement expression)
+     1  ctraces/ctr_id.c                             cfl_sds_destroy
+     1  ctraces/ctr_mpack_utils.c                    cfl_sds_destroy
+    23  librdkafka/cJSON.c                           cJSON_Delete
+     2  librdkafka/lz4.c                             rd_kafka_mem_free
+     4  librdkafka/lz4hc.c                           rd_kafka_mem_free
+     2  librdkafka/rdhttp.c                          cJSON_Delete
+    15  librdkafka/rdkafka_sasl_oauthbearer_oidc.c   cJSON_Delete
+     2  monkey-libevent/mk_core/mk_event.c           mk_print
+     5  monkey-libevent/mk_core/mk_rconf.c           mk_config_error
+    13  monkey-libevent/mk_core/mk_rconf.c           mk_print
+     1  monkey-libevent/mk_core/mk_rconf.c           mk_rconf_warning
+     1  monkey-libevent/mk_core/mk_string.c          mk_print
+     8  monkey-libevent/mk_core/mk_utils.c           mk_print
+     9  monkey-libevent/mk_server/mk_config.c        mk_print
+     1  monkey-libevent/mk_server/mk_fifo.c          mk_print
+     2  monkey-libevent/mk_server/mk_header.c        mk_print
+     1  monkey-libevent/mk_server/mk_http.c          mk_print
+     1  monkey-libevent/mk_server/mk_http_thread.c   mk_print
+     1  monkey-libevent/mk_server/mk_lib.c           mk_print
+     3  monkey-libevent/mk_server/mk_mimetype.c      mk_print
+     8  monkey-libevent/mk_server/mk_plugin.c        mk_print
+     3  monkey-libevent/mk_server/mk_scheduler.c     mk_print
+     1  monkey-libevent/mk_server/mk_server.c        (other unsupported: indirect memory access is outside the resource p)
+     7  monkey-libevent/mk_server/mk_server.c        mk_print
+     2  monkey-libevent/mk_server/mk_socket.c        (other unsupported: indirect memory access is outside the resource p)
+    10  monkey-libevent/mk_server/mk_socket.c        mk_print
+     3  monkey-libevent/mk_server/mk_user.c          (other unsupported: indirect memory access is outside the resource p)
+     4  monkey-libevent/mk_server/mk_user.c          mk_print
+     1  monkey-libevent/mk_server/mk_utils.c         mk_print
+    12  monkey-libevent/mk_server/mk_vhost.c         mk_print
+
+=== ADDED, by unit and category ===
+     2  cmetrics/cmt_decode_msgpack.c                unknown_alias
+     1  cmetrics/cmt_decode_opentelemetry.c          unknown_alias
+     2  cmetrics/cmt_decode_prometheus_remote_write.c unknown_alias
+    16  cmetrics/cmt_decode_statsd.c                 unknown_alias
+     3  cmetrics/cmt_encode_opentelemetry_batch.c    unknown_alias
+     2  cmetrics/cmt_encode_prometheus.c             unknown_alias
+     3  cmetrics/cmt_encode_prometheus_remote_write.c unknown_alias
+    10  cmetrics/cmt_encode_splunk_hec.c             unknown_alias
+     1  cmetrics/cmt_mpack_utils.c                   unknown_alias
+     5  ctraces/ctr_decode_msgpack.c                 unknown_alias
+     5  ctraces/ctr_decode_opentelemetry.c           unknown_alias
+     1  ctraces/ctr_encode_msgpack.c                 unknown_alias
+     5  ctraces/ctr_encode_text.c                    unknown_alias
+     1  ctraces/ctr_id.c                             unknown_alias
+     1  ctraces/ctr_id.c                             unsupported
+     1  ctraces/ctr_mpack_utils.c                    unknown_alias
+    20  librdkafka/cJSON.c                           unknown_alias
+     3  librdkafka/cJSON.c                           unsupported
+     2  librdkafka/lz4hc.c                           unknown_alias
+     2  librdkafka/rdhttp.c                          unknown_alias
+     1  librdkafka/rdkafka.c                         summary_conflict
+    12  librdkafka/rdkafka_sasl_oauthbearer_oidc.c   unknown_alias
+     7  monkey-libevent/mk_core/mk_rconf.c           unsupported
+     1  monkey-libevent/mk_core/mk_string.c          unsupported
+     4  monkey-libevent/mk_core/mk_utils.c           unsupported
+     1  monkey-libevent/mk_server/mk_config.c        unsupported
+     1  monkey-libevent/mk_server/mk_header.c        unsupported
+     4  monkey-libevent/mk_server/mk_plugin.c        unsupported
+     3  monkey-libevent/mk_server/mk_socket.c        unsupported
+     1  monkey-libevent/mk_server/mk_utils.c         unsupported
+     7  monkey-libevent/mk_server/mk_vhost.c         unsupported
+
+=== ADDED unsupported, distinct descriptions ===
+    26  arguments beyond the declared parameters of `mk_print` are outside the resource projection
+     2  nested call `gai_strerror` inside a modeled call is outside the resource projection
+     1  unmodeled expression may mutate a formal resource identity
+     1  nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection
+     1  nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection
+     1  nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection
+     1  nested call `dlerror` inside a modeled call is outside the resource projection
+
+=== ADDED unknown_alias, distinct descriptions (top 12) ===
+    10  unresolved resource identity `metric_name`
+     6  unresolved resource identity `value`
+     5  unresolved resource identity `ctr`
+     5  unresolved resource identity `id_hex`
+     5  unresolved resource identity `json`
+     4  unresolved resource identity `cmt`
+     4  unresolved resource identity `label_k`
+     4  unresolved resource identity `payload`
+     4  unresolved resource identity `val`
+     4  unresolved resource identity `metric_str`
+     4  unresolved resource identity `a`
+     4  unresolved resource identity `item`
+  ... 40 distinct identities in all
