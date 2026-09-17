@@ -6,6 +6,85 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WAVE-36-CLOSE` (2026-09-18).** Seven cards, **two arbiters**, base
+`fa48211a`. All **89** integrator-addressed items given a verdict **measured
+against the tree** — the target file grepped for the proposed text or its
+effect, never inferred from a report's claim that it had landed — and that
+distinction found **four unapplied items and one that could not land as
+written**. Unapplied: `W36-CORPUS-CONTRACTS-3`'s **constraint 7** and
+**constraint 8** amendments, `STABILITY-REEVAL` #2's **constraint 5c**
+amendment, and **constraint 14's entire wave-36 entry**, which no card had
+written — neither the six-of-seven "do not engage" list nor
+`WRITE-LEND-TASKS-EXERCISE`'s `+0` censused row. All four are landed here, 5c
+with two corrections *recorded* rather than made silently: the card's two line
+numbers had moved (`legacy_c.rs:3312` and `:5161`, not `3277`/`5056`, the
+mechanism verified in source before landing, since landing a stale number would
+put a false statement into a standing constraint), and "those" → "that"
+following the card's own deletion. The fifth, constraint 16, is **split**: the
+proposed text says the host row "joins this list as its **sixth** row" and the
+row has *been* the sixth since the wave-35 close, so that half is superseded and
+the **measurement** lands beside the existing row — the row's first observation
+at the *middle* of the load range (wave 35 measured ≈100 and ≈6.5) and the first
+after the `poll(2)` repair, showing the repair narrows the failure window
+without closing it. Constraint 16 is now recorded **known incomplete**:
+`LOAD-SENSITIVE-ROW-UNNAMED` names a seventh test with the same signature in the
+same crate. **`STABILITY-REEVAL` #2's `--check` content arm is adopted and built
+stronger than proposed**: rather than parsing an `applied` verdict's prose
+`where`, an entry carries a structured `verify` list of `{file, contains}` /
+`{file, absent}` claims that the tool opens and reads, whitespace normalised on
+both sides so a wrapped quotation matches and nothing else normalised so a
+**softened** amendment is still a changed claim; from wave 36 an `applied`
+verdict must carry `verify` or an `unverifiable` ground. 19 new tests (45 → 64),
+each red by mutating the fixture, and **the arm itself was falsified by mutating
+the implementation in eight places, all eight caught**. Run on this close's own
+record it found **five** things — a false `absent` claim about constraint 15h
+(whose superseded sentence is deliberately *retained* as a named reference), a
+wrong evidence-pointer quotation, a capitalisation, a missing claim and the
+close's own report needing a `no_section` reason — and the fixed record verifies
+**112 content claims across 9 files**, 46 of 50 `applied` verdicts carrying
+checkable text and 4 declared unverifiable with a ground. Verdicts: **50
+applied, 31 noted, 4 superseded, 4 deferred, 0 declined**. `named_followups`
+**171 → 187**: +18 for every residual the sweep found reaching no tracker (all
+nine of `W36-CORPUS-CONTRACTS-3`'s §9 and all nine of
+`C-GATEWAY-INDIRECT-CENSUS-2`'s, both cards having left them to the close
+deliberately), +1 for the close's own `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`
+(two names are now carried by *both* the decision mechanism and the tracker, so
+ending one will not end the other), and **−3 retirements, each named and each
+checked to be a registered entry first**: `CARD-SCOPE-SELF-MERGE` and
+`MAIN-GUARD-UNACTIVATED`, both discharged because the integrator ran the guard's
+activation — the log carries the self-test's two refusals and every merge of the
+wave as authorised — and `RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED`, discharged
+by the arm above. The guard log is **read for the first time** (21 authorised
+entries, 5 refusals), which is `MAIN-GUARD-LOG-UNCONSUMED`'s question answered
+though not its automation; it also exposed a gap the installer's message does
+not mention — **`git push` of `main` needs the token exactly as `git merge`
+does**, two pushes refused before it was carried — now in `CLAUDE.md` beside the
+`pkill` rule landed in `MUTEX-SHARE-CROSS-EMISSION`'s own words after that card
+killed a **sibling** card's gate run, and beside the new close rule that a
+retirement is named, checked, and swept after. The 44 residual-shaped names were
+classified one by one (18 registered, 15 card names, 8 discharged with the
+discharging card named, 2 standing rules, 1 a deferred decision) and the 26 seam
+commits by eye (22 cards' own code, 3 integrator corrections, 1 the wave's
+opening — **zero** uncarded work). Ten deferred-decision entries are re-listed
+with grounds, six carried open from wave 33, two ended at wave 35 and recorded
+so the 15-entry carry is accounted, and **two raised by this wave**:
+`INDIRECT-CENSUS-FEATURE-UNBUILT` and `TASK-ROUTE-TSAN-SEGV`'s priority — the
+latter behind a route-wide fact the close states plainly, that the **whole
+checked concurrency route has no thread-sanitizer evidence and no TSan row
+exists anywhere in this repository**. Gate at the close's own tip, with its one
+code change *inside* the measurement: **4,611 passed / 0 failed / 8 ignored**
+over 233 summaries and 229 executables, **135 Lean**, **293 Python**, both
+probes 0, fmt/clippy clean, 22m31s, provider 122 carried (constraint 18 not
+engaged). The Python run went red once, informatively:
+`CommittedMatrixIsSelfConsistent` caught `171 != 187` after the hand edit, and
+the repair was to regenerate rather than touch the count. **Nothing is
+promoted**: no corpus count, unit status or function status moves at this close,
+the contract corpus stands at 82, CT coverage at 46/50 with sanitized-native 10
+and proof 3, and full language conformance stays **false**. `DOCS-COMPACT-7` is
+due around wave 37 and `STABILITY-REEVAL` #3 after it; `main` moved to
+`477b733d` (wave 37's opening) during this close, whose own commit message
+agrees that wave 36's paragraph belongs here.
+
 **`WRITE-LEND-TASKS-EXERCISE` (2026-09-18, wave 36).** Discharges the residual
 of the same name, landing in one card the three things wave 31's sentence
 demanded together: checker rule, emission and sanitized native comparison. A

@@ -131,6 +131,28 @@ the operational guidance that is in neither of those.
   is worth no more than silence. An amendment lands **in the words the card
   proposed** or is recorded `declined` with its ground — never silently
   softened while being "reconciled" (invariant 1).
+  Since wave 36 the "saying where" is **mechanical**: an `applied` verdict
+  carries a `verify` list of `{file, contains}` / `{file, absent}` claims that
+  `--check` opens and reads, or an `unverifiable` ground saying why the claim
+  has no quotable text. Whitespace is normalised on both sides so a wrapped
+  quotation still matches; nothing else is, so a **softened** amendment is
+  still a changed claim. The arm exists because a wave-35 verdict recorded
+  `applied` had its asserted text absent from the file it named
+  (`RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED`) — prose naming a location is
+  not a measurement of it. It still decides nothing: it decides whether the
+  close's own string is where the close said it is, never whether it is the
+  right string.
+- **A retirement is named, checked, and swept after.** Before counting a name
+  as retired, confirm it is **actually a registered entry** — wave 36 took
+  three retirements and two of that wave's cards each recorded a "retirement"
+  of a name that had never been in the matrix, which is a no-op that later
+  reads as a lost removal unless it is recorded as one. And **retiring an entry
+  requires re-homing every name it was the sole tracker for**, checked by
+  `--residuals` run *after* the removal and compared with the run before it, not
+  by intention (`STABILITY-REEVAL` #2). Expect the retired names themselves to
+  appear in that later run: a discharged name stays written in the history that
+  discharged it, and joins the "discharged, with the discharging card named"
+  class rather than becoming open work.
 
 ## Worktree and measurement hygiene
 
