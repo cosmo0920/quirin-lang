@@ -1,0 +1,136 @@
+{
+  "wave": 33,
+  "cards": [
+    "c-gateway-return-position",
+    "verifier-host-closed-input-deadline"
+  ],
+  "note": "Wave-33 close reconciliation. TWO merged cards plus ONE ABANDONED attempt (see `abandoned_cards` below - it cannot go in `no_section`, because the sweep hard-exits on a card with no README and so cannot list it in `cards` at all; recorded here instead rather than dropped). 21 integrator-addressed items, all from the arbiter C-GATEWAY-RETURN-POSITION; VERIFIER-HOST-CLOSED-INPUT-DEADLINE contributes none and carries a `no_section` ground. EVERY verdict below was measured against the tree - grep of the named file, or the card's own archived census - and never taken from the report's claim. The tool decides nothing: a green `--check` means each item carries a human verdict, never that any item was applied. Two findings came out of the measurement and are recorded at their items: item 13's already-landed matrix edit is now STALE in one derived field (`dimensions.named_followups` 45 against a `named_followups` of 47, the integrator's own aeef9bbc hand edit adding two entries without moving the count beside them - exactly the matrix's own D02-DIMENSIONS-FOLLOWUP-COUNT residual, repaired at this close by REGENERATION through the generator rather than by hand, constraint 25); and item 21's sub-claim that VERIFIER-HOST-CLOSED-INPUT-DEADLINE is `named in AGENTS.md` is stale after the integrator's aeef9bbc rewrite of the merged-gate row, which dropped the SCREAMING-KEBAB name while keeping the report path - the tracking property still holds through `named_followups`, so the residual is tracked and only the card's account of WHERE is out of date. Four decisions are `deferred` to the integrator and the user rather than taken here; they are listed in this close's README.",
+  "verdicts": {
+    "c-gateway-return-position#for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "AGENTS.md line 105 reads `baseline is docs/reports/c-gateway-return-position/artifacts/` and line 117 names `docs/reports/c-gateway-return-position/` in the frozen-predecessor chain. Archive verified present on disk: 13 files under docs/reports/c-gateway-return-position/artifacts/ including diagnostics.json.gz, chunk-contracts.json.gz and their -before pairs. No predecessor archive edited (constraint 21)."
+    },
+    "c-gateway-return-position#for-the-integrator#2": {
+      "verdict": "applied",
+      "note": "AGENTS.md line 126 carries `unsupported` **50,117** with the 50,150 -> 50,117 attribution. Measured independently against the card's own archived census docs/reports/c-gateway-return-position/logs/census.txt: unsupported 50150 -> 50117, delta -33, leaves added 0, leaves removed 33, all 33 of one description `unmodeled call, aggregate or indirect access in return expression`. logs/moved-leaves.txt exists and carries 39 lines (1 header + 33 leaf rows + spacing)."
+    },
+    "c-gateway-return-position#for-the-integrator#3": {
+      "verdict": "applied",
+      "note": "AGENTS.md line 126 carries leak **272** unmoved at the C-GATEWAY-RETURN-POSITION re-pin, `unknown_alias` **4,208**, `double_release` **1**. Verified against logs/census.txt: double_release 1->1 +0, leak 272->272 +0, unknown_alias 4208->4208 +0. Constraint 7's chain gained no link - grep of AGENTS.md constraint 7 shows no wave-33 entry, correct because the pin did not move."
+    },
+    "c-gateway-return-position#for-the-integrator#4": {
+      "verdict": "applied",
+      "note": "AGENTS.md line 126 carries `2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only` with `unit statuses did not move` and retains the `raw units remain unpromoted` language (ledger prose plus the Cycle 19 paragraph). logs/census.txt: unit status before and after both {'Unknown': 137, 'Unsafe': 42, 'data_only': 4, 'Safe': 2}; `unit status moves: 0`."
+    },
+    "c-gateway-return-position#for-the-integrator#5": {
+      "verdict": "applied",
+      "note": "AGENTS.md line 126 carries `179 Safe / 85 provisional Unsafe / 4,570 Unknown` and `33 functions moved Unknown -> Safe with none withdrawn and none made provisional Unsafe`. logs/census.txt: function status before {'Unknown': 4603, 'Safe': 146, 'Unsafe': 85} -> after {'Unknown': 4570, 'Safe': 179, 'Unsafe': 85}; function status moves 33, promotions to Safe 33, withdrawals from Safe 0, newly provisional Unsafe 0. The 511-function three-way split is in the same log: 33 leaf-free (6.5%), 0 exchanged, 478 unmoved (93.5%)."
+    },
+    "c-gateway-return-position#for-the-integrator#6": {
+      "verdict": "noted",
+      "note": "No action owed - a statement that nothing moved. Verified rather than assumed: `git diff --stat 37bc9004..HEAD -- contract/qcore` is empty, so compiler/tests/qcore_contract_corpus.rs's pinned tables are untouched (constraint 5), and AGENTS.md's Contract corpus row still reads 76 modules. Nothing to apply."
+    },
+    "c-gateway-return-position#for-the-integrator#7": {
+      "verdict": "applied",
+      "note": "Both files exist on disk: proof/QCore/ReturnPositionEscape.lean and proof/AuditReturnPositionEscape.lean; `import QCore.ReturnPositionEscape` is line 1 of proof/QCore.lean. `ls proof/Audit*.lean | wc -l` = 128. AGENTS.md line 130 (Merged gate row) carries **128 Lean audits**; acceptance_matrix.json validation.lean_audits = 128 with `AuditReturnPositionEscape.lean` present in lean_audit_files (length 128). Re-measured at this close by scripts/check_lean_audits.py - see gate.json."
+    },
+    "c-gateway-return-position#for-the-integrator#8": {
+      "verdict": "superseded",
+      "note": "Superseded by the wave's second card, VERIFIER-HOST-CLOSED-INPUT-DEADLINE (merge c7770c29, integrator correction aeef9bbc), which repaired the failure rather than absorbing or weakening it - the arbiter's instruction `must not be made green here` was honoured IN the arbiter (its own gate.json records the failure as a finding) and the repair landed as a separate card. The arbiter's attribution to the 100 ms arm was itself corrected: the repair localizes the defect to the THIRD, 1,000 ms large-response arm. AGENTS.md line 130 records the repair, all three deadlines retained, the assertion not weakened. Re-measured at this close: the named test passes and the workspace suite carries 0 failed - see gate.json."
+    },
+    "c-gateway-return-position#for-the-integrator#9": {
+      "verdict": "noted",
+      "note": "Section heading only; it carries no action of its own. Its three listed files are items 11-14 and each is measured there."
+    },
+    "c-gateway-return-position#for-the-integrator#10": {
+      "verdict": "noted",
+      "note": "Framing sentence asserting the card already landed the sync-rule edits. Checked as a whole: `git diff --stat 37bc9004..HEAD` shows AGENTS.md, docs/development/increments/{wave-33.md,README.md} and docs/reviews/r0_3/acceptance_matrix.json all moved within the wave, and README.md did not. The individual claims are verified at items 11-14; two of them are not wholly true any more and say so there."
+    },
+    "c-gateway-return-position#for-the-integrator#11": {
+      "verdict": "noted",
+      "note": "Statement of what the card landed in AGENTS.md; verified clause by clause. Baseline paragraph names the card's artifacts/ (line 105) and adds the byte-for-byte link to the attribution chain (line 117): CONFIRMED. Cycle 19 raw corpus row carries 179/85/4,570, unsupported 50,117 and leak 272 (line 126): CONFIRMED. New standing constraint 5b exists at AGENTS.md line 250, states the rule, both measured boundaries (RETURN-POSITION-ESCAPE-UNREACHABLE, RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS) and the two `do not` sentences: CONFIRMED, landed in the card's own proposed words - not softened. ONE CLAUSE IS NO LONGER TRUE: `the Merged gate row carries section 9's numbers INCLUDING the one failure and why it is not a regression` was overwritten by the integrator at aeef9bbc, which replaced it with the repaired measurement (0 failed). That supersession is correct and is recorded at item 8; nothing is owed here."
+    },
+    "c-gateway-return-position#for-the-integrator#12": {
+      "verdict": "noted",
+      "note": "Verified on disk: docs/development/increments/wave-33.md exists; docs/development/increments/README.md line 24 reads `Current record file: wave-33.md` and line 40 carries the `| 33 | Wave 33 records |` table row. The card's paragraph is present. This close PREPENDS the wave-33 close paragraph above it, newest first, per the sync rule - that is the close's own edit, not a re-application of this item."
+    },
+    "c-gateway-return-position#for-the-integrator#13": {
+      "verdict": "noted",
+      "note": "Statement of a landed matrix edit; verified AND FOUND STALE IN ONE FIELD. Confirmed: validation.lean_audits = 128 and `AuditReturnPositionEscape.lean` present in lean_audit_files (128 entries). NOT confirmed as still consistent: the item says `named_followups 42 -> 45 with dimensions.named_followups moved with it`, but the committed matrix now holds 47 named_followups against a dimensions.named_followups of 45 - the integrator's own aeef9bbc hand edit added CARD-SCOPE-SELF-MERGE and WORKTREE-SUBMODULE-UNGATED without moving the derived count beside them. This is precisely the matrix's own registered residual D02-DIMENSIONS-FOLLOWUP-COUNT (`A hand edit to a carried matrix section can leave the derived count beside it stale`) firing a second time. REPAIRED AT THIS CLOSE BY REGENERATION, never by hand: `dimensions` is owner=derived (`counted from the emitted rows`) per section_ownership, so docs/reports/remaining-d02/build_matrix.py --gate docs/reports/wave33-close/gate.json recomputes it to 47 while carrying named_followups verbatim (owner=hand_maintained). AGENTS.md line 145 already reads `named_followups, 47 entries` and is correct. NOTE FOR THE INTEGRATOR: the brief for this close named the generator `scripts/build_matrix.py`; no such file exists - the generator is docs/reports/remaining-d02/build_matrix.py, which is also what section_ownership.generator names."
+    },
+    "c-gateway-return-position#for-the-integrator#14": {
+      "verdict": "noted",
+      "note": "Verified, not assumed: `git diff --stat 37bc9004..HEAD -- README.md` is empty, so README.md is untouched across the whole wave. Correct per the sync rule (a new increment updates the current record file, AGENTS.md's headline numbers and the index, and leaves README.md alone). This close does not touch it either."
+    },
+    "c-gateway-return-position#for-the-integrator#15": {
+      "verdict": "noted",
+      "note": "Section heading only. Its three items are 16-18 and each is measured there."
+    },
+    "c-gateway-return-position#for-the-integrator#16": {
+      "verdict": "noted",
+      "note": "A decision to make NO change, ratified rather than applied. Verified against the tree: `git diff --stat 37bc9004..HEAD -- docs/QCORE_SPEC_r0_3.md` is empty, so section L21 is untouched across the wave. The ground holds on inspection - gateway diagnostics are categories (`unmodeled call, aggregate or indirect access in return expression`), not Q codes, so the Q-namespace icebox (Q-NAMESPACE-DECISION) does not engage, and the 33 moved leaves are withdrawn rather than reworded, which allocates and widens nothing. Constraint 1 is untouched. Nothing owed."
+    },
+    "c-gateway-return-position#for-the-integrator#17": {
+      "verdict": "noted",
+      "note": "Conditional item; the condition does not obtain, checked rather than assumed. `grep -rn 'w31-corpus-contracts-2/artifacts' docs AGENTS.md CLAUDE.md scripts compiler crates` returns exactly ONE hit outside that card's own directory: docs/reports/w32-reconcile-sweep/reconciliation-waves-29-31.json line 332, which is a wave-32 close record's historical note about where the baseline stood then. That is an archived record of a past close, not a live pointer, and editing it would edit a frozen archive (constraint 21). So AGENTS.md is the only live baseline pointer and item 1 already moved it. No second pointer to move."
+    },
+    "c-gateway-return-position#for-the-integrator#18": {
+      "verdict": "noted",
+      "note": "Statement that nothing is owed; verified. AGENTS.md constraint 7 still ends at the C-GATEWAY-WAVE 266 -> 272 entry and gained no wave-33 link, which is correct because logs/census.txt measures leak 272 -> 272 (+0) at this arbiter. Constraint 7's rule - that a change moving the number is a finding to attribute - is not engaged by a number that did not move."
+    },
+    "c-gateway-return-position#for-the-integrator#19": {
+      "verdict": "noted",
+      "note": "Section heading only. Its two items are 20 and 21."
+    },
+    "c-gateway-return-position#for-the-integrator#20": {
+      "verdict": "noted",
+      "note": "The card's own statement of which of its blocks it considers integrator-addressed. Checked against the sweep's independent parse: the sweep yields 21 items for this card, and the card's enumeration (seven numbered points + the already-landed list + the two left items) accounts for the same blocks once the four section headings and three framing sentences the sweep also splits out are set aside. No divergence; nothing owed. Recorded so the count is reconciled rather than assumed."
+    },
+    "c-gateway-return-position#for-the-integrator#21": {
+      "verdict": "noted",
+      "note": "Residual-tracking claim; re-measured at this close rather than trusted. `scripts/reconciliation_sweep.py . --cards c-gateway-return-position verifier-host-closed-input-deadline --residuals` reports `0 residual-shaped names in no tracker`, matching the card. All six names were also checked individually against the three trackers: RETURN-POSITION-ESCAPE-UNREACHABLE (AGENTS.md + matrix), RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS (AGENTS.md), RETURN-POSITION-SUBSHAPE-B, RETURN-POSITION-TYPED-MEMBER-REACH, RETURN-POSITION-CONDITIONAL, VERIFIER-HOST-CLOSED-INPUT-DEADLINE (matrix named_followups). ONE SUB-CLAIM IS STALE: the card says `the first two and the last are named in AGENTS.md`, but VERIFIER-HOST-CLOSED-INPUT-DEADLINE no longer appears in AGENTS.md by name - the integrator's aeef9bbc rewrite of the merged-gate row replaced the failure text with the repair text, keeping the report PATH and dropping the SCREAMING-KEBAB name. The tracking property itself still holds (the residual is in named_followups), so nothing is owed; only the card's account of where it is tracked is out of date, which is recorded here rather than corrected in a merged report."
+    }
+  },
+  "no_section": {
+    "verifier-host-closed-input-deadline": "Genuinely owed the integrator nothing in a section of its own, checked rather than assumed: the report's six headings are Finding and repair, Regression evidence, Validation, Integrator correction (2026-09-15) and Remaining boundary, none of which is an integrator-addressed spelling and none of which asks for a ledger edit. The reason is structural - this was not a delegated card at all. It arrived OUT OF SCOPE from a stalled measurement card that merged its own work to main as a bare fast-forward, and the integrator promoted it to a card after the fact, re-landing it as a merge (c7770c29) and REWRITING its Validation section and increment paragraph at aeef9bbc. So the integrator-facing work was done by the integrator, in the tree, before this close; the ledger movement it would have owed (the Merged gate row, AGENTS.md line 130) is already applied and is reconciled at item 8 of the arbiter's list. Its process breach is registered as CARD-SCOPE-SELF-MERGE and its submodule trap as WORKTREE-SUBMODULE-UNGATED, both in named_followups."
+  },
+  "deferred_decisions": {
+    "note": "Four decisions this close deliberately SURFACES rather than takes. They are the integrator's and the user's. None is a swept item, so none can carry a verdict in the `verdicts` map above - check() rejects a verdict for an item the sweep does not find - and they are recorded here instead of being silently dropped. Each carries the ground for the deferral.",
+    "items": [
+      {
+        "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+        "verdict": "deferred",
+        "note": "docs/reviews/r0_3/acceptance_matrix.json's `updated` field still reads `2026-09-12 (wave 27 complete: ...)`, six waves behind. Surfaced as an open decision by W32-RECONCILE-SWEEP and still unresolved. NOT taken here, and verified not taken by accident: `updated` is owner=integrator_supplied per section_ownership, and build_matrix.py line 639 reads `carried(\"updated\")` - it is carried from the previous matrix and is NOT among GATE_KEYS, so this close's regeneration with --gate could not and did not move it (confirmed by diffing the matrix before and after: exactly four fields changed, and `updated` is not one of them). The decision is what the field should SAY - a per-wave checkpoint note, or a field the generator derives - and it belongs to whoever owns the matrix's framing, not to a close.",
+        "ground": "An integrator-supplied framing field whose content is a judgment about what the checkpoint note is for; a close has no standing to author it, and guessing would put a fabricated checkpoint summary into a carried section."
+      },
+      {
+        "name": "CT10-REASON-ROW",
+        "verdict": "deferred",
+        "note": "Carried forward unchanged from W32-RECONCILE-SWEEP, which recorded it as that sweep's ONE deferred verdict (docs/reports/w32-reconcile-sweep/README.md section 5.4 and its table row for WRITE-LEND-TASKS section 12.5). CT10 stays unmapped and no lane has taken the readiness that card's section 8 supplies. Wave 33 mapped nothing and ran no CT lane, so nothing in this wave changes the position.",
+        "ground": "Explicitly a mapping lane's work, and constraint 23 plus constraint 25 make it unsafe for a close to touch: the CT `newly_decidable_not_mapped_reasons` map is DERIVED from the judgment's own key set, so publishing a reason row for CT10 outside a lane would move keys against a matrix the close may not regenerate for that purpose. A close writing a reason row would be mapping by the back door."
+      },
+      {
+        "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+        "verdict": "deferred",
+        "note": "A standing USER decision, open since DOCS-COMPACT-3 section 9 (wave 27) and carried unchanged by DOCS-COMPACT-4. examples/strings/status_line.qcore pipes a binding that two statements read, which is the fan-out side of the `pipe the flow, parenthesize the assembly` rule. Wave 33 touched no example program and no examples page, so the position is unchanged. Recorded here so the open case is visible at this close rather than only in a wave-27 report.",
+        "ground": "Left for the USER's decision on two grounds the originating card stated and this close does not overturn: repairing it would UN-PIPE a line, the opposite of the direction that pass was asked to move lines in, and the case turns on a real open question about the rule itself - whether a SLICE of a value is a second reader of it or the assembly half of the rule. No user message reached this close, so no user direction on it exists to act on."
+      },
+      {
+        "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+        "verdict": "deferred",
+        "note": "Whether CLAUDE.md's and AGENTS.md's sync rule - one paragraph per increment in the current record file, plus AGENTS.md's headline numbers - binds a TOOLING commit that publishes under docs/reports/ without moving a semantic surface or a headline number. Live in wave 33: this close's own deliverables are such a publication, and so was W32-RECONCILE-SWEEP's tool. The rule's text is written for an increment that moves status, and it does not say whether a docs/reports/ publication with no count movement owes a paragraph, owes nothing, or owes a line somewhere else.",
+        "ground": "An interpretation of the sync rule itself, which is a standing rule in AGENTS.md and CLAUDE.md. Constraint-style rule text lands `in the words the card proposed` or is declined with ground (invariant 1); a close resolving an ambiguity in the rule it is being judged by would be authoring rule text for its own benefit. Surfaced for the integrator with the concrete instance named."
+      }
+    ]
+  },
+  "abandoned_cards": {
+    "c-gateway-indirect-census": {
+      "disposition": "abandoned",
+      "swept": false,
+      "why_not_in_no_section": "The sweep cannot see this card at all: it produced NO report, and scripts/reconciliation_sweep.py exits with `no such card report: docs/reports/c-gateway-indirect-census/README.md` when the name is passed to --cards, so the name cannot appear in this record's `cards` list, and check() rejects a `no_section` entry for a card that is not in `cards`. Recorded here instead of being dropped - a ledger that quietly omits an abandoned card is what CLAUDE.md's STABILITY-REEVAL method 3 hunts for. `no_section` would have been the honest sweep answer had the tool been able to represent it; that it cannot is itself a small gap in the wave-32 mechanism, surfaced for the integrator.",
+      "salvaged_partial": "Of the 18,555 `indirect memory access is outside the resource projection` leaves, the 284 functions blocked by that reason ALONE hold only 833 of them.",
+      "boundary": "Not independently reproduced at this close - the figure is carried from the abandoned card's own partial measurement, with no committed artifact on main to re-derive it from. Its WIP tool sits unmerged on branch worktree-agent-a5b3a29c1b3667c11 with a classifier KNOWN WRONG for macro-expanded accesses, so the 833/18,555 split is an unaudited lower-bound-shaped observation and MUST NOT be cited as a measurement. It decides nothing about the corpus and promotes nothing.",
+      "deliverable_on_main": "none"
+    }
+  }
+}
