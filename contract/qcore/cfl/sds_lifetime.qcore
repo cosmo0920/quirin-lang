@@ -1,0 +1,126 @@
+module contract;
+
+// CFL dynamic-string release — resource-projection vocabulary version 1.
+//
+// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// Every citation below was read from the pinned checkout
+// (`build/cycle19/fluent-bit-clang-source`) at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Why this callee
+//
+// `cfl_sds_destroy` is the highest function-cover callee in the baseline: of
+// the 193 projected functions whose ONLY refusals are `call to uncontracted
+// function` leaves, 13 name it and **8 name nothing else**, so one declaration
+// decides every leaf those eight hold. All eight are one-statement encoder
+// destructors in cmetrics and ctraces, e.g.
+// (`lib/cmetrics/src/cmt_encode_text.c:697-700`)
+//
+//     void cmt_encode_text_destroy(cfl_sds_t text)
+//     {
+//         cfl_sds_destroy(text);
+//     }
+//
+// ## `cfl_sds_destroy`, read from `lib/cfl/src/cfl_sds.c:249-275`
+//
+//     void cfl_sds_destroy(cfl_sds_t s)
+//     {
+//         struct cfl_sds *head;
+//         struct cfl_sds_arena_header *arena_head;
+//
+//         if (!s) {
+//             return;
+//         }
+//
+//         head = CFL_SDS_HEADER(s);
+//         if ((head->alloc & CFL_SDS_ARENA_FLAG) == 0) {
+//             free(head);
+//         }
+//         else {
+//             arena_head = sds_arena_header(head);
+//             if (arena_head->external) {
+//                 cfl_arena_free_external(arena_head->arena, arena_head);
+//             }
+//             else if (arena_head->allocation_class != 0) {
+//                 cfl_arena_free_sds(
+//                     arena_head->arena, arena_head,
+//                     arena_head->allocation_class,
+//                     sizeof(struct cfl_sds_arena_header) + CFL_SDS_HEADER_SIZE +
+//                     cfl_sds_alloc(s) + 1);
+//             }
+//         }
+//     }
+//
+//   * `s` is the ONLY parameter. On every path that does anything, the storage
+//     `s` addresses stops being the caller's: the non-arena arm calls
+//     `free(head)` outright, and both arena arms return the block to its arena
+//     (`cfl_arena_free_external`, `cfl_arena_free_sds`). After the call the
+//     caller may not read, write or release `s` again on any path. That is what
+//     `resource_released` says.
+//   * The FIRST statement is `if (!s) { return; }`, so a null argument is
+//     tolerated and is not a defect at any call site. The nullability marker is
+//     therefore `nullable` — the same reading, on the same ground (a leading
+//     null guard in the body), that card WAVE23-C-OPERATIONS gave
+//     `flb_input_chunk_destroy_direct_routes`, whose already-declared
+//     neighbour `flb_input_chunk_destroy` carries `nonnull` because its body
+//     has no such guard.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## The interior-pointer offset, stated rather than hidden
+//
+// `s` is NOT the address `free` receives: `CFL_SDS_HEADER(s)` steps back to the
+// allocation base and `free(head)` releases THAT. The declaration is
+// nonetheless faithful at the abstraction the resource projection works in,
+// because the identity the caller holds is the one `cfl_sds_create` and its
+// siblings RETURN, which is the interior pointer `s`. Acquisition and release
+// are stated in the same coordinate. The header offset is internal to CFL and
+// is not modeled here; nothing in this declaration says the released address
+// equals `s`.
+//
+// ## ABI and modes (constraint 8)
+//
+// `lib/cfl/include/cfl/cfl_sds.h:74` declares
+//
+//     void cfl_sds_destroy(cfl_sds_t s);
+//
+// and `lib/cfl/include/cfl/cfl_sds.h:32` declares `typedef char *cfl_sds_t;`.
+// So the one parameter is exactly one object-pointer level — `ptr<mut, u8>` —
+// and the result is `void`, spelled `unit`. The declared arity is one, which
+// is the arity every analysed call site writes; the C declaration is not
+// variadic, so no `resource_variadic_data_tail()` is declared.
+//
+// ## No W4 interaction
+//
+// `cfl_sds_destroy` is DEFINED in `lib/cfl/src/cfl_sds.c`, which is not one of
+// the 185 audited units — the corpus's libraries are cmetrics, ctraces,
+// librdkafka, chunkio, fluent-bit-chunk and monkey-libevent, and CFL is not
+// among them. No unit therefore derives a W4 summary for this callee, so
+// constraint 8's duty gate has nothing to compare and the declaration cannot be
+// withdrawn for disagreement with an inferred summary. This is the cleanest of
+// the card's six cases, and it is the reason this one was chosen first.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about the CFL arena itself — `cfl_arena_free_external` and
+//     `cfl_arena_free_sds` are not declared, modeled or claimed here, and no
+//     arena is a tracked resource in this projection.
+//   * Nothing about whether the body is correct, whether `s` was produced by a
+//     CFL constructor, or whether the arena flag is read correctly.
+//   * Nothing about double release: passing an already-released `s` is a
+//     use-after-free this declaration neither creates nor detects. The
+//     gateway's own liveness precondition is what refuses that, on settled
+//     denotations, and it is unchanged here.
+//   * Nothing about thread safety or ordering.
+
+// --- the CFL dynamic string's release --------------------------------------
+extern fn cfl_sds_destroy(s: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(s, nullable);
+    ensures normal resource_return_none();
+};
