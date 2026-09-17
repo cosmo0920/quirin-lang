@@ -1024,9 +1024,26 @@ fn every_way_out_of_the_fork_join_shape_is_refused_at_its_own_event() {
     );
     cases.push(("a nested spawn inside an open segment", nested, 1));
 
+    // Two ways a spawn goes unjoined, and they reach *different* arms. Here the
+    // creator resumes its own work where the join should have been, so the
+    // segment-contiguity arm is what refuses.
     let mut unmatched = base.clone();
     unmatched.events.remove(7);
-    cases.push(("a spawn its creator never joins", unmatched, 1));
+    cases.push((
+        "a spawn whose creator resumes instead of joining",
+        unmatched,
+        1,
+    ));
+
+    // And here the trace simply ends inside the open segment, which is the only
+    // way to reach the end-of-events arm: nothing follows to be out of place.
+    let mut runs_off_the_end = base.clone();
+    runs_off_the_end.events.truncate(7);
+    cases.push((
+        "a spawn whose segment runs off the end of the trace",
+        runs_off_the_end,
+        1,
+    ));
 
     let mut interleaved = base.clone();
     interleaved.events.insert(
