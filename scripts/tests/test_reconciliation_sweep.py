@@ -31,6 +31,30 @@ def write_report(root: pathlib.Path, card: str, body: str) -> None:
     (directory / "README.md").write_text(body, encoding="utf-8")
 
 
+#: The ledger an `applied` claim is measured against. The amendment is
+#: deliberately WRAPPED mid-sentence, because that is how `AGENTS.md` carries
+#: every real amendment, and a verification arm that cannot read a wrapped
+#: amendment is one that gets switched off at its first false red.
+LEDGER = """# Ledger
+
+15p. **A worker exercises its lease**, and the owner holds
+    no whole-payload authority while one is out.
+"""
+
+
+def write_agents_md(root: pathlib.Path, body: str = LEDGER) -> None:
+    """Write the fixture `AGENTS.md` an `applied` claim is measured against.
+
+    NOT named `write_ledger`: this file already defines one, 280 lines down, for
+    the follow-on tracker the residual tests read. The first draft of this helper
+    took that name, was silently shadowed by the later definition, and every new
+    test went red with "the named location does not exist" — which is this wave's
+    own `ADD-NAME-COLLISION` residual, found by a test that failed loudly rather
+    than by care.
+    """
+    (root / "AGENTS.md").write_text(body, encoding="utf-8")
+
+
 NUMBERED_REPORT = """# A card
 
 ## 3. Something else
@@ -147,6 +171,7 @@ class CheckTests(unittest.TestCase):
     def _tree(self, scratch, verdicts, cards=("a-card",)):
         root = pathlib.Path(scratch)
         write_report(root, "a-card", NUMBERED_REPORT)
+        write_agents_md(root)
         record = root / "record.json"
         record.write_text(
             json.dumps({"wave": 99, "cards": list(cards), "verdicts": verdicts}),
@@ -156,10 +181,22 @@ class CheckTests(unittest.TestCase):
 
     def _complete(self):
         return {
-            "a-card#integrator-reconciliation-list#1": {"verdict": "applied"},
+            "a-card#integrator-reconciliation-list#1": {
+                "verdict": "applied",
+                "verify": [
+                    {
+                        "file": "AGENTS.md",
+                        "contains": "the owner holds no whole-payload authority",
+                    }
+                ],
+            },
             "a-card#integrator-reconciliation-list#2": {
                 "verdict": "applied",
                 "note": "AGENTS.md constraint 15h",
+                "unverifiable": (
+                    "the matrix was regenerated; what landed is a derived count, "
+                    "not a sentence to quote"
+                ),
             },
             "a-card#integrator-reconciliation-list#3": {
                 "verdict": "declined",
@@ -216,6 +253,7 @@ class CheckTests(unittest.TestCase):
         root = pathlib.Path(scratch)
         write_report(root, "a-card", NUMBERED_REPORT)
         write_report(root, "quiet", SILENT_REPORT)
+        write_agents_md(root)
         record = root / "record.json"
         record.write_text(
             json.dumps(
@@ -532,6 +570,365 @@ class SeamTests(unittest.TestCase):
         self.assertIn("classifies none of them", finished.stdout)
 
 
+class AppliedClaimTests(unittest.TestCase):
+    """`RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED` (`STABILITY-REEVAL` #2, wave 36).
+
+    The wave-35 close recorded 44 verdicts `applied`, each with a `where` naming
+    a file — and one of those files did not carry the asserted text. `where` is
+    prose, and prose naming a location is not a measurement of it. This arm
+    opens the named location and reads.
+
+    Every test here is shown red **by mutation**: the fixture that passes is
+    mutated in one place and the same check is asserted to complain. A test that
+    only ever sees the green case is evidence about nothing.
+    """
+
+    def _tree(self, scratch, verdicts, ledger=LEDGER):
+        root = pathlib.Path(scratch)
+        write_report(root, "a-card", NUMBERED_REPORT)
+        write_agents_md(root, ledger)
+        record = root / "record.json"
+        record.write_text(
+            json.dumps({"wave": 99, "cards": ["a-card"], "verdicts": verdicts}),
+            encoding="utf-8",
+        )
+        return root, record
+
+    def _verdicts(self, first):
+        rest = {
+            f"a-card#integrator-reconciliation-list#{n}": {
+                "verdict": "noted",
+                "note": "not this test's subject",
+            }
+            for n in (2, 3)
+        }
+        return {"a-card#integrator-reconciliation-list#1": first, **rest}
+
+    # --- the arm is green where the tree agrees ---------------------------
+
+    def test_an_asserted_sentence_present_in_the_tree_passes(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "A worker exercises its lease"}
+                        ],
+                    }
+                ),
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+
+    def test_a_quotation_the_tree_wraps_still_matches(self):
+        """The whole arm turns on this: `AGENTS.md` wraps at 76 columns.
+
+        The asserted text spans the fixture's line break. A literal substring
+        search would call a landed amendment missing.
+        """
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {
+                                "file": "AGENTS.md",
+                                "contains": "the owner holds no whole-payload authority",
+                            }
+                        ],
+                    }
+                ),
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+            self.assertNotIn(
+                "the owner holds no whole-payload authority",
+                (root / "AGENTS.md").read_text(encoding="utf-8"),
+                "the fixture must wrap, or this test proves nothing",
+            )
+
+    # --- and red, by mutation, where it does not --------------------------
+
+    def test_an_asserted_sentence_the_tree_does_not_carry_is_refused(self):
+        """The wave-35 defect itself: `applied`, a named file, and no such text."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "where": "AGENTS.md, constraint 15p.",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "the owner retains read authority"}
+                        ],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("does NOT carry the asserted text", complaints[0])
+        self.assertIn("the named location disagrees", complaints[0])
+
+    def test_one_changed_word_is_a_changed_claim(self):
+        """Invariant 1's hazard: an amendment silently SOFTENED while landing.
+
+        The fixture is the green case with the ledger mutated in exactly one
+        word — `no` becoming `some`. Normalising whitespace must not normalise
+        this away.
+        """
+        softened = LEDGER.replace("no whole-payload authority", "some whole-payload authority")
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {
+                                "file": "AGENTS.md",
+                                "contains": "the owner holds no whole-payload authority",
+                            }
+                        ],
+                    }
+                ),
+                ledger=softened,
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("does NOT carry the asserted text", complaints[0])
+
+    def test_a_named_location_that_does_not_exist_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [{"file": "docs/NO_SUCH.md", "contains": "anything at all"}],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("the named location does not exist", complaints[0])
+
+    def test_an_absent_claim_is_refused_while_the_stale_text_stands(self):
+        """The other half: a superseded sentence asserted gone but still there."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "A worker exercises its lease"},
+                            {"file": "AGENTS.md", "absent": "A worker exercises its lease"},
+                        ],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("STILL carries the text asserted absent", complaints[0])
+
+    def test_an_absent_claim_passes_once_the_stale_text_is_gone(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {"file": "AGENTS.md", "absent": "proof 3 of 45"},
+                        ],
+                    }
+                ),
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+
+    # --- and it cannot be satisfied by saying nothing ---------------------
+
+    def test_a_bare_applied_verdict_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(scratch, self._verdicts({"verdict": "applied"}))
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED", complaints[0])
+
+    def test_prose_naming_a_location_is_not_a_measurement_of_it(self):
+        """A `where` field alone is exactly what wave 35 had. It is not enough."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "where": "AGENTS.md, constraint 15p, landed verbatim.",
+                        "note": "I looked and it is there.",
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("neither 'verify'", complaints[0])
+
+    def test_a_declared_unverifiable_applied_claim_passes_with_a_ground(self):
+        """The escape hatch exists, is deliberate, and is counted in the summary."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "unverifiable": "the matrix was regenerated; no sentence to quote",
+                    }
+                ),
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+
+    def test_an_empty_ground_does_not_answer_it(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch, self._verdicts({"verdict": "applied", "unverifiable": "   "})
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED", complaints[0])
+
+    def test_asserting_and_declaring_unverifiable_at_once_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "unverifiable": "no sentence to quote",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "A worker exercises its lease"}
+                        ],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("never both", complaints[0])
+
+    def test_the_escape_hatch_is_refused_on_a_verdict_that_asserts_no_landing(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "declined",
+                        "note": "spec §L21 already carries it",
+                        "unverifiable": "nothing landed",
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("asserts no landing", complaints[0])
+
+    # --- malformed claims are complaints, never silent passes -------------
+
+    def test_a_claim_carrying_both_kinds_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [{"file": "AGENTS.md", "contains": "a", "absent": "a"}],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("carries exactly one of", complaints[0])
+
+    def test_a_claim_carrying_neither_kind_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts({"verdict": "applied", "verify": [{"file": "AGENTS.md"}]}),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("carries exactly one of", complaints[0])
+
+    def test_a_claim_naming_no_file_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts({"verdict": "applied", "verify": [{"contains": "a sentence"}]}),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("names no 'file'", complaints[0])
+
+    def test_a_file_outside_the_repository_is_refused(self):
+        """A close verifies the tree it is closing, not the machine it runs on."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [{"file": "../escape.md", "contains": "anything"}],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("escapes the repository root", complaints[0])
+
+    def test_every_claim_of_a_list_is_read(self):
+        """Not just the first: a two-claim entry with a bad second one is red."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "A worker exercises its lease"},
+                            {"file": "AGENTS.md", "contains": "a sentence nobody wrote"},
+                        ],
+                    }
+                ),
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("verify[2]", complaints[0])
+
+    def test_the_cli_reports_what_it_verified_and_what_it_did_not(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._tree(
+                scratch,
+                self._verdicts(
+                    {
+                        "verdict": "applied",
+                        "verify": [
+                            {"file": "AGENTS.md", "contains": "A worker exercises its lease"},
+                            {"file": "AGENTS.md", "absent": "proof 3 of 45"},
+                        ],
+                    }
+                ),
+            )
+            finished = subprocess.run(
+                [sys.executable, str(SCRIPT), str(root), "--check", str(record)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(finished.returncode, 0, finished.stderr + finished.stdout)
+        self.assertIn("2 content claims (1 present, 1 absent)", finished.stdout)
+        self.assertIn("1 of 1 'applied' verdicts carry checkable text", finished.stdout)
+        self.assertIn("Whether it is the RIGHT string stays a person's judgment", finished.stdout)
+
+
 class DeferredDecisionTests(unittest.TestCase):
     """`WAVE-33-DEFERRED-DECISIONS-UNTRACKED`: a deferral nothing ever re-reads."""
 
@@ -568,7 +965,10 @@ class DeferredDecisionTests(unittest.TestCase):
             "wave": 41,
             "cards": ["a-card"],
             "verdicts": {
-                f"a-card#integrator-reconciliation-list#{n}": {"verdict": "applied"}
+                f"a-card#integrator-reconciliation-list#{n}": {
+                    "verdict": "applied",
+                    "unverifiable": "this fixture is about deferrals, not about content claims",
+                }
                 for n in (1, 2, 3)
             },
         }
