@@ -401,6 +401,19 @@ middle of the load range** — wave 35 measured ≈100 and ≈6.5 — and the fi
 *after* the `poll(2)` repair. What it shows is that the repair **narrows the
 failure window without closing it**.
 
+**A fourth measurement, found by reading the sibling card rather than the
+proposing one, changes what the row's load figure means.**
+`JOINED-PROVENANCE-CALL-FRAMES` §8 saw the same row **green twice** in the full
+`--no-fail-fast` suite at load **≈38 on 16 cores** with sibling cards building —
+*below* the ≈40 at which `W36-CORPUS-CONTRACTS-3` saw it red — and says in terms
+that it did not reproduce the red. Adding this close's own green, one wave
+produced: red at ≈40, green at ≈38, green 12/12 isolated at 23.7–27.6, and green
+in a fourth full suite. **Load is therefore not a threshold for this row**, and
+constraint 16 now says so, because a paragraph that recorded only the red
+measurement would have implied a bound that three other runs in the same wave
+contradict. The disagreement is the finding; it must not be resolved by picking
+the run that suits a conclusion.
+
 And the list is now recorded **known incomplete** rather than assumed complete:
 `LOAD-SENSITIVE-ROW-UNNAMED` names a seventh test,
 `a_forced_override_never_weakens_an_execution`, with the same signature in the

@@ -1486,6 +1486,19 @@ pointer is the card that established it; read it before deviating.
     at the middle of the load range — wave 35 measured it at ≈100 and at ≈6.5 —
     and it is post-`poll(2)`-repair, so the repair narrows the failure window
     without closing it (`STANDALONE-HOST-CLOSED-INPUT-LOAD`).
+    **Load is not a threshold for this row, and wave 36 is the wave that shows
+    it.** Three further observations sit beside the red one, all post-repair:
+    card `JOINED-PROVENANCE-CALL-FRAMES` saw it **green twice** in the full
+    `--no-fail-fast` suite at load **≈38 on 16 cores** with sibling cards
+    building — *below* the ≈40 at which its sibling saw red, and it explicitly
+    did **not** reproduce that red — and the wave-36 close saw it green again in
+    its own full-suite gate. So one wave produced red at ≈40, green at ≈38,
+    green 12/12 isolated at 23.7–27.6, and green in a fourth full suite. Two
+    green runs at high load are consistent with **both** a fixed row and a
+    load-sensitive one, which is the reason this row stays on the list and the
+    reason no load figure here may be read as a bound. Do not "resolve" the
+    disagreement by picking the run that suits a conclusion; the disagreement is
+    the finding.
     A **seventh** row is separately named and deliberately not added, because
     card `C-GATEWAY-INDIRECT-CENSUS-2` saw constraint 16's signature and family
     on a test that is **none of the six**: `LOAD-SENSITIVE-ROW-UNNAMED`. Until
