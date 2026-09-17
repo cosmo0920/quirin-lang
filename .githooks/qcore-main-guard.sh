@@ -20,12 +20,15 @@
 #      repository-local token written by scripts/install_main_guard.py. Absent
 #      or wrong, the answer is no. The default is refusal, for everyone.
 #
-# Two measurements shaped this, both in the card report §3:
-#   * git REWRITES PWD in the hook environment, so a stale caller PWD does not
-#     survive `git -C <main checkout>` — the exact incident shape. The signal
-#     that does survive it is process ancestry (/proc, Linux).
+# Three measurements shaped this, all in the card report §3:
+#   * git REWRITES PWD in the hook environment, and a POSIX shell re-derives it
+#     at startup anyway, so a caller's PWD cannot reach a shell hook — which
+#     rules out the obvious detector for `git -C <main checkout>`, the exact
+#     incident shape. What does survive it is process ancestry (/proc, Linux).
 #   * A deletion of main reaches the hook as 0000...->0000..., so an old==new
 #     filter that does not exclude the all-zeroes new value lets a deletion past.
+#   * Every worktree the Agent tool creates is named `agent-<hex>`, while a
+#     named worktree beside them may be the integrator's own session.
 #
 # A hook is bypassable by intent (--no-verify, core.hooksPath, writing
 # .git/refs by hand). This guard is against a delegated agent's MISTAKE.
@@ -90,12 +93,11 @@ qcore_provenance_signals() {
             _signals="${_signals:+$_signals,}cwd-in-card-worktree"
         fi
 
-        # The caller's exported working directory. git overwrites PWD for its
-        # own hooks, so this does NOT catch `git -C <main>`; it catches a hook
-        # driven by another tool or invoked directly. Kept because it is free.
-        if qcore_is_card_path "${PWD:-}" "$_root"; then
-            _signals="${_signals:+$_signals,}caller-pwd-in-card-worktree"
-        fi
+        # There is deliberately NO signal on the caller's exported PWD. It was
+        # written, tested, and removed as unreachable: git rewrites PWD for its
+        # own hooks, and a POSIX shell re-derives PWD from getcwd() at startup,
+        # so a caller's PWD reaches a shell hook under neither mechanism. An arm
+        # no input can drive is not a guard (card report §3.2).
 
         # Process ancestry. This is the arm that catches the wave-33 incident
         # shape — a card running `git -C <main checkout> merge` — because the

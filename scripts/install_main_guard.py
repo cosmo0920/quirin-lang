@@ -82,9 +82,12 @@ def refuse_if_linked_worktree(top: Path) -> None:
         raise SystemExit(f"refusing: {top} is an agent worktree.")
 
 
-def run_hook(hook: Path, state: str, stdin: str, env: dict) -> subprocess.CompletedProcess:
+def run_hook(
+    hook: Path, state: str, stdin: str, env: dict, cwd: Path
+) -> subprocess.CompletedProcess:
     return subprocess.run(
         [str(hook), state],
+        cwd=str(cwd),
         input=stdin,
         capture_output=True,
         text=True,
@@ -94,26 +97,29 @@ def run_hook(hook: Path, state: str, stdin: str, env: dict) -> subprocess.Comple
 
 
 def self_test(top: Path, hooks: Path, token: str) -> list[tuple[str, bool, str]]:
-    """Drive the installed hook on a synthetic transaction. Touches no ref."""
+    """Drive the installed hook on a synthetic transaction. Touches no ref.
+
+    Provenance is supplied as a real working directory and as the explicit card
+    marker. It is deliberately NOT supplied as an inherited PWD: a POSIX shell
+    re-derives PWD at startup, so a hook cannot read a caller's PWD, and a
+    self-test built on one would prove nothing.
+    """
     head = git("rev-parse", "HEAD", cwd=top)
     line = f"{ZERO} {head} refs/heads/main\n"
     hook = hooks / "reference-transaction"
 
-    base = dict(os.environ)
-    for key in ("QCORE_ALLOW_MAIN_UPDATE", "QCORE_CARD_WORKTREE"):
+    base = {k: v for k, v in os.environ.items()}
+    for key in ("QCORE_ALLOW_MAIN_UPDATE", "QCORE_CARD_WORKTREE", "GIT_DIR"):
         base.pop(key, None)
     base["PWD"] = str(top)
-    base["GIT_DIR"] = str(top / ".git")
 
-    agent = dict(base)
-    agent["PWD"] = str(top / ".claude" / "worktrees" / "agent-selftest")
-    agent["QCORE_ALLOW_MAIN_UPDATE"] = token
-
-    allowed = dict(base)
-    allowed["QCORE_ALLOW_MAIN_UPDATE"] = token
+    with_token = dict(base)
+    with_token["QCORE_ALLOW_MAIN_UPDATE"] = token
+    marked = dict(with_token)
+    marked["QCORE_CARD_WORKTREE"] = "1"
 
     results = []
-    r = run_hook(hook, "prepared", line, base)
+    r = run_hook(hook, "prepared", line, base, top)
     results.append(
         (
             "an unauthorised update to refs/heads/main is refused",
@@ -121,15 +127,40 @@ def self_test(top: Path, hooks: Path, token: str) -> list[tuple[str, bool, str]]
             f"exit {r.returncode}",
         )
     )
-    r = run_hook(hook, "prepared", line, agent)
+    r = run_hook(hook, "prepared", line, marked, top)
     results.append(
         (
-            "an agent-worktree update is refused even carrying the token",
-            r.returncode != 0,
+            "a card-marked update is refused even carrying the token",
+            r.returncode != 0 and "qcore-card-worktree-marker" in r.stderr,
             f"exit {r.returncode}",
         )
     )
-    r = run_hook(hook, "prepared", line, allowed)
+
+    card_root = top / ".claude" / "worktrees"
+    if card_root.is_dir():
+        probe = card_root / "agent-mainguard-selftest"
+        probe.mkdir(exist_ok=True)
+        try:
+            r = run_hook(hook, "prepared", line, with_token, probe)
+            results.append(
+                (
+                    "an update from a card worktree directory is refused with the token",
+                    r.returncode != 0 and "cwd-in-card-worktree" in r.stderr,
+                    f"exit {r.returncode}",
+                )
+            )
+        finally:
+            probe.rmdir()
+    else:
+        results.append(
+            (
+                f"(skipped: {card_root} does not exist, so the card-path arm was not driven)",
+                True,
+                "skipped",
+            )
+        )
+
+    r = run_hook(hook, "prepared", line, with_token, top)
     results.append(
         (
             "the integrator's authorised update is allowed",

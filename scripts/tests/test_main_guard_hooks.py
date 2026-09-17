@@ -140,19 +140,25 @@ class GuardFixture(unittest.TestCase):
         state: str,
         stdin: str,
         *,
-        pwd: Path,
+        cwd: Path | None = None,
         token: bool = False,
         extra: dict | None = None,
     ) -> subprocess.CompletedProcess:
-        """Drive one hook on a synthetic transaction, as the installer does."""
+        """Drive one hook on a synthetic transaction, as the installer does.
+
+        The directory is passed as a real working directory, not as an inherited
+        PWD: a POSIX shell re-derives PWD from getcwd() at startup, so a hook
+        written in sh cannot see a caller's PWD at all (card report §3.2).
+        """
+        where = cwd or self.repo
         return subprocess.run(
             [str(HOOKS_DIR / name), state],
-            cwd=str(self.repo),
+            cwd=str(where),
             input=stdin,
             capture_output=True,
             text=True,
             check=False,
-            env=self.env(pwd=pwd, token=token, extra=extra),
+            env=self.env(pwd=where, token=token, extra=extra),
         )
 
     def rev_parse(self, ref: str) -> str:
@@ -301,22 +307,36 @@ class SignalArms(GuardFixture):
     def line(self) -> str:
         return f"{ZERO} {self.card_sha} refs/heads/main\n"
 
-    def test_the_caller_pwd_arm_refuses(self) -> None:
+    def test_the_cwd_arm_refuses_even_carrying_the_token(self) -> None:
         result = self.run_hook_directly(
             "reference-transaction", "prepared", self.line(),
-            pwd=self.worktree, token=True,
+            cwd=self.worktree, token=True,
         )
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("caller-pwd-in-card-worktree", result.stderr)
+        self.assertIn("cwd-in-card-worktree", result.stderr)
 
     def test_the_git_dir_arm_refuses(self) -> None:
         result = self.run_hook_directly(
             "reference-transaction", "prepared", self.line(),
-            pwd=self.repo, token=True,
+            token=True,
             extra={"GIT_DIR": str(self.repo / ".git" / "worktrees" / "agent-x")},
         )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("git-dir-is-card-worktree", result.stderr)
+
+    def test_an_inherited_pwd_is_not_a_signal(self) -> None:
+        """Measured, and pinned so no one re-adds a vacuous arm.
+
+        An exported PWD naming a card worktree decides nothing, because a POSIX
+        shell re-derives PWD from getcwd() when it starts. A hook arm reading it
+        could never fire. This test asserts the measurement, not a wish.
+        """
+        result = self.run_hook_directly(
+            "reference-transaction", "prepared", self.line(),
+            cwd=self.repo, token=True,
+            extra={"PWD": str(self.worktree)},
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_a_named_worktree_is_not_vetoed_by_provenance(self) -> None:
         """MAIN-GUARD-NAMED-WORKTREE, pinned as a boundary rather than implied.
@@ -326,21 +346,23 @@ class SignalArms(GuardFixture):
         token alone. Only the Agent tool's `agent-<hex>` worktrees are vetoed.
         """
         named = self.repo / ".claude" / "worktrees" / "some-named-branch"
-        result = self.run_hook_directly(
+        named.mkdir(parents=True)
+        allowed = self.run_hook_directly(
             "reference-transaction", "prepared", self.line(),
-            pwd=named, token=True,
+            cwd=named, token=True,
         )
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(allowed.returncode, 0, allowed.stderr)
         refused = self.run_hook_directly(
-            "reference-transaction", "prepared", self.line(), pwd=named,
+            "reference-transaction", "prepared", self.line(), cwd=named,
         )
         self.assertNotEqual(refused.returncode, 0)
+        self.assertIn("no valid QCORE_ALLOW_MAIN_UPDATE", refused.stderr)
 
     def test_a_transaction_that_does_not_touch_main_is_ignored(self) -> None:
         result = self.run_hook_directly(
             "reference-transaction", "prepared",
             f"{ZERO} {self.card_sha} refs/heads/worktree-agent-x\n",
-            pwd=self.worktree,
+            cwd=self.worktree,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -349,7 +371,7 @@ class SignalArms(GuardFixture):
         for state in ("committed", "aborted"):
             with self.subTest(state=state):
                 result = self.run_hook_directly(
-                    "reference-transaction", state, self.line(), pwd=self.worktree,
+                    "reference-transaction", state, self.line(), cwd=self.worktree,
                 )
                 self.assertEqual(result.returncode, 0, result.stderr)
 
@@ -423,6 +445,102 @@ class PrePushGuard(GuardFixture):
             cwd=self.worktree, pwd=self.worktree, check=False,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class InstallerActivation(unittest.TestCase):
+    """The one command the integrator runs, exercised rather than described.
+
+    A delegated card cannot activate the guard in the real checkout, so the
+    activation path is proved here, in a throwaway repository built out of this
+    repository's own `.githooks` and `scripts/install_main_guard.py`.
+    """
+
+    def setUp(self) -> None:
+        root = Path(tempfile.mkdtemp(prefix="qcore-main-guard-install-"))
+        self.addCleanup(GuardFixture._remove, root)
+        self.assertNotIn("/.claude/worktrees/", str(root))
+        self.repo = root / "repo"
+        (self.repo / "scripts").mkdir(parents=True)
+        subprocess.run(
+            ["cp", "-r", str(HOOKS_DIR), str(self.repo / ".githooks")], check=True
+        )
+        subprocess.run(
+            ["cp", str(REPO_ROOT / "scripts" / "install_main_guard.py"),
+             str(self.repo / "scripts" / "install_main_guard.py")],
+            check=True,
+        )
+        self.env = {k: v for k, v in os.environ.items() if k not in SCRUBBED}
+        self.env["PWD"] = str(self.repo)
+        for args in (
+            ["init", "-b", "main", "."],
+            ["config", "user.email", "integrator@example.invalid"],
+            ["config", "user.name", "Integrator"],
+            ["add", "-A"],
+            ["commit", "-m", "base"],
+        ):
+            got = subprocess.run(
+                ["git", *args], cwd=str(self.repo), env=self.env,
+                capture_output=True, text=True,
+            )
+            self.assertEqual(got.returncode, 0, got.stderr)
+
+    def install(self, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["python3", "scripts/install_main_guard.py", *extra],
+            cwd=str(self.repo), env=self.env, capture_output=True, text=True,
+        )
+
+    def test_activation_configures_the_guard_and_proves_it(self) -> None:
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("The guard is active", result.stdout)
+        self.assertNotIn("[FAIL]", result.stdout)
+        hooks_path = subprocess.run(
+            ["git", "config", "--get", "core.hooksPath"], cwd=str(self.repo),
+            env=self.env, capture_output=True, text=True,
+        ).stdout.strip()
+        self.assertEqual(Path(hooks_path), self.repo / ".githooks")
+        token = subprocess.run(
+            ["git", "config", "--get", "qcore.mainguard.token"], cwd=str(self.repo),
+            env=self.env, capture_output=True, text=True,
+        ).stdout.strip()
+        self.assertTrue(token)
+
+        # And the guard is really on afterwards: a commit onto main is refused.
+        (self.repo / "next.txt").write_text("next\n")
+        subprocess.run(["git", "add", "next.txt"], cwd=str(self.repo), env=self.env,
+                       capture_output=True, text=True)
+        commit = subprocess.run(
+            ["git", "commit", "-m", "unauthorised"], cwd=str(self.repo), env=self.env,
+            capture_output=True, text=True,
+        )
+        self.assertNotEqual(commit.returncode, 0)
+        self.assertIn("main-ref guard: REFUSED", commit.stderr)
+
+    def test_verify_reports_inactive_before_activation(self) -> None:
+        before = self.install("--verify")
+        self.assertNotEqual(before.returncode, 0)
+        self.assertIn("guard active          : NO", before.stdout)
+        self.install()
+        after = self.install("--verify")
+        self.assertEqual(after.returncode, 0, after.stdout)
+        self.assertIn("guard active          : yes", after.stdout)
+
+    def test_activation_is_refused_in_a_linked_worktree(self) -> None:
+        """A card must not be able to activate, rotate or calibrate the guard."""
+        wt = self.repo / ".claude" / "worktrees" / "agent-y"
+        subprocess.run(
+            ["git", "worktree", "add", "-b", "worktree-agent-y", str(wt), "main"],
+            cwd=str(self.repo), env=self.env, capture_output=True, text=True,
+        )
+        env = dict(self.env)
+        env["PWD"] = str(wt)
+        result = subprocess.run(
+            ["python3", "scripts/install_main_guard.py"],
+            cwd=str(wt), env=env, capture_output=True, text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("linked worktree", result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
