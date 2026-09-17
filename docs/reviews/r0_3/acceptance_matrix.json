@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 100
+  "named_followups": 103
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6133,7 +6133,7 @@
   "workspace_tests": 4544,
   "provider_tests": 122,
   "python_evidence_validator_tests": 227,
-  "lean_audits": 131,
+  "lean_audits": 132,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6194,6 +6194,7 @@
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
+   "AuditJoinedProvenanceCycles.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLoopBudget.lean",
@@ -6932,6 +6933,27 @@
    "why": "Observed in wave 35 by card MUTEX-SHARE-CROSS-ARMS and recorded rather than absorbed. scripts/tests/test_check_lean_audits.py's test_every_audit_runs_once_with_the_sequential_command was RED once under `python3 -m unittest discover` while a full cargo test --workspace was compiling on the same host, and GREEN in isolation, GREEN in a paired run with the matrix tests, and GREEN on a repeat discover without that load - both facts recorded, per constraint 16's discipline for load-sensitive rows. It is NOT that card's code: the test builds its own TemporaryDirectory fixture of six Audit*.lean files and touches nothing the card changed, and the card's new audit file cannot reach it. Likely mechanism, stated as a HYPOTHESIS and not a measurement: check_audits calls the patched run_step from a four-worker ThreadPoolExecutor, and unittest.mock's call_args_list is not thread-safe, so concurrent recording can corrupt the list the assertion reads. Discharge: reproduce under deliberate load, and if confirmed either record the row in constraint 16's load-sensitive inventory (which today lists five Rust rows and no Python one) or make the assertion thread-safe. NOT a discharge: lowering the worker count to make the race less likely, which would hide the row rather than decide it.",
    "source": "docs/reports/mutex-share-cross-arms/README.md",
    "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+  },
+  {
+   "id": "JOINED-PROVENANCE-CYCLE-SITES",
+   "title": "A resource site created inside a loop derives no conditional-provenance fact, by a deliberate restriction that is a measured boundary rather than a limitation anyone has tried to lift",
+   "why": "Card JOINED-PROVENANCE-CYCLES (wave 35) extended the conditional-provenance relation from acyclic CFGs to cyclic ones by a greatest fixed point, but admits facts only for sites whose creating node lies on no cycle: a site created inside a loop stands for one abstract resource per SITE and not per dynamic object, so a per-site identity fact would not be a statement about one of them and settling its disposition could discharge an object a later iteration replaced. The restriction is driven non-vacuously by legacy_joined_provenance::tests::a_site_created_inside_the_cycle_derives_nothing and by the mutation that deletes it. Discharge: supply a per-iteration object identity, or prove the site's abstract resource may be treated as one object across iterations, then re-measure populations 2 and 3 (74/419 and 67/354 functions/leaves at this card's base).",
+   "source": "docs/reports/joined-provenance-cycles/README.md",
+   "recorded_by": "JOINED-PROVENANCE-CYCLES"
+  },
+  {
+   "id": "JOINED-PROVENANCE-RELEASE-NULLABLE",
+   "title": "Every site that reaches release_site's premise gate in the pinned corpus is in nullable_sites, so the conditional shallow release settles nowhere regardless of provenance quality",
+   "why": "Card JOINED-PROVENANCE-CYCLES (wave 35) instrumented legacy_joined_provenance::release_site's site-premise gate over the whole 185-unit corpus with its fixed point active. The gate is reached 14 times and passes ZERO times, and state.nullable_sites.contains(&site) holds at all 14. This is why that card moved no leaf: the blocker is downstream of the provenance relation, not in it. Discharge: decide whether a nullable site may be settled when the release is a declared nullable contract -- fail-closed today, and invariant 1 constrains the direction -- and re-measure the 14.",
+   "source": "docs/reports/joined-provenance-cycles/README.md",
+   "recorded_by": "JOINED-PROVENANCE-CYCLES"
+  },
+  {
+   "id": "JOINED-PROVENANCE-FACTS-NAME-NOTHING",
+   "title": "At all 14 corpus sites reaching release_site's premise gate the derived facts do not name the released pointer, and no card has attributed that loss to a rule",
+   "why": "The other half of the same measured conjunction as JOINED-PROVENANCE-RELEASE-NULLABLE (card JOINED-PROVENANCE-CYCLES, wave 35): not_named_by_facts holds at 14 of 14 sites, so even a relation that named every pointer perfectly would still be blocked by the nullable premise, and even a resolved nullable premise would still be blocked by this one. The first suspect is constraint 10b's rule that calls forget prior relations, which is JOINED-PROVENANCE-CALL-FRAMES' territory; this residual is that card's first quantitative evidence. Discharge: attribute the 14 sites individually to the rule that loses the name.",
+   "source": "docs/reports/joined-provenance-cycles/README.md",
+   "recorded_by": "JOINED-PROVENANCE-CYCLES"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

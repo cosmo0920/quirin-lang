@@ -1,0 +1,39 @@
+functions the instrumentation saw:        4771
+  of those, CFG differed between runs:    36
+  with a cyclic CFG:                      1273
+functions in the diagnostics document:    4771
+
+== population 1: cyclic CFG AND >=1 unresolved-identity leaf ==
+  functions: 659
+  leaves in them: 2718
+
+== population 2: ... and >=1 acquisition site in the CFG ==
+  functions: 74
+  leaves in them: 419
+
+== population 3: ... and >=1 acquisition site lying on no cycle ==
+  functions: 67
+  leaves in them: 354
+  their unit-projected status: {'Unknown': 43, 'Unsafe': 24}
+
+== the 20 largest members of population 3 ==
+    34 leaves  sites=  1 off-cycle=  1  names= 13  rd_kafka_mock_handle_ConsumerGroupHeartbeat
+    33 leaves  sites=  2 off-cycle=  2  names= 12  flb_input_chunk_map
+    29 leaves  sites=  1 off-cycle=  1  names=  5  rd_kafka_mock_handle_ShareGroupHeartbeat
+    25 leaves  sites=  2 off-cycle=  2  names= 11  mk_rconf_read
+    13 leaves  sites=  1 off-cycle=  1  names=  0  decode_labels
+    13 leaves  sites=  1 off-cycle=  1  names=  3  parse_ujws_config
+    12 leaves  sites=  3 off-cycle=  3  names=  9  decode_histogram_points
+    12 leaves  sites=  1 off-cycle=  1  names=  8  rd_kafka_lz4_decompress
+    10 leaves  sites=  3 off-cycle=  3  names=  0  set_up_time_series_for_label_set
+     8 leaves  sites=  3 off-cycle=  1  names= 13  rd_string_render
+     7 leaves  sites=  2 off-cycle=  2  names= 15  cat_exp_histogram_values
+     7 leaves  sites=  3 off-cycle=  3  names=  8  decode_exponential_histogram_data_point
+     7 leaves  sites=  1 off-cycle=  1  names= 14  initialize_opentelemetry_context
+     7 leaves  sites=  1 off-cycle=  1  names=  7  rd_kafka_lz4_compress
+     7 leaves  sites=  1 off-cycle=  1  names=  5  mk_string_html_escape
+     7 leaves  sites=  5 off-cycle=  1  names=  0  mk_vhost_read
+     6 leaves  sites=  3 off-cycle=  3  names= 10  rd_kafka_jwt_b64_decode_payload
+     5 leaves  sites=  1 off-cycle=  1  names=  5  cmt_cat_summary
+     5 leaves  sites=  1 off-cycle=  1  names=  5  decode_histogram_data_point
+     5 leaves  sites=  1 off-cycle=  1  names=  5  decode_summary_data_point

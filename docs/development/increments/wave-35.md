@@ -6,6 +6,83 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+`JOINED-PROVENANCE-CYCLES` (2026-09-18), wave 35's second arbiter, extending the
+conditional-provenance relation from acyclic CFGs to cyclic ones and **moving
+nothing**. Wave 31 declined a whole function for carrying a back edge anywhere;
+this card replaces that bail-out with the **greatest fixed point** of the same
+transfer — every node but the entry starting at the top element, where an absent
+site makes every guarantee vacuous, predecessors met until nothing moves — and
+keeps the acyclic route's code unreached, so a topologically sortable graph
+still takes wave 31's single pass. The measurement came first and is the part
+worth keeping. Ground truth was taken from the analyzer's **own CFG** rather
+than a source-text classifier, and it reports three nested populations: **659**
+functions with a cyclic CFG and an unresolved-identity leaf (2,718 leaves),
+**74** of those creating any resource site at all (419), and **67** with a site
+whose creating node lies on no cycle (354) — so the number a brief would
+naturally quote overstates the servable population by nearly **10×**, because
+585 of the 659 have nothing for a provenance relation to be *about*, which
+measures definedness rather than derivability. A first run of that census
+returned **zero** for the middle population and was wrong: it counted only bare
+`Acquire` nodes, while a contracted allocator in this corpus arrives as a
+`ContractCall` carrying `produced_sites`. All figures are quoted against
+`148eef79`, wave 35's first arbiter, onto which this card was rebased and on
+whose tree everything was re-measured: removing the constant `do … while (0)`
+back edge moves **654** functions cyclic → acyclic (1,927 − 654 = 1,273,
+reproducing that card's own number independently), costing this card six
+functions and 20 leaves of servable population — reach that moved to the
+topological pass rather than reach lost, which answers
+`CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH` from this record. Soundness on a
+cycle is the restriction that a site whose creating node lies **on** a cycle
+derives nothing: such a site stands for one abstract resource per *site* and not
+per dynamic object, so a per-site identity fact is not a statement about one of
+them. `QCore.JoinedProvenanceCycles` (Lean audits **131 → 132**) states both
+halves the card was asked for — `fixed_point_is_sound` is soundness on a cyclic
+graph, proved by induction on the arrival itself so a back edge is no different
+from a forward one and no acyclicity hypothesis appears, and
+`acyclic_solution_is_unique` is the conservative extension, the fixed-point
+equation having exactly one solution on a rank-increasing graph, so **no acyclic
+body's verdict can change**; `weakening_stays_sound` and
+`claiming_nothing_is_sound` are the refusing direction, which is why declining at
+the iteration bound is always available, and `an_off_cycle_node_does_not_return`
+carries the eligibility rule. These are abstract rule theorems, not extraction of
+the Rust analyzer (`GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION`). The re-pin's BEFORE
+reproduces `c-gateway-constant-do-while`'s archives byte for byte
+(`diagnostics` `9af9ee2e4e0837b6`), and the AFTER moves **0 leaves added, 0
+withdrawn, 54,592 unmoved, zero unit and zero function status moves**: leak
+**272**, `unknown_alias` **4,214**, `unsupported` **50,106** and
+`double_release` **0** all stand exactly as the first arbiter left them. That
+zero is **not vacuity, and the difference is measured**: 1,273 cyclic functions
+run the fixed point and **40 derive at least one real site fact**. Where they
+stop is measured too — instrumenting `release_site`'s site-premise gate over the
+whole corpus finds it reached **14** times and passing **zero**, with *two*
+independent blockers universal at all 14 (the facts do not name the released
+pointer, and the site is in `nullable_sites`), so even a perfect provenance
+relation would move nothing here until the nullable premise is addressed
+(`JOINED-PROVENANCE-RELEASE-NULLABLE`, `JOINED-PROVENANCE-FACTS-NAME-NOTHING`).
+The brief's question about the production `input_chunk_get` residual is answered
+exactly rather than inferred: the instrumentation records it `cyclic: false` with
+one off-cycle site over 47 reachable nodes, so **cycles were never its blocker**,
+it was already served by the wave-31 pass, and `AOM-DESTROY-JOINED-PROVENANCE`
+stands untouched. One pinned expectation was **updated deliberately**: the fourth
+body of `an_overwritten_live_acquisition_is_not_a_conditional_lookup_acquisition`
+— added by wave 31's own commit to pin that a cyclic CFG derives nothing, and not
+an overwrite case at all — moved to
+`a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release`, which also
+asserts the `UnknownAlias` identity refusal and the non-`Safe` status are
+retained, nothing flipping `Unknown` to `Safe`. Six mutations were run and **all
+six caught**, but two of the harness's own results were findings rather than
+confirmations and are recorded as such: the C-level test first written for the
+eligibility rule did **not** drive it (the suite stayed green with the
+restriction deleted), so the rule is now driven by a direct `derive()` test on a
+hand-built CFG where nothing downstream can mask it, and the eligible-site filter
+needed a graph carrying an eligible and an ineligible site at once because a
+graph with only the latter returns early; a third mutation was **withdrawn as a
+no-op**, since replacing the `None` predecessor skip with `Facts::default()`
+cannot change a result — the two are the same lattice element, which is
+`absent_predecessor_is_neutral` — and a mutation that cannot change a result is
+no evidence that a rule is unverified (`JOINED-PROVENANCE-CYCLE-SITES` records
+the in-loop restriction as a measured boundary).
+
 `MUTEX-SHARE-CROSS-ARMS` (2026-09-18), discharging `STABILITY-REEVAL` #1's
 residual `MUTEX-SHARE-CROSS-UNEXERCISED-ARMS`: wave 32's `MUTEX-SHARE-CROSS`
 wrote, under a heading naming the `STABILITY-REEVAL` cadence, that "there are
@@ -59,6 +136,7 @@ directions rather than the fixed polarity it is usually described with,
 recorded as seen and not touched. The red run is published beside the green one
 rather than being the one that did not count, this card's own thesis applied to
 itself.
+
 `C-GATEWAY-CONSTANT-DO-WHILE` (2026-09-17), wave 35's first arbiter, modelling
 the constant `do … while (0)` exit and withdrawing the corpus's only
 `double_release` row. `do S while (0)` executes `S` exactly once (C11

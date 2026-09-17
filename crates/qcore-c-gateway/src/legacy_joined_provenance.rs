@@ -1,14 +1,22 @@
-//! Conditional identity facts for acyclic custody CFGs.
+//! Conditional identity facts for custody CFGs.
 //!
 //! `site -> names` means: on every path on which this acquisition exists,
 //! each listed name denotes it. Absence is the neutral element at a join;
 //! two present predecessors intersect names. No caller resource is seeded.
-//! Cyclic CFGs derive no facts. This pre-pass never changes custody scheduling.
+//! This pre-pass never changes custody scheduling.
+//!
+//! An **acyclic** CFG is solved in one topological pass, byte for byte as card
+//! C-GATEWAY-WAVE (wave 31) wrote it. A **cyclic** CFG is solved by card
+//! JOINED-PROVENANCE-CYCLES' greatest fixed point over the same transfer, and
+//! derives facts only for sites whose creating node lies on no cycle — a site
+//! created inside a loop stands for one abstract resource per *site* rather
+//! than per dynamic object, so no per-site identity fact is a statement about
+//! one of them. Declining is always available and always safe.
 use super::*;
 
 type Bindings = BTreeMap<usize, BTreeSet<String>>;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, PartialEq, Eq)]
 struct Facts {
     present: BTreeSet<usize>,
     bindings: Bindings,
@@ -140,19 +148,41 @@ pub(super) fn derive(cfg: &LegacyCfg) -> Vec<Bindings> {
         }
     }
     if order.len() != reachable.len() {
-        return vec![Bindings::new(); cfg.nodes.len()];
+        return fixed_point(cfg, &reachable);
     }
     let mut incoming = vec![None::<Facts>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(Facts::default());
     for node in order {
-        let Some(mut out) = incoming[node].clone() else {
+        let Some(facts) = incoming[node].clone() else {
             continue;
         };
-        out.step(&cfg.nodes[node].instruction);
-        for names in out.bindings.values_mut() {
-            names.retain(|name| cfg.conditional_names.contains(name));
-        }
+        let branches = outgoing(cfg, node, &facts);
         for (edge, &next) in cfg.nodes[node].successors.iter().enumerate() {
+            let branch = branches[edge].clone();
+            match &mut incoming[next] {
+                Some(current) => current.join(&branch),
+                slot => *slot = Some(branch),
+            }
+        }
+    }
+    incoming
+        .into_iter()
+        .map(|facts| facts.unwrap_or_default().bindings)
+        .collect()
+}
+
+/// One node's outgoing facts, one per successor edge: the instruction's
+/// transfer, the conditional-name restriction, then the null edge's exclusion
+/// of every site the tested name denotes. Shared by the acyclic pass and the
+/// fixed point so the two routes cannot drift apart.
+fn outgoing(cfg: &LegacyCfg, node: usize, incoming: &Facts) -> Vec<Facts> {
+    let mut out = incoming.clone();
+    out.step(&cfg.nodes[node].instruction);
+    for names in out.bindings.values_mut() {
+        names.retain(|name| cfg.conditional_names.contains(name));
+    }
+    (0..cfg.nodes[node].successors.len())
+        .map(|edge| {
             let mut branch = out.clone();
             if let LegacyInstruction::BranchOnNull {
                 source,
@@ -170,16 +200,113 @@ pub(super) fn derive(cfg: &LegacyCfg) -> Vec<Bindings> {
                     branch.bindings.remove(&site);
                 }
             }
-            match &mut incoming[next] {
-                Some(current) => current.join(&branch),
-                slot => *slot = Some(branch),
+            branch
+        })
+        .collect()
+}
+
+/// The iteration bound. Exceeding it declines the whole function, exactly as
+/// this module did for every cyclic CFG before card JOINED-PROVENANCE-CYCLES.
+const FIXED_POINT_ROUNDS: usize = 64;
+
+/// Sites whose creating node lies on **no** cycle, and so runs at most once per
+/// call. A site created inside a loop stands for one abstract resource per
+/// *site*, not per dynamic object, so `site -> names` would not be a statement
+/// about one of them; such a site derives no fact here. This is what makes the
+/// relation's reading — "on every path on which this acquisition exists, each
+/// listed name denotes it" — carry over to a cyclic graph unchanged.
+fn acyclic_sites(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> BTreeSet<usize> {
+    let on_cycle = |node: usize| {
+        let mut seen = BTreeSet::new();
+        let mut pending: Vec<usize> = cfg.nodes[node].successors.clone();
+        while let Some(next) = pending.pop() {
+            if next == node {
+                return true;
+            }
+            if seen.insert(next) {
+                pending.extend(&cfg.nodes[next].successors);
             }
         }
+        false
+    };
+    let mut sites = BTreeSet::new();
+    for &node in reachable {
+        let created: Vec<usize> = match &cfg.nodes[node].instruction {
+            LegacyInstruction::Acquire { site, .. } => vec![*site],
+            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
+            _ => Vec::new(),
+        };
+        if created.is_empty() || on_cycle(node) {
+            continue;
+        }
+        sites.extend(created);
     }
-    incoming
-        .into_iter()
-        .map(|facts| facts.unwrap_or_default().bindings)
-        .collect()
+    sites
+}
+
+/// The same relation as the acyclic pre-pass, computed as the **greatest fixed
+/// point** over a cyclic graph: every node but the entry starts at the top
+/// element — no site present, so every guarantee is vacuous — and predecessors'
+/// outgoing facts are met until nothing moves. Absence stays neutral and two
+/// present predecessors still intersect, so a claim can never be justified by
+/// the cycle alone: the entry's own concrete facts are one of the meet's
+/// operands on every path into a loop.
+///
+/// Iteration only ever weakens a claim, so declining early is always safe: a
+/// graph that has not settled within [`FIXED_POINT_ROUNDS`] derives nothing.
+fn fixed_point(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> Vec<Bindings> {
+    let declined = vec![Bindings::new(); cfg.nodes.len()];
+    let sites = acyclic_sites(cfg, reachable);
+    if sites.is_empty() {
+        return declined;
+    }
+    let mut predecessors = vec![Vec::new(); cfg.nodes.len()];
+    for &node in reachable {
+        for &next in &cfg.nodes[node].successors {
+            predecessors[next].push(node);
+        }
+    }
+    let mut incoming = vec![None::<Facts>; cfg.nodes.len()];
+    incoming[cfg.entry] = Some(Facts::default());
+    for _ in 0..FIXED_POINT_ROUNDS {
+        let mut next_round = incoming.clone();
+        for &node in reachable {
+            if node == cfg.entry {
+                continue;
+            }
+            let mut arrived = None::<Facts>;
+            for &previous in &predecessors[node] {
+                // A predecessor still at the top element is neutral: meeting
+                // with it changes nothing.
+                let Some(facts) = incoming[previous].as_ref() else {
+                    continue;
+                };
+                let branches = outgoing(cfg, previous, facts);
+                for (edge, &successor) in cfg.nodes[previous].successors.iter().enumerate() {
+                    if successor != node {
+                        continue;
+                    }
+                    match &mut arrived {
+                        Some(current) => current.join(&branches[edge]),
+                        slot => *slot = Some(branches[edge].clone()),
+                    }
+                }
+            }
+            next_round[node] = arrived;
+        }
+        if next_round == incoming {
+            return incoming
+                .into_iter()
+                .map(|facts| {
+                    let mut bindings = facts.unwrap_or_default().bindings;
+                    bindings.retain(|site, names| sites.contains(site) && !names.is_empty());
+                    bindings
+                })
+                .collect();
+        }
+        incoming = next_round;
+    }
+    declined
 }
 
 /// Recognise one plain, shallow release. The identity refusal remains; this
@@ -265,6 +392,84 @@ pub(super) fn finish_release(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// `0 -> 1 -> 2 -> {1, 3}`: nodes 1 and 2 lie on a cycle, nodes 0 and 3 do
+    /// not, and the whole graph has a back edge so the topological pass
+    /// declines it and the fixed point runs.
+    fn cyclic_cfg(acquire_at: usize) -> LegacyCfg {
+        let plain = |successors: Vec<usize>| LegacyCfgNode {
+            instruction: LegacyInstruction::NoOp,
+            successors,
+            line: 0,
+            is_exit: false,
+        };
+        let mut nodes = vec![
+            plain(vec![1]),
+            plain(vec![2]),
+            plain(vec![1, 3]),
+            plain(Vec::new()),
+        ];
+        nodes[acquire_at].instruction = LegacyInstruction::Acquire {
+            destination: "p".to_string(),
+            site: 7,
+        };
+        nodes[3].is_exit = true;
+        LegacyCfg {
+            function: "subject".to_string(),
+            entry: 0,
+            nodes,
+            publications: PublicationFacts::default(),
+            conditional_names: BTreeSet::from(["p".to_string()]),
+        }
+    }
+
+    #[test]
+    fn a_back_edge_no_longer_declines_an_off_cycle_acquisition() {
+        // Card JOINED-PROVENANCE-CYCLES. Wave 31 returned empty bindings for
+        // every node of this graph purely because it carries a back edge.
+        let facts = derive(&cyclic_cfg(0));
+        assert_eq!(
+            facts[3].get(&7),
+            Some(&BTreeSet::from(["p".to_string()])),
+            "{facts:?}"
+        );
+    }
+
+    #[test]
+    fn a_site_created_inside_the_cycle_derives_nothing() {
+        // The eligibility rule itself, driven where nothing downstream can
+        // mask it: node 2 lies on the cycle, so site 7 is not a statement
+        // about one object and no node may carry a fact for it.
+        let facts = derive(&cyclic_cfg(2));
+        assert!(
+            facts.iter().all(|bindings| bindings.is_empty()),
+            "{facts:?}"
+        );
+    }
+
+    #[test]
+    fn an_eligible_site_does_not_carry_an_ineligible_one_with_it() {
+        // Both kinds of site in one graph, so the `sites.is_empty()` early
+        // return cannot stand in for the published-bindings filter: node 0's
+        // site 7 is eligible and must survive, while node 2's site 8 is
+        // created on the cycle and must appear on no node.
+        let mut cfg = cyclic_cfg(0);
+        cfg.nodes[2].instruction = LegacyInstruction::Acquire {
+            destination: "q".to_string(),
+            site: 8,
+        };
+        cfg.conditional_names.insert("q".to_string());
+        let facts = derive(&cfg);
+        assert_eq!(
+            facts[3].get(&7),
+            Some(&BTreeSet::from(["p".to_string()])),
+            "{facts:?}"
+        );
+        assert!(
+            facts.iter().all(|bindings| !bindings.contains_key(&8)),
+            "{facts:?}"
+        );
+    }
 
     #[test]
     fn presence_controls_the_join_not_the_pointer_target_union() {

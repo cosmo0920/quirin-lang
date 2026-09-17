@@ -1661,7 +1661,14 @@ fn an_overwritten_live_acquisition_is_not_a_conditional_lookup_acquisition() {
         "void *p = q_maybe_alloc(); if (!p) return; if (flag) p = external; if (!p) return; q_free(p);",
         "void *p = external; if (flag) { p = q_maybe_alloc(); if (!p) return; } q_free(p);",
         "void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } p = external; if (!p) return; q_free(p);",
-        "void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } while (flag) { flag = 0; } q_free(p);",
+        // Card JOINED-PROVENANCE-CYCLES moved the fourth body of this table —
+        // the same shape with a trailing `while` that rebinds nothing — into
+        // `a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release`.
+        // It was pinned here by the wave-31 card that introduced the acyclic
+        // pre-pass, to record that a cyclic CFG derived no facts at all; that
+        // restriction is what this card lifts, so the pin is updated
+        // deliberately rather than weakened. An overwrite still refuses, which
+        // is what this test is named for and what the three bodies above check.
     ] {
         let source = format!("extern void *external; void subject(int flag) {{ {body} }}");
         let summary = analyze_legacy_c(
@@ -1677,6 +1684,89 @@ fn an_overwritten_live_acquisition_is_not_a_conditional_lookup_acquisition() {
                 .iter()
                 .flat_map(|exit| &exit.sites)
                 .any(|site| site.disposition == SiteDisposition::Mixed),
+            "{body}: {:?}",
+            summary.exits
+        );
+    }
+}
+
+#[test]
+fn a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release() {
+    // Card JOINED-PROVENANCE-CYCLES. The acquisition runs at most once — its
+    // node lies on no cycle — and nothing on the back edge rebinds `p`, so `p`
+    // denotes the site on every path on which the site exists. Before this card
+    // the function declined for carrying a back edge anywhere at all.
+    for body in [
+        "void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } while (flag) { flag = 0; } q_free(p);",
+        "while (flag) { flag = 0; } void *p = external; if (!p) { p = q_maybe_alloc(); if (!p) return; } q_free(p);",
+    ] {
+        let source = format!("extern void *external; void subject(int flag) {{ {body} }}");
+        let summary = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_NULLABLE]),
+        )
+        .unwrap();
+        // The lookup's identity refusal is retained: this settles a
+        // disposition, it does not resolve an identity (constraint 10b).
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Unknown,
+            "{body}: {:?}",
+            summary.diagnostics
+        );
+        assert!(
+            has(&summary, |kind| matches!(
+                kind,
+                LegacyDiagnosticKind::UnknownAlias { .. }
+            )),
+            "{body}"
+        );
+        assert!(
+            summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Released),
+            "{body}: {:?}",
+            summary.exits
+        );
+        assert!(
+            !summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Mixed),
+            "{body}: {:?}",
+            summary.exits
+        );
+    }
+}
+
+#[test]
+fn an_acquisition_inside_a_cycle_derives_no_conditional_fact() {
+    // The eligibility rule, and the arm that keeps the cyclic extension
+    // fail-closed: a site created inside a loop stands for one abstract
+    // resource per *site* and not per dynamic object, so a per-site identity
+    // fact would not be a statement about one of them. Such a site declines.
+    for body in [
+        "void *p = external; while (flag) { if (!p) { p = q_maybe_alloc(); if (!p) return; } flag = 0; } q_free(p);",
+        "void *p = external; while (flag) { p = q_maybe_alloc(); if (!p) return; flag = 0; } q_free(p);",
+    ] {
+        let source = format!("extern void *external; void subject(int flag) {{ {body} }}");
+        let summary = analyze_legacy_c(
+            &source,
+            "subject",
+            &fixture_contracts(&[Q_BASE, Q_NULLABLE]),
+        )
+        .unwrap();
+        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
+        assert!(
+            !summary
+                .exits
+                .iter()
+                .flat_map(|exit| &exit.sites)
+                .any(|site| site.disposition == SiteDisposition::Released),
             "{body}: {:?}",
             summary.exits
         );

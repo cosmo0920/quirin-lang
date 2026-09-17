@@ -1,0 +1,5 @@
+moved leaves: 0
+  in functions the instrumentation never saw: 0
+  in functions recorded ACYCLIC:              0
+
+RESULT: every moved leaf is in a cyclic function.

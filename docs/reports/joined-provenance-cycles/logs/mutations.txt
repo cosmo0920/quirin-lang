@@ -1,0 +1,23 @@
+baseline: green
+
+CAUGHT  the loop-created site restriction is removed (every site eligible)
+        expected: a_site_created_inside_the_cycle_derives_nothing
+        failures: legacy_c::joined_provenance::tests::a_site_created_inside_the_cycle_derives_nothing, legacy_c::joined_provenance::tests::an_eligible_site_does_not_carry_an_ineligible_one_with_it
+CAUGHT  the fixed point declines everything (wave-31 behaviour restored)
+        expected: a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+        failures: legacy_c::joined_provenance::tests::a_back_edge_no_longer_declines_an_off_cycle_acquisition, legacy_c::joined_provenance::tests::an_eligible_site_does_not_carry_an_ineligible_one_with_it, legacy_c::tests::a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+CAUGHT  the meet at a join unions names instead of intersecting them
+        expected: (any)
+        failures: legacy_c::joined_provenance::tests::presence_controls_the_join_not_the_pointer_target_union
+CAUGHT  the iteration stops after one round instead of at stability
+        expected: a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+        failures: legacy_c::joined_provenance::tests::an_eligible_site_does_not_carry_an_ineligible_one_with_it, legacy_c::joined_provenance::tests::a_back_edge_no_longer_declines_an_off_cycle_acquisition, legacy_c::tests::a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+CAUGHT  a contracted allocator's produced site is no longer eligible
+        expected: a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+        failures: legacy_c::tests::a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release
+CAUGHT  the eligible-site filter no longer restricts the published bindings
+        expected: an_eligible_site_does_not_carry_an_ineligible_one_with_it
+        failures: legacy_c::joined_provenance::tests::an_eligible_site_does_not_carry_an_ineligible_one_with_it
+
+restored tree: green
+mutations not caught as expected: 0
