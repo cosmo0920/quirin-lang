@@ -1,0 +1,11 @@
+archive: docs/reports/c-gateway-constant-do-while/artifacts
+run:     measure/joined-provenance-call-frames/runs/before
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   9af9ee2e4e0837b6 / 9af9ee2e4e0837b6
+ source           raw IDENTICAL  canonical IDENTICAL   ae38f6c93dfbe341 / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     187b9c727a9bc10f / de059aad0b062da3
+ contracts        raw differs    canonical differs     9074ed8e2fbaedd7 / c041391e7e7acd56
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.

@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "chunk-contracts": {
+      "bytes": 4186178,
+      "produced_as": "resource-diagnostics.chunk-contracts.json",
+      "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "stage": "after"
+    },
+    "chunk-contracts-before": {
+      "bytes": 4186178,
+      "produced_as": "resource-diagnostics.chunk-contracts.json",
+      "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "stage": "before"
+    },
+    "contracts": {
+      "bytes": 101640,
+      "produced_as": "resource-diagnostics.contracts.json",
+      "sha256": "c041391e7e7acd567d846f656480dacafb06adcbd591f3eb6c672e8324a4f042",
+      "stage": "after"
+    },
+    "contracts-before": {
+      "bytes": 101640,
+      "produced_as": "resource-diagnostics.contracts.json",
+      "sha256": "c041391e7e7acd567d846f656480dacafb06adcbd591f3eb6c672e8324a4f042",
+      "stage": "before"
+    },
+    "diagnostics": {
+      "bytes": 13887394,
+      "produced_as": "resource-diagnostics.json",
+      "sha256": "9af9ee2e4e0837b6593300478898e64ec7697cd28f4356211c8988dc40003da9",
+      "stage": "after"
+    },
+    "diagnostics-before": {
+      "bytes": 13887394,
+      "produced_as": "resource-diagnostics.json",
+      "sha256": "9af9ee2e4e0837b6593300478898e64ec7697cd28f4356211c8988dc40003da9",
+      "stage": "before"
+    },
+    "source": {
+      "bytes": 1663934,
+      "produced_as": "monkey-source.json",
+      "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+      "stage": "after"
+    },
+    "source-before": {
+      "bytes": 1663934,
+      "produced_as": "monkey-source.json",
+      "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+      "stage": "before"
+    },
+    "source-effects": {
+      "bytes": 118505,
+      "produced_as": "resource-diagnostics.source-effects.json",
+      "sha256": "de059aad0b062da31fc11cb82f8c1d6687e8b710fddb583a99576dffba5aaec3",
+      "stage": "after"
+    },
+    "source-effects-before": {
+      "bytes": 118505,
+      "produced_as": "resource-diagnostics.source-effects.json",
+      "sha256": "de059aad0b062da31fc11cb82f8c1d6687e8b710fddb583a99576dffba5aaec3",
+      "stage": "before"
+    }
+  },
+  "base": "60958bf0",
+  "baseline": "docs/reports/c-gateway-constant-do-while/artifacts",
+  "card": "JOINED-PROVENANCE-CALL-FRAMES",
+  "note": "AFTER is this card's re-pin and is byte-identical to the baseline in both verdict-bearing artifacts, as is BEFORE: the card moved no leaf. source-effects and contracts differ identically in BEFORE and AFTER (checkout root and identity digests) and are not attributable to this card."
+}

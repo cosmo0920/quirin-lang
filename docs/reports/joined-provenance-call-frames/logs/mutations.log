@@ -1,0 +1,23 @@
+baseline: green
+
+CAUGHT  the call clears every relation again (pre-card behaviour restored)
+        expected: a_call_no_longer_forgets_a_relation_it_cannot_write
+        failures: legacy_c::joined_provenance::tests::a_call_no_longer_forgets_a_relation_it_cannot_write, legacy_c::joined_provenance::tests::an_acquisition_survives_an_intervening_call_end_to_end
+CAUGHT  the call clears every relation again — the end-to-end route
+        expected: an_acquisition_survives_an_intervening_call_end_to_end
+        failures: legacy_c::joined_provenance::tests::a_call_no_longer_forgets_a_relation_it_cannot_write, legacy_c::joined_provenance::tests::an_acquisition_survives_an_intervening_call_end_to_end
+CAUGHT  the frame test is dropped: a call preserves every name unconditionally
+        expected: a_call_forgets_a_name_the_frame_list_does_not_carry
+        failures: legacy_c::joined_provenance::tests::a_call_forgets_a_name_the_frame_list_does_not_carry
+CAUGHT  the reallocated parameter is no longer forgotten
+        expected: a_call_still_forgets_a_reallocated_parameter
+        failures: legacy_c::joined_provenance::tests::a_call_still_forgets_a_reallocated_parameter
+CAUGHT  the rebound forget is skipped, so a call keeps its own destination
+        expected: a_call_still_forgets_its_own_destination
+        failures: legacy_c::joined_provenance::tests::a_call_still_forgets_its_own_destination, legacy_c::joined_provenance::tests::a_call_still_forgets_an_out_slot
+CAUGHT  the out-slot forget is bypassed: `rebound_names` stops claiming them
+        expected: a_call_still_forgets_an_out_slot
+        failures: legacy_c::joined_provenance::tests::a_call_still_forgets_an_out_slot
+
+restored tree: green
+mutations not caught as expected: 0
