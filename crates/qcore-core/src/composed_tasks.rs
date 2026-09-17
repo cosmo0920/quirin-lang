@@ -372,6 +372,25 @@ fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
             slots.extend(operand_slots(value));
             slots
         }
+        TaskInstructionKind::WriteBufferByte {
+            authority,
+            index,
+            value,
+        } => {
+            let mut slots = vec![*authority];
+            slots.extend(operand_slots(index));
+            slots.extend(operand_slots(value));
+            slots
+        }
+        TaskInstructionKind::ReadBufferByte {
+            authority,
+            index,
+            value_slot,
+        } => {
+            let mut slots = vec![*authority, *value_slot];
+            slots.extend(operand_slots(index));
+            slots
+        }
         TaskInstructionKind::DropBuffer { buffer } => vec![*buffer],
         TaskInstructionKind::BindScalar { slot, value } => {
             let mut slots = vec![*slot];
