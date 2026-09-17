@@ -127,6 +127,11 @@ EVIDENCE_FILES = [
     # retires wave 13's CT46 bucket row, by declaration rather than by editing
     # that record (constraint 21).
     "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+    # Card `MUTEX-SHARE-CROSS-EMISSION` (wave 36): the checked mutex backend
+    # learned to render a non-nested fork/join trace, so CT46's four unassessed
+    # stages move to executed on the case's own artifact. A superseding record
+    # per constraint 21 — the ct-ctwin-lane record keeps its bytes.
+    "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"
