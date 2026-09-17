@@ -15,6 +15,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/arena_lifetime.qcore", "cfl_arena_destroy", 5),
     ("cfl/intrusive_list.qcore", "cfl_list_add", 4),
     ("cfl/intrusive_list.qcore", "cfl_list_del", 5),
+    // Card W36-CORPUS-CONTRACTS-3: the CFL dynamic string's release, the
+    // highest function-cover callee in the baseline (8 projected functions name
+    // it and nothing else). Read from `lib/cfl/src/cfl_sds.c:249-275`;
+    // `nullable` because the body's first statement is `if (!s) { return; }`.
+    ("cfl/sds_lifetime.qcore", "cfl_sds_destroy", 3),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_close", 10),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_delete", 5),
     // Card NEIGHBOURS: the corpus moves 64 -> 67 modules with this file,
@@ -225,7 +230,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "native_unsupported_constructor",
         11,
     ),
+    // Card W36-CORPUS-CONTRACTS-3: the CMetrics context's release, read from
+    // `lib/cmetrics/src/cmetrics.c:92-146`. `nonnull` — measured, not
+    // defaulted: the body has no leading null guard and its first executable
+    // statement reads `cmt->counters`.
+    ("cmetrics/context_lifetime.qcore", "cmt_destroy", 3),
     ("cmetrics/counter_reset.qcore", "cmt_counter_allow_reset", 4),
+    // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
+    // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
+    // ground. This is the corpus's first `ctraces` contract module.
+    ("ctraces/context_lifetime.qcore", "ctr_destroy", 3),
     (
         "fluent_bit/busy_state.qcore",
         "flb_input_chunk_release_lock",
@@ -423,6 +437,17 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("library/source_projection.qcore", "frame_write", 2),
     ("library/source_projection.qcore", "frame_declaration", 2),
     ("library/source_projection.qcore", "frame_dependency", 2),
+    // Card W36-CORPUS-CONTRACTS-3: cJSON is vendored INSIDE librdkafka
+    // (`lib/librdkafka-2.15.0/src/cJSON.c`), which is why this module sits in
+    // the librdkafka family. Read from `:253-276`; `nullable` because the loop
+    // condition `while (item != NULL)` precedes every dereference, and the
+    // three call sites do reach the null path.
+    ("librdkafka/cjson.qcore", "cJSON_Delete", 3),
+    // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
+    // to `librdkafka/memory.qcore`, so that module's pin stays untouched. Read
+    // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
+    // nowhere, `ptr` is forwarded to the already-declared `rd_free`.
+    ("librdkafka/kafka_mem.qcore", "rd_kafka_mem_free", 4),
     ("librdkafka/memory.qcore", "rd_malloc", 3),
     ("librdkafka/memory.qcore", "rd_calloc", 4),
     ("librdkafka/memory.qcore", "rd_strdup", 3),
@@ -495,6 +520,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CONSTRUCTOR-RESIDUALS, continued. Four clauses: the marker, two
     // borrowed pointers and the unit result.
     ("monkey/intrusive_list.qcore", "mk_list_add", 4),
+    // Card W36-CORPUS-CONTRACTS-3: this card's ONE variadic declaration, the
+    // `fluent_bit/logging.qcore` shape one library over — five clauses because
+    // of `resource_variadic_data_tail()`. Read from
+    // `lib/monkey/mk_core/mk_utils.c:200-264`: the tail is consumed by
+    // `vprintf` into `stdout` and no pointer to it outlives the call.
+    ("monkey/logging.qcore", "mk_print", 5),
     ("monkey/memory.qcore", "mk_mem_alloc", 3),
     ("monkey/memory.qcore", "mk_mem_alloc_z", 3),
     ("monkey/memory.qcore", "mk_mem_free", 3),
@@ -592,8 +623,21 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // `chunkio/chunk_sizes.qcore` and
     // `fluent_bit/input_chunk_total_size.qcore`, the two size-sibling
     // declarations W29's named non-declarations pointed at, each read against
-    // its own pinned body.
-    assert_eq!(sources.len(), 76, "unexpected contract corpus size");
+    // its own pinned body. 76 -> 82 by card W36-CORPUS-CONTRACTS-3's
+    // deliberate addition of six release/custody-neutral declarations, chosen
+    // by FUNCTION-COVER yield over the 193 baseline functions whose only
+    // refusals are `call to uncontracted function` leaves:
+    // `cfl/sds_lifetime.qcore` (`cfl_sds_destroy`, 8 such functions),
+    // `librdkafka/kafka_mem.qcore` (`rd_kafka_mem_free`, 4),
+    // `cmetrics/context_lifetime.qcore` (`cmt_destroy`, 3),
+    // `librdkafka/cjson.qcore` (`cJSON_Delete`, 3),
+    // `monkey/logging.qcore` (`mk_print`, 3, this card's one variadic) and
+    // `ctraces/context_lifetime.qcore` (`ctr_destroy`, 2) — the last opening
+    // the corpus's first `ctraces` family. Each was read against its own pinned
+    // body before it was declared; the card also read `add`, `memcpy` and
+    // `memset` and deliberately did NOT land them, with the readings published
+    // in `docs/reports/w36-corpus-contracts-3/README.md`.
+    assert_eq!(sources.len(), 82, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");
