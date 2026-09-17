@@ -159,6 +159,32 @@ the operational guidance that is in neither of those.
 - Delegated cards work in isolated worktrees, merge one at a time under the
   failure-gated chain discipline, and close with a per-card report under
   `docs/reports/<card>/README.md`.
+- **A delegated card never advances `main`, and since wave 36 a mechanism says
+  so.** The instruction alone failed once: a wave-33 measurement card ran
+  `git -C <main checkout> merge` and put its own commit on `main` as a bare
+  fast-forward, with no merge commit, no review and no gate
+  (`CARD-SCOPE-SELF-MERGE`). `CARD-SCOPE-GUARD` landed versioned hooks in
+  `.githooks/` — a `reference-transaction` hook, which sees **local** ref
+  updates from every worktree, plus `pre-push` for the remote door. An update to
+  `refs/heads/main` is refused outright from a delegated `agent-*` worktree,
+  with or without authorisation, and refused for everyone else unless it carries
+  the repository-local token on that one command
+  (`QCORE_ALLOW_MAIN_UPDATE="$(git config --get qcore.mainguard.token)" …`,
+  never `export`ed). The hooks are **inert until the integrator runs
+  `python3 scripts/install_main_guard.py` once in the main checkout**, which a
+  card cannot do. They are also **bypassable by intent** — `--no-verify`, a
+  `core.hooksPath` override, a hand-written ref — and are a guard against a
+  card's *mistake*, not a security control; do not describe them as more.
+  `docs/reports/card-scope-guard/README.md`, and `.git/qcore-main-guard.log` for
+  what was refused or authorised.
+- **Never end a turn with a pristine tree while work is in flight.** The harness
+  removes an isolation worktree when its agent ends a turn with an **unchanged**
+  tree — clean and no commits ahead of base — *even while that agent's own
+  background jobs are still using it*; it cost a wave-36 card its worktree
+  mid-run. Make a checkpoint WIP commit as soon as there is anything to keep
+  (the rule above already prefers a WIP commit to `git stash`), stay at least one
+  commit ahead of the base for the rest of the card, and amend or squash later.
+  `WORKTREE-AUTOREMOVAL-PRISTINE-TREE`.
 
 ## Platform records
 

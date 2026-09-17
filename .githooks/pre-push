@@ -1,0 +1,50 @@
+#!/bin/sh
+# QCore-C main-ref guard — pre-push hook (belt and braces).
+#
+# The reference-transaction hook is the guard; it fires on local ref updates,
+# which is where the wave-33 incident happened. A push to a REMOTE updates no
+# local ref, so nothing in this repository's ref machinery would see it. This
+# hook covers that second door.
+#
+# stdin: <local ref> SP <local sha1> SP <remote ref> SP <remote sha1> LF.
+#
+# Card CARD-SCOPE-GUARD (wave 36). docs/reports/card-scope-guard/README.md.
+
+set -u
+
+. "$(dirname "$0")/qcore-main-guard.sh"
+
+touched=0
+detail=""
+while IFS=' ' read -r local_ref local_sha remote_ref remote_sha; do
+    [ "${remote_ref:-}" = "$QCORE_PROTECTED_REF" ] || continue
+    touched=1
+    detail="${detail:+$detail }${local_ref:-?}->${remote_ref}"
+done
+
+[ "$touched" = 1 ] || exit 0
+
+signals=$(qcore_provenance_signals)
+
+# A branch this repository's delegation protocol only ever gives to a card.
+branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || branch=""
+case "$branch" in
+    worktree-agent-*|claude/*|card/*)
+        signals="${signals:+$signals,}card-branch:$branch"
+        ;;
+esac
+
+if [ -n "$signals" ]; then
+    qcore_guard_log "refused-push-provenance:$signals" "$detail"
+    qcore_refusal_message "a push to $QCORE_PROTECTED_REF" "$signals"
+    exit 1
+fi
+
+if qcore_is_authorised; then
+    qcore_guard_log "authorised-push" "$detail"
+    exit 0
+fi
+
+qcore_guard_log "refused-push-unauthorised" "$detail"
+qcore_refusal_message "a push to $QCORE_PROTECTED_REF" ""
+exit 1
