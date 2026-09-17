@@ -369,6 +369,92 @@ narrated verdict.
   **`CT-STAGE-TALLY-LITERAL-UNDISCLOSED`** — two low-severity disclosure gaps,
   both already swept by the wave-35 close. Carried for completeness.
 
+### 2.10 Method step 4 — what a later card does to these claims
+
+The two queued wave-36 arbiters are `JOINED-PROVENANCE-CALL-FRAMES` and
+`W36-CORPUS-CONTRACTS-3`.
+
+**`WAVE-36-CARDS-UNCHARTERED` (MEASURED).** Neither has a brief in the tree.
+`wave-36.md` was an empty skeleton; `JOINED-PROVENANCE-CALL-FRAMES` appears only
+as a residual *name*, three times; `W36-CORPUS-CONTRACTS-3` appears **nowhere in
+the repository** — zero hits across `docs/`, `AGENTS.md`, `CLAUDE.md` and the
+matrix. Both are chartered only outside the tree. This compounds §2.1: an agent
+sizing `CALL-FRAMES` ("the 14 sites") from the **ledger** rather than the report
+sizes it against **21** sites that no longer exist, and there is no brief in the
+tree to correct it.
+
+**`RELEASE-SITE-PREMISES-PARTIALLY-INSTRUMENTED` (MEASURED).** `release_site`
+(`legacy_joined_provenance.rs:358-364`) is a **seven-way** disjunction; the
+published census counts **three**. The disjuncts `contained` (:362),
+`field_links` (:363) and `conditional_replacements` (:364) have never been the
+blocker at any corpus site and were never instrumented. `CALL-FRAMES` removes
+`:358` at some subset of the 14, after which `:359-364` are the live gate — and a
+post-card census could not distinguish "now blocked by `contained`" from "still
+blocked by naming". **A prediction the card should commit to before measuring:**
+because `nullable_site` is *independently* universal at 14/14, `CALL-FRAMES`
+**alone moves zero corpus sites**, however well it attributes the naming loss;
+its payoff is conditional on `JOINED-PROVENANCE-RELEASE-NULLABLE` landing too.
+
+**`LOADER-ABI-MODES-CORPUS-PROPERTY` (MEASURED rule, INFERRED threat).** The
+purest instance of the pattern this step hunts. Constraint 8 does not withdraw on
+a duty refinement **"because every derivable comparison in the pinned corpus is a
+nullability refinement"** — sound only because the corpus contains no such shape.
+`W36-CORPUS-CONTRACTS-3` adds declarations, each creating new derivable
+comparisons; the first non-nullability duty inequality fires the withdrawal arm,
+which constraint 8 itself says can turn a `Safe` unit into a provisional
+`Unsafe`, moving the histogram and possibly leak 272.
+
+**`JPC-CENSUS-CONTRACT-SET-DEPENDENT` (MEASURED).** `acyclic_sites` counts
+`ContractCall { produced_sites }` as well as `Acquire`, so the whole population
+census is a function of the contract corpus — the card's own §2 records
+population 2 first measuring **zero** for exactly this reason. Growing the corpus
+invalidates 67 / 354 / 40 / 14 as published.
+
+Also recorded: `RETURN-POSITION-PREMISE-CONTRACT-ROUTE` (a `Stored`/`Removed`
+declaration is a plausible second route to falsifying `TrackedBasesAreBound`,
+where only the member-typing route is named).
+
+### 2.11 The 64-round bound, and the `Alias` read
+
+**`JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED` (MEASURED, five ways).** How
+many of the **1,273** cyclic functions exhaust `FIXED_POINT_ROUNDS = 64` and
+silently derive nothing is **not measured and not instrumented**: the shipped
+code counts nothing; the archived instrumentation has no `rounds_used` or
+`converged` field; `census.txt` has no such row; `rg FIXED_POINT_ROUNDS` returns
+six hits — three in the module, three in the archived copy, **zero in any test**;
+and the only cyclic fixture settles in a handful of rounds. The project's own
+convention in the same subsystem is the opposite: the sibling bound
+`MAX_ALIAS_TARGETS` sets `state.widened` and `legacy_c.rs:6317-6323` turns that
+into an `Unsupported` diagnostic that keeps the function non-`Safe`. Declining is
+fail-closed and proved safe, so this is **not unsoundness** — it is an unmeasured
+refusal rate behind a green suite, the `TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`
+shape, and it makes the report's headline ("1,273 run the fixed point and 40
+derive") readable as a measurement of derivability when it may be partly a
+measurement of the bound.
+
+**`JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE` (MEASURED).** `fixed_point` binds
+`let declined = …` at `:258` and returns **that same value** both at `:261`
+("nothing to derive") and at `:309` ("did not converge"). No consumer and no
+future census can separate them — which is why the rate above is unmeasurable
+without a code change.
+
+**The `legacy_c.rs:6826` `Alias` read — answered NO, by exhaustive enumeration.**
+An `AbstractPointer` with `targets` empty, `unknown == false` and
+`may_be_null == false` **cannot** reach `state.pointers`. The invariant is
+`targets.is_empty() ⟹ (unknown || may_be_null)`, and it holds at all six struct
+literals, the clone insertion, all three join arms and every write to the two
+booleans; the one non-literal `unknown = false` (`:7887`) immediately sets
+`may_be_null` (`:7888`), and the load-bearing `may_be_null = false` (`:7890`) is
+guarded at `:7880` by `unknown || targets.len() > 1`, so an empty-targets binding
+reaching it had `unknown == true`. Two fragility residuals follow:
+**`POINTER-EMPTY-TARGETS-INVARIANT-UNSTATED`** (the invariant is asserted
+nowhere — no doc comment, no `debug_assert`, no Lean — and rests on two conjuncts
+a plausible "completeness fix" would remove) and
+**`ABSTRACT-POINTER-DEFAULT-IS-THE-UNSOUND-TRIPLE`** (the struct derives
+`Default`, and its `Default` *is* the forbidden triple, so a future
+`entry(name).or_default()` — already the idiom six times in this file on
+neighbouring maps — would insert it silently).
+
 ---
 
 ## 3. Measurements completed, and what they settled
@@ -386,11 +472,15 @@ narrated verdict.
 
 ## 4. Postponed, and why
 
-* **Step 4 (which unreachable-today rules become load-bearing under
-  `JOINED-PROVENANCE-CALL-FRAMES` and `W36-CORPUS-CONTRACTS-3`), the 64-round
-  decline rate, and the `legacy_c.rs:6826` `Alias` read** — measured by a
-  sub-audit whose result is recorded in §5 below. Where it is incomplete this
-  report says so rather than implying coverage.
+* **The 64-round decline rate itself** is postponed and **cannot** be measured
+  without a code change (§2.11): the two outcomes return the same value. What is
+  delivered here is the demonstration that it is unmeasured and the smallest
+  change that would make it measurable — not the number.
+* **Whether the 40 deriving functions and the 14 gate-reaching sites intersect**
+  is undecided (`JPC-PREMISE-CENSUS-BLIND-TO-CYCLICITY`): the archived
+  instrumentation records neither function name nor cyclicity, so the corpus
+  evidence cannot establish that the **cyclic** arm's output has ever reached a
+  consumer. The test suite does; the corpus cannot be asked.
 * **`LEAN-STATEMENT-SEMANTIC-REVIEW`** (open from firing #1) is **partly
   advanced** here: §2.3–§2.5 are three instances of exactly that review, all in
   one module. That is evidence the residual is real and worth a card, not
