@@ -4396,6 +4396,47 @@ fn run_mutex_crossing(
              crossing is a rendering artefact and not a thread boundary"
         );
     }
+    // Card `MUTEX-SHARE-CROSS-EMISSION`, and this assertion exists **because a
+    // mutation escaped without it**. The native comparison below compares the
+    // program's *logged* event sequence, so deleting a real `mtx_lock` while
+    // keeping its log line, or moving a real `mtx_unlock` away from its log
+    // line, both produced a byte-identical run under the sanitizers. What ties
+    // a logged acquisition to a real one is that the emitter writes the
+    // operation and its log adjacently, in one statement — so that adjacency is
+    // what gets asserted, on the emitted text, rather than assumed.
+    let mut logged_sections = 0;
+    let lines: Vec<&str> = c.lines().collect();
+    for (index, line) in lines.iter().enumerate() {
+        if !line.contains("qcore_diagnostic_log(") {
+            continue;
+        }
+        let operation = if line.contains("QCORE_DIAG_MUTEX_LOCK") {
+            "mtx_lock(&m"
+        } else if line.contains("QCORE_DIAG_MUTEX_UNLOCK") {
+            "mtx_unlock(&m"
+        } else {
+            continue;
+        };
+        logged_sections += 1;
+        let previous = index
+            .checked_sub(1)
+            .and_then(|previous| lines.get(previous))
+            .copied()
+            .unwrap_or_default();
+        assert!(
+            previous.contains(operation),
+            "{id}: the logged mutex event on line {} is not immediately \
+             preceded by its own `{operation}…` call, so the observation this \
+             case compares would not witness the real operation",
+            index + 1
+        );
+    }
+    assert!(
+        logged_sections >= 4,
+        "{id}: both tasks' critical sections are in the emitted text — the \
+         child's and the creator's, two acquisitions and two releases — or this \
+         adjacency check is passing vacuously"
+    );
     let reference = qcore_core::mutex_c_emit::interpret_mutex_program(
         &checked.lowered.program,
         &checked.certificate,
