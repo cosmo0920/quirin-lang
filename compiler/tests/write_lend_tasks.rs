@@ -9,10 +9,14 @@
 //! write, read nor release while any lease is out), decided disjoint at check
 //! time by the wave-29 overlap rule, and returned exactly at the creator's
 //! join. What is deliberately **not** here: the worker exercising the
-//! authority (a worker-side range write is the named residual
-//! `WRITE-LEND-TASKS-EXERCISE`), so no claim of two threads natively mutating
-//! disjoint bytes is made — the native test below runs the checked program
-//! under ASan/UBSan and pins the lease trace, not a mutation.
+//! authority, so no claim of two threads natively mutating disjoint bytes is
+//! made *by this file* — the native test below runs the checked program under
+//! ASan/UBSan and pins the lease trace, not a mutation. That claim now exists,
+//! one card later: `WRITE-LEND-TASKS-EXERCISE` (wave 36) discharged the
+//! residual this paragraph used to name, and
+//! `compiler/tests/write_lend_tasks_exercise.rs` is where two threads really
+//! do write distinct bytes of one payload under the sanitizers. This file
+//! keeps its own scope — authority *held* — unchanged.
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
 use qcore_core::task_execution::{
@@ -467,14 +471,37 @@ fn the_emitted_c_announces_leases_and_their_returns() {
     // The packed ranges: [0,2) and [2,4), low in the high 32 bits.
     assert!(source.contains(&format!("INT64_C({})", 2u64)));
     assert!(source.contains(&format!("INT64_C({})", (2u64 << 32) | 4)));
-    // Both creations capture the same lender slot's value — one object.
+    // Both creations capture the same lender slot's **buffer** — one object.
+    //
+    // Deliberate pin update (card `WRITE-LEND-TASKS-EXERCISE`, wave 36). Before
+    // that card a lease handed the worker the lender slot's whole task value,
+    // so the two capture lines were textually identical and the assertion was
+    // `captures[0] == captures[1]`. A lease now additionally hands over its
+    // **base** in the task value's otherwise-unused scalar field, because a
+    // lease-relative byte index means nothing without the base it counts from
+    // — so the two lines differ in exactly that field, `INT32_C(0)` against
+    // `INT32_C(2)`, and agree on the pointer. The property this test exists to
+    // pin is the pointer one, and it is now asserted directly rather than
+    // through textual identity.
     let captures = source
         .lines()
-        .filter(|line| line.trim().starts_with("captures[0] = s_"))
+        .filter(|line| line.trim().starts_with("captures[0] = "))
         .map(str::trim)
         .collect::<Vec<_>>();
     assert!(captures.len() >= 2, "{captures:?}");
-    assert_eq!(captures[0], captures[1], "{captures:?}");
+    let buffer_of = |line: &str| {
+        line.rsplit_once(", ")
+            .expect("a lease capture names its lender slot")
+            .1
+            .to_string()
+    };
+    assert_eq!(
+        buffer_of(captures[0]),
+        buffer_of(captures[1]),
+        "two writers-in-waiting of one object, never two copies: {captures:?}"
+    );
+    assert!(captures[0].contains("INT32_C(0),"), "{captures:?}");
+    assert!(captures[1].contains("INT32_C(2),"), "{captures:?}");
 }
 
 /// Native evidence, on the `scoped_read_shares.rs` precedent: the emitted C of

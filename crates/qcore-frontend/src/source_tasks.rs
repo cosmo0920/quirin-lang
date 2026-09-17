@@ -57,6 +57,28 @@ fn tokens_for(source: &SourceProgram, span: Span) -> Vec<Token> {
         .collect()
 }
 
+/// The top-level comma positions of a call's argument list, which is what
+/// selects between an arity this route already had and one card
+/// `WRITE-LEND-TASKS-EXERCISE` adds. Nesting is tracked so a comma inside a
+/// parenthesized operand cannot be mistaken for an argument separator.
+fn argument_commas(tokens: &[Token]) -> Vec<usize> {
+    let Some(close) = matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen) else {
+        return Vec::new();
+    };
+    let mut depth = 0usize;
+    let mut commas = Vec::new();
+    for (index, token) in tokens.iter().enumerate().take(close).skip(2) {
+        if symbol(Some(token), Symbol::LeftParen) {
+            depth += 1;
+        } else if symbol(Some(token), Symbol::RightParen) {
+            depth = depth.saturating_sub(1);
+        } else if depth == 0 && symbol(Some(token), Symbol::Comma) {
+            commas.push(index);
+        }
+    }
+    commas
+}
+
 fn word(token: Option<&Token>, expected: &str) -> bool {
     matches!(token.map(|t| &t.kind), Some(TokenKind::Word(w)) if w == expected)
 }
@@ -1411,6 +1433,17 @@ impl<'a> Builder<'a> {
             // owner can name the buffer: a read loan is not an `own<Buffer>`
             // binding, so a borrower cannot reach this form at all, and the
             // ledger separately refuses the write while any share is out.
+            //
+            // Card `WRITE-LEND-TASKS-EXERCISE` adds the **three**-argument
+            // spelling `qcore_buffer_write(LEASE, INDEX, VALUE)`, the
+            // `borrow_utf8` arity precedent: one byte of the payload, through
+            // a range write lease, at an index relative to that lease's own
+            // low. The arity is what selects the form, so no word is
+            // reserved and the two-argument owner write is untouched.
+            let commas = argument_commas(tokens);
+            if commas.len() == 2 {
+                return self.lease_byte_write(tokens, span, slot, &commas);
+            }
             let comma = tokens
                 .iter()
                 .position(|token| symbol(Some(token), Symbol::Comma))
@@ -1462,6 +1495,14 @@ impl<'a> Builder<'a> {
             return Ok(Some(ValueType::Scalar(Scalar::Unit)));
         }
         if word(tokens.first(), "qcore_buffer_read") {
+            // The two-argument spelling `qcore_buffer_read(NAME, INDEX)` reads
+            // one byte (card `WRITE-LEND-TASKS-EXERCISE`) — through a lease,
+            // relative to its low, or through an owner, where the base is 0
+            // and the whole-payload read's own authority gate applies.
+            let commas = argument_commas(tokens);
+            if commas.len() == 1 {
+                return self.byte_read(tokens, span, slot, commas[0]);
+            }
             if tokens.len() != 4
                 || !symbol(tokens.get(1), Symbol::LeftParen)
                 || !symbol(tokens.get(3), Symbol::RightParen)
@@ -1546,6 +1587,112 @@ impl<'a> Builder<'a> {
             }
         }
         unreachable!("rebinding follows a successful lookup of the same name")
+    }
+
+    /// `qcore_buffer_write(LEASE, INDEX, VALUE)` — one byte of the payload,
+    /// through a range write lease. The lease is the only authority this form
+    /// admits: the owner's whole-payload write remains its only write
+    /// footprint, so wave 31's "the owner holds no whole-payload authority
+    /// while a lease is out" rule is inherited unchanged rather than restated
+    /// against a second owner-side footprint.
+    fn lease_byte_write(
+        &mut self,
+        tokens: &[Token],
+        span: Span,
+        slot: usize,
+        commas: &[usize],
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        let close = matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
+            .filter(|close| *close == tokens.len().saturating_sub(1))
+            .ok_or_else(|| {
+                self.bad(
+                    span,
+                    "a byte write requires one lend<Buffer> name, one byte index and one \
+                     i32 value",
+                )
+            })?;
+        let target = name(tokens.get(2))
+            .filter(|_| commas[0] == 3)
+            .ok_or_else(|| self.bad(span, "a byte write requires an exact lease name"))?;
+        let (id, kind) = self.lookup(target, span)?;
+        if kind != ValueType::Scalar(Scalar::WriteLease) {
+            return Err(self.bad(
+                span,
+                "a byte write requires lend<Buffer>: the owner's write footprint is the \
+                 whole payload, and a read share grants no write authority",
+            ));
+        }
+        let (index, index_kind) = self.scalar_operand(&tokens[commas[0] + 1..commas[1]], span)?;
+        if index_kind != Scalar::I32 {
+            return Err(self.bad(span, "a byte index must be an i32"));
+        }
+        let (value, value_kind) = self.scalar_operand(&tokens[commas[1] + 1..close], span)?;
+        if value_kind != Scalar::I32 {
+            return Err(self.bad(span, "a byte write requires an i32 value"));
+        }
+        self.instruction(
+            span,
+            TaskInstructionKind::WriteBufferByte {
+                authority: id.0 as usize,
+                index,
+                value,
+            },
+        );
+        self.instruction(
+            span,
+            TaskInstructionKind::BindScalar {
+                slot,
+                value: ScalarOperand::Unit,
+            },
+        );
+        Ok(Some(ValueType::Scalar(Scalar::Unit)))
+    }
+
+    /// `qcore_buffer_read(NAME, INDEX)` — one byte, through a lease or through
+    /// the owner. A read share is refused by name: giving a loan a byte view
+    /// is the named residual `WRITE-LEND-EXERCISE-LOAN-BYTE-READ`.
+    fn byte_read(
+        &mut self,
+        tokens: &[Token],
+        span: Span,
+        slot: usize,
+        comma: usize,
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        let close = matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
+            .filter(|close| *close == tokens.len().saturating_sub(1))
+            .ok_or_else(|| {
+                self.bad(
+                    span,
+                    "a byte read requires one exact name and one byte index",
+                )
+            })?;
+        let target = name(tokens.get(2))
+            .filter(|_| comma == 3)
+            .ok_or_else(|| self.bad(span, "a byte read requires an exact name"))?;
+        let (id, kind) = self.lookup(target, span)?;
+        if !matches!(
+            kind,
+            ValueType::Scalar(Scalar::OwnedBuffer | Scalar::WriteLease)
+        ) {
+            return Err(self.bad(
+                span,
+                "a byte read requires own<Buffer> or lend<Buffer>; a read share admits the \
+                 whole-payload read only",
+            ));
+        }
+        let (index, index_kind) = self.scalar_operand(&tokens[comma + 1..close], span)?;
+        if index_kind != Scalar::I32 {
+            return Err(self.bad(span, "a byte index must be an i32"));
+        }
+        self.instruction(
+            span,
+            TaskInstructionKind::ReadBufferByte {
+                authority: id.0 as usize,
+                index,
+                value_slot: slot,
+            },
+        );
+        Ok(Some(ValueType::Scalar(Scalar::I32)))
     }
 
     fn scalar_operand(

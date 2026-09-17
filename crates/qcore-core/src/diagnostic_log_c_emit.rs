@@ -85,7 +85,9 @@ enum qcore_diagnostic_kind {
     QCORE_DIAG_EVENT_STEP,
     QCORE_DIAG_RUN_OUTCOME,
     QCORE_DIAG_TASK_LEASE,
-    QCORE_DIAG_TASK_LEASE_RETURN
+    QCORE_DIAG_TASK_LEASE_RETURN,
+    QCORE_DIAG_BUFFER_BYTE_WRITE,
+    QCORE_DIAG_BUFFER_BYTE_READ
 };
 
 struct qcore_diagnostic_event {
@@ -193,6 +195,17 @@ static void qcore_diagnostic_stdout(const struct qcore_diagnostic_event *event)
     case QCORE_DIAG_TASK_LEASE_RETURN:
         (void)fprintf(stdout, "QCORE_BUFFER_LEASE_RETURN %" PRIu64 " %" PRIu64 "\n",
             event->subject, event->related); return;
+    case QCORE_DIAG_BUFFER_BYTE_WRITE:
+        /* Index and byte travel packed in `value`: the payload's extent is
+           four and a byte is eight bits, so both fit the int32 the worker's
+           private event array carries (card WRITE-LEND-TASKS-EXERCISE). */
+        (void)fprintf(stdout, "QCORE_BUFFER_BYTE_WRITE %" PRIu64 " %" PRIu64 " %" PRId64 " %" PRId64 "\n",
+            event->subject, event->related,
+            event->value >> 8, event->value & INT64_C(255)); return;
+    case QCORE_DIAG_BUFFER_BYTE_READ:
+        (void)fprintf(stdout, "QCORE_BUFFER_BYTE_READ %" PRIu64 " %" PRIu64 " %" PRId64 " %" PRId64 "\n",
+            event->subject, event->related,
+            event->value >> 8, event->value & INT64_C(255)); return;
     case QCORE_DIAG_TASK_RESULT:
         if (event->name != NULL && event->name[0] == 'i')
             (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " I32 %" PRId64 "\n",

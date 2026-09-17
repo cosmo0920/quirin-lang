@@ -62,10 +62,12 @@ pub enum ScalarType {
     /// (card `WRITE-LEND-TASKS`): write authority over `[low, high)` of the
     /// payload's [`BUFFER_PAYLOAD_BYTES`], transferred to one worker for
     /// spawn..join. Like a read loan it is not a value type — no result, no
-    /// entry parameter, no copy, move or re-lease source — and in this first
-    /// slice it also admits **no operation in the worker's body**: the
-    /// authority is held and enforced against the owner, and the worker-side
-    /// range write is the named residual `WRITE-LEND-TASKS-EXERCISE`.
+    /// entry parameter, no copy, move or re-lease source. Card
+    /// `WRITE-LEND-TASKS-EXERCISE` (wave 36) discharged the residual of that
+    /// name: a worker body now **exercises** the authority, through
+    /// [`TaskInstructionKind::WriteBufferByte`] and
+    /// [`TaskInstructionKind::ReadBufferByte`], at an index relative to this
+    /// lease's own `low`.
     WriteLease,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -150,6 +152,31 @@ pub enum TaskInstructionKind {
     WriteBuffer {
         buffer: SlotId,
         value: ScalarOperand,
+    },
+    /// Write one byte of a Buffer's payload through a **range write lease**
+    /// (card `WRITE-LEND-TASKS-EXERCISE`). `index` is relative to the
+    /// authority's own base — a lease's `low` — so the owner byte this
+    /// instruction names is `base + index`, the rebasing law the sequential
+    /// lend states as `WRITE-LEND-COMPUTED-INDEX`. The index must be a
+    /// check-time constant: an operand this instruction cannot resolve is not
+    /// provably inside the authority and is refused rather than approximated.
+    /// Only a lease reaches this instruction; the owner's whole-payload write
+    /// is unchanged and is still its only write footprint.
+    WriteBufferByte {
+        authority: SlotId,
+        index: ScalarOperand,
+        value: ScalarOperand,
+    },
+    /// Read one byte of a Buffer's payload, through a lease (relative to its
+    /// `low`) or through the owner (relative to 0, so absolute). The owner arm
+    /// takes the *same* authority gate the whole-payload read takes, so a read
+    /// while any lease is outstanding stays refused exactly as card
+    /// `WRITE-LEND-TASKS` left it. A read share admits no byte view in this
+    /// slice (`WRITE-LEND-EXERCISE-LOAN-BYTE-READ`).
+    ReadBufferByte {
+        authority: SlotId,
+        index: ScalarOperand,
+        value_slot: SlotId,
     },
     DropBuffer {
         buffer: SlotId,
@@ -302,8 +329,10 @@ enum AbstractValue {
     Loan(ResourceId),
     /// Range write authority over a resource this frame does not own (card
     /// `WRITE-LEND-TASKS`). Like a loan it is unregistered in the frame's
-    /// ledger and carries no discharge duty; unlike a loan it is not even
-    /// readable — no operation of this slice admits it in a worker body.
+    /// ledger and carries no discharge duty. Unlike a loan it is not
+    /// *whole-payload* readable: it carries authority over a byte range, and
+    /// since card `WRITE-LEND-TASKS-EXERCISE` the operations that reach it are
+    /// the byte access pair, never the whole-payload read or write.
     Lease(ResourceId),
 }
 impl AbstractValue {
@@ -323,9 +352,10 @@ impl AbstractValue {
             _ => None,
         }
     }
-    /// The identity a read is performed against, owned or borrowed. A write
-    /// lease is deliberately not readable: it carries write authority over a
-    /// byte range, not a whole-payload read this route could express.
+    /// The identity a **whole-payload** read is performed against, owned or
+    /// borrowed. A write lease is deliberately not among them: it carries
+    /// authority over a byte range, not over the whole payload. Its byte
+    /// accesses go through [`State::authority`] instead.
     fn readable(&self) -> Option<ResourceId> {
         match self {
             Self::Owned(id) | Self::Loan(id) => Some(*id),
@@ -333,6 +363,39 @@ impl AbstractValue {
         }
     }
 }
+/// Which authority a byte access is performed under. The distinction is the
+/// whole rebasing law: a lease's index counts from its own `low`, an owner's
+/// from 0, and a read share carries no byte authority at all.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ByteAuthority {
+    Owner,
+    Lease,
+    Loan,
+}
+
+/// A byte index is a **check-time constant or nothing**. An operand this
+/// function cannot resolve to a literal is not provably inside the authority
+/// it is offered against, so it is refused rather than approximated — the
+/// sequential lend's `WRITE-LEND-COMPUTED-INDEX` arm, decided here in the IR
+/// rather than by a route rule.
+fn constant_index(state: &State, operand: &ScalarOperand) -> Result<u64, String> {
+    match operand {
+        ScalarOperand::I32(value) if *value >= 0 => Ok(*value as u64),
+        ScalarOperand::I32(value) => Err(format!("a byte index cannot be negative: {value}")),
+        other => {
+            // Resolving the slot first keeps a stale or mistyped operand
+            // reporting what it always reported; only a well-typed but
+            // non-constant index reaches the refusal this card adds.
+            state.value(other)?;
+            Err(
+                "a byte index must be a check-time constant, so a computed one is not \
+                 provably inside its authority (WRITE-LEND-COMPUTED-INDEX)"
+                    .into(),
+            )
+        }
+    }
+}
+
 #[derive(Clone)]
 enum AbstractSlot {
     Value(AbstractValue),
@@ -382,6 +445,19 @@ struct WorkerExit {
     /// derived from the worker's own checked exit, exactly like `returned`,
     /// and is `None` for every normal exit and every payload-free error.
     error_payload: Option<WorkerReturn>,
+}
+/// What one checked function tells its callers. The resource-effect exits are
+/// card T04's; the **lease footprint** is card `WRITE-LEND-TASKS-EXERCISE`'s:
+/// the exclusive bound `n` such that every byte this function touches through
+/// its write lease lies in `[0, n)` of that lease. It is `None` when the
+/// function exercises no lease, which is every function written before this
+/// card. The creator's spawn site — the only place where a lease's real
+/// `[low, high)` is known — decides the fit, so the rebasing law is checked
+/// where both halves exist and nowhere else.
+#[derive(Clone)]
+struct FunctionSummary {
+    exits: Vec<WorkerExit>,
+    lease_footprint: Option<u64>,
 }
 #[derive(Clone)]
 struct State {
@@ -485,6 +561,17 @@ impl State {
                 .map_err(|e| format!("{e:?}"))?;
         }
         Ok(resource)
+    }
+    /// Classify the authority a byte access names. A slot that is none of the
+    /// three keeps the original owned-buffer refusal verbatim, so a stale,
+    /// moved-away or scalar slot reports what it always reported.
+    fn authority(&self, slot: SlotId) -> Result<ByteAuthority, String> {
+        match self.slots.get(&slot) {
+            Some(AbstractSlot::Value(AbstractValue::Owned(_))) => Ok(ByteAuthority::Owner),
+            Some(AbstractSlot::Value(AbstractValue::Lease(_))) => Ok(ByteAuthority::Lease),
+            Some(AbstractSlot::Value(AbstractValue::Loan(_))) => Ok(ByteAuthority::Loan),
+            _ => Err(format!("slot {slot} is not an initialized owned buffer")),
+        }
     }
     fn bind(&mut self, id: SlotId, value: AbstractSlot) -> Result<(), String> {
         if self.slots.contains_key(&id) {
@@ -596,8 +683,8 @@ impl State {
 fn check_function(
     module: &TaskModule,
     id: FunctionId,
-    summaries: &BTreeMap<FunctionId, Vec<WorkerExit>>,
-) -> Result<Vec<WorkerExit>, TaskDiagnostic> {
+    summaries: &BTreeMap<FunctionId, FunctionSummary>,
+) -> Result<FunctionSummary, TaskDiagnostic> {
     let function = &module.functions[&id];
     let fail = |span, message| problem(id, span, message);
     let span_valid = |span: TaskSpan| {
@@ -848,6 +935,23 @@ fn check_function(
         };
         state.slots.insert(slot, AbstractSlot::Value(value));
     }
+    // At most one lease parameter: a creation supplies at most one lease, so a
+    // second lease parameter could never be filled, and `lease_footprint`
+    // could not say which lease it belongs to. Refusing here keeps the
+    // summary's single-authority reading a fact rather than a convention.
+    if function
+        .parameters
+        .iter()
+        .filter(|(_, kind)| *kind == ScalarType::WriteLease)
+        .count()
+        > 1
+    {
+        return Err(fail(
+            function.span,
+            "a task function takes at most one write lease".into(),
+        ));
+    }
+    let mut lease_footprint: Option<u64> = None;
     let mut exits = vec![];
     let mut queue = vec![(function.entry, state)];
     let mut reached = BTreeSet::new();
@@ -896,6 +1000,74 @@ fn check_function(
                         // A borrower's slot is a loan, never an owned buffer,
                         // so no borrower can reach this instruction at all.
                         state.buffer(*buffer)?;
+                    }
+                    TaskInstructionKind::WriteBufferByte {
+                        authority,
+                        index,
+                        value,
+                    } => {
+                        if state.value(value)?.ty() != ScalarType::I32 {
+                            return Err("a byte write requires a copy i32 value".into());
+                        }
+                        let index = constant_index(&state, index)?;
+                        match state.authority(*authority)? {
+                            ByteAuthority::Lease => {
+                                lease_footprint = Some(lease_footprint.unwrap_or(0).max(index + 1));
+                            }
+                            // The owner's whole-payload write stays its only
+                            // write footprint in this slice: admitting an
+                            // owner byte write would add a second owner-side
+                            // footprint that card `WRITE-LEND-TASKS`' "the
+                            // owner holds no whole-payload authority while a
+                            // lease is out" rule was never measured against.
+                            ByteAuthority::Owner => {
+                                return Err("the whole-payload write is the owner's only write \
+                                     footprint; a byte write requires a lend<Buffer> \
+                                     (WRITE-LEND-EXERCISE-OWNER-BYTE-WRITE)"
+                                    .into());
+                            }
+                            ByteAuthority::Loan => {
+                                return Err(
+                                    "a read share grants no write authority, byte-wise or \
+                                     whole-payload"
+                                        .into(),
+                                );
+                            }
+                        }
+                    }
+                    TaskInstructionKind::ReadBufferByte {
+                        authority,
+                        index,
+                        value_slot,
+                    } => {
+                        let index = constant_index(&state, index)?;
+                        match state.authority(*authority)? {
+                            ByteAuthority::Lease => {
+                                lease_footprint = Some(lease_footprint.unwrap_or(0).max(index + 1));
+                            }
+                            ByteAuthority::Owner => {
+                                // Exactly the whole-payload read's gate, so a
+                                // read while any lease is outstanding stays
+                                // refused by the ledger rather than by a rule
+                                // written a second time here.
+                                state.readable(*authority)?;
+                                if index >= BUFFER_PAYLOAD_BYTES {
+                                    return Err(format!(
+                                        "byte {index} is outside the payload's \
+                                         [0, {BUFFER_PAYLOAD_BYTES}) extent"
+                                    ));
+                                }
+                            }
+                            ByteAuthority::Loan => {
+                                return Err("a read share admits the whole-payload read only \
+                                     (WRITE-LEND-EXERCISE-LOAN-BYTE-READ)"
+                                    .into());
+                            }
+                        }
+                        state.bind(
+                            *value_slot,
+                            AbstractSlot::Value(AbstractValue::Scalar(ScalarType::I32)),
+                        )?;
                     }
                     TaskInstructionKind::DropBuffer { buffer } => {
                         let resource = state.buffer(*buffer)?;
@@ -1219,10 +1391,33 @@ fn check_function(
                     for slot in consumed_slots {
                         state.slots.insert(slot, AbstractSlot::Consumed);
                     }
-                    let worker_exits = summaries
+                    let worker_summary = summaries
                         .get(worker)
                         .ok_or("worker has no checked resource-effect summary")?;
-                    for exit in worker_exits {
+                    // The rebasing law, decided where both halves are known:
+                    // the worker states the exclusive bound it touches through
+                    // its lease, and this creation supplies the lease's real
+                    // `[low, high)`. Byte `low + i` is authorized exactly when
+                    // `i < high - low`, so the whole footprint fits exactly
+                    // when `bound <= high - low`. A worker that exercises a
+                    // lease it was never handed is refused here too.
+                    if let Some(bound) = worker_summary.lease_footprint {
+                        let Some((_, range)) = leases.first() else {
+                            return Err(format!(
+                                "worker exercises bytes [0, {bound}) of a write lease this \
+                                 creation does not supply"
+                            ));
+                        };
+                        let extent = range.high.saturating_sub(range.low);
+                        if bound > extent {
+                            return Err(format!(
+                                "worker exercises bytes [0, {bound}) of its lease, which does \
+                                 not fit the leased range [{}, {}) of extent {extent}",
+                                range.low, range.high
+                            ));
+                        }
+                    }
+                    for exit in &worker_summary.exits {
                         let mut success_state = state.clone();
                         for input in &exit.dropped {
                             let resource = *captured
@@ -1537,7 +1732,10 @@ fn check_function(
         }
         fresh
     });
-    Ok(exits)
+    Ok(FunctionSummary {
+        exits,
+        lease_footprint,
+    })
 }
 
 pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<TaskDiagnostic>> {
@@ -1563,8 +1761,8 @@ pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<T
             errors.push(problem(id, function.span, "duplicate function name"));
         }
         match check_function(module, id, &summaries) {
-            Ok(exits) => {
-                summaries.insert(id, exits);
+            Ok(summary) => {
+                summaries.insert(id, summary);
             }
             Err(error) => errors.push(error),
         }

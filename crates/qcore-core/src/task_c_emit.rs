@@ -45,13 +45,31 @@ fn scalar(value: &ScalarOperand) -> String {
 /// of one object. They differ only in what the *caller* keeps, which
 /// `consume` decides.
 fn self_value(operand: &ScalarOperand) -> String {
-    if let ScalarOperand::Move(slot)
-    | ScalarOperand::Loan { slot, .. }
-    | ScalarOperand::Lease { slot, .. } = operand
-    {
-        format!("s_{slot}.value")
-    } else {
-        format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand))
+    match operand {
+        // A lease additionally hands the worker its **base**, in the task
+        // value's scalar field — which a lease slot has no other use for,
+        // since no scalar operation admits one. Without it a lease-relative
+        // byte index would have nothing to count from inside the worker, and
+        // the base is exactly the fact the holder must not be able to choose
+        // (card `WRITE-LEND-TASKS-EXERCISE`).
+        ScalarOperand::Lease { slot, low, .. } => {
+            format!("(struct qcore_task_value){{INT32_C({low}), s_{slot}.value.buffer}}")
+        }
+        ScalarOperand::Move(slot) | ScalarOperand::Loan { slot, .. } => {
+            format!("s_{slot}.value")
+        }
+        _ => format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand)),
+    }
+}
+
+/// A byte index reaches emission only as the check-time constant the checker
+/// demanded, so there is no run-time index expression to emit. An operand of
+/// any other shape never passes `check_task_module`, and reaching one here is
+/// a defect in this crate rather than in the program.
+fn byte_index(operand: &ScalarOperand) -> u64 {
+    match operand {
+        ScalarOperand::I32(value) if *value >= 0 => *value as u64,
+        _ => unreachable!("checked byte index is a non-negative constant"),
     }
 }
 
@@ -206,7 +224,8 @@ pub fn emit_task_c11_with_source_lines(
                     | InstructionKind::BindScalar { slot, .. } => {
                         slots.insert(*slot);
                     }
-                    InstructionKind::UnwrapInfallible { value_slot, .. } => {
+                    InstructionKind::UnwrapInfallible { value_slot, .. }
+                    | InstructionKind::ReadBufferByte { value_slot, .. } => {
                         slots.insert(*value_slot);
                     }
                     InstructionKind::TakeErrorPayload { buffer_slot, .. } => {
@@ -250,6 +269,24 @@ pub fn emit_task_c11_with_source_lines(
         for (index, (slot, _)) in function.parameters.iter().enumerate() {
             writeln!(source, "    s_{slot}.value = args[{index}];").unwrap();
         }
+        // A byte access counts from its authority's base: a lease's own `low`,
+        // which the creator wrote into the task value's scalar field, or 0 for
+        // an owner. A lease is only ever a parameter — no operand rebinds one,
+        // and there is no transitive leasing — so this set is exactly the
+        // lease bindings this function has.
+        let lease_slots = function
+            .parameters
+            .iter()
+            .filter(|(_, kind)| *kind == ScalarType::WriteLease)
+            .map(|(slot, _)| *slot)
+            .collect::<BTreeSet<_>>();
+        let base = |slot: &usize| {
+            if lease_slots.contains(slot) {
+                format!("(uint64_t)(uint32_t)s_{slot}.value.scalar")
+            } else {
+                "UINT64_C(0)".to_string()
+            }
+        };
         // Slots are single-assignment, so a handle slot names exactly one
         // creation and therefore exactly the loans that creation opened.
         let loans_by_handle = function
@@ -340,6 +377,36 @@ pub fn emit_task_c11_with_source_lines(
                             source,
                             "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);",
                             scalar(value)
+                        )
+                        .unwrap();
+                    }
+                    InstructionKind::WriteBufferByte {
+                        authority,
+                        index,
+                        value,
+                    } => {
+                        writeln!(
+                            source,
+                            "    qcore_buffer_byte_write(s_{authority}.value.buffer, \
+                             {} + UINT64_C({}), {}, context);",
+                            base(authority),
+                            byte_index(index),
+                            scalar(value)
+                        )
+                        .unwrap();
+                    }
+                    InstructionKind::ReadBufferByte {
+                        authority,
+                        index,
+                        value_slot,
+                    } => {
+                        writeln!(
+                            source,
+                            "    s_{value_slot}.value.scalar = \
+                             qcore_buffer_byte_read(s_{authority}.value.buffer, \
+                             {} + UINT64_C({}), context);",
+                            base(authority),
+                            byte_index(index)
                         )
                         .unwrap();
                     }
@@ -561,7 +628,7 @@ pub fn emit_task_c11_with_source_lines(
     }
 
     let mut prologue = String::from(
-        "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_drop;\n",
+        "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_byte_write; (void)&qcore_buffer_byte_read; (void)&qcore_buffer_drop;\n",
     );
     for id in module.functions.keys() {
         writeln!(prologue, "    (void)&qcore_task_fn_{id};").unwrap();
@@ -706,6 +773,8 @@ static void qcore_buffer_log_event(uint64_t task, struct qcore_buffer_event even
     case 2: kind = QCORE_DIAG_RESOURCE_READ; break;
     case 3: kind = QCORE_DIAG_RESOURCE_RELEASE; break;
     case 4: kind = QCORE_DIAG_RESOURCE_WRITE; break;
+    case 5: kind = QCORE_DIAG_BUFFER_BYTE_WRITE; break;
+    case 6: kind = QCORE_DIAG_BUFFER_BYTE_READ; break;
     default: abort();
     }
     qcore_diagnostic_log(QCORE_LOG_TRACE, kind, task, event.generation,
@@ -750,6 +819,25 @@ static void qcore_buffer_write(struct qcore_buffer *buffer, int32_t payload, str
     if (buffer == NULL) abort();
     buffer->payload = payload;
     qcore_buffer_event(context, 4, buffer->generation, payload);
+}
+/* One byte of the payload, through a checked range write lease. The object
+ * written is `((unsigned char *)&buffer->payload)[index]`: a distinct memory
+ * location in the sense of C11 6.2.6.1/4 and 3.14, so two workers holding
+ * disjoint leases write distinct objects and are not in a data race. The
+ * checker has already decided that `index` lies inside the writer's own lease
+ * and that no two live leases overlap; the extent is re-decided here so a
+ * miscompiled index cannot reach memory. */
+static void qcore_buffer_byte_write(struct qcore_buffer *buffer, uint64_t index, int32_t value, struct qcore_task_context *context) {
+    if (buffer == NULL || index >= sizeof buffer->payload) abort();
+    unsigned char byte = (unsigned char)(value & INT32_C(255));
+    ((unsigned char *)&buffer->payload)[index] = byte;
+    qcore_buffer_event(context, 5, buffer->generation, (int32_t)((index << 8) | byte));
+}
+static int32_t qcore_buffer_byte_read(const struct qcore_buffer *buffer, uint64_t index, struct qcore_task_context *context) {
+    if (buffer == NULL || index >= sizeof buffer->payload) abort();
+    unsigned char byte = ((const unsigned char *)&buffer->payload)[index];
+    qcore_buffer_event(context, 6, buffer->generation, (int32_t)((index << 8) | byte));
+    return (int32_t)byte;
 }
 static void qcore_buffer_drop(struct qcore_buffer *buffer, struct qcore_task_context *context) {
     if (buffer == NULL) abort();

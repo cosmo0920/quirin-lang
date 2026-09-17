@@ -64,6 +64,23 @@ const COMPILE_FLAGS: [&str; 7] = [
 // Quiet-emission repair (2026-09-11): these now bind the emitted C plus the
 // explicit typed stdout sink, the exact translation unit executed below.
 // Fresh native evidence: docs/reports/native-observation-repair/native-runs.json.
+// Deliberate pin update (card `WRITE-LEND-TASKS-EXERCISE`, 2026-09-18) — the
+// **fifth** recorded move of these two pins, and the same shape as the fourth
+// below. The shared diagnostic prelude gained two more enum members and two
+// adapter cases (`QCORE_DIAG_BUFFER_BYTE_WRITE`, `QCORE_DIAG_BUFFER_BYTE_READ`,
+// one byte of a payload written or read through a range write lease), the task
+// preamble gained the two helpers that log them, and the emitter's explicit
+// "used" list gained their two entries — all three forced, the last by
+// `-Wall -Wextra -Werror` on an unused `static`. That prelude is emitted into
+// every task program, so the generated C of these two pre-existing programs
+// moved by exactly that text. **Neither program's printed bytes moved**: neither
+// declares a lease, so neither can reach a byte access and neither logs either
+// new kind; `parse_observed_trace` reads the same lines; the relation below is
+// re-verified against fresh native runs in this same change; and the
+// `is_reference_order` and refusal-code assertions are untouched. The new
+// members are appended at the **end** of the enum, so no existing kind's value
+// moved. The record is `docs/reports/write-lend-tasks-exercise/README.md` §4.
+//
 // Deliberate pin update (card `WRITE-LEND-TASKS`, 2026-09-13) — the **fourth**
 // recorded move of these two pins, on the `TRACE-STDIO` precedent above. The
 // shared diagnostic prelude gained two enum members and two adapter cases
@@ -76,8 +93,8 @@ const COMPILE_FLAGS: [&str; 7] = [
 // in this same change, and the `is_reference_order` and refusal-code
 // assertions are untouched. The record is
 // `docs/reports/write-lend-tasks/README.md` §6.
-const ROUND_TRIP_C_DIGEST: &str = "6df369991465940e";
-const CONCURRENT_C_DIGEST: &str = "0da423be2f16b8bb";
+const ROUND_TRIP_C_DIGEST: &str = "bfa572914cb96413";
+const CONCURRENT_C_DIGEST: &str = "9cbe67a70a420d52";
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 

@@ -10,7 +10,14 @@ pub enum ScalarValue {
     ReadLoan(ResourceId),
     /// A write-leased identity (card `WRITE-LEND-TASKS`). Refused as an
     /// outcome exactly as a loan is, independently of the checker's rule.
-    WriteLease(ResourceId),
+    /// It carries its own `low` since card `WRITE-LEND-TASKS-EXERCISE`: a
+    /// lease-relative byte index means nothing without the base it counts
+    /// from, and the base is the one fact the holder must not be able to
+    /// choose.
+    WriteLease {
+        resource: ResourceId,
+        low: u64,
+    },
 }
 impl ScalarValue {
     fn outcome(self) -> Result<TaskOutcome, String> {
@@ -19,7 +26,7 @@ impl ScalarValue {
             Self::I32(value) => Ok(TaskOutcome::I32(value)),
             Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
             Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
-            Self::WriteLease(_) => Err("a write lease is not a reference outcome".into()),
+            Self::WriteLease { .. } => Err("a write lease is not a reference outcome".into()),
         }
     }
 }
@@ -91,6 +98,23 @@ pub enum TaskEvent {
     BufferLeaseReturned {
         borrower: u64,
         buffer: ResourceId,
+    },
+    /// One byte of a payload written **through a lease** (card
+    /// `WRITE-LEND-TASKS-EXERCISE`). `index` is the owner-side byte, already
+    /// rebased through the lease's `low`, so the event names the memory the
+    /// emitted C writes rather than the holder's private coordinate.
+    BufferByteWritten {
+        task: u64,
+        buffer: ResourceId,
+        index: u64,
+        byte: u8,
+    },
+    /// One byte of a payload read, through a lease or through the owner.
+    BufferByteRead {
+        task: u64,
+        buffer: ResourceId,
+        index: u64,
+        byte: u8,
     },
     CreateFailed {
         worker: FunctionId,
@@ -183,13 +207,58 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
         },
         // Leasing, like lending, neither consumes nor copies the binding; the
         // range travels with the reservation, not with the value.
-        ScalarOperand::Lease { slot, .. } => match slots.get(slot) {
+        ScalarOperand::Lease { slot, low, .. } => match slots.get(slot) {
             Some(Value::Scalar(ScalarValue::OwnedBuffer(resource))) => {
-                Ok(ScalarValue::WriteLease(*resource))
+                Ok(ScalarValue::WriteLease {
+                    resource: *resource,
+                    low: *low,
+                })
             }
             _ => Err("reference lessor slot is unavailable".into()),
         },
     }
+}
+
+/// The value a byte access names, read straight out of the slot. `scalar`'s
+/// `Move` arm deliberately admits only an owned buffer, so it cannot be reused
+/// here: a lease is neither moved nor copied by being exercised.
+fn authority_value(slots: &BTreeMap<SlotId, Value>, slot: SlotId) -> Result<ScalarValue, String> {
+    match slots.get(&slot) {
+        Some(Value::Scalar(
+            value @ (ScalarValue::OwnedBuffer(_)
+            | ScalarValue::ReadLoan(_)
+            | ScalarValue::WriteLease { .. }),
+        )) => Ok(value.clone()),
+        _ => Err("reference byte-access slot is unavailable".into()),
+    }
+}
+
+/// Rebase a lease-relative index onto the payload and re-decide its extent,
+/// independently of the checker. `base` is the lease's `low`, or 0 for an
+/// owner. A non-constant index is refused here as it is in the checker: the
+/// reference run may not resolve what the checker could not.
+fn byte_offset(
+    slots: &BTreeMap<SlotId, Value>,
+    index: &ScalarOperand,
+    base: u64,
+) -> Result<u64, String> {
+    let ScalarOperand::I32(value) = index else {
+        // Touch the slot so an unavailable one reports as unavailable rather
+        // than as a non-constant index.
+        scalar(slots, index)?;
+        return Err("reference byte index is not a check-time constant".into());
+    };
+    if *value < 0 {
+        return Err("reference byte index is negative".into());
+    }
+    let offset = base + *value as u64;
+    if offset >= BUFFER_PAYLOAD_BYTES {
+        return Err(format!(
+            "reference byte {offset} is outside the payload's \
+             [0, {BUFFER_PAYLOAD_BYTES}) extent"
+        ));
+    }
+    Ok(offset)
 }
 
 /// The identity a reference read is performed against, owned or borrowed.
@@ -357,6 +426,91 @@ impl Runtime<'_> {
                                     buffer: resource,
                                     value: written,
                                 },
+                            );
+                        }
+                        TaskInstructionKind::WriteBufferByte {
+                            authority,
+                            index,
+                            value,
+                        } => {
+                            let ScalarValue::I32(written) = scalar(&slots, value)? else {
+                                return Err("reference byte write requires i32".into());
+                            };
+                            let ScalarValue::WriteLease { resource, low } =
+                                authority_value(&slots, *authority)?
+                            else {
+                                return Err("reference byte write requires a write lease".into());
+                            };
+                            let offset = byte_offset(&slots, index, low)?;
+                            let payload = self
+                                .buffers
+                                .get_mut(&resource)
+                                .ok_or("reference buffer payload missing")?;
+                            // The payload's own object representation, which
+                            // is what the emitted C indexes. Reference and C
+                            // therefore agree by construction on any host;
+                            // a program whose *observation* depends on that
+                            // representation is the recorded boundary
+                            // `WRITE-LEND-EXERCISE-BYTE-ORDER`.
+                            let mut bytes = payload.to_ne_bytes();
+                            let byte = (written & 0xff) as u8;
+                            bytes[offset as usize] = byte;
+                            *payload = i32::from_ne_bytes(bytes);
+                            self.buffer_event(
+                                task,
+                                TaskEvent::BufferByteWritten {
+                                    task,
+                                    buffer: resource,
+                                    index: offset,
+                                    byte,
+                                },
+                            );
+                        }
+                        TaskInstructionKind::ReadBufferByte {
+                            authority,
+                            index,
+                            value_slot,
+                        } => {
+                            let (resource, offset) = match authority_value(&slots, *authority)? {
+                                ScalarValue::WriteLease { resource, low } => {
+                                    (resource, byte_offset(&slots, index, low)?)
+                                }
+                                ScalarValue::OwnedBuffer(resource) => {
+                                    // Independently of the checker: the
+                                    // owner's byte read takes the same
+                                    // ledger gate its whole-payload read
+                                    // takes, so a lease outstanding
+                                    // refuses it here too.
+                                    self.ledger
+                                        .read_resource(task, resource)
+                                        .map_err(|e| format!("{e:?}"))?;
+                                    (resource, byte_offset(&slots, index, 0)?)
+                                }
+                                _ => {
+                                    return Err(
+                                        "reference byte read requires an owner or a write \
+                                             lease"
+                                            .into(),
+                                    );
+                                }
+                            };
+                            let payload = *self
+                                .buffers
+                                .get(&resource)
+                                .ok_or("reference buffer payload missing")?;
+                            let byte = payload.to_ne_bytes()[offset as usize];
+                            self.buffer_event(
+                                task,
+                                TaskEvent::BufferByteRead {
+                                    task,
+                                    buffer: resource,
+                                    index: offset,
+                                    byte,
+                                },
+                            );
+                            slots.insert(
+                                *value_slot,
+                                Value::Scalar(ScalarValue::I32(i32::from(byte))),
                             );
                         }
                         TaskInstructionKind::DropBuffer { buffer } => {
@@ -632,8 +786,8 @@ impl Runtime<'_> {
                         let leased_resources = arguments
                             .iter()
                             .filter_map(|value| {
-                                if let ScalarValue::WriteLease(id) = value {
-                                    Some(*id)
+                                if let ScalarValue::WriteLease { resource, .. } = value {
+                                    Some(*resource)
                                 } else {
                                     None
                                 }
@@ -1007,6 +1161,26 @@ pub fn render_task_event(event: &TaskEvent) -> String {
             TaskEvent::BufferLeaseReturned { borrower, buffer } => {
                 writeln!(output, "QCORE_BUFFER_LEASE_RETURN {borrower} {buffer}").unwrap()
             }
+            TaskEvent::BufferByteWritten {
+                task,
+                buffer,
+                index,
+                byte,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_BYTE_WRITE {task} {buffer} {index} {byte}"
+            )
+            .unwrap(),
+            TaskEvent::BufferByteRead {
+                task,
+                buffer,
+                index,
+                byte,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_BYTE_READ {task} {buffer} {index} {byte}"
+            )
+            .unwrap(),
             TaskEvent::Join { task } => writeln!(output, "QCORE_TASK_JOIN {task}").unwrap(),
             TaskEvent::Result { task, outcome } => match outcome {
                 TaskOutcome::OwnedBuffer(buffer) => {

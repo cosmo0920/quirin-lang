@@ -528,14 +528,29 @@ pub fn reference_trace(
                 // dropping is a move in the admitting direction, which
                 // invariant 1 forbids; refusing only blocks a comparison.
                 //
-                // What stays open is the forward question, narrowed to
-                // `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`: whether the
-                // observable alphabet should grow to carry leases once
-                // `WRITE-LEND-TASKS-EXERCISE` makes a worker exercise its
-                // authority. Growing it takes CT03's method — a conservativity
-                // theorem plus a rule shown non-vacuous in both directions —
-                // whose second half is unavailable while no worker-side range
-                // write exists to admit or refuse.
+                // The forward question `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`
+                // asked whether the observable alphabet should grow to carry
+                // leases once `WRITE-LEND-TASKS-EXERCISE` made a worker
+                // exercise its authority. That card landed, and the answer is
+                // **no** — decided, not deferred, on a ground the exercise
+                // itself supplies. F02's `AdmittedCausalOrder` is a *sequence*:
+                // to admit a run it must state one causal order over its
+                // events. Two workers holding disjoint write leases write
+                // their bytes genuinely concurrently, with no causal edge
+                // between them and no synchronization until their joins, so
+                // any total order the alphabet could carry would assert an
+                // ordering the run does not have. That is the same situation
+                // constraint 15a answers with a *window-and-emitter* relation
+                // rather than a causal one, and is the opposite of F02's
+                // premise. Byte events therefore join the lease events on the
+                // refusing side — so the alphabet did not grow and no existing
+                // digest moved — and write-lend programs stay outside F02
+                // relational comparison by construction, their native evidence
+                // being sanitizer, allocation-count and the byte-identical
+                // stdout of a strict comparison whose windows are the joins.
+                TaskEvent::BufferByteWritten { .. } | TaskEvent::BufferByteRead { .. } => {
+                    return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
+                }
                 TaskEvent::BufferWritten {
                     task,
                     buffer,
