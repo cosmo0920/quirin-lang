@@ -331,18 +331,54 @@ Run at the card's tip, on Linux, with 212 GB free.
 
 | Step | Result |
 |---|---|
-| `git submodule update --init --recursive` | exit 0 |
-| `cargo test --workspace --no-fail-fast` | *(see §7.1)* |
-| `cargo fmt --all -- --check` | *(see §7.1)* |
-| `cargo clippy --all-targets -- -D warnings` | *(see §7.1)* |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | *(see §7.1)* |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | *(see §7.1)* |
+| `git submodule update --init --recursive` | **exit 0** |
+| `cargo test --workspace --no-fail-fast` | **exit 0** |
+| `cargo fmt --all -- --check` | **exit 0** |
+| `cargo clippy --all-targets -- -D warnings` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
 | `python3 scripts/check_lean_audits.py` | **Passed 133 Lean audits** |
 | `python3 scripts/ct_stage_summary.py --check` | clean, no drift |
 
-### 7.1 Gate results
+Every step ran; every exit code was captured to a file rather than through a
+pipe. `--no-fail-fast` is part of the gate (`GATE-NO-FAIL-FAST`), so the
+workspace suite's **exit 0 means zero failures in every target**, not zero up to
+the first failing binary.
 
-*(filled in below from the recorded run)*
+### 7.1 What was and was not measured
+
+**The aggregate test count is deliberately not quoted in this report.** The
+suite's own exit code is the gate's criterion and it is recorded above; the
+per-target totals were truncated by the `tail` the first run was piped through,
+and the re-run to recover them was contended by a sibling wave-36 card's gate
+holding the same `target/` lock. Rather than quote a number this card did not
+read, the count is left to the wave close, which measures it at the integration
+tip in any case (see §9 item 3). Three targets to note for that measurement, all
+green here and all in this card's blast radius:
+`crates/qcore-core` (unit, `mutex_c_emit`), `compiler/tests/ct_corpus.rs`, and
+`compiler/tests/checked_mutex_guards.rs`.
+
+**Sanitizer output on CT46's own artifact.** The emitted program compiled clean
+under `-std=c11 -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined
+-fno-omit-frame-pointer -pthread`, ran with
+`ASAN_OPTIONS=detect_leaks=1:halt_on_error=1` and
+`UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1`, exited **0**, wrote
+**nothing to stderr**, and its stdout was the 14-line reference observation:
+
+```
+resource 1 4 / create 1 / spawn 0 1 / lock 1 1 / open 1 / write 1 0 4 /
+close 1 / unlock 1 / join 0 1 / lock 1 2 / read 1 0 4 20 / unlock 2 /
+destroy-mutex 1 / destroy 1
+```
+
+LeakSanitizer is enabled and silent, so the protected allocation is reclaimed —
+a Linux-only observation (`MUTEX-SHARE-CROSS-EMISSION-APPLE-RUN`).
+
+**Residual-name hygiene.** `scripts/reconciliation_sweep.py . --cards
+mutex-share-cross-emission --residuals` reports **none** of this card's five
+names as unreached: all five are in `named_followups`. The 26 untracked names it
+lists are pre-existing, from other waves' increment files and standing
+constraints, and are not this card's to dispose of.
 
 ## 8. Named follow-ons
 
