@@ -1257,6 +1257,8 @@ pub fn analyze_unrestricted_c11_with_inventory(
             |inventory| inventory.definitions().to_vec(),
         )),
     };
+    #[cfg(feature = "indirect-census")]
+    crate::indirect_census::next_unit();
     let preprocessed_source = validate_unrestricted_c11(unit)?;
     let analysis = match analyze_legacy_c_translation_unit_selected_partial(
         &preprocessed_source,
@@ -1805,6 +1807,8 @@ pub(crate) fn build_function_cfg(
         alias_classes,
         variadic_tails,
         frame_protected,
+        #[cfg(feature = "indirect-census")]
+        census_function: function.to_owned(),
     };
     let statements =
         parser
@@ -2891,6 +2895,11 @@ struct Parser<'a> {
     /// binding environment. Empty whenever the body could not be delimited,
     /// which restores the pre-repair blanket poison for the whole function.
     frame_protected: BTreeSet<String>,
+    /// Card **C-GATEWAY-INDIRECT-CENSUS-2**: this function's name, carried only
+    /// so the instrumented census can label its records. Compiled out with the
+    /// feature off, and read by nothing else.
+    #[cfg(feature = "indirect-census")]
+    census_function: String,
 }
 
 impl Parser<'_> {
@@ -2911,6 +2920,32 @@ impl Parser<'_> {
                 .cloned()
                 .collect(),
         )
+    }
+
+    /// Card **C-GATEWAY-INDIRECT-CENSUS-2**: hand one already-decided
+    /// `indirect memory access` refusal to the instrumented census.
+    ///
+    /// Called only after the classifier has committed to refusing, so it can
+    /// neither admit nor refuse anything. Compiled out with the feature off.
+    #[cfg(feature = "indirect-census")]
+    fn census_indirect(
+        &self,
+        texts: &[&str],
+        exempt: &[(usize, usize)],
+        refusal: &crate::indirect_census::Refusal,
+    ) {
+        crate::indirect_census::record(
+            &crate::indirect_census::Context {
+                function: &self.census_function,
+                formal_parameters: &self.formal_parameters,
+                typed_model: &self.typed_model,
+                typed_types: &self.typed_types,
+                typed_bases: &self.typed_bases,
+            },
+            texts,
+            exempt,
+            refusal,
+        );
     }
 
     /// The complete expression was delimited by the parser; malformed
@@ -3912,6 +3947,47 @@ impl Parser<'_> {
             };
         }
         if unsupported_access {
+            #[cfg(feature = "indirect-census")]
+            {
+                // Which arm of the gate's disjunction fired, recomputed from the
+                // same locals it was computed from. Measurement only.
+                let position = if let Some(equal) = assignment {
+                    if admitted_store.is_none()
+                        && direct_assignment_destination(&texts[..equal])
+                            .as_deref()
+                            .is_some_and(|place| {
+                                place.contains('.') || place.contains('[') || place.contains("->")
+                            })
+                    {
+                        crate::indirect_census::Position::AssignmentDestination
+                    } else {
+                        crate::indirect_census::Position::AssignmentValue
+                    }
+                } else if declaration_like
+                    && texts
+                        .first()
+                        .is_some_and(|first| DECLARATION_SPECIFIERS.contains(first))
+                {
+                    crate::indirect_census::Position::Declaration
+                } else if find_call(&texts).is_some() {
+                    crate::indirect_census::Position::CallArgument
+                } else {
+                    crate::indirect_census::Position::ExpressionStatement
+                };
+                self.census_indirect(
+                    &texts,
+                    &borrowed_actuals,
+                    &crate::indirect_census::Refusal {
+                        from: assignment.map_or(0, |equal| equal + 1),
+                        assignment,
+                        line: tokens.first().map_or(0, |token| token.line),
+                        site: crate::indirect_census::RefusalSite::LexicalGate,
+                        position,
+                        call_contracted: find_call(&texts)
+                            .map(|(_, function)| self.contracts.contract(function).is_some()),
+                    },
+                );
+            }
             return LegacyInstruction::Unknown {
                 description: "indirect memory access is outside the resource projection".into(),
                 writes: self.refused_writes(&texts),
@@ -4036,6 +4112,21 @@ impl Parser<'_> {
                     && !matches!(contract.result, ResourceReturnMode::None)
                     && !store.pointer_field
                 {
+                    #[cfg(feature = "indirect-census")]
+                    self.census_indirect(
+                        &texts,
+                        &borrowed_actuals,
+                        &crate::indirect_census::Refusal {
+                            from: 0,
+                            assignment,
+                            line: tokens.first().map_or(0, |token| token.line),
+                            site: crate::indirect_census::RefusalSite::NonPointerResultStore,
+                            position: crate::indirect_census::Position::AssignmentDestination,
+                            // This arm is only reached through a contracted
+                            // call, so the answer is fixed.
+                            call_contracted: Some(true),
+                        },
+                    );
                     return LegacyInstruction::Unknown {
                         description: "indirect memory access is outside the resource projection"
                             .into(),
@@ -4260,6 +4351,20 @@ impl Parser<'_> {
             ) else {
                 // A value shape the premises do not cover keeps the existing
                 // refusal and the existing diagnostic.
+                #[cfg(feature = "indirect-census")]
+                self.census_indirect(
+                    &texts,
+                    &borrowed_actuals,
+                    &crate::indirect_census::Refusal {
+                        from: equal + 1,
+                        assignment,
+                        line: tokens.first().map_or(0, |token| token.line),
+                        site: crate::indirect_census::RefusalSite::UnclassifiedStoreValue,
+                        position: crate::indirect_census::Position::AssignmentValue,
+                        call_contracted: find_call(&texts)
+                            .map(|(_, function)| self.contracts.contract(function).is_some()),
+                    },
+                );
                 return LegacyInstruction::Unknown {
                     description: "indirect memory access is outside the resource projection".into(),
                     writes: self.refused_writes(&texts),

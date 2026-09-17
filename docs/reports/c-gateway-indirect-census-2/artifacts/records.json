@@ -1,0 +1,270 @@
+{
+ "ceiling_functions": 2,
+ "ceiling_functions_premise_holds": 1,
+ "ceiling_premise_holds_names": [
+  "librdkafka/nanopb/pb_encode.c/pb_ostream_from_buffer"
+ ],
+ "tags_seen": 909,
+ "tags_refused_whole": 173,
+ "refusing_tokens": {
+  ":": 9,
+  "(": 66,
+  "{": 98
+ },
+ "unresolved_leaves_with_tag": 2882,
+ "unresolved_leaves_without_tag": 10514,
+ "why": {
+  "record body REFUSED WHOLE on `(`": 346,
+  "record body read; this member is simply in no class": 166,
+  "record body REFUSED WHOLE on `{`": 2367,
+  "record never declared in the units that use it": 3
+ },
+ "why_sole_blocked": {
+  "record body REFUSED WHOLE on `(`": 10,
+  "record body read; this member is simply in no class": 7,
+  "record body REFUSED WHOLE on `{`": 80,
+  "record never declared in the units that use it": 0
+ },
+ "top_tags": [
+  {
+   "tag": "rd_kafka_s",
+   "leaves": 593,
+   "sole_blocked_leaves": 10,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_broker_s",
+   "leaves": 467,
+   "sole_blocked_leaves": 3,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_toppar_s",
+   "leaves": 226,
+   "sole_blocked_leaves": 6,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_buf_s",
+   "leaves": 226,
+   "sole_blocked_leaves": 4,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_op_s",
+   "leaves": 173,
+   "sole_blocked_leaves": 4,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_mock_cluster_s",
+   "leaves": 165,
+   "sole_blocked_leaves": 39,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_topic_s",
+   "leaves": 88,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_property",
+   "leaves": 83,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "plugin_api",
+   "leaves": 77,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "Opentelemetry__Proto__Metrics__V1__Metric",
+   "leaves": 60,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "cmt_opts",
+   "leaves": 56,
+   "sole_blocked_leaves": 0,
+   "refused_on": null
+  },
+  {
+   "tag": "rd_kafka_transport_s",
+   "leaves": 53,
+   "sole_blocked_leaves": 5,
+   "refused_on": "{"
+  },
+  {
+   "tag": "Opentelemetry__Proto__Common__V1__AnyValue",
+   "leaves": 49,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "mk_http_session",
+   "leaves": 49,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "cmt",
+   "leaves": 38,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "Opentelemetry__Proto__Metrics__V1__NumberDataPoint",
+   "leaves": 37,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_conf_s",
+   "leaves": 37,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "opentelemetry_decode_value",
+   "leaves": 27,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "LZ4HC_CCtx_internal",
+   "leaves": 24,
+   "sole_blocked_leaves": 2,
+   "refused_on": "("
+  },
+  {
+   "tag": "mk_stream_input",
+   "leaves": 23,
+   "sole_blocked_leaves": 2,
+   "refused_on": "("
+  },
+  {
+   "tag": "pb_ostream_s",
+   "leaves": 20,
+   "sole_blocked_leaves": 5,
+   "refused_on": "("
+  },
+  {
+   "tag": "LZ4_stream_t_internal",
+   "leaves": 18,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "rd_kafka_sasl_oauthbearer_state",
+   "leaves": 16,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "ctrace_span",
+   "leaves": 15,
+   "sole_blocked_leaves": 2,
+   "refused_on": null
+  },
+  {
+   "tag": "cio_options",
+   "leaves": 15,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "flb_input_plugin",
+   "leaves": 15,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "rd_kafka_ConfigEntry_s",
+   "leaves": 13,
+   "sole_blocked_leaves": 6,
+   "refused_on": "{"
+  },
+  {
+   "tag": "cmt_map_label",
+   "leaves": 11,
+   "sole_blocked_leaves": 0,
+   "refused_on": null
+  },
+  {
+   "tag": "Opentelemetry__Proto__Metrics__V1__Exemplar",
+   "leaves": 11,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "ctrace_instrumentation_scope",
+   "leaves": 10,
+   "sole_blocked_leaves": 2,
+   "refused_on": null
+  },
+  {
+   "tag": "pb_istream_s",
+   "leaves": 10,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "rd_kafka_metadata_cache_entry",
+   "leaves": 10,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_UserScramCredentialAlteration_s",
+   "leaves": 9,
+   "sole_blocked_leaves": 2,
+   "refused_on": "{"
+  },
+  {
+   "tag": "rd_kafka_q_io",
+   "leaves": 8,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "rd_kafka_sasl_scram_state",
+   "leaves": 8,
+   "sole_blocked_leaves": 0,
+   "refused_on": "{"
+  },
+  {
+   "tag": "mk_event",
+   "leaves": 8,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "mk_plugin_network",
+   "leaves": 7,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "mk_plugin",
+   "leaves": 7,
+   "sole_blocked_leaves": 0,
+   "refused_on": "("
+  },
+  {
+   "tag": "cmt_map",
+   "leaves": 6,
+   "sole_blocked_leaves": 0,
+   "refused_on": null
+  },
+  {
+   "tag": "ctrace_span_event",
+   "leaves": 6,
+   "sole_blocked_leaves": 0,
+   "refused_on": null
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "card": "C-GATEWAY-INDIRECT-CENSUS-2",
+ "wave": 36,
+ "base": "60958bf0",
+ "workspace_tests": {
+  "passed": 4580,
+  "failed": 0,
+  "ignored": 8,
+  "result_summaries": 230,
+  "test_executables": 228
+ },
+ "exits": {
+  "submodule": 0,
+  "workspace_tests": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "clippy_census": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean_audits": 0
+ },
+ "lean_audits": 132,
+ "notes": [
+  "Every step ran with the indirect-census feature OFF, which is how the workspace builds it: the feature is declared on qcore-c-gateway and enabled by no workspace member, so the gate measures a tree in which the census code does not exist. `clippy_census` is an EXTRA step this card adds, running clippy over qcore-c-gateway WITH the feature on, so the instrumentation is linted rather than merely unlinted.",
+  "Both probes exit 0.",
+  "Every exit captured to its own file, never through a pipe.",
+  "4,580 / 0 / 8 over 230 result summaries reproduces the wave-35 close figure exactly, which is the expected outcome for a card that adds no test and changes no shipped behaviour.",
+  "CONSTRAINT 16, both facts recorded. A separate earlier run of `cargo test --workspace --no-fail-fast`, deliberately concurrent with two pinned corpus audits, failed `a_forced_override_never_weakens_an_execution` with Io(\"Broken pipe (os error 32)\") at crates/qcore-verifier-host/tests/execution_quota.rs:777 (4,579 passed / 1 failed / 8 ignored over the same 230 summaries). The same test PASSES in this isolated gate run. That is constraint 16's signature and family, but the test is NOT one of its six named rows - see the report's LOAD-SENSITIVE-ROW-UNNAMED finding."
+ ]
+}

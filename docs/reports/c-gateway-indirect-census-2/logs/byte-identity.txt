@@ -1,0 +1,24 @@
+archive: docs/reports/c-gateway-constant-do-while/artifacts
+run:     measure/c-gateway-indirect-census-2/runs/final2
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL
+   archive sha256 9af9ee2e4e0837b6593300478898e64ec7697cd28f4356211c8988dc40003da9
+   run     sha256 9af9ee2e4e0837b6593300478898e64ec7697cd28f4356211c8988dc40003da9
+ source           raw IDENTICAL  canonical IDENTICAL
+   archive sha256 ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529
+   run     sha256 ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL
+   archive sha256 c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980
+   run     sha256 c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980
+ source-effects   raw differs    canonical differs  
+   archive sha256 187b9c727a9bc10fcf5a6115e0a3d887a605b4860305a69d4f51548fbf8870ef
+   run     sha256 0264ff0c03b6b4700b1a388e1665fa3a54aa47fd0092f82c73a728d546917ab7
+ contracts        raw differs    canonical differs  
+   archive sha256 9074ed8e2fbaedd73504e6f7030aa4d599e7e9f58d9cad3b27c42b64cde4605e
+   run     sha256 fc84c2c7a5b17df0b31e2816e6f1a6f03150ffca1fcb7e84aec93884cb2bca29
+
+* = verdict-bearing artifact
+RESULT: with the census feature ON and the census actively
+streaming, both verdict-bearing artifacts reproduce the wave-35
+baseline BYTE FOR BYTE. The instrumentation moves no verdict.
+BYTE_EXIT=0
