@@ -224,7 +224,8 @@ pub fn emit_task_c11_with_source_lines(
                     | InstructionKind::BindScalar { slot, .. } => {
                         slots.insert(*slot);
                     }
-                    InstructionKind::UnwrapInfallible { value_slot, .. } => {
+                    InstructionKind::UnwrapInfallible { value_slot, .. }
+                    | InstructionKind::ReadBufferByte { value_slot, .. } => {
                         slots.insert(*value_slot);
                     }
                     InstructionKind::TakeErrorPayload { buffer_slot, .. } => {
@@ -268,6 +269,24 @@ pub fn emit_task_c11_with_source_lines(
         for (index, (slot, _)) in function.parameters.iter().enumerate() {
             writeln!(source, "    s_{slot}.value = args[{index}];").unwrap();
         }
+        // A byte access counts from its authority's base: a lease's own `low`,
+        // which the creator wrote into the task value's scalar field, or 0 for
+        // an owner. A lease is only ever a parameter — no operand rebinds one,
+        // and there is no transitive leasing — so this set is exactly the
+        // lease bindings this function has.
+        let lease_slots = function
+            .parameters
+            .iter()
+            .filter(|(_, kind)| *kind == ScalarType::WriteLease)
+            .map(|(slot, _)| *slot)
+            .collect::<BTreeSet<_>>();
+        let base = |slot: &usize| {
+            if lease_slots.contains(slot) {
+                format!("(uint64_t)(uint32_t)s_{slot}.value.scalar")
+            } else {
+                "UINT64_C(0)".to_string()
+            }
+        };
         // Slots are single-assignment, so a handle slot names exactly one
         // creation and therefore exactly the loans that creation opened.
         let loans_by_handle = function
@@ -369,7 +388,8 @@ pub fn emit_task_c11_with_source_lines(
                         writeln!(
                             source,
                             "    qcore_buffer_byte_write(s_{authority}.value.buffer, \
-                             (uint64_t)s_{authority}.value.scalar + UINT64_C({}), {}, context);",
+                             {} + UINT64_C({}), {}, context);",
+                            base(authority),
                             byte_index(index),
                             scalar(value)
                         )
@@ -384,7 +404,8 @@ pub fn emit_task_c11_with_source_lines(
                             source,
                             "    s_{value_slot}.value.scalar = \
                              qcore_buffer_byte_read(s_{authority}.value.buffer, \
-                             (uint64_t)s_{authority}.value.scalar + UINT64_C({}), context);",
+                             {} + UINT64_C({}), context);",
+                            base(authority),
                             byte_index(index)
                         )
                         .unwrap();
@@ -607,7 +628,7 @@ pub fn emit_task_c11_with_source_lines(
     }
 
     let mut prologue = String::from(
-        "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_drop;\n",
+        "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_byte_write; (void)&qcore_buffer_byte_read; (void)&qcore_buffer_drop;\n",
     );
     for id in module.functions.keys() {
         writeln!(prologue, "    (void)&qcore_task_fn_{id};").unwrap();
