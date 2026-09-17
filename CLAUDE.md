@@ -143,6 +143,19 @@ the operational guidance that is in neither of those.
   overwrite was caught and re-measured during wave 15; a wave-17 card lost a
   whole providers run to its own `cargo clean` because the log lived under
   `target/`.
+- **A mutation harness restores by rewriting, never by an mtime-preserving
+  copy.** `shutil.copy2` restores the backup's timestamp, which leaves
+  cargo's fingerprint from the mutant build *newer* than the restored
+  source: cargo skips the rebuild and every later run in that worktree
+  links the mutated crate while `git status` reads clean. Measured in wave
+  35 (`MUTATION-HARNESS-MTIME-RESTORE`), where it produced two false CT
+  failures; the same mistake in the discharging direction produces a false
+  **green**, which is why this is a rule and not a tip. Restore by writing
+  the original bytes back, and assert the round-trip.
+  The rule is landed here; the **second reader** card `MUTEX-SHARE-CROSS-ARMS`
+  asked for — an audit of `docs/reports/c-gateway-return-call-w4/scripts/mutations.py`,
+  the other harness in the tree, which that card did not examine — is **not**
+  done and is carried by `MUTATION-HARNESS-MTIME-RESTORE` itself.
 - Delegated cards work in isolated worktrees, merge one at a time under the
   failure-gated chain discipline, and close with a per-card report under
   `docs/reports/<card>/README.md`.

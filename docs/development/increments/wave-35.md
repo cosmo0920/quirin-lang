@@ -6,6 +6,68 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WAVE-35-CLOSE` (2026-09-18)** closed a wave of **seven** cards and **two
+arbiters** — wave 31's shape — and the close's own finding is what measuring
+every item against the tree bought over reading the reports. All **78**
+integrator-addressed items got a verdict (44 `applied`, 27 `noted`, 3
+`superseded`, 2 `declined`, 2 `deferred`; `--check` exit 0, which says a verdict
+was *recorded* and never that an item was *applied*), and four things came out
+of it, three of them real losses. `CT-CTWIN-LANE`'s **entire** §9 item 1 was
+unapplied: `grep -c CT46 AGENTS.md` returned **0** at the base and the ledger
+still read *45/50 mapped, 5 unmapped*, although the card merged at `cfd410d0`
+with three further cards merging after it. `MUTEX-SHARE-CROSS-ARMS`' single
+ledger **retirement** was dropped at its merge while its five additions landed,
+so the ledger carried `MUTEX-SHARE-CROSS-UNEXERCISED-ARMS` beside the successor
+entry whose own text says it discharged it — the **third** instance in three
+waves of a removal from this hand-maintained section being lost at a merge
+resolution (`3bbec4d0` in wave 32, `8d158c4e` this wave), a pattern named in the
+close's §5.1 but left for a card to rule on. `MUTEX-SHARE-CROSS`'s whole
+integrator list was still unlanded **three waves on**, exactly as
+`SWEEP-BLIND-SPOTS` measured, with spec §L21 carrying the widening all along and
+AGENTS.md's summary table silent; its standing constraint is landed **verbatim**
+as **15o** and both namespace rows updated. And arbiter #1's proposed constraint
+**5c** carried a clause arbiter #2 **falsified later in the same wave** — that
+`legacy_joined_provenance::derive` returns no facts for a cyclic CFG, which
+`legacy_joined_provenance.rs:151`'s `fixed_point` call now contradicts — so it
+could not land in the words proposed; it is recorded `superseded` with both
+texts published and AGENTS.md's own 5c says so in its body, the rule itself
+unchanged. One amendment is **declined** in the card's own offered words: the
+multi-tip Lean figure, because the close **re-measured the whole merged-gate
+row** at its own base, and the 130 proposed was itself two tips stale. The **62**
+residual-shaped names the widened `--residuals` returned — the first honest
+count, not a regression — were classified **one by one**: 27 registered as open
+work with discharge conditions, 22 card names, 6 discharged with the discharging
+card named, 3 decisions already carried, 3 rules or prospective names, 1 bucket
+label. `named_followups` **103 → 121**, a byte-identical generator fixed point
+regenerated with **this close's own gate** (previous closes carried wave 33's
+because wave 34 had no close directory; that reason is gone), 17/17 green. The
+after-state is reported honestly rather than as arithmetic: `--residuals` now
+returns **37**, and five of the names that left did so by being mentioned in
+another entry's **prose**, which the tool counts as tracking by design and which
+is weaker than an entry. A shape defect was also measured and repaired *beside*
+the wave-34 record rather than in it (constraint 21): that close wrote its
+`deferred_decisions.items` as a map where the reader wants a list, so
+`_decisions_of` returned the literal key `['items']` and **none** of its seven
+decisions — the three it **raised** reaching the re-listing mechanism nowhere,
+in the very wave that mechanism landed. All seven are restored in a new sibling
+`deferred_decisions.json` and all seven are re-listed here, four of them wave
+33's for a third wave; only `VERIFIER-HOST-ROW-DISPOSITION` ends, `resolved` by
+the card assigned to it rather than by the close, which took none of them. The
+standing gate passes at `4cf9bdf9`: **4,580 passed / 0 failed / 8 ignored** over
+230 result summaries, **132** Lean audits, **247** Python, both probes exit 0,
+fmt and clippy clean, every exit captured with no pipe in the command, provider
+122 carried on a measured-empty diff. The contested host row was **green** and
+the gate says so — while stating that a full-suite run at load ≈6.5 is **not**
+the quiet-host number `HOST-ROW-STARVATION-DESCRIPTION` still asks for, an
+entry amended in place rather than retired because its starvation hypothesis was
+refuted by its sibling card while its second discharge arm has no measurement
+anywhere. **Nothing is promoted**: no unit or function status moved at either
+arbiter, the contract corpus stays 76, CT **45/50 → 46/50 is mapping and not
+conformance** with sanitized-native 9 and proof 3 both unmoved, and full
+language conformance stays **false**. `STABILITY-REEVAL` #2 is due after this
+wave and `DOCS-COMPACT-7` around wave 37; both are noted and neither is
+performed. Evidence: `docs/reports/wave35-close/`.
+
 `JOINED-PROVENANCE-CYCLES` (2026-09-18), wave 35's second arbiter, extending the
 conditional-provenance relation from acyclic CFGs to cyclic ones and **moving
 nothing**. Wave 31 declined a whole function for carrying a back edge anywhere;
