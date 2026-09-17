@@ -1,0 +1,91 @@
+{
+  "id": "CT46",
+  "verdict": "checked_mutex_crossing",
+  "entry": "main",
+  "diagnostics": [],
+  "outcome": null,
+  "trace": null,
+  "stages_executed": [
+    "parse",
+    "elaborate",
+    "mutex_lowering",
+    "mutex_invariant_check"
+  ],
+  "evidence_target": "linux",
+  "notes": "source.mutex.guard.v1 (card MUTEX-SHARE-CROSS, wave 32; mapped by card CT-CTWIN-LANE, wave 35). CT46 asks that a known shared wrapper holding a non-Sync but Send payload be accepted ONLY through a verified mutex protocol. Two of those words have no referent in this language and the mapping says so rather than pretending otherwise. There is no `wrapper` type at all — no Arc<Mutex<T>>; the payload `buf` and the generation `m` are two separate names bound in one scope — and there is no `Send`/`Sync` trait. What the language has instead is the transferability judgment's own classification: `let buf = protected 4;` is TransferKind::ProtectedResource, which qcore_core::transfer documents verbatim as \"CT46's payload\", sendable because custody really moves over a derivable synchronization edge and not freely shareable because ShareProtocol::CheckedMutex is its ONE sharing discipline in both the read and the write direction. The mapping therefore rests on the judgment's classification, not on a trait, and that substitution is the boundary this row publishes. The `accept` half is the case: the declared crossing `thread scope c share buf under m { ... }` lowers to a real Spawn/Join pair whose child takes the generation itself, and every reach of the payload by either task names a guard. The `only` half is the four refusing controls, each a different way of reaching the payload without the protocol and each refused by a distinct rule. Deliberately NOT claimed: emission, native execution and the sanitized run. `compile_files` admits this module and returns c_source: None, and interpret_mutex_program refuses it with UnsupportedEvent { event: 1 } -- event 1 being the Spawn the crossing introduces. That is card MUTEX-SHARE-CROSS's own MUTEX-SHARE-CROSS-EMISSION residual, measured here rather than inherited, and it is why the three emission/execution stages read `unassessed` and not `executed`. The no_crossing control pins the other side of that boundary: the same route without the clause emits real C and interprets to a reference observation, so the missing emission is attributable to the crossing and not to the route. Nothing about two threads actually running is claimed: this is a checked-only mapping.",
+  "checked_mutex_crossing": {
+    "attributed_to": "the declared crossing `thread scope c share buf under m { ... }` -- the capture mode that requests ShareProtocol::CheckedMutex for a `protected` payload (TransferMode::ShareUnderMutex)",
+    "payload": "TransferKind::ProtectedResource",
+    "protocol": "ShareProtocol::CheckedMutex",
+    "spawn": {
+      "parent": 0,
+      "child": 1
+    },
+    "join": {
+      "parent": 0,
+      "child": 1
+    },
+    "child_lock_task": 1,
+    "reaches": [
+      {
+        "task": 1,
+        "guarded": true
+      },
+      {
+        "task": 0,
+        "guarded": true
+      }
+    ],
+    "emission_refusal": "UnsupportedEvent { event: 1 }",
+    "controls": [
+      {
+        "source": "no_crossing.qcore",
+        "expectation": "accept_emitting",
+        "diagnostic_sequence": [],
+        "message_fragment": null,
+        "reference_observation": [
+          "resource 1 4",
+          "create 1",
+          "lock 1 1",
+          "read 1 0 4 0",
+          "unlock 1",
+          "destroy-mutex 1",
+          "destroy 1"
+        ],
+        "note": "The emission-boundary control, and the one that keeps this case's three unassessed stages a measurement rather than an omission. The same route, the same payload and the same generation with the crossing clause removed: the checker admits it, the C backend renders it, and interpret_mutex_program returns the observation pinned above. So the case's empty emission is attributable to the crossing clause itself -- the Spawn event it introduces is outside the emitted subset -- and not to the mutex route, the protected payload or this fixture's shape."
+      },
+      {
+        "source": "unguarded_reach.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q611"],
+        "message_fragment": "UnguardedProtectedAccess",
+        "reference_observation": [],
+        "note": "The `only` half, first way: the crossing is declared exactly as the case declares it, and the child then reaches the payload with no guard. Refused by the UNEDITED core -- Q611 is CheckedMutexInvariantV1's own code, not this route's -- which is the point card MUTEX-SHARE-CROSS makes about where the soundness lives: a footprint a live generation protects has no unguarded access at all. Declaring the crossing buys the right to reach the payload under the protocol and nothing else."
+      },
+      {
+        "source": "absent_protocol.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q600"],
+        "message_fragment": "a declared crossing is exactly",
+        "reference_observation": [],
+        "note": "The `only` half, second way: the payload is shared into the child with no protocol named at all (`share buf` without `under m`). Refused by name at the form, so a crossing cannot be requested without naming the discipline that admits it."
+      },
+      {
+        "source": "mismatched_protocol.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q600"],
+        "message_fragment": "guards `other`, not `buf`",
+        "reference_observation": [],
+        "note": "The `only` half, third way: a protocol IS named, and it is a real verified mutex generation -- it just protects a different payload. Refused. This is what makes `verified mutex protocol` mean the generation that protects THIS payload rather than any mutex the program happens to hold, and it is the control that distinguishes this mapping from a vacuous one in which naming any lock would do."
+      },
+      {
+        "source": "share_generation.qcore",
+        "expectation": "reject",
+        "diagnostic_sequence": ["Q600"],
+        "message_fragment": "KindNotTransferable(NotAValue)",
+        "reference_observation": [],
+        "note": "The `only` half, fourth way: the generation itself is shared instead of the payload. Refused by the transferability judgment, whose message names the kind and states the route's rule -- the checked-mutex route shares only a `protected N` payload and only under the generation that protects it. This control is what shows the judgment is consulted on the payload's kind at all, so the admission of the case is a classification decision and not a syntactic one."
+      }
+    ]
+  }
+}

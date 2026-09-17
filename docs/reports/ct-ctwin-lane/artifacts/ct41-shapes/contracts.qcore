@@ -1,0 +1,22 @@
+module contract;
+
+// The declared custody API the CT41 shapes are analyzed against — the same
+// synthetic `q_*` allocator surface CT40, CT43 and CT45 use. These are trusted
+// test assumptions about a synthetic API, not verified facts about any library.
+//
+// Nothing here says anything about synchronization, ordering or atomicity, and
+// that is the point: the projection derives no such fact, which is why the
+// qualifier on a completion flag cannot move one of its verdicts.
+
+extern fn q_alloc() -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn q_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};

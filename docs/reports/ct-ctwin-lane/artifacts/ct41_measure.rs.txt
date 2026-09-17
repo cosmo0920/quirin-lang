@@ -1,0 +1,101 @@
+//! SCRATCH re-measurement of the archived CT41 shapes. Deleted before the gate.
+//! Reproduces docs/reports/ct-ctwin-lane/artifacts/ct41-measurement.json.
+
+use std::collections::BTreeMap;
+use std::fs;
+use std::path::PathBuf;
+
+use qcore_compiler::{
+    AnalysisStatus, C11TranslationUnit, LegacyDiagnosticKind, ResourceContracts,
+    UnrestrictedLegacyResult, analyze_unrestricted_c11, validate_unrestricted_c11,
+};
+
+fn shapes() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../docs/reports/ct-ctwin-lane/artifacts/ct41-shapes")
+}
+
+fn contracts() -> ResourceContracts {
+    let text = fs::read_to_string(shapes().join("contracts.qcore")).expect("contracts");
+    let mut sources = BTreeMap::new();
+    sources.insert("contracts.qcore".to_owned(), text);
+    qcore_compiler::contract_loader::load_resource_contract_sources(&sources).expect("load")
+}
+
+fn label(kind: &LegacyDiagnosticKind) -> String {
+    match kind {
+        LegacyDiagnosticKind::Leak { acquisition_line } => format!("leak:{acquisition_line}"),
+        LegacyDiagnosticKind::DoubleRelease { acquisition_line } => {
+            format!("double-release:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::ReleaseAfterEscape { acquisition_line } => {
+            format!("release-after-escape:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::CustodyConflict { acquisition_line } => {
+            format!("custody-conflict:{acquisition_line}")
+        }
+        LegacyDiagnosticKind::UnknownAlias { variable } => format!("unknown-alias:{variable}"),
+        LegacyDiagnosticKind::Unsupported { description } => format!("unsupported:{description}"),
+        LegacyDiagnosticKind::SummaryConflict { .. } => "summary-conflict".to_owned(),
+    }
+}
+
+#[test]
+fn measure_archived_ct41_shapes() {
+    if qcore_c_gateway::clang_command().is_err() {
+        println!("NO CLANG — nothing measured");
+        return;
+    }
+    let ctr = contracts();
+    for name in [
+        "a_volatile_store.c",
+        "b_plain_store.c",
+        "c_no_flag.c",
+        "d_volatile_spin.c",
+        "e_plain_spin.c",
+    ] {
+        let source = fs::read_to_string(shapes().join(name)).expect("shape");
+        let unit = C11TranslationUnit {
+            source: &source,
+            ..Default::default()
+        };
+        validate_unrestricted_c11(&unit).expect("admissible C11");
+        let result = analyze_unrestricted_c11(&unit, "subject", &ctr).expect("analyzed");
+        let (verdict, reason, summary) = match &result {
+            UnrestrictedLegacyResult::Safe(c) => ("safe", None, Some(&c.summary)),
+            UnrestrictedLegacyResult::Unsafe(s) => ("unsafe", None, Some(s)),
+            UnrestrictedLegacyResult::Unknown {
+                reason, partial, ..
+            } => ("unknown", Some(reason.clone()), partial.as_ref()),
+        };
+        let summary = summary.expect("summary");
+        let statuses: BTreeMap<String, &str> = summary
+            .functions
+            .iter()
+            .map(|(n, f)| {
+                (
+                    n.clone(),
+                    match f.status {
+                        AnalysisStatus::Safe => "safe",
+                        AnalysisStatus::Unsafe => "unsafe",
+                        AnalysisStatus::Unknown => "unknown",
+                    },
+                )
+            })
+            .collect();
+        let diags: Vec<String> = summary
+            .functions
+            .iter()
+            .flat_map(|(n, f)| {
+                f.diagnostics
+                    .iter()
+                    .map(move |d| format!("{n}:{}:{}", d.line, label(&d.kind)))
+            })
+            .collect();
+        println!("SHAPE {name}");
+        println!("  verdict: {verdict}");
+        println!("  reason : {reason:?}");
+        println!("  status : {statuses:?}");
+        println!("  diags  : {diags:?}");
+    }
+}
