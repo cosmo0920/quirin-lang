@@ -691,10 +691,18 @@ class LiveTreeTests(unittest.TestCase):
         self.assertEqual(sweep_module.check(ROOT, record), [])
 
     def test_a_since_ref_with_no_diff_fails_loudly(self):
-        """A sweep that quietly covered nothing is the failure mode being removed."""
+        """A sweep that quietly covered nothing is the failure mode being removed.
+
+        The window is `HEAD..HEAD`, empty by construction. It used to be
+        `--since HEAD`, which was empty only while HEAD carried no card report;
+        since SWEEP-BLIND-SPOTS made `--since` inclusive of its base
+        (WAVE-BASE-UNSWEPT), that premise fails on every main whose tip is a
+        card merge - the integrator hit it at 56a97db0. The exclusive
+        `cards_changed_since` keeps its meaning and is asserted unchanged.
+        """
         self.assertEqual(sweep_module.cards_changed_since(ROOT, "HEAD"), [])
         finished = subprocess.run(
-            [sys.executable, str(SCRIPT), str(ROOT), "--since", "HEAD"],
+            [sys.executable, str(SCRIPT), str(ROOT), "--range", "HEAD..HEAD"],
             capture_output=True,
             text=True,
             check=False,
