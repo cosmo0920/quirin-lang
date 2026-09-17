@@ -809,6 +809,20 @@ RECORD = {
     ),
     "verdicts": VERDICTS,
     "no_section": {
+        "wave35-close": (
+            "THIS CLOSE'S OWN REPORT, swept because it lands under docs/reports/ inside the range it "
+            "declares - a close sweeps itself, which is worth recording because the next close will "
+            "meet it too. It owes the integrator no section for the same reason wave34-close does "
+            "not: A WAVE CLOSE IS THE INTEGRATOR, and it addresses the next close through "
+            "deferred_decisions, which the sweep re-lists on its own. MEASURED, not assumed: the "
+            "first draft of this report headed its closing section 'For the integrator and the next "
+            "wave', and --check immediately raised THREE unverdicted items for the close against "
+            "itself (the STABILITY-REEVAL #2 cadence, DOCS-COMPACT-7, and the moved constraint "
+            "count). The HEADING was corrected to 'Cadences noted for the record, not performed', "
+            "which is what that section actually is, rather than the close writing verdicts on its "
+            "own notes - a self-verdict would be the record agreeing with itself and would mean "
+            "nothing. The three notes are unchanged and still stand in §11."
+        ),
         "wave34-close": (
             "Swept and found to carry no integrator-addressed section, correctly. A WAVE CLOSE IS "
             "THE INTEGRATOR: it addresses the next close only through deferred_decisions, which is a "

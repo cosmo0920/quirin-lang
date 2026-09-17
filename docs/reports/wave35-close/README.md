@@ -388,7 +388,16 @@ to exactly that.
 * **Prose tracking is weaker than an entry**, and five names left the untracked
   set that way rather than by registration (§2.1).
 
-## 11. For the integrator and the next wave
+## 11. Cadences noted for the record, not performed
+
+This section is deliberately **not** headed "For the integrator". A wave close
+*is* the integrator, and it addresses the next close through
+`deferred_decisions`, which the sweep re-lists on its own — the same reason
+`wave34-close` is recorded in this record's `no_section` map. The first draft of
+this heading did use that phrase, and the sweep's `--check` immediately created
+three unverdicted items for the close **against itself**; the heading is
+corrected rather than the items answered, and the episode is recorded here
+because it is a real property of the tool that the next close will meet.
 
 * **`STABILITY-REEVAL` #2 is due after this wave** — every two waves, and #1 ran
   in wave 34. **Noted, not performed.** Three of this close's measurements are
