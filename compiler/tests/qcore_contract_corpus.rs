@@ -251,7 +251,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // the declarations are the neutral element, which a faithful summary of a
     // body that releases nothing cannot contradict. Read from
     // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
-    ("cmetrics/metric_values.qcore", "cmt_metric_get_timestamp", 3),
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_timestamp",
+        3,
+    ),
     ("cmetrics/metric_values.qcore", "cmt_metric_set_double", 5),
     // Card W37-CORPUS-CONTRACTS-4: the unsigned msgpack tag reader, sole
     // blocker of `unpack_meta_ver`. `output_buffer` is an OUT parameter, but
@@ -261,7 +265,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // are NULL-guarded before any dereference, so the body has real failure
     // paths a borrowed declaration cannot delete (constraint 4). Read from
     // `lib/cmetrics/src/cmt_mpack_utils.c:88-113`.
-    ("cmetrics/mpack_utils.qcore", "cmt_mpack_consume_uint_tag", 4),
+    (
+        "cmetrics/mpack_utils.qcore",
+        "cmt_mpack_consume_uint_tag",
+        4,
+    ),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
@@ -506,7 +514,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // DECLINED on two grounds: `static` with no header declaration in the very
     // unit that calls it, and a CONDITIONAL release (`if (do_free)`) whose
     // other five sites in that unit pass 0.
-    ("librdkafka/topic_partition.qcore", "rd_kafka_topic_partition_list_sort", 5),
+    (
+        "librdkafka/topic_partition.qcore",
+        "rd_kafka_topic_partition_list_sort",
+        5,
+    ),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_enq0", 5),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_deq0", 5),
     ("monkey/callback_binding.qcore", "binding_scope", 8),
