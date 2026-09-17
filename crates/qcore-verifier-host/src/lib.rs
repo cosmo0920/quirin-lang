@@ -1232,6 +1232,77 @@ fn nonblocking(pipe: &impl std::os::fd::AsRawFd) -> Result<(), ProviderFailure> 
     Ok(())
 }
 
+/// The transport loop's backoff quantum. It bounds how long one wait may last,
+/// never how much may be transferred before the next wait.
+#[cfg(unix)]
+const TRANSPORT_BACKOFF: Duration = Duration::from_millis(1);
+
+/// Wait for one of the live transport pipes to become ready, for at most the
+/// backoff quantum and never past the declared deadline.
+///
+/// Sleeping a fixed quantum whenever a bounded chunk did not move imposes a
+/// throughput ceiling of one pipe capacity per quantum — on a host whose pipe
+/// capacity is 8 KiB that is 8 KiB/ms, so an 8 MiB request needs at least 1,024
+/// quanta and exhausts a 1,000 ms budget while the provider is actively
+/// draining it. Whether that ceiling is reached is decided by a race the host
+/// loses precisely when it is *fastest*: the peer has not yet been scheduled to
+/// drain the pipe by the time an unloaded loop comes back around, so the full
+/// quantum is charged for an event that takes microseconds. Waiting for
+/// readiness removes the ceiling while preserving both properties the bound
+/// relies on: an idle provider never spins, and no wait outlives the deadline
+/// or the quantum.
+#[cfg(unix)]
+fn backoff_until_ready(
+    writable: Option<std::os::fd::RawFd>,
+    readable_output: Option<std::os::fd::RawFd>,
+    readable_error: Option<std::os::fd::RawFd>,
+    deadline: Instant,
+) {
+    let remaining = deadline.saturating_duration_since(Instant::now());
+    if remaining.is_zero() {
+        // The caller's very next act is the deadline check. Waiting here could
+        // only delay the refusal it is about to return.
+        return;
+    }
+    let wait = remaining.min(TRANSPORT_BACKOFF);
+    let mut fds = Vec::with_capacity(3);
+    if let Some(fd) = writable {
+        fds.push(libc::pollfd {
+            fd,
+            events: libc::POLLOUT,
+            revents: 0,
+        });
+    }
+    for fd in [readable_output, readable_error].into_iter().flatten() {
+        fds.push(libc::pollfd {
+            fd,
+            events: libc::POLLIN,
+            revents: 0,
+        });
+    }
+    if fds.is_empty() {
+        // Every pipe is finished, so only the direct child's exit can still
+        // change the loop's state, and that is observed by `try_wait` rather
+        // than by readiness. Back off exactly as before.
+        thread::sleep(wait);
+        return;
+    }
+    // The descriptors are owned by the live pipes for the whole call, and the
+    // slice is valid for its length. A failed `poll` is not a transport
+    // failure: it degrades to the timed backoff this call replaced, so an
+    // unpollable descriptor cannot turn into a spin.
+    let ready = unsafe {
+        libc::poll(
+            fds.as_mut_ptr(),
+            fds.len() as libc::nfds_t,
+            wait.as_millis() as libc::c_int,
+        )
+    };
+    if ready < 0 {
+        thread::sleep(wait);
+    }
+}
+
 #[cfg(unix)]
 fn read_available(
     reader: &mut impl Read,
@@ -1749,13 +1820,21 @@ impl ProcessProvider {
                 }
                 return decode_protocol_frame(output, limit);
             }
-            // Back off only when all pipes would block. Sleeping after each
-            // successful 8 KiB read imposes a throughput ceiling that can
-            // exhaust the deadline while a provider is actively responding.
-            // Each iteration still checks the deadline and services both
-            // output pipes once, so continuous output cannot starve either.
+            // Back off only when all pipes would block, and then wait for one of
+            // them to become ready rather than for a fixed quantum. Sleeping
+            // after each bounded chunk imposes a throughput ceiling of one pipe
+            // capacity per quantum, which can exhaust the deadline while a
+            // provider is actively responding. Each iteration still checks the
+            // deadline and services both output pipes once, so continuous
+            // output cannot starve either.
             if progress_before == (sent, output.len(), error_output.len()) {
-                thread::sleep(Duration::from_millis(1));
+                use std::os::fd::AsRawFd;
+                backoff_until_ready(
+                    stdin.as_ref().map(|input| input.as_raw_fd()),
+                    (!output_done).then(|| stdout.as_raw_fd()),
+                    (!error_done).then(|| stderr.as_raw_fd()),
+                    deadline,
+                );
             }
         }
     }
