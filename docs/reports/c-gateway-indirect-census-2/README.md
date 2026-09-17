@@ -575,6 +575,21 @@ The corpus baseline remains `docs/reports/c-gateway-constant-do-while/artifacts/
   decision that the 2-function reach does not justify the risk. **Not a
   discharge:** citing the 2,713 leaves.
 
+* **`LOAD-SENSITIVE-ROW-UNNAMED`** — §10.1's observation.
+  `a_forced_override_never_weakens_an_execution`
+  (`crates/qcore-verifier-host/tests/execution_quota.rs:777`) failed with
+  `Io("Broken pipe (os error 32)")` in a workspace run deliberately concurrent
+  with two pinned corpus audits, and **passes in this card's isolated gate**.
+  That is constraint 16's exact signature and crate, but the test is **not** one
+  of its six named rows nor the deliberately-excluded seventh. Filed rather than
+  promoted: constraint 16's rows each carry a measured load figure, and one
+  observation under a heavy self-inflicted load is not one. **Discharge:** a
+  card that can measure it — bisect the load at which it flips, as
+  `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` was measured failing at
+  50 and passing at 37 — and either add the row with its figure or record that
+  it is the same mechanism as an existing row. **Not a discharge:** re-running
+  until green.
+
 * **`POISON-UNMASK-ON-ADMISSION`** — a cross-cutting soundness hazard for
   **every** candidate in §6, and the one most easily missed. Admitting an access
   makes its statement no longer refused, so the statement's `RefusedWrites` no
@@ -589,6 +604,69 @@ The corpus baseline remains `docs/reports/c-gateway-constant-do-while/artifacts/
   measures, for its own admitted set, how many refusals disappear through an
   edge becoming infeasible rather than through the access being modelled, and
   publishes the two numbers apart.
+
+## 10. Standing gate
+
+Run in order from `scripts/gate.sh`, **every exit captured to its own file and
+never through a pipe**. Machine: Linux, 621 GB volume with 129 GB free at the
+start of the run (well above the 60 GB floor, so the full gate ran rather than
+crate-scoped checks).
+
+| step | exit |
+|---|---|
+| `git submodule update --init --recursive` | **0** |
+| `cargo test --workspace --no-fail-fast` | **0** |
+| `cargo fmt --all -- --check` | **0** |
+| `cargo clippy --all-targets -- -D warnings` | **0** |
+| `cargo clippy -p qcore-c-gateway --features indirect-census --all-targets -- -D warnings` | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **0** |
+| `python3 scripts/check_lean_audits.py` | **0** — 132 audits passed |
+
+**Workspace tests: 4,580 passed / 0 failed / 8 ignored**, over **230** result
+summaries from **228** test executables. That reproduces the wave-35 close
+figure exactly, which is the expected outcome for a card that adds no test and
+changes no shipped behaviour.
+
+The fifth row is **an extra step this card adds to its own gate**, not part of
+the standing list. Every other step runs with `indirect-census` **off** — the
+feature is enabled by no workspace member, so the standing gate measures a tree
+in which the census does not exist — and that extra pass lints the
+instrumentation rather than leaving it unlinted. Per-step exits are archived at
+`logs/gate-exits.txt` and `gate.json`.
+
+### 10.1 Constraint 16: a load-sensitive row, both facts recorded
+
+A **separate, earlier** `cargo test --workspace --no-fail-fast`, run deliberately
+concurrent with two pinned corpus audits, returned **4,579 passed / 1 failed / 8
+ignored** over the same 230 summaries. The one failure:
+
+```
+---- a_forced_override_never_weakens_an_execution stdout ----
+thread 'a_forced_override_never_weakens_an_execution' panicked at
+crates/qcore-verifier-host/tests/execution_quota.rs:777:29:
+called `Result::unwrap()` on an `Err` value: Io("Broken pipe (os error 32)")
+```
+
+**The same test passes in the isolated gate run above** (`workspace_tests.log`
+line 5811, `... ok`). Constraint 16's standing instruction is to verify such a
+row in isolation and record **both** facts rather than weaken anything, and that
+is what this section does. Nothing was retried until green, no deadline was
+raised and no test was touched.
+
+`Io(Broken pipe)` is constraint 16's own named signature for two of its rows —
+the confined-fixture write test, and
+`enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded`
+"at load ~40". This failure is the **same shape in the same crate**, and
+`execution_quota.rs` is the same file family. But
+`a_forced_override_never_weakens_an_execution` is **not** one of constraint 16's
+six named rows, nor the deliberately-excluded seventh
+(`VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE`). It is filed as
+`LOAD-SENSITIVE-ROW-UNNAMED` in §9. This card does **not** propose adding it to
+constraint 16: one observation under an unusually heavy, self-inflicted load is
+an observation, and constraint 16's rows each carry a measured load figure that
+this card did not take. Naming the observation is the honest step; promoting it
+would be the unearned one.
 
 ## 11. Reproduction
 
@@ -645,9 +723,9 @@ written and nothing runs.
 
 ### 12.2 Not applied — needs your decision
 
-* **The seven named follow-ons in §9 are not registered in
+* **The nine named follow-ons in §9 are not registered in
   `named_followups`.** A measurement card's whole output is findings, and
-  registering seven at once against a 121-entry list is a judgement about the
+  registering nine at once against a 121-entry list is a judgement about the
   tracker's shape rather than about this card, so I have left it to you. The two
   I would register first, because they are the ones a wave-37 card will trip
   over, are **`BASE-TYPE-READER-UNMEASURED`** (the 78.5% nobody has measured)

@@ -36,12 +36,23 @@ makes every sibling scalar unclassifiable — 2,713 leaves, measured ceiling **2
 sole-blocked functions**. The reader's dominant answer, though, is that **78.5%
 of unresolved members were never a question**: the *base*'s declared type was not
 committed, a different reader nobody has measured
-(`BASE-TYPE-READER-UNMEASURED`). Seven further residuals are named, including
+(`BASE-TYPE-READER-UNMEASURED`). Nine residuals are named, including
 `CENSUS-TWO-PREMISE-READINGS` (the two implementations of constraint 5's premise
 disagree on 16.0% of the family, and the constraint's own wording is the stricter
 one) and `POISON-UNMASK-ON-ADMISSION` (any admission spares bindings from the
 refusal poison and can unmask a stale scalar fact, constraint 10a's already
 recorded hazard, so a wave-37 re-pin must attribute those moves separately).
-Report: `docs/reports/c-gateway-indirect-census-2/README.md`.
+Gate: **4,580 passed / 0 failed / 8 ignored** over 230 result summaries,
+fmt/clippy clean (plus an extra clippy pass with the census feature **on**), both
+probes exit 0, **132 Lean audits**, every exit captured to its own file — all
+eight steps exit 0. One constraint-16 observation is recorded with **both**
+facts: a separate run deliberately concurrent with two corpus audits failed
+`a_forced_override_never_weakens_an_execution` with `Io(Broken pipe)`
+(`qcore-verifier-host/tests/execution_quota.rs:777`) and the same test **passes**
+in the isolated gate; that is constraint 16's signature and crate but **not** one
+of its six named rows, and the card files it as `LOAD-SENSITIVE-ROW-UNNAMED`
+rather than proposing a seventh, because one observation under a heavy
+self-inflicted load carries no measured load figure. Report:
+`docs/reports/c-gateway-indirect-census-2/README.md`.
 
 
