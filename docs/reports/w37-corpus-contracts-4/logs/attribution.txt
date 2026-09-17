@@ -1,0 +1,71 @@
+leaves removed: 183   leaves added: 15   net: -168
+
+=== REMOVED, by class ===
+  uncontracted-call leaves naming a DECLARED callee: 179
+       122  mpack_write_cstr                         declared
+        14  cmt_mpack_consume_uint_tag               declared
+        10  mpack_write_double                       declared
+         9  cfl_time_now                             declared
+         9  rd_kafka_topic_partition_list_sort       declared
+         7  cmt_metric_get_timestamp                 declared
+         3  cmt_metric_set_double                    declared
+         2  mpack_write_i64                          declared
+         2  LZ4_resetStream                          declared
+         1  pack_cmetrics_type                       CASCADE (not declared)
+         1  mpack_write_str                          declared
+  removed leaves that are NOT uncontracted-call rows: 3
+      cmetrics/cmt_decode_msgpack.c :: unpack_metric_value L7420 [unsupported] indirect memory access is outside the resource projection
+      librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_add L20630 [unsupported] indirect memory access is outside the resource projection
+      librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_add L20567 [unsupported] indirect memory access is outside the resource projection
+
+=== ADDED, split into SUBSTITUTION vs GENUINE ADDITION ===
+  SAME-POSITION TEXT SUBSTITUTIONS (no leaf added here): 15
+    cmetrics/cmt_encode_msgpack.c :: pack_metric L7194
+        was: [unsupported] call to uncontracted function `mpack_write_double`
+        now: [unsupported] nested call `cmt_metric_hist_get_sum_value` inside a modeled call is outside the resource projection
+    cmetrics/cmt_encode_msgpack.c :: pack_metric L7259
+        was: [unsupported] call to uncontracted function `mpack_write_i64`
+        now: [unsupported] nested call `cmt_metric_get_int64_value` inside a modeled call is outside the resource projection
+    ctraces/ctr_encode_msgpack.c :: pack_string L6772
+        was: [unsupported] call to uncontracted function `mpack_write_str`
+        now: [unsupported] nested call `cfl_sds_len` inside a modeled call is outside the resource projection
+    ctraces/ctr_span.c :: ctr_span_event_add_ts L7059
+        was: [unsupported] call to uncontracted function `cfl_time_now`
+        now: [unknown_alias] unresolved resource identity `ev`
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_add L20581
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_add L20630
+        was: [unsupported] indirect memory access is outside the resource projection
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_subtract L20692
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_add L20543
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_add L20567
+        was: [unsupported] indirect memory access is outside the resource projection
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_subtract L20647
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic L22157
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic_id L22162
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22125
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22134
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22200
+        was: [unsupported] call to uncontracted function `rd_kafka_topic_partition_list_sort`
+        now: [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+  GENUINE ADDITIONS (this position gained a leaf): 0
+
+=== withdrawal leaves in AFTER, by callee ===
+  {'rd_kafka_topic_partition_list_sort': 11}

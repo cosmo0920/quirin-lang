@@ -6,7 +6,63 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
-
+**Wave 37 · `W37-CORPUS-CONTRACTS-4` (2026-09-18).** Wave 37's second arbiter, declarative:
+six `.qcore` modules carrying **ten** declarations, six manifest rows, no crate
+source at all, so one audit binary served both stages and the only difference
+between them is which modules the manifest selects. BEFORE reproduces
+`joined-provenance-call-frames`' `diagnostics.json` and `chunk-contracts.json`
+byte for byte, which is what makes every movement below these ten premises and
+nothing else. **8 functions `Unknown` → `Safe`** (205 → 213 Safe, 4,545 → 4,537
+Unknown, provisional Unsafe 84 unmoved, **none lost**), **zero unit moves**;
+`unsupported` 49,922 → **49,753** as 183 withdrawn and 15 added, of which
+exactly **179 withdrawn name the ten declared callees — the ex-ante prediction,
+met exactly**; `unknown_alias` 4,308 → 4,309; leak **272** and
+`summary_conflict` **1** both unmoved. The added-leaf figure is the card's
+strongest measurement and is not a raw count: **all 15 added rows are
+same-position text substitutions and none is a genuine addition**, so no
+position in the corpus refuses that did not refuse before. No `summary_conflict`
+arose although six of the ten callees are defined in analysed units, and the
+reason is structural rather than lucky — every declaration is the **neutral
+element** (`N(m)`: every formal borrowed, result none), the weakest statement
+the vocabulary can make, which a faithful summary of a body that releases
+nothing cannot contradict; W36's conflict arose precisely because its
+`rd_kafka_mem_free` declaration was *not* neutral. Two findings. First, the card
+**predicted an exchange ex ante** and was exactly right: `pack_string` was
+forecast, by reading `mpack_write_str(writer, str, cfl_sds_len(str))`, to
+exchange its decided leaf for `nested call cfl_sds_len inside a modeled call`,
+naming mechanism, function and inner callee — which turns
+`W36-COVER-HIDDEN-BLOCKER` from a surprise into a prediction
+(`NESTED-CALL-IN-ARGUMENT-POSITION`, now seen in a third library). Second, the
+two remaining misses were **not** hidden blockers but a **withdrawal**:
+`rd_kafka_topic_partition_list_sort`'s C declaration spells its comparator as an
+**inline function-pointer parameter declarator**, which the ABI reader does not
+parse — it resolves only the function-pointer *typedef* form card
+`CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF` taught it, which is why
+`msgpack_packer_init`'s `fnptr` works — so constraint 8 withdrew the declaration
+at every call site with `abi-unreadable-declaration`, **leaf-neutrally** (all 11
+rows same-position substitutions, no function's leaf count changed). That is the
+gate failing closed on a *reader* boundary rather than a disagreement, the first
+such measurement from production text (`LOADER-ABI-INLINE-FNPTR-DECLARATOR`),
+and the module was kept rather than reverted precisely because reverting it
+would delete the only evidence for it. The card also measured **why** it lands
+ten custody-neutral declarations and not one release, the exact inverse of its
+predecessor: after W36 harvested the release-shaped callees, the sole-blocker
+cover frontier is dominated by unit-internal `static` helpers that a name-keyed
+declaration may not address at all, where W4 is the lever
+(`W37-COVER-FRONTIER-IS-STATIC`). `add`, `memcpy`/`memset`, `snprintf`,
+`sprintf`, `sds_cat_safe`, `rd_kafka_topic_partition_destroy0`,
+`rd_kafka_destroy_app`, `XXH32`, `cmt_atomic_initialize` and three further
+families were read and deliberately declined with their readings published,
+including the refinement that `ADD-NAME-COLLISION` means **definitions that
+disagree** and not merely several definitions — four identical vendored mpack
+copies are safe to declare, `add`'s three divergent ones are not. Corpus 82 →
+**88**, manifest-selected 27 → **33**, resource-v1 declarations 49 → **59**,
+rejected unchanged at 145; constraint 5's pins updated deliberately in four
+files. No Lean: a grown premise set is not a semantic change (invariant 6), the
+`W31`/`W36` position taken on the same ground. Ten residuals **registered in the
+acceptance matrix** (`named_followups` 171 → 181) rather than named in the
+report alone, which is the practice W36's close asked for.
+`docs/reports/w37-corpus-contracts-4/README.md`.
 **Wave 37 · `JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
 conditional-provenance fixed point's `FIXED_POINT_ROUNDS = 64` is replaced by
 this graph's own **proved** bound, `nodes * (1 + sites + sites * names)`
@@ -143,4 +199,3 @@ decides zero). Six residuals are **registered** in `named_followups`
 attributed exactly to wave 36's own first arbiter `W36-CORPUS-CONTRACTS-3`,
 confirming the registered residual `JPC-CENSUS-CONTRACT-SET-DEPENDENT` as
 measured rather than hypothetical. `docs/reports/base-type-reader-census/`.
-

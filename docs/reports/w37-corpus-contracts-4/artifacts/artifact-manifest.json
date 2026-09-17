@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "chunk-contracts": {
+      "bytes": 4186178,
+      "produced_as": "resource-diagnostics.chunk-contracts.json",
+      "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "stage": "after"
+    },
+    "chunk-contracts-before": {
+      "bytes": 4186178,
+      "produced_as": "resource-diagnostics.chunk-contracts.json",
+      "sha256": "c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980",
+      "stage": "before"
+    },
+    "contracts": {
+      "bytes": 183138,
+      "produced_as": "resource-diagnostics.contracts.json",
+      "sha256": "fe945ffb298efc2b40b515436f0c76a469b9249ec0580100629b0682a71351ce",
+      "stage": "after"
+    },
+    "contracts-before": {
+      "bytes": 140464,
+      "produced_as": "resource-diagnostics.contracts.json",
+      "sha256": "ea4038f0af05f61391fc1bf08c7b24e30f1613e5c4c8aae2777647c82493dc75",
+      "stage": "before"
+    },
+    "diagnostics": {
+      "bytes": 13830567,
+      "produced_as": "resource-diagnostics.json",
+      "sha256": "c54ad4219fa85793652760e94cdff48f145fc30f04f7ab2604f65da38a42cc2b",
+      "stage": "after"
+    },
+    "diagnostics-before": {
+      "bytes": 13868540,
+      "produced_as": "resource-diagnostics.json",
+      "sha256": "a7aa3b5f9ab193a0f08277ca069d1f28acda91a40dbcc12c29ac94a46bf5ac7b",
+      "stage": "before"
+    },
+    "source": {
+      "bytes": 1663934,
+      "produced_as": "monkey-source.json",
+      "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+      "stage": "after"
+    },
+    "source-before": {
+      "bytes": 1663934,
+      "produced_as": "monkey-source.json",
+      "sha256": "ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529",
+      "stage": "before"
+    },
+    "source-effects": {
+      "bytes": 118505,
+      "produced_as": "resource-diagnostics.source-effects.json",
+      "sha256": "c199353eddb00e20fb9b9ad925f5739c11ba0b6d0795f5c7674eebc47c7c325f",
+      "stage": "after"
+    },
+    "source-effects-before": {
+      "bytes": 118505,
+      "produced_as": "resource-diagnostics.source-effects.json",
+      "sha256": "c199353eddb00e20fb9b9ad925f5739c11ba0b6d0795f5c7674eebc47c7c325f",
+      "stage": "before"
+    }
+  },
+  "base": "477b733d",
+  "baseline": "docs/reports/joined-provenance-call-frames/artifacts",
+  "card": "W37-CORPUS-CONTRACTS-4",
+  "note": "Declarative card: no checker, loader, backend or any other crate source changed, so ONE audit binary served both stages and the only difference between them is the contract manifest (27 -> 33 modules, 49 -> 59 resource-v1 declarations). AFTER is this card's re-pin. BEFORE reproduces the baseline byte for byte in both verdict-bearing artifacts AND in `source`; `source-effects` and `contracts` differ identically in BEFORE and AFTER (checkout root and identity digests) and are not attributable to this card. `chunk-contracts` is byte-identical between BEFORE and AFTER: the ten declarations move no chunk contract at all."
+}

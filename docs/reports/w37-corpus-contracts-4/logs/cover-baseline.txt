@@ -1,0 +1,63 @@
+source: docs/reports/joined-provenance-call-frames/artifacts
+units: 185
+unit status: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+projected functions: 4834  {'Safe': 205, 'Unknown': 4545, 'Unsafe': 84}
+corpus diagnostic counts:
+  leak: 272
+  summary_conflict: 1
+  unknown_alias: 4308
+  unsupported: 49922
+
+=== functions blocked ONLY by uncontracted-call leaves: 163 ===
+    status histogram: {'Unknown': 163}
+    distinct-callee-count histogram: {1: 99, 2: 34, 3: 21, 4: 7, 6: 2}
+
+    top callees by SOLE-BLOCKER count (the function-cover yield):
+        7  memcpy                                   named_by=  10 leaves=69
+        3  add                                      named_by=   3 leaves=4
+        2  memset                                   named_by=   2 leaves=61
+        2  rd_kafka_destroy_app                     named_by=   2 leaves=2
+        2  rd_kafka_topic_partition_destroy0        named_by=   2 leaves=2
+        2  rd_kafka_topic_partition_list_sort       named_by=   2 leaves=9
+        1  cmt_atomic_initialize                    named_by=   1 leaves=1
+        1  __atomic_store_n                         named_by=   1 leaves=1
+        1  cmt_mpack_consume_uint_tag               named_by=   1 leaves=14
+        1  destroy_context_list                     named_by=   1 leaves=2
+        1  mpack_write_cstr                         named_by=   2 leaves=122
+        1  pack_context_metrics                     named_by=   2 leaves=2
+        1  set_result                               named_by=   1 leaves=10
+        1  cmt_metric_get_timestamp                 named_by=   1 leaves=7
+        1  cmt_metric_set_double                    named_by=   1 leaves=3
+        1  pack_kvlist                              named_by=   1 leaves=1
+        1  mpack_write_double                       named_by=   1 leaves=10
+        1  mpack_write_i64                          named_by=   1 leaves=2
+        1  mpack_write_str                          named_by=   1 leaves=1
+        1  otlp_kvpair_list_destroy                 named_by=   1 leaves=3
+        1  sds_cat_safe                             named_by=   4 leaves=46
+        1  cfl_time_now                             named_by=   2 leaves=9
+        1  sprintf                                  named_by=   1 leaves=8
+        1  crc32c_zeros                             named_by=   1 leaves=2
+        1  LZ4_resetStream                          named_by=   1 leaves=2
+        1  XXH32                                    named_by=   1 leaves=4
+        1  pb_decode_inner                          named_by=   1 leaves=3
+        1  dlclose                                  named_by=   1 leaves=3
+        1  curl_global_init                         named_by=   1 leaves=1
+        1  rd_kafka_dump0                           named_by=   2 leaves=2
+      total functions with a single blocker: 99
+
+    top callees by LEAF mass (deliberately NOT the selection key):
+       1138  fprintf                                  sole_blocker_of=0
+       1044  snprintf                                 sole_blocker_of=1
+        286  __bswap_32                               sole_blocker_of=0
+        252  __bswap_16                               sole_blocker_of=0
+        170  cfl_sds_cat_safe                         sole_blocker_of=0
+        143  rd_kafka_buf_write_i32                   sole_blocker_of=0
+        132  rd_kafka_op_destroy                      sole_blocker_of=1
+        129  rd_list_destroy                          sole_blocker_of=1
+        122  mpack_write_cstr                         sole_blocker_of=1
+         98  rd_kafka_topic_partition_list_destroy    sole_blocker_of=1
+         96  rd_kafka_buf_write_i8                    sole_blocker_of=0
+         92  strlen                                   sole_blocker_of=0
+         86  rd_kafka_op_new0                         sole_blocker_of=0
+         77  ut_destroy_metadata                      sole_blocker_of=0
+         72  rd_kafka_toppar_destroy0                 sole_blocker_of=0

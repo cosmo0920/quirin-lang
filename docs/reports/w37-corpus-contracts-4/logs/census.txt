@@ -1,0 +1,62 @@
+=== corpus diagnostic counts ===
+  leak                272 ->    272
+  summary_conflict      1 ->      1
+  unknown_alias      4308 ->   4309   <-- MOVED
+  unsupported       49922 ->  49753   <-- MOVED
+
+=== unit status moves ===
+  0 unit(s) moved
+
+=== function status moves ===
+  8 function(s) moved
+    cmetrics/cmt_decode_msgpack.c :: unpack_meta_ver: Unknown -> Safe
+    cmetrics/cmt_encode_cloudwatch_emf.c :: pack_cmetrics_type: Unknown -> Safe
+    cmetrics/cmt_encode_prometheus_remote_write.c :: check_staled_timestamp: Unknown -> Safe
+    cmetrics/cmt_metric.c :: cmt_metric_set: Unknown -> Safe
+    ctraces/ctr_encode_msgpack.c :: pack_double: Unknown -> Safe
+    ctraces/ctr_encode_msgpack.c :: pack_int64: Unknown -> Safe
+    ctraces/ctr_span.c :: ctr_span_end: Unknown -> Safe
+    librdkafka/lz4.c :: LZ4_resetStreamState: Unknown -> Safe
+
+=== leaves REMOVED: 183 ===
+  by category: {'unsupported': 183}
+  uncontracted-call leaves by callee: {'mpack_write_cstr': 122, 'cmt_mpack_consume_uint_tag': 14, 'mpack_write_double': 10, 'cfl_time_now': 9, 'rd_kafka_topic_partition_list_sort': 9, 'cmt_metric_get_timestamp': 7, 'cmt_metric_set_double': 3, 'mpack_write_i64': 2, 'LZ4_resetStream': 2, 'pack_cmetrics_type': 1, 'mpack_write_str': 1}
+  of those, naming a callee this card declared: 179
+  removed leaves NOT naming a declared callee: 4
+
+=== leaves ADDED: 15 ===
+  by category: {'unknown_alias': 1, 'unsupported': 14}
+    cmetrics/cmt_encode_msgpack.c :: pack_metric L7194 origin=cmt_encode_msgpack.c:273 [unsupported] nested call `cmt_metric_hist_get_sum_value` inside a modeled call is outside the resource projection
+    cmetrics/cmt_encode_msgpack.c :: pack_metric L7259 origin=cmt_encode_msgpack.c:360 [unsupported] nested call `cmt_metric_get_int64_value` inside a modeled call is outside the resource projection
+    ctraces/ctr_encode_msgpack.c :: pack_string L6772 origin=ctr_encode_msgpack.c:37 [unsupported] nested call `cfl_sds_len` inside a modeled call is outside the resource projection
+    ctraces/ctr_span.c :: ctr_span_event_add_ts L7059 origin=ctr_span.c:436 [unknown_alias] unresolved resource identity `ev`
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_add L20581 origin=rdkafka_assignment.c:912 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_add L20630 origin=rdkafka_assignment.c:991 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_assignment_subtract L20692 origin=rdkafka_assignment.c:1104 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_add L20543 origin=rdkafka_assignment.c:844 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_add L20567 origin=rdkafka_assignment.c:876 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_assignment.c :: rd_kafka_share_assignment_subtract L20647 origin=rdkafka_assignment.c:1027 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic L22157 origin=rdkafka_partition.c:3679 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic_id L22162 origin=rdkafka_partition.c:3685 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22125 origin=rdkafka_sticky_assignor.c:1648 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22134 origin=rdkafka_sticky_assignor.c:1672 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_sticky_assignor.c :: sortPartitions L22200 origin=rdkafka_sticky_assignor.c:1786 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+
+=== three-way split over the 11 predicted functions ===
+  LEAF-FREE (every leaf gone):        8
+    cmetrics/cmt_decode_msgpack.c :: unpack_meta_ver  (cmt_mpack_consume_uint_tag)  status=Safe
+    cmetrics/cmt_encode_cloudwatch_emf.c :: pack_cmetrics_type  (mpack_write_cstr)  status=Safe
+    cmetrics/cmt_encode_prometheus_remote_write.c :: check_staled_timestamp  (cmt_metric_get_timestamp)  status=Safe
+    cmetrics/cmt_metric.c :: cmt_metric_set  (cmt_metric_set_double)  status=Safe
+    ctraces/ctr_encode_msgpack.c :: pack_double  (mpack_write_double)  status=Safe
+    ctraces/ctr_encode_msgpack.c :: pack_int64  (mpack_write_i64)  status=Safe
+    ctraces/ctr_span.c :: ctr_span_end  (cfl_time_now)  status=Safe
+    librdkafka/lz4.c :: LZ4_resetStreamState  (LZ4_resetStream)  status=Safe
+  EXCHANGED for another refusal:      3
+    ctraces/ctr_encode_msgpack.c :: pack_string  (mpack_write_str)  status=Unknown
+        L6772 origin=ctr_encode_msgpack.c:37 [unsupported] nested call `cfl_sds_len` inside a modeled call is outside the resource projection
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic  (rd_kafka_topic_partition_list_sort)  status=Unknown
+        L22157 origin=rdkafka_partition.c:3679 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+    librdkafka/rdkafka_partition.c :: rd_kafka_topic_partition_list_sort_by_topic_id  (rd_kafka_topic_partition_list_sort)  status=Unknown
+        L22162 origin=rdkafka_partition.c:3685 [unsupported] call to `rd_kafka_topic_partition_list_sort` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)
+  UNMOVED (the leaf is still there):  0
