@@ -206,9 +206,13 @@ pub fn classify_trace(program: &MutexInvariantProgram) -> TraceShape {
                 }
                 let mut cursor = index + 1;
                 let end = loop {
+                    // A malformed segment — unmatched, nested, interleaved with
+                    // its parent's events, or carrying a typed-error exit — is
+                    // reported at its **`Spawn`**, which is the event whose
+                    // rendering the backend cannot construct. Reporting the
+                    // offending member instead would name an event that is
+                    // perfectly renderable on its own.
                     let Some(event) = events.get(cursor) else {
-                        // An unmatched spawn: reported at the spawn, which is
-                        // the event the trace cannot render.
                         return TraceShape::Outside { event: index };
                     };
                     match event {
@@ -222,11 +226,11 @@ pub fn classify_trace(program: &MutexInvariantProgram) -> TraceShape {
                         MutexInvariantEvent::Spawn { .. }
                         | MutexInvariantEvent::Join { .. }
                         | MutexInvariantEvent::ErrorExit { .. } => {
-                            return TraceShape::Outside { event: cursor };
+                            return TraceShape::Outside { event: index };
                         }
                         other => {
                             if event_task(other) != Some(*child) {
-                                return TraceShape::Outside { event: cursor };
+                                return TraceShape::Outside { event: index };
                             }
                         }
                     }
