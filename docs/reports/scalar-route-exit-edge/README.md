@@ -385,11 +385,41 @@ the three-way split in §3 is `0 / 0 / 54,503`, and the internal coordinate
 Run at the card tip. `git submodule update --init --recursive` first, exit
 captured to its own file; every step's exit captured to a file with **no pipe in
 the command**. Disk checked before the run (`df -h .`): 78 GB free, above the
-60 GB threshold, so the full gate ran. Per-command exits in
-`measure/scalar-route-exit-edge/gate/`, transcribed into `gate.json` beside this
-report.
+60 GB threshold, so the full gate ran. Per-command exits transcribed into
+`gate.json` beside this report.
 
-*Filled from `gate/` before this card reports.*
+| step | exit | |
+|---|---:|---|
+| `git submodule update --init --recursive` | **0** | |
+| `cargo test --workspace --no-fail-fast` | **0** | **4,622 passed / 0 failed / 8 ignored**, 232 result summaries, 0 failing |
+| `cargo fmt --all -- --check` | **0** | exited 1 first; see below |
+| `cargo clippy --all-targets -- -D warnings` | **0** | re-run after the reflow |
+| `cargo run … --example reevaluation_probe` | **0** | |
+| `cargo run … --example reevaluation_followup` | **0** | |
+| `python3 scripts/check_lean_audits.py` | **0** | **136** audits (135 before this card) |
+
+Prior workspace figures, for the delta only: 4,580 at the wave-35 close, 4,559
+at wave 34, 4,544 at wave 33.
+
+Two things are recorded rather than smoothed over.
+
+**`fmt` exited 1 on the first run.** `cargo fmt --all` re-wrapped two statements
+this card added — one joined onto a single line, one `if`/`else` split across
+lines. The diff is whitespace only and **no token changed**; the re-check exits
+0. Because the reflow touched `legacy_c.rs` after the workspace run,
+`cargo clippy` was re-run rather than carried, and `cargo test -p qcore-c-gateway`
+was run as an extra step (all targets green, not part of the standing gate). The
+**4,622 figure is from the pre-reflow tree** and is reported as such.
+
+**The filesystem reached 100% during the run**, several cards building
+concurrently. No `ENOSPC` reached this gate's own steps — the workspace build had
+completed before the window, a grep of `test.log` for the error is empty, and
+85–88 GB were free again afterwards. A gate figure is a measurement on one
+machine under stated conditions, never a property, so the condition is stated.
+
+`origin/main` was re-fetched after the final BEFORE and is still `477b733d`, an
+ancestor of this branch: the baseline had not moved, so no BEFORE re-run was
+needed.
 
 ---
 

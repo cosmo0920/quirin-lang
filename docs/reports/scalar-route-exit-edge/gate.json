@@ -1,0 +1,90 @@
+{
+  "card": "SCALAR-ROUTE-EXIT-EDGE",
+  "wave": 37,
+  "base": "477b733d",
+  "note": "Every step's exit was captured to its own file with no pipe in the command. The full gate ran; `df -h .` before launch showed 78 GB free, above the 60 GB threshold. Other cards were building concurrently and the filesystem reached 100% during the run - no ENOSPC reached this gate's own steps (grep of test.log for the error is empty, and the workspace build had completed before the window), and 85-88 GB were free again afterwards. Recorded because a gate figure is a measurement on one machine under stated conditions, never a property.",
+  "steps": [
+    {
+      "command": "git submodule update --init --recursive",
+      "exit": 0,
+      "log": "gate/submodule.log"
+    },
+    {
+      "command": "cargo test --workspace --no-fail-fast",
+      "exit": 0,
+      "log": "gate/test.log",
+      "passed": 4622,
+      "failed": 0,
+      "ignored": 8,
+      "result_summaries": 232,
+      "failing_summaries": 0,
+      "prior_figures_for_the_delta_only": {
+        "wave-35 close": 4580,
+        "wave-34 close": 4559,
+        "wave-33 close": 4544
+      }
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit": 0,
+      "log": "gate/fmt.log",
+      "note": "Exited 1 on the first run. Two statements this card added were re-wrapped by `cargo fmt --all`; the diff is whitespace only - one statement joined onto a single line, one `if`/`else` expression split across lines - and no token changed. Re-checked at exit 0."
+    },
+    {
+      "command": "cargo clippy --all-targets -- -D warnings",
+      "exit": 0,
+      "log": "gate/clippy.log",
+      "note": "Re-run after the rustfmt reflow, not carried from before it."
+    },
+    {
+      "command": "cargo test -p qcore-c-gateway",
+      "exit": 0,
+      "log": "gate/test-gateway-postfmt.log",
+      "note": "Not part of the standing gate. Run after the rustfmt reflow because the reflow touched `legacy_c.rs`, so the only crate whose source changed after the workspace run is re-measured rather than assumed. All targets green."
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_probe",
+      "exit": 0,
+      "log": "gate/probe.log"
+    },
+    {
+      "command": "cargo run -p qcore-compiler --example reevaluation_followup",
+      "exit": 0,
+      "log": "gate/followup.log"
+    },
+    {
+      "command": "python3 scripts/check_lean_audits.py",
+      "exit": 0,
+      "log": "gate/lean.log",
+      "lean_audits": 136,
+      "note": "135 before this card; AuditScalarRouteExitEdge.lean is the 136th. Axiom surface of every theorem it prints is `propext` or nothing - no project axioms."
+    }
+  ],
+  "ordering_caveat": "`cargo test --workspace --no-fail-fast` ran before the rustfmt reflow of two statements in `crates/qcore-c-gateway/src/legacy_c.rs`. The reflow changes no token, and the crate it touched was re-run green afterwards, but the 4,622 figure is from the pre-reflow tree and is reported as such rather than restated as a post-reflow measurement.",
+  "corpus_audit": {
+    "note": "Not part of the standing gate; recorded here because this card is an arbiter. All three runs exit 0.",
+    "runs": [
+      {"stage": "rb-before", "exit": 0, "seconds": 367.0},
+      {"stage": "rb-after", "exit": 0, "seconds": 310.3},
+      {"stage": "census", "exit": 0, "seconds": 443.3}
+    ],
+    "baseline": "docs/reports/joined-provenance-call-frames/artifacts",
+    "before_reproduces_baseline_byte_for_byte": true,
+    "after_reproduces_before_byte_for_byte": true,
+    "census_reproduces_baseline_byte_for_byte": true,
+    "verdict_bearing_artifacts": ["diagnostics", "chunk-contracts"],
+    "leaves_added": 0,
+    "leaves_removed": 0,
+    "leaves_unmoved": 54503,
+    "unit_status_moves": 0,
+    "function_status_moves": 0
+  },
+  "mutations": {
+    "harness": "scripts/mutate.py",
+    "log": "mutations.log",
+    "count": 6,
+    "all_red": true,
+    "restored_sha256_equal": true,
+    "restored_tests_exit": 0
+  }
+}

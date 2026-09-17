@@ -5227,8 +5227,7 @@ impl CfgBuilder {
                 // `C-GATEWAY-CONSTANT-DO-WHILE`'s rule the continuation is the
                 // header's only successor, so it is index 0; otherwise index 1,
                 // as for `while`. Either way it is the edge that leaves.
-                self.nodes[header].loop_exit_edge =
-                    Some(usize::from(!*condition_is_literal_zero));
+                self.nodes[header].loop_exit_edge = Some(usize::from(!*condition_is_literal_zero));
                 body_entry
             }
             Statement::Switch {
@@ -6193,7 +6192,11 @@ fn report_retained_loop_exit_edges(
         else {
             continue;
         };
-        let assume_null = if edge == 0 { *true_is_null } else { !*true_is_null };
+        let assume_null = if edge == 0 {
+            *true_is_null
+        } else {
+            !*true_is_null
+        };
         let mut probe = state.clone();
         if matches!(
             refine_pointer_null(&mut probe, source, assume_null),
