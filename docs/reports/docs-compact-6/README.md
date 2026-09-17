@@ -14,8 +14,8 @@ list missing its two largest members, a mutation count inflated from three to
 five, a discharged residual still described as unproved. Correcting an
 understatement costs words. **This pass therefore grew `AGENTS.md` by 4.3% and
 `CLAUDE.md` by 11.9%**, and that is the honest outcome rather than a failure to
-compact; the cadence rule in `CLAUDE.md` now says so in those words. Two
-sections were genuinely merged (§2.6, §8) and the growth is net of them.
+compact; the cadence rule in `CLAUDE.md` now says so in those words. Three
+regions were genuinely merged and the growth is net of them (§3).
 
 ---
 
@@ -196,9 +196,27 @@ chain. Every named archive is retained in the frozen list; no link is lost.
 | **total** | **148,272** | **155,088** | **+6,816** | **+4.60%** |
 
 Single-digit percentages, as the rule predicts — but in the **growing**
-direction, for the reason this report opens with. The two merges (§2.6 the arbiter chain,
-§8 the gate row) removed roughly 4,100 bytes between them; without them the
-growth would have been about 9,300.
+direction, for the reason this report opens with.
+
+Three regions were genuinely merged, and the saving is **measured, not
+estimated**:
+
+| Region | Before | After | Δ |
+|---|---|---|---|
+| Merged-gate row (§8) | 2,710 | 1,590 | **−1,120** |
+| Corpus row (§1) | 2,829 | 2,431 | **−398** |
+| Arbiter-chain paragraph (§2.6) | 1,580 | 1,377 | **−203** |
+| **total** | | | **−1,721** |
+
+So the corrections added about 6,965 bytes to `AGENTS.md` and the merges gave
+back 1,721.
+
+**A correction to this report's own first draft**, kept rather than quietly
+fixed, because it is the defect this card exists to catch: that draft said the
+merges "removed roughly 4,100 bytes", a figure **estimated by eye and never
+measured**. Measuring it gives 1,721 — off by a factor of 2.4 in the
+flattering direction. A number that is not read from its source is not a
+number, whichever file it appears in.
 
 `README.md` is **unchanged, and that is a measured finding rather than an
 omission**. The compaction rule's standing worry is that "README falls behind
