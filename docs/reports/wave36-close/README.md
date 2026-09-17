@@ -638,9 +638,27 @@ card. These are this close's, and each is in a commit message.
   only after a card's **final report**, not after its first committed artifact —
   is the durable finding, and it is a rule about *reading* another agent's
   progress, which is the same class of error as §6.5's pattern-kill.
-  The truncated run died at 79 of 233 summaries with `cargo test` exit **101**.
-  **Neither that exit nor the partial log was interpreted** — a gate that runs
-  out of disk measures the disk, not the tree. The response was to discard it,
+  The truncated run died at 79 of 231 summaries with `cargo test` exit **101**,
+  and its surviving log has since been read rather than assumed — which changed
+  the diagnosis. It records **four failures, all the same error**, and not one of
+  them is a disk-space message or a constraint-16 load row:
+
+  ```
+  error: extern location for qcore_core does not exist:
+    …/target/debug/deps/libqcore_core-4c197541e54f19c1.rlib
+  ```
+
+  all four `qcore-core` doc-tests, failing to **compile** in 0.02s because the
+  `.rlib` they link had been deleted **underneath the running gate**. The
+  `exit-cargo-test` file recording 101 was already on disk *before* this card ran
+  its own `rm -rf target`, which places the deletion at the reclamation and not
+  at the card — and makes the coordinator's "collateral" account exact, with a
+  mechanism attached. So the run was not measuring a full disk and was certainly
+  not measuring the tree: it was measuring its own build directory being removed.
+  **Neither that exit nor the partial log was interpreted as evidence about the
+  tree** — which is the same category as this gate's recorded `trap '' TERM`
+  incident, a gate red for a reason that had nothing to do with the code, and the
+  reason the standing rule is to discard such a run rather than explain it. The response was to discard it,
   make the gate's outputs **run-scoped** so a re-run can no longer eat the run it
   is checking, and re-measure from scratch; §13's figures are that clean run's.
   This card also removed its own `target/` before knowing of the integrator's
@@ -703,7 +721,7 @@ Measured at this close's own integration tip, so the one code change it makes is
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | exit 0, `third_party/libevent` at `d82464a2` |
-| `cargo test --workspace --no-fail-fast` | exit 0 — **4,611 passed / 0 failed / 8 ignored**, 233 result summaries, 229 executables, 22m31s |
+| `cargo test --workspace --no-fail-fast` | exit 0 — **4,611 passed / 0 failed / 8 ignored**, 231 result summaries, 229 executables (220 binaries + 9 doc-test sections; two doc-test sections print two summaries each), 21m24s |
 | `cargo fmt --all -- --check` | exit 0 |
 | `cargo clippy --all-targets -- -D warnings` | exit 0 |
 | `reevaluation_probe` | exit 0 |
@@ -729,7 +747,7 @@ Constraint 16's rows, stated because that constraint requires a gate report to
 say which it saw: the sixth row, `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
 and `memory_growth_beyond_the_declared_limit_is_bounded` were **all green**, as
 was the unnamed seventh (§6.3). `grep -c 'test result: FAILED'` over the log is
-**0** across all 233 summaries, so no isolated re-verification was required and
+**0** across all 231 summaries, so no isolated re-verification was required and
 none is claimed. This is a full-suite run on a machine carrying its own build —
 **not** the quiet-host isolated number `HOST-ROW-STARVATION-DESCRIPTION` still
 asks for, and not offered as one.

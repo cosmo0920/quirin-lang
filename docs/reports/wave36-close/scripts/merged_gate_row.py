@@ -14,14 +14,14 @@ AGENTS = pathlib.Path("AGENTS.md")
 HEAD = "| Merged gate | "
 
 ROW = (
-    "| Merged gate | **4,611 passed / 0 failed / 8 ignored, 229 test executables / 233 result "
+    "| Merged gate | **4,611 passed / 0 failed / 8 ignored, 229 test executables / 231 result "
     "summaries** · 122 provider (carried; **Unix** — see below) · **293 Python** · **135 Lean "
     "audits** · both probes exit 0 · fmt/clippy clean. Measured by the **wave-36 close** at its "
     "own integration tip (base `fa48211a`, the `WRITE-LEND-TASKS-EXERCISE` merge, plus the close's "
     "own commits — so the one code change the close makes, the reconciliation sweep's "
     "content-verifying `--check` arm, is *inside* this measurement rather than beside it), "
     "`git submodule update --init --recursive` run first and exit 0 (`WORKTREE-SUBMODULE-UNGATED`); "
-    "one uninterrupted `cargo test --workspace --no-fail-fast` of 22m31s, **every step's exit "
+    "one uninterrupted `cargo test --workspace --no-fail-fast` of 21m24s (a full rebuild; see the close's §11), **every step's exit "
     "captured to its own file with no pipe in the command** (`GATE-EXIT-SWALLOWED-BY-PIPE`). "
     "Per-command exits in `docs/reports/wave36-close/gate.json`, and each card's own gate in its "
     "own report. **A gate figure is a measurement on one machine, never a property**, and four "
