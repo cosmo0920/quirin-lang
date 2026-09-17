@@ -184,6 +184,14 @@ pub struct IndirectLeaf {
     pub position: Position,
     /// Whether the refused statement contains a call at all.
     pub contains_call: bool,
+    /// Whether the statement's first call — the one the classifier models — is
+    /// to a function a declared `.qcore` contract or a validated summary
+    /// covers.
+    ///
+    /// This separates the two futures of a refused call statement, and a census
+    /// that could not tell them apart would report every `f(p->x)` as an
+    /// exchange. `None` when the statement carries no call.
+    pub call_contracted: Option<bool>,
     /// The number of tokens in the refused statement, as a crude size axis.
     pub tokens: usize,
     /// Every access chain the gate's own token view carries.
@@ -253,6 +261,9 @@ pub(crate) struct Refusal {
     pub(crate) line: usize,
     pub(crate) site: RefusalSite,
     pub(crate) position: Position,
+    /// Whether this statement's first call is contracted, supplied by the
+    /// classifier from the same `ResourceContracts` the gate itself holds.
+    pub(crate) call_contracted: Option<bool>,
 }
 
 pub(crate) fn record(
@@ -267,6 +278,7 @@ pub(crate) fn record(
         line,
         site,
         position,
+        call_contracted,
     } = refusal;
     if std::env::var_os(CENSUS_PATH_VARIABLE).is_none() {
         return;
@@ -293,6 +305,7 @@ pub(crate) fn record(
             .iter()
             .enumerate()
             .any(|(index, text)| is_name(text) && texts.get(index + 1) == Some(&"(")),
+        call_contracted,
         tokens: texts.len(),
         chains: chains(context, texts, &window),
     });

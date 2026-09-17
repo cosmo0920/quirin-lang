@@ -3983,6 +3983,8 @@ impl Parser<'_> {
                         line: tokens.first().map_or(0, |token| token.line),
                         site: crate::indirect_census::RefusalSite::LexicalGate,
                         position,
+                        call_contracted: find_call(&texts)
+                            .map(|(_, function)| self.contracts.contract(function).is_some()),
                     },
                 );
             }
@@ -4120,6 +4122,9 @@ impl Parser<'_> {
                             line: tokens.first().map_or(0, |token| token.line),
                             site: crate::indirect_census::RefusalSite::NonPointerResultStore,
                             position: crate::indirect_census::Position::AssignmentDestination,
+                            // This arm is only reached through a contracted
+                            // call, so the answer is fixed.
+                            call_contracted: Some(true),
                         },
                     );
                     return LegacyInstruction::Unknown {
@@ -4356,6 +4361,8 @@ impl Parser<'_> {
                         line: tokens.first().map_or(0, |token| token.line),
                         site: crate::indirect_census::RefusalSite::UnclassifiedStoreValue,
                         position: crate::indirect_census::Position::AssignmentValue,
+                        call_contracted: find_call(&texts)
+                            .map(|(_, function)| self.contracts.contract(function).is_some()),
                     },
                 );
                 return LegacyInstruction::Unknown {
