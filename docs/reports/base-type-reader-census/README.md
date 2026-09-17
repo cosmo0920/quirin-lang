@@ -416,9 +416,28 @@ above the 60 GB floor, so the full gate ran rather than crate-scoped checks.
 | `cargo run -p qcore-compiler --example reevaluation_followup` | **0** |
 | `python3 scripts/check_lean_audits.py` | **0** |
 
-Workspace tests and Lean audit counts are in `gate.json` beside this file. The
-fifth row is an extra step this card adds to its own gate, not part of the
-standing list.
+**Workspace tests: 4,611 passed / 0 failed / 8 ignored**, over 231 result
+summaries from 229 test executables; **135 Lean audits** passed. The fifth row
+is an extra step this card adds to its own gate, not part of the standing list —
+every other step runs with the feature off, so without it the instrumentation
+this card extends would be unlinted.
+
+This card adds no test and changes no shipped behaviour, so that figure is the
+tree's own at `477b733d`. It is reported as **measured** rather than as
+reproducing an earlier close, because wave 36 has no close record yet and the
+wave-36 census card's 4,580 was taken at that wave's opening commit.
+
+**Constraint 16: the load was present and nothing tripped.** Part of this run
+was concurrent with another worktree's `clippy` — observed directly, as
+`clippy-driver` processes outside this worktree while
+`filesystem_chunk_close_route_parity` and
+`both_routes_refuse_the_same_body_mutations` were running here. **No row
+failed.** There is therefore nothing to verify in isolation and nothing to
+record beyond the observation itself; it is written down because constraint 16's
+rows are load-sensitive and a green suite under measured load is a slightly
+better fact than a green suite under none. Nothing was retried, no deadline
+raised and no test touched. Per-step exits are archived at
+`logs/gate-exits.txt` and `gate.json`.
 
 ## 10. Named follow-ons
 
