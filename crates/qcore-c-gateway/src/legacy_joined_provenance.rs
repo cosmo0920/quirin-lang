@@ -12,6 +12,14 @@
 //! created inside a loop stands for one abstract resource per *site* rather
 //! than per dynamic object, so no per-site identity fact is a statement about
 //! one of them. Declining is always available and always safe.
+//!
+//! A **call** no longer forgets every relation (card
+//! JOINED-PROVENANCE-CALL-FRAMES). It forgets the places it writes — its
+//! destination and `Out` slots, already removed by `rebound_names`, and a
+//! `Reallocated` parameter — and every name outside the closed list of slots
+//! no lvalue but the name itself designates; a name on that list is one no
+//! callee can reach, so the call cannot change what it denotes. An
+//! unrecognised name is always forgotten.
 use super::*;
 
 type Bindings = BTreeMap<usize, BTreeSet<String>>;
@@ -59,7 +67,11 @@ impl Facts {
         self.present.extend(&other.present);
     }
 
-    fn step(&mut self, instruction: &LegacyInstruction) {
+    /// One instruction's transfer. `preserved` is the closed list of names
+    /// whose *slot* no lvalue but the name itself designates — card
+    /// JOINED-PROVENANCE-CALL-FRAMES reads it at a call, and a name outside it
+    /// is always forgotten there.
+    fn step(&mut self, instruction: &LegacyInstruction, preserved: &BTreeSet<String>) {
         let copied = if let LegacyInstruction::Alias { source, .. } = instruction {
             self.bindings
                 .iter()
@@ -88,13 +100,41 @@ impl Facts {
             LegacyInstruction::ContractCall {
                 destination,
                 contract,
+                arguments,
                 produced_sites,
                 ..
             } => {
-                // The contract vocabulary does not establish preservation of
-                // arbitrary local slots. Forget prior relations across calls;
-                // only a freshly returned local identity is established below.
-                self.bindings.clear();
+                // Card **JOINED-PROVENANCE-CALL-FRAMES**: a call forgets every
+                // relation it could have written, and keeps only those it
+                // provably could not.
+                //
+                // A name in `preserved` is an unshadowed object of *automatic*
+                // storage duration this body declared, is not one of its
+                // formals, and has no `&` anywhere in the body taking its
+                // address. No pointer to that slot therefore exists for a
+                // callee to hold, and the object has no linkage, so under the
+                // same C object model constraint 10a already rests on — a
+                // callee reaches only what its arguments and file-scope
+                // objects give it — no call can change the value the name
+                // denotes. Passing the name *by value* hands over that value,
+                // never the slot.
+                //
+                // The places this call does write are already gone:
+                // `rebound_names` forgot its destination and every `Out` slot
+                // before this arm ran. A `Reallocated` result replaces the
+                // value at its parameter, so that name is forgotten here too.
+                // Everything else — a member, a subscript, a `*out`, a formal,
+                // an address-taken local, a name this reader cannot classify —
+                // is outside `preserved` and is forgotten exactly as before.
+                if let ResourceReturnMode::Reallocated { parameter, .. } = contract.result
+                    && let Some(Some(name)) = arguments.get(parameter)
+                {
+                    self.forget(name);
+                }
+                for names in self.bindings.values_mut() {
+                    names.retain(|name| preserved.contains(name));
+                }
+                self.bindings.retain(|_, names| !names.is_empty());
                 self.present.extend(produced_sites);
                 if contract
                     .parameters
@@ -177,7 +217,7 @@ pub(super) fn derive(cfg: &LegacyCfg) -> Vec<Bindings> {
 /// fixed point so the two routes cannot drift apart.
 fn outgoing(cfg: &LegacyCfg, node: usize, incoming: &Facts) -> Vec<Facts> {
     let mut out = incoming.clone();
-    out.step(&cfg.nodes[node].instruction);
+    out.step(&cfg.nodes[node].instruction, &cfg.conditional_names);
     for names in out.bindings.values_mut() {
         names.retain(|name| cfg.conditional_names.contains(name));
     }
@@ -468,6 +508,179 @@ mod tests {
         assert!(
             facts.iter().all(|bindings| !bindings.contains_key(&8)),
             "{facts:?}"
+        );
+    }
+
+    /// One contracted call node. Every aggregate and nested field is empty,
+    /// which is what the overwhelming majority of the pinned corpus's calls
+    /// carry; the arms this card adds read none of them.
+    fn call(
+        destination: Option<&str>,
+        arguments: Vec<Option<&str>>,
+        contract: ResourceFunctionContract,
+    ) -> LegacyInstruction {
+        LegacyInstruction::ContractCall {
+            function: "callee".to_string(),
+            destination: destination.map(str::to_string),
+            arguments: arguments
+                .into_iter()
+                .map(|argument| argument.map(str::to_string))
+                .collect(),
+            contract,
+            produced_sites: Vec::new(),
+            aggregate_reads: Vec::new(),
+            aggregate_consumed: Vec::new(),
+            aggregate_addresses: Vec::new(),
+            alias_reads: Vec::new(),
+            nested: None,
+        }
+    }
+
+    /// `site 7 -> {p}`, as an `Acquire` would have left it.
+    fn named(name: &str) -> Facts {
+        Facts {
+            present: BTreeSet::from([7]),
+            bindings: BTreeMap::from([(7, BTreeSet::from([name.to_string()]))]),
+        }
+    }
+
+    fn preserved(names: [&str; 1]) -> BTreeSet<String> {
+        names.iter().map(|name| (*name).to_string()).collect()
+    }
+
+    #[test]
+    fn a_call_no_longer_forgets_a_relation_it_cannot_write() {
+        // Card JOINED-PROVENANCE-CALL-FRAMES, the whole point: `callee(q)`
+        // writes neither `p`'s slot nor anything that designates it, so the
+        // relation stands. Before this card every call cleared it.
+        let mut facts = named("p");
+        facts.step(
+            &call(
+                None,
+                vec![Some("q")],
+                ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
+            ),
+            &preserved(["p"]),
+        );
+        assert_eq!(facts.bindings.get(&7), Some(&BTreeSet::from(["p".to_string()])));
+    }
+
+    #[test]
+    fn a_call_forgets_a_name_the_frame_list_does_not_carry() {
+        // The guard is built positively: a name the frame reader did not
+        // recognise is forgotten at a call exactly as before. Driven here
+        // rather than through `derive`, because `outgoing` applies the same
+        // membership test after every node, so no graph can present this
+        // `step` with an unrecognised name — see the report's
+        // CALL-FRAMES-ALLOWLIST-LOCAL-ONLY.
+        let mut facts = named("p");
+        facts.step(
+            &call(
+                None,
+                vec![Some("q")],
+                ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
+            ),
+            &preserved(["elsewhere"]),
+        );
+        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+    }
+
+    #[test]
+    fn a_call_still_forgets_its_own_destination() {
+        let mut facts = named("p");
+        facts.step(
+            &call(
+                Some("p"),
+                Vec::new(),
+                ResourceFunctionContract::new([], ResourceReturnMode::None),
+            ),
+            &preserved(["p"]),
+        );
+        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+    }
+
+    #[test]
+    fn a_call_still_forgets_an_out_slot() {
+        let mut facts = named("p");
+        facts.step(
+            &call(
+                None,
+                vec![Some("p")],
+                ResourceFunctionContract::new(
+                    [ResourceParameterMode::Out { nullable: false }],
+                    ResourceReturnMode::None,
+                ),
+            ),
+            &preserved(["p"]),
+        );
+        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+    }
+
+    #[test]
+    fn a_call_still_forgets_a_reallocated_parameter() {
+        // The result replaces the value at parameter 0, so `p` no longer
+        // denotes what it denoted, even though no callee wrote `p`'s slot.
+        let mut facts = named("p");
+        facts.step(
+            &call(
+                Some("q"),
+                vec![Some("p")],
+                ResourceFunctionContract::new(
+                    [ResourceParameterMode::Owned { nullable: false }],
+                    ResourceReturnMode::Reallocated {
+                        parameter: 0,
+                        nullable: false,
+                    },
+                ),
+            ),
+            &preserved(["p"]),
+        );
+        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+    }
+
+    #[test]
+    fn an_acquisition_survives_an_intervening_call_end_to_end() {
+        // The same rule reached through `derive`, which is the route the
+        // analyzer actually takes: acquire, call, exit. Before this card the
+        // call cleared the relation and node 2 carried nothing.
+        let plain = |instruction, successors: Vec<usize>| LegacyCfgNode {
+            instruction,
+            successors,
+            line: 0,
+            is_exit: false,
+        };
+        let mut nodes = vec![
+            plain(
+                LegacyInstruction::Acquire {
+                    destination: "p".to_string(),
+                    site: 7,
+                },
+                vec![1],
+            ),
+            plain(
+                call(
+                    None,
+                    vec![Some("q")],
+                    ResourceFunctionContract::new(
+                        [ResourceParameterMode::Borrowed],
+                        ResourceReturnMode::None,
+                    ),
+                ),
+                vec![2],
+            ),
+            plain(LegacyInstruction::NoOp, Vec::new()),
+        ];
+        nodes[2].is_exit = true;
+        let cfg = LegacyCfg {
+            function: "subject".to_string(),
+            entry: 0,
+            nodes,
+            publications: PublicationFacts::default(),
+            conditional_names: BTreeSet::from(["p".to_string()]),
+        };
+        assert_eq!(
+            derive(&cfg)[2].get(&7),
+            Some(&BTreeSet::from(["p".to_string()]))
         );
     }
 
