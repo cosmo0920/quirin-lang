@@ -134,7 +134,6 @@ impl Facts {
                 for names in self.bindings.values_mut() {
                     names.retain(|name| preserved.contains(name));
                 }
-                self.bindings.retain(|_, names| !names.is_empty());
                 self.present.extend(produced_sites);
                 if contract
                     .parameters
@@ -548,6 +547,14 @@ mod tests {
         names.iter().map(|name| (*name).to_string()).collect()
     }
 
+    /// What site 7 is still claimed to be named by. A site whose entry is gone
+    /// and a site whose entry carries no name are the same fact — `release_site`
+    /// asks only `facts.get(&site)?.contains(source)` — so the assertions below
+    /// read the names rather than the shape of the map.
+    fn names_of_site(facts: &Facts) -> BTreeSet<String> {
+        facts.bindings.get(&7).cloned().unwrap_or_default()
+    }
+
     #[test]
     fn a_call_no_longer_forgets_a_relation_it_cannot_write() {
         // Card JOINED-PROVENANCE-CALL-FRAMES, the whole point: `callee(q)`
@@ -582,7 +589,7 @@ mod tests {
             ),
             &preserved(["elsewhere"]),
         );
-        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+        assert!(names_of_site(&facts).is_empty(), "{:?}", facts.bindings);
     }
 
     #[test]
@@ -596,7 +603,7 @@ mod tests {
             ),
             &preserved(["p"]),
         );
-        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+        assert!(names_of_site(&facts).is_empty(), "{:?}", facts.bindings);
     }
 
     #[test]
@@ -613,7 +620,7 @@ mod tests {
             ),
             &preserved(["p"]),
         );
-        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+        assert!(names_of_site(&facts).is_empty(), "{:?}", facts.bindings);
     }
 
     #[test]
@@ -635,7 +642,7 @@ mod tests {
             ),
             &preserved(["p"]),
         );
-        assert!(facts.bindings.is_empty(), "{:?}", facts.bindings);
+        assert!(names_of_site(&facts).is_empty(), "{:?}", facts.bindings);
     }
 
     #[test]
