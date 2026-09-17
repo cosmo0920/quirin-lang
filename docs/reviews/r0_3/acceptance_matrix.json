@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 159
+  "named_followups": 165
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6133,7 +6133,7 @@
   "workspace_tests": 4580,
   "provider_tests": 122,
   "python_evidence_validator_tests": 247,
-  "lean_audits": 132,
+  "lean_audits": 133,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6266,7 +6266,8 @@
    "AuditVariadicNested.lean",
    "AuditW4.lean",
    "AuditWriteLend.lean",
-   "AuditWriteLendTasks.lean"
+   "AuditWriteLendTasks.lean",
+   "AuditWriteLendTasksExercise.lean"
   ],
   "reevaluation_probe_exit": 0,
   "reevaluation_followup_exit": 0,

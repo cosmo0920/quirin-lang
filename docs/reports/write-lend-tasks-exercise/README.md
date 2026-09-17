@@ -541,5 +541,19 @@ branch (marked **applied here**) or a decision only you can take.
 8. **A decision I did not take: CT07.** §10 item 7 explains why this card does
    not remap the row. If you would rather a lane did it in the same wave, it is
    ready to be scheduled.
-9. **No `gate.json` claim beyond §9.** The card's own counts are in §9; the
+9. **The matrix was regenerated, not hand-counted, and the gate provenance is
+   untouched.** `named_followups` is hand-maintained, so editing it left the
+   **derived** `dimensions.named_followups` stale at 159 — precisely
+   `D02-DIMENSIONS-FOLLOWUP-COUNT`, the residual that fired at the wave-32 and
+   wave-33 closes, and `CommittedMatrixIsSelfConsistent` (wave 34) caught it
+   here. Repaired by running `docs/reports/remaining-d02/build_matrix.py`, not
+   by editing the count. The regeneration's **only** other change was derived
+   too (`validation.lean_audits` 132 → 133, this card's audit file), and
+   `validation.measurement_provenance` was **restored to the committed value**
+   rather than let the generator relabel the wave-35 close's
+   integrator-supplied gate numbers as carried (constraint 25). **The wave-36
+   close should pass `--gate` with its own measured numbers**; this card
+   deliberately did not, because that flip is the integrator's.
+   274 Python tests pass.
+10. **No `gate.json` claim beyond §9.** The card's own counts are in §9; the
    wave close should re-measure at the integration tip rather than carry mine.
