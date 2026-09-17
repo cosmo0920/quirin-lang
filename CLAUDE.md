@@ -44,9 +44,10 @@ the operational guidance that is in neither of those.
   apart, README falls behind the ledger. A recurring compaction card
   (DOCS-COMPACT 2026-09-10, DOCS-COMPACT-2 2026-09-11, DOCS-COMPACT-3
   2026-09-12 after wave 26, DOCS-COMPACT-4 2026-09-13 after wave 29,
-  DOCS-COMPACT-5 2026-09-13 after wave 31; next due
-  around wave 34) re-reads every headline
-  number from its source, inventories the standing constraints before and
+  DOCS-COMPACT-5 2026-09-13 after wave 31, DOCS-COMPACT-6 2026-09-17 in
+  wave 34; next due around wave 36) re-reads every headline
+  number **from its source and never from the file being compacted**,
+  inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
   hard invariant or evidence pointer may be dropped, and a fact that lives only
   in these files moves verbatim into the development history indexed by
@@ -54,10 +55,16 @@ the operational guidance that is in neither of those.
   as checkpoints; they do not become a second current rule authority.
   Expect single-digit percentages: two passes in, these files are references
   rather than chronicles, and the rule exists to bound accretion, not to
-  promise a shrinking file.
+  promise a shrinking file. **A pass may legitimately grow a file**, and
+  `DOCS-COMPACT-6` did: the defects `STABILITY-REEVAL` #1 found were
+  *understatements* — a conditional theorem presented as unconditional, a
+  premise list missing its two largest members, a mutation count inflated — and
+  correcting an understatement costs words. Compaction bounds accretion of
+  *narrative*; it does not licence trading accuracy for bytes.
 - **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after
   wave 31). Green tests are an *observation*, and an observation is not a
-  proof: a recurring **`STABILITY-REEVAL`** card (first due after wave 33)
+  proof: a recurring **`STABILITY-REEVAL`** card (#1 ran in wave 34,
+  `docs/reports/stability-reeval-1/README.md`; next due after wave 35)
   asks, of the claims this project currently rests on, **under what conditions
   each is unstable or unproven** — and it reports that as a finding rather
   than as reassurance. The method, in the order that has caught the most:
@@ -69,7 +76,14 @@ the operational guidance that is in neither of those.
      inferring it from the diff. The occasioning case:
      `TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`, where a semantic union
      resolved at integration was "verified" by two green suites that never
-     touched the arm in question.
+     touched the arm in question. That residual was **discharged** by wave 32's
+     `TRACE-ALPHABET-LEASE-BOUNDARY`; it is named here as the case that
+     occasioned the cadence, not as open work. The cadence earned itself on it
+     twice over — `STABILITY-REEVAL` #1 found `AGENTS.md`'s CT row still
+     describing the arm as unproved two closes after its own constraint 15n
+     recorded the discharge, and found the discharging card's mutation evidence
+     overstated in that constraint at five tests where the measurement is
+     three. Both were repaired by `DOCS-COMPACT-6`.
   2. **Separate the proved side from the observed side of a boundary.** A
      theorem about one arm (CT03's write conservativity) says nothing about
      its sibling arm (the lease refusal). Where a boundary is proved on one
@@ -144,8 +158,10 @@ requirements that are part of the gate.
   starts the `quirin` compiler and compiles emitted C sources. The ARM64
   observation is the user's own environment report — compiler runs and emitted C
   builds; no test-suite, sanitizer or byte-comparison claim is made for that
-  architecture (candidate residual names: `QUIRIN-ARM64-GATE`,
-  `QUIRIN-ARM64-RUN`).
+  architecture. `QUIRIN-ARM64-GATE` and `QUIRIN-ARM64-RUN` were carried here as
+  "candidate residual names" for three waves and reached no tracker; both are
+  **registered in `named_followups`** as of `DOCS-COMPACT-6` (wave 34), each
+  with its own discharge condition.
 - **Windows:** native C11 thread subset and MSVC/Clang fixtures —
   `docs/reports/windows-c11-threads/README.md`,
   `docs/reports/windows-vs2026/README.md`,
@@ -180,7 +196,11 @@ requirements that are part of the gate.
     (wave 31) joins the pair for the task-route range write lease, on the
     `STRING-CONCAT-WINDOWS-RUN` precedent: the native test ran the Linux arm,
     macOS compiles the same test file, no MSVC run has happened and none is
-    claimed (`docs/reports/write-lend-tasks/README.md` §9).
+    claimed (`docs/reports/write-lend-tasks/README.md` §9). `WRITE-LEND-WINDOWS-RUN`
+    and `WRITE-LEND-TASKS-WINDOWS-RUN` were the two members of this family that
+    `STD-MODULES-O`'s roll-up did not mention and that reached no tracker at
+    all; both are **registered in `named_followups`** as of `DOCS-COMPACT-6`
+    (wave 34).
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
