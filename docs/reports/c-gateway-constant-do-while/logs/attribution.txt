@@ -1,0 +1,27 @@
+== headline ==
+BEFORE {"double_release": 1, "leak": 272, "unknown_alias": 4214, "unsupported": 50106}
+AFTER  {"leak": 272, "unknown_alias": 4214, "unsupported": 50106}
+  (no category moved)
+
+== unit status moves ==
+  total: 0
+
+== function status moves ==
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_jwt_b64_decode_payload: Unsafe -> Unknown
+  total: 1
+
+== leaves ==
+  removed: 1   added: 0
+  removed double_release   1
+
+-- removed leaves (1) --
+  librdkafka/rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_jwt_b64_decode_payload
+    internal L21340  double_release: repeated release of acquisition at rdkafka_sasl_oauthbearer_oidc.c:136
+
+-- added leaves (0) --
+
+== three-way split over affected functions ==
+  leaf-free (every leaf withdrawn):        0
+  fewer leaves (exchanged/withdrawn):      1
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_jwt_b64_decode_payload  19 -> 18
+  same or more leaves:                     0

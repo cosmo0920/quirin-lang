@@ -1,0 +1,12 @@
+head: 4771 analysed function names
+card: 4771 analysed function names
+source restored: True
+
+functions seen in both runs: 4771
+  acyclic in both:                        2844
+  cyclic in both:                         1272
+  CYCLIC -> ACYCLIC (this card's effect): 654
+  acyclic -> cyclic (must be 0):          0
+  mixed within a run (re-analysis):       1
+
+wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4b9c03fd33dec337/measure/c-gateway-constant-do-while/acyclicity.txt

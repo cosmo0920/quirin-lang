@@ -1,0 +1,27 @@
+=== preprocessed `while (0)` census over the pinned 185-unit corpus ===
+             chunkio        0
+            cmetrics      841
+             ctraces      435
+    fluent-bit-chunk      130
+          librdkafka    13361
+     monkey-libevent      286
+               TOTAL    15053
+
+units measured: 185  missing-from-db: 0  preprocess-failed: 0
+
+top 15 units by occurrence:
+    2073  rdkafka_mock_handlers.c
+    1834  rdkafka_admin.c
+    1044  rdkafka_request.c
+     857  rdkafka_fetcher.c
+     662  rdkafka_cgrp.c
+     448  rdkafka_sticky_assignor.c
+     413  rdkafka_metadata.c
+     373  rdkafka_msgset_reader.c
+     335  rdkafka_broker.c
+     322  rdkafka.c
+     252  rdkafka_txnmgr.c
+     242  rdkafka_mock.c
+     204  rdkafka_range_assignor.c
+     201  rdunittest_msgset_errors.c
+     183  rdunittest_acknowledge.c
