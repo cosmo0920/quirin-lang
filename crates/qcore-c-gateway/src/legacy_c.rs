@@ -13,6 +13,9 @@ mod joined_provenance;
 #[path = "legacy_out_alias.rs"]
 mod out_alias;
 
+#[path = "legacy_return_call.rs"]
+pub(crate) mod return_call;
+
 #[path = "legacy_enumeration.rs"]
 pub mod enumeration;
 
@@ -2821,6 +2824,11 @@ enum Statement {
         expression_supported: bool,
         writes: RefusedWrites,
         returned_place: Option<String>,
+        /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call this `return`
+        /// expression is, when it is exactly one. `Some` desugars the exit into
+        /// the two nodes `PLACE = f(args); return PLACE;` the analyzer already
+        /// decides; see [`return_call`] for why that reduction is the rule.
+        returned_call: Option<Box<LegacyInstruction>>,
     },
 }
 
@@ -3374,6 +3382,16 @@ impl Parser<'_> {
                 let strict = self.supported_expression(&expression, ExpressionRole::Returned);
                 let untracked_pointer =
                     !strict && self.supported_expression(&expression, ExpressionRole::Decides);
+                // Card C-GATEWAY-RETURN-CALL-W4. Asked last, and only where
+                // both rules above refuse, so no expression this project
+                // admitted before is decided by different code. A `Some` here
+                // is a *modeled* call whose result escapes only custody the
+                // call itself produced; everything else keeps the refusal it
+                // has, including the `Reallocated` result wave 33's soundness
+                // ground was right about.
+                let returned_call = (!strict && !untracked_pointer)
+                    .then(|| self.return_call_instruction(&expression, line))
+                    .flatten();
                 Ok(Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
@@ -3383,6 +3401,7 @@ impl Parser<'_> {
                     } else {
                         canonical_place(&texts)
                     },
+                    returned_call: returned_call.map(Box::new),
                 })
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -3470,6 +3489,55 @@ impl Parser<'_> {
             self.cursor += 1;
         }
         Err(line)
+    }
+
+    /// Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call a `return`
+    /// expression is, desugared to the assignment the analyzer already decides.
+    ///
+    /// The whole expression must be exactly one call, the reserved synthetic
+    /// place must be unspelled in this stream, and the answer
+    /// [`Self::classify_simple`] gives to `PLACE = <expression>` must be a
+    /// [`LegacyInstruction::ContractCall`] into that place whose result mode
+    /// escapes only custody the call produced. Anything else answers `None` and
+    /// the `return` keeps the refusal it had.
+    ///
+    /// `classify_simple`'s only mutation of the parser is `next_site`, so a
+    /// declined probe restores it and is observationally identical to never
+    /// having run — which is what keeps site numbering, and therefore
+    /// certificate identity, unmoved for every `return` this card refuses.
+    fn return_call_instruction(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+    ) -> Option<LegacyInstruction> {
+        let texts = expression
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        return_call::whole_expression_call(expression, &texts)?;
+        if !return_call::place_is_unspelled(self.tokens, return_call::RETURN_RESULT_PLACE) {
+            return None;
+        }
+        let mut synthetic = Vec::with_capacity(expression.len() + 2);
+        synthetic.extend(return_call::assignment_prefix(line));
+        synthetic.extend_from_slice(expression);
+        let restore = self.next_site;
+        let instruction = self.classify_simple(&synthetic);
+        let admitted = matches!(
+            &instruction,
+            LegacyInstruction::ContractCall {
+                destination: Some(destination),
+                contract,
+                ..
+            } if destination == return_call::RETURN_RESULT_PLACE
+                && return_call::escapes_only_fresh_custody(contract.result)
+        );
+        if admitted {
+            Some(instruction)
+        } else {
+            self.next_site = restore;
+            None
+        }
     }
 
     fn classify_simple(&mut self, tokens: &[Token]) -> LegacyInstruction {
@@ -4826,7 +4894,25 @@ impl CfgBuilder {
                 writes,
                 expression_supported,
                 returned_place,
+                returned_call,
             } => {
+                // Card C-GATEWAY-RETURN-CALL-W4. `return f(args);` becomes the
+                // two nodes `PLACE = f(args);` and `return PLACE;` — the same C,
+                // and the pair the analyzer has decided since Cycle 9. The call
+                // node is an ordinary interior node; the exit is an ordinary
+                // `EscapeIfOwned`, so `observe_exit` needs no arm for a call
+                // result.
+                if let Some(call) = returned_call {
+                    let exit = self.push(
+                        LegacyInstruction::EscapeIfOwned {
+                            source: return_call::RETURN_RESULT_PLACE.to_owned(),
+                        },
+                        Vec::new(),
+                        *line,
+                        true,
+                    );
+                    return self.push((**call).clone(), vec![exit], *line, false);
+                }
                 let instruction = if !*expression_supported {
                     LegacyInstruction::Unknown {
                         description:

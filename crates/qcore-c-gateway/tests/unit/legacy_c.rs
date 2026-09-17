@@ -1790,3 +1790,48 @@ fn conditional_provenance_excludes_shadowed_and_address_taken_names() {
         assert_ne!(summary.status, AnalysisStatus::Safe);
     }
 }
+
+/// Card **C-GATEWAY-RETURN-CALL-W4**: a declined return-call probe leaves the
+/// parser's site counter exactly where it found it.
+///
+/// The admission asks `Parser::classify_simple` to classify a synthetic
+/// `PLACE = <expression>` and then *inspects* the answer, so that one existing
+/// lookup decides which contract is in force. `classify_simple`'s only mutation
+/// of the parser is `next_site`, so a probe whose answer the rule declines
+/// restores it — otherwise every `return` this card refuses would silently
+/// renumber the sites of the acquisitions that follow it, and site numbering is
+/// certificate identity.
+///
+/// The observable is that the sites a body uses are exactly `0..n`. The probe
+/// here is a `Reallocated` result, which this card refuses, placed on an
+/// **early** `return` so that an unrestored counter would leave site 0 unused
+/// and shift both later acquisitions up. Mutating the restore away turns this
+/// assertion red, which is what makes it evidence rather than decoration.
+#[test]
+fn a_declined_return_call_probe_restores_the_site_counter() {
+    let source = "void *q_alloc(void); void q_free(void *); \
+                  void *q_realloc(void *p, unsigned long size); \
+                  void *subject(void *p, int c) { \
+                      if (c) { return q_realloc(p, 8); } \
+                      void *a = q_alloc(); q_free(a); return q_alloc(); }";
+    let tokens = tokenize(source);
+    let cfg = build_function_cfg(&tokens, "subject", &fixture_contracts(&[Q_BASE, Q_REALLOC]))
+        .expect("the fixture projects");
+    let mut sites = cfg
+        .nodes
+        .iter()
+        .flat_map(|node| match &node.instruction {
+            LegacyInstruction::Acquire { site, .. } => vec![*site],
+            LegacyInstruction::ContractCall { produced_sites, .. } => produced_sites.clone(),
+            _ => Vec::new(),
+        })
+        .collect::<Vec<_>>();
+    sites.sort_unstable();
+    sites.dedup();
+    assert!(!sites.is_empty(), "the fixture must allocate sites at all");
+    assert_eq!(
+        sites,
+        (0..sites.len()).collect::<Vec<_>>(),
+        "a declined return-call probe must not consume a site: {sites:?}"
+    );
+}

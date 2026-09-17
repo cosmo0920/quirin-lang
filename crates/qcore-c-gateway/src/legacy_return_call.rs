@@ -1,0 +1,201 @@
+//! Card **C-GATEWAY-RETURN-CALL-W4**: the modeled call in `return` position —
+//! wave 33's withdrawn sub-shape B, landed on a rule that answers the
+//! soundness ground it was withdrawn on rather than setting that ground aside.
+//!
+//! # What was withdrawn, and on which two grounds
+//!
+//! Card `C-GATEWAY-RETURN-POSITION` admitted a pointer-valued bounded typed
+//! access chain in the `return` position and **withdrew** `return CALL(args)`
+//! on two separate grounds (`docs/reports/c-gateway-return-position/README.md`
+//! §3):
+//!
+//! 1. a **yield** ground — only 12 of the 335 such callees carry a *declared*
+//!    contract, so the rest would exchange a return refusal for a
+//!    `call to uncontracted function` refusal and be no better decided;
+//! 2. a **soundness** ground — applying a callee's parameter custody at a
+//!    return position would let a `Consumed`/`Released` mode **discharge** a
+//!    live obligation of the caller at that exit, which is invariant 1's
+//!    forbidden direction, on a route whose exit observer
+//!    [`super::observe_exit`] has no arm for a call result at all.
+//!
+//! Ground 1 counted one of the two routes constraint 4 admits. A call is
+//! modeled through a declared contract **or** through a summary
+//! `observations_match_contract` validated, and
+//! [`super::analyze_defined_function`] builds every function's CFG against
+//! `derivation.environment()` — the declared environment *grown with* those
+//! validated summaries. So the reach question is not "how many callees are
+//! declared" but "how many have a contract in force", and this card
+//! re-measures it (report §3).
+//!
+//! **Ground 2 is not refuted by a larger reachable set**, and this module does
+//! not treat it as if it were. A yield argument cannot answer a soundness
+//! argument. What follows is the rule that answers it.
+//!
+//! # The rule: a return-position call is the assignment it already is
+//!
+//! `return f(a);` and `{ T = f(a); return T; }` are the same C, for a fresh `T`
+//! of the result's type. The gateway already models the second form — the
+//! call through [`super::Parser::classify_simple`] and the return through
+//! [`super::LegacyInstruction::EscapeIfOwned`] — and has since Cycle 9. This
+//! module therefore adds **no** new instruction and **no** new
+//! [`super::ReturnedValue`] constructor. It performs that desugaring:
+//! [`super::Parser`] binds the call's result to one reserved synthetic place
+//! and the exit escapes that place, so the new case *reduces* to the case the
+//! analyzer already decides. That is the answer to ground 2's mechanical half —
+//! `observe_exit` needs no arm for a call result, because after the desugaring
+//! there is no call at the exit.
+//!
+//! # Why the discharging direction is excluded, per result mode
+//!
+//! `ResourceReturnMode` has exactly three constructors, and the soundness
+//! question splits cleanly along them. Write `S` for the abstract state before
+//! the call and `S'` for the state [`super::apply_contract_call`] leaves.
+//!
+//! * [`ResourceReturnMode::None`] — the destination is *removed* from the
+//!   pointer environment, so the exit's `EscapeIfOwned` finds no place and
+//!   observes [`super::ReturnedValue::None`]. Nothing escapes. Any resource
+//!   this body still holds is therefore still held at the exit, and
+//!   `report_leaks` reports it. This is the **accusing** direction: the
+//!   `Unknown` it replaces marked the path unmodeled, and an unmodeled exit is
+//!   one `report_leaks` skips.
+//!
+//! * [`ResourceReturnMode::Owned`] — `apply_contract_call` calls
+//!   `create_resource` on a site drawn from `produced_sites`, and those sites
+//!   come from the parser's monotonically increasing `next_site` counter. The
+//!   site is therefore **fresh**: it is not a site of `S`, at all, by
+//!   construction rather than by analysis. Escaping it moves *that* site to
+//!   `Escaped` and no other. So the escape discharges nothing this body owed
+//!   before the call — which is exactly the property ground 2 demands, stated
+//!   about the one mode that can produce custody.
+//!
+//! * [`ResourceReturnMode::Reallocated`] — **refused, by name.** Here the
+//!   result denotes the identity the caller passed at the named parameter:
+//!   `apply_contract_call` records `conditional_replacements[site] = old`, so
+//!   escaping the fresh site would carry the *old* site's obligation out with
+//!   it. That is precisely "a `Consumed`/`Released` mode discharging a live
+//!   obligation of the caller at that exit", and it is the case ground 2 was
+//!   right about. It keeps the refusal it has today.
+//!
+//! The **parameter** modes are applied by `apply_contract_call` unchanged, and
+//! that is not a new trust: a statement-position call has applied them at every
+//! other position since Cycle 9, and constraint 4's contract-or-validated-
+//! summary discipline is the mechanism that licenses them. What this card does
+//! *not* do is let the return position license anything the call itself does
+//! not already license.
+//!
+//! # Two premises that are checked rather than assumed
+//!
+//! **The synthetic place must not collide.** [`RETURN_RESULT_PLACE`] is a place
+//! in the same namespace as this body's C names, so a body that spells it would
+//! have its own binding overwritten. The admission therefore requires the name
+//! to appear nowhere in the analysed token stream and **refuses** otherwise
+//! ([`place_is_unspelled`]). The name is reserved to the implementation by
+//! C11 §7.1.3, so this is a fail-closed guard on an already-improbable case and
+//! not a probability argument.
+//!
+//! **A rejected probe must leave no trace.** The desugaring asks
+//! `classify_simple` to classify the synthetic statement and then *inspects*
+//! the answer, so that one lookup — the existing one — decides which contract
+//! is in force, and the withdrawal rewriting of constraint 8, the literal
+//! premises, the nested-call admission and the variadic tail all apply exactly
+//! as they do to a real assignment. `classify_simple`'s only mutation of the
+//! parser is `next_site`, so a probe whose answer this module declines restores
+//! it and is observationally identical to never having run. That is what keeps
+//! site numbering — and therefore certificate identity — unmoved for every
+//! `return` this card does not admit.
+//!
+//! # What is deliberately not admitted
+//!
+//! A callee with **no contract in force** is not admitted, so this card's
+//! bucket (2) — "exchange the return leaf for a different refusal" — is empty
+//! by construction, exactly as sub-shape A's was. Clearing the return refusal
+//! for an uncontracted callee would report `call to uncontracted function` in
+//! its place and decide nothing, which is the outcome wave 33 named as
+//! unacceptable to publish as progress; the measurement of what that would have
+//! yielded is published in the report instead (`RETURN-CALL-UNCONTRACTED-EXCHANGE`).
+//! A call that is not the **whole** return expression — a cast of one, a
+//! conditional over two, arithmetic on a result — is not admitted either: the
+//! desugaring's equivalence argument is about `return f(a);` and nothing else.
+
+use qcore_schemas::contract::ResourceReturnMode;
+
+use super::{Token, is_identifier, matching};
+
+/// The synthetic place a `return CALL(…)` result is bound to.
+///
+/// Reserved to the implementation by C11 §7.1.3 (leading double underscore at
+/// file scope), and additionally *checked* absent from the analysed stream by
+/// [`place_is_unspelled`] before any admission.
+///
+/// **This name can reach a published diagnostic**, and is spelled to be read
+/// there: an admitted `return f(…)` whose result is a nullable owned resource
+/// reports "nullable resource `__qcore_returned_value` used by a non-null
+/// contract" against the function's own entry contract. That row is a *true*
+/// statement — the value this return hands back may be null, and nothing in
+/// force says the function's result may be — and it is `Unknown`-class, so it
+/// is the accusing direction rather than a false `Safe`. The corpus re-pin
+/// attributes ten such rows across five functions
+/// (`docs/reports/c-gateway-return-call-w4/README.md` §5). Rendering it as a
+/// phrase rather than a place is the open residual
+/// `RETURN-CALL-SYNTHETIC-PLACE-PRESENTED`; it is presentation, and deliberately
+/// not taken here, because changing how a place is rendered touches every
+/// diagnostic that carries one.
+pub(crate) const RETURN_RESULT_PLACE: &str = "__qcore_returned_value";
+
+/// The callee of an expression that is **exactly** one call `NAME ( … )`.
+///
+/// The closing parenthesis must be the last token, so a cast of a call, a
+/// conditional over two calls, a call inside arithmetic and a call followed by
+/// a selection all answer `None`. Whether `NAME` is a callee this projection
+/// models is not decided here — that is the contract environment's answer, read
+/// through `classify_simple`.
+pub(crate) fn whole_expression_call<'a>(tokens: &'a [Token], texts: &[&'a str]) -> Option<&'a str> {
+    if texts.len() < 3 {
+        return None;
+    }
+    let name = *texts.first()?;
+    if !is_identifier(name) || texts.get(1) != Some(&"(") {
+        return None;
+    }
+    let close = matching(tokens, 1, "(", ")")?;
+    (close == texts.len() - 1).then_some(name)
+}
+
+/// Does escaping this result at the exit discharge only custody the call itself
+/// produced?
+///
+/// `None` escapes nothing and `Owned` escapes a site drawn fresh from the
+/// parser's site counter, so neither can move a site the body already held.
+/// `Reallocated` carries the replaced parameter's obligation and is refused;
+/// see this module's header for the full argument.
+pub(crate) fn escapes_only_fresh_custody(result: ResourceReturnMode) -> bool {
+    match result {
+        ResourceReturnMode::None | ResourceReturnMode::Owned { .. } => true,
+        ResourceReturnMode::Reallocated { .. } => false,
+    }
+}
+
+/// Is `place` spelled nowhere in `tokens`?
+///
+/// The synthetic destination shares a namespace with this body's C names, so a
+/// collision would overwrite a real binding. Absence is required, not assumed.
+pub(crate) fn place_is_unspelled(tokens: &[Token], place: &str) -> bool {
+    !tokens.iter().any(|token| token.text == place)
+}
+
+/// The synthetic `PLACE = ` prefix, carrying the `return` statement's own line
+/// so every diagnostic the call reports is attributed where the source spells
+/// it (constraint 12a leaves the presented coordinate derived from this
+/// internal one).
+pub(crate) fn assignment_prefix(line: usize) -> [Token; 2] {
+    [
+        Token {
+            text: RETURN_RESULT_PLACE.to_owned(),
+            line,
+        },
+        Token {
+            text: "=".to_owned(),
+            line,
+        },
+    ]
+}

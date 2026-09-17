@@ -1,0 +1,74 @@
+== headline counts ==
+  double_release         1 ->       1
+  leak                 272 ->     272
+  unknown_alias       4208 ->    4214   <== +6
+  unsupported        50117 ->   50106   <== -11
+
+== leaves ==
+  withdrawn 17
+  added     12
+
+-- withdrawn, by description --
+     14  unmodeled call, aggregate or indirect access in return expression
+      2  call to uncontracted function `flb_input_chunk_is_up`
+      1  call to uncontracted function `rd_list_alloc`
+
+-- added, by description --
+      5  unresolved resource identity `__qcore_returned_value`
+      5  nullable resource `__qcore_returned_value` used by a non-null contract
+      1  unresolved resource identity `rl`
+      1  nullable resource `rl` used by a non-null contract
+
+== status moves ==
+  units     0
+  functions 7
+    Unknown -> Safe    __cmt_allocator_alloc   [cmt_decode_prometheus_remote_write.c]
+    Unknown -> Safe    flb_input_chunk_get_size   [flb_input_chunk.c]
+    Unknown -> Safe    flb_input_chunk_is_up   [flb_input_chunk.c]
+    Unknown -> Safe    rd_kafka_mem_calloc   [rdkafka.c]
+    Unknown -> Safe    rd_kafka_mem_malloc   [rdkafka.c]
+    Unknown -> Safe    rd_list_alloc   [rdlist.c]
+    Unknown -> Safe    XXH_malloc   [rdxxhash.c]
+  function moves by destination: {'Safe': 7}
+
+== functions that ended leaf-free (had leaves before) ==  7
+== functions that exchanged one refusal for another ==  6
+    LZ4F_calloc   [lz4frame.c]
+    LZ4F_malloc   [lz4frame.c]
+    rd_dl_error   [rddl.c]
+    rd_kafka_AuthorizedOperations_parse   [rdkafka_admin.c]
+    ut_create_mock_jwt_template_file   [rdkafka_sasl_oauthbearer_oidc.c]
+    rd_list_new   [rdlist.c]
+
+-- every withdrawn leaf (unit, function, preprocessed line, origin) --
+  cmt_decode_prometheus_remote_write.c :: __cmt_allocator_alloc :: L6440 :: cmt_decode_prometheus_remote_write.c:33 :: unmodeled call, aggregate or indirect access in return expression
+  cmt_encode_opentelemetry.c :: destroy_data_point :: L8333 :: cmt_encode_opentelemetry.c:2085 :: unmodeled call, aggregate or indirect access in return expression
+  flb_input_chunk.c :: flb_input_chunk_destroy :: L19737 :: flb_input_chunk.c:2748 :: call to uncontracted function `flb_input_chunk_is_up`
+  flb_input_chunk.c :: flb_input_chunk_down :: L19976 :: flb_input_chunk.c:3136 :: unmodeled call, aggregate or indirect access in return expression
+  flb_input_chunk.c :: flb_input_chunk_get_size :: L18180 :: flb_input_chunk.c:758 :: unmodeled call, aggregate or indirect access in return expression
+  flb_input_chunk.c :: flb_input_chunk_is_up :: L19971 :: flb_input_chunk.c:3130 :: unmodeled call, aggregate or indirect access in return expression
+  flb_input_chunk.c :: input_chunk_append_raw :: L20103 :: flb_input_chunk.c:3316 :: call to uncontracted function `flb_input_chunk_is_up`
+  lz4frame.c :: LZ4F_calloc :: L1055 :: lz4frame.c:108 :: unmodeled call, aggregate or indirect access in return expression
+  lz4frame.c :: LZ4F_malloc :: L1066 :: lz4frame.c:123 :: unmodeled call, aggregate or indirect access in return expression
+  rddl.c :: rd_dl_error :: L2953 :: rddl.c:53 :: unmodeled call, aggregate or indirect access in return expression
+  rdkafka.c :: rd_kafka_mem_calloc :: L25105 :: rdkafka.c:7128 :: unmodeled call, aggregate or indirect access in return expression
+  rdkafka.c :: rd_kafka_mem_malloc :: L25102 :: rdkafka.c:7124 :: unmodeled call, aggregate or indirect access in return expression
+  rdkafka_admin.c :: rd_kafka_AuthorizedOperations_parse :: L25154 :: rdkafka_admin.c:7798 :: unmodeled call, aggregate or indirect access in return expression
+  rdkafka_sasl_oauthbearer_oidc.c :: ut_create_mock_jwt_template_file :: L22211 :: rdkafka_sasl_oauthbearer_oidc.c:1640 :: unmodeled call, aggregate or indirect access in return expression
+  rdlist.c :: rd_list_alloc :: L2981 :: rdlist.c:81 :: unmodeled call, aggregate or indirect access in return expression
+  rdlist.c :: rd_list_new :: L2984 :: rdlist.c:85 :: call to uncontracted function `rd_list_alloc`
+  rdxxhash.c :: XXH_malloc :: L532 :: rdxxhash.c:108 :: unmodeled call, aggregate or indirect access in return expression
+
+-- every added leaf --
+  lz4frame.c :: LZ4F_calloc :: L1055 :: lz4frame.c:108 :: unresolved resource identity `__qcore_returned_value`
+  lz4frame.c :: LZ4F_calloc :: L1055 :: lz4frame.c:108 :: nullable resource `__qcore_returned_value` used by a non-null contract
+  lz4frame.c :: LZ4F_malloc :: L1066 :: lz4frame.c:123 :: unresolved resource identity `__qcore_returned_value`
+  lz4frame.c :: LZ4F_malloc :: L1066 :: lz4frame.c:123 :: nullable resource `__qcore_returned_value` used by a non-null contract
+  rddl.c :: rd_dl_error :: L2953 :: rddl.c:53 :: unresolved resource identity `__qcore_returned_value`
+  rddl.c :: rd_dl_error :: L2953 :: rddl.c:53 :: nullable resource `__qcore_returned_value` used by a non-null contract
+  rdkafka_admin.c :: rd_kafka_AuthorizedOperations_parse :: L25154 :: rdkafka_admin.c:7798 :: unresolved resource identity `__qcore_returned_value`
+  rdkafka_admin.c :: rd_kafka_AuthorizedOperations_parse :: L25154 :: rdkafka_admin.c:7798 :: nullable resource `__qcore_returned_value` used by a non-null contract
+  rdkafka_sasl_oauthbearer_oidc.c :: ut_create_mock_jwt_template_file :: L22211 :: rdkafka_sasl_oauthbearer_oidc.c:1640 :: unresolved resource identity `__qcore_returned_value`
+  rdkafka_sasl_oauthbearer_oidc.c :: ut_create_mock_jwt_template_file :: L22211 :: rdkafka_sasl_oauthbearer_oidc.c:1640 :: nullable resource `__qcore_returned_value` used by a non-null contract
+  rdlist.c :: rd_list_new :: L2987 :: rdlist.c:88 :: unresolved resource identity `rl`
+  rdlist.c :: rd_list_new :: L2987 :: rdlist.c:88 :: nullable resource `rl` used by a non-null contract

@@ -1,0 +1,46 @@
+module contract;
+
+// Card C-GATEWAY-RETURN-CALL-W4 — held-out generic `r_*` custody API for the
+// modeled call in `return` position.
+//
+// Deliberately unrelated to the `q_*` (W4-EXPR-POS), `z_*` (REACH-GATE),
+// `k_*` (O04-B08), `g_*` (O04) and `h_*` (O04-ARMS) families. What this card
+// needs and no existing family supplies is a callee that **returns a value**
+// while carrying a custody effect on a parameter: `q_free` and `q_transfer`
+// return `unit`, so `return q_free(p);` is not C at all and could not put the
+// rule's result-mode arms under test.
+//
+// The three below give the two admitted result modes a value-returning callee
+// each, over the three parameter modes whose effects the return position now
+// applies. `resource_return_reallocated` is the refused arm and lives in
+// `q_realloc.qcore` already, so nothing here duplicates it.
+//
+// These are synthetic trusted test assumptions, not facts about any library.
+
+extern fn r_release_code(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn r_consume_code(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_consumed(p, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn r_borrow_code(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn r_wrap(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_owned(nonnull);
+};

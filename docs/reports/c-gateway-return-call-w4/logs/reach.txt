@@ -1,0 +1,23 @@
+return-expression leaves in BEFORE: 1470
+withdrawn by this card:             14
+
+== shape of the returned expression, over every remaining return leaf ==
+     643   43.7%  call
+     455   31.0%  not-a-complete-return-on-this-line
+     226   15.4%  field-chain-or-mixed
+      78    5.3%  cast-or-parenthesized
+      24    1.6%  conditional
+      23    1.6%  subscript
+      16    1.1%  other
+       3    0.2%  dereference
+       2    0.1%  plain-name-or-literal
+
+== the sub-shape B population re-derived ==
+  `return CALL(...)` leaves: 643
+  distinct callees:          372
+
+== classifier check ==
+  withdrawn leaves classified `call`: 14/14
+
+== yield over the re-derived population ==
+  admitted: 14 of 643 `return CALL(...)` leaves (2.2%)

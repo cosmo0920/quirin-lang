@@ -105,29 +105,32 @@ revision-0.3 source-language conformance. `crates/` holds nine crates; the core
 Cargo workspace declares **ten** members (those nine plus `compiler`), and
 `providers/` is a separate six-member workspace excluded from it.
 
-Headline numbers after `C-GATEWAY-RETURN-POSITION` (2026-09-14). The **corpus
-baseline is `docs/reports/c-gateway-return-position/artifacts/`** — wave 33's
-only card and therefore its arbiter. The chain is what makes each delta
+Headline numbers after `C-GATEWAY-RETURN-CALL-W4` (2026-09-17). The **corpus
+baseline is `docs/reports/c-gateway-return-call-w4/artifacts/`** — wave 34's
+arbiter. The chain is what makes each delta
 attributable: `C-GATEWAY-WAVE`'s BEFORE reproduced wave 30's
 `w4-recursive-summaries` archives byte for byte, wave 31's second arbiter's
 fresh BEFORE reproduced `c-gateway-wave`'s own `diagnostics.json` and
-`chunk-contracts.json` byte for byte, and wave 33's BEFORE reproduces
+`chunk-contracts.json` byte for byte, wave 33's BEFORE reproduces
 `w31-corpus-contracts-2`'s both verdict-bearing artifacts byte for byte — an
 identity that card re-asserts inside its archiving tool, which refuses to write
-if it ever stops holding — which isolates each arbiter's movement from the
+if it ever stops holding — and wave 34's BEFORE reproduces
+`c-gateway-return-position`'s both verdict-bearing artifacts byte for byte under
+the same self-refusing tool, which isolates each arbiter's movement from the
 gateway change beneath it. Each arbiter's leaf attribution and gate are in its
 own report (`docs/reports/c-gateway-wave/`,
 `docs/reports/w31-corpus-contracts-2/`,
-`docs/reports/c-gateway-return-position/`). All earlier archives remain frozen (constraint
+`docs/reports/c-gateway-return-position/`,
+`docs/reports/c-gateway-return-call-w4/`). All earlier archives remain frozen (constraint
 21), including `wave23-c-operations`, `aom-destroy-siblings`, `aom-binding-poison`,
 `gateway-c-location`, `w29-corpus-contracts`, `w4-recursive-summaries`,
-`c-gateway-wave` and `w31-corpus-contracts-2`. Diagnostics retain two coordinates: the presented original
+`c-gateway-wave`, `w31-corpus-contracts-2` and `c-gateway-return-position`. Diagnostics retain two coordinates: the presented original
 `file:line` and the internal preprocessed line used for pin, leaf and
 certificate identity (`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
 
 | Measure | Value |
 |---|---|
-| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions at either wave-31 arbiter. 4,834 projected functions: **179 Safe / 85 provisional Unsafe / 4,570 Unknown**; at `C-GATEWAY-WAVE` four scalar counter helpers withdrew Safe → Unknown and one constant-loop abstraction exposed a provisional repeated release (five function moves, all named in that report), `W31-CORPUS-CONTRACTS-2` moved **zero** functions and zero units, and at `C-GATEWAY-RETURN-POSITION` (wave 33) **33 functions moved Unknown → Safe with none withdrawn and none made provisional Unsafe**, the gateway's return position having been widened to admit a pointer-valued bounded typed access chain; unit statuses did not move. `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272 at `C-GATEWAY-WAVE`: six added, none withdrawn; constraint 7 — **unmoved** at both the `W31-CORPUS-CONTRACTS-2` and `C-GATEWAY-RETURN-POSITION` arbiter re-pins, as are `unknown_alias` **4,208** and `double_release` **1**). `unsupported` **50,117** (50,155 → 50,150 at wave 31's second arbiter: the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size`, decided by the two declared contracts, plus the one argument-expression refusal the second declaration retires at its chained-actual site, attributed leaf by leaf in `docs/reports/w31-corpus-contracts-2/README.md` §5; zero leaves added, two units changed — then 50,150 → 50,117 at wave 33's arbiter: **33 withdrawn return-position refusals and zero leaves added**, every one attributed in `docs/reports/c-gateway-return-position/README.md` §5, whose BEFORE run reproduced the wave-31 baseline byte for byte). Provisional findings remain subject to the reports' coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
+| Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — no unit status moves and no Safe promotions at either wave-31 arbiter. 4,834 projected functions: **179 Safe / 85 provisional Unsafe / 4,570 Unknown**; at `C-GATEWAY-WAVE` four scalar counter helpers withdrew Safe → Unknown and one constant-loop abstraction exposed a provisional repeated release (five function moves, all named in that report), `W31-CORPUS-CONTRACTS-2` moved **zero** functions and zero units, and at `C-GATEWAY-RETURN-POSITION` (wave 33) **33 functions moved Unknown → Safe with none withdrawn and none made provisional Unsafe**, the gateway's return position having been widened to admit a pointer-valued bounded typed access chain; unit statuses did not move; and at `C-GATEWAY-RETURN-CALL-W4` (wave 34) **7 further functions moved Unknown → Safe with none withdrawn and none made provisional Unsafe** (179 → **186 Safe**, 4,570 → **4,563 Unknown**, provisional Unsafe **85** unmoved), the return position having been widened again to admit a *modeled call* whose result mode is `None` or `Owned` — `Reallocated` refused by name, being the arm that would discharge the replaced parameter's obligation at the exit; unit statuses again did not move. `flb_input_chunk_create` remains function-level **Safe**. Leak **272** (266 → 272 at `C-GATEWAY-WAVE`: six added, none withdrawn; constraint 7 — **unmoved** at the `W31-CORPUS-CONTRACTS-2`, `C-GATEWAY-RETURN-POSITION` and `C-GATEWAY-RETURN-CALL-W4` arbiter re-pins, as is `double_release` **1**; `unknown_alias` **4,208 → 4,214** at wave 34, all six added rows `Unknown`-class and in the accusing direction). `unsupported` **50,117** (50,155 → 50,150 at wave 31's second arbiter: the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size`, decided by the two declared contracts, plus the one argument-expression refusal the second declaration retires at its chained-actual site, attributed leaf by leaf in `docs/reports/w31-corpus-contracts-2/README.md` §5; zero leaves added, two units changed — then 50,150 → 50,117 at wave 33's arbiter: **33 withdrawn return-position refusals and zero leaves added**, every one attributed in `docs/reports/c-gateway-return-position/README.md` §5, whose BEFORE run reproduced the wave-31 baseline byte for byte; then 50,117 → **50,106** at wave 34's arbiter: **17 withdrawn and zero added** — 14 return-expression refusals plus 3 second-order `call to uncontracted function` leaves decided by summaries newly derived from the bodies this card promoted — attributed leaf by leaf in `docs/reports/c-gateway-return-call-w4/README.md` §5). Provisional findings remain subject to the reports' coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
 | CT01–CT50 conformance | **45/50 mapped**, 5 unmapped; sanitized-native **9 of 45** (wave 32's `CT-COMPOSED-NATIVE` gave the `composed_epoch` route a runner that really compiles and runs an admitted case's own emitted C under the platform sanitizers and compares its stdout byte for byte with that module's own checked task half, moving CT22's and CT25's emission/native/sanitized rows off `unassessed`; CT23 stays out, being the route's refusal, and every arm of the runner was falsified before it was believed); **proof 3 of 45** — CT01 (wave 29, `CT01-PROOF-LEG`), CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases) and CT03 (wave 31, `CT03-PROOF-ALPHABET`, the first leg to need the F02 alphabet itself to grow — by the Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved — while the *sibling* arm of that same alphabet decision, the two lease events still refused, is **observed and not proved**: no test drives a lease-carrying reference run into it, so the green suites are evidence about the paths they took, and the risk is bounded by direction alone because the arm refuses rather than admits (`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED`, the occasioning case for `CLAUDE.md`'s `STABILITY-REEVAL` cadence)): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). Wave 32 (`CT-WIRE-LANE-4`) mapped **CT47 and CT44**: CT47 on the transferability judgment's refusal at the crossing construct — verified in source that the owned buffer is `MovedOnly` and *sendable*, so the refusal is for the **mode** and not a vacuous kind refusal, with all three contracts the kind does carry supplied as admitting controls — and CT44 after measuring both of card T00's archived blockers **obsolete** (the refusal names the borrowing task, and "environment moves before join" now has a source form), attribution separated in both directions. Each publishes the boundary its scenario's untranslatable words rest on (no pointer type; the storage is heap-bound, so "stack" has no referent). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **76 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`; 74 → 76 at wave 31: `chunkio/chunk_sizes.qcore` and `fluent_bit/input_chunk_total_size.qcore`, each deliberate; resource-v1 declarations 39 → 41 → 43, manifest-selected modules 18 → 19 → 21) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
@@ -234,9 +237,22 @@ pointer is the card that established it; read it before deviating.
    that seeds any element above `N(m)` for a member of its own component must
    supply a well-founded rank, as the contextual and countdown routes do.
    Declared contracts always win; a disagreement is a `SummaryConflict`
-   diagnostic, never a silent override. `w4-custody-inference`,
+   diagnostic, never a silent override.
+   **"Defined in this translation unit" is not "W4-derivable", and a reach
+   argument that counts the former overstates this route by two orders of
+   magnitude.** Validation by re-analysis requires the callee's *own* body to be
+   fully modeled and defect-free, so a callee that is itself `Unknown` yields no
+   summary and its callers gain nothing from it. Measured over the 643
+   `return CALL(...)` refusal leaves of the pinned corpus, on one population so
+   the shares are comparable: **379 (58.9%) have a callee defined in the same
+   `.c`**, but the callee's own body is `Safe` — the precondition for a
+   validated summary — in **4 (0.6%)**; the other 375 are 366 `Unknown` and 9
+   `Unsafe` bodies, and 264 (41.1%) of the 643 are external. A card scoped on the larger
+   figure will not find the smaller one waiting for it: wave 34's arbiter
+   withdrew 14 such leaves, of which **13 were decided by a declared `.qcore`
+   contract and exactly 1 by this route**. `w4-custody-inference`,
    `w4-custody-extensions`, `w4-gateway-crate`, `remaining-c03`,
-   `w4-recursive-summaries`.
+   `w4-recursive-summaries`, `c-gateway-return-call-w4` §3.3.
 5. The typed scalar-field whitelist's last premise — the base is a name this
    function never binds to a resource identity — exists because dropping it
    turned a read through a released pointer into `Safe`. The fail-closed pin
@@ -339,6 +355,15 @@ pointer is the card that established it; read it before deviating.
    repair before publication. The original worklist schedule is retained;
    neither the leak rows nor the new constant-loop repeated-release row is a
    validated upstream defect claim.
+   At the wave-34 `C-GATEWAY-RETURN-CALL-W4` arbiter the pin is **unmoved at
+   272** — the first gateway *admission* card in this chain to move no leak leaf
+   in either direction. That is not luck and is worth the sentence: the exits it
+   newly models are allocator wrappers that retain nothing, so exposing them
+   accuses nobody. Admitting a previously unmodeled exit remains a move in the
+   accusing direction by construction, because `report_leaks` **skips** an
+   unmodeled exit; a future admission card reaching bodies that do retain should
+   expect the pin to rise, and that rise is a finding to attribute, not a
+   regression. `c-gateway-return-call-w4` §5.
 8. **A declared contract must agree with the C the unit declares** — in types
    and in modes. A contract whose parameter or result ABI projections the
    analysed translation unit's own C declaration contradicts, or whose custody
