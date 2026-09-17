@@ -231,7 +231,7 @@ case-insensitive. The classification is right — it *is* a card name — but it
 went quiet for the wrong reason, and a future close must not read that drop as a
 decision anyone took.
 
-### 3.2 And two more appeared, which is what a retirement costs
+### 3.2 And three more appeared — two that a retirement costs, one this report wrote
 
 After the three retirements (§8), `--residuals` rose **25 → 27**:
 `MAIN-GUARD-UNACTIVATED` and `RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED` now
@@ -241,6 +241,19 @@ that discharged them. **No third-party name was orphaned** — that is the check
 with the run before them, and it is now a written close rule. The two join the
 "discharged, with the discharging card named" class rather than becoming open
 work, and the rule says to expect them.
+
+Then **27 → 28**, when this report itself entered the scanned set — it is a
+`docs/reports/<card>/README.md` changed in the range, so the names it writes are
+scanned like any card's. The addition is
+`DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK`, which §9 discusses and which is a
+**deferred decision, not a followup**; it joins `VERIFIER-HOST-ROW-DISPOSITION`
+in that class and must not be registered. The number is recorded here rather than
+left at 27 because a close that quotes its own pre-writing measurement is doing
+the thing this whole report is about.
+
+**Final state: 28 names**, none of them unclassified — 14 card names (§3.1's
+false positive having gone quiet), 10 discharged with the discharging card
+named, 2 standing rules, 2 deferred decisions.
 
 ## 4. The `--check` content arm — and what it found in this close's own record
 
