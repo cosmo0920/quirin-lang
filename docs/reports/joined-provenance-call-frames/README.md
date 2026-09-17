@@ -1,8 +1,15 @@
 # JOINED-PROVENANCE-CALL-FRAMES — conditional provenance across a call
 
-Wave 36. Card base `60958bf0`, rebased onto wave 36's first arbiter
-(`W36-CORPUS-CONTRACTS-3`); this card is the wave's **second** arbiter and owns
-a corpus re-pin.
+Wave 36. Card base `60958bf0`, rebased onto `d47e2bb2`. This card owns a corpus
+re-pin and merges **after** the wave's declarative arbiter
+`W36-CORPUS-CONTRACTS-3`, whose AFTER its BEFORE reproduces byte for byte.
+
+> **Ordinal conflict for the integrator to settle.** The card brief called this
+> card wave 36's *first* arbiter and `W36-CORPUS-CONTRACTS-3` the second; that
+> card's own increment paragraph also calls itself the *second*; and by merge
+> order it is in fact first and this card second. This report therefore
+> identifies both cards by **name and merge order** and claims no ordinal for
+> itself. Nothing measured here depends on the label.
 
 ## 1. Headline, including the part that does not move
 
@@ -40,7 +47,10 @@ first suspect. The analyzer was instrumented (not a source-text classifier):
 every removal of a name from a site's binding set is charged to the rule that
 performed it, and one JSON line per reached premise gate carries the causes.
 `scripts/instrument.py` builds the instrumented module from the shipped one by
-17 uniquely-anchored edits; `logs/premise-base.jsonl` is its output.
+17 uniquely-anchored edits; `logs/rb-premise-before.jsonl` and
+`logs/rb-premise-after.jsonl` are its output on `d47e2bb2`'s tree. (The same
+measurement was taken before the rebase and is identical in every row; §6
+records that check.)
 
 The 14 visits are **6 distinct `(function, site, source)` triples** — the
 worklist reaches some of them more than once. Attribution over the base tree:
@@ -180,8 +190,59 @@ retain, so the line was an inconsistency rather than hygiene.
 
 ## 6. The re-pin
 
-*(This section is completed against wave 36's first arbiter's artifacts after
-the rebase; see §6 of the final revision.)*
+Rebased onto `d47e2bb2`, which carries wave 36's declarative arbiter
+`W36-CORPUS-CONTRACTS-3` (merge `de3a914a`) and `STABILITY-REEVAL #2`. BEFORE is
+that tree with this card's module reverted; AFTER is the card tip.
+
+**BEFORE reproduces `docs/reports/w36-corpus-contracts-3/artifacts/` byte for
+byte** on both verdict-bearing artifacts — `diagnostics a7aa3b5f9ab193a0`,
+`chunk-contracts c4f438e4ed3dab3c` — so the chain is attributable through this
+wave's declarative arbiter to wave 35's. (`source-effects` and `contracts`
+differ by checkout root and identity digests, identically in BEFORE and AFTER,
+exactly as every preceding arbiter recorded.)
+
+The three-way leaf split over the pinned 185-unit corpus, leaf identity
+`(unit file, function, preprocessed line, category, description)` — the
+**internal** coordinate per constraint 12a:
+
+| | |
+|---|---:|
+| added (only in AFTER) | **0** |
+| removed (only in BEFORE) | **0** |
+| unmoved | **54,503** |
+| unit status moves | **0** |
+| function status moves | **0** |
+
+Every count stands exactly as the declarative arbiter left it: `leak` **272**
+(constraint 7's chain untouched, no leaf added or withdrawn), `unknown_alias`
+**4,308**, `unsupported` **49,922**, `summary_conflict` **1**, functions
+**205 Safe / 84 provisional Unsafe / 4,545 Unknown**. AFTER's verdict-bearing
+artifacts are byte-identical to BEFORE's, so this is not a histogram agreeing by
+coincidence — the bytes are the same. No archive was edited (constraint 21).
+
+**The attribution was re-taken on this tree rather than carried.** The
+declarative arbiter's six declarations change which callees are contracted,
+which could have moved this card's population. Re-running the instrumentation on
+`d47e2bb2`'s own tree gives the **same 14 visits, the same 6 distinct sites, the
+same causes and the same 0 → 6 naming move** as the pre-rebase measurement: none
+of `cfl_sds_destroy`, `rd_kafka_mem_free`, `cmt_destroy`, `cJSON_Delete`,
+`mk_print` or `ctr_destroy` sits behind any of these six sites. Measured
+(`logs/rb-premise-before.jsonl`, `logs/rb-premise-after.jsonl`), not assumed.
+
+**Why zero movement is the expected result and not a disappointment.** The
+naming premise is one of seven at `release_site`. It now passes at 6 of 14
+visits, but `nullable_site` holds at **all 14** and `unresolved_effect` at 5,
+so no visit has every premise pass. A leaf can only move when all seven do. The
+card's yield is therefore the measurement in §2 and the counterfactual in §7 —
+and the fact that a precision improvement of this size moved nothing is itself
+evidence about where the remaining blocker lies.
+
+**The rebase was verified, not assumed.** The four audit runs were produced by
+binaries built at `4e8e5bb3` (the declarative arbiter's tip before its merge
+commit). `d47e2bb2` is **source-identical** to `4e8e5bb3` under `crates/`,
+`contract/`, `compiler/` and `proof/`, and the baseline artifacts are unchanged
+between them, so the runs measure main's tree. That containment was checked with
+`git diff --stat` over those paths rather than inferred from the merge subjects.
 
 ## 7. Boundaries and named follow-ons
 
@@ -251,8 +312,139 @@ the rebase; see §6 of the final revision.)*
 
 ## 8. The gate
 
-*(Re-run after the rebase; see §8 of the final revision.)*
+Run at the card tip, rebased onto `d47e2bb2`, with
+`git submodule update --init --recursive` done first. Every exit captured to a
+file, never through a pipe.
+
+| command | result |
+|---|---|
+| `cargo test --workspace --no-fail-fast` | **4,586 passed / 0 failed / 8 ignored**, 232 result summaries, exit 0 |
+| `cargo fmt --all -- --check` | exit 0 |
+| `cargo clippy --all-targets -- -D warnings` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | exit 0 |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | exit 0 |
+| `python3 scripts/check_lean_audits.py` | **133 Lean audits**, exit 0 |
+
+**The host row the brief asked about was green here.**
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+passed in the full `--no-fail-fast` suite, twice — once before the rebase and
+once after — at a machine load average of **~38 on 16 cores**, with several
+sibling cards building concurrently. `W36-CORPUS-CONTRACTS-3` reported it red at
+load ~40 and green 12/12 in isolation; this card did **not** reproduce the red,
+which is reported as the observation it is and not as evidence that the repair
+at `e3d3a2ce` is either sound or unsound. Two green runs at high load are
+consistent with both a fixed row and a load-sensitive one.
+
+The disk check the brief requires: **129 GB free** at the time of the gate, above
+the 60 GB floor, so the full gate ran rather than the crate-scoped subset.
 
 ## 9. For the integrator
 
-*(Completed in the final revision.)*
+Apply in these words.
+
+1. **Ledger, the corpus baseline pointer.** The baseline moves to
+   `docs/reports/joined-provenance-call-frames/artifacts/`, described as "wave
+   36's second merged arbiter, whose BEFORE reproduces
+   `w36-corpus-contracts-3`'s `diagnostics.json` and `chunk-contracts.json`
+   byte for byte and which moved **zero** leaves, zero functions and zero
+   units", with the chain list gaining `joined-provenance-call-frames` over
+   `w36-corpus-contracts-3`.
+
+2. **Ledger, the Cycle 19 corpus row. No count changes.** After the declarative
+   arbiter's clause, add: "`JOINED-PROVENANCE-CALL-FRAMES` then moved **zero**
+   leaves, zero functions and zero units — its AFTER is byte-identical to its
+   BEFORE — so all counts above stand as `W36-CORPUS-CONTRACTS-3` left them:
+   conditional provenance is now preserved across a call the frame shows it
+   cannot write, which takes `release_site`'s naming premise from 0 of 14 to
+   **6 of 14**, while the nullable-site premise still blocks all 14."
+   272 / 4,308 / 49,922 / 1 and 205 Safe / 84 provisional Unsafe / 4,545 Unknown
+   are all unchanged.
+
+3. **`named_followups` — TWO REMOVALS, and they are the point of this item.**
+   The union merge has lost retirements three waves running, so both are named
+   explicitly:
+   * **REMOVE `JOINED-PROVENANCE-FACTS-NAME-NOTHING`** — discharged. Its
+     condition was "attribute those 14 individually to the rule that loses the
+     name"; §2 is that attribution.
+   * **REMOVE `JOINED-PROVENANCE-CALL-FRAMES`** — discharged. Wave 31's
+     follow-on asked for preservation across calls to be proved; §3 lands it and
+     §4 proves it.
+
+4. **`named_followups` — three additions**, each with its discharge condition as
+   written in §7: `JOINED-PROVENANCE-ROUND-BOUND`,
+   `CALL-FRAMES-FRAME-READER-PREMISE`, `CALL-FRAMES-ALLOWLIST-LOCAL-ONLY`.
+
+5. **Standing constraint 10b — a required amendment, in these words.** The
+   sentence "No caller custody is seeded and calls forget prior relations" is
+   **now false** and must not be left standing. Replace it with:
+
+   > No caller custody is seeded. A **call** forgets every relation it could
+   > have written and keeps only those it provably could not (card
+   > `JOINED-PROVENANCE-CALL-FRAMES`, wave 36): it forgets its destination and
+   > every `Out` slot — both already removed by `rebound_names` — and a
+   > `Reallocated` parameter, and it forgets every name outside
+   > `cfg.conditional_names`, the unshadowed automatic locals of this body whose
+   > addresses it never takes. A name on that list designates a slot no callee
+   > can reach under the same no-undefined-behaviour C object model constraint
+   > 10a rests on, so the call cannot change what it denotes; passing the name
+   > as an argument hands over its value, never its slot. An unrecognised name
+   > is always forgotten, and the rule only ever weakens
+   > (`QCore.JoinedProvenanceCallFrames.a_call_never_adds_a_name`), the pre-card
+   > blanket forget being exactly this rule at the empty frame
+   > (`the_empty_frame_is_the_old_blanket_forget`).
+
+   and append `joined-provenance-call-frames` to that constraint's evidence
+   pointer list. Please land this **in these words or record it `declined` with
+   a ground** — a "reconciled" softening would leave the constraint asserting
+   something the code no longer does.
+
+6. **Lean audit count.** `check_lean_audits.py` now passes **133** audits
+   (`AuditJoinedProvenanceCallFrames.lean` added, registered in
+   `proof/QCore.lean`). Update the merged-gate row's Lean number when it is
+   next re-measured at the integration tip.
+
+7. **An ordinal conflict to settle, not silently resolved here.** The brief
+   called this card wave 36's *first* arbiter; `W36-CORPUS-CONTRACTS-3`'s own
+   increment paragraph calls **itself** the *second*; by merge order it is
+   first and this card second. This report and this card's increment paragraph
+   therefore identify both cards by **name and merge order** and claim no
+   ordinal. One of the two increment paragraphs needs correcting, and the choice
+   is the integrator's.
+
+8. **A note on this card's own honesty check, offered rather than applied.**
+   `CALL-FRAMES-ALLOWLIST-LOCAL-ONLY` (§7) is a `STABILITY-REEVAL`-style vacuity
+   finding about code this card is shipping: a guard that cannot fire through
+   the production route today. It is recorded as a residual with a discharge
+   condition rather than removed, and the reasoning is in §7. If the next
+   `STABILITY-REEVAL` firing wants a worked example of step 1 applied by the
+   card that created the arm, this is one.
+
+## 10. Reproduction
+
+Scripts are archived under `scripts/`; they read the pinned tree at
+`/home/cosmo/Documents/GitHub/qcore-c/build/cycle19/c-gateway-wave-pin` and
+write only to the worktree-private `measure/` directory. Each audit run takes
+about four and a half minutes unloaded.
+
+```sh
+git submodule update --init --recursive
+cargo build --release -p qcore-compiler --example cycle19_fluent_bit_libraries_audit
+cp target/release/examples/cycle19_fluent_bit_libraries_audit \
+   measure/joined-provenance-call-frames/bin/rb-after
+python3 -B measure/joined-provenance-call-frames/run_audit.py rb-after \
+   measure/joined-provenance-call-frames/bin/rb-after
+python3 -B measure/joined-provenance-call-frames/byte_identity.py \
+   measure/joined-provenance-call-frames/runs/rb-before \
+   docs/reports/w36-corpus-contracts-3/artifacts
+python3 -B measure/joined-provenance-call-frames/leaves.py rb-before rb-after
+python3 -B measure/joined-provenance-call-frames/mutations.py
+python3 -B measure/joined-provenance-call-frames/archive.py rb-before rb-after
+```
+
+BEFORE is the same build with
+`crates/qcore-c-gateway/src/legacy_joined_provenance.rs` at `d47e2bb2`. The
+premise census additionally needs the temporary instrumentation, which
+`scripts/instrument.py` generates from whichever version of the module it is
+given — it detects the post-card signature and switches three anchors. That
+instrumentation is **not** in the shipped source, and the published BEFORE and
+AFTER artifacts were produced by binaries built without it.

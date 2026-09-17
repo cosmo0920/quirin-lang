@@ -1,14 +1,15 @@
-BEFORE = runs/before   AFTER = runs/after-final
+BEFORE = runs/rb-before   AFTER = runs/rb-after
 
 == diagnostic_counts ==
   leak                 272 ->     272
-  unknown_alias       4214 ->    4214
-  unsupported        50106 ->   50106
+  summary_conflict       1 ->       1
+  unknown_alias       4308 ->    4308
+  unsupported        49922 ->   49922
 
 == leaf three-way split ==
   added (only in AFTER):   0
   removed (only in BEFORE):0
-  unmoved:                 54592
+  unmoved:                 54503
 
 == unit status moves: 0 ==
 == function status moves: 0 ==

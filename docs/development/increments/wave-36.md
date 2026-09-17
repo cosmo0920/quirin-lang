@@ -6,6 +6,57 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`JOINED-PROVENANCE-CALL-FRAMES` (2026-09-18), the arbiter merging after
+`W36-CORPUS-CONTRACTS-3` — the name is found, and the leaf still does not
+move.** Wave 35 measured two independent blockers at all 14 sites reaching
+`release_site`'s premise gate; this card was chartered against one of them, so
+**zero corpus movement was the expected outcome and is what happened**: 0 leaves
+added, 0 removed, 54,503 unmoved, 0 unit and 0 function status moves, with
+AFTER's verdict-bearing artifacts **byte-identical** to BEFORE's, and BEFORE
+reproducing `docs/reports/w36-corpus-contracts-3/artifacts/` byte for byte
+(`diagnostics a7aa3b5f9ab193a0`, `chunk-contracts c4f438e4ed3dab3c`). Every
+count stands as the declarative arbiter left it — leak **272**, `unknown_alias`
+**4,308**, `unsupported` **49,922**, `summary_conflict` **1**, functions
+**205 / 84 / 4,545**. What the card delivers is the **attribution** wave 35's
+`JOINED-PROVENANCE-FACTS-NAME-NOTHING` asked for, taken from the analyzer's own
+instrumentation rather than from source text. The 14 visits are **6 distinct
+sites**, and the cause splits three ways: **`call_forget` at 3 sites (6 of 14
+visits)** — constraint 10b's "calls forget prior relations", and the cause at
+**every** site whose relation had ever named the released pointer; the fixed
+point declining at the **iteration round bound** at 2 sites (6 visits), which
+wave 35 did not separate and which is the new residual
+`JOINED-PROVENANCE-ROUND-BOUND`; and `JOINED-PROVENANCE-CYCLE-SITES` at the
+remaining 1 site (2 visits). Because calls were the cause wherever a name
+existed, the designed rule landed: the `ContractCall` arm of `Facts::step` no
+longer clears the binding map but keeps names in `cfg.conditional_names` —
+pre-existing, `unique_local_names ∩ frame_protected − formals`, so
+address-never-taken automatic locals a callee cannot reach under constraint
+10a's own no-undefined-behaviour C object model — while forgetting the
+destination and `Out` slots (already gone via `rebound_names`) and, newly, a
+`Reallocated` parameter. The naming premise now passes at **6 of 14 visits (3 of
+6 sites), from 0 of 14**. Nine Lean theorems in
+`QCore.JoinedProvenanceCallFrames`, **all axiom-free**, state the rule, its
+monotonicity in the refusing direction, that a written name is outside every
+frame, and — as the conservativity statement in exact form — that the pre-card
+blanket forget **is this rule at the empty frame**, with
+`a_call_edge_is_transfer_sound` discharging precisely the hypothesis
+`JoinedProvenanceCycles.fixed_point_is_sound` already carried, so wave 35's
+theorems are reused unedited. 6 of 6 mutations caught; one mutation first
+reported MISSED and was traced to a **non-unique anchor** mutating an unrelated
+rule, fixed rather than recorded as a gap, and one tidy-up line was **deleted
+rather than shipped unfalsifiable** once its four tests were found to be
+asserting map shape instead of meaning. The card's own vacuity finding is
+registered as `CALL-FRAMES-ALLOWLIST-LOCAL-ONLY`: the frame guard cannot fire
+through `derive` today, because `outgoing` applies the same membership test
+after every node, so it is driven by a direct `step` test and recorded as a
+local enforcement of the premise rather than as verified in place. The
+counterfactual for the standing decision is published: if
+`JOINED-PROVENANCE-RELEASE-NULLABLE` were relaxed and nothing else changed,
+exactly **one** of the 14 visits — `rd_kafka_jwt_b64_decode_payload` site 1,
+name `payload` — would have every premise pass.
+`AOM-DESTROY-JOINED-PROVENANCE` is untouched and unreachable by this rule by
+construction, its binding being address-taken and therefore outside the frame.
+
 `STABILITY-REEVAL` #2 (2026-09-18), the cadence's **second firing**, audited
 waves 34–35 by `CLAUDE.md`'s four steps and closed with **31 registered
 residuals and zero retirements** (`named_followups` 121 → **152**), the

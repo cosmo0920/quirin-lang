@@ -401,13 +401,11 @@ AFTER_EDITS = [
         """                for names in self.bindings.values_mut() {
                     names.retain(|name| preserved.contains(name));
                 }
-                self.bindings.retain(|_, names| !names.is_empty());
                 self.present.extend(produced_sites);
                 if contract""",
         """                for names in self.bindings.values_mut() {
                     names.retain(|name| preserved.contains(name));
                 }
-                self.bindings.retain(|_, names| !names.is_empty());
                 self.present.extend(produced_sites);
                 for site in produced_sites {
                     trace_shape(*site, "contract_unnamed");

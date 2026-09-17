@@ -46,8 +46,8 @@ def main():
             }
     document = {
         "artifacts": dict(sorted(manifest.items())),
-        "base": "60958bf0",
-        "baseline": "docs/reports/c-gateway-constant-do-while/artifacts",
+        "base": "d47e2bb2",
+        "baseline": "docs/reports/w36-corpus-contracts-3/artifacts",
         "card": "JOINED-PROVENANCE-CALL-FRAMES",
         "note": (
             "AFTER is this card's re-pin and is byte-identical to the baseline "
