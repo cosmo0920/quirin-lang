@@ -158,11 +158,18 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**190** entries at the wave-36 close (+19: the **18** residual-shaped names its
-sweep found reaching no tracker — all nine of `W36-CORPUS-CONTRACTS-3`'s §9 and
-all nine of `C-GATEWAY-INDIRECT-CENSUS-2`'s, both cards having left them to the
-close deliberately — plus the close's own `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`;
-**retirements: none**, stated because the union merge loses an unnamed removal).
+**187** entries at the wave-36 close (171 → 189 → 190 → **187**: the **18**
+residual-shaped names its sweep found reaching no tracker — all nine of
+`W36-CORPUS-CONTRACTS-3`'s §9 and all nine of `C-GATEWAY-INDIRECT-CENSUS-2`'s,
+both cards having left them to the close deliberately — plus the close's own
+`DECISION-ALSO-REGISTERED-AS-FOLLOWUP`, less **three retirements, each named and
+each checked to be a registered entry before being counted**:
+`CARD-SCOPE-SELF-MERGE` and `MAIN-GUARD-UNACTIVATED`, both discharged by the
+integrator activating the guard, and `RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED`,
+discharged by the close's own `--check` content arm. Two further "retirements" in
+the wave's own cards were **no-ops** — `JOINED-PROVENANCE-CALL-FRAMES` and
+`WRITE-LEND-TASKS-EXERCISE` were never matrix entries — and are recorded as such
+rather than counted).
 The wave's own chain: 171 after WRITE-LEND-TASKS-EXERCISE (+7 −1), 165 after
 MUTEX-SHARE-CROSS-EMISSION, 161 after JOINED-PROVENANCE-CALL-FRAMES (+3 −2),
 159 after STABILITY-REEVAL #2 (+31), 128 after CARD-SCOPE-GUARD (+7), from

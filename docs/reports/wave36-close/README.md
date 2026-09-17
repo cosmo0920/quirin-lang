@@ -603,6 +603,32 @@ were found by the mechanism this close landed, on its first use, against its own
 work. That is the argument for the mechanism, and it is also the reason not to
 read a green `--check` as a green close.
 
+**And a sixth, of a different kind, which the `--check` arm could not have
+caught.** This close wrote `**190**` as `AGENTS.md`'s stated follow-on count —
+correct when written, stale three commits later once the retirements landed, and
+**three too high**. It was caught by re-reading the number from the matrix file
+rather than from the ledger, which is §13's discipline and not the tool's: the
+arm verifies that a string the close wrote is where the close said it is, and
+`190` was exactly where the close said it was. This is a live instance of
+`INTEGRATOR-HEADLINE-COUNT-HAND-WRITTEN-UNCHECKED`, registered by
+`STABILITY-REEVAL` #2 **this wave**, reproducing inside the close that registered
+it — and the honest reading is that the residual is about a real gap, since the
+one ledger number with a derived counterpart is checked by a test and this one,
+in prose, is not.
+
+### 11.1 What the verification arm does not reach
+
+Worth stating so a future close does not over-trust a green `--check`:
+
+* It checks **the claims a close chose to write**. An item verdicted `applied`
+  with a weak claim passes as easily as one with a strong claim; four of this
+  close's fifty `applied` verdicts carry no textual claim at all, by declaration.
+* It cannot check a **number** against its source — only against a string. The
+  `190` slip above is exactly that gap.
+* It says nothing about whether the landed text is the **right** text. Choosing
+  the quotation, and judging that it is the quotation that matters, stays a
+  person's work, and the tool prints a sentence saying so on every green run.
+
 ## 12. `main` moved during this close
 
 At the close's start `main` was `fa48211a`, the brief's base. It is now
