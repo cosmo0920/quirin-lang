@@ -46,8 +46,42 @@ close can say "no" out loud instead of by silence:
                     It exists so that `applied` never has to stretch, and it
                     demands a note for exactly the same reason.
 
-Every verdict except `applied` requires a note. `applied` does not, but a bare
-`applied` is worth little: say where it landed so the claim is checkable.
+Every verdict except `applied` requires a note. `applied` requires something
+stronger, since card `STABILITY-REEVAL` #2 (wave 36) found a wave-35 verdict
+recorded `applied` whose asserted text **was not at the named location**
+(`RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED`): the `where` field is prose, and
+prose naming a file is not a measurement of that file. An `applied` entry must
+therefore carry **one of two things**, and `--check` reads both:
+
+  * `verify` — a list of `{"file": <path>, "contains": <text>}` or
+    `{"file": <path>, "absent": <text>}` claims. Each is opened and read at
+    check time. Whitespace is normalised on both sides, so a quotation the tree
+    wraps at its own column still matches the words a person would verify by
+    eye; nothing else is normalised, so a changed word is a changed claim.
+    `absent` is the other half — "this stale sentence now occurs zero times" is
+    exactly as checkable as its replacement's presence, and a close that only
+    ever asserts presence cannot catch a duplicated amendment.
+  * `unverifiable` — a ground, in words, for why this `applied` claim has no
+    checkable text: it landed as a regenerated artifact, a run that happened, a
+    deletion with no successor sentence. The escape hatch is deliberate and
+    deliberately visible: `--check` counts these and prints the count, so a
+    close that discharges its evidence by declaring it cannot be checked says so
+    out loud rather than by omission.
+
+Carrying both is refused, and so is `unverifiable` on any verdict that is not
+`applied`, a non-`applied` verdict asserting no landing. A `verify` list is
+honoured on any verdict, so a `superseded` entry can assert the superseding
+text.
+
+The **demand** begins at wave `VERIFY_APPLIED_FROM_WAVE`; a `verify` list is
+read at every wave. See that constant for why the two halves are separated —
+the short version is that the wave-33..35 records are frozen archives
+(constraint 21) and an unconditional demand would have left only two moves,
+both of them the failure this repository names.
+
+This arm does not make the tool decide anything. It decides whether a **string
+the close itself wrote down** is where the close said it is. Choosing the
+string, and judging that it is the right string, stays the person's.
 
 Record shape — `docs/reports/wave<N>-close/reconciliation.json`:
 
@@ -187,6 +221,26 @@ DECISION_VERDICTS = ("deferred", "resolved", "withdrawn")
 #: The verdicts that leave a decision outstanding, to be re-listed at the next
 #: close.
 DECISION_OPEN = ("deferred",)
+
+#: The two claim kinds an `applied` verdict's `verify` list may carry. Exactly
+#: one per claim: a claim asserting both presence and absence of the same text
+#: is a confusion, not a stronger claim.
+VERIFY_KINDS = ("contains", "absent")
+
+#: The first wave whose close must give every `applied` verdict either checkable
+#: text or a written ground.
+#:
+#: **Why a wave number and not an unconditional rule.** A `verify` list is read
+#: wherever it appears, at every wave; what this number gates is the *demand*.
+#: The wave-32 retrospective record and the wave-33..35 closes are **frozen
+#: archives** (constraint 21) and a live test pins one of them green. An
+#: unconditional demand would leave exactly two moves: edit a frozen archive, or
+#: weaken the test around it — and both are the failure this repository names.
+#: So the demand begins at the close that landed the arm, history keeps the
+#: standard it was written to, and no archive is touched. A record may also set
+#: `"verify_applied": true` to opt in earlier; it may **not** set it false to
+#: opt out, which would restore the hole.
+VERIFY_APPLIED_FROM_WAVE = 36
 
 HEADING = re.compile(r"^(#{2,6})\s+(.*?)\s*$")
 NUMBERED = re.compile(r"^(\d+)\.\s+(.*)$")
@@ -650,6 +704,155 @@ def _check_decisions(root: pathlib.Path, record: dict, record_path: pathlib.Path
     return complaints
 
 
+def _normalise(text: str) -> str:
+    """Collapse every run of whitespace to a single space.
+
+    A close quotes an amendment out of a card's report; the tree carries it
+    wrapped at the target file's own column — `AGENTS.md` at 76, a regenerated
+    JSON artifact at none. A literal substring search would therefore report a
+    *landed* amendment missing purely because a newline fell inside the
+    quotation, which is the failure mode that makes a verification arm get
+    switched off. Normalising both sides makes the assertion about the words,
+    which is what a person verifying an amendment reads. Nothing else is
+    normalised: case, punctuation and every word stay significant, so a softened
+    amendment (invariant 1's hazard) is still a changed claim.
+    """
+    return re.sub(r"\s+", " ", text)
+
+
+def _excerpt(text: str, limit: int = 140) -> str:
+    flat = _normalise(text).strip()
+    return repr(flat if len(flat) <= limit else flat[:limit] + " ...")
+
+
+def _verify_claim(root: pathlib.Path, item_id: str, position: int, claim) -> list[str]:
+    """Complaints about one `verify` claim, measured against the tree."""
+    where = f"{item_id} verify[{position}]"
+    if not isinstance(claim, dict):
+        return [f"{where}: claim is not an object"]
+    path = claim.get("file")
+    if not isinstance(path, str) or not path.strip():
+        return [f"{where}: claim names no 'file'"]
+    kinds = [kind for kind in VERIFY_KINDS if kind in claim]
+    if len(kinds) != 1:
+        return [
+            f"{where}: a claim carries exactly one of {', '.join(VERIFY_KINDS)}; "
+            f"this one carries {len(kinds)}"
+        ]
+    kind = kinds[0]
+    needle = claim[kind]
+    if not isinstance(needle, str) or not needle.strip():
+        return [f"{where}: {kind!r} is not a non-empty string"]
+    target = (root / path).resolve()
+    try:
+        target.relative_to(root)
+    except ValueError:
+        return [f"{where}: 'file' {path!r} escapes the repository root"]
+    try:
+        body = target.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return [f"{where}: no file at {path} - the named location does not exist"]
+    except (IsADirectoryError, UnicodeDecodeError, PermissionError) as error:
+        return [f"{where}: {path} is not readable text ({type(error).__name__})"]
+    present = _normalise(needle).strip() in _normalise(body)
+    if kind == "contains" and not present:
+        return [
+            f"{where}: {path} does NOT carry the asserted text {_excerpt(needle)} - "
+            "the verdict says 'applied' and the named location disagrees"
+        ]
+    if kind == "absent" and present:
+        return [
+            f"{where}: {path} STILL carries the text asserted absent {_excerpt(needle)}"
+        ]
+    return []
+
+
+def demands_verified_claims(record: dict) -> bool:
+    """Whether this record must give every `applied` verdict evidence.
+
+    True from `VERIFY_APPLIED_FROM_WAVE` on, and for any record that opts in.
+    Setting the flag false does not opt out: a close may adopt the standard
+    early and may not abandon it late.
+    """
+    if record.get("verify_applied") is True:
+        return True
+    wave = record.get("wave")
+    return isinstance(wave, int) and wave >= VERIFY_APPLIED_FROM_WAVE
+
+
+def _check_claims(root: pathlib.Path, verdicts: dict, demand: bool = True) -> list[str]:
+    """Complaints about every entry's evidence for its own verdict.
+
+    This is the arm `RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED` asks for. It
+    verifies a string the close wrote down against the location the close named,
+    and it decides nothing else. A `verify` list is read whether or not `demand`
+    is set — an assertion a record volunteers is measured at every wave.
+    """
+    complaints: list[str] = []
+    for item_id in sorted(verdicts):
+        entry = verdicts[item_id]
+        if not isinstance(entry, dict):
+            continue  # already reported by `check`
+        verdict = entry.get("verdict")
+        claims = entry.get("verify")
+        ground = str(entry.get("unverifiable", "")).strip()
+        if claims is not None and not isinstance(claims, list):
+            complaints.append(f"{item_id}: 'verify' is not a list of claims")
+            claims = None
+        if verdict == "applied":
+            if claims and ground:
+                complaints.append(
+                    f"{item_id}: carries both 'verify' and 'unverifiable' - an applied claim is "
+                    "either checkable text at a named location or declared unverifiable with a "
+                    "ground, never both"
+                )
+            elif demand and not claims and not ground:
+                complaints.append(
+                    f"{item_id}: verdict 'applied' carries neither 'verify' (checkable text at a "
+                    "named location) nor 'unverifiable' (a ground for why the claim is not "
+                    "textual) - RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED"
+                )
+        elif ground:
+            complaints.append(
+                f"{item_id}: 'unverifiable' on a {verdict!r} verdict, which asserts no landing"
+            )
+        for position, claim in enumerate(claims or [], start=1):
+            complaints.extend(_verify_claim(root, item_id, position, claim))
+    return complaints
+
+
+def claim_summary(verdicts: dict) -> str:
+    """One line saying how much of this record was mechanically verified."""
+    applied = [
+        entry
+        for entry in verdicts.values()
+        if isinstance(entry, dict) and entry.get("verdict") == "applied"
+    ]
+    claims = [
+        claim
+        for entry in verdicts.values()
+        if isinstance(entry, dict) and isinstance(entry.get("verify"), list)
+        for claim in entry["verify"]
+    ]
+    files = {
+        claim["file"]
+        for claim in claims
+        if isinstance(claim, dict) and isinstance(claim.get("file"), str)
+    }
+    absent = sum(1 for claim in claims if isinstance(claim, dict) and "absent" in claim)
+    declared = sum(
+        1
+        for entry in applied
+        if str(entry.get("unverifiable", "")).strip()
+    )
+    return (
+        f"{len(claims)} content claims ({len(claims) - absent} present, {absent} absent) "
+        f"verified at their named locations across {len(files)} files; "
+        f"{len(applied) - declared} of {len(applied)} 'applied' verdicts carry checkable text, "
+        f"{declared} declared unverifiable with a ground."
+    )
+
+
 def check(root: pathlib.Path, record_path: pathlib.Path, cards: list[str] | None = None):
     """Complaints about a wave-close reconciliation record, as strings.
 
@@ -715,6 +918,7 @@ def check(root: pathlib.Path, record_path: pathlib.Path, cards: list[str] | None
             complaints.append(f"{item_id}: verdict {verdict!r} carries no note")
     for item_id in sorted(set(verdicts) - set(swept)):
         complaints.append(f"{item_id}: verdict recorded for an item the sweep does not find")
+    complaints.extend(_check_claims(root, verdicts, demands_verified_claims(record)))
     complaints.extend(_check_decisions(root, record, record_path))
     return complaints
 
@@ -811,6 +1015,21 @@ def main(argv: list[str] | None = None) -> int:
             "every swept item carries a recorded verdict. "
             "This says nothing about whether any item was applied - "
             "read the notes."
+        )
+        try:
+            record = json.loads(pathlib.Path(args.check).read_text(encoding="utf-8"))
+            print(claim_summary(record.get("verdicts", {})))
+            if not demands_verified_claims(record):
+                print(
+                    "This record predates the evidence standard and was NOT held to it: "
+                    f"it may carry bare 'applied' verdicts (wave {VERIFY_APPLIED_FROM_WAVE}+ "
+                    "records, and any record setting 'verify_applied', are held to it)."
+                )
+        except (OSError, json.JSONDecodeError, AttributeError):
+            pass
+        print(
+            "A verified claim says the close's own string is at the close's own named "
+            "location. Whether it is the RIGHT string stays a person's judgment."
         )
         return 0
 

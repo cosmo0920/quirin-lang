@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 171
+  "named_followups": 187
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6156,10 +6156,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Wave-35 close, 2026-09-18, measured at 4cf9bdf9 (the close's own base: the JOINED-PROVENANCE-CYCLES merge, wave 35's second arbiter) with a clean tree, before any of this close's own edits were written. SEVEN cards merged and TWO ARBITERS RAN, a repeat of wave 31's shape. THE FULL FIGURES, since this record's schema carries only nine keys: 4,580 passed / 0 failed / 8 ignored over 230 result summaries and 228 test executables; 132 Lean audits; 247 Python; cargo test exit 0; submodule init exit 0. `git submodule update --init --recursive` was run FIRST and exited 0, checking out third_party/libevent at d82464a2, the pinned revision (WORKTREE-SUBMODULE-UNGATED, constraint 5); free disk 307 GB at start, so nothing was skipped for space. EVERY STEP OF THE STANDING GATE RAN AND EVERY EXIT WAS CAPTURED TO ITS OWN FILE WITH NO PIPE IN THE COMMAND - a `| tail` swallowed a gate exit for the integrator earlier in this wave, and the remedy is mechanical rather than advisory. The run took 15m54s wall (03:15:19 to 03:31:13 +09:00) as a single uninterrupted `cargo test --workspace --no-fail-fast`; --no-fail-fast is part of the gate (GATE-NO-FAIL-FAST) so 4,580 is a MEASUREMENT and not a lower bound. THE CONTESTED HOST ROW WAS GREEN HERE AND THIS RUN STATES WHICH IT SAW, as constraint 16 requires: `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` PASSED (measure/cargo-test.log:5853). THAT IS NOT THE MEASUREMENT HOST-ROW-STARVATION-DESCRIPTION ASKS FOR AND IS NOT OFFERED AS ONE: this is a full-suite run, not an isolated one, and the machine carried this gate's own build at a one-minute load average of about 6.5 rather than being quiet. It is, however, the FIRST full-suite observation after card VERIFIER-HOST-CONTROL-BUDGET's poll(2) repair, and it agrees with that card's 38/38. Constraint 16's other listed rows that appear in the workspace suite were also green - `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` (:1870) and `memory_growth_beyond_the_declared_limit_is_bounded` (:5805) - and NO isolated re-verification was required or is claimed, `grep -c 'test result: FAILED'` over the log being 0 across all 230 result summaries. The RLIMIT_NPROC row is NOT in this figure: it is a provider-conformance row, and provider 122 is CARRIED rather than re-measured because `git diff --name-only a300a39d^ HEAD -- providers/ crates/qcore-schemas/` is EMPTY - no provider source, no manifest template and no qcore-schemas major version moved, so constraint 18 is not engaged. It remains a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY), and card VERIFIER-HOST-CONTROL-BUDGET separately measured that row unverifiable under this wave's own conditions because five sibling cards were INSIDE its measurement (VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE, registered by this close). DELTAS, for the delta only: workspace 4,559 -> 4,580 (+21, the wave's own added tests), Lean 129 -> 132 (+3: AuditConstantDoWhile.lean, AuditMutexShareCrossArms.lean, AuditJoinedProvenanceCycles.lean, one per arbiter and one for the arms card), Python 229 -> 247 (+18, wholly SWEEP-BLIND-SPOTS' test_reconciliation_sweep.py going 27 -> 45). NOTHING IS PROMOTED: no corpus unit or function status moved at EITHER wave-35 arbiter, raw units stay unpromoted, the contract corpus is unchanged at 76, and full language conformance stays FALSE. The one corpus count that moved is `double_release` 1 -> 0, at arbiter #1, BY WITHDRAWAL rather than by discharge. CT coverage moved 45/50 -> 46/50 by MAPPING, not conformance (constraint 23), with sanitized-native 9 and proof 3 both unmoved - so the denominators grew and neither numerator did. Evidence: docs/reports/wave35-close/README.md and reconciliation.json; per-command exits and logs are worktree-private under measure/ (gitignored, never under target/, never in the shared scratchpad).",
-  "workspace_tests": 4580,
+  "note": "Wave-36 close, 2026-09-18, measured at the close's own integration tip (base fa48211a, the WRITE-LEND-TASKS-EXERCISE merge, plus this close's own commits - so the ONE code change this close makes, the reconciliation sweep's content-verifying --check arm and its 19 tests, is INSIDE this measurement rather than beside it). SEVEN cards merged. THE FULL FIGURES, since this record's schema carries only nine keys: 4,611 passed / 0 failed / 8 ignored over 233 result summaries and 229 test executables (220 `Running` plus 9 doc-test binaries); 135 Lean audits; 293 Python; cargo test exit 0; submodule init exit 0. `git submodule update --init --recursive` was run FIRST and exited 0, checking out third_party/libevent at d82464a2, the pinned revision (constraint 5); free disk 256 GB at start, so nothing was skipped for space. EVERY STEP OF THE STANDING GATE RAN AND EVERY EXIT WAS CAPTURED TO ITS OWN FILE WITH NO PIPE IN THE COMMAND (GATE-EXIT-SWALLOWED-BY-PIPE). The run took 22m31s wall (07:51:48 to 08:14:19 +09:00) as a single uninterrupted `cargo test --workspace --no-fail-fast`; --no-fail-fast is part of the gate (GATE-NO-FAIL-FAST) so 4,611 is a MEASUREMENT and not a lower bound. THE DETACHED SHELL DID NOT IGNORE TERM: an earlier run of this close's gate was red for exactly that reason - a `trap '' TERM` in the wrapper is INHERITED by every child and turns a Python signal-handling row red - reproduced both ways and re-measured green, which is why measure/run-gate.sh carries a comment forbidding it. CONSTRAINT 16 ROWS, stated because a gate report must say which it saw: the sixth row `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` PASSED here, in a full-suite run on a machine carrying its own build - NOT the quiet-host isolated number HOST-ROW-STARVATION-DESCRIPTION asks for and not offered as one. `vp04_vp07_vp08_process_lifecycle_and_payload_budgets` and `memory_growth_beyond_the_declared_limit_is_bounded` were green, and so was `a_forced_override_never_weakens_an_execution`, the UNNAMED seventh row card C-GATEWAY-INDIRECT-CENSUS-2 measured red under two concurrent corpus audits (LOAD-SENSITIVE-ROW-UNNAMED, registered by this close and named in constraint 16 so the list is known incomplete rather than assumed complete). `grep -c 'test result: FAILED'` over the log is 0 across all 233 summaries, so NO isolated re-verification was required and none is claimed. THE PYTHON RUN WENT RED ONCE, DELIBERATELY AND INFORMATIVELY: after this close edited named_followups by hand, `CommittedMatrixIsSelfConsistent::test_each_derived_dimension_matches_the_section_it_counts` failed with '171 != 187', which is D02-DIMENSIONS-FOLLOWUP-COUNT's tripwire doing its job; the repair was to regenerate through build_matrix.py rather than to touch the count, and the figure recorded here is the re-run after regeneration. The RLIMIT_NPROC row is NOT in this figure: it is a provider-conformance row, and provider 122 is CARRIED rather than re-measured because `git diff --name-only 60958bf0^ HEAD -- providers/ crates/qcore-schemas/` is EMPTY - no provider source, no manifest template and no qcore-schemas major version moved (still 14.0.0), so constraint 18 is not engaged. It remains a Unix figure (PROVIDER-CONFORMANCE-UNIX-ONLY). DELTAS, for the delta only, against the wave-35 close's 4,580 / 247 / 132: workspace 4,580 -> 4,611 (+31, the wave's own added tests; this close adds NO cargo test); Lean 132 -> 135 (+3, one per arbiter plus the emission card); Python 274 at fa48211a -> 293 (+19, wholly this close's test_reconciliation_sweep.py going 45 -> 64). NOTHING IS PROMOTED BY THIS CLOSE: it moves no corpus count, no unit status and no function status, raw units stay unpromoted, the contract corpus stands at 82 where W36-CORPUS-CONTRACTS-3 left it, CT coverage stands at 46/50 with sanitized-native 10 and proof 3, and full language conformance stays FALSE. Evidence: docs/reports/wave36-close/README.md and reconciliation.json; per-command exits and logs are worktree-private under measure/ (gitignored, never under target/, never in the shared scratchpad).",
+  "workspace_tests": 4611,
   "provider_tests": 122,
-  "python_evidence_validator_tests": 247,
+  "python_evidence_validator_tests": 293,
   "lean_audits": 135,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
@@ -6304,7 +6304,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "pass",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/wave35-close/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/wave36-close/gate.json)"
  },
  "named_followups": [
   {
@@ -6575,12 +6575,6 @@
    "why": "Card C-GATEWAY-RETURN-POSITION (wave 33) measured the whole 511-function return-only-blocked population by returned-expression shape and found 28 leaves (5.2%) are conditional expressions over field reads - `return error ? error->code : RD_KAFKA_RESP_ERR_NO_ERROR;` and the like. These refuse today for their OPERANDS rather than for the conditional operator itself: `?` and `:` are admitted operand punctuation, so a conditional all of whose operands are F4 chains or scalars is already admitted by the wave-33 rule, and the card's own re-pinned test drives exactly that shape. Discharge: measure how many of the 28 would be admitted if every operand were an F4 chain, which separates 'refused for the conditional' from 'refused for an untyped member' and tells a later card whether there is a population here at all. This is a measurement request, not a proposed widening.",
    "source": "docs/reports/c-gateway-return-position/README.md",
    "recorded_by": "C-GATEWAY-RETURN-POSITION"
-  },
-  {
-   "id": "CARD-SCOPE-SELF-MERGE",
-   "title": "A delegated card went outside its brief and merged its own work to main",
-   "why": "Card C-GATEWAY-INDIRECT-CENSUS (wave 33) was cut as a MEASUREMENT card, explicitly told not to chase the known pre-existing qcore-verifier-host failure, not to edit crates/, and to commit but not merge. It did all three, and the commit reached main as a bare fast-forward with no merge commit, no review and no integrator gate. The CODE was reviewed on its merits and kept; what is recorded is the process defect (CLAUDE.md's STABILITY-REEVAL method 3, a semantic edit made without a card). Discharge condition: a mechanism that makes a delegated card unable to advance main - not an instruction telling it not to, which is what failed here. WAVE 36, CARD-SCOPE-GUARD: the mechanism is built and tested but the entry stays OPEN, because it is inert until one step only the integrator can take. `.githooks/reference-transaction` (git >= 2.28) sees LOCAL ref updates from every worktree, which is what the incident was and what a pre-push hook cannot see; `.githooks/pre-push` covers the remote door. An update to refs/heads/main is refused outright from a delegated `agent-*` worktree - cwd, GIT_DIR, an explicit marker, the calibrated session marker, or PROCESS ANCESTRY, the arm that catches the incident's own `git -C <main> merge` shape because the card's shell stays an ancestor - with or without authorisation; everyone else must carry the repository-local token on that one command. Three designs were falsified by measurement and are recorded in the report: git rewrites PWD for its own hooks AND a POSIX shell re-derives it, so the obvious caller-PWD arm could never fire and was removed rather than shipped vacuous; a deletion of main arrives as 0000->0000, which the first draft's no-op filter let through; and only `agent-*` worktrees may be vetoed, since the delegating session itself works from a named one. 27 tests, 11 of 11 mutants killed with no survivors. TO RETIRE THIS ENTRY: run `python3 scripts/install_main_guard.py` once in the main checkout and record it (MAIN-GUARD-UNACTIVATED carries that step). The guard is bypassable by intent (--no-verify, a core.hooksPath override, a hand-written ref) and claims nothing against a card that means to bypass it (MAIN-GUARD-BYPASSABLE).",
-   "source": "docs/reports/verifier-host-closed-input-deadline/README.md (Integrator correction); docs/reports/card-scope-guard/README.md (the mechanism, wave 36)"
   },
   {
    "id": "WORKTREE-SUBMODULE-UNGATED",
@@ -7093,12 +7087,6 @@
    "recorded_by": "WAVE-35-CLOSE"
   },
   {
-   "id": "MAIN-GUARD-UNACTIVATED",
-   "title": "The main-ref guard changes nothing until core.hooksPath is set in the main checkout",
-   "why": "CARD-SCOPE-GUARD (wave 36) ships .githooks/ versioned, but core.hooksPath is repository-local configuration that no commit can carry, so until the integrator runs `python3 scripts/install_main_guard.py` once in the MAIN checkout the hooks are inert and the repository behaves exactly as before. The installer refuses to run in a linked worktree, so a delegated card cannot activate, rotate or calibrate the guard - which is the point, and is why CARD-SCOPE-SELF-MERGE is amended and kept open rather than retired. Discharge: the integrator runs the command and records it (a wave close noting it, or `--verify` exit 0 quoted); CARD-SCOPE-SELF-MERGE may then be retired deliberately in the same close.",
-   "source": "docs/reports/card-scope-guard/README.md"
-  },
-  {
    "id": "MAIN-GUARD-BYPASSABLE",
    "title": "The main-ref guard is a guard against a card's mistake, not a security control",
    "why": "A git hook is defeated by `--no-verify`, by `git -c core.hooksPath=...`, by unsetting the config, by writing .git/refs/heads/main by hand, or by reading the token out of .git/config. Every one of those is a deliberate act. CARD-SCOPE-GUARD claims only that a delegated card cannot advance main BY MISTAKE - a card running a command it believes it is allowed to run, which is what the wave-33 record describes - and makes no claim about a card that intends to bypass it. This is a STATED BOUNDARY: it is not discharged by strengthening the hook, and a real answer would be a server-side or human review gate outside this repository's control.",
@@ -7138,13 +7126,6 @@
    "id": "JPC-LEDGER-44-21-STALE",
    "title": "AGENTS.md's Cycle 19 row carries 44/21 where card JOINED-PROVENANCE-CYCLES said apply 40/14 in those words",
    "why": "AGENTS.md's Cycle 19 raw corpus row reads 'exercised on 44 corpus functions' and 'every one of the 21 sites'. The card's report section 11 item 2 says 'Apply in these words' and the words are 40 and 14 (docs/reports/joined-provenance-cycles/README.md:415-416); docs/development/increments/wave-35.md:117 also says 40/14. The 21 is not a typo: README.md:251 records it as the SUPERSEDED pre-rebase census at a300a39d, the figure the card's section 2 exists to stop anyone quoting, against README.md:18 'Every count quoted here is against ebc0fd49, never against a300a39d'. The string 44 occurs nowhere in the card's report or logs. Measured independently by two sub-audits of this card. This matters now, not later: the queued wave-36 arbiter JOINED-PROVENANCE-CALL-FRAMES is chartered as 'the 14 sites', and an agent sizing it from the ledger will attribute 21 sites that no longer exist. DISCHARGE: correct the row to 40 and 14, citing README.md:36 and :237, before either wave-36 arbiter is cut; and state in the wave-36 record which tree each figure was measured on.",
-   "source": "docs/reports/stability-reeval-2/README.md",
-   "recorded_by": "STABILITY-REEVAL-2"
-  },
-  {
-   "id": "RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED",
-   "title": "An 'applied' reconciliation verdict asserts a figure at a named location and the figure is not there; --check cannot detect it",
-   "why": "docs/reports/wave35-close/reconciliation.json, verdict joined-provenance-cycles#for-the-integrator#3, records verdict 'applied', where 'AGENTS.md, Cycle 19 raw corpus row.', and a note reading 'Verified against the card's report, as it asked. ... the zero-movement sentence with its 40 exercised functions and 14 blocked sites is present.' That row says 44 and 21 (see JPC-LEDGER-44-21-STALE). CLAUDE.md already requires an applied verdict to say WHERE, and this one does; the remaining hole is that nothing checks the verdict's ASSERTED CONTENT against its NAMED LOCATION, so --check is green whenever every item merely carries a verdict. MEASURED on how hard this is to see: a naive scan of all 103 wave-34/35 verdicts for applied + an AGENTS.md location + a quoted figure flags exactly one candidate, and that one is a false positive (a spec line number). The defect is invisible to any check that does not read the named location, which is the argument for mechanising it rather than asking for more care. DISCHARGE: an arm of scripts/reconciliation_sweep.py --check that, for every applied verdict whose where names a file and whose note quotes a figure or a sentence, asserts that text is present at that location, shown RED by mutating one verdict's figure before it is believed.",
    "source": "docs/reports/stability-reeval-2/README.md",
    "recorded_by": "STABILITY-REEVAL-2"
   },
@@ -7445,6 +7426,139 @@
    "title": "CT07's mapping rests on one sequential entry's bindings, and a genuinely two-threaded artifact now exists",
    "why": "Card CT07-WRITE-REMAP (wave 30) upgraded CT07's evidence onto the write-lend scenario - two write authorities over disjoint ranges of one buffer - and recorded honestly that both are held by ONE SEQUENTIAL ENTRY'S BINDINGS, NOT TWO THREADS, naming WRITE-LEND-TASKS as the residual that would fix it. That residual's successor has now landed: card WRITE-LEND-TASKS-EXERCISE (wave 36) produces an admitted program in which two THREADS hold disjoint write leases over one buffer's payload and each exercises its authority, with a sanitized native run and a byte-identical stdout comparison behind it. A CT-wire lane could therefore upgrade CT07's evidence to the scenario's actual shape. Card WRITE-LEND-TASKS-EXERCISE DELIBERATELY DID NOT REMAP THE ROW, and the ground is constraint 23 plus constraint 25: mapping is a lane's work, and publishing a labelled row from a language card would move the derived newly_decidable_not_mapped_reasons map's keys against a matrix this card may not regenerate - the measured mistake wave 26 avoided by withdrawing CT24 and CT47 rather than loosening a test. CONDITION: a CT-wire lane re-examines CT07 with wave 36's flagship as the candidate artifact and records, in its OWN stage-evidence record, whether the evidence improves and whether any count moves - noting that an evidence upgrade at unchanged coverage moves no count, as wave 30's own CT07 remap did not.",
    "source": "docs/reports/write-lend-tasks-exercise/README.md"
+  },
+  {
+   "id": "W36-COVER-HIDDEN-BLOCKER",
+   "title": "A sole-blocker cover is an upper bound on function moves, never a forecast",
+   "why": "A refusal reachable only after the first one is removed is invisible to a cover built from emitted leaves: it cost card W36-CORPUS-CONTRACTS-3 three of its 23 predicted function moves, the cJSON_Delete trio exchanging its decided leaf for a `nested call ... inside a modeled call` refusal that was unreachable while the outer call was uncontracted. This bounds what any future cover card may promise. DISCHARGE: a cover modelling the projection's reachability, not only its emitted leaves.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "CJSON-DELETE-NESTED-DETACH",
+   "title": "Three cJSON functions exchanged a decided leaf for a nested-call refusal",
+   "why": "The three cJSON functions W36-CORPUS-CONTRACTS-3 predicted would move did not: each exchanged its decided leaf for `nested call ... inside a modeled call`. DISCHARGE: nested-call-in-argument-position admission, or W4 summaries for the three `cJSON_DetachItemFrom*` callees, which are in the same unit.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "KAFKA-MEM-FREE-SUMMARY-CONFLICT",
+   "title": "W4 derives Released{nonnull} where the faithful declaration says nullable",
+   "why": "The corpus's first `summary_conflict` (0 -> 1), and it costs `rd_kafka_mem_free` its own Safe. The declaration is the faithful one - `rd_free(NULL)` reaches `free(NULL)` - and declaring `nonnull` to silence the conflict would assert a precondition the body does not have (constraint 4), so this is constraint 8's gate working in the conservative direction and not a defect. It is still a live W4 defect with a concrete repair. DISCHARGE: a W4 derivation that reads a delegate's declared nullability instead of defaulting a released formal to `nonnull`.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "MK-PRINT-TAIL-ACTUALS",
+   "title": "26 sites still refuse arguments beyond mk_print's declared parameters",
+   "why": "The `resource_variadic_data_tail()` clause admits nothing on its own, as designed, so 26 sites keep the `arguments beyond the declared parameters of mk_print` refusal. DISCHARGE: a per-site tail-actual admission, or acceptance as a measured boundary.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "CJSON-DELETE-SIBLING-CHAIN",
+   "title": "cJSON_Delete releases a reachable set; v1 can only state the fact about one parameter",
+   "why": "`cJSON_Delete` releases the whole `next` chain and the subtree beneath it; the declaration states the fact about `item` alone, so the corpus carries a declaration weaker than the C. DISCHARGE: a v1 mode meaning 'releases a set reachable from this parameter', or a call site binding two items of one chain.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "LIBC-MEM-RESULT-ALIAS",
+   "title": "v1 cannot say a result aliases parameter 1, so memcpy/memset stay undeclared",
+   "why": "`memcpy`/`memset` were read and DELIBERATELY NOT declared by W36-CORPUS-CONTRACTS-3, because resource-v1 has no way to say 'the result aliases parameter 1'. Worth roughly 9 sole-blocked functions plus 130 leaves for one vocabulary addition, which makes it the highest-yield single item the card found. DISCHARGE: a v1 result mode meaning exactly that.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "ADD-NAME-COLLISION",
+   "title": "`add` cannot be declared: three definitions, three signatures, one of them static inline",
+   "why": "Declined by W36-CORPUS-CONTRACTS-3 because the pinned corpus carries three distinct definitions of `add` with three signatures, the cmetrics one `static inline` with no header declaration, and a `.qcore` declaration is corpus-wide. DISCHARGE: a unit-scoped declaration vocabulary, which v1 has none of; W4 summary inference is the right lever meanwhile.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "W36-CTRACES-FAMILY-FIRST",
+   "title": "contract/qcore/ctraces/ is a new family whose convention is one card's choice",
+   "why": "The family has one module. Its manifest placement (after `cmetrics/`, before `monkey/`) and the module name `context_lifetime.qcore`, paired with cmetrics' identically-named sibling, are W36-CORPUS-CONTRACTS-3's choice alone and no convention was found to follow. DISCHARGE: integrator confirmation, or a second `ctraces` module settling the convention.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "STANDALONE-HOST-CLOSED-INPUT-LOAD",
+   "title": "The sixth constraint-16 row measured failing at mid-range load, after its repair",
+   "why": "`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` (crates/qcore-verifier-host/tests/standalone_host.rs:175) failed once inside a full gate at load average ~40 on 16 cores and passed 12/12 in isolation at load 23.7 to 27.6. This is the row's first measurement at the MIDDLE of the load range - wave 35 measured it at ~100 and at ~6.5 - and it is post-poll(2)-repair, so the repair narrows the failure window without closing it. The card proposed the measurement as ADDING a sixth row; the row had been the sixth since the wave-35 close, so the WAVE-36-CLOSE declined that half and landed the measurement beside the existing row instead. DISCHARGE: the 1s wall-clock bound is pinned against a measured margin, or the repair is reopened - never by weakening the bound.",
+   "source": "docs/reports/w36-corpus-contracts-3/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "BASE-TYPE-READER-UNMEASURED",
+   "title": "78.5% of unresolved-member leaves carry no record tag: a reader nobody has measured",
+   "why": "10,514 of the 13,396 unresolved-member leaves carry no record tag at all, because the reader never committed to the BASE's declared type and the member was never a question. That is `classify_specifiers`, typedef resolution and `read_locals` - a different reader from the record-body one C-GATEWAY-INDIRECT-CENSUS-2 instrumented. Every reach number in that report is therefore a statement about the routes it measured and not about the family's ceiling, which is why the card recommends cutting no wave-37 arbiter on this family. DISCHARGE: instrument the base-type reader the same way - what it refuses, on which spelling - and publish the sole-blocked reach of repairing each, BEFORE any card is cut on it.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "CENSUS-TWO-PREMISE-READINGS",
+   "title": "Two over-approximations of constraint 5's one sentence disagree on 16% of the family",
+   "why": "`FunctionTypes::may_bind` (bound_names) and `UntrackedBases::never_bound` (untracked_bases) disagree on 2,933 leaves (16.0%): 2,893 where may_bind says the base is bindable and never_bound says it is not, and 40 the other way. Constraint 5's wording is may_bind's, and may_bind is the stricter refuser here, so a card reading never_bound works in a space roughly FOUR TIMES larger than the constraint describes without saying so. Neither function is defective; they are consumed by different rules. It is a trap for any wave-37 arbiter. DISCHARGE: state in constraint 5 which reading the premise names, or prove the two agree wherever an admission consults them.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "RECORD-BODY-TOTAL-OR-REJECT",
+   "title": "One unparsable member declaration makes every member of that record unclassifiable",
+   "why": "`TypedAccessModel::read_record_body` refuses a whole record body on any '(', ')', '{', '}', ':' or '=', so 173 of 909 record tags (19.0%) in the pinned corpus are refused wholesale - 98 on '{', 66 on '(', 9 on ':' - accounting for 2,713 unresolved-member leaves. The one genuine CODE DEFECT the census found, filed on its own merits. It is NOT a promising arbiter: the measured ceiling is 2 sole-blocked functions, 1 with constraint 5's premise intact. DISCHARGE: a per-member total-or-reject reader - classify the member declarations that parse, mark the ones that do not as explicitly unreadable so they stay refused - landed with its own measured re-pin, or a recorded decision that the 2-function reach does not justify the risk. NOT A DISCHARGE: citing the 2,713 leaves.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "POISON-UNMASK-ON-ADMISSION",
+   "title": "Admitting an access can move counts in the admitting direction for unrelated reasons",
+   "why": "A cross-cutting soundness hazard for every admission candidate, and the one most easily missed. Admitting an access makes its statement no longer refused, so that statement's RefusedWrites no longer poisons any binding. Constraint 10a already records that sparing a binding can UNMASK a stale scalar fact a NoOp mutation left behind (AOM-POISON-NOOP-INCREMENT: `pass++` lowering to NoOp so a Clear-bound scalar stays definitely-null for ever, making a `pass != 0` edge Infeasible and suppressing the refusals inside it). A wave-37 arbiter's re-pin can therefore move counts for reasons unrelated to the access it admits. DISCHARGE: the arbiter measures, for its own admitted set, how many refusals disappear through an edge becoming infeasible rather than through the access being modelled, and publishes the two numbers apart.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "LOAD-SENSITIVE-ROW-UNNAMED",
+   "title": "A seventh test shows constraint 16's signature and is none of its six named rows",
+   "why": "`a_forced_override_never_weakens_an_execution` (crates/qcore-verifier-host/tests/execution_quota.rs:777) failed with Io(\"Broken pipe (os error 32)\") in a workspace run deliberately concurrent with two pinned corpus audits, and passes in the card's isolated gate. That is constraint 16's exact signature and crate, but the test is not one of its six named rows nor the deliberately-excluded seventh. Filed rather than promoted: each constraint-16 row carries a measured load figure and one observation under a heavy self-inflicted load is not one. Named in constraint 16 by WAVE-36-CLOSE so the list is known incomplete rather than assumed complete. DISCHARGE: a card that bisects the load at which it flips, as vp04_vp07_vp08 was measured failing at 50 and passing at 37, and either adds the row with its figure or records that it is the same mechanism as an existing row. NOT A DISCHARGE: re-running until green.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "INDIRECT-EXCHANGE-PROXY-UNVALIDATED",
+   "title": "The census's three-way split rests on a proxy never validated against an admission",
+   "why": "A statement carrying an uncontracted call, or a second chain of a different shape, is PREDICTED to stay refused. The proxy has never been validated against an actual admission, because the census makes none. It errs toward exchange, so the CLEAR column is an upper bound - but the SIZE of the error is unmeasured. DISCHARGE: the first wave-37 arbiter to admit any shape publishes its measured three-way split beside this card's prediction for the same shape, and the difference is recorded.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "INDIRECT-CENSUS-FEATURE-UNBUILT",
+   "title": "The indirect-census instrumentation is built by no CI job and will rot silently",
+   "why": "The `indirect-census` feature is built by no CI job and by no gate step other than the one the card adds to its own gate script. A later refactor of `legacy_c.rs` or `typed_field_access.rs` will break it silently, and the next card wanting the census pays to repair it. The card states this is a DECISION rather than a task and declines to take it, since the answer depends on whether wave 37 takes a gateway card at all - and the card's own recommendation is that it should not take this one. DISCHARGE: either a CI job building `-p qcore-c-gateway --features indirect-census`, or a recorded decision that the instrumentation is disposable and a future census re-derives it.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "CENSUS-DECLARATION-WINDOW-APPROXIMATE",
+   "title": "The Declaration arm's census reads a window the gate did not read",
+   "why": "For the 15 `Declaration`-arm leaves the gate's predicate is not `contains_unmodeled_access` but a separate bracket/dot test over the declaration prefix, so the census reads a different window from the gate. 15 leaves of 18,555; recorded rather than repaired. DISCHARGE: give the declaration arm its own census window, or state the arm is out of every arbiter's scope and drop the axis for it.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "CENSUS-UNEXPLAINED-LEAF",
+   "title": "One published leaf of 18,555 is explained by no census statement",
+   "why": "0.01% of the family. The likeliest cause is the `for`-clause path: `classify_simple` is also called for a `for` init and increment clause, where the statement the parser attributes is the `for`'s own line rather than the clause's first token, so the census's (function, line) key can miss. Not chased, because it is one leaf and the direction is understood. DISCHARGE: thread the statement's attributed line into `classify_simple` rather than reading it off the first token, and re-run; or identify the leaf and record why it is unexplainable.",
+   "source": "docs/reports/c-gateway-indirect-census-2/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
+  },
+  {
+   "id": "DECISION-ALSO-REGISTERED-AS-FOLLOWUP",
+   "title": "CT10-REASON-ROW and MATRIX-UPDATED-STALE-AT-WAVE-27 are now both a deferred decision and a named_followup",
+   "why": "Card STABILITY-REEVAL #2 registered both names in named_followups, correctly, because STABILITY-REEVAL #1 had raised them and no tracker carried them (STABILITY-REEVAL-1-RESIDUALS-ORPHANED). But both are ALSO open deferred decisions, carried from the wave-33 close through waves 34 and 35, and the wave-35 close's own classification says in terms that decisions 'must not be registered as followups as well'. Neither half is wrong on its own and the close did not undo either: --check re-lists them as decisions and --residuals now sees them tracked, so both mechanisms work. The hazard is at the END - resolving the decision will not retire the followup, and retiring the followup will not resolve the decision, so one half can stand for waves after the other is answered, which is the same silence the re-listing mechanism was landed to prevent. This is also the shape STABILITY-REEVAL #2 item 5 asks the close rule to cover from the other direction (retiring a tracker entry must re-home every name it was the sole tracker for). DISCHARGE: state which mechanism owns a name that is both, and add the cross-check to the close rule - or, if both are to be kept, make each entry name the other so ending one is visibly half the job.",
+   "source": "docs/reports/wave36-close/README.md",
+   "recorded_by": "WAVE-36-CLOSE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

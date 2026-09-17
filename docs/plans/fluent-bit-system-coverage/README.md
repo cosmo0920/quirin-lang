@@ -241,14 +241,36 @@ passed. The required standing gate ran with logs under the worktree-private
 1 failed, 8 ignored; 227 result summaries), fmt/clippy and both reevaluation
 probes exited 0, and the Lean audit command exited 0 with 128 audits passed.
 
-**FB-PLAN-GATE-HOST-TIMEOUT** is an unresolved validation finding, outside the
-production-coverage cards' scope. The unchanged
-`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
-test failed at `crates/qcore-verifier-host/tests/standalone_host.rs:212`: the
-large-response admitting control returned `Err(Timeout)` rather than its
-expected response under the 1,000 ms deadline. One isolated rerun also exited
-101 at the same assertion. This is not classified as a flake or as the cause
-repaired by the earlier host card. Discharge: a separately scoped host
+**FB-PLAN-GATE-HOST-TIMEOUT — RESOLVED AT THE WAVE-36 CLOSE; the paragraph
+below is kept as the observation it was, and must not be read as a live
+accusation** (`FB-PLAN-STALE-RED-ASSERTION`, raised by `STABILITY-REEVAL` #2,
+which measured the test **green 4/4** while this text still asserted it red —
+stale in the *accusing* direction, which is the direction that matters). What
+was unknown here is now known, and neither half of the original finding
+survives as written. The **cause** was a transport defect and not a host
+condition: an 8 KiB pipe capacity against a 1 ms backoff quantum put a ceiling
+on the 8 MiB-each-way arm, found and repaired with `poll(2)` by card
+`VERIFIER-HOST-CONTROL-BUDGET` (wave 35), which changed
+`crates/qcore-verifier-host/src/lib.rs` **only** and left the test file
+untouched; the admitting control passes 38/38 after it. The **row** is
+separately real and is now constraint 16's sixth load-sensitive row, sensitive
+at the *top* of the range — measured failing 3 of 6 at load ≈100 (wave 35),
+failing once in-gate at load ≈40 and passing 12/12 in isolation at load
+23.7–27.6 (wave 36), and **passing** in the wave-36 close's own full-suite gate.
+So it is an environment boundary with a measured mechanism, not an unresolved
+validation finding, and the repair narrows the failure window without closing
+it (`STANDALONE-HOST-CLOSED-INPUT-LOAD`). Verify it in isolation; never weaken
+the 1-second bound. The original text, unedited:
+
+> The unchanged
+> `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+> test failed at `crates/qcore-verifier-host/tests/standalone_host.rs:212`: the
+> large-response admitting control returned `Err(Timeout)` rather than its
+> expected response under the 1,000 ms deadline. One isolated rerun also exited
+> 101 at the same assertion. This is not classified as a flake or as the cause
+> repaired by the earlier host card.
+
+Original discharge condition, now met: a separately scoped host
 investigation that establishes the cause on this environment and validates a
 repair or records an evidenced environment boundary without weakening the
 assertion/deadline. No host code changed here and no full-green gate is claimed.

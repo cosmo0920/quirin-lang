@@ -131,6 +131,28 @@ the operational guidance that is in neither of those.
   is worth no more than silence. An amendment lands **in the words the card
   proposed** or is recorded `declined` with its ground — never silently
   softened while being "reconciled" (invariant 1).
+  Since wave 36 the "saying where" is **mechanical**: an `applied` verdict
+  carries a `verify` list of `{file, contains}` / `{file, absent}` claims that
+  `--check` opens and reads, or an `unverifiable` ground saying why the claim
+  has no quotable text. Whitespace is normalised on both sides so a wrapped
+  quotation still matches; nothing else is, so a **softened** amendment is
+  still a changed claim. The arm exists because a wave-35 verdict recorded
+  `applied` had its asserted text absent from the file it named
+  (`RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED`) — prose naming a location is
+  not a measurement of it. It still decides nothing: it decides whether the
+  close's own string is where the close said it is, never whether it is the
+  right string.
+- **A retirement is named, checked, and swept after.** Before counting a name
+  as retired, confirm it is **actually a registered entry** — wave 36 took
+  three retirements and two of that wave's cards each recorded a "retirement"
+  of a name that had never been in the matrix, which is a no-op that later
+  reads as a lost removal unless it is recorded as one. And **retiring an entry
+  requires re-homing every name it was the sole tracker for**, checked by
+  `--residuals` run *after* the removal and compared with the run before it, not
+  by intention (`STABILITY-REEVAL` #2). Expect the retired names themselves to
+  appear in that later run: a discharged name stays written in the history that
+  discharged it, and joins the "discharged, with the discharging card named"
+  class rather than becoming open work.
 
 ## Worktree and measurement hygiene
 
@@ -143,6 +165,25 @@ the operational guidance that is in neither of those.
   overwrite was caught and re-measured during wave 15; a wave-17 card lost a
   whole providers run to its own `cargo clean` because the log lived under
   `target/`.
+  **Scope a gate run's outputs to the run** (`measure/<run-name>/…`), never to
+  fixed paths. At the wave-36 close a *confirmation* re-run truncated the
+  `cargo-test.log` of the run it was confirming, then died at 79 of 233
+  summaries with exit 101 when the filesystem hit 100% — so a published figure
+  briefly had no log behind it. The re-run is the dangerous case precisely
+  because it is meant to change nothing. A gate that runs out of disk measures
+  the disk: **discard it, do not interpret it**, and re-measure after freeing
+  space (this worktree's own `target/` is the thing to remove, which is safe
+  exactly because no log lives there).
+- **A committed artifact is not a finished card.** When reclaiming disk from a
+  delegated worktree under pressure, reclaim only after that card's **final
+  report** — not when its `gate.json` or another artifact appears in the log.
+  At the wave-36 close an integrator read a committed `gate.json` as *finished*
+  and reclaimed a `target/` out from under a card that was still confirming,
+  costing a full rebuild at the worst moment (six cards at their build peaks).
+  Recorded by the integrator against their own action. It is the same class of
+  error as killing by pattern rather than by PID: **inferring another agent's
+  state from a signal that does not carry it**, when the agent itself can be
+  asked.
 - **A mutation harness restores by rewriting, never by an mtime-preserving
   copy.** `shutil.copy2` restores the backup's timestamp, which leaves
   cargo's fingerprint from the mutant build *newer* than the restored
@@ -177,6 +218,27 @@ the operational guidance that is in neither of those.
   card's *mistake*, not a security control; do not describe them as more.
   `docs/reports/card-scope-guard/README.md`, and `.git/qcore-main-guard.log` for
   what was refused or authorised.
+  **The guard is now active** (the integrator ran the installer in the main
+  checkout at the wave-36 close; the log carries the self-test refusals and every
+  later merge as authorised), and **`git push` of `main` needs the token exactly
+  as `git merge` does** — the installer's message named merges only, and the
+  integrator's first two pushes of this wave were refused
+  (`refused-push-unauthorised`, twice) before the token was carried on the push
+  command too. That is the guard working; it is written here because the
+  activation message does not say it.
+- **Never `pkill`/`pgrep` on a pattern that names a tool invocation** —
+  `cargo`, `lake`, `python3` — because every parallel card runs the same
+  commands. **The process table is shared across worktrees exactly as the stash
+  stack is.** Kill by the PID you captured when you started the process, or use
+  `TaskStop` on the background task id. Landed in card
+  `MUTEX-SHARE-CROSS-EMISSION`'s own words after that card ran
+  `pkill -f "cargo test --workspace"` and killed a **sibling** wave-36 card's
+  standing-gate run mid-flight, whose evidence file stops after `SUB=0` with no
+  `TESTS=` line; it disclosed the kill in full, touched no repository state and
+  deliberately did not restart the other card's job, on the ground that guessing
+  at another card's intent is worse than reporting the fact. The card *had* the
+  PID — it had already used `kill -0` to wait on its own run — and still reached
+  for the pattern, which is why this is a rule rather than advice.
 - **Never end a turn with a pristine tree while work is in flight.** The harness
   removes an isolation worktree when its agent ends a turn with an **unchanged**
   tree — clean and no commits ahead of base — *even while that agent's own
