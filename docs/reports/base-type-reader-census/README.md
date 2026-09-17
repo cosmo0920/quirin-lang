@@ -291,6 +291,36 @@ For comparison, on the same corpus and the same discount: wave 36's best access
 shape decided **11**, its best access pair **17**, its record-body route alone
 **2**, and all 403 access shapes admitted at once **45**.
 
+### 6.3 The soundness question, per cause
+
+The brief asks which of constraints 5, 5a, 5b and 5c each cause touches, and in
+which direction. Answering it for all fourteen exposes a division the reach
+numbers do not show: **five causes are not reader gaps at all**. They are
+deliberate refusals the reader makes on purpose, and "repairing" them is the
+admitting direction with no defect to point at — 927 leaves, and 6 of §6.1's 47
+cleared functions, sit behind refusals that must stay.
+
+| cause | repairable? | constraints touched, and the direction |
+|---|---|---|
+| `TypedefDefinesAggregate` | **yes** | **5b directly** — this is the member-typing widening it warns falsifies `TrackedBasesAreBound`, in the **admitting** direction. **5**'s premise unavailable for 10 of the 12 it decides. 10a's `POISON-UNMASK-ON-ADMISSION` applies. 5a, 5c untouched |
+| `FunctionRefused/*` (declarator and parameter tokens) | yes, but | **5b**, admitting, with the **largest blast radius of any cause**: a function whose declarations are refused today has *every* typed rule in it disabled, so repairing the reader turns the whole typed-access surface on for 245 + 95 functions at once — for **2** decided. **5** is not even narrowed by it, since `bound_names` is computed independently of the declaration reading |
+| `NoBaseName` | yes, but | **Constraint 5's premise cannot be stated**: an unnamed base has no `may_bind` answer, and the census reports it at its fail-closed value. An arbiter would have to invent a new premise before it could admit anything. Constraint 4 is adjacent — giving a call *result* a type is not modelling the call's effects, and must not be allowed to look like it |
+| `ArrayDeclarator` | yes, but | **5a**'s shape: an index the route cannot resolve to a constant is not provably anything, and an array base needs a bounds story the projection does not have. Admitting direction; **0** decided |
+| `PointerDepthAboveOne` | yes, but | **5** and **10**: a `struct x **` base is a store destination whose pointee may outlive the call, which is constraint 10's measured hazard (the escape model promoted `Unsafe` to `Safe` and was withdrawn). 5 decided, all in `initialize_*_list` / `*_destroy_array` shapes |
+| `NotDeclared/FileScopeDeclaration` | yes, but | **Constraint 10 head-on.** A file-scope base is precisely "an object that outlives the call", whose store constraint 10 refuses rather than escapes, having *measured* the alternative promoting a publish-without-release body to `Safe`. 1 decided |
+| `NotDeclared/Unknown` | no | nothing to commit; the name is declared nowhere the reader can see. 304 functions touched, **0** decided |
+| `DeclaredScalar` | no | the reader **did** commit, to `Scalar`. A selection on a scalar is not a record question and no base-type change makes it one |
+| **`TypedefDisagreeing`** | **no — deliberate** | Two disagreeing `typedef`s of one name; the table records `None` on purpose. Committing either would pick one arbitrarily, which is the shape **constraint 8** refuses elsewhere by *withdrawing* a declaration that contradicts the unit's own C. 647 leaves |
+| **`UnionSpecifier`** | **no — deliberate** | A union member may overlap a pointer. `classify_specifiers` refuses unions for that reason and **must keep refusing them**; committing them is the forbidden direction outright, not a repair. 24 leaves, 3 of them in the cleared set |
+| **`PointerToScalar`** | **no — correct** | `char *` / `int *` is not a record pointer. There is nothing to commit; the `Opaque` answer is right. 255 leaves |
+| **`ShadowedByDifferentType`** | **no — deliberate** | `record_variable` makes a name redeclared at a different type unusable rather than keeping either. Same ambiguity as `TypedefDisagreeing` |
+| `RejectingQualifier` (`volatile`, `_Atomic`) | **no — deliberate** | a `volatile` object may change under the analyzer; 0 leaves reached it as a blocking cause, and it must stay refused |
+| `UnreadableSpecifiers` / `NoSpecifiers` | yes, but | a specifier list the reader cannot parse. **5b**, admitting; **0** decided over 262 leaves |
+
+**Constraint 5c is touched by no cause.** Nothing here moves a CFG edge.
+**Constraint 5a is touched only** by `ArrayDeclarator` and, through
+`POISON-UNMASK-ON-ADMISSION`, by every cause that admits a statement.
+
 ## 7. Ranked recommendation for a wave-38 card
 
 **No base-type reader change survives the discount as a standalone wave-38
@@ -370,6 +400,15 @@ admitting direction.
 `ArrayDeclarator` (479, 0) are pure leaf mass. `NoBaseName` (1,986 leaves, 2
 decided) needs a whole function-return-type reader for a two-function return.
 `NotDeclared/Unknown` touches 304 functions and decides zero.
+
+And **five causes are not gaps at all** (§6.3): `TypedefDisagreeing`,
+`UnionSpecifier`, `PointerToScalar`, `ShadowedByDifferentType` and
+`RejectingQualifier` are refusals the reader makes on purpose — an ambiguity it
+declines to resolve arbitrarily, a union member that may overlap a pointer, a
+`char *` that simply is not a record pointer, a shadowed name, a `volatile`
+object. Together they hold **927 leaves** and account for **6** of §6.1's 47
+cleared functions. A wave-38 card should not count those 927 as reachable, and
+should not read their appearance in a cause distribution as a defect list.
 
 ## 8. Inertness and byte identity
 
