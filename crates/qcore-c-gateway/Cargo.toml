@@ -5,6 +5,13 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 description = "Fail-closed existing-C analysis, validated custody inference and Clang transport."
 
+[features]
+# Card C-GATEWAY-INDIRECT-CENSUS-2. Off by default and never enabled by any
+# workspace member: with it off, `indirect_census` and every call site of it in
+# `legacy_c` are compiled out entirely. It adds no rule and moves no verdict;
+# the card publishes the byte-identity measurement that says so.
+indirect-census = []
+
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "14.0.0" }
