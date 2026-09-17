@@ -23,7 +23,6 @@ waves of a removal from this hand-maintained section being lost at a merge
 resolution (`3bbec4d0` in wave 32, `8d158c4e` this wave), a pattern named in the
 close's §5.1 but left for a card to rule on. `MUTEX-SHARE-CROSS`'s whole
 integrator list was still unlanded **three waves on**, exactly as
-
 `SWEEP-BLIND-SPOTS` measured, with spec §L21 carrying the widening all along and
 AGENTS.md's summary table silent; its standing constraint is landed **verbatim**
 as **15o** and both namespace rows updated. And arbiter #1's proposed constraint
@@ -94,7 +93,6 @@ back edge moves **654** functions cyclic → acyclic (1,927 − 654 = 1,273,
 reproducing that card's own number independently), costing this card six
 functions and 20 leaves of servable population — reach that moved to the
 topological pass rather than reach lost, which answers
-
 `CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH` from this record. Soundness on a
 cycle is the restriction that a site whose creating node lies **on** a cycle
 derives nothing: such a site stands for one abstract resource per *site* and not
@@ -277,7 +275,6 @@ and re-measuring confirmed it rather than overturning it. CT41 asks for "no
 synchronization proof" from a `volatile` completion flag, and clause (b) of the
 wave-9 attribution rule requires a control in which removing *the construct the
 scenario names* moves the verdict — while the decided content of card
-
 `CTWIN-PUBLISH` §5 is precisely that removing `volatile` moves **nothing**, C11
 `volatile` being an access-ordering qualifier and not a synchronization
 primitive. That obstruction is **structural, not a gap**: no measurement can
@@ -321,7 +318,6 @@ verbatim (`CT-CTWIN-DESCRIPTOR` unchanged), and the socket arm that wave 31
 landed at model level is **unreachable from source** — `derive_socket_cells` and
 `footprint_program` are called from one unit test and from nothing in the
 frontend, the checker or `compile_files` — so no `.qcore` fixture can reach the
-
 `Q664` refusal and a row there would name evidence the harness cannot execute
 (`CT42-CELL-UNROUTED`). **CT10** stays unmapped on half a scenario (the
 concurrency half exists at byte granularity since wave 31; no source syntax
@@ -346,7 +342,6 @@ and 3 of 46 — and a grown denominator is mapping, not conformance.
 `docs/reports/ct-ctwin-lane/README.md`.
 
 **`VERIFIER-HOST-CONTROL-BUDGET` (2026-09-17)** dispositioned
-
 `VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED` by finding its mechanism, and the
 mechanism was a defect rather than the host property two waves had assumed. The
 transport loop's backoff charged a **fixed 1 ms quantum for an event taking
@@ -380,7 +375,6 @@ no Windows sibling exists since the non-Unix arms refuse before any transport.
 `docs/reports/verifier-host-control-budget/README.md`.
 
 `SWEEP-BLIND-SPOTS` (2026-09-17) repaired the four measured blind spots
-
 `STABILITY-REEVAL` #1 found in `scripts/reconciliation_sweep.py` and then
 pointed the mechanism at the wave it was built in and skipped in.
 `--residuals` now scans the card reports, `docs/development/increments/` and
