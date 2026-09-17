@@ -1,0 +1,134 @@
+cores: 16
+--- repetition 1 ---
+load:  04:40:37 up 3 days, 11:30,  1 user,  load average: 27.64, 28.73, 22.99
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.46s
+
+exit=0
+--- repetition 2 ---
+load:  04:40:39 up 3 days, 11:30,  1 user,  load average: 27.64, 28.73, 22.99
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.02s
+
+exit=0
+--- repetition 3 ---
+load:  04:40:41 up 3 days, 11:30,  1 user,  load average: 27.64, 28.73, 22.99
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.83s
+
+exit=0
+--- repetition 4 ---
+load:  04:40:43 up 3 days, 11:30,  1 user,  load average: 26.07, 28.39, 22.91
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.07s
+
+exit=0
+--- repetition 5 ---
+load:  04:40:46 up 3 days, 11:30,  1 user,  load average: 26.07, 28.39, 22.91
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.07s
+
+exit=0
+--- repetition 6 ---
+load:  04:40:48 up 3 days, 11:30,  1 user,  load average: 24.94, 28.12, 22.85
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.75s
+
+exit=0
+--- repetition 7 ---
+load:  04:40:49 up 3 days, 11:30,  1 user,  load average: 24.94, 28.12, 22.85
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.08s
+
+exit=0
+--- repetition 8 ---
+load:  04:40:52 up 3 days, 11:30,  1 user,  load average: 24.94, 28.12, 22.85
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.16s
+
+exit=0
+--- repetition 9 ---
+load:  04:40:54 up 3 days, 11:30,  1 user,  load average: 23.66, 27.80, 22.77
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.10s
+
+exit=0
+--- repetition 10 ---
+load:  04:40:56 up 3 days, 11:30,  1 user,  load average: 23.66, 27.80, 22.77
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.94s
+
+exit=0
+--- repetition 11 ---
+load:  04:40:58 up 3 days, 11:30,  1 user,  load average: 22.49, 27.49, 22.70
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.86s
+
+exit=0
+--- repetition 12 ---
+load:  04:41:00 up 3 days, 11:30,  1 user,  load average: 22.49, 27.49, 22.70
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/standalone_host.rs (target/debug/deps/standalone_host-bffb1e0ca60cf7d2)
+
+running 1 test
+test closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.93s
+
+exit=0
+ISOLATED RESULT: 12 passed, 0 failed, of 12

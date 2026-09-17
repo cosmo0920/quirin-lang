@@ -440,11 +440,83 @@ six premises alone.
 
 ---
 
-## 8. Gate
+## 8. Gate — and the one red row, reported with load and repetitions
 
-See `logs/gate-exits.txt` for every captured exit code (captured to a file, never
-through a pipe) and §11 for the run's own statement. Disk was checked before
-the gate: **255 GB free**, well above the 60 GB floor, so the full gate ran.
+Disk was checked first: **255 GB free**, well above the 60 GB floor, so the
+full gate ran. Every exit code was captured to a file, never read through a
+pipe (`logs/gate-exits.txt`):
+
+```
+submodule=0  test=101  fmt=0  clippy=0  probe=0  followup=0  lean=0  pytests=0
+```
+
+**4,579 passed · 1 failed · 8 ignored**, over 232 test-result summaries.
+`cargo fmt --all -- --check`, `cargo clippy --all-targets -D warnings`, both
+reevaluation probes (exit 0, as the brief requires them to be reported
+honestly), **132 Lean audits** and `python3 -m unittest discover -s
+scripts/tests` are all green.
+
+### 8.1 The failure is the row the brief named, and it is load
+
+```
+---- closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request stdout ----
+thread '…' panicked at crates/qcore-verifier-host/tests/standalone_host.rs:175:5:
+assertion failed: start.elapsed() < Duration::from_secs(1)
+```
+
+The brief says this row was **REPAIRED at `e3d3a2ce`** and that red is a
+finding to report with load and repetitions. Reported, with both.
+
+**What the assertion is.** `standalone_host.rs:160-176` sets
+`manifest.limits.timeout_ms = 40`, builds a request whose `request_id` is
+`"x".repeat(8 * 1024 * 1024)` — deliberately "larger than Linux's and macOS's
+maximum dynamically grown pipe capacity", per the test's own comment — and then
+asserts that the whole `provider.verify(&request)` round trip returns
+`Err(ProviderFailure::Timeout)` **in under one second of wall clock**. It is a
+wall-clock bound over an 8 MiB pipe write plus a process spawn.
+
+**The load.** Wave 36's cards build in parallel. Measured on this machine
+(**16 cores**) around the failing step, with a sibling's `audit-after-ins`
+binary at 76% CPU and three `rust-lld` at 300%/150%/141%:
+
+```
+04:38:57  load average: 31.13, 28.09, 22.02
+04:39:06  load average: 35.19, 29.07, 22.41
+04:39:42  load average: 40.68, 31.11, 23.34
+```
+
+**The repetitions.** Re-run **alone**, 12 times, after this card's own gate had
+finished (`scripts/reverify.sh`, `logs/reverify.txt`), recording the load
+average before each repetition:
+
+```
+ISOLATED RESULT: 12 passed, 0 failed, of 12
+loads at each repetition: 27.64 27.64 27.64 26.07 26.07 24.94 24.94 24.94
+                          23.66 23.66 …
+```
+
+**12 of 12 pass**, at load averages still between 23.7 and 27.6 — i.e. it
+passes even under substantial residual sibling load, and failed only at the
+peak. Both facts are recorded, which is what constraint 16 asks of a
+load-sensitive row.
+
+**It cannot be this card.** This card changes **no crate source at all** — six
+`.qcore` files, one manifest, four test-pin files and documentation.
+`qcore-verifier-host` depends only on `qcore-frontend` and `qcore-schemas`
+(never on the contract crate), does not read
+`contract/cycle19-resource-contracts.json`, and the failing assertion is a
+timer. **No claim is made here that the row is fixed or unfixable**: the
+measurement says it passed 12/12 alone and failed once at load ~40 on 16 cores,
+and nothing more. Residual **`STANDALONE-HOST-CLOSED-INPUT-LOAD`**, proposed
+for constraint 16's list as a **sixth** load-sensitive row — see §10 item 12.
+
+### 8.2 Two gate numbers have drifted from the ledger
+
+Measured here: **4,579 + 1 = 4,580 workspace tests** and **132 Lean audits**.
+`AGENTS.md`'s "Merged gate" row still reads **4,534** and **127**, which is the
+**wave-32 close's** checkpoint measured at that integration tip — it is the
+close's row to move, not a card's, so this card deliberately did **not** edit
+it. Flagged for the close in §10 item 13.
 
 ---
 
@@ -460,9 +532,10 @@ the gate: **255 GB free**, well above the 60 GB floor, so the full gate ran.
 | `LIBC-MEM-RESULT-ALIAS` | `memcpy`/`memset` declined: v1 cannot say "the result aliases parameter 1". | A v1 result mode meaning exactly that; unlocks 9 sole-blocked functions plus 130 leaves. |
 | `ADD-NAME-COLLISION` | `add` declined: three distinct definitions, three signatures, the cmetrics one `static inline` with no header declaration. | A unit-scoped declaration vocabulary (v1 has none); W4 is the right lever meanwhile. |
 | `W36-CTRACES-FAMILY-FIRST` | `contract/qcore/ctraces/` is a new family with one module; its manifest ordering and naming convention are this card's choice alone. | Integrator confirmation, or a second `ctraces` module settling the convention. |
+| `STANDALONE-HOST-CLOSED-INPUT-LOAD` | The brief-flagged host row failed once in-gate on a **1s wall-clock** assertion at load ~40 on 16 cores, and passed **12/12** in isolation at load 23.7–27.6 (§8.1). | Constraint 16's list gains it as a sixth row, **or** `e3d3a2ce`'s repair is reopened — either way the measurement lands somewhere. |
 
 **RETIREMENTS: none.** This card retires no residual and removes no
-`named_followups` entry. Stated explicitly because the matrix's union merge
+`named_followups` entry. Nine names in all (**121 → 130** if none collides). Stated explicitly because the matrix's union merge
 loses unnamed removals.
 
 ---
@@ -524,8 +597,8 @@ not.
    `context_lifetime.qcore` (paired with cmetrics' identically-named sibling)
    are my choices; overrule either if the corpus has a convention I missed
    (`W36-CTRACES-FAMILY-FIRST`).
-9. **Eight residuals in §9 reach no tracker yet.** `--residuals` will list them.
-   Please add all eight to `named_followups` (**121 → 129** if none collides);
+9. **Nine residuals in §9 reach no tracker yet.** `--residuals` will list them.
+   Please add all nine to `named_followups` (**121 → 130** if none collides);
    `W36-COVER-HIDDEN-BLOCKER`, `KAFKA-MEM-FREE-SUMMARY-CONFLICT` and
    `LIBC-MEM-RESULT-ALIAS` are the three I would keep visible — the first
    because it bounds what any future cover card may promise, the second because
@@ -535,7 +608,7 @@ not.
     `W31-CORPUS-CONTRACTS-2`'s precedent — that card, the directly analogous
     declarative arbiter, touched neither `acceptance_matrix.json` nor
     `build_matrix.py`. `named_followups` is therefore still at **121** in the
-    tree and the eight names in §9 are carried by this report and the increment
+    tree and the nine names in §9 are carried by this report and the increment
     record only, which is the half of the `DOCS-COMPACT-4`/`-5` defect the
     `--residuals` sweep exists to catch. Two matrix fields worth a glance at the
     close: `corpus.contract_modules_per_directory` and
@@ -544,7 +617,28 @@ not.
     that divergence is the already-recorded `D02-B00-LEDGER-SNAPSHOT`
     (constraint 25), it widens here, and it must be repaired by publishing
     provenance beside them and **never** by editing the archive (constraint 21).
-11. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
+12. **Proposed amendment text for standing constraint 16** (the P02-FLAKE
+    list). The brief asked for this row to be reported if red; it was, and it
+    reproduces the family's shape exactly. Please add, in these words:
+
+    > `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+    > (`crates/qcore-verifier-host/tests/standalone_host.rs:175`) joins this
+    > list as its **sixth** row, measured by card `W36-CORPUS-CONTRACTS-3`
+    > (wave 36): it asserts a **one-second wall-clock bound** over an 8 MiB
+    > pipe write and a process spawn against a 40 ms declared timeout, failed
+    > once inside a full gate at load average ~40 on 16 cores with sibling
+    > cards building, and passed **12 of 12** re-run in isolation at load 23.7
+    > to 27.6. Verify it in isolation; never weaken the bound.
+
+    If the integrator would rather treat `e3d3a2ce`'s repair as incomplete than
+    add a sixth row, that is a legitimate alternative reading of the same
+    measurement — but the measurement should land somewhere either way
+    (`STANDALONE-HOST-CLOSED-INPUT-LOAD`).
+13. **Two "Merged gate" ledger numbers have drifted** and are the **close's**
+    to move, not this card's: `AGENTS.md` reads **4,534 workspace tests** and
+    **127 Lean audits** (the wave-32 checkpoint); this card measured **4,580**
+    and **132** at its own tip. Deliberately not edited here (§8.2).
+14. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
     to six declared premises; the added `unknown_alias` leaves are
     `Unknown`-class evidence and not defect claims (invariant 2).
 

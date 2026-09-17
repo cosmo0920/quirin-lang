@@ -73,6 +73,20 @@ checker are all unedited. Corpus 76 → **82** modules, manifest-selected 21 →
 **27**, resource-v1 declarations 43 → **49**, every constraint-5 pin updated
 deliberately (`qcore_contract_corpus.rs`, `contract_loader.rs`'s
 `(21, 43, 145) → (27, 49, 145)` and its explicit old-table parity rows,
-`prod_contracts.rs`, `neighbours.rs`).
+`prod_contracts.rs`, `neighbours.rs`). Gate
+`submodule=0 test=101 fmt=0 clippy=0 probe=0 followup=0 lean=0 pytests=0` —
+**4,579 passed, 1 failed, 8 ignored**, 132 Lean audits, both probes exit 0. The
+one red row is the one the card brief flagged in advance,
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`,
+and it failed on a **one-second wall-clock assertion**
+(`standalone_host.rs:175`) over an 8 MiB pipe write and a process spawn against
+a 40 ms declared timeout. Reported with load and repetitions as the brief
+requires: it failed at load average **~40 on 16 cores** with sibling wave-36
+cards building (`rust-lld` at 300%/150%/141%), and passed **12 of 12** re-run
+in isolation at load 23.7–27.6. The card changes no crate source and
+`qcore-verifier-host` never reads the contract manifest, so the row is offered
+as constraint 16's **sixth** load-sensitive member — or as evidence that
+`e3d3a2ce`'s repair is incomplete, the integrator's call
+(`STANDALONE-HOST-CLOSED-INPUT-LOAD`).
 `docs/reports/w36-corpus-contracts-3/README.md`.
 
