@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 91
+  "named_followups": 95
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -1024,13 +1024,14 @@
    "docs/reports/ct-wire-lane-3/ct_stage_evidence.json",
    "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
    "docs/reports/ct-composed-native/ct_stage_evidence.json",
-   "docs/reports/ct-wire-lane-4/ct_stage_evidence.json"
+   "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
+   "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   ],
   "derivation_rule": "a stage is 'executed' only where a named workspace test runs it on the case's own artifact (T00's rule), and the manifest entry must name that executor, that artifact, its invocation count, its exact target_os gate and the external tools its runner cannot start without. compiler/tests/ct_corpus.rs rederives all of it from its own dispatch and refuses any drift, so no row can claim a stage its executed evidence does not carry. Schema 2 makes the manifest entry and the stage-derived status one object; the schema-1 columns `cfg` and `type_checker`, which conflated four passes and read differently per route, are gone.",
   "totals": {
    "cases": 50,
-   "mapped": 45,
-   "unmapped": 5
+   "mapped": 46,
+   "unmapped": 4
   },
   "reporting_host": "linux",
   "host_gates_load_bearing": [
@@ -1159,80 +1160,83 @@
   ],
   "stage_histogram": {
    "parse": {
-    "executed": 45
+    "executed": 46
    },
    "elaborate": {
-    "executed": 42,
+    "executed": 43,
     "not_applicable": 3
    },
    "task_lowering": {
     "executed": 22,
-    "not_applicable": 23
+    "not_applicable": 24
    },
    "task_ledger_check": {
     "executed": 21,
-    "not_applicable": 24
+    "not_applicable": 25
    },
    "mutex_lowering": {
-    "executed": 10,
+    "executed": 11,
     "not_applicable": 35
    },
    "mutex_invariant_check": {
-    "executed": 10,
+    "executed": 11,
     "not_applicable": 35
    },
    "epoch_lowering": {
     "executed": 7,
-    "not_applicable": 38
+    "not_applicable": 39
    },
    "epoch_bound_check": {
     "executed": 7,
-    "not_applicable": 38
+    "not_applicable": 39
    },
    "sequential_whole_program": {
     "executed": 2,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "sequential_reference_execution": {
     "executed": 2,
-    "not_applicable": 43
+    "not_applicable": 44
    },
    "task_reference_execution": {
     "executed": 12,
-    "not_applicable": 33
+    "not_applicable": 34
    },
    "mutex_reference_execution": {
     "executed": 2,
-    "not_applicable": 43
+    "not_applicable": 43,
+    "unassessed": 1
    },
    "c_emission": {
     "executed": 18,
-    "not_applicable": 27
+    "not_applicable": 27,
+    "unassessed": 1
    },
    "native_execution": {
     "executed": 18,
-    "not_applicable": 27
+    "not_applicable": 27,
+    "unassessed": 1
    },
    "native_sanitized": {
     "executed": 9,
     "not_applicable": 7,
     "recorded_not_gated": 5,
-    "unassessed": 24
+    "unassessed": 25
    },
    "legacy_c_twin": {
     "executed": 3,
-    "not_applicable": 42
+    "not_applicable": 43
    },
    "proof": {
     "executed": 3,
-    "unassessed": 42
+    "unassessed": 43
    }
   },
   "depth_profile": {
    "elaborate": 4,
    "epoch_bound_check": 4,
    "legacy_c_twin": 3,
-   "mutex_invariant_check": 8,
+   "mutex_invariant_check": 9,
    "native_execution": 7,
    "native_sanitized": 8,
    "proof": 3,
@@ -1281,6 +1285,7 @@
    "CT43": "legacy_c_twin",
    "CT44": "task_ledger_check",
    "CT45": "legacy_c_twin",
+   "CT46": "mutex_invariant_check",
    "CT47": "task_ledger_check",
    "CT48": "mutex_invariant_check",
    "CT49": "native_sanitized",
@@ -1288,16 +1293,16 @@
   },
   "observation_counts": {
    "c_emission": 34,
-   "elaborate": 42,
+   "elaborate": 43,
    "epoch_bound_check": 7,
    "epoch_lowering": 7,
    "legacy_c_twin": 4,
-   "mutex_invariant_check": 10,
-   "mutex_lowering": 10,
+   "mutex_invariant_check": 11,
+   "mutex_lowering": 11,
    "mutex_reference_execution": 2,
    "native_execution": 49,
    "native_sanitized": 30,
-   "parse": 45,
+   "parse": 46,
    "proof": 3,
    "sequential_reference_execution": 2,
    "sequential_whole_program": 2,
@@ -5113,7 +5118,7 @@
     "mapping_status": "unmapped",
     "expected": "No synchronization proof",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "current_bucket_source": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
     "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
     "blocker": "as CT40; the gateway plausibly already decides it (typed_source.rs refuses volatile/_Atomic/restrict) but no harness path runs it",
     "bucket_changed_since_batch2": false,
@@ -5171,16 +5176,16 @@
      }
     },
     "deepest_executed_stage": null,
-    "blocker_current": "The resource projection has no synchronization model; the `volatile` invariance is asserted as correct by card CTWIN-PUBLISH §5 rather than open, so no verdict of this gateway is evidence about a synchronization proof and a mapping would be vacuous.",
-    "blocker_superseded_by": "docs/reports/wave17-ct40/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-measured over three shapes; the decision is card CTWIN-PUBLISH §5, follow-on CT-CTWIN-SYNC"
+    "blocker_current": "The resource projection has no synchronization model, and the `volatile` invariance is asserted as CORRECT by card CTWIN-PUBLISH section 5 rather than open, so no verdict of this gateway is evidence about a synchronization proof. The obstruction is structural, not a gap: clause (b) of the wave-9 attribution rule needs a control in which removing the named construct moves the verdict, and the decided fact is that removing `volatile` moves nothing. Re-measured here over five shapes, including the scenario's own consumer shape, which is answered SAFE with and without the qualifier. The typed-source arm cannot carry it either: that refusal covers `volatile`, `_Atomic` and `restrict` in one branch with one message, and so cannot express the very distinction the case is about.",
+    "blocker_superseded_by": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), re-measured over five shapes plus the typed-source arm; the decision is card CTWIN-PUBLISH section 5, follow-ons CT-CTWIN-SYNC and CT41-TYPED-SOURCE-UNDISCRIMINATING"
    },
    {
     "id": "CT42",
     "mapping_status": "unmapped",
     "expected": "Preserve shared protocol-cell identity",
     "current_bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
-    "current_bucket_source": "docs/reports/wave17-ct40/ct_stage_evidence.json",
+    "current_bucket_source": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
     "archived_bucket": "blocked-on-harness-schema (C-twin stage)",
     "blocker": "as CT40",
     "bucket_changed_since_batch2": false,
@@ -5238,9 +5243,9 @@
      }
     },
     "deepest_executed_stage": null,
-    "blocker_current": "The case asks for a preserved identity, a positive modelling property, and no verdict measured here establishes one; an int-typed resource identity is still not expressible at all, the contract loader refusing `owned result requires a pointer return type`.",
-    "blocker_superseded_by": "docs/reports/wave17-ct40/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave17-ct40/README.md (wave-17 CT lane), re-verified against card CT-CTWIN's measurement; follow-on CT-CTWIN-DESCRIPTOR"
+    "blocker_current": "Both arms measured. The C-twin arm is unchanged and re-verified: an int-typed resource identity is not expressible at all, the contract loader refusing `owned result requires a pointer return type`. The socket arm that card CT42-PROTOCOL-CELL landed at model level is unreachable from source -- derive_socket_cells and footprint_program are called from one unit test and from nothing in the frontend, the checker or compile_files -- so no .qcore fixture can reach the Q664 SharedProtocolCell refusal and a row on that arm would name evidence the harness cannot execute.",
+    "blocker_superseded_by": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+    "blocker_measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), both arms measured on this tree; follow-ons CT-CTWIN-DESCRIPTOR, CT42-MAP and CT42-CELL-UNROUTED"
    },
    {
     "id": "CT43",
@@ -5507,70 +5512,83 @@
    },
    {
     "id": "CT46",
-    "mapping_status": "unmapped",
+    "mapping_status": "mapped",
     "expected": "Accept only through verified mutex protocol",
-    "current_bucket": "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)",
-    "current_bucket_source": "docs/reports/wave13-ct34/ct_stage_evidence.json",
-    "archived_bucket": "blocked-on-unimplemented-syntax (no mutex value)",
-    "blocker": "needs Send/Sync conditions and a verified mutex protocol",
-    "bucket_changed_since_batch2": false,
+    "route": "mutex_guard",
+    "harness_verdict_mode": "checked_mutex_crossing",
+    "manifest_evidence_target": "linux",
+    "source_reject_controls_executed": null,
+    "epoch_controls_executed": null,
+    "legacy_c_controls_executed": null,
     "stage_derived_status": {
      "parse": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1
      },
      "elaborate": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1
      },
      "task_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_ledger_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_lowering": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1
      },
      "mutex_invariant_check": {
-      "status": "unexecuted"
+      "status": "executed",
+      "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+      "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+      "observations": 1
      },
      "epoch_lowering": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "epoch_bound_check": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_whole_program": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "sequential_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "task_reference_execution": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "mutex_reference_execution": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "c_emission": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "native_execution": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "native_sanitized": {
-      "status": "unexecuted"
+      "status": "unassessed"
      },
      "legacy_c_twin": {
-      "status": "unexecuted"
+      "status": "not_applicable"
      },
      "proof": {
-      "status": "unexecuted"
+      "status": "unassessed"
      }
     },
-    "deepest_executed_stage": null,
-    "blocker_current": "The recorded Send/Sync-derivation blocker is retired: card CT46-SENDSYNC landed a closed transferable(T) judgment that decides both matrices whole, so the derivation CT46 was said to need now exists. The measured remaining obstacle is different, and is named CT46-MUTEX-CAPTURE: the mutex ledger and the task ledger compose today by mutual exclusion rather than over a capture - the mutex route admits no task capture of a guarded payload and the task route refuses mutexes outright - so no source text can ask for mutex-mediated sharing across a task boundary and CT46's `accept` half is unwritable. Mapping only the refusing half would answer a different question.",
-    "blocker_superseded_by": "docs/reports/wave13-ct34/ct_stage_evidence.json",
-    "blocker_measured_by": "docs/reports/wave13-ct34/README.md section 'CT46 - stale, and updated', carrying card CT46-SENDSYNC (wave 12) forward"
+    "auxiliary_executed_stages": {},
+    "deepest_executed_stage": "mutex_invariant_check",
+    "stage_evidence_record": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+    "semantic_profile": "CheckedMutexGuardsV1: a `protected N` payload — the transferability judgment's TransferKind::ProtectedResource, sendable over a derivable synchronization edge and not freely shareable — declared to cross into a child task under the generation that protects it (TransferMode::ShareUnderMutex requesting ShareProtocol::CheckedMutex), with every reach of the payload by either task naming a guard. Checked only: the module is admitted and the C backend renders nothing for it, interpret_mutex_program refusing the Spawn the crossing introduces, so no emission, native or sanitized evidence is claimed. CT46's own words `wrapper` and `non-Sync but Send` have no referent in this language and are carried by the judgment's classification instead; the task route's own own<Buffer> still cannot request mutex mediation (MUTEX-SHARE-CROSS-TASK-BUFFER)."
    },
    {
     "id": "CT47",
@@ -5975,15 +5993,13 @@
   "unmapped_bucket_counts": {
    "blocked-on-unimplemented-syntax": 1,
    "DECIDABLE-NOW (with a distinguishing fixture)": 1,
-   "blocked-on-gateway-expressiveness (C-twin measured)": 2,
-   "blocked-on-mutex-capture (CT46-MUTEX-CAPTURE)": 1
+   "blocked-on-gateway-expressiveness (C-twin measured)": 2
   },
   "unmapped_label_sources": {
    "CT10": "t00-archive",
    "CT24": "t00-archive",
-   "CT41": "docs/reports/wave17-ct40/ct_stage_evidence.json",
-   "CT42": "docs/reports/wave17-ct40/ct_stage_evidence.json",
-   "CT46": "docs/reports/wave13-ct34/ct_stage_evidence.json"
+   "CT41": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
+   "CT42": "docs/reports/ct-ctwin-lane/ct_stage_evidence.json"
   },
   "newly_decidable_not_mapped": [
    "CT24"
@@ -6851,6 +6867,34 @@
    "why": "Measured by the WAVE-34 CLOSE while gating its own change, not by any card. One run of `python3 -m unittest discover -s scripts/tests` reported `Ran 229 tests ... FAILED (failures=1)`. SIX subsequent runs were green - four in isolation and two deliberately concurrent with a second copy of the same suite - so the row is NOT reliably reproducible in either direction. WHICH row failed is UNKNOWN: that run's per-test output was not captured, and the reproduction attempts produced no FAIL line to name. The failing run was the one executed concurrently with another Python process, and the suite does contain at least one timing-based fixture (it prints `Still running stalled fixture: 0.2s / 0.5s`), so a wall-clock row is the leading hypothesis and is explicitly NOT asserted here. The finding is not that a test is broken - every other signal this close measured is green, including the full workspace suite at 4,559 passed / 0 failed and the same Python suite six times - but that AGENTS.md publishes `229 Python` as though it were a property, while constraint 16's five load-sensitive rows are ALL RUST and nothing records a Python one. That is the same shape as VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED: an observation on one machine presented as a property. DISCHARGE, one of: (a) re-run the suite under controlled concurrent load with per-test output captured (`-v`, or a runner that prints the failing test on failure) until the row is NAMED, then decide whether it joins constraint 16's list or is repaired; (b) a measurement showing the failure was an artifact of this close's environment specifically - the run happened minutes after a full-disk ENOSPC condition cleared and while a large cargo build's artifacts were still settling - which would close this as environmental rather than as a test defect. NOT a discharge: assuming it was a flake because it did not recur, which is the inference this project's own STABILITY-REEVAL cadence exists to refuse.",
    "source": "docs/reports/wave34-close/README.md",
    "recorded_by": "WAVE-34-CLOSE"
+  },
+  {
+   "id": "CT41-TYPED-SOURCE-UNDISCRIMINATING",
+   "title": "The typed-source arm named in CT41's archived blocker cannot carry the case: it refuses volatile, _Atomic and restrict in one branch with one message",
+   "why": "Card CT-CTWIN-LANE (wave 35) examined that arm for the first time. CT41's recorded blocker has always carried the parenthetical `typed_source.rs refuses volatile/_Atomic/restrict`, and it is still true -- crates/qcore-c-gateway/src/typed_source.rs::c_type refuses any such type with `qualified access requires additional synchronization/alias evidence`. It is nevertheless not a route on which CT41 could map, and the reason is about the rule's SHAPE rather than its reachability: one branch, one message, covering a real synchronization primitive (_Atomic), a pure aliasing qualifier (restrict) and the access-ordering qualifier that is neither (volatile) alike. CT41's entire content is the difference between the first and the third -- card CTWIN-PUBLISH section 5's decision that C11 volatile is not a synchronization primitive -- so a rule that cannot tell them apart cannot be evidence about that difference. Recorded as a measured boundary, NOT as a defect in typed_source.rs: refusing the whole qualifier class is fail-closed and correct for what that importer does. Discharge: either a statement that this arm is permanently out of scope for CT41, or a rule that distinguishes the qualifiers, which would need the synchronization model the gateway does not have.",
+   "source": "docs/reports/ct-ctwin-lane/README.md",
+   "recorded_by": "CT-CTWIN-LANE"
+  },
+  {
+   "id": "CT42-CELL-UNROUTED",
+   "title": "CT42's socket arm landed at model level and is unreachable from any source program, so no CT fixture can execute it",
+   "why": "Card CT42-PROTOCOL-CELL (wave 31) landed the derived protocol cell in qcore_core::socket_footprint -- derive_socket_cells and footprint_program, an accepted connection becoming one cell with two custodians, refused in the unedited disjointness checker as SharedProtocolCell (Q664). Card CT-CTWIN-LANE (wave 35) measured what a mapping lane would need and found the arm UNROUTED: both functions are called from crates/qcore-core/tests/unit/socket_footprint.rs and from nothing in the frontend, the checker or compile_files, and that card's own report already states that no .qcore statement spells AssertDisjoint over sockets. A CT fixture on a source route is a program the harness compiles through the real pipeline, so a CT42 row on this arm would name a stage the harness cannot execute -- exactly what constraint 23's `executed only where a named workspace test runs it on the case's own artifact` forbids. This is why CT42 stayed unmapped in wave 35 even though its model half exists. Discharge: wire the deriver into the socket route behind source syntax that asks the disjointness question (a route card, not a mapping lane), after which CT42's socket arm becomes mappable; or record that the derived cell is model-only by design. The C-twin arm stays separately blocked on CT-CTWIN-DESCRIPTOR.",
+   "source": "docs/reports/ct-ctwin-lane/README.md",
+   "recorded_by": "CT-CTWIN-LANE"
+  },
+  {
+   "id": "CT-FIXTURE-CROSS-CASE-DUPLICATES",
+   "title": "Two undisclosed byte-identical CT fixture pairs, each a case's own artifact doubling as another case's control",
+   "why": "Card CT-CTWIN-LANE (wave 35) hashed every one of CT46's six new fixture files against every .qcore/.c file under compiler/tests/fixtures/ct/, discharging CT-SHARED-FIXTURE-DISCLOSURE's duty not to create a second shared fixture silently. CT46 creates none. The sweep incidentally found THREE duplicate groups where only one is disclosed. Beyond the known CT01/CT12/CT14 case.qcore group: CT02/case.qcore is byte-identical to CT14/read_before_join.qcore, and CT03/case.qcore is byte-identical to CT04/write_after_joins.qcore. These are a DIFFERENT relation from the disclosed one -- not three cases sharing one artifact, but one case's own artifact doubling as another case's CONTROL -- and neither is disclosed in any report, fixture comment or harness assertion. Classified as a DISCLOSURE GAP, not a defect: a control that is another mapped case's admitted program is arguably a strong control, and both owning reports describe their control in their own terms. The hazard is concrete and one-directional -- editing CT02/case.qcore or CT03/case.qcore silently changes what CT14's and CT04's controls test, with nothing anywhere saying so. Not repaired by the finding lane: the repair touches other cases' fixtures and records, outside a mapping lane's boundary. Discharge: disclose both pairs in the owning reports (and, if the coupling is unintended, give one side its own file), or record that reusing a case artifact as another case's control is deliberate practice.",
+   "source": "docs/reports/ct-ctwin-lane/README.md",
+   "recorded_by": "CT-CTWIN-LANE"
+  },
+  {
+   "id": "HOST-ROW-STARVATION-DESCRIPTION",
+   "title": "The standing description of qcore-verifier-host's closed-input row (\"red in isolation, green under a full suite\") does not match the tree and appears to describe its pre-repair state",
+   "why": "Card CT-CTWIN-LANE (wave 35) was briefed that closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request is red in isolation and green under a full suite, and to report which it saw. It saw the row RED BOTH WAYS: failing inside cargo test --workspace --no-fail-fast (4,558 passed / 1 failed / 8 ignored, exit 101) and failing again when re-run in isolation, both with Err(Timeout) at standalone_host.rs:212. The standing description is also contradicted by the row's own repair record: card VERIFIER-HOST-CLOSED-INPUT-DEADLINE (2026-09-14, docs/reports/verifier-host-closed-input-deadline/README.md) reports the test passing 5/5 ISOLATED repetitions after its repair, with the integrator measuring the whole workspace at 4,544/0/8 on the merge candidate. So \"red in isolation\" looks like a description of the PRE-repair state that outlived it, and each wave's cards are being briefed with it. The likelier account of wave 35's failure is in that same record's scope sentence -- \"scheduling under arbitrary host starvation remains outside this observation\" -- since the third arm gives an 8 MiB response a 1,000 ms wall-clock budget and this gate ran with up to NINE concurrent sibling cargo test --workspace processes at a one-minute load average of 22-26. That places the failure inside an exclusion the repairing card already declared. This is NOT a claim that the repair is unsound: the finding lane did not re-derive the transport argument and does not vouch for it, and it changed nothing in that crate. Discharge: re-measure the row on a quiet machine and replace the standing description with what actually holds, or give the 1,000 ms arm a load-independent budget so the row stops depending on how many sibling cards share the host.",
+   "source": "docs/reports/ct-ctwin-lane/README.md",
+   "recorded_by": "CT-CTWIN-LANE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

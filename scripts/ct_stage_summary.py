@@ -122,6 +122,11 @@ EVIDENCE_FILES = [
     "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
     "docs/reports/ct-composed-native/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
+    # Card `CT-CTWIN-LANE` (wave 35): CT46 mapped, and the four cases this lane
+    # re-measured and deliberately left unmapped. It is also the record that
+    # retires wave 13's CT46 bucket row, by declaration rather than by editing
+    # that record (constraint 21).
+    "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
 ]
 
 ACCEPTANCE = "docs/reviews/r0_3/acceptance.json"

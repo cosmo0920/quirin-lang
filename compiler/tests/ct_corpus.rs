@@ -115,6 +115,12 @@ use qcore_compiler::{
     LegacyProgramSummary, ResourceContracts, SourceFile, TraceEvent, UnrestrictedLegacyResult,
     analyze_unrestricted_c11, compile_files, format_diagnostic, validate_unrestricted_c11,
 };
+// Card `CT-CTWIN-LANE` (wave 35): CT46's declared crossing is asserted against
+// the checked event list and against the transferability judgment's own
+// published classification, so the fixture pins the model's vocabulary rather
+// than this harness's prose.
+use qcore_core::mutex_invariant::MutexInvariantEvent;
+use qcore_core::transfer::MUTEX_SHARE_CROSSING;
 use serde::Deserialize;
 
 /// Pinned mapping expectation. Exactly these manifest entries carry
@@ -123,7 +129,7 @@ const MAPPED_CASES: &[&str] = &[
     "CT01", "CT02", "CT03", "CT04", "CT05", "CT06", "CT07", "CT08", "CT09", "CT11", "CT12", "CT13",
     "CT14", "CT15", "CT16", "CT17", "CT18", "CT19", "CT20", "CT21", "CT22", "CT23", "CT25", "CT26",
     "CT27", "CT28", "CT29", "CT30", "CT31", "CT32", "CT33", "CT34", "CT35", "CT36", "CT37", "CT38",
-    "CT39", "CT40", "CT43", "CT44", "CT45", "CT47", "CT48", "CT49", "CT50",
+    "CT39", "CT40", "CT43", "CT44", "CT45", "CT46", "CT47", "CT48", "CT49", "CT50",
 ];
 /// The `legacy_c` route (card CT-CTWIN, extended by the wave-17 CT lane). These
 /// three cases name C constructs that
@@ -150,6 +156,21 @@ const MUTEX_REJECT_CASES: &[&str] = &[
 /// The one accepted mutex-guard case, executed end to end and re-run under
 /// ASan/UBSan/LSan.
 const MUTEX_SANITIZED_CASE: &str = "CT26";
+/// The one `source.mutex.guard.v1` **declared-crossing** case (card
+/// `MUTEX-SHARE-CROSS`, wave 32; mapped by card `CT-CTWIN-LANE`, wave 35).
+///
+/// This mode is an *accept* that deliberately stops at the checker. The module
+/// is admitted — `compile_files` returns it on the checked mutex route — but
+/// the C backend renders nothing for it and `interpret_mutex_program` refuses
+/// its event list, because the `Spawn` the crossing introduces is outside the
+/// emitted subset. So it is neither `checked_mutex_sanitized` (which requires a
+/// sanitized native run) nor `checked_mutex_reject` (it is not a refusal), and
+/// it carries its own mode rather than being squeezed into either. The emission
+/// boundary is *pinned* rather than omitted: the case states the exact refusal
+/// its emission produces, and one control is the same route without the
+/// crossing clause, which does emit and does interpret — so the missing
+/// emission is attributable to the crossing and not to the route.
+const MUTEX_CROSSING_CASE: &str = "CT46";
 /// Task-route rejection cases (cards T05 and T06; CT44 and CT47 added by card
 /// `CT-WIRE-LANE-4`, wave 32). Same discipline as the mutex
 /// rejections: the exact ordered code vector plus at least one control that
@@ -419,6 +440,12 @@ const RUNNER_REGISTRY: &[&str] = &[
     // Card `CT34-SANITIZED`: the one runner that executes a stage on a control
     // rather than on the case's own fixture.
     "compiler/tests/ct_corpus.rs::run_mutex_controls",
+    // Card `CT-CTWIN-LANE` (wave 35): the declared-crossing runner. It asserts
+    // the admitted crossing's whole lowered shape — the spawn/join edge, the
+    // child's own lock, and the complete guarded-reach vector rebuilt from the
+    // event list — then pins the emission refusal and runs the four controls
+    // that make "only through the protocol" falsifiable.
+    "compiler/tests/ct_corpus.rs::run_mutex_crossing",
     // Card `CT-WIRE-LANE`: the one runner whose native observation is compared
     // up to a declared partial order instead of byte for byte.
     "compiler/tests/ct_corpus.rs::run_reordering_partial_order",
@@ -576,6 +603,8 @@ struct ExpectedCase {
     checked_mutex_sanitized: Option<CheckedMutexSanitized>,
     #[serde(default)]
     checked_mutex_reject: Option<CheckedMutexReject>,
+    #[serde(default)]
+    checked_mutex_crossing: Option<CheckedMutexCrossing>,
     #[serde(default)]
     native_heap_scenarios: Option<NativeHeapScenarios>,
     #[serde(default)]
@@ -1016,6 +1045,77 @@ struct CheckedMutexSanitized {
     reference_observation: Vec<String>,
 }
 
+/// An admitted `source.mutex.guard.v1` **declared crossing** (card
+/// `CT-CTWIN-LANE`, wave 35; the construct is card `MUTEX-SHARE-CROSS`'s).
+///
+/// The evidence is the lowered shape, not merely "it checked". `reaches` is
+/// rebuilt whole from the checked event list rather than looked up by the keys
+/// the fixture names, so a fixture cannot pin a convenient subset of the
+/// payload accesses — and it is the vector that carries this case's `expected`
+/// text, because every entry being guarded is exactly "accepted only through
+/// the protocol". `emission_refusal` pins the boundary the mapping does *not*
+/// cross: this module is admitted and emits nothing, and saying so in the
+/// fixture is what keeps the three unassessed stages a measurement.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CheckedMutexCrossing {
+    /// The construct the CT scenario is about, so the controls below have
+    /// something to be controls *of*.
+    attributed_to: String,
+    /// The transferability judgment's classification of the shared payload and
+    /// the protocol it admits. Recorded because CT46's own words (`non-Sync but
+    /// Send`) have no referent in this language and these are what stand in for
+    /// them; the runner checks them against `qcore_core::transfer`'s own data.
+    payload: String,
+    protocol: String,
+    /// The task edge the crossing really lowers to.
+    spawn: TaskEdge,
+    join: TaskEdge,
+    /// The child takes the generation itself; nothing is parked with it.
+    child_lock_task: u32,
+    /// Every access of the protected payload, in order, with whether it named a
+    /// guard. Rebuilt whole from the event list.
+    reaches: Vec<GuardedReach>,
+    /// The verbatim refusal `interpret_mutex_program` returns for this module.
+    emission_refusal: String,
+    controls: Vec<MutexCrossingControl>,
+}
+
+#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[serde(deny_unknown_fields)]
+struct TaskEdge {
+    parent: u32,
+    child: u32,
+}
+
+#[derive(Deserialize, PartialEq, Eq, Debug)]
+#[serde(deny_unknown_fields)]
+struct GuardedReach {
+    task: u32,
+    guarded: bool,
+}
+
+/// One declared-crossing control. `accept_emitting` is the emission-boundary
+/// control — admitted, rendered, and interpreted to the pinned observation —
+/// and `reject` is one of the ways of reaching the payload without the
+/// protocol, pinning both its code vector and a distinguishing fragment of its
+/// message, so a control cannot pass by reaching the right code for the wrong
+/// reason.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct MutexCrossingControl {
+    source: String,
+    /// `accept_emitting` or `reject`; any other spelling fails the harness.
+    expectation: String,
+    diagnostic_sequence: Vec<String>,
+    message_fragment: Option<String>,
+    /// `accept_emitting` only: the observation `interpret_mutex_program`
+    /// computes from this control's own checked event list.
+    reference_observation: Vec<String>,
+    #[allow(dead_code)]
+    note: String,
+}
+
 /// A refused `source.mutex.guard.v1` fixture: the exact ordered diagnostic code
 /// vector plus the controls that keep the refusal from being vacuous.
 #[derive(Deserialize)]
@@ -1259,6 +1359,10 @@ fn route_stages(route: &str) -> &'static [&'static str] {
 fn route_for_case(case_id: &str, verdict: &str) -> &'static str {
     match verdict {
         "checked_mutex_sanitized" => "mutex_guard",
+        // Card `CT-CTWIN-LANE`: the declared crossing is the same route, one
+        // construct further in. It stops at the checker, which is a fact about
+        // this construct's emission and not about the route's vocabulary.
+        "checked_mutex_crossing" => "mutex_guard",
         "epoch_bound_figures" => "epoch",
         "legacy_c_twin" => "legacy_c",
         "native_join_failure"
@@ -1525,6 +1629,24 @@ fn derive_stage_plan(
             plan.insert("native_execution", StagePlan::absent("unassessed"));
         }
     }
+    // Card `CT-CTWIN-LANE` (wave 35). A declared crossing is *admitted* and
+    // still reaches no backend: `compile_files` returns the module with
+    // `c_source: None` and `interpret_mutex_program` refuses its event list,
+    // because the `Spawn` the crossing introduces is outside the emitted
+    // subset. Both facts are asserted by `run_mutex_crossing` on this case's own
+    // fixture, so they are measured rather than assumed.
+    //
+    // These three read `unassessed` and not `not_applicable`: the `mutex_guard`
+    // vocabulary really has them (CT26 executes all three), so they are an open
+    // item a later card could close — card `MUTEX-SHARE-CROSS`'s own
+    // `MUTEX-SHARE-CROSS-EMISSION` residual — rather than structurally absent.
+    // `native_sanitized` reaches `unassessed` on its own below, by the route
+    // rule, and is deliberately not special-cased here.
+    if verdict == "checked_mutex_crossing" {
+        plan.insert("mutex_reference_execution", StagePlan::absent("unassessed"));
+        plan.insert("c_emission", StagePlan::absent("unassessed"));
+        plan.insert("native_execution", StagePlan::absent("unassessed"));
+    }
     // The plain sequential accept mode runs its reference execution inside
     // `compile_files` itself, so it has no separate runner and no host gate.
     if verdict == "accept"
@@ -1729,6 +1851,16 @@ fn run_mapped_case(case: &ManifestCase) {
         case.id
     );
     assert_eq!(
+        expected.checked_mutex_crossing.is_some(),
+        expected.verdict == "checked_mutex_crossing"
+    );
+    assert_eq!(
+        expected.checked_mutex_crossing.is_some(),
+        case.id == MUTEX_CROSSING_CASE,
+        "{}: exactly one CT case carries declared-crossing evidence",
+        case.id
+    );
+    assert_eq!(
         expected.native_heap_scenarios.is_some(),
         expected.verdict == "native_heap_scenarios"
     );
@@ -1849,6 +1981,11 @@ fn run_mapped_case(case: &ManifestCase) {
             || expected.native_owned_transfer.is_some()
             || expected.native_task_scenarios.is_some()
             || expected.checked_mutex_sanitized.is_some()
+            // Card `CT-CTWIN-LANE`: the declared crossing takes the mutex
+            // route, which refuses a non-Linux/macOS/Windows host at `Q500`
+            // before the checker is reached, and its `accept_emitting` control
+            // compiles through the host-gated emission path.
+            || expected.checked_mutex_crossing.is_some()
             || expected.native_heap_scenarios.is_some()
             // Card `CT-WIRE-LANE`: the sanitized compile-and-run half is
             // Unix-only, exactly as the two runners above.
@@ -1947,6 +2084,100 @@ fn run_mapped_case(case: &ManifestCase) {
         );
         assert!(!mutex.reference_observation.is_empty());
         assert!(!mutex.emitted_c_contains.is_empty());
+    }
+    if let Some(crossing) = &expected.checked_mutex_crossing {
+        // The classification half of the mapping is checked against the
+        // judgment's own published data rather than against this fixture's
+        // prose, so a rename there cannot leave the fixture asserting a
+        // vocabulary the code no longer has.
+        assert_eq!(
+            crossing.payload,
+            format!("TransferKind::{:?}", MUTEX_SHARE_CROSSING.kind),
+            "{}: the declared payload must be the judgment's own kind",
+            case.id
+        );
+        assert_eq!(
+            crossing.protocol,
+            format!("ShareProtocol::{:?}", MUTEX_SHARE_CROSSING.protocol),
+            "{}: the declared protocol must be the judgment's own",
+            case.id
+        );
+        // This mapping rests on the crossing being requestable from source at
+        // all. That is a compile-time fact about the judgment's published data,
+        // so it is pinned in a `const` block rather than at run time: if a
+        // later card sets `requestable: false` — as `MUTEX_SHARING_GAP` still
+        // is for the task route's own buffer — this file stops compiling,
+        // instead of a green test reporting a case mapped onto a capability the
+        // judgment no longer offers.
+        const { assert!(MUTEX_SHARE_CROSSING.requestable) };
+        assert!(
+            !crossing.attributed_to.trim().is_empty(),
+            "{}: a crossing names the construct its scenario is about",
+            case.id
+        );
+        assert!(
+            !crossing.reaches.is_empty() && crossing.reaches.iter().all(|reach| reach.guarded),
+            "{}: `accept only through the protocol` means every reach names a guard",
+            case.id
+        );
+        assert!(
+            crossing
+                .reaches
+                .iter()
+                .any(|reach| reach.task == crossing.spawn.child),
+            "{}: the child must be one of the tasks that reaches the payload, or \
+             the crossing carries nothing",
+            case.id
+        );
+        assert!(
+            !crossing.emission_refusal.trim().is_empty(),
+            "{}: the emission boundary is pinned, never omitted",
+            case.id
+        );
+        assert_eq!(
+            crossing
+                .controls
+                .iter()
+                .filter(|control| control.expectation == "accept_emitting")
+                .count(),
+            1,
+            "{}: exactly one control pins the other side of the emission \
+             boundary, so the case's empty emission is attributable",
+            case.id
+        );
+        assert!(
+            crossing
+                .controls
+                .iter()
+                .filter(|control| control.expectation == "reject")
+                .count()
+                >= 2,
+            "{}: `only through the protocol` needs more than one way of \
+             failing to reach it",
+            case.id
+        );
+        for control in &crossing.controls {
+            match control.expectation.as_str() {
+                "accept_emitting" => assert!(
+                    control.diagnostic_sequence.is_empty()
+                        && control.message_fragment.is_none()
+                        && !control.reference_observation.is_empty(),
+                    "{}: the emitting control pins the observation that makes it \
+                     the emission boundary",
+                    case.id
+                ),
+                "reject" => assert!(
+                    !control.diagnostic_sequence.is_empty()
+                        && control.message_fragment.is_some()
+                        && control.reference_observation.is_empty(),
+                    "{}: a refused control pins its codes and a distinguishing \
+                     fragment of its message",
+                    case.id
+                ),
+                other => panic!("{}: unknown crossing control `{other}`", case.id),
+            }
+            assert!(required_files.insert(control.source.clone()));
+        }
     }
     if let Some(reject) = &expected.checked_mutex_reject {
         assert!(
@@ -2856,6 +3087,25 @@ fn run_mapped_case(case: &ManifestCase) {
             );
             run_checked_mutex_sanitized(&expected, result);
         }
+        "checked_mutex_crossing" => {
+            assert!(
+                expected.diagnostics.is_empty()
+                    && expected.outcome.is_none()
+                    && expected.trace.is_none(),
+                "{}: this mode's evidence is the lowered crossing and its \
+                 controls, not an execution post-state",
+                case.id
+            );
+            run_mutex_crossing(
+                &directory,
+                &case.id,
+                expected
+                    .checked_mutex_crossing
+                    .as_ref()
+                    .expect("mode metadata"),
+                result,
+            );
+        }
         "reordering_partial_order" => {
             assert!(
                 expected.diagnostics.is_empty()
@@ -3408,7 +3658,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 20] = [
+const EVIDENCE_FILES: [&str; 21] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3429,6 +3679,11 @@ const EVIDENCE_FILES: [&str; 20] = [
     "docs/reports/ct03-proof-alphabet/ct_stage_evidence.json",
     "docs/reports/ct-composed-native/ct_stage_evidence.json",
     "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
+    // Card `CT-CTWIN-LANE` (wave 35): CT46 mapped, and the four cases this lane
+    // re-measured and deliberately left unmapped. It is also the record that
+    // retires wave 13's CT46 bucket row, by declaration rather than by editing
+    // that record (constraint 21).
+    "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
@@ -3928,6 +4183,208 @@ fn growth_control_admission(id: &str, control: &MutexControl, source: &str) -> u
         control.source
     );
     certificate.admitted_protection_growths.len()
+}
+
+/// CT46: the declared crossing, admitted through the verified mutex protocol.
+///
+/// The case's own module is asserted whole — the spawn/join edge, the child's
+/// own lock, and the complete ordered guarded-reach vector rebuilt from the
+/// checked event list — so a fixture cannot pin a convenient subset of the
+/// payload accesses. The emission boundary is asserted in **both** directions:
+/// this module renders no C and its event list is refused by
+/// `interpret_mutex_program` with the fixture's verbatim refusal, while the
+/// `accept_emitting` control — the same route without the crossing clause —
+/// does render and does interpret to its pinned observation. Without that pair
+/// the case's three `unassessed` stages would be an omission; with it they are
+/// a measurement attributable to the crossing.
+fn run_mutex_crossing(
+    directory: &Path,
+    id: &str,
+    crossing: &CheckedMutexCrossing,
+    result: Result<qcore_compiler::CompiledModule, Vec<qcore_compiler::FileDiagnostic>>,
+) {
+    // The whole route refuses a host it cannot emit threads for, before the
+    // checker is reached, so there is nothing to measure there.
+    if !cfg!(any(
+        target_os = "linux",
+        target_os = "macos",
+        target_os = "windows"
+    )) {
+        unsupported_target(&result.unwrap_err());
+        eprintln!("{id}: declared crossing unexecuted on this host");
+        return;
+    }
+    let module = result.unwrap_or_else(|diagnostics| {
+        panic!(
+            "{id}: the declared crossing must be admitted:\n{}",
+            diagnostics
+                .iter()
+                .map(format_diagnostic)
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    });
+    let checked = module
+        .checked
+        .as_checked_mutex_guards()
+        .unwrap_or_else(|| panic!("{id}: the case must take the checked mutex route"));
+    let events = &checked.lowered.program.events;
+
+    // The crossing is a real task boundary in the model, not a syntactic
+    // annotation: the child is spawned, it takes the generation itself, and its
+    // creator joins it.
+    assert!(
+        events.iter().any(|event| matches!(
+            event,
+            MutexInvariantEvent::Spawn { parent, child }
+                if *parent == crossing.spawn.parent && *child == crossing.spawn.child
+        )),
+        "{id}: the declared crossing must lower to a real spawn"
+    );
+    assert!(
+        events.iter().any(|event| matches!(
+            event,
+            MutexInvariantEvent::Join { parent, child }
+                if *parent == crossing.join.parent && *child == crossing.join.child
+        )),
+        "{id}: the creator must join the child it shared the payload with"
+    );
+    assert!(
+        events.iter().any(|event| matches!(
+            event,
+            MutexInvariantEvent::Lock { task, .. } if *task == crossing.child_lock_task
+        )),
+        "{id}: the child acquires the generation itself; nothing is parked with it"
+    );
+    // Rebuilt whole, so the fixture pins every reach or none.
+    let reaches: Vec<GuardedReach> = events
+        .iter()
+        .filter_map(|event| match event {
+            MutexInvariantEvent::Access { task, guard, .. } => Some(GuardedReach {
+                task: *task,
+                guarded: guard.is_some(),
+            }),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        reaches, crossing.reaches,
+        "{id}: every reach of the shared payload, in order, and whether it named \
+         a guard — this vector is what `accept only through a verified mutex \
+         protocol` means here"
+    );
+
+    // The emission boundary, stated as a decision rather than left as silence.
+    assert!(
+        module.c_source.is_none(),
+        "{id}: this mapping claims no emission; if the backend has learned to \
+         render a crossing, the manifest's three `unassessed` stages move in the \
+         same change"
+    );
+    let refusal = qcore_core::mutex_c_emit::interpret_mutex_program(
+        &checked.lowered.program,
+        &checked.certificate,
+    )
+    .expect_err("a crossing is outside the emitted subset");
+    assert_eq!(
+        format!("{refusal:?}"),
+        crossing.emission_refusal,
+        "{id}: the emission refusal is part of the measurement"
+    );
+
+    for control in &crossing.controls {
+        let path = directory.join(&control.source);
+        let source = fs::read_to_string(&path)
+            .unwrap_or_else(|error| panic!("cannot read {}: {error}", path.display()));
+        let outcome = compile_files(
+            &[SourceFile::new(path.to_string_lossy(), source)],
+            &CompileOptions::default(),
+        );
+        match control.expectation.as_str() {
+            // The other side of the emission boundary: the same route, the same
+            // payload and the same generation with the clause removed. It
+            // renders, and it interprets to the observation the fixture pins.
+            "accept_emitting" => {
+                let module = outcome.unwrap_or_else(|diagnostics| {
+                    panic!(
+                        "{id} control {}: this control must be admitted, or the \
+                         case's empty emission attributes nothing:\n{}",
+                        control.source,
+                        diagnostics
+                            .iter()
+                            .map(format_diagnostic)
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    )
+                });
+                let checked = module
+                    .checked
+                    .as_checked_mutex_guards()
+                    .unwrap_or_else(|| panic!("{id} control {}: same route", control.source));
+                assert!(
+                    module.c_source.is_some(),
+                    "{id} control {}: the route really does emit without the \
+                     crossing clause",
+                    control.source
+                );
+                let observation = qcore_core::mutex_c_emit::interpret_mutex_program(
+                    &checked.lowered.program,
+                    &checked.certificate,
+                )
+                .unwrap_or_else(|error| {
+                    panic!(
+                        "{id} control {}: this control is inside the emitted \
+                         subset: {error:?}",
+                        control.source
+                    )
+                });
+                assert_eq!(
+                    observation, control.reference_observation,
+                    "{id} control {}: reference observation drifted from the \
+                     pinned expectation",
+                    control.source
+                );
+            }
+            // One of the ways of reaching the payload without the protocol.
+            // Both the code vector and a distinguishing fragment of the message
+            // are pinned: a control that reached the right code for the wrong
+            // reason would pass on the code alone.
+            "reject" => {
+                let diagnostics = outcome.err().unwrap_or_else(|| {
+                    panic!(
+                        "{id} control {}: this program must be refused",
+                        control.source
+                    )
+                });
+                assert_eq!(
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.code.clone())
+                        .collect::<Vec<_>>(),
+                    control.diagnostic_sequence,
+                    "{id} control {}: exact ordered code vector",
+                    control.source
+                );
+                let fragment = control
+                    .message_fragment
+                    .as_deref()
+                    .expect("a refused control pins a message fragment");
+                assert!(
+                    diagnostics
+                        .iter()
+                        .any(|diagnostic| diagnostic.message.contains(fragment)),
+                    "{id} control {}: no diagnostic carries `{fragment}`; the \
+                     reported messages were {:?}",
+                    control.source,
+                    diagnostics
+                        .iter()
+                        .map(|diagnostic| diagnostic.message.clone())
+                        .collect::<Vec<_>>()
+                );
+            }
+            other => panic!("{id}: unknown crossing control `{other}`"),
+        }
+    }
 }
 
 fn run_mutex_controls(directory: &Path, id: &str, reject: &CheckedMutexReject) {

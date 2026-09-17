@@ -1,0 +1,71 @@
+{
+  "card": "CT-CTWIN-LANE",
+  "wave": 35,
+  "generated": "2026-09-17",
+  "what": "CT41 re-measured on this tree over five shapes, through the real unrestricted-C gateway entry points. The shapes are the .c files beside this record, and the numbers below were re-derived FROM THOSE FILES so the archive is the thing that was measured rather than a transcription of a deleted scratch run.",
+  "environment": {
+    "clang": "Ubuntu clang version 21.1.8 (6ubuntu1), /usr/bin/clang",
+    "target": "x86_64-pc-linux-gnu",
+    "QCORE_CLANG": "unset (discovery)",
+    "base": "main at a300a39d plus this card"
+  },
+  "entry_points": [
+    "qcore_compiler::validate_unrestricted_c11 (the `parse` stage: Clang preprocessing plus syntax acceptance)",
+    "qcore_compiler::analyze_unrestricted_c11 (the `legacy_c_twin` stage: resource projection and unit verdict)"
+  ],
+  "entry_function": "subject",
+  "contracts": "ct41-shapes/contracts.qcore — the same synthetic q_* surface CT40/CT43/CT45 use; trusted test assumptions about a synthetic API, not verified facts about any library",
+  "note_on_line_numbers": "The `4` in each diagnostic is the INTERNAL preprocessed line, not a line of the commented source file. That is constraint 12a (GATEWAY-LOCATION-INTERNAL-CHANNELS): the presented coordinate is the original file:line, while pin, leaf and certificate identity stay on the preprocessed coordinate, which is what this raw projection API reports.",
+  "shapes": [
+    {
+      "file": "ct41-shapes/a_volatile_store.c",
+      "role": "producer, WITH the qualifier",
+      "verdict": "unknown",
+      "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "function_status": { "subject": "unknown" },
+      "diagnostics": ["subject:4:unsupported:unsupported assignment expression"]
+    },
+    {
+      "file": "ct41-shapes/b_plain_store.c",
+      "role": "producer, WITHOUT the qualifier — shape A with `volatile` removed and nothing else",
+      "verdict": "unknown",
+      "reason": "resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)",
+      "function_status": { "subject": "unknown" },
+      "diagnostics": ["subject:4:unsupported:unsupported assignment expression"],
+      "measured": "byte-identical to shape A in verdict, verbatim reason, per-function status and ordered diagnostics"
+    },
+    {
+      "file": "ct41-shapes/c_no_flag.c",
+      "role": "isolating control — no flag at all",
+      "verdict": "safe",
+      "reason": null,
+      "function_status": { "subject": "safe" },
+      "diagnostics": [],
+      "isolates": "the flag STORE. A and B's Unknown is bought by the unsupported assignment expression, not by the qualifier, the acquisition or the release."
+    },
+    {
+      "file": "ct41-shapes/d_volatile_spin.c",
+      "role": "consumer, WITH the qualifier — the scenario's own spin-on-a-completion-flag shape",
+      "verdict": "safe",
+      "reason": null,
+      "function_status": { "subject": "safe" },
+      "diagnostics": []
+    },
+    {
+      "file": "ct41-shapes/e_plain_spin.c",
+      "role": "consumer, WITHOUT the qualifier",
+      "verdict": "safe",
+      "reason": null,
+      "function_status": { "subject": "safe" },
+      "diagnostics": [],
+      "measured": "byte-identical to shape D"
+    }
+  ],
+  "findings": {
+    "clause_b_fails_structurally": "The wave-9 attribution rule's clause (b) needs a control in which removing the construct the scenario names MOVES the verdict. A vs B and D vs E are each byte-identical, so no such control exists — and card CTWIN-PUBLISH section 5 decided that this identity is CORRECT rather than a gap, C11 volatile being an access-ordering qualifier and not a synchronization primitive. The obstruction therefore cannot be retired by any later measurement.",
+    "clause_a_fails_more_sharply_than_wave_17": "Wave 17 measured producer shapes only and so saw only the `unknown` horn. The consumer shapes D and E — the scenario's own shape — are answered SAFE with no diagnostic at all. A mapping would record a certification against a case whose expected outcome is a non-certification. The `safe` is correct within the gateway's scope (one translation unit, one acquisition, one release, resource projection only) and is not a defect; it is simply not evidence about a synchronization proof.",
+    "delta_from_wave_17_attributed": "Wave 17's producer pair carried `1 unresolved alias(es)` and a second diagnostic `subject:4:unknown-alias:p`; both are absent here. That is wave 31's AOM-BINDING-POISON narrowing (card C-GATEWAY-WAVE, constraint 10a) — a refused statement no longer poisons bindings its own text cannot have written, so `p` survives the refused assignment. The movement is in the refusal-REDUCING direction and changes nothing about the mapping question.",
+    "typed_source_arm": "crates/qcore-c-gateway/src/typed_source.rs::c_type refuses `volatile`, `_Atomic` and `restrict` in ONE branch with ONE message (`qualified access requires additional synchronization/alias evidence`). Removing the qualifier would move that verdict, which is clause (b) — but the rule treats a real synchronization primitive (_Atomic) exactly like the qualifier that is not one (volatile), and that difference is CT41's entire content. Recorded as CT41-TYPED-SOURCE-UNDISCRIMINATING, a measured boundary and not a defect: refusing the qualifier class wholesale is fail-closed and correct for that importer. This arm was NOT re-measured through a new harness; the claim is a reading of the branch, which is a literal substring test on the type text, plus its existing tests in typed_source_match.rs."
+  },
+  "reproduce": "See reproduce.md beside this file for the exact harness. Nothing in the committed test suite runs these shapes: CT41 is unmapped, so it has no runner, and adding one would be the vacuous mapping this lane declined."
+}

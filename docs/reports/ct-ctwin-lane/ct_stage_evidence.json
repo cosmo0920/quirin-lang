@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "card": "CT-CTWIN-LANE",
+  "generated": "2026-09-17",
+  "report": "docs/reports/ct-ctwin-lane/README.md",
+  "purpose": "Wave 35's CT mapping lane. One case mapped (CT46, on the `mutex_guard` route) and four re-measured and left unmapped (CT41, CT42, CT10, CT24), each with the measurement published here rather than inherited. A grown denominator is mapping, not conformance (constraint 23).",
+  "derivation_rule": "Every `verified_stages` block below is the manifest's own row for that case, which `compiler/tests/ct_corpus.rs` independently rederives from its own dispatch and refuses drift on. Nothing here is a second hand-kept copy.",
+  "route": "mutex_guard",
+  "why_this_case_maps_now": "Card MUTEX-SHARE-CROSS (wave 32) landed the capture form CT46's accept half had always lacked: `thread scope NAME share PLACE under MUTEX { ... }`, a TransferMode::ShareUnderMutex requesting ShareProtocol::CheckedMutex for a TransferKind::ProtectedResource payload. That card's own section 10 declared the recorded blocker CT46-MUTEX-CAPTURE discharged clause by clause and left three questions for a mapping lane; this lane answers all three by measurement. (a) Does a mutex generation satisfy the scenario's `known shared wrapper` premise? No -- there is no wrapper type in this language at all -- so the mapping publishes that as an untranslatable word rather than resting on it. (b) May the row read `executed` for the native stages? No: measured, `compile_files` admits the module and returns `c_source: None`, and `interpret_mutex_program` refuses its event list with `UnsupportedEvent { event: 1 }`. (c) Does the `Send` direction have a source spelling? Not as a trait; it is carried by the judgment's classification, asserted against `qcore_core::transfer::MUTEX_SHARE_CROSSING` rather than against fixture prose.",
+  "attribution": {
+    "clause_a_verdict_class": "The scenario's `Accept` is the case: the crossing is admitted, and the admission is asserted as the lowered shape -- a real Spawn{0,1}, the child's own Lock, a real Join{0,1}, and the complete ordered guarded-reach vector [(1, guarded), (0, guarded)] rebuilt whole from the checked event list rather than looked up by keys the fixture names.",
+    "clause_b_attributable": "The scenario's `only through verified mutex protocol` is four controls, each a different way of reaching the payload without the protocol, each refused by a distinct rule and each pinning a distinguishing fragment of its message as well as its code vector: unguarded_reach.qcore at Q611 (the UNEDITED core's own code, not this route's), absent_protocol.qcore at Q600 for naming no protocol, mismatched_protocol.qcore at Q600 for naming a real generation that guards a DIFFERENT payload, and share_generation.qcore refused by the transferability judgment for sharing the generation instead of the payload. The third is the one that keeps the mapping non-vacuous: without it, naming any lock at all would satisfy `verified mutex protocol`.",
+    "emission_boundary_control": "no_crossing.qcore is the same route, the same payload and the same generation with the crossing clause removed. It is admitted, it DOES render C, and it DOES interpret to the pinned observation. So the case's empty emission is attributable to the crossing clause -- the Spawn it introduces is outside the emitted subset -- and not to the mutex route, the protected payload or this fixture's shape. Without this control the case's four unassessed stages would be an omission."
+  },
+  "boundaries_published_not_papered_over": {
+    "wrapper": "CT46 says `known shared wrapper`. This language has no wrapper type at all -- no Arc<Mutex<T>>; the payload `buf` and the generation `m` are two separate names bound in one scope. The mapping rests on the pairing the route checks, not on a wrapper value.",
+    "non_sync_but_send": "There is no Send/Sync trait. The words are carried by qcore_core::transfer::TransferKind::ProtectedResource, which that module documents verbatim as \"CT46's payload\": sendable because custody really moves over a derivable synchronization edge, and not freely shareable because ShareProtocol::CheckedMutex is its one sharing discipline in both the read and the write direction. The harness asserts this against MUTEX_SHARE_CROSSING itself.",
+    "two_threads_running": "Nothing here is evidence about two threads actually running. The authority is held and checked, not exercised: the module emits no C and is never executed.",
+    "task_route_buffer": "MUTEX_SHARING_GAP.requestable stays false. The task route's own own<Buffer> still cannot request mutex mediation (MUTEX-SHARE-CROSS-TASK-BUFFER), so this mapping is about the checked-mutex route's `protected` payload and no other kind."
+  },
+  "what_the_mapping_does_not_claim": [
+    "No emission: compile_files returns c_source: None for this module, measured.",
+    "No reference execution: interpret_mutex_program refuses with UnsupportedEvent { event: 1 }, measured.",
+    "No native run and no sanitized run; sanitized-native stays 9 and proof stays 3, neither numerator moved.",
+    "No new checker rule, diagnostic code, lowering, model, Lean theorem or reserved word. The only Rust is harness wiring in compiler/tests/ct_corpus.rs.",
+    "No C gateway source change of any kind (two arbiters own crates/qcore-c-gateway/ this wave)."
+  ],
+  "lean_is_not_applicable": "This lane binds no theorem to a CT fixture; `proof` stays unassessed for CT46 and the proof count is unmoved at 3. Card MUTEX-SHARE-CROSS's own QCore.MutexShareCross.aSharedPayloadIsReachableOnlyThroughTheProtocol is about the model, not about this case's artifact, so citing it as this case's proof stage would be exactly the overstatement constraint 23 forbids (T00.7 stays open).",
+  "sanitized_native_growth": "none; 9 of 45 -> 9 of 46, denominator only",
+  "inventory": {
+    "added_mapped_ids": [
+      "CT46"
+    ],
+    "mapped_before": 45,
+    "mapped_after": 46,
+    "unmapped_after": 4,
+    "total": 50
+  },
+  "executed_totals_added": {
+    "source_compilations_of_case_artifacts": 1,
+    "source_compilations_of_control_artifacts": 5,
+    "accepted_controls": 1,
+    "rejected_controls": 4,
+    "c_emissions": 0,
+    "sanitized_native_compile_and_run": 0,
+    "cases_with_proof_evidence": 0
+  },
+  "mapped_case_stage_matrix": {
+    "CT46": {
+      "harness_verdict_mode": "checked_mutex_crossing",
+      "manifest_evidence_target": "linux",
+      "verified_stages": {
+        "parse": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "elaborate": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "task_lowering": {
+          "status": "not_applicable"
+        },
+        "task_ledger_check": {
+          "status": "not_applicable"
+        },
+        "mutex_lowering": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "mutex_invariant_check": {
+          "status": "executed",
+          "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+          "artifact": "compiler/tests/fixtures/ct/CT46/case.qcore",
+          "observations": 1
+        },
+        "epoch_lowering": {
+          "status": "not_applicable"
+        },
+        "epoch_bound_check": {
+          "status": "not_applicable"
+        },
+        "sequential_whole_program": {
+          "status": "not_applicable"
+        },
+        "sequential_reference_execution": {
+          "status": "not_applicable"
+        },
+        "task_reference_execution": {
+          "status": "not_applicable"
+        },
+        "mutex_reference_execution": {
+          "status": "unassessed"
+        },
+        "c_emission": {
+          "status": "unassessed"
+        },
+        "native_execution": {
+          "status": "unassessed"
+        },
+        "native_sanitized": {
+          "status": "unassessed"
+        },
+        "legacy_c_twin": {
+          "status": "not_applicable"
+        },
+        "proof": {
+          "status": "unassessed"
+        }
+      }
+    }
+  },
+  "cases_examined_and_left_unmapped": {
+    "CT41": {
+      "scenario": "`volatile` used as a completion flag",
+      "expected": "No synchronization proof",
+      "re_measured_on_this_tree": "Five shapes through the real gateway entry points (analyze_unrestricted_c11 over the same synthetic q_* contract surface CT40/CT43/CT45 use; Ubuntu clang 21.1.8). PRODUCER shapes -- `g_done = 1;` beside an acquisition and release, with `volatile int g_done;` and with plain `int g_done;` -- are byte-identical: unknown, reason `resource projection unresolved: 1 unsupported operation(s), 0 unresolved alias(es), 0 custody summary conflict(s)`, one diagnostic `subject:4:unsupported:unsupported assignment expression`. The body with no flag at all is safe with no diagnostic. CONSUMER shapes -- `while (!g_done) { } q_free(p);`, which is the scenario's own spin-on-a-completion-flag shape -- are byte-identical to each other at SAFE with no diagnostic at all, with and without the qualifier. The wave-17 lane measured the producer pair with one more diagnostic (`subject:4:unknown-alias:p`) and one more unresolved alias; that difference is wave 31's AOM-BINDING-POISON narrowing (card C-GATEWAY-WAVE), is in the refusal-reducing direction and moves nothing about this case.",
+      "why_still_unmapped": "The operative reason is STRUCTURAL and no measurement can retire it. Clause (b) of the wave-9 attribution rule (docs/reports/wave9-ctwin/README.md) requires a control in which removing the construct the scenario names MOVES the verdict; the construct CT41 names is `volatile`, and the decided content of card CTWIN-PUBLISH section 5 is precisely that removing it moves nothing -- C11 volatile is an access-ordering qualifier for the abstract machine and not a synchronization primitive, so a projection deriving no synchronization fact MUST answer identically with and without it. A mapping is therefore vacuous by construction, not by a gap a later card could close. Clause (a) fails too, and now more sharply than in wave 17: the scenario's own consumer shape is answered SAFE, so a mapping would record a certification against a case whose expected outcome is a non-certification. The wave-17 reason's other clause, `no harness path runs it`, is RETIRED -- the C-twin harness path has existed since that very lane and this lane ran it -- so the reason is narrowed to its structural half rather than repeated whole.",
+      "typed_source_arm_examined_for_the_first_time": "The archived blocker's parenthetical (`typed_source.rs refuses volatile/_Atomic/restrict`) is still true: crates/qcore-c-gateway/src/typed_source.rs:522 refuses any such type with `qualified access requires additional synchronization/alias evidence`. That arm was never examined for CT41 before, and it cannot carry the case either -- for a reason that is about the rule's shape and not about its reachability. The refusal is ONE branch with ONE message covering `volatile`, `_Atomic` and `restrict` alike, so it treats a real synchronization primitive exactly like the qualifier that is not one. CT41's entire content is the difference between those two, so a rule that cannot tell them apart cannot be evidence about it. Recorded as CT41-TYPED-SOURCE-UNDISCRIMINATING. (Stated as a reading of the rule plus its existing tests, not as a new measurement: the branch is a literal substring test on the type text, so the claim is settled by the source.)",
+      "follow_on": "CT-CTWIN-SYNC (decided by card CTWIN-PUBLISH section 5, not open as a gap); new: CT41-TYPED-SOURCE-UNDISCRIMINATING"
+    },
+    "CT42": {
+      "scenario": "Two descriptors share an underlying logical state",
+      "expected": "Preserve shared protocol-cell identity",
+      "re_measured_on_this_tree": "BOTH arms measured, where earlier lanes measured one. (i) C-TWIN ARM: the contract loader still refuses an int-typed owned result verbatim -- `contracts.qcore: q_open_fd at byte 18: owned result requires a pointer return type` -- so an int-typed resource identity is still not expressible at all. CT-CTWIN-DESCRIPTOR unchanged and re-verified rather than inherited. (ii) SOCKET ARM: card CT42-PROTOCOL-CELL (wave 31) landed the derived cell at MODEL level -- qcore_core::socket_footprint derive_socket_cells/footprint_program, an accepted connection being one cell with two custodians, refused in the unedited disjointness checker as SharedProtocolCell (Q664). That arm is UNREACHABLE FROM SOURCE: derive_socket_cells and footprint_program are called from crates/qcore-core/tests/unit/socket_footprint.rs and from nothing else -- not the frontend, not the checker, not compile_files -- and the card's own report states that no .qcore statement spells AssertDisjoint over sockets.",
+      "why_still_unmapped": "A CT fixture on a source route is a .qcore program the harness compiles through the real pipeline. No such program can reach Q664 on the socket arm, because nothing in the pipeline calls the deriver; a row claiming that stage would name evidence this harness cannot execute, which is exactly what constraint 23's `executed only where a named workspace test runs it on the case's own artifact` forbids. Wiring the deriver into the route would need new source syntax and a checker change -- a route card, not a mapping lane, and out of this lane's scope in both directions. The C-twin arm stays blocked where it has always been. Recorded as CT42-CELL-UNROUTED.",
+      "follow_on": "CT-CTWIN-DESCRIPTOR (unchanged, re-verified); CT42-MAP (still open, and this lane measured why); new: CT42-CELL-UNROUTED"
+    },
+    "CT10": {
+      "scenario": "Adjacent bit-fields in one memory location",
+      "expected": "Reject independent concurrent writes",
+      "re_measured_on_this_tree": "The scenario has two halves and exactly one of them exists. The CONCURRENCY half landed at BYTE granularity in wave 31 (WRITE-LEND-TASKS: disjoint range write leases across a real spawn, overlapping leases refused). The SUB-BYTE half does not exist on any source route: no .qcore syntax declares a bit-field, so `adjacent bit-fields in one memory location` has no source form. The model does carry the rule -- disjoint_footprint's SharedBitfieldUnit (Q661), exercised by crates/qcore-core/tests/unit/disjoint_footprint.rs::adjacent_bitfields_of_one_storage_unit_are_never_disjoint -- but that is a hand-constructed LayoutContract, not a program. The C-twin arm cannot supply the missing half either: the gateway refuses a bit-field's whole enclosing function (typed_field_access.rs::a_bitfield_refuses_the_whole_record), which is a refusal for inexpressibility and not the scenario's `reject independent concurrent writes`.",
+      "why_still_unmapped": "Mapping it would rest on half a scenario: either the byte-granularity concurrency shape with the words `bit-fields` and `one memory location` unmet, or a model-level unit test that is not a case artifact. The brief for this lane said not to map on half a scenario and the measurement agrees. CT10 keeps card T00's archived bucket, and the deferred residual CT10-REASON-ROW stays deferred: this lane did not take it, and says so rather than leaving it ambiguous.",
+      "follow_on": "CT10-REASON-ROW (deferred, untaken)"
+    },
+    "CT24": {
+      "scenario": "Cleanup destroys an owner before child join",
+      "expected": "Reject",
+      "re_measured_on_this_tree": "Not attempted, deliberately and by instruction. CT24 has been examined and WITHDRAWN twice -- wave 26 and wave 30's CT24-CLEANUP-PREEMPTED, whose lane 3 measurement is that on the only route with an executed cleanup-destroy, a region before the join refuses for its PLACEMENT whatever its duties, so no control can isolate the destroy.",
+      "why_still_unmapped": "It stays withdrawn. Publishing a labelled row for it would move newly_decidable_not_mapped_reasons' key set, which constraint 25 derives from the judgment's own keys, against a matrix this lane may not regenerate by hand -- the trap wave 26 measured and wave 30 re-measured. CT24 keeps card T00's DECIDABLE-NOW bucket and its t00-archive label source, untouched.",
+      "follow_on": "CT24-CLEANUP-TASK-COMPOSITION (unchanged, untaken)"
+    }
+  },
+  "unmapped_reasons_provenance": "CT41 and CT42 keep the bucket the wave-17 CT lane measured -- `blocked-on-gateway-expressiveness (C-twin measured)` -- so neither row declares a supersession: re-verification reaching the same label is the record saying the label still holds, and inventing a new bucket would be label churn that moves the tally shape for cases nothing about which moved. Only the REASONS move, and only for CT41 and CT42, each narrowed by a measurement this lane took. CT10 and CT24 keep card T00's archive rows untouched and are not republished here, because this lane measured them without moving their labels. CT46's row is not published here at all: the case is mapped, so it has no blocker to publish, and the wave-13 record's row for it is retired below rather than deleted from that record.",
+  "unmapped_reasons": {
+    "CT41": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "The resource projection has no synchronization model, and the `volatile` invariance is asserted as CORRECT by card CTWIN-PUBLISH section 5 rather than open, so no verdict of this gateway is evidence about a synchronization proof. The obstruction is structural, not a gap: clause (b) of the wave-9 attribution rule needs a control in which removing the named construct moves the verdict, and the decided fact is that removing `volatile` moves nothing. Re-measured here over five shapes, including the scenario's own consumer shape, which is answered SAFE with and without the qualifier. The typed-source arm cannot carry it either: that refusal covers `volatile`, `_Atomic` and `restrict` in one branch with one message, and so cannot express the very distinction the case is about.",
+      "measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), re-measured over five shapes plus the typed-source arm; the decision is card CTWIN-PUBLISH section 5, follow-ons CT-CTWIN-SYNC and CT41-TYPED-SOURCE-UNDISCRIMINATING"
+    },
+    "CT42": {
+      "bucket": "blocked-on-gateway-expressiveness (C-twin measured)",
+      "reason": "Both arms measured. The C-twin arm is unchanged and re-verified: an int-typed resource identity is not expressible at all, the contract loader refusing `owned result requires a pointer return type`. The socket arm that card CT42-PROTOCOL-CELL landed at model level is unreachable from source -- derive_socket_cells and footprint_program are called from one unit test and from nothing in the frontend, the checker or compile_files -- so no .qcore fixture can reach the Q664 SharedProtocolCell refusal and a row on that arm would name evidence the harness cannot execute.",
+      "measured_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane), both arms measured on this tree; follow-ons CT-CTWIN-DESCRIPTOR, CT42-MAP and CT42-CELL-UNROUTED"
+    }
+  },
+  "retired_unmapped_reasons": {
+    "CT46": {
+      "retires": "docs/reports/wave13-ct34/ct_stage_evidence.json",
+      "mapped_by": "docs/reports/ct-ctwin-lane/README.md (wave-35 CT lane): CT46 is mapped on the mutex_guard route under the checked_mutex_crossing verdict mode, so it has no blocker to publish. The wave-13 record keeps its row and its bytes; this declaration is what retires it, so the history stays visible instead of being edited out of an archived record (constraint 21, and the mechanism card CT-LANE-RETIREMENT built in wave 17)."
+    }
+  },
+  "fixture_disclosure_sweep": {
+    "duty": "CT-SHARED-FIXTURE-DISCLOSURE (wave 33): CT01/CT12/CT14 are one byte-identical fixture, and a lane may not create another without disclosing it.",
+    "method": "Every one of CT46's six new files was hashed against every .qcore/.c file under compiler/tests/fixtures/ct/. None collides, so this lane creates no shared fixture.",
+    "incidental_finding": "The sweep found THREE duplicate groups, not one. Beyond the disclosed CT01/CT12/CT14 case.qcore group: CT02/case.qcore is byte-identical to CT14/read_before_join.qcore, and CT03/case.qcore is byte-identical to CT04/write_after_joins.qcore. Both are a different relation from the disclosed one -- a case's own artifact doubling as another case's CONTROL -- and neither is disclosed in any report, fixture comment or harness assertion.",
+    "classification": "A disclosure gap, not a defect. A control that is another mapped case's admitted program is arguably a strong control, and both owning reports describe their control in their own terms. The concrete hazard is one-directional: editing CT02/case.qcore or CT03/case.qcore silently changes what CT14's and CT04's controls test.",
+    "not_repaired_here": "The repair touches other cases' fixtures and records, outside a mapping lane's boundary.",
+    "residual": "CT-FIXTURE-CROSS-CASE-DUPLICATES"
+  }
+}
