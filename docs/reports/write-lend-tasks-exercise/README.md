@@ -147,12 +147,24 @@ type refusals before this card. Census, run rather than assumed, over **514**
 | `qcore_buffer_write` | 23 | **0** |
 | `qcore_buffer_read` | 139 | **0** |
 
-The only arity-3 `qcore_buffer_write` and arity-2 `qcore_buffer_read` anywhere
-in the tree are the **emitted C helpers'** own signatures (three and two hits
-in Rust string literals), which are a different language and a different
-function; the byte helpers take distinct names (`qcore_buffer_byte_write`,
-`qcore_buffer_byte_read`), so there is no collision. **No shipped program's
-meaning changes.**
+The census is a **pre-card** measurement, taken at base `0a5c2ecc`. Before this
+card the only arity-3 `qcore_buffer_write` and arity-2 `qcore_buffer_read`
+anywhere in the tree were the **emitted C helpers'** own signatures — three and
+two hits in Rust string literals, a different language and a different
+function, and the byte helpers take distinct names
+(`qcore_buffer_byte_write`, `qcore_buffer_byte_read`), so there is no collision
+even there. The card's own fixtures add QCore-source occurrences afterwards,
+which is the point of taking the census first. **No shipped program's meaning
+changes**: every occurrence in the 514 fixtures is at an arity this card does
+not touch.
+
+Reproduction:
+
+```sh
+find . -path ./third_party -prune -o \( -name '*.qcore' -o -name '*.qc' \) -print | wc -l
+grep -rn 'qcore_buffer_write([^)]*,[^)]*,' --include='*.qcore' --include='*.qc' .
+grep -rn 'qcore_buffer_read([^)]*,'        --include='*.qcore' --include='*.qc' .
+```
 
 ## 4. Leg 2 — the emission
 
