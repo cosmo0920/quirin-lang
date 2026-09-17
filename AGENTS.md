@@ -148,7 +148,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**95** entries; the section is *carried*, `dimensions.named_followups` is
+**100** entries; the section is *carried*, `dimensions.named_followups` is
 *derived*, and the two are checked against each other on the committed file, so
 add entries through `docs/reports/remaining-d02/build_matrix.py` and never by
 hand — constraint 25) plus each report's own follow-on list; per-card evidence in

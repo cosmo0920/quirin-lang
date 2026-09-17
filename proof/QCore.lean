@@ -90,6 +90,7 @@ import QCore.Concurrency
 import QCore.LifetimeCorrespondence
 import QCore.MutexInvariant
 import QCore.MutexShareCross
+import QCore.MutexShareCrossArms
 import QCore.DisjointFootprint
 import QCore.TranslationValidation
 import QCore.VerifierPlugin
