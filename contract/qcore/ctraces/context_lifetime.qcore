@@ -1,0 +1,93 @@
+module contract;
+
+// CTraces context release — resource-projection vocabulary version 1.
+//
+// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// Read from the pinned checkout (`build/cycle19/fluent-bit-clang-source`) at
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Why this callee
+//
+// Two projected functions in the baseline are blocked by `ctr_destroy` and by
+// nothing else: `ctr_decode_msgpack_destroy`
+// (`lib/ctraces/src/ctr_decode_msgpack.c:770`) and
+// `ctr_decode_opentelemetry_destroy` (`:651` of its own file), each holding
+// exactly one leaf. It is `cmt_destroy`'s exact sibling one library over, and
+// it is declared here for the same reason and on the same reading.
+//
+// ## `ctr_destroy`, read from `lib/ctraces/src/ctraces.c:58-71`
+//
+//     void ctr_destroy(struct ctrace *ctx)
+//     {
+//         struct cfl_list *head;
+//         struct cfl_list *tmp;
+//         struct ctrace_resource_span *resource_span;
+//
+//         /* delete resources */
+//         cfl_list_foreach_safe(head, tmp, &ctx->resource_spans) {
+//             resource_span = cfl_list_entry(head, struct ctrace_resource_span, _head);
+//             ctr_resource_span_destroy(resource_span);
+//         }
+//
+//         free(ctx);
+//     }
+//
+//   * `ctx` is the ONLY parameter, and the LAST statement on every path is
+//     `free(ctx)` — unconditional. After the call the caller may not read,
+//     write or release `ctx` again. That is what `resource_released` says.
+//   * The nullability marker is **`nonnull`**, measured rather than defaulted:
+//     there is NO leading null guard, and the first executable statement
+//     dereferences the parameter, `cfl_list_foreach_safe` expanding to a read
+//     of `ctx->resource_spans`. `ctr_destroy(NULL)` is undefined behaviour
+//     upstream, not a tolerated no-op.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## The cascade, stated rather than hidden
+//
+// The loop releases every resource span on the context's list through
+// `ctr_resource_span_destroy`. No span is a tracked identity in this
+// projection — each is reached only by walking `ctx`'s own intrusive list, and
+// no analysed call site holds a separate binding to one. This declaration
+// states the custody fact about `ctx` and says NOTHING about the cascade being
+// complete or correct.
+//
+// ## ABI and modes (constraint 8)
+//
+// `lib/ctraces/include/ctraces/ctraces.h:72` declares
+//
+//     void ctr_destroy(struct ctrace *ctx);
+//
+// One object-pointer level — `ptr<mut, u8>` — and a `void` result, spelled
+// `unit`. Arity one, matching every analysed call site; not variadic, so no
+// `resource_variadic_data_tail()`.
+//
+// ## Declared although defined in a corpus unit
+//
+// `ctr_destroy` IS defined inside an audited unit, `ctraces/ctraces.c`, so it
+// meets constraint 8's duty gate. A declared contract always wins over an
+// inferred W4 summary and a disagreement is a `SummaryConflict` diagnostic,
+// never a silent override; a withdrawal would be scoped to `ctraces.c` alone,
+// and the two call sites this declaration exists to decide are in two OTHER
+// units, which define no body for it. `ctraces.c`'s own definition stays
+// analyzable and is not rewritten.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about `ctr_resource_span_destroy`, which is not declared here.
+//   * Nothing about whether a context reached this call in a valid state.
+//   * Nothing about double release or use-after-free, which the gateway's own
+//     liveness precondition refuses on settled denotations, unchanged here.
+//   * Nothing about thread safety or ordering.
+
+// --- the CTraces context's release -----------------------------------------
+extern fn ctr_destroy(ctx: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(ctx, nonnull);
+    ensures normal resource_return_none();
+};

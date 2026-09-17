@@ -49,7 +49,14 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `fluent_bit/input_chunk_total_size.qcore`), the two size-sibling
     // declarations that card's predecessor named and declined, each landed on
     // its own pinned-body reading.
-    assert_eq!(contracts.source_assumptions().len(), 21);
+
+    // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
+    // function-cover yield over the 193 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
+    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
+    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 27);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -168,6 +175,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // LP64 declared-ABI projection.
         ("cio_chunk_get_content_size", 1),
         ("flb_input_chunk_total_size", 1),
+        // Card W36-CORPUS-CONTRACTS-3 adds ONE to this all-borrowed loop:
+        // Monkey's variadic diagnostic sink `mk_print`
+        // (`lib/monkey/mk_core/mk_utils.c:200-264`), whose `int` level and
+        // `const char *` format are both read-only and whose variadic tail is
+        // consumed by `vprintf` into `stdout` — no tail argument freed, no
+        // pointer to one retained past the call. The DECLARED arity is two;
+        // the `...` is carried by `resource_variadic_data_tail()` and not by a
+        // third parameter, exactly as `flb_log_print` above carries it at
+        // arity four. The card's other five declarations release a parameter
+        // and are therefore listed below the loop rather than inside it.
+        ("mk_print", 2),
     ] {
         old.insert_contract(
             name,
@@ -208,6 +226,50 @@ fn production_contracts_preserve_the_previous_resource_modes() {
                 nullable: true,
             },
         ),
+    );
+    // Card W36-CORPUS-CONTRACTS-3 adds five releasing declarations, listed
+    // here rather than in the all-borrowed loop and listed one by one so each
+    // nullability marker is visible as its own decision. The markers are NOT
+    // uniform, and that is the point: each was read off its own pinned body.
+    //
+    //   * `cfl_sds_destroy` (`lib/cfl/src/cfl_sds.c:249-275`) — `nullable`,
+    //     because the body's FIRST statement is `if (!s) { return; }`. It is
+    //     the highest function-cover callee in the baseline.
+    //   * `cJSON_Delete` (`lib/librdkafka-2.15.0/src/cJSON.c:253-276`) —
+    //     `nullable`, because `while (item != NULL)` is evaluated before any
+    //     dereference. The null path is REACHED at all three call sites, which
+    //     pass a `cJSON_DetachItem…` result that is NULL when not found.
+    //   * `cmt_destroy` (`lib/cmetrics/src/cmetrics.c:92-146`) and
+    //     `ctr_destroy` (`lib/ctraces/src/ctraces.c:58-71`) — `nonnull`, the
+    //     opposite reading on the opposite evidence: neither body has a
+    //     leading null guard, and each dereferences its parameter in its first
+    //     executable statement. This is `flb_input_chunk_destroy`'s position
+    //     above, for `flb_input_chunk_destroy`'s reason.
+    //   * `rd_kafka_mem_free` (`lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`)
+    //     is the only two-parameter one: `rk` is read NOWHERE in the body, so
+    //     it is `Borrowed` and is deliberately not asserted non-null (LZ4's
+    //     `FREEMEM` passes a null handle); `ptr` is forwarded to `rd_free`,
+    //     whose own declaration already carries `nullable`, so the marker is
+    //     inherited from the delegate rather than guessed.
+    old.insert_contract(
+        "cfl_sds_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: true }], R::None),
+    );
+    old.insert_contract(
+        "cJSON_Delete",
+        ResourceFunctionContract::new([P::Released { nullable: true }], R::None),
+    );
+    old.insert_contract(
+        "cmt_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
+    old.insert_contract(
+        "ctr_destroy",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None),
+    );
+    old.insert_contract(
+        "rd_kafka_mem_free",
+        ResourceFunctionContract::new([P::Borrowed, P::Released { nullable: true }], R::None),
     );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
@@ -473,7 +535,14 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // ADDRESS-OF-MEMBER-DESTROY-UNDECLARED; 17 -> 18 by card
     // AOM-DESTROY-SIBLINGS; 18 -> 19 by card W29-CORPUS-CONTRACTS; 19 -> 21 by
     // card W31-CORPUS-CONTRACTS-2.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 21);
+
+    // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
+    // function-cover yield over the 193 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
+    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
+    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 27);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -629,7 +698,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // both manifest-selected — the two size-sibling read-only queries the
     // previous arbiter named and declined, each declared borrowed/none
     // against its own pinned body.
-    assert_eq!(modules.len(), 76, "corpus module count");
+
+    // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
+    // function-cover yield over the 193 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
+    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
+    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    assert_eq!(modules.len(), 82, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -711,11 +787,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `flb_input_chunk_total_size`, the two size-sibling read-only queries
     // W29's named non-declarations pointed at, declared borrowed/none against
     // their own pinned bodies).
-    // The rejected count is unchanged in all ten cases, because every added
+    // 21 -> 27 and 43 -> 49 by card W36-CORPUS-CONTRACTS-3, six declarations
+    // chosen by function-cover yield and each read against its own pinned body:
+    // `cfl/sds_lifetime.qcore`'s `cfl_sds_destroy`,
+    // `cmetrics/context_lifetime.qcore`'s `cmt_destroy`,
+    // `ctraces/context_lifetime.qcore`'s `ctr_destroy`,
+    // `librdkafka/cjson.qcore`'s `cJSON_Delete`,
+    // `librdkafka/kafka_mem.qcore`'s `rd_kafka_mem_free` and
+    // `monkey/logging.qcore`'s `mk_print` — five releases and one variadic
+    // custody-neutral diagnostic sink.
+    // The rejected count is unchanged in all eleven cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (21, 43, 145)
+        (27, 49, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

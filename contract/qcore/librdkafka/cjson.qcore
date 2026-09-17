@@ -1,0 +1,140 @@
+module contract;
+
+// cJSON entity release — resource-projection vocabulary version 1.
+//
+// Card W36-CORPUS-CONTRACTS-3. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise. Any verdict that rests on it is a
+// verdict RELATIVE TO this declaration, never a proof of the C implementation.
+//
+// Read from the pinned checkout (`build/cycle19/fluent-bit-clang-source`) at
+// Fluent Bit 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Where cJSON lives, measured rather than assumed
+//
+// There is no `lib/cjson/` in the pinned tree. The only cJSON is the copy
+// VENDORED INSIDE librdkafka, `lib/librdkafka-2.15.0/src/cJSON.{c,h}`, which is
+// why this module sits in the `librdkafka` family rather than a family of its
+// own. `librdkafka/cJSON.c` is one of the 185 audited units.
+//
+// ## Why this callee
+//
+// Three projected functions in the baseline are blocked by `cJSON_Delete` and
+// by nothing else, all three in that same unit and each holding exactly one
+// leaf: `cJSON_DeleteItemFromArray` (`lib/librdkafka-2.15.0/src/cJSON.c:2291`),
+// `cJSON_DeleteItemFromObject` (`:2310`) and
+// `cJSON_DeleteItemFromObjectCaseSensitive` (`:2315`). All three are one-line
+// detach-then-delete wrappers, e.g. (`:2288-2291`)
+//
+//     CJSON_PUBLIC(void) cJSON_DeleteItemFromArray(cJSON *array, int which)
+//     {
+//         cJSON_Delete(cJSON_DetachItemFromArray(array, which));
+//     }
+//
+// ## `cJSON_Delete`, read from `lib/librdkafka-2.15.0/src/cJSON.c:253-276`
+//
+//     CJSON_PUBLIC(void) cJSON_Delete(cJSON *item)
+//     {
+//         cJSON *next = NULL;
+//         while (item != NULL)
+//         {
+//             next = item->next;
+//             if (!(item->type & cJSON_IsReference) && (item->child != NULL))
+//             {
+//                 cJSON_Delete(item->child);
+//             }
+//             if (!(item->type & cJSON_IsReference) && (item->valuestring != NULL))
+//             {
+//                 global_hooks.deallocate(item->valuestring);
+//                 item->valuestring = NULL;
+//             }
+//             if (!(item->type & cJSON_StringIsConst) && (item->string != NULL))
+//             {
+//                 global_hooks.deallocate(item->string);
+//                 item->string = NULL;
+//             }
+//             global_hooks.deallocate(item);
+//             item = next;
+//         }
+//     }
+//
+//   * `item` is the ONLY parameter. On the first iteration the loop reaches
+//     `global_hooks.deallocate(item)` unconditionally — the two guarded
+//     `deallocate` calls above it concern `item->valuestring` and
+//     `item->string`, not `item` — so the storage `item` addresses stops being
+//     the caller's. That is what `resource_released` says.
+//   * The nullability marker is **`nullable`**, and the ground is the loop
+//     condition itself rather than a separate guard: `while (item != NULL)` is
+//     evaluated BEFORE any dereference, so `cJSON_Delete(NULL)` executes zero
+//     iterations and returns. A null argument is tolerated and is not a defect
+//     at any call site. That matters concretely here: at all three call sites
+//     the argument is the result of a `cJSON_DetachItem…` call, which returns
+//     NULL when the item is not found, so the null path is REACHED and
+//     `nonnull` would have been the wrong reading.
+//   * `CJSON_PUBLIC` is a visibility/dllexport wrapper macro, not a calling
+//     convention this projection models; `cJSON_Delete` is an ordinary
+//     function.
+//   * The result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## The sibling chain, stated rather than hidden — the load-bearing boundary
+//
+// This body does NOT release only `item`. The `item = next` step walks the
+// whole `next` chain, and the `cJSON_Delete(item->child)` recursion walks the
+// whole subtree, so one call releases an entire sibling list and everything
+// below it. `resource_released(item, nullable)` states the custody fact about
+// `item` and says NOTHING about the rest. That is faithful but NOT complete: if
+// some caller held a separate tracked identity for a SIBLING of `item`, this
+// declaration would not report that the sibling had been released too.
+//
+// At the three call sites that motivate this module the question does not
+// arise, and that was checked rather than assumed: each passes the result of
+// `cJSON_DetachItemViaPointer` (reached through `cJSON_DetachItemFromArray` at
+// `:2280-2284` and `cJSON_DetachItemFromObject` at `:2294-2299`), i.e. an item
+// already unlinked from its list, and no analysed call site in the corpus binds
+// a sibling separately. The gap is recorded as the named residual
+// `CJSON-DELETE-SIBLING-CHAIN` rather than left implicit, and its discharge
+// condition is a call site that binds two items of one chain — which would need
+// the v1 vocabulary to carry "releases a set reachable from this parameter",
+// which it does not.
+//
+// ## ABI and modes (constraint 8)
+//
+// `lib/librdkafka-2.15.0/src/cJSON.h:170-171` declares
+//
+//     CJSON_PUBLIC(void) cJSON_Delete(cJSON *item);
+//
+// One object-pointer level — `ptr<mut, u8>` — and a `void` result, spelled
+// `unit`. Arity one, matching every analysed call site; not variadic, so no
+// `resource_variadic_data_tail()`.
+//
+// ## Declared although defined in a corpus unit
+//
+// `cJSON_Delete` is defined in `librdkafka/cJSON.c`, which is ALSO the unit
+// holding all three call sites — so unlike this card's other five cases the
+// declaration and the derived W4 summary meet in the SAME unit, and constraint
+// 8's duty gate is live here rather than vacuous. That is deliberate and is
+// measured, not assumed: a declared contract wins over an inferred summary, a
+// disagreement is reported as a `SummaryConflict` diagnostic and never silently
+// resolved, and a duty contradiction would withdraw the declaration for this
+// unit — which is exactly the unit whose three functions it exists to decide.
+// The card's measured result reports whether that happened.
+//
+// ## NOT CLAIMED
+//
+//   * Nothing about `global_hooks.deallocate` — an indirect call through a
+//     file-scope hook table, which this projection does not model and which is
+//     not declared here.
+//   * Nothing about the recursion terminating, or about the subtree being
+//     acyclic.
+//   * Nothing about double release or use-after-free, which the gateway's own
+//     liveness precondition refuses on settled denotations, unchanged here.
+//   * Nothing about thread safety or ordering.
+
+// --- the cJSON entity's release (and, upstream, its whole sibling chain) ----
+extern fn cJSON_Delete(item: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(item, nullable);
+    ensures normal resource_return_none();
+};

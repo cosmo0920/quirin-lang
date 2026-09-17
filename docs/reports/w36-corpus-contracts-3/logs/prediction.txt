@@ -1,0 +1,97 @@
+source: measure/w36/runs/before
+units: 185
+unit status: {'Safe': 2, 'Unknown': 137, 'Unsafe': 42, 'data_only': 4}
+projected functions: 4834  {'Safe': 186, 'Unknown': 4564, 'Unsafe': 84}
+corpus diagnostic counts:
+  leak: 272
+  unknown_alias: 4214
+  unsupported: 50106
+
+=== functions blocked ONLY by uncontracted-call leaves: 193 ===
+    status histogram: {'Unknown': 193}
+    distinct-callee-count histogram: {1: 122, 2: 35, 3: 22, 4: 8, 5: 1, 6: 5}
+
+    top callees by BLOCKED-FUNCTION naming count:
+       13  cfl_sds_destroy
+       11  memcpy
+       11  __builtin_va_end
+       11  __builtin_va_start
+        8  snprintf
+        7  cfl_sds_cat_safe
+        5  fprintf
+        5  rd_kafka_mem_free
+        4  sds_cat_safe
+        4  rd_kafka_error_new_v
+        4  mk_print
+        3  cmt_destroy
+        3  mpack_finish_map
+        3  mpack_write_cstr
+        3  double_to_string
+        3  format_metric_name
+        3  strerror_r
+        3  add
+        3  strlen
+        3  cJSON_Delete
+
+    top callees by SOLE-BLOCKER count (the function-cover yield):
+        8  cfl_sds_destroy
+        7  memcpy
+        4  rd_kafka_mem_free
+        3  cmt_destroy
+        3  add
+        3  cJSON_Delete
+        3  mk_print
+        2  ctr_destroy
+        2  memset
+        2  rd_kafka_destroy_app
+        2  rd_kafka_topic_partition_destroy0
+        2  rd_kafka_topic_partition_list_sort
+        1  cmt_atomic_initialize
+        1  __atomic_store_n
+        1  cmt_mpack_consume_uint_tag
+        1  destroy_context_list
+        1  mpack_write_cstr
+        1  pack_context_metrics
+        1  set_result
+        1  cmt_metric_get_timestamp
+      total functions with a single blocker: 122
+
+=== PREDICTION: the six declared callees ===
+  cfl_sds_destroy: sole blocker of 8 function(s); named by 13
+      cmetrics/cmt_encode_influx.c :: cmt_encode_influx_destroy  status=Unknown leaves=1
+      cmetrics/cmt_encode_opentelemetry.c :: cmt_encode_opentelemetry_destroy  status=Unknown leaves=1
+      cmetrics/cmt_encode_prometheus.c :: cmt_encode_prometheus_destroy  status=Unknown leaves=1
+      cmetrics/cmt_encode_prometheus_remote_write.c :: cmt_encode_prometheus_remote_write_destroy  status=Unknown leaves=1
+      cmetrics/cmt_encode_splunk_hec.c :: cmt_encode_splunk_hec_destroy  status=Unknown leaves=1
+      cmetrics/cmt_encode_text.c :: cmt_encode_text_destroy  status=Unknown leaves=1
+      ctraces/ctr_encode_opentelemetry.c :: ctr_encode_opentelemetry_destroy  status=Unknown leaves=1
+      ctraces/ctr_encode_text.c :: ctr_encode_text_destroy  status=Unknown leaves=1
+  rd_kafka_mem_free: sole blocker of 4 function(s); named by 5
+      librdkafka/lz4.c :: LZ4_freeStream  status=Unknown leaves=1
+      librdkafka/lz4.c :: LZ4_freeStreamDecode  status=Unknown leaves=1
+      librdkafka/lz4hc.c :: LZ4_freeHC  status=Unknown leaves=1
+      librdkafka/lz4hc.c :: LZ4_freeStreamHC  status=Unknown leaves=1
+  cmt_destroy: sole blocker of 3 function(s); named by 3
+      cmetrics/cmt_decode_msgpack.c :: cmt_decode_msgpack_destroy  status=Unknown leaves=1
+      cmetrics/cmt_decode_prometheus_remote_write.c :: cmt_decode_prometheus_remote_write_destroy  status=Unknown leaves=1
+      cmetrics/cmt_decode_statsd.c :: cmt_decode_statsd_destroy  status=Unknown leaves=1
+  cJSON_Delete: sole blocker of 3 function(s); named by 3
+      librdkafka/cJSON.c :: cJSON_DeleteItemFromArray  status=Unknown leaves=1
+      librdkafka/cJSON.c :: cJSON_DeleteItemFromObject  status=Unknown leaves=1
+      librdkafka/cJSON.c :: cJSON_DeleteItemFromObjectCaseSensitive  status=Unknown leaves=1
+  mk_print: sole blocker of 3 function(s); named by 4
+      monkey-libevent/mk_core/mk_rconf.c :: mk_config_error  status=Unknown leaves=2
+      monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_warning  status=Unknown leaves=1
+      monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_event_bad_return  status=Unknown leaves=1
+  ctr_destroy: sole blocker of 2 function(s); named by 2
+      ctraces/ctr_decode_msgpack.c :: ctr_decode_msgpack_destroy  status=Unknown leaves=1
+      ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_destroy  status=Unknown leaves=1
+  PREDICTED functions whose last blocker is removed: 23
+  PREDICTED uncontracted-call leaves named by the six, corpus-wide: 204
+  (a leaf is DECIDED by the declaration; a function only moves when
+   the declaration was its LAST blocker, which is why the two differ)
+
+=== the declined callees, for the record ===
+  add: sole blocker of 3, named by 3, 4 leaves
+  memcpy: sole blocker of 7, named by 11, 69 leaves
+  memset: sole blocker of 2, named by 2, 61 leaves

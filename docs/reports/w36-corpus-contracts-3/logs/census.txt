@@ -1,0 +1,200 @@
+=== corpus diagnostic counts ===
+  leak                272 ->    272
+  summary_conflict      0 ->      1   <-- MOVED
+  unknown_alias      4214 ->   4308   <-- MOVED
+  unsupported       50106 ->  49922   <-- MOVED
+
+=== unit status moves ===
+  0 unit(s) moved
+
+=== function status moves ===
+  21 function(s) moved
+    cmetrics/cmt_decode_msgpack.c :: cmt_decode_msgpack_destroy: Unknown -> Safe
+    cmetrics/cmt_decode_prometheus_remote_write.c :: cmt_decode_prometheus_remote_write_destroy: Unknown -> Safe
+    cmetrics/cmt_decode_statsd.c :: cmt_decode_statsd_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_influx.c :: cmt_encode_influx_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_opentelemetry.c :: cmt_encode_opentelemetry_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_prometheus.c :: cmt_encode_prometheus_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_prometheus_remote_write.c :: cmt_encode_prometheus_remote_write_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_splunk_hec.c :: cmt_encode_splunk_hec_destroy: Unknown -> Safe
+    cmetrics/cmt_encode_text.c :: cmt_encode_text_destroy: Unknown -> Safe
+    ctraces/ctr_decode_msgpack.c :: ctr_decode_msgpack_destroy: Unknown -> Safe
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_destroy: Unknown -> Safe
+    ctraces/ctr_encode_opentelemetry.c :: ctr_encode_opentelemetry_destroy: Unknown -> Safe
+    ctraces/ctr_encode_text.c :: ctr_encode_text_destroy: Unknown -> Safe
+    librdkafka/lz4.c :: LZ4_freeStream: Unknown -> Safe
+    librdkafka/lz4.c :: LZ4_freeStreamDecode: Unknown -> Safe
+    librdkafka/lz4hc.c :: LZ4_freeHC: Unknown -> Safe
+    librdkafka/lz4hc.c :: LZ4_freeStreamHC: Unknown -> Safe
+    librdkafka/rdkafka.c :: rd_kafka_mem_free: Safe -> Unknown
+    monkey-libevent/mk_core/mk_rconf.c :: mk_config_error: Unknown -> Safe
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_warning: Unknown -> Safe
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_event_bad_return: Unknown -> Safe
+
+=== leaves REMOVED: 217 ===
+  by category: {'unsupported': 217}
+  uncontracted-call leaves by callee: {'mk_print': 87, 'cfl_sds_destroy': 56, 'cJSON_Delete': 40, 'cmt_destroy': 8, 'ctr_destroy': 7, 'rd_kafka_mem_free': 6, 'mk_config_error': 5, 'mk_rconf_warning': 1}
+  of those, naming a callee this card declared: 204
+  removed leaves NOT naming a declared callee: 13
+
+=== leaves ADDED: 128 ===
+  by category: {'summary_conflict': 1, 'unknown_alias': 94, 'unsupported': 33}
+    cmetrics/cmt_decode_msgpack.c :: cmt_decode_msgpack_create L8694 origin=cmt_decode_msgpack.c:2192 [unknown_alias] unresolved resource identity `cmt`
+    cmetrics/cmt_decode_msgpack.c :: unpack_opts_unit L7207 origin=cmt_decode_msgpack.c:246 [unknown_alias] unresolved resource identity `value`
+    cmetrics/cmt_decode_opentelemetry.c :: destroy_context_list L8667 origin=cmt_decode_opentelemetry.c:2071 [unknown_alias] unresolved resource identity `context`
+    cmetrics/cmt_decode_prometheus_remote_write.c :: cmt_decode_prometheus_remote_write_create L7099 origin=cmt_decode_prometheus_remote_write.c:873 [unknown_alias] unresolved resource identity `cmt`
+    cmetrics/cmt_decode_prometheus_remote_write.c :: cmt_decode_prometheus_remote_write_create L7104 origin=cmt_decode_prometheus_remote_write.c:879 [unknown_alias] unresolved resource identity `cmt`
+    cmetrics/cmt_decode_statsd.c :: cmt_decode_statsd_create L5997 origin=cmt_decode_statsd.c:622 [unknown_alias] unresolved resource identity `cmt`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5629 origin=cmt_decode_statsd.c:132 [unknown_alias] unresolved resource identity `label_k`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5666 origin=cmt_decode_statsd.c:176 [unknown_alias] unresolved resource identity `label_k`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5687 origin=cmt_decode_statsd.c:206 [unknown_alias] unresolved resource identity `label_k`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5688 origin=cmt_decode_statsd.c:207 [unknown_alias] unresolved resource identity `label_v`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5707 origin=cmt_decode_statsd.c:233 [unknown_alias] unresolved resource identity `label_k`
+    cmetrics/cmt_decode_statsd.c :: decode_labels L5708 origin=cmt_decode_statsd.c:234 [unknown_alias] unresolved resource identity `label_v`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5841 origin=cmt_decode_statsd.c:410 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5846 origin=cmt_decode_statsd.c:417 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5858 origin=cmt_decode_statsd.c:430 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5863 origin=cmt_decode_statsd.c:437 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5875 origin=cmt_decode_statsd.c:451 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5880 origin=cmt_decode_statsd.c:458 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5893 origin=cmt_decode_statsd.c:473 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5898 origin=cmt_decode_statsd.c:480 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_decode_statsd.c :: decode_statsd_message L5907 origin=cmt_decode_statsd.c:490 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_encode_opentelemetry_batch.c :: append_original_payload L6927 origin=cmt_encode_opentelemetry_batch.c:577 [unknown_alias] unresolved resource identity `copy`
+    cmetrics/cmt_encode_opentelemetry_batch.c :: batch_pack L6863 origin=cmt_encode_opentelemetry_batch.c:501 [unknown_alias] unresolved resource identity `payload`
+    cmetrics/cmt_encode_opentelemetry_batch.c :: batch_pack L6870 origin=cmt_encode_opentelemetry_batch.c:509 [unknown_alias] unresolved resource identity `payload`
+    cmetrics/cmt_encode_prometheus.c :: format_histogram_bucket L6186 origin=cmt_encode_prometheus.c:450 [unknown_alias] unresolved resource identity `val`
+    cmetrics/cmt_encode_prometheus.c :: format_summary_quantiles L6232 origin=cmt_encode_prometheus.c:512 [unknown_alias] unresolved resource identity `val`
+    cmetrics/cmt_encode_prometheus_remote_write.c :: pack_complex_metric_sample L7094 origin=cmt_encode_prometheus_remote_write.c:852 [unknown_alias] unresolved resource identity `additional_label_caption`
+    cmetrics/cmt_encode_prometheus_remote_write.c :: pack_complex_metric_sample L7345 origin=cmt_encode_prometheus_remote_write.c:1168 [unknown_alias] unresolved resource identity `additional_label_caption`
+    cmetrics/cmt_encode_prometheus_remote_write.c :: pack_complex_metric_sample L7347 origin=cmt_encode_prometheus_remote_write.c:1171 [unknown_alias] unresolved resource identity `synthetized_metric_name`
+    cmetrics/cmt_encode_splunk_hec.c :: append_bucket_metric L5846 origin=cmt_encode_splunk_hec.c:359 [unknown_alias] unresolved resource identity `metric_val`
+    cmetrics/cmt_encode_splunk_hec.c :: append_metric_value L5701 origin=cmt_encode_splunk_hec.c:173 [unknown_alias] unresolved resource identity `metric_val`
+    cmetrics/cmt_encode_splunk_hec.c :: append_quantiles_metric L5922 origin=cmt_encode_splunk_hec.c:496 [unknown_alias] unresolved resource identity `metric_val`
+    cmetrics/cmt_encode_splunk_hec.c :: format_histogram_bucket L5870 origin=cmt_encode_splunk_hec.c:394 [unknown_alias] unresolved resource identity `val`
+    cmetrics/cmt_encode_splunk_hec.c :: format_histogram_bucket L5889 origin=cmt_encode_splunk_hec.c:431 [unknown_alias] unresolved resource identity `metric_str`
+    cmetrics/cmt_encode_splunk_hec.c :: format_histogram_bucket L5903 origin=cmt_encode_splunk_hec.c:463 [unknown_alias] unresolved resource identity `metric_str`
+    cmetrics/cmt_encode_splunk_hec.c :: format_metric_name L5680 origin=cmt_encode_splunk_hec.c:144 [unknown_alias] unresolved resource identity `metric_name`
+    cmetrics/cmt_encode_splunk_hec.c :: format_summary_metric L5943 origin=cmt_encode_splunk_hec.c:527 [unknown_alias] unresolved resource identity `val`
+    cmetrics/cmt_encode_splunk_hec.c :: format_summary_metric L5959 origin=cmt_encode_splunk_hec.c:561 [unknown_alias] unresolved resource identity `metric_str`
+    cmetrics/cmt_encode_splunk_hec.c :: format_summary_metric L5973 origin=cmt_encode_splunk_hec.c:593 [unknown_alias] unresolved resource identity `metric_str`
+    cmetrics/cmt_mpack_utils.c :: cmt_mpack_unpack_map L6373 origin=cmt_mpack_utils.c:230 [unknown_alias] unresolved resource identity `key_name`
+    ctraces/ctr_decode_msgpack.c :: unpack_link_span_id L7424 origin=ctr_decode_msgpack.c:289 [unknown_alias] unresolved resource identity `value`
+    ctraces/ctr_decode_msgpack.c :: unpack_link_trace_id L7409 origin=ctr_decode_msgpack.c:268 [unknown_alias] unresolved resource identity `value`
+    ctraces/ctr_decode_msgpack.c :: unpack_span_parent_span_id L7537 origin=ctr_decode_msgpack.c:441 [unknown_alias] unresolved resource identity `value`
+    ctraces/ctr_decode_msgpack.c :: unpack_span_span_id L7517 origin=ctr_decode_msgpack.c:414 [unknown_alias] unresolved resource identity `value`
+    ctraces/ctr_decode_msgpack.c :: unpack_span_trace_id L7497 origin=ctr_decode_msgpack.c:387 [unknown_alias] unresolved resource identity `value`
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_create L8909 origin=ctr_decode_opentelemetry.c:553 [unknown_alias] unresolved resource identity `ctr`
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_create L8921 origin=ctr_decode_opentelemetry.c:572 [unknown_alias] unresolved resource identity `ctr`
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_create L8927 origin=ctr_decode_opentelemetry.c:581 [unknown_alias] unresolved resource identity `ctr`
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_create L8938 origin=ctr_decode_opentelemetry.c:597 [unknown_alias] unresolved resource identity `ctr`
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_create L8944 origin=ctr_decode_opentelemetry.c:606 [unknown_alias] unresolved resource identity `ctr`
+    ctraces/ctr_encode_msgpack.c :: pack_id L6887 origin=ctr_encode_msgpack.c:193 [unknown_alias] unresolved resource identity `encoded_id`
+    ctraces/ctr_encode_text.c :: format_span L6904 origin=ctr_encode_text.c:203 [unknown_alias] unresolved resource identity `id_hex`
+    ctraces/ctr_encode_text.c :: format_span L6913 origin=ctr_encode_text.c:214 [unknown_alias] unresolved resource identity `id_hex`
+    ctraces/ctr_encode_text.c :: format_span L6922 origin=ctr_encode_text.c:225 [unknown_alias] unresolved resource identity `id_hex`
+    ctraces/ctr_encode_text.c :: format_span L6992 origin=ctr_encode_text.c:321 [unknown_alias] unresolved resource identity `id_hex`
+    ctraces/ctr_encode_text.c :: format_span L7001 origin=ctr_encode_text.c:332 [unknown_alias] unresolved resource identity `id_hex`
+    ctraces/ctr_id.c :: ctr_id_from_base16 L6919 origin=ctr_id.c:239 [unsupported] unmodeled expression may mutate a formal resource identity
+    ctraces/ctr_id.c :: ctr_id_from_base16 L6930 origin=ctr_id.c:253 [unknown_alias] unresolved resource identity `decoded_id`
+    ctraces/ctr_mpack_utils.c :: ctr_mpack_unpack_map L2220 origin=ctr_mpack_utils.c:384 [unknown_alias] unresolved resource identity `key_name`
+    librdkafka/cJSON.c :: cJSON_AddArrayToObject L3020 origin=cJSON.c:2239 [unknown_alias] unresolved resource identity `array`
+    librdkafka/cJSON.c :: cJSON_AddBoolToObject L2970 origin=cJSON.c:2179 [unknown_alias] unresolved resource identity `bool_item`
+    librdkafka/cJSON.c :: cJSON_AddFalseToObject L2960 origin=cJSON.c:2167 [unknown_alias] unresolved resource identity `false_item`
+    librdkafka/cJSON.c :: cJSON_AddNullToObject L2940 origin=cJSON.c:2143 [unknown_alias] unresolved resource identity `null`
+    librdkafka/cJSON.c :: cJSON_AddNumberToObject L2980 origin=cJSON.c:2191 [unknown_alias] unresolved resource identity `number_item`
+    librdkafka/cJSON.c :: cJSON_AddObjectToObject L3010 origin=cJSON.c:2227 [unknown_alias] unresolved resource identity `object_item`
+    librdkafka/cJSON.c :: cJSON_AddRawToObject L3000 origin=cJSON.c:2215 [unknown_alias] unresolved resource identity `raw_item`
+    librdkafka/cJSON.c :: cJSON_AddStringToObject L2990 origin=cJSON.c:2203 [unknown_alias] unresolved resource identity `string_item`
+    librdkafka/cJSON.c :: cJSON_AddTrueToObject L2950 origin=cJSON.c:2155 [unknown_alias] unresolved resource identity `true_item`
+    librdkafka/cJSON.c :: cJSON_CreateDoubleArray L3398 origin=cJSON.c:2705 [unknown_alias] unresolved resource identity `a`
+    librdkafka/cJSON.c :: cJSON_CreateFloatArray L3364 origin=cJSON.c:2665 [unknown_alias] unresolved resource identity `a`
+    librdkafka/cJSON.c :: cJSON_CreateIntArray L3330 origin=cJSON.c:2625 [unknown_alias] unresolved resource identity `a`
+    librdkafka/cJSON.c :: cJSON_CreateRaw L3290 origin=cJSON.c:2575 [unknown_alias] unresolved resource identity `item`
+    librdkafka/cJSON.c :: cJSON_CreateString L3248 origin=cJSON.c:2525 [unknown_alias] unresolved resource identity `item`
+    librdkafka/cJSON.c :: cJSON_CreateStringArray L3432 origin=cJSON.c:2745 [unknown_alias] unresolved resource identity `a`
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromArray L3059 origin=cJSON.c:2291 [unsupported] nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromObject L3073 origin=cJSON.c:2310 [unsupported] nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromObjectCaseSensitive L3077 origin=cJSON.c:2315 [unsupported] nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection
+    librdkafka/cJSON.c :: cJSON_Duplicate_rec L3525 origin=cJSON.c:2854 [unknown_alias] unresolved resource identity `newitem`
+    librdkafka/cJSON.c :: cJSON_ParseWithLengthOpts L2200 origin=cJSON.c:1192 [unknown_alias] unresolved resource identity `item`
+    librdkafka/cJSON.c :: cJSON_ReplaceItemViaPointer L3144 origin=cJSON.c:2397 [unknown_alias] unresolved resource identity `item`
+    librdkafka/cJSON.c :: parse_array L2503 origin=cJSON.c:1583 [unknown_alias] unresolved resource identity `head`
+    librdkafka/cJSON.c :: parse_object L2643 origin=cJSON.c:1763 [unknown_alias] unresolved resource identity `head`
+    librdkafka/lz4hc.c :: LZ4HC_compress_optimal L1763 origin=lz4hc.c:1628 [unknown_alias] unresolved resource identity `opt`
+    librdkafka/lz4hc.c :: LZ4_compress_HC L1260 origin=lz4hc.c:970 [unknown_alias] unresolved resource identity `statePtr`
+    librdkafka/rdhttp.c :: unittest_http_get L21771 origin=rdhttp.c:734 [unknown_alias] unresolved resource identity `json`
+    librdkafka/rdhttp.c :: unittest_http_get L21778 origin=rdhttp.c:751 [unknown_alias] unresolved resource identity `json`
+    librdkafka/rdkafka.c :: rd_kafka_mem_free L25107 origin=rdkafka.c:7131 [summary_conflict] inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Released { nullable: false }], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Released { nullable: true }], result: None }; the declared contract governs every call site
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: rd_kafka_oidc_assertion_create L21599 origin=rdkafka_sasl_oauthbearer_oidc.c:580 [unknown_alias] unresolved resource identity `header_json_obj`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: rd_kafka_oidc_assertion_create L21606 origin=rdkafka_sasl_oauthbearer_oidc.c:589 [unknown_alias] unresolved resource identity `payload_json_obj`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: rd_kafka_oidc_assertion_parse_template_file L21420 origin=rdkafka_sasl_oauthbearer_oidc.c:327 [unknown_alias] unresolved resource identity `template_json`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: rd_kafka_oidc_token_try_validate L21700 origin=rdkafka_sasl_oauthbearer_oidc.c:758 [unknown_alias] unresolved resource identity `payloads`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_assertion_process_template_file L22239 origin=rdkafka_sasl_oauthbearer_oidc.c:1689 [unknown_alias] unresolved resource identity `header`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_assertion_process_template_file L22240 origin=rdkafka_sasl_oauthbearer_oidc.c:1690 [unknown_alias] unresolved resource identity `payload`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_assertion_process_template_file L22252 origin=rdkafka_sasl_oauthbearer_oidc.c:1706 [unknown_alias] unresolved resource identity `header`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_assertion_process_template_file L22254 origin=rdkafka_sasl_oauthbearer_oidc.c:1708 [unknown_alias] unresolved resource identity `payload`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_should_succeed L22008 origin=rdkafka_sasl_oauthbearer_oidc.c:1229 [unknown_alias] unresolved resource identity `json`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_sub_claim_name L22113 origin=rdkafka_sasl_oauthbearer_oidc.c:1469 [unknown_alias] unresolved resource identity `json`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_with_empty_key L22032 origin=rdkafka_sasl_oauthbearer_oidc.c:1277 [unknown_alias] unresolved resource identity `json`
+    librdkafka/rdkafka_sasl_oauthbearer_oidc.c :: ut_sasl_oauthbearer_oidc_with_empty_key L22033 origin=rdkafka_sasl_oauthbearer_oidc.c:1278 [unknown_alias] unresolved resource identity `parsed_token`
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_open L2167 origin=mk_core/mk_rconf.c:635 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read L1946 origin=mk_core/mk_rconf.c:241 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read L1951 origin=mk_core/mk_rconf.c:249 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read_glob L2122 origin=mk_core/mk_rconf.c:491 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read_glob L2125 origin=mk_core/mk_rconf.c:494 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read_glob L2128 origin=mk_core/mk_rconf.c:497 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_read_glob L2131 origin=mk_core/mk_rconf.c:500 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_string.c :: mk_string_build L2250 origin=mk_core/mk_string.c:417 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_utils.c :: mk_utils_register_pid L2640 origin=mk_core/mk_utils.c:340 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_utils.c :: mk_utils_register_pid L2646 origin=mk_core/mk_utils.c:347 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_utils.c :: mk_utils_register_pid L2655 origin=mk_core/mk_utils.c:359 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_core/mk_utils.c :: mk_utils_register_pid L2662 origin=mk_core/mk_utils.c:367 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_config.c :: mk_config_print_error_msg L6024 origin=mk_server/mk_config.c:132 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_header.c :: mk_header_prepare L5934 origin=mk_server/mk_header.c:195 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_load L6118 origin=mk_server/mk_plugin.c:162 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_load L6144 origin=mk_server/mk_plugin.c:203 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_load L6148 origin=mk_server/mk_plugin.c:209 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_load_dynamic L6056 origin=mk_server/mk_plugin.c:69 [unsupported] nested call `dlerror` inside a modeled call is outside the resource projection
+    monkey-libevent/mk_server/mk_socket.c :: mk_socket_connect L5866 origin=mk_server/mk_socket.c:198 [unsupported] nested call `gai_strerror` inside a modeled call is outside the resource projection
+    monkey-libevent/mk_server/mk_socket.c :: mk_socket_server L5944 origin=mk_server/mk_socket.c:306 [unsupported] nested call `gai_strerror` inside a modeled call is outside the resource projection
+    monkey-libevent/mk_server/mk_socket.c :: mk_socket_server L5970 origin=mk_server/mk_socket.c:338 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_utils.c :: mk_utils_utime2gmt L5934 origin=mk_server/mk_utils.c:214 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_init L6427 origin=mk_server/mk_vhost.c:672 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_read L6198 origin=mk_server/mk_vhost.c:372 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_read L6230 origin=mk_server/mk_vhost.c:423 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_read L6238 origin=mk_server/mk_vhost.c:434 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_read L6241 origin=mk_server/mk_vhost.c:437 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_set_single L6384 origin=mk_server/mk_vhost.c:619 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+    monkey-libevent/mk_server/mk_vhost.c :: mk_vhost_set_single L6388 origin=mk_server/mk_vhost.c:623 [unsupported] arguments beyond the declared parameters of `mk_print` are outside the resource projection
+
+=== three-way split over the 23 predicted functions ===
+  LEAF-FREE (every leaf gone):        20
+    cmetrics/cmt_decode_msgpack.c :: cmt_decode_msgpack_destroy  (cmt_destroy)  status=Safe
+    cmetrics/cmt_decode_prometheus_remote_write.c :: cmt_decode_prometheus_remote_write_destroy  (cmt_destroy)  status=Safe
+    cmetrics/cmt_decode_statsd.c :: cmt_decode_statsd_destroy  (cmt_destroy)  status=Safe
+    cmetrics/cmt_encode_influx.c :: cmt_encode_influx_destroy  (cfl_sds_destroy)  status=Safe
+    cmetrics/cmt_encode_opentelemetry.c :: cmt_encode_opentelemetry_destroy  (cfl_sds_destroy)  status=Safe
+    cmetrics/cmt_encode_prometheus.c :: cmt_encode_prometheus_destroy  (cfl_sds_destroy)  status=Safe
+    cmetrics/cmt_encode_prometheus_remote_write.c :: cmt_encode_prometheus_remote_write_destroy  (cfl_sds_destroy)  status=Safe
+    cmetrics/cmt_encode_splunk_hec.c :: cmt_encode_splunk_hec_destroy  (cfl_sds_destroy)  status=Safe
+    cmetrics/cmt_encode_text.c :: cmt_encode_text_destroy  (cfl_sds_destroy)  status=Safe
+    ctraces/ctr_decode_msgpack.c :: ctr_decode_msgpack_destroy  (ctr_destroy)  status=Safe
+    ctraces/ctr_decode_opentelemetry.c :: ctr_decode_opentelemetry_destroy  (ctr_destroy)  status=Safe
+    ctraces/ctr_encode_opentelemetry.c :: ctr_encode_opentelemetry_destroy  (cfl_sds_destroy)  status=Safe
+    ctraces/ctr_encode_text.c :: ctr_encode_text_destroy  (cfl_sds_destroy)  status=Safe
+    librdkafka/lz4.c :: LZ4_freeStream  (rd_kafka_mem_free)  status=Safe
+    librdkafka/lz4.c :: LZ4_freeStreamDecode  (rd_kafka_mem_free)  status=Safe
+    librdkafka/lz4hc.c :: LZ4_freeHC  (rd_kafka_mem_free)  status=Safe
+    librdkafka/lz4hc.c :: LZ4_freeStreamHC  (rd_kafka_mem_free)  status=Safe
+    monkey-libevent/mk_core/mk_rconf.c :: mk_config_error  (mk_print)  status=Safe
+    monkey-libevent/mk_core/mk_rconf.c :: mk_rconf_warning  (mk_print)  status=Safe
+    monkey-libevent/mk_server/mk_plugin.c :: mk_plugin_event_bad_return  (mk_print)  status=Safe
+  EXCHANGED for another refusal:      3
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromArray  (cJSON_Delete)  status=Unknown
+        L3059 origin=cJSON.c:2291 [unsupported] nested call `cJSON_DetachItemFromArray` inside a modeled call is outside the resource projection
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromObject  (cJSON_Delete)  status=Unknown
+        L3073 origin=cJSON.c:2310 [unsupported] nested call `cJSON_DetachItemFromObject` inside a modeled call is outside the resource projection
+    librdkafka/cJSON.c :: cJSON_DeleteItemFromObjectCaseSensitive  (cJSON_Delete)  status=Unknown
+        L3077 origin=cJSON.c:2315 [unsupported] nested call `cJSON_DetachItemFromObjectCaseSensitive` inside a modeled call is outside the resource projection
+  UNMOVED (the leaf is still there):  0

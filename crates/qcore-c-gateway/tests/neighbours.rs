@@ -861,5 +861,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // `fluent_bit/input_chunk_total_size.qcore` — the latter a seventh
     // declaration of a function this very unit defines, on the same
     // arrangement.
-    assert_eq!(contracts.source_assumptions().len(), 21);
+
+    // 21 -> 27 by card W36-CORPUS-CONTRACTS-3, six declarations chosen by
+    // function-cover yield over the 193 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
+    // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
+    // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 27);
 }

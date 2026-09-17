@@ -1,0 +1,11 @@
+archive: docs/reports/joined-provenance-cycles/artifacts
+run:     measure/w36/runs/before
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   9af9ee2e4e0837b6 / 9af9ee2e4e0837b6
+ source           raw IDENTICAL  canonical IDENTICAL   ae38f6c93dfbe341 / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     dce9b54609d6dd84 / 08b7a97b1ceb4240
+ contracts        raw differs    canonical differs     0889f7b0e945ae3f / 95c3ffdaad207611
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.
