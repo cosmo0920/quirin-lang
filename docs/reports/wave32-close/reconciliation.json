@@ -1,0 +1,291 @@
+{
+  "wave": 32,
+  "retro_sweep": {
+    "performed_in_wave": 35,
+    "performed_by": "SWEEP-BLIND-SPOTS",
+    "range": "8bf7fd33..474f27af",
+    "range_meaning": "the wave-31 close commit to the wave-32 close commit",
+    "measured_against": "the tree at wave 35, not at the wave-32 tip",
+    "discharges": "WAVE-32-CLOSE-UNSWEPT"
+  },
+  "cards": [
+    "ct-composed-native",
+    "ct-wire-lane-4",
+    "docs-compact-5",
+    "mutex-share-cross",
+    "proof-leg-batch",
+    "trace-alphabet-lease-boundary",
+    "w32-reconcile-sweep"
+  ],
+  "note": "RETRO-SWEEP, performed in WAVE 35 by card SWEEP-BLIND-SPOTS, of a close that happened in wave 32 and wrote no reconciliation record. Wave 32 is the wave that LANDED the close rule (W32-RECONCILE-SWEEP; CLAUDE.md then reads 'The close WRITES docs/reports/wave<N>-close/reconciliation.json beside its gate.json') and then did not follow it - the mechanism was instituted and skipped in the same wave. Six of its seven cards were never swept by anything; only docs-compact-5 appears in docs/reports/w32-reconcile-sweep/reconciliation-waves-29-31.json, which covers waves 29-31. This file discharges WAVE-32-CLOSE-UNSWEPT. SWEEP RANGE: `--range 8bf7fd33..474f27af`, the wave-31 close commit to the wave-32 close commit, using the explicit range this card adds for exactly this purpose. It returns all seven cards and 67 items. proof-leg-batch contributes 3 of them only because this card taught SECTION_MARKERS the spelling 'integrator flip' (its heading is '5. No integrator flip is proposed'); before that it would have needed a no_section excuse. HOW THE VERDICTS WERE TAKEN: every one is measured against the tree AT WAVE 35 - a grep of the named file, a `git show` of the named commit, a JSON read of the named record - and never inferred from a report's own claim. Because three waves have passed, a verdict here answers 'is this in the tree now', which is a different and in some ways better question than the close would have answered; where a later card moved the item, the verdict says so. THE TOOL DECIDED NOTHING. A green --check means every item carries a recorded human verdict, never that any item was applied. WHAT THE SWEEP FOUND UNAPPLIED - the cost of the missing record, and the reason this file is not a formality: (1) MUTEX-SHARE-CROSS's entire integrator list is unlanded. Its proposed standing constraint is absent (AGENTS.md contains 'MUTEX-SHARE-CROSS' zero times), its Q600 and Q610-Q627 namespace rows are not updated although the spec section L21 they summarise DOES carry the widening, and its constraint-14 census row is missing. (2) That last omission has since been made load-bearing: DOCS-COMPACT-6 (wave 34) rewrote constraint 14 to claim 'every card of waves 32, 33 and 34' over a list that omits MUTEX-SHARE-CROSS, PROOF-LEG-BATCH and DOCS-COMPACT-5 (CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE). (3) A recorded `applied` verdict is false in half its evidence: the waves-29-31 record's docs-compact-5 note cites DOCS-COMPACT-O as carrying the pass-4 and pass-5 residual names, and that edit was lost at merge 3bbec4d0 (-2,208 bytes, the only named_followups row to change across that merge) (W32-SWEEP-MATRIX-EDIT-LOST-AT-MERGE). None of the three is a code defect; all three are exactly the class of loss an unswept close produces. DEFERRED DECISIONS: this record declares none. The wave-32 close predates the deferred-decision tracker, and outstanding_decisions(root, 32) is empty because no close before wave 32 registered one. The four decisions W32-RECONCILE-SWEEP surfaced were carried by the WAVE-33 close, which recorded them correctly in its own deferred_decisions block; they are re-listed against waves 34 onwards by the checker this card adds, and their verdicts here are `deferred` pointing at that block. NOT EDITED: docs/reports/wave32-close/gate.json is untouched (constraint 21); this file is new beside it. No frozen archive was edited and no card report was rewritten.",
+  "verdicts": {
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "Applied by the integrator at commit a0cbf143 'Apply CT-COMPOSED-NATIVE's coupled edit: sanitized-native 7 of 43 -> 9 of 43'. Measured: compiler/tests/ct_corpus.rs:445 registers \"compiler/tests/ct_corpus.rs::run_composed_native\" in RUNNER_REGISTRY, and the function is defined at ct_corpus.rs:5071."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#2": {
+      "verdict": "noted",
+      "note": "Subheading '4.1 Why this card does not take it'. No action owed; it introduces the card's ground for proposing rather than applying the coupled edit."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#3": {
+      "verdict": "noted",
+      "note": "Statement of the exact-equality rule the harness already enforces (a stage status checked against the manifest). Checked: the rule is unchanged, and the coupled edit was applied on both halves together, which is what the rule demands."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#4": {
+      "verdict": "noted",
+      "note": "Subheading '4.2 The harness half'."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#5": {
+      "verdict": "applied",
+      "note": "Applied by the integrator at commit a0cbf143 'Apply CT-COMPOSED-NATIVE's coupled edit: sanitized-native 7 of 43 -> 9 of 43'. Measured: the derive_stage_plan block sits at ct_corpus.rs:1509 beside the composed_epoch site, and carries an integrator comment at 1510-1511 reading 'Integrator, wave 32: the coupled edit card CT-COMPOSED-NATIVE published in its report SS4, applied together with the manifest rows'."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#6": {
+      "verdict": "applied",
+      "note": "The proposed Rust block. Measured in place at ct_corpus.rs:1509-1514, binding runner = \"compiler/tests/ct_corpus.rs::run_composed_native\" under `if route == \"composed_epoch\" && !refused`, as proposed."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#7": {
+      "verdict": "applied",
+      "note": "Measured: SANITIZED_GATED_CASES at ct_corpus.rs:456-458 reads CT03, CT07, CT09, CT17, CT22, CT25, CT26, CT34, CT49 - nine entries, with CT22 and CT25 present. 7 -> 9 as proposed."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#8": {
+      "verdict": "noted",
+      "note": "Subheading '4.3 The manifest half'."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#9": {
+      "verdict": "applied",
+      "note": "Measured in docs/reevaluation/ct_manifest.json: CT22 and CT25 each carry all three rows (c_emission, native_execution, native_sanitized)."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#10": {
+      "verdict": "applied",
+      "note": "Measured: CT22's and CT25's three rows are identical in status and executor, as the card proposed they be written identically."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#11": {
+      "verdict": "applied",
+      "note": "The proposed JSON. Measured: CT22 and CT25 both read status 'executed' with executor 'compiler/tests/ct_corpus.rs::run_composed_native' on all three rows."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#12": {
+      "verdict": "applied",
+      "note": "Measured: CT23 is unchanged - c_emission 'not_applicable', native_execution 'not_applicable', native_sanitized 'unassessed'. The route's refusal stayed out, as the card asked."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#13": {
+      "verdict": "noted",
+      "note": "'evidence_target is already linux on all three cases and needs no edit' - a statement that nothing is owed. Checked: no evidence_target edit appears in the coupled-edit commit a0cbf143."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#14": {
+      "verdict": "noted",
+      "note": "Subheading '4.4 What the numbers become'."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#15": {
+      "verdict": "superseded",
+      "note": "The proposed table reads 'CT mapped 43/50 -> 43/50 (mapping does not move)' and 'sanitized-native 7 of 43 -> 9 of 43'. Superseded WITHIN THE SAME WAVE by CT-WIRE-LANE-4, which mapped CT44 and CT47: AGENTS.md line 131 now reads '45/50 mapped' and 'sanitized-native 9 of 45'. The numerator the card computed is the one that landed; the denominator moved under it. Not a defect in either card - two cards of one wave moving one row, which is exactly what a close reconciles."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#16": {
+      "verdict": "applied",
+      "note": "The coupled stages_executed assertion. Measured: the workspace suite passes with the manifest rows above, and the harness asserts stages_executed equal to the derived plan, so a half-applied edit could not be green."
+    },
+    "ct-composed-native#the-proposed-stage-records-for-the-integrator#17": {
+      "verdict": "applied",
+      "note": "'A lane taking this inherits one measured consequence: acceptance.json is regenerated through scripts/ct_stage_summary.py --write.' Measured: docs/reports/ct-wire-lane-4/ct_stage_evidence.json is registered in scripts/ct_stage_summary.py EVIDENCE_FILES (line 124), and the array now stands at 20 entries, so the regeneration path was taken and has been taken twice since."
+    },
+    "ct-wire-lane-4#integrator-carry-list#1": {
+      "verdict": "noted",
+      "note": "'Files this lane owns and changed:' - the list header."
+    },
+    "ct-wire-lane-4#integrator-carry-list#2": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: docs/reevaluation/ct_manifest.json carries CT44 and CT47 with stage rows, and AGENTS.md's CT row names both as wave-32 mappings."
+    },
+    "ct-wire-lane-4#integrator-carry-list#3": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: compiler/tests/ct_corpus.rs carries the pinned tables; EVIDENCE_FILES has since grown past 19 to 20, so the lane's 18 -> 19 step is inside a sequence rather than the current value."
+    },
+    "ct-wire-lane-4#integrator-carry-list#4": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: compiler/tests/fixtures/ct/CT44/ and compiler/tests/fixtures/ct/CT47/ both exist."
+    },
+    "ct-wire-lane-4#integrator-carry-list#5": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: scripts/ct_stage_summary.py:124 lists docs/reports/ct-wire-lane-4/ct_stage_evidence.json."
+    },
+    "ct-wire-lane-4#integrator-carry-list#6": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: scripts/tests/test_ct_stage_summary.py is present and green in this card's Python run (247 tests, 0 failures)."
+    },
+    "ct-wire-lane-4#integrator-carry-list#7": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: docs/reviews/r0_3/acceptance.json is present and has been regenerated twice since by later waves."
+    },
+    "ct-wire-lane-4#integrator-carry-list#8": {
+      "verdict": "noted",
+      "note": "The lane regenerated the acceptance matrix itself rather than leaving it to the integrator, on the ground that mapping CT47 moves a derived map (constraint 25). Checked and sound: the derived newly_decidable map's keys come from the judgment's own key set, so a lane that maps a case must regenerate or leave the matrix inconsistent."
+    },
+    "ct-wire-lane-4#integrator-carry-list#9": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: docs/reports/ct-wire-lane-4/README.md and its ct_stage_evidence.json."
+    },
+    "ct-wire-lane-4#integrator-carry-list#10": {
+      "verdict": "noted",
+      "note": "A statement of what this lane itself changed, not a request. Verified present in the tree: docs/development/increments/wave-32.md exists and the increments README pointer has since moved on to wave-35.md."
+    },
+    "ct-wire-lane-4#integrator-carry-list#11": {
+      "verdict": "applied",
+      "note": "THE ONE OWED ITEM IN THIS SECTION. Applied by the integrator at commit 1423b6dc 'Ledger: CT 45/50 after CT-WIRE-LANE-4 (wave 32)'. Measured at AGENTS.md line 131: the CT row reads '45/50 mapped, 5 unmapped; sanitized-native 9 of 45'. Both numbers the lane left are in the tree, and the numerator/denominator pairing is the one the lane described."
+    },
+    "docs-compact-5#the-unapplied-integrator-reconciliation-list#1": {
+      "verdict": "applied",
+      "note": "The item's substance - that WRITE-LEND-TASKS SS12's three AGENTS.md items be worked rather than reduced to headline numbers - is in the tree: AGENTS.md:878 carries the 15h append ('Appended, card WRITE-LEND-TASKS (wave 31...)'), and line 1402 carries the Q020 and Q600 namespace rows for that card. The mechanism the item asked for also landed (scripts/reconciliation_sweep.py plus CLAUDE.md's close rule). BUT ONE HALF OF THE PRIOR VERDICT'S EVIDENCE IS FALSE AGAINST THE TREE. docs/reports/w32-reconcile-sweep/reconciliation-waves-29-31.json gave this same item 'applied' with the note '... and DOCS-COMPACT-O in the matrix now carries the passes 4 and 5 residual names'. It does not. Measured across the merge: at 16070450 (the card's own commit) DOCS-COMPACT-O was 5,473 bytes and named both DOCS-COMPACT-4-TABLE-SYNC and DOCS-COMPACT-5-RECONCILIATION-LIST; at the merge 3bbec4d0 it is 3,265 bytes and names neither, and HEAD's row is byte-equal to the post-merge one. Exactly one named_followups row changed across that merge and it is this one (-2,208 bytes). Registered as the named residual W32-SWEEP-MATRIX-EDIT-LOST-AT-MERGE. DOCS-COMPACT-4-TABLE-SYNC reaches the ledger nowhere today; DOCS-COMPACT-5-RECONCILIATION-LIST reaches it only through a wave-34 entry (CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK)."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#1": {
+      "verdict": "noted",
+      "note": "'This card may not edit AGENTS.md, README.md or the acceptance matrix.' A scope statement, and the correct one - which is why everything below it is owed to someone else."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#2": {
+      "verdict": "deferred",
+      "note": "NOT APPLIED, and not by a decision: the wave-32 close wrote no reconciliation record at all and this card was never swept (WAVE-32-CLOSE-UNSWEPT). Measured unapplied against the tree at wave 35, three waves later. AGENTS.md contains the string 'MUTEX-SHARE-CROSS' zero times, and no constraint 15 append or new constraint carries the opt-in clause. Carried to the wave-35 integrator with the proposed text quoted verbatim in docs/reports/sweep-blind-spots/README.md SS6; per CLAUDE.md an amendment lands in the words the card proposed or is recorded declined with its ground."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#3": {
+      "verdict": "deferred",
+      "note": "NOT APPLIED, and not by a decision: the wave-32 close wrote no reconciliation record at all and this card was never swept (WAVE-32-CLOSE-UNSWEPT). Measured unapplied against the tree at wave 35, three waves later. This is the proposed constraint's verbatim text (the block quote). Measured absent from AGENTS.md: 'ProtectedResource', 'CheckedMutex', 'ShareUnderMutex' and 'share PLACE under' together match AGENTS.md on exactly one line, 1442, which is the pre-existing Q610-Q627 row mentioning CheckedMutexInvariantV1 - not this text. Quoted verbatim in this card's report for the integrator."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#4": {
+      "verdict": "deferred",
+      "note": "MIXED, and measured part by part. (a) The Q600 namespace row is NOT updated: AGENTS.md:1441 still reads 'Four later cards move this row' and names REGION-CREDIT-JOINS, CT47-COPY-CAPTURE, REGION-JOINS-LOAN and WRITE-LEND-TASKS, with no MUTEX-SHARE-CROSS - while the authority it summarises, docs/QCORE_SPEC_r0_3.md:1004, DOES carry 'Card MUTEX-SHARE-CROSS (wave 32) widens Q600's boundary condition and the Q610-Q627 sub-band's route'. AGENTS.md calls that table 'a summary of it, not a second allocation', and the summary has drifted from its authority. (b) The Q610-Q627 row is NOT updated (AGENTS.md:1442 is one unchanged line). (c) The constraint-14 census row is NOT updated, and the omission is now load-bearing: the row was rewritten at DOCS-COMPACT-6 (wave 34) to read 'every card of waves 32, 33 and 34' and then enumerates ten cards, omitting MUTEX-SHARE-CROSS, PROOF-LEG-BATCH and DOCS-COMPACT-5 - so a claim of exhaustiveness now stands over an incomplete list. Registered as CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE. (d) The Lean-audit headline 125 -> 126 is SUPERSEDED: AGENTS.md's merged-gate row reads 129 Lean audits at the wave-34 close, and AuditMutexShareCross.lean is in the matrix's lean_audit_files list, so the card's module is counted."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#5": {
+      "verdict": "applied",
+      "note": "Measured: docs/reviews/r0_3/acceptance_matrix.json validation.lean_audits = 129 and validation.lean_audit_files contains 'AuditMutexShareCross.lean'. The one-line matrix reconciliation was taken (by later regenerations through docs/reports/remaining-d02/build_matrix.py)."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#6": {
+      "verdict": "noted",
+      "note": "A notice of workspace-internal public API changes, with the explicit statement that constraint 18's provider rebuild is NOT owed because qcore-schemas is untouched. Verified: crates/qcore-core/src/transfer.rs:161 and :167 declare TransferKind::ProtectedResource and ::MutexShare. qcore-schemas' version is unchanged at 14.0.0 in the matrix, so the rebuild is correctly not owed."
+    },
+    "mutex-share-cross#integrator-reconciliation-list#7": {
+      "verdict": "deferred",
+      "note": "'CT46's mapping and its manifest reason may be updated per SS10 by a mapping lane, never by this card.' Measured: docs/reevaluation/ct_manifest.json still carries CT46 with mapping_status 'unmapped', route null, source_fixture null. Correctly still a lane's work and correctly not taken by the card or by any close; it is deferred to a CT mapping lane. Note the card's own SS13.5 half that stays open regardless: MUTEX-SHARE-CROSS-TASK-BUFFER, the task route's own<Buffer> still not crossing under a mutex."
+    },
+    "mutex-share-cross#the-one-expected-python-failure-left-for-the-integrator#1": {
+      "verdict": "applied",
+      "note": "The expected failure was the derived-value tripwire (test_the_derived_facts_are_recomputed_rather_than_carried, ['14.0.0', 125] != ['14.0.0', 126]) waiting on a matrix regeneration the card could not make. Measured resolved: validation.lean_audits is 129 and this card's own run of `python3 -m unittest discover -s scripts/tests` is 247 tests, 0 failures - the tripwire is green. Reconciled by the later regenerations, exactly as the card predicted."
+    },
+    "proof-leg-batch#no-integrator-flip-is-proposed#1": {
+      "verdict": "noted",
+      "note": "'With both rows withdrawn there are no flip terms to propose.' Verified against the tree rather than taken from the report: docs/reevaluation/ct_manifest.json gives CT12 and CT14 proof status 'unassessed', and PROOF_GATED_CASES in compiler/tests/ct_corpus.rs:198 still holds exactly three entries. The withdrawal stands; nothing is owed to the integrator."
+    },
+    "proof-leg-batch#no-integrator-flip-is-proposed#2": {
+      "verdict": "noted",
+      "note": "The card's verification that card T00's frozen archive (docs/reports/remaining-t00/coverage.json) is the record currently holding CT12's and CT14's stages, kept for a future reopening. Verified the archive is present and unedited in this wave; constraint 21 holds."
+    },
+    "proof-leg-batch#no-integrator-flip-is-proposed#3": {
+      "verdict": "noted",
+      "note": "A quotation of T00's own note, carried as the standard the withdrawal applies. No action owed. Recorded here because the sweep did not see this section at all before this card: its heading, '5. No integrator flip is proposed', matched no marker, so SECTION_MARKERS gained 'integrator flip' (see this card's report SS2) and the section now yields its three items instead of a no_section excuse."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#1": {
+      "verdict": "noted",
+      "note": "'AGENTS.md's Merged gate row is deliberately left untouched' - a statement of a decision the card made about its own scope, and the right one: the row is sourced to a close's gate.json and measured at the integration tip, not at a card's tip."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#2": {
+      "verdict": "superseded",
+      "note": "'workspace tests 4,511 -> 4,516'. Superseded by the wave-32 close's own measurement at the integration tip: docs/reports/wave32-close/gate.json records workspace_tests 4534. That is the correct outcome - a card's delta is an input to the close's measurement, not a substitute for it."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#3": {
+      "verdict": "superseded",
+      "note": "'Lean audits 125 -> 126'. Superseded: the wave-32 close published 127 and AGENTS.md's merged-gate row now reads 129 at the wave-34 close. The card's module is counted (AuditTaskTraceLeaseBoundary.lean is present in proof/ and in the matrix's lean_audit_files)."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#4": {
+      "verdict": "superseded",
+      "note": "'Python 200, with the lean_audits tripwire red until the matrix is regenerated'. Superseded: the close published 227 Python and the tripwire is green; this card's own run measures 247 Python tests, 0 failures."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#5": {
+      "verdict": "applied",
+      "note": "'provider (122) and every corpus row carried - no arbiter ran.' Measured: docs/reports/wave32-close/gate.json records provider_tests 122, and its note states 'NO ARBITER RAN ... so every corpus row is CARRIED from the wave-31 w31-corpus-contracts-2 baseline and labelled carried: leak 272, unknown_alias 4,208, unsupported 50,150, contract corpus 76, zero status moves'. The close carried exactly what the card said it should."
+    },
+    "trace-alphabet-lease-boundary#for-the-integrator-at-the-wave-32-close#6": {
+      "verdict": "noted",
+      "note": "A horizontal rule ('---') the extractor read as a block. Not an item; it carries no request. Recorded rather than silently dropped, and reported in this card's report SS7 as a small known extractor artifact (a rule between sections becomes a no-content item), left unrepaired because suppressing it would mean the extractor deciding what is and is not content."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#1": {
+      "verdict": "noted",
+      "note": "'Four items are not unambiguous. Each is listed with its options and evidence ... rather than repaired on a guess.' The framing sentence. It is also the sentence that makes this section's items decisions rather than tasks, which is why they now go through the deferred-decision tracker this card adds rather than through a verdict alone."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#2": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.1. STILL OPEN and now TRACKED: measured, docs/reviews/r0_3/acceptance_matrix.json's `updated` still begins '2026-09-12 (wave 27 complete: ...'. The wave-33 close deferred it by name as MATRIX-UPDATED-STALE-AT-WAVE-27 with its ground, and STABILITY-REEVAL-1 registered it in named_followups, so it is no longer visible only in one report. This is the section heading."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#3": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.1. STILL OPEN and now TRACKED: measured, docs/reviews/r0_3/acceptance_matrix.json's `updated` still begins '2026-09-12 (wave 27 complete: ...'. The wave-33 close deferred it by name as MATRIX-UPDATED-STALE-AT-WAVE-27 with its ground, and STABILITY-REEVAL-1 registered it in named_followups, so it is no longer visible only in one report. This is the body stating the evidence."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#4": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.1. STILL OPEN and now TRACKED: measured, docs/reviews/r0_3/acceptance_matrix.json's `updated` still begins '2026-09-12 (wave 27 complete: ...'. The wave-33 close deferred it by name as MATRIX-UPDATED-STALE-AT-WAVE-27 with its ground, and STABILITY-REEVAL-1 registered it in named_followups, so it is no longer visible only in one report. Option (a), the integrator writes a wave-28..31 checkpoint note. Not taken."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#5": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.1. STILL OPEN and now TRACKED: measured, docs/reviews/r0_3/acceptance_matrix.json's `updated` still begins '2026-09-12 (wave 27 complete: ...'. The wave-33 close deferred it by name as MATRIX-UPDATED-STALE-AT-WAVE-27 with its ground, and STABILITY-REEVAL-1 registered it in named_followups, so it is no longer visible only in one report. Option (b), record that validation.note is the live checkpoint note and updated a date stamp only. Not taken."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#6": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.1. STILL OPEN and now TRACKED: measured, docs/reviews/r0_3/acceptance_matrix.json's `updated` still begins '2026-09-12 (wave 27 complete: ...'. The wave-33 close deferred it by name as MATRIX-UPDATED-STALE-AT-WAVE-27 with its ground, and STABILITY-REEVAL-1 registered it in named_followups, so it is no longer visible only in one report. Option (c), leave both. Not taken - and note that leaving both is what has happened in practice without being decided, which is the difference between an outcome and a decision."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#7": {
+      "verdict": "noted",
+      "note": "'Evidence: dimensions and validation.note moved at the waves-29/30/31 closes; updated did not.' Re-measured and still true through wave 34: dimensions reads named_followups 80 against a named_followups of 80, and validation.note has moved on, while `updated` has not."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#8": {
+      "verdict": "applied",
+      "note": "Decision 5.2, TAKEN. Applied by the integrator at commit e0052b14 'Take one of the sweep's integrator decisions: STD-MODULES-O staleness'. This is the section heading."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#9": {
+      "verdict": "applied",
+      "note": "The body: STD-MODULES-O recorded SLICE-PERMISSIONS-WRITE-LEND as new and open three waves after it landed. Measured repaired: the STD-MODULES-O row's `why` now contains 'SLICE-PERMISSIONS-WRITE-LEND LANDED at wave 29 and its sibling WRITE-LEND-TASKS at wave 31 ... This row's mention of it as open is stale and is corrected here rather than by editing the landed cards' reports.'"
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#10": {
+      "verdict": "noted",
+      "note": "'Not repaired here because the card that landed it did not write the text, and named_followups is integrator-owned recorded analysis.' The card's ground for proposing rather than taking. Sound, and the integrator then took it - which is the mechanism working in the direction it was built for."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#11": {
+      "verdict": "applied",
+      "note": "Option (a), append a discharge sentence naming the successors. THIS IS THE OPTION TAKEN - e0052b14's added sentence names both successors (SLICE-PERMISSIONS-WRITE-LEND at wave 29, WRITE-LEND-TASKS at wave 31) in the row itself, which is option (a) exactly."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#12": {
+      "verdict": "declined",
+      "note": "Option (b), open a WRITE-LEND-O family row cross-referencing REGION-SRC-O and AGGREGATES-O. Not taken; option (a) was. Ground: e0052b14's message states the correction was made 'in the follow-up's own text rather than by editing the landed cards' reports', which is (a)'s smallest-change shape. No WRITE-LEND-O row exists in named_followups."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#13": {
+      "verdict": "declined",
+      "note": "Option (c), decide that family rows freeze at the card that opened them and say so in AGENTS.md. Not taken; option (a) was. Ground: the row was amended rather than frozen, which is the opposite of (c), and AGENTS.md carries no such sentence."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#14": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.3. STILL OPEN and now TRACKED as SYNC-RULE-TOOLING-COMMIT-SCOPE (deferred by the wave-33 close, registered in named_followups by STABILITY-REEVAL-1). It has since acquired a live instance: commit 37bc9004, a tooling-and-test commit that publishes nothing under docs/reports/ and appears in no increment record (WINDOWS-COHERENCE-GATES-UNCARDED). This is the section heading."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#15": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.3. STILL OPEN and now TRACKED as SYNC-RULE-TOOLING-COMMIT-SCOPE (deferred by the wave-33 close, registered in named_followups by STABILITY-REEVAL-1). It has since acquired a live instance: commit 37bc9004, a tooling-and-test commit that publishes nothing under docs/reports/ and appears in no increment record (WINDOWS-COHERENCE-GATES-UNCARDED). The body, on docs/reports/development-docs-structure/ written by commit c05b2c4b outside the card discipline."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#16": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.3. STILL OPEN and now TRACKED as SYNC-RULE-TOOLING-COMMIT-SCOPE (deferred by the wave-33 close, registered in named_followups by STABILITY-REEVAL-1). It has since acquired a live instance: commit 37bc9004, a tooling-and-test commit that publishes nothing under docs/reports/ and appears in no increment record (WINDOWS-COHERENCE-GATES-UNCARDED). Option (a), treat it as a card retrospectively. Not taken."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#17": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.3. STILL OPEN and now TRACKED as SYNC-RULE-TOOLING-COMMIT-SCOPE (deferred by the wave-33 close, registered in named_followups by STABILITY-REEVAL-1). It has since acquired a live instance: commit 37bc9004, a tooling-and-test commit that publishes nothing under docs/reports/ and appears in no increment record (WINDOWS-COHERENCE-GATES-UNCARDED). Option (b), record in CLAUDE.md that tooling commits may publish under docs/reports/ and are exempt. Not taken; CLAUDE.md carries no such sentence."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#18": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.3. STILL OPEN and now TRACKED as SYNC-RULE-TOOLING-COMMIT-SCOPE (deferred by the wave-33 close, registered in named_followups by STABILITY-REEVAL-1). It has since acquired a live instance: commit 37bc9004, a tooling-and-test commit that publishes nothing under docs/reports/ and appears in no increment record (WINDOWS-COHERENCE-GATES-UNCARDED). Option (c), move such reports elsewhere so docs/reports/* stays one kind of thing. Not taken. This card has a stake in the answer: its uncarded_commits rule reads 'writes a docs/reports/<card>/README.md', and under (c) that rule would become exact instead of approximate."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#19": {
+      "verdict": "noted",
+      "note": "'This is worth deciding now precisely because SS4's mechanism walks docs/reports/.' Re-measured as still true and now doubly so: this card adds a second walker of that tree (--uncarded) whose precision depends on the same answer. Recorded against SYNC-RULE-TOOLING-COMMIT-SCOPE rather than decided here."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#20": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.4. STILL OPEN and now TRACKED as CT10-REASON-ROW (carried by the wave-33 close with its ground; registered in named_followups). CT10 stays unmapped: docs/reevaluation/ct_manifest.json shows 0 of 50 cases with mapping_status 'mapped' set on CT10's row. Correctly a mapping lane's work - constraints 23 and 25 make a close writing a reason row mapping by the back door. This is the section heading, and the card's own one deferred verdict."
+    },
+    "w32-reconcile-sweep#for-the-integrator-decisions-not-guesses#21": {
+      "verdict": "deferred",
+      "note": "Part of decision 5.4. STILL OPEN and now TRACKED as CT10-REASON-ROW (carried by the wave-33 close with its ground; registered in named_followups). CT10 stays unmapped: docs/reevaluation/ct_manifest.json shows 0 of 50 cases with mapping_status 'mapped' set on CT10's row. Correctly a mapping lane's work - constraints 23 and 25 make a close writing a reason row mapping by the back door. The body: WRITE-LEND-TASKS SS12.5 and SS8 supply CT10's concurrency half. The readiness stands; no lane has taken it."
+    }
+  }
+}
