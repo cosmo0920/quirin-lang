@@ -268,7 +268,7 @@ reported as measured.
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | exit 0 (libevent at `d82464a2`) |
-| `cargo test --workspace --no-fail-fast` | **4,566 total: 4,563 passed, 3 failed, 8 ignored** — see below |
+| `cargo test --workspace --no-fail-fast` | **4,566 passed, 0 failed, 8 ignored** at the card's tip; an earlier run at the same content had 3 red — see below |
 | `cargo fmt --all -- --check` | exit 0, clean |
 | `cargo clippy --all-targets -- -D warnings` | exit 0, clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
@@ -279,21 +279,42 @@ reported as measured.
 **4,566 is 4,559 plus this card's seven**, which is the whole of the movement.
 Lean audits are **129 → 130**, this card's one new audit.
 
-**The three red rows are all `qcore-verifier-host`, and none is this card's**
-— nothing here touches that crate, and each was re-verified in isolation, both
-facts recorded per constraint 16's discipline:
+**Two full-suite runs were taken, and they disagree — both are reported.** The
+final run, at the committed tip, is **4,566 / 0 / 8**. An earlier run at
+content differing only by two formatting-only edits (a doc comment and
+`.err().expect()` → `.expect_err()` in one test helper) was **4,563 / 3 / 8**,
+with all three red rows in `qcore-verifier-host`. That crate is untouched by
+this card, and each row was re-verified in isolation, both facts recorded per
+constraint 16's discipline:
 
 * `confined_process_execution::an_admitted_path_still_works_under_confinement`
-  and `::the_package_root_is_admitted_read_and_execute_only` — red under the
-  full suite, **green in isolation** (12 of 12, exit 0). The
-  constraint-16 shape exactly.
+  and `::the_package_root_is_admitted_read_and_execute_only` — red under that
+  suite, **green in isolation** (12 of 12, exit 0), and **green in the final
+  full run**. Constraint 16's shape exactly.
 * `standalone_host::closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
-  — the row the brief names as a known one. It was **red both ways here**: red
-  under the full suite *and* red in isolation (`Err(Timeout)` where the
-  assertion wants `Ok(VerificationResponse{…})`, a wall-clock row at
-  `standalone_host.rs:212`). The brief describes it as red in isolation and
-  green under a full suite; on this host it did not go green under load either.
-  Reported, **not touched**.
+  — the row the brief names as a known one. Seen **red under that suite and
+  also red in isolation** (`Err(Timeout)` where the assertion wants
+  `Ok(VerificationResponse{…})`, a wall-clock row at `standalone_host.rs:212`),
+  and then **green in the final full run**. The brief describes it as red in
+  isolation and green under a full suite; this host produced red-in-isolation,
+  red-under-load *and* green-under-load across the session, so its behaviour is
+  wall-clock-dependent in both directions rather than a fixed polarity.
+  Reported as seen, **not touched**. This is **new evidence for the existing
+  residual `VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED`**, not a new finding:
+  card `STABILITY-REEVAL-1` measured that row failing *deterministically 3 of 3
+  in isolation* and diagnosed a wall-clock throughput shortfall (about 8 MiB
+  each way through a pipe inside 1,000 ms). This card's observation — the same
+  row **green** in a full-workspace run on the same host — is consistent with
+  that diagnosis and inconsistent with "deterministic", which bears directly on
+  that residual's discharge option (a), recording an environment boundary. The
+  entry belongs to `STABILITY-REEVAL-1` and is **not edited here**; §11 hands
+  the measurement to the integrator instead.
+
+The honest reading is that the workspace suite is **green at this card's tip**
+and that three `qcore-verifier-host` rows are timing-dependent on this host. A
+single green run is not proof that they are sound — that is this card's own
+thesis applied to itself — which is why the red run is published beside the
+green one rather than being the one that "did not count".
 
 No pinned expectation was edited, no fail-closed gate weakened, no diagnostic
 downgraded, no frozen archive modified.
@@ -313,7 +334,16 @@ downgraded, no frozen archive modified.
    and is replaced in `named_followups` by a successor entry recording the
    discharge and what remains open — the `TRACE-ALPHABET-LEASE-BOUNDARY`
    pattern, where the successor carries the story rather than the original being
-   silently deleted. Three new residuals are in §9; all three reach the tracker.
+   silently deleted. §9 lists **five** residuals — that successor
+   (`MUTEX-SHARE-CROSS-ARM-C-REVIVAL`) and four further ones — and all five
+   reach `named_followups`, which goes 80 → 84 (one replaced, four added). The
+   matrix was regenerated through `docs/reports/remaining-d02/build_matrix.py .
+   --gate docs/reports/wave33-close/gate.json`, the invocation the previous
+   regeneration used, so the integrator-supplied gate block and its provenance
+   are reproduced unchanged and only the derived counts move
+   (`dimensions.named_followups` 80 → 84, `validation.lean_audits` 129 → 130,
+   plus the new audit filename). `scripts/tests/test_build_matrix_sections.py`
+   passes, 17 of 17.
 4. **One of the residual's own claims was sharpened, not merely confirmed.** The
    residual derives arm C's death from the documented "only pair". The measured
    fact is stronger: the admitting arm's protocol is a *literal*, so the residue
@@ -344,7 +374,16 @@ downgraded, no frozen archive modified.
    Landing it takes a second reader on
    `docs/reports/c-gateway-return-call-w4/scripts/mutations.py`, which this card
    did not audit and which is the other harness in the tree.
-8. **Two residuals in §9 are about the project's measurement apparatus, not
+8. **A measurement for someone else's residual, handed over rather than filed.**
+   `VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED` (recorded by `STABILITY-REEVAL-1`)
+   states that `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+   fails **deterministically 3 of 3 in isolation**. This card saw it red in
+   isolation, red under a full suite, **and green under a full suite**, on one
+   host in one session (§10). That is evidence for its discharge option (a) —
+   record an environment boundary — and against the word "deterministic". No new
+   residual was opened for it and that entry was **not edited**, since it is
+   another card's; the integrator should fold this data point in.
+9. **Two residuals in §9 are about the project's measurement apparatus, not
    about this card's subject** (`MUTATION-HARNESS-MTIME-RESTORE`,
    `PYTHON-AUDIT-COMMAND-ROW-LOAD-SENSITIVE`). They are recorded here because
    this card is where they were measured, and both reach the tracker; neither is

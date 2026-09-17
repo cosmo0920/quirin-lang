@@ -45,13 +45,18 @@ one of them a deliberate **measured boundary** — whether
 postponement is recorded as the outcome it is rather than smoothed over. No CT
 count, stage row, pin, archive or keyword moves; `docs/reports/mutex-share-cross/`
 is superseded from this card's own record and **not edited** (constraint 21).
-Gate at the card's tip: **4,566 workspace tests (4,563 passed, 3 failed, 8
-ignored)** — 4,559 plus this card's seven — fmt and clippy clean, both probes
-**exit 0**, **130 Lean audits**, **229 Python**. All three red rows are
-`qcore-verifier-host`'s and none is this card's: the two
-`confined_process_execution` rows are constraint 16's shape, red under the full
-suite and **green in isolation**, while
+Gate at the card's tip: **4,566 workspace tests, 0 failed, 8 ignored** — 4,559
+plus this card's seven — fmt and clippy clean, both probes **exit 0**, **130
+Lean audits**, **229 Python**. Two full runs were taken and they **disagree**,
+so both are published: an earlier one at content differing only by two
+formatting-only edits was 4,563 / 3 / 8, every red row in the untouched
+`qcore-verifier-host`. The two `confined_process_execution` rows are constraint
+16's shape (green in isolation, green in the final run), and
 `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` was
-red **both** ways on this host (`Err(Timeout)` at `standalone_host.rs:212`) —
-recorded as seen and not touched.
+seen red in isolation, red under load *and* green under load across the session
+(`Err(Timeout)` at `standalone_host.rs:212`) — wall-clock-dependent in both
+directions rather than the fixed polarity it is usually described with,
+recorded as seen and not touched. The red run is published beside the green one
+rather than being the one that did not count, this card's own thesis applied to
+itself.
 
