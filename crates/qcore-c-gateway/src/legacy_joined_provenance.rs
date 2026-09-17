@@ -565,11 +565,17 @@ mod tests {
             &call(
                 None,
                 vec![Some("q")],
-                ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
+                ResourceFunctionContract::new(
+                    [ResourceParameterMode::Borrowed],
+                    ResourceReturnMode::None,
+                ),
             ),
             &preserved(["p"]),
         );
-        assert_eq!(facts.bindings.get(&7), Some(&BTreeSet::from(["p".to_string()])));
+        assert_eq!(
+            facts.bindings.get(&7),
+            Some(&BTreeSet::from(["p".to_string()]))
+        );
     }
 
     #[test]
@@ -585,7 +591,10 @@ mod tests {
             &call(
                 None,
                 vec![Some("q")],
-                ResourceFunctionContract::new([ResourceParameterMode::Borrowed], ResourceReturnMode::None),
+                ResourceFunctionContract::new(
+                    [ResourceParameterMode::Borrowed],
+                    ResourceReturnMode::None,
+                ),
             ),
             &preserved(["elsewhere"]),
         );
