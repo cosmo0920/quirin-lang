@@ -502,9 +502,35 @@ neighbouring maps — would insert it silently).
 
 ## 5. Gate
 
-Recorded in §5 of the final revision with each step's captured exit code. Exit
-codes are captured to files, never through a pipe — which §2.8 shows is not a
-formality.
+Run at `ab45406d` on this card's tree by `measure/gate.sh`, which **captures
+every step's exit code to its own file and pipes nothing**. That is not
+ceremony: §2.8 records a wave-35 merge reaching origin with the Python suite red
+because a gate command took a pipe's status instead of the command's, twice in
+one wave. A card reporting on that defect must not commit it.
+
+| Step | Result | Exit |
+|---|---|---|
+| `cargo test --workspace --no-fail-fast` | **4,580 passed · 0 failed · 8 ignored** | **0** |
+| `cargo fmt --all -- --check` | clean | **0** |
+| `cargo clippy --all-targets -- -D warnings` | clean | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | JSON emitted | **0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | JSON emitted | **0** |
+| `python3 scripts/check_lean_audits.py` | **132 Lean audits passed** | **0** |
+| `python3 -m unittest discover -s scripts/tests` | **247 tests, OK** | **0** |
+
+`grep -c '^test result: FAILED' measure/test.log` is **0**, so the totals are a
+measurement of the whole run rather than of everything before a first failure —
+which is what `--no-fail-fast` is in the gate for (`GATE-NO-FAIL-FAST`).
+`git submodule update --init --recursive` ran first and exited 0; `df -h .`
+showed 258 GB free at the start and 166 GB at the gate, so every step ran and
+none was skipped for space. The Python suite is reported because this card
+**changed `acceptance_matrix.json`**, where the derived-vs-carried checks live;
+247 matches the wave-35 close's own figure.
+
+**This card changed no Rust, so these numbers are not evidence about a code
+change** — they are evidence that the documentation, matrix and increment edits
+left the tree green. The 4,580 is above the wave-32 ledger's 4,534 because of
+waves 33–35's cards, not this one.
 
 ---
 
