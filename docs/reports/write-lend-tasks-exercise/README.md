@@ -419,7 +419,7 @@ Run at the card's tip. Commands and results:
 | Step | Result |
 |---|---|
 | `git submodule update --init --recursive` | exit 0 |
-| `cargo test --workspace --no-fail-fast` | see §9.1 |
+| `cargo test --workspace --no-fail-fast` | **4,601 passed, 0 failed, 8 ignored** (233 binaries, exit 0) |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
@@ -434,7 +434,20 @@ the crate-scoped subset.
 
 ### 9.1 Full-gate numbers
 
-See `gate.json` beside this report for the machine-readable record.
+**4,601 workspace tests, 0 failed, 8 ignored**, across 233 test binaries, exit
+0, with `--no-fail-fast` so a load-sensitive row cannot shrink the suite it is
+reported against (`GATE-NO-FAIL-FAST`). No constraint-16 row tripped in this
+run, so nothing needed re-verification in isolation.
+
+Not measured by this card, and carried rather than claimed: the **provider**
+suite (no provider or manifest-template change, and `qcore-schemas` stays
+14.0.0, so constraint 18 does not engage) and every **corpus** row (no
+gateway, contract, audit or provider source file was touched — see the branch
+diff — so no arbiter ran and leak 272 / `unknown_alias` 4,208 /
+`unsupported` 50,150 / contract corpus stand unmoved from the wave-31
+`w31-corpus-contracts-2` baseline as carried forward).
+
+`gate.json` beside this report is the machine-readable record.
 
 ## 10. Named follow-ons
 
