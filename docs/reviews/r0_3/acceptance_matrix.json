@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 128
+  "named_followups": 159
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6033,7 +6033,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 76,
+  "contract_modules": 82,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -7122,6 +7122,223 @@
    "title": "The harness removes an isolation worktree whose agent ends a turn with an unchanged tree",
    "why": "Reported by the coordinator during wave 36 after STABILITY-REEVAL #2 lost its worktree mid-run: an isolation worktree is auto-removed when its agent ends a turn with a clean tree and no commits ahead of base, EVEN WHILE that agent's background jobs are still using it - so a card whose first long gate or measurement run precedes its first commit can lose the tree the run is writing into. The mitigation landed in CLAUDE.md's worktree hygiene by CARD-SCOPE-GUARD: make a checkpoint WIP commit as soon as there is anything to keep and stay at least one commit ahead of the base for the rest of the card. That is a rule for agents, not a fix. Discharge: a harness change that respects in-flight background work, or a recorded decision that the rule is the whole answer.",
    "source": "docs/reports/card-scope-guard/README.md"
+  },
+  {
+   "id": "JPC-LEDGER-44-21-STALE",
+   "title": "AGENTS.md's Cycle 19 row carries 44/21 where card JOINED-PROVENANCE-CYCLES said apply 40/14 in those words",
+   "why": "AGENTS.md's Cycle 19 raw corpus row reads 'exercised on 44 corpus functions' and 'every one of the 21 sites'. The card's report section 11 item 2 says 'Apply in these words' and the words are 40 and 14 (docs/reports/joined-provenance-cycles/README.md:415-416); docs/development/increments/wave-35.md:117 also says 40/14. The 21 is not a typo: README.md:251 records it as the SUPERSEDED pre-rebase census at a300a39d, the figure the card's section 2 exists to stop anyone quoting, against README.md:18 'Every count quoted here is against ebc0fd49, never against a300a39d'. The string 44 occurs nowhere in the card's report or logs. Measured independently by two sub-audits of this card. This matters now, not later: the queued wave-36 arbiter JOINED-PROVENANCE-CALL-FRAMES is chartered as 'the 14 sites', and an agent sizing it from the ledger will attribute 21 sites that no longer exist. DISCHARGE: correct the row to 40 and 14, citing README.md:36 and :237, before either wave-36 arbiter is cut; and state in the wave-36 record which tree each figure was measured on.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RECONCILIATION-APPLIED-ASSERTS-UNVERIFIED",
+   "title": "An 'applied' reconciliation verdict asserts a figure at a named location and the figure is not there; --check cannot detect it",
+   "why": "docs/reports/wave35-close/reconciliation.json, verdict joined-provenance-cycles#for-the-integrator#3, records verdict 'applied', where 'AGENTS.md, Cycle 19 raw corpus row.', and a note reading 'Verified against the card's report, as it asked. ... the zero-movement sentence with its 40 exercised functions and 14 blocked sites is present.' That row says 44 and 21 (see JPC-LEDGER-44-21-STALE). CLAUDE.md already requires an applied verdict to say WHERE, and this one does; the remaining hole is that nothing checks the verdict's ASSERTED CONTENT against its NAMED LOCATION, so --check is green whenever every item merely carries a verdict. MEASURED on how hard this is to see: a naive scan of all 103 wave-34/35 verdicts for applied + an AGENTS.md location + a quoted figure flags exactly one candidate, and that one is a false positive (a spec line number). The defect is invisible to any check that does not read the named location, which is the argument for mechanising it rather than asking for more care. DISCHARGE: an arm of scripts/reconciliation_sweep.py --check that, for every applied verdict whose where names a file and whose note quotes a figure or a sentence, asserts that text is present at that location, shown RED by mutating one verdict's figure before it is believed.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-OFF-CYCLE-THEOREM-ACYCLIC-ONLY",
+   "title": "an_off_cycle_node_does_not_return's hypothesis asserts whole-graph acyclicity, so it is vacuous exactly where its card operates",
+   "why": "proof/QCore/JoinedProvenanceCycles.lean:153 states an_off_cycle_node_does_not_return with the single hypothesis (increasing : forall p n, n in g.succ p -> rank p < rank n), which ranges over EVERY edge and so asserts the whole graph is acyclic; under it no node returns to itself, trivially, for every node. It therefore says nothing about an off-cycle node IN A GRAPH THAT HAS CYCLES, which is the only case card JOINED-PROVENANCE-CYCLES exists for. The shipped code tests exactly that excluded case: crates/qcore-c-gateway/src/legacy_joined_provenance.rs:218 acyclic_sites is a PER-NODE test (on_cycle(node) is 'node is reachable from itself') run inside fixed_point, whose doc comment says it is 'computed as the greatest fixed point over a cyclic graph'. SECOND LAYER, also measured: Steps (line 136) is pure graph reachability, while the property the docstring and report claim ('runs at most once PER CALL') is about execution; the file HAS an execution relation, Reach (line 48, carrying a World), and the off-cycle theorem does not use it. The ledger is clean - grep -c an_off_cycle_node_does_not_return AGENTS.md is 0 - so the overreach lives in the Lean docstring (lines 148-152) and in docs/reports/joined-provenance-cycles/README.md:154-156. DISCHARGE: prove the per-node property over Reach for a graph that may contain cycles elsewhere - the statement the code needs - or record that the theorem covers wholly acyclic graphs and that acyclic_sites' restriction is OBSERVED, not proved, published beside the report rather than edited into it (constraint 21).",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-TRANSFERSOUND-UNNAMED-PREMISE",
+   "title": "fixed_point_is_sound is described by the hypothesis it lacks rather than the premise that carries it, and TransferSound is named nowhere outside Lean",
+   "why": "AGENTS.md says 'soundness on a cycle is fixed_point_is_sound, proved by induction on the arrival with no acyclicity hypothesis'. True, but the theorem carries three hypotheses and the principal one is (transfers : forall p n, TransferSound g site p n) - the abstract transfer is sound on EVERY edge. rg TransferSound over the whole tree returns hits in ONE file only, the Lean module itself: the premise is named in neither the report, the increment record nor AGENTS.md. The card does carry a general caveat (GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION, report:133-137) naming three premises - extraction, CFG construction, declared release effects - but the abstract interpretation's own correctness obligation is a fourth and is the one that does the work. This is STABILITY-REEVAL method step 2 exactly: the theorem is PROVED, its premise about the shipped transfer is OBSERVED. DISCHARGE: name TransferSound in the report's premise list beside the other three, or discharge it against the shipped transfer.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-UNIQUENESS-ENTRY-AGREEMENT-UNSTATED",
+   "title": "acyclic_solution_is_unique holds only among solutions agreeing at the entry, and the ledger states it without that condition",
+   "why": "AGENTS.md: 'the fixed-point equation has exactly one solution on an acyclic graph (acyclic_solution_is_unique), so no acyclic body's verdict can move.' The theorem (proof/QCore/JoinedProvenanceCycles.lean:101) additionally requires (root : a g.entry = b g.entry), so it proves uniqueness only AMONG SOLUTIONS AGREEING AT THE ENTRY. As written the ledger sentence is false - solutions differing at the entry exist - and what is true is 'exactly one solution per entry value'. The load-bearing step, that the wave-31 topological pass and the fixed point seed the entry identically, is unstated in both the report (:144-147) and AGENTS.md. DISCHARGE: state the entry-agreement condition where the theorem is cited, and state or prove that the two routes agree at the entry.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "FOREVER-FOR-EXIT-EDGE-UNOWNED",
+   "title": "Constraint 5c says modelling for(;;) exactly is untaken and would need Lean plus a re-pin; the shipped CFG builder has done it since Cycle 19 with neither",
+   "why": "AGENTS.md constraint 5c: 'the rule does not generalise to while (1) or for (;;): modelling those exactly would remove an EXIT edge, which is the accusing direction and needs its own Lean statement and re-pin (CONSTANT-DO-WHILE-OTHER-CONSTANTS).' True of while (1): Statement::While sets successors = vec![body_entry, continuation] UNCONDITIONALLY (legacy_c.rs:5027). FALSE of for (;;): legacy_c.rs:3277 sets condition_always_true = condition.is_empty(), and legacy_c.rs:5056 then makes the header's successors vec![body_entry], removing the exit edge. Dated by git log -S to 490f5151 'Complete Cycle 19 control-flow foundation', untouched by wave 35, and proof/QCore/ConstantDoWhile.lean contains no statement about it. NOT A SOUNDNESS CLAIM: an omitted for condition is replaced by a nonzero constant (C11 6.8.5.3) so the removal is exact, and break still reaches continuation because the builder pushes break_targets before compiling the body. The finding is that a STANDING CONSTRAINT ASSERTS A PROPERTY OF THE CODE THE CODE CONTRADICTS, and that the neighbour it misdescribes is unowned - the same shape as CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED, which WAS recorded. DISCHARGE: narrow 5c's sentence to while (1), record the pre-existing for(;;) route as a second unowned neighbour, and add a pinning test driving for(;;) with and without a break.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "DO-WHILE-ACYCLICITY-SCRIPT-PREMISE-STALE",
+   "title": "The sentence AGENTS.md says would contradict constraint 10b is landed verbatim in the committed script 5c sends readers to",
+   "why": "AGENTS.md 5c records that the integrator caught card C-GATEWAY-CONSTANT-DO-WHILE's stale sentence - the card wrote that derive 'returns no conditional-provenance facts at all for a cyclic CFG', which wave 35's second arbiter falsified later in the same wave, and 'landing that sentence verbatim would have put a statement contradicting 10b into this file'. That sentence IS landed, verbatim, in the committed script the same constraint points readers to for re-measurement: docs/reports/c-gateway-constant-do-while/scripts/acyclicity.py:4-6 reads 'legacy_joined_provenance::derive topologically sorts the CFG and, when the sort fails ... returns no conditional provenance facts at all for that whole function.' Merge order confirms the mechanism: 3ead460b (do-while, arbiter 1) merged BEFORE 4cf9bdf9 (cycles, arbiter 2), so the script measured against a derive its own wave-sibling then replaced. AGENTS.md says arbiter 2's section 8 reproduced the 654 independently, so the NUMBER is not in doubt; what is stale is the committed instrument's stated premise. DISCHARGE: publish a provenance note BESIDE the script (constraint 21 - do not edit the archive) recording that its docstring's premise was falsified by JOINED-PROVENANCE-CYCLES in the same wave and that the 654 was re-derived in that card's section 8.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "GATE-EXIT-SWALLOWED-BY-PIPE",
+   "title": "A wave-35 merge reached origin with the Python suite red because a pipe took tail's exit code, and it happened twice in one wave",
+   "why": "MEASURED verbatim from commit b6ea42df's own message: 'Merge 56a97db0 reached origin with the Python suite red - the integrator's gate command piped unittest into tail, so the pipe's exit code was tail's and the push proceeded. That is the second time this wave a pipe swallowed a gate'. This is STABILITY-REEVAL method item 1 at the level of the gate itself: for at least one wave-35 merge the reported greenness was an artefact of measurement technique rather than of the suite, and the project already carries the rule. Advice is skippable, so the step must be mechanical. DISCHARGE: a gate runner that captures each step's exit code to a file and refuses to emit a green gate.json unless every captured exit is 0; or set -o pipefail mandated in AGENTS.md's standing per-change gate section, with the close's gate.json recording the captured exits rather than a narrated verdict.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "STABILITY-REEVAL-1-RESIDUALS-ORPHANED",
+   "title": "Retiring WAVE-33-DEFERRED-DECISIONS-UNTRACKED removed the only tracker entry for two names, which now reach no tracker at all",
+   "why": "MEASURED three ways, including by the project's own tool. CT10-REASON-ROW and MATRIX-UPDATED-STALE-AT-WAVE-27 each appear 0 times in named_followups and 0 times in AGENTS.md, and scripts/reconciliation_sweep.py --residuals lists both with NO tracker line, written only in docs/reports/stability-reeval-1/README.md. So the names raised by the stability card now sit in exactly the untracked set that --residuals exists to surface - the same place DOCS-COMPACT-4's and DOCS-COMPACT-5's own findings sat for two waves. The defect the cadence was created to catch has happened to the cadence's own output. DISCHARGE: this card registers both names in their own right; additionally, add to the close rule that RETIRING A TRACKER ENTRY REQUIRES RE-HOMING EVERY NAME IT WAS THE SOLE TRACKER FOR, checked by --residuals BEFORE the retirement lands rather than after.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "CT10-REASON-ROW",
+   "title": "Re-homed orphan: raised by STABILITY-REEVAL #1, left with no tracker when its parent entry was retired",
+   "why": "Registered here in its own right under STABILITY-REEVAL-1-RESIDUALS-ORPHANED. Raised by firing 1 of the stability cadence and carried only in docs/reports/stability-reeval-1/README.md; the retirement of WAVE-33-DEFERRED-DECISIONS-UNTRACKED removed the only tracker entry pointing at it. This entry exists so the name reaches a tracker; the substance is firing 1's. DISCHARGE: read docs/reports/stability-reeval-1/README.md's statement of this name and either act on it or record it declined with its ground - and do not retire this entry without re-homing anything it is the sole tracker for.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+   "title": "Re-homed orphan: raised by STABILITY-REEVAL #1, left with no tracker when its parent entry was retired",
+   "why": "Registered here in its own right under STABILITY-REEVAL-1-RESIDUALS-ORPHANED. Raised by firing 1 of the stability cadence and carried only in docs/reports/stability-reeval-1/README.md; the retirement of WAVE-33-DEFERRED-DECISIONS-UNTRACKED removed the only tracker entry pointing at it. This entry exists so the name reaches a tracker; the substance is firing 1's. DISCHARGE: read docs/reports/stability-reeval-1/README.md's statement of this name and either act on it or record it declined with its ground.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "FB-PLAN-STALE-RED-ASSERTION",
+   "title": "The Fluent Bit plan asserts a live red test that measures green, an accusing-direction staleness",
+   "why": "docs/plans/fluent-bit-system-coverage/README.md:244 reads 'FB-PLAN-GATE-HOST-TIMEOUT is an unresolved validation finding' and asserts that closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request FAILED at crates/qcore-verifier-host/tests/standalone_host.rs:212. This card's first run measured that test green 4 of 4. The plan text is stale in the ACCUSING direction - it asserts a live red test that is green - which is the safer direction but still a false statement in a planning document that scopes future cards. DISCHARGE: re-measure and either record the discharge beside the finding or restate it as an evidenced environment boundary, without weakening the assertion or the deadline.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-40-UNARCHIVED",
+   "title": "The '40 deriving functions' and the 14-site premise table are report sentences with no archived script, log or test",
+   "why": "docs/reports/joined-provenance-cycles/README.md:36 and :228 publish '40 of them derive at least one real site fact' and :237-242 the 14-reached/0-passed premise table. Neither is backed by an archived artifact: logs/census.txt does not contain 40 nor any deriving-function count, scripts/census.py computes only populations 1-3 (659/74/67) and never reads fixed-point output, and section 10's reproduction recipe does not invoke the one thing that could produce them - scripts/legacy_joined_provenance.instrumented.rs's QCORE_JPC_FIXPOINT and QCORE_JPC_PREMISE emitters. The data is re-derivable but the reduction was done by hand and not kept. DISCHARGE: add the two reducer scripts and their logs under docs/reports/joined-provenance-cycles/{scripts,logs}/ and list them in section 10, or restate both numbers in the report as measured once and not archived.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-PREMISE-CENSUS-BLIND-TO-CYCLICITY",
+   "title": "The archived premise census records no function name and no cyclicity flag, so it cannot say whether the cyclic arm's output ever reached a consumer",
+   "why": "docs/reports/joined-provenance-cycles/scripts/legacy_joined_provenance.instrumented.rs:456-459 emits only {\"site\":N,\"blocking\":\"...\"}. The 40 functions that derive facts and the 14 sites that reach the release_site gate may therefore be entirely disjoint sets, and the corpus evidence does not establish that the CYCLIC arm's output has ever reached a downstream consumer. The test suite does drive cyclic-to-consumed (see JPC-CONSUMPTION-ONLY-IN-EXIT-CUSTODY); the corpus does not, and cannot be asked. DISCHARGE: re-run the premise census with function and cyclic on each line and publish the cyclic/acyclic split of the 14, and whether they intersect the 40.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-CONSUMPTION-ONLY-IN-EXIT-CUSTODY",
+   "title": "A cyclic-derived fact is consumed only through exit custody in tests and never at all on the corpus",
+   "why": "MEASURED, both halves. The consumption chain is real and verdict-bearing: legacy_c.rs:6224 derive -> :6250 release_site -> :6263 finish_release, which at legacy_joined_provenance.rs:388-389 inserts RELEASED and clears unresolved_effect_sites, both then read by report_leaks (legacy_c.rs:7945), site_disposition (:5919), observe_exit (:5950) and W4 at legacy_summary.rs:705. The test a_cycle_beside_an_off_cycle_acquisition_still_settles_the_release (crates/qcore-c-gateway/tests/unit/legacy_c.rs:1693) drives it, and the card's own logs/mutations.txt shows three separate mutations turn it red, so it is non-vacuous. BUT the assertions are only on exit-site disposition (Released present, Mixed absent), i.e. the ExitCustody/W4-summary channel; no test drives a cyclic CFG to a changed diagnostic, leak row or function status, and on the pinned corpus the release_site gate passes 0 times in 14 so nothing is consumed there at all. DISCHARGE: a test in which a cyclic body's settled release changes a derived parameter mode at legacy_summary.rs:705 or an ExitCustody a caller reads, or an explicit statement that this route's consumption channel is exit custody only.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED",
+   "title": "How many of the 1,273 cyclic functions exhaust the 64-round bound and silently derive nothing is not measured and not instrumented",
+   "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:210 sets FIXED_POINT_ROUNDS = 64, used at :271, with a bare declined at :309. MEASURED five ways that the decline rate is unknown: the shipped code counts nothing; the card's archived instrumentation emits function/nodes/reachable/cyclic/bare_acquires/sites/sites_off_cycle/conditional_names and NO rounds-used or converged field; logs/census.txt has no such row; rg FIXED_POINT_ROUNDS returns six hits, three in the module and three in the archived copy, and ZERO in any test; and the module's only cyclic fixture settles in a handful of rounds, while the mutation 'the iteration stops after one round' proves the ITERATION matters but never exercises the BOUND. The project's own convention in the same subsystem is the opposite: the sibling bound MAX_ALIAS_TARGETS sets state.widened when it fires and legacy_c.rs:6317-6323 turns that into an Unsupported diagnostic that keeps the function non-Safe. Declining is fail-closed and proved safe (weakening_stays_sound), so this is NOT unsoundness; it is an unmeasured refusal rate behind a green suite, and it makes README:228's headline readable as a measurement of derivability when it may be partly a measurement of the bound. DISCHARGE: one instrumented corpus run adding rounds_used and converged, publishing how many of the 1,273 hit 64, the maximum rounds any function actually used, and whether any of the 67 population-3 functions is among the declines; plus a direct derive() unit test on a hand-built CFG that provably needs more than 64 rounds. Re-run after JOINED-PROVENANCE-CALL-FRAMES, which raises the chain height.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE",
+   "title": "fixed_point returns the identical value for 'nothing to derive' and 'did not converge', so no consumer or census can separate them",
+   "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:258 binds let declined = vec![Bindings::new(); cfg.nodes.len()], returned at :261 when sites.is_empty() (nothing to derive) and again at :309 when the 64-round loop falls through (did not converge). They are the same value. No downstream consumer, and no future census, can tell the two apart - which is what makes JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED unmeasurable without a code change, and what would make a post-CALL-FRAMES result of 'still zero' have two causes nothing in the tree could separate. DISCHARGE: make the two outcomes distinguishable, at minimum an Unsupported diagnostic on the :309 path following the state.widened precedent at legacy_c.rs:6317-6323. Note this is an ACCUSING change - a function that declines would stop being silently Safe-eligible on that pre-pass's account - so it needs its own re-pin.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RELEASE-SITE-PREMISES-PARTIALLY-INSTRUMENTED",
+   "title": "release_site has seven refusal disjuncts and the published census counts three; the other four have never been instrumented",
+   "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:358-364 is a seven-way disjunction: not_named_by_facts (:358), not_live (:359), nullable_site (:360), unresolved_effect (:361), contained (:362), field_links (:363), conditional_replacements (:364). The published census (report :237-242) counts three - not_named_by_facts 14/14, nullable_site 14/14, unresolved_effect 5/14. The disjuncts at :362-364 have never been the blocker at any corpus site and were never instrumented. This becomes load-bearing immediately: the queued JOINED-PROVENANCE-CALL-FRAMES removes :358 at some subset of the 14, after which :359-364 are the live gate, and a post-card census could not distinguish 'now blocked by contained' from 'still blocked by naming'. A PREDICTION THE CARD SHOULD COMMIT TO BEFORE MEASURING: because nullable_site is independently universal at 14/14, CALL-FRAMES alone moves ZERO corpus sites however perfectly it attributes the naming loss; its payoff is conditional on JOINED-PROVENANCE-RELEASE-NULLABLE landing too. DISCHARGE: publish a seven-way census at the next gateway arbiter, and a direct release_site unit test on a hand-built AbstractState for each of :362, :363 and :364, since no corpus path reaches them.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JPC-CENSUS-CONTRACT-SET-DEPENDENT",
+   "title": "The joined-provenance population census is a function of the contract corpus, so a contract card invalidates its published figures",
+   "why": "legacy_joined_provenance.rs:234-238 counts a creating node as Acquire{site} OR ContractCall{produced_sites}, and :260 returns early when sites is empty. So growing the contract corpus turns uncontracted calls into ContractCalls, makes more nodes create sites, and makes more of the 1,273 run the full iteration. The card already recorded this dependency as a caught error (report :81-87): population 2 first measured ZERO because the instrumentation counted only bare Acquire, and 'in the pinned corpus a contracted allocator arrives as a ContractCall carrying produced_sites, so the real count is 74'. The queued W36-CORPUS-CONTRACTS-3 adds roughly 20 declarations, which invalidates 67 / 354 / 40 / 14 as published. DISCHARGE: state in the successor report that populations 1-3 are indexed to the 76-module corpus, and re-run scripts/census.py at every contract-corpus card rather than letting the previous card's figures be read forward.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "LOADER-ABI-MODES-CORPUS-PROPERTY",
+   "title": "Constraint 8's mode gate is sound only because the pinned corpus contains no non-nullability duty inequality, and a contract card can end that",
+   "why": "AGENTS.md constraint 8 says the mode gate 'deliberately does not withdraw on a refinement inside one duty ... BECAUSE EVERY DERIVABLE COMPARISON IN THE PINNED CORPUS IS A NULLABILITY REFINEMENT and withdrawing on inequality would withdraw a release contract in every unit including rd_free/mk_mem_free/flb_free's headers'. This is the purest instance of a rule sound only because the corpus contains no such shape. The queued W36-CORPUS-CONTRACTS-3 adds roughly 20 declarations, each creating new derivable comparisons against W4-derived summaries; the first whose duty inequality is not a nullability refinement makes the withdrawal arm fire, and constraint 8 itself says a withdrawal can turn a Safe unit into a provisional Unsafe - which would move the 186/84/4,564 histogram and possibly leak 272 (constraint 7). DISCHARGE: re-run the derivable-comparison census over the proposed declarations and state, in the card's report and BEFORE measuring, whether the all-nullability-refinements property still holds; if it does not, predict the withdrawal and its direction rather than absorbing it.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RETURN-POSITION-PREMISE-CONTRACT-ROUTE",
+   "title": "TrackedBasesAreBound names only the member-typing route to its falsification; a Stored/Removed declaration is a plausible second route",
+   "why": "AGENTS.md (constraint 5b region) records that the None answer in the return-position escape is 'a backstop no test distinguishes' and that its premise TrackedBasesAreBound - the projection tracks no place whose base the body does not bind - is falsified by 'a card that widens member typing far enough to put a projection-bound place on an admitted chain', naming FB-BACKLOG-CUSTODY as the trigger. INFERRED, not measured: a Stored/Removed owner-index declaration creates field_links entries (legacy_c.rs:7115, :7719), i.e. projection-tracked places rooted in aggregates, so a contract-corpus card is a plausible SECOND route to falsifying the same premise, and only the member-typing route is named. DISCHARGE: before W36-CORPUS-CONTRACTS-3 lands, check whether any proposed declaration carries Stored or Removed; if so re-read the may_bind premise against the places those declarations make tracked, and either measure that such a declaration cannot put a projection-bound place on an admitted chain or add the contract route to the constraint's named trigger list beside FB-BACKLOG-CUSTODY.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "WAVE-36-CARDS-UNCHARTERED",
+   "title": "Both wave-36 arbiters are chartered against numbers that exist only outside the tree",
+   "why": "MEASURED. docs/development/increments/wave-36.md exists but is an empty skeleton. JOINED-PROVENANCE-CALL-FRAMES appears in the repository only as a residual/follow-on NAME, three times (docs/reports/joined-provenance-cycles/README.md:297-301, docs/reports/c-gateway-wave/README.md:90, and the matrix). W36-CORPUS-CONTRACTS-3 appears NOWHERE in the repository - zero hits across docs/, AGENTS.md, CLAUDE.md and the matrix. Both exist only in planning memory outside the tree. This compounds JPC-LEDGER-44-21-STALE: an agent sizing CALL-FRAMES ('the 14 sites') from the ledger rather than the report will size it against 21 sites that no longer exist, and there is no brief in the tree to correct it. DISCHARGE: write both briefs into the tree - a wave-36 queue entry or a plan page - citing the report figures rather than the ledger row, before either arbiter is cut.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RETURN-CALL-WHOLE-EXPRESSION-SINGLE-WITNESS",
+   "title": "One test with two bodies is the sole witness for the whole-expression premise; the row whose name implies it covers that premise is insensitive to it",
+   "why": "MEASURED by mutation. With whole_expression_call's extent check removed (legacy_return_call.rs:162), a_call_that_is_not_the_whole_return_expression_is_refused (return_position_modeled_call.rs:380) stayed GREEN - all six of its shapes are refused by something else, principally classify_simple's pre-existing guard at legacy_c.rs:4023 and, for the cast, the non-identifier head token. The premise IS covered, by a_tail_after_the_call_cannot_launder_the_produced_site (:411), which went red; but that is one test with two bodies, and it is what separates a false Safe from the tree - both mutated bodies were measured Safe and certified. The docstring at :376-378 presents the six-shape row as the whole-expression premise's evidence and it is not. DISCHARGE: add a second independent row driving the extent check on a body whose tail is not an untracked value - one whose refusal survives deleting the sole witness - or amend the docstring to state that the six shapes are refused by classify_simple's guard and name where the premise's only witness lives.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RETURN-CALL-TESTS-CLANG-GUARDED-GREEN",
+   "title": "All 14 rows of the return-call suite early-return without Clang, so on a Clang-less machine the file reports 14 green having measured nothing",
+   "why": "MEASURED that the guard exists on every row of crates/qcore-c-gateway/tests/return_position_modeled_call.rs and that it did NOT fire in this card's run (clang 21.1.8 present; grep -c 'skipping Clang-dependent' on the run log returned 0, so all 14 really executed). The residual is about what the row means elsewhere: a green result from this file is evidence only conditional on Clang being present, and nothing in the result distinguishes the two cases. DISCHARGE: make Clang absence visible as ignored rather than ok - a reported skip, or one row that asserts the suite actually ran - or record in the card report that these 14 rows are a Clang-conditional measurement.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "RETURN-CALL-PIN-CONTROL-UNANCHORED",
+   "title": "The one Unknown-to-Safe pin move in waves 34-35 has a control that detects a regression of one leg but not a co-movement of both",
+   "why": "crates/qcore-c-gateway/tests/neutral_expression_positions.rs:394 moves a pinned expectation from AnalysisStatus::Unknown to ::Safe. It is disclosed everywhere required - report section 6 'Deliberate pin update' and the commit message's capitalised 'TWO PINNED EXPECTATIONS UPDATED DELIBERATELY' - and the card writes its control into the test body, asserting the statement form of the identical C is Safe too (:406) with the comment 'if it ever moved, the alignment above would be resting on nothing'. MEASURED: the control exists and is a real assertion. INFERRED: it rests on the claim that the statement form was ALREADY Safe before the card, which nothing in the suite anchors to a pre-card measurement, so if a future card made the statement form Safe for a new reason both legs would agree and the pin would be self-consistent while resting on nothing - the exact failure the comment says it guards against. DISCHARGE: cite the pre-card commit and archived verdict for the statement form in the test comment or the report, or state it as a measured boundary - the control detects a regression of one leg, not a co-movement of both.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "CORPUS-TOTALS-UNPINNED-BY-ANY-TEST",
+   "title": "No test asserts the corpus headline counts; waves 34-35 moved four of them and no test literal moved, because none exists",
+   "why": "MEASURED by grepping every file under compiler/tests/ and crates/*/tests/ for the headline figures: no test asserts leak 272, unsupported 50,106, unknown_alias 4,214 or the double_release total. Waves 34 and 35 moved four of these (unsupported 50,117 to 50,106; unknown_alias 4,208 to 4,214; double_release 1 to 0; leak unmoved) and no test literal moved with them, because there is none. These pins live in AGENTS.md prose and in report artifacts, so a drift is caught only by a human reading a diff plus the BEFORE/AFTER byte-identity scripts. Adjacent to VERIFIER-HOST-CONTROL-MARGIN-UNPINNED, which wave 35 registered for the same shape in another subsystem. DISCHARGE: a test, or an existing probe example's exit condition, asserting the headline counts against the pinned corpus; or an explicit recorded decision that the archive-comparison scripts are the intended pin and the ledger row is documentation - the decision recorded either way.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "INTEGRATOR-HEADLINE-COUNT-HAND-WRITTEN-UNCHECKED",
+   "title": "The named_followups figure in AGENTS.md is hand-written at merge time and nothing mechanically checks it against the matrix",
+   "why": "MEASURED: at all three wave-35 merges that touched it (cfd410d0, 3ead460b, ebc0fd49) the AGENTS.md entries figure differs from BOTH parents - 95, 95 and 100 - so it was hand-written by the integrator at resolution time. All three were CORRECT against the same commit's acceptance_matrix.json, so this is a hazard rather than a live defect; but it is precisely the shape that produced DOCS-COMPACT-4-TABLE-SYNC's loss. DISCHARGE: a check - a workspace test, or an arm of scripts/reconciliation_sweep.py --check - asserting that the entries figure in AGENTS.md equals both len(named_followups) and dimensions.named_followups at the committed tree, shown RED by mutating AGENTS.md's number before it is believed.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "POINTER-EMPTY-TARGETS-INVARIANT-UNSTATED",
+   "title": "The invariant that keeps a known non-null pointee-less pointer from arising holds at all fourteen write sites and is asserted nowhere",
+   "why": "This card asked whether an AbstractPointer can be inserted with targets empty, unknown false and may_be_null false - a claim of a known, non-null, pointee-less pointer that downstream readers could take as resolved. ANSWER: NO, measured by exhaustive enumeration of every construction, insertion, join and in-place mutation in legacy_c.rs. The invariant is targets.is_empty() implies (unknown || may_be_null). It holds at all six struct literals, the clone insertion, all three join arms, and every write to the two booleans; the single non-literal unknown=false site (:7887) immediately sets may_be_null (:7888), and the load-bearing may_be_null=false site (:7890) is guarded at :7880 by unknown || targets.len() > 1, so an empty-targets binding reaching it had unknown true. But the invariant is asserted NOWHERE - no doc comment on the struct (legacy_c.rs:5257-5263), no debug_assert, no Lean - and it rests on two conjuncts a plausible well-intentioned edit would remove: widening the :7880 guard to 'also narrow the empty case', which reads like a completeness fix and makes :7890 produce the triple directly; and replacing the Infeasible early return at :7893-7898 with a fallthrough. DISCHARGE: state the invariant as a doc comment on AbstractPointer and enforce it at a single insertion helper with a debug_assert, and name it in constraint 10b beside 'Non-nullness does not establish lookup identity'. Cheap, and JOINED-PROVENANCE-CALL-FRAMES will be editing next door.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "ABSTRACT-POINTER-DEFAULT-IS-THE-UNSOUND-TRIPLE",
+   "title": "AbstractPointer derives Default and its Default is exactly the triple the invariant forbids",
+   "why": "legacy_c.rs:5257 derives Default on AbstractPointer { targets, unknown, may_be_null }, so AbstractPointer::default() IS targets empty / unknown false / may_be_null false - the triple POINTER-EMPTY-TARGETS-INVARIANT-UNSTATED shows must never reach state.pointers. It does not today: the two AbstractPointer::default() uses at :6649 and :6652 are local temporaries handed to mark_unresolved_effect and discarded, and there is no state.pointers.entry(..).or_default() anywhere. But or_default() is the idiomatic Rust one-liner and is already used six times in this same file on the neighbouring field_links, contained and conditional_replacements maps, so a future entry(name).or_default() on pointers would insert the forbidden triple silently, with no compile error and no test failure. DISCHARGE: remove the Default derive and spell the two temporaries as explicit literals. Do NOT discharge it by making the default unknown: true - that would silently change those two temporaries' behaviour, since mark_unresolved_effect with unknown true marks EVERY resource, an accusing change needing its own re-pin.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "SINCE-EMPTY-WINDOW-PROPERTY-REHOMED",
+   "title": "An uncarded integrator commit moved the empty-window property off the --since path it was written to guard",
+   "why": "Commit b6ea42df, an integrator commit with no card, changed scripts/tests/test_reconciliation_sweep.py:693 from driving --since HEAD to --range HEAD..HEAD after SWEEP-BLIND-SPOTS made --since inclusive of its base. The assertion is retained and the intent preserved, and mitigating measurements are real: --since occurrences in that file went 2 to 5 and a new test drives the new inclusivity positively. But the property 'a --since window that covers nothing fails loudly' is no longer driven through the --since path. It was disclosed in docs/reports/wave35-close/README.md:312 and in that close's uncarded_commits, so it was swept rather than hidden. DISCHARGE: assert the loud-failure property on the --since path with a base ref that genuinely covers nothing on the live tree, or record that --range is the intended home and name the sibling that covers --since's empty case.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "CT-STAGE-TALLY-LITERAL-UNDISCLOSED",
+   "title": "A mapping lane moved a pinned tally literal and named the cause but not the literal in its commit message",
+   "why": "Card CT-CTWIN-LANE moved sum(counts.values()) from 5 to 4 at scripts/tests/test_ct_stage_summary.py:990. The cause is disclosed in both the report and the commit message (CT46 mapped, 45/50 to 46/50) and the test's own comment carries the history line by line, so this is a documentation gap rather than a silent edit. But CLAUDE.md asks for the PIN to be named deliberately in the commit message, and the literal is not. Low severity, recorded for the pattern rather than the instance. DISCHARGE: name the literal in future lane commit messages when a mapping moves it, or record that a tally derived from a disclosed mapping count is covered by disclosing the mapping.",
+   "source": "docs/reports/stability-reeval-2/README.md",
+   "recorded_by": "STABILITY-REEVAL-2"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"
