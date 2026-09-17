@@ -293,30 +293,117 @@ Prose about `AGENTS` and `JSON`, neither of which is a residual name.
 """
 
 
+def write_ledger(root: pathlib.Path, *names: str) -> None:
+    """The one tracker: `named_followups` in the acceptance matrix."""
+    matrix = root / "docs" / "reviews" / "r0_3"
+    matrix.mkdir(parents=True, exist_ok=True)
+    (matrix / "acceptance_matrix.json").write_text(
+        json.dumps({"named_followups": [{"id": name} for name in names]}), encoding="utf-8"
+    )
+
+
+def names_of(found) -> list:
+    return [entry.name for entry in found]
+
+
 class ResidualTests(unittest.TestCase):
-    def _tree(self, scratch, tracked_text):
+    def _tree(self, scratch, ledger=(), agents_text=""):
         root = pathlib.Path(scratch)
         write_report(root, "a-card", RESIDUAL_REPORT)
-        (root / "AGENTS.md").write_text(tracked_text, encoding="utf-8")
+        write_ledger(root, *ledger)
+        (root / "AGENTS.md").write_text(agents_text, encoding="utf-8")
         return root
 
-    def test_a_name_no_tracker_mentions_is_a_candidate(self):
+    def test_a_name_the_ledger_does_not_carry_is_a_candidate(self):
         with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
-            root = self._tree(scratch, "constraint 1: `A-CARD-TRACKED` stands.\n")
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED",))
             found = sweep_module.untracked_residuals(root, ["a-card"])
-        self.assertEqual(found, {"a-card": ["A-CARD-UNTRACKED"]})
+        self.assertEqual(names_of(found), ["A-CARD-UNTRACKED"])
 
     def test_single_words_are_not_residual_names(self):
         with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
-            root = self._tree(scratch, "")
-            found = sweep_module.untracked_residuals(root, ["a-card"])
-        self.assertNotIn("AGENTS", found["a-card"])
-        self.assertNotIn("JSON", found["a-card"])
+            root = self._tree(scratch)
+            found = names_of(sweep_module.untracked_residuals(root, ["a-card"]))
+        self.assertNotIn("AGENTS", found)
+        self.assertNotIn("JSON", found)
 
-    def test_a_card_whose_names_are_all_tracked_is_omitted(self):
+    def test_a_card_whose_names_the_ledger_carries_is_omitted(self):
         with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
-            root = self._tree(scratch, "`A-CARD-TRACKED` and `A-CARD-UNTRACKED`\n")
-            self.assertEqual(sweep_module.untracked_residuals(root, ["a-card"]), {})
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"))
+            self.assertEqual(sweep_module.untracked_residuals(root, ["a-card"]), [])
+
+    def test_a_name_only_a_constraint_mentions_is_untracked_work(self):
+        """`RESIDUAL-NAMED-ONLY-IN-A-CONSTRAINT-IS-UNTRACKED-WORK`, non-vacuously.
+
+        This is the exact fixture the old `TRACKERS` got wrong: both names appear
+        in `AGENTS.md` and neither is in the ledger, so the old tool returned
+        `{}` - tracked - and said nothing. That silence is what left
+        `RETURN-POSITION-ESCAPE-UNREACHABLE` and its sibling out of every
+        open-work list. A constraint states a rule; the ledger states open work.
+        """
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(
+                scratch,
+                ledger=(),
+                agents_text=(
+                    "## Standing constraints when touching specific subsystems\n\n"
+                    "5b. `A-CARD-TRACKED` and `A-CARD-UNTRACKED` must survive refactors.\n"
+                ),
+            )
+            found = sweep_module.untracked_residuals(root, ["a-card"])
+        self.assertEqual(names_of(found), ["A-CARD-TRACKED", "A-CARD-UNTRACKED"])
+        self.assertTrue(
+            all(entry.mentions == ("AGENTS.md",) for entry in found),
+            [entry.mentions for entry in found],
+        )
+
+    def test_a_residual_introduced_in_an_increment_record_is_seen(self):
+        """`SWEEP-RESIDUALS-SCANS-REPORTS-ONLY`, non-vacuously.
+
+        The name is written in no card report at all, so the old reports-only
+        scan could not return it however the ledger was arranged.
+        """
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"))
+            records = root / "docs" / "development" / "increments"
+            records.mkdir(parents=True)
+            (records / "wave-99.md").write_text(
+                "The integrator left `INCREMENT-ONLY-RESIDUAL` open.\n", encoding="utf-8"
+            )
+            found = sweep_module.untracked_residuals(root, ["a-card"])
+        self.assertEqual(names_of(found), ["INCREMENT-ONLY-RESIDUAL"])
+        self.assertEqual(
+            found[0].sources, ("docs/development/increments/wave-99.md",)
+        )
+
+    def test_the_constraint_scan_reads_the_constraints_section_only(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(
+                scratch,
+                ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"),
+                agents_text=(
+                    "## Status ledger\n\n"
+                    "Card `LEDGER-ROW-NAME` moved the count.\n\n"
+                    "## Standing constraints when touching specific subsystems\n\n"
+                    "1. `A-CONSTRAINT-NAME` stands.\n\n"
+                    "## Standing per-change gate\n\n"
+                    "`A-GATE-NAME` is run before merge.\n"
+                ),
+            )
+            found = names_of(sweep_module.untracked_residuals(root, ["a-card"]))
+        self.assertIn("A-CONSTRAINT-NAME", found)
+        self.assertNotIn("LEDGER-ROW-NAME", found)
+        self.assertNotIn("A-GATE-NAME", found)
+
+    def test_a_file_with_no_constraints_heading_is_read_whole(self):
+        """`CLAUDE.md` is that file, and its platform records name residuals."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = self._tree(scratch, ledger=("A-CARD-TRACKED", "A-CARD-UNTRACKED"))
+            (root / "CLAUDE.md").write_text(
+                "## Platform records\n\nOpen: `QUIRIN-ARM64-GATE`.\n", encoding="utf-8"
+            )
+            found = names_of(sweep_module.untracked_residuals(root, ["a-card"]))
+        self.assertEqual(found, ["QUIRIN-ARM64-GATE"])
 
     def test_the_cli_says_it_classifies_nothing(self):
         with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
@@ -329,6 +416,257 @@ class ResidualTests(unittest.TestCase):
             )
         self.assertEqual(finished.returncode, 0, finished.stderr)
         self.assertIn("classifies none of them", finished.stdout)
+
+
+def run_git(root: pathlib.Path, *args: str) -> str:
+    finished = subprocess.run(
+        ["git", *args], cwd=root, capture_output=True, text=True, check=True
+    )
+    return finished.stdout.strip()
+
+
+def fixture_repo(root: pathlib.Path) -> dict:
+    """A three-commit history with the `WAVE-BASE-UNSWEPT` shape in it.
+
+    `close` - the previous wave's close commit.
+    `base`  - a commit that writes a card report AND is what a later close would
+              declare as its `--since` base. Its report is what the exclusive
+              range could never see.
+    `seam`  - a commit in the same position writing NO report at all, which is
+              `37bc9004` exactly.
+    """
+    run_git(root, "init", "-q", "-b", "main")
+    run_git(root, "config", "user.email", "t@example.invalid")
+    run_git(root, "config", "user.name", "T")
+    (root / "marker").write_text("0\n", encoding="utf-8")
+    run_git(root, "add", "-A")
+    run_git(root, "commit", "-q", "-m", "Close the previous wave")
+    close = run_git(root, "rev-parse", "HEAD")
+
+    write_report(root, "base-card", NUMBERED_REPORT)
+    run_git(root, "add", "-A")
+    run_git(root, "commit", "-q", "-m", "BASE-CARD: the report the base commit writes")
+    base = run_git(root, "rev-parse", "HEAD")
+
+    (root / "marker").write_text("1\n", encoding="utf-8")
+    run_git(root, "add", "-A")
+    run_git(root, "commit", "-q", "-m", "Fix some gates")
+    seam = run_git(root, "rev-parse", "HEAD")
+    return {"close": close, "base": base, "seam": seam}
+
+
+class SeamTests(unittest.TestCase):
+    """`WAVE-BASE-UNSWEPT`: the base commit's own work was invisible."""
+
+    def test_the_base_commits_own_report_is_swept_only_when_the_base_is_included(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            shas = fixture_repo(root)
+            exclusive = sweep_module.cards_changed_in_range(
+                root, shas["base"], "HEAD", include_base=False
+            )
+            inclusive = sweep_module.cards_changed_in_range(
+                root, shas["base"], "HEAD", include_base=True
+            )
+        self.assertEqual(exclusive, [], "the old behaviour, pinned so the repair is visible")
+        self.assertEqual(inclusive, ["base-card"])
+
+    def test_cards_changed_since_keeps_its_exclusive_meaning(self):
+        """The primitive is unchanged; only the close's range moved."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            shas = fixture_repo(root)
+            self.assertEqual(sweep_module.cards_changed_since(root, shas["base"]), [])
+
+    def test_an_explicit_range_sweeps_between_two_closes(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            shas = fixture_repo(root)
+            found = sweep_module.cards_changed_in_range(root, shas["close"], shas["seam"])
+        self.assertEqual(found, ["base-card"])
+
+    def test_parse_range_wants_two_ends(self):
+        self.assertEqual(sweep_module.parse_range("a..b"), ("a", "b"))
+        self.assertEqual(sweep_module.parse_range("a.."), ("a", "HEAD"))
+        with self.assertRaises(SystemExit):
+            sweep_module.parse_range("a b")
+
+    def test_a_commit_that_writes_no_report_is_listed(self):
+        """The `37bc9004` shape: real work, no card, invisible to every record."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            shas = fixture_repo(root)
+            found = sweep_module.uncarded_commits(root, shas["base"], "HEAD")
+        subjects = [subject for _, subject, _ in found]
+        self.assertIn("Fix some gates", subjects)
+        self.assertNotIn("BASE-CARD: the report the base commit writes", subjects)
+
+    def test_uncarded_needs_a_range(self):
+        finished = subprocess.run(
+            [sys.executable, str(SCRIPT), str(ROOT), "--uncarded"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(finished.returncode, 0)
+        self.assertIn("needs --since or --range", finished.stderr + finished.stdout)
+
+    def test_the_uncarded_listing_disclaims_classifying(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root = pathlib.Path(scratch)
+            shas = fixture_repo(root)
+            finished = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT),
+                    str(root),
+                    "--range",
+                    f"{shas['close']}..HEAD",
+                    "--uncarded",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(finished.returncode, 0, finished.stderr)
+        self.assertIn("classifies none of them", finished.stdout)
+
+
+class DeferredDecisionTests(unittest.TestCase):
+    """`WAVE-33-DEFERRED-DECISIONS-UNTRACKED`: a deferral nothing ever re-reads."""
+
+    OPEN = {
+        "note": "one decision this close does not take",
+        "items": [
+            {
+                "name": "A-DEFERRED-DECISION",
+                "verdict": "deferred",
+                "ground": "belongs to a mapping lane",
+            }
+        ],
+    }
+
+    def _closes(self, scratch, earlier, later_block):
+        root = pathlib.Path(scratch)
+        write_report(root, "a-card", NUMBERED_REPORT)
+        earlier_dir = root / "docs" / "reports" / "wave40-close"
+        earlier_dir.mkdir(parents=True, exist_ok=True)
+        (earlier_dir / "reconciliation.json").write_text(
+            json.dumps(
+                {
+                    "wave": 40,
+                    "cards": ["a-card"],
+                    "verdicts": {},
+                    "deferred_decisions": earlier,
+                }
+            ),
+            encoding="utf-8",
+        )
+        record = root / "docs" / "reports" / "wave41-close" / "reconciliation.json"
+        record.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "wave": 41,
+            "cards": ["a-card"],
+            "verdicts": {
+                f"a-card#integrator-reconciliation-list#{n}": {"verdict": "applied"}
+                for n in (1, 2, 3)
+            },
+        }
+        if later_block is not None:
+            payload["deferred_decisions"] = later_block
+        record.write_text(json.dumps(payload), encoding="utf-8")
+        return root, record
+
+    def test_a_later_close_that_ignores_an_open_deferral_is_refused(self):
+        """Before this card a deferral lived in one JSON file and expired in silence."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(scratch, self.OPEN, None)
+            complaints = sweep_module.check(root, record)
+        self.assertEqual(len(complaints), 1, complaints)
+        self.assertIn("A-DEFERRED-DECISION", complaints[0])
+        self.assertIn("not re-listed here", complaints[0])
+
+    def test_re_stating_the_deferral_answers_it(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(
+                scratch,
+                self.OPEN,
+                {
+                    "items": [
+                        {
+                            "name": "A-DEFERRED-DECISION",
+                            "verdict": "deferred",
+                            "ground": "still a lane's, and no lane ran this wave",
+                        }
+                    ]
+                },
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+
+    def test_resolving_it_ends_the_carry(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(
+                scratch,
+                self.OPEN,
+                {
+                    "items": [
+                        {
+                            "name": "A-DEFERRED-DECISION",
+                            "verdict": "resolved",
+                            "ground": "taken at wave 41",
+                        }
+                    ]
+                },
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
+            self.assertEqual(sweep_module.outstanding_decisions(root, 42), {})
+
+    def test_a_decision_verdict_outside_the_vocabulary_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(
+                scratch,
+                self.OPEN,
+                {"items": [{"name": "A-DEFERRED-DECISION", "verdict": "maybe", "ground": "x"}]},
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertTrue(any("is not one of" in c for c in complaints), complaints)
+
+    def test_a_deferral_restated_without_a_ground_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(
+                scratch,
+                self.OPEN,
+                {"items": [{"name": "A-DEFERRED-DECISION", "verdict": "deferred"}]},
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertTrue(any("carries no ground" in c for c in complaints), complaints)
+
+    def test_a_sibling_file_registers_a_closed_records_deferrals(self):
+        """So a frozen close record never has to be edited (constraint 21)."""
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(scratch, {}, None)
+            sibling = root / "docs" / "reports" / "wave40-close" / "deferred_decisions.json"
+            sibling.write_text(
+                json.dumps(
+                    {
+                        "items": [
+                            {"name": "A-RETRO-DECISION", "verdict": "deferred", "ground": "g"}
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            complaints = sweep_module.check(root, record)
+        self.assertTrue(any("A-RETRO-DECISION" in c for c in complaints), complaints)
+
+    def test_a_plain_map_is_read_as_well_as_the_items_list(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-sweep-") as scratch:
+            root, record = self._closes(
+                scratch,
+                {"A-DEFERRED-DECISION": {"verdict": "deferred", "ground": "g"}},
+                {"A-DEFERRED-DECISION": {"verdict": "withdrawn", "ground": "overtaken"}},
+            )
+            self.assertEqual(sweep_module.check(root, record), [])
 
 
 class LiveTreeTests(unittest.TestCase):
