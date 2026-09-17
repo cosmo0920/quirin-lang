@@ -70,9 +70,15 @@ both times because the existing tests compare generator output with generator
 output; both were shown **non-vacuous by mutation** (the exact 47 → 45 drift, and
 an `indent=2` reserialisation) with the matrix restored byte-identically after.
 Gate: fmt and clippy clean, both probes exit 0, **128 Lean audits** (unmoved
-across the 4.34 upgrade), **229 Python**, and the one workspace failure above
-reported rather than absorbed — repairing it would have meant a measurement card
-editing `crates/`, the `CARD-SCOPE-SELF-MERGE` breach wave 33 registered. CT
+across the 4.34 upgrade), **229 Python**, and
+`cargo test --workspace --no-fail-fast` exiting **101** at **4,543 passed /
+1 failed / 8 ignored over 227 result summaries** — which **reproduces the Fluent
+Bit plan card's run exactly**, so with three isolated runs beside it the failure
+is neither a load nor an isolation artifact, and 4,543 + 1 = the ledger's own
+4,544, putting the whole disagreement in the pass/fail split rather than the
+denominator. The failure is reported rather than absorbed: repairing it would
+have meant a measurement card editing `crates/`, the `CARD-SCOPE-SELF-MERGE`
+breach wave 33 registered. CT
 coverage unchanged at 45/50 mapped, sanitized-native 9 of 45, proof 3 of 45;
 corpus, contract and provider rows carried. Nothing is promoted; full language
 conformance stays **false**.

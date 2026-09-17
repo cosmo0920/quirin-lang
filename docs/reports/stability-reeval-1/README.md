@@ -664,7 +664,7 @@ honestly, including the failure.
 
 | Command | Result |
 |---|---|
-| `cargo test --workspace --no-fail-fast` | see §7.1 — **one failure**, pre-existing, not caused by this card |
+| `cargo test --workspace --no-fail-fast` | exit **101** — **4,543 passed / 1 failed / 8 ignored** across **227 result summaries**; the one failure is §7.1's, pre-existing and not caused by this card |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
 | `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
@@ -682,12 +682,28 @@ were measured, and asked for any difference to be attributed. There is none:
 
 The one failing row is
 `qcore-verifier-host :: closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`,
-measured in §2.1: deterministic, 3/3 in isolation, on the **unmodified** tree at
-`d3225f91` before this card touched anything. It is a **finding, not a build
-failure**, and this card deliberately did not absorb it: repairing it is scoped
-in §2.1's discharge condition, and doing it here would mean a measurement card
-editing `crates/` — exactly the `CARD-SCOPE-SELF-MERGE` breach wave 33
-registered.
+at `standalone_host.rs:212`, `left: Err(Timeout)` — the same assertion §2.1
+measured deterministically 3/3 in isolation on the **unmodified** tree before
+this card touched anything.
+
+**The full-suite run reproduces the Fluent Bit plan card's record exactly**:
+that card reported "workspace tests exited 101 (4,543 passed, 1 failed, 8
+ignored; 227 result summaries)", and this run is `WORKSPACE EXIT:101`, **4,543
+passed / 1 failed / 8 ignored, 227 result summaries, one FAILED binary**. Two
+independent full-gate runs on this host, plus three isolated runs, all agree.
+So the failure is **neither a load artifact nor an isolation artifact**: it
+fails alone and it fails in the full suite, at the same assertion, with the same
+value.
+
+Note that 4,543 + 1 = **4,544**, the ledger's published total — so this card's
+Rust test count is unchanged (its two additions are Python), and the
+disagreement with the ledger is entirely in the *pass/fail split*, not in the
+denominator.
+
+It is a **finding, not a build failure**, and this card deliberately did not
+absorb it: repairing it is scoped in §2.1's discharge condition, and doing it
+here would mean a measurement card editing `crates/` — exactly the
+`CARD-SCOPE-SELF-MERGE` breach wave 33 registered.
 
 ---
 
