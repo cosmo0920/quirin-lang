@@ -429,6 +429,7 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
         successors: entries,
         line: 0,
         is_exit: false,
+        loop_exit_edge: None,
     });
     zero
 }
