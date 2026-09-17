@@ -21,7 +21,7 @@ dates. Current agent rules and headline status live in
 
 ## Adding a record
 
-Current record file: [wave-33.md](wave-33.md). Prepend one paragraph per
+Current record file: [wave-34.md](wave-34.md). Prepend one paragraph per
 new increment below the checkpoint notice — and, in a record file that carries
 a `<!-- migrated-section -->` block, above that block; the current file need not
 have one. Keep that increment's evidence and boundaries together. Start the next wave's
@@ -37,6 +37,7 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
+| 34 | [Wave 34 records](wave-34.md) |
 | 33 | [Wave 33 records](wave-33.md) |
 | 32 | [Wave 32 records](wave-32.md) |
 | 31 | [Wave 31 records](wave-31.md) |

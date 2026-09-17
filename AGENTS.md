@@ -147,7 +147,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-47 entries) plus each report's own follow-on list; per-card evidence in
+74 entries) plus each report's own follow-on list; per-card evidence in
 `docs/reports/<card>/README.md`, which is authoritative for that card's counts,
 boundaries and premises; direction in `docs/GENERALIZATION_PLAN.md` (W0–W7) and
 `docs/ROADMAP_AFTER_CYCLE_9.md`'s workstream table; trust/verdict rules and

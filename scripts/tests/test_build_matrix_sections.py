@@ -410,5 +410,52 @@ class BuildMatrixSections(unittest.TestCase):
         self.assertIn("positionally", produced["validation"]["measurement_provenance"])
 
 
+class CommittedMatrixIsSelfConsistent(unittest.TestCase):
+    """Card STABILITY-REEVAL-1 (wave 34), discharging the first half of
+    `D02-DIMENSIONS-FOLLOWUP-COUNT`.
+
+    The two tests above compare GENERATOR OUTPUT against generator output, so
+    both are self-consistent by construction and neither can see drift in the
+    COMMITTED file. `dimensions.named_followups` therefore sat at 45 against a
+    `named_followups` of 47 and no test went red - the residual fired twice, at
+    the wave-32 and wave-33 closes, each time on a hand edit and each time
+    caught by a person reading the file rather than by the suite.
+
+    These two check the committed matrix itself, which is the artifact every
+    other reader trusts. They are deliberately about the file on disk: a
+    regeneration repairs both, so a red row here names a hand edit that did not
+    go back through the generator (constraint 25).
+    """
+
+    def test_each_derived_dimension_matches_the_section_it_counts(self):
+        committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
+        # Only the dimensions whose name IS a section name; the derived
+        # cell/product counts are the other tests' territory.
+        for section in ("requirements", "named_followups"):
+            self.assertEqual(
+                committed["dimensions"][section],
+                len(committed[section]),
+                f"dimensions.{section} is {committed['dimensions'][section]} against a "
+                f"{section} of {len(committed[section])}; regenerate through "
+                f"{GENERATOR.relative_to(ROOT)} rather than repairing the count by hand",
+            )
+
+    def test_the_committed_matrix_keeps_the_generators_byte_format(self):
+        """The second half of the same defect: a hand edit in another format
+        re-serialises all ~6,500 lines, so the next real diff is unreadable.
+        The generator writes `indent=1, ensure_ascii=False` plus a trailing
+        newline (card HYGIENE-16); the committed file must round-trip through
+        exactly that.
+        """
+        raw = COMMITTED.read_text(encoding="utf-8")
+        reserialised = json.dumps(json.loads(raw), indent=1, ensure_ascii=False) + "\n"
+        self.assertEqual(
+            reserialised,
+            raw,
+            "the committed matrix is not in the generator's byte format; it was edited "
+            "by hand with different serialisation settings",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
