@@ -158,7 +158,15 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**171** entries after WRITE-LEND-TASKS-EXERCISE (wave 36, +7 −1; 165 after MUTEX-SHARE-CROSS-EMISSION; 161 after JOINED-PROVENANCE-CALL-FRAMES; 159 after STABILITY-REEVAL #2; 128 after CARD-SCOPE-GUARD; 121 at the wave-35 close), which registered **28** names — 27 of the
+**190** entries at the wave-36 close (+19: the **18** residual-shaped names its
+sweep found reaching no tracker — all nine of `W36-CORPUS-CONTRACTS-3`'s §9 and
+all nine of `C-GATEWAY-INDIRECT-CENSUS-2`'s, both cards having left them to the
+close deliberately — plus the close's own `DECISION-ALSO-REGISTERED-AS-FOLLOWUP`;
+**retirements: none**, stated because the union merge loses an unnamed removal).
+The wave's own chain: 171 after WRITE-LEND-TASKS-EXERCISE (+7 −1), 165 after
+MUTEX-SHARE-CROSS-EMISSION, 161 after JOINED-PROVENANCE-CALL-FRAMES (+3 −2),
+159 after STABILITY-REEVAL #2 (+31), 128 after CARD-SCOPE-GUARD (+7), from
+**121** at the wave-35 close, which itself registered **28** names — 27 of the
 62 its widened sweep returned, plus `DOCS-COMPACT-4-TABLE-SYNC` — and retired
 **10** as discharged by named cards; the section is *carried*,
 `dimensions.named_followups` is

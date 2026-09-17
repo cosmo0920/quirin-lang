@@ -177,6 +177,27 @@ the operational guidance that is in neither of those.
   card's *mistake*, not a security control; do not describe them as more.
   `docs/reports/card-scope-guard/README.md`, and `.git/qcore-main-guard.log` for
   what was refused or authorised.
+  **The guard is now active** (the integrator ran the installer in the main
+  checkout at the wave-36 close; the log carries the self-test refusals and every
+  later merge as authorised), and **`git push` of `main` needs the token exactly
+  as `git merge` does** — the installer's message named merges only, and the
+  integrator's first two pushes of this wave were refused
+  (`refused-push-unauthorised`, twice) before the token was carried on the push
+  command too. That is the guard working; it is written here because the
+  activation message does not say it.
+- **Never `pkill`/`pgrep` on a pattern that names a tool invocation** —
+  `cargo`, `lake`, `python3` — because every parallel card runs the same
+  commands. **The process table is shared across worktrees exactly as the stash
+  stack is.** Kill by the PID you captured when you started the process, or use
+  `TaskStop` on the background task id. Landed in card
+  `MUTEX-SHARE-CROSS-EMISSION`'s own words after that card ran
+  `pkill -f "cargo test --workspace"` and killed a **sibling** wave-36 card's
+  standing-gate run mid-flight, whose evidence file stops after `SUB=0` with no
+  `TESTS=` line; it disclosed the kill in full, touched no repository state and
+  deliberately did not restart the other card's job, on the ground that guessing
+  at another card's intent is worse than reporting the fact. The card *had* the
+  PID — it had already used `kill -0` to wait on its own run — and still reached
+  for the pattern, which is why this is a rule rather than advice.
 - **Never end a turn with a pristine tree while work is in flight.** The harness
   removes an isolation worktree when its agent ends a turn with an **unchanged**
   tree — clean and no commits ahead of base — *even while that agent's own
