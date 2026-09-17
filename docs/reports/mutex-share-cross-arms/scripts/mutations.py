@@ -24,10 +24,8 @@ nonzero.
 
 from __future__ import annotations
 
-import shutil
 import subprocess
 import sys
-import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -220,8 +218,6 @@ def main() -> int:
     survivors = []
     for mutation in MUTATIONS:
         original = mutation.path.read_text()
-        backup = Path(tempfile.mkdtemp()) / mutation.path.name
-        shutil.copy2(mutation.path, backup)
         try:
             mutation.path.write_text(apply(original, mutation))
             if mutation.lean:
@@ -241,8 +237,17 @@ def main() -> int:
                     else f"SURVIVED for {missing}"
                 )
         finally:
-            shutil.copy2(backup, mutation.path)
-            shutil.rmtree(backup.parent, ignore_errors=True)
+            # Restore by REWRITING, never by `shutil.copy2`. copy2 preserves the
+            # backup's mtime, so a restored file is older than the fingerprint
+            # cargo recorded while building the mutant — cargo then skips the
+            # rebuild and every later run in that worktree silently links the
+            # MUTATED crate. Measured the hard way: a whole workspace run after
+            # this harness reported two CT failures that were this bug and not
+            # the tree (`MUTATION-HARNESS-MTIME-RESTORE` in the card's report).
+            mutation.path.write_text(original)
+            assert mutation.path.read_text() == original, (
+                f"{mutation.name}: restore did not reproduce the original"
+            )
         status = "caught" if caught else "SURVIVED"
         print(f"[{status:8}] {mutation.name}: arm {mutation.arm} -- {detail}")
         if not caught:

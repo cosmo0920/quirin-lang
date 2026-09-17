@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 80
+  "named_followups": 84
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6117,7 +6117,7 @@
   "workspace_tests": 4544,
   "provider_tests": 122,
   "python_evidence_validator_tests": 227,
-  "lean_audits": 129,
+  "lean_audits": 130,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6185,6 +6185,7 @@
    "AuditMemberAddressReader.lean",
    "AuditMutexInvariant.lean",
    "AuditMutexShareCross.lean",
+   "AuditMutexShareCrossArms.lean",
    "AuditNativeLibrary.lean",
    "AuditNativeLibraryContract.lean",
    "AuditNativeLibraryHeader.lean",
@@ -6552,11 +6553,39 @@
    "recorded_by": "STABILITY-REEVAL-1"
   },
   {
-   "id": "MUTEX-SHARE-CROSS-UNEXERCISED-ARMS",
-   "title": "A card asserting it has no unexercised arms carries four, two of them provably dead",
-   "why": "docs/reports/mutex-share-cross/README.md:186, under a section headed 'the STABILITY-REEVAL discipline', states 'Every refusal this card adds is driven by a named test; there are no unexercised arms in the card's own rules.' Card STABILITY-REEVAL-1 (wave 34) measured four further refusal arms in `lower_declared_share` (crates/qcore-frontend/src/source_mutex.rs) that the card's §6 table does not list and no test drives. TWO ARE PROVABLY UNREACHABLE FROM ANY PROGRAM: (1) the `Ok(other)` arm at :1325-1336, because for TransferMode::ShareUnderMutex the judgment at crates/qcore-core/src/transfer.rs:634-635 returns only Ok(ShareUnderMutex(CheckedMutex)), which the PRECEDING arm matches, and transfer.rs:762 states that pair is the only one in the matrix yielding the mutex protocol; (2) the `state.resource_of.get(...) else` arm at :1348-1356, because `place` is ProtectedResource iff `state.resource_of.contains_key(resource_name)` (:1313-1319) and only ProtectedResource reaches that point - same map, same key. The other two (:1292-1296, :1298-1302, non-Word tokens at the payload and mutex positions) are reachable in principle but undriven; the three shapes in `a_malformed_crossing_clause_names_the_form` are all length-6 and stop at the length arm, and each refusal message occurs exactly once in the tree - its own definition. Dead fail-closed backstops are defensible; the sentence asserting they do not exist is not. Discharge: amend the card's §6 to list the four with their status, giving the two dead ones the RETURN-POSITION-ESCAPE-UNREACHABLE treatment (a backstop justified by an argument, never by the green suite); or drive the two reachable token arms with a test. NOT a discharge: deleting the arms - they fail closed, and FB-SYSTEM-EXTENSIONS makes both dead arms reachable.",
-   "source": "docs/reports/stability-reeval-1/README.md",
-   "recorded_by": "STABILITY-REEVAL-1"
+   "id": "MUTEX-SHARE-CROSS-ARM-C-REVIVAL",
+   "title": "Arm C of lower_declared_share is dead only while the mutex mode's protocol is a literal",
+   "why": "Card MUTEX-SHARE-CROSS-ARMS (wave 35) DISCHARGED MUTEX-SHARE-CROSS-UNEXERCISED-ARMS, wave 32's claim that its rules carry no unexercised arm. All four arms the STABILITY-REEVAL-1 cadence measured are now dispositioned: arms A and B (a non-Word token at the payload and mutex positions, source_mutex.rs:1291-1302) are DRIVEN by crates/qcore-frontend/tests/mutex_share_cross_arms.rs, each asserting its own sentence and the absence of every neighbouring arm's, with non-vacuity measured by three mutations (message swap each way, header indices swapped: 1, 1 and 3 tests red). Arms C and D are PROVED UNREACHABLE and KEPT as backstops justified by QCore.MutexShareCrossArms (AuditMutexShareCrossArms.lean; nine theorems, axiom closure propext alone), never by the suite, which still cannot reach either. One of the residual's own claims was SHARPENED: it derived arm C's death from the documented 'only pair', but the measured fact is stronger and independent of it - for ShareUnderMutex the judgment's admitting arm constructs its protocol as a LITERAL, so the Ok(other) residue is empty for EVERY kind (theProtocolResidueIsEmpty). The two dead arms are therefore not dead for the same reason, which the residual treated as one fact. WHAT REMAINS OPEN here is arm C's revival condition: a second mutex-family protocol (an rwlock or recursive mutex; constraint 27 records these as represented refusals today) turns that literal into a variable and makes the arm live. The mutation harness measured exactly this - restoring the pre-card pass-through judgment makes arm C reachable and turns the card's test red (thePassThroughJudgmentWouldReachTheProtocolArm proves receivedKind does not intercept the value, because it reads the transfer's constructor and not its protocol). Discharge: the card adding a second mutex-family protocol drives arm C with a test in the same change, or records there why it cannot.",
+   "source": "docs/reports/mutex-share-cross-arms/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-ARM-D-REVIVAL",
+   "title": "Arm D is dead by the uniqueness of the payload's transfer class alone, and FB-SYSTEM-EXTENSIONS revives it",
+   "why": "Card MUTEX-SHARE-CROSS-ARMS (wave 35) proved arm D of lower_declared_share (source_mutex.rs:1375-1383, the payload lookup that misses after the judgment admitted) unreachable in two halves. The non-local half is QCore.MutexShareCrossArms.theLookupAlwaysHits: no kind but ProtectedResource is admitted at all. The local half is that `place` is ProtectedResource only in the branch the lookup's own Some selected - and the card made that ONE binding read twice rather than two lookups (a behaviour-preserving restructure; contains_key and get(..).is_some() are the same predicate on the same map and key, with the arm and its message kept byte-identical and all 16 wave-32 rows passing unmodified), so it is read rather than argued. The honest statement of how thin this is, published rather than smoothed over: the admitting decision reads the kind's CLASS and nothing else (theJudgmentCannotTellTwoKindsOfOneClassApart), so arm D is dead by the UNIQUENESS of the payload's class (armDLeansOnUniqueness) and by nothing structural. A second mutex-bearing kind admits exactly as the payload does while naming no protected resource of the module, and the mutation harness measured that: giving OwnedBuffer the payload's class turns three tests red. FB-SYSTEM-EXTENSIONS' lock-order work needs nesting and a second mutex-bearing kind, and the second kind ALONE revives the arm. Discharge: the card adding a second kind sharing under the checked mutex drives arm D in the same change. Until then only_the_protected_payload_reaches_the_lookup and exactly_one_kind_carries_the_payloads_class are the tripwires - they go red on the day the premise drops, which is the earliest a test can speak here.",
+   "source": "docs/reports/mutex-share-cross-arms/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+  },
+  {
+   "id": "MUTEX-SHARE-CROSS-UNMODELED-PLACE-UNMEASURED",
+   "title": "Whether TransferKind::Unmodeled is reachable at the declared crossing was not measured",
+   "why": "Card MUTEX-SHARE-CROSS-ARMS (wave 35) dispositioned the four arms STABILITY-REEVAL-1 named and deliberately did NOT extend its own scope to a fifth question it noticed while measuring them. lower_declared_share classifies the payload name into ProtectedResource, MutexGeneration or Unmodeled (source_mutex.rs). The judgment-refusal arm below that classification is driven today for MutexGeneration only (`share m under m`, reported by the wave-32 file as KindNotTransferable(NotAValue)). Whether the Unmodeled branch is reachable at this site is UNMEASURED: an undeclared name refuses earlier, at Q013 - measured by this card, `share nosuch under m` reports `Q013 unknown name` - so reachability turns on whether this route admits a binding of a third sort at the payload position at all. This is recorded as a MEASURED BOUNDARY (outcome 3 of the card's three-outcome menu) rather than as a defect: postponement is a valid outcome and the rule the cadence enforces is that it be recorded as one, not that every question be answered in the wave that raises it. Discharge: measure the branch's reachability, then drive it with a test or prove it unreachable and keep it as a justified backstop, as this card did for arms A-D.",
+   "source": "docs/reports/mutex-share-cross-arms/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+  },
+  {
+   "id": "MUTATION-HARNESS-MTIME-RESTORE",
+   "title": "A mutation harness that restores with shutil.copy2 leaves the mutant linked into every later build",
+   "why": "Measured in wave 35 by card MUTEX-SHARE-CROSS-ARMS, in its own harness. shutil.copy2 PRESERVES the backup's mtime, so a restored source file is OLDER than the fingerprint cargo recorded while building the mutant: cargo considers the crate up to date, skips the rebuild, and every later cargo invocation in that worktree silently links the MUTATED crate. This is not theoretical - the first full workspace run after that card's harness reported two failures, ct03_proof_leg's ct03_artifact_is_the_lean_proved_shared_reads_shape (Q500, 'the derived transferability judgment and the capture enumeration disagree about this capture') and ct_corpus's stage-agreement row, which were the arm-d-second-sharing-kind mutation still linked into qcore-core and NOT a defect in the tree. The working tree was pristine against HEAD throughout, which is what makes the mode dangerous: git status cannot see it, and the same mistake in the DISCHARGING direction produces a false GREEN rather than a false red. That card's harness now restores by rewriting the file and asserts the round-trip, and both tests were re-run green before its gate. WHAT IS NOT DONE: the hazard is generic to every mutation harness in the tree - docs/reports/c-gateway-return-call-w4/scripts/mutations.py is the other one and was NOT audited for this pattern - and the rule is not yet in CLAUDE.md. Discharge: read the other harness, and land the proposed CLAUDE.md measurement-hygiene bullet quoted in docs/reports/mutex-share-cross-arms/README.md section 11.",
+   "source": "docs/reports/mutex-share-cross-arms/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+  },
+  {
+   "id": "PYTHON-AUDIT-COMMAND-ROW-LOAD-SENSITIVE",
+   "title": "A Python audit-runner row was observed red once under concurrent cargo load and green otherwise",
+   "why": "Observed in wave 35 by card MUTEX-SHARE-CROSS-ARMS and recorded rather than absorbed. scripts/tests/test_check_lean_audits.py's test_every_audit_runs_once_with_the_sequential_command was RED once under `python3 -m unittest discover` while a full cargo test --workspace was compiling on the same host, and GREEN in isolation, GREEN in a paired run with the matrix tests, and GREEN on a repeat discover without that load - both facts recorded, per constraint 16's discipline for load-sensitive rows. It is NOT that card's code: the test builds its own TemporaryDirectory fixture of six Audit*.lean files and touches nothing the card changed, and the card's new audit file cannot reach it. Likely mechanism, stated as a HYPOTHESIS and not a measurement: check_audits calls the patched run_step from a four-worker ThreadPoolExecutor, and unittest.mock's call_args_list is not thread-safe, so concurrent recording can corrupt the list the assertion reads. Discharge: reproduce under deliberate load, and if confirmed either record the row in constraint 16's load-sensitive inventory (which today lists five Rust rows and no Python one) or make the assertion thread-safe. NOT a discharge: lowering the worker count to make the race less likely, which would hide the row rather than decide it.",
+   "source": "docs/reports/mutex-share-cross-arms/README.md",
+   "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
   },
   {
    "id": "LEASE-BOUNDARY-MUTATION-COUNT-OVERSTATED",

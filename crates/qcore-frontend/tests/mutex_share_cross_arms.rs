@@ -17,8 +17,9 @@
 //!
 //! Every refusal below asserts the code **and** the arm's own distinguishing
 //! sentence, and additionally asserts the *neighbouring* arms' sentences are
-//! absent: the four arms sit within six lines of each other and a test that
-//! only asserted `Q600` would not tell any of them apart.
+//! absent: all six refusals of this one function share the code `Q600`, arms A
+//! and B are adjacent and differ only in which header position they read, and a
+//! test that only asserted the code would not tell any of them apart.
 
 use qcore_core::mutex_invariant::check_mutex_invariant_program;
 use qcore_core::transfer::{
@@ -29,9 +30,11 @@ use qcore_frontend::source_mutex::{LoweredMutexModule, has_source_mutex, lower_s
 
 const DECLARATIONS: &str = "let buf = protected 4; let m = mutex guards buf;";
 
-/// The arms' own sentences, quoted from `lower_declared_share`. Each occurs
-/// exactly once in the tree — its own definition — so a match here is that arm
-/// and no other.
+/// The arms' own sentences, quoted from `lower_declared_share`. Before this
+/// card each occurred exactly once in the tree — its own definition — which is
+/// how card `STABILITY-REEVAL-1` measured that no test drove them; each now
+/// occurs twice, there and here. No two arms share a sentence, so a match here
+/// is that arm and no other.
 const FORM: &str = "a declared crossing is exactly `thread scope NAME share PLACE under MUTEX";
 const NESTING: &str = "a declared crossing does not nest";
 const PAYLOAD_NAME: &str = "a declared crossing names the payload it shares";
@@ -59,9 +62,8 @@ fn refusal(source: &str) -> (String, String) {
             return (first.code.to_owned(), first.message.clone());
         }
     };
-    let diagnostics = check_mutex_invariant_program(&module.program)
-        .err()
-        .expect("this program must be refused");
+    let diagnostics =
+        check_mutex_invariant_program(&module.program).expect_err("this program must be refused");
     let located = module.locate(&diagnostics[0]);
     (located.code.to_owned(), located.message)
 }
@@ -101,7 +103,13 @@ fn a_crossing_whose_payload_position_is_not_a_name_names_the_payload_rule() {
     only(
         &message,
         PAYLOAD_NAME,
-        &[FORM, NESTING, MUTEX_NAME, JUDGMENT, NOT_A_PROTECTED_RESOURCE],
+        &[
+            FORM,
+            NESTING,
+            MUTEX_NAME,
+            JUDGMENT,
+            NOT_A_PROTECTED_RESOURCE,
+        ],
     );
 }
 
@@ -121,7 +129,13 @@ fn a_crossing_whose_mutex_position_is_not_a_name_names_the_generation_rule() {
     only(
         &message,
         MUTEX_NAME,
-        &[FORM, NESTING, PAYLOAD_NAME, JUDGMENT, NOT_A_PROTECTED_RESOURCE],
+        &[
+            FORM,
+            NESTING,
+            PAYLOAD_NAME,
+            JUDGMENT,
+            NOT_A_PROTECTED_RESOURCE,
+        ],
     );
 }
 
@@ -175,7 +189,11 @@ fn the_nesting_arm_still_precedes_both_token_arms() {
 fn the_protocol_residue_is_empty_over_every_kind() {
     let mut admitting = Vec::new();
     for kind in TransferKind::ALL {
-        match admits_capture(kind, TransferMode::ShareUnderMutex, TransferKind::MutexShare) {
+        match admits_capture(
+            kind,
+            TransferMode::ShareUnderMutex,
+            TransferKind::MutexShare,
+        ) {
             Err(_) => {}
             Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex)) => {
                 admitting.push(kind);
@@ -208,8 +226,12 @@ fn the_protocol_residue_is_empty_over_every_kind() {
 #[test]
 fn only_the_protected_payload_reaches_the_lookup() {
     for kind in TransferKind::ALL {
-        let admitted =
-            admits_capture(kind, TransferMode::ShareUnderMutex, TransferKind::MutexShare).is_ok();
+        let admitted = admits_capture(
+            kind,
+            TransferMode::ShareUnderMutex,
+            TransferKind::MutexShare,
+        )
+        .is_ok();
         assert_eq!(
             admitted,
             kind == TransferKind::ProtectedResource,
