@@ -170,6 +170,23 @@ pub struct Chain {
     pub member_class: MemberClass,
     /// The final member's spelling, when the chain ends at one.
     pub member: Option<String>,
+    /// Card **BASE-TYPE-READER-CENSUS**: why the base's declared type did not
+    /// commit to a record tag, in the declaration reader's own vocabulary, or
+    /// [`BaseTypeCause::Committed`] when it did.
+    pub base_cause: BaseTypeCause,
+    /// The step index (0-based, among `steps`) at which a tag the reader **had
+    /// committed to** was lost — a member that is not a `struct TAG *`, or a
+    /// subscript. `None` when the base never had a tag, or when the chain kept
+    /// one throughout.
+    ///
+    /// This is what separates the two halves of the wave-36 card's `tag: null`
+    /// row: `base_cause != Committed` is a **base**-type question, and
+    /// `base_cause == Committed` with a `tag_lost_step` is a *member* question
+    /// the wave-36 card already owns.
+    pub tag_lost_step: Option<usize>,
+    /// For a chain hanging off a call's result: the callee's spelling where the
+    /// token view carries one.
+    pub callee: Option<String>,
 }
 
 /// One refused statement: one leaf of the corpus's largest refusal family.
@@ -406,6 +423,9 @@ fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain>
                     member_class: MemberClass::NoMember,
                     member: None,
                     tag: None,
+                    base_cause: BaseTypeCause::NoBaseName,
+                    tag_lost_step: None,
+                    callee: window.get(cursor + 1).map(|&at| texts[at].to_owned()),
                 });
                 cursor += 2;
                 continue;
@@ -447,11 +467,39 @@ fn chains(context: &Context<'_>, texts: &[&str], window: &[usize]) -> Vec<Chain>
                 member_class: MemberClass::Unresolved,
                 member: None,
                 tag: None,
+                base_cause: BaseTypeCause::NoBaseName,
+                tag_lost_step: None,
+                callee: callee_before(texts, index),
             });
         }
         cursor += 1;
     }
     out
+}
+
+/// The callee spelling of the call whose `)` sits at `close`, when the token
+/// run is one. Card **BASE-TYPE-READER-CENSUS**: a chain hanging off a call's
+/// result is blocked by a *function return type* reader, so the census names
+/// the function rather than reporting an anonymous base.
+fn callee_before(texts: &[&str], close: usize) -> Option<String> {
+    let mut depth = 0usize;
+    let mut index = close;
+    loop {
+        match texts.get(index).copied() {
+            Some(")") => depth += 1,
+            Some("(") => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    break;
+                }
+            }
+            None => return None,
+            _ => {}
+        }
+        index = index.checked_sub(1)?;
+    }
+    let name = texts.get(index.checked_sub(1)?)?;
+    is_name(name).then(|| (*name).to_owned())
 }
 
 /// The selection step at `cursor` in the gate's view, if there is one.
@@ -497,6 +545,10 @@ fn walk(
     // body reading decided the member's class.
     let mut selected_tag: Option<String> = None;
     let mut member_class = MemberClass::NoMember;
+    // Card BASE-TYPE-READER-CENSUS: the step at which a tag the reader HAD
+    // committed to was lost, which separates a base-type question from a
+    // member question.
+    let mut tag_lost_step: Option<usize> = None;
     let mut at = cursor + 1;
     while let Some(&index) = window.get(at) {
         match texts.get(index).copied() {
@@ -512,6 +564,9 @@ fn walk(
                 steps.push(Step::Arrow);
                 selected_tag = tag.clone();
                 (member_class, tag) = classify(context, tag.as_deref(), name);
+                if selected_tag.is_some() && tag.is_none() && tag_lost_step.is_none() {
+                    tag_lost_step = Some(steps.len() - 1);
+                }
                 member = Some((*name).to_owned());
                 at += 3;
             }
@@ -525,6 +580,9 @@ fn walk(
                 steps.push(Step::Dot);
                 selected_tag = tag.clone();
                 (member_class, tag) = classify(context, tag.as_deref(), name);
+                if selected_tag.is_some() && tag.is_none() && tag_lost_step.is_none() {
+                    tag_lost_step = Some(steps.len() - 1);
+                }
                 member = Some((*name).to_owned());
                 at += 2;
             }
@@ -550,6 +608,9 @@ fn walk(
                 };
                 let Some(close) = close else { break };
                 steps.push(Step::Subscript);
+                if tag.is_some() && tag_lost_step.is_none() {
+                    tag_lost_step = Some(steps.len() - 1);
+                }
                 member = None;
                 member_class = MemberClass::NoMember;
                 selected_tag = None;
@@ -571,6 +632,9 @@ fn walk(
         member_class,
         member,
         tag: selected_tag,
+        base_cause: base_cause(context, base),
+        tag_lost_step,
+        callee: None,
     };
     Some((chain, at.max(cursor + 1)))
 }
@@ -606,6 +670,50 @@ fn classify(
     (MemberClass::Unresolved, None)
 }
 
+/// Why the base's declared type did not commit to a record tag — the question
+/// residual `BASE-TYPE-READER-UNMEASURED` names (card
+/// **BASE-TYPE-READER-CENSUS**).
+///
+/// Every answer is carried out of the reader rather than re-derived here: the
+/// refusal rule and the specifier-level cause were written by
+/// `FunctionTypes::read` at the return that produced them. The two `Unrecorded`
+/// variants exist so that a gap in that plumbing is **published as a gap**
+/// rather than silently attributed to a neighbouring cause.
+fn base_cause(context: &Context<'_>, base: &str) -> BaseTypeCause {
+    if !context.typed_types.is_readable() {
+        return BaseTypeCause::FunctionRefused(
+            context
+                .typed_types
+                .census
+                .refusal
+                .clone()
+                .unwrap_or(DeclRefusal::Unrecorded),
+        );
+    }
+    match context.typed_types.declared_type(base) {
+        Some(DeclaredType::Record(_)) | Some(DeclaredType::RecordPointer(_)) => {
+            BaseTypeCause::Committed
+        }
+        Some(DeclaredType::Scalar) => BaseTypeCause::DeclaredScalar,
+        Some(DeclaredType::Opaque) => BaseTypeCause::DeclaredOpaque(
+            context
+                .typed_types
+                .census
+                .opaque
+                .get(base)
+                .cloned()
+                .unwrap_or(OpaqueCause::Unrecorded),
+        ),
+        None => BaseTypeCause::NotDeclared(if context.typed_model.is_enum_constant(base) {
+            UndeclaredKind::EnumConstant
+        } else if context.typed_model.census_declares_at_file_scope(base) {
+            UndeclaredKind::FileScopeDeclaration
+        } else {
+            UndeclaredKind::Unknown
+        }),
+    }
+}
+
 fn base_kind(context: &Context<'_>, base: &str) -> BaseKind {
     if !context.typed_types.is_readable() {
         return BaseKind::UnreadableDeclarations;
@@ -617,4 +725,140 @@ fn base_kind(context: &Context<'_>, base: &str) -> BaseKind {
         return BaseKind::AutomaticLocal;
     }
     BaseKind::OutsideFunctionDeclarations
+}
+
+// ---------------------------------------------------------------------------
+// Card BASE-TYPE-READER-CENSUS (wave 37)
+// ---------------------------------------------------------------------------
+//
+// `C-GATEWAY-INDIRECT-CENSUS-2` measured the *member* reader and found that
+// 78.5% of its unresolved members were never a member question at all: the
+// chain's `tag` was already absent, so the reader had not committed to the
+// **base**'s declared type. Residual `BASE-TYPE-READER-UNMEASURED` records that
+// the base-type reader — `TypedAccessModel::classify_specifiers`, typedef
+// resolution and `read_locals`/`read_parameters` — had never been measured.
+//
+// The vocabulary below is that reader's own. Every variant is set at the exact
+// `DeclaredType::Opaque` (or refusal) return it names, by the reader itself,
+// through a note sink that is `()` with the feature off. There is therefore
+// **one** reader here too: the census does not re-derive a cause it could
+// disagree with, it carries out the answer the reader already gave.
+
+/// Which rule of the total-or-reject declaration reader refused a whole
+/// function, so that no name in it has a committed type.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum DeclRefusal {
+    /// The parameter token slice carries one of `( ) { } . ; =` — a
+    /// function-pointer parameter, a K&R definition, or a parenthesized
+    /// declarator. Carries the offending token.
+    ParameterListToken(String),
+    /// `split_declarator` did not read a parameter group.
+    ParameterDeclarator,
+    /// `statement_end` found no end for a local declaration run.
+    LocalStatementEnd,
+    /// A local declaration split to no groups at all.
+    LocalEmptyDeclaration,
+    /// `readable_declarator` refused a local declarator on `{ } ( ) :` — a
+    /// function-pointer local, a bitfield, a parenthesized declarator. Carries
+    /// the offending token.
+    LocalDeclaratorToken(String),
+    /// `split_declarator` did not read the first group of a local declaration.
+    LocalSplitDeclarator,
+    /// `read_declarator` did not read a later group of a local declaration.
+    LocalReadDeclarator,
+    /// The function was refused but the note sink recorded no rule. Published
+    /// rather than folded into another bucket: an unattributed refusal is a
+    /// finding about this census, not evidence about the reader.
+    Unrecorded,
+}
+
+/// Why a base name the declaration reader *read* has no committed record type.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum OpaqueCause {
+    /// The declarator carries an array modifier.
+    ArrayDeclarator,
+    /// Two or more `*` over a specifier list the reader did commit to.
+    PointerDepthAboveOne,
+    /// Exactly one `*` over a specifier list resolving to `Scalar` — `char *`,
+    /// `int *`. The reader commits to the pointee and still answers `Opaque`,
+    /// because only `struct TAG *` is a `RecordPointer`.
+    PointerToScalar,
+    /// `volatile` or `_Atomic` in the specifier list.
+    RejectingQualifier,
+    /// The specifier list is empty once ignorable specifiers are removed.
+    NoSpecifiers,
+    /// A `union` specifier. Never admitted: a union member may overlap a
+    /// pointer.
+    UnionSpecifier,
+    /// A bare `struct` keyword with no tag.
+    BareTagKeyword,
+    /// The specifier is a typedef name whose declaration **defines** the
+    /// aggregate — `typedef struct foo_s { … } foo_t;`. The reader records the
+    /// definition's head and `classify_specifiers` deliberately answers
+    /// `Opaque` for it (card ABI-TYPEDEF-ADDRESS-OF-MEMBER kept that answer
+    /// byte-identical). Carries the head, e.g. `struct flb_input_instance`.
+    TypedefDefinesAggregate(String),
+    /// Two disagreeing `typedef` declarations of the name; the table holds
+    /// `None`.
+    TypedefDisagreeing,
+    /// The specifier is a single name this unit declares no `typedef` for.
+    TypedefUnknown(String),
+    /// The typedef chain reached `TYPEDEF_DEPTH_LIMIT`.
+    TypedefDepthLimit,
+    /// A specifier list of several tokens that are not all arithmetic
+    /// keywords.
+    UnreadableSpecifiers,
+    /// A redeclaration in an inner scope with a different declared type; the
+    /// reader makes the name unusable rather than keeping either type.
+    ShadowedByDifferentType,
+    /// The reader answered `Opaque` and the note sink recorded no rule.
+    /// Published rather than folded away.
+    Unrecorded,
+}
+
+/// Why a base name has no declaration in this function at all.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum UndeclaredKind {
+    /// An enumeration constant this unit declares.
+    EnumConstant,
+    /// A name the same declaration reader reads as a **file-scope** declarator
+    /// of this unit. Approximate in the refusing direction: a file-scope
+    /// declaration this reader will not read is absent here and reported
+    /// `Unknown`.
+    FileScopeDeclaration,
+    /// No declaration of this name anywhere the census can see.
+    Unknown,
+}
+
+/// Why a chain's base has no record tag for its first selection to resolve
+/// against — the question residual `BASE-TYPE-READER-UNMEASURED` names.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize)]
+pub enum BaseTypeCause {
+    /// The reader committed: `struct TAG` or `struct TAG *`. Not a cause; a
+    /// chain answering this and still ending `Unresolved` lost its tag at a
+    /// *member*, which is the wave-36 card's question and not this one's.
+    Committed,
+    /// The chain has no base name: a call's result, or a parenthesized or cast
+    /// sub-expression.
+    NoBaseName,
+    /// The whole function's declarations were refused.
+    FunctionRefused(DeclRefusal),
+    /// The declarations were read and this name is not among them.
+    NotDeclared(UndeclaredKind),
+    /// The reader committed to `Scalar`. A selection on a scalar is not a
+    /// record question at all, and no base-type reader change makes it one.
+    DeclaredScalar,
+    /// The reader read the declaration and would not commit to the type.
+    DeclaredOpaque(OpaqueCause),
+}
+
+/// The note sink the declaration reader writes one specifier-level cause into.
+pub type OpaqueNote = Option<OpaqueCause>;
+
+/// The note sink `FunctionTypes::read` writes its refusal and its per-name
+/// `Opaque` causes into.
+#[derive(Clone, Debug, Default)]
+pub struct DeclCensus {
+    pub refusal: Option<DeclRefusal>,
+    pub opaque: std::collections::BTreeMap<String, OpaqueCause>,
 }

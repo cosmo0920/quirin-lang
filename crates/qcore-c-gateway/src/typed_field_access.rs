@@ -62,6 +62,85 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+// ---------------------------------------------------------------------------
+// Card BASE-TYPE-READER-CENSUS (wave 37): note sinks, and why they are shaped
+// this way.
+//
+// The census must not become a **second** reader of declared types — that is
+// the mistake card `C-GATEWAY-INDIRECT-CENSUS` made with source text and that
+// `C-GATEWAY-INDIRECT-CENSUS-2` exists to avoid. So the cause of every
+// `DeclaredType::Opaque` answer is recorded **by the reader, at the return that
+// produces it**, and carried out to the census rather than re-derived.
+//
+// With the `indirect-census` feature off, `OpaqueNote` is `()`, `DeclCensus` is
+// a unit struct, and each `note_*!` macro expands to a borrow of its sink with
+// the cause tokens dropped before type checking — so no cause value is
+// constructed, no map is allocated and no branch is taken. The reader below is
+// one function either way.
+
+#[cfg(feature = "indirect-census")]
+pub(crate) type OpaqueNote = crate::indirect_census::OpaqueNote;
+/// With the feature off the sink carries nothing. It is a newtype rather than
+/// `()` so that `OpaqueNote::default()` is an ordinary value construction at
+/// every call site under both configurations, and neither configuration needs a
+/// lint exemption to say the same thing.
+#[cfg(not(feature = "indirect-census"))]
+#[derive(Clone, Debug, Default)]
+pub(crate) struct OpaqueNote(());
+
+#[cfg(feature = "indirect-census")]
+pub(crate) type DeclCensus = crate::indirect_census::DeclCensus;
+#[cfg(not(feature = "indirect-census"))]
+#[derive(Clone, Debug, Default)]
+pub(crate) struct DeclCensus(());
+
+/// Record the specifier-level cause of one `Opaque` answer.
+#[cfg(feature = "indirect-census")]
+macro_rules! note_opaque {
+    ($note:expr, $cause:expr) => {
+        *$note = Some($cause)
+    };
+}
+#[cfg(not(feature = "indirect-census"))]
+macro_rules! note_opaque {
+    ($note:expr, $cause:expr) => {
+        let _ = &$note;
+    };
+}
+
+/// Record the rule that refused a whole function's declarations. First writer
+/// wins: the reader stops at its first refusal, so that is the rule to report.
+#[cfg(feature = "indirect-census")]
+macro_rules! note_refusal {
+    ($census:expr, $cause:expr) => {
+        if $census.refusal.is_none() {
+            $census.refusal = Some($cause);
+        }
+    };
+}
+#[cfg(not(feature = "indirect-census"))]
+macro_rules! note_refusal {
+    ($census:expr, $cause:expr) => {
+        let _ = &$census;
+    };
+}
+
+/// Attach a specifier-level cause to the name it made `Opaque`.
+#[cfg(feature = "indirect-census")]
+macro_rules! note_name_opaque {
+    ($census:expr, $name:expr, $note:expr) => {
+        if let Some(cause) = $note.clone() {
+            $census.opaque.insert($name.to_owned(), cause);
+        }
+    };
+}
+#[cfg(not(feature = "indirect-census"))]
+macro_rules! note_name_opaque {
+    ($census:expr, $name:expr, $note:expr) => {
+        let _ = &$census;
+    };
+}
+
 /// A declared C type, as far as this reader is willing to commit to it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum DeclaredType {
@@ -192,6 +271,15 @@ pub(crate) struct TypedAccessModel {
     /// only by the dereference-of-a-call-result rule in
     /// [`crate::variadic_nested`].
     scalar_pointer_results: BTreeMap<String, bool>,
+    /// Card **BASE-TYPE-READER-CENSUS**: names this unit declares at **file
+    /// scope**, read by the same declaration reader the function bodies use.
+    ///
+    /// Census-only, and approximate **in the refusing direction**: a file-scope
+    /// declaration this reader will not read is absent here, so the census
+    /// reports its name `Unknown` rather than claiming a declaration it did not
+    /// see. Nothing consults this table but the census.
+    #[cfg(feature = "indirect-census")]
+    census_file_scope: BTreeSet<String>,
 }
 
 /// Declared types of one function's formals and locals.
@@ -205,6 +293,12 @@ pub(crate) struct FunctionTypes {
     /// over-approximation: rejecting a name that could not in fact be bound
     /// only narrows the whitelist.
     bound: BTreeSet<String>,
+    /// Card **BASE-TYPE-READER-CENSUS**: the rule that refused this function's
+    /// declarations, and the specifier-level cause of every name the reader
+    /// answered `Opaque` for. Written by the reader at the return that decided
+    /// it; read only by the census. Absent with the feature off.
+    #[cfg(feature = "indirect-census")]
+    pub(crate) census: DeclCensus,
 }
 
 /// Arithmetic type keywords. `void`, `_Complex` and `_Imaginary` are absent by
@@ -384,7 +478,19 @@ impl TypedAccessModel {
         model.read_records(texts);
         model.read_enum_constants(texts);
         model.read_scalar_pointer_results(texts);
+        #[cfg(feature = "indirect-census")]
+        {
+            model.census_file_scope = file_scope_names(&model, texts);
+        }
         model
+    }
+
+    /// Whether this unit declares `name` at file scope, as far as the same
+    /// declaration reader will read it. Card **BASE-TYPE-READER-CENSUS**;
+    /// census-only.
+    #[cfg(feature = "indirect-census")]
+    pub(crate) fn census_declares_at_file_scope(&self, name: &str) -> bool {
+        self.census_file_scope.contains(name)
     }
 
     /// Read the return type of every function declaration or definition this
@@ -798,10 +904,28 @@ impl TypedAccessModel {
     }
 
     fn classify_specifiers(&self, specifiers: &[&str], depth: usize) -> DeclaredType {
+        self.classify_specifiers_noting(specifiers, depth, &mut OpaqueNote::default())
+    }
+
+    /// The classifier itself. `note` receives the cause of an `Opaque` answer
+    /// and is `()` with the census feature off (card
+    /// **BASE-TYPE-READER-CENSUS**); the answers are otherwise exactly those
+    /// the wrapper above has always given.
+    #[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
+    fn classify_specifiers_noting(
+        &self,
+        specifiers: &[&str],
+        depth: usize,
+        note: &mut OpaqueNote,
+    ) -> DeclaredType {
         if specifiers
             .iter()
             .any(|text| REJECTING_QUALIFIERS.contains(text))
         {
+            note_opaque!(
+                note,
+                crate::indirect_census::OpaqueCause::RejectingQualifier
+            );
             return DeclaredType::Opaque;
         }
         let core = specifiers
@@ -810,20 +934,31 @@ impl TypedAccessModel {
             .filter(|text| !IGNORED_SPECIFIERS.contains(text))
             .collect::<Vec<_>>();
         match core.as_slice() {
-            [] => DeclaredType::Opaque,
+            [] => {
+                note_opaque!(note, crate::indirect_census::OpaqueCause::NoSpecifiers);
+                DeclaredType::Opaque
+            }
             ["struct", tag] if is_name(tag) => DeclaredType::Record((*tag).to_owned()),
             // A union member may overlap a pointer; never admitted.
-            ["union", _] | ["union"] | ["struct"] => DeclaredType::Opaque,
+            ["union", _] | ["union"] => {
+                note_opaque!(note, crate::indirect_census::OpaqueCause::UnionSpecifier);
+                DeclaredType::Opaque
+            }
+            ["struct"] => {
+                note_opaque!(note, crate::indirect_census::OpaqueCause::BareTagKeyword);
+                DeclaredType::Opaque
+            }
             ["enum", tag] if is_name(tag) => DeclaredType::Scalar,
             ["enum"] => DeclaredType::Scalar,
             [name] if is_name(name) => {
                 if depth >= TYPEDEF_DEPTH_LIMIT {
+                    note_opaque!(note, crate::indirect_census::OpaqueCause::TypedefDepthLimit);
                     return DeclaredType::Opaque;
                 }
                 match self.typedefs.get(*name) {
                     Some(Some(TypedefTarget::Specifiers(target))) => {
                         let target = target.iter().map(String::as_str).collect::<Vec<_>>();
-                        self.classify_specifiers(&target, depth + 1)
+                        self.classify_specifiers_noting(&target, depth + 1, note)
                     }
                     // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER records an aggregate a
                     // typedef defines, and this classifier deliberately answers
@@ -834,13 +969,41 @@ impl TypedAccessModel {
                     // types of locals — therefore decides byte-identically to
                     // the tree before that card. Only
                     // [`Self::is_non_pointer_object`] reads the new target.
-                    _ => DeclaredType::Opaque,
+                    Some(Some(TypedefTarget::Aggregate(head))) => {
+                        note_opaque!(
+                            note,
+                            crate::indirect_census::OpaqueCause::TypedefDefinesAggregate(
+                                head.clone()
+                            )
+                        );
+                        DeclaredType::Opaque
+                    }
+                    Some(None) => {
+                        note_opaque!(
+                            note,
+                            crate::indirect_census::OpaqueCause::TypedefDisagreeing
+                        );
+                        DeclaredType::Opaque
+                    }
+                    None => {
+                        note_opaque!(
+                            note,
+                            crate::indirect_census::OpaqueCause::TypedefUnknown((*name).to_owned())
+                        );
+                        DeclaredType::Opaque
+                    }
                 }
             }
             rest if rest.iter().all(|text| ARITHMETIC_KEYWORDS.contains(text)) => {
                 DeclaredType::Scalar
             }
-            _ => DeclaredType::Opaque,
+            _ => {
+                note_opaque!(
+                    note,
+                    crate::indirect_census::OpaqueCause::UnreadableSpecifiers
+                );
+                DeclaredType::Opaque
+            }
         }
     }
 
@@ -856,13 +1019,43 @@ impl TypedAccessModel {
     }
 
     fn declared_type(&self, specifiers: &[&str], stars: usize, array: bool) -> DeclaredType {
+        self.declared_type_noting(specifiers, stars, array, &mut OpaqueNote::default())
+    }
+
+    /// The declarator-level reader. `note` receives the *innermost* cause of an
+    /// `Opaque` answer — a specifier the classifier refused where there is one,
+    /// and otherwise the declarator fact (array, pointer depth) that made a
+    /// committed specifier list opaque. Card **BASE-TYPE-READER-CENSUS**; the
+    /// answers are exactly the wrapper's.
+    #[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
+    fn declared_type_noting(
+        &self,
+        specifiers: &[&str],
+        stars: usize,
+        array: bool,
+        note: &mut OpaqueNote,
+    ) -> DeclaredType {
         if array {
+            note_opaque!(note, crate::indirect_census::OpaqueCause::ArrayDeclarator);
             return DeclaredType::Opaque;
         }
-        match (self.classify_specifiers(specifiers, 0), stars) {
+        match (self.classify_specifiers_noting(specifiers, 0, note), stars) {
             (kind, 0) => kind,
             (DeclaredType::Record(tag), 1) => DeclaredType::RecordPointer(tag),
-            _ => DeclaredType::Opaque,
+            // The specifier list was refused; `note` already carries that
+            // cause, which is the one an arbiter would have to answer.
+            (DeclaredType::Opaque, _) => DeclaredType::Opaque,
+            (DeclaredType::Scalar, _) => {
+                note_opaque!(note, crate::indirect_census::OpaqueCause::PointerToScalar);
+                DeclaredType::Opaque
+            }
+            _ => {
+                note_opaque!(
+                    note,
+                    crate::indirect_census::OpaqueCause::PointerDepthAboveOne
+                );
+                DeclaredType::Opaque
+            }
         }
     }
 
@@ -1123,21 +1316,29 @@ impl FunctionTypes {
     ) -> Self {
         let bound = bound_names(body, protected_formals);
         let mut variables = BTreeMap::new();
-        if !read_parameters(model, parameters, &mut variables) {
-            return Self {
-                variables: None,
-                bound,
-            };
+        let mut census = DeclCensus::default();
+        if !read_parameters(model, parameters, &mut variables, &mut census) {
+            return Self::build(None, bound, census);
         }
-        if !read_locals(model, body, &mut variables) {
-            return Self {
-                variables: None,
-                bound,
-            };
+        if !read_locals(model, body, &mut variables, &mut census) {
+            return Self::build(None, bound, census);
         }
+        Self::build(Some(variables), bound, census)
+    }
+
+    /// Assemble one reading. Split out so the census sink is carried in exactly
+    /// one place and the three exits above stay identical with the feature off.
+    #[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
+    fn build(
+        variables: Option<BTreeMap<String, DeclaredType>>,
+        bound: BTreeSet<String>,
+        census: DeclCensus,
+    ) -> Self {
         Self {
-            variables: Some(variables),
+            variables,
             bound,
+            #[cfg(feature = "indirect-census")]
+            census,
         }
     }
 
@@ -1283,15 +1484,22 @@ fn bound_names(body: &[&str], protected_formals: &BTreeSet<String>) -> BTreeSet<
     bound
 }
 
+#[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
 fn record_variable(
     variables: &mut BTreeMap<String, DeclaredType>,
     name: String,
     kind: DeclaredType,
+    census: &mut DeclCensus,
 ) {
     match variables.get(&name) {
         // A redeclaration in an inner scope with a different declared type
         // makes the name unusable rather than silently keeping either type.
         Some(existing) if *existing != kind => {
+            note_name_opaque!(
+                census,
+                name,
+                Some(crate::indirect_census::OpaqueCause::ShadowedByDifferentType)
+            );
             variables.insert(name, DeclaredType::Opaque);
         }
         Some(_) => {}
@@ -1301,15 +1509,21 @@ fn record_variable(
     }
 }
 
+#[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
 fn read_parameters(
     model: &TypedAccessModel,
     parameters: &[&str],
     variables: &mut BTreeMap<String, DeclaredType>,
+    census: &mut DeclCensus,
 ) -> bool {
-    if parameters
+    if let Some(offending) = parameters
         .iter()
-        .any(|text| matches!(*text, "(" | ")" | "{" | "}" | "." | ";" | "="))
+        .find(|text| matches!(**text, "(" | ")" | "{" | "}" | "." | ";" | "="))
     {
+        note_refusal!(
+            census,
+            crate::indirect_census::DeclRefusal::ParameterListToken((*offending).to_owned())
+        );
         return false;
     }
     if parameters.is_empty() || parameters == ["void"] {
@@ -1317,21 +1531,30 @@ fn read_parameters(
     }
     for group in parameters.split(|text| *text == ",") {
         let Some((specifiers, declarator)) = split_declarator(group) else {
+            note_refusal!(
+                census,
+                crate::indirect_census::DeclRefusal::ParameterDeclarator
+            );
             return false;
         };
         let Some(name) = declarator.name else {
             continue;
         };
-        let kind = model.declared_type(&specifiers, declarator.stars, declarator.array);
-        record_variable(variables, name, kind);
+        let mut note = OpaqueNote::default();
+        let kind =
+            model.declared_type_noting(&specifiers, declarator.stars, declarator.array, &mut note);
+        note_name_opaque!(census, name, note);
+        record_variable(variables, name, kind, census);
     }
     true
 }
 
+#[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
 fn read_locals(
     model: &TypedAccessModel,
     body: &[&str],
     variables: &mut BTreeMap<String, DeclaredType>,
+    census: &mut DeclCensus,
 ) -> bool {
     for start in 0..body.len() {
         if start > 0 && !matches!(body[start - 1], "{" | "}" | ";" | "(" | ":") {
@@ -1341,9 +1564,13 @@ fn read_locals(
             continue;
         }
         let Some(end) = statement_end(body, start) else {
+            note_refusal!(
+                census,
+                crate::indirect_census::DeclRefusal::LocalStatementEnd
+            );
             return false;
         };
-        if !read_declaration(model, &body[start..end], variables) {
+        if !read_declaration(model, &body[start..end], variables, census) {
             return false;
         }
     }
@@ -1367,7 +1594,12 @@ pub(crate) fn unique_local_names(model: &TypedAccessModel, body: &[&str]) -> BTr
             return BTreeSet::new();
         };
         let mut names = BTreeMap::new();
-        if !read_declaration(model, &body[start..end], &mut names) {
+        if !read_declaration(
+            model,
+            &body[start..end],
+            &mut names,
+            &mut DeclCensus::default(),
+        ) {
             return BTreeSet::new();
         }
         for name in names.into_keys() {
@@ -1380,32 +1612,54 @@ pub(crate) fn unique_local_names(model: &TypedAccessModel, body: &[&str]) -> BTr
     seen
 }
 
+#[cfg_attr(not(feature = "indirect-census"), allow(unused_variables))]
 fn read_declaration(
     model: &TypedAccessModel,
     declaration: &[&str],
     variables: &mut BTreeMap<String, DeclaredType>,
+    census: &mut DeclCensus,
 ) -> bool {
     // Initializers are dropped before the declarator is read: an initializer
     // may contain calls, aggregates and commas that say nothing about the
     // declared type. What remains must be a declarator this reader understands.
     let mut groups = split_top_level(declaration, ",").into_iter();
     let Some(first) = groups.next() else {
+        note_refusal!(
+            census,
+            crate::indirect_census::DeclRefusal::LocalEmptyDeclaration
+        );
         return false;
     };
     let first = truncate_at_initializer(&first);
-    if !readable_declarator(&first) {
+    if let Some(offending) = unreadable_declarator_token(&first) {
+        note_refusal!(
+            census,
+            crate::indirect_census::DeclRefusal::LocalDeclaratorToken(offending.to_owned())
+        );
         return false;
     }
     let Some((specifiers, declarator)) = split_declarator(&first) else {
+        note_refusal!(
+            census,
+            crate::indirect_census::DeclRefusal::LocalSplitDeclarator
+        );
         return false;
     };
     let mut declarators = vec![declarator];
     for group in groups {
         let group = truncate_at_initializer(&group);
-        if !readable_declarator(&group) {
+        if let Some(offending) = unreadable_declarator_token(&group) {
+            note_refusal!(
+                census,
+                crate::indirect_census::DeclRefusal::LocalDeclaratorToken(offending.to_owned())
+            );
             return false;
         }
         let Some(declarator) = read_declarator(&group) else {
+            note_refusal!(
+                census,
+                crate::indirect_census::DeclRefusal::LocalReadDeclarator
+            );
             return false;
         };
         declarators.push(declarator);
@@ -1414,18 +1668,76 @@ fn read_declaration(
         let Some(name) = declarator.name else {
             continue;
         };
-        let kind = model.declared_type(&specifiers, declarator.stars, declarator.array);
-        record_variable(variables, name, kind);
+        let mut note = OpaqueNote::default();
+        let kind =
+            model.declared_type_noting(&specifiers, declarator.stars, declarator.array, &mut note);
+        note_name_opaque!(census, name, note);
+        record_variable(variables, name, kind, census);
     }
     true
 }
 
-/// A declarator carrying a nested declarator, a function parameter list, a
-/// bitfield width or an aggregate is not read; it refuses its whole function.
-fn readable_declarator(group: &[&str]) -> bool {
-    !group
+/// Every name this unit declares at brace depth 0, read by the **same**
+/// declaration reader `read_locals` uses. Card **BASE-TYPE-READER-CENSUS**.
+///
+/// A function *definition*'s declarator carries `(`, so `readable_declarator`
+/// refuses it and no function name enters this set — which is what makes it a
+/// file-scope **object** table. A declaration the reader will not read is
+/// simply absent, so the census under-reports rather than over-reports.
+#[cfg(feature = "indirect-census")]
+fn file_scope_names(model: &TypedAccessModel, texts: &[&str]) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    let mut depth = 0usize;
+    for start in 0..texts.len() {
+        match texts[start] {
+            "{" => {
+                depth += 1;
+                continue;
+            }
+            "}" => {
+                depth = depth.saturating_sub(1);
+                continue;
+            }
+            _ => {}
+        }
+        if depth != 0 {
+            continue;
+        }
+        if start > 0 && !matches!(texts[start - 1], "{" | "}" | ";") {
+            continue;
+        }
+        if !is_declaration_candidate(texts, start) {
+            continue;
+        }
+        let Some(end) = statement_end(texts, start) else {
+            continue;
+        };
+        let mut found = BTreeMap::new();
+        if read_declaration(
+            model,
+            &texts[start..end],
+            &mut found,
+            &mut DeclCensus::default(),
+        ) {
+            names.extend(found.into_keys());
+        }
+    }
+    names
+}
+
+/// The first token that makes a declarator unreadable, if any: a nested
+/// declarator, a function parameter list, a bitfield width or an aggregate.
+/// A declarator this answers `Some` for refuses its whole function.
+///
+/// Card **BASE-TYPE-READER-CENSUS** replaced the predicate `readable_declarator`
+/// — which was `self.is_none()` — with this, because the census reports *which*
+/// token refused and a second reader answering that question could disagree
+/// with the first. The refusal set is unchanged.
+fn unreadable_declarator_token<'a>(group: &[&'a str]) -> Option<&'a str> {
+    group
         .iter()
-        .any(|text| matches!(*text, "{" | "}" | "(" | ")" | ":"))
+        .copied()
+        .find(|text| matches!(*text, "{" | "}" | "(" | ")" | ":"))
 }
 
 fn truncate_at_initializer<'a>(group: &[&'a str]) -> Vec<&'a str> {
