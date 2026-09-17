@@ -1,0 +1,23 @@
+first discount  (base reader alone, member assumed to classify): 30
+second discount (member must actually classify):                 see discount.py
+BOTH READERS    (typedef-aggregate resolution + per-member body): 17
+     12  premise UNAVAILABLE (a blocked base may bind)
+      5  premise HOLDS (every blocked base never-bound)
+
+    librdkafka/cJSON.c/suffix_object
+    librdkafka/rdbuf.c/rd_slice_widen
+    librdkafka/rdhdrhistogram.c/rd_hdr_countsIndex
+    librdkafka/rdkafka_cgrp.c/PartitionMemberInfo_new
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_disable
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_init_int
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_init_ptr
+    librdkafka/rdkafka_fetcher.c/rd_kafkap_Fetch_reply_tags_set_topic_cnt
+    librdkafka/rdkafka_interceptor.c/rd_kafka_interceptor_method_new
+    librdkafka/rdkafka_msg.c/rd_kafka_Produce_result_new
+    librdkafka/rdkafka_msg.c/rd_kafka_message_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new_from_rktp
+    librdkafka/rdkafka_share_acknowledgement.c/rd_kafka_share_ack_batch_entry_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerGenerationPair_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerPair_new
+    librdkafka/rdunittest_acknowledge.c/ut_ack_create_message

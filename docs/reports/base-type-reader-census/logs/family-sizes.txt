@@ -1,0 +1,7 @@
+(18555, 284, 833)         docs/reports/c-gateway-constant-do-while/artifacts/diagnostics.json.gz
+(18555, 284, 833)         docs/reports/c-gateway-constant-do-while/artifacts/diagnostics-before.json.gz
+(18555, 284, 833)         docs/reports/joined-provenance-cycles/artifacts/diagnostics.json.gz
+(18549, 285, 835)         docs/reports/joined-provenance-call-frames/artifacts/diagnostics-before.json.gz
+(18549, 285, 835)         docs/reports/joined-provenance-call-frames/artifacts/diagnostics.json.gz
+(18549, 285, 835)         docs/reports/w36-corpus-contracts-3/artifacts/diagnostics.json.gz
+(18555, 284, 833)         docs/reports/w36-corpus-contracts-3/artifacts/diagnostics-before.json.gz

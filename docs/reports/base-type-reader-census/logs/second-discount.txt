@@ -1,0 +1,35 @@
+==============================================================================
+THE SECOND DISCOUNT: does committing the base type resolve the member?
+==============================================================================
+cause: DeclaredOpaque/TypedefDefinesAggregate
+functions the first discount predicts leaf-free: 30
+
+A function survives the second discount only if EVERY one of its
+chains blocked by this cause names a `struct TAG` whose record body
+the reader actually READ. Where the body is refused whole the refusal
+moves one step rather than clearing, and where the head names no
+struct tag there is nothing to commit to at all.
+
+     13  falls -- a head naming no struct tag
+     12  SURVIVES  -- every blocked base resolves to a read body
+      5  falls -- a record body refused whole
+
+SURVIVING functions: 12
+    librdkafka/cJSON.c/suffix_object
+    librdkafka/rdbuf.c/rd_slice_widen
+    librdkafka/rdhdrhistogram.c/rd_hdr_countsIndex
+    librdkafka/rdkafka_cgrp.c/PartitionMemberInfo_new
+    librdkafka/rdkafka_fetcher.c/rd_kafkap_Fetch_reply_tags_set_topic_cnt
+    librdkafka/rdkafka_msg.c/rd_kafka_Produce_result_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new_from_rktp
+    librdkafka/rdkafka_share_acknowledgement.c/rd_kafka_share_ack_batch_entry_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerGenerationPair_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerPair_new
+    librdkafka/rdunittest_acknowledge.c/ut_ack_create_message
+
+--- constraint 5's premise over the surviving set ---
+An arbiter admitting an access through one of these bases needs the
+premise `a name this function never binds to a resource identity`.
+     10  at least one blocked base MAY BIND (premise unavailable)
+      2  every blocked base is NEVER-BOUND (premise holds)
