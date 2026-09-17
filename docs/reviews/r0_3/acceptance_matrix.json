@@ -6117,7 +6117,7 @@
   "workspace_tests": 4544,
   "provider_tests": 122,
   "python_evidence_validator_tests": 227,
-  "lean_audits": 129,
+  "lean_audits": 130,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6143,6 +6143,7 @@
    "AuditConcurrencyPrelude.lean",
    "AuditConditionalGroupDepth.lean",
    "AuditConnectives.lean",
+   "AuditConstantDoWhile.lean",
    "AuditCt01OwnedTransfer.lean",
    "AuditCt03ReadShares.lean",
    "AuditCt37CompletionCapsule.lean",

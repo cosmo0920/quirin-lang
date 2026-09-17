@@ -2789,6 +2789,12 @@ enum Statement {
     DoWhile {
         line: usize,
         condition_supported: bool,
+        /// The controlling expression is the single literal token `0`, so the
+        /// body runs exactly once (C11 §6.8.5.2) and the CFG carries no back
+        /// edge. Keyed on the *token*, never on an evaluated expression
+        /// (standing constraint 5a: an operand-class marker is never a
+        /// computed value). Card `C-GATEWAY-CONSTANT-DO-WHILE`.
+        condition_is_literal_zero: bool,
         writes: RefusedWrites,
         null_condition: Option<PointerNullCondition>,
         body: Vec<Statement>,
@@ -3293,6 +3299,7 @@ impl Parser<'_> {
                     writes: self.expression_writes(&condition),
                     condition_supported: self
                         .supported_expression(&condition, ExpressionRole::Decides),
+                    condition_is_literal_zero: condition_is_literal_zero(&condition),
                     null_condition: self.null_condition(&condition),
                     body,
                 })
@@ -4506,6 +4513,28 @@ fn contains_braces(tokens: &[Token]) -> bool {
         .any(|token| matches!(token.text.as_str(), "{" | "}"))
 }
 
+/// Is a controlling expression the single literal token `0`?
+///
+/// This is the whole key of the constant `do … while (0)` rule (card
+/// `C-GATEWAY-CONSTANT-DO-WHILE`). It is deliberately a **token** test and
+/// deliberately the narrowest one:
+///
+/// * Standing constraint 5a forbids deciding control flow from an *evaluated*
+///   expression, so nothing here folds constants, reads a binding's value or
+///   consults a scalar fact. `while (x)` with `x` known zero, `while (1 - 1)`
+///   and `while ((0))` all answer `false` and keep the back edge.
+/// * Answering `false` is the conservative answer. Keeping the back edge
+///   over-approximates the paths, which can only *add* refusals and
+///   accusations; answering `true` removes paths, which is the admitting
+///   direction invariant 1 governs. Every widening of this predicate
+///   therefore needs its own measured re-pin.
+/// * Only the spelling `0` is claimed. `0u`, `0L`, `0x0` and `'\0'` are
+///   literal zeros too and are **not** claimed here
+///   (`CONSTANT-DO-WHILE-ZERO-SPELLINGS`).
+fn condition_is_literal_zero(tokens: &[Token]) -> bool {
+    matches!(tokens, [token] if token.text == "0")
+}
+
 /// Split a `for` header into its three clauses.
 ///
 /// The grouping tokens are consumed by the depth tracking and do **not** reach
@@ -5038,6 +5067,7 @@ impl CfgBuilder {
                 line,
                 writes,
                 condition_supported,
+                condition_is_literal_zero,
                 null_condition,
                 body,
             } => {
@@ -5053,7 +5083,20 @@ impl CfgBuilder {
                 let body_entry = self.compile_sequence(body, header);
                 self.continue_targets.pop();
                 self.break_targets.pop();
-                self.nodes[header].successors = vec![body_entry, continuation];
+                // `do S while (0)` executes S exactly once (C11 §6.8.5.2), so
+                // the controlling expression has the single successor
+                // `continuation`: the CFG is sequential composition, and the
+                // back edge to `body_entry` would be a path the C does not
+                // have. Removing it is the admitting direction (invariant 1),
+                // which is why the key is the literal token and the rule is
+                // proved in `QCore.ConstantDoWhile`. A `continue` in the body
+                // still targets `header`, which is exactly C's "jump to the
+                // controlling expression", and so now exits.
+                self.nodes[header].successors = if *condition_is_literal_zero {
+                    vec![continuation]
+                } else {
+                    vec![body_entry, continuation]
+                };
                 body_entry
             }
             Statement::Switch {
