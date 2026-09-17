@@ -174,6 +174,16 @@ the operational guidance that is in neither of those.
   the disk: **discard it, do not interpret it**, and re-measure after freeing
   space (this worktree's own `target/` is the thing to remove, which is safe
   exactly because no log lives there).
+- **A committed artifact is not a finished card.** When reclaiming disk from a
+  delegated worktree under pressure, reclaim only after that card's **final
+  report** — not when its `gate.json` or another artifact appears in the log.
+  At the wave-36 close an integrator read a committed `gate.json` as *finished*
+  and reclaimed a `target/` out from under a card that was still confirming,
+  costing a full rebuild at the worst moment (six cards at their build peaks).
+  Recorded by the integrator against their own action. It is the same class of
+  error as killing by pattern rather than by PID: **inferring another agent's
+  state from a signal that does not carry it**, when the agent itself can be
+  asked.
 - **A mutation harness restores by rewriting, never by an mtime-preserving
   copy.** `shutil.copy2` restores the backup's timestamp, which leaves
   cargo's fingerprint from the mutant build *newer* than the restored

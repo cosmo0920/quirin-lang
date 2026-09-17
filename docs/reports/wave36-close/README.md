@@ -623,20 +623,32 @@ card. These are this close's, and each is in a commit message.
   §9's carry is stated as *fifteen entries over eight names*, in both numbers,
   rather than as a single total.
 * **A confirmation re-run of this close's own gate destroyed the evidence of the
-  run it was confirming, and then filled the disk.** The gate script wrote to
-  fixed paths under `measure/`; re-launching it truncated `cargo-test.log`, and
-  the second run died at 79 of 233 summaries with `cargo test` exit **101** when
-  the filesystem reached 100% (621 GB, 0 available). So for a period this report
-  cited a workspace figure whose log no longer existed. **Neither the exit nor
-  the partial log was interpreted** — a gate that ran out of disk measures the
-  disk, not the tree — and the response was to discard it, free 44 GB by
-  removing this worktree's own `target/` (no log has ever lived there; they are
-  all under `measure/`, per `CLAUDE.md`), make the gate's outputs **run-scoped**
-  so a re-run can no longer eat the run it is checking, and re-measure from
-  scratch. §13's figures are that clean run's. The killing was done **by PID,
-  after reading `/proc/<pid>/cwd` to confirm each process was this worktree's**,
-  which is the rule §6.5 landed earlier in this same close — written for a card
-  that killed a sibling's gate, and applied here within the hour.
+  run it was confirming, during a full-disk event.** Two distinct faults, and
+  they are worth separating because they have different owners.
+  **The truncation is this card's.** The gate script wrote to *fixed* paths
+  under `measure/`, so re-launching it truncated `cargo-test.log` — a
+  consequence of the script's design, not of the disk, and it would have
+  happened on an empty filesystem. For a period this report therefore cited a
+  workspace figure whose log no longer existed.
+  **The full disk and the rebuild are the integrator's, by their own account
+  and recorded here at their request.** With six cards building the filesystem
+  reached 100% (621 GB, 0 available); the integrator reclaimed this worktree's
+  `target/` because this card's `gate.json` was already committed, which read as
+  *finished* while the card was still confirming. Their corrected rule — reclaim
+  only after a card's **final report**, not after its first committed artifact —
+  is the durable finding, and it is a rule about *reading* another agent's
+  progress, which is the same class of error as §6.5's pattern-kill.
+  The truncated run died at 79 of 233 summaries with `cargo test` exit **101**.
+  **Neither that exit nor the partial log was interpreted** — a gate that runs
+  out of disk measures the disk, not the tree. The response was to discard it,
+  make the gate's outputs **run-scoped** so a re-run can no longer eat the run it
+  is checking, and re-measure from scratch; §13's figures are that clean run's.
+  This card also removed its own `target/` before knowing of the integrator's
+  reclamation, so the 44 GB is claimed by neither account exclusively and is not
+  attributed here. The processes were killed **by PID, after reading
+  `/proc/<pid>/cwd` to confirm each was this worktree's** — the rule §6.5 landed
+  earlier in this same close, for a card that killed a sibling's gate by
+  pattern, applied here within the hour.
 
 To which this close adds, from §4.2: **five defects in its own reconciliation
 record**, four of them evidence claims and one a missing claim entirely. They
