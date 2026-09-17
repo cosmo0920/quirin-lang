@@ -22,6 +22,13 @@
 //! unrecognised name is always forgotten.
 use super::*;
 
+/// Card **JOINED-PROVENANCE-ROUND-BOUND**'s rounds-to-convergence census, a
+/// child of the module it measures so that nothing outside this file — and in
+/// particular not `legacy_c` — has to change to carry it. Off by default.
+#[cfg(feature = "provenance-rounds-census")]
+#[path = "provenance_rounds.rs"]
+mod provenance_rounds;
+
 type Bindings = BTreeMap<usize, BTreeSet<String>>;
 
 #[derive(Clone, Default, PartialEq, Eq)]
@@ -246,7 +253,99 @@ fn outgoing(cfg: &LegacyCfg, node: usize, incoming: &Facts) -> Vec<Facts> {
 
 /// The iteration bound. Exceeding it declines the whole function, exactly as
 /// this module did for every cyclic CFG before card JOINED-PROVENANCE-CYCLES.
+///
+/// Card **JOINED-PROVENANCE-ROUND-BOUND** (wave 37) proved the iteration
+/// terminates — `QCore.JoinedProvenanceRoundBound.kleene_reaches_a_fixed_point`
+/// — and measured how many rounds the pinned corpus's cyclic functions
+/// actually take. The number below is unchanged by that card and is now a
+/// *measured* bound rather than a guess; the report's §4 states the proved
+/// bound it sits under and §3 the measurement that decided not to move it.
 const FIXED_POINT_ROUNDS: usize = 64;
+
+/// What one run of the iteration did — card **JOINED-PROVENANCE-ROUND-BOUND**.
+///
+/// Before that card a decline and a convergence returned the *same value*: an
+/// all-empty `Vec<Bindings>` is what a settled graph with nothing to say
+/// produces and also what an exhausted bound produces, so the decline rate was
+/// unobservable without a code change
+/// (`JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE`). This type is that change,
+/// and it is the whole of it: it carries **no diagnostic**, reaches no
+/// certificate, and [`fixed_point`] maps `Declined` to exactly the vector it
+/// always returned, so no verdict can move.
+#[derive(Debug, PartialEq, Eq)]
+enum Settled {
+    /// The sweep ran `rounds` times, the last of which changed nothing.
+    Converged {
+        rounds: usize,
+        solution: Vec<Bindings>,
+    },
+    /// The sweep still moved at the cap, so the whole function derives nothing.
+    Declined,
+}
+
+/// The greatest-fixed-point sweep, run to convergence or to `cap`.
+///
+/// Split out of [`fixed_point`] so that the outcome is a value rather than an
+/// indistinguishable vector, and so that a measurement can run the *same*
+/// iteration under a different cap without a second implementation that could
+/// drift from this one.
+fn iterate(
+    cfg: &LegacyCfg,
+    reachable: &BTreeSet<usize>,
+    sites: &BTreeSet<usize>,
+    cap: usize,
+) -> Settled {
+    let mut predecessors = vec![Vec::new(); cfg.nodes.len()];
+    for &node in reachable {
+        for &next in &cfg.nodes[node].successors {
+            predecessors[next].push(node);
+        }
+    }
+    let mut incoming = vec![None::<Facts>; cfg.nodes.len()];
+    incoming[cfg.entry] = Some(Facts::default());
+    for round in 0..cap {
+        let mut next_round = incoming.clone();
+        for &node in reachable {
+            if node == cfg.entry {
+                continue;
+            }
+            let mut arrived = None::<Facts>;
+            for &previous in &predecessors[node] {
+                // A predecessor still at the top element is neutral: meeting
+                // with it changes nothing.
+                let Some(facts) = incoming[previous].as_ref() else {
+                    continue;
+                };
+                let branches = outgoing(cfg, previous, facts);
+                for (edge, &successor) in cfg.nodes[previous].successors.iter().enumerate() {
+                    if successor != node {
+                        continue;
+                    }
+                    match &mut arrived {
+                        Some(current) => current.join(&branches[edge]),
+                        slot => *slot = Some(branches[edge].clone()),
+                    }
+                }
+            }
+            next_round[node] = arrived;
+        }
+        if next_round == incoming {
+            return Settled::Converged {
+                rounds: round + 1,
+                solution: incoming
+                    .into_iter()
+                    .map(|facts| {
+                        let mut bindings = facts.unwrap_or_default().bindings;
+                        bindings.retain(|site, names| sites.contains(site) && !names.is_empty());
+                        bindings
+                    })
+                    .collect(),
+            };
+        }
+        incoming = next_round;
+    }
+    Settled::Declined
+}
 
 /// Sites whose creating node lies on **no** cycle, and so runs at most once per
 /// call. A site created inside a loop stands for one abstract resource per
@@ -297,55 +396,24 @@ fn fixed_point(cfg: &LegacyCfg, reachable: &BTreeSet<usize>) -> Vec<Bindings> {
     let declined = vec![Bindings::new(); cfg.nodes.len()];
     let sites = acyclic_sites(cfg, reachable);
     if sites.is_empty() {
+        // No eligible site: nothing to derive whatever the iteration would do,
+        // so the sweep is not run at all. The census is still told, because
+        // "this cyclic function has no off-cycle site" is one of the answers
+        // the round measurement has to separate from a decline.
+        #[cfg(feature = "provenance-rounds-census")]
+        provenance_rounds::record(cfg, reachable, &sites, None);
         return declined;
     }
-    let mut predecessors = vec![Vec::new(); cfg.nodes.len()];
-    for &node in reachable {
-        for &next in &cfg.nodes[node].successors {
-            predecessors[next].push(node);
-        }
+    let settled = iterate(cfg, reachable, &sites, FIXED_POINT_ROUNDS);
+    #[cfg(feature = "provenance-rounds-census")]
+    provenance_rounds::record(cfg, reachable, &sites, Some(&settled));
+    match settled {
+        Settled::Converged { solution, .. } => solution,
+        // Card JOINED-PROVENANCE-ROUND-BOUND: the decline is now a named
+        // outcome, and it still returns precisely the vector it returned
+        // before — every node's bindings empty.
+        Settled::Declined => declined,
     }
-    let mut incoming = vec![None::<Facts>; cfg.nodes.len()];
-    incoming[cfg.entry] = Some(Facts::default());
-    for _ in 0..FIXED_POINT_ROUNDS {
-        let mut next_round = incoming.clone();
-        for &node in reachable {
-            if node == cfg.entry {
-                continue;
-            }
-            let mut arrived = None::<Facts>;
-            for &previous in &predecessors[node] {
-                // A predecessor still at the top element is neutral: meeting
-                // with it changes nothing.
-                let Some(facts) = incoming[previous].as_ref() else {
-                    continue;
-                };
-                let branches = outgoing(cfg, previous, facts);
-                for (edge, &successor) in cfg.nodes[previous].successors.iter().enumerate() {
-                    if successor != node {
-                        continue;
-                    }
-                    match &mut arrived {
-                        Some(current) => current.join(&branches[edge]),
-                        slot => *slot = Some(branches[edge].clone()),
-                    }
-                }
-            }
-            next_round[node] = arrived;
-        }
-        if next_round == incoming {
-            return incoming
-                .into_iter()
-                .map(|facts| {
-                    let mut bindings = facts.unwrap_or_default().bindings;
-                    bindings.retain(|site, names| sites.contains(site) && !names.is_empty());
-                    bindings
-                })
-                .collect();
-        }
-        incoming = next_round;
-    }
-    declined
 }
 
 /// Recognise one plain, shallow release. The identity refusal remains; this
@@ -472,6 +540,69 @@ mod tests {
             Some(&BTreeSet::from(["p".to_string()])),
             "{facts:?}"
         );
+    }
+
+    /// Card **JOINED-PROVENANCE-ROUND-BOUND**: the decline is observable.
+    ///
+    /// Before this card `fixed_point` returned an all-empty vector both when a
+    /// graph settled with nothing to say and when the bound was exhausted, so
+    /// no caller and no test could tell the two apart
+    /// (`JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE`). These three tests are
+    /// the discharge: the same graph, run under a cap that suffices and a cap
+    /// that does not, reports `Converged` and `Declined` — and `derive`'s
+    /// answer is unchanged in both directions.
+    #[test]
+    fn the_iteration_reports_convergence_and_the_round_it_settled_at() {
+        let cfg = cyclic_cfg(0);
+        let reachable = BTreeSet::from([0, 1, 2, 3]);
+        let sites = acyclic_sites(&cfg, &reachable);
+        let Settled::Converged { rounds, solution } =
+            iterate(&cfg, &reachable, &sites, FIXED_POINT_ROUNDS)
+        else {
+            panic!("this graph settles well inside the bound");
+        };
+        assert!(
+            (1..=FIXED_POINT_ROUNDS).contains(&rounds),
+            "settled at round {rounds}"
+        );
+        assert_eq!(
+            solution[3].get(&7),
+            Some(&BTreeSet::from(["p".to_string()])),
+            "{solution:?}"
+        );
+    }
+
+    #[test]
+    fn a_cap_below_what_the_graph_needs_declines_rather_than_converging() {
+        // The round the previous test measured, minus one: the same graph, the
+        // same sweep, one round short. This is the arm that was invisible.
+        let cfg = cyclic_cfg(0);
+        let reachable = BTreeSet::from([0, 1, 2, 3]);
+        let sites = acyclic_sites(&cfg, &reachable);
+        let Settled::Converged { rounds, .. } =
+            iterate(&cfg, &reachable, &sites, FIXED_POINT_ROUNDS)
+        else {
+            panic!("this graph settles well inside the bound");
+        };
+        assert_eq!(
+            iterate(&cfg, &reachable, &sites, rounds - 1),
+            Settled::Declined,
+            "settling needs {rounds} rounds, so {} must decline",
+            rounds - 1
+        );
+    }
+
+    #[test]
+    fn a_decline_still_derives_exactly_nothing() {
+        // The verdict-neutrality of the whole change: whatever the outcome is
+        // called, an exhausted bound publishes the empty vector it always did.
+        let cfg = cyclic_cfg(0);
+        let reachable = BTreeSet::from([0, 1, 2, 3]);
+        let sites = acyclic_sites(&cfg, &reachable);
+        assert_eq!(iterate(&cfg, &reachable, &sites, 1), Settled::Declined);
+        // ... and the production route, which runs at the real bound, does not
+        // decline this graph, so the two arms are both reachable from here.
+        assert!(derive(&cfg).iter().any(|bindings| !bindings.is_empty()));
     }
 
     #[test]
