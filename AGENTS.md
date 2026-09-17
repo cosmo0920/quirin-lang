@@ -133,10 +133,10 @@ certificate identity (`GATEWAY-LOCATION-INTERNAL-CHANNELS`, constraint 12a).
 | Measure | Value |
 |---|---|
 | Cycle 19 raw corpus (185 units) | **2 Safe / 42 provisional Unsafe / 137 Unknown / 4 data-only** — **no unit status has moved at any arbiter from wave 31 through wave 35**. 4,834 projected functions: **186 Safe / 84 provisional Unsafe / 4,564 Unknown**. `flb_input_chunk_create` remains function-level **Safe**. Leak **272**, `unknown_alias` **4,214**, `double_release` **0**, `unsupported` **50,106** — all four read from the wave-35 baseline named above. The function and `unsupported` chain, each delta attributed leaf by leaf in its own arbiter's report §5 and narrated in that wave's increment record: `C-GATEWAY-WAVE` (wave 31) four scalar counter helpers Safe → Unknown plus one constant-loop abstraction exposing a provisional repeated release, five function moves; `W31-CORPUS-CONTRACTS-2` **zero** functions and zero units, `unsupported` 50,155 → 50,150 on the four uncontracted-call leaves naming `cio_chunk_get_content_size`/`flb_input_chunk_total_size` decided by two declared contracts, plus one argument-expression refusal retired at its chained-actual site, zero leaves added and two units changed; `C-GATEWAY-RETURN-POSITION` (wave 33) **33 functions Unknown → Safe**, none withdrawn and none made provisional Unsafe, `unsupported` 50,150 → 50,117 as **33 withdrawn return-position refusals and zero added**, the return position widened to admit a pointer-valued bounded typed access chain; `C-GATEWAY-RETURN-CALL-W4` (wave 34) **7 further functions Unknown → Safe** (179 → 186 Safe, 4,570 → 4,563 Unknown, provisional Unsafe 85 unmoved), `unsupported` 50,117 → **50,106** as **17 withdrawn and zero added** — 14 return-expression refusals plus 3 second-order `call to uncontracted function` leaves decided by summaries newly derived from the bodies that card promoted — the position widened again to admit a *modeled call* whose result mode is `None` or `Owned`, `Reallocated` refused by name as the arm that would discharge the replaced parameter's obligation at the exit. `C-GATEWAY-CONSTANT-DO-WHILE` (wave 35) **one function provisional Unsafe → Unknown** (85 → 84 Unsafe, 4,563 → 4,564 Unknown, Safe **186 unmoved**, so nothing is promoted), `unsupported`, `unknown_alias` and leak all **unmoved**, and `double_release` **1 → 0** as **one withdrawn leaf and zero added** — the corpus's only repeated-release row, `rd_kafka_jwt_b64_decode_payload` at internal L21340, **withdrawn** because `do S while (0)` runs `S` once (C11 §6.8.5.2) and the CFG's back edge was a path the C does not have; the function keeps 18 other leaves and so goes to `Unknown`, not `Safe`, and four of the five artifacts are byte-identical with BEFORE. `unknown_alias` moved 4,208 → 4,214 at wave 34, all six added rows `Unknown`-class and in the accusing direction; leak **272** (266 → 272 at `C-GATEWAY-WAVE`: six added, none withdrawn) is unmoved at every re-pin since, constraint 7 carrying that chain in full, and `double_release` stood at **1** from wave 31 until wave 35 withdrew it. `JOINED-PROVENANCE-CYCLES` (wave 35's second arbiter) then moved **zero** leaves, zero functions and zero units, so all four counts above stand as its first arbiter left them: the conditional-provenance relation was extended to cyclic CFGs by a greatest fixed point, is exercised on 44 corpus functions, and is blocked at `release_site`'s nullable-site and naming premises at every one of the 21 sites that reach them. Provisional findings remain subject to the reports' coverage and reachability boundaries; the production `input_chunk_get` residual stays Unknown |
-| CT01–CT50 conformance | **45/50 mapped**, 5 unmapped; sanitized-native **9 of 45** (wave 32's `CT-COMPOSED-NATIVE` gave the `composed_epoch` route a runner that really compiles and runs an admitted case's own emitted C under the platform sanitizers and compares its stdout byte for byte with that module's own checked task half, moving CT22's and CT25's emission/native/sanitized rows off `unassessed`; CT23 stays out, being the route's refusal, and every arm of the runner was falsified before it was believed); **proof 3 of 45** — CT01 (wave 29, `CT01-PROOF-LEG`), CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases) and CT03 (wave 31, `CT03-PROOF-ALPHABET`, the first leg to need the F02 alphabet itself to grow — by the Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved — while the *sibling* arm of that same alphabet decision, the two lease events still refused, was at the time **observed and not proved**, the occasioning case for `CLAUDE.md`'s `STABILITY-REEVAL` cadence; wave 32's `TRACE-ALPHABET-LEASE-BOUNDARY` **discharged** that residual and constraint 15n now carries the measured statement — the arm is **reachable and driven**, dropping is proved an *admitting* mistake rather than a lossy one, and the refusal's index is proved to be the first offending event's own, so this row no longer says "no test drives it" (the forward question, whether the observable alphabet should grow once a worker exercises its authority, stays open as `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`)): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). Wave 32 (`CT-WIRE-LANE-4`) mapped **CT47 and CT44**: CT47 on the transferability judgment's refusal at the crossing construct — verified in source that the owned buffer is `MovedOnly` and *sendable*, so the refusal is for the **mode** and not a vacuous kind refusal, with all three contracts the kind does carry supplied as admitting controls — and CT44 after measuring both of card T00's archived blockers **obsolete** (the refusal names the borrowing task, and "environment moves before join" now has a source form), attribution separated in both directions. Each publishes the boundary its scenario's untranslatable words rest on (no pointer type; the storage is heap-bound, so "stack" has no referent). A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
+| CT01–CT50 conformance | **46/50 mapped**, 4 unmapped; sanitized-native **9 of 46** (wave 32's `CT-COMPOSED-NATIVE` gave the `composed_epoch` route a runner that really compiles and runs an admitted case's own emitted C under the platform sanitizers and compares its stdout byte for byte with that module's own checked task half, moving CT22's and CT25's emission/native/sanitized rows off `unassessed`; CT23 stays out, being the route's refusal, and every arm of the runner was falsified before it was believed); **proof 3 of 46** — CT01 (wave 29, `CT01-PROOF-LEG`), CT37 (wave 30, `CT-PROOF-LEG-2`, chosen by a measured survey of all 42 mapped cases) and CT03 (wave 31, `CT03-PROOF-ALPHABET`, the first leg to need the F02 alphabet itself to grow — by the Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved — while the *sibling* arm of that same alphabet decision, the two lease events still refused, was at the time **observed and not proved**, the occasioning case for `CLAUDE.md`'s `STABILITY-REEVAL` cadence; wave 32's `TRACE-ALPHABET-LEASE-BOUNDARY` **discharged** that residual and constraint 15n now carries the measured statement — the arm is **reachable and driven**, dropping is proved an *admitting* mistake rather than a lossy one, and the refusal's index is proved to be the first offending event's own, so this row no longer says "no test drives it" (the forward question, whether the observable alphabet should grow once a worker exercises its authority, stays open as `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`)): each case's scenario property proved in Lean of the checked artifact's reference run and its admitted renderings (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation, native execution deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes card T00's frozen archive from its own record (constraint 21). Wave 28 (`CT-WIRE-LANE-2`) mapped CT07, CT08, CT09, CT21 and CT23 (CT07 stating the read-loan/retained-write boundary; CT09's layout leg an executed *observation*; CT23 on the `composed_epoch` route); wave 29 (`CT22-WIRE`) mapped **CT22** on `REGION-CREDIT-JOINS`' evidence with the wave-28 narrowed reason retired in its own record; wave 30 (`CT07-WRITE-REMAP`) upgraded **CT07's evidence** onto the write-lend scenario — two write authorities over disjoint ranges of one buffer, both held by one sequential entry's bindings, **not two threads** (`WRITE-LEND-TASKS` the residual) — superseding the wave-28 record's CT07 entry from its own record with **no count moved** (evidence quality, not coverage). Wave 31 (`CT-WIRE-LANE-3`) mapped **CT25** — *cleanup destroys owner after joins and loan expiry*, every word carried by an unedited model's checked fact — and **examined CT24 and withdrew it** with the measurement published: on the only route with an executed cleanup-destroy a region before the join refuses for its *placement* whatever its duties, so no control isolates the destroy, and mapping it would move the derived reasons map's keys against a matrix the lane may not regenerate (constraint 25, measured rather than assumed). Wave 32 (`CT-WIRE-LANE-4`) mapped **CT47 and CT44**: CT47 on the transferability judgment's refusal at the crossing construct — verified in source that the owned buffer is `MovedOnly` and *sendable*, so the refusal is for the **mode** and not a vacuous kind refusal, with all three contracts the kind does carry supplied as admitting controls — and CT44 after measuring both of card T00's archived blockers **obsolete** (the refusal names the borrowing task, and "environment moves before join" now has a source form), attribution separated in both directions. Each publishes the boundary its scenario's untranslatable words rest on (no pointer type; the storage is heap-bound, so "stack" has no referent). Wave 35 (`CT-CTWIN-LANE`) mapped **CT46** on card `MUTEX-SHARE-CROSS`'s composition, under a new `checked_mutex_crossing` verdict mode on the `mutex_guard` route — the corpus's first **admitted** case that deliberately stops at the checker: the module is accepted and the C backend renders nothing for it, `interpret_mutex_program` refusing the `Spawn` the crossing introduces, which is `MUTEX-SHARE-CROSS-EMISSION` measured rather than inherited and is why four stages read `unassessed` and none reads `executed`. The emission boundary is pinned in both directions, one control being the same route without the clause, which does render and does interpret. Two of CT46's own words are published as untranslatable — there is no wrapper type and no `Send`/`Sync` trait — both carried instead by the transferability judgment's `TransferKind::ProtectedResource`, asserted against `MUTEX_SHARE_CROSSING` itself. The same lane **re-measured the four remaining cases and mapped none**: CT41's obstruction is **structural** — clause (b) of the wave-9 attribution rule needs a control in which removing `volatile` moves the verdict, and `CTWIN-PUBLISH` §5's decision is that it moves nothing — with the scenario's own consumer shape now measured **`safe` with no diagnostic**, and the typed-source arm examined for the first time and found unable to tell `volatile` from `_Atomic` (`CT41-TYPED-SOURCE-UNDISCRIMINATING`); CT42 stays unmapped with **both** arms measured, the socket arm being **unreachable from source** (`CT42-CELL-UNROUTED`); CT10 stays unmapped on half a scenario; CT24 stays withdrawn. A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **76 modules** (73 → 74 at wave 29: `fluent_bit/input_chunk_sizes.qcore`; 74 → 76 at wave 31: `chunkio/chunk_sizes.qcore` and `fluent_bit/input_chunk_total_size.qcore`, each deliberate; resource-v1 declarations 39 → 41 → 43, manifest-selected modules 18 → 19 → 21) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | **4,559 passed / 0 failed / 8 ignored, 217 test executables / 228 result summaries** · 122 provider (carried; **Unix** — see below) · **229 Python** · **129 Lean audits** · both probes exit 0 · fmt/clippy clean. Measured at the `DOCS-COMPACT-6` tip (wave 34), `git submodule update --init --recursive` run first (`WORKTREE-SUBMODULE-UNGATED`); per-command exits in `docs/reports/docs-compact-6/README.md` §8, and each card's own gate in its own report. **A gate figure is a measurement on one machine, never a property**, and two qualifications travel with this one. First, `qcore-verifier-host`'s `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` is **green in this run and was measured red 3/3 in isolation** by `STABILITY-REEVAL` #1 in the same wave: the row is not reliably reproducible in either direction, it is **not** one of constraint 16's five load-sensitive rows, and the boundary is recorded beside them (`VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED`) — so a gate report must **state which it saw** rather than treat either outcome as settling anything. Second, provider **122 is carried, not re-measured** (no provider source, manifest template or `qcore-schemas` major version moved, so constraint 18 is not engaged) **and is a Unix figure**: `37bc9004` made three conformance binaries `cfg(unix)`, so four test functions do not run on Windows and the carried number has no platform qualifier of its own (`PROVIDER-CONFORMANCE-UNIX-ONLY`). Prior figures, for the delta only: 4,544 / 0 / 8 at the wave-33 close, 4,534 / 0 / 8 at wave 32 |
+| Merged gate | **4,580 passed / 0 failed / 8 ignored, 228 test executables / 230 result summaries** · 122 provider (carried; **Unix** — see below) · **247 Python** · **132 Lean audits** · both probes exit 0 · fmt/clippy clean. Measured by the **wave-35 close** at its own base `4cf9bdf9` (the `JOINED-PROVENANCE-CYCLES` merge), `git submodule update --init --recursive` run first and exit 0 (`WORKTREE-SUBMODULE-UNGATED`); one uninterrupted `cargo test --workspace --no-fail-fast` of 15m54s, **every step's exit captured to its own file with no pipe in the command** — a `| tail` swallowed a gate exit for the integrator earlier in this wave. Per-command exits in `docs/reports/wave35-close/gate.json`, and each card's own gate in its own report. **A gate figure is a measurement on one machine, never a property**, and two qualifications travel with this one. First, `qcore-verifier-host`'s `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` was **green here**, and this row says so because constraint 16 requires a gate report to state which it saw: this is the **first full-suite observation after** card `VERIFIER-HOST-CONTROL-BUDGET` measured the mechanism (an 8 KiB pipe capacity against a 1 ms backoff quantum) and repaired it with `poll(2)` **without touching the test file**, and it agrees with that card's 38/38 — but it is a full-suite run on a machine carrying its own build at load ≈6.5, **not** the quiet-host isolated number `HOST-ROW-STARVATION-DESCRIPTION` still asks for, and it is not offered as one. Second, provider **122 is carried, not re-measured** (`git diff` over `providers/` and `crates/qcore-schemas/` across the whole wave is empty, so constraint 18 is not engaged) **and is a Unix figure** (`PROVIDER-CONFORMANCE-UNIX-ONLY`); its `RLIMIT_NPROC` row was separately measured **unverifiable under this wave's own conditions**, five sibling cards being *inside* its measurement rather than ambient load (`VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE`). Prior figures, for the delta only: 4,559 / 0 / 8 at the wave-34 close, 4,544 / 0 / 8 at wave 33, 4,534 / 0 / 8 at wave 32 |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -152,7 +152,10 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**103** entries; the section is *carried*, `dimensions.named_followups` is
+**121** entries at the wave-35 close, which registered **28** names — 27 of the
+62 its widened sweep returned, plus `DOCS-COMPACT-4-TABLE-SYNC` — and retired
+**10** as discharged by named cards; the section is *carried*,
+`dimensions.named_followups` is
 *derived*, and the two are checked against each other on the committed file, so
 add entries through `docs/reports/remaining-d02/build_matrix.py` and never by
 hand — constraint 25) plus each report's own follow-on list; per-card evidence in
@@ -315,6 +318,55 @@ pointer is the card that established it; read it before deviating.
     arbiter — so the unchanged leak pin records that absence rather than that
     arm's verification (`RETURN-POSITION-ACCUSING-UNEXERCISED-IN-CORPUS`).
     `c-gateway-return-position`.
+5c. **A constant `do … while (0)` is sequential composition, and the key is
+    the token.** `do S while (0)` executes `S` exactly once (C11 §6.8.5.2),
+    so its CFG header has `continuation` as its **only** successor and the
+    back edge to `body_entry` is a path the C does not have. Removing that
+    edge is the **admitting** direction (invariant 1), which is why three
+    things must survive refactors. The rule is keyed on the **single literal
+    token `0`** and never on an evaluated expression — constraint 5a's rule,
+    applied here — so `while ((0))`, `while (1 - 1)`, `while (0 == 0)` and
+    `while (0 && 0)` keep the back edge, and answering "not literal zero" is
+    the conservative answer, so any widening of `condition_is_literal_zero`
+    (the unclaimed spellings `0u`, `0L`, `0x0`, `'\0'` included) is an
+    admitting change needing its own measured re-pin. The **exit** edge is
+    never the one removed and the header node is retained, so the rule removes
+    a path and never a destination, and no leaf's internal coordinate moves
+    for an unrelated reason. And the rule does **not** generalise to
+    `while (1)` or `for (;;)`: modelling those exactly would remove an *exit*
+    edge, which is the accusing direction and needs its own Lean statement and
+    re-pin (`CONSTANT-DO-WHILE-OTHER-CONSTANTS`). The 32 `unmodeled call,
+    aggregate or indirect access in do-while condition` leaves are a different
+    question and stay refused — measured unmoved at 32 across the re-pin.
+    Proved as `QCore.ConstantDoWhile`: `constant_do_while_is_its_body` the
+    `≡ S` equality, `removing_the_back_edge_only_removes_paths` and
+    `the_successor_list_never_grows` the conservativity for **every**
+    condition, `the_repeated_release_is_a_path_the_c_does_not_have` the
+    non-vacuity. Separately, and **not owned by that card**, a pre-existing
+    route already decides a `do`-`while` from a *modelled scalar value*; it
+    answers conservatively wherever measured and is pinned by
+    `a_modeled_scalar_condition_is_a_separate_pre_existing_route`
+    (`CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED`). Finally, removing a back edge
+    **makes a function acyclic**, and that changes which route
+    `legacy_joined_provenance::derive` takes for it (constraint 10b) — so this
+    rule silently changes *that* pre-pass's reach: **654** of 4,771 analysed
+    functions at this card's re-pin, with a measured diagnostic effect of zero.
+    Any widening of the key therefore moves two subsystems and must re-measure
+    both (`docs/reports/c-gateway-constant-do-while/scripts/acyclicity.py`,
+    `CONSTANT-DO-WHILE-JOINED-PROVENANCE-REACH`).
+    **Two clauses of this paragraph are the integrator's, not the card's**, and
+    the wave-35 close's `reconciliation.json` carries both before-and-after
+    texts: the card wrote that `derive` "returns no conditional-provenance facts
+    at all for a cyclic CFG", which wave 35's **second** arbiter
+    (`JOINED-PROVENANCE-CYCLES`) falsified later in the same wave by solving a
+    cyclic CFG with a greatest fixed point — landing that sentence verbatim
+    would have put a statement contradicting 10b into this file — and the card's
+    script path was its own gitignored `measure/`, replaced by the committed
+    copy it archived. The rule itself is unchanged, and the residual it names is
+    **answered** by that second arbiter's §8, which reproduced the 654
+    independently and measured the flip's cost at six functions and 20 leaves of
+    servable population — reach that moved to the topological pass, not reach
+    lost. `c-gateway-constant-do-while`, `joined-provenance-cycles`.
 6. **C02-P-ALIAS-LEAK-ORDER:** `report_leaks` on intermediate iterates is
    scheduling-sensitive; a pre-pass keeps it scheduling-neutral with
    `AbstractState` byte-identical. Recorded, not repaired — do not disturb it
@@ -672,6 +724,23 @@ pointer is the card that established it; read it before deviating.
       the card — immediately before `<Buffer>` in a task parameter type, and as
       a capture's first word inside a spawn's argument list — so `lend` stays
       contextual and no global reservation is taken.
+    * `MUTEX-SHARE-CROSS` **+0 reserved words, +0 tokens, +0 name-resolution
+      exclusions** — the cleanest outcome in this ledger, and the card asked
+      for this row three waves before it was written
+      (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`). Both clause words of
+      `thread scope NAME share PLACE under MUTEX { … }` were **already
+      globally reserved** — `share` by the scoped-task route's
+      `read PLACE share N`, `under` by card `T03-GUARD-JOIN` — so the card
+      claims only a **position**, the fourth token of a child-task header,
+      which was a parse failure before it. Censused over **490** `.qcore`/`.qc`
+      files outside `third_party/`: 33 total hits, **8** in code rather than
+      comments, **0** occurrences of `share` at any position other than the
+      read capture's clause, **0** occurrences of `under` in code anywhere, and
+      **0** occurrences of `thread scope NAME share|under` in any fixture. No
+      exclusion was carved out of `referenced_names`, unlike
+      `SOCKET-INET-ADDRESSES` and `WRITE-LEND-TASKS`, because the card claims
+      no word — and both clause **names** stay genuine references, measured
+      rather than asserted (an unbound one refuses at `Q013`).
     * **Cards that do not engage this constraint at all** — none reserves a
       word or moves the lexer, and the documentation cards touch no crate
       source: `EXAMPLES-SUITE-WIRE`, `DOCS-COMPACT-3`, `GATEWAY-C-LOCATION`;
@@ -680,15 +749,28 @@ pointer is the card that established it; read it before deviating.
       `CT24-CLEANUP-PREEMPTED`, `CT-PROOF-LEG-2`, `REGION-JOINS-LOAN`,
       `CT07-WRITE-REMAP` and `W4-RECURSIVE-SUMMARIES`; wave 31's
       `C-GATEWAY-WAVE`, `CT42-PROTOCOL-CELL`, `CT-WIRE-LANE-3`,
-      `W31-CORPUS-CONTRACTS-2` and `CT03-PROOF-ALPHABET`; and **every card of
-      waves 32, 33 and 34** — `CT-WIRE-LANE-4`, `CT-COMPOSED-NATIVE`,
-      `TRACE-ALPHABET-LEASE-BOUNDARY`, `W32-RECONCILE-SWEEP`,
+      `W31-CORPUS-CONTRACTS-2` and `CT03-PROOF-ALPHABET`; waves 32, 33 and 34's
+      `CT-WIRE-LANE-4`, `CT-COMPOSED-NATIVE`, `TRACE-ALPHABET-LEASE-BOUNDARY`,
+      `W32-RECONCILE-SWEEP`, `PROOF-LEG-BATCH`, `DOCS-COMPACT-5`,
       `C-GATEWAY-RETURN-POSITION`, `VERIFIER-HOST-CLOSED-INPUT-DEADLINE`,
       the Lean proof-integrity pass, `STABILITY-REEVAL` #1,
-      `C-GATEWAY-RETURN-CALL-W4` and `DOCS-COMPACT-6`. **Waves 28 through 34
-      each closed at zero reserved words**, the longest such run in this
-      ledger; the source surface has not grown a global keyword since
-      `LOOP-V1`.
+      `C-GATEWAY-RETURN-CALL-W4` and `DOCS-COMPACT-6`; and **wave 35's seven**
+      — `SWEEP-BLIND-SPOTS`, `WAVE-34-CLOSE`, `VERIFIER-HOST-CONTROL-BUDGET`,
+      `CT-CTWIN-LANE`, `C-GATEWAY-CONSTANT-DO-WHILE`, `MUTEX-SHARE-CROSS-ARMS`
+      and `JOINED-PROVENANCE-CYCLES`. **This bullet said "every card of waves
+      32, 33 and 34" over a list that named neither `PROOF-LEG-BATCH` nor
+      `DOCS-COMPACT-5` nor `MUTEX-SHARE-CROSS`, and the universal was
+      therefore false**; card `SWEEP-BLIND-SPOTS` measured that
+      (`CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE`) and offered the integrator
+      either arm. The wave-35 close took **both**, because they are not
+      interchangeable: the quantifier is narrowed to the cards actually
+      enumerated, the two documentation-and-proof cards join this list, and
+      `MUTEX-SHARE-CROSS` does **not** — it ran a census (its §9) and belongs
+      in the `+0` family above, where its row now stands. Adding it here in the
+      card's stead would have replaced a false universal with a false member.
+      **Waves 28 through 35 each closed at zero reserved words**, the longest
+      such run in this ledger; the source surface has not grown a global
+      keyword since `LOOP-V1`.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
@@ -1141,10 +1223,42 @@ pointer is the card that established it; read it before deviating.
     relational comparison by construction, their native evidence being
     sanitizer and allocation-count rather than a trace relation.
     `trace-alphabet-lease-boundary`, `ct03-proof-alphabet`, `write-lend-tasks`.
+15o. **(card `MUTEX-SHARE-CROSS`.)** A `protected N` payload crosses a task
+    boundary only through `thread scope NAME share PLACE under MUTEX { … }` on
+    `source.mutex.guard.v1`, and the decision is in **three** halves that must
+    not be merged: classification is `qcore_core::transfer`'s (the fifth row;
+    each sharing mode requests **one** protocol and is admitted exactly when
+    the kind's discipline is that protocol — do not restore the arm that took
+    whatever protocol the kind named); the **absent** and **mismatched**
+    protocol gates are the crossing's, because the judgment cannot see a
+    generation's declared footprint; and **unverified** is the *unedited*
+    `CheckedMutexInvariantV1` checker's own `Q611`. Do not re-implement a
+    guard rule beside the judgment. The clause is **opt-in**: a child without
+    it lowers byte-identically, and the load-bearing reach rule
+    (`Frame::admits_reach`) applies only to a declaring child and only in the
+    refusing direction. `MUTEX_SHARING_GAP` stays `false` — the *task* route's
+    Buffer still has no mutex — and the crossing is **checked, never
+    executed** (`MUTEX-SHARE-CROSS-EMISSION`); do not claim native or
+    data-race evidence for it. `mutex-share-cross`.
+    **Landed at the wave-35 close, three waves after the card proposed it**
+    (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`, the measured cost of
+    `WAVE-32-CLOSE-UNSWEPT`): the words above are the card's §13.1 block quote
+    reproduced by card `SWEEP-BLIND-SPOTS` §6.1 and landed unchanged. The
+    number `15o` is the integrator's, the card having left it unassigned.
+    Wave 35's `MUTEX-SHARE-CROSS-ARMS` supersedes one sentence of that card's
+    report from its own record (constraint 21, not by editing it): the four
+    arms of these rules that no test drove are now **two driven** by
+    `crates/qcore-frontend/tests/mutex_share_cross_arms.rs` and **two proved
+    unreachable** and kept as backstops justified by
+    `QCore.MutexShareCrossArms` — and the two dead arms are **not** dead for
+    the same reason, arm C's admitting protocol being a literal (so its residue
+    is empty for *every* kind, independent of the only-pair property) while
+    arm D does rest on that property. `mutex-share-cross`,
+    `mutex-share-cross-arms`, `sweep-blind-spots`.
 
 **Providers, packages and limits**
 
-16. **P02-FLAKE:** five provider/host rows are load- or parallelism-sensitive
+16. **P02-FLAKE:** six provider/host rows are load- or parallelism-sensitive
     and are verified in isolation, never weakened: the `RLIMIT_NPROC`
     conformance test (it counts every process of the real UID, and keeps a
     deterministic companion), `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
@@ -1156,36 +1270,52 @@ pointer is the card that established it; read it before deviating.
     (added wave 20; the same `Io(Broken pipe)` shape as its sibling row, at
     load ~40). `remaining-p03` §9.1, `remaining-p03-f`,
     `wave17-gen-ctreasons` §4.1, `wave17-corpus`.
-    **Recorded beside the five, and deliberately not among them** (wave 34,
-    `VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED`):
-    `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
-    (`crates/qcore-verifier-host/tests/standalone_host.rs`) is **not a load
-    flake** and must not be treated as one — `STABILITY-REEVAL` #1 measured it
-    failing **deterministically 3/3 in isolation** on an unmodified tree,
-    returning `Err(Timeout)` from the admitting control the
-    `VERIFIER-HOST-CLOSED-INPUT-DEADLINE` repair itself added, and
-    `docs/plans/fluent-bit-system-coverage/README.md` records the same
-    assertion failing on an isolated rerun and states it is not a flake. The
-    measured host condition: the third arm moves roughly 8 MiB each way through
-    a pipe against a fixed 1,000 ms deadline, and raising that budget to
-    8,000 ms makes it pass, so it is a **wall-clock throughput shortfall of the
-    host, not a hang and not a defect in the repair** — which is present, sound,
-    and whose assertions are **not** weakened. This is exactly why it is **not**
-    a sixth member of the five: those five are **verified green in isolation**,
-    and isolation is precisely where this one was measured **red**.
-    **The row is not reliably reproducible in either direction, and that is the
-    finding.** Two measurements, same wave, recorded together because neither
-    alone is the truth: `STABILITY-REEVAL` #1 measured it **red 3/3 in
-    isolation**, and `DOCS-COMPACT-6`'s gate measured it **green** under one
-    full `--no-fail-fast` workspace run on the same host. A row that fails alone
-    and passes under load is the opposite of constraint 16's shape and cannot be
-    dispositioned by re-running it. **Therefore: neither a `0 failed` nor a
-    `1 failed` on this row settles anything** — a green run is an observation
-    about one machine at one moment and never a property, and a red run is a
-    finding to record rather than a flake to re-roll. Until the residual is
-    discharged, a gate report **states which it saw**. Do not discharge this by
-    shrinking the response, raising the deadline or deleting the control
-    (invariant 1). `stability-reeval-1` §2.1 and §7.1, `docs-compact-6` §8,
+    **The sixth, landed at the wave-35 close in card
+    `VERIFIER-HOST-CONTROL-BUDGET`'s own words:**
+
+    > `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
+    > (`crates/qcore-verifier-host/tests/standalone_host.rs`) is a **sixth**
+    > load-sensitive row, and the only one sensitive at the *top* of the range:
+    > its first arm's `assert!(start.elapsed() < Duration::from_secs(1))`, a
+    > fixed one-second guard over a 40 ms deadline, was measured failing 3 of 6
+    > repetitions at 1-minute load ≈100 on a 16-CPU host
+    > (`docs/reports/verifier-host-control-budget/README.md` §5). Its *other*
+    > historical sensitivity — the large-response admitting control failing when
+    > the host was **least** loaded — was a transport defect, not a host
+    > condition, and was repaired by card `VERIFIER-HOST-CONTROL-BUDGET`; do not
+    > re-file that half here.
+
+    **This replaces, rather than re-issues, the wave-34 paragraph** that
+    recorded the row beside the five as not-a-load-flake
+    (`HOST-ROW-STARVATION-DESCRIPTION`, card `CT-CTWIN-LANE`'s request, and the
+    reason it is replaced is that the mechanism is now *known*). What that
+    paragraph got right is kept and what it got wrong is named. Right: the
+    large-response failure was real, was not a flake to re-roll, and was **not**
+    a weakness in the `VERIFIER-HOST-CLOSED-INPUT-DEADLINE` repair, whose
+    assertions were never weakened — `VERIFIER-HOST-CONTROL-BUDGET` changed
+    `crates/qcore-verifier-host/src/lib.rs` **only**, leaving the test file
+    untouched. Wrong: "deterministically 3/3 in isolation" was three samples of
+    a biased coin — 22 pre-repair isolated repetitions measured **7 pass / 15
+    fail** — and card `MUTEX-SHARE-CROSS-ARMS` independently saw the row red in
+    isolation, red under a full suite **and** green under a full suite on one
+    host in one session. The mechanism was never a host throughput limit as
+    such: an **8 KiB** pipe capacity against a **1 ms** backoff quantum put a
+    ceiling on the 8 MiB-each-way arm, repaired with `poll(2)`, after which the
+    control passes **38/38**. Two successors carry what stays open —
+    `VERIFIER-HOST-CONTROL-MARGIN-UNPINNED` (nothing pins the 42–112 ms margin
+    against the 1,000 ms budget, which is exactly how the defect survived wave
+    33 behind a published `0 failed`) and `HOST-PIPE-CAPACITY-UNEXPLAINED` (the
+    8 KiB is itself unexplained, so the defect's *size* is a function of an
+    unexplained number). The standing instruction is unchanged and now applies
+    to the first arm: a gate report **states which it saw**, and nothing is
+    discharged by shrinking the response, raising the deadline or deleting a
+    control (invariant 1). A seventh row is **measured but deliberately not
+    added**: the `RLIMIT_NPROC` row above could not be cleanly verified during
+    wave 35 at all, because it counts every process of the *real UID* and the
+    wave's five sibling cards were **inside its measurement**, not ambient load
+    (`VERIFIER-HOST-NPROC-ROW-UNVERIFIABLE-UNDER-WAVE`). `remaining-p03` §9.1,
+    `verifier-host-control-budget` §5 and §7.1, `mutex-share-cross-arms` §10,
+    `stability-reeval-1` §2.1 and §7.1, `docs-compact-6` §8,
     `c-gateway-return-call-w4`.
 17. **EXTERN-F1-STORE-REACH:** the abandonment gate refuses a second live
     acquisition and was deliberately not weakened, which is why
@@ -1459,8 +1589,8 @@ waves without a card needing a range.
 | `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend. `REGION-CREDIT-JOINS` (wave 28), `REGION-JOINS-DUTIES` (wave 29) and `REGION-JOINS-LOAN` (wave 30) widen `Q302`'s composed-route condition a second, third and fourth time — the region on the epoch task route after every join, then its sealed pack carrying real duties, then the **adoption** `move NAME;` beside a worker's counted read share (with an adopted name the entry does not bind, and one owner taken twice through either shape, as that card's own `Q302` conditions) — constraint 15m's admitted set, each stated in §L21, each allocating nothing |
 | `Q400`, `Q401`, `Q403` | driver invocation | no inputs; missing/ambiguous entry; `--entry` against a library module |
 | `Q500` | `CEmission` | construct the reduced C11 CFG cannot encode |
-| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile. Four later cards move this row and **allocate nothing**, each stated in §L21: `REGION-CREDIT-JOINS` (wave 28) widens the composed-route reconciliation condition — a spawn or join whose span follows the entry's `error region` is refused, the ordering derived from the checked task IR and never declared; `CT47-COPY-CAPTURE` (wave 29) widens the boundary condition — the transferability judgment's refusal of a task-creation capture, attributed at the crossing construct and naming the missing transfer/share contract, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop); `REGION-JOINS-LOAN` (wave 30) **narrows** one condition deliberately and widens none, discharging the composed epoch route's blanket refusal of read-loan captures (`T08-COMPOSE-LOAN`, constraint 15m); and `WRITE-LEND-TASKS` (wave 31) widens the boundary and scoped-task conditions three ways on the `CT47-COPY-CAPTURE` precedent — the judgment's grown vocabulary (`TransferMode::LendWrite`, the delivered `lend<Buffer>`, `ShareProtocol::DisjointWriteLeases`), the lease's check-time bound decisions (a varying bound, an empty range, a range past `BUFFER_PAYLOAD_BYTES`), and the ledger's own `OverlappingLeases` / `LeaseOutstanding` / `InvalidLease` / `TooManyWriters` arriving through the unedited `check_task_module` (constraint 15h). `CT24-CLEANUP-PREEMPTED` (wave 30) moves no code and widens no condition: the `ScopeBusy` refusal is rendered from the exit rule's own loan backstop, same code, same span, same refused set |
-| `Q610`–`Q627` | `Concurrency` | `CheckedMutexInvariantV1`; `Q624`/`Q625` opt-in lock ranks, `Q626`/`Q627` opt-in protection growth |
+| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile. Five later cards move this row and **allocate nothing**, each stated in §L21: `REGION-CREDIT-JOINS` (wave 28) widens the composed-route reconciliation condition — a spawn or join whose span follows the entry's `error region` is refused, the ordering derived from the checked task IR and never declared; `CT47-COPY-CAPTURE` (wave 29) widens the boundary condition — the transferability judgment's refusal of a task-creation capture, attributed at the crossing construct and naming the missing transfer/share contract, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop); `REGION-JOINS-LOAN` (wave 30) **narrows** one condition deliberately and widens none, discharging the composed epoch route's blanket refusal of read-loan captures (`T08-COMPOSE-LOAN`, constraint 15m); and `WRITE-LEND-TASKS` (wave 31) widens the boundary and scoped-task conditions three ways on the `CT47-COPY-CAPTURE` precedent — the judgment's grown vocabulary (`TransferMode::LendWrite`, the delivered `lend<Buffer>`, `ShareProtocol::DisjointWriteLeases`), the lease's check-time bound decisions (a varying bound, an empty range, a range past `BUFFER_PAYLOAD_BYTES`), and the ledger's own `OverlappingLeases` / `LeaseOutstanding` / `InvalidLease` / `TooManyWriters` arriving through the unedited `check_task_module` (constraint 15h). `MUTEX-SHARE-CROSS` (wave 32) is the fifth, widening `Q600`'s boundary condition and the `Q610`–`Q627` sub-band's route and allocating nothing, on the same precedent: the judgment's vocabulary grows again (`TransferKind::ProtectedResource` and the delivered `MutexShare`, `TransferMode::ShareUnderMutex`, each sharing mode now requesting **one** named protocol), and the crossing's two protocol gates — **absent** (the `under` name is not a mutex generation of this module) and **mismatched** (it guards some other resource) — land at `Q600` at the clause, while the third refusal, `unverified`, is the unedited checker's own `Q611` (constraint 15o). This row's entry is the wave-35 close's, three waves late; the authority it summarises, spec §L21, has carried the widening since the card (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`). `CT24-CLEANUP-PREEMPTED` (wave 30) moves no code and widens no condition: the `ScopeBusy` refusal is rendered from the exit rule's own loan backstop, same code, same span, same refused set |
+| `Q610`–`Q627` | `Concurrency` | `CheckedMutexInvariantV1`; `Q624`/`Q625` opt-in lock ranks, `Q626`/`Q627` opt-in protection growth. Card `MUTEX-SHARE-CROSS` (wave 32) reaches `Q611` `UnguardedProtectedAccess` from a **new route** and allocates nothing: the third refusal of the declared task crossing (`thread scope NAME share PLACE under MUTEX { … }`, constraint 15o) — a child reaching the shared payload outside a critical section — is reported here under this **unedited** checker's own code rather than at `Q600`, because a protected footprint has no unguarded access at all and no rule of the mutex checker is re-implemented beside the judgment. Row landed at the wave-35 close (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`) |
 | `Q630`–`Q641` | `Concurrency` | `FlatEpochBoundV1` flat-epoch accounting (`source.epoch.bound.v1`), and its sibling `EpochCreditRecoveryV1` — the error path over the same epoch's credits, reached from source by `source.epoch.tasks.v1`'s `error(move\|drop\|close);` row clause (card `CT23-CREDIT-ERROR-PATH`). The same pass and the same quantities, so it **extends four of this band's conditions and takes no code of its own**: `Q630` a plan that does not describe its epoch (including a clause on the declarative route, which has no error edge), `Q635` credit **abandoned** at the creator's error edge, `Q636` a restoration larger than its grant, `Q641` the error path's arithmetic. `Q637` is deliberately **not** extended (constraint 15j) |
 | `Q650`–`Q667` | `Concurrency` | `DisjointFootprintsV1` disjoint footprints |
 | `Q670`–`Q677` | `Concurrency` | `CheckedRegionTaskCreditV1` error-region task credit |

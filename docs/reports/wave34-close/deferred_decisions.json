@@ -1,0 +1,40 @@
+{
+ "note": "WRITTEN BY THE WAVE-35 CLOSE, BESIDE THE WAVE-34 RECORD AND WITHOUT EDITING IT (constraint 21), using exactly the mechanism scripts/reconciliation_sweep.py provides for this case: 'The sibling deferred_decisions.json exists so that a close whose record was already written - and which must not be edited - can have its deferrals registered retrospectively in a NEW file beside it.' WHY IT WAS NEEDED. The wave-34 close deferred seven decisions and recorded them correctly in prose, in its reconciliation.json's deferred_decisions block. But it wrote `items` as a MAP of name -> sentence, where decisions_in() reads `items` only when it is a LIST of {name, verdict, ground} objects and otherwise falls through to a plain-name map whose values must be objects. The consequence, measured at the wave-35 close with `_decisions_of(pathlib.Path('docs/reports/wave34-close'))`: the reader returned the single bogus name 'items' and NONE of the seven decisions. So the three decisions wave 34 RAISED - DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK, VERIFIER-HOST-ROW-DISPOSITION and PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED - reached the re-listing mechanism NOWHERE, and would have expired in exactly the silence that mechanism was landed in the same wave to prevent. The four it inherited from wave 33 stayed visible only because the WAVE-33 record happens to use the list shape. This file restores all seven to the reader; the wave-34 record's own prose remains the authority for each decision's substance and is unedited. Every verdict here is 'deferred' because that is what the wave-34 close recorded; this file changes no decision, and the wave-35 close re-lists all seven in its own record with any new evidence stated there.",
+ "items": [
+  {
+   "name": "MATRIX-UPDATED-STALE-AT-WAVE-27",
+   "verdict": "deferred",
+   "ground": "The acceptance matrix's `updated` field has read wave 27 since wave 27. Carried from the wave-33 close undecided, and from the wave-34 close undecided. Substance in docs/reports/wave34-close/reconciliation.json."
+  },
+  {
+   "name": "CT10-REASON-ROW",
+   "verdict": "deferred",
+   "ground": "Carried from the wave-33 close undecided, and from the wave-34 close undecided. Substance in docs/reports/wave34-close/reconciliation.json."
+  },
+  {
+   "name": "EXAMPLES-STYLE-SLICE-FANOUT",
+   "verdict": "deferred",
+   "ground": "Carried from the wave-33 close undecided, and from the wave-34 close undecided. Substance in docs/reports/wave34-close/reconciliation.json."
+  },
+  {
+   "name": "SYNC-RULE-TOOLING-COMMIT-SCOPE",
+   "verdict": "deferred",
+   "ground": "Whether the sync rule binds a tooling commit that publishes under docs/reports/. Carried from the wave-33 close undecided; 37bc9004 remains a live instance, registered as WINDOWS-COHERENCE-GATES-UNCARDED. Substance in docs/reports/wave34-close/reconciliation.json."
+  },
+  {
+   "name": "DOCS-COMPACT-CADENCE-DOES-CORRECTION-WORK",
+   "verdict": "deferred",
+   "ground": "RAISED BY THE WAVE-34 CLOSE FOR THE USER. DOCS-COMPACT-6 grew the three files above the single-digit expectation CLAUDE.md's cadence rule states, and amended the rule to permit growth, arguing that every prose defect STABILITY-REEVAL #1 named was a claim WEAKER than its evidence and that correcting an understatement costs words. The question: is compaction the right vehicle for correction work at all, or should a compaction pass be measured only on redundancy while corrections land as their own card? Both readings are defensible and the answer sets the rule for DOCS-COMPACT-7. Substance in docs/reports/wave34-close/reconciliation.json."
+  },
+  {
+   "name": "VERIFIER-HOST-ROW-DISPOSITION",
+   "verdict": "deferred",
+   "ground": "Raised by the wave-34 close and NOTED NOT TAKEN there, the brief having assigned it to card VERIFIER-HOST-CONTROL-BUDGET in wave 35. The open question was whether documentation option (a) alone retires VERIFIER-HOST-LARGE-RESPONSE-CONTROL-RED. Substance in docs/reports/wave34-close/reconciliation.json; the wave-35 close records it resolved, by that card rather than by the close."
+  },
+  {
+   "name": "PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED",
+   "verdict": "deferred",
+   "ground": "Raised by the wave-34 close from its hand sweep. Six open -WINDOWS-RUN/-APPLE-RUN residuals named in CLAUDE.md reach no tracker while three siblings were registered by DOCS-COMPACT-6. Either complete the registration or state the rule that keeps platform residuals out of the matrix; the present split is neither. Substance in docs/reports/wave34-close/reconciliation.json."
+  }
+ ]
+}
