@@ -45,11 +45,15 @@ artifact. Only `contracts` and `source-effects` differ between them, which is
 the checkout-root class. So the cover derived from either is the same cover;
 the BEFORE gate below nonetheless targets the **ledger-named** baseline.
 
-`origin/main` was re-fetched before the final runs. At that point
-`JOINED-PROVENANCE-CALL-FRAMES` had **not** merged (`origin/main` was still at
-`60958bf0`), so no rebase was required and the baseline did not move under this
-card. **If it merges before this card does, the integrator must have the BEFORE
-re-run against the new baseline** — see §10.
+`origin/main` was fetched before the final runs and **again after the gate**.
+At the second fetch it had advanced to `b5cfc2cb`, but the seven new commits are
+`CARD-SCOPE-GUARD` (a reference-transaction guard on main) plus integrator
+corrections to wave-35 increment separation and to `AGENTS.md`'s stated
+follow-on count (121 → 128). **`JOINED-PROVENANCE-CALL-FRAMES` has still not
+merged**, so the **corpus baseline did not move**, this card's BEFORE remains
+the right BEFORE, and no re-run was required. That was checked, not assumed.
+**If that card merges before this one does, the integrator must have this
+card's BEFORE re-run against the new baseline** — see §10 item 3.
 
 ### 1.1 BEFORE reproduces the baseline byte for byte
 
@@ -535,7 +539,7 @@ it. Flagged for the close in §10 item 13.
 | `STANDALONE-HOST-CLOSED-INPUT-LOAD` | The brief-flagged host row failed once in-gate on a **1s wall-clock** assertion at load ~40 on 16 cores, and passed **12/12** in isolation at load 23.7–27.6 (§8.1). | Constraint 16's list gains it as a sixth row, **or** `e3d3a2ce`'s repair is reopened — either way the measurement lands somewhere. |
 
 **RETIREMENTS: none.** This card retires no residual and removes no
-`named_followups` entry. Nine names in all (**121 → 130** if none collides). Stated explicitly because the matrix's union merge
+`named_followups` entry. Nine names in all. Stated explicitly because the matrix's union merge
 loses unnamed removals.
 
 ---
@@ -598,7 +602,7 @@ not.
    are my choices; overrule either if the corpus has a convention I missed
    (`W36-CTRACES-FAMILY-FIRST`).
 9. **Nine residuals in §9 reach no tracker yet.** `--residuals` will list them.
-   Please add all nine to `named_followups` (**121 → 130** if none collides);
+   Please add all nine to `named_followups` (**128 → 137** if none collides — 128, not the brief's 121, per the integrator's own correction `b5cfc2cb` landed after this card branched);
    `W36-COVER-HIDDEN-BLOCKER`, `KAFKA-MEM-FREE-SUMMARY-CONFLICT` and
    `LIBC-MEM-RESULT-ALIAS` are the three I would keep visible — the first
    because it bounds what any future cover card may promise, the second because
@@ -607,7 +611,7 @@ not.
 10. **The acceptance matrix was deliberately NOT regenerated**, on
     `W31-CORPUS-CONTRACTS-2`'s precedent — that card, the directly analogous
     declarative arbiter, touched neither `acceptance_matrix.json` nor
-    `build_matrix.py`. `named_followups` is therefore still at **121** in the
+    `build_matrix.py`. `named_followups` is therefore still at the integrator's corrected **128** in the
     tree and the nine names in §9 are carried by this report and the increment
     record only, which is the half of the `DOCS-COMPACT-4`/`-5` defect the
     `--residuals` sweep exists to catch. Two matrix fields worth a glance at the
