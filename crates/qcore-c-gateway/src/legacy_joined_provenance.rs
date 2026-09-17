@@ -693,11 +693,61 @@ mod tests {
             (1..=bound).contains(&rounds),
             "settled at round {rounds} of {bound}"
         );
+        // The reported round is **exact**, not merely in range: it is the least
+        // cap under which this graph settles. Without both halves an off-by-one
+        // in the count is invisible, since a cap one too generous still
+        // converges and a cap two too small still declines.
+        assert!(
+            matches!(
+                iterate(&cfg, &reachable, &sites, rounds),
+                Settled::Converged { .. }
+            ),
+            "the reported round must itself be a sufficient cap"
+        );
+        assert_eq!(
+            iterate(&cfg, &reachable, &sites, rounds - 1),
+            Settled::Declined,
+            "and one round less must not be, or {rounds} is not the settling round"
+        );
         assert_eq!(
             solution[3].get(&7),
             Some(&BTreeSet::from(["p".to_string()])),
             "{solution:?}"
         );
+    }
+
+    #[test]
+    fn a_produced_site_counts_toward_the_bound() {
+        // `created_sites` reads both site-creating instructions. A contracted
+        // call's `produced_sites` are sites the sweep's `present` component can
+        // carry exactly as an `Acquire`'s are, so leaving them out would
+        // under-count the universe the proved budget is computed from — and the
+        // budget would no longer bound the iteration it is claimed to bound.
+        let mut cfg = cyclic_cfg(0);
+        cfg.nodes[1].instruction = LegacyInstruction::ContractCall {
+            function: "callee".to_string(),
+            destination: Some("q".to_string()),
+            arguments: Vec::new(),
+            contract: ResourceFunctionContract::new(
+                [],
+                ResourceReturnMode::Owned { nullable: false },
+            ),
+            produced_sites: vec![9],
+            aggregate_reads: Vec::new(),
+            aggregate_consumed: Vec::new(),
+            aggregate_addresses: Vec::new(),
+            alias_reads: Vec::new(),
+            nested: None,
+        };
+        cfg.conditional_names.insert("q".to_string());
+        let reachable = BTreeSet::from([0, 1, 2, 3]);
+        assert_eq!(
+            created_sites(&cfg, &reachable),
+            BTreeSet::from([7, 9]),
+            "the produced site must be in the universe the bound is computed from"
+        );
+        // Two sites and two names, over four nodes: 4 * (1 + 2 * (1 + 2)).
+        assert_eq!(round_bound(&cfg, &reachable), 4 * (1 + 2 * 3));
     }
 
     #[test]
