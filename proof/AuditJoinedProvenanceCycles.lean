@@ -1,0 +1,8 @@
+import QCore.JoinedProvenanceCycles
+#print axioms QCore.JoinedProvenanceCycles.fixed_point_is_sound
+#print axioms QCore.JoinedProvenanceCycles.weakening_stays_sound
+#print axioms QCore.JoinedProvenanceCycles.claiming_nothing_is_sound
+#print axioms QCore.JoinedProvenanceCycles.meet_satisfies_the_inequality
+#print axioms QCore.JoinedProvenanceCycles.acyclic_solution_is_unique
+#print axioms QCore.JoinedProvenanceCycles.steps_increase_rank
+#print axioms QCore.JoinedProvenanceCycles.an_off_cycle_node_does_not_return

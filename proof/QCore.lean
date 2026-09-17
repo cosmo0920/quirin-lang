@@ -171,4 +171,6 @@ import QCore.SocketEventCompose
 import QCore.SocketFootprint
 import QCore.ReturnCallCustody
 import QCore.ConstantDoWhile
+import QCore.JoinedProvenanceCycles
+
 /-! The executable formal core of QCore-C revision 0.1. -/
