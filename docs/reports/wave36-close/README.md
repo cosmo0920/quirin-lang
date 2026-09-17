@@ -622,6 +622,21 @@ card. These are this close's, and each is in a commit message.
   written** — the rule being new is not a defence, and the miss is the reason
   §9's carry is stated as *fifteen entries over eight names*, in both numbers,
   rather than as a single total.
+* **A confirmation re-run of this close's own gate destroyed the evidence of the
+  run it was confirming, and then filled the disk.** The gate script wrote to
+  fixed paths under `measure/`; re-launching it truncated `cargo-test.log`, and
+  the second run died at 79 of 233 summaries with `cargo test` exit **101** when
+  the filesystem reached 100% (621 GB, 0 available). So for a period this report
+  cited a workspace figure whose log no longer existed. **Neither the exit nor
+  the partial log was interpreted** — a gate that ran out of disk measures the
+  disk, not the tree — and the response was to discard it, free 44 GB by
+  removing this worktree's own `target/` (no log has ever lived there; they are
+  all under `measure/`, per `CLAUDE.md`), make the gate's outputs **run-scoped**
+  so a re-run can no longer eat the run it is checking, and re-measure from
+  scratch. §13's figures are that clean run's. The killing was done **by PID,
+  after reading `/proc/<pid>/cwd` to confirm each process was this worktree's**,
+  which is the rule §6.5 landed earlier in this same close — written for a card
+  that killed a sibling's gate, and applied here within the hour.
 
 To which this close adds, from §4.2: **five defects in its own reconciliation
 record**, four of them evidence claims and one a missing claim entirely. They

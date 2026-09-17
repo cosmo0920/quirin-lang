@@ -165,6 +165,15 @@ the operational guidance that is in neither of those.
   overwrite was caught and re-measured during wave 15; a wave-17 card lost a
   whole providers run to its own `cargo clean` because the log lived under
   `target/`.
+  **Scope a gate run's outputs to the run** (`measure/<run-name>/…`), never to
+  fixed paths. At the wave-36 close a *confirmation* re-run truncated the
+  `cargo-test.log` of the run it was confirming, then died at 79 of 233
+  summaries with exit 101 when the filesystem hit 100% — so a published figure
+  briefly had no log behind it. The re-run is the dangerous case precisely
+  because it is meant to change nothing. A gate that runs out of disk measures
+  the disk: **discard it, do not interpret it**, and re-measure after freeing
+  space (this worktree's own `target/` is the thing to remove, which is safe
+  exactly because no log lives there).
 - **A mutation harness restores by rewriting, never by an mtime-preserving
   copy.** `shutil.copy2` restores the backup's timestamp, which leaves
   cargo's fingerprint from the mutant build *newer* than the restored
