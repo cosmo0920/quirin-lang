@@ -422,8 +422,9 @@ Run at the card's tip. Commands and results:
 | `cargo test --workspace --no-fail-fast` | see §9.1 |
 | `cargo fmt --all -- --check` | clean |
 | `cargo clippy --all-targets -- -D warnings` | clean |
-| `cargo run -p qcore-compiler --example reevaluation_probe` | see §9.1 |
-| `cargo run -p qcore-compiler --example reevaluation_followup` | see §9.1 |
+| `cargo run -p qcore-compiler --example reevaluation_probe` | **exit 0** |
+| `cargo run -p qcore-compiler --example reevaluation_followup` | **exit 0** |
+| `python3 -m unittest discover -s scripts/tests` | **274 tests, OK** |
 | `python3 scripts/check_lean_audits.py` | **133 audits, exit 0** |
 
 Card-local suites: `compiler/tests/write_lend_tasks_exercise.rs` **16 tests**,
