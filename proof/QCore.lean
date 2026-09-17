@@ -173,6 +173,7 @@ import QCore.SocketEventCompose
 import QCore.SocketFootprint
 import QCore.ReturnCallCustody
 import QCore.ConstantDoWhile
+import QCore.ScalarRouteExitEdge
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceCallFrames
 
