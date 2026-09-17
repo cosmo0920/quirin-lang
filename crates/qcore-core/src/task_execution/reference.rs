@@ -14,7 +14,10 @@ pub enum ScalarValue {
     /// lease-relative byte index means nothing without the base it counts
     /// from, and the base is the one fact the holder must not be able to
     /// choose.
-    WriteLease { resource: ResourceId, low: u64 },
+    WriteLease {
+        resource: ResourceId,
+        low: u64,
+    },
 }
 impl ScalarValue {
     fn outcome(self) -> Result<TaskOutcome, String> {
@@ -23,9 +26,7 @@ impl ScalarValue {
             Self::I32(value) => Ok(TaskOutcome::I32(value)),
             Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
             Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
-            Self::WriteLease { .. } => {
-                Err("a write lease is not a reference outcome".into())
-            }
+            Self::WriteLease { .. } => Err("a write lease is not a reference outcome".into()),
         }
     }
 }
@@ -221,10 +222,7 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
 /// The value a byte access names, read straight out of the slot. `scalar`'s
 /// `Move` arm deliberately admits only an owned buffer, so it cannot be reused
 /// here: a lease is neither moved nor copied by being exercised.
-fn authority_value(
-    slots: &BTreeMap<SlotId, Value>,
-    slot: SlotId,
-) -> Result<ScalarValue, String> {
+fn authority_value(slots: &BTreeMap<SlotId, Value>, slot: SlotId) -> Result<ScalarValue, String> {
     match slots.get(&slot) {
         Some(Value::Scalar(
             value @ (ScalarValue::OwnedBuffer(_)
@@ -473,30 +471,29 @@ impl Runtime<'_> {
                             index,
                             value_slot,
                         } => {
-                            let (resource, offset) =
-                                match authority_value(&slots, *authority)? {
-                                    ScalarValue::WriteLease { resource, low } => {
-                                        (resource, byte_offset(&slots, index, low)?)
-                                    }
-                                    ScalarValue::OwnedBuffer(resource) => {
-                                        // Independently of the checker: the
-                                        // owner's byte read takes the same
-                                        // ledger gate its whole-payload read
-                                        // takes, so a lease outstanding
-                                        // refuses it here too.
-                                        self.ledger
-                                            .read_resource(task, resource)
-                                            .map_err(|e| format!("{e:?}"))?;
-                                        (resource, byte_offset(&slots, index, 0)?)
-                                    }
-                                    _ => {
-                                        return Err(
-                                            "reference byte read requires an owner or a write \
+                            let (resource, offset) = match authority_value(&slots, *authority)? {
+                                ScalarValue::WriteLease { resource, low } => {
+                                    (resource, byte_offset(&slots, index, low)?)
+                                }
+                                ScalarValue::OwnedBuffer(resource) => {
+                                    // Independently of the checker: the
+                                    // owner's byte read takes the same
+                                    // ledger gate its whole-payload read
+                                    // takes, so a lease outstanding
+                                    // refuses it here too.
+                                    self.ledger
+                                        .read_resource(task, resource)
+                                        .map_err(|e| format!("{e:?}"))?;
+                                    (resource, byte_offset(&slots, index, 0)?)
+                                }
+                                _ => {
+                                    return Err(
+                                        "reference byte read requires an owner or a write \
                                              lease"
-                                                .into(),
-                                        );
-                                    }
-                                };
+                                            .into(),
+                                    );
+                                }
+                            };
                             let payload = *self
                                 .buffers
                                 .get(&resource)

@@ -1622,8 +1622,7 @@ impl<'a> Builder<'a> {
                  whole payload, and a read share grants no write authority",
             ));
         }
-        let (index, index_kind) =
-            self.scalar_operand(&tokens[commas[0] + 1..commas[1]], span)?;
+        let (index, index_kind) = self.scalar_operand(&tokens[commas[0] + 1..commas[1]], span)?;
         if index_kind != Scalar::I32 {
             return Err(self.bad(span, "a byte index must be an i32"));
         }
@@ -1662,7 +1661,10 @@ impl<'a> Builder<'a> {
         let close = matching(tokens, 1, Symbol::LeftParen, Symbol::RightParen)
             .filter(|close| *close == tokens.len().saturating_sub(1))
             .ok_or_else(|| {
-                self.bad(span, "a byte read requires one exact name and one byte index")
+                self.bad(
+                    span,
+                    "a byte read requires one exact name and one byte index",
+                )
             })?;
         let target = name(tokens.get(2))
             .filter(|_| comma == 3)

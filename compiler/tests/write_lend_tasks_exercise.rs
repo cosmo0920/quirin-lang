@@ -12,12 +12,21 @@
 //!
 //! This file is the claim that sentence withheld. Two threads write distinct
 //! bytes of one `int32_t` payload — distinct memory locations in the sense of
-//! C11 3.14, so not a data race — under AddressSanitizer, UndefinedBehaviorSanitizer,
-//! LeakSanitizer and ThreadSanitizer, with the native stdout compared byte for
-//! byte against the reference execution's own rendering.
+//! C11 3.14, so not a data race — under AddressSanitizer,
+//! UndefinedBehaviorSanitizer and LeakSanitizer, with the native stdout
+//! compared byte for byte against the reference execution's own rendering.
+//!
+//! **ThreadSanitizer is not part of that evidence**, and the reason is
+//! measured rather than assumed: TSan cannot run *any* program this route
+//! emits on this toolchain, the lease-free companion included, so there is no
+//! TSan row to report. See
+//! `thread_sanitizer_cannot_run_this_routes_programs_lease_or_not` and the
+//! residual `TASK-ROUTE-TSAN-SEGV`.
 
 use qcore_compiler::{CompileOptions, CompiledModule, SourceFile, compile_files};
-use qcore_core::task_execution::{TaskExecutionScript, execute_with_source_lines};
+use qcore_core::task_execution::{
+    TaskExecutionObservation, TaskExecutionScript, execute_with_source_lines,
+};
 use std::collections::BTreeMap;
 use std::process::Command;
 
@@ -49,6 +58,42 @@ fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block
             let a = join move first?;
             let b = join move second?;
             let byte0 = qcore_buffer_read(buffer, 0);
+            let byte2 = qcore_buffer_read(buffer, 2);
+            drop buffer;
+            return byte2;
+          }
+          Result::Err { error: refused } => {
+            let a = join move first?;
+            drop buffer;
+            return a;
+          }
+        }
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 0;
+      }
+    }
+  }
+}";
+
+/// The flagship without its `log_level`, so it stays on the plain scoped-task
+/// route and its reference run is an ordinary `TaskExecutionObservation` — the
+/// shape `reference_trace` consumes.
+const NO_LEASE_FREE_EXERCISE: &str = "import std.concurrency; concurrency checked;
+fn writer(half: lend<Buffer>) -> i32 {
+  let done = qcore_buffer_write(half, 0, 9);
+  return 1;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(0)?;
+  thread scope s {
+    match spawn s writer(lend buffer 0..2) {
+      Result::Ok { value: first } => {
+        match spawn s writer(lend buffer 2..4) {
+          Result::Ok { value: second } => {
+            let a = join move first?;
+            let b = join move second?;
             let byte2 = qcore_buffer_read(buffer, 2);
             drop buffer;
             return byte2;
@@ -155,9 +200,7 @@ fn assert_refused(source: &str, fragment: &str) -> String {
     let hit = found
         .iter()
         .find(|(_, message)| message.contains(fragment))
-        .unwrap_or_else(|| {
-            panic!("expected a refusal containing {fragment:?}, got: {found:?}")
-        });
+        .unwrap_or_else(|| panic!("expected a refusal containing {fragment:?}, got: {found:?}"));
     hit.0.clone()
 }
 
@@ -210,7 +253,10 @@ fn each_worker_writes_its_own_rebased_byte_and_the_owner_reads_them_back() {
          QCORE_BUFFER_DROP 0 1\n\
          QCORE_TASK_RESULT 0 I32 9\n"
     );
-    assert!(err.is_empty(), "the flagship writes no source line: {err:?}");
+    assert!(
+        err.is_empty(),
+        "the flagship writes no source line: {err:?}"
+    );
     // Constraint 15a: every line is the parent's, so the comparison below is
     // the strict byte one and not the reordering relation.
     assert!(
@@ -251,9 +297,18 @@ fn a_computed_index_is_not_provably_inside_its_lease() {
             "  let done = qcore_buffer_write(half, 0, 9);",
             "  let done = qcore_buffer_write(half, at, 9);",
         )
-        .replace("  let buffer = qcore_buffer_new(0)?;", "  let at = 0;\n  let buffer = qcore_buffer_new(0)?;")
-        .replace("writer(lend buffer 0..2)", "writer(lend buffer 0..2, copy at)")
-        .replace("writer(lend buffer 2..4)", "writer(lend buffer 2..4, copy at)");
+        .replace(
+            "  let buffer = qcore_buffer_new(0)?;",
+            "  let at = 0;\n  let buffer = qcore_buffer_new(0)?;",
+        )
+        .replace(
+            "writer(lend buffer 0..2)",
+            "writer(lend buffer 0..2, copy at)",
+        )
+        .replace(
+            "writer(lend buffer 2..4)",
+            "writer(lend buffer 2..4, copy at)",
+        );
     let code = assert_refused(&source, "must be a check-time constant");
     assert_eq!(code, "Q600");
 }
@@ -354,6 +409,113 @@ fn overlapping_ranges_still_refuse_when_both_workers_write() {
     );
 }
 
+// ---------------------------------------------------------------- leg 4: the
+// F02 alphabet decision.
+
+/// **`TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`, decided: the alphabet does not
+/// grow.** Wave 32 left open whether the F02 observable alphabet should carry
+/// leases once a worker exercised its authority. It now does, and the answer
+/// is still no, on a ground the exercise itself supplies rather than on the
+/// absence of one: `AdmittedCausalOrder` is a **sequence**, so to admit a run
+/// it must state one causal order over its events, and two workers holding
+/// disjoint leases write their bytes with no causal edge between them and no
+/// synchronization until their joins. Any order the alphabet could carry would
+/// assert an ordering the run does not have — the situation constraint 15a
+/// answers with a window-and-emitter relation, and the opposite of F02's
+/// premise.
+///
+/// So the byte events join the lease events on the refusing side. This test
+/// drives that arm **on its own**, on a synthetic observation carrying a byte
+/// write and no lease event, so the arm is exercised rather than shadowed by
+/// the lease refusal that would always precede it in a real run.
+#[test]
+fn the_byte_events_are_outside_the_f02_alphabet() {
+    use qcore_core::scoped_tasks::TaskOutcome;
+    use qcore_core::task_execution::{TaskEvent, TaskObservation};
+    use qcore_core::task_trace_relation::reference_trace;
+    let byte_write = TaskExecutionObservation {
+        root_outcome: TaskOutcome::I32(0),
+        tasks: vec![TaskObservation {
+            task: 0,
+            function: 0,
+            parent: None,
+            arguments: vec![],
+            outcome: TaskOutcome::I32(0),
+            joined: true,
+        }],
+        events: vec![
+            TaskEvent::BufferAllocated {
+                task: 0,
+                buffer: 1,
+                initial: 0,
+            },
+            TaskEvent::BufferByteWritten {
+                task: 0,
+                buffer: 1,
+                index: 2,
+                byte: 9,
+            },
+        ],
+    };
+    let refused =
+        reference_trace(&byte_write).expect_err("a byte write is outside the observable alphabet");
+    // The index a refusal carries is the offending event's own position —
+    // wave 32's `refusal_points_at_a_refused_event`, holding for this
+    // constructor too.
+    assert!(
+        format!("{refused:?}").contains("index: 1"),
+        "the refusal must name the byte event's own position: {refused:?}"
+    );
+
+    // And the byte *read* refuses on its own footing, not only beside a write.
+    let byte_read = TaskExecutionObservation {
+        events: vec![TaskEvent::BufferByteRead {
+            task: 0,
+            buffer: 1,
+            index: 0,
+            byte: 0,
+        }],
+        ..byte_write
+    };
+    assert!(reference_trace(&byte_read).is_err());
+}
+
+/// The decision's other half, measured rather than asserted: a real exercised
+/// program could never have reached F02 comparison anyway, because a byte
+/// write is only reachable through a lease and the lease event refuses first.
+/// Growing the alphabet by the byte events *alone* would therefore have
+/// decided nothing — which is why the decision had to be taken on the causal
+/// -order ground above and not on reachability.
+#[test]
+fn a_real_exercised_program_refuses_at_its_lease_before_its_byte_write() {
+    use qcore_core::task_execution::{TaskEvent, execute_task_module};
+    use qcore_core::task_trace_relation::reference_trace;
+    let module = compiled(NO_LEASE_FREE_EXERCISE);
+    let observation = execute_task_module(
+        module.checked.as_scoped_tasks().unwrap(),
+        &TaskExecutionScript {
+            spawn_outcomes: vec![true, true],
+            allocation_outcomes: vec![true],
+        },
+    )
+    .unwrap();
+    let lease_at = observation
+        .events
+        .iter()
+        .position(|e| matches!(e, TaskEvent::BufferLeased { .. }))
+        .expect("an exercised program carries a lease event");
+    let byte_at = observation
+        .events
+        .iter()
+        .position(|e| matches!(e, TaskEvent::BufferByteWritten { .. }))
+        .expect("an exercised program carries a byte write");
+    assert!(
+        lease_at < byte_at,
+        "a byte write is only reachable through a lease, so the lease event is earlier"
+    );
+    assert!(reference_trace(&observation).is_err());
+}
+
 // ---------------------------------------------------------------- leg 2: the
 // emission.
 
@@ -366,9 +528,7 @@ fn the_emitted_worker_writes_one_byte_at_its_leases_base() {
     let module = compiled(DISJOINT_EXERCISE);
     let source = module.c_source.as_ref().unwrap();
     assert!(
-        source.contains(
-            "((unsigned char *)&buffer->payload)[index] = byte;"
-        ),
+        source.contains("((unsigned char *)&buffer->payload)[index] = byte;"),
         "the byte helper must write one object, not a read-modify-write of the payload"
     );
     // The worker's own access: base from the lease slot's scalar field.
@@ -384,8 +544,14 @@ fn the_emitted_worker_writes_one_byte_at_its_leases_base() {
     assert!(source.contains("(struct qcore_task_value){INT32_C(2), s_"));
     // The owner's byte reads are based at the literal 0, never at a slot.
     assert_eq!(
-        source.matches("qcore_buffer_byte_read(s_4.value.buffer, UINT64_C(0) + UINT64_C(0), context)").count()
-            + source.matches("qcore_buffer_byte_read(s_4.value.buffer, UINT64_C(0) + UINT64_C(2), context)").count(),
+        source
+            .matches("qcore_buffer_byte_read(s_4.value.buffer, UINT64_C(0) + UINT64_C(0), context)")
+            .count()
+            + source
+                .matches(
+                    "qcore_buffer_byte_read(s_4.value.buffer, UINT64_C(0) + UINT64_C(2), context)"
+                )
+                .count(),
         2,
         "the owner's base is the literal zero:\n{source}"
     );
@@ -426,10 +592,8 @@ fn run_native(
     sanitizers: &str,
     mutate: impl Fn(String) -> String,
 ) -> Result<Native, String> {
-    let directory = std::env::temp_dir().join(format!(
-        "qcore-wlt-exercise-{tag}-{}",
-        std::process::id()
-    ));
+    let directory =
+        std::env::temp_dir().join(format!("qcore-wlt-exercise-{tag}-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let c = directory.join("module.c");
     let executable = directory.join("module");
@@ -528,13 +692,17 @@ static void lease_free(void *p) { fprintf(stderr, "LEASE_FREE %p\n", p); free(p)
 fn two_threads_write_disjoint_bytes_of_one_object_sanitized() {
     let module = compiled(DISJOINT_EXERCISE);
     let (out, err) = reference(&module);
-    let native = run_native("asan", &module, "address,undefined", |c| c)
-        .unwrap_or_else(|stderr| panic!("the exercised program failed under ASan/UBSan:\n{stderr}"));
+    let native = run_native("asan", &module, "address,undefined", |c| c).unwrap_or_else(|stderr| {
+        panic!("the exercised program failed under ASan/UBSan:\n{stderr}")
+    });
     assert_eq!(
         native.stdout, out,
         "native stdout and the reference rendering disagree"
     );
-    assert_eq!(native.stderr, err, "native stderr and the reference disagree");
+    assert_eq!(
+        native.stderr, err,
+        "native stderr and the reference disagree"
+    );
     assert_eq!(native.allocated.len(), 1);
     assert_eq!(native.allocated, native.freed);
 }
@@ -617,8 +785,13 @@ fn a_write_one_byte_past_the_range_is_caught_and_we_say_by_what() {
     assert!(padding.stderr.is_empty(), "{padding:?}");
 
     // Far enough out to leave the allocation, and ASan names it.
-    let overflow = run_native("past-overflow", &module, "address,undefined", unguard_at(64))
-        .expect_err("a write past the allocation must not run clean");
+    let overflow = run_native(
+        "past-overflow",
+        &module,
+        "address,undefined",
+        unguard_at(64),
+    )
+    .expect_err("a write past the allocation must not run clean");
     assert!(
         overflow.contains("heap-buffer-overflow"),
         "AddressSanitizer should name the overflow:\n{overflow}"

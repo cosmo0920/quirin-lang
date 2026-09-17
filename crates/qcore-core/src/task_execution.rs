@@ -382,9 +382,11 @@ fn constant_index(state: &State, operand: &ScalarOperand) -> Result<u64, String>
             // reporting what it always reported; only a well-typed but
             // non-constant index reaches the refusal this card adds.
             state.value(other)?;
-            Err("a byte index must be a check-time constant, so a computed one is not \
+            Err(
+                "a byte index must be a check-time constant, so a computed one is not \
                  provably inside its authority (WRITE-LEND-COMPUTED-INDEX)"
-                .into())
+                    .into(),
+            )
         }
     }
 }
@@ -1005,8 +1007,7 @@ fn check_function(
                         let index = constant_index(&state, index)?;
                         match state.authority(*authority)? {
                             ByteAuthority::Lease => {
-                                lease_footprint =
-                                    Some(lease_footprint.unwrap_or(0).max(index + 1));
+                                lease_footprint = Some(lease_footprint.unwrap_or(0).max(index + 1));
                             }
                             // The owner's whole-payload write stays its only
                             // write footprint in this slice: admitting an
@@ -1015,12 +1016,10 @@ fn check_function(
                             // owner holds no whole-payload authority while a
                             // lease is out" rule was never measured against.
                             ByteAuthority::Owner => {
-                                return Err(
-                                    "the whole-payload write is the owner's only write \
+                                return Err("the whole-payload write is the owner's only write \
                                      footprint; a byte write requires a lend<Buffer> \
                                      (WRITE-LEND-EXERCISE-OWNER-BYTE-WRITE)"
-                                        .into(),
-                                );
+                                    .into());
                             }
                             ByteAuthority::Loan => {
                                 return Err(
@@ -1039,8 +1038,7 @@ fn check_function(
                         let index = constant_index(&state, index)?;
                         match state.authority(*authority)? {
                             ByteAuthority::Lease => {
-                                lease_footprint =
-                                    Some(lease_footprint.unwrap_or(0).max(index + 1));
+                                lease_footprint = Some(lease_footprint.unwrap_or(0).max(index + 1));
                             }
                             ByteAuthority::Owner => {
                                 // Exactly the whole-payload read's gate, so a
@@ -1056,11 +1054,9 @@ fn check_function(
                                 }
                             }
                             ByteAuthority::Loan => {
-                                return Err(
-                                    "a read share admits the whole-payload read only \
+                                return Err("a read share admits the whole-payload read only \
                                      (WRITE-LEND-EXERCISE-LOAN-BYTE-READ)"
-                                        .into(),
-                                );
+                                    .into());
                             }
                         }
                         state.bind(

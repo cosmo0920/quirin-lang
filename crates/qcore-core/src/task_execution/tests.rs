@@ -697,3 +697,163 @@ fn task_buffer_namespaces_do_not_wrap_or_reuse_zero_generation() {
         reference::buffer_identity(2, 1).unwrap()
     );
 }
+
+// ---------------------------------------------------------------------------
+// Card `WRITE-LEND-TASKS-EXERCISE`: the byte-access arms the *source* route
+// refuses earlier, driven here at the IR so the backstops are exercised rather
+// than merely written. The frontend refuses each of these with its own message
+// before the IR is reached, so without these tests a green suite would be
+// evidence about the frontend's paths only — the mistake
+// `TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED` recorded and the
+// `STABILITY-REEVAL` cadence exists to catch.
+
+/// One function with the given parameters and body, as a whole module's entry.
+/// Every arm below is a refusal, so the entry never has to be runnable.
+fn byte_access_function(
+    name: &str,
+    parameters: Vec<(SlotId, ScalarType)>,
+    instructions: Vec<TaskInstructionKind>,
+) -> TaskFunction {
+    use TaskTerminatorKind as T;
+    TaskFunction {
+        name: name.into(),
+        parameters,
+        result: ScalarType::I32,
+        errors: BTreeSet::new(),
+        error_payloads: BTreeSet::new(),
+        declared_effects: TaskEffects {
+            alloc: false,
+            spawn: false,
+            join: false,
+            may_block: false,
+        },
+        entry: 0,
+        span: span(),
+        blocks: [(
+            0,
+            block(
+                instructions,
+                T::Return {
+                    value: ScalarOperand::I32(0),
+                },
+            ),
+        )]
+        .into_iter()
+        .collect(),
+    }
+}
+
+/// A module whose entry is trivial and whose second function is the one under
+/// test — `check_task_module` checks every function, spawned or not.
+fn module_with_worker(worker: TaskFunction) -> TaskModule {
+    TaskModule {
+        entry: 1,
+        functions: [
+            (0, worker),
+            (1, byte_access_function("main", vec![], vec![])),
+        ]
+        .into_iter()
+        .collect(),
+        source_len: 2,
+    }
+}
+
+fn refusal(module: &TaskModule) -> String {
+    check_task_module(module)
+        .expect_err("expected a refusal")
+        .iter()
+        .map(|problem| problem.message.clone())
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// The owner's write footprint is the whole payload and nothing else: an owner
+/// byte write is refused in the IR, not only by the source reader
+/// (`WRITE-LEND-EXERCISE-OWNER-BYTE-WRITE`).
+#[test]
+fn the_ir_refuses_an_owner_byte_write() {
+    let module = module_with_worker(byte_access_function(
+        "worker",
+        vec![(0, ScalarType::OwnedBuffer)],
+        vec![TaskInstructionKind::WriteBufferByte {
+            authority: 0,
+            index: ScalarOperand::I32(0),
+            value: ScalarOperand::I32(9),
+        }],
+    ));
+    let message = refusal(&module);
+    assert!(
+        message.contains("the owner's only write footprint"),
+        "{message}"
+    );
+}
+
+/// A read share admits the whole-payload read and no byte view
+/// (`WRITE-LEND-EXERCISE-LOAN-BYTE-READ`), decided in the IR.
+#[test]
+fn the_ir_refuses_a_byte_read_through_a_read_share() {
+    let module = module_with_worker(byte_access_function(
+        "worker",
+        vec![(0, ScalarType::ReadLoan)],
+        vec![TaskInstructionKind::ReadBufferByte {
+            authority: 0,
+            index: ScalarOperand::I32(0),
+            value_slot: 1,
+        }],
+    ));
+    let message = refusal(&module);
+    assert!(
+        message.contains("a read share admits the whole-payload read only"),
+        "{message}"
+    );
+}
+
+/// A read share has no byte **write** either — the arm below the read one, and
+/// a different message, so neither stands in for the other.
+#[test]
+fn the_ir_refuses_a_byte_write_through_a_read_share() {
+    let module = module_with_worker(byte_access_function(
+        "worker",
+        vec![(0, ScalarType::ReadLoan)],
+        vec![TaskInstructionKind::WriteBufferByte {
+            authority: 0,
+            index: ScalarOperand::I32(0),
+            value: ScalarOperand::I32(9),
+        }],
+    ));
+    let message = refusal(&module);
+    assert!(
+        message.contains("a read share grants no write authority"),
+        "{message}"
+    );
+}
+
+/// A worker takes at most one write lease, so the footprint summary's
+/// single-authority reading is a fact rather than a convention.
+#[test]
+fn the_ir_refuses_a_second_write_lease_parameter() {
+    let module = module_with_worker(byte_access_function(
+        "worker",
+        vec![(0, ScalarType::WriteLease), (1, ScalarType::WriteLease)],
+        vec![],
+    ));
+    let message = refusal(&module);
+    assert!(message.contains("at most one write lease"), "{message}");
+}
+
+/// A byte past the payload's extent is refused for the owner, who holds all of
+/// it — the extent is re-decided in the IR and not only at the source.
+#[test]
+fn the_ir_refuses_an_owner_byte_read_past_the_extent() {
+    let module = module_with_worker(byte_access_function(
+        "worker",
+        vec![(0, ScalarType::OwnedBuffer)],
+        vec![TaskInstructionKind::ReadBufferByte {
+            authority: 0,
+            index: ScalarOperand::I32(BUFFER_PAYLOAD_BYTES as i32),
+            value_slot: 1,
+        }],
+    ));
+    let message = refusal(&module);
+    assert!(message.contains("outside the payload's"), "{message}");
+}
