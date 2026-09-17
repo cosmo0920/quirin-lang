@@ -1,0 +1,6547 @@
+{
+ "provenance": {
+  "statement_records": 88001,
+  "unit_ordinals": 171,
+  "units_assigned": 171,
+  "units_unassigned": 0
+ },
+ "coverage": {
+  "published_leaves": 18555,
+  "explained": 18554,
+  "unexplained": 1,
+  "multi_statement_leaves": 1964,
+  "functions": 3239,
+  "units": 171
+ },
+ "sole_blocked": {
+  "functions": 284,
+  "leaves": 833,
+  "single_shape_functions": 136,
+  "by_shape": [
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 13
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->..",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 12
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->.",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 12
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "[]",
+     "NoMember",
+     "CallArgument"
+    ],
+    "functions": 12
+   },
+   {
+    "shape": [
+     "AutomaticLocal",
+     "never-bound",
+     ".",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 11
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Scalar",
+     "CallArgument"
+    ],
+    "functions": 8
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->.",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 6
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 6
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Unresolved",
+     "AssignmentValue"
+    ],
+    "functions": 5
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "RecordPointer",
+     "CallArgument"
+    ],
+    "functions": 4
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->->",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "AggregateValued",
+     "CallArgument"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "*",
+     "NoMember",
+     "CallArgument"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "AutomaticLocal",
+     "may-bind",
+     "*",
+     "NoMember",
+     "ExpressionStatement"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "SinglePointer",
+     "AssignmentDestination"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Scalar",
+     "AssignmentValue"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->..",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 3
+   },
+   {
+    "shape": [
+     "UnreadableDeclarations",
+     "may-bind",
+     "->",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 2
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "[]",
+     "NoMember",
+     "AssignmentValue"
+    ],
+    "functions": 2
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "RecordPointer",
+     "AssignmentValue"
+    ],
+    "functions": 2
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->[]",
+     "NoMember",
+     "AssignmentValue"
+    ],
+    "functions": 2
+   },
+   {
+    "shape": [
+     "OutsideFunctionDeclarations",
+     "never-bound",
+     ".",
+     "Unresolved",
+     "CallArgument"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "UnreadableDeclarations",
+     "may-bind",
+     "->",
+     "Unresolved",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "AggregateValued",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "[]",
+     "NoMember",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "VoidPointer",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "OutsideFunctionDeclarations",
+     "never-bound",
+     ".",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "*",
+     "NoMember",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->->.",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     ".",
+     "SinglePointer",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "Scalar",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "Unresolved",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->",
+     "AggregateValued",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "UnreadableDeclarations",
+     "never-bound",
+     "->.",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "Scalar",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "UnreadableDeclarations",
+     "never-bound",
+     "->..",
+     "Unresolved",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "may-bind",
+     "->->.",
+     "Unresolved",
+     "AssignmentValue"
+    ],
+    "functions": 1
+   },
+   {
+    "shape": [
+     "Formal",
+     "never-bound",
+     "->",
+     "RecordPointer",
+     "AssignmentDestination"
+    ],
+    "functions": 1
+   }
+  ]
+ },
+ "co_blockers": {
+  "unmodeled call, aggregate or indirect access in branch condition": 2108,
+  "call to uncontracted function `X`": 1965,
+  "unresolved resource identity `X`": 1177,
+  "braced initializer, expression, or declaration is not modeled": 851,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 577,
+  "unsupported assignment expression": 494,
+  "unrecognized assignment destination": 390,
+  "unmodeled call, aggregate or indirect access in return expression": 372,
+  "unmodeled increment or decrement expression": 353,
+  "store through `X` without an out-parameter contract": 238,
+  "unmodeled call, aggregate or indirect access in loop condition": 174,
+  "C operator `X` requires type/operand analysis": 112,
+  "unmodeled call, aggregate or indirect access in switch expression": 72,
+  "nullable resource `X` used by a non-null contract": 61,
+  "unmodeled expression may mutate a formal resource identity": 58,
+  "unmodeled call, aggregate or indirect access in do-while condition": 26,
+  "local declaration may shadow a formal resource identity": 17,
+  "discarded owned result of resource API `X`": 9,
+  "nested call `X` inside a modeled call is outside the resource projection": 5,
+  "arguments do not match resource contract for `X`": 3
+ },
+ "predictions": [
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 34,
+   "functions_touched": 25,
+   "cleared": 11,
+   "exchanged": 0,
+   "unmoved": 14,
+   "cleared_functions": [
+    "librdkafka/nanopb/pb_encode.c/pb_ostream_from_buffer",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_assigned_partitions",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_avg",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_max",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_poll_idle_ratio_avg",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_rebalance_latency_avg",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_rebalance_latency_max",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_share_consumer_poll_idle_ratio_avg",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_share_time_between_poll_avg",
+    "librdkafka/rdkafka_telemetry_encode.c/calculate_share_time_between_poll_max",
+    "monkey-libevent/mk_core/mk_memory.c/mk_ptr_create"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 22,
+   "functions_touched": 16,
+   "cleared": 6,
+   "exchanged": 0,
+   "unmoved": 10,
+   "cleared_functions": [
+    "chunkio/chunkio.c/cio_set_log_level",
+    "librdkafka/lz4hc.c/LZ4_attach_HC_dictionary",
+    "librdkafka/lz4hc.c/LZ4_favorDecompressionSpeed",
+    "librdkafka/lz4hc.c/LZ4_setCompressionLevel",
+    "librdkafka/rdkafka.c/rd_kafka_set_log_level",
+    "monkey-libevent/mk_server/mk_lib.c/mk_http_status"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 70,
+   "functions_touched": 36,
+   "cleared": 4,
+   "exchanged": 2,
+   "unmoved": 30,
+   "cleared_functions": [
+    "librdkafka/rdbuf.c/rd_slice_widen",
+    "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_clear_last_err",
+    "librdkafka/rdkafka_conf.c/rd_kafka_confval_disable",
+    "monkey-libevent/mk_server/mk_http_parser.c/request_set"
+   ]
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 49,
+   "functions_touched": 47,
+   "cleared": 3,
+   "exchanged": 0,
+   "unmoved": 44,
+   "cleared_functions": [
+    "cmetrics/cmt_encode_opentelemetry.c/initialize_exponential_histogram_data_point_list",
+    "cmetrics/cmt_encode_opentelemetry.c/initialize_histogram_data_point_list",
+    "cmetrics/cmt_encode_opentelemetry.c/initialize_metric_list"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 8,
+   "cleared": 3,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": [
+    "ctraces/ctr_encode_opentelemetry.c/otel_span_set_name",
+    "ctraces/ctr_encode_opentelemetry.c/otel_span_set_trace_state",
+    "librdkafka/snappy.c/writer_set_expected_length"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 53,
+   "functions_touched": 47,
+   "cleared": 2,
+   "exchanged": 10,
+   "unmoved": 35,
+   "cleared_functions": [
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroup_destroy_array",
+    "librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopic_destroy_array"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 25,
+   "functions_touched": 19,
+   "cleared": 2,
+   "exchanged": 0,
+   "unmoved": 17,
+   "cleared_functions": [
+    "librdkafka/rdmap.c/rd_bytes_hash",
+    "librdkafka/rdunittest_fetcher.c/ut_set_types"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 15,
+   "functions_touched": 7,
+   "cleared": 2,
+   "exchanged": 1,
+   "unmoved": 4,
+   "cleared_functions": [
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_connects",
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_connects2"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 583,
+   "functions_touched": 269,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 268,
+   "cleared_functions": [
+    "librdkafka/rdkafka_fetcher.c/rd_kafkap_Fetch_reply_tags_set_topic_cnt"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 349,
+   "functions_touched": 91,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 90,
+   "cleared_functions": [
+    "ctraces/ctr_span.c/ctr_span_start_ts"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 102,
+   "functions_touched": 88,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 87,
+   "cleared_functions": [
+    "librdkafka/rdkafka_request.c/rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 68,
+   "functions_touched": 56,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 55,
+   "cleared_functions": [
+    "librdkafka/rdhdrhistogram.c/rd_hdr_countsIndex"
+   ]
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "never-bound",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 4,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": [
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_decoded_int64"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 8,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": [
+    "cmetrics/cmt_time.c/cmt_time_from_ns"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "AggregateValued",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 2,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": [
+    "ctraces/ctr_encode_opentelemetry.c/otel_span_set_kind"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": [
+    "ctraces/ctr_link.c/ctr_link_set_attributes"
+   ]
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": [
+    "chunkio/chunkio.c/cio_set_log_callback"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    ".",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 0,
+   "cleared_functions": [
+    "ctraces/ctr_encode_opentelemetry.c/destroy_id"
+   ]
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 0,
+   "cleared_functions": [
+    "librdkafka/rdkafka_admin.c/rd_kafka_admin_request_op_result_cb_set"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 1,
+   "exchanged": 0,
+   "unmoved": 0,
+   "cleared_functions": [
+    "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_coordinator_assigned_partitions"
+   ]
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1416,
+   "functions_touched": 710,
+   "cleared": 0,
+   "exchanged": 13,
+   "unmoved": 697,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1122,
+   "functions_touched": 352,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 352,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 904,
+   "functions_touched": 239,
+   "cleared": 0,
+   "exchanged": 12,
+   "unmoved": 227,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 795,
+   "functions_touched": 364,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 364,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 773,
+   "functions_touched": 506,
+   "cleared": 0,
+   "exchanged": 5,
+   "unmoved": 501,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 757,
+   "functions_touched": 342,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 342,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 571,
+   "functions_touched": 178,
+   "cleared": 0,
+   "exchanged": 2,
+   "unmoved": 176,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 454,
+   "functions_touched": 269,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 269,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 401,
+   "functions_touched": 240,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 239,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 387,
+   "functions_touched": 81,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 81,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 329,
+   "functions_touched": 103,
+   "cleared": 0,
+   "exchanged": 12,
+   "unmoved": 91,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 301,
+   "functions_touched": 164,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 164,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 300,
+   "functions_touched": 236,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 236,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 277,
+   "functions_touched": 228,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 228,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 259,
+   "functions_touched": 221,
+   "cleared": 0,
+   "exchanged": 3,
+   "unmoved": 218,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 258,
+   "functions_touched": 225,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 225,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 252,
+   "functions_touched": 98,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 98,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 243,
+   "functions_touched": 81,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 81,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 201,
+   "functions_touched": 87,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 87,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 196,
+   "functions_touched": 109,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 109,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 189,
+   "functions_touched": 87,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 87,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 171,
+   "functions_touched": 55,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 55,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 168,
+   "functions_touched": 73,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 73,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 152,
+   "functions_touched": 75,
+   "cleared": 0,
+   "exchanged": 3,
+   "unmoved": 72,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 152,
+   "functions_touched": 115,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 115,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 149,
+   "functions_touched": 80,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 80,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "*",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 138,
+   "functions_touched": 103,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 103,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 132,
+   "functions_touched": 74,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 74,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 127,
+   "functions_touched": 26,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 26,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 123,
+   "functions_touched": 48,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 48,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 119,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 117,
+   "functions_touched": 84,
+   "cleared": 0,
+   "exchanged": 4,
+   "unmoved": 80,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 112,
+   "functions_touched": 79,
+   "cleared": 0,
+   "exchanged": 3,
+   "unmoved": 76,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 112,
+   "functions_touched": 110,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 110,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "no-chain",
+    "-",
+    "-",
+    "-",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 108,
+   "functions_touched": 87,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 87,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 106,
+   "functions_touched": 48,
+   "cleared": 0,
+   "exchanged": 8,
+   "unmoved": 40,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 101,
+   "functions_touched": 156,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 156,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 95,
+   "functions_touched": 73,
+   "cleared": 0,
+   "exchanged": 2,
+   "unmoved": 71,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 95,
+   "functions_touched": 64,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 64,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 90,
+   "functions_touched": 51,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 51,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 89,
+   "functions_touched": 46,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 46,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 87,
+   "functions_touched": 78,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 77,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 87,
+   "functions_touched": 49,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 49,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 87,
+   "functions_touched": 62,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 62,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 84,
+   "functions_touched": 37,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 37,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "no-chain",
+    "-",
+    "-",
+    "-",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 80,
+   "functions_touched": 53,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 53,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 79,
+   "functions_touched": 73,
+   "cleared": 0,
+   "exchanged": 2,
+   "unmoved": 71,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 79,
+   "functions_touched": 38,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 38,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 78,
+   "functions_touched": 61,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 61,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 74,
+   "functions_touched": 48,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 48,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 72,
+   "functions_touched": 38,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 38,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 72,
+   "functions_touched": 50,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 49,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 71,
+   "functions_touched": 24,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 24,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 68,
+   "functions_touched": 57,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 57,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 65,
+   "functions_touched": 47,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 47,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 64,
+   "functions_touched": 33,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 33,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 63,
+   "functions_touched": 60,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 60,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 62,
+   "functions_touched": 43,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 43,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 58,
+   "functions_touched": 62,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 62,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 58,
+   "functions_touched": 32,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 32,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "never-bound",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 58,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 57,
+   "functions_touched": 43,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 43,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 54,
+   "functions_touched": 37,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 37,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 54,
+   "functions_touched": 16,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 16,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 53,
+   "functions_touched": 31,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 31,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 50,
+   "functions_touched": 45,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 44,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 50,
+   "functions_touched": 26,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 26,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 49,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 46,
+   "functions_touched": 35,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 35,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 46,
+   "functions_touched": 38,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 38,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 46,
+   "functions_touched": 17,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 17,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 46,
+   "functions_touched": 39,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 39,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 45,
+   "functions_touched": 35,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 35,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 44,
+   "functions_touched": 28,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 28,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "SinglePointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 42,
+   "functions_touched": 21,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 21,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 40,
+   "functions_touched": 24,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 24,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 40,
+   "functions_touched": 23,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 23,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 40,
+   "functions_touched": 27,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 27,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 39,
+   "functions_touched": 28,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 28,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 39,
+   "functions_touched": 29,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 29,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 38,
+   "functions_touched": 32,
+   "cleared": 0,
+   "exchanged": 3,
+   "unmoved": 29,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 38,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 37,
+   "functions_touched": 37,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 37,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 35,
+   "functions_touched": 20,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 20,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "*",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 35,
+   "functions_touched": 31,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 31,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 31,
+   "functions_touched": 15,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 15,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 31,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 31,
+   "functions_touched": 25,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 24,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 30,
+   "functions_touched": 16,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 16,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 25,
+   "functions_touched": 19,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 19,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 25,
+   "functions_touched": 18,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 18,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 25,
+   "functions_touched": 14,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 14,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 24,
+   "functions_touched": 15,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 15,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 24,
+   "functions_touched": 13,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 13,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 23,
+   "functions_touched": 21,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 21,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "AggregateValued",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 23,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 22,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 21,
+   "functions_touched": 13,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 13,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 21,
+   "functions_touched": 17,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 17,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 20,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 20,
+   "functions_touched": 13,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 13,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 19,
+   "functions_touched": 15,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 15,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 19,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 19,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 18,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 18,
+   "functions_touched": 12,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 12,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 18,
+   "functions_touched": 18,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 18,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "...",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 18,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 17,
+   "functions_touched": 15,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 15,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 17,
+   "functions_touched": 12,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 12,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 17,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 16,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 16,
+   "functions_touched": 10,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 10,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 15,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 15,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 15,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 15,
+   "functions_touched": 15,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 15,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 14,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 14,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 14,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 13,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 13,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 12,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 12,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 13,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 12,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 12,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 11,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 11,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 17,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 17,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 12,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 11,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 10,
+   "functions_touched": 24,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 24,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "VoidPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 9,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 9,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 9,
+   "functions_touched": 7,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 7,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "AggregateValued",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 100,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 100,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "Declaration"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 8,
+   "functions_touched": 8,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 8,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "Declaration"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[].->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 7,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*->",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 6,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 6,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 6,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "*",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "VoidPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 5,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 5,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->...",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 5,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "AggregateValued",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "RecordPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 4,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[]->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "never-bound",
+    "[][]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    "[]",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->...->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[]->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[].->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 4,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 4,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.....",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->",
+    "VoidPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "AggregateValued",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 3,
+   "functions_touched": 3,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 3,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "VoidPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "OtherPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*->",
+    "Scalar",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "never-bound",
+    ".",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 1,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "OtherPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->...",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->..->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    ".[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "AggregateValued",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[].[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[].[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->[].[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->[]->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->->.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.....",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "AggregateValued",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[].->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "Unresolved",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "*[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->..->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "SinglePointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 2,
+   "functions_touched": 2,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 2,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "SinglePointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[]->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->[]->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "RecordPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "SinglePointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "AggregateValued",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "never-bound",
+    ".",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "CallResult",
+    "may-bind",
+    "[]",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[][]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[]",
+    "NoMember",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".->",
+    "RecordPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->->",
+    "OtherPointer",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->...[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->...[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->",
+    "OtherPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "OtherPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->[].[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "[]->->[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "*[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[].[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[].[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[].[].[].[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "[].->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    ".->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->->.",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[][]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->[].[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->.[].",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->.",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->...",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->.....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..->->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->..[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "never-bound",
+    "*",
+    "NoMember",
+    "ExpressionStatement"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "UnreadableDeclarations",
+    "may-bind",
+    "[]->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->->[].",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->.....",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->->..",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "...",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->...",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->..",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "OutsideFunctionDeclarations",
+    "may-bind",
+    "->",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "->....",
+    "Unresolved",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "never-bound",
+    "->->",
+    "Scalar",
+    "AssignmentDestination"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "[]->",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "..",
+    "Unresolved",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    ".",
+    "SinglePointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "RecordPointer",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "VoidPointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*->",
+    "SinglePointer",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "AutomaticLocal",
+    "may-bind",
+    "*.",
+    "Unresolved",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    "->->",
+    "AggregateValued",
+    "CallArgument"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  },
+  {
+   "shape": [
+    "Formal",
+    "may-bind",
+    ".[]",
+    "NoMember",
+    "AssignmentValue"
+   ],
+   "leaves_where_hardest": 1,
+   "functions_touched": 1,
+   "cleared": 0,
+   "exchanged": 0,
+   "unmoved": 1,
+   "cleared_functions": []
+  }
+ ]
+}

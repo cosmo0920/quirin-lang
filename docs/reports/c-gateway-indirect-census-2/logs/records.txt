@@ -1,0 +1,71 @@
+==============================================================================
+THE RECORD-BODY READER, MEASURED
+==============================================================================
+distinct record tags whose body the reader met: 909
+tags read differently in different units:       0
+tags the reader REFUSED WHOLE:                  173  (19.0%)
+
+the token that refused the body:
+         98   56.6%  {
+         66   38.2%  (
+          9    5.2%  :
+
+==============================================================================
+THE UNRESOLVED-MEMBER LEAVES, CROSSED WITH THE READER'S ANSWER
+==============================================================================
+leaves whose deciding chain ends at an Unresolved member: 13396
+  the reader committed to a record tag for the base:     2882
+  no tag at all (the BASE's type was not committed):     10514
+
+of the 2882 tagged Unresolved leaves, why:
+       2367   82.1%  record body REFUSED WHOLE on `{`
+        346   12.0%  record body REFUSED WHOLE on `(`
+        166    5.8%  record body read; this member is simply in no class
+          3    0.1%  record never declared in the units that use it
+
+the same, restricted to sole-blocked functions (97 leaves):
+         80   82.5%  record body REFUSED WHOLE on `{`
+         10   10.3%  record body REFUSED WHOLE on `(`
+          7    7.2%  record body read; this member is simply in no class
+          0    0.0%  record never declared in the units that use it
+
+top record tags by tagged Unresolved leaves:
+   leaves   sole  tag                                reader's answer
+      593     10  rd_kafka_s                         REFUSED on `{`
+      467      3  rd_kafka_broker_s                  REFUSED on `{`
+      226      6  rd_kafka_toppar_s                  REFUSED on `{`
+      226      4  rd_kafka_buf_s                     REFUSED on `{`
+      173      4  rd_kafka_op_s                      REFUSED on `{`
+      165     39  rd_kafka_mock_cluster_s            REFUSED on `{`
+       88      0  rd_kafka_topic_s                   REFUSED on `{`
+       83      0  rd_kafka_property                  REFUSED on `{`
+       77      0  plugin_api                         REFUSED on `(`
+       60      0  Opentelemetry__Proto__Metrics__V1_ REFUSED on `{`
+       56      0  cmt_opts                           read; member in no class
+       53      5  rd_kafka_transport_s               REFUSED on `{`
+       49      0  Opentelemetry__Proto__Common__V1__ REFUSED on `{`
+       49      0  mk_http_session                    REFUSED on `(`
+       38      0  cmt                                REFUSED on `(`
+       37      0  Opentelemetry__Proto__Metrics__V1_ REFUSED on `{`
+       37      0  rd_kafka_conf_s                    REFUSED on `{`
+       27      0  opentelemetry_decode_value         REFUSED on `{`
+       24      2  LZ4HC_CCtx_internal                REFUSED on `(`
+       23      2  mk_stream_input                    REFUSED on `(`
+
+==============================================================================
+CEILING FOR A PER-MEMBER RECORD READER
+==============================================================================
+This is an UPPER BOUND and nothing else. It counts a function only if
+it is sole-blocked and every statement of every leaf it holds is
+(a) non-exchanging and (b) barred by an Unresolved member on a record
+the reader refused WHOLE. It assumes, without measuring, that every
+such member would become classified AND that the resulting access
+would then be admitted. Both assumptions are generous; the second is
+the one constraint 5's premise governs, and 87.2%% of the sole-blocked
+leaves fail that premise, so the realised number will be far below.
+
+sole-blocked functions barred ONLY by a whole-body-refused record: 2
+  of those, every base also satisfies constraint 5's premise:      1
+  (the second number is the one an arbiter could pursue without
+   touching the premise the wave-17 fail-closed pin already caught)
+      librdkafka/nanopb/pb_encode.c/pb_ostream_from_buffer

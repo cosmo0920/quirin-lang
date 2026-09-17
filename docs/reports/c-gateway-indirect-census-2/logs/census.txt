@@ -1,0 +1,404 @@
+==============================================================================
+CENSUS PROVENANCE AND JOIN
+==============================================================================
+statement records streamed by the instrumented analyzer: 88001
+distinct translation-unit ordinals in the stream:        171
+leaf-carrying units in the published document:           171
+units the join assigned:                                 171
+units the join could NOT assign:                         0
+
+published `indirect memory access is outside the resource projection` leaves: 18555
+  explained by at least one census statement: 18554  (99.99%)
+  UNEXPLAINED:                                1  (0.01%)
+  leaves covering MORE THAN ONE refused statement: 1964  (10.6%)
+    (one preprocessed line, several statements: macro expansion.
+     Such a leaf clears only if every one of them is admitted.)
+  widest leaf: 15 statements at librdkafka/rdkafka_partition.c/rd_kafka_msgq_insert_msgq_before/20648
+functions carrying at least one such leaf: 3239
+units carrying at least one:               171
+
+==============================================================================
+DISTRIBUTION OVER THE CENSUS AXES
+  Counted per LEAF (the published unit of refusal). A leaf covering
+  several statements contributes its hardest one, because that is the
+  one an arbiter would have to clear.
+==============================================================================
+
+refusal site:
+      18539   99.9%  LexicalGate
+         15    0.1%  UnclassifiedStoreValue
+
+syntactic position (which side of the gate fired):
+       7910   42.6%  CallArgument
+       5520   29.8%  AssignmentValue
+       4939   26.6%  AssignmentDestination
+        170    0.9%  ExpressionStatement
+         15    0.1%  Declaration
+
+the refused statement contains a call:
+      11203   60.4%  True
+       7351   39.6%  False
+
+access chains in the refused statement:
+      14771   79.6%  1
+       1854   10.0%  2
+        964    5.2%  5
+        482    2.6%  3
+        295    1.6%  4
+        188    1.0%  0
+
+base kind of the deciding chain:
+       7996   43.1%  Formal
+       6330   34.1%  AutomaticLocal
+       2631   14.2%  UnreadableDeclarations
+       1209    6.5%  CallResult
+        200    1.1%  OutsideFunctionDeclarations
+        188    1.0%  no-chain
+
+CONSTRAINT 5's PREMISE — may this function bind that base to a resource identity?
+      17763   95.7%  may-bind
+        603    3.2%  NEVER-BOUND
+        188    1.0%  no-chain
+
+UntrackedBases::never_bound (the admission rules' own reading, which also requires the declaration reader to have succeeded):
+      14910   80.4%  risky-or-unreadable
+       3456   18.6%  never-bound
+        188    1.0%  no-chain
+
+chain depth:
+      12566   67.7%  1
+       3824   20.6%  2
+       1709    9.2%  3
+        199    1.1%  4
+        188    1.0%  no-chain
+         54    0.3%  5
+         13    0.1%  6
+          1    0.0%  7
+
+step spelling:
+      10260   55.3%  ->
+       1957   10.5%  ->.
+       1296    7.0%  ->->
+       1200    6.5%  ->..
+        859    4.6%  []
+        795    4.3%  *
+        652    3.5%  .
+        306    1.6%  ->[]
+        188    1.0%  no-chain
+        156    0.8%  ->->->
+        132    0.7%  ->->.
+        132    0.7%  [].
+         85    0.5%  ->[].
+         71    0.4%  ->...
+        465    2.5%  (57 further values)
+
+final member class:
+      13396   72.2%  Unresolved
+       2084   11.2%  NoMember
+       1051    5.7%  Scalar
+        544    2.9%  AggregateValued
+        494    2.7%  SinglePointer
+        455    2.5%  RecordPointer
+        214    1.2%  VoidPointer
+        188    1.0%  no-chain
+        128    0.7%  OtherPointer
+
+CROSS-TAB of the two readings of constraint 5's premise (FunctionTypes::may_bind vs UntrackedBases::never_bound):
+      14870   81.0%  may_bind=True  never_bound=False
+       2893   15.8%  may_bind=True  never_bound=True
+        563    3.1%  may_bind=False  never_bound=True
+         40    0.2%  may_bind=False  never_bound=False
+
+WHY a single `->` leaf is unresolved (depth-1 arrow leaves only, 10260 of them):
+       4943   48.2%  base type not committed (the reader would not commit to `struct TAG *`)
+       2783   27.1%  base committed, MEMBER not classified
+        850    8.3%  base committed, member classified as Scalar
+        523    5.1%  base committed, member classified as AggregateValued
+        444    4.3%  base committed, member classified as SinglePointer
+        411    4.0%  base committed, member classified as RecordPointer
+        187    1.8%  base committed, member classified as VoidPointer
+        119    1.2%  base committed, member classified as OtherPointer
+
+==============================================================================
+FUNCTIONS BLOCKED BY THIS FAMILY ALONE
+==============================================================================
+functions in the corpus carrying a leaf of this family: 3239
+functions whose ONLY blocker family is this one:         284
+leaves those functions hold: 833  (4.5% of the family's 18555)
+
+This is the card's central asymmetry, re-measured: the family's leaf
+mass and its function reach are nearly disjoint. An arbiter aimed at
+the leaf count clears leaves; only the sole-blocked set can be
+*decided* by this family alone.
+
+--- the same axes, restricted to the 833 leaves of the 284 sole-blocked functions ---
+
+position:
+        334   40.1%  AssignmentDestination
+        333   40.0%  CallArgument
+        159   19.1%  AssignmentValue
+          7    0.8%  ExpressionStatement
+
+contains a call, and is it contracted:
+        415   49.8%  UNCONTRACTED call
+        331   39.7%  no call
+         87   10.4%  contracted call
+
+constraint 5's premise (may_bind):
+        726   87.2%  may-bind
+        106   12.7%  NEVER-BOUND
+          1    0.1%  no-chain
+
+base kind:
+        525   63.0%  Formal
+        264   31.7%  AutomaticLocal
+         22    2.6%  CallResult
+         19    2.3%  UnreadableDeclarations
+          2    0.2%  OutsideFunctionDeclarations
+          1    0.1%  no-chain
+
+final member class:
+        510   61.2%  Unresolved
+        112   13.4%  NoMember
+         67    8.0%  Scalar
+         53    6.4%  AggregateValued
+         39    4.7%  SinglePointer
+         30    3.6%  RecordPointer
+         14    1.7%  OtherPointer
+          7    0.8%  VoidPointer
+          1    0.1%  no-chain
+
+step spelling:
+        494   59.3%  ->
+        107   12.8%  ->.
+         78    9.4%  *
+         57    6.8%  ->..
+         29    3.5%  .
+         25    3.0%  ->->
+         17    2.0%  []
+         11    1.3%  ->[]
+          4    0.5%  ->->[]
+          3    0.4%  ->->.
+          8    1.0%  (5 further values)
+
+top co-blockers, by how many of the 3239 functions carry them:
+       2108   23.0%  unmodeled call, aggregate or indirect access in branch condition
+       1965   21.4%  call to uncontracted function `X`
+       1177   12.8%  unresolved resource identity `X`
+        851    9.3%  braced initializer, expression, or declaration is not modeled
+        577    6.3%  unmodeled call, aggregate or indirect access in for-loop condition
+        494    5.4%  unsupported assignment expression
+        390    4.3%  unrecognized assignment destination
+        372    4.1%  unmodeled call, aggregate or indirect access in return expression
+        353    3.9%  unmodeled increment or decrement expression
+        238    2.6%  store through `X` without an out-parameter contract
+        174    1.9%  unmodeled call, aggregate or indirect access in loop condition
+        112    1.2%  C operator `X` requires type/operand analysis
+        351    3.8%  (107 further values)
+
+==============================================================================
+THE SOLE-BLOCKED FUNCTIONS, BY SHAPE
+==============================================================================
+sole-blocked functions with an unexplained leaf: 0
+sole-blocked functions whose every leaf-statement has ONE shape: 136  (47.9%)
+sole-blocked functions needing 2+ shapes admitted together:     148
+
+distinct shapes needed per sole-blocked function:
+        136   47.9%  1
+         85   29.9%  2
+         29   10.2%  3
+         18    6.3%  4
+         11    3.9%  5
+          5    1.8%  6
+
+single-shape sole-blocked functions, by that shape:
+   funcs  base kind | premise | steps | member | position
+      13  Formal | may-bind | -> | Unresolved | CallArgument
+      12  Formal | may-bind | ->.. | Unresolved | CallArgument
+      12  Formal | may-bind | ->. | Unresolved | CallArgument
+      12  Formal | may-bind | [] | NoMember | CallArgument
+      11  AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+       8  Formal | may-bind | -> | Scalar | CallArgument
+       6  Formal | never-bound | ->. | Unresolved | AssignmentDestination
+       6  Formal | never-bound | -> | Unresolved | AssignmentDestination
+       5  Formal | may-bind | -> | Unresolved | AssignmentValue
+       4  Formal | may-bind | -> | RecordPointer | CallArgument
+       3  Formal | may-bind | ->-> | Unresolved | CallArgument
+       3  Formal | may-bind | -> | AggregateValued | CallArgument
+       3  Formal | may-bind | * | NoMember | CallArgument
+       3  AutomaticLocal | may-bind | * | NoMember | ExpressionStatement
+       3  Formal | never-bound | -> | SinglePointer | AssignmentDestination
+       3  Formal | may-bind | -> | Scalar | AssignmentValue
+       3  Formal | never-bound | ->.. | Unresolved | AssignmentDestination
+       2  UnreadableDeclarations | may-bind | -> | Unresolved | CallArgument
+       2  Formal | never-bound | [] | NoMember | AssignmentValue
+       2  Formal | may-bind | -> | RecordPointer | AssignmentValue
+       2  Formal | may-bind | ->[] | NoMember | AssignmentValue
+       1  OutsideFunctionDeclarations | never-bound | . | Unresolved | CallArgument
+       1  UnreadableDeclarations | may-bind | -> | Unresolved | AssignmentValue
+       1  Formal | never-bound | -> | AggregateValued | AssignmentDestination
+       1  Formal | may-bind | [] | NoMember | AssignmentValue
+
+==============================================================================
+PREDICTED THREE-WAY SPLIT PER CANDIDATE SHAPE
+  (1) leaf-free   (2) exchanged for another refusal   (3) unmoved
+==============================================================================
+Method, stated so the numbers can be checked rather than believed.
+For a candidate shape S, take EVERY function carrying a leaf whose
+statements include shape S. It is predicted leaf-free only if:
+  - its only blocker family is this one; otherwise UNMOVED, because
+    another family still refuses it;
+  - every statement of every leaf it holds in this family has shape S;
+    otherwise UNMOVED, because the leaves S does not cover remain;
+  - and no such statement carries a call to an UNCONTRACTED function,
+    nor a second access chain of a different shape; otherwise
+    EXCHANGED, because admitting the access leaves the statement
+    facing the uncontracted-call gate, or a second access S does not
+    cover. A call the analyzer already has a contract for is NOT an
+    exchange: the statement's remaining decision is one the projection
+    can already make.
+The exchange test is a PROXY. It errs toward calling a function
+exchanged rather than cleared, so the CLEAR column is a lower bound on
+nothing and an upper bound on what a wave-37 arbiter could hope for;
+it is a scoping estimate, not a measurement of that arbiter's result.
+Shapes are ranked by predicted DECIDED FUNCTIONS, not by leaf mass —
+ranking by leaves is exactly the error this card exists to prevent.
+
+Ranked by predicted DECIDED functions. Top 12 by that measure, then
+the top 12 by leaf mass, so the gap between the two is visible.
+
+shape (ranked by CLEAR)                               leaves   funcs  CLEAR   exch  unmov
+AutomaticLocal | never-bound | . | Unresolved | Assi      34      25     11      0     14
+Formal | never-bound | ->. | Unresolved | Assignment      22      16      6      0     10
+Formal | never-bound | -> | Unresolved | AssignmentD      70      36      4      2     30
+AutomaticLocal | may-bind | * | NoMember | Expressio      49      47      3      0     44
+Formal | never-bound | -> | SinglePointer | Assignme      13       8      3      0      5
+Formal | may-bind | [] | NoMember | CallArgument          53      47      2     10     35
+Formal | never-bound | [] | NoMember | AssignmentVal      25      19      2      0     17
+Formal | never-bound | ->.. | Unresolved | Assignmen      15       7      2      1      4
+Formal | may-bind | -> | Unresolved | AssignmentDest     583     269      1      0    268
+Formal | may-bind | -> | Scalar | AssignmentDestinat     349      91      1      0     90
+Formal | may-bind | * | NoMember | AssignmentValue       102      88      1      0     87
+Formal | never-bound | -> | Unresolved | AssignmentV      68      56      1      0     55
+
+shape (ranked by LEAF MASS)                           leaves   funcs  CLEAR   exch  unmov
+Formal | may-bind | -> | Unresolved | CallArgument      1416     710      0     13    697
+AutomaticLocal | may-bind | -> | Unresolved | Assign    1122     352      0      0    352
+Formal | may-bind | ->. | Unresolved | CallArgument      904     239      0     12    227
+AutomaticLocal | may-bind | -> | Unresolved | CallAr     795     364      0      0    364
+Formal | may-bind | -> | Unresolved | AssignmentValu     773     506      0      5    501
+CallResult | may-bind | -> | Unresolved | CallArgume     757     342      0      0    342
+Formal | may-bind | -> | Unresolved | AssignmentDest     583     269      1      0    268
+UnreadableDeclarations | may-bind | -> | Unresolved      571     178      0      2    176
+AutomaticLocal | may-bind | -> | Unresolved | Assign     454     269      0      0    269
+UnreadableDeclarations | may-bind | -> | Unresolved      401     240      0      1    239
+UnreadableDeclarations | may-bind | -> | Unresolved      387      81      0      0     81
+Formal | may-bind | -> | Scalar | AssignmentDestinat     349      91      1      0     90
+
+totals over ALL 403 distinct shapes:
+   shapes deciding at least one function: 20
+   best single shape decides:             11 function(s)
+   union of every shape's cleared set:    45 function(s)
+
+==============================================================================
+PAIRS OF SHAPES ADMITTED TOGETHER
+==============================================================================
+148 of the 284 sole-blocked functions need two or more shapes admitted
+together before they hold no leaf, so a single-shape ranking
+understates what a two-shape arbiter could decide. The same discount
+is applied: a pair decides a function only if the function is
+sole-blocked, every statement of every leaf it holds has one of the
+two shapes, and none of them exchanges.
+
+best pairs, by functions decided:
+   17 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | never-bound | ->. | Unresolved | AssignmentDestination
+   15 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | never-bound | -> | Unresolved | AssignmentDestination
+   14 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: AutomaticLocal | may-bind | * | NoMember | ExpressionStatement
+   14 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | never-bound | -> | SinglePointer | AssignmentDestination
+   13 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | may-bind | [] | NoMember | CallArgument
+   12 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | may-bind | -> | Unresolved | AssignmentDestination
+   12 functions
+      A: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+      B: Formal | may-bind | -> | Scalar | AssignmentDestination
+   11 functions
+      A: Formal | may-bind | -> | Unresolved | CallArgument
+      B: AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination
+
+Shapes predicted to clear at least one function, with the functions:
+  AutomaticLocal | never-bound | . | Unresolved | AssignmentDestination  ->  11 function(s)
+      librdkafka/nanopb/pb_encode.c/pb_ostream_from_buffer
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_assigned_partitions
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_avg
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_max
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_poll_idle_ratio_avg
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_rebalance_latency_avg
+      librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_rebalance_latency_max
+      librdkafka/rdkafka_telemetry_encode.c/calculate_share_consumer_poll_idle_ratio_avg
+      librdkafka/rdkafka_telemetry_encode.c/calculate_share_time_between_poll_avg
+      librdkafka/rdkafka_telemetry_encode.c/calculate_share_time_between_poll_max
+      monkey-libevent/mk_core/mk_memory.c/mk_ptr_create
+  Formal | never-bound | ->. | Unresolved | AssignmentDestination  ->  6 function(s)
+      chunkio/chunkio.c/cio_set_log_level
+      librdkafka/lz4hc.c/LZ4_attach_HC_dictionary
+      librdkafka/lz4hc.c/LZ4_favorDecompressionSpeed
+      librdkafka/lz4hc.c/LZ4_setCompressionLevel
+      librdkafka/rdkafka.c/rd_kafka_set_log_level
+      monkey-libevent/mk_server/mk_lib.c/mk_http_status
+  Formal | never-bound | -> | Unresolved | AssignmentDestination  ->  4 function(s)
+      librdkafka/rdbuf.c/rd_slice_widen
+      librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_clear_last_err
+      librdkafka/rdkafka_conf.c/rd_kafka_confval_disable
+      monkey-libevent/mk_server/mk_http_parser.c/request_set
+  AutomaticLocal | may-bind | * | NoMember | ExpressionStatement  ->  3 function(s)
+      cmetrics/cmt_encode_opentelemetry.c/initialize_exponential_histogram_data_point_list
+      cmetrics/cmt_encode_opentelemetry.c/initialize_histogram_data_point_list
+      cmetrics/cmt_encode_opentelemetry.c/initialize_metric_list
+  Formal | never-bound | -> | SinglePointer | AssignmentDestination  ->  3 function(s)
+      ctraces/ctr_encode_opentelemetry.c/otel_span_set_name
+      ctraces/ctr_encode_opentelemetry.c/otel_span_set_trace_state
+      librdkafka/snappy.c/writer_set_expected_length
+  Formal | may-bind | [] | NoMember | CallArgument  ->  2 function(s)
+      librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroup_destroy_array
+      librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopic_destroy_array
+  Formal | never-bound | [] | NoMember | AssignmentValue  ->  2 function(s)
+      librdkafka/rdmap.c/rd_bytes_hash
+      librdkafka/rdunittest_fetcher.c/ut_set_types
+  Formal | never-bound | ->.. | Unresolved | AssignmentDestination  ->  2 function(s)
+      librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_connects
+      librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_connects2
+  Formal | may-bind | -> | Unresolved | AssignmentDestination  ->  1 function(s)
+      librdkafka/rdkafka_fetcher.c/rd_kafkap_Fetch_reply_tags_set_topic_cnt
+  Formal | may-bind | -> | Scalar | AssignmentDestination  ->  1 function(s)
+      ctraces/ctr_span.c/ctr_span_start_ts
+  Formal | may-bind | * | NoMember | AssignmentValue  ->  1 function(s)
+      librdkafka/rdkafka_request.c/rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics
+  Formal | never-bound | -> | Unresolved | AssignmentValue  ->  1 function(s)
+      librdkafka/rdhdrhistogram.c/rd_hdr_countsIndex
+  OutsideFunctionDeclarations | never-bound | . | Unresolved | AssignmentDestination  ->  1 function(s)
+      librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_decoded_int64
+  Formal | never-bound | -> | Scalar | AssignmentDestination  ->  1 function(s)
+      cmetrics/cmt_time.c/cmt_time_from_ns
+  Formal | never-bound | -> | AggregateValued | AssignmentDestination  ->  1 function(s)
+      ctraces/ctr_encode_opentelemetry.c/otel_span_set_kind
+  Formal | never-bound | -> | RecordPointer | AssignmentDestination  ->  1 function(s)
+      ctraces/ctr_link.c/ctr_link_set_attributes
+  UnreadableDeclarations | never-bound | ->. | Unresolved | AssignmentDestination  ->  1 function(s)
+      chunkio/chunkio.c/cio_set_log_callback
+  Formal | never-bound | . | SinglePointer | AssignmentDestination  ->  1 function(s)
+      ctraces/ctr_encode_opentelemetry.c/destroy_id
+  UnreadableDeclarations | never-bound | ->.. | Unresolved | AssignmentDestination  ->  1 function(s)
+      librdkafka/rdkafka_admin.c/rd_kafka_admin_request_op_result_cb_set
+  Formal | never-bound | ->->. | Unresolved | AssignmentDestination  ->  1 function(s)
+      librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_set_coordinator_assigned_partitions

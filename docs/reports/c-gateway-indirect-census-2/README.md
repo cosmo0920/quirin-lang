@@ -23,7 +23,8 @@ decided.
 | Best single shape, discounted | **11 functions decided** |
 | Best pair of shapes, discounted | **17 functions decided** |
 | Union of all **403** shapes | **45 functions** — the ceiling if every shape were admitted at once |
-| Recommendation | **No access shape is worth a wave-37 arbiter on its own.** The binding constraint is not the access gate; see §7 |
+| Record-body reader route | measured separately: **2 functions** decided (§7.2) |
+| Recommendation | **No shape and no reader widening survives the discount.** Every route into this family clears leaves and decides almost nothing; see §7.3 |
 
 **The one sentence that matters for scoping.** Ranking shapes by leaf mass and
 ranking them by *decided functions* produce nearly disjoint orders. The largest
@@ -31,6 +32,14 @@ shape by leaves — 1,416 leaves across 710 functions — decides **zero**
 functions. The best shape by decided functions holds **34** leaves and decides
 **11**. A wave-37 card cut on the leaf count would clear leaves and decide
 almost nothing, which is the failure mode this card exists to prevent.
+
+The same asymmetry appears again by an independent route. Because 72.2% of
+leaves end at a member the declaration reader will not classify, the card also
+instrumented that reader; the whole-record refusal it found accounts for 2,713
+leaves and would decide **2** functions (§7). And the reader's own dominant
+answer is that **78.5% of unresolved members were never a question at all** —
+the *base*'s declared type was not committed — which is a different reader again
+and the honest next measurement (`BASE-TYPE-READER-UNMEASURED`, §9).
 
 ## 2. What was instrumented, and why not source text
 
@@ -319,6 +328,140 @@ than assuming it; this card cannot measure that histogram because it makes no
 change, so **the CLEAR column is a count of functions that would stop being
 blocked by this family, and nothing more**.
 
+## 7. Why the member is unresolved — and why that is not the lever either
+
+§4 showed 72.2% of leaves ending at a member the declaration reader will not
+classify. Because that row dominates everything else, this card instrumented the
+reader too — `TypedAccessModel::read_record_body`, behind the same feature — and
+asked it, per record body, what it did and which token stopped it.
+
+**The reader is total-or-reject over the whole body.** Its first statement is
+
+```rust
+if body.iter().any(|t| matches!(*t, "{" | "}" | "(" | ")" | ":" | "=")) {
+    return None;
+}
+```
+
+so **one** member declaration it will not parse — a nested anonymous aggregate's
+`{`, a function-pointer member's `(`, a bitfield's `:` — makes **every** member
+of that record unclassifiable, including the plain scalars beside the offending
+one. Measured over the pinned corpus:
+
+| | |
+|---|---:|
+| distinct record tags whose body the reader met | **909** |
+| tags read differently in different units | **0** |
+| tags the reader **refused whole** | **173 (19.0%)** |
+| refused on `{` (nested anonymous aggregate) | 98 (56.6%) |
+| refused on `(` (function-pointer member) | 66 (38.2%) |
+| refused on `:` (bitfield) | 9 (5.2%) |
+
+The worked example is `pb_ostream_s` in `librdkafka/nanopb`: it carries a
+function-pointer `callback` member, so `stream.max_size` and
+`stream.bytes_written` — plain scalars — are unclassifiable too, and
+`pb_ostream_from_buffer`'s five stores are all refused. That function is one of
+the 11 the best shape would decide.
+
+### 7.1 But the member is not the main blocker — the base is
+
+Crossing the reader's answer with the refused accesses that actually land on
+each tag gives the result that settles this card:
+
+| of the **13,396** leaves ending at an `Unresolved` member | leaves | share |
+|---|---:|---:|
+| **no record tag at all — the BASE's type was never committed** | **10,514** | **78.5%** |
+| a tag was committed; the record body was refused whole | 2,713 | 20.3% |
+| a tag was committed, the body read, the member simply in no class | 166 | 1.2% |
+| the record is never declared in the units that use it | 3 | 0.0% |
+
+So the whole-body-refusal defect — real, and worth fixing on its own merits —
+accounts for **one fifth** of the unresolved members. Four fifths are blocked
+one level earlier, at the *base*'s declared type: `classify_specifiers`,
+typedef resolution and `read_locals`, none of which this card instrumented.
+
+### 7.2 The ceiling, measured
+
+A per-member total-or-reject reader is the obvious wave-37 candidate, so its
+**upper bound** was computed rather than guessed. Counting only sole-blocked
+functions whose every leaf-statement is non-exchanging **and** barred solely by
+an `Unresolved` member on a whole-body-refused record — generously assuming
+every such member would become classified *and* that the resulting access would
+then be admitted:
+
+> **2 functions.** Of those, **1** also satisfies constraint 5's premise on
+> every base: `librdkafka/nanopb/pb_encode.c/pb_ostream_from_buffer`.
+
+It would retire on the order of 2,713 leaves and decide **two functions**. The
+top tags by leaf count show why: `rd_kafka_s` alone carries 593 unresolved-member
+leaves, of which **10** are in sole-blocked functions; `rd_kafka_broker_s` 467 of
+which 3; `rd_kafka_toppar_s` 226 of which 6. The leaf mass concentrates in a
+handful of very large librdkafka structs that appear all over functions with many
+other blockers.
+
+**This is the same asymmetry as §6, reached by an independent route.** Every way
+into this family clears leaves and decides almost nothing.
+
+### 7.3 Ranked recommendation
+
+The brief asks for at most two shapes, ranked, with the discount stated, and
+says that "if no shape survives the discount, say so; that is a valid result."
+
+**No shape survives the discount as a standalone wave-37 arbiter.** The best
+decides **11 of 3,239** touched functions and **11 of 284** sole-blocked ones;
+the best pair, **17**; every one of the 403 shapes admitted at once, **45**; and
+the record-reader route, **2**. For completeness the two worth naming are:
+
+**Rank 1 — `AutomaticLocal · never-bound · . · Unresolved · AssignmentDestination`.**
+34 leaves, 25 functions touched, **11 decided, 0 exchanged, 14 unmoved.** The
+form is `local.field = VALUE;` where `local` is an automatic aggregate *value*
+this function declares. Its attraction is that it is the one shape in the top of
+either ranking where **constraint 5's premise actually holds** — and holds under
+`may_bind`, which is the constraint's own reading, not the looser `never_bound`
+(see `CENSUS-TWO-PREMISE-READINGS`).
+
+*Soundness questions an arbiter must answer, and in which direction:*
+
+* **Constraint 5** — satisfied by construction for this shape; this is the rare
+  corner where it is. But the arbiter must read `may_bind`, not `never_bound`,
+  or it silently enlarges its own population.
+* **The member's class is unknown**, so `aggregate_store::admitted_field`'s
+  requirement — exactly one of scalar / single-pointer / void-pointer — fails.
+  Admitting the store *without* the class is **unsound in the admitting
+  direction**: an unclassified member may be a pointer, and overwriting it
+  destroys a tracked identity and with it a release obligation. The arbiter
+  therefore cannot be an access rule; it must first be a **type-reader** change,
+  which is §7's route with its measured ceiling of 2.
+* **Constraint 5b applies directly and must be re-read before starting.** It
+  warns that "a card that widens member typing far enough to put a
+  projection-bound place on an admitted chain falsifies exactly this premise" —
+  `TrackedBasesAreBound`, which
+  `QCore.ReturnPositionEscape.an_admitted_chain_names_no_tracked_place` takes as
+  an explicit hypothesis rather than proving. Widening member typing is exactly
+  what this shape needs.
+* **The shape is new to `admitted_store`**, which matches only
+  `[base, "-", ">", field]`; there is no `.` form at all today. Narrower in one
+  way (an automatic object of this function, no pointee, no liveness question,
+  and constraint 10's outlives-the-call rule does not apply), new in another.
+* **`POISON-UNMASK-ON-ADMISSION`** (§9) applies, as it does to every candidate.
+
+**Rank 2 — `Formal · never-bound · ->. · Unresolved · AssignmentDestination`.**
+22 leaves, 16 functions touched, **6 decided, 0 exchanged, 10 unmoved.** Form
+`formal->a.b = V;`. Same premise position and same member-class obstacle, plus
+one more: the chain crosses an `AggregateValued` member, and `admitted_field`
+has no continuation rule for one — only `record_pointer_field` continues a
+chain, and only through `->`. Paired with Rank 1 this is the best two-shape
+arbiter available, at **17 functions**.
+
+**What this card recommends instead.** Do not cut a wave-37 arbiter on this
+family for its size. If the wave wants gateway reach, the measurement that is
+missing — and that this card deliberately did **not** take, because it is a
+different reader — is the one §7.1 exposes: **78.5% of unresolved members are
+blocked at the base's declared type, not at the member's.** Nobody has measured
+what `classify_specifiers`, typedef resolution and `read_locals` refuse, or what
+the sole-blocked reach of repairing them would be. That is the honest next
+census, and it is named `BASE-TYPE-READER-UNMEASURED` in §9.
+
 ## 8. Inertness and byte identity
 
 The card's only change to shipped code is instrumentation, and both halves of
@@ -403,6 +546,31 @@ The corpus baseline remains `docs/reports/c-gateway-constant-do-while/artifacts/
   **Discharge:** give the declaration arm its own census window, or state the
   arm is out of every arbiter's scope and drop the axis for it.
 
+* **`BASE-TYPE-READER-UNMEASURED`** — §7.1's exposed gap and the honest next
+  census. **78.5% of the 13,396 unresolved-member leaves (10,514) carry no
+  record tag at all**: the reader never committed to the *base*'s declared type,
+  so the member was never a question. That is `classify_specifiers`, typedef
+  resolution and `read_locals` — a different reader from the record-body one
+  this card instrumented, and one nobody has measured. Every reach number in
+  this report is therefore a statement about the routes it measured, not about
+  the family's ceiling. **Discharge:** instrument the base-type reader the same
+  way — what it refuses, on which spelling — and publish the sole-blocked reach
+  of repairing each, before any card is cut on it.
+
+* **`RECORD-BODY-TOTAL-OR-REJECT`** — `TypedAccessModel::read_record_body`
+  refuses a whole record body on any `(`, `)`, `{`, `}`, `:` or `=`, so one
+  member declaration the reader cannot parse makes **every** member of that
+  record unclassifiable. **173 of 909 record tags (19.0%)** in the pinned corpus
+  are refused this way — 98 on `{`, 66 on `(`, 9 on `:` — accounting for 2,713
+  unresolved-member leaves. A genuine defect in the reader's granularity, filed
+  on its own merits. It is **not** a promising arbiter: §7.2's measured ceiling
+  is **2 sole-blocked functions**, 1 of them with constraint 5's premise intact.
+  **Discharge:** a per-member total-or-reject reader — classify the member
+  declarations that parse, mark the ones that do not as explicitly unreadable so
+  they stay refused — landed with its own measured re-pin, or a recorded
+  decision that the 2-function reach does not justify the risk. **Not a
+  discharge:** citing the 2,713 leaves.
+
 * **`POISON-UNMASK-ON-ADMISSION`** — a cross-cutting soundness hazard for
   **every** candidate in §6, and the one most easily missed. Admitting an access
   makes its statement no longer refused, so the statement's `RefusedWrites` no
@@ -450,3 +618,68 @@ selected here. `QCORE_INDIRECT_CENSUS` and `QCORE_INDIRECT_CENSUS_RECORDS` name
 the two census streams; with neither set, and with the feature off, nothing is
 written and nothing runs.
 
+## 12. For the integrator
+
+### 12.1 Applied by this card
+
+* **`docs/development/increments/wave-36.md`.** One paragraph, prepended. The
+  file already existed (wave 36 was opened at `60958bf0`); it was not created.
+* **`docs/reviews/r0_3/acceptance_matrix.json`.** Regenerated with
+  `python3 docs/reports/remaining-d02/build_matrix.py . --gate <the wave's gate>`;
+  see §12.2 for the one decision that needs you. **`named_followups` is carried
+  at 121 and this card retires none** — it is a measurement card and discharges
+  nothing.
+* **Nothing else.** This card owns no re-pin, moves no headline number in
+  `AGENTS.md`'s ledger, adds no archive to constraint 21's frozen list and
+  changes no corpus baseline. The baseline remains
+  `docs/reports/c-gateway-constant-do-while/artifacts/`.
+
+### 12.2 Not applied — needs your decision
+
+* **The seven named follow-ons in §9 are not registered in
+  `named_followups`.** A measurement card's whole output is findings, and
+  registering seven at once against a 121-entry list is a judgement about the
+  tracker's shape rather than about this card, so I have left it to you. The two
+  I would register first, because they are the ones a wave-37 card will trip
+  over, are **`BASE-TYPE-READER-UNMEASURED`** (the 78.5% nobody has measured)
+  and **`CENSUS-TWO-PREMISE-READINGS`** (a card reading `never_bound` instead of
+  `may_bind` silently works in a space four times larger than constraint 5
+  describes). **`RECORD-BODY-TOTAL-OR-REJECT`** is the one genuine code defect
+  found, and deserves an entry whether or not anyone acts on it.
+
+* **`INDIRECT-CENSUS-FEATURE-UNBUILT` is a decision, not a task.** The
+  `indirect-census` feature is built by no CI job. Either add one, or record the
+  decision that the instrumentation is disposable and the next census
+  re-derives it. I have not chosen for you, because the answer depends on
+  whether wave 37 takes a gateway card at all — and this card's recommendation
+  is that it should not take *this* one.
+
+### 12.3 No standing constraint is proposed
+
+This card lands no "when touching X, do not Y" rule, so the standing-constraint
+inventory is untouched. Two existing constraints are *read* in ways worth
+noting, and neither needs amending on this card's account:
+
+* **Constraint 5** is the binding one throughout, and this card is evidence
+  **for** it rather than against: the premise it protects is unavailable for
+  95.7% of the family, which is exactly what makes the family hard, and nothing
+  here suggests weakening it. If you want one sentence added anywhere, it is the
+  clarification `CENSUS-TWO-PREMISE-READINGS` asks for — *which* of the two
+  implementations the premise names — and that belongs to whoever takes that
+  residual, in the words they measure, not to this card.
+* **Constraint 5b** should be re-read by any wave-37 gateway card before it
+  starts, for the reason 5b itself gives: it warns that widening member typing
+  far enough to put a projection-bound place on an admitted chain falsifies
+  `TrackedBasesAreBound`, and §7.3's Rank 1 needs exactly that widening. That
+  warning is already written; this card only confirms it is live.
+
+### 12.4 Recommendation to the wave
+
+**Do not cut a wave-37 arbiter on this family.** It is the largest family in the
+corpus and that is precisely the trap: its leaf mass and its function reach are
+nearly disjoint, and every route measured here — 403 access shapes, their best
+pair, and the record-body reader — decides between 2 and 17 functions against a
+3,239-function population. If a gateway card is wanted, the honest prerequisite
+is the base-type reader census `BASE-TYPE-READER-UNMEASURED` names, which covers
+78.5% of the unresolved members and which nobody has measured. Cutting on the
+18,555 would repeat the error this card was commissioned to prevent.
