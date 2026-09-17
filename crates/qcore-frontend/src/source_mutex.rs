@@ -1310,7 +1310,13 @@ fn lower_declared_share<'a>(
     // question and must not enter here, or a generation shared under something
     // that is not a generation would be reported as an *unmodeled* form rather
     // than as the non-value it is.
-    let place = if state.resource_of.contains_key(resource_name) {
+    // Card `MUTEX-SHARE-CROSS-ARMS`: the lookup is performed **once**, here,
+    // and the classification reads its result. Behaviour is unchanged — the
+    // same map at the same key — but the refusal below is now visibly the
+    // `None` of the very lookup that classified this name, rather than a second
+    // lookup a reader has to reason is the same one.
+    let declared_resource = state.resource_of.get(resource_name).copied();
+    let place = if declared_resource.is_some() {
         TransferKind::ProtectedResource
     } else if state.mutex_of.contains_key(resource_name) {
         TransferKind::MutexGeneration
@@ -1323,6 +1329,17 @@ fn lower_declared_share<'a>(
         TransferKind::MutexShare,
     ) {
         Ok(AdmittedTransfer::ShareUnderMutex(ShareProtocol::CheckedMutex)) => {}
+        // **Unreachable, and kept.** For this mode the judgment's admitting arm
+        // constructs the protocol as a *literal*, so an admitted capture is the
+        // pattern above for every kind there is
+        // (`QCore.MutexShareCrossArms.theProtocolResidueIsEmpty`) and this
+        // binder can never be bound. It stays as a fail-closed backstop on the
+        // strength of that theorem, not of the suite: under the pre-card
+        // pass-through judgment quoted in `qcore_core::transfer`, an
+        // `own<Buffer>` arrives here admitted under `CountedReadShares` with
+        // the right delivered kind, and this arm is the only refusal between
+        // that value and an unprotected crossing
+        // (`thePassThroughJudgmentWouldReachTheProtocolArm`).
         Ok(other) => {
             return Err(failure(
                 span,
@@ -1345,7 +1362,17 @@ fn lower_declared_share<'a>(
         }
     }
 
-    let Some(&resource) = state.resource_of.get(resource_name) else {
+    // **Unreachable, and kept.** `place` is `ProtectedResource` only in the
+    // branch this very lookup's `Some` selected, and
+    // `QCore.MutexShareCrossArms.theLookupAlwaysHits` proves no other kind is
+    // admitted above, so nothing reaches this `else`. It stays as a fail-closed
+    // backstop on the strength of that theorem and of
+    // `theJudgmentCannotTellTwoKindsOfOneClassApart` — which shows the arm is
+    // dead by the *uniqueness* of the payload's class alone, so a second
+    // mutex-bearing kind (`FB-SYSTEM-EXTENSIONS`) revives it — and never on the
+    // strength of the suite, which cannot reach it to tell it from its negation
+    // (residual `MUTEX-SHARE-CROSS-UNEXERCISED-ARMS`).
+    let Some(resource) = declared_resource else {
         return Err(failure(
             span,
             format!(
