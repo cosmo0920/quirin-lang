@@ -6,6 +6,61 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+Wave 34 close (2026-09-18): **three cards merged and one arbiter ran**. The
+reconciliation swept **25** integrator-addressed items and gave every one a
+verdict **measured against the tree** rather than inferred from the report's own
+claim that it had landed — 11 `applied`, 3 `superseded`, 5 `deferred`, 6
+`noted`, **0 `declined`** — and that distinction earned its keep. **One item was
+unapplied**: `C-GATEWAY-RETURN-CALL-W4` asked for four residuals by name, and
+`DOCS-COMPACT-6`, merging afterwards, moved `named_followups` 74 → 80 without
+them (its six additions are platform and constraint names), so all four reached
+no tracker — the sweep's own `--residuals` pass names them independently, which
+is the same defect's other half. They are registered here, `named_followups`
+**80 → 84**, every `why` written from the card's own §10 discharge condition.
+**One amendment is recorded `superseded` rather than `applied` because it did
+not land in the words proposed**: the arbiter's §11 item 3 transcribed "236
+(70.5%)" against a 643-leaf denominator, which is the brief's pre-landing
+236/335 figure and is internally inconsistent (236/643 = 36.7%), where the tree
+carries the card's **own** §3.3 measurement, 379/643 (58.9%); the
+two-orders-of-magnitude conclusion is identical either way and nothing was
+softened. A **hand sweep** covered the tool's two known blind spots and found
+six platform residuals `CLAUDE.md` still calls open reaching no tracker while
+`DOCS-COMPACT-6` registered three siblings, plus wave-32's
+`MUTEX-SHARE-CROSS-MULTI` — both reported and neither registered, completing a
+partial registration being a disposition rather than a reconciliation. The gate
+**reproduces the `DOCS-COMPACT-6` tip figures exactly and independently** —
+4,559 passed / 0 failed / 8 ignored over 217 test executables / 228 result
+summaries, fmt and clippy clean, both probes exit 0, **129** Lean audits, **229**
+Python — so `AGENTS.md`'s Merged gate row is confirmed rather than carried and
+this close does not edit it; the matrix was then regenerated carrying this
+close's **own** `--gate`, a byte-identical fixed point with `validation` the only
+section moved. The contested host row
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` was
+**green here**, the second full-suite observation agreeing with
+`DOCS-COMPACT-6`'s against `STABILITY-REEVAL` #1's 3/3 red **in isolation** — the
+inverse of constraint 16's five load-sensitive rows, stated rather than treated
+as settling anything, and not re-measured in isolation by this close. Two
+obstacles are recorded rather than hidden: every `cargo` invocation first failed
+with `ENOSPC` on a 100%-full host filesystem, and the first completed gate
+attempt was SIGTERMed by the session's own ten-minute timeout at 78 of 228
+summaries — a partial suite is not a measurement and no figure here comes from
+it. The close registered **one finding of its own**,
+`PYTHON-EVIDENCE-SUITE-INTERMITTENT-ROW` (`named_followups` 84 → **85**): one run
+of the Python evidence suite reported `FAILED (failures=1)` and six subsequent
+runs were green — four isolated, two deliberately concurrent — so the row is not
+reliably reproducible in either direction and *which* row failed is unknown, that
+run's per-test output not having been captured; it is registered because
+`AGENTS.md` publishes "229 Python" as a property while constraint 16's five
+load-sensitive rows are all Rust and nothing records a Python one. Seven
+decisions are carried forward undecided, four of them wave 33's own. **Nothing is
+promoted**: no unit status moved at the wave-34 arbiter, raw units stay
+unpromoted, contract corpus unchanged at 76, CT coverage unchanged at 45/50
+mapped with sanitized-native 9 and proof 3 — the wave mapped nothing — and full
+language conformance stays **false**. Evidence:
+[the close record](../../reports/wave34-close/README.md), its
+[reconciliation record](../../reports/wave34-close/reconciliation.json) and
+[gate](../../reports/wave34-close/gate.json).
+
 `DOCS-COMPACT-6` (2026-09-17), the sixth three-file compaction pass, and the
 first whose finding is that the three files **understated** rather than
 accreted. Every headline number was re-read from its source and never from the
