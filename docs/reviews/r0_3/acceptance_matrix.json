@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 159
+  "named_followups": 161
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6133,7 +6133,7 @@
   "workspace_tests": 4580,
   "provider_tests": 122,
   "python_evidence_validator_tests": 247,
-  "lean_audits": 132,
+  "lean_audits": 133,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6194,6 +6194,7 @@
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditHttpComputedLength.lean",
+   "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
@@ -6879,13 +6880,6 @@
    "recorded_by": "JOINED-PROVENANCE-CYCLES"
   },
   {
-   "id": "JOINED-PROVENANCE-FACTS-NAME-NOTHING",
-   "title": "At all 14 corpus sites reaching release_site's premise gate the derived facts do not name the released pointer, and no card has attributed that loss to a rule",
-   "why": "The other half of the same measured conjunction as JOINED-PROVENANCE-RELEASE-NULLABLE (card JOINED-PROVENANCE-CYCLES, wave 35): not_named_by_facts holds at 14 of 14 sites, so even a relation that named every pointer perfectly would still be blocked by the nullable premise, and even a resolved nullable premise would still be blocked by this one. The first suspect is constraint 10b's rule that calls forget prior relations, which is JOINED-PROVENANCE-CALL-FRAMES' territory; this residual is that card's first quantitative evidence. Discharge: attribute the 14 sites individually to the rule that loses the name.",
-   "source": "docs/reports/joined-provenance-cycles/README.md",
-   "recorded_by": "JOINED-PROVENANCE-CYCLES"
-  },
-  {
    "id": "CONSTANT-DO-WHILE-ZERO-SPELLINGS",
    "title": "The constant do-while rule claims the single token `0`, and the other literal zeros were not exhaustively measured",
    "why": "Card C-GATEWAY-CONSTANT-DO-WHILE (wave 35, arbiter #1) keys its back-edge removal on the single literal token `0` - constraint 5a's rule applied here. `0u`, `0L`, `0U`, `0x0`, `00` and '\\0' are literal zeros a `do ... while (...)` may equally spell and each KEEPS its back edge today, which is the conservative answer. Nothing in the pinned corpus's preprocessed text was found to use one in this position, but that was NOT exhaustively measured. DISCHARGE: a preprocessed census of `do ... while (E)` conditions over the 185 units that classifies every E a single-token integer constant expression, followed either by a widening of condition_is_literal_zero WITH ITS OWN MEASURED RE-PIN - widening is the admitting direction (invariant 1) - or by a recorded statement that the set is empty.",
@@ -7339,6 +7333,24 @@
    "why": "Card CT-CTWIN-LANE moved sum(counts.values()) from 5 to 4 at scripts/tests/test_ct_stage_summary.py:990. The cause is disclosed in both the report and the commit message (CT46 mapped, 45/50 to 46/50) and the test's own comment carries the history line by line, so this is a documentation gap rather than a silent edit. But CLAUDE.md asks for the PIN to be named deliberately in the commit message, and the literal is not. Low severity, recorded for the pattern rather than the instance. DISCHARGE: name the literal in future lane commit messages when a mapping moves it, or record that a tally derived from a disclosed mapping count is covered by disclosing the mapping.",
    "source": "docs/reports/stability-reeval-2/README.md",
    "recorded_by": "STABILITY-REEVAL-2"
+  },
+  {
+   "id": "JOINED-PROVENANCE-ROUND-BOUND",
+   "title": "new. Two of the six distinct sites (6 of 14 visits) derive nothing because the greatest fixed point exhausts `FIXED_POINT_ROUNDS = 64` and declines the whole fu",
+   "why": "* **`JOINED-PROVENANCE-ROUND-BOUND`** — **new.** Two of the six distinct sites (6 of 14 visits) derive nothing because the greatest fixed point exhausts `FIXED_POINT_ROUNDS = 64` and declines the whole function — `rd_kafka_mock_handle_ConsumerGroupHeartbeat` and `rd_kafka_mock_handle_ShareGroupHeartbeat`. Wave 35 recorded these inside the undifferentiated \"not named by facts\" bucket; separating the two decline reasons is what exposes them. Declining is sound (`weakening_stays_sound`), so this is a **precision** boundary and not a soundness one. Discharge: measure how many rounds those two functions actually need, and either raise the bound with the cost measured or establish a termination argument that removes it.",
+   "source": "docs/reports/joined-provenance-call-frames/README.md §7"
+  },
+  {
+   "id": "CALL-FRAMES-FRAME-READER-PREMISE",
+   "title": "new. The rule's soundness rests on `cfg.conditional_names` really being address-never-taken automatic locals",
+   "why": "* **`CALL-FRAMES-FRAME-READER-PREMISE`** — **new.** The rule's soundness rests on `cfg.conditional_names` really being address-never-taken automatic locals. That set is built by pre-existing code (`frame_protected_locals`, `unique_local_names`, cards AOM-BINDING-POISON and C-GATEWAY-WAVE) which this card reads and does not write, and it is therefore **not** among the arms §5 mutates. Its exclusions — static duration, file-scope, address-taken, shadowed, formal — are each fail-closed by construction, but the frame reader is now load-bearing for a *second* rule. Discharge: a mutation suite over `frame_protected_locals`' four exclusions driven from the call-frame side, or a proof that each exclusion is necessary for `FrameRespecting`.",
+   "source": "docs/reports/joined-provenance-call-frames/README.md §7"
+  },
+  {
+   "id": "CALL-FRAMES-ALLOWLIST-LOCAL-ONLY",
+   "title": "new, and a vacuity finding about this card's own work. The frame test inside `step` cannot currently fire through `derive`: `outgoing` applies the same `conditi",
+   "why": "* **`CALL-FRAMES-ALLOWLIST-LOCAL-ONLY`** — **new, and a vacuity finding about this card's own work.** The frame test inside `step` cannot currently fire through `derive`: `outgoing` applies the same `conditional_names` membership test after **every** node, so every name reaching a call is already in the frame. The guard is therefore a *local* enforcement of the premise, driven by a direct `step` test (`a_call_forgets_a_name_the_frame_list_does_not_carry`) and by §5's mutation, but no CFG can present it with an unrecognised name today. It is kept deliberately — without it the arm's soundness would depend on a caller's ordering rather than on its own text, which is worse — and it is recorded rather than presented as verified-in-place. Discharge: either derive the invariant explicitly (assert it, or restrict the type) so the guard is provably redundant, or introduce a route that reaches `step` without `outgoing`'s filter and drive the arm from it.",
+   "source": "docs/reports/joined-provenance-call-frames/README.md §7"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

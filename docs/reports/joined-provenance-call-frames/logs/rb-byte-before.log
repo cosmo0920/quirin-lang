@@ -1,0 +1,11 @@
+archive: docs/reports/w36-corpus-contracts-3/artifacts
+run:     measure/joined-provenance-call-frames/runs/rb-before
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL   a7aa3b5f9ab193a0 / a7aa3b5f9ab193a0
+ source           raw IDENTICAL  canonical IDENTICAL   ae38f6c93dfbe341 / ae38f6c93dfbe341
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL   c4f438e4ed3dab3c / c4f438e4ed3dab3c
+ source-effects   raw differs    canonical differs     08b7a97b1ceb4240 / de059aad0b062da3
+ contracts        raw differs    canonical differs     d349f2698d531351 / 44ef29fa567c5dc0
+
+* = verdict-bearing artifact
+RESULT: the verdict-bearing artifacts reproduce the baseline BYTE FOR BYTE.
