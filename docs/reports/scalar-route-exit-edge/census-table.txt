@@ -1,0 +1,42 @@
+census rows (BranchOnNull edges, settled states): 17588
+distinct BranchOnNull nodes: 4240
+distinct functions with a BranchOnNull: 1691
+distinct LOOP HEADER BranchOnNull nodes: 201
+
+== edges by role x result ==
+  body    refined         369
+  body    unknown          43
+  branch  infeasible      154
+  branch  refined       13220
+  branch  unknown        3390
+  exit    refined         369
+  exit    unknown          43
+
+== edges by role x arm ==
+  body    unknown_or_multi       43
+  body    untracked             369
+  branch  empty_targets          48
+  branch  known_non_null        260
+  branch  nullable_single       810
+  branch  unknown_or_multi     3390
+  branch  untracked           12256
+  exit    unknown_or_multi       43
+  exit    untracked             369
+
+== LOOP HEADER edges: polarity x role x arm x result ==
+  true_is_null=False body  untracked         refined        332
+  true_is_null=False exit  untracked         refined        332
+  true_is_null=False body  unknown_or_multi  unknown         43
+  true_is_null=False exit  unknown_or_multi  unknown         43
+  true_is_null=True  body  untracked         refined         37
+  true_is_null=True  exit  untracked         refined         37
+
+== loop-header edges the value route calls INFEASIBLE: 0 ==
+   of which EXIT edges (this card's hazard): 0
+   of which BODY edges (the untouched sibling): 0
+
+
+== branch (if) edges called infeasible — the precision this card keeps ==
+   154
+     empty_targets          24
+     known_non_null        130

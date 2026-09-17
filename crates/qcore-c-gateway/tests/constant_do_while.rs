@@ -264,6 +264,18 @@ fn only_the_literal_zero_token_loses_the_back_edge() {
 /// unmodeled initializer keeps the edge and its refusal. That is why this card
 /// still had work to do — a macro's `while (0)` is a literal token and no
 /// binding, so this route never reached it.
+///
+/// **Amended by card `SCALAR-ROUTE-EXIT-EDGE` (wave 37).** Every row below
+/// spells the header *positively*, so all four measure the **back** edge, and
+/// the assertion was on `double_releases()` alone, which a deleted **exit**
+/// edge does not move. Inverting the polarity (`while (!flag)`,
+/// `while (flag == 0)`) makes the same arm delete the exit edge instead, which
+/// stranded the function's exit node and returned `Safe` for a body that leaks
+/// after the loop. The rows are kept exactly as wave 35 measured them — this is
+/// still the back-edge boundary — and the missing half now has its own family
+/// in `scalar_route_exit_edge.rs`. The added assertion here is the one that
+/// says *which* edge these rows are about: the exit is still reached, so the
+/// acquisition's disposition after the loop is still judged.
 #[test]
 fn a_modeled_scalar_condition_is_a_separate_pre_existing_route() {
     if !clang_available() {
@@ -283,6 +295,16 @@ fn a_modeled_scalar_condition_is_a_separate_pre_existing_route() {
             run.double_releases() >= 1,
             keeps_back_edge,
             "`{prelude}` then `while (flag)`: {:?}",
+            run.diagnostics
+        );
+        // SCALAR-ROUTE-EXIT-EDGE: the exit is reached on every row, so the
+        // acquisition really is judged after the loop rather than left
+        // unexamined. A row that deleted its exit edge would report no leak
+        // *and* no release — indistinguishable from a clean function.
+        assert_eq!(
+            run.leaks(),
+            0,
+            "`{prelude}`: the exit is reached and the release discharges it: {:?}",
             run.diagnostics
         );
     }
