@@ -62,10 +62,12 @@ pub enum ScalarType {
     /// (card `WRITE-LEND-TASKS`): write authority over `[low, high)` of the
     /// payload's [`BUFFER_PAYLOAD_BYTES`], transferred to one worker for
     /// spawn..join. Like a read loan it is not a value type — no result, no
-    /// entry parameter, no copy, move or re-lease source — and in this first
-    /// slice it also admits **no operation in the worker's body**: the
-    /// authority is held and enforced against the owner, and the worker-side
-    /// range write is the named residual `WRITE-LEND-TASKS-EXERCISE`.
+    /// entry parameter, no copy, move or re-lease source. Card
+    /// `WRITE-LEND-TASKS-EXERCISE` (wave 36) discharged the residual of that
+    /// name: a worker body now **exercises** the authority, through
+    /// [`TaskInstructionKind::WriteBufferByte`] and
+    /// [`TaskInstructionKind::ReadBufferByte`], at an index relative to this
+    /// lease's own `low`.
     WriteLease,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -327,8 +329,10 @@ enum AbstractValue {
     Loan(ResourceId),
     /// Range write authority over a resource this frame does not own (card
     /// `WRITE-LEND-TASKS`). Like a loan it is unregistered in the frame's
-    /// ledger and carries no discharge duty; unlike a loan it is not even
-    /// readable — no operation of this slice admits it in a worker body.
+    /// ledger and carries no discharge duty. Unlike a loan it is not
+    /// *whole-payload* readable: it carries authority over a byte range, and
+    /// since card `WRITE-LEND-TASKS-EXERCISE` the operations that reach it are
+    /// the byte access pair, never the whole-payload read or write.
     Lease(ResourceId),
 }
 impl AbstractValue {
@@ -348,9 +352,10 @@ impl AbstractValue {
             _ => None,
         }
     }
-    /// The identity a read is performed against, owned or borrowed. A write
-    /// lease is deliberately not readable: it carries write authority over a
-    /// byte range, not a whole-payload read this route could express.
+    /// The identity a **whole-payload** read is performed against, owned or
+    /// borrowed. A write lease is deliberately not among them: it carries
+    /// authority over a byte range, not over the whole payload. Its byte
+    /// accesses go through [`State::authority`] instead.
     fn readable(&self) -> Option<ResourceId> {
         match self {
             Self::Owned(id) | Self::Loan(id) => Some(*id),

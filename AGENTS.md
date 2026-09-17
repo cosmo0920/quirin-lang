@@ -155,7 +155,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**159** entries after STABILITY-REEVAL #2 (wave 36, +31, none retired; 128 after CARD-SCOPE-GUARD; 121 at the wave-35 close), which registered **28** names — 27 of the
+**165** entries after `WRITE-LEND-TASKS-EXERCISE` (wave 36, +7 -1: the card registers six of its own residuals plus wave 31's untracked `WRITE-LEND-TASKS-EXTENT`, and **retires** `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED` by deciding it — the F02 observable alphabet does not grow; 159 after STABILITY-REEVAL #2, +31 none retired; 128 after CARD-SCOPE-GUARD; 121 at the wave-35 close), which registered **28** names — 27 of the
 62 its widened sweep returned, plus `DOCS-COMPACT-4-TABLE-SYNC` — and retired
 **10** as discharged by named cards; the section is *carried*,
 `dimensions.named_followups` is
@@ -1002,13 +1002,58 @@ pointer is the card that established it; read it before deviating.
     `LendWrite`, deliberately distinct from the still-refused `write` capture
     (`aWriteCaptureIsRefusedByName` re-decided over the grown matrices), and
     exclusivity is audited as
-    `QCore.WriteLendTasks.no_byte_has_two_write_authorities`. **No operation
-    admits a lease in a worker body** — the authority is held and enforced, not
-    exercised, which is a measured boundary and not a claim about two threads
-    mutating (`WRITE-LEND-TASKS-EXERCISE`); do not add one without landing its
-    checker rule, emission and sanitized native comparison together.
+    `QCore.WriteLendTasks.no_byte_has_two_write_authorities`.
+    **Appended, card `WRITE-LEND-TASKS-EXERCISE` (wave 36); it supersedes the
+    "no operation admits a lease in a worker body" sentence deliberately,
+    discharging the residual of that name by landing the three things that
+    sentence demanded together.** A worker body now **exercises** its lease:
+    `qcore_buffer_write(LEASE, INDEX, VALUE)` writes one byte and
+    `qcore_buffer_read(NAME, INDEX)` reads one, at an index **relative to the
+    authority's own base** — a lease's `low`, or 0 for an owner — which is the
+    sequential lend's rebasing law (`WRITE-LEND-COMPUTED-INDEX`) crossing the
+    spawn boundary. The decision is **in the IR and split across the two places
+    its halves are known**, and must stay split: the worker's body states the
+    exclusive bound it touches through its lease, because a body is checked
+    without knowing where its lease sits; the **creator's spawn site** decides
+    whether that bound fits the real `[low, high)`. Do not move the fit into
+    the worker (it cannot be decided there) or the footprint into the creator
+    (it is a property of the body). The equivalence of that one comparison with
+    every per-index containment fact is proved
+    (`QCore.WriteLendTasksExercise.the_footprint_fit_is_exactly_the_rebasing_law`),
+    which is what licenses checking a summary once instead of every write at
+    every creation. Four rules must survive refactors. A byte index is a
+    **check-time constant or nothing** — an unresolvable index is not *provably*
+    inside its authority and refuses, and the refusal is non-vacuous because a
+    nonempty lease always has indices it does not admit
+    (`some_index_is_always_outside`). The **owner gains no byte write**: the
+    whole-payload write stays its only write footprint
+    (`WRITE-LEND-EXERCISE-OWNER-BYTE-WRITE`), so wave 31's "the owner holds no
+    whole-payload authority while a lease is out" is inherited unchanged rather
+    than re-measured against a second owner-side footprint. A **read share
+    admits no byte view** (`WRITE-LEND-EXERCISE-LOAN-BYTE-READ`). And the
+    owner's byte **read** takes the *same* ledger gate its whole-payload read
+    takes, so a lease outstanding refuses it by the existing rule and not by a
+    second one written here. Exclusivity is re-audited about the writes
+    themselves — `QCore.WriteLendTasksExercise.no_byte_is_written_by_two_parties`
+    — and exhibited natively: two threads writing distinct bytes of one
+    `int32_t` payload under ASan/UBSan/LSan with stdout byte-identical to the
+    reference run. The emitted worker writes
+    `((unsigned char *)&buffer->payload)[base + index]`, a distinct memory
+    location in the sense of C11 3.14; the lease's **base** travels in the task
+    value's otherwise-unused scalar field, which is the one fact the holder
+    must not be able to choose. Three boundaries are **measured, not claimed**:
+    ThreadSanitizer cannot run any program this route emits, lease or not
+    (`TASK-ROUTE-TSAN-SEGV`); a stray byte at `payload + 4` lands in
+    `struct qcore_buffer`'s own tail padding, which the allocation owns, so no
+    memory tool sees it — which is why the emitted helper carries its **own**
+    extent guard rather than delegating to a sanitizer, and that guard must not
+    be removed; and a program whose observation depends on the payload's object
+    representation is host-dependent (`WRITE-LEND-EXERCISE-BYTE-ORDER`), the
+    published flagship being representation-independent by construction rather
+    than by luck. No Windows or Apple run is claimed
+    (`WRITE-LEND-EXERCISE-WINDOWS-RUN`).
     `ct07-slice-permissions`, `slice-permissions-write-lend`,
-    `write-lend-tasks`.
+    `write-lend-tasks`, `write-lend-tasks-exercise`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
@@ -1215,17 +1260,36 @@ pointer is the card that established it; read it before deviating.
     dropped" (`encoding_is_positionwise`, `encoding_preserves_length`). The two
     other construction routes into `AdmittedCausalOrder` cannot carry a lease
     at all: `parse_observed_trace` has no tag for the rendered lease lines, and
-    `declare` takes `Vec<ObservedEvent>`, which has no lease constructor. What
-    is **not** decided is the forward question
-    (`TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`): whether the observable alphabet
-    should grow to carry leases once `WRITE-LEND-TASKS-EXERCISE` makes a worker
-    exercise its authority. Growing it takes **CT03's method** — a
-    conservativity theorem plus a rule shown non-vacuous in both directions —
-    and that second half is unavailable while no worker-side range write exists
-    to admit or refuse. Until then, write-lend programs sit outside F02
-    relational comparison by construction, their native evidence being
-    sanitizer and allocation-count rather than a trace relation.
-    `trace-alphabet-lease-boundary`, `ct03-proof-alphabet`, `write-lend-tasks`.
+    `declare` takes `Vec<ObservedEvent>`, which has no lease constructor. **Amended, card
+    `WRITE-LEND-TASKS-EXERCISE` (wave 36), which DECIDES the forward question
+    `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED` rather than leaving it open.** That
+    residual asked whether the observable alphabet should grow to carry leases
+    once a worker exercised its authority. A worker now does, and **the answer
+    is no — the alphabet does not grow**, on a ground the exercise itself
+    supplies rather than on the absence of one: `AdmittedCausalOrder` is a
+    **sequence**, so admitting a run means stating one causal order over its
+    events, and two workers holding disjoint write leases write their bytes
+    with no causal edge between them and no synchronization until their joins.
+    Any order the alphabet could carry would **assert an ordering the run does
+    not have** — which is the situation constraint 15a answers with a
+    window-and-emitter relation, and is the opposite of F02's premise. The two
+    byte events therefore join the lease events on the **refusing** side, so
+    the alphabet did not grow and no existing digest moved. Reachability is
+    deliberately *not* the ground, and that is measured: in a real exercised
+    program the lease event always precedes the byte write, so growing the
+    alphabet by the byte events alone would have decided nothing — both facts
+    are driven, the refusal on a synthetic observation carrying no lease event
+    so the arm is exercised rather than shadowed, and the shadowing itself on a
+    compiled program. The operative consequence is unchanged and is now a
+    decision rather than a pending question: write-lend programs sit outside
+    F02 relational comparison **by construction**, their native evidence being
+    sanitizer, allocation-count and the byte-identical stdout of a strict
+    comparison whose windows are the joins. Re-opening this needs CT03's
+    method — a conservativity theorem plus a rule shown non-vacuous in both
+    directions — **and** a causal-order semantics for concurrent byte writes,
+    which is the half the sequence shape denies.
+    `trace-alphabet-lease-boundary`, `ct03-proof-alphabet`, `write-lend-tasks`,
+    `write-lend-tasks-exercise`.
 15o. **(card `MUTEX-SHARE-CROSS`.)** A `protected N` payload crosses a task
     boundary only through `thread scope NAME share PLACE under MUTEX { … }` on
     `source.mutex.guard.v1`, and the decision is in **three** halves that must
@@ -1541,8 +1605,8 @@ existing band**, on the `SOCKET-EVENT-COMPOSE` /
 `NATIVE-LIBRARY-HEADER-DECORATION` precedent — the same condition reached by a
 new route — with the widening stated in §L21 and in the card's report rather
 than taken silently. Constraint 1 is unchanged: a code is still allocated to a
-condition, still stable, still not reusable by a second pass. **Waves 26–31 ran
-the consequence thirteen times, on nine bands, without strain** — wave 26:
+condition, still stable, still not reusable by a second pass. **Waves 26–36 ran
+the consequence fourteen times, on nine bands, without strain** — wave 26:
 `LOOP-UNROLL-BUDGET` (`Q097`/`Q098`), `HTTP-V1-COMPUTED-LENGTH`
 (`Q090`/`Q093`/`Q094`), `SOCKET-INET-ADDRESSES` (widening `Q084` inside
 `Q080`–`Q089`); wave 27: `CT23-CREDIT-ERROR-PATH` (`Q630`/`Q635`/`Q636`/`Q641`),
@@ -1559,8 +1623,15 @@ nothing. Three cards allocated nothing either and are **not** instances of the
 rule: `GATEWAY-C-LOCATION` and `CT24-CLEANUP-PREEMPTED`, because fixing where a
 diagnostic is *attributed* is not a code change (constraint 1), and
 `CT42-PROTOCOL-CELL`, which reaches the footprint checker's existing `Q664`
-condition from a new deriver without widening it. **Waves 32–34 allocated no
-code and ran no condition extension either**, so the count stands at thirteen:
+condition from a new deriver without widening it. Wave 36's `WRITE-LEND-TASKS-EXERCISE` is the **fourteenth**, on the same two
+bands wave 31 used (`Q020` and `Q600`, so no tenth band): the worker-side byte
+access lands entirely as condition extensions — the at-most-one-lease parameter
+rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
+the constant-index tier and the three authority rules on `Q600` — with the
+**arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
+word and takes no code. **Waves 32–34 allocated no
+code and ran no condition extension either**, so the count before it stood at
+thirteen:
 the two gateway arbiters `C-GATEWAY-RETURN-POSITION` and
 `C-GATEWAY-RETURN-CALL-W4` move **gateway diagnostics**, which are categories
 rather than `Q` codes, so the icebox does not engage; and the remaining cards
@@ -1572,7 +1643,7 @@ waves without a card needing a range.
 | `Q000` | `NameResolution` (per file) | input file does not parse as a QCore declaration |
 | `Q001`, `Q016` | `Index` | index/quant presentation; dimension/axis validity and quant-index type resolution |
 | `Q010`–`Q015` | `NameResolution` | duplicates, unknown name, `Q014` unknown imported module, `Q015` concurrency without its file-local import |
-| `Q020`, `Q021` | `OrdinaryTypes` | unsupported ordinary construct / task-route source-contract gate; sequential whole-program contract gate. **Route-specific, not to be unified** (constraint 2). Card `WRITE-LEND-TASKS` (wave 31) widens `Q020`'s task-parameter condition and **allocates no code**: the admitted worker parameter types grow by the ungraded `lend<Buffer>` range write lease, receivable only from a `lend PLACE LOW..HIGH` capture, with the place/parameter agreement check covering the new pair exactly as it covers `borrow<Buffer>`; `lend` stays contextual (constraints 14 and 15h) |
+| `Q020`, `Q021` | `OrdinaryTypes` | unsupported ordinary construct / task-route source-contract gate; sequential whole-program contract gate. **Route-specific, not to be unified** (constraint 2). Card `WRITE-LEND-TASKS` (wave 31) widens `Q020`'s task-parameter condition and **allocates no code**: the admitted worker parameter types grow by the ungraded `lend<Buffer>` range write lease, receivable only from a `lend PLACE LOW..HIGH` capture, with the place/parameter agreement check covering the new pair exactly as it covers `borrow<Buffer>`; `lend` stays contextual (constraints 14 and 15h). Card `WRITE-LEND-TASKS-EXERCISE` (wave 36) widens the same condition again and **allocates no code**: a worker takes **at most one** `lend<Buffer>` parameter, and the byte spellings `qcore_buffer_write(LEASE, INDEX, VALUE)` / `qcore_buffer_read(NAME, INDEX)` refuse here when the named binding is the wrong kind for the position. The **arity** selects the form (the `borrow_utf8` precedent), so +0 words and +0 tokens |
 | `Q022`–`Q027` | `ExternCall` | admission and bridging of `source.extern-call.v1` declared extern calls |
 | `Q028`–`Q031` | `StandardIo` | `source.std-io.v1` print/log/flush admission behind `std.fmt`/`std.io`/`std.logger` |
 | `Q032`–`Q035` | `UncheckedLinkage` | `source.extern-call.unsafe.v1` explicit unchecked linkage; scalars only, every pointer refused |
@@ -1592,7 +1663,7 @@ waves without a card needing a range.
 | `Q300`, `Q302`–`Q309` | `TypedErrors`, `ErrorRegion` | `Q300` typed errors; `Q302` error region, with `Q303`–`Q309` the finer conditions the pass has allocated since Cycle 6 and `RegionTaskDiagnostic::code` already reads back — `Q303` a `quant open` naming another region, `Q304` a pack consumed twice, `Q305` a handler returning with its pack open, `Q306` a **nonempty** pack caught without being opened, `Q307` an error leaving a handler undischarged, `Q308` a cleanup action that is not total and noexcept, `Q309` one resource in both the payload and a pack. Card `QUANT-REGION-SOURCE` allocates **no code** and widens two conditions: `Q302`'s from "the error-region model refused" to that **and** `source.region.v1`'s own shape refusals, each v1 path boundary refused **by name** there (`REGION-NORMAL-EXIT`, `-MULTIPLE-CATCH`, `-MULTIPLE`, `-PROPAGATE`, `-FAILING-ACQUIRE`, `-IN-ARM`, `-HANDLER-BODY`, `-CATCH-PAYLOAD-BINDING`); and these codes are now emitted from the **driver** as well as the frontend. `REGION-CREDIT-JOINS` (wave 28), `REGION-JOINS-DUTIES` (wave 29) and `REGION-JOINS-LOAN` (wave 30) widen `Q302`'s composed-route condition a second, third and fourth time — the region on the epoch task route after every join, then its sealed pack carrying real duties, then the **adoption** `move NAME;` beside a worker's counted read share (with an adopted name the entry does not bind, and one owner taken twice through either shape, as that card's own `Q302` conditions) — constraint 15m's admitted set, each stated in §L21, each allocating nothing |
 | `Q400`, `Q401`, `Q403` | driver invocation | no inputs; missing/ambiguous entry; `--entry` against a library module |
 | `Q500` | `CEmission` | construct the reduced C11 CFG cannot encode |
-| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile. Five later cards move this row and **allocate nothing**, each stated in §L21: `REGION-CREDIT-JOINS` (wave 28) widens the composed-route reconciliation condition — a spawn or join whose span follows the entry's `error region` is refused, the ordering derived from the checked task IR and never declared; `CT47-COPY-CAPTURE` (wave 29) widens the boundary condition — the transferability judgment's refusal of a task-creation capture, attributed at the crossing construct and naming the missing transfer/share contract, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop); `REGION-JOINS-LOAN` (wave 30) **narrows** one condition deliberately and widens none, discharging the composed epoch route's blanket refusal of read-loan captures (`T08-COMPOSE-LOAN`, constraint 15m); and `WRITE-LEND-TASKS` (wave 31) widens the boundary and scoped-task conditions three ways on the `CT47-COPY-CAPTURE` precedent — the judgment's grown vocabulary (`TransferMode::LendWrite`, the delivered `lend<Buffer>`, `ShareProtocol::DisjointWriteLeases`), the lease's check-time bound decisions (a varying bound, an empty range, a range past `BUFFER_PAYLOAD_BYTES`), and the ledger's own `OverlappingLeases` / `LeaseOutstanding` / `InvalidLease` / `TooManyWriters` arriving through the unedited `check_task_module` (constraint 15h). `MUTEX-SHARE-CROSS` (wave 32) is the fifth, widening `Q600`'s boundary condition and the `Q610`–`Q627` sub-band's route and allocating nothing, on the same precedent: the judgment's vocabulary grows again (`TransferKind::ProtectedResource` and the delivered `MutexShare`, `TransferMode::ShareUnderMutex`, each sharing mode now requesting **one** named protocol), and the crossing's two protocol gates — **absent** (the `under` name is not a mutex generation of this module) and **mismatched** (it guards some other resource) — land at `Q600` at the clause, while the third refusal, `unverified`, is the unedited checker's own `Q611` (constraint 15o). This row's entry is the wave-35 close's, three waves late; the authority it summarises, spec §L21, has carried the widening since the card (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`). `CT24-CLEANUP-PREEMPTED` (wave 30) moves no code and widens no condition: the `ScopeBusy` refusal is rendered from the exit rule's own loan backstop, same code, same span, same refused set |
+| `Q600` | `Concurrency` | scoped-task checking and the carried-over structural refusal shared by every checked concurrency profile. Five later cards move this row and **allocate nothing**, each stated in §L21: `REGION-CREDIT-JOINS` (wave 28) widens the composed-route reconciliation condition — a spawn or join whose span follows the entry's `error region` is refused, the ordering derived from the checked task IR and never declared; `CT47-COPY-CAPTURE` (wave 29) widens the boundary condition — the transferability judgment's refusal of a task-creation capture, attributed at the crossing construct and naming the missing transfer/share contract, previously falling through to the `Q500` executable-subset catch-all (kept unedited as the fail-closed backstop); `REGION-JOINS-LOAN` (wave 30) **narrows** one condition deliberately and widens none, discharging the composed epoch route's blanket refusal of read-loan captures (`T08-COMPOSE-LOAN`, constraint 15m); and `WRITE-LEND-TASKS` (wave 31) widens the boundary and scoped-task conditions three ways on the `CT47-COPY-CAPTURE` precedent — the judgment's grown vocabulary (`TransferMode::LendWrite`, the delivered `lend<Buffer>`, `ShareProtocol::DisjointWriteLeases`), the lease's check-time bound decisions (a varying bound, an empty range, a range past `BUFFER_PAYLOAD_BYTES`), and the ledger's own `OverlappingLeases` / `LeaseOutstanding` / `InvalidLease` / `TooManyWriters` arriving through the unedited `check_task_module` (constraint 15h). `WRITE-LEND-TASKS-EXERCISE` (wave 36) widens the scoped-task condition a fourth time and allocates nothing: the worker-side byte access — the creator's **footprint fit** (the bound a worker's body states against the lease that creation supplies), the constant-index tier (an unresolvable index is not provably inside, a negative one and one past `BUFFER_PAYLOAD_BYTES` refuse beside it), and the three authority rules (no owner byte write, no read-share byte view, the owner's byte read on the whole-payload read's own gate) — all decided in the IR, constraint 15h. `MUTEX-SHARE-CROSS` (wave 32) is the fifth, widening `Q600`'s boundary condition and the `Q610`–`Q627` sub-band's route and allocating nothing, on the same precedent: the judgment's vocabulary grows again (`TransferKind::ProtectedResource` and the delivered `MutexShare`, `TransferMode::ShareUnderMutex`, each sharing mode now requesting **one** named protocol), and the crossing's two protocol gates — **absent** (the `under` name is not a mutex generation of this module) and **mismatched** (it guards some other resource) — land at `Q600` at the clause, while the third refusal, `unverified`, is the unedited checker's own `Q611` (constraint 15o). This row's entry is the wave-35 close's, three waves late; the authority it summarises, spec §L21, has carried the widening since the card (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`). `CT24-CLEANUP-PREEMPTED` (wave 30) moves no code and widens no condition: the `ScopeBusy` refusal is rendered from the exit rule's own loan backstop, same code, same span, same refused set |
 | `Q610`–`Q627` | `Concurrency` | `CheckedMutexInvariantV1`; `Q624`/`Q625` opt-in lock ranks, `Q626`/`Q627` opt-in protection growth. Card `MUTEX-SHARE-CROSS` (wave 32) reaches `Q611` `UnguardedProtectedAccess` from a **new route** and allocates nothing: the third refusal of the declared task crossing (`thread scope NAME share PLACE under MUTEX { … }`, constraint 15o) — a child reaching the shared payload outside a critical section — is reported here under this **unedited** checker's own code rather than at `Q600`, because a protected footprint has no unguarded access at all and no rule of the mutex checker is re-implemented beside the judgment. Row landed at the wave-35 close (`MUTEX-SHARE-CROSS-INTEGRATOR-LIST-UNLANDED`) |
 | `Q630`–`Q641` | `Concurrency` | `FlatEpochBoundV1` flat-epoch accounting (`source.epoch.bound.v1`), and its sibling `EpochCreditRecoveryV1` — the error path over the same epoch's credits, reached from source by `source.epoch.tasks.v1`'s `error(move\|drop\|close);` row clause (card `CT23-CREDIT-ERROR-PATH`). The same pass and the same quantities, so it **extends four of this band's conditions and takes no code of its own**: `Q630` a plan that does not describe its epoch (including a clause on the declarative route, which has no error edge), `Q635` credit **abandoned** at the creator's error edge, `Q636` a restoration larger than its grant, `Q641` the error path's arithmetic. `Q637` is deliberately **not** extended (constraint 15j) |
 | `Q650`–`Q667` | `Concurrency` | `DisjointFootprintsV1` disjoint footprints |

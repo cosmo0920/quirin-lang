@@ -6,6 +6,50 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WRITE-LEND-TASKS-EXERCISE` (2026-09-18, wave 36).** Discharges the residual
+of the same name, landing in one card the three things wave 31's sentence
+demanded together: checker rule, emission and sanitized native comparison. A
+worker body now **exercises** its range write lease —
+`qcore_buffer_write(LEASE, INDEX, VALUE)` and `qcore_buffer_read(NAME, INDEX)`,
+the **arity** selecting the form on the `borrow_utf8` precedent, so **+0 words,
++0 tokens, +0 `Q` codes** (censused at zero occurrences of either new arity
+across 514 `.qcore`/`.qc` fixtures). The rebasing law is decided **in the IR and
+split across the two places its halves are known**: the worker's body states the
+exclusive bound it touches through its lease, because a body is checked without
+knowing where its lease sits; the creator's spawn site, the only place the real
+`[low, high)` exists, decides the fit. Those are proved *equivalent*
+(`the_footprint_fit_is_exactly_the_rebasing_law`), which is what licenses
+checking a summary once instead of every write at every creation. Exclusivity is
+re-proved about the **writes themselves** rather than about the permissions
+(`no_byte_is_written_by_two_parties`), and exhibited natively: **two threads
+writing distinct bytes of one `int32_t` under ASan/UBSan/LSan, stdout
+byte-identical to the reference run**, one allocation released once. Leg 4
+**decides** `TRACE-ALPHABET-LEASE-GROWTH-UNDECIDED`: the F02 observable alphabet
+does **not** grow, because `AdmittedCausalOrder` is a *sequence* and two
+disjoint leases' writes have no causal edge between them, so any order it could
+carry would assert an ordering the run does not have — the reachability
+argument, that a lease event always refuses first, is published beside it as a
+measurement rather than as the reason. Three boundaries are measured rather than
+claimed. **ThreadSanitizer cannot run any program this route emits** — wave 31's
+own held-only program and the published lease-free `examples/threads/two_workers`
+die at the identical address and pc, so the failure is the route's and not the
+exercise's (`TASK-ROUTE-TSAN-SEGV`). A stray byte at `payload + 4` lands in
+`struct qcore_buffer`'s **own tail padding**, which the allocation owns, so ASan
+is silent — the measured reason the emitted helper carries its own extent guard
+instead of delegating to a sanitizer, with the overflow named only at `+64`. And
+a program mixing whole-payload and byte access is host-dependent
+(`WRITE-LEND-EXERCISE-BYTE-ORDER`); the flagship is representation-independent by
+C11 7.20.1.1 rather than by luck. Eleven mutations, ten caught and one surviving
+**as recorded** — breaking the frontend's read-share arm leaves the IR refusing
+with the same sentence, constraint 15h's "decided in the IR, not by a route rule"
+made visible. The campaign found a real defect in the test set: three IR arms
+were backstops **no test reached**, the
+`TRACE-ALPHABET-LEASE-REFUSAL-UNEXERCISED` shape again, now driven by five
+IR-level tests. 16 card tests, 133 Lean audits, no Windows or Apple run claimed
+(`WRITE-LEND-EXERCISE-WINDOWS-RUN`). CT07 is deliberately **not** remapped
+(constraint 23); `CT07-TWO-THREAD-REMAP` names the lane work.
+`docs/reports/write-lend-tasks-exercise/README.md`.
+
 **`C-GATEWAY-INDIRECT-CENSUS-2` (2026-09-18, wave 36).** A measurement card:
 no analyzer rule changed, no verdict moved, no re-pin owned. It censuses the
 corpus's largest refusal family, `indirect memory access is outside the resource

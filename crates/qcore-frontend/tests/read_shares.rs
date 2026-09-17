@@ -316,9 +316,16 @@ fn the_write_form_is_exact() {
             "qcore_buffer_write(buffer)",
             "buffer write requires one owned-buffer name and one i32 value",
         ),
+        // Deliberate pin update (card `WRITE-LEND-TASKS-EXERCISE`, wave 36).
+        // The three-argument spelling now *means* something — it is the byte
+        // write through a range write lease — so this line is refused for the
+        // **kind** of `buffer` rather than for its shape. The point the row
+        // makes is unchanged and arguably sharper: an owner still cannot reach
+        // a byte write, because the whole-payload write remains its only write
+        // footprint (`WRITE-LEND-EXERCISE-OWNER-BYTE-WRITE`).
         (
             "qcore_buffer_write(buffer, 1, 2)",
-            "task scalar expressions require an i32 literal or immutable scalar binding",
+            "a byte write requires lend<Buffer>",
         ),
         ("qcore_buffer_write(missing, 1)", "unknown name `missing`"),
     ] {
