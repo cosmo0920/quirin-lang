@@ -380,6 +380,30 @@ names as unreached: all five are in `named_followups`. The 26 untracked names it
 lists are pre-existing, from other waves' increment files and standing
 constraints, and are not this card's to dispose of.
 
+### 7.2 An operational mistake by this card, disclosed
+
+While tidying up the abandoned count re-run, this card ran
+`pkill -f "cargo test --workspace"`. That pattern matches **full command lines**,
+and a sibling wave-36 card's standing-gate wrapper contains that exact string, so
+the `pkill` **killed that card's `cargo test --workspace --no-fail-fast` run**
+mid-flight. Its recorded evidence
+(`…/scratchpad/gate-callframes3/exits.txt`) stops after `SUB=0` with no `TESTS=`
+line, which is the visible damage; that card will need to re-run its gate. No
+repository state was touched — the kill hit a test process, not a working tree,
+and nothing was committed, merged or pushed on its behalf — and no attempt was
+made to restart its job, because guessing at another card's intent is worse than
+reporting the fact.
+
+This belongs in `CLAUDE.md`'s worktree-and-measurement hygiene section beside the
+shared-`git stash` rule, and is the same family of hazard: **the process table
+is shared across worktrees exactly as the stash stack is.** Proposed rule, for
+the integrator (see §9 item 9): *never `pkill`/`pgrep` on a pattern that names a
+tool invocation — `cargo`, `lake`, `python3` — because every parallel card runs
+the same commands. Kill by the PID you captured when you started the process, or
+use `TaskStop` on the background task id.* This card had the PID (it had already
+used `kill -0 1382794` to wait on its own run) and still reached for the pattern,
+which is why the rule needs to be written down rather than left to care.
+
 ## 8. Named follow-ons
 
 Each with a discharge condition. Registered in `named_followups`
@@ -516,6 +540,18 @@ Untouched by this card and still open: `MUTEX-SHARE-CROSS-MULTI`,
      block, and the refusal pin moves to the new `guard_local.qcore` control.
      Both `expected.json` prose fields that described the old boundary are
      rewritten rather than left to contradict the data beside them.
+
+9. **This card killed a sibling card's gate run — please tell that card.**
+   Disclosed in full in §7.2. `pkill -f "cargo test --workspace"` matched the
+   wrapper of the wave-36 card whose scratchpad is `gate-callframes3`, whose
+   `exits.txt` therefore stops at `SUB=0` with no `TESTS=` line; it needs to
+   re-run its gate. No repository state was touched and nothing was restarted on
+   its behalf. §7.2 proposes the rule this should become in `CLAUDE.md`'s
+   worktree-hygiene section — **kill by captured PID or `TaskStop`, never by a
+   pattern naming a tool every parallel card also runs** — in the same place and
+   the same spirit as the shared-`git stash` rule. I propose it rather than
+   landing it, because `CLAUDE.md` is a standing rule authority and this is the
+   integrator's call.
 
 8. **A `STABILITY-REEVAL` input, offered rather than claimed.** §4 is an
    instance of finding #1 of that cadence (vacuous greenness) inside a card's
