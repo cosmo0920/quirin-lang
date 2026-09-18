@@ -275,7 +275,8 @@
       "docs/reports/ct-wire-lane-4/ct_stage_evidence.json",
       "docs/reports/ct-ctwin-lane/ct_stage_evidence.json",
       "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
-      "docs/reports/ct-lane-5/ct_stage_evidence.json"
+      "docs/reports/ct-lane-5/ct_stage_evidence.json",
+      "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json"
     ],
     "reporting_host": "linux",
     "stage_histogram": {
@@ -345,8 +346,8 @@
         "not_applicable": 43
       },
       "proof": {
-        "executed": 3,
-        "unassessed": 43
+        "executed": 4,
+        "unassessed": 42
       }
     },
     "depth_profile": {
@@ -355,8 +356,8 @@
       "legacy_c_twin": 3,
       "mutex_invariant_check": 8,
       "native_execution": 7,
-      "native_sanitized": 9,
-      "proof": 3,
+      "native_sanitized": 8,
+      "proof": 4,
       "task_ledger_check": 7,
       "task_lowering": 1
     },
@@ -372,7 +373,7 @@
       "native_execution": 51,
       "native_sanitized": 32,
       "parse": 46,
-      "proof": 3,
+      "proof": 4,
       "sequential_reference_execution": 1,
       "sequential_whole_program": 1,
       "task_ledger_check": 22,
@@ -472,7 +473,7 @@
       "CT04": "task_ledger_check",
       "CT05": "task_ledger_check",
       "CT06": "elaborate",
-      "CT07": "native_sanitized",
+      "CT07": "proof",
       "CT08": "elaborate",
       "CT09": "native_sanitized",
       "CT11": "elaborate",

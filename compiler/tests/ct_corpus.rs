@@ -3813,7 +3813,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 23] = [
+const EVIDENCE_FILES: [&str; 24] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3850,6 +3850,11 @@ const EVIDENCE_FILES: [&str; 23] = [
     // record per constraint 21; the ct07-write-remap record keeps its bytes.
     // It maps no new case, so the mapped count does not move.
     "docs/reports/ct-lane-5/ct_stage_evidence.json",
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's proof stage moves to
+    // executed on the ledger-bound leg. A superseding record per constraint
+    // 21; the ct-lane-5 record keeps its bytes, and every other stage row is
+    // carried from it unchanged.
+    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

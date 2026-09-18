@@ -685,9 +685,9 @@ fn mutated(old: &str, new: &str) -> String {
 #[test]
 fn an_overlapping_mutant_is_caught_by_the_checker_and_refused_by_the_procedure_at_disjointness() {
     let source = mutated("lend buffer 0..2", "lend buffer 0..3");
-    let errors = compiled("overlapping.qcore", &source)
-        .err()
-        .expect("the checker refuses overlapping leases before anything is emitted");
+    let Err(errors) = compiled("overlapping.qcore", &source) else {
+        panic!("the checker refuses overlapping leases before anything is emitted");
+    };
     assert!(
         errors
             .iter()
@@ -716,9 +716,9 @@ fn an_overlapping_mutant_is_caught_by_the_checker_and_refused_by_the_procedure_a
 #[test]
 fn an_empty_lease_mutant_is_caught_by_the_checker_and_refused_by_the_procedure_at_nonemptiness() {
     let source = mutated("lend buffer 2..4", "lend buffer 2..2");
-    let errors = compiled("empty.qcore", &source)
-        .err()
-        .expect("the checker refuses an empty lease");
+    let Err(errors) = compiled("empty.qcore", &source) else {
+        panic!("the checker refuses an empty lease");
+    };
     assert!(
         errors
             .iter()
