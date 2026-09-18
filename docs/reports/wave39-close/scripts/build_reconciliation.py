@@ -124,7 +124,7 @@ verdict(
     "a fourth time; the sentence now points at the authority (PROOF_GATED_CASES, the runner "
     "registry and the manifest) and records the three drifts. A comment edit only; no test moved.",
     [
-        c(CT_CORPUS, "removed by the wave-39 close rather than refreshed a fourth time"),
+        c(CT_CORPUS, "figures were removed by the wave-39 close rather than refreshed a fourth"),
         a(CT_CORPUS, "and proof is 3 of 43"),
     ],
 )
@@ -529,13 +529,13 @@ record = {
         "WAVE-39-CLOSE. Base b6d1f101, the LOOPS-ON-COMPOSED-ROUTES merge (= origin/main at the "
         "start); the compiler-side wave of five cards, the only card running at the close. 49 "
         "integrator-addressed items across the five cards, each given a verdict MEASURED AGAINST THE "
-        "TREE rather than read off the card's claim: applied 33 (most at their merges in the card's "
+        "TREE rather than read off the card's claim: applied 31 (most at their merges in the card's "
         "words, verified by reading the tree at b6d1f101; six by this close - the ct_corpus.rs doc "
         "comment, the OWNED-FIELD-WINDOWS-RUN name, the CT46 citation, the wave paragraph's "
         "executed-schedule wording, the Q-space tally correction, the harness residual), superseded "
         "5 (three integration-gate regenerations and this close's own; the Lean count; the Q-space "
         "numbering), declined 2 (a standing rule for harness invisibility; the loops card's two "
-        "not-mine decisions), noted 9. Nothing was found unapplied at its merge; one thing was found "
+        "not-mine decisions), noted 11. Nothing was found unapplied at its merge; one thing was found "
         "UNCOUNTED at its merge (CT42-CELL-ROUTE's condition extensions missing from the Q-space tally, "
         "corrected here). A further 57 items belong to five frozen reports inside the inclusive range "
         "(ct-lane-5, joined-provenance-round-bound, task-route-tsan, mutex-share-cross-emission, "
