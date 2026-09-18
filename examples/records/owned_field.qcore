@@ -1,0 +1,70 @@
+// A record that owns two buffers (card `AGGREGATE-OWNED-FIELD`): the
+// aggregate carries the custody now, and the four rules that make that safe
+// are the ownership IR's own — construction moves the buffers in, a field
+// read of an owned field moves one out, `drop f;` releases every field still
+// held in declaration order, and a leak through a field is a leak.
+//
+// `Frame` declares one scalar and two `bytes` fields. `head` and `body` are
+// acquired as ordinary buffers, written, and then moved into the record by the
+// construction that names them; from that statement on, `h` and `b` are moved
+// bindings and any use of them refuses at `Q054` with the checker's own "use
+// after move". The record's fields stand at every position a buffer name does:
+// `extent(f.body)`, `f.body[1] = 67;`, `let b0 = f.body[0];`.
+//
+// The move out is the field read `let taken = f.body;` — the same spelling a
+// scalar field read has, decided by the declared type — after which `taken`
+// owes the buffer and `f.body` is a hole. `drop f;` then releases `f.head`
+// alone, tolerating the hole, and `drop taken;` releases the moved-out
+// buffer. Remove either drop and the unedited checker refuses at `Q054`,
+// naming the leaked path `f.head` or the binding `taken`; remove the
+// `drop f;` and the emitted C leaks the head under LSan, which the suite's
+// sanitized run would report.
+//
+// Six numbers are printed: the scalar field, the extent read through the
+// field, one byte of each owned field, one byte written through a field, and
+// one byte written through the moved-out binding.
+
+import std.buffer;
+import std.fmt;
+import std.io;
+
+type Frame { tag: i32, head: bytes, body: bytes }
+
+fn main() -> unit effects { io, alloc, mut } {
+    let h = bytes(2);
+    h[0] = 72;
+    h[1] = 73;
+    let b = bytes(4);
+    b[0] = 81;
+
+    // Construction moves `h` and `b` into the record; the assembly stays a
+    // statement (examples/README.md's rule), built from three pieces.
+    let f = Frame { tag: 7, head: h, body: b };
+
+    // The scalar field reads as it always did; the owned fields are read,
+    // measured and written through their paths.
+    let t = f.tag;
+    let n = extent(f.body);
+    f.body[1] = 67;
+    let h0 = f.head[0];
+    let b0 = f.body[0];
+    let b1 = f.body[1];
+    t |> print dec;
+    n |> print dec;
+    h0 |> print dec;
+    b0 |> print dec;
+    b1 |> print dec;
+
+    // The partial move: `taken` owes the body from here on and `f.body` is a
+    // hole the whole-record drop below tolerates.
+    let taken = f.body;
+    taken[2] = 111;
+    let b2 = taken[2];
+    b2 |> print dec;
+
+    // `drop f;` releases `f.head` — the one field still held — and nothing
+    // twice; `drop taken;` releases the moved-out body.
+    drop f;
+    drop taken;
+    return;
+}

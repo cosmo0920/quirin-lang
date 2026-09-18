@@ -1,0 +1,61 @@
+baseline unit: exit=0
+baseline e2e: exit=0
+M1-drop-through-releases-nothing: exit=101 RED (arm is driven)
+  falsifies: drop-through releases the live fields (the ledger is empty after `drop p;`)
+  thread 'ownership::tests::dropping_an_aggregate_releases_its_live_fields_and_tolerates_a_hole' (891002) panicked at crates/qcore-core/src/../tests/unit/ownership.rs:574:6:
+  restored: sha256 EQUAL (7d963df613c9)
+M2-emitter-frees-in-reverse-order: exit=101 RED (arm is driven)
+  falsifies: the whole-record release frees the members in declaration order
+  thread 'a_whole_record_drop_releases_the_live_fields_in_declared_order' (926996) panicked at compiler/tests/aggregate_owned_field.rs:271:5:
+  restored: sha256 EQUAL (1e3a252dcfc8)
+M3-value-half-publishes-only-the-first-release: exit=101 RED (arm is driven)
+  falsifies: the certificate publishes every field the drop-through released
+  thread 'a_whole_record_drop_releases_the_live_fields_in_declared_order' (934869) panicked at compiler/tests/aggregate_owned_field.rs:259:5:
+  restored: sha256 EQUAL (f91913c9c6fb)
+M4-construction-does-not-move: exit=101 RED (arm is driven)
+  falsifies: the moved-in binding is a use after move (the checker's own words)
+  thread 'using_the_buffer_after_moving_it_into_a_record_refuses_as_a_use_after_move' (940511) panicked at compiler/tests/aggregate_owned_field.rs:182:5:
+  restored: sha256 EQUAL (7d963df613c9)
+M5-move-out-leaves-no-hole: exit=101 RED (arm is driven)
+  falsifies: a move out leaves a hole (the ledger invariant holds and a second read refuses)
+  thread 'ownership::tests::moving_a_field_out_leaves_a_hole_a_second_read_refuses' (944909) panicked at crates/qcore-core/src/../tests/unit/ownership.rs:524:6:
+  restored: sha256 EQUAL (7d963df613c9)
+M6-leak-rule-blind-to-fields: exit=101 RED (arm is driven)
+  falsifies: an unreleased field is reported by its path
+  thread 'ownership::tests::an_unreleased_field_is_a_normal_path_leak_named_by_its_path' (948346) panicked at crates/qcore-core/src/../tests/unit/ownership.rs:694:5:
+  restored: sha256 EQUAL (7d963df613c9)
+M7-aggregate-copied: exit=101 RED (arm is driven)
+  falsifies: a record with an owned field is never copied
+  thread 'ownership::tests::an_aggregate_is_never_copied' (952076) panicked at crates/qcore-core/src/../tests/unit/ownership.rs:717:6:
+  restored: sha256 EQUAL (7d963df613c9)
+M8-Q055-lift-withdrawn: exit=101 RED (arm is driven)
+  falsifies: a buffer at a bytes field is admitted (the lift)
+  thread 'a_buffer_at_a_bytes_field_is_admitted_and_at_an_i32_field_still_refused' (962165) panicked at compiler/tests/aggregate_owned_field.rs:350:39:
+  restored: sha256 EQUAL (f91913c9c6fb)
+M9-lend-window-gate-removed: exit=101 RED (arm is driven)
+  falsifies: a lend beside an owned-field record is refused by name
+  thread 'a_lend_beside_an_owned_field_and_an_owned_field_in_a_loop_body_refuse_by_name' (971168) panicked at compiler/tests/aggregate_owned_field.rs:487:5:
+  restored: sha256 EQUAL (f91913c9c6fb)
+M10-loop-body-gate-removed: exit=101 RED (arm is driven)
+  falsifies: an owned-field statement in a for body is refused by name
+  thread 'a_lend_beside_an_owned_field_and_an_owned_field_in_a_loop_body_refuse_by_name' (975003) panicked at compiler/tests/aggregate_owned_field.rs:495:5:
+  restored: sha256 EQUAL (f91913c9c6fb)
+M11-aggregate-readable-as-a-plain-owner: exit=101 RED (arm is driven)
+  falsifies: the record itself is not a plain owner a read can name
+  thread 'ownership::tests::an_aggregate_at_a_plain_owner_position_refuses_by_name' (976297) panicked at crates/qcore-core/src/../tests/unit/ownership.rs:776:52:
+  restored: sha256 EQUAL (7d963df613c9)
+M12-emitter-frees-a-moved-out-member: exit=101 RED (arm is driven)
+  falsifies: the whole-record release skips a moved-out member (no double free)
+  thread 'the_emitted_c_holds_the_pointer_in_the_struct_and_moves_by_initializer' (979759) panicked at compiler/tests/aggregate_owned_field.rs:623:5:
+  restored: sha256 EQUAL (1e3a252dcfc8)
+M13-field-path-bounds-unchecked: exit=101 RED (arm is driven)
+  falsifies: an index through a field is bounded by the buffer the field holds
+  thread 'an_index_through_a_field_is_bounded_by_the_buffer_it_holds' (983436) panicked at crates/qcore-core/src/std_buffer.rs:2157:43:
+  restored: sha256 EQUAL (f91913c9c6fb)
+M14-scalar-field-at-custody-position-admitted: exit=101 RED (arm is driven)
+  falsifies: a custody position naming a scalar field is refused
+  error[E0004]: non-exhaustive patterns: `Some(FieldType::I32)` not covered
+  restored: sha256 EQUAL (f91913c9c6fb)
+restored e2e: exit=0
+restored unit: exit=0
+vacuous: 0 of 14

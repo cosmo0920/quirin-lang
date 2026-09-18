@@ -205,6 +205,32 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
         BufferEvent::Field { record, .. } => {
             consumed.insert(record.clone(), true);
         }
+        // Card `AGGREGATE-OWNED-FIELD`: the field-path statements read the
+        // record they name and their operands — marked consumed for the
+        // reason the arms above are, though this route refuses them before
+        // emission.
+        BufferEvent::FieldStore {
+            record,
+            index,
+            value,
+            ..
+        } => {
+            consumed.insert(record.clone(), true);
+            for operand in [index, value] {
+                if let BufferOperand::Scalar(scalar) = operand {
+                    consumed.insert(scalar.clone(), true);
+                }
+            }
+        }
+        BufferEvent::FieldLoad { record, index, .. } => {
+            consumed.insert(record.clone(), true);
+            if let BufferOperand::Scalar(scalar) = index {
+                consumed.insert(scalar.clone(), true);
+            }
+        }
+        BufferEvent::FieldExtent { record, .. } | BufferEvent::FieldRelease { record, .. } => {
+            consumed.insert(record.clone(), true);
+        }
         BufferEvent::Line(_) | BufferEvent::Return => {}
     }
 }

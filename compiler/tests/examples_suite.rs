@@ -1258,6 +1258,7 @@ const SOCKET_SERVER: &str = include_str!("../../examples/events/socket_server.qc
 const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qcore");
 const RECORD_POINT: &str = include_str!("../../examples/records/point.qcore");
 const PIXEL_WRITES: &str = include_str!("../../examples/records/pixel_writes.qcore");
+const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qcore");
 const CYCLE12: &str = include_str!("../../examples/cycle12.qcore");
 
 /// `examples/`, on disk. The scan below is the point: a constant list cannot
@@ -1455,6 +1456,13 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
             PIXEL_WRITES,
             SourceExecutionProfile::StandardBufferV1,
         ),
+        // Card `AGGREGATE-OWNED-FIELD`: a record that owns is a program that
+        // acquires, so route selection did not move.
+        (
+            "records/owned_field.qcore",
+            OWNED_FIELD,
+            SourceExecutionProfile::StandardBufferV1,
+        ),
         (
             "cycle12.qcore",
             CYCLE12,
@@ -1493,6 +1501,7 @@ fn the_check_only_example_is_the_only_one_that_emits_no_c() {
         ("loops/buffer_copy.qcore", BUFFER_COPY),
         ("records/point.qcore", RECORD_POINT),
         ("records/pixel_writes.qcore", PIXEL_WRITES),
+        ("records/owned_field.qcore", OWNED_FIELD),
         ("cycle12.qcore", CYCLE12),
     ] {
         assert!(
@@ -1588,6 +1597,13 @@ fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
             PIXEL_WRITES,
             RECORDS_README,
             "transcript: pixel_writes stdout",
+            None,
+        ),
+        (
+            "records/owned_field.qcore",
+            OWNED_FIELD,
+            RECORDS_README,
+            "transcript: owned_field stdout",
             None,
         ),
     ] {
@@ -1811,6 +1827,16 @@ fn the_record_examples_run_clean_and_match_their_reference_execution() {
             "transcript: pixel_writes stdout",
             None,
         ),
+        // Card `AGGREGATE-OWNED-FIELD`: the record that owns is a second
+        // positive leak control — one buffer released through the
+        // whole-record drop, the other through the binding it moved out to.
+        (
+            "owned-field",
+            "records/owned_field.qcore",
+            OWNED_FIELD,
+            "transcript: owned_field stdout",
+            None,
+        ),
     ] {
         let module = plain(name, source);
         let (expected_out, expected_err) = projections(&module);
@@ -1863,6 +1889,20 @@ fn the_records_page_publishes_the_struct_the_backend_really_writes() {
             .contains("qcore_bytes_new"),
         "pixel_writes.qcore acquires a real buffer"
     );
+    // Card `AGGREGATE-OWNED-FIELD`: the page's struct for the record that
+    // owns — pointer members — is the one the backend writes, the initializer
+    // is the move, and the whole-record drop frees the one member still held.
+    let owned = plain("records/owned_field.qcore", OWNED_FIELD);
+    let owned_c = owned.c_source.as_deref().unwrap();
+    let published = block(RECORDS_README, "emitted: frame-struct");
+    assert!(
+        owned_c.contains(published.trim_end()),
+        "the page publishes a struct the backend does not write: {published}"
+    );
+    assert!(owned_c.contains(".f_head = b_h, .f_body = b_b"));
+    assert!(owned_c.contains("unsigned char *b_taken = r_f.f_body;"));
+    assert!(owned_c.contains("qcore_bytes_drop(r_f.f_head);"));
+    assert!(!owned_c.contains("qcore_bytes_drop(r_f.f_body);"));
 }
 
 /// The refused program the records page publishes, compiled, and the

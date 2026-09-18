@@ -24,12 +24,16 @@ CT09's "distinct ordinary struct fields" asks for it, and it is non-vacuous
 because the constructed value is built in *declared* order out of the supplied
 assignment rather than being the assignment itself.
 
-**A record carries no custody, and that is proved rather than asserted.**
-`a_record_item_presents_no_event` and `a_record_only_program_leaves_the_ledger_unchanged`
-say the aggregate contributes nothing at all to the inherited cycle-3 ledger of
-`QCore.StdBuffer` — which is the modelled form of the v1 field-custody decision.
-An *owned* field would make that false, which is exactly why it is a separate
-card.
+**A record of scalars carries no custody, and that is proved rather than
+asserted.** `a_record_item_presents_no_event` and
+`a_record_only_program_leaves_the_ledger_unchanged` say the aggregate of this
+module contributes nothing at all to the inherited cycle-3 ledger of
+`QCore.StdBuffer` — which is the modelled form of card `AGGREGATES-V1`'s
+field-custody decision. Card `AGGREGATE-OWNED-FIELD` (wave 39) landed the
+*owned* field beside it, in `QCore.AggregateOwnedField`, with the four rules a
+record that owns needs; the theorems here remain true of the scalar record
+they are about, and that module's `a_record_of_scalars_composes_nothing` is
+where the two halves meet.
 
 What is **not** proved here: that the Rust lowering extracts a declaration and a
 construction faithfully from source tokens (a tested Rust boundary, the
@@ -46,12 +50,14 @@ open QCore.StdBuffer
 
 abbrev FieldName := String
 
-/-- A declared field.
+/-- A declared field of the **scalar** record this module models.
 
-It carries a name and nothing else, because v1 gives every field the **same**
-type: an integer. That is not a simplification of the Rust model, it is the Rust
-model — `FieldType` has one constructor — and it is why an owned field is a
-different card rather than a different constructor. -/
+It carries a name and nothing else: every field of the record this module is
+about is an integer. Since card `AGGREGATE-OWNED-FIELD` the Rust `FieldType`
+has a second constructor, `Bytes`, whose model — the move in, the move out,
+the drop-through and the leak that names a path, and the kind-for-kind
+agreement a construction now checks — is `QCore.AggregateOwnedField`'s; this
+module's theorems are the scalar half and are unchanged by it. -/
 structure Field where
   name : FieldName
   deriving DecidableEq, Repr

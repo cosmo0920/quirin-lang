@@ -429,7 +429,7 @@ pub fn custody_signature(state: &OwnershipState) -> CustodySignature {
     let mut owned = BTreeMap::new();
     for entry in state.ledger() {
         owned.insert(
-            entry.owner().to_owned(),
+            entry.owner_spelling(),
             (entry.resource_type().to_owned(), entry.footprint().clone()),
         );
     }

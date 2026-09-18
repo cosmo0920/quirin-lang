@@ -1,0 +1,6 @@
+programs in both trees: 521
+admitted in both and byte-identical on profile, custody, C and observation: 286
+refused in both (same codes unless listed): 235
+differ: 0
+present in one tree only: 1
+  ONLY card examples/records/owned_field.qcore

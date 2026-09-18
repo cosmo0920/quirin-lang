@@ -1,0 +1,20 @@
+files scanned: 526
+
+field-type `bytes` (`: bytes`): 1 occurrence(s) in code
+    ('examples/records/owned_field.qcore', 31, 'type Frame { tag: i32, head: bytes, body: bytes }')
+
+field-type `Buffer` (`: Buffer`): 0 occurrence(s) in code
+
+record declaration with a `bytes` field: 1 occurrence(s) in code
+    ('examples/records/owned_field.qcore', 31, 'type Frame { tag: i32, head: bytes, body: bytes }')
+
+dotted store or load `NAME.NAME[`: 4 occurrence(s) in code
+    ('examples/records/owned_field.qcore', 48, 'f.body[1] = 67;')
+    ('examples/records/owned_field.qcore', 49, 'let h0 = f.head[0];')
+    ('examples/records/owned_field.qcore', 50, 'let b0 = f.body[0];')
+    ('examples/records/owned_field.qcore', 51, 'let b1 = f.body[1];')
+
+`drop NAME.NAME`: 0 occurrence(s) in code
+
+`extent(NAME.NAME)`: 1 occurrence(s) in code
+    ('examples/records/owned_field.qcore', 47, 'let n = extent(f.body);')

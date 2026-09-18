@@ -13,6 +13,10 @@
 //!             | "let" NAME "=" NAME "[" OPERAND "]" ";"        -- read one byte
 //!             | NAME "[" OPERAND "]" "=" OPERAND ";"           -- write one byte
 //!             | "drop" NAME ";"                                -- release
+//!             | "let" NAME "=" "extent" "(" NAME "." FIELD ")" ";"  -- through an owned field
+//!             | "let" NAME "=" NAME "." FIELD "[" OPERAND "]" ";"   -- (card AGGREGATE-OWNED-FIELD;
+//!             | NAME "." FIELD "[" OPERAND "]" "=" OPERAND ";"      --  the shapes are
+//!             | "drop" NAME "." FIELD ";"                            --  source_record's)
 //!             | "print" RENDERING OPERAND ";"                  -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"              -- std.logger + std.fmt
 //!             | "flush" ";"                                    -- std.logger
@@ -453,6 +457,27 @@ fn lower_let(
             ));
             return None;
         };
+        // Card `AGGREGATE-OWNED-FIELD`: `extent(RECORD.FIELD)`, the extent
+        // of the buffer an owned field holds.
+        if symbol(window, 4, Symbol::LeftParen) && symbol(window, 6, Symbol::Dot) {
+            let Some(field) = word(window, 7) else {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "`extent(RECORD.FIELD)` names the owned field whose length it binds",
+                ));
+                return None;
+            };
+            if !symbol(window, 8, Symbol::RightParen) || !ends_with_semicolon(window, 9) {
+                diagnostics.push(diagnostic("Q051", span, "this `extent(…)` is not closed"));
+                return None;
+            }
+            return Some(BufferEvent::FieldExtent {
+                binding: binding.to_owned(),
+                record: name.to_owned(),
+                field: field.to_owned(),
+            });
+        }
         if !symbol(window, 4, Symbol::LeftParen)
             || !symbol(window, 6, Symbol::RightParen)
             || !ends_with_semicolon(window, 7)
@@ -597,6 +622,38 @@ fn lower_record(
             record,
             field,
         })),
+        // Card `AGGREGATE-OWNED-FIELD`: the index is this route's operand,
+        // read by the reader above out of the span the record reader returned.
+        crate::source_record::RecordStatement::FieldLoad {
+            binding,
+            record,
+            field,
+            index: (start, end),
+        } => {
+            let Some((index, next)) = operand(window, start) else {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte read through a field indexes with one integer literal or one bound \
+                     integer name",
+                ));
+                return Some(None);
+            };
+            if next != end {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte read through a field indexes with exactly one operand",
+                ));
+                return Some(None);
+            }
+            Some(Some(BufferEvent::FieldLoad {
+                binding,
+                record,
+                field,
+                index,
+            }))
+        }
         crate::source_record::RecordStatement::Construct {
             binding,
             type_name,
@@ -635,6 +692,76 @@ fn lower_record(
                 binding,
                 type_name,
                 fields: lowered,
+            }))
+        }
+    }
+}
+
+/// Lower one store through a field or one field release (card
+/// `AGGREGATE-OWNED-FIELD`), if this statement is one — the [`lower_record`]
+/// contract, for the two field-path forms that are not a `let`.
+fn lower_field_path(
+    window: &[&Token],
+    span: Span,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<Option<BufferEvent>> {
+    let read = crate::source_record::read_field_path_statement(window)?;
+    let statement = match read {
+        Ok(statement) => statement,
+        Err(message) => {
+            diagnostics.push(diagnostic("Q051", span, message));
+            return Some(None);
+        }
+    };
+    match statement {
+        crate::source_record::FieldPathStatement::Release { record, field } => {
+            Some(Some(BufferEvent::FieldRelease { record, field }))
+        }
+        crate::source_record::FieldPathStatement::Store {
+            record,
+            field,
+            index: (index_start, index_end),
+            value: (value_start, value_end),
+        } => {
+            let Some((index, next)) = operand(window, index_start) else {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte write through a field indexes with one integer literal or one bound \
+                     integer name",
+                ));
+                return Some(None);
+            };
+            if next != index_end {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte write through a field indexes with exactly one operand",
+                ));
+                return Some(None);
+            }
+            let Some((value, next)) = operand(window, value_start) else {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte write through a field stores one integer literal or one bound \
+                     integer name",
+                ));
+                return Some(None);
+            };
+            if next != value_end {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    "a byte write through a field stores exactly one operand",
+                ));
+                return Some(None);
+            }
+            Some(Some(BufferEvent::FieldStore {
+                record,
+                field,
+                index,
+                value,
             }))
         }
     }
@@ -911,6 +1038,15 @@ impl LoweringConstants {
             | BufferEvent::Field { .. }
             | BufferEvent::Store { .. }
             | BufferEvent::Release { .. }
+            // Card `AGGREGATE-OWNED-FIELD`: a load or an extent read through
+            // a field binds a value the checker computes out of a moved-in
+            // buffer, which this lowering does not follow — so, like a byte
+            // read, it contributes no bound (`AGGREGATE-BOUND-FROM-FIELD`'s
+            // shape at a field path).
+            | BufferEvent::FieldStore { .. }
+            | BufferEvent::FieldLoad { .. }
+            | BufferEvent::FieldExtent { .. }
+            | BufferEvent::FieldRelease { .. }
             // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a loan, not a
             // constant, so it contributes no bound — and a loop cannot stand
             // beside one anyway (`SLICE-PERMISSIONS-LOOP-WINDOW`).
@@ -1024,6 +1160,18 @@ fn lower_statements(
                     diagnostics.push(diagnostic("Q051", span, "`drop NAME;` names one buffer"));
                     continue;
                 };
+                // Card `AGGREGATE-OWNED-FIELD`: `drop RECORD.FIELD;`, read by
+                // the record reader.
+                if let Some(event) = lower_field_path(&window, span, diagnostics) {
+                    if let Some(event) = event {
+                        constants.observe(&event);
+                        events.push(event);
+                        if let Some(spans) = event_spans.as_deref_mut() {
+                            spans.push(span);
+                        }
+                    }
+                    continue;
+                }
                 if ends_with_semicolon(&window, 2) {
                     Some(BufferEvent::Release {
                         name: name.to_owned(),
@@ -1101,9 +1249,12 @@ fn lower_statements(
             other => {
                 // A byte write has a *name* at its head, so it is recognised by
                 // shape rather than by keyword — which is exactly why it needs
-                // no reserved word.
+                // no reserved word. Card `AGGREGATE-OWNED-FIELD`: so does a
+                // write through a field, told by the `.` after the name.
                 if symbol(&window, 1, Symbol::LeftBracket) {
                     lower_store(&window, span, diagnostics)
+                } else if let Some(event) = lower_field_path(&window, span, diagnostics) {
+                    event
                 } else {
                     diagnostics.push(diagnostic(
                         "Q051",

@@ -1,0 +1,24 @@
+'QCore.AggregateOwnedField.release_removes_exactly_its_own' depends on axioms: [propext]
+'QCore.AggregateOwnedField.release_keeps_every_other' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_preserves_length' depends on axioms: [propext]
+'QCore.AggregateOwnedField.compose_moves_each_source_in' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.compose_two_moves_both_in' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.compose_moves_no_quantity' depends on axioms: [propext]
+'QCore.AggregateOwnedField.compose_holds_the_sources' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_out_leaves_a_hole' depends on axioms: [propext]
+'QCore.AggregateOwnedField.a_hole_refuses_a_second_move' depends on axioms: [propext]
+'QCore.AggregateOwnedField.move_out_keeps_the_other_fields' depends on axioms: [propext]
+'QCore.AggregateOwnedField.dropThrough_released' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_exactly_the_live_fields' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_nothing_twice' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_tolerates_a_hole' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_is_in_declaration_order' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_releases_from_the_ledger' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.an_unreleased_field_is_a_leak_named_by_its_path' depends on axioms: [propext]
+'QCore.AggregateOwnedField.drop_through_discharges_the_leak' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.an_aggregate_is_never_copied' does not depend on any axioms
+'QCore.AggregateOwnedField.a_hollow_aggregate_is_still_not_copied' does not depend on any axioms
+'QCore.AggregateOwnedField.agreement_is_exactly_kind_for_kind' depends on axioms: [propext, Quot.sound]
+'QCore.AggregateOwnedField.a_scalar_at_a_bytes_field_is_refused' does not depend on any axioms
+'QCore.AggregateOwnedField.a_buffer_at_an_i32_field_is_refused' does not depend on any axioms
+'QCore.AggregateOwnedField.a_record_of_scalars_composes_nothing' does not depend on any axioms

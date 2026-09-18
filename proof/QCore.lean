@@ -153,6 +153,7 @@ import QCore.ObsReordering
 import QCore.StdBuffer
 import QCore.SourceLoop
 import QCore.SourceRecord
+import QCore.AggregateOwnedField
 import QCore.QuantRegionSource
 import QCore.RegionCreditJoins
 import QCore.RegionJoinsDuties

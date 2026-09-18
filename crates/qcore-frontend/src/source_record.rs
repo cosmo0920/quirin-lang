@@ -3,12 +3,24 @@
 //!
 //! ```text
 //! decl    ::= "type" NAME "{" FIELD ":" FTYPE { "," FIELD ":" FTYPE } [","] "}"
-//! FTYPE   ::= "i32"
+//! FTYPE   ::= "i32" | "bytes"                -- `bytes`: card AGGREGATE-OWNED-FIELD
 //! stmt    ::= "let" NAME "=" TYPE "{" FIELD ":" OPERAND
 //!                                     { "," FIELD ":" OPERAND } [","] "}" ";"
-//!           | "let" NAME "=" NAME "." FIELD ";"
+//!           | "let" NAME "=" NAME "." FIELD ";"            -- field read, or move out
+//!           | "let" NAME "=" NAME "." FIELD "[" OPERAND "]" ";"   -- load through a field
+//!           | NAME "." FIELD "[" OPERAND "]" "=" OPERAND ";"      -- store through a field
+//!           | "drop" NAME "." FIELD ";"                            -- release one field
 //! OPERAND ::= ["-"] INTEGER | NAME          -- `source.buffer.v1`'s own
 //! ```
+//!
+//! The three field-path statement forms and the `bytes` field type are card
+//! `AGGREGATE-OWNED-FIELD`'s (wave 39). They reserve nothing: `bytes` is the
+//! acquisition's own reserved word (`STD-BUFFER`), the `.` is the `Dot` this
+//! reader has always consumed, and `drop`, `[` and `=` are what they were. A
+//! construction supplying an acquired buffer's name at a `bytes` field moves
+//! it in; `let NAME = RECORD.FIELD;` at such a field moves it out. Which of
+//! the two a `let NAME = RECORD.FIELD;` is, the reader does not decide — the
+//! spelling is one statement and the declared type decides it in the model.
 //!
 //! # Zero reserved words, and the census that decided the spelling
 //!
@@ -59,13 +71,13 @@
 //!
 //! # What this lowering does not establish
 //!
-//! No field write (`AGGREGATE-FIELD-WRITE`), no owned or view field
-//! (`AGGREGATE-OWNED-FIELD`, `AGGREGATE-VIEW-FIELD`), no nested record
-//! (`AGGREGATE-NESTED`), no record-valued parameter or result
-//! (`AGGREGATE-ACROSS-CALL`), and no field type but `i32`
-//! (`AGGREGATE-FIELD-TYPES`). Each is a named follow-on in
-//! `docs/reports/aggregates-v1/README.md` §12 with its missing capability
-//! stated.
+//! No field write (`AGGREGATE-FIELD-WRITE`), no view field
+//! (`AGGREGATE-VIEW-FIELD`), no nested record (`AGGREGATE-NESTED`), no
+//! record-valued parameter or result (`AGGREGATE-ACROSS-CALL`), and no field
+//! type but `i32` and `bytes` (`AGGREGATE-FIELD-TYPES`). Each is a named
+//! follow-on in `docs/reports/aggregates-v1/README.md` §12 — and, for the
+//! owned field's own boundaries, `docs/reports/aggregate-owned-field/README.md`
+//! — with its missing capability stated.
 
 use crate::frontend::{DeclarationKind, SourceBlock, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
@@ -94,6 +106,33 @@ pub enum RecordStatement {
         record: String,
         field: String,
     },
+    /// `let NAME = NAME . FIELD [ OPERAND ] ;` — a byte read through an owned
+    /// field (card `AGGREGATE-OWNED-FIELD`). The index is carried as the
+    /// half-open token range of its operand inside the statement's window,
+    /// read by `source.buffer.v1`'s own operand reader, exactly as a
+    /// construction's field values are.
+    FieldLoad {
+        binding: String,
+        record: String,
+        field: String,
+        index: (usize, usize),
+    },
+}
+
+/// A field-path statement that is not a `let` (card `AGGREGATE-OWNED-FIELD`):
+/// a store through an owned field, or a release of one.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum FieldPathStatement {
+    /// `NAME . FIELD [ OPERAND ] = OPERAND ;`, with the index and the value as
+    /// token ranges inside the window.
+    Store {
+        record: String,
+        field: String,
+        index: (usize, usize),
+        value: (usize, usize),
+    },
+    /// `drop NAME . FIELD ;`
+    Release { record: String, field: String },
 }
 
 fn word<'a>(window: &'a [&Token], cursor: usize) -> Option<&'a str> {
@@ -170,6 +209,28 @@ pub fn read_record_statement(window: &[&Token]) -> Option<Result<RecordStatement
                      `{head}.1.2` is a single floating-point token besides"
                 )));
             };
+            // Card `AGGREGATE-OWNED-FIELD`: `let X = p.f[IDX];` — a byte read
+            // through an owned field. Told from the field read by the `[`
+            // after the field, exactly as a byte read is told from a literal
+            // bind by the `[` after the name.
+            if symbol(window, 6, Symbol::LeftBracket) {
+                let close = window.len().checked_sub(2)?;
+                if close <= 7
+                    || !symbol(window, close, Symbol::RightBracket)
+                    || !symbol(window, close + 1, Symbol::Semicolon)
+                {
+                    return Some(Err(format!(
+                        "`{head}.{field}[…]` is not closed; a byte read through a field is \
+                         `let NAME = RECORD.FIELD[INDEX];` with one operand as the index"
+                    )));
+                }
+                return Some(Ok(RecordStatement::FieldLoad {
+                    binding,
+                    record: head,
+                    field: field.to_owned(),
+                    index: (7, close),
+                }));
+            }
             if window.len() != 7 || !symbol(window, 6, Symbol::Semicolon) {
                 return Some(Err(format!(
                     "`{head}.{field}` is not closed; `source.record.v1` reads exactly one field \
@@ -249,6 +310,83 @@ pub fn read_record_statement(window: &[&Token]) -> Option<Result<RecordStatement
             }))
         }
     }
+}
+
+/// Whether a statement is one of the two field-path forms that are not a
+/// `let` (card `AGGREGATE-OWNED-FIELD`): `NAME . FIELD [` at its head, or
+/// `drop NAME . FIELD`. The one place that decides it, so the lowering and
+/// [`block_record_span`] cannot disagree.
+#[must_use]
+pub fn field_path_statement_shape(window: &[&Token]) -> bool {
+    if word(window, 0) == Some("drop") {
+        return word(window, 1).is_some() && symbol(window, 2, Symbol::Dot);
+    }
+    word(window, 0).is_some()
+        && word(window, 0) != Some("let")
+        && symbol(window, 1, Symbol::Dot)
+        && word(window, 2).is_some()
+        && symbol(window, 3, Symbol::LeftBracket)
+}
+
+/// Read one store through a field or one field release, on the
+/// [`read_record_statement`] contract: `None` when the statement is not one
+/// of the two shapes, `Some(Err(message))` when it is one and is malformed.
+#[must_use]
+pub fn read_field_path_statement(window: &[&Token]) -> Option<Result<FieldPathStatement, String>> {
+    if !field_path_statement_shape(window) {
+        return None;
+    }
+    if word(window, 0) == Some("drop") {
+        let record = word(window, 1)?.to_owned();
+        let Some(field) = word(window, 3) else {
+            return Some(Err(format!(
+                "`drop {record}.` names no field; a field release is `drop RECORD.FIELD;`"
+            )));
+        };
+        if window.len() != 5 || !symbol(window, 4, Symbol::Semicolon) {
+            return Some(Err(format!(
+                "`drop {record}.{field}` is not closed; a field release is `drop RECORD.FIELD;`"
+            )));
+        }
+        return Some(Ok(FieldPathStatement::Release {
+            record,
+            field: field.to_owned(),
+        }));
+    }
+    let record = word(window, 0)?.to_owned();
+    let field = word(window, 2)?.to_owned();
+    // `RECORD . FIELD [ INDEX ] = VALUE ;`
+    let Some(close) = (4..window.len()).find(|at| symbol(window, *at, Symbol::RightBracket)) else {
+        return Some(Err(format!(
+            "`{record}.{field}[` is not closed; a store through a field is \
+             `RECORD.FIELD[INDEX] = VALUE;`"
+        )));
+    };
+    if close == 4 {
+        return Some(Err(format!(
+            "`{record}.{field}[]` indexes with nothing; a store through a field is \
+             `RECORD.FIELD[INDEX] = VALUE;` with one operand as the index"
+        )));
+    }
+    if !symbol(window, close + 1, Symbol::Equal) {
+        return Some(Err(format!(
+            "`{record}.{field}[…]` is followed by something other than `=`; a store through a \
+             field is `RECORD.FIELD[INDEX] = VALUE;`"
+        )));
+    }
+    let end = window.len().checked_sub(1)?;
+    if !symbol(window, end, Symbol::Semicolon) || end <= close + 2 {
+        return Some(Err(format!(
+            "`{record}.{field}[…] =` stores nothing, or is not closed; a store through a field \
+             is `RECORD.FIELD[INDEX] = VALUE;`"
+        )));
+    }
+    Some(Ok(FieldPathStatement::Store {
+        record,
+        field,
+        index: (4, close),
+        value: (close + 2, end),
+    }))
 }
 
 /// Read every record **type declaration** of this module.
@@ -367,7 +505,7 @@ pub fn has_source_record(program: &SourceProgram) -> bool {
 pub fn block_record_span(block: &SourceBlock, tokens: &[Token]) -> Option<Span> {
     for statement in &block.statements {
         let window = window(tokens, statement.span);
-        if record_statement_shape(&window).is_some() {
+        if record_statement_shape(&window).is_some() || field_path_statement_shape(&window) {
             return Some(statement.span);
         }
         for nested in statement.value.nested_blocks() {

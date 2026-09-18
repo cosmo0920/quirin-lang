@@ -64,12 +64,23 @@
 //!
 //! Card `AGGREGATES-V1` admits [`crate::source_record`]'s record type here — a
 //! module-level `type NAME { FIELD: i32, … }` declaration, a construction and a
-//! field read. A v1 record is a **plain copyable value**: every field is a
-//! scalar, so it contributes no ownership operation, opens no obligation and
-//! derives no effect, and a record name at a custody or a scalar position is
-//! refused. It is admitted here rather than anywhere else because this is the
-//! route that already holds a check-time-constant integer environment, which is
-//! exactly what a field value is and what a field read produces.
+//! field read. A record of scalar fields is a **plain copyable value**: it
+//! contributes no ownership operation, opens no obligation and derives no
+//! effect, and a record name at a custody or a scalar position is refused. It
+//! is admitted here rather than anywhere else because this is the route that
+//! already holds a check-time-constant integer environment, which is exactly
+//! what a field value is and what a field read produces.
+//!
+//! Card `AGGREGATE-OWNED-FIELD` (wave 39) admits a field declared `bytes`: a
+//! construction supplying an acquired buffer at such a field **moves** it in,
+//! and the record is then a custody shape decided entirely by the
+//! path-extended ownership IR — `p.FIELD` stands at every custody position a
+//! buffer name does (a store, a load, an extent read, a release), `let c =
+//! p.FIELD;` is the partial move, and `drop p;` releases every live owned
+//! field in declaration order. This module builds the operation list
+//! ([`OwnershipOp::Compose`], [`OwnershipOp::ReadField`] and their siblings)
+//! and decides none of the four rules; a record declaring no `bytes` field
+//! contributes exactly the operations it always did — none.
 //!
 //! # What is not claimed
 //!
@@ -92,9 +103,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use crate::ownership::{self, Footprint, OwnershipError, OwnershipOp, ResourceId};
+use crate::ownership::{self, FieldPath, Footprint, OwnershipError, OwnershipOp, ResourceId};
 use crate::source_loop::{self, BoundRefusal, LoopRefusal, MAX_ITERATIONS, MAX_UNROLLED_EVENTS};
-use crate::source_record::{self, RecordRefusal, RecordType, RecordValue};
+use crate::source_record::{self, FieldType, FieldValue, RecordRefusal, RecordType, RecordValue};
 use crate::std_io::{ObservedLine, Rendering, StdIoEvent, StdIoOperand, rendered_line};
 use crate::typed_errors::{Effect, EffectRow};
 
@@ -231,17 +242,48 @@ pub enum BufferEvent {
         type_name: String,
         fields: Vec<(String, BufferOperand)>,
     },
-    /// `let BINDING = RECORD.FIELD;` — read one field into an integer.
+    /// `let BINDING = RECORD.FIELD;` — read one field into an integer, or —
+    /// since card `AGGREGATE-OWNED-FIELD`, when the field is declared `bytes`
+    /// — **move the owned buffer out** of the record into a plain binding.
     ///
-    /// The result is an ordinary scalar of this route's environment, which is
-    /// what makes a field readable, renderable and indexable with **no** new
-    /// operand form: `source.std-io.v1`'s existing `Scalar` operand already
-    /// denotes it, exactly as card `LOOP-V1` found for a loop index.
+    /// For a scalar field the result is an ordinary scalar of this route's
+    /// environment, which is what makes a field readable, renderable and
+    /// indexable with **no** new operand form: `source.std-io.v1`'s existing
+    /// `Scalar` operand already denotes it, exactly as card `LOOP-V1` found for
+    /// a loop index. For an owned field the statement is the partial move
+    /// ([`OwnershipOp::MoveOut`]): the binding is a buffer this entry now owns
+    /// and the field is a hole a later `drop RECORD;` tolerates. Which of the
+    /// two a statement is, is decided by the declared type and nowhere else.
     Field {
         binding: String,
         record: String,
         field: String,
     },
+    /// `RECORD.FIELD[INDEX] = VALUE;` — write one byte through an owned field
+    /// (card `AGGREGATE-OWNED-FIELD`). [`Self::Store`] at a field path.
+    FieldStore {
+        record: String,
+        field: String,
+        index: BufferOperand,
+        value: BufferOperand,
+    },
+    /// `let BINDING = RECORD.FIELD[INDEX];` — [`Self::Load`] at a field path.
+    FieldLoad {
+        binding: String,
+        record: String,
+        field: String,
+        index: BufferOperand,
+    },
+    /// `let BINDING = extent(RECORD.FIELD);` — [`Self::Extent`] at a field path.
+    FieldExtent {
+        binding: String,
+        record: String,
+        field: String,
+    },
+    /// `drop RECORD.FIELD;` — release one owned field, leaving a hole
+    /// ([`OwnershipOp::DropField`]). `drop RECORD;` is [`Self::Release`] naming
+    /// the record, and releases every live owned field.
+    FieldRelease { record: String, field: String },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -321,7 +363,24 @@ pub struct RecordConstruction {
     pub event: usize,
     pub binding: String,
     pub type_name: String,
+    /// The scalar fields, in declared order.
     pub fields: Vec<(String, i32)>,
+    /// The owned fields, in declared order, each with the name of the buffer
+    /// binding the construction moved into it (card `AGGREGATE-OWNED-FIELD`).
+    /// Empty for every record of scalars.
+    pub owned: Vec<(String, String)>,
+}
+
+/// One partial move: an owned field's buffer leaving its record for a plain
+/// binding (card `AGGREGATE-OWNED-FIELD`), published with the extent the
+/// binding now owns so a reader checks it against the acquisition it came from.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FieldMove {
+    pub event: usize,
+    pub record: String,
+    pub field: String,
+    pub binding: String,
+    pub extent: u32,
 }
 
 /// One checked field read: which value, which field, and the integer it
@@ -364,8 +423,14 @@ pub struct BufferCertificate {
     /// extent transport, published**: a reader sees how many bytes each
     /// resource was declared to be without re-deriving anything.
     pub acquisitions: Vec<(String, u32)>,
-    /// Every release, in program order.
+    /// Every release, in program order. A release through an owned field is
+    /// published by its `RECORD.FIELD` path, and a whole-record `drop` publishes
+    /// one entry per live owned field it releases, in declaration order (card
+    /// `AGGREGATE-OWNED-FIELD`).
     pub releases: Vec<String>,
+    /// Every partial move out of an owned field, in program order (card
+    /// `AGGREGATE-OWNED-FIELD`). Empty for every program written before it.
+    pub moves: Vec<FieldMove>,
     /// Every admitted write lend, with its footprint and its window (card
     /// `SLICE-PERMISSIONS-WRITE-LEND`). Empty for every program written before
     /// that card, which is what keeps their certificates value-identical.
@@ -673,10 +738,17 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
     fn walk(events: &[BufferEvent], effects: &mut BTreeSet<Effect>) {
         for event in events {
             match event {
-                BufferEvent::Acquire { .. } | BufferEvent::Release { .. } => {
+                // Card `AGGREGATE-OWNED-FIELD`: a release through a field, and
+                // a whole-record release, free storage exactly as `drop NAME;`
+                // does; a store through a field mutates exactly as a store
+                // does. A construction *moves* a buffer in and a field move
+                // moves one out, and a move allocates nothing.
+                BufferEvent::Acquire { .. }
+                | BufferEvent::Release { .. }
+                | BufferEvent::FieldRelease { .. } => {
                     effects.insert(Effect::Alloc);
                 }
-                BufferEvent::Store { .. } => {
+                BufferEvent::Store { .. } | BufferEvent::FieldStore { .. } => {
                     effects.insert(Effect::Mut);
                 }
                 BufferEvent::Line(
@@ -708,6 +780,8 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 // binding they go through.
                 BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
+                | BufferEvent::FieldLoad { .. }
+                | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Bind { .. }
                 | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
@@ -798,9 +872,24 @@ pub fn custody_operations_with_gates(
     }
     let mut acquired = BTreeSet::new();
     acquired_names(&program.events, &mut acquired);
+    let types: BTreeMap<&str, &RecordType> = program
+        .records
+        .iter()
+        .map(|record| (record.name.as_str(), record))
+        .collect();
 
     struct Walk<'a> {
         acquired: &'a BTreeSet<String>,
+        /// The module's record types by name, so a construction knows which
+        /// of its fields are owned (card `AGGREGATE-OWNED-FIELD`).
+        types: &'a BTreeMap<&'a str, &'a RecordType>,
+        /// Record binding → declared type, for every record this walk
+        /// composed **with at least one owned field**. A record of scalars is
+        /// never entered here, because it contributes no operation.
+        composed: BTreeMap<String, String>,
+        /// Plain bindings that own a buffer moved **out** of a field: custody
+        /// names exactly as an acquisition's are, for every later statement.
+        moved_out: BTreeSet<String>,
         operations: Vec<OwnershipOp>,
         gates: Vec<LoopCustodyGate>,
         next_id: ResourceId,
@@ -809,7 +898,18 @@ pub fn custody_operations_with_gates(
 
     impl Walk<'_> {
         fn names(&self, name: &String) -> bool {
-            self.acquired.contains(name)
+            self.acquired.contains(name) || self.moved_out.contains(name)
+        }
+
+        /// Whether `record.field` is an owned field of a record this walk
+        /// composed — the one question every field-path arm below asks. A
+        /// field that is not one contributes no operation, and the value half
+        /// refuses the statement by name.
+        fn owned_field(&self, record: &str, field: &str) -> bool {
+            self.composed
+                .get(record)
+                .and_then(|type_name| self.types.get(type_name.as_str()))
+                .is_some_and(|declared| declared.field(field) == Some(FieldType::Bytes))
         }
 
         /// The owner name this occurrence denotes in the flat operation list.
@@ -851,6 +951,98 @@ pub fn custody_operations_with_gates(
                     BufferEvent::Release { name } if self.names(name) => {
                         self.operations
                             .push(OwnershipOp::Drop(Self::owner(renames, name)));
+                    }
+                    // --- Card `AGGREGATE-OWNED-FIELD`: the aggregate arms. ---
+                    //
+                    // Each builds one operation of the path-extended IR and
+                    // decides nothing: which fields are owned is the declared
+                    // type's, and every custody rule — the move in, the hole
+                    // a move out leaves, the declaration-order drop-through,
+                    // the leak that names a path — is `ownership::check_ownership`'s.
+                    //
+                    // A construction of a type declaring an owned field is a
+                    // `Compose` of exactly its owned fields in declared order,
+                    // each moving the named buffer in. A field supplied
+                    // something that is not a custody name — a literal, a
+                    // scalar, a record — contributes no move, on this
+                    // function's standing rule (the checker is asked about
+                    // **resources**, and the value half refuses such a field
+                    // by name at `Q052`); and a record of scalars contributes
+                    // **no operation at all**, which is what keeps every
+                    // program written before the card byte-identical.
+                    BufferEvent::Construct {
+                        binding,
+                        type_name,
+                        fields,
+                    } => {
+                        if let Some(declared) = self.types.get(type_name.as_str())
+                            && declared.has_owned_field()
+                        {
+                            let moved: Vec<(String, String)> = declared
+                                .owned_field_names()
+                                .filter_map(|owned| {
+                                    fields.iter().find(|(name, _)| name == owned).and_then(
+                                        |(_, operand)| match operand {
+                                            BufferOperand::Scalar(from) if self.names(from) => {
+                                                Some((owned.to_owned(), Self::owner(renames, from)))
+                                            }
+                                            BufferOperand::Scalar(_)
+                                            | BufferOperand::Literal(_) => None,
+                                        },
+                                    )
+                                })
+                                .collect();
+                            self.operations.push(OwnershipOp::Compose {
+                                owner: binding.clone(),
+                                fields: moved,
+                            });
+                            self.composed.insert(binding.clone(), type_name.clone());
+                        }
+                    }
+                    // The partial move: a read of an owned field is the
+                    // `MoveOut`, and its binding is a custody name from here on.
+                    BufferEvent::Field {
+                        binding,
+                        record,
+                        field,
+                    } => {
+                        if self.owned_field(record, field) {
+                            self.operations.push(OwnershipOp::MoveOut {
+                                from: FieldPath::new(record.clone(), field.clone()),
+                                to: binding.clone(),
+                            });
+                            self.moved_out.insert(binding.clone());
+                        }
+                    }
+                    BufferEvent::FieldStore { record, field, .. }
+                        if self.owned_field(record, field) =>
+                    {
+                        self.operations.push(OwnershipOp::WriteField(FieldPath::new(
+                            record.clone(),
+                            field.clone(),
+                        )));
+                    }
+                    BufferEvent::FieldLoad { record, field, .. }
+                    | BufferEvent::FieldExtent { record, field, .. }
+                        if self.owned_field(record, field) =>
+                    {
+                        self.operations.push(OwnershipOp::ReadField(FieldPath::new(
+                            record.clone(),
+                            field.clone(),
+                        )));
+                    }
+                    BufferEvent::FieldRelease { record, field }
+                        if self.owned_field(record, field) =>
+                    {
+                        self.operations.push(OwnershipOp::DropField(FieldPath::new(
+                            record.clone(),
+                            field.clone(),
+                        )));
+                    }
+                    // `drop p;` of a composed record is the plain `Drop` — the
+                    // IR sees an aggregate binding and walks its fields.
+                    BufferEvent::Release { name } if self.composed.contains_key(name) => {
+                        self.operations.push(OwnershipOp::Drop(name.clone()));
                     }
                     BufferEvent::Repeat {
                         variable,
@@ -894,28 +1086,28 @@ pub fn custody_operations_with_gates(
                             iteration,
                         });
                     }
+                    // A custody position naming nothing the checker was told
+                    // about — a name that is not a buffer, a field that is not
+                    // owned — contributes no operation; the value half refuses
+                    // the statement by name (`NotABuffer`, `FieldIsNotABuffer`).
                     BufferEvent::Store { .. }
                     | BufferEvent::Load { .. }
                     | BufferEvent::Extent { .. }
-                    | BufferEvent::Release { .. } => {}
+                    | BufferEvent::Release { .. }
+                    | BufferEvent::FieldStore { .. }
+                    | BufferEvent::FieldLoad { .. }
+                    | BufferEvent::FieldExtent { .. }
+                    | BufferEvent::FieldRelease { .. } => {}
                     // Unreachable: a program with a lend takes
                     // `lend_custody_operations` before this walk runs. Kept
                     // total with **no** operation, which cannot admit anything
                     // — a loan this walk did not open makes every later use of
                     // its binding an unknown name to the checker.
                     BufferEvent::Lend { .. } => {}
-                    // **A record contributes no custody operation at all**
-                    // (card `AGGREGATES-V1`). Every field of a v1 record is a
-                    // scalar, so there is no resource for the cycle-3 checker
-                    // to be asked about — which is exactly why a record name at
-                    // a custody position is refused by this route's existing
-                    // "this is not a buffer" rule rather than by anything the
-                    // aggregate added.
-                    BufferEvent::Construct { .. }
-                    | BufferEvent::Field { .. }
-                    | BufferEvent::Bind { .. }
-                    | BufferEvent::Line(_)
-                    | BufferEvent::Return => {}
+                    // A record of scalars contributes no custody operation at
+                    // all (card `AGGREGATES-V1`): the `Construct` and `Field`
+                    // arms above push one only for a declared owned field.
+                    BufferEvent::Bind { .. } | BufferEvent::Line(_) | BufferEvent::Return => {}
                 }
             }
         }
@@ -923,6 +1115,9 @@ pub fn custody_operations_with_gates(
 
     let mut walk = Walk {
         acquired: &acquired,
+        types: &types,
+        composed: BTreeMap::new(),
+        moved_out: BTreeSet::new(),
         operations: Vec::new(),
         gates: Vec::new(),
         next_id: 1,
@@ -1276,12 +1471,18 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     }
                     // Unreachable from the route: `check_buffer_program`
                     // refuses a `for` in an entry that lends before this
-                    // projection is consulted (`SLICE-PERMISSIONS-LOOP-WINDOW`).
-                    // A direct model-level caller gets no operation for it,
-                    // and the refusal it already received stands.
+                    // projection is consulted (`SLICE-PERMISSIONS-LOOP-WINDOW`),
+                    // and — card `AGGREGATE-OWNED-FIELD` — refuses an owned-field
+                    // record beside a lend the same way (`OWNED-FIELD-LEND-WINDOW`).
+                    // A direct model-level caller gets no operation for any of
+                    // them, and the refusal it already received stands.
                     BufferEvent::Repeat { .. }
                     | BufferEvent::Construct { .. }
                     | BufferEvent::Field { .. }
+                    | BufferEvent::FieldStore { .. }
+                    | BufferEvent::FieldLoad { .. }
+                    | BufferEvent::FieldExtent { .. }
+                    | BufferEvent::FieldRelease { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
                 }
@@ -1330,16 +1531,47 @@ pub struct BufferEvaluation {
     /// type is a declaration: a statement can construct a value of one and read
     /// a field of one, and neither can change what a type is.
     pub record_types: BTreeMap<String, RecordType>,
-    /// The record values this entry constructed, by binding name. A record is a
-    /// plain value, so this map is the whole of what holding one costs — there
-    /// is no ledger entry beside it.
+    /// The record values this entry constructed, by binding name. A record of
+    /// scalars is a plain value, so for one this map is the whole of what
+    /// holding it costs — there is no ledger entry beside it.
     pub records: BTreeMap<String, RecordValue>,
+    /// The owned fields of every composed record — record binding → field →
+    /// the buffer it holds and whether it still does (card
+    /// `AGGREGATE-OWNED-FIELD`). The value half's mirror of what the ownership
+    /// IR decides: it carries the bytes and the extent so a store through a
+    /// field is checked against the same bounds rule a store through a name
+    /// is, and it records liveness only so that a whole-record `drop` can
+    /// **publish** which fields it released. It refuses no custody question;
+    /// those are the IR's, at `Q054`.
+    pub owned_fields: BTreeMap<String, BTreeMap<String, OwnedField>>,
     /// The live write lends, by binding name (card
     /// `SLICE-PERMISSIONS-WRITE-LEND`). A loan never leaves this map, and that
     /// is not a leak: the loan's window runs to the last statement naming it,
     /// so by construction there is no later use for an expired entry to
     /// mislead — the same self-consistency the read card's `through` rests on.
     pub loans: BTreeMap<String, LoanShape>,
+}
+
+/// One owned field of a composed record, as the value half carries it (card
+/// `AGGREGATE-OWNED-FIELD`): the moved-in buffer's extent and bytes, and
+/// whether the field still holds them.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct OwnedField {
+    pub extent: u32,
+    pub contents: Vec<u8>,
+    pub state: OwnedFieldState,
+}
+
+/// Whether an owned field still holds its buffer. A field that does not is a
+/// **hole**: the partial move or the field release left it, and a later
+/// whole-record `drop` skips it. The value half records this to publish what a
+/// drop released; every *refusal* about a hole — a use after the move, a
+/// second release — is the ownership IR's own.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OwnedFieldState {
+    Live,
+    Moved,
+    Released,
 }
 
 /// What one live write lend holds: which buffer, and which of its bytes (card
@@ -1379,6 +1611,11 @@ pub struct BufferStep {
     pub construction: Option<RecordConstruction>,
     /// The field this event read.
     pub projection: Option<RecordProjection>,
+    /// The owned field this event moved out (card `AGGREGATE-OWNED-FIELD`).
+    pub field_move: Option<FieldMove>,
+    /// The owned fields this event released, by path, in declaration order:
+    /// one for `drop RECORD.FIELD;`, every live one for `drop RECORD;`.
+    pub field_releases: Vec<String>,
     /// The write lend this event opened, with its **resolved** footprint in the
     /// owner's coordinates (card `SLICE-PERMISSIONS-WRITE-LEND`). The window is
     /// the caller's to pair in, because `through` is a whole-program fact.
@@ -1550,6 +1787,32 @@ impl BufferEvaluation {
             BufferEvent::Release { name } => {
                 if self.extents.contains_key(name) {
                     step.release = Some(name.clone());
+                } else if let Some(declared) = self
+                    .records
+                    .get(name)
+                    .and_then(|value| self.record_types.get(&value.type_name))
+                    .filter(|declared| declared.has_owned_field())
+                {
+                    // Card `AGGREGATE-OWNED-FIELD`: `drop RECORD;` of a record
+                    // with an owned field. The value half publishes which
+                    // fields the drop-through releases — the live ones, in
+                    // declaration order — and marks them released; the custody
+                    // of the drop, the tolerated hole and the double drop are
+                    // the IR's. A record of scalars falls through to the
+                    // "is not a buffer" refusal it always had.
+                    let mut released = Vec::new();
+                    for field in declared.owned_field_names() {
+                        if let Some(owned) = self
+                            .owned_fields
+                            .get_mut(name)
+                            .and_then(|fields| fields.get_mut(field))
+                            && owned.state == OwnedFieldState::Live
+                        {
+                            owned.state = OwnedFieldState::Released;
+                            released.push(format!("{name}.{field}"));
+                        }
+                    }
+                    step.field_releases = released;
                 } else if self.loans.contains_key(name) {
                     // Card `SLICE-PERMISSIONS-WRITE-LEND`: a loan is not
                     // released — its window closes at its last use, and the
@@ -1686,7 +1949,40 @@ impl BufferEvaluation {
                 };
                 let mut supplied = Vec::new();
                 for (field, operand) in fields {
-                    match self.operand(index, operand) {
+                    // Card `AGGREGATE-OWNED-FIELD`: a field declared `bytes`
+                    // takes an acquired buffer's **name** and moves it in;
+                    // every other field takes this route's operand exactly as
+                    // before — so a buffer at an `i32` field still refuses at
+                    // the crossing rule (`Q055`), unchanged, and only the
+                    // declared owned field is the lift.
+                    let value = match (declared.field(field), operand) {
+                        (Some(FieldType::Bytes), BufferOperand::Scalar(name))
+                            if self.extents.contains_key(name) =>
+                        {
+                            Ok(FieldValue::Bytes {
+                                moved_from: name.clone(),
+                            })
+                        }
+                        (Some(FieldType::Bytes), BufferOperand::Scalar(name))
+                            if self.loans.contains_key(name) =>
+                        {
+                            // A loan cannot cross into a record: the existing
+                            // lend crossing condition, reached at a field.
+                            Err(BufferError::Lend {
+                                event: index,
+                                refusal: LendRefusal::CrossesBoundary { name: name.clone() },
+                            })
+                        }
+                        (Some(FieldType::Bytes), _) => Err(BufferError::Record {
+                            event: index,
+                            refusal: RecordRefusal::FieldTakesABuffer {
+                                type_name: type_name.clone(),
+                                field: field.clone(),
+                            },
+                        }),
+                        _ => self.operand(index, operand).map(FieldValue::Scalar),
+                    };
+                    match value {
                         Ok(value) => supplied.push((field.clone(), value)),
                         Err(error) => {
                             step.errors.push(error);
@@ -1704,16 +2000,45 @@ impl BufferEvaluation {
                             .iter()
                             .filter_map(|field| {
                                 value
-                                    .project(&field.name)
+                                    .scalar(&field.name)
                                     .map(|value| (field.name.clone(), value))
                             })
                             .collect();
+                        // The owned fields, in declared order, each taking the
+                        // moved-in buffer's extent and bytes. The source
+                        // binding is left as it was: every later use of it is
+                        // refused by the IR as a use after move (`Q054`), the
+                        // one refusal and the true one — the precedent is a
+                        // use after `drop`, which the value half likewise
+                        // leaves to the checker.
+                        let mut owned_fields = BTreeMap::new();
+                        let mut owned = Vec::new();
+                        for field in declared.owned_field_names() {
+                            if let Some(FieldValue::Bytes { moved_from }) = value.project(field) {
+                                let extent = self.extents.get(moved_from).copied().unwrap_or(0);
+                                let contents =
+                                    self.contents.get(moved_from).cloned().unwrap_or_default();
+                                owned_fields.insert(
+                                    field.to_owned(),
+                                    OwnedField {
+                                        extent,
+                                        contents,
+                                        state: OwnedFieldState::Live,
+                                    },
+                                );
+                                owned.push((field.to_owned(), moved_from.clone()));
+                            }
+                        }
+                        if !owned_fields.is_empty() {
+                            self.owned_fields.insert(binding.clone(), owned_fields);
+                        }
                         self.records.insert(binding.clone(), value);
                         step.construction = Some(RecordConstruction {
                             event: index,
                             binding: binding.clone(),
                             type_name: type_name.clone(),
                             fields: published,
+                            owned,
                         });
                     }
                     Err(refusal) => step.errors.push(BufferError::Record {
@@ -1737,7 +2062,8 @@ impl BufferEvaluation {
                     return step;
                 };
                 match value.project(field) {
-                    Some(read) => {
+                    Some(FieldValue::Scalar(read)) => {
+                        let read = *read;
                         step.projection = Some(RecordProjection {
                             event: index,
                             record: record.clone(),
@@ -1746,6 +2072,44 @@ impl BufferEvaluation {
                             value: read,
                         });
                         self.scalars.insert(binding.clone(), read);
+                    }
+                    // Card `AGGREGATE-OWNED-FIELD`: the partial move. The
+                    // binding owns the field's buffer from here on — its
+                    // extent and bytes are the field's — and the field is a
+                    // hole. A move out of a hole is the IR's use-after-move at
+                    // `Q054`; the value half still binds the name so that the
+                    // one refusal is the custody one.
+                    Some(FieldValue::Bytes { .. }) => {
+                        let type_name = value.type_name.clone();
+                        let Some(owned) = self
+                            .owned_fields
+                            .get_mut(record)
+                            .and_then(|fields| fields.get_mut(field))
+                        else {
+                            step.errors.push(BufferError::Record {
+                                event: index,
+                                refusal: RecordRefusal::NoSuchField {
+                                    name: record.clone(),
+                                    type_name,
+                                    field: field.clone(),
+                                },
+                            });
+                            return step;
+                        };
+                        if owned.state == OwnedFieldState::Live {
+                            owned.state = OwnedFieldState::Moved;
+                        }
+                        let extent = owned.extent;
+                        let contents = owned.contents.clone();
+                        self.extents.insert(binding.clone(), extent);
+                        self.contents.insert(binding.clone(), contents);
+                        step.field_move = Some(FieldMove {
+                            event: index,
+                            record: record.clone(),
+                            field: field.clone(),
+                            binding: binding.clone(),
+                            extent,
+                        });
                     }
                     None => step.errors.push(BufferError::Record {
                         event: index,
@@ -1757,9 +2121,175 @@ impl BufferEvaluation {
                     }),
                 }
             }
+            // --- The field-path custody positions (card `AGGREGATE-OWNED-FIELD`). ---
+            //
+            // Each is the plain-name arm above at `RECORD.FIELD`: the same
+            // bounds rule, the same byte-range rule, the same published access
+            // — with the name published as the path. Which fields are owned,
+            // and whether the field still holds its buffer, is asked of the
+            // declared type and of the IR respectively; this half asks only
+            // "which bytes".
+            BufferEvent::FieldStore {
+                record,
+                field,
+                index: at,
+                value,
+            } => {
+                let spelling = format!("{record}.{field}");
+                let place = self.owned_field(index, record, field).and_then(|owned| {
+                    field_place(index, &spelling, owned.extent, self.operand(index, at))
+                });
+                let value = self.operand(index, value);
+                match (place, value) {
+                    (Ok(at), Ok(value)) => {
+                        let Ok(byte) = u8::try_from(value) else {
+                            step.errors.push(BufferError::ByteOutOfRange {
+                                event: index,
+                                value,
+                            });
+                            return step;
+                        };
+                        if let Some(owned) = self
+                            .owned_fields
+                            .get_mut(record)
+                            .and_then(|fields| fields.get_mut(field))
+                        {
+                            owned.contents[at] = byte;
+                        }
+                        step.access = Some(BufferAccess {
+                            event: index,
+                            name: spelling,
+                            index: at as u32,
+                            byte,
+                            write: true,
+                        });
+                    }
+                    (place, value) => {
+                        step.errors.extend(place.err());
+                        step.errors.extend(value.err());
+                    }
+                }
+            }
+            BufferEvent::FieldLoad {
+                binding,
+                record,
+                field,
+                index: at,
+            } => {
+                let spelling = format!("{record}.{field}");
+                match self.owned_field(index, record, field).and_then(|owned| {
+                    field_place(index, &spelling, owned.extent, self.operand(index, at))
+                }) {
+                    Ok(at) => {
+                        let byte = self
+                            .owned_fields
+                            .get(record)
+                            .and_then(|fields| fields.get(field))
+                            .and_then(|owned| owned.contents.get(at).copied())
+                            .unwrap_or(0);
+                        self.scalars.insert(binding.clone(), i32::from(byte));
+                        step.access = Some(BufferAccess {
+                            event: index,
+                            name: spelling,
+                            index: at as u32,
+                            byte,
+                            write: false,
+                        });
+                    }
+                    Err(error) => step.errors.push(error),
+                }
+            }
+            BufferEvent::FieldExtent {
+                binding,
+                record,
+                field,
+            } => match self.owned_field(index, record, field) {
+                Ok(owned) => {
+                    self.scalars.insert(binding.clone(), owned.extent as i32);
+                }
+                Err(error) => step.errors.push(error),
+            },
+            BufferEvent::FieldRelease { record, field } => {
+                match self.owned_field(index, record, field) {
+                    Ok(_) => {
+                        // Published only while live: a release of a hole is
+                        // the IR's double drop or use after move, the one
+                        // refusal, at `Q054`.
+                        if let Some(owned) = self
+                            .owned_fields
+                            .get_mut(record)
+                            .and_then(|fields| fields.get_mut(field))
+                            && owned.state == OwnedFieldState::Live
+                        {
+                            owned.state = OwnedFieldState::Released;
+                            step.field_releases = vec![format!("{record}.{field}")];
+                        }
+                    }
+                    Err(error) => step.errors.push(error),
+                }
+            }
             BufferEvent::Line(_) | BufferEvent::Return | BufferEvent::Repeat { .. } => {}
         }
         step
+    }
+
+    /// Resolve `RECORD.FIELD` to the owned field it names, or refuse by name:
+    /// not a record this entry constructed, a field the type does not declare,
+    /// or a field declared `i32` (card `AGGREGATE-OWNED-FIELD`). Whether the
+    /// field still holds its buffer is not asked here — that is the IR's
+    /// question, and its answer arrives at `Q054`.
+    fn owned_field(
+        &self,
+        event: usize,
+        record: &str,
+        field: &str,
+    ) -> Result<&OwnedField, BufferError> {
+        let Some(value) = self.records.get(record) else {
+            return Err(BufferError::Record {
+                event,
+                refusal: RecordRefusal::NotARecord {
+                    name: record.to_owned(),
+                },
+            });
+        };
+        match self
+            .record_types
+            .get(&value.type_name)
+            .and_then(|declared| declared.field(field))
+        {
+            Some(FieldType::Bytes) => {}
+            Some(FieldType::I32) => {
+                return Err(BufferError::Record {
+                    event,
+                    refusal: RecordRefusal::FieldIsNotABuffer {
+                        name: record.to_owned(),
+                        type_name: value.type_name.clone(),
+                        field: field.to_owned(),
+                    },
+                });
+            }
+            None => {
+                return Err(BufferError::Record {
+                    event,
+                    refusal: RecordRefusal::NoSuchField {
+                        name: record.to_owned(),
+                        type_name: value.type_name.clone(),
+                        field: field.to_owned(),
+                    },
+                });
+            }
+        }
+        self.owned_fields
+            .get(record)
+            .and_then(|fields| fields.get(field))
+            .ok_or_else(|| BufferError::Record {
+                event,
+                refusal: RecordRefusal::NoSuchField {
+                    name: record.to_owned(),
+                    type_name: value.type_name.clone(),
+                    field: field.to_owned(),
+                },
+            })
     }
 
     /// Resolve `LOAN[INDEX]` to a validated index **in the loan's own
@@ -1835,7 +2365,8 @@ impl BufferEvaluation {
 
     /// Resolve `NAME[INDEX]` to a validated `(extent, index)` pair. The bounds
     /// rule lives here and nowhere else, so a read and a write cannot disagree
-    /// about it.
+    /// about it — [`field_place`] below is the same rule at a field path,
+    /// stated over the extent the field holds.
     pub fn place(
         &self,
         event: usize,
@@ -1858,6 +2389,45 @@ impl BufferEvaluation {
             });
         }
         Ok((extent, index as usize))
+    }
+}
+
+/// The bounds rule at a field path (card `AGGREGATE-OWNED-FIELD`): the index
+/// is inside `[0, extent)` of the buffer the field holds, or the statement is
+/// refused at `Q053` naming the path. Written beside [`BufferEvaluation::place`]
+/// with the same comparison so the two cannot drift.
+fn field_place(
+    event: usize,
+    spelling: &str,
+    extent: u32,
+    index: Result<i32, BufferError>,
+) -> Result<usize, BufferError> {
+    let index = index?;
+    if index < 0 || u32::try_from(index).is_ok_and(|index| index >= extent) {
+        return Err(BufferError::OutOfBounds {
+            event,
+            name: spelling.to_owned(),
+            index,
+            extent,
+        });
+    }
+    Ok(index as usize)
+}
+
+/// Whether this event is one of card `AGGREGATE-OWNED-FIELD`'s — a
+/// construction of a type declaring an owned field, a field-path custody
+/// statement, or a whole-record release of a composed record — at any depth.
+/// The two window gates in [`check_buffer_program`] ask it.
+fn owned_field_event(event: &BufferEvent, types: &BTreeMap<String, RecordType>) -> bool {
+    match event {
+        BufferEvent::Construct { type_name, .. } => types
+            .get(type_name)
+            .is_some_and(RecordType::has_owned_field),
+        BufferEvent::FieldStore { .. }
+        | BufferEvent::FieldLoad { .. }
+        | BufferEvent::FieldExtent { .. }
+        | BufferEvent::FieldRelease { .. } => true,
+        _ => false,
     }
 }
 
@@ -1911,6 +2481,78 @@ pub fn check_buffer_program(
             event: program.events.len(),
             refusal: LoopRefusal::Bound(BoundRefusal::Budget { unrolled }),
         }]);
+    }
+
+    // --- Half zero-and-a-quarter: the owned field's two window premises
+    // (card `AGGREGATE-OWNED-FIELD`), each refused by name. ---
+    //
+    // A record with an owned field beside a **lend**: the lend projection's
+    // borrow nodes are built by a segment walk that addresses owners by
+    // plain name, and giving it field paths would put a second custody
+    // projection beside the first. Refused rather than approximated, the
+    // `SLICE-PERMISSIONS-LOOP-WINDOW` shape (`OWNED-FIELD-LEND-WINDOW`).
+    let composes_owned_field = any_event(&program.events, |event| {
+        owned_field_event(event, &record_types)
+    });
+    if composes_owned_field
+        && let Some(position) = program
+            .events
+            .iter()
+            .position(|event| matches!(event, BufferEvent::Lend { .. }))
+    {
+        return Err(vec![BufferError::Shape {
+            event: position,
+            reason: "a lend is not a statement an entry that composes a record with an owned \
+                     field models; the lend's custody projection addresses owners by plain \
+                     name, and a projection that also addressed fields would be a second one \
+                     beside it (`OWNED-FIELD-LEND-WINDOW`)"
+                .to_owned(),
+        }]);
+    }
+    // An owned-field statement inside a **loop body**: the unrolled custody
+    // walk gives each iteration's acquisitions their own scope, and a composed
+    // record — whose fields are addressed by path — would need the same
+    // scoping for its aggregate and every field. Refused by name rather than
+    // left to surface as a rebound name in the second iteration
+    // (`OWNED-FIELD-LOOP-BODY`). A field read of an **outer** composed record
+    // inside a body is refused for the same reason: the move would recur.
+    {
+        let composed_outside: BTreeSet<&str> = program
+            .events
+            .iter()
+            .filter_map(|event| match event {
+                BufferEvent::Construct {
+                    binding, type_name, ..
+                } if record_types
+                    .get(type_name)
+                    .is_some_and(RecordType::has_owned_field) =>
+                {
+                    Some(binding.as_str())
+                }
+                _ => None,
+            })
+            .collect();
+        for (position, event) in program.events.iter().enumerate() {
+            let BufferEvent::Repeat { body, .. } = event else {
+                continue;
+            };
+            let offending = any_event(body, |inner| {
+                owned_field_event(inner, &record_types)
+                    || matches!(inner, BufferEvent::Field { record, .. } | BufferEvent::Release { name: record }
+                        if composed_outside.contains(record.as_str()))
+            });
+            if offending {
+                return Err(vec![BufferError::Shape {
+                    event: position,
+                    reason: "a record with an owned field is not a statement a `for` body \
+                             models; the unrolled custody walk scopes each iteration's \
+                             acquisitions by name, and a composed record's fields are addressed \
+                             by path, so the aggregate and its fields would each need that \
+                             scoping (`OWNED-FIELD-LOOP-BODY`)"
+                        .to_owned(),
+                }]);
+            }
+        }
     }
 
     // --- Half zero-and-a-half: the lend's window premises (card
@@ -2052,6 +2694,7 @@ pub fn check_buffer_program(
         },
         acquisitions: Vec::new(),
         releases: Vec::new(),
+        moves: Vec::new(),
         lend_windows: lend_window_by_event,
         lends: Vec::new(),
         accesses: Vec::new(),
@@ -2068,6 +2711,7 @@ pub fn check_buffer_program(
         evaluation,
         acquisitions,
         releases,
+        moves,
         lends,
         accesses,
         constructions,
@@ -2105,6 +2749,7 @@ pub fn check_buffer_program(
             effects: derived,
             acquisitions,
             releases,
+            moves,
             lends,
             peak_live_bytes,
             accesses,
@@ -2131,6 +2776,7 @@ struct ValueRun {
     evaluation: BufferEvaluation,
     acquisitions: Vec<(String, u32)>,
     releases: Vec<String>,
+    moves: Vec<FieldMove>,
     /// Each lend's window end by its event index, precomputed by
     /// [`lend_windows`] — `through` is a whole-program fact the stepper cannot
     /// know (card `SLICE-PERMISSIONS-WRITE-LEND`).
@@ -2188,6 +2834,7 @@ impl ValueRun {
             evaluation,
             acquisitions,
             releases,
+            moves,
             lend_windows,
             lends,
             accesses,
@@ -2231,11 +2878,20 @@ impl ValueRun {
             // so a record constructed inside a `for` body is decided by the one
             // implementation a top-level one is.
             | BufferEvent::Construct { .. }
-            | BufferEvent::Field { .. } => {
+            | BufferEvent::Field { .. }
+            // Card `AGGREGATE-OWNED-FIELD`: the four field-path positions are
+            // value-bearing exactly as their plain-name twins are, and reach
+            // the same stepper.
+            | BufferEvent::FieldStore { .. }
+            | BufferEvent::FieldLoad { .. }
+            | BufferEvent::FieldExtent { .. }
+            | BufferEvent::FieldRelease { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
                 releases.extend(step.release);
+                releases.extend(step.field_releases);
+                moves.extend(step.field_move);
                 accesses.extend(step.access);
                 constructions.extend(step.construction);
                 projections.extend(step.projection);
@@ -2401,9 +3057,14 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 | BufferEvent::Load { binding, .. }
                 | BufferEvent::Extent { binding, .. }
                 // Card `AGGREGATES-V1`: both aggregate events bind a name, and
-                // both names are body-local.
+                // both names are body-local. Card `AGGREGATE-OWNED-FIELD`: so
+                // do a load and an extent read through a field — though an
+                // owned-field statement in a body refuses before this matters
+                // (`OWNED-FIELD-LOOP-BODY`).
                 | BufferEvent::Construct { binding, .. }
-                | BufferEvent::Field { binding, .. } => {
+                | BufferEvent::Field { binding, .. }
+                | BufferEvent::FieldLoad { binding, .. }
+                | BufferEvent::FieldExtent { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {
@@ -2422,6 +3083,8 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 }
                 BufferEvent::Store { .. }
                 | BufferEvent::Release { .. }
+                | BufferEvent::FieldStore { .. }
+                | BufferEvent::FieldRelease { .. }
                 | BufferEvent::Line(_)
                 | BufferEvent::Return => {}
             }
@@ -2457,6 +3120,7 @@ pub enum BufferRecheckFailure {
     Effects,
     Acquisitions,
     Releases,
+    Moves,
     Lends,
     PeakLiveBytes,
     Accesses,
@@ -2476,6 +3140,7 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Effects => "the derived effect row",
             Self::Acquisitions => "the acquisitions and the extents they declare",
             Self::Releases => "the releases",
+            Self::Moves => "the partial moves out of owned fields",
             Self::Lends => "the admitted write lends, their footprints and their windows",
             Self::PeakLiveBytes => "the peak live byte total",
             Self::Accesses => "the checked byte accesses",
@@ -2509,6 +3174,9 @@ pub fn recheck_buffer_certificate(
     }
     if rederived.releases != certificate.releases {
         return Err(BufferRecheckFailure::Releases);
+    }
+    if rederived.moves != certificate.moves {
+        return Err(BufferRecheckFailure::Moves);
     }
     if rederived.lends != certificate.lends {
         return Err(BufferRecheckFailure::Lends);
