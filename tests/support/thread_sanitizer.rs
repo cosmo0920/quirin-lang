@@ -121,7 +121,8 @@ pub struct Sanitized {
 impl Sanitized {
     /// The `TASK-ROUTE-TSAN-SEGV` shape: the null-`ThreadState` fault.
     pub fn is_unregistered_thread_fault(&self) -> bool {
-        self.stderr.contains("SEGV on unknown address 0x000000000018")
+        self.stderr
+            .contains("SEGV on unknown address 0x000000000018")
     }
 }
 
@@ -149,7 +150,8 @@ pub fn run(tag: &str, c_source: &str, bind_threads: bool) -> Result<Sanitized, S
     std::fs::write(&c, c_source).unwrap();
     std::fs::write(&binding, PTHREAD_BINDING).unwrap();
 
-    let mut compiler = Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
+    let mut compiler =
+        Command::new(std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into()));
     compiler.args([
         "-std=c11",
         "-pthread",
