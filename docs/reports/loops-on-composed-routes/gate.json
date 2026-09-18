@@ -1,6 +1,6 @@
 {
- "note": "Card LOOPS-ON-COMPOSED-ROUTES (wave 39), one detached full gate at 7aff9fcfaffece9ff2b07aa964d71028a4caa1c7 (measure/run-gate.sh: setsid -f, no trap '' TERM, every exit to its own file, no pipe; exits copied to gate/ beside this file). Started 2026-09-18T08:13:54Z, cargo test ended 2026-09-18T08:31:27Z, gate ended 2026-09-18T08:31:56Z. Workspace: 4662 passed / 0 failed / 9 ignored over 235 result summaries (224 Running targets, 9 Doc-tests sections; 0 FAILED summaries). fmt 0, clippy 0, probe 0, followup 0, Lean audits exit 0 over 138 proof/Audit*.lean files (137 + AuditLoopWindows.lean). Python (unittest discover -s scripts/tests) exit 1, ran 303; re-run after the matrix regeneration with --gate: exit 0, ran 303 (gate/python-post.exit). Clang: `clang --version` on the gate's host with QCORE_CLANG unset, exit 0, first line under the clang key. Provider 122 carried, not re-measured: nothing under providers/ or crates/qcore-schemas/ moved and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure. Constraint-16 rows: see README section 10 for which were seen green under full-suite load. A gate figure is a measurement on one machine, never a property.",
- "workspace_tests": 4662,
+ "note": "Card LOOPS-ON-COMPOSED-ROUTES (wave 39), one detached full gate at 4cc580bb71da50a12b078dcfadd50903eb343f79 (measure/run-gate.sh: setsid -f, no trap '' TERM, every exit to its own file, no pipe; exits copied to gate/ beside this file). Started 2026-09-18T12:14:08Z, cargo test ended 2026-09-18T12:30:42Z, gate ended 2026-09-18T12:31:17Z. Workspace: 4701 passed / 0 failed / 9 ignored over 237 result summaries (226 Running targets, 9 Doc-tests sections; 0 FAILED summaries). fmt 0, clippy 0, probe 0, followup 0, Lean audits exit 0 over 140 proof/Audit*.lean files (main's 139 at e80b58d6 + AuditLoopWindows.lean; measured on disk after the rebase). Python (unittest discover -s scripts/tests) exit 1, ran 303; re-run after the matrix regeneration with --gate: exit 0, ran 303 (gate/python-post.exit). Clang: `clang --version` on the gate's host with QCORE_CLANG unset, exit 0, first line under the clang key. Provider 122 carried, not re-measured: nothing under providers/ or crates/qcore-schemas/ moved and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure. Constraint-16 rows: see README section 10 for which were seen green under full-suite load. A gate figure is a measurement on one machine, never a property.",
+ "workspace_tests": 4701,
  "provider_tests": 122,
  "python_evidence_validator_tests": 303,
  "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
  "cargo_fmt": "clean",
  "cargo_clippy": "clean",
  "standing_gate": "pass",
- "lean_audits": 138,
+ "lean_audits": 140,
  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

@@ -17,7 +17,8 @@ loan still read after the loop before the body runs (`loop_body_conflict`),
 the body then running through the buffer route's own `BufferRun::repeat`
 (published for this, so there is one iteration rule) and the composed custody
 list unrolling it. Proved sound relative to `LOOP-V1`'s unrolling in
-`QCore.LoopWindows` (audit 138: `every_use_lies_inside_the_window`,
+`QCore.LoopWindows` (`AuditLoopWindows.lean`, 140 on disk after the rebase onto
+`e80b58d6`: `every_use_lies_inside_the_window`,
 `the_unrolled_window_lies_inside_the_iteration_window`,
 `the_unrolling_is_loop_v1s`, `the_window_is_exact_over_a_flat_program`, and
 the non-vacuity `a_top_level_only_window_misses_a_body_use`; the IR's
@@ -31,7 +32,12 @@ close's decision) and **`STRING-CONCAT-LOOP-WINDOW` retired**, its discharge
 met word for word; `WRITE-LEND-RELEND` left open, orthogonal. Three residuals
 registered, each a refusal **by name** that sits before the window is
 computed: `LOOP-PER-ITERATION-LOAN`, `LOOP-WINDOW-BODY-CUSTODY`,
-`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY` (`named_followups` 228 → 230).
+`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY` (`named_followups` 232 → 234 on the
+rebased tree). Rebased onto `e80b58d6` behind `AGGREGATE-OWNED-FIELD` and
+`CT07-TWO-THREAD-PROOF-LEG`, with that card's two by-name refusals
+(`OWNED-FIELD-LEND-WINDOW`, `OWNED-FIELD-LOOP-BODY`) pinned against the
+iteration windows — they sit before this card's block and no window is
+computed for them.
 Constraint 15h amended deliberately, its two "one flat statement sequence"
 sentences quoted as superseded in place and the theorem appended; §L21 rows
 `Q051`, `Q068` and `Q077`–`Q079` carry the narrowings with the exact admitted
@@ -43,10 +49,11 @@ top-level-only window). Emission census over 527 programs: 139 admitted by
 both byte-identical, 0 moved, the 2 new admissions this card's own examples
 (`examples/loops/lend_fill.qcore`, `examples/strings/looped_fill.qcore`, each
 run sanitized on the Linux arm; no Windows or Apple run claimed). Gate at
-`7aff9fcf`: **4,662 / 0 / 9** over 235 summaries (+23, the card's own file),
-fmt/clippy/probes clean, **138** Lean audits, Python 303 OK after the
-regeneration (red only on the followups tripwire before it), Clang present;
-a first run at `ac2a6b84` exited 101 against stale artifacts the first
+`4cc580bb` on the rebased tree: **4,701 / 0 / 9** over 237 summaries (+24,
+the card's own file), fmt/clippy/probes clean, **140** Lean audits, Python
+303 OK after the regeneration (red only on the two tripwires before it),
+Clang present; the pre-rebase gate measured 4,662 / 0 / 9 and 138, and a
+first run at `ac2a6b84` exited 101 against stale artifacts the first
 mutation harness left (restore by `mv` without a `touch`; three rows of the
 card's own file) plus one load-red constraint-16 row, both recorded and the
 harness corrected (`docs/reports/loops-on-composed-routes/gate.json`, §10).

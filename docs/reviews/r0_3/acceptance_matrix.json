@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 232
+  "named_followups": 234
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6164,11 +6164,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Integration gate measured by the integrator at the merge tip 3fa88fc6 (detached run gate-aggregate; every exit to its own file; the per-merge regeneration could not use any card's gate.json because two wave-39 cards added Lean audits and the generator refuses a figure that disagrees with the tree). Workspace figure is the merged tip's own; provider 122 carried (providers/ and crates/qcore-schemas/ unchanged since the merge base); Python figure is the re-run after this regeneration; Clang claim taken from the card's own recording beside this file (gate/clang-version.txt, same host).",
-  "workspace_tests": 4677,
+  "note": "Card LOOPS-ON-COMPOSED-ROUTES (wave 39), one detached full gate at 4cc580bb71da50a12b078dcfadd50903eb343f79 (measure/run-gate.sh: setsid -f, no trap '' TERM, every exit to its own file, no pipe; exits copied to gate/ beside this file). Started 2026-09-18T12:14:08Z, cargo test ended 2026-09-18T12:30:42Z, gate ended 2026-09-18T12:31:17Z. Workspace: 4701 passed / 0 failed / 9 ignored over 237 result summaries (226 Running targets, 9 Doc-tests sections; 0 FAILED summaries). fmt 0, clippy 0, probe 0, followup 0, Lean audits exit 0 over 140 proof/Audit*.lean files (main's 139 at e80b58d6 + AuditLoopWindows.lean; measured on disk after the rebase). Python (unittest discover -s scripts/tests) exit 1, ran 303. Clang: `clang --version` on the gate's host with QCORE_CLANG unset, exit 0, first line under the clang key. Provider 122 carried, not re-measured: nothing under providers/ or crates/qcore-schemas/ moved and qcore-schemas is still 14.0.0 (constraint 18 not engaged); a Unix figure. Constraint-16 rows: see README section 10 for which were seen green under full-suite load. A gate figure is a measurement on one machine, never a property.",
+  "workspace_tests": 4701,
   "provider_tests": 122,
   "python_evidence_validator_tests": 303,
-  "lean_audits": 139,
+  "lean_audits": 140,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6237,6 +6237,7 @@
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLoopBudget.lean",
+   "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
@@ -6314,9 +6315,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "pass",
+  "standing_gate": "fail",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/aggregate-owned-field/integration-gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/loops-on-composed-routes/gate.json)"
  },
  "named_followups": [
   {

@@ -226,10 +226,15 @@ three re-pinned suites (`write_lend.rs`, `slice_permissions.rs`,
 source mutations, one at a time, runs the named test, expects it red, restores
 the file and checks it sha256-equal. Results in `mutations.log`, summarised:
 
-Run at HEAD `7aff9fcf` (2026-09-18T08:12:45Z), exit 0 — **baseline green
-before and after, six of six red, three files restored sha256-equal**
-(`std_buffer.rs` `3f542a6446518d9d`, `std_string.rs` `40e050ce507de858`,
-`source_std_string.rs` `49e77c407429327c`, before and after):
+Run at HEAD `4cc580bb` (2026-09-18T12:13:29Z, the tree rebased onto
+`e80b58d6`), exit 0 — **baseline green before and after, six of six red, three
+files restored sha256-equal** (`std_buffer.rs` `87eda8f8a503c7d4`,
+`std_string.rs` `4158d84e4ddb544e`, `source_std_string.rs`
+`49e77c407429327c`, before and after). The pre-rebase run (HEAD `7aff9fcf`,
+08:12Z) gave the same six verdicts; a first post-rebase run reported M1
+**VACUOUS** because the rebase had put a comment between M1's anchor lines
+and the mutation was never applied — the harness's exactly-once anchor check
+doing its job — and M1 was re-anchored on the `Repeat` arm alone.
 
 **A finding about the harness itself, recorded rather than smoothed.** The
 first run (HEAD `ac2a6b84`, 07:40Z) reported the same six red rows but left
@@ -328,39 +333,48 @@ is empty; the composed route reads the loop through the buffer route's reader.
 
 ## 10. Gate
 
-Two detached full gates (`measure/run-gate.sh`: `setsid -f`, no
+Three detached full gates (`measure/run-gate.sh`: `setsid -f`, no
 `trap '' TERM`, every step's exit to its own file, no pipe; exits copied to
 `gate/` beside this file, `gate.json` built from them by a script that reads
-only those files). Disk 207 GB free before run 1, 123 GB after run 2.
+only those files). **The figures are run 3's**, on the tree rebased onto
+`e80b58d6`; runs 1 and 2 (pre-rebase) are kept below because each records a
+fact.
 
-**Run 2 — the figures (`gate/`, HEAD `7aff9fcf`, this card's final code;
-later commits are documentation, `gate.json` and the regeneration only).**
-Started 08:13:54Z; `git submodule update --init --recursive` exit 0; one
-uninterrupted `cargo test --workspace --no-fail-fast` of 17m33s, exit 0:
-**4,662 passed / 0 failed / 9 ignored** over 235 result summaries (224
-`Running` targets + 9 doc-test sections; the loose `^test result` grep gives
-237, the wave-38 close's two-line discrepancy reproduced); fmt 0; clippy 0;
-both probes 0;
-`scripts/check_lean_audits.py` exit 0, **138 Lean audits** (137 +
-`AuditLoopWindows.lean`); Python (`unittest discover -s scripts/tests`) **exit
-1 in the detached run, deliberately reported**: 303 run, 2 failures, both
-`D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire against the not-yet-regenerated
-matrix (`228 != 230`) — the wave-36/37/38 closes' shape — and **303 OK, exit
-0** re-run after the regeneration with `--gate` (`gate/python-post.exit`).
+**Run 3 — the figures (`gate/`, HEAD `4cc580bb`, this card's final code on
+`e80b58d6`; later commits are documentation, `gate.json` and the
+regeneration only).** Started 12:14:08Z; `git submodule update --init
+--recursive` exit 0; one uninterrupted `cargo test --workspace
+--no-fail-fast` of 16m34s, exit 0: **4,701 passed / 0 failed / 9 ignored**
+over 237 result summaries (226 `Running` targets + 9 doc-test sections; the
+loose `^test result` grep gives 239, the two-line discrepancy the closes
+record); fmt 0; clippy 0; both probes 0; `scripts/check_lean_audits.py`
+exit 0, **140 Lean audits** (main's 139 at `e80b58d6` + `AuditLoopWindows.lean`,
+measured on disk after the rebase); Python (`unittest discover -s
+scripts/tests`) **exit 1 in the detached run, deliberately reported**: 303
+run, 2 failures, both tripwires against the not-yet-regenerated matrix
+(`D02-DIMENSIONS-FOLLOWUP-COUNT`'s `232 != 234`, and the Lean-count check's
+`139 != 140`) — the wave-36/37/38 closes' shape — and **303 OK, exit 0**
+re-run after the regeneration with `--gate` (`gate/python-post.exit`).
 `clang --version` exit 0, `Ubuntu clang version 21.1.8 (6ubuntu1)`,
-`QCORE_CLANG` unset (`gate/clang-version.txt`). Gate ended 08:31:56Z.
+`QCORE_CLANG` unset (`gate/clang-version.txt`). Gate ended 12:31:17Z; disk
+161 GB free before, 256 GB after.
 
 Constraint 16: all five named rows that live in this workspace were **green**
-under full-suite load in run 2 — `a_declared_process_limit_stops_the_fixture_from_forking`,
+under full-suite load in run 3 — `a_declared_process_limit_stops_the_fixture_from_forking`,
 `vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
 `memory_growth_beyond_the_declared_limit_is_bounded`,
 `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`
-and the unnamed `a_forced_override_never_weakens_an_execution`; a full-suite
-run on a machine carrying four sibling builds, not a quiet-host number.
+and the unnamed `a_forced_override_never_weakens_an_execution`, plus
+`an_admitted_path_still_works_under_confinement` (red in run 1, below); a
+full-suite run on a machine carrying sibling builds, not a quiet-host number.
 `real_packages_preserve_unknown_and_reject_mutations` lives in `providers/`
 and is not among them. Provider **122 carried, not re-measured**: nothing under
 `providers/` or `crates/qcore-schemas/` moved and `qcore-schemas` is still
 14.0.0 (constraint 18 not engaged); a Unix figure.
+
+**Run 2 (pre-rebase, HEAD `7aff9fcf`, base `e878b362`) — exit 0**: 4,662 / 0
+/ 9 over 235 summaries, 138 Lean, 303 Python after regeneration; superseded
+by run 3 and not carried into `gate.json`.
 
 **Run 1 (`gate/run1/`, HEAD `ac2a6b84`) — exit 101, recorded, not
 smoothed.** 4,658 passed / **4 failed** / 9 ignored: three rows of this card's
@@ -368,15 +382,18 @@ own test file red against the stale artifacts the first mutation harness left
 (§6 — the source tree was byte-identical to the committed one, the rlibs were
 not), and one constraint-16 row, `an_admitted_path_still_works_under_confinement`
 (the confined-fixture write test, `Io(Broken pipe)` under load), red under
-the load of the sibling gates and **green in run 2** — both facts recorded.
-Every other step of run 1 was exit 0 with the same Lean and Python figures.
+the load of the sibling gates and **green in runs 2 and 3** — both facts
+recorded. Every other step of run 1 was exit 0.
 
-Delta against the wave-38 close's 4,639 / 0 / 9, 137, 303: workspace **+23**
-(exactly `loops_on_composed_routes.rs`'s 23 tests; the three re-pinned tests
-in `write_lend.rs`, `slice_permissions.rs` and `string_concat.rs` are renamed,
-not added), Lean **+1**, Python **+0**, ignored unchanged. Nothing is promoted
-by this card: no corpus count, unit status or function status moves; contract
-corpus 88; CT 46/50; full language conformance false.
+Delta: this card's own file contributes **+24** workspace tests (23 plus the
+owned-field pair pinned after the rebase; the three re-pinned tests in
+`write_lend.rs`, `slice_permissions.rs` and `string_concat.rs` are renamed,
+not added) and **+1** Lean audit, Python +0, ignored unchanged; the rest of
+the distance from the wave-38 close's 4,639 / 137 is the two cards merged
+ahead of this one and is theirs to attribute. Nothing is promoted by this
+card: no corpus count, unit status or function status moves; contract corpus
+88; CT and proof counts as main carries them; full language conformance
+false.
 
 ## 11. Residuals and retirements
 
@@ -402,13 +419,15 @@ corpus 88; CT 46/50; full language conformance false.
 * `LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY` — a string construct, text line,
   `len`-bound header or unrolling licence inside a composed `for` body.
 
-`named_followups`: 228 → **230** (+3, −1).
+`named_followups`: 232 (main at `e80b58d6`) → **234** (+3, −1; 228 → 230 on
+the pre-rebase base).
 
 ## 12. For the integrator
 
-1. **Headline numbers moved in this tree**: Lean audits **137 → 138**
-   (`AuditLoopWindows.lean`); `named_followups` **228 → 230**; workspace tests
-   per `gate.json` (see §10). `AGENTS.md`'s gate row and followups line are
+1. **Headline numbers moved in this tree** (after the rebase onto
+   `e80b58d6`): Lean audits **139 → 140** (`AuditLoopWindows.lean`);
+   `named_followups` **232 → 234**; workspace tests **4,701 / 0 / 9** per
+   `gate.json` (see §10). `AGENTS.md`'s gate row and followups line are
    edited accordingly.
 2. **Constraint 15h amended deliberately, in the constraint's own text**: the
    sentence "Do not widen the window's computation without revisiting it: the
