@@ -66,11 +66,18 @@ the operational guidance that is in neither of those.
 - **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after
   wave 31). Green tests are an *observation*, and an observation is not a
   proof: a recurring **`STABILITY-REEVAL`** card (#1 in wave 34, #2 in wave 36,
-  #3 in wave 38, reports under `docs/reports/stability-reeval-{1,2,3}/README.md`;
-  **#4 is due now**, after wave 39 — recorded as due by the wave-39 close, not
-  run — and #3's own §6 item 11 names the Windows arm (`F02-WINDOWS-PIN-RUN`,
-  the one live red row) and the tracker-only residuals as the highest-value
-  unexamined ground, where #2's §6 had named the corpus artifacts — pinned by
+  #3 in wave 38, #4 in wave 40, reports under
+  `docs/reports/stability-reeval-{1,2,3,4}/README.md`; **#5 is due after wave
+  41** — recorded as due by the wave-40 close, not run — and #4's own §6 item 12
+  names the **transcription family** (`LOOPWINDOWS-LEAN-IS-A-TRANSCRIPTION`,
+  `CT42-CELL-DERIVER-LEAN-PARITY-UNBOUND` and
+  `PROOF-LEG-DIGESTS-UNCROSSCHECKED` being one defect wearing three names, so a
+  census of every "proved in Lean" claim against what binds it to Rust is the
+  cheapest way to size it) and **the standing constraints' own sentences** as
+  the highest-value unexamined ground, #4 having found two of them simply false
+  by reading them against the tree rather than against each other; where #3's §6
+  had named the Windows arm (`F02-WINDOWS-PIN-RUN`, the one live red row) and
+  the tracker-only residuals, and #2's §6 the corpus artifacts — pinned by
   no test — and the remaining Lean docstrings) asks, of the claims this project currently rests on, **under what conditions
   each is unstable or unproven** — and it reports that as a finding rather
   than as reassurance. The method, in the order that has caught the most:
@@ -105,6 +112,14 @@ the operational guidance that is in neither of those.
   it, exercise it, or state it as a measured boundary). Postponement is a valid
   outcome and must be recorded as one; what is forbidden is letting an
   observation stand where the text implies a proof.
+  **What actually gets a residual discharged is brief-reach, not the class of
+  work it needs** — firing #4's §1.3, which corrected firing #3's own headline:
+  #3 had measured 0 of 18 "mechanism-needing" residuals discharged and blamed
+  the class; measured again, mechanism runs 5/11 and sentence 3/3, every
+  discharged name appears in a close's item table or in a card's brief, and the
+  three names reaching no close document are all open. So **write the open
+  residuals a card can plausibly touch into that card's brief**, and treat a
+  name that reaches no brief and no close document as the one at risk.
 - **Work every card's integrator reconciliation list at the wave close, and
   leave the record that you did** (card `W32-RECONCILE-SWEEP`, wave 32,
   discharging `DOCS-COMPACT-5-RECONCILIATION-LIST`). Cards close with a section
@@ -148,6 +163,28 @@ the operational guidance that is in neither of those.
   not a measurement of it. It still decides nothing: it decides whether the
   close's own string is where the close said it is, never whether it is the
   right string.
+  **A `--check` is green at its own close and only there, and that is the
+  rule** — decided at the wave-40 close on
+  `RECONCILIATION-VERIFY-CLAIM-PERISHABLE`, whose occasioning case was one
+  claim quoting the increments index's mutable "Current record file" pointer.
+  Measured at that base, the wave-39 close's own record fails **16 of its 57**
+  claims, not one: **15** of those 16 were broken by the wave-40 compaction
+  merge rewriting the very `AGENTS.md`/`CLAUDE.md` sentences the close had
+  verified, and only the sixteenth by the wave-opening commit. Durability is a
+  property of the **target file**, not of the wording: every claim into the
+  acceptance matrix (17), a frozen increment record (4), the spec (3), crate
+  source (2), the CT manifest and its fixture (2) and a frozen card report (1)
+  survived, while 15 of the 27 into the two compaction-eligible files did not.
+  So "quote only durable text" is **not sufficient on its own** — verifying an
+  `AGENTS.md` amendment *in `AGENTS.md`* is the point of the arm, and a
+  compaction card is chartered to rewrite exactly that prose. Operative until a
+  `--check` mode distinguishes "applied and later legitimately superseded" from
+  "never applied": **prefer the most durable location an amendment allows**
+  (the tracker entry, the wave record, the spec, crate source) when the
+  amendment genuinely lives there; **each close `--check`s its own record
+  against its own tree** and is never obliged to re-green a predecessor's; and
+  a later red on a frozen close's record is **evidence of supersession, not of
+  a defect**, and must not be repaired by editing that frozen record.
 - **A retirement is named, checked, and swept after.** Before counting a name
   as retired, confirm it is **actually a registered entry** — wave 36 took
   three retirements and two of that wave's cards each recorded a "retirement"
@@ -233,6 +270,19 @@ the operational guidance that is in neither of those.
   the file — and what its check cannot yet see is a Clang recording borrowed
   from the card's own gate directory (`INTEGRATION-GATE-CLANG-CLAIM-BORROWED`,
   registered by the wave-39 close).
+  **When the file is owed, decided at the wave-40 close**
+  (`INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE`, taken on its second arm):
+  a merge whose message states a figure **differing from the card's own
+  `gate.json`** must publish `docs/reports/<card>/integration-gate.json`; a
+  merge whose stated figure **equals** the card's need not, the card's own file
+  being the record. Applied retrospectively: wave 39's `0d9e922f` and
+  `45a33285` stated differing figures and published none, so the close appended
+  a dated note to each card's report carrying the figure, the measured
+  pre-amendment tip **and the in-history merge sha beside it** — a measured tip
+  is cited with its successor, because all five wave-39 tips and both wave-40
+  tips are non-ancestors of `main` (`INTEGRATION-TIP-CITATION-UNREACHABLE`).
+  Wave 40's two merges stated figures **equal** to their cards' gates
+  (4,727 / 141 / 303 both times, measured), so neither owed a file.
 - **A delegated card never advances `main`, and since wave 36 a mechanism says
   so.** The instruction alone failed once: a wave-33 measurement card ran
   `git -C <main checkout> merge` and put its own commit on `main` as a bare

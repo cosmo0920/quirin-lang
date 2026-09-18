@@ -1,0 +1,38 @@
+..................................skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+skip: docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz: already backfilled, byte-identical
+skip: docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz: already itemized by the tool that wrote it
+Passed 2 Lean audits
+..Passed 2 Lean audits
+..Passed 2 Lean audits
+......Starting 6 audits, 4 at a time (limit 120s each)
+Passed Audit1.lean (1/6) in 0.0s
+Passed Audit2.lean (2/6) in 0.0s
+Passed Audit3.lean (3/6) in 0.0s
+Passed Audit4.lean (4/6) in 0.0s
+Passed Audit5.lean (5/6) in 0.0s
+Passed AuditAll.lean (6/6) in 0.0s
+Passed 6 Lean audits
+..Passed 6 Lean audits
+.......Starting failure (limit 5s)
+..Starting stalled fixture (limit 0.5s)
+Still running stalled fixture: 0.2s / 0.5s
+Still running stalled fixture: 0.4s / 0.5s
+Still running stalled fixture: 0.5s / 0.5s
+........................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 303 tests in 13.762s
+
+OK

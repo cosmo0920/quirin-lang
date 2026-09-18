@@ -1,0 +1,35 @@
+==============================================================================
+{
+ "id": "CT-COMPOSED-NATIVE-ROWS",
+ "title": "The composed-epoch native runner executes, and three stage rows it backs still read unassessed",
+ "why": "Card CT-COMPOSED-NATIVE (wave 32), its own follow-on. The runner really compiles and runs an admitted case's emitted C under the platform sanitizers and byte-compares stdout with that module's checked task half - and three stage rows it backs still read `unassessed`. A stage may read `executed` only where a named workspace test runs it on the case's own artifact (constraint 23), so the gap is between evidence that exists and evidence that is CREDITED. DISCHARGE: credit the rows in a stage-evidence record, or state why the runner does not back them.",
+ "source": "docs/reports/ct-composed-native/README.md",
+ "recorded_by": "WAVE-35-CLOSE"
+}
+==============================================================================
+{
+ "id": "CT-COMPOSED-NATIVE-NON-LINUX-VACUOUS-PASS",
+ "title": "The composed-epoch native runner passes green on Windows while asserting nothing",
+ "why": "`run_composed_native` in compiler/tests/ct_corpus.rs early-returns on non-Linux/macOS hosts, printing an eprintln, and the test still PASSES. Card STABILITY-REEVAL-1 (wave 34) records this as a disclosure gap rather than a defect: the restriction is documented (evidence_target=linux) and deliberate. But the ledger's CT row publishes 'sanitized-native 9 of 45' with NO platform qualifier, so a green suite on Windows reads as evidence for the CT22/CT25 sanitized rows when it is evidence for nothing. The cadence's rule is that an arm no test reaches is not verified by a green suite; here the suite is green precisely where it reaches nothing. Discharge: state the platform boundary in the CT ledger row beside the sanitized-native count, so the number carries the host condition it was measured on.",
+ "source": "docs/reports/stability-reeval-1/README.md",
+ "recorded_by": "STABILITY-REEVAL-1"
+}
+==============================================================================
+{
+ "id": "INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE",
+ "title": "Two wave-39 merges state an integration figure differing from their card's gate and publish no integration-gate.json",
+ "why": "MEASURED by card STABILITY-REEVAL-4 (wave 40). 0d9e922f (CT07) and 45a33285 (CT42) state integration figures - 4620 / 138 at f1fcd14d and 4703 / 140 at ecfef946 - each differing from that card's own gate.json (4644 / 138 and 4697 / 140), and neither publishes a docs/reports/<card>/integration-gate.json. Both cited tips are non-ancestors of main (INTEGRATION-TIP-CITATION-UNREACHABLE), so those two figures have no record outside an unreachable commit's message. AGENTS.md describes the convention as covering 'the three integration gates the integrator measured at the merges where no card's gate could agree with the merged tree', which is true of the three that were published and silent about these two. The CLAUDE.md convention the wave-39 close wrote says an integrator who cannot regenerate the matrix with any card's gate.json measures the tip and writes the file; it does not say what to do when the integrator measures a tip for another reason. DISCHARGE: publish an integration-gate.json for every merge that measures a tip, OR state the rule that a merge whose message states a figure differing from the card's gate must publish one, and apply it retrospectively to these two by a dated appended note (constraint 21).",
+ "source": "docs/reports/stability-reeval-4/README.md",
+ "recorded_by": "STABILITY-REEVAL-4"
+}
+==============================================================================
+AMEND LEDGER-TSAN-BOUNDARY-SENTENCES-STALE: present
+AMEND LEASE-BOUNDARY-TRANSCRIPTION-PREMISE: present
+AMEND INTEGRATION-TIP-CITATION-UNREACHABLE: present
+AMEND RECONCILIATION-VERIFY-CLAIM-PERISHABLE: present
+AMEND INTEGRATION-GATE-CLANG-CLAIM-BORROWED: present
+AMEND CLANG-RECORDING-UNBOUND-TO-ITS-RUN: present
+REGISTER CONSTRAINT-14-WORD-COUNT-CASE-FILTERED: new
+REGISTER RESIDUAL-QUIET-BY-PROSE-MENTION: new
+
+258 entries before any edit.

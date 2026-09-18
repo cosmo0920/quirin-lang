@@ -1,0 +1,12 @@
+  70f1cec3  DOCS-COMPACT-8: re-derive at d6a57f66, and a ninth correction  (4 files)
+  97166b99  DOCS-COMPACT-8: the merged-gate row re-measured, and two registrations  (14 files)
+  c1eaf2a4  DOCS-COMPACT-8: wave-40 record, and seven verbatim checkpoints  (3 files)
+  fa6b50c8  DOCS-COMPACT-8: CLAUDE.md - cadence roster and the Windows residual family  (1 files)
+  c97d4e5d  DOCS-COMPACT-8: the Q-space note and four ledger blocks compacted  (1 files)
+  55951751  DOCS-COMPACT-8: three corrections and constraint 14's compaction  (2 files)
+  f11ccbba  Open wave 40: create the increment record and move the index pointer  (2 files)
+  11edf7eb  WAVE-39-CLOSE: CT46 TSan citation, tracker edits (+3 -2, one amendment), interim regeneration with the base gate  (35 files)
+  b1462e6d  WAVE-39-CLOSE: sweep scripts, Q-space tally correction, constraint-14 wave line, CLAUDE.md conventions, ct_corpus doc comment (WIP)  (8 files)
+
+9 commits in the range write no docs/reports/<card>/README.md.
+Writing no report is NECESSARY for being uncarded, not sufficient: a card's own code commits are in this list too. This tool classifies none of them.

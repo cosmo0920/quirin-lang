@@ -1,0 +1,13 @@
+named_followups 258 -> 257
+retire CT-COMPOSED-NATIVE-ROWS: already absent (idempotent)
+retire CT-COMPOSED-NATIVE-NON-LINUX-VACUOUS-PASS: already absent (idempotent)
+retire INTEGRATION-GATE-NOT-PUBLISHED-FOR-EVERY-MERGE: already absent (idempotent)
+amend LEDGER-TSAN-BOUNDARY-SENTENCES-STALE: already applied (idempotent)
+amend LEASE-BOUNDARY-TRANSCRIPTION-PREMISE: already applied (idempotent)
+amend INTEGRATION-TIP-CITATION-UNREACHABLE: already applied (idempotent)
+amend RECONCILIATION-VERIFY-CLAIM-PERISHABLE: already applied (idempotent)
+amend INTEGRATION-GATE-CLANG-CLAIM-BORROWED: already applied (idempotent)
+amend CLANG-RECORDING-UNBOUND-TO-ITS-RUN: already applied (idempotent)
+register CONSTRAINT-14-WORD-COUNT-CASE-FILTERED: already present (idempotent)
+register RESIDUAL-QUIET-BY-PROSE-MENTION: already present (idempotent)
+named_followups 257 -> 257
