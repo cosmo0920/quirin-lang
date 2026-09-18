@@ -1,0 +1,58 @@
+     Running tests/loops_on_composed_routes.rs (target/debug/deps/loops_on_composed_routes-635a0938bde550b1)
+
+running 23 tests
+test a_body_release_under_a_live_loan_is_refused_by_the_model_by_name ... ok
+test a_body_store_after_the_release_is_the_inherited_use_after_drop ... FAILED
+test a_body_index_read_from_a_byte_conflicts_with_every_live_loan ... ok
+test a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name ... FAILED
+test a_body_index_read_from_a_byte_conflicts_on_the_composed_route_too ... ok
+test a_body_line_renders_once_per_iteration_on_the_composed_route ... ok
+test a_loop_before_the_lend_writes_the_owner_freely ... ok
+test a_loan_used_only_inside_the_loop_is_live_across_it_and_the_body_write_refuses ... ok
+test a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name ... FAILED
+test a_loop_writing_outside_a_live_loans_range_is_admitted_on_the_composed_route ... ok
+test a_loop_filling_a_buffer_before_it_is_borrowed_is_admitted ... ok
+test the_projection_unrolls_the_body_inside_the_borrow_node ... ok
+test an_owner_write_before_the_loop_is_inside_the_window_and_one_after_it_is_outside ... ok
+test a_for_in_a_string_module_without_a_buffer_still_refuses_as_a_nested_block ... ok
+test a_lend_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name ... ok
+test a_loop_filling_a_lend_is_admitted_and_its_window_runs_through_the_loop ... ok
+test a_body_write_into_a_borrowed_range_refuses_on_the_composed_route ... ok
+test a_nested_loop_is_projected_by_the_same_rule_at_every_depth ... ok
+test two_loans_last_used_inside_one_loop_nest_and_their_disjointness_is_still_decided ... ok
+test the_loops_own_refusals_keep_their_codes_on_the_composed_route ... ok
+test a_body_that_acquires_or_releases_refuses_by_name_where_a_loan_is_held ... ok
+test the_looped_fill_example_runs_sanitized_and_matches_its_reference_execution ... ok
+test the_lend_fill_example_runs_sanitized_and_matches_its_reference_execution ... ok
+
+failures:
+
+---- a_body_store_after_the_release_is_the_inherited_use_after_drop stdout ----
+
+thread 'a_body_store_after_the_release_is_the_inherited_use_after_drop' (963897) panicked at compiler/tests/loops_on_composed_routes.rs:721:5:
+[EffectNotDeclared { event: 5, effect: Alloc }, EffectNotDeclared { event: 5, effect: Mut }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name stdout ----
+
+thread 'a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name' (963900) panicked at compiler/tests/loops_on_composed_routes.rs:891:5:
+assertion `left == right` failed
+  left: ["Q077", "Q077"]
+ right: ["Q077"]
+
+---- a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name stdout ----
+
+thread 'a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name' (963917) panicked at compiler/tests/loops_on_composed_routes.rs:965:5:
+assertion `left == right` failed
+  left: ["Q077", "Q077"]
+ right: ["Q077"]
+
+
+failures:
+    a_body_store_after_the_release_is_the_inherited_use_after_drop
+    a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name
+    a_string_construct_inside_a_body_on_the_composed_route_refuses_by_name
+
+test result: FAILED. 20 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+error: test failed, to rerun pass `-p qcore-compiler --test loops_on_composed_routes`

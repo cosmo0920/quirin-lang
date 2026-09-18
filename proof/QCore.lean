@@ -159,6 +159,7 @@ import QCore.RegionCreditJoins
 import QCore.RegionJoinsDuties
 import QCore.RegionJoinsLoan
 import QCore.LoopBudget
+import QCore.LoopWindows
 import QCore.StdString
 import QCore.StringSliceIo
 import QCore.StringConcat

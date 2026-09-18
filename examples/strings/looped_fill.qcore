@@ -1,0 +1,45 @@
+// A `for` in a composed string/buffer module, with a borrow's window computed
+// over iterations (card `LOOPS-ON-COMPOSED-ROUTES`).
+//
+// Before that card the composed route refused a `for` as a nested block
+// (`STRING-CONCAT-LOOP-WINDOW`, `Q068`): its borrow window was an interval of
+// statement indices that a loop body contributed nothing to. This program is
+// the shape that refusal kept out. The first loop fills a buffer before any
+// view of it exists; the second runs inside a live loan's window and writes
+// only the bytes the loan does not hold.
+//
+// The window question is decided by one rule: a loop is one statement, and
+// every store in its body, at every iteration, is judged against every loan
+// still read after it. `head` is read after the second loop, so the loop's
+// stores to bytes 2 and 3 are judged against `[0, 2)` and admitted; a store
+// to byte 1 in the same body would refuse at `Q078`.
+
+import std.string;
+import std.buffer;
+import std.io;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(4);
+
+    // No view exists yet: the loop writes every byte of the owner.
+    for i in 0..4 {
+        b[i] = 97;
+    }
+    let all = borrow_utf8(b);
+    print all;
+
+    // `head` views bytes 0 and 1 and is read after the loop, so the loan is
+    // live across it; the body writes bytes 2 and 3, outside the loan.
+    let head = borrow_utf8(b, 0, 2);
+    for i in 0..2 {
+        b[2] = 98;
+        b[3] = 98;
+    }
+    print head;
+
+    let again = borrow_utf8(b);
+    print again;
+
+    drop b;
+    return;
+}

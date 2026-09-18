@@ -149,7 +149,7 @@ internal preprocessed line used for pin, leaf and certificate identity
 | CT01–CT50 conformance | **47/50 mapped**, 3 unmapped; sanitized-native **10 of 47**; **proof 4 of 47** (wave 39: `CT07-TWO-THREAD-PROOF-LEG` moved the proof numerator, and `CT42-CELL-ROUTE` mapped CT42 by routing the socket protocol cell from source — a grown denominator, which is mapping and not conformance). Which lane mapped which case, and on whose evidence, is the increment records' business — waves 28 through 39 each carry their lane's paragraph, and each lane's own report is authoritative for its measurements. What this row carries is the **current state and the standing method**. *The proof leg*: CT01 (wave 29), CT37 (wave 30, chosen by a measured survey of all 42 then-mapped cases), CT03 (wave 31, the first leg to need the F02 alphabet itself to grow, by the T05 Buffer write, proved **conservative** so that a write-free trace relates exactly as before and no existing digest moved) and CT07 (wave 39, `CT07-TWO-THREAD-PROOF-LEG`, the first leg bound **through the scoped-task ledger's lease set** rather than the F02 trace relation — `reference_trace` refuses this run's lease events by constraint 15n's decided boundary and was not touched; wave 31's `no_byte_has_two_write_authorities` is instantiated on the artifact's own two-thread ledger state, the `Reachable` witness being a proved replay (`QCore.Ct07LeaseLedger.replay_reaches`) of the lease opens and closes the checked module's reference execution performs, the production `ScopedTaskLedger` agreeing step for step, the kernel-decided digest recomputed from the artifact, and no alphabet growth). Each of the first three is a scenario property proved in Lean of the checked artifact's reference run **and its admitted renderings** (CT37's completion strictly before the join in every admitted rendering), bound to the case by a named host-unconditional test through the F02 digest relation; CT07's is a property of every ledger state its run reaches, bound by a named host-unconditional test through the ledger's own admission; in all four native execution is deliberately observation-only; the per-case gate is the pinned fail-closed `PROOF_GATED_CASES` table in `ct_corpus.rs`, and each flip's stage evidence supersedes the earlier record **from its own record** (constraint 21). CT03's sibling arm — the lease events the alphabet refuses — was observed and not proved when that leg landed; wave 32's `TRACE-ALPHABET-LEASE-BOUNDARY` discharged that residual and wave 36's `WRITE-LEND-TASKS-EXERCISE` **decided** the forward question, so constraint 15n and not this row carries the measured statement. *The sanitized-native leg*: wave 32's `CT-COMPOSED-NATIVE` gave the `composed_epoch` route a runner that compiles and runs an admitted case's own emitted C under the platform sanitizers and compares its stdout byte for byte with that module's own checked task half — every arm of that runner falsified before it was believed. CT23 stays outside it, being the route's refusal. Wave 36's `MUTEX-SHARE-CROSS-EMISSION` took the tenth slot: CT46's emission, native, sanitized and mutex-reference rows moved from `unassessed` to **executed**, retiring the wave-35 boundary that the `mutex_guard` route's crossing stopped at the checker. *Evidence can improve without a count moving*, and twice has: wave 30 put CT07 on the write-lend scenario, and wave 37's `CT-LANE-5` re-mapped it again onto the **two-thread** range write lease, so the scenario's word *independently* rests on two threads for the first time, with a sanitized native run and an allocation-identity witness behind it — each superseding the earlier record from its own record, with **no count moved**. *The three unmapped* (four until wave 39), each re-measured rather than assumed: CT41's obstruction is **structural** — clause (b) of the wave-9 attribution rule needs a control in which removing `volatile` moves the verdict, and `CTWIN-PUBLISH` §5's decision is that it moves nothing, with the scenario's own consumer shape measured `safe` with no diagnostic and the typed-source arm unable to tell `volatile` from `_Atomic` (`CT41-TYPED-SOURCE-UNDISCRIMINATING`); CT42 **left the set in wave 39**: `CT42-CELL-ROUTE` routed the socket arm from source (`disjoint NAME NAME;`, the two ends of one accepted connection refused as one cell at `Q664` by the unedited `DisjointFootprintsV1` checker, both fallback arms of the deriver made refusals first and the T09 derived-alias edit taken), mapped on the `sequential` route under the `reject` mode with no native, sanitizer or proof claim, its C-twin arm still blocked on `CT-CTWIN-DESCRIPTOR`; CT10 has half a scenario; CT24 stays **withdrawn** by the lane that measured it, a withdrawal rather than a loosened test, because `newly_decidable_not_mapped_reasons` is derived from that judgment's own key set (constraint 25). Every mapped case publishes the boundary its scenario's untranslatable words rest on — no pointer type and heap-bound storage for the buffer cases, no wrapper type and no `Send`/`Sync` trait for CT46, whose crossing is carried instead by the transferability judgment's `TransferKind::ProtectedResource`. A grown denominator is mapping, not conformance, and a grown proof numerator is evidence about one case's artifact (constraint 23) |
 | Contract corpus | **88 modules**, **59** resource-v1 declarations, **33** manifest-selected. Two of those are pinned expectations and move only deliberately (invariant 5): the module count by `compiler/tests/qcore_contract_corpus.rs`, the manifest selection by `crates/qcore-c-gateway/tests/neighbours.rs`. The growth chain wave by wave, and which declarations each corpus card chose, are in the increment records and in those cards' own reports. The standing method, unchanged across the two declarative arbiters that produced the last twelve modules (`W36-CORPUS-CONTRACTS-3`, 76 → 82; `W37-CORPUS-CONTRACTS-4`, 82 → 88): declarations are chosen by **function-cover yield** over the baseline functions blocked only by uncontracted-call leaves, and each is read **line-cited from its own pinned body** before it is declared — the cover being an upper bound and never a forecast (`W36-COVER-HIDDEN-BLOCKER`). Wave 37's ten declarations are **not one of them a release**, every one the neutral element, which is why they moved eight functions to `Safe` and added no `summary_conflict`; its new families are chosen deliberately too (`mpack/` is **not** the existing `msgpack/`, a different library) |
 | `qcore-schemas` | 14.0.0 · `qcore-compiler` 0.4.0 · `qcore-verifier-host` / `qcore-verification` 0.4.0 · ChunkIO provider package 0.13.0 |
-| Merged gate | **4,644 passed / 0 failed / 9 ignored, 235 result summaries over 233 test targets** (224 `Running` plus 9 doc-test sections; two of those sections print two summaries each) · **140** Lean audits · **303** Python · 122 provider (carried) · both probes exit 0 · fmt/clippy clean · Clang **present** (21.1.8, recorded and checked). Measured by card **`CT07-TWO-THREAD-PROOF-LEG`** at its own tip `81f783ce` (base `e878b362`, the wave-38 close; a **per-card** gate, to be replaced by the wave-39 close's integration-tip figure): +5 workspace tests (its leg's five) and +1 Lean audit (`AuditCt07LeaseLedger.lean`) against the wave-38 close's 4,639 / 0 / 9 and 137 at `19c61952` (whose ninth ignored row, the `#[ignore]`d F02 pin-agreement test, stays **red by design** on `--ignored` — `F02-WINDOWS-PIN-STALE-SINCE-WAVE-36`, a Windows row no Linux gate can see): `git submodule update --init --recursive` first and exit 0, one uninterrupted `cargo test --workspace --no-fail-fast` of 18m16s under four sibling worktrees building, and **every step's exit captured to its own file, in that run's own directory, with no pipe in the command** (`GATE-EXIT-SWALLOWED-BY-PIPE`). Per-command exits and the full accounting in `docs/reports/ct07-two-thread-proof-leg/gate.json` (the wave-38 close's in `docs/reports/wave38-close/gate.json`), which carries the Lean count under a `lean_audits` key that `build_matrix.py --gate` checks against `proof/Audit*.lean` and refuses on disagreement (wave 37), and — as of the wave-38 close — **a `clang` presence claim checked against the `clang-version.txt` recorded beside it, with both keys now required rather than optional**, so the one figure of this row that had no machine-readable source and drifted in two consecutive waves (`GATE-ROW-FIGURE-ATTRIBUTION-DRIFT`, `DOCS-COMPACT-7` §1.1) is refused where it would be written, and a green workspace figure taken without Clang is no longer indistinguishable in the record from one taken with it. Each card's own gate is in its own report, and each close's in its own. **A gate figure is a measurement on one machine, never a property**, and four boundaries travel with this one. First, constraint 16's rows, because that constraint requires a gate report to **state which it saw**: all five named rows that live in this workspace were **green**, `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` included, and so was the unnamed seventh `a_forced_override_never_weakens_an_execution` — but this is a full-suite run on a machine carrying its own build, **not** the quiet-host isolated number `HOST-ROW-STARVATION-DESCRIPTION` still asks for, and it is not offered as one. `real_packages_preserve_unknown_and_reject_mutations` lives in the separate `providers/` workspace and is not among them. Second, provider **122 is carried, not re-measured** (nothing under `providers/` or `crates/qcore-schemas/` moved across the wave and `qcore-schemas` is still 14.0.0, so constraint 18 is not engaged) **and is a Unix figure** (`PROVIDER-CONFORMANCE-UNIX-ONLY`). Third, this row is **one measurement at one tip**: every figure in it was produced by the run named here, and the Python figure is the re-run after the matrix regeneration, the detached run's own Python step having gone red on `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire (`228 != 227`) and on the Lean-count tripwire (`137` carried against `138` on disk) exactly as the wave-36, wave-37 and wave-38 closes' did (`229 != 228` at wave 38) — recorded in `gate.json`, not smoothed. Fourth, the per-wave narrative this row used to carry is in the increment records |
+| Merged gate | **4,644 passed / 0 failed / 9 ignored, 235 result summaries over 233 test targets** (224 `Running` plus 9 doc-test sections; two of those sections print two summaries each) · **141** Lean audits · **303** Python · 122 provider (carried) · both probes exit 0 · fmt/clippy clean · Clang **present** (21.1.8, recorded and checked). Measured by card **`CT07-TWO-THREAD-PROOF-LEG`** at its own tip `81f783ce` (base `e878b362`, the wave-38 close; a **per-card** gate, to be replaced by the wave-39 close's integration-tip figure): +5 workspace tests (its leg's five) and +1 Lean audit (`AuditCt07LeaseLedger.lean`) against the wave-38 close's 4,639 / 0 / 9 and 137 at `19c61952` (whose ninth ignored row, the `#[ignore]`d F02 pin-agreement test, stays **red by design** on `--ignored` — `F02-WINDOWS-PIN-STALE-SINCE-WAVE-36`, a Windows row no Linux gate can see): `git submodule update --init --recursive` first and exit 0, one uninterrupted `cargo test --workspace --no-fail-fast` of 18m16s under four sibling worktrees building, and **every step's exit captured to its own file, in that run's own directory, with no pipe in the command** (`GATE-EXIT-SWALLOWED-BY-PIPE`). Per-command exits and the full accounting in `docs/reports/ct07-two-thread-proof-leg/gate.json` (the wave-38 close's in `docs/reports/wave38-close/gate.json`), which carries the Lean count under a `lean_audits` key that `build_matrix.py --gate` checks against `proof/Audit*.lean` and refuses on disagreement (wave 37), and — as of the wave-38 close — **a `clang` presence claim checked against the `clang-version.txt` recorded beside it, with both keys now required rather than optional**, so the one figure of this row that had no machine-readable source and drifted in two consecutive waves (`GATE-ROW-FIGURE-ATTRIBUTION-DRIFT`, `DOCS-COMPACT-7` §1.1) is refused where it would be written, and a green workspace figure taken without Clang is no longer indistinguishable in the record from one taken with it. Each card's own gate is in its own report, and each close's in its own. **A gate figure is a measurement on one machine, never a property**, and four boundaries travel with this one. First, constraint 16's rows, because that constraint requires a gate report to **state which it saw**: all five named rows that live in this workspace were **green**, `closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request` included, and so was the unnamed seventh `a_forced_override_never_weakens_an_execution` — but this is a full-suite run on a machine carrying its own build, **not** the quiet-host isolated number `HOST-ROW-STARVATION-DESCRIPTION` still asks for, and it is not offered as one. `real_packages_preserve_unknown_and_reject_mutations` lives in the separate `providers/` workspace and is not among them. Second, provider **122 is carried, not re-measured** (nothing under `providers/` or `crates/qcore-schemas/` moved across the wave and `qcore-schemas` is still 14.0.0, so constraint 18 is not engaged) **and is a Unix figure** (`PROVIDER-CONFORMANCE-UNIX-ONLY`). Third, this row is **one measurement at one tip**: every figure in it was produced by the run named here, and the Python figure is the re-run after the matrix regeneration, the detached run's own Python step having gone red on `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire (`228 != 227`) and on the Lean-count tripwire (`137` carried against `138` on disk) exactly as the wave-36, wave-37 and wave-38 closes' did (`229 != 228` at wave 38) — recorded in `gate.json`, not smoothed. Fourth, the per-wave narrative this row used to carry is in the increment records |
 | Full language conformance | **false** |
 
 Cycles 1–17 are complete at their bounded milestones; Cycle 18 is bounded
@@ -165,7 +165,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**231** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
+**233** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
 229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close; the wave-38 close
 registered two and retired three, each named in
 `docs/reports/wave38-close/README.md`; the proof-leg card retired two and
@@ -936,6 +936,15 @@ pointer is the card that established it; read it before deviating.
       prose; the already-reserved `assert` and `footprint` were considered
       and not taken. The first reserved word since `LOOP-V1`, ending the
       wave-28-to-37 run deliberately and stated as such.
+    * `LOOPS-ON-COMPOSED-ROUTES` (wave 39) **+0 words, +0 tokens, and the
+      census was run rather than assumed**: the card admits an existing
+      statement (`for`) in two positions that refused before it — beside a
+      lend on the buffer route, and inside a composed string/buffer entry —
+      and spells nothing new; `git diff --stat e878b362 -- crates/qcore-frontend/src/lexer.rs crates/qcore-frontend/src/parser.rs`
+      is empty, the composed route reads the loop through
+      `source_std_buffer::lower_for_statement` (the same reader, the same
+      bound tier), and the three residual names it refuses by name are
+      diagnostic text, not words. Its report §9 states the census.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
@@ -1084,10 +1093,15 @@ pointer is the card that established it; read it before deviating.
     `source.buffer.v1` admits only constant bytes at constant indices — and its
     **window** runs from the borrow to the last statement reading the view or
     **anything derived from it**, a slice of a borrow being itself a borrow of
-    the same buffer. Do not widen the window's computation without revisiting
-    it: the interval is exact because the route is one flat statement sequence,
-    and a loop construct invalidates that premise — which is why the composed
-    route **refuses** a `for` today (`STRING-CONCAT-LOOP-WINDOW`). A borrow
+    the same buffer. **Superseded deliberately by card `LOOPS-ON-COMPOSED-ROUTES`
+    (wave 39; the amendment at the end of this constraint):** the sentence this
+    constraint carried from `STRING-CONCAT` to wave 38 — "Do not widen the
+    window's computation without revisiting it: the interval is exact because
+    the route is one flat statement sequence, and a loop construct invalidates
+    that premise — which is why the composed route **refuses** a `for` today
+    (`STRING-CONCAT-LOOP-WINDOW`)" — is replaced by the iteration-window
+    theorem: the window is computed **over iterations**, and the composed route
+    **admits** a `for`. A borrow
     contributes an ordinary `Read` to the cycle-3 ownership operation list; do
     not re-implement the custody rules beside it. **Route selection changes only
     for the bridge construct** — a module holding a buffer without spelling
@@ -1133,16 +1147,23 @@ pointer is the card that established it; read it before deviating.
     not move these rules out of the IR into a route, and do not give the release
     arm a range.** On the composed string route every sentence of this
     constraint stands unchanged: a `lend(…)` beside `borrow_utf8`'s read loans
-    refuses by name at `Q077` (`SLICE-PERMISSIONS-COMPOSED-LEND`), so the
-    window-exactness argument and the `for` refusal at `Q068` are untouched
-    there (`STRING-CONCAT-LOOP-WINDOW` re-measured, not assumed). On the buffer
-    route the exactness premise is defended by three refusals that must survive
-    refactors: a `for` in an entry that lends (`SLICE-PERMISSIONS-LOOP-WINDOW`),
-    a crossed pair of lend windows (`SLICE-PERMISSIONS-CROSSED-WINDOWS`), and an
-    acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`). The lend's bound
+    refuses by name at `Q077` (`SLICE-PERMISSIONS-COMPOSED-LEND`). **Superseded
+    deliberately by card `LOOPS-ON-COMPOSED-ROUTES` (wave 39):** the clause that
+    followed — "so the window-exactness argument and the `for` refusal at
+    `Q068` are untouched there (`STRING-CONCAT-LOOP-WINDOW` re-measured, not
+    assumed)" — and the first of the three refusals the next sentence listed —
+    "a `for` in an entry that lends (`SLICE-PERMISSIONS-LOOP-WINDOW`)" — are
+    replaced by the amendment at the end of this constraint. On the buffer
+    route the window's soundness is now defended by **two** refusals that must
+    survive refactors, plus the amendment's own two: a crossed pair of lend
+    windows (`SLICE-PERMISSIONS-CROSSED-WINDOWS`) and an
+    acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`), the latter
+    scanned at any depth. The lend's bound
     tier is the loop bound's (`WRITE-LEND-BOUND-FROM-BYTE`); a loan is never
-    released and never re-lent; and a module with no lend builds the custody
-    operation list it always built.
+    released and never re-lent (`WRITE-LEND-RELEND` stays open and is
+    orthogonal to loops — a sub-lend is a second borrow node nested in the
+    first's body, which the one-pass walker cannot see); and a module with no
+    lend builds the custody operation list it always built.
     **Appended, card `WRITE-LEND-TASKS` (wave 31; it supersedes nothing above,
     discharging the sibling residual the wave-29 card named).** The write lend
     now also **crosses the spawn boundary**, as a range write lease:
@@ -1214,8 +1235,59 @@ pointer is the card that established it; read it before deviating.
     published flagship being representation-independent by construction rather
     than by luck. No Windows or Apple run is claimed
     (`WRITE-LEND-EXERCISE-WINDOWS-RUN`).
+    **Amended, card `LOOPS-ON-COMPOSED-ROUTES` (wave 39; deliberate — it
+    replaces the "one flat statement sequence" premise this constraint carried
+    from `STRING-CONCAT`, the two sentences quoted as superseded above, by a
+    theorem).** A loan's window is computed **over iterations**: on both
+    routes it runs from the loan's opening to the last **top-level** statement
+    naming the loan **at any depth** (`std_buffer::last_uses`;
+    `std_string::view_uses_at_any_depth`), so a `for` whose body names a loan
+    is that statement and the loan is **live across every iteration** of it.
+    The computation is proved sound relative to `source.loop.v1`'s own
+    unrolling in `QCore.LoopWindows`: every use in the unrolled program lies
+    inside the window (`every_use_lies_inside_the_window`), unrolled positions
+    are attributed to non-decreasing top-level indices, so everything the exact
+    unrolled window contains the iteration window contains
+    (`the_unrolled_window_lies_inside_the_iteration_window`), the unrolling is
+    `QCore.SourceLoop.unroll`'s (`the_unrolling_is_loop_v1s`), a loop-free
+    program's window is the flat one the routes always computed
+    (`the_window_is_exact_over_a_flat_program`), and the replaced top-level-only
+    computation demonstrably missed a body use
+    (`a_top_level_only_window_misses_a_body_use`). The over-approximation is in
+    the **refusing** direction because the IR's owner-access, lend-admission
+    and drop decisions are monotone in the live loans
+    (`a_longer_live_set_refuses_no_less` and siblings) — do not replace the
+    window by an exact per-position one without re-proving both halves. A
+    `for` is therefore **admitted** beside a lend (`SLICE-PERMISSIONS-LOOP-WINDOW`
+    lifted, `Q051` narrowed) and inside a composed string/buffer entry
+    (`STRING-CONCAT-LOOP-WINDOW` discharged, `Q068` and `Q077` narrowed), with
+    the body decided **under the loans live at the loop**: on the buffer route
+    the lend-structured projection unrolls the body inside the borrow node
+    with the index bound, so the IR decides every body access as it decides a
+    top-level one; on the composed route every body store, at every
+    iteration, is judged against every loan still read after the loop
+    **before the body runs** (`loop_body_conflict`), the body then running
+    through the buffer route's own `BufferRun::repeat` — the one iteration
+    rule, published for this — and the composed custody list unrolling it so a
+    body store after a release is the inherited `UseAfterDrop`. An index
+    outside the lowering-visible tier (a byte or a field read) is **not
+    provably disjoint** and conflicts with every live loan of its buffer, on
+    both routes. Three premises must survive refactors, each a refusal **by
+    name** that sits **before** the window is computed and must not be
+    reordered behind it: a lend or a `borrow_utf8` inside a body is a
+    per-iteration loan (`LOOP-PER-ITERATION-LOAN`, `Q051`/`Q077`); a body that
+    acquires or releases where a loan is held (`LOOP-WINDOW-BODY-CUSTODY`,
+    `Q051` in an entry that lends, `Q077` on the composed route); and a string
+    construct, text line, `len`-bound header or unrolling licence inside a
+    composed `for` body (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`, `Q077`).
+    The release arm stays whole-buffer, the crossed-window and (now
+    depth-aware) nested-acquisition refusals stand, `WRITE-LEND-RELEND` is
+    untouched, an entry with no loan keeps `source.loop.v1`'s admission byte
+    for byte, and every program admitted before the card emits byte-identical
+    C (a 527-program census, 139 admitted, 0 moved).
     `ct07-slice-permissions`, `slice-permissions-write-lend`,
-    `write-lend-tasks`, `write-lend-tasks-exercise`.
+    `write-lend-tasks`, `write-lend-tasks-exercise`,
+    `loops-on-composed-routes`.
 15i. **A declared address is a check-time constant parsed once, and the two
     address families are disjoint.** `source.socket.v1`'s `bind NAME ADDRESS;`,
     `connect NAME ADDRESS;` and `sendto NAME ADDRESS …;` carry a literal IPv4
@@ -1969,7 +2041,15 @@ access lands entirely as condition extensions — the at-most-one-lease paramete
 rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
 the constant-index tier and the three authority rules on `Q600` — with the
 **arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
-word and takes no code. **Waves 33, 34 and 37 allocated no code and ran no
+word and takes no code. Wave 39's `LOOPS-ON-COMPOSED-ROUTES` is the
+**seventeenth** (merged after `AGGREGATE-OWNED-FIELD`, the sixteenth, below),
+and the first whose movements are **all narrowings** stated as
+such: `Q051`, `Q068` and `Q077` each lose the blanket `for` refusal (§L21
+amendments), `Q078` is reached from a body statement with its condition
+unwidened, the three shapes it refuses by name land on `Q051`/`Q077` as
+condition extensions, and the composed route reaches the loop pass's own
+`Q097`–`Q099` unwidened (`StringError::Loop`, the `BufferError::Loop`
+precedent) — no code allocated. **Waves 33, 34 and 37 allocated no code and ran no
 condition extension either**: the gateway
 arbiters `C-GATEWAY-RETURN-POSITION`, `C-GATEWAY-RETURN-CALL-W4` and wave 37's
 `SCALAR-ROUTE-EXIT-EDGE` move **gateway diagnostics**, which are categories

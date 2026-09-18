@@ -1172,8 +1172,96 @@ pub fn lower_source_string(
         )
     });
 
+    // Card `LOOPS-ON-COMPOSED-ROUTES`: the lowering-visible constants a loop
+    // bound may name, kept by `source.buffer.v1`'s own environment so the
+    // bound is resolved in that route's tier and no other.
+    let mut constants = crate::source_std_buffer::LoweringConstants::new();
+
     for statement in &body.statements {
         let span = statement.span;
+        // Card `LOOPS-ON-COMPOSED-ROUTES`: **a `for` is admitted in a composed
+        // module**, lowered by `source.buffer.v1`'s own loop reader, so the
+        // loop and its body are that route's statements read by that route's
+        // reader — `LOOP-V1`'s own statement, surviving the composition. The
+        // window question the old refusal named is decided in the checker
+        // (`check_string_program`'s `Repeat` arm, over `QCore.LoopWindows`).
+        // Every *other* nested block keeps the flat-sequence refusal below.
+        if holds_a_buffer && matches!(statement.value, crate::frontend::StatementKind::For { .. }) {
+            // A body is `source.buffer.v1`'s vocabulary. A string construct
+            // inside it is refused **here, by name**, before the buffer reader
+            // sees the statement — a `borrow_utf8` in a body would be a
+            // per-iteration loan (`LOOP-PER-ITERATION-LOAN`), and a literal,
+            // a `len`, a `concat` or a text line is a view construct this
+            // composition's loop body does not model
+            // (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`).
+            fn body_string_use(block: &SourceBlock, tokens: &[Token]) -> Option<(StringUse, Span)> {
+                for statement in &block.statements {
+                    let window = window(tokens, statement.span);
+                    if let Some(kind) = string_use(&window) {
+                        return Some((kind, statement.span));
+                    }
+                    for nested in statement.value.nested_blocks() {
+                        if let Some(found) = body_string_use(nested, tokens) {
+                            return Some(found);
+                        }
+                    }
+                }
+                None
+            }
+            let mut refused = false;
+            for block in statement.value.nested_blocks() {
+                if let Some((kind, inner)) = body_string_use(block, tokens) {
+                    let message = match kind {
+                        StringUse::Borrow => {
+                            "this `for` body borrows a buffer, which is a per-iteration loan: \
+                             its window opens and closes inside one iteration and is not an \
+                             interval of statement indices, so the composed string/buffer entry \
+                             refuses it by name rather than approximating it; a view a loop \
+                             body needs is borrowed before the loop (`LOOP-PER-ITERATION-LOAN`)"
+                        }
+                        StringUse::Literal
+                        | StringUse::Length
+                        | StringUse::Concat
+                        | StringUse::Render
+                        | StringUse::Slice => {
+                            "a `for` body on the composed string/buffer route is \
+                             `source.buffer.v1`'s statement vocabulary, read by that route's \
+                             reader; a string view, a `len`, a `concat` or a text line inside \
+                             one is not modelled and is refused by name \
+                             (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`)"
+                        }
+                    };
+                    diagnostics.push(diagnostic("Q077", inner, message));
+                    refused = true;
+                    break;
+                }
+            }
+            if refused {
+                continue;
+            }
+            let mut loop_diagnostics = Vec::new();
+            let event = crate::source_std_buffer::lower_for_statement(
+                parsed,
+                statement,
+                &mut constants,
+                &mut loop_diagnostics,
+            );
+            for mut refusal in loop_diagnostics {
+                // The buffer reader's own message under **this** pass's code:
+                // §L21 forbids a second pass taking `Q051`, and the loop's
+                // `Q097`–`Q099` are the loop pass's and stay as they are.
+                if refusal.code == "Q051" {
+                    refusal.code = "Q077";
+                    refusal.pass = SemanticPass::StandardString;
+                }
+                diagnostics.push(refusal);
+            }
+            if let Some(event) = event {
+                events.push(StringEvent::Buffer(event));
+                event_spans.push(span);
+            }
+            continue;
+        }
         if !statement.value.nested_blocks().is_empty() {
             diagnostics.push(diagnostic(
                 "Q068",
@@ -1208,6 +1296,7 @@ pub fn lower_source_string(
         if let Some(read) = buffer_read {
             match read {
                 Ok(buffer_event) => {
+                    constants.observe(&buffer_event);
                     events.push(StringEvent::Buffer(buffer_event));
                     event_spans.push(span);
                 }
@@ -1283,6 +1372,9 @@ pub fn lower_source_string(
             }
         };
         if let Some(event) = event {
+            if let StringEvent::Bind { binding, value } = &event {
+                constants.observe_scalar(binding, *value);
+            }
             events.push(event);
             event_spans.push(span);
         }

@@ -1,14 +1,19 @@
 # Loops — `source.loop.v1`
 
-One program: the checked bounded counted loop `for NAME in 0..BOUND { … }`,
-on `source.buffer.v1`, which is the only route v1 admits it on. Card
+Two programs: the checked bounded counted loop `for NAME in 0..BOUND { … }`,
+on `source.buffer.v1`, which is the route v1 admits it on. Card
 `LOOP-V1`; the evidence package is [`docs/reports/loop-v1/README.md`](../../docs/reports/loop-v1/README.md)
 and the design note written before it is
-[`docs/design/SOURCE_LOOP_V1.md`](../../docs/design/SOURCE_LOOP_V1.md).
+[`docs/design/SOURCE_LOOP_V1.md`](../../docs/design/SOURCE_LOOP_V1.md). The
+second program is card `LOOPS-ON-COMPOSED-ROUTES`' (wave 39), whose evidence
+package is [`docs/reports/loops-on-composed-routes/README.md`](../../docs/reports/loops-on-composed-routes/README.md):
+a `for` beside a **write lend**, admitted with the loan's window computed over
+iterations. Its sanitized native run is `compiler/tests/loops_on_composed_routes.rs`'s.
 
 | Program | What it shows |
 |---|---|
 | [`buffer_copy.qcore`](buffer_copy.qcore) | A bulk copy between two owned buffers — `STD-BUFFER-COPY`, the blocker this construct was landed for — and a second loop that renders its own index |
+| [`lend_fill.qcore`](lend_fill.qcore) | A loop filling a lend's range **through the loan**, index by index, while the owner writes a byte it kept — the shape `SLICE-PERMISSIONS-LOOP-WINDOW` refused until the window was computed over iterations |
 
 ## The form
 
@@ -91,6 +96,45 @@ checker read out of the buffer's footprint:
 
 `81 67 111 114` is `QCor` in ASCII, copied byte by byte from `src` into a `dst`
 no source statement ever writes at a spelled index.
+
+## A loop beside a lend — `lend_fill.qcore`
+
+The loan `part` covers `[0, 4)` of `store`; the loop copies `src` into it
+**through the loan**, and in the same body writes `store[7]`, a byte the loan
+does not hold. Before card `LOOPS-ON-COMPOSED-ROUTES` an entry that lends
+refused a `for` by name, because the loan's window was an interval of statement
+indices that a loop body contributed nothing to. Now a loan a body names is
+**live across the whole loop**: `part`'s window runs through the `for`, every
+body write is judged against it at every iteration, and the owner's write to
+byte 7 is admitted because it lies outside the range — exactly as it would be
+in a flat sequence. Writing `store[2]` in that body is refused at `Q054`.
+
+The emitted C is one real `for`, the loan store in the loan's own coordinates
+through the displaced pointer the lend declared:
+
+<!-- emitted: lend-loop -->
+```c
+    unsigned char *const l_part = b_store;
+    for (int32_t s_i = INT32_C(0); s_i < INT32_C(4); s_i += INT32_C(1)) {
+        int32_t s_v = qcore_bytes_load(b_src, (size_t) 4u, (size_t) (s_i));
+        qcore_bytes_store(l_part, (size_t) 4u, (size_t) (s_i), s_v);
+        qcore_bytes_store(b_store, (size_t) 8u, (size_t) (INT32_C(7)), INT32_C(1));
+    }
+```
+
+Standard output carries the four copied bytes read back through the owner and
+then the byte the owner wrote inside the loop:
+
+<!-- transcript: lend_fill stdout -->
+```text
+81
+67
+111
+114
+1
+```
+
+Nothing is written to the logger's stream: the program writes no `log` line.
 
 ## A refused program
 

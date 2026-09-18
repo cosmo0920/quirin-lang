@@ -1,0 +1,57 @@
+// A `for` beside a write lend, with the loan's window computed over iterations
+// (card `LOOPS-ON-COMPOSED-ROUTES`).
+//
+// Before that card an entry that lends refused a `for` by name
+// (`SLICE-PERMISSIONS-LOOP-WINDOW`): the loan's window was an interval of
+// statement indices that a loop body contributed nothing to. This program is
+// the shape that refusal kept out — a loop filling a lend's range through the
+// loan, index by index, while the owner writes a byte it kept — and every
+// statement in it is one the buffer route already had.
+//
+// The window question is decided by one rule: a loan a loop body names is live
+// across the whole loop. So `part` is live at the `for`, `part[i] = v` is a
+// store through the loan at the byte iteration `i` writes, and `store[7] = 1`
+// is an owner write outside `[0, 4)` — admitted beside the loan, at every
+// iteration, exactly as it is admitted beside it in a flat sequence. A write
+// to `store[2]` in the same body would be refused at `Q054`, because the loan
+// is live there however early in the body it stands.
+
+import std.buffer;
+import std.fmt;
+import std.io;
+import std.logger;
+
+fn main() -> unit effects { io, alloc, mut } {
+    let src = bytes(4);
+    src[0] = 81;
+    src[1] = 67;
+    src[2] = 111;
+    src[3] = 114;
+
+    let store = bytes(8);
+    let part = lend(store, 0, 4);
+
+    // The loan's window runs through this loop. Its body copies through the
+    // loan and writes the owner's byte 7, which the loan does not hold.
+    for i in 0..4 {
+        let v = src[i];
+        part[i] = v;
+        store[7] = 1;
+    }
+
+    // After the loop the window has closed: the owner reads its bytes back.
+    let a = store[0];
+    let b = store[1];
+    let c = store[2];
+    let d = store[3];
+    let e = store[7];
+    a |> print dec;
+    b |> print dec;
+    c |> print dec;
+    d |> print dec;
+    e |> print dec;
+
+    drop src;
+    drop store;
+    return;
+}

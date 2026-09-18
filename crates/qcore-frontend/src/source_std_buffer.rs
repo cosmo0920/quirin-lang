@@ -1005,15 +1005,31 @@ pub fn lower_source_buffer(
 /// name — the value is known to the checker but not to the lowering, and
 /// widening the tier would mean deciding the count in a second place
 /// (`LOOP-BOUND-FROM-BYTE`).
+///
+/// Published since card `LOOPS-ON-COMPOSED-ROUTES` so the composed
+/// string/buffer route, which now embeds a `for`, resolves its bound through
+/// the same environment and the same reader this route does.
 #[derive(Clone, Debug, Default)]
-struct LoweringConstants {
+pub struct LoweringConstants {
     scalars: BTreeMap<String, i32>,
     extents: BTreeMap<String, u32>,
 }
 
 impl LoweringConstants {
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Record a constant a **composing route's own** `let` bound — the
+    /// composed string route's `let n = 4;` is that route's statement, not
+    /// one of this route's events, and a loop bound may name it.
+    pub fn observe_scalar(&mut self, binding: &str, value: i32) {
+        self.scalars.insert(binding.to_owned(), value);
+    }
+
     /// Record what one lowered event binds.
-    fn observe(&mut self, event: &BufferEvent) {
+    pub fn observe(&mut self, event: &BufferEvent) {
         match event {
             BufferEvent::Bind { binding, value } => {
                 self.scalars.insert(binding.clone(), *value);
@@ -1048,8 +1064,7 @@ impl LoweringConstants {
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
             // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a loan, not a
-            // constant, so it contributes no bound — and a loop cannot stand
-            // beside one anyway (`SLICE-PERMISSIONS-LOOP-WINDOW`).
+            // constant, so it contributes no bound.
             | BufferEvent::Lend { .. }
             | BufferEvent::Line(_)
             | BufferEvent::Repeat { .. }
@@ -1282,6 +1297,39 @@ fn lower_statements(
              discarding it",
         ));
     }
+}
+
+/// Lower one `for NAME in 0..BOUND { … }` statement for a route that embeds
+/// this route's statements (card `LOOPS-ON-COMPOSED-ROUTES`: the composed
+/// string/buffer route), through the **same** reader the entry's own
+/// sequence uses — so a loop body's statements on that route are this
+/// route's statements, read by this route's reader, bounded by this route's
+/// tier, exactly as `LOOP-V1` stated it for the uncomposed route.
+///
+/// `None` for a statement that is not a `for`. The diagnostics it pushes carry
+/// this route's `Q051` for a body statement outside the buffer grammar and
+/// the loop's own `Q097`–`Q099` for the loop's own refusals; a composing route
+/// re-attributes the former to its own band (§L21 forbids a second pass
+/// emitting `Q051`) and keeps the latter, which are the loop pass's.
+pub fn lower_for_statement(
+    parsed: &SourceProgram,
+    statement: &crate::frontend::Located<crate::frontend::StatementKind>,
+    constants: &mut LoweringConstants,
+    diagnostics: &mut Vec<SourceDiagnostic>,
+) -> Option<BufferEvent> {
+    let crate::frontend::StatementKind::For { binding, body } = &statement.value else {
+        return None;
+    };
+    lower_loop(
+        parsed,
+        parsed.lexical_tokens(),
+        binding,
+        body,
+        statement.span,
+        constants,
+        qcore_core::source_loop::LoopBudget::Default,
+        diagnostics,
+    )
 }
 
 fn loop_shape_diagnostic(span: Span, message: impl Into<String>) -> SourceDiagnostic {

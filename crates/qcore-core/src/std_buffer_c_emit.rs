@@ -367,25 +367,28 @@ pub const RECORD_PRELUDE_OWNED: &str = r#"
 /// every rendered value out of the modelled bytes, so re-deriving them here
 /// would be a second implementation of the same arithmetic rather than a check
 /// of the first.
+/// How many lines this sequence produces when it runs — a `for` body's lines
+/// counted once per iteration, because that is how many times they are
+/// written. Published since card `LOOPS-ON-COMPOSED-ROUTES` so the composed
+/// string route counts an embedded loop's lines by the same rule.
+#[must_use]
+pub fn produced_lines(events: &[BufferEvent]) -> usize {
+    events
+        .iter()
+        .map(|event| match event {
+            BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. }) => 1,
+            BufferEvent::Repeat { count, body, .. } => {
+                (*count as usize).saturating_mul(produced_lines(body))
+            }
+            _ => 0,
+        })
+        .sum()
+}
+
 pub fn interpret_buffer_program(
     program: &BufferProgram,
     certificate: &BufferCertificate,
 ) -> Result<Vec<String>, BufferEmissionRefusal> {
-    /// How many lines this sequence produces when it runs — a `for` body's
-    /// lines counted once per iteration, because that is how many times they
-    /// are written.
-    fn produced_lines(events: &[BufferEvent]) -> usize {
-        events
-            .iter()
-            .map(|event| match event {
-                BufferEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. }) => 1,
-                BufferEvent::Repeat { count, body, .. } => {
-                    (*count as usize).saturating_mul(produced_lines(body))
-                }
-                _ => 0,
-            })
-            .sum()
-    }
     let produced = produced_lines(&program.events);
     if produced != certificate.lines.len() {
         return Err(BufferEmissionRefusal::CertificateDisagrees);
@@ -573,6 +576,48 @@ pub fn emit_buffer_c11(
     Ok(BufferCEmission {
         source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),
     })
+}
+
+/// Emit one `for` block — the loop and its body, at the entry's own indent —
+/// for a route that embeds this route's statements but not its lends or
+/// records (card `LOOPS-ON-COMPOSED-ROUTES`: the composed string/buffer route).
+///
+/// The text is [`emit_events`]'s own, byte for byte, with an empty loan and
+/// record environment: a lend or a record inside the body is refused by that
+/// route before emission, and this function refuses one too rather than
+/// emitting nothing for it. The body's bindings are scoped out of `scalars`
+/// and `extents` on return, exactly as the block scopes them in C.
+pub fn buffer_loop_block(
+    index: usize,
+    event: &BufferEvent,
+    scalars: &mut BTreeMap<String, String>,
+    extents: &mut BTreeMap<String, u32>,
+) -> Result<String, BufferEmissionRefusal> {
+    if !matches!(event, BufferEvent::Repeat { .. }) {
+        return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
+    }
+    let lends = BTreeMap::new();
+    let mut loans = BTreeMap::new();
+    let mut records = RecordEnvironment {
+        types: BTreeMap::new(),
+        bound: BTreeMap::new(),
+        field_extents: BTreeMap::new(),
+        live_fields: BTreeMap::new(),
+    };
+    let mut source = String::new();
+    emit_events(
+        std::slice::from_ref(event),
+        "    ",
+        index,
+        false,
+        scalars,
+        extents,
+        &mut loans,
+        &lends,
+        &mut records,
+        &mut source,
+    )?;
+    Ok(source)
 }
 
 /// Emit one sequence of events at `indent`.

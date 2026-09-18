@@ -255,17 +255,20 @@ pub fn interpret_string_program(
     program: &StringProgram,
     certificate: &StringCertificate,
 ) -> Result<Vec<String>, StringEmissionRefusal> {
-    let produced = program
+    // A line inside an embedded `for` body is counted once per iteration, by
+    // `source.buffer.v1`'s own count (card `LOOPS-ON-COMPOSED-ROUTES`).
+    let produced: usize = program
         .events
         .iter()
-        .filter(|event| {
-            matches!(
-                event,
-                StringEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
-                    | StringEvent::Text { .. }
-            )
+        .map(|event| match event {
+            StringEvent::Line(StdIoEvent::Print { .. } | StdIoEvent::Log { .. })
+            | StringEvent::Text { .. } => 1,
+            StringEvent::Buffer(buffer_event) => {
+                std_buffer_c_emit::produced_lines(std::slice::from_ref(buffer_event))
+            }
+            _ => 0,
         })
-        .count();
+        .sum();
     if produced != certificate.lines.len() {
         return Err(StringEmissionRefusal::CertificateDisagrees);
     }
@@ -479,6 +482,24 @@ pub fn emit_string_c11(
             // `source.buffer.v1`'s **own** emitter, with that route's own C
             // names, so a composed module's `bytes(8)` is the same call the
             // uncomposed route writes.
+            // Card `LOOPS-ON-COMPOSED-ROUTES`: an embedded `for` is emitted by
+            // `source.buffer.v1`'s **own** block emitter — a real C `for`
+            // whose body is written once — so the loop a composed module
+            // writes is the loop the uncomposed route writes, character for
+            // character.
+            StringEvent::Buffer(buffer_event @ BufferEvent::Repeat { .. }) => {
+                match std_buffer_c_emit::buffer_loop_block(
+                    index,
+                    buffer_event,
+                    &mut scalars,
+                    &mut extents,
+                ) {
+                    Ok(block) => source.push_str(&block),
+                    Err(_) => {
+                        return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                    }
+                }
+            }
             StringEvent::Buffer(buffer_event) => {
                 match std_buffer_c_emit::buffer_event_statement(
                     index,
@@ -680,9 +701,14 @@ pub fn preamble(program: &StringProgram, certificate: &StringCertificate) -> Vec
             STRING_PRELUDE_SLICE,
         ));
     }
+    // Scanned **at any depth** since card `LOOPS-ON-COMPOSED-ROUTES`: a store
+    // whose only occurrence is inside a `for` body still needs the writer in
+    // the prelude — `LOOP-V1`'s depth-recursive scan, surviving the
+    // composition. Missing it would be a C compile error rather than a
+    // refusal, but a compile error is not the fail-closed answer either.
     let buffer_event = |matcher: fn(&BufferEvent) -> bool| {
         program.events.iter().any(|event| match event {
-            StringEvent::Buffer(buffer_event) => matcher(buffer_event),
+            StringEvent::Buffer(buffer_event) => buffer_event.any(&matcher),
             _ => false,
         })
     };

@@ -1259,6 +1259,11 @@ const BUFFER_COPY: &str = include_str!("../../examples/loops/buffer_copy.qcore")
 const RECORD_POINT: &str = include_str!("../../examples/records/point.qcore");
 const PIXEL_WRITES: &str = include_str!("../../examples/records/pixel_writes.qcore");
 const OWNED_FIELD: &str = include_str!("../../examples/records/owned_field.qcore");
+// Card `LOOPS-ON-COMPOSED-ROUTES` (wave 39): a `for` beside a lend and a `for`
+// in a composed string/buffer module. Their sanitized native runs are
+// `loops_on_composed_routes.rs`'s; this suite holds their pages to the model.
+const LEND_FILL: &str = include_str!("../../examples/loops/lend_fill.qcore");
+const LOOPED_FILL: &str = include_str!("../../examples/strings/looped_fill.qcore");
 const CYCLE12: &str = include_str!("../../examples/cycle12.qcore");
 
 /// `examples/`, on disk. The scan below is the point: a constant list cannot
@@ -1443,6 +1448,18 @@ fn the_newer_families_take_the_routes_their_pages_say_they_take() {
             BUFFER_COPY,
             SourceExecutionProfile::StandardBufferV1,
         ),
+        // A `for` beside a lend stays on the buffer route; a `for` in a module
+        // that spells the bridge is the composed string route's.
+        (
+            "loops/lend_fill.qcore",
+            LEND_FILL,
+            SourceExecutionProfile::StandardBufferV1,
+        ),
+        (
+            "strings/looped_fill.qcore",
+            LOOPED_FILL,
+            SourceExecutionProfile::StandardStringV1,
+        ),
         // A record is admitted on the buffer route and on no other, so both
         // records programs are that route's — including `point.qcore`, which
         // holds no buffer at all.
@@ -1499,6 +1516,8 @@ fn the_check_only_example_is_the_only_one_that_emits_no_c() {
         ("events/wake_payload.qcore", WAKE_PAYLOAD),
         ("events/socket_server.qcore", SOCKET_SERVER),
         ("loops/buffer_copy.qcore", BUFFER_COPY),
+        ("loops/lend_fill.qcore", LEND_FILL),
+        ("strings/looped_fill.qcore", LOOPED_FILL),
         ("records/point.qcore", RECORD_POINT),
         ("records/pixel_writes.qcore", PIXEL_WRITES),
         ("records/owned_field.qcore", OWNED_FIELD),
@@ -1584,6 +1603,20 @@ fn the_newer_pages_publish_the_transcripts_their_programs_produce() {
             LOOPS_README,
             "transcript: buffer_copy stdout",
             Some("transcript: buffer_copy stderr"),
+        ),
+        (
+            "loops/lend_fill.qcore",
+            LEND_FILL,
+            LOOPS_README,
+            "transcript: lend_fill stdout",
+            None,
+        ),
+        (
+            "strings/looped_fill.qcore",
+            LOOPED_FILL,
+            STRINGS_README,
+            "transcript: looped_fill stdout",
+            None,
         ),
         (
             "records/point.qcore",
@@ -1679,6 +1712,8 @@ fn the_newer_transcript_checks_would_notice_a_changed_line() {
         (EVENTS_README, "transcript: socket_server stdout", "81"),
         (LOOPS_README, "transcript: buffer_copy stdout", "0"),
         (LOOPS_README, "transcript: buffer_copy stderr", "[INFO] 4"),
+        (LOOPS_README, "transcript: lend_fill stdout", "81"),
+        (STRINGS_README, "transcript: looped_fill stdout", "aaaa"),
         (RECORDS_README, "transcript: point stdout", "65"),
         (RECORDS_README, "transcript: point stderr", "[INFO] 9"),
         (RECORDS_README, "transcript: pixel_writes stdout", "81"),

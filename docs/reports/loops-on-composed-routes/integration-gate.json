@@ -1,0 +1,13 @@
+{
+ "note": "Integration gate measured by the integrator at the merge tip 4786ae4c (detached run gate-loops; every exit to its own file; the per-merge regeneration could not use any card's gate.json because two wave-39 cards added Lean audits and the generator refuses a figure that disagrees with the tree). Workspace figure is the merged tip's own; provider 122 carried (providers/ and crates/qcore-schemas/ unchanged since the merge base); Python figure is the re-run after this regeneration; Clang claim taken from the card's own recording beside this file (gate/clang-version.txt, same host).",
+ "workspace_tests": 4727,
+ "provider_tests": 122,
+ "python_evidence_validator_tests": 303,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "pass",
+ "lean_audits": 141,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

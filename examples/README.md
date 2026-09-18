@@ -21,10 +21,10 @@ page says so. It is the only one.
 | [unsafe-linkage/](unsafe-linkage/) | `unsafe extern fn` and native-library manifests | `source.extern-call.v1` |
 | [threads/](threads/) | Scoped tasks, owned buffers, read shares | the checked task profiles |
 | [events/](events/) | One event context, a registration on a descriptor, declared dispatch turns — and a **checked socket** registered with that reactor, the server shape | `source.event.v1`, `source.socket.v1` |
-| [strings/](strings/) | Immutable UTF-8 views, slices, text reaching a stream, and text a program computes | `source.string.v1` |
+| [strings/](strings/) | Immutable UTF-8 views, slices, text reaching a stream, text a program computes — and a `for` inside the `std.buffer` composition | `source.string.v1` |
 | [sockets/](sockets/) | Checked TCP and UDP over loopback, both ends in one program — with a kernel-chosen port, or over a **declared** IPv4/IPv6 address and port | `source.socket.v1` |
 | [http/](http/) | A checked, executed HTTP/1.1 subset — including a `Content-Length` the program computes — and the same bytes written by hand | `source.http.v1`, `source.socket.v1` |
-| [loops/](loops/) | The bounded counted loop `for i in 0..n`, and the bulk buffer copy it was landed for | `source.loop.v1` on `source.buffer.v1` |
+| [loops/](loops/) | The bounded counted loop `for i in 0..n`, the bulk buffer copy it was landed for, and a loop beside a write lend | `source.loop.v1` on `source.buffer.v1` |
 | [records/](records/) | The first aggregate type: `type NAME { … }`, construction, field reads — a plain copyable value, shown alone and beside an owned buffer | `source.record.v1` on `source.buffer.v1` |
 
 `compiler/tests/examples_suite.rs` holds **every** directory in the table above
@@ -43,7 +43,8 @@ ones no other file does and references the rest rather than building them twice:
 
 | Directory | Native runner |
 |---|---|
-| stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/, records/ | `cargo test -p qcore-compiler --test examples_suite` |
+| stdio/, pipes/, branching/, extern/, unsafe-linkage/, loops/ (`buffer_copy`), records/ | `cargo test -p qcore-compiler --test examples_suite` |
+| loops/ (`lend_fill`), strings/ (`looped_fill`) | `cargo test -p qcore-compiler --test loops_on_composed_routes` |
 | threads/ | `cargo test -p qcore-compiler --test thread_examples` |
 | events/ | `cargo test -p qcore-compiler --test std_event` (`self_pipe`, `write_interest`), `--test compose_event_lines` (`wake_payload`), `--test socket_event_compose` (`socket_server`) |
 | strings/ | `cargo test -p qcore-compiler --test string_slice_io` (`status_line`), `--test string_concat` (`computed_length`) |

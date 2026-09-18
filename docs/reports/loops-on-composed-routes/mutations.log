@@ -1,0 +1,18 @@
+mutations.sh — 2026-09-18T12:13:29Z — HEAD 4cc580bb
+sha256 before: 87eda8f8a503c7d4  crates/qcore-core/src/std_buffer.rs;4158d84e4ddb544e  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;
+baseline (before): loops_on_composed_routes GREEN
+M1-top-level-only-window: test 'a_loan_used_only_inside_the_loop_is_live_across_it_and_the_body_write_refuses' went RED under the mutation — non-vacuous (ok)
+M1-top-level-only-window: crates/qcore-core/src/std_buffer.rs restored sha256-equal (87eda8f8a503c7d4)
+M2-composed-body-not-judged: test 'a_body_write_into_a_borrowed_range_refuses_on_the_composed_route' went RED under the mutation — non-vacuous (ok)
+M2-composed-body-not-judged: crates/qcore-core/src/std_string.rs restored sha256-equal (4158d84e4ddb544e)
+M3-per-iteration-lend-admitted: test 'a_lend_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name' went RED under the mutation — non-vacuous (ok)
+M3-per-iteration-lend-admitted: crates/qcore-core/src/std_buffer.rs restored sha256-equal (87eda8f8a503c7d4)
+M4-body-custody-unnamed: test 'a_body_that_acquires_or_releases_refuses_by_name_where_a_loan_is_held' went RED under the mutation — non-vacuous (ok)
+M4-body-custody-unnamed: crates/qcore-core/src/std_buffer.rs restored sha256-equal (87eda8f8a503c7d4)
+M5-composed-custody-not-unrolled: test 'a_body_store_after_the_release_is_the_inherited_use_after_drop' went RED under the mutation — non-vacuous (ok)
+M5-composed-custody-not-unrolled: crates/qcore-core/src/std_string.rs restored sha256-equal (4158d84e4ddb544e)
+M6-per-iteration-borrow-unnamed: test 'a_borrow_inside_a_body_is_a_per_iteration_loan_and_refuses_by_name' went RED under the mutation — non-vacuous (ok)
+M6-per-iteration-borrow-unnamed: crates/qcore-frontend/src/source_std_string.rs restored sha256-equal (49e77c407429327c)
+sha256 after:  87eda8f8a503c7d4  crates/qcore-core/src/std_buffer.rs;4158d84e4ddb544e  crates/qcore-core/src/std_string.rs;49e77c407429327c  crates/qcore-frontend/src/source_std_string.rs;
+baseline (after): loops_on_composed_routes GREEN
+RESULT: every mutation went red and every file was restored sha256-equal

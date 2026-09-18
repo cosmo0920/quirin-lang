@@ -1,0 +1,4291 @@
+{
+ "card": "LOOPS-ON-COMPOSED-ROUTES",
+ "base_binary": "measure/census/quirin-base",
+ "card_binary": "target/debug/quirin",
+ "counts": {
+  "programs": 529,
+  "admitted_by_both_byte_identical": 139,
+  "admitted_by_both_differing": 0,
+  "admitted_by_base_only": 0,
+  "admitted_by_card_only": 3,
+  "refused_by_both": 387
+ },
+ "moved": [
+  {
+   "program": "examples/loops/lend_fill.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "b4609094b2d6069e7f2a5cea21696314c5e260b5e634ef76b7fe184966663198",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/loops/lend_fill.qcore:36:5: Q051: `source.loop.v1`'s `for` is not a statement an entry that lends models; a lend's window is an interval of statement indices and is exact only because the route is one flat sequence, so a loop body writing under a live lend would need a window over iterations rather than over indices (`SLICE-PERMISSIONS-LOOP-WINDOW`)"
+   ]
+  },
+  {
+   "program": "examples/records/owned_field.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "8f7d3cf4d23057fe1a37686b8bf9a44aa928c4219ecedcde97cebbbe14b3c8e1",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/records/owned_field.qcore:31:1: Q051: `Frame.head` is declared `bytes`, which is not a field type `source.record.v1` models; every field of this revision's record is `i32`, and a field that owns something is a custody shape this model does not carry (`AGGREGATE-OWNED-FIELD`)"
+   ]
+  },
+  {
+   "program": "examples/strings/looped_fill.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "10a02183ecdb42378f3769913d61c54aa81fe4d40ae1a880a3824b54bc01b081",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/strings/looped_fill.qcore:25:5: Q068: `source.string.v1` models one flat statement sequence; this statement opens a nested block"
+   ]
+  }
+ ],
+ "rows": [
+  {
+   "program": "compiler/tests/fixtures/bitwise/masked_condition.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "0778092068d765ec36e8d933d4655d309f5b18f10c72938e1675ac05eefd06c7",
+   "card_sha256": "0778092068d765ec36e8d933d4655d309f5b18f10c72938e1675ac05eefd06c7",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/bitwise/negated_condition.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e01a0458bb8c038c608be9a8ce80ab05a9be13655fe0dcc7e5bcfe4193b3ac81",
+   "card_sha256": "e01a0458bb8c038c608be9a8ce80ab05a9be13655fe0dcc7e5bcfe4193b3ac81",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/bitwise/negated_condition_twin.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5bdc5983ad87a3336f933993f1afdf0687fb21ebfdd33ebf58ecba13acad0fee",
+   "card_sha256": "5bdc5983ad87a3336f933993f1afdf0687fb21ebfdd33ebf58ecba13acad0fee",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/branch/conditional_release.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "3b045ec3af5cfdbdb6faf1b20d59c6b453d557c8b12e659db50c3e78074f8dc5",
+   "card_sha256": "3b045ec3af5cfdbdb6faf1b20d59c6b453d557c8b12e659db50c3e78074f8dc5",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/branch/unbranched_twin.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8673195abca4979d0802cbf462acc736d306a1c308d08a4aa4cb48864c303da8",
+   "card_sha256": "8673195abca4979d0802cbf462acc736d306a1c308d08a4aa4cb48864c303da8",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/branch_arms/call_else_arm.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d3cbda3b89086b4d99e9ed739b7761d5fb7ba716ebe8bdc4b0979113cd7938b1",
+   "card_sha256": "d3cbda3b89086b4d99e9ed739b7761d5fb7ba716ebe8bdc4b0979113cd7938b1",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/branch_arms/call_then_arm.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7409716be8fa77b28f1d6ad1ce5c4a07312f2e8af74abf1699b6bba9188e8a34",
+   "card_sha256": "7409716be8fa77b28f1d6ad1ce5c4a07312f2e8af74abf1699b6bba9188e8a34",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/branch_arms/early_return.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "bf30396b2a5e00eab6e45ca74b10c64e5463ff295d13b7d97e6dd2e9085cf826",
+   "card_sha256": "bf30396b2a5e00eab6e45ca74b10c64e5463ff295d13b7d97e6dd2e9085cf826",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/compose/borrowed_render.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/compose/chain.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/compose/chain_hand_written.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/connectives/short_circuit_or.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "b1c7f04ed74d00c504346d9fb49e409deff0d54be1689c8796ed4fcdc18a19e9",
+   "card_sha256": "b1c7f04ed74d00c504346d9fb49e409deff0d54be1689c8796ed4fcdc18a19e9",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/connectives/short_circuit_or_twin.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "62ebc8761a927219fc18d56775fd6c47eb2233167e70aaee2b01726ecff4ce8b",
+   "card_sha256": "62ebc8761a927219fc18d56775fd6c47eb2233167e70aaee2b01726ecff4ce8b",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/contracts/alloc_acquire.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT01/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "card_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT02/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT03/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "card_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT04/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT04/write_after_joins.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "card_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT05/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT05/remainder_fits.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "card_sha256": "4a982f4e5fac7881536d0f7e8698e653ef453af75f446c2b7aec6d14653de120",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT06/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT06/copy_read_first.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "90af039730220ddd19a684b30f3ba17ea3a7094e69685240e1b7a0667afbdddd",
+   "card_sha256": "90af039730220ddd19a684b30f3ba17ea3a7094e69685240e1b7a0667afbdddd",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT06/no_copy.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "991f0b572ccddda2a6d35dbc184469686ab95c8dc37f111c86d726f465551bcb",
+   "card_sha256": "991f0b572ccddda2a6d35dbc184469686ab95c8dc37f111c86d726f465551bcb",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "2e9813ed46357dbc110f363f95d74d1e0934e8674fb86f0b85becc51dc32bf4d",
+   "card_sha256": "2e9813ed46357dbc110f363f95d74d1e0934e8674fb86f0b85becc51dc32bf4d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/overlapping_leases.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/overlapping_lends.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/past_extent_read.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/past_range_byte.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/read_loan.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "card_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "67ab173320ac82523017e2b6faa9371621f94edfee7989ed9908baba339394f6",
+   "card_sha256": "67ab173320ac82523017e2b6faa9371621f94edfee7989ed9908baba339394f6",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT08/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT08/disjoint.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "card_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT08/no_loan.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "ee80aef4d9f12f24061fdbb4d27499c9eb78bba1444e8d652047aa36e67fbbf5",
+   "card_sha256": "ee80aef4d9f12f24061fdbb4d27499c9eb78bba1444e8d652047aa36e67fbbf5",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT09/bad_field.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT09/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "card_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT11/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT11/write_after_alias.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "2ac29e4624009bb82d985dcf0bebfe7dd0498f028f8019323582b2d17f58d9a3",
+   "card_sha256": "2ac29e4624009bb82d985dcf0bebfe7dd0498f028f8019323582b2d17f58d9a3",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT11/write_before_alias.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7bc13394a3cec2f97febc107dc86fd3114bf300a55dc3bf98a7e7dbd97dfeee1",
+   "card_sha256": "7bc13394a3cec2f97febc107dc86fd3114bf300a55dc3bf98a7e7dbd97dfeee1",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT12/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "card_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT13/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6bec59f78b0a34c7795ef4dbd086e3e20eb7e010a8c9729cf6eb54689431f7c1",
+   "card_sha256": "6bec59f78b0a34c7795ef4dbd086e3e20eb7e010a8c9729cf6eb54689431f7c1",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT13/unjoined_failure.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT14/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "card_sha256": "6febbc7bb100a58cfe4efd651d94c905cc981e568389535b942410dc7a775a46",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT14/drop_before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT14/read_before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT15/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "f368000c7218787a6e15b4a20ca46a0f011b643da5ca1fa8d14e42fc3dad2194",
+   "card_sha256": "f368000c7218787a6e15b4a20ca46a0f011b643da5ca1fa8d14e42fc3dad2194",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT16/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "1537344eece174c90e0329f118b5dca6be170c780ecd9fd0de327941f03ed16a",
+   "card_sha256": "1537344eece174c90e0329f118b5dca6be170c780ecd9fd0de327941f03ed16a",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT16/unclean_worker.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT17/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "ff86f110a143048228851af9b54a5a0eb6b5826e9467f97304209b73e32d7a7b",
+   "card_sha256": "ff86f110a143048228851af9b54a5a0eb6b5826e9467f97304209b73e32d7a7b",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT17/undelivered_payload.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT17/unreleased_payload.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT18/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT18/owned_payload.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "85649369d55cca3d66a9fcdf23b677871f8ec3eaf6589566913a7be3011327f8",
+   "card_sha256": "85649369d55cca3d66a9fcdf23b677871f8ec3eaf6589566913a7be3011327f8",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT19/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT19/joined_sibling.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "c26e57a683d669502e21f7a8fc1b4dc025ad9cf0b6f580d37284dde3bbd0c606",
+   "card_sha256": "c26e57a683d669502e21f7a8fc1b4dc025ad9cf0b6f580d37284dde3bbd0c606",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT20/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6223e92a3b6155390c2277402954b931dc8e213669b4a4c88a143fd3ac5668a8",
+   "card_sha256": "6223e92a3b6155390c2277402954b931dc8e213669b4a4c88a143fd3ac5668a8",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT20/undropped.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT20/unjoined.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT21/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT21/discharged.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e780ce68992e4e73c269e1122535072a63915a03fb85014acce5e2e48be6e3cd",
+   "card_sha256": "e780ce68992e4e73c269e1122535072a63915a03fb85014acce5e2e48be6e3cd",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT21/unopened.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/acquiring.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/both_models.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "card_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "card_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/no_discharge.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/no_open.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/no_region.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "card_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/spawn_after.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/spent_out.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "card_sha256": "dc73ac979d09372805451c5b01f454cb67ac437557ea157c3fb7f5b5780aca50",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT22/wrong_region.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/minted.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/no_arm.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "card_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/partial.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "card_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/restored.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "card_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT23/spent.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "card_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/adopt_scalar.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/adopt_twice.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/adopt_unknown.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7bea8758e7e781173091b2f7a1c9b13c2a10157ff06b0372656048882e8de02b",
+   "card_sha256": "7bea8758e7e781173091b2f7a1c9b13c2a10157ff06b0372656048882e8de02b",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7bea8758e7e781173091b2f7a1c9b13c2a10157ff06b0372656048882e8de02b",
+   "card_sha256": "7bea8758e7e781173091b2f7a1c9b13c2a10157ff06b0372656048882e8de02b",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT25/live_share_drop.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT26/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fbbd56eb0ca4cb782a5fe302c09301739c163f690c5a5a67c5bc979bf5e2e68c",
+   "card_sha256": "fbbd56eb0ca4cb782a5fe302c09301739c163f690c5a5a67c5bc979bf5e2e68c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT27/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "1339d72e4641844431c9795f1a6d432a804d6791ccb333ac0505d3ddee47b14d",
+   "card_sha256": "1339d72e4641844431c9795f1a6d432a804d6791ccb333ac0505d3ddee47b14d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT28/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT28/child_unlocks.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT28/own_acquisition.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "3b7a056c115fb2cbe2b433e3f40dd7f55b8401c787583b05ee340cfd4aeee56f",
+   "card_sha256": "3b7a056c115fb2cbe2b433e3f40dd7f55b8401c787583b05ee340cfd4aeee56f",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT29/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT29/restored.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e1f17bb5014a65533bd12015f43f4451fe38e2fd400c761e284ae312cf4e6b5c",
+   "card_sha256": "e1f17bb5014a65533bd12015f43f4451fe38e2fd400c761e284ae312cf4e6b5c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT30/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT30/escaped_borrow.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT30/released.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "571cb53a3aa9dd51bedacfd4fc4d9b31c06bae3c9d60ac494161b1143499a83e",
+   "card_sha256": "571cb53a3aa9dd51bedacfd4fc4d9b31c06bae3c9d60ac494161b1143499a83e",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT31/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT31/performed.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT32/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT32/joined_outside.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "183a0ef98b9af073b1086eb4513b623b64cffef302cfa969e392f42267bab3b6",
+   "card_sha256": "183a0ef98b9af073b1086eb4513b623b64cffef302cfa969e392f42267bab3b6",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT33/ascending_nesting.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "23bef8ecca0202d812ae4c3c02a4d61d64a8ffef867927ec8289dbcc0dee3fb3",
+   "card_sha256": "23bef8ecca0202d812ae4c3c02a4d61d64a8ffef867927ec8289dbcc0dee3fb3",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT33/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT33/unranked.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT34/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "45a0383c111817f54ce4092b549fd1e248de65750f6b2a7ba7336f548e049940",
+   "card_sha256": "45a0383c111817f54ce4092b549fd1e248de65750f6b2a7ba7336f548e049940",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "c92d763a3eb14b6f8c46040d5b267f584b9a9f48bc568da30ed21e8006a8f401",
+   "card_sha256": "c92d763a3eb14b6f8c46040d5b267f584b9a9f48bc568da30ed21e8006a8f401",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT35/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT35/repeated_entry.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT35/two_cells.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT36/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT36/maximized_allocation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT36/summed_allocation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT37/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "card_sha256": "4ec957756c8a3c543c63faa6d40374dfc7bdca8a51546be9284ca39642369684",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT37/unconsumed_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT37/undropped_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT38/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT38/split_within_total.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT39/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT39/work_bound_only.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT40/contracts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT43/contracts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT44/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT44/drop_after_join.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5c8b2ee973da59bf9579b024d8c25a8fbdbbde6e59f4dd97e4a3ed9f25107e07",
+   "card_sha256": "5c8b2ee973da59bf9579b024d8c25a8fbdbbde6e59f4dd97e4a3ed9f25107e07",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT44/move_before_join.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6c340b541464fe79dd737598508e692872ea83c4b64f7752548e78ddb1aeb761",
+   "card_sha256": "6c340b541464fe79dd737598508e692872ea83c4b64f7752548e78ddb1aeb761",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT45/contracts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT45/destructor_contract.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/absent_protocol.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "3b7a056c115fb2cbe2b433e3f40dd7f55b8401c787583b05ee340cfd4aeee56f",
+   "card_sha256": "3b7a056c115fb2cbe2b433e3f40dd7f55b8401c787583b05ee340cfd4aeee56f",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/guard_local.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/no_crossing.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "b49652034236fa913ed613d27c1d683b57a88b663d35cceea4acb37317d3f21c",
+   "card_sha256": "b49652034236fa913ed613d27c1d683b57a88b663d35cceea4acb37317d3f21c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/share_generation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT46/unguarded_reach.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT47/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT47/modeless.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT47/move_transfer.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "db187de577e8ad5168c05767fa1a334564aff295d577636e298473d1efa99022",
+   "card_sha256": "db187de577e8ad5168c05767fa1a334564aff295d577636e298473d1efa99022",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT47/read_share.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5c8b2ee973da59bf9579b024d8c25a8fbdbbde6e59f4dd97e4a3ed9f25107e07",
+   "card_sha256": "5c8b2ee973da59bf9579b024d8c25a8fbdbbde6e59f4dd97e4a3ed9f25107e07",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT47/write_lease.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "89ec9bfb0292a2f7e21364f86a93a73aa87193efadb774ccd55d92633bda1fbc",
+   "card_sha256": "89ec9bfb0292a2f7e21364f86a93a73aa87193efadb774ccd55d92633bda1fbc",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT48/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT48/never_asserted.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT48/reasserted.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "eab4d457b10024e2a993d585db8bfaafade2f720c42a448fdab1c2c30272b8b0",
+   "card_sha256": "eab4d457b10024e2a993d585db8bfaafade2f720c42a448fdab1c2c30272b8b0",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "00c1028ed5ba8fce062dfbdd8722e68f77f3aede19a2973ce5e3dbe1a7b65d72",
+   "card_sha256": "00c1028ed5ba8fce062dfbdd8722e68f77f3aede19a2973ce5e3dbe1a7b65d72",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT49/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8385d840a2e7352ffd679fef16dfa1a8148c60806dd9714285571dbf43b87c01",
+   "card_sha256": "8385d840a2e7352ffd679fef16dfa1a8148c60806dd9714285571dbf43b87c01",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT49/parent_only.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d1ba35d6c21711a265ced4478db058fd66387ac9a6d99470c32b30bd47be765a",
+   "card_sha256": "d1ba35d6c21711a265ced4478db058fd66387ac9a6d99470c32b30bd47be765a",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT50/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6c61919397847118011b2e6635ba4094de319ca20b3bc93d1de6f330bd8e9d58",
+   "card_sha256": "6c61919397847118011b2e6635ba4094de319ca20b3bc93d1de6f330bd8e9d58",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT50/stale_drop.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/ct/CT50/stale_read.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/case.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "591efa188ccb42cf49864c9b1a74f5bf68d0514606152d67260aa5a23c04396d",
+   "card_sha256": "591efa188ccb42cf49864c9b1a74f5bf68d0514606152d67260aa5a23c04396d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "591efa188ccb42cf49864c9b1a74f5bf68d0514606152d67260aa5a23c04396d",
+   "card_sha256": "591efa188ccb42cf49864c9b1a74f5bf68d0514606152d67260aa5a23c04396d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "04da29af3599975a931b7642c67b79722d69280cf896f0ea1b03018505a5d10c",
+   "card_sha256": "04da29af3599975a931b7642c67b79722d69280cf896f0ea1b03018505a5d10c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/contracts/buffer_api.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/out_slot.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/realloc.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/realloc_failure.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/released.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/round_trip.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/scalar_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/stored.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/extern_calls/stored_failure.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/f02/concurrent_round_trip.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "83225fe8df003a0918045194d803363d77c842296b709602fdefea171cfee983",
+   "card_sha256": "83225fe8df003a0918045194d803363d77c842296b709602fdefea171cfee983",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/native_library/contracts/buffer_lib.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/pipe/lines_piped.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "card_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/pipe/realloc_piped.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/pipe/round_trip_piped.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/pipe/scalar_result_piped.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/region/discharged_pack.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fdfe7d350bd34f415de4231c250caf2d5c288b632da7dc1e87a6939ae6a0e68d",
+   "card_sha256": "fdfe7d350bd34f415de4231c250caf2d5c288b632da7dc1e87a6939ae6a0e68d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/region/hand_written_twin.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "9e140a9003f70cee035da31a0e6d00942b3c9cd2191ab681fa4aa94dc97e58ba",
+   "card_sha256": "9e140a9003f70cee035da31a0e6d00942b3c9cd2191ab681fa4aa94dc97e58ba",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/slice_permissions/disjoint_halves.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "card_sha256": "d83ed1a69f2b7c07a2e3e632e78a06d24a8c2c32d50c3e59081fdf601d209a87",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/slice_permissions/overlapping_write.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "compiler/tests/fixtures/source_loop/copy.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "21b8e1fe1923c1fe8315861eb13e2b2769966be44e528b0b4dbda1a081d096dc",
+   "card_sha256": "21b8e1fe1923c1fe8315861eb13e2b2769966be44e528b0b4dbda1a081d096dc",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/source_record/point.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "card_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_buffer/bytes.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8027a1bc08c207ae29fecf3f1bc725543026d97be14dec8488f4d1d04f590f6d",
+   "card_sha256": "8027a1bc08c207ae29fecf3f1bc725543026d97be14dec8488f4d1d04f590f6d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_buffer/silent.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7e539d3f00ec597bcc29c7f6d9acabdbf46dfe9e41b2ecfffe76ce18c86b9bab",
+   "card_sha256": "7e539d3f00ec597bcc29c7f6d9acabdbf46dfe9e41b2ecfffe76ce18c86b9bab",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_modules/lines.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "card_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_modules/logger_only.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "a786070cfaa149eaf630a9aebb1e79a0ad23dad3c150be0cb6b3c1c4d73bfbe6",
+   "card_sha256": "a786070cfaa149eaf630a9aebb1e79a0ad23dad3c150be0cb6b3c1c4d73bfbe6",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_string/composed.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "9d5a81e5a17e30504fe36b1ac2d2c9c2a4cba04fb647074d826c96d75eafadcb",
+   "card_sha256": "9d5a81e5a17e30504fe36b1ac2d2c9c2a4cba04fb647074d826c96d75eafadcb",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_string/silent.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "2cde6320c547efbb5bf79de16c16f20cc06ed2a19b2d9457573387f7ff63450f",
+   "card_sha256": "2cde6320c547efbb5bf79de16c16f20cc06ed2a19b2d9457573387f7ff63450f",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_string/slices.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "1c1ae16fe2049f0d58fb19250ba2ebe86cf7506aaa43288b2b414eeadb2f0130",
+   "card_sha256": "1c1ae16fe2049f0d58fb19250ba2ebe86cf7506aaa43288b2b414eeadb2f0130",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/std_string/text.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "831e1b0bed3e406cf42d98d98fa186b536c9c757aaaa558342ee892d655a2269",
+   "card_sha256": "831e1b0bed3e406cf42d98d98fa186b536c9c757aaaa558342ee892d655a2269",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d267aa3baa514fcff1dfc40ee1161225d84ff10da04335489c8781b694eed40b",
+   "card_sha256": "d267aa3baa514fcff1dfc40ee1161225d84ff10da04335489c8781b694eed40b",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "005424f49bf53d98fae2ccc50adc90f28af5ded3a1b14161616e83885135fc6f",
+   "card_sha256": "005424f49bf53d98fae2ccc50adc90f28af5ded3a1b14161616e83885135fc6f",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "compiler/tests/fixtures/unsafe_linkage/round_trip.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fbfc76fcb4c50b754dc9bcfba91397239cdef666318831a60617750635806ece",
+   "card_sha256": "fbfc76fcb4c50b754dc9bcfba91397239cdef666318831a60617750635806ece",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "contract/profiles/libevent-core/libevent_memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cfl/arena_lifetime.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cfl/intrusive_list.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cfl/sds_lifetime.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cfl/time.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/chunk_destructor.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/chunk_residency.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/chunk_sizes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/constructor_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/context_destructor.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/counters.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/error_frame.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/error_state.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/file_close.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/file_close_delete.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_attempts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_chunk_close.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_constructor_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_delete.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_delete_attempt.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_delete_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_descriptor_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_existing_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_integrity_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_os_constructor_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_os_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_outcomes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_reopen_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_sync_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_teardown_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_transition_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/filesystem_unmap_failure_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/import_composition.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/list_unlink.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/lock_state.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/memory_backend.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/memory_close.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/nested_cleanup.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/nested_memory_teardown.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/parent_teardown.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/resource_open_close.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/stream_destructor.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/teardown_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/teardown_traversal.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/unmap_wrapper.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/unsupported_close.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/chunkio/unsupported_constructor_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cmetrics/context_lifetime.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cmetrics/counter_reset.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cmetrics/metric_values.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/cmetrics/mpack_utils.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/ctraces/context_lifetime.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/busy_state.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/hash_table_publication.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_destroy.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_destroy_direct_routes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_helpers.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_name.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_sizes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/input_chunk_total_size.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/logging.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/resource_memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/routes_mask.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/fluent_bit/time.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/language/quantified_indices.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/libc/errno.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/libc/memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/libc/pthread_mutex.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/library/custody_evidence.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/library/source_projection.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/cjson.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/kafka_mem.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/lz4_stream.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/queue_destructor.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/refcount.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/topic_partition.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/librdkafka/typed_queue.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/callback_binding.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/composition.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/descriptor_observation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/intrusive_list.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/logging.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/monkey/wrapper_paths.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/mpack/writer.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "contract/qcore/msgpack/packer.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-audit/tests/fixtures/alloc_acquire.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-audit/tests/fixtures/alloc_release.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/address_of_member_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/alias_aggregate_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/borrow_residuals.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/c02p_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/chained_tail_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/constructor_residuals_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/neighbours_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_read_bound_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/prod_contracts_generic.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_remove.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_store.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_internal_make.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_nullable.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_realloc.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/q_rich_modes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/r_return_call.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-c-gateway/tests/fixtures/contracts/z_reach.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-verification/tests/fixtures/generic_source/cleanup.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-verification/tests/fixtures/generic_source/counter.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-verification/tests/fixtures/generic_source/destructor.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "crates/qcore-verification/tests/fixtures/generic_source/unlink.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P21_span_line4.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P22_span_dupaxis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P25_multifile_dimension.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/P28_byte_offsets.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/d01_boundary_first.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e9de80aa0f08a5a47caabea28618fed43f994b173490e29cdbcdbccaf4cd8e82",
+   "card_sha256": "e9de80aa0f08a5a47caabea28618fed43f994b173490e29cdbcdbccaf4cd8e82",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-d01/probes/d01_boundary_second.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "768984cb345b81e58ebe325ac1514a28b5d51993beae361076b5a977c7473102",
+   "card_sha256": "768984cb345b81e58ebe325ac1514a28b5d51993beae361076b5a977c7473102",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-g03/libevent-core/libevent_memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-p06/ctraces_span_dropped_counts.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT26/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT27/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT29/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT29/restored.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT30/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t03/fixtures/CT30/released.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t04/fixtures/CT24/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t04/fixtures/CT25/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t05/fixtures/CT03/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t05/fixtures/CT04/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t05/fixtures/CT05/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-t05/fixtures/CT11/case.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S01_bool_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S02_u32_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S03_unknown_named_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S05_own_item_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S06_nested_own_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S07_i32_positive.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5bc7b71e948f9969e544637722ca9bd94715fb216ea9eda6e3a0cca439c991d6",
+   "card_sha256": "5bc7b71e948f9969e544637722ca9bd94715fb216ea9eda6e3a0cca439c991d6",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S08_unit_positive.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "3cfe61475c126012434533b1acd42d905ea1301e8298a2dec479da3c73cab157",
+   "card_sha256": "3cfe61475c126012434533b1acd42d905ea1301e8298a2dec479da3c73cab157",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S09_missing_return.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S11_call_with_argument.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d0c290513d7ea9c9978f0163f042b16d3693a52c73baccc4ec769029da34fd08",
+   "card_sha256": "d0c290513d7ea9c9978f0163f042b16d3693a52c73baccc4ec769029da34fd08",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S14_unit_returns_value.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S15_i32_bare_return.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S17_unknown_param_used.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S20_helper_missing_return.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S21_structured_control_flow.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8da29ce7efe8cb2a38a472c497e46c3d5c70b3eecdb161de230684a9b8e39f04",
+   "card_sha256": "8da29ce7efe8cb2a38a472c497e46c3d5c70b3eecdb161de230684a9b8e39f04",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S23_acquire_positive.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fec802cd70423d3e5c632b4fde9743910808ad73ad2fcea5c574ecc9c4084870",
+   "card_sha256": "fec802cd70423d3e5c632b4fde9743910808ad73ad2fcea5c574ecc9c4084870",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "c735da5fbb1fcaf49dd78282db5205d220a9e69439a0121d38d998da534fb643",
+   "card_sha256": "c735da5fbb1fcaf49dd78282db5205d220a9e69439a0121d38d998da534fb643",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "c5dea2653f8ff0df6302ce5e03e9fca00020646ad0fbd72008a3a74e23b47dbc",
+   "card_sha256": "c5dea2653f8ff0df6302ce5e03e9fca00020646ad0fbd72008a3a74e23b47dbc",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "3ff8d649de92825ad260100d11d36d10fbde33dce4e3402c4459a2f3cb3c36db",
+   "card_sha256": "3ff8d649de92825ad260100d11d36d10fbde33dce4e3402c4459a2f3cb3c36db",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S29_unknown_error_type.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S30_call_unknown_function.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S31_return_after_return.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S33_callee_bad_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S34_result_generic_type.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T10_nested_own_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T12_worker_bool_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/T21_unknown_worker.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X01_tuple_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X02_array_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X03_slice_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X04_pointer_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X05_never_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X06_borrow_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X07_quant_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X08_function_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X09_task_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X10_mutex_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X11_own_empty.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X12_own_no_args.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X13_deep_nested_own.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "943051b5f64fc6557b1f29e90ec36919c1bb8abb746b8d889c9a9a122823b39e",
+   "card_sha256": "943051b5f64fc6557b1f29e90ec36919c1bb8abb746b8d889c9a9a122823b39e",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v03/probes/X15_empty_result.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P04-dup-axis-use.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "30790ad5d61865f2abb020974fe2edcae20de74ed90ba5eae4802c30e7c0491d",
+   "card_sha256": "30790ad5d61865f2abb020974fe2edcae20de74ed90ba5eae4802c30e7c0491d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P06-nominal-count-use.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fce3739277fb79d7b2441e782993c0e575e159e54cac41eaf9853d3d44a6602d",
+   "card_sha256": "fce3739277fb79d7b2441e782993c0e575e159e54cac41eaf9853d3d44a6602d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "bc43c4ec5432473edfebcc18f2832bda14460dfdd7916950fdc95a7f470b5450",
+   "card_sha256": "bc43c4ec5432473edfebcc18f2832bda14460dfdd7916950fdc95a7f470b5450",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P08-valid-named-use.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8b8407085da8de25194a46b9b07e1d563db4883b7929c588830fdefb74a628aa",
+   "card_sha256": "8b8407085da8de25194a46b9b07e1d563db4883b7929c588830fdefb74a628aa",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e590ace4740a457127a1439b20cac92c6af68ffc95e38ed323025d373ec8adc9",
+   "card_sha256": "e590ace4740a457127a1439b20cac92c6af68ffc95e38ed323025d373ec8adc9",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "0b43f274609b7709b01ca39a88a208b422a891cd94ce944e78aea7ef07865b2d",
+   "card_sha256": "0b43f274609b7709b01ca39a88a208b422a891cd94ce944e78aea7ef07865b2d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P13-axis-self-reference.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P15-count-of-unknown.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "940614f83d9b6638f35c17269330e0f6a45de7e348df9c7fbf91b3fa7e40c098",
+   "card_sha256": "940614f83d9b6638f35c17269330e0f6a45de7e348df9c7fbf91b3fa7e40c098",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P18-library-mode-unused.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P20-two-bad-axes.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P21-span-line4.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "4dbc2445dbba0f4505a1b756456a2aae39c3ab03a7daee17cf041f6f1a245886",
+   "card_sha256": "4dbc2445dbba0f4505a1b756456a2aae39c3ab03a7daee17cf041f6f1a245886",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P25-multifile-a.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a01_requires.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a02_ensures.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a03_quant.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a04_first_main.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "0217b3711a2e4ce95e771a178b4ce9f361651f43201d2d676e0e6575da08b04c",
+   "card_sha256": "0217b3711a2e4ce95e771a178b4ce9f361651f43201d2d676e0e6575da08b04c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a04_second_bound.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a06_never_referenced.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a07_empty_contract_control.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "98e1e45df858e847cc6ffb54bbef645ac53f2bddac92795adde57a4a9c6d55e2",
+   "card_sha256": "98e1e45df858e847cc6ffb54bbef645ac53f2bddac92795adde57a4a9c6d55e2",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a11_library_mode.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a12_contract_mode.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a13_extern_contract_control.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "239482eb6c0b39b52fb616b921d500efb80ae46fc2ad5ef59e6ba4a0cd836a99",
+   "card_sha256": "239482eb6c0b39b52fb616b921d500efb80ae46fc2ad5ef59e6ba4a0cd836a99",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a14_verify_scope.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/a15_task_second_file_main.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b01_outer_resolution.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b03_header_unresolved.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b04_binder_escape.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b05_sibling_leak.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b08_duplicate_binding.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b10_cross_file_first.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/b10_cross_file_second.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c01_scope_without_marker.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c02_nested_worker.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c05_contract_on_worker.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c08_nested_scope_control.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/d01_boundary_first.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "44ab8be7acacab2b17b13bb837cc81a62bc99f73df8ed78677fe793d79847fca",
+   "card_sha256": "44ab8be7acacab2b17b13bb837cc81a62bc99f73df8ed78677fe793d79847fca",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/d01_boundary_second.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "24cd0bb0944c3f0fd7180a6b744554866d89fbffaae38646f6f93be8a471a6b5",
+   "card_sha256": "24cd0bb0944c3f0fd7180a6b744554866d89fbffaae38646f6f93be8a471a6b5",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "docs/reports/remaining-v07/probes/d02_boundary_record.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w5-configured-audit/demo/memory.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w5-configured-process-audit/second-codebase/alloc.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w5-configured-process-audit/second-codebase/frame.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w5-configured-process-audit/second-codebase/policy.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w5-configured-process-audit/second-codebase/rules.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w6-native-source-tasks/native-copy.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/branching/condition_tier.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "ce932fef3de1cab2d1be93ed5652fb78c33d13f08167f1ab19a5b44ab93f007d",
+   "card_sha256": "ce932fef3de1cab2d1be93ed5652fb78c33d13f08167f1ab19a5b44ab93f007d",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/branching/conditional_release.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d6e8bddf8463c181a2427732fe54d6b24b77f323f5354d7bec1ef2a4af874df7",
+   "card_sha256": "d6e8bddf8463c181a2427732fe54d6b24b77f323f5354d7bec1ef2a4af874df7",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/branching/early_return.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "7c7fb875de274bcaca541793281c667f9e660343f3b807a3cc577bb822e01654",
+   "card_sha256": "7c7fb875de274bcaca541793281c667f9e660343f3b807a3cc577bb822e01654",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/cycle12.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "39a2658c0dddefd1896612d313b7a213ba7b132ea7f1efd013a4d5a411678fae",
+   "card_sha256": "39a2658c0dddefd1896612d313b7a213ba7b132ea7f1efd013a4d5a411678fae",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/events/self_pipe.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "d83a2eae292dd1480118450ce027c77ca235525203117f6c08faea50ebcfd799",
+   "card_sha256": "d83a2eae292dd1480118450ce027c77ca235525203117f6c08faea50ebcfd799",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/events/socket_server.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "76704e45a368d611917da4ee0eb27e76e6240cca3e941b26174305e4694bb2f2",
+   "card_sha256": "76704e45a368d611917da4ee0eb27e76e6240cca3e941b26174305e4694bb2f2",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/events/wake_payload.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "e67920ec353c8196be0fd4ce6e775020ceb8092902d8d6a02e86cd3fad1d3f90",
+   "card_sha256": "e67920ec353c8196be0fd4ce6e775020ceb8092902d8d6a02e86cd3fad1d3f90",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/events/write_interest.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/extern/borrowed_render.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/extern/buffer_round_trip.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/extern/contracts/buffer_api.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/extern/scalar_results.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/http/computed_length.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5f7b36ad85a76f7b8e6cbb07f3a11c7c4a5d2d7bd0ca13ebd55cdf570e93a872",
+   "card_sha256": "5f7b36ad85a76f7b8e6cbb07f3a11c7c4a5d2d7bd0ca13ebd55cdf570e93a872",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/http/exchange.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "6dbbfd573ac8f64ad78987176d160bea826778fc1d1a4c647c606d14739c512f",
+   "card_sha256": "6dbbfd573ac8f64ad78987176d160bea826778fc1d1a4c647c606d14739c512f",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/http/raw_request.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "658f3c8ea631dd215a5957cc2994ea8f7ba1d1ba943a672003df7851bb275d54",
+   "card_sha256": "658f3c8ea631dd215a5957cc2994ea8f7ba1d1ba943a672003df7851bb275d54",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/loops/buffer_copy.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "21b8e1fe1923c1fe8315861eb13e2b2769966be44e528b0b4dbda1a081d096dc",
+   "card_sha256": "21b8e1fe1923c1fe8315861eb13e2b2769966be44e528b0b4dbda1a081d096dc",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/loops/lend_fill.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "b4609094b2d6069e7f2a5cea21696314c5e260b5e634ef76b7fe184966663198",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/loops/lend_fill.qcore:36:5: Q051: `source.loop.v1`'s `for` is not a statement an entry that lends models; a lend's window is an interval of statement indices and is exact only because the route is one flat sequence, so a loop body writing under a live lend would need a window over iterations rather than over indices (`SLICE-PERMISSIONS-LOOP-WINDOW`)"
+   ]
+  },
+  {
+   "program": "examples/pipes/rendered_lines.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "card_sha256": "5aae631eca56bce408c29f2bb0d008b02b88778e2370f26c17242e256054e956",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/pipes/scalar_stages.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/pipes/scalar_stages_hand_written.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/records/owned_field.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "8f7d3cf4d23057fe1a37686b8bf9a44aa928c4219ecedcde97cebbbe14b3c8e1",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/records/owned_field.qcore:31:1: Q051: `Frame.head` is declared `bytes`, which is not a field type `source.record.v1` models; every field of this revision's record is `i32`, and a field that owns something is a custody shape this model does not carry (`AGGREGATE-OWNED-FIELD`)"
+   ]
+  },
+  {
+   "program": "examples/records/pixel_writes.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "8067577628dbc3590c36b3af87885a41f6f8ea78929a65a2ab359f75f30e4327",
+   "card_sha256": "8067577628dbc3590c36b3af87885a41f6f8ea78929a65a2ab359f75f30e4327",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/records/point.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "card_sha256": "523d1d5a44801e9b9b4e88100c824234e3624842909d0675a0c530f08614598a",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/sockets/inet_v4_echo.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "fb9c7d4659568e8b06af209a6bc43a2f3ffb8dacda2199c5b5102fbc06615913",
+   "card_sha256": "fb9c7d4659568e8b06af209a6bc43a2f3ffb8dacda2199c5b5102fbc06615913",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/sockets/inet_v6_echo.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "47f7a4013d6b1fb4a7ce9b6937acbd58837a0021c2af068e7cd188d4698cc948",
+   "card_sha256": "47f7a4013d6b1fb4a7ce9b6937acbd58837a0021c2af068e7cd188d4698cc948",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/sockets/tcp_echo.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "c2a676b0c163b7cfaa4764210b1126652c57e1d296b36278b321f349959f2a5c",
+   "card_sha256": "c2a676b0c163b7cfaa4764210b1126652c57e1d296b36278b321f349959f2a5c",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/sockets/udp_echo.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "2b63bd8647637cacc833e2f8d8e8b099684183cbf19b4b81f4f761c46690b6ed",
+   "card_sha256": "2b63bd8647637cacc833e2f8d8e8b099684183cbf19b4b81f4f761c46690b6ed",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/stdio/barrier.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "a786070cfaa149eaf630a9aebb1e79a0ad23dad3c150be0cb6b3c1c4d73bfbe6",
+   "card_sha256": "a786070cfaa149eaf630a9aebb1e79a0ad23dad3c150be0cb6b3c1c4d73bfbe6",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/stdio/pipeline.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "examples/stdio/renderings.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "b5a9cb7a5de1f96e9711e284ecb244406141f4dfe0a6a0943a7464cb648e74b1",
+   "card_sha256": "b5a9cb7a5de1f96e9711e284ecb244406141f4dfe0a6a0943a7464cb648e74b1",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/stdio/severities.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "a586d79784734ac9f175001bc4530b09babdbabe09de041e1e1965d62e559098",
+   "card_sha256": "a586d79784734ac9f175001bc4530b09babdbabe09de041e1e1965d62e559098",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/strings/computed_length.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "86cfbb9ec4af4984e52a0c2d6d2ad37b25ba8ac3d7636915cf753c64aaba1620",
+   "card_sha256": "86cfbb9ec4af4984e52a0c2d6d2ad37b25ba8ac3d7636915cf753c64aaba1620",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/strings/looped_fill.qcore",
+   "base_exit": 1,
+   "card_exit": 0,
+   "base_sha256": null,
+   "card_sha256": "10a02183ecdb42378f3769913d61c54aa81fe4d40ae1a880a3824b54bc01b081",
+   "verdict": "admitted_by_card_only",
+   "base_stderr_first_line": [
+    "examples/strings/looped_fill.qcore:25:5: Q068: `source.string.v1` models one flat statement sequence; this statement opens a nested block"
+   ]
+  },
+  {
+   "program": "examples/strings/status_line.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "f22701c93053678a305f95d591341e280ab5dade376c8a8104be65deabce5444",
+   "card_sha256": "f22701c93053678a305f95d591341e280ab5dade376c8a8104be65deabce5444",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/threads/core_context.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "0274f996454096d4afb59b40d97030ce8ecd33263a77668af21934f5587a4926",
+   "card_sha256": "0274f996454096d4afb59b40d97030ce8ecd33263a77668af21934f5587a4926",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/threads/owned_buffer.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "ca562a229ef75631b084509d45fa4ddba91ca2299074eeec2283f7c60f98faba",
+   "card_sha256": "ca562a229ef75631b084509d45fa4ddba91ca2299074eeec2283f7c60f98faba",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/threads/shared_readers.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "67343fcf806a390001bd2eb529071e58b58efd28ddae247f0fdc0becc160f498",
+   "card_sha256": "67343fcf806a390001bd2eb529071e58b58efd28ddae247f0fdc0becc160f498",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/threads/two_workers.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "f5e836dcf7cbdec2500657d07e34fea0e7f26d24c9441633a8a684a37e533d89",
+   "card_sha256": "f5e836dcf7cbdec2500657d07e34fea0e7f26d24c9441633a8a684a37e533d89",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "examples/unsafe-linkage/unchecked_calls.qcore",
+   "base_exit": 0,
+   "card_exit": 0,
+   "base_sha256": "13f1522b6edea5a2e1aa6e1ffb5ee64b04b4039ecf3b24412d5a559619c087aa",
+   "card_sha256": "13f1522b6edea5a2e1aa6e1ffb5ee64b04b4039ecf3b24412d5a559619c087aa",
+   "verdict": "admitted_by_both_byte_identical"
+  },
+  {
+   "program": "measure/probe_borrow_in_body.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "providers/conformance/tests/fixtures/configured_boolean_source/sample.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  },
+  {
+   "program": "providers/conformance/tests/fixtures/configured_boolean_source/source_projection.qcore",
+   "base_exit": 1,
+   "card_exit": 1,
+   "base_sha256": null,
+   "card_sha256": null,
+   "verdict": "refused_by_both"
+  }
+ ]
+}
