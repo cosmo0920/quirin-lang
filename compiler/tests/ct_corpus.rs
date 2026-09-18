@@ -237,6 +237,16 @@ const PROOF_GATED_CASES: &[(&str, &str)] = &[
         "CT03",
         "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
     ),
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's disjointness
+    // procedure over the scoped-task ledger's lease set
+    // (QCore.Ct07LeaseLedger over QCore.WriteLendTasks,
+    // AuditCt07LeaseLedger.lean). The first leg bound **through the ledger**
+    // rather than the F02 trace relation, which refuses this run's lease
+    // events by constraint 15n's decided boundary; the alphabet did not grow.
+    (
+        "CT07",
+        "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
+    ),
 ];
 /// The `source.epoch.tasks.v1` composed cases, whose verdict mode pins
 /// published credit quantities wholesale because an epoch that merely checks
@@ -472,6 +482,10 @@ const RUNNER_REGISTRY: &[&str] = &[
     "compiler/tests/ct37_proof_leg.rs::ct37_artifact_is_the_lean_proved_completion_capsule_shape",
     // Card `CT03-PROOF-ALPHABET`: CT03's proof-stage runner, the same shape.
     "compiler/tests/ct03_proof_leg.rs::ct03_artifact_is_the_lean_proved_shared_reads_shape",
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's proof-stage runner —
+    // the same shape, bound through the checked module's lease set and the
+    // production ledger rather than the F02 digest relation.
+    "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
     // Card `CT-COMPOSED-NATIVE` (wave 32): the composed-epoch accept runner —
     // one sanitized compile-and-run of the case's own emitted C, its standard
     // output compared byte for byte with the reference observation of the
@@ -3799,7 +3813,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 23] = [
+const EVIDENCE_FILES: [&str; 24] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3836,6 +3850,11 @@ const EVIDENCE_FILES: [&str; 23] = [
     // record per constraint 21; the ct07-write-remap record keeps its bytes.
     // It maps no new case, so the mapped count does not move.
     "docs/reports/ct-lane-5/ct_stage_evidence.json",
+    // Card `CT07-TWO-THREAD-PROOF-LEG` (wave 39): CT07's proof stage moves to
+    // executed on the ledger-bound leg. A superseding record per constraint
+    // 21; the ct-lane-5 record keeps its bytes, and every other stage row is
+    // carried from it unchanged.
+    "docs/reports/ct07-two-thread-proof-leg/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.

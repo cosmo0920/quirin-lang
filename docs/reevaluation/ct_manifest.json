@@ -700,7 +700,10 @@
           "status": "not_applicable"
         },
         "proof": {
-          "status": "unassessed"
+          "status": "executed",
+          "executor": "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
+          "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+          "observations": 1
         }
       },
       "evidence_target": "linux",

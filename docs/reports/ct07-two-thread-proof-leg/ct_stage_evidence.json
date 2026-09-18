@@ -1,0 +1,146 @@
+{
+ "schema_version": 1,
+ "card": "CT07-TWO-THREAD-PROOF-LEG",
+ "generated": "2026-09-18",
+ "report": "docs/reports/ct07-two-thread-proof-leg/README.md",
+ "purpose": "The integrator flip of CT07's proof stage: the manifest's fourth executed proof row, superseding the wave-37 CT-LANE-5 record for CT07 without editing it (constraint 21). Every other stage row is carried from that record unchanged; only proof moves, on the named workspace test this card landed. Proof 3 of 46 -> 4 of 46 is evidence about one case's artifact and never conformance (constraint 23).",
+ "derivation_rule": "A stage is executed only where a named workspace test runs it on the case's own artifact. compiler/tests/ct07_proof_leg.rs lowers CT07's fixture through the real pipeline, reads the lease captures out of the checked task IR, executes the checked module's reference execution, transcribes its lease opens and closes into the Lean Step vocabulary and replays them with the transcription of QCore.Ct07LeaseLedger.replay; a Some is, by replay_reaches, a Reachable witness for the state the artifact reaches - the hypothesis of the bound theorem. The F02 route (AdmittedCausalOrder::derive) is not used and is re-measured to refuse this run (CT07-PROOF-LEG-PATTERN-UNAVAILABLE); the alphabet did not grow and reference_trace is untouched.",
+ "theorem_bound": {
+  "primary": "QCore.WriteLendTasks.no_byte_has_two_write_authorities (wave 31), instantiated as QCore.Ct07LeaseLedger.ct07_no_byte_has_two_write_authorities on ct07Ledger = [{holder 2, [2,4)}, {holder 1, [0,2)}]",
+  "second": "QCore.WriteLendTasksExercise.no_byte_is_written_by_two_parties (wave 36), instantiated as ct07_no_byte_is_written_by_two_parties on the same state, the artifact's two byte writes (writer 1 byte 0, writer 2 byte 2) shown admitted against it (ct07_writes_are_admitted) - a consequence checked on top of the lease binding, not a second binding route",
+  "artifact_side_witness": "Reachable term <-> ledger state: the reference run's BufferLeased/BufferLeaseReturned events, transcribed as [lease 1 [0,2), lease 2 [2,4), reclaim 1, reclaim 2] (= ct07Steps), replayed to ct07Ledger after both opens and to [] after both joins; the production ScopedTaskLedger driven through the same steps reads back the same (holder, range) set after every step; LeaseRange::overlaps (ownership::axes_overlap) agrees with the transcribed overlaps on the artifact's ranges",
+  "pin": "ct07_ledger_digest = 8876998389998880787, proved by decide in Lean and recomputed from the artifact with wrapping u64 arithmetic"
+ },
+ "mapped_case_stage_matrix": {
+  "CT07": {
+   "supersedes": "docs/reports/ct-lane-5/ct_stage_evidence.json",
+   "harness_verdict_mode": "native_heap_scenarios",
+   "manifest_evidence_target": "linux",
+   "verified_stages": {
+    "parse": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 1
+    },
+    "elaborate": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 1
+    },
+    "task_lowering": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 1
+    },
+    "task_ledger_check": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_mapped_case",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 1
+    },
+    "mutex_lowering": {
+     "status": "not_applicable"
+    },
+    "mutex_invariant_check": {
+     "status": "not_applicable"
+    },
+    "epoch_lowering": {
+     "status": "not_applicable"
+    },
+    "epoch_bound_check": {
+     "status": "not_applicable"
+    },
+    "sequential_whole_program": {
+     "status": "not_applicable"
+    },
+    "sequential_reference_execution": {
+     "status": "not_applicable"
+    },
+    "task_reference_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 2,
+     "host_gate": [
+      "linux",
+      "macos"
+     ]
+    },
+    "mutex_reference_execution": {
+     "status": "not_applicable"
+    },
+    "c_emission": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 2,
+     "host_gate": [
+      "linux",
+      "macos",
+      "windows"
+     ]
+    },
+    "native_execution": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 2,
+     "host_gate": [
+      "linux",
+      "macos"
+     ]
+    },
+    "native_sanitized": {
+     "status": "executed",
+     "executor": "compiler/tests/ct_corpus.rs::run_native_heap_scenarios",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 2,
+     "host_gate": [
+      "linux",
+      "macos"
+     ]
+    },
+    "legacy_c_twin": {
+     "status": "not_applicable"
+    },
+    "proof": {
+     "status": "executed",
+     "executor": "compiler/tests/ct07_proof_leg.rs::ct07_artifact_is_the_lean_proved_disjoint_halves_shape",
+     "artifact": "compiler/tests/fixtures/ct/CT07/case.qcore",
+     "observations": 1,
+     "note": "QCore.WriteLendTasks.no_byte_has_two_write_authorities instantiated on CT07's own ledger state (QCore.Ct07LeaseLedger.ct07_no_byte_has_two_write_authorities); the Reachable witness is the transcribed replay of the lease opens and closes the checked module's reference execution performs (replay_reaches), the digest pin recomputed from the artifact, the production ScopedTaskLedger agreeing step for step. Host-unconditional: no cfg, no Clang, no native half."
+    }
+   },
+   "carried_unchanged_from_ct_lane_5": [
+    "measured_observation",
+    "controls",
+    "non_vacuity",
+    "boundaries_published_not_papered_over"
+   ],
+   "non_vacuity_of_the_proof_leg": {
+    "method": "Three mutations of CT07's own fixture, each measured at two places: where the pipeline catches it, and what the transcribed procedure says when fed the mutant's would-be lease steps directly, with no checker in between. Shipped as scripts/mutate_ct07_proof_leg.py with its log beside this record.",
+    "overlapping_halves_0_3_and_2_4": "caught by the CHECKER: Q600, the ledger's own OverlappingLeases at the second spawn, before any artifact exists for the binding to read; the procedure refuses the would-be second open at the disjointness clause (overlaps [0,3) [2,4) = true; Lean overlapping_halves_are_refused, the_overlap_is_the_disjointness_clause)",
+    "empty_half_2_2": "caught by the CHECKER: Q600, the task checker's 'a write lease must cover at least one byte' at the capture, before the ledger is asked; the procedure refuses the would-be open at the nonemptiness clause (Lean an_empty_half_is_refused, the_empty_half_is_the_nonemptiness_clause)",
+    "single_writer": "ADMITTED by the checker - one lease, a reachable state the theorem holds of - and refused by the BINDING for the shape: steps [lease 1 [0,2), reclaim 1] are not ct07Steps, the state is not ct07Ledger, dischargesDisjointHalves is false (one lease; bytes 2 and 3 under no authority), the digest is not the pin (Lean a_single_writer_is_reachable_but_not_the_scenario, a_single_writer_leaves_the_other_half_unheld)"
+   },
+   "boundary": "The binding is about the checked module's lease set and reference execution, host-unconditionally; the emitted C's native behaviour stays observation-only under run_native_heap_scenarios, with no ThreadSanitizer evidence (TASK-ROUTE-TSAN-SEGV). No verified extraction between Lean and Rust is claimed: the agreement is the checked-digest transcription pattern F02 established, here over the ledger. The payload is one int32_t (WRITE-LEND-TASKS-EXTENT, unchanged)."
+  }
+ },
+ "unmapped_reasons": {},
+ "retired_unmapped_reasons": {},
+ "inventory": {
+  "added_mapped_ids": [],
+  "re_mapped_ids": [],
+  "mapped_before": 46,
+  "mapped_after": 46,
+  "unmapped_after": 4,
+  "total": 50,
+  "proof_before": 3,
+  "proof_after": 4,
+  "sanitized_native_before": 10,
+  "sanitized_native_after": 10
+ }
+}
