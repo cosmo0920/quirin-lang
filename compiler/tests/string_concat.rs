@@ -1243,7 +1243,8 @@ fn the_models_own_loop_arm_runs_a_repeat_through_the_buffer_routes_runner() {
             StringEvent::Return,
         ],
     };
-    let certificate = check_string_program(&program).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
+    let certificate =
+        check_string_program(&program).expect("admitted since LOOPS-ON-COMPOSED-ROUTES");
     let written: Vec<(u32, u8)> = certificate
         .accesses
         .iter()

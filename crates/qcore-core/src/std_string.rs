@@ -1128,13 +1128,11 @@ fn view_uses(event: &StringEvent) -> Vec<&str> {
 /// that lets a view be read inside a loop lengthens the window here rather
 /// than closing it before the loop opens.
 fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
-    fn buffer_view_uses<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str>) {
+    /// The view names a buffer event reads, at any depth: a loop's are its
+    /// body's, and every other buffer event's are none.
+    fn buffer_view_uses(event: &BufferEvent) -> Vec<&str> {
         match event {
-            BufferEvent::Repeat { body, .. } => {
-                for event in body {
-                    buffer_view_uses(event, into);
-                }
-            }
+            BufferEvent::Repeat { body, .. } => body.iter().flat_map(buffer_view_uses).collect(),
             // No buffer event names a view; see above.
             BufferEvent::Bind { .. }
             | BufferEvent::Acquire { .. }
@@ -1150,12 +1148,12 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
-            | BufferEvent::Return => {}
+            | BufferEvent::Return => Vec::new(),
         }
     }
     let mut names = view_uses(event);
     if let StringEvent::Buffer(buffer_event) = event {
-        buffer_view_uses(buffer_event, &mut names);
+        names.extend(buffer_view_uses(buffer_event));
     }
     names
 }

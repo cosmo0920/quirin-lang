@@ -1216,7 +1216,10 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<&'a str
 /// did not; `the_unrolling_is_loop_v1s` ties the unrolling those theorems are
 /// stated over to `QCore.SourceLoop.unroll`, `LOOP-V1`'s own.
 #[must_use]
-pub fn last_uses<'a>(events: &'a [BufferEvent], bindings: &BTreeSet<&str>) -> BTreeMap<&'a str, usize> {
+pub fn last_uses<'a>(
+    events: &'a [BufferEvent],
+    bindings: &BTreeSet<&str>,
+) -> BTreeMap<&'a str, usize> {
     let mut last_use = BTreeMap::new();
     for (index, event) in events.iter().enumerate() {
         let mut names = Vec::new();

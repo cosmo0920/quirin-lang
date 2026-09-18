@@ -1186,12 +1186,7 @@ pub fn lower_source_string(
         // window question the old refusal named is decided in the checker
         // (`check_string_program`'s `Repeat` arm, over `QCore.LoopWindows`).
         // Every *other* nested block keeps the flat-sequence refusal below.
-        if holds_a_buffer
-            && matches!(
-                statement.value,
-                crate::frontend::StatementKind::For { .. }
-            )
-        {
+        if holds_a_buffer && matches!(statement.value, crate::frontend::StatementKind::For { .. }) {
             // A body is `source.buffer.v1`'s vocabulary. A string construct
             // inside it is refused **here, by name**, before the buffer reader
             // sees the statement — a `borrow_utf8` in a body would be a
@@ -1199,10 +1194,7 @@ pub fn lower_source_string(
             // a `len`, a `concat` or a text line is a view construct this
             // composition's loop body does not model
             // (`LOOP-ON-COMPOSED-ROUTE-BODY-VOCABULARY`).
-            fn body_string_use(
-                block: &SourceBlock,
-                tokens: &[Token],
-            ) -> Option<(StringUse, Span)> {
+            fn body_string_use(block: &SourceBlock, tokens: &[Token]) -> Option<(StringUse, Span)> {
                 for statement in &block.statements {
                     let window = window(tokens, statement.span);
                     if let Some(kind) = string_use(&window) {

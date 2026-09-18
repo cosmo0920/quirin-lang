@@ -925,6 +925,15 @@ pointer is the card that established it; read it before deviating.
       **Waves 28 through 37 each closed at zero reserved words**, the longest
       such run in this ledger; the source surface has not grown a global
       keyword since `LOOP-V1`.
+    * `LOOPS-ON-COMPOSED-ROUTES` (wave 39) **+0 words, +0 tokens, and the
+      census was run rather than assumed**: the card admits an existing
+      statement (`for`) in two positions that refused before it — beside a
+      lend on the buffer route, and inside a composed string/buffer entry —
+      and spells nothing new; `git diff --stat e878b362 -- crates/qcore-frontend/src/lexer.rs crates/qcore-frontend/src/parser.rs`
+      is empty, the composed route reads the loop through
+      `source_std_buffer::lower_for_statement` (the same reader, the same
+      bound tier), and the three residual names it refuses by name are
+      diagnostic text, not words. Its report §9 states the census.
 
     `remaining-t03-f`, `remaining-t08-epoch-src`, `extern-call-v1`,
     `wave17-std-modules`, `remaining-extern-modes`,
@@ -1073,10 +1082,15 @@ pointer is the card that established it; read it before deviating.
     `source.buffer.v1` admits only constant bytes at constant indices — and its
     **window** runs from the borrow to the last statement reading the view or
     **anything derived from it**, a slice of a borrow being itself a borrow of
-    the same buffer. Do not widen the window's computation without revisiting
-    it: the interval is exact because the route is one flat statement sequence,
-    and a loop construct invalidates that premise — which is why the composed
-    route **refuses** a `for` today (`STRING-CONCAT-LOOP-WINDOW`). A borrow
+    the same buffer. **Superseded deliberately by card `LOOPS-ON-COMPOSED-ROUTES`
+    (wave 39; the amendment at the end of this constraint):** the sentence this
+    constraint carried from `STRING-CONCAT` to wave 38 — "Do not widen the
+    window's computation without revisiting it: the interval is exact because
+    the route is one flat statement sequence, and a loop construct invalidates
+    that premise — which is why the composed route **refuses** a `for` today
+    (`STRING-CONCAT-LOOP-WINDOW`)" — is replaced by the iteration-window
+    theorem: the window is computed **over iterations**, and the composed route
+    **admits** a `for`. A borrow
     contributes an ordinary `Read` to the cycle-3 ownership operation list; do
     not re-implement the custody rules beside it. **Route selection changes only
     for the bridge construct** — a module holding a buffer without spelling
@@ -1122,16 +1136,23 @@ pointer is the card that established it; read it before deviating.
     not move these rules out of the IR into a route, and do not give the release
     arm a range.** On the composed string route every sentence of this
     constraint stands unchanged: a `lend(…)` beside `borrow_utf8`'s read loans
-    refuses by name at `Q077` (`SLICE-PERMISSIONS-COMPOSED-LEND`), so the
-    window-exactness argument and the `for` refusal at `Q068` are untouched
-    there (`STRING-CONCAT-LOOP-WINDOW` re-measured, not assumed). On the buffer
-    route the exactness premise is defended by three refusals that must survive
-    refactors: a `for` in an entry that lends (`SLICE-PERMISSIONS-LOOP-WINDOW`),
-    a crossed pair of lend windows (`SLICE-PERMISSIONS-CROSSED-WINDOWS`), and an
-    acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`). The lend's bound
+    refuses by name at `Q077` (`SLICE-PERMISSIONS-COMPOSED-LEND`). **Superseded
+    deliberately by card `LOOPS-ON-COMPOSED-ROUTES` (wave 39):** the clause that
+    followed — "so the window-exactness argument and the `for` refusal at
+    `Q068` are untouched there (`STRING-CONCAT-LOOP-WINDOW` re-measured, not
+    assumed)" — and the first of the three refusals the next sentence listed —
+    "a `for` in an entry that lends (`SLICE-PERMISSIONS-LOOP-WINDOW`)" — are
+    replaced by the amendment at the end of this constraint. On the buffer
+    route the window's soundness is now defended by **two** refusals that must
+    survive refactors, plus the amendment's own two: a crossed pair of lend
+    windows (`SLICE-PERMISSIONS-CROSSED-WINDOWS`) and an
+    acquisition inside a window (`WRITE-LEND-NESTED-ACQUIRE`), the latter
+    scanned at any depth. The lend's bound
     tier is the loop bound's (`WRITE-LEND-BOUND-FROM-BYTE`); a loan is never
-    released and never re-lent; and a module with no lend builds the custody
-    operation list it always built.
+    released and never re-lent (`WRITE-LEND-RELEND` stays open and is
+    orthogonal to loops — a sub-lend is a second borrow node nested in the
+    first's body, which the one-pass walker cannot see); and a module with no
+    lend builds the custody operation list it always built.
     **Appended, card `WRITE-LEND-TASKS` (wave 31; it supersedes nothing above,
     discharging the sibling residual the wave-29 card named).** The write lend
     now also **crosses the spawn boundary**, as a range write lease:
@@ -1916,7 +1937,14 @@ access lands entirely as condition extensions — the at-most-one-lease paramete
 rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
 the constant-index tier and the three authority rules on `Q600` — with the
 **arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
-word and takes no code. **Waves 33, 34 and 37 allocated no code and ran no
+word and takes no code. Wave 39's `LOOPS-ON-COMPOSED-ROUTES` is the
+**sixteenth**, and the first whose movements are **narrowings** stated as
+such: `Q051`, `Q068` and `Q077` each lose the blanket `for` refusal (§L21
+amendments), `Q078` is reached from a body statement with its condition
+unwidened, the three shapes it refuses by name land on `Q051`/`Q077` as
+condition extensions, and the composed route reaches the loop pass's own
+`Q097`–`Q099` unwidened (`StringError::Loop`, the `BufferError::Loop`
+precedent) — no code allocated. **Waves 33, 34 and 37 allocated no code and ran no
 condition extension either**: the gateway
 arbiters `C-GATEWAY-RETURN-POSITION`, `C-GATEWAY-RETURN-CALL-W4` and wave 37's
 `SCALAR-ROUTE-EXIT-EDGE` move **gateway diagnostics**, which are categories

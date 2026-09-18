@@ -1,13 +1,16 @@
 # Strings
 
-Two programs, on the `source.string.v1` route with its output composition and
+Three programs, on the `source.string.v1` route with its output composition and
 its `std.buffer` bridge (cards `STRING-SLICE`, `STRING-SLICE-IO` and
-`STRING-CONCAT`).
+`STRING-CONCAT`), the third with a `for` inside the composition (card
+`LOOPS-ON-COMPOSED-ROUTES`, wave 39, whose sanitized native run is
+`compiler/tests/loops_on_composed_routes.rs`'s).
 
 | Program | What it shows |
 |---|---|
 | [status_line.qcore](status_line.qcore) | An HTTP/1.1 response head rendered to standard output: literal views, the empty line, a bound view and a slice of one |
 | [computed_length.qcore](computed_length.qcore) | The same head with a **computed** `Content-Length`: content the program writes into storage it owns, borrowed as UTF-8, its length taken, and the header line composed from that number |
+| [looped_fill.qcore](looped_fill.qcore) | A `for` filling a buffer before it is borrowed, and a second `for` inside a live loan's window writing only the bytes the loan does not hold — the shape `STRING-CONCAT-LOOP-WINDOW` refused until the borrow window was decided over iterations |
 
 ## What a rendered string is
 
@@ -96,9 +99,25 @@ Content-Length: 11
 {"ok":true}
 ```
 
+## Transcript — `looped_fill.qcore`
+
+The first loop runs before any view exists and writes every byte of the owner;
+`all` then views `aaaa`. The second loop runs inside `head`'s window — `head`
+views `[0, 2)` and is read after the loop — and writes bytes 2 and 3 at every
+iteration, which the loan does not hold; `head` still reads `aa`, and a fresh
+whole-extent view reads what the loop wrote. A store to byte 1 in that body
+would be refused at `Q078`.
+
+<!-- transcript: looped_fill stdout -->
+```text
+aaaa
+aa
+aabb
+```
+
 ## What these are not
 
-Neither is an HTTP implementation, and neither claims to be. There is no socket,
+Neither of the first two is an HTTP implementation, and neither claims to be. There is no socket,
 no request parsing and no header model — writing a message to a wire is
 `source.http.v1`'s, and connecting a computed length to that route is the named
 follow-on `HTTP-V1-COMPUTED-LENGTH`. In `status_line.qcore` the

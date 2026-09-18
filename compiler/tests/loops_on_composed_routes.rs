@@ -427,7 +427,16 @@ fn a_nested_loop_is_projected_by_the_same_rule_at_every_depth() {
         "return;",
     ];
     let module = admitted(&buffer_module(&inside));
-    assert_eq!(module.checked.as_standard_buffer().unwrap().certificate.lends[0].through, 2);
+    assert_eq!(
+        module
+            .checked
+            .as_standard_buffer()
+            .unwrap()
+            .certificate
+            .lends[0]
+            .through,
+        2
+    );
     // Index 4 through a lend of four bytes, reached by the loop's fifth
     // iteration: refused at check time — by the IR's containment rule over
     // the projected `WriteRange` (`Q054`) and by the value half's own bound
@@ -469,7 +478,16 @@ fn a_loop_before_the_lend_writes_the_owner_freely() {
         "return;",
     ];
     let module = admitted(&buffer_module(&body));
-    assert_eq!(module.checked.as_standard_buffer().unwrap().certificate.lends[0].through, 3);
+    assert_eq!(
+        module
+            .checked
+            .as_standard_buffer()
+            .unwrap()
+            .certificate
+            .lends[0]
+            .through,
+        3
+    );
 }
 
 /// An index the lowering-visible tier cannot resolve — a value read out of a
