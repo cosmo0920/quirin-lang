@@ -59,7 +59,7 @@ elsewhere rather than passing vacuously
 than smoothed over: `docs/reports/remaining-t04/README.md` §5.1 had stated the
 **correct** diagnosis, and the remedy, waves earlier; it reached no tracker,
 and wave 36 then contradicted it — `TSAN-DIAGNOSIS-WAS-LOST-THEN-CONTRADICTED`.
-`named_followups` **171 → 174** (+4 −1; `TASK-ROUTE-TSAN-SEGV` retired against
+Gate at `dd07c480`: **4,620 passed / 0 failed / 8 ignored** over 232 result summaries, fmt and clippy clean, both probes exit 0, **135** Lean audits — all six steps 0. Run twice and both runs reported: the first exited 1 on `cargo fmt`, catching two rustfmt violations in this card's own new support module, which is the gate working; the repair is whitespace only and the whole gate was re-run rather than the one step. The test figure was identical across both runs, and no constraint-16 load-sensitive row flaked in either, despite another session's full gate sharing the machine at load ~33. `named_followups` **171 → 174** (+4 −1; `TASK-ROUTE-TSAN-SEGV` retired against
 its own discharge condition, met word for word). No Lean: no semantic surface
 moved — no checker rule, no model, no emitted byte.
 

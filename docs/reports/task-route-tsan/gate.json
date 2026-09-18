@@ -1,0 +1,44 @@
+{
+  "card": "TASK-ROUTE-TSAN",
+  "commit": "dd07c480",
+  "note": "The standing per-change gate from AGENTS.md, run from artifacts/gate.sh. Every step's exit captured to its own file with no pipe in the command, into a run-scoped directory so a re-run cannot truncate the run it confirms.",
+  "submodule_init": {
+    "exit": 0,
+    "libevent": "d82464a2"
+  },
+  "disk_free_before": "81G",
+  "concurrency": "Another session ran its own full gate on this machine for part of both runs; load average peaked near 33. No constraint-16 load-sensitive row failed in either run, so none needed isolated re-verification.",
+  "steps": {
+    "test": 0,
+    "fmt": 0,
+    "clippy": 0,
+    "probe": 0,
+    "followup": 0,
+    "lean": 0
+  },
+  "workspace_tests": {
+    "passed": 4620,
+    "failed": 0,
+    "ignored": 8,
+    "result_summaries": 232
+  },
+  "lean_audits": 135,
+  "earlier_run": {
+    "id": "gate-run3",
+    "commit": "7892d8dc",
+    "steps": {
+      "test": 0,
+      "fmt": 1,
+      "clippy": 0,
+      "probe": 0,
+      "followup": 0,
+      "lean": 0
+    },
+    "workspace_tests": {
+      "passed": 4620,
+      "failed": 0,
+      "ignored": 8
+    },
+    "note": "fmt failed on two rustfmt violations in this card's own tests/support/thread_sanitizer.rs. Fixed at dd07c480 (whitespace only, inside a cfg(linux) helper) and the WHOLE gate re-run rather than the one step, so the published figures are a single measurement of one tree."
+  }
+}

@@ -295,14 +295,40 @@ rather than left for a reader to discover.
 
 ## 6. Gate
 
-Standing per-change gate from `AGENTS.md`, run at `65ac3a26` from
-`artifacts/gate.sh`, run-scoped to a worktree-private `measure/gate-run2/` with **every step's exit
-captured to its own file and no pipe in the command**. `git submodule update
---init --recursive` was run first (exit 0, `third_party/libevent` checked out at
-`d82464a2`). `df -h .` before the run: **167 GB free**, so the full workspace
-gate rather than crate-scoped checks.
+Standing per-change gate from `AGENTS.md`, run at **`dd07c480`** from
+`artifacts/gate.sh` into a run-scoped worktree-private directory, with **every
+step's exit captured to its own file and no pipe in the command**. The
+submodule init ran first (exit 0, `third_party/libevent` at `d82464a2`).
+`df -h .` before the run: **81 GB free** — above the 60 GB threshold, so the
+full workspace gate rather than crate-scoped checks. Machine figures in
+`gate.json`.
 
-GATE_TABLE_PLACEHOLDER
+| Step | Exit | Measured |
+|---|---|---|
+| `cargo test --workspace --no-fail-fast` | **0** | **4,620 passed / 0 failed / 8 ignored**, 232 result summaries |
+| `cargo fmt --all -- --check` | **0** | clean |
+| `cargo clippy --all-targets -- -D warnings` | **0** | clean |
+| `cargo run … --example reevaluation_probe` | **0** | |
+| `cargo run … --example reevaluation_followup` | **0** | |
+| `python3 scripts/check_lean_audits.py` | **0** | **135** audits passed |
+
+### 6.0 Two runs, and the first one caught something
+
+The gate was run **twice**, and the first run is reported rather than
+discarded. At `7892d8dc` every step was 0 **except `cargo fmt --all -- --check`,
+which exited 1** — on two rustfmt violations in this card's own new
+`tests/support/thread_sanitizer.rs`. That is the gate doing its job on this
+card, so it is recorded here and in `gate.json`'s `earlier_run` rather than
+quietly fixed. The repair (`dd07c480`) is whitespace only, inside a
+`#[cfg(target_os = "linux")]` helper, and the **whole gate was re-run** rather
+than the one step — so the table above is a single measurement of a single
+tree, not a splice of two.
+
+The test figure was **identical across both runs** (4,620 / 0 / 8), which is
+itself worth recording: none of constraint 16's five load-sensitive rows flaked
+in either run, *despite* another session running its own full gate on this
+machine for part of both (load average peaked near 33). No row needed isolated
+re-verification, and none is claimed to have had one.
 
 ### 6.1 The zero-byte-change check, run rather than argued
 
