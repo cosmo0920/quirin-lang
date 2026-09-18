@@ -37,7 +37,7 @@ merge. The migration report maps original line ranges to the new pages.
 
 | Wave | Records |
 |---|---|
-| 40 | [Wave 40 records](wave-40.md) |
+| 40 | [Wave 40 records](wave-40.md) · [compaction checkpoints](wave-40-compaction-checkpoints.md) |
 | 39 | [Wave 39 records](wave-39.md) |
 | 38 | [Wave 38 records](wave-38.md) |
 | 37 | [Wave 37 records](wave-37.md) |
