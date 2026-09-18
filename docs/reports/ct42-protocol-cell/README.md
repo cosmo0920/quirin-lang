@@ -204,3 +204,31 @@ failing as `['14.0.0', 121] != ['14.0.0', 122]` — this card adds an audit
 (121 → 122) and the committed matrix's `validation.lean_audits` still pins
 121. The matrix is regenerated at wave close by the integrator (constraint
 25's `section_ownership` discipline); this card may not touch it.
+
+---
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `CT42-CELL-FALLBACK-ARM-DIRECTION`
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. §3's last bullet says the two arms "unreachable for admitted
+programs" assign a fresh singleton cell in "the direction that *refuses more*
+disjointness questions than it admits". Card `STABILITY-REEVAL-3` (wave 38,
+§4) measured the opposite, and this close re-read the lines at `4f663934`:
+`crates/qcore-core/src/socket_footprint.rs:184` (`continue`, a connector the
+resolution cannot target) and `:211` (`None => acquire(entries, binding, None)`,
+an accept with nothing queued) give the binding a fresh singleton cell
+(`cell.unwrap_or(descriptor)`, `:167`), and the **unedited** T09 checker
+(`crates/qcore-core/src/disjoint_footprint.rs:714-722`) returns
+`Ok((true, …))` — *proved disjoint* — for two descriptors of distinct cells,
+refusing `SharedProtocolCell` only when the cells are equal. So the fallback
+arms **admit** disjointness for a binding whose real connector was not paired:
+the admitting direction, not the refusing one. Harmless today only because
+`check_socket_program` (`:149`) refuses first; load-bearing the moment
+`CT42-CELL-ROUTE` routes the deriver, since any disagreement between its FIFO
+pairing and `std_socket`'s peer assignment (`CT42-CELL-PENDING-PHASE`) reaches
+an arm that admits. Registered as `CT42-CELL-FALLBACK-ARM-DIRECTION`
+(`docs/reviews/r0_3/acceptance_matrix.json`), whose discharge is to make both
+arms `Err` (or prove pairing agreement with `std_socket`'s resolution) before
+any source certificate carries a derived cell; the route card's brief carries
+that line. Line numbers are as measured at `4f663934`; this note archives no
+new run and changes no code.

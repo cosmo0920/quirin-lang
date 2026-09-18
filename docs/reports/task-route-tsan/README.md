@@ -478,3 +478,39 @@ worker sitting directly on `start_thread`) rather than by proof.
    written as prose. Whether to widen it is a decision for the close; this card
    records the instance and the cost rather than proposing a tool change it did
    not measure.
+
+---
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES`
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. Two sentences of it are narrower than they read, measured by card
+`STABILITY-REEVAL-3` (wave 38, §2.4) and re-read by this close at `4f663934`.
+
+1. **"TSan reports two races" (§4.1).** The committed harness runs under
+   `TSAN_OPTIONS=halt_on_error=1` (`tests/support/thread_sanitizer.rs:183`) and
+   `removing_the_join_edge_…` asserts *at least one* race, so what the archived
+   test measures is "a race is reported, and the run halts at the first"; the
+   count of **two** is what the card's own un-halted run saw and is not what
+   the test checks. The sentence stands as the card's observation; the row's
+   claim is the weaker one.
+2. **"CT46's emitted crossing" (§4's table and §5).** The row runs
+   `fork_join_trace()` (`crates/qcore-core/tests/unit/mutex_c_emit.rs:843`), a
+   hand-built `MutexInvariantProgram` used only inside that unit file; nothing
+   asserts its events equal the lowering of
+   `compiler/tests/fixtures/ct/CT46/case.qcore` that `ct_corpus.rs`'s
+   `run_mutex_crossing` executes. The row is evidence about a **CT46-shaped
+   twin**. Likewise the first subject, `DISJOINT_EXERCISE`
+   (`compiler/tests/task_route_tsan.rs:65`), is the std.logger twin duplicated
+   verbatim from `write_lend_tasks_exercise.rs:45` with nothing asserting the
+   two literals stay equal, and `fixtures/ct/CT07/case.qcore` has no TSan row.
+
+None of this makes a row vacuous — each is green about the program it runs —
+but the boundary between "the row" and "the case" is a name, not a test.
+Registered as `TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES`; its discharge (CT07's
+fixture among the subjects; a test equating `fork_join_trace().events` with
+CT46's lowered events, or both reports reworded beside them; one shared
+`DISJOINT_EXERCISE` fixture; the "two races" sentence corrected or a
+`halt_on_error=0` run archived) is material for the queued `TSAN-ROWS-2`
+card. This note corrects the reading; it archives no new run and changes no
+code.

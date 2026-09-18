@@ -165,8 +165,9 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**229** entries after `STABILITY-REEVAL-3` (wave 38; 215 at the wave-37
-close). Which card registered or retired which name,
+**228** entries after the wave-38 close (229 after `STABILITY-REEVAL-3`, 215
+at the wave-37 close; the close registered two and retired three, each named
+in `docs/reports/wave38-close/README.md`). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
 paragraphs; the retirement discipline itself is a standing rule in `CLAUDE.md`,
 and each close's own record carries that close's arithmetic. The operative rule
@@ -1864,7 +1865,12 @@ there and put the total at thirteen until wave 37**, a universal its own
 constraint. The totals above are re-derived from this paragraph's own
 enumeration plus those two rows, and nothing derives them mechanically
 (`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`). The icebox has now held for twelve
-waves without a card needing a range.
+waves without a card needing a range. **Re-affirmed on 2026-09-18 for wave 39
+— an integrator-recorded decision, carried as still open (re-affirmed, not
+resolved) in the wave-38 close's deferred decisions:** condition extensions
+only; no card allocates a new `Q` code, including the aggregate-custody card,
+which widens the existing `StandardBuffer` and `Ownership` bands with each
+widening stated in §L21.
 
 | Codes | Owning pass | Meaning |
 |---|---|---|

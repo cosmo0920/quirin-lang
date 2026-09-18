@@ -202,7 +202,13 @@ the operational guidance that is in neither of those.
   done and is carried by `MUTATION-HARNESS-MTIME-RESTORE` itself.
 - Delegated cards work in isolated worktrees, merge one at a time under the
   failure-gated chain discipline, and close with a per-card report under
-  `docs/reports/<card>/README.md`.
+  `docs/reports/<card>/README.md`. **A mutation count is cited in a report
+  only with its script and its per-mutation log in that report directory**;
+  a count whose harness lives under `measure/` or `private/` is written as
+  *measured once, harness not shipped*, and a later close publishes that
+  restatement beside the report rather than editing it
+  (`W36-W37-MUTATION-HARNESSES-UNSHIPPED`, restated for four wave-36/37
+  cards by the wave-38 close).
 - **A delegated card never advances `main`, and since wave 36 a mechanism says
   so.** The instruction alone failed once: a wave-33 measurement card ran
   `git -C <main checkout> merge` and put its own commit on `main` as a bare

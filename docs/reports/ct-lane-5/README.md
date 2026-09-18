@@ -574,3 +574,22 @@ or a decision only the integrator can take.
     `compiler/tests/fixtures/ct/` outside `ct_corpus.rs` is either listed in one
     place or refused — small, and a close-rule or test-level check rather than a
     card.
+
+---
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `mutations.json`, and the §2.4 harness
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. §2.4 cites "`measure/ct-lane-5/mutate.py`; results in
+`mutations.json`". This directory holds no `mutations.json`: the seven results
+are the `mutations` key of `ct_stage_evidence.json` (line 237 at `4f663934`),
+so the citation names the wrong file; and `measure/` is a gitignored,
+worktree-private path, so the harness is not in the tree (`ls` at `4f663934`:
+`README.md`, `ct_stage_evidence.json`, `gate.json`). The seven-of-seven count
+is therefore **measured once by the card, harness not shipped** — a later
+reader can re-derive each mutation from the table's description but cannot
+re-run the card's script. Recorded under
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED` (card `STABILITY-REEVAL-3`, wave 38);
+the card-report convention in `CLAUDE.md` now says a mutation count is cited
+only with its script and its per-mutation log in the report directory. This
+note changes no code and re-runs nothing.

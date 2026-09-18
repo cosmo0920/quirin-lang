@@ -571,3 +571,18 @@ branch (marked **applied here**) or a decision only you can take.
    274 Python tests pass.
 10. **No `gate.json` claim beyond §9.** The card's own counts are in §9; the
    wave close should re-measure at the integration tip rather than carry mine.
+
+---
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §8 harness
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. §8's `private/mutate.py` (eleven mutations, ten caught, M5d's
+survival expected and asserted) is worktree-private and not in the tree; the
+directory holds `README.md` and `gate.json` (`ls` at `4f663934`), and the
+table names no catching test per row. The count is therefore **measured once
+by the card, harness not shipped**. Recorded under
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED` (card `STABILITY-REEVAL-3`, wave 38);
+the card-report convention in `CLAUDE.md` now says a mutation count is cited
+only with its script and its per-mutation log in the report directory. This
+note changes no code and re-runs nothing.
