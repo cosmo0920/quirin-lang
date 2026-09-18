@@ -1,5 +1,5 @@
    Compiling qcore-compiler v0.4.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad35af03690b9af3d/compiler)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.12s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.10s
      Running tests/task_route_tsan.rs (target/debug/deps/task_route_tsan-fe5701d2c006b5dc)
 
 running 1 test
@@ -9,11 +9,11 @@ failures:
 
 ---- overlapping_writers_are_reported_under_every_schedule stdout ----
 
-thread 'overlapping_writers_are_reported_under_every_schedule' (805634) panicked at compiler/tests/task_route_tsan.rs:631:13:
-ct07-case under forced-together: the overlapping writers should be reported:
-QCORE_FORCED start 1
+thread 'overlapping_writers_are_reported_under_every_schedule' (944761) panicked at compiler/tests/task_route_tsan.rs:638:13:
+ct07-case under forced-reverse: the overlapping writers should be reported:
 QCORE_FORCED start 2
 QCORE_FORCED leave 2
+QCORE_FORCED start 1
 QCORE_FORCED leave 1
 
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
@@ -22,6 +22,6 @@ note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 failures:
     overlapping_writers_are_reported_under_every_schedule
 
-test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 1.19s
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.84s
 
 error: test failed, to rerun pass `-p qcore-compiler --test task_route_tsan`

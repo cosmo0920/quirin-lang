@@ -1,6 +1,6 @@
 # `TSAN-ROWS-2` — contention-forcing ThreadSanitizer schedules on the task route, and the CT46 decision (wave 39)
 
-Base: `main` at `e878b362`. Linux arm only (Ubuntu clang 21.1.8 / glibc 2.43 /
+Base: `main` at `e878b362`; gate at `ae73b5f9` (§7). Linux arm only (Ubuntu clang 21.1.8 / glibc 2.43 /
 x86-64); no Windows or Apple claim is made anywhere in this card
 (`TASK-ROUTE-TSAN-WINDOWS-APPLE-RUN` stays).
 
@@ -193,9 +193,9 @@ under reverse deterministically, since the released worker's pre-body
 acquire always follows the finished worker's post-write release; under
 together whenever the second worker's pre-body acquire lands after the
 first's post-write lock cycles. Which of the two the test reaches first
-varies (`artifacts/hook_visible_to_tsan.log` is the archived run, a together
-miss; the run before it missed under reverse), and the test stops at the first
-schedule that misses. Re-instrumenting **alone** (`hook_instrumented_only`)
+varies (`artifacts/hook_visible_to_tsan.log` is the archived run, a reverse
+miss; of the two sweeps before it one missed under together and one under
+reverse), and the test stops at the first schedule that misses. Re-instrumenting **alone** (`hook_instrumented_only`)
 is timing-dependent and weak: it produced a reverse miss once, in the card's
 very first sweep, whose log was not kept, and **0 of 5** in the archived
 sweep (`artifacts/hook_instrumented_only.count`) — so no claim rests on it;
@@ -354,7 +354,26 @@ an amendment if the entry is kept rather than retired):
 
 ## 7. Gate
 
-*(filled at the gate commit — see `gate.json` beside this file and `gate/`)*
+The standing per-change gate from `AGENTS.md`, run **detached** from
+`scripts/gate.sh` (`setsid -f`, no `trap '' TERM`; every step's exit in its
+own file, no pipe) at **`ae73b5f9`** — the commit carrying every code change
+of this card — into worktree-private `private/tsan-rows-2/gate/`, the exit
+files and recordings copied to `gate/` beside `gate.json`, which
+`scripts/gatejson.py` derives from those files (no figure typed). `df -h`
+before launch: 208 GB free. 07:51:25Z → 08:22:39Z (31 min under four sibling
+worktrees' builds).
+
+| Step | Exit | Figure |
+|---|---|---|
+| `cargo test --workspace --no-fail-fast` | 0 | **4,645 passed / 0 failed / 10 ignored** over 234 result summaries; `test result: FAILED` 0 times, so no constraint-16 row needed isolated re-verification and none is claimed |
+| `cargo fmt --all -- --check` | 0 (post-fix re-check 0) | clean |
+| `cargo clippy --all-targets -- -D warnings` | **101**, then **0** | **deliberately reported**: one `clippy::type_complexity` lint on this card's own repaired test (`write_lend_tasks_exercise.rs`), fixed by a local `type` alias moving no behaviour — the file's 16 tests re-run green (`gate/wlt-post.exit`) — and the whole workspace clippy re-run 0 (`gate/clippy-post.exit`), fmt re-checked 0 (`gate/fmt-post.exit`). The `cargo test` figure is the detached run's; it compiled and ran the same test file before the alias existed |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | — |
+| `check_lean_audits.py` | 0 | **137** Lean audits, under the required `lean_audits` key, checked by the generator against `proof/Audit*.lean` |
+| Python suite | **1**, then **0** | the detached run's one failure was `CommittedMatrixIsSelfConsistent::test_each_derived_dimension_matches_the_section_it_counts` (`228 != 231`) — the tracker edited and not yet regenerated, `D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire doing its job, the identical shape the wave-36/37/38 closes recorded. Regenerated with `--gate docs/reports/tsan-rows-2/gate.json` (`gate/regen.exit`, `gate/regen-final.exit` 0), then **303 OK** (`gate/python-post.exit`, `gate/python-final.exit` 0) |
+| `clang --version` | 0 | `present: Ubuntu clang version 21.1.8 (6ubuntu1)`, recorded in `gate/clang-version.txt` and checked by the generator |
+
+Provider **122 carried, not re-measured**: `git diff --name-only e878b362 HEAD -- providers/ crates/qcore-schemas/` is empty (the builder refuses to write otherwise) and `qcore-schemas` is still 14.0.0. Deltas against the wave-38 close's 4,639 / 9 ignored / 303 / 137: **+6 passed** (the six new tests of §4.4's table), **+1 ignored** (the measurement harness), Python +0, Lean +0. Emission diff (`git diff --stat e878b362 -- crates/qcore-core/src compiler/src examples`): **empty**. Nothing is promoted.
 
 ## 8. Residuals and retirements
 

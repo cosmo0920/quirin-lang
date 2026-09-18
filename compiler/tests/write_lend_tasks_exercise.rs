@@ -813,7 +813,8 @@ fn thread_sanitizer_cannot_run_this_routes_programs_lease_or_not() {
         assert!(wrapped.contains(&c));
         wrapped
     };
-    let bound: [(&str, &CompiledModule, &dyn Fn(String) -> String); 2] = [
+    type Prepare<'a> = &'a dyn Fn(String) -> String;
+    let bound: [(&str, &CompiledModule, Prepare); 2] = [
         ("tsan-bound", &exercised_module, &as_emitted),
         ("tsan-bound-plain", &lease_free_module, &in_sink),
     ];
