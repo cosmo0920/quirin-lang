@@ -1,0 +1,12 @@
+# generator arms, 2026-09-18T06:19:36Z, build_matrix.py sha256 4a357a03922269edf2547ca80810312eee5d51486d82ff9de7fe707031dc00b9
+M1 the required-checked-keys refusal never fires: RED (as required); failing tests: test_a_gate_file_lacking_clang_is_refused test_a_gate_file_lacking_lean_audits_is_refused
+M2 a clang claim is never compared with its recording: RED (as required); failing tests: test_a_clang_claim_disagreeing_with_its_recording_is_refused
+M3 a missing clang recording is not refused: RED (as required); failing tests: test_a_clang_claim_with_no_recording_beside_it_is_refused
+M4 the presence claim is not checked against the recorded exit: RED (as required); failing tests: test_a_clang_presence_claim_contradicted_by_the_recorded_exit_is_refused
+M5 any clang value is accepted as a presence claim: RED (as required); failing tests: test_a_clang_value_that_is_not_a_presence_claim_is_refused
+M6 (wave-37 arm re-confirmed) the lean count is never compared with disk: RED (as required); failing tests: test_a_recorded_lean_count_that_disagrees_with_the_files_on_disk_is_refused
+# restored: build_matrix.py sha256 4a357a03922269edf2547ca80810312eee5d51486d82ff9de7fe707031dc00b9 (equal); 6/6 as required
+# f02 agreement test, 2026-09-18T06:20:57Z, windows_threads.rs sha256 3dfabb8cfe7257315dfeb981f920add77efd88558c26120531f2027fdc6aa4cd
+F0 at the committed literals (--include-ignored): RED (RED is the finding); failing tests: the_windows_f02_pins_agree_with_the_linux_ones
+F1 both Windows literals TEMPORARILY set to the Linux pair (never committed): GREEN (as required); failing tests: -
+# restored: windows_threads.rs sha256 3dfabb8cfe7257315dfeb981f920add77efd88558c26120531f2027fdc6aa4cd (equal)

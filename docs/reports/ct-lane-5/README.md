@@ -575,8 +575,6 @@ or a decision only the integrator can take.
     place or refused — small, and a close-rule or test-level check rather than a
     card.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `mutations.json`, and the §2.4 harness
 
 Appended, not edited (constraint 21): every line above the rule is the frozen

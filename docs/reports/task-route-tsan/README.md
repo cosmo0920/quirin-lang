@@ -479,8 +479,6 @@ worker sitting directly on `start_thread`) rather than by proof.
    records the instance and the cost rather than proposing a tool change it did
    not measure.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `TSAN-SUBJECTS-ARE-TWINS-NOT-FIXTURES`
 
 Appended, not edited (constraint 21): every line above the rule is the frozen

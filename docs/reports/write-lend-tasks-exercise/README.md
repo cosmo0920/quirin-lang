@@ -572,8 +572,6 @@ branch (marked **applied here**) or a decision only you can take.
 10. **No `gate.json` claim beyond §9.** The card's own counts are in §9; the
    wave close should re-measure at the integration tip rather than carry mine.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §8 harness
 
 Appended, not edited (constraint 21): every line above the rule is the frozen

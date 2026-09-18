@@ -448,8 +448,6 @@ Raw logs stay worktree-private under `measure/` per `CLAUDE.md`'s hygiene rule.
     publish, and adding one would create a second copy of the same bytes for a
     later card to reconcile. The reproduction commands in §11 regenerate it.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §7 harness
 
 Appended, not edited (constraint 21): every line above the rule is the frozen

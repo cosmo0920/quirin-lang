@@ -562,8 +562,6 @@ Untouched by this card and still open: `MUTEX-SHARE-CROSS-MULTI`,
    sequential, task, epoch, socket, event and HTTP routes have the same gap is
    **not measured by this card** and I make no claim about them.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §4 mutations
 
 Appended, not edited (constraint 21): every line above the rule is the frozen

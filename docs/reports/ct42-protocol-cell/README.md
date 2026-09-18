@@ -205,8 +205,6 @@ failing as `['14.0.0', 121] != ['14.0.0', 122]` — this card adds an audit
 121. The matrix is regenerated at wave close by the integrator (constraint
 25's `section_ownership` discipline); this card may not touch it.
 
----
-
 ## Published beside by `WAVE-38-CLOSE` (2026-09-18) — `CT42-CELL-FALLBACK-ARM-DIRECTION`
 
 Appended, not edited (constraint 21): every line above the rule is the frozen
