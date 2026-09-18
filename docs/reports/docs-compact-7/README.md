@@ -147,9 +147,34 @@ Against the rebase base `2caf7369`.
 
 | File | before | after | Δ | % |
 |---|---|---|---|---|
-| `AGENTS.md` | 173,199 | *see §6* | | |
+| `AGENTS.md` | 173,199 | 164,024 | **−9,175** | **−5.30%** |
 | `CLAUDE.md` | 22,170 | 22,999 | +829 | +3.74% |
 | `README.md` | 11,970 | 13,178 | +1,208 | +10.09% |
+| **total** | **207,339** | **200,201** | **−7,138** | **−3.44%** |
+
+### 3.0 The split
+
+| | compaction | correction / preservation |
+|---|---|---|
+| `AGENTS.md` | **−10,673** (headline −544, the three ledger rows −8,814, merged gate −427, count paragraph −854, constraint 23 −34) | **+1,498** (Q-space +895, gate-section paragraph +593, submodule +23, load-row count −5, constraint 25 −9) |
+| `CLAUDE.md` | +80 | +748 |
+| `README.md` | 0 | +1,208 |
+| **total** | **−10,593** | **+3,454** |
+
+`AGENTS.md`'s compaction alone is **−6.16%** of the file and its net change is
+**−5.30%**, inside the single-digit range the cadence rule expects. Across the
+three files the compaction removes **10,593 bytes of narrative** and the
+corrections add **3,454**, net **−7,138 (−3.44%)**. Corrections are itemised
+below with their sources so the integrator can judge each on its own, and split
+off cleanly if the answer is that correction work does not belong to this
+cadence.
+
+The wave added **16,452 bytes** to `AGENTS.md` and **4,503** to `CLAUDE.md`
+between this card's two bases. This pass returns 9,175 of the former — so the
+file ends the wave larger than it began it, which is the cadence rule working as
+written: it bounds accretion of narrative, it does not promise a shrinking file,
+and the constraint text the wave added is rule content that this card does not
+touch.
 
 ### 3.1 Every edit, line by line
 
@@ -158,7 +183,7 @@ Against the rebase base `2caf7369`.
 | 1 | `AGENTS.md` headline paragraph | −544 | compaction | Per-link prose dropped; the **chain list is preserved in full** (12 links, newest first), as are the byte-identity rule, the archiving-tool assertion and the two-coordinates sentence. The two link *kinds* the wave introduced — declarative and zero-movement — are kept as definitions rather than as three retellings. **Corrects** "those seven" against a list of twelve, and states that **eleven** of the twelve published an archive (`joined-provenance-round-bound` published none, having moved nothing), which the old text's count could not express. |
 | 2 | `AGENTS.md` *Cycle 19* + *CT* + *Contract corpus* rows | −8,814 | compaction + correction | The per-arbiter delta narrative (waves 31–37) and the waves-28-to-37 mapping chronicle removed — each already a paraphrase of two other authorities the rows themselves named. Kept: every current count, the leak pin's pointer to constraint 7, the coverage boundaries, `input_chunk_get`, the proof-leg method, `PROOF_GATED_CASES`, constraint 21's supersession rule, the four unmapped cases' current grounds, both contract pins and the declaration-choosing method. **Three corrections inside**, §4.2–§4.4. |
 | 3 | `AGENTS.md` follow-on count paragraph | −854 | compaction + correction | The per-merge changelog removed to the increment records. **Corrects** a live internal inconsistency: the paragraph opened "**213** entries at the wave-36 close" and then derived "171 → 189 → 190 → **187**" — 213 is the current figure, 187 was the close's, and 26 entries had been added since without the chain being updated. The operative rule is kept in full, and the `171 != 187` tripwire the close hit is kept as the reason the rule exists. |
-| 4 | `AGENTS.md` *Merged gate* row | §6 | compaction + correction | §1.1 and §6. |
+| 4 | `AGENTS.md` *Merged gate* row | −427 | compaction + correction | The three-wave host-row narrative and the "prior figures, for the delta only" list removed to history. **Corrects** the 137-Lean-audits-attributed-to-a-close-that-measured-135 defect (§1.1) by replacing every figure with one this card measured in a single run (§6). The row's boundaries are kept and a fourth added. |
 | 5 | `AGENTS.md` constraint 23 | −34 | compaction | §2.2. |
 | 6 | `AGENTS.md` constraint 25 | −9 | correction | §2.3. |
 | 7 | `AGENTS.md` gate section, submodule comment | +23 | correction | "once per checkout" is false for a delegated worktree, which is a fresh checkout every time; the doc half of `WORKTREE-SUBMODULE-UNGATED`. |
@@ -327,7 +352,60 @@ with its own report directory. The other two are both **correctly** absent:
 
 ## 6. The merged-gate row, and this card's gate
 
-*(filled in below)*
+No wave-37 close exists yet, and the row as found carried the wave-36 close's
+figures — which are behind the tip by six merges, and one of which (§1.1)
+disagreed with its own named source. This card therefore **ran the full standing
+gate itself** at `2caf7369` with its own documentation-only commits on top, and
+the row now carries that single measurement, every figure of it produced by the
+same run. Disk 256 GB free at start, so nothing was skipped for space; output
+scoped to `measure/rebase-gate/` rather than to fixed paths, per the hygiene rule
+this wave added; no `trap '' TERM` in the wrapper, which the wave-36 close
+measured turns signal-handling rows red.
+
+**All eight steps exit 0.** 01:50:02Z → 02:04:26Z; `cargo test` 14m24s.
+
+| Step | Exit | Result |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | `third_party/libevent` at the pinned revision |
+| `cargo test --workspace --no-fail-fast` | 0 | **4,637 passed / 0 failed / 8 ignored**, 233 result summaries over 231 test targets (222 `Running` + 9 doc-test sections), 0 `FAILED` summaries |
+| `cargo fmt --all -- --check` | 0 | clean |
+| `cargo clippy --all-targets -- -D warnings` | 0 | clean |
+| `reevaluation_probe` | 0 | |
+| `reevaluation_followup` | 0 | |
+| `scripts/check_lean_audits.py` | 0 | **Passed 137 Lean audits** |
+| `python3 -m unittest discover -s scripts/tests` | 0 | **Ran 293 tests … OK** |
+
+233 summaries over 231 targets because two doc-test sections print two summaries
+each — the wave-36 close's own accounting, independently reproduced here.
+
+The matrix's `named_followups` was appended to before the gate started and the
+generator re-run, so `dimensions` and the section agree (216/216); the Python
+suite and the two committed-matrix modules were **re-run afterwards** in any
+case — 293 tests OK, and 81 tests OK across
+`test_build_matrix_sections` + `test_reconciliation_sweep`. No `.rs` file in the
+tree mentions `acceptance_matrix`, so `cargo test` does not depend on it.
+
+### 6.1 Which load-sensitive rows this gate saw
+
+Constraint 16 requires a gate report to **state which it saw**. Every row of it
+that lives in this workspace was **green**:
+`a_declared_process_limit_stops_the_fixture_from_forking`,
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets`, the confined-fixture
+write test,
+`enforced_process_limits::memory_growth_beyond_the_declared_limit_is_bounded`,
+`closed_input_does_not_mask_descendant_timeout_or_accept_a_partial_request`, and
+the **unnamed seventh** `a_forced_override_never_weakens_an_execution` that the
+wave-36 close recorded (`LOAD-SENSITIVE-ROW-UNNAMED`).
+`real_packages_preserve_unknown_and_reject_mutations` lives in the separate
+`providers/` workspace and was not measured here.
+
+This is a full-suite run on a machine carrying its own build. It is **not** the
+quiet-host isolated number `HOST-ROW-STARVATION-DESCRIPTION` still asks for, and
+is not offered as one.
+
+Since this card changed no Rust, no `proof/` and no frozen archive, these numbers
+are **not evidence about a code change**; they are the wave-37 tip's current
+state, measured because the row was carrying an older close's.
 
 ---
 
@@ -403,7 +481,38 @@ explicitly still open.
 
 ## 8. Verbatim moves into `docs/development/`
 
-*(listed below, with the gate row)*
+Seven blocks, **25,038 bytes**, moved verbatim into
+`docs/development/increments/wave-37.md` under a heading that labels them
+checkpoints and states in terms that they are **not** a second current rule
+authority:
+
+| # | block | bytes |
+|---|---|---|
+| 1 | the headline paragraph (arbiter chain) at `2caf7369` | 2,872 |
+| 2 | the *Cycle 19 raw corpus* row | 9,203 |
+| 3 | the *CT01–CT50 conformance* row | 6,252 |
+| 4 | the *Contract corpus* row | 1,465 |
+| 5 | the *Merged gate* row | 2,794 |
+| 6 | the follow-on count paragraph | 1,613 |
+| 7 | `CLAUDE.md`'s dated cadence roster and `STABILITY-REEVAL` pointer | 412 |
+
+Block 7 is the one whose content lived **only** in the file being compacted: the
+six firing dates appear nowhere else in the tree. Blocks 1–6 are paraphrases of
+material that also lives in the arbiters' and lanes' reports and in the wave
+records; they are moved anyway, because the brief asks for it and because a
+verbatim checkpoint costs less than an argument about whether a paraphrase was
+unique. Three of them carried a statement that was **false when superseded** —
+the chain length, CT46's stage rows, and the count paragraph's own derivation —
+and that is recorded in §4 rather than repaired inside the checkpoint, which
+would defeat the point of a verbatim copy.
+
+**One boundary to flag.** `wave-37.md` is now **58,922 bytes**, against the
+retrieval guidance that new history pages "stay below 32 KiB *where a complete
+record boundary permits it*". It does not permit it here: the page already held
+24,550 bytes of this wave's six card records before this card added its own
+paragraph and these checkpoints, and a wave's records belong on the wave's page.
+Splitting the checkpoint appendix onto its own page is a reasonable call, but it
+is the close's to make, not this card's.
 
 ---
 
@@ -451,4 +560,10 @@ dangling citation either.
 
 ## 11. Gate
 
-*(see §6)*
+Full standing per-change gate at `2caf7369`, **all eight steps exit 0** — §6 for
+the table, §6.1 for the load-sensitive rows this run saw.
+`docs/reports/docs-compact-7/gate.json` carries the per-command exits.
+
+**+0 reserved words, +0 tokens, +0 `Q` codes.** This card engages constraint 14
+not at all — that constraint is byte-identical across it — and allocates nothing
+in the `Q` space; it only *counts* the allocations others made (§4.1).
