@@ -1,0 +1,7 @@
+stage=after2 exit=0 seconds=263.6
+      131734  audit.log
+     1663934  monkey-source.json
+     4186178  resource-diagnostics.chunk-contracts.json
+      183138  resource-diagnostics.contracts.json
+    13830567  resource-diagnostics.json
+      118505  resource-diagnostics.source-effects.json

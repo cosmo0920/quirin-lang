@@ -1,0 +1,196 @@
+module contract;
+
+// mpack writer primitives — resource-projection vocabulary version 1.
+//
+// Card W37-CORPUS-CONTRACTS-4. FOUR TRUSTED ASSUMPTIONS about four upstream
+// functions. This module verifies nothing: the C bodies are not analyzed by
+// this loader, and a declaration is a premise. Any verdict that rests on one is
+// a verdict RELATIVE TO this declaration, never a proof of the C.
+//
+// Read from the pinned checkout (`build/cycle19/c-gateway-wave-pin/
+// fluent-bit-clang-source`) at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## This is a NEW contract family, and it is NOT `msgpack/`
+//
+// `contract/qcore/msgpack/packer.qcore` declares `msgpack_packer_init` of
+// **msgpack-c**. The functions below belong to **mpack**, a different library
+// with a different API (`mpack_writer_t` vs `msgpack_packer`). The two are
+// vendored side by side in this tree and share only a naming resemblance, so
+// they get separate families; merging them would be a naming error, not a
+// tidy-up. `W37-MPACK-FAMILY-FIRST` records that the directory name and its
+// manifest position are this card's choice alone.
+//
+// ## Four vendored copies, and why that is NOT the `ADD-NAME-COLLISION` case
+//
+// A resource contract is keyed by NAME, so a name with several definitions in
+// the tree is a hazard — card W36-CORPUS-CONTRACTS-3 declined `add` for exactly
+// that reason (three definitions, three DIFFERENT signatures, one of them
+// `static inline` with no header declaration at all).
+//
+// Each of the four names below has **four** definitions, and the four were
+// compared rather than assumed:
+//
+//     lib/mpack-amalgamation-1.1.1/src/mpack/mpack.c   i64:1988 double:2038 str:2202 cstr:2279
+//     lib/cmetrics/lib/mpack/src/mpack/mpack.c         i64:1774 double:1816 str:1968 cstr:2045
+//     lib/ctraces/lib/mpack/src/mpack/mpack.c          i64:1774 double:1816 str:1968 cstr:2045
+//     lib/cprofiles/lib/mpack/src/mpack/mpack.c        i64:1774 double:1816 str:1968 cstr:2045
+//
+// and all four copies spell each signature IDENTICALLY, character for
+// character, with external linkage and a matching header prototype in each
+// copy's own `mpack.h`. These are four vendored copies of ONE library at one
+// version, not four different functions sharing a name. A declaration true of
+// all four is therefore not the `add` error: the distinction that matters is
+// not "how many definitions" but "do they agree", and here they do — measured.
+//
+// ## Why these callees
+//
+// Chosen by FUNCTION-COVER yield over the baseline's 163 projected functions
+// whose only refusals are `call to uncontracted function` leaves. Each of the
+// four is the SOLE blocker of exactly one projected function:
+//
+//   * `mpack_write_cstr`  -> `pack_cmetrics_type`
+//                            (`lib/cmetrics/src/cmt_encode_cloudwatch_emf.c:93-118`,
+//                             eight leaves, one per call)
+//   * `mpack_write_double`-> `pack_double` (`lib/ctraces/src/ctr_encode_msgpack.c:45-48`)
+//   * `mpack_write_i64`   -> `pack_int64`  (`lib/ctraces/src/ctr_encode_msgpack.c:40-43`)
+//   * `mpack_write_str`   -> `pack_string` (`lib/ctraces/src/ctr_encode_msgpack.c:35-38`)
+//
+// ## The bodies, read before declaring
+//
+// `mpack_write_double` (cmetrics copy, `mpack.c:1816-1819`) is the whole shape:
+//
+//     void mpack_write_double(mpack_writer_t* writer, double value) {
+//         mpack_writer_track_element(writer);
+//         MPACK_WRITE_ENCODED(mpack_encode_double, MPACK_TAG_SIZE_DOUBLE, value);
+//     }
+//
+// `mpack_write_i64` (`:1774`) is the same with an integer encoding and a
+// size-optimised delegation to `mpack_write_u64` for values above 127.
+//
+// `mpack_write_str` (`:1968`) writes a length tag and then copies `count`
+// bytes out of `data` into the writer's buffer (`mpack_memcpy(p + ..., data,
+// count)`), growing that buffer through `mpack_writer_ensure` when needed.
+//
+// `mpack_write_cstr` (`:2045-2051`):
+//
+//     void mpack_write_cstr(mpack_writer_t* writer, const char* cstr) {
+//         mpack_assert(cstr != NULL, "cstr pointer is NULL");
+//         size_t length = mpack_strlen(cstr);
+//         if (length > UINT32_MAX)
+//             mpack_writer_flag_error(writer, mpack_error_invalid);
+//         mpack_write_str(writer, cstr, (uint32_t)length);
+//     }
+//
+//   * `writer` is the output context. Every one of the four READS and WRITES
+//     THROUGH it and none of them frees it, stores it anywhere that outlives
+//     the call, or transfers it. The caller's obligation — to
+//     `mpack_writer_destroy` the writer it initialised — is exactly what it was
+//     before the call, which is what `resource_borrowed` says.
+//   * `data`/`cstr` are `const char *`. They are read (`mpack_strlen`,
+//     `mpack_memcpy`) and never freed, never stored, never returned. Borrowed.
+//   * `value`/`count` are scalars passed BY VALUE. They are not pointers, carry
+//     no custody, and are declared borrowed for the same reason `mk_print`'s
+//     `level` is.
+//   * every result is `void`, so `resource_return_none()` is the faithful — and
+//     the only faithful — result mode.
+//
+// ## NOT CLAIMED, recorded rather than hidden
+//
+//   * **The writer's INTERNAL buffer may be reallocated.** Under
+//     `mpack_writer_init_growable` the flush callback reallocs
+//     `writer->buffer`, so a byte address inside the writer is not stable
+//     across these calls. That is a fact about a FIELD of the borrowed object,
+//     not about the parameter's custody: the caller holds the `mpack_writer_t
+//     *`, that pointer is unchanged, and the caller's destroy obligation is
+//     unchanged. This projection models parameter custody only and says
+//     nothing about interior addresses (`MPACK-WRITER-INTERIOR-REALLOC`).
+//   * Nothing about the encoding being well-formed msgpack, about the writer's
+//     error flag, about whether a flush succeeded, or about `count` matching
+//     `data`'s real length. `mpack_write_str` with a `count` larger than the
+//     buffer is an upstream out-of-bounds read this declaration neither creates
+//     nor detects; a custody projection models custody.
+//   * `mpack_assert(cstr != NULL, ...)` compiles out in the pinned
+//     configuration, and no non-nullness is asserted here in any case: v1
+//     carries a nullability marker only on a RELEASED parameter, and nothing
+//     below releases anything.
+//   * Nothing about thread safety. Two threads writing one writer is a data
+//     race this projection neither models nor excludes.
+//
+// ## ABI and modes (constraint 8)
+//
+// Header prototypes (cmetrics copy, `lib/cmetrics/lib/mpack/src/mpack/mpack.h`;
+// the other three copies agree):
+//
+//     void mpack_write_i64(mpack_writer_t* writer, int64_t value);        // :2787
+//     void mpack_write_double(mpack_writer_t* writer, double value);      // :2824
+//     void mpack_write_str(mpack_writer_t* writer, const char* str,
+//                          uint32_t length);                              // :2958
+//     void mpack_write_cstr(mpack_writer_t* writer, const char* cstr);    // :2984
+//
+// `mpack_writer_t *` is one object-pointer level, `ptr<mut, u8>`; `const char
+// *` is one object-pointer level, `ptr<const, u8>`. Under the LP64 model of the
+// audited targets (`LOADER-ABI-LP64`) `int64_t` projects to `i64`, `uint32_t`
+// to `u32`, `double` to `f64`, and the `void` results to `unit`. Arities are
+// two, two, three and two, as declared.
+//
+// `mpack_write_str`'s header spells its parameters `str, length` where its
+// definition spells them `data, count`. A declaration's parameter NAMES are its
+// own — the ABI comparison is over types, pointer levels and arity — so this
+// module follows the DEFINITION's spelling, and the disagreement is recorded
+// here rather than silently resolved.
+//
+// ## Defined in no analysed unit
+//
+// None of the four mpack `.c` copies is among the 185 analysed units, so
+// constraint 8's duty gate has no derived summary to compare against and
+// nothing here can be withdrawn on a body this corpus does not define
+// ("absence of evidence is not evidence"). This was checked against the
+// baseline's own unit list, not assumed.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+// `mpack_writer_track_element`, `mpack_writer_ensure`, `mpack_write_u64`,
+// `mpack_strlen`, `mpack_memcpy`, `mpack_writer_flag_error`,
+// `mpack_start_str_notrack` and `mpack_write_native` are all named by these
+// bodies and none is declared: this card selects by function-cover yield and
+// none of them is the sole blocker of any projected function in the baseline.
+// `mpack_write_cstr_or_nil` (`:2053`) is the nullable sibling of
+// `mpack_write_cstr` and blocks nothing.
+
+// --- a NUL-terminated string written as an msgpack str ---
+extern fn mpack_write_cstr(writer: ptr<mut, u8>, cstr: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(cstr);
+    ensures normal resource_return_none();
+};
+
+// --- a counted byte range written as an msgpack str ---
+extern fn mpack_write_str(writer: ptr<mut, u8>, data: ptr<const, u8>, count: u32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(data);
+    ensures normal resource_borrowed(count);
+    ensures normal resource_return_none();
+};
+
+// --- a signed 64-bit integer written as an msgpack int ---
+extern fn mpack_write_i64(writer: ptr<mut, u8>, value: i64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+// --- a double written as an msgpack float64 ---
+extern fn mpack_write_double(writer: ptr<mut, u8>, value: f64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(writer);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};

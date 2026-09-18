@@ -20,6 +20,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // it and nothing else). Read from `lib/cfl/src/cfl_sds.c:249-275`;
     // `nullable` because the body's first statement is `if (!s) { return; }`.
     ("cfl/sds_lifetime.qcore", "cfl_sds_destroy", 3),
+    // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
+    // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
+    // the contract is `requires` + `return_none` and nothing else — the
+    // `flb_time_now` shape, whose C header is unprototyped `()` in exactly
+    // the same way, which is what settles the arity gate by precedent.
+    // Read from `lib/cfl/src/cfl_time.c:31-60`.
+    ("cfl/time.qcore", "cfl_time_now", 2),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_close", 10),
     ("chunkio/chunk_destructor.qcore", "cio_chunk_delete", 5),
     // Card NEIGHBOURS: the corpus moves 64 -> 67 modules with this file,
@@ -236,6 +243,33 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // statement reads `cmt->counters`.
     ("cmetrics/context_lifetime.qcore", "cmt_destroy", 3),
     ("cmetrics/counter_reset.qcore", "cmt_counter_allow_reset", 4),
+    // Card W37-CORPUS-CONTRACTS-4: two CMetrics metric-value accessors, each
+    // the sole blocker of one projected function (`check_staled_timestamp` and
+    // `cmt_metric_set`). Both are custody-NEUTRAL — the metric is read through
+    // or written through, never released — and both are defined in
+    // `cmt_metric.c`, an ANALYSED unit, so constraint 8's duty gate applies;
+    // the declarations are the neutral element, which a faithful summary of a
+    // body that releases nothing cannot contradict. Read from
+    // `lib/cmetrics/src/cmt_metric.c:244-251` and `:71-81`.
+    (
+        "cmetrics/metric_values.qcore",
+        "cmt_metric_get_timestamp",
+        3,
+    ),
+    ("cmetrics/metric_values.qcore", "cmt_metric_set_double", 5),
+    // Card W37-CORPUS-CONTRACTS-4: the unsigned msgpack tag reader, sole
+    // blocker of `unpack_meta_ver`. `output_buffer` is an OUT parameter, but
+    // what is written through it is a SCALAR, not a resource identity, so it
+    // is `borrowed` and not a custody `Out` — declaring `Out` would assert the
+    // caller acquires an obligation it does not acquire. Both pointer formals
+    // are NULL-guarded before any dereference, so the body has real failure
+    // paths a borrowed declaration cannot delete (constraint 4). Read from
+    // `lib/cmetrics/src/cmt_mpack_utils.c:88-113`.
+    (
+        "cmetrics/mpack_utils.qcore",
+        "cmt_mpack_consume_uint_tag",
+        4,
+    ),
     // Card W36-CORPUS-CONTRACTS-3: `cmt_destroy`'s exact sibling one library
     // over, read from `lib/ctraces/src/ctraces.c:58-71`, `nonnull` on the same
     // ground. This is the corpus's first `ctraces` contract module.
@@ -448,6 +482,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
     // nowhere, `ptr` is forwarded to the already-declared `rd_free`.
     ("librdkafka/kafka_mem.qcore", "rd_kafka_mem_free", 4),
+    // Card W37-CORPUS-CONTRACTS-4: the deprecated in-place LZ4 stream reset,
+    // sole blocker of `LZ4_resetStreamState`. ZEROING IS NOT RELEASING — the
+    // body is one `MEM_INIT` (memset) through the parameter, and the freeing
+    // neighbour `LZ4_freeStream` is a different name already decided through
+    // `kafka_mem.qcore` above. Read from
+    // `lib/librdkafka-2.15.0/src/lz4.c:1524-1528`.
+    ("librdkafka/lz4_stream.qcore", "LZ4_resetStream", 3),
     ("librdkafka/memory.qcore", "rd_malloc", 3),
     ("librdkafka/memory.qcore", "rd_calloc", 4),
     ("librdkafka/memory.qcore", "rd_strdup", 3),
@@ -462,6 +503,22 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/refcount.qcore", "rd_refcnt_add0", 4),
     ("librdkafka/refcount.qcore", "rd_refcnt_sub0", 4),
     ("librdkafka/refcount.qcore", "rd_refcnt_destroy_final", 3),
+    // Card W37-CORPUS-CONTRACTS-4: the in-place ordering of a topic-partition
+    // list — this card's HIGHEST function-cover yield at two projected
+    // functions (`..._sort_by_topic` and `..._sort_by_topic_id`). Sorting
+    // permutes an array the caller still owns whole, so all three formals are
+    // borrowed; `cmp` is `fnptr`, the spelling `msgpack/packer.qcore` already
+    // uses for `msgpack_packer_init`'s callback. Read from
+    // `lib/librdkafka-2.15.0/src/rdkafka_partition.c:3664-3674`. Its
+    // higher-yield unit-mate `rd_kafka_topic_partition_destroy0` was read and
+    // DECLINED on two grounds: `static` with no header declaration in the very
+    // unit that calls it, and a CONDITIONAL release (`if (do_free)`) whose
+    // other five sites in that unit pass 0.
+    (
+        "librdkafka/topic_partition.qcore",
+        "rd_kafka_topic_partition_list_sort",
+        5,
+    ),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_enq0", 5),
     ("librdkafka/typed_queue.qcore", "rd_kafka_q_deq0", 5),
     ("monkey/callback_binding.qcore", "binding_scope", 8),
@@ -548,6 +605,31 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/wrapper_paths.qcore", "_mk_event_wait_with_flags", 4),
     ("monkey/wrapper_paths.qcore", "_mk_event_wait_2", 5),
     ("monkey/wrapper_paths.qcore", "_mk_event_backend", 3),
+    // Card W37-CORPUS-CONTRACTS-4: the corpus's first `mpack` family, and it is
+    // NOT the `msgpack/` directly above — `msgpack_packer_init` belongs to
+    // msgpack-c, `mpack_write_*` to mpack, two different libraries vendored
+    // side by side in the audited tree that share only a naming resemblance.
+    // Each of the four is the sole blocker of exactly one projected function
+    // (`pack_cmetrics_type`, `pack_string`, `pack_int64`, `pack_double`).
+    //
+    // Each name has FOUR definitions in the tree (the amalgamation copy plus
+    // the cmetrics, ctraces and cprofiles vendored copies), which is the
+    // `ADD-NAME-COLLISION` hazard's shape but NOT its substance: all four
+    // copies spell each signature identically with external linkage and a
+    // matching header prototype, so they are four copies of one library at one
+    // version rather than four functions sharing a name. The distinction that
+    // matters is not how many definitions but whether they AGREE — compared,
+    // not assumed. None of the four `.c` copies is an analysed unit, so
+    // constraint 8's duty gate has no summary to compare against.
+    //
+    // Read from `lib/cmetrics/lib/mpack/src/mpack/mpack.c` at `:2045` (cstr),
+    // `:1968` (str), `:1774` (i64) and `:1816` (double). All custody-neutral:
+    // the writer is written through and never released, the byte sources are
+    // read and never retained, the scalars pass by value, every result `void`.
+    ("mpack/writer.qcore", "mpack_write_cstr", 4),
+    ("mpack/writer.qcore", "mpack_write_str", 5),
+    ("mpack/writer.qcore", "mpack_write_i64", 4),
+    ("mpack/writer.qcore", "mpack_write_double", 4),
     // Card ABI-TYPEDEF-ADDRESS-OF-MEMBER. Five clauses: the marker, three
     // borrowed parameters and the `unit` result. The third parameter is the
     // corpus's first `fnptr`, on which `resource_borrowed` is both the only
@@ -637,7 +719,25 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // body before it was declared; the card also read `add`, `memcpy` and
     // `memset` and deliberately did NOT land them, with the readings published
     // in `docs/reports/w36-corpus-contracts-3/README.md`.
-    assert_eq!(sources.len(), 82, "unexpected contract corpus size");
+    // 82 -> 88 by card W37-CORPUS-CONTRACTS-4's deliberate addition of six
+    // custody-NEUTRAL modules, chosen by FUNCTION-COVER yield over the 163
+    // baseline functions whose only refusals are `call to uncontracted
+    // function` leaves: `librdkafka/topic_partition.qcore`
+    // (`rd_kafka_topic_partition_list_sort`, 2 such functions),
+    // `mpack/writer.qcore` (four writer primitives, 1 function each, and the
+    // corpus's first `mpack` family — distinct from the existing `msgpack/`,
+    // which is a different library), `cmetrics/metric_values.qcore` (2),
+    // `cmetrics/mpack_utils.qcore` (1), `cfl/time.qcore` (1) and
+    // `librdkafka/lz4_stream.qcore` (1). Not one is a release: after W36
+    // harvested the release-shaped callees the remaining cover frontier is
+    // dominated by unit-internal `static` helpers a name-keyed declaration may
+    // not address at all, so the card also READ and deliberately did NOT land
+    // `rd_kafka_topic_partition_destroy0`, `rd_kafka_destroy_app`,
+    // `sds_cat_safe`, `snprintf`, `sprintf`, `XXH32`, `cmt_atomic_initialize`
+    // and the `set_result` / `otlp_kvpair_list_destroy` /
+    // `destroy_context_list` families, with every reading published in
+    // `docs/reports/w37-corpus-contracts-4/README.md`.
+    assert_eq!(sources.len(), 88, "unexpected contract corpus size");
 
     for path in sources {
         let source = fs::read_to_string(&path).expect("contract source is readable");

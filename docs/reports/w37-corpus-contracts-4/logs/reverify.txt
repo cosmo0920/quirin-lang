@@ -1,0 +1,134 @@
+cores: 16
+--- repetition 1 ---
+load:  08:42:52 up 3 days, 15:32,  1 user,  load average: 12.99, 18.67, 21.35
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 2 ---
+load:  08:42:53 up 3 days, 15:32,  1 user,  load average: 12.99, 18.67, 21.35
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 3 ---
+load:  08:42:55 up 3 days, 15:32,  1 user,  load average: 12.67, 18.51, 21.28
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 4 ---
+load:  08:42:57 up 3 days, 15:32,  1 user,  load average: 12.67, 18.51, 21.28
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 5 ---
+load:  08:42:58 up 3 days, 15:32,  1 user,  load average: 12.67, 18.51, 21.28
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 6 ---
+load:  08:43:00 up 3 days, 15:32,  1 user,  load average: 13.50, 18.59, 21.29
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 7 ---
+load:  08:43:01 up 3 days, 15:32,  1 user,  load average: 13.50, 18.59, 21.29
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 8 ---
+load:  08:43:03 up 3 days, 15:32,  1 user,  load average: 13.50, 18.59, 21.29
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 9 ---
+load:  08:43:04 up 3 days, 15:32,  1 user,  load average: 13.50, 18.59, 21.29
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 10 ---
+load:  08:43:06 up 3 days, 15:32,  1 user,  load average: 13.06, 18.41, 21.22
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.50s
+
+exit=0
+--- repetition 11 ---
+load:  08:43:08 up 3 days, 15:32,  1 user,  load average: 13.06, 18.41, 21.22
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.51s
+
+exit=0
+--- repetition 12 ---
+load:  08:43:09 up 3 days, 15:32,  1 user,  load average: 13.06, 18.41, 21.22
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running tests/enforced_process_limits.rs (target/debug/deps/enforced_process_limits-4878faf5623c23d1)
+
+running 1 test
+test a_declared_process_limit_stops_the_fixture_from_forking ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 1.51s
+
+exit=0
+ISOLATED RESULT: 12 passed, 0 failed, of 12

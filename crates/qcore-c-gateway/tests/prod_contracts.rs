@@ -869,5 +869,12 @@ fn the_modules_under_test_are_the_production_ones() {
     // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
     // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
     // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 27);
+
+    // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
+    // by function-cover yield over the 163 baseline functions blocked only by
+    // uncontracted-call leaves: `cfl/time.qcore`,
+    // `cmetrics/metric_values.qcore`, `cmetrics/mpack_utils.qcore`,
+    // `mpack/writer.qcore`, `librdkafka/lz4_stream.qcore` and
+    // `librdkafka/topic_partition.qcore`.
+    assert_eq!(contracts.source_assumptions().len(), 33);
 }

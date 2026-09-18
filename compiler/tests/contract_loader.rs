@@ -56,7 +56,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
     // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
     // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
-    assert_eq!(contracts.source_assumptions().len(), 27);
+
+    // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
+    // by function-cover yield over the 163 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
+    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
+    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
+    // none — so none can contradict a faithful derived summary.
+    assert_eq!(contracts.source_assumptions().len(), 33);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -186,6 +196,52 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // arity four. The card's other five declarations release a parameter
         // and are therefore listed below the loop rather than inside it.
         ("mk_print", 2),
+        // Card W37-CORPUS-CONTRACTS-4 adds TEN to this all-borrowed loop and
+        // NONE below it — the exact inverse of W36 above (one in the loop,
+        // five releases below), and the inversion is this card's finding
+        // rather than a coincidence: W36 harvested the release-shaped
+        // callees, and what the sole-blocker cover frontier still offered to
+        // a NAME-KEYED declaration afterwards was custody-neutral. The
+        // release-shaped candidates that remained
+        // (`rd_kafka_topic_partition_destroy0`, `rd_kafka_destroy_app`,
+        // `otlp_kvpair_list_destroy`, `destroy_context_list`) are all `static`
+        // inside the very units that call them, where W4 and not declaration
+        // is the lever; the readings are published in the card's report.
+        //
+        //   * `cfl_time_now` (`lib/cfl/src/cfl_time.c:31-60`) — ZERO
+        //     parameters, `uint64_t` result. Its C header spells `()`,
+        //     unprototyped, exactly as `flb_time_now`'s does, which is what
+        //     settles the arity gate by precedent rather than by hope.
+        //   * `cmt_metric_get_timestamp` / `cmt_metric_set_double`
+        //     (`lib/cmetrics/src/cmt_metric.c:244-251`, `:71-81`) — the metric
+        //     is read through / written through, never released. Writing
+        //     through a borrowed pointer is `msgpack_packer_init`'s position.
+        //   * `cmt_mpack_consume_uint_tag`
+        //     (`lib/cmetrics/src/cmt_mpack_utils.c:88-113`) — its OUT
+        //     parameter carries a SCALAR, not a resource identity, so it is
+        //     borrowed and not a custody `Out`.
+        //   * the four mpack writers (`lib/cmetrics/lib/mpack/src/mpack/
+        //     mpack.c:2045`, `:1968`, `:1774`, `:1816`) — four vendored copies
+        //     each, compared and found to AGREE character for character, which
+        //     is what separates them from the `ADD-NAME-COLLISION` case.
+        //   * `LZ4_resetStream` (`lib/librdkafka-2.15.0/src/lz4.c:1524-1528`)
+        //     — zeroing is not releasing; the freeing neighbour is a different
+        //     name, already decided through `rd_kafka_mem_free`.
+        //   * `rd_kafka_topic_partition_list_sort`
+        //     (`lib/librdkafka-2.15.0/src/rdkafka_partition.c:3664-3674`) —
+        //     this card's highest yield at two functions; permuting an array
+        //     the caller owns whole changes no custody, and `cmp` is an
+        //     `fnptr`, `msgpack_packer_init`'s spelling.
+        ("cfl_time_now", 0),
+        ("cmt_metric_get_timestamp", 1),
+        ("cmt_metric_set_double", 3),
+        ("cmt_mpack_consume_uint_tag", 2),
+        ("mpack_write_cstr", 2),
+        ("mpack_write_str", 3),
+        ("mpack_write_i64", 2),
+        ("mpack_write_double", 2),
+        ("LZ4_resetStream", 1),
+        ("rd_kafka_topic_partition_list_sort", 3),
     ] {
         old.insert_contract(
             name,
@@ -542,7 +598,17 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
     // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
     // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 27);
+
+    // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
+    // by function-cover yield over the 163 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
+    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
+    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
+    // none — so none can contradict a faithful derived summary.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 33);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -705,7 +771,17 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cfl/sds_lifetime.qcore`, `cmetrics/context_lifetime.qcore`,
     // `ctraces/context_lifetime.qcore`, `librdkafka/cjson.qcore`,
     // `librdkafka/kafka_mem.qcore` and `monkey/logging.qcore`.
-    assert_eq!(modules.len(), 82, "corpus module count");
+
+    // 27 -> 33 by card W37-CORPUS-CONTRACTS-4, six declarative modules chosen
+    // by function-cover yield over the 163 baseline functions blocked only by
+    // uncontracted-call leaves, each read against its own pinned body:
+    // `cfl/time.qcore`, `cmetrics/metric_values.qcore`,
+    // `cmetrics/mpack_utils.qcore`, `mpack/writer.qcore` (the corpus's first
+    // `mpack` family, distinct from `msgpack/`), `librdkafka/lz4_stream.qcore`
+    // and `librdkafka/topic_partition.qcore`. Every one of the ten
+    // declarations is the NEUTRAL ELEMENT — every formal borrowed, result
+    // none — so none can contradict a faithful derived summary.
+    assert_eq!(modules.len(), 88, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -796,11 +872,23 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `librdkafka/kafka_mem.qcore`'s `rd_kafka_mem_free` and
     // `monkey/logging.qcore`'s `mk_print` — five releases and one variadic
     // custody-neutral diagnostic sink.
-    // The rejected count is unchanged in all eleven cases, because every added
+    // 27 -> 33 and 49 -> 59 by card W37-CORPUS-CONTRACTS-4, six modules and
+    // ten declarations chosen by function-cover yield and each read against its
+    // own pinned body: `cfl/time.qcore`'s `cfl_time_now`,
+    // `cmetrics/metric_values.qcore`'s `cmt_metric_get_timestamp` and
+    // `cmt_metric_set_double`, `cmetrics/mpack_utils.qcore`'s
+    // `cmt_mpack_consume_uint_tag`, `mpack/writer.qcore`'s `mpack_write_cstr`,
+    // `mpack_write_str`, `mpack_write_i64` and `mpack_write_double`,
+    // `librdkafka/lz4_stream.qcore`'s `LZ4_resetStream` and
+    // `librdkafka/topic_partition.qcore`'s
+    // `rd_kafka_topic_partition_list_sort` — ten custody-NEUTRAL declarations,
+    // no release among them, which is the opposite balance to W36's five
+    // releases and is a fact about what the post-W36 cover frontier still held.
+    // The rejected count is unchanged in all twelve cases, because every added
     // module is entirely v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (27, 49, 145)
+        (33, 59, 145)
     );
     assert_eq!(
         load_resource_contract_manifest(&manifest())

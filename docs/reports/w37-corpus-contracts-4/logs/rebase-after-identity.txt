@@ -1,0 +1,7 @@
+diagnostics      archived=c54ad4219fa85793 rebased=c54ad4219fa85793 identical=True
+chunk-contracts  archived=c4f438e4ed3dab3c rebased=c4f438e4ed3dab3c identical=True
+source           archived=ae38f6c93dfbe341 rebased=ae38f6c93dfbe341 identical=True
+source-effects   archived=c199353eddb00e20 rebased=c199353eddb00e20 identical=True
+contracts        archived=fe945ffb298efc2b rebased=fe945ffb298efc2b identical=True
+
+ALL FIVE AFTER ARTIFACTS BYTE-IDENTICAL: True

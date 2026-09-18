@@ -1,0 +1,113 @@
+module contract;
+
+// CFL wall-clock reading — resource-projection vocabulary version 1.
+//
+// Card W37-CORPUS-CONTRACTS-4. ONE TRUSTED ASSUMPTION about one upstream
+// function. This module verifies nothing: the C body is not analyzed by this
+// loader, and a declaration is a premise.
+//
+// Read from the pinned checkout at Fluent Bit
+// 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 on this card's own run.
+//
+// ## Why this callee
+//
+// `cfl_time_now` is the SOLE blocker of one projected function, `ctr_span_end`
+// (`lib/ctraces/src/ctr_span.c:268-274`), whose single leaf is the call at
+// `:272`.
+//
+// ## The body, read from `lib/cfl/src/cfl_time.c:31-60`
+//
+//     uint64_t cfl_time_now()
+//     {
+//         struct timespec tm = {0};
+//         ...
+//     #if defined CFL_HAVE_CLOCK_GET_TIME        /* macOS */
+//         clock_serv_t cclock;
+//         mach_timespec_t mts;
+//         host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+//         clock_get_time(cclock, &mts);
+//         tm.tv_sec = mts.tv_sec;
+//         tm.tv_nsec = mts.tv_nsec;
+//         mach_port_deallocate(mach_task_self(), cclock);
+//     #elif defined CFL_HAVE_TIMESPEC_GET        /* C11 */
+//         timespec_get(&tm, TIME_UTC);
+//     #else
+//         clock_gettime(CLOCK_REALTIME, &tm);
+//     #endif
+//
+//         return (((uint64_t) tm.tv_sec * 1000000000L) + tm.tv_nsec);
+//     }
+//
+//   * The function takes NO PARAMETERS, so there is no custody to state on the
+//     way in. It is the simplest possible custody-neutral declaration.
+//   * The only object it touches is `tm`, a function-LOCAL `struct timespec`
+//     whose address is passed to a clock call and which does not outlive the
+//     call. Nothing is allocated, nothing is released, nothing is stored.
+//   * The result is `uint64_t`, a SCALAR nanosecond count. A scalar result
+//     carries no custody, so `resource_return_none()` is the faithful — and the
+//     only writable — result mode; v1's owning result modes require a pointer
+//     return type.
+//   * On the macOS arm a mach port is acquired and released within the body
+//     (`host_get_clock_service` / `mach_port_deallocate`); it is balanced there
+//     and never reaches the caller. The audited targets take the
+//     `clock_gettime`/`timespec_get` arm in any case, and this declaration
+//     states the same custody fact on every arm: none crosses the boundary.
+//
+// ## The unprototyped `()` declaration, and why it is settled by precedent
+//
+// The header spells the function with an EMPTY parameter list rather than
+// `(void)`:
+//
+//     lib/cfl/include/cfl/cfl_time.h:25
+//         uint64_t cfl_time_now();
+//
+// which in C is an unprototyped declaration with unspecified parameters, not a
+// declaration of arity zero. Whether constraint 8's arity gate accepts a
+// zero-arity contract against it is a real question, and it is NOT left to
+// hope: the corpus already declares `flb_time_now`, whose C declaration is the
+// SAME shape —
+//
+//     include/fluent-bit/flb_lib.h:94
+//         FLB_EXPORT double flb_time_now();
+//
+// — as a zero-arity contract in `contract/qcore/fluent_bit/time.qcore`, and it
+// is manifest-selected and not withdrawn in the pinned corpus. So this shape is
+// exercised production text, measured rather than assumed, and this declaration
+// follows it exactly.
+//
+// ## Defined in no analysed unit
+//
+// `lib/cfl/src/cfl_time.c` is NOT among the 185 analysed units, so constraint
+// 8's duty gate has no derived summary to compare against and nothing here can
+// be withdrawn on a body this corpus does not define. Checked against the
+// baseline's own unit list.
+//
+// ## ABI (constraint 8)
+//
+// One definition in the whole tree, external linkage. `uint64_t` projects to
+// `u64` under the LP64 model of the audited targets (`LOADER-ABI-LP64`).
+//
+// ## NOT CLAIMED
+//
+// Nothing about the clock: not its resolution, not its monotonicity, not its
+// epoch, not whether the underlying `clock_gettime`/`timespec_get` succeeded —
+// this body discards that status, which is an upstream fact this declaration
+// neither endorses nor reports. This is the same sentence
+// `fluent_bit/time.qcore` writes about `flb_time_now`, for the same reason. A
+// custody declaration says what happens to the caller's resources, and this one
+// says: nothing.
+//
+// ## Read at the same time and DELIBERATELY LEFT UNDECLARED
+//
+// `cfl_time_to_nanosec` and the rest of the `cfl_time_*` family block no
+// projected function in the baseline. `timespec_get`, `clock_gettime`,
+// `host_get_clock_service`, `clock_get_time`, `mach_host_self`,
+// `mach_task_self` and `mach_port_deallocate` are named by this body and are
+// undeclared for the same reason.
+
+// --- the wall-clock reading ctraces timestamps a span's end with ---
+extern fn cfl_time_now() -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_return_none();
+};
