@@ -260,7 +260,7 @@ verdicts[D + "2"] = V(
     "itself.",
     [
         {"file": A, "contains": "**Measured by the wave-40 close in two detached runs at its own in-history tips, whose figures are identical**"},
-        {"file": A, "contains": "the five wave-39 tips this row used to cite are not"},
+        {"file": A, "contains": "every tip this row has cited since wave 39 is **not**"},
     ],
 )
 verdicts[D + "3"] = V(

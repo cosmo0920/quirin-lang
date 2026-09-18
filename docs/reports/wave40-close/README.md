@@ -368,7 +368,11 @@ discharge narrows to the **second** arm alone — a `--check` mode distinguishin
 open.
 
 *This close's own record is checked under that rule and makes no claim about any
-later tree.*
+later tree.* It also demonstrated the mechanism on itself while being written:
+one `verify` claim quoting an `AGENTS.md` sentence went red when the close
+sharpened that same sentence a few minutes later, and the fix was to re-quote,
+not to soften the sentence. A claim into prose is perishable **by the minute**,
+not only by the wave.
 
 ### 8.2 The checkpoint-page split — **kept**, with both index links
 
