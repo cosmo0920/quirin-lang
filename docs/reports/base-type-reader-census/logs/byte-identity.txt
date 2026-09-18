@@ -1,0 +1,24 @@
+archive: docs/reports/joined-provenance-call-frames/artifacts
+run:     measure/base-type-reader-census/runs/final
+
+*diagnostics      raw IDENTICAL  canonical IDENTICAL
+   archive sha256 a7aa3b5f9ab193a0f08277ca069d1f28acda91a40dbcc12c29ac94a46bf5ac7b
+   run     sha256 a7aa3b5f9ab193a0f08277ca069d1f28acda91a40dbcc12c29ac94a46bf5ac7b
+ source           raw IDENTICAL  canonical IDENTICAL
+   archive sha256 ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529
+   run     sha256 ae38f6c93dfbe341b187077e9dd0074501000ea76d621feb481db2303930e529
+*chunk-contracts  raw IDENTICAL  canonical IDENTICAL
+   archive sha256 c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980
+   run     sha256 c4f438e4ed3dab3c3b0e776af5c7c5181385353a72c67b6874ab4df5ba917980
+ source-effects   raw differs    canonical differs  
+   archive sha256 de059aad0b062da31fc11cb82f8c1d6687e8b710fddb583a99576dffba5aaec3
+   run     sha256 ceb34206aadf2322063fc93f0bc796b34103a86195a7a4ec4639e24cafc57e10
+ contracts        raw differs    canonical differs  
+   archive sha256 44ef29fa567c5dc0eb33d89ba711fede7c2faee8e9bb9a315e7a33efabae95ef
+   run     sha256 316c909ea9743f0f317c5400b2798d35ca5eeea43f3658f9e573dba1c6c15ede
+
+* = verdict-bearing artifact
+RESULT: with the census feature ON and the census actively
+streaming, both verdict-bearing artifacts reproduce the wave-36
+baseline BYTE FOR BYTE. The instrumentation moves no verdict.
+BYTE_IDENTITY_EXIT=0

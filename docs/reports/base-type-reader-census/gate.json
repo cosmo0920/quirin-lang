@@ -1,0 +1,33 @@
+{
+ "card": "BASE-TYPE-READER-CENSUS",
+ "wave": 37,
+ "base": "477b733d",
+ "workspace_tests": {
+  "passed": 4611,
+  "failed": 0,
+  "ignored": 8,
+  "result_summaries": 231,
+  "test_executables": 229
+ },
+ "exits": {
+  "submodule": 0,
+  "workspace_tests": 0,
+  "fmt": 0,
+  "clippy": 0,
+  "clippy_census": 0,
+  "probe": 0,
+  "followup": 0,
+  "lean_audits": 0
+ },
+ "lean_audits": 135,
+ "free_space_gib_at_start": 162,
+ "notes": [
+  "Every step ran with the indirect-census feature OFF, which is how the workspace builds it: the feature is declared on qcore-c-gateway and enabled by no workspace member, so the standing gate measures a tree in which the census code does not exist. `clippy_census` is an EXTRA step this card adds, running clippy over qcore-c-gateway WITH the feature on, so the instrumentation this card extends is linted rather than merely unlinted. It is not part of the standing list.",
+  "Both probes exit 0.",
+  "Every exit captured to its own file, never through a pipe.",
+  "`df -h .` reported 162 GiB free at the start, above the 60 GiB floor, so the full gate ran rather than crate-scoped checks.",
+  "CONSTRAINT 16: this run was concurrent with another worktree's clippy for part of its duration (observed directly: clippy-driver processes outside this worktree while `filesystem_chunk_close_route_parity` and `both_routes_refuse_the_same_body_mutations` were running here). NO row tripped - 4,611 passed / 0 failed / 8 ignored - so there is nothing to verify in isolation and nothing to record beyond the observation that the load was present and the suite was green under it.",
+  "This card adds no test and changes no shipped behaviour, so 4,611 / 0 / 8 over 231 summaries is the tree's own figure at 477b733d plus this card's documentation and instrumentation; it is reported as measured rather than as reproducing any earlier close, because wave 36 has no close record yet.",
+  "The corpus audit whose byte identity is asserted in the report ran separately and earlier, exit 0 captured to its own file; it is not a gate step."
+ ]
+}

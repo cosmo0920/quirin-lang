@@ -1,0 +1,255 @@
+==============================================================================
+JOIN (card C-GATEWAY-INDIRECT-CENSUS-2's, verbatim)
+==============================================================================
+statement records streamed:                  87976
+distinct translation-unit ordinals:          171
+leaf-carrying units in the document:         171
+units the join assigned:                     171
+units the join could NOT assign:             0
+record bodies the reader met:                909
+published leaves of this family:             18549
+  explained by at least one statement:       18548  (99.99%)
+functions carrying one:                      3239
+
+==============================================================================
+REPRODUCING THE WAVE-36 FIGURE BEFORE EXTENDING IT
+==============================================================================
+The wave-36 card reports 13,396 leaves ending at an `Unresolved`
+member, of which 10,514 (78.5%) carry `tag: null` -- which that card
+read as `the BASE's type was never committed`. It is reproduced here
+from the same field, and then DECOMPOSED, because `tag` is the tag of
+the LAST selection: a chain whose base DID commit can still lose the
+tag at an intermediate member or a subscript, and that is the wave-36
+card's own question rather than this one's.
+
+leaves whose deciding chain ends `Unresolved`:      13396
+   of those, carrying no record tag at all:         10514  (78.5%)
+
+DECOMPOSITION of that tagless row:
+       7115   67.7%  BASE NOT COMMITTED (this card's question)
+       3332   31.7%  base COMMITTED; tag lost at step 0 (a member question)
+         64    0.6%  base COMMITTED; tag lost at step 1 (a member question)
+          3    0.0%  base COMMITTED; tag lost at step 2 (a member question)
+
+==============================================================================
+WHY THE BASE TYPE DID NOT COMMIT
+  Per LEAF, attributed its hardest statement and that statement's
+  hardest chain -- a statement clears only if every chain in it does.
+==============================================================================
+
+base-type cause, whole family (18549 leaves):
+       8484   45.7%  Committed
+       3220   17.4%  DeclaredOpaque/TypedefDefinesAggregate
+       2147   11.6%  FunctionRefused/LocalDeclaratorToken
+       1986   10.7%  NoBaseName
+        647    3.5%  DeclaredOpaque/TypedefDisagreeing
+        484    2.6%  FunctionRefused/ParameterListToken
+        479    2.6%  DeclaredOpaque/ArrayDeclarator
+        262    1.4%  DeclaredOpaque/UnreadableSpecifiers
+        255    1.4%  DeclaredOpaque/PointerToScalar
+        188    1.0%  (no chain)
+        161    0.9%  NotDeclared/FileScopeDeclaration
+        113    0.6%  DeclaredOpaque/PointerDepthAboveOne
+         69    0.4%  NotDeclared/Unknown
+         28    0.2%  DeclaredScalar
+         24    0.1%  DeclaredOpaque/UnionSpecifier
+          1    0.0%  (unexplained leaf)
+          1    0.0%  DeclaredOpaque/ShadowedByDifferentType
+
+top payloads (the spelling the reader refused):
+       1688   28.8%  FunctionRefused/LocalDeclaratorToken  ->  (
+        451    7.7%  FunctionRefused/LocalDeclaratorToken  ->  {
+        320    5.5%  FunctionRefused/ParameterListToken  ->  (
+        202    3.5%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_topic_partition_s
+        164    2.8%  FunctionRefused/ParameterListToken  ->  .
+        162    2.8%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_topic_partition_list_s
+        158    2.7%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct
+        117    2.0%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_share_ack_batches_s
+        112    1.9%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_msg_s
+        110    1.9%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_mock_partition_s
+        101    1.7%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct cJSON
+         94    1.6%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_group_member_s
+         91    1.6%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_chariov_s
+         81    1.4%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_msgset_reader_s
+         74    1.3%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_msgset_writer_s
+         71    1.2%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_mock_connection_s
+         68    1.2%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_mock_broker_s
+         61    1.0%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_mock_sharegroup_s
+         57    1.0%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_mock_cgrp_consumer_member_s
+         55    0.9%  DeclaredOpaque/TypedefDefinesAggregate  ->  struct rd_kafka_share_ack_batch_entry_s
+       1614   27.6%  (110 further values)
+
+--- the typedef-defines-aggregate cause, crossed with the RECORD BODY
+    reader (residual RECORD-BODY-TOTAL-OR-REJECT) ---
+The cause payload names the definition's head, so this is the one
+cause where the census can ask whether committing the base type would
+actually resolve the member, or merely move the refusal one step.
+
+would committing the base type resolve the member?
+       1624   50.4%  tag known and its record body WAS read -- both readers agree
+       1338   41.6%  tag known, but its record BODY is refused whole (on `{`)
+        158    4.9%  head is `struct` -- no struct tag to resolve to
+         63    2.0%  tag known, but its record BODY is refused whole (on `(`)
+         33    1.0%  head is `union` -- no struct tag to resolve to
+          3    0.1%  head is `enum` -- no struct tag to resolve to
+          1    0.0%  head is `enum rd_kafka_internal_ShareAcknowledgement_type_s` -- no struct tag to resolve to
+
+==============================================================================
+THE SOLE-BLOCKED SUBSET, BY CAUSE
+==============================================================================
+functions whose ONLY blocker family is this one: 285
+leaves they hold: 835  (4.5% of 18549)
+
+base-type cause, sole-blocked leaves only (835):
+        503   60.2%  Committed
+        223   26.7%  DeclaredOpaque/TypedefDefinesAggregate
+         31    3.7%  NoBaseName
+         22    2.6%  DeclaredOpaque/TypedefDisagreeing
+         19    2.3%  DeclaredOpaque/PointerDepthAboveOne
+         17    2.0%  FunctionRefused/ParameterListToken
+          5    0.6%  DeclaredOpaque/UnionSpecifier
+          4    0.5%  DeclaredScalar
+          3    0.4%  DeclaredOpaque/PointerToScalar
+          2    0.2%  NotDeclared/FileScopeDeclaration
+          2    0.2%  DeclaredOpaque/UnreadableSpecifiers
+          2    0.2%  FunctionRefused/LocalDeclaratorToken
+          1    0.1%  DeclaredOpaque/ArrayDeclarator
+          1    0.1%  (no chain)
+
+cause x constraint 5's premise (may_bind), sole-blocked leaves:
+        461   55.3%  Committed  |  may-bind
+        173   20.7%  DeclaredOpaque/TypedefDefinesAggregate  |  may-bind
+         50    6.0%  DeclaredOpaque/TypedefDefinesAggregate  |  NEVER-BOUND
+         42    5.0%  Committed  |  NEVER-BOUND
+         31    3.7%  NoBaseName  |  may-bind
+         19    2.3%  DeclaredOpaque/PointerDepthAboveOne  |  may-bind
+         16    1.9%  DeclaredOpaque/TypedefDisagreeing  |  may-bind
+         15    1.8%  FunctionRefused/ParameterListToken  |  may-bind
+          6    0.7%  DeclaredOpaque/TypedefDisagreeing  |  NEVER-BOUND
+          4    0.5%  DeclaredScalar  |  may-bind
+          3    0.4%  DeclaredOpaque/UnionSpecifier  |  NEVER-BOUND
+          2    0.2%  NotDeclared/FileScopeDeclaration  |  NEVER-BOUND
+          2    0.2%  DeclaredOpaque/PointerToScalar  |  may-bind
+          2    0.2%  DeclaredOpaque/UnionSpecifier  |  may-bind
+          2    0.2%  DeclaredOpaque/UnreadableSpecifiers  |  may-bind
+          2    0.2%  FunctionRefused/ParameterListToken  |  NEVER-BOUND
+          4    0.5%  (3 further values)
+
+==============================================================================
+DISCOUNTED THREE-WAY PREDICTION PER CAUSE
+  (1) leaf-free   (2) exchanged for another refusal   (3) unmoved
+==============================================================================
+Method. For a candidate cause C -- a reader change that committed the
+declared type of every base blocked by C -- take every function
+carrying a leaf one of whose statements has a chain blocked by C. It
+is predicted leaf-free only if:
+  - its only blocker family is this one; else UNMOVED;
+  - every chain of every statement of every leaf it holds in this
+    family is either already Committed or blocked by C; else UNMOVED,
+    because the chains C does not reach still refuse;
+  - and no such statement carries an UNCONTRACTED call; else
+    EXCHANGED, because admitting the access leaves the statement
+    facing the uncontracted-call gate.
+This is GENEROUS in one further way the shape-level prediction was
+not, and it is stated rather than buried: committing a base's type
+yields a TAG, not an admission. The member must then classify, and
+the access rule must then admit it. So CLEAR is an upper bound on an
+upper bound -- see the record-body cross-tab above for the one cause
+where the second question can be asked.
+
+cause (ranked by CLEAR)                         leaves   funcs  CLEAR   exch  unmov
+DeclaredOpaque/TypedefDefinesAggregate            3220     945     30     38    877
+DeclaredOpaque/PointerDepthAboveOne                113      81      5     10     66
+DeclaredOpaque/UnionSpecifier                       24      18      3      1     14
+NoBaseName                                        1986     792      2     15    775
+DeclaredOpaque/TypedefDisagreeing                  647     155      2      3    150
+FunctionRefused/ParameterListToken                 484      95      2      4     89
+DeclaredOpaque/PointerToScalar                     255     158      1      1    156
+NotDeclared/FileScopeDeclaration                   161     101      1      1     99
+DeclaredScalar                                      28      32      1      1     30
+FunctionRefused/LocalDeclaratorToken              2147     245      0      1    244
+DeclaredOpaque/ArrayDeclarator                     479     201      0      0    201
+DeclaredOpaque/UnreadableSpecifiers                262      66      0      1     65
+NotDeclared/Unknown                                 69     304      0      0    304
+DeclaredOpaque/ShadowedByDifferentType               1       1      0      0      1
+
+cause (ranked by LEAF MASS)                     leaves   funcs  CLEAR   exch  unmov
+DeclaredOpaque/TypedefDefinesAggregate            3220     945     30     38    877
+FunctionRefused/LocalDeclaratorToken              2147     245      0      1    244
+NoBaseName                                        1986     792      2     15    775
+DeclaredOpaque/TypedefDisagreeing                  647     155      2      3    150
+FunctionRefused/ParameterListToken                 484      95      2      4     89
+DeclaredOpaque/ArrayDeclarator                     479     201      0      0    201
+DeclaredOpaque/UnreadableSpecifiers                262      66      0      1     65
+DeclaredOpaque/PointerToScalar                     255     158      1      1    156
+NotDeclared/FileScopeDeclaration                   161     101      1      1     99
+DeclaredOpaque/PointerDepthAboveOne                113      81      5     10     66
+NotDeclared/Unknown                                 69     304      0      0    304
+DeclaredScalar                                      28      32      1      1     30
+DeclaredOpaque/UnionSpecifier                       24      18      3      1     14
+DeclaredOpaque/ShadowedByDifferentType               1       1      0      0      1
+
+causes deciding at least one function: 9 of 14
+best single cause decides:             30 function(s)
+union of EVERY cause's cleared set:    47 function(s)
+   (the ceiling if one card committed every base type at once, still
+    assuming every member then classifies and every access is then
+    admitted -- against 285 sole-blocked and 3239 touched functions)
+
+==============================================================================
+PAIRS OF CAUSES COMMITTED TOGETHER
+==============================================================================
+   40 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: NoBaseName
+   35 functions   A: DeclaredOpaque/PointerDepthAboveOne    B: DeclaredOpaque/TypedefDefinesAggregate
+   34 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: DeclaredOpaque/UnionSpecifier
+   32 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: DeclaredOpaque/TypedefDisagreeing
+   32 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: FunctionRefused/ParameterListToken
+   31 functions   A: DeclaredOpaque/PointerToScalar         B: DeclaredOpaque/TypedefDefinesAggregate
+   31 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: DeclaredScalar
+   31 functions   A: DeclaredOpaque/TypedefDefinesAggregate B: NotDeclared/FileScopeDeclaration
+   30 functions   A: DeclaredOpaque/ArrayDeclarator         B: DeclaredOpaque/TypedefDefinesAggregate
+   30 functions   A: DeclaredOpaque/ShadowedByDifferentType B: DeclaredOpaque/TypedefDefinesAggregate
+
+==============================================================================
+NAMED CLEARED FUNCTIONS (so the recommendation can be checked)
+==============================================================================
+DeclaredOpaque/TypedefDefinesAggregate  (30)
+    librdkafka/cJSON.c/suffix_object
+    librdkafka/rdbuf.c/rd_slice_widen
+    librdkafka/rdhdrhistogram.c/rd_hdr_countsIndex
+    librdkafka/rdkafka_cgrp.c/PartitionMemberInfo_new
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_disable
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_init_int
+    librdkafka/rdkafka_conf.c/rd_kafka_confval_init_ptr
+    librdkafka/rdkafka_fetcher.c/rd_kafkap_Fetch_reply_tags_set_topic_cnt
+    librdkafka/rdkafka_interceptor.c/rd_kafka_interceptor_method_new
+    librdkafka/rdkafka_msg.c/rd_kafka_Produce_result_new
+    librdkafka/rdkafka_msg.c/rd_kafka_message_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new
+    librdkafka/rdkafka_partition.c/rd_kafka_topic_partition_new_from_rktp
+    librdkafka/rdkafka_share_acknowledgement.c/rd_kafka_share_ack_batch_entry_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerGenerationPair_new
+    librdkafka/rdkafka_sticky_assignor.c/ConsumerPair_new
+    librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_assigned_partitions
+    librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_avg
+    librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_commit_latency_max
+    librdkafka/rdkafka_telemetry_encode.c/calculate_consumer_poll_idle_ratio_avg
+DeclaredOpaque/PointerDepthAboveOne  (5)
+    cmetrics/cmt_encode_opentelemetry.c/initialize_exponential_histogram_data_point_list
+    cmetrics/cmt_encode_opentelemetry.c/initialize_histogram_data_point_list
+    cmetrics/cmt_encode_opentelemetry.c/initialize_metric_list
+    librdkafka/rdkafka_admin.c/rd_kafka_DeleteGroup_destroy_array
+    librdkafka/rdkafka_admin.c/rd_kafka_DeleteTopic_destroy_array
+DeclaredOpaque/UnionSpecifier  (3)
+    librdkafka/lz4hc.c/LZ4_attach_HC_dictionary
+    librdkafka/lz4hc.c/LZ4_favorDecompressionSpeed
+    librdkafka/lz4hc.c/LZ4_setCompressionLevel
+NoBaseName  (2)
+    librdkafka/rdkafka_coord.c/rd_kafka_coord_reqs_init
+    librdkafka/rdkafka_mock_sharegrp.c/rd_kafka_mock_sharegrps_init
+DeclaredOpaque/TypedefDisagreeing  (2)
+    librdkafka/rdkafka_aux.c/rd_kafka_Node_new
+    librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_clear_last_err
+FunctionRefused/ParameterListToken  (2)
+    chunkio/chunkio.c/cio_set_log_callback
+    librdkafka/rdkafka_admin.c/rd_kafka_admin_request_op_result_cb_set
