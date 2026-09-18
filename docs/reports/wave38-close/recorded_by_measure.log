@@ -1,0 +1,53 @@
+entries without recorded_by: 67
+distinct recorded_by values across the rest: 22
+source names exactly one report directory: 49
+source names more than one report directory: 18
+source names no report directory: 0
+single-directory entries whose DIR.upper() is an existing recorded_by value: 0
+single-directory: distinct directories 26
+   1 aggregates-v1  -> AGGREGATES-V1  not a recorded_by value
+   5 base-type-reader-census  -> BASE-TYPE-READER-CENSUS  not a recorded_by value
+   6 card-scope-guard  -> CARD-SCOPE-GUARD  not a recorded_by value
+   1 docs-compact-3  -> DOCS-COMPACT-3  not a recorded_by value
+   1 gateway-c-location  -> GATEWAY-C-LOCATION  not a recorded_by value
+   2 joined-provenance-call-frames  -> JOINED-PROVENANCE-CALL-FRAMES  not a recorded_by value
+   1 quant-region-source  -> QUANT-REGION-SOURCE  not a recorded_by value
+   1 remaining-ct46-sendsync  -> REMAINING-CT46-SENDSYNC  not a recorded_by value
+   1 remaining-e03-b-o  -> REMAINING-E03-B-O  not a recorded_by value
+   1 remaining-g03-f  -> REMAINING-G03-F  not a recorded_by value
+   1 remaining-hash-contracts  -> REMAINING-HASH-CONTRACTS  not a recorded_by value
+   1 remaining-hygiene-14  -> REMAINING-HYGIENE-14  not a recorded_by value
+   1 remaining-o03-reactor  -> REMAINING-O03-REACTOR  not a recorded_by value
+   1 remaining-p01-f3  -> REMAINING-P01-F3  not a recorded_by value
+   1 remaining-p03-f  -> REMAINING-P03-F  not a recorded_by value
+   1 remaining-p09-routes  -> REMAINING-P09-ROUTES  not a recorded_by value
+   1 remaining-t03-guard-join  -> REMAINING-T03-GUARD-JOIN  not a recorded_by value
+  10 w37-corpus-contracts-4  -> W37-CORPUS-CONTRACTS-4  not a recorded_by value
+   1 wave18-lean-perf  -> WAVE18-LEAN-PERF  not a recorded_by value
+   1 wave18-pipe-operator  -> WAVE18-PIPE-OPERATOR  not a recorded_by value
+   1 wave18-unsafe-linkage  -> WAVE18-UNSAFE-LINKAGE  not a recorded_by value
+   1 wave19-pipe-chain  -> WAVE19-PIPE-CHAIN  not a recorded_by value
+   1 wave19-trace-stdio  -> WAVE19-TRACE-STDIO  not a recorded_by value
+   1 wave21-quirin-rename  -> WAVE21-QUIRIN-RENAME  not a recorded_by value
+   1 wave23-c-operations  -> WAVE23-C-OPERATIONS  not a recorded_by value
+   5 write-lend-tasks-exercise  -> WRITE-LEND-TASKS-EXERCISE  not a recorded_by value
+multi-directory entries:
+   P02-FLAKE ['remaining-p03', 'remaining-t03', 'wave17-gen-ctreasons']
+   T03-CT-REST ['remaining-ct33-ranks', 'remaining-t03-ct-integration', 'wave17-ct40', 'wave5-ct-integration']
+   C03-NFR-REACH ['remaining-c03-nfr', 'remaining-c03-reach', 'remaining-reach-gate', 'remaining-w4-expr-pos']
+   EXTERN-CALL-F ['extern-call-f1', 'extern-call-v1', 'remaining-extern-modes']
+   O04-ARMS-O ['aom-binding-poison', 'c-gateway-wave', 'remaining-alias-aggregate', 'remaining-loader-abi', 'remaining-o04-arms', 'remaining-o04-b08', 'remaining-o04-b09b10', 'remaining-o04-read-bound', 'remaining-o04-trace']
+   T08-SRC-O ['ct23-credit-error-path', 'remaining-t08-compose', 'remaining-t08-epoch-src']
+   E01-F1-O ['gateway-c-location', 'remaining-e01-f1', 'remaining-e01-f1-raw', 'remaining-e01-raw-cond', 'remaining-e01-tail']
+   P04-NEXT-O ['remaining-memclose', 'remaining-p04-b1', 'remaining-p04-b2', 'remaining-p04-compose', 'remaining-p04-compose-a', 'remaining-p04-compose-fs', 'remaining-p04-compose-unsupported', 'remaining-p04-frame', 'remaining-p04-next', 'remaining-p04-next-ab']
+   CT-CTWIN-O ['aggregates-v1', 'remaining-ctwin-publish', 'remaining-ctwin-residuals', 'wave17-ct40', 'wave9-ctwin']
+   C02-P-ALIAS-O ['aom-binding-poison', 'remaining-alias-aggregate', 'remaining-alias-locals', 'remaining-borrow-liveness', 'remaining-borrow-residuals', 'remaining-c02-p-alias', 'remaining-constructor-residuals']
+   D02-BUCKETS-STALE ['remaining-hygiene-14', 'wave16-hygiene', 'wave17-gen-ctreasons']
+   PROD-CONTRACTS-O ['remaining-constructor-residuals', 'remaining-neighbours', 'remaining-neighbours-chained-tail', 'remaining-prod-contracts']
+   LOADER-ABI-O ['remaining-loader-abi', 'remaining-loader-abi-modes']
+   HASH-CLAUSE-O ['remaining-hash-clause', 'remaining-hash-refine']
+   DIFF-TOOL-CONTRACTS ['wave14-corpus', 'wave16-hygiene', 'wave17-gen-ctreasons']
+   STD-MODULES-O ['ct07-slice-permissions', 'loop-v1', 'socket-event-compose', 'socket-v1-windows-run', 'string-concat', 'wave17-std-modules', 'windows-native-sockets-harness']
+   EXAMPLES-SUITE-O ['docs-compact-3', 'wave21-examples-suite']
+   WORKTREE-SUBMODULE-UNGATED ['c-gateway-return-position', 'verifier-host-closed-input-deadline']
+no-directory entries:

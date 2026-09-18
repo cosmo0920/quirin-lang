@@ -447,3 +447,17 @@ Raw logs stay worktree-private under `measure/` per `CLAUDE.md`'s hygiene rule.
     arbiter that reproduces the baseline byte for byte has no new archive to
     publish, and adding one would create a second copy of the same bytes for a
     later card to reconcile. The reproduction commands in §11 regenerate it.
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §7 harness
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. §7's `measure/joined-provenance-round-bound/mutations.py` (seven
+mutations, six caught, one expected survivor) lives on a gitignored,
+worktree-private path and is not in the tree; no per-mutation log was
+published (`ls` at `4f663934`: `README.md` alone, the absence `DOCS-COMPACT-7`
+also noticed). The six-of-seven count is therefore **measured once by the
+card, harness not shipped**. Recorded under
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED` (card `STABILITY-REEVAL-3`, wave 38);
+the card-report convention in `CLAUDE.md` now says a mutation count is cited
+only with its script and its per-mutation log in the report directory. This
+note changes no code and re-runs nothing.

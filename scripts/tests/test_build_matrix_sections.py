@@ -82,6 +82,49 @@ def generate_ok(test, out, previous=None, extra=()):
     return json.loads(pathlib.Path(out).read_text(encoding="utf-8"))
 
 
+# The nine keys the generator cannot measure and carries from --gate.
+MEASURED_GATE_KEYS = {
+    "note": "measured for this test",
+    "workspace_tests": 1234,
+    "provider_tests": 67,
+    "python_evidence_validator_tests": 108,
+    "reevaluation_probe_exit": 0,
+    "reevaluation_followup_exit": 0,
+    "cargo_fmt": "clean",
+    "cargo_clippy": "clean",
+    "standing_gate": "passed",
+}
+CLANG_BANNER = "Ubuntu clang version 21.1.8 (6ubuntu1)"
+
+
+def lean_audits_on_disk():
+    return len(list((ROOT / "proof").glob("Audit*.lean")))
+
+
+def write_gate(scratch, lean_audits=None, clang=None, recording=CLANG_BANNER, exit_code="0",
+               omit=(), extra=None):
+    """Write the gate.json a close publishes since the wave-38 close, beside its
+    Clang recording: the nine measured keys plus the two CHECKED keys -
+    `lean_audits` (checked against proof/Audit*.lean) and `clang` (a presence
+    claim checked against clang-version.txt / clang-version.exit beside the
+    gate). `recording=None` writes no recording; `omit` drops keys."""
+    gate = dict(MEASURED_GATE_KEYS)
+    gate["lean_audits"] = lean_audits_on_disk() if lean_audits is None else lean_audits
+    gate["clang"] = f"present: {CLANG_BANNER}" if clang is None else clang
+    for key in omit:
+        gate.pop(key, None)
+    if extra:
+        gate.update(extra)
+    if recording is not None:
+        (scratch / "clang-version.txt").write_text(
+            recording + "\nQCORE_CLANG=<unset>\n", encoding="utf-8"
+        )
+        (scratch / "clang-version.exit").write_text(exit_code + "\n", encoding="utf-8")
+    path = scratch / "gate.json"
+    path.write_text(json.dumps(gate), encoding="utf-8")
+    return path
+
+
 class BuildMatrixSections(unittest.TestCase):
     def test_regeneration_preserves_the_sections_the_generator_does_not_own(self):
         committed = json.loads(COMMITTED.read_text(encoding="utf-8"))
@@ -193,23 +236,7 @@ class BuildMatrixSections(unittest.TestCase):
                 ),
                 carried["validation"]["measurement_provenance"],
             )
-            gate = scratch / "gate.json"
-            gate.write_text(
-                json.dumps(
-                    {
-                        "note": "measured for this test",
-                        "workspace_tests": 1234,
-                        "provider_tests": 67,
-                        "python_evidence_validator_tests": 108,
-                        "reevaluation_probe_exit": 0,
-                        "reevaluation_followup_exit": 0,
-                        "cargo_fmt": "clean",
-                        "cargo_clippy": "clean",
-                        "standing_gate": "passed",
-                    }
-                ),
-                encoding="utf-8",
-            )
+            gate = write_gate(scratch)
             supplied = generate_ok(self, scratch / "supplied.json", extra=["--gate", str(gate)])
         self.assertEqual(supplied["validation"]["workspace_tests"], 1234)
         self.assertEqual(supplied["validation"]["provider_tests"], 67)
@@ -229,24 +256,7 @@ class BuildMatrixSections(unittest.TestCase):
     def test_a_gate_key_the_generator_does_not_publish_is_refused(self):
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
-            gate = scratch / "gate.json"
-            gate.write_text(
-                json.dumps(
-                    {
-                        "note": "n",
-                        "workspace_tests": 1,
-                        "provider_tests": 1,
-                        "python_evidence_validator_tests": 1,
-                        "reevaluation_probe_exit": 0,
-                        "reevaluation_followup_exit": 0,
-                        "cargo_fmt": "clean",
-                        "cargo_clippy": "clean",
-                        "standing_gate": "passed",
-                        "invented_gate": 1,
-                    }
-                ),
-                encoding="utf-8",
-            )
+            gate = write_gate(scratch, extra={"invented_gate": 1})
             finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("invented_gate", finished.stderr + finished.stdout)
@@ -258,48 +268,110 @@ class BuildMatrixSections(unittest.TestCase):
     # refuses a disagreement, so a drifted figure is refused where it would
     # have been written. The published field stays derived either way.
 
-    @staticmethod
-    def _gate_with_lean_count(count):
-        return {
-            "note": "measured for this test",
-            "workspace_tests": 1234,
-            "provider_tests": 67,
-            "python_evidence_validator_tests": 108,
-            "reevaluation_probe_exit": 0,
-            "reevaluation_followup_exit": 0,
-            "cargo_fmt": "clean",
-            "cargo_clippy": "clean",
-            "standing_gate": "passed",
-            "lean_audits": count,
-        }
-
     def test_a_recorded_lean_count_that_matches_the_files_on_disk_is_accepted(self):
-        on_disk = len(list((ROOT / "proof").glob("Audit*.lean")))
+        on_disk = lean_audits_on_disk()
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
-            gate = scratch / "gate.json"
-            gate.write_text(json.dumps(self._gate_with_lean_count(on_disk)), encoding="utf-8")
+            gate = write_gate(scratch, lean_audits=on_disk)
             supplied = generate_ok(self, scratch / "out.json", extra=["--gate", str(gate)])
         self.assertEqual(supplied["validation"]["lean_audits"], on_disk)
         self.assertEqual(supplied["validation"]["workspace_tests"], 1234)
         self.assertTrue(
             supplied["validation"]["measurement_provenance"].startswith("integrator_supplied")
         )
+        # Neither checked key is copied into the published block.
+        self.assertNotIn("clang", supplied["validation"])
 
     def test_a_recorded_lean_count_that_disagrees_with_the_files_on_disk_is_refused(self):
-        on_disk = len(list((ROOT / "proof").glob("Audit*.lean")))
+        on_disk = lean_audits_on_disk()
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
-            gate = scratch / "gate.json"
-            gate.write_text(
-                json.dumps(self._gate_with_lean_count(on_disk + 2)), encoding="utf-8"
-            )
+            gate = write_gate(scratch, lean_audits=on_disk + 2)
             finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
             written = (scratch / "out.json").exists()
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("lean_audits", finished.stderr + finished.stdout)
         self.assertIn(str(on_disk), finished.stderr + finished.stdout)
         self.assertFalse(written, "a refused gate must not write a matrix")
+
+    # Since the wave-38 close the two checked keys are REQUIRED in a --gate
+    # file. Card STABILITY-REEVAL-3 measured that a gate.json omitting
+    # `lean_audits` passed without comment - the unchecked figure the key was
+    # added to prevent (LEAN-AUDIT-GATE-KEY-OPTIONAL) - and that no close's
+    # gate.json recorded whether Clang was present when its workspace count
+    # was taken (CLANG-GUARDED-GREEN-FAMILY-750). The refusal is about the one
+    # gate file a REGENERATION names; a frozen close's gate.json is never read.
+
+    def _refused(self, scratch, gate, *needles):
+        finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
+        written = (scratch / "out.json").exists()
+        self.assertNotEqual(finished.returncode, 0, finished.stdout)
+        for needle in needles:
+            self.assertIn(needle, finished.stderr + finished.stdout)
+        self.assertFalse(written, "a refused gate must not write a matrix")
+
+    def test_a_gate_file_lacking_lean_audits_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, omit=("lean_audits",))
+            self._refused(scratch, gate, "lean_audits", "LEAN-AUDIT-GATE-KEY-OPTIONAL")
+
+    def test_a_gate_file_lacking_clang_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, omit=("clang",))
+            self._refused(scratch, gate, "clang", "CLANG-GUARDED-GREEN-FAMILY-750")
+
+    def test_a_clang_claim_agreeing_with_its_recording_is_accepted(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, clang=f"present: {CLANG_BANNER}")
+            supplied = generate_ok(self, scratch / "out.json", extra=["--gate", str(gate)])
+            # The recording may also live in a gate/ subdirectory beside the file
+            # (card STABILITY-REEVAL-3's layout).
+            nested = scratch / "nested"
+            (nested / "gate").mkdir(parents=True)
+            for name in ("clang-version.txt", "clang-version.exit"):
+                (nested / "gate" / name).write_text(
+                    (scratch / name).read_text(encoding="utf-8"), encoding="utf-8"
+                )
+            gate = write_gate(nested, recording=None)
+            generate_ok(self, nested / "out.json", extra=["--gate", str(gate)])
+        self.assertTrue(
+            supplied["validation"]["measurement_provenance"].startswith("integrator_supplied")
+        )
+
+    def test_an_absent_clang_claim_agreeing_with_its_recording_is_accepted(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            failure = "gate.sh: line 15: clang: command not found"
+            gate = write_gate(scratch, clang=f"absent: {failure}", recording=failure, exit_code="127")
+            generate_ok(self, scratch / "out.json", extra=["--gate", str(gate)])
+
+    def test_a_clang_claim_disagreeing_with_its_recording_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, clang="present: Ubuntu clang version 20.1.0")
+            self._refused(scratch, gate, "clang", "disagrees with the recording")
+
+    def test_a_clang_claim_with_no_recording_beside_it_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, recording=None)
+            self._refused(scratch, gate, "no clang-version.txt is recorded")
+
+    def test_a_clang_presence_claim_contradicted_by_the_recorded_exit_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = write_gate(scratch, exit_code="127")
+            self._refused(scratch, gate, "claims Clang present", "127")
+
+    def test_a_clang_value_that_is_not_a_presence_claim_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            for value in (True, "21.1.8", "installed: clang", "present:", "present: "):
+                gate = write_gate(scratch, clang=value)
+                self._refused(scratch, gate, "presence claim")
 
     def test_a_missing_previous_matrix_refuses_rather_than_writing_a_stripped_file(self):
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:

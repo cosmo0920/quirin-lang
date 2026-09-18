@@ -150,17 +150,50 @@ GATE_KEYS = [
     "standing_gate",
 ]
 
-# Gate keys a close MAY supply and this script CAN measure, so a supplied value
-# is CHECKED against the derived one and never carried. Card DOCS-COMPACT-7
-# (wave 37) found the merged-gate row's Lean figure wrong the same way in two
-# consecutive waves - the current file count wearing an older close's label -
-# because a close's gate.json had no key to hold the number it measured
-# (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT). A close now records `lean_audits` beside
-# its other measurements, and a regeneration with `--gate` refuses when that
-# recorded figure disagrees with proof/Audit*.lean on disk: the drift becomes a
-# refusal at the point it would be written, instead of a number a later card
-# has to notice. The published `validation.lean_audits` stays DERIVED.
-CHECKED_GATE_KEYS = ["lean_audits"]
+# Gate keys a close MUST supply and this script CHECKS rather than carries.
+# Card DOCS-COMPACT-7 (wave 37) found the merged-gate row's Lean figure wrong
+# the same way in two consecutive waves - the current file count wearing an
+# older close's label - because a close's gate.json had no key to hold the
+# number it measured (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT). A close records
+# `lean_audits` beside its other measurements, and a regeneration with `--gate`
+# refuses when that recorded figure disagrees with proof/Audit*.lean on disk:
+# the drift becomes a refusal at the point it would be written, instead of a
+# number a later card has to notice. The published `validation.lean_audits`
+# stays DERIVED.
+#
+# Since the wave-38 close BOTH keys are REQUIRED in a --gate file, not optional:
+# card STABILITY-REEVAL-3 (wave 38) measured that a gate.json omitting
+# `lean_audits` passed without comment, which is exactly the unchecked figure
+# the key was added to prevent (LEAN-AUDIT-GATE-KEY-OPTIONAL); and that no
+# close's gate.json recorded whether Clang was present when its workspace
+# count was taken, although 750 test guards across 79 files early-return green
+# without it (CLANG-GUARDED-GREEN-FAMILY-750). `clang` is a PRESENCE CLAIM,
+# `present: <banner>` or `absent: <banner>`, checked against the
+# clang-version.txt (and clang-version.exit, when recorded) the close publishes
+# beside its gate.json - in that directory or its gate/ subdirectory. Neither
+# key is copied into the published block. The refusal applies to a
+# REGENERATION - the one gate file named on the command line - and never to
+# reading a frozen close's gate.json, which is archived text this script does
+# not open (constraint 21).
+CHECKED_GATE_KEYS = ["lean_audits", "clang"]
+CLANG_PRESENCE = ("present", "absent")
+
+
+def clang_recording(gate_file):
+    """The Clang recording published beside a gate.json: the first line of
+    clang-version.txt (the compiler's banner, or the failure text when there is
+    none) and clang-version.exit when it is recorded. Looked for in the gate
+    file's own directory, then in a gate/ subdirectory beside it."""
+    base = pathlib.Path(gate_file).resolve().parent
+    for directory in (base, base / "gate"):
+        text = directory / "clang-version.txt"
+        if text.is_file():
+            lines = text.read_text(encoding="utf-8").splitlines()
+            first = lines[0].strip() if lines else ""
+            exit_file = directory / "clang-version.exit"
+            exit_code = exit_file.read_text(encoding="utf-8").strip() if exit_file.is_file() else None
+            return text, first, exit_code
+    return None, None, None
 
 
 def read_json(rel):
@@ -198,10 +231,20 @@ if gate_path:
     missing = sorted(set(GATE_KEYS) - set(supplied))
     if missing:
         sys.exit(f"--gate {gate_path} is missing {missing}; a partial gate is never merged")
+    missing_checked = sorted(set(CHECKED_GATE_KEYS) - set(supplied))
+    if missing_checked:
+        sys.exit(
+            f"--gate {gate_path} lacks the checked key(s) {missing_checked}; since the wave-38 "
+            "close a regeneration refuses a gate record that omits them "
+            "(LEAN-AUDIT-GATE-KEY-OPTIONAL, CLANG-GUARDED-GREEN-FAMILY-750) - record "
+            "`lean_audits` as the count check_lean_audits.py passed and `clang` as "
+            "'present: <first line of clang-version.txt>' or 'absent: <that line>' with the "
+            "recording beside the gate file"
+        )
     GATE = {key: supplied[key] for key in GATE_KEYS}
     # A checked key is read here and compared below, once the derived figure
     # exists; it is never copied into the published block.
-    GATE_CHECKED = {key: supplied[key] for key in CHECKED_GATE_KEYS if key in supplied}
+    GATE_CHECKED = {key: supplied[key] for key in CHECKED_GATE_KEYS}
     GATE_PROVENANCE = f"integrator_supplied ({gate_path})"
 else:
     previous_validation = previous["validation"]
@@ -240,6 +283,34 @@ if "lean_audits" in GATE_CHECKED and GATE_CHECKED["lean_audits"] != len(lean_aud
         "disagrees with the tree it claims to measure is refused rather than published "
         "(GATE-ROW-FIGURE-ATTRIBUTION-DRIFT)"
     )
+if "clang" in GATE_CHECKED:
+    claim = GATE_CHECKED["clang"]
+    presence, separator, banner = (claim.partition(": ") if isinstance(claim, str) else ("", "", ""))
+    if presence not in CLANG_PRESENCE or not separator or not banner.strip():
+        sys.exit(
+            f"--gate {gate_path} records clang = {claim!r}; the key is a presence claim of the form "
+            "'present: <first line of clang-version.txt>' or 'absent: <that line>' "
+            "(CLANG-GUARDED-GREEN-FAMILY-750)"
+        )
+    recording, first_line, exit_code = clang_recording(gate_path)
+    if recording is None:
+        sys.exit(
+            f"--gate {gate_path} claims clang = {claim!r} but no clang-version.txt is recorded "
+            "beside it (in its own directory or a gate/ subdirectory); a presence claim with no "
+            "recording is refused (CLANG-GUARDED-GREEN-FAMILY-750)"
+        )
+    if banner.strip() != first_line:
+        sys.exit(
+            f"--gate {gate_path} records clang = {claim!r} but {recording} begins "
+            f"{first_line!r}; a claim that disagrees with the recording it names is refused "
+            "(CLANG-GUARDED-GREEN-FAMILY-750)"
+        )
+    if exit_code is not None and (exit_code == "0") != (presence == "present"):
+        sys.exit(
+            f"--gate {gate_path} claims Clang {presence} but {recording.parent / 'clang-version.exit'} "
+            f"reads {exit_code!r}; the presence claim must agree with the recorded exit "
+            "(CLANG-GUARDED-GREEN-FAMILY-750)"
+        )
 
 workspace_toml = (ROOT / "Cargo.toml").read_text(encoding="utf-8")
 members = re.findall(r'"([^"]+)"', workspace_toml.split("members = [", 1)[1].split("]", 1)[0])

@@ -561,3 +561,16 @@ Untouched by this card and still open: `MUTEX-SHARE-CROSS-MULTI`,
    The mutex route is repaired here for its mutex operations. Whether the
    sequential, task, epoch, socket, event and HTTP routes have the same gap is
    **not measured by this card** and I make no claim about them.
+
+## Published beside by `WAVE-38-CLOSE` (2026-09-18) — the §4 mutations
+
+Appended, not edited (constraint 21): every line above the rule is the frozen
+card text. §4's mutation tables (the emitted-C mutations a, a2, b, c, d of
+§4.1 and the later arms) name no script, and the directory holds `README.md`
+and `ct_stage_evidence.json` only (`ls` at `4f663934`); no harness and no
+per-mutation log is in the tree. Each count is therefore **measured once by
+the card, harness not shipped**. Recorded under
+`W36-W37-MUTATION-HARNESSES-UNSHIPPED` (card `STABILITY-REEVAL-3`, wave 38);
+the card-report convention in `CLAUDE.md` now says a mutation count is cited
+only with its script and its per-mutation log in the report directory. This
+note changes no code and re-runs nothing.

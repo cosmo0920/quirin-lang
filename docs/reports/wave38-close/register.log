@@ -1,0 +1,42 @@
+## WAVE-38-QUEUE-NAMES-UNTRACKED - REGISTERED
+{
+ "id": "WAVE-38-QUEUE-NAMES-UNTRACKED",
+ "title": "Two of the queued LOOPS/AGGREGATE cards' target names reach no tracker, and one is classified as a rule not work",
+ "why": "MEASURED by card STABILITY-REEVAL-3 (wave 38), step 4. The queued compiler cards name their targets by residual: LOOPS-ON-COMPOSED-ROUTES by STRING-CONCAT-LOOP-WINDOW, SLICE-PERMISSIONS-LOOP-WINDOW and WRITE-LEND-RELEND; AGGREGATE-OWNED-FIELD by its own name. In named_followups: WRITE-LEND-RELEND is PRESENT; STRING-CONCAT-LOOP-WINDOW and AGGREGATE-OWNED-FIELD are ABSENT (only mentioned inside other entries' why texts, which scripts/reconciliation_sweep.py says is not tracking); SLICE-PERMISSIONS-LOOP-WINDOW is one of the nine names CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK classifies as a RULE the constraint imposes, which 'a card that lifts must name then'. So a card sized from the tracker finds one of its three targets, and a card sized from the constraint finds a rule. This is WAVE-36-CARDS-UNCHARTERED's shape one wave later. Step-4 measurement for the briefs: on both routes the window is computed over TOP-LEVEL event indices only (std_buffer.rs lend_windows :965-1054, last_use over Store/Load/Extent/Release/Lend with through = unwrap_or(index); std_string.rs last_view_uses :1057 and :1509), so a loan used only inside a Repeat body would close before the loop opens and every owner write in the body would be admitted - which is why both Repeat refusals (std_buffer.rs:1926-1944, std_string.rs:1814-1843) sit BEFORE the window computation and must not be reordered; and constraint 15k's 'a record contributes no ownership operation' is an explicit no-op arm (std_buffer.rs:914-918) over an owner vocabulary that is a plain String everywhere (ownership.rs:169-176, :242, :845), so AGGREGATE-OWNED-FIELD is an IR card before it is a route card and Q055's buffer-at-a-field-position refusal is the gate it must knowingly lift. DISCHARGE: register STRING-CONCAT-LOOP-WINDOW and AGGREGATE-OWNED-FIELD with the discharge conditions above, or extend CONSTRAINT-NAMED-BOUNDARIES-NOT-OPEN-WORK to name them and say why the queued cards are not their work.",
+ "source": "docs/reports/stability-reeval-3/README.md",
+ "recorded_by": "STABILITY-REEVAL-3"
+}
+## LEAN-AUDIT-GATE-KEY-OPTIONAL - REGISTERED
+{
+ "id": "LEAN-AUDIT-GATE-KEY-OPTIONAL",
+ "title": "The checked lean_audits gate key is optional, so the drift it exists to catch recurs by omission",
+ "why": "MEASURED by card STABILITY-REEVAL-3 (wave 38) on a private copy of docs/reports/remaining-d02/build_matrix.py (original md5 unchanged): a --gate with lean_audits = 139 against 137 proof/Audit*.lean is refused with the verbatim message naming GATE-ROW-FIGURE-ATTRIBUTION-DRIFT and writes nothing; 137 is accepted; with the comparison mutated to False the 139 gate is accepted and the matrix written, so the arm is load-bearing and test_build_matrix_sections.py:289 is the test that goes red. But GATE_CHECKED is populated only under 'if key in supplied' (:204): a gate.json that omits lean_audits passes without comment, as the wave-35 and wave-36 gates do. A close that forgets the key gets exactly the unchecked figure the key was added to prevent. Also: the published validation.lean_audits stays DERIVED, so the arm guards the gate record's honesty and not the AGENTS.md row (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT stays partial on its second arm). DISCHARGE: from the wave-38 close on, a --gate file lacking lean_audits is refused (or its omission printed as provenance in the gate block), with a test red by mutation.",
+ "source": "docs/reports/stability-reeval-3/README.md",
+ "recorded_by": "STABILITY-REEVAL-3"
+}
+## CLANG-GUARDED-GREEN-FAMILY-750 - REGISTERED
+{
+ "id": "CLANG-GUARDED-GREEN-FAMILY-750",
+ "title": "The 14-row Clang early-return shape is a 750-guard family, and no gate.json records Clang presence",
+ "why": "MEASURED by card STABILITY-REEVAL-3 (wave 38): rg -c 'if !clang_available()' over crates/ and compiler/ totals 750 early-return guards across 79 test files (publication_custody.rs 36, neutral_expression_positions.rs 32, may_alias_boundary.rs 32, ... scalar_route_exit_edge.rs 11). RETURN-CALL-TESTS-CLANG-GUARDED-GREEN (firing #2) named the shape on one file of 14 rows; it is the crate convention. On a Clang-less host every one reports ok having measured nothing, and no close's gate.json records whether Clang was present when its workspace count was taken - the ten keys are counts and exits, so a 4,637-green figure taken without Clang would be indistinguishable from one taken with it. This card recorded clang-version.txt (Ubuntu clang 21.1.8, QCORE_CLANG unset) beside its own gate as the cheapest form of the discharge. DISCHARGE: a clang presence key (present/absent plus version) in the close's gate.json, checked by the generator the way lean_audits now is; OR one shared helper that reports Clang absence as ignored so the count moves visibly; and the 14-row entry re-scoped to the family or retired into this one.",
+ "source": "docs/reports/stability-reeval-3/README.md",
+ "recorded_by": "STABILITY-REEVAL-3"
+}
+## amend target MAIN-GUARD-REFUSES-PACK-REFS - REGISTERED
+## amend target F02-WINDOWS-PIN-STALE-SINCE-WAVE-36 - REGISTERED
+## amend target MATRIX-RECORDED-BY-ABSENT-67 - REGISTERED
+## amend target RETURN-CALL-TESTS-CLANG-GUARDED-GREEN - REGISTERED
+## amend target GATE-ROW-FIGURE-ATTRIBUTION-DRIFT - REGISTERED
+## new STRING-CONCAT-LOOP-WINDOW - absent, will register
+## new AGGREGATE-OWNED-FIELD - absent, will register
+registered: STRING-CONCAT-LOOP-WINDOW
+registered: AGGREGATE-OWNED-FIELD
+amended: MAIN-GUARD-REFUSES-PACK-REFS
+amended: F02-WINDOWS-PIN-STALE-SINCE-WAVE-36
+amended: MATRIX-RECORDED-BY-ABSENT-67
+amended: RETURN-CALL-TESTS-CLANG-GUARDED-GREEN
+amended: GATE-ROW-FIGURE-ATTRIBUTION-DRIFT
+retired: WAVE-38-QUEUE-NAMES-UNTRACKED
+retired: LEAN-AUDIT-GATE-KEY-OPTIONAL
+retired: CLANG-GUARDED-GREEN-FAMILY-750
+named_followups 229 -> 228
