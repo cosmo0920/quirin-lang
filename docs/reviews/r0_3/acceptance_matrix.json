@@ -195,7 +195,7 @@
   "ct_stage_names": 17,
   "ct_cells": 850,
   "unverified_spec_items": 7,
-  "named_followups": 196
+  "named_followups": 197
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6160,7 +6160,7 @@
   "workspace_tests": 4611,
   "provider_tests": 122,
   "python_evidence_validator_tests": 293,
-  "lean_audits": 136,
+  "lean_audits": 137,
   "lean_audit_files": [
    "AuditAggregateStore.lean",
    "AuditAll.lean",
@@ -6223,6 +6223,7 @@
    "AuditHttpComputedLength.lean",
    "AuditJoinedProvenanceCallFrames.lean",
    "AuditJoinedProvenanceCycles.lean",
+   "AuditJoinedProvenanceRoundBound.lean",
    "AuditLifetimeCorrespondence.lean",
    "AuditLiteralArgumentPremise.lean",
    "AuditLoopBudget.lean",
@@ -7215,20 +7216,6 @@
    "recorded_by": "STABILITY-REEVAL-2"
   },
   {
-   "id": "JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED",
-   "title": "How many of the 1,273 cyclic functions exhaust the 64-round bound and silently derive nothing is not measured and not instrumented",
-   "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:210 sets FIXED_POINT_ROUNDS = 64, used at :271, with a bare declined at :309. MEASURED five ways that the decline rate is unknown: the shipped code counts nothing; the card's archived instrumentation emits function/nodes/reachable/cyclic/bare_acquires/sites/sites_off_cycle/conditional_names and NO rounds-used or converged field; logs/census.txt has no such row; rg FIXED_POINT_ROUNDS returns six hits, three in the module and three in the archived copy, and ZERO in any test; and the module's only cyclic fixture settles in a handful of rounds, while the mutation 'the iteration stops after one round' proves the ITERATION matters but never exercises the BOUND. The project's own convention in the same subsystem is the opposite: the sibling bound MAX_ALIAS_TARGETS sets state.widened when it fires and legacy_c.rs:6317-6323 turns that into an Unsupported diagnostic that keeps the function non-Safe. Declining is fail-closed and proved safe (weakening_stays_sound), so this is NOT unsoundness; it is an unmeasured refusal rate behind a green suite, and it makes README:228's headline readable as a measurement of derivability when it may be partly a measurement of the bound. DISCHARGE: one instrumented corpus run adding rounds_used and converged, publishing how many of the 1,273 hit 64, the maximum rounds any function actually used, and whether any of the 67 population-3 functions is among the declines; plus a direct derive() unit test on a hand-built CFG that provably needs more than 64 rounds. Re-run after JOINED-PROVENANCE-CALL-FRAMES, which raises the chain height.",
-   "source": "docs/reports/stability-reeval-2/README.md",
-   "recorded_by": "STABILITY-REEVAL-2"
-  },
-  {
-   "id": "JOINED-PROVENANCE-DECLINE-INDISTINGUISHABLE",
-   "title": "fixed_point returns the identical value for 'nothing to derive' and 'did not converge', so no consumer or census can separate them",
-   "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:258 binds let declined = vec![Bindings::new(); cfg.nodes.len()], returned at :261 when sites.is_empty() (nothing to derive) and again at :309 when the 64-round loop falls through (did not converge). They are the same value. No downstream consumer, and no future census, can tell the two apart - which is what makes JOINED-PROVENANCE-FIXED-POINT-BOUND-UNMEASURED unmeasurable without a code change, and what would make a post-CALL-FRAMES result of 'still zero' have two causes nothing in the tree could separate. DISCHARGE: make the two outcomes distinguishable, at minimum an Unsupported diagnostic on the :309 path following the state.widened precedent at legacy_c.rs:6317-6323. Note this is an ACCUSING change - a function that declines would stop being silently Safe-eligible on that pre-pass's account - so it needs its own re-pin.",
-   "source": "docs/reports/stability-reeval-2/README.md",
-   "recorded_by": "STABILITY-REEVAL-2"
-  },
-  {
    "id": "RELEASE-SITE-PREMISES-PARTIALLY-INSTRUMENTED",
    "title": "release_site has seven refusal disjuncts and the published census counts three; the other four have never been instrumented",
    "why": "crates/qcore-c-gateway/src/legacy_joined_provenance.rs:358-364 is a seven-way disjunction: not_named_by_facts (:358), not_live (:359), nullable_site (:360), unresolved_effect (:361), contained (:362), field_links (:363), conditional_replacements (:364). The published census (report :237-242) counts three - not_named_by_facts 14/14, nullable_site 14/14, unresolved_effect 5/14. The disjuncts at :362-364 have never been the blocker at any corpus site and were never instrumented. This becomes load-bearing immediately: the queued JOINED-PROVENANCE-CALL-FRAMES removes :358 at some subset of the 14, after which :359-364 are the live gate, and a post-card census could not distinguish 'now blocked by contained' from 'still blocked by naming'. A PREDICTION THE CARD SHOULD COMMIT TO BEFORE MEASURING: because nullable_site is independently universal at 14/14, CALL-FRAMES alone moves ZERO corpus sites however perfectly it attributes the naming loss; its payoff is conditional on JOINED-PROVENANCE-RELEASE-NULLABLE landing too. DISCHARGE: publish a seven-way census at the next gateway arbiter, and a direct release_site unit test on a hand-built AbstractState for each of :362, :363 and :364, since no corpus path reaches them.",
@@ -7325,12 +7312,6 @@
    "why": "Card CT-CTWIN-LANE moved sum(counts.values()) from 5 to 4 at scripts/tests/test_ct_stage_summary.py:990. The cause is disclosed in both the report and the commit message (CT46 mapped, 45/50 to 46/50) and the test's own comment carries the history line by line, so this is a documentation gap rather than a silent edit. But CLAUDE.md asks for the PIN to be named deliberately in the commit message, and the literal is not. Low severity, recorded for the pattern rather than the instance. DISCHARGE: name the literal in future lane commit messages when a mapping moves it, or record that a tally derived from a disclosed mapping count is covered by disclosing the mapping.",
    "source": "docs/reports/stability-reeval-2/README.md",
    "recorded_by": "STABILITY-REEVAL-2"
-  },
-  {
-   "id": "JOINED-PROVENANCE-ROUND-BOUND",
-   "title": "new. Two of the six distinct sites (6 of 14 visits) derive nothing because the greatest fixed point exhausts `FIXED_POINT_ROUNDS = 64` and declines the whole fu",
-   "why": "* **`JOINED-PROVENANCE-ROUND-BOUND`** — **new.** Two of the six distinct sites (6 of 14 visits) derive nothing because the greatest fixed point exhausts `FIXED_POINT_ROUNDS = 64` and declines the whole function — `rd_kafka_mock_handle_ConsumerGroupHeartbeat` and `rd_kafka_mock_handle_ShareGroupHeartbeat`. Wave 35 recorded these inside the undifferentiated \"not named by facts\" bucket; separating the two decline reasons is what exposes them. Declining is sound (`weakening_stays_sound`), so this is a **precision** boundary and not a soundness one. Discharge: measure how many rounds those two functions actually need, and either raise the bound with the cost measured or establish a termination argument that removes it.",
-   "source": "docs/reports/joined-provenance-call-frames/README.md §7"
   },
   {
    "id": "CALL-FRAMES-FRAME-READER-PREMISE",
@@ -7618,6 +7599,34 @@
    "source": "docs/reports/scalar-route-exit-edge/README.md",
    "title": "The value route's zero spellings do NOT move with CONSTANT-DO-WHILE-ZERO-SPELLINGS - measured, with the ground",
    "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) was asked whether the value route's unclaimed zero spellings move with CONSTANT-DO-WHILE-ZERO-SPELLINGS, and measured that they do not. The two rules key DIFFERENT PREDICATES IN DIFFERENT POSITIONS: condition_is_literal_zero (legacy_c.rs:4652) matches a single token whose text is \"0\" over a CONDITION token stream, while the value route keys on is_null_constant (legacy_c.rs:4799), which matches NULL, nullptr, 0 and (void *)0, applied to an INITIALIZER's right-hand side and to the operands of == and !=. Neither is a subset of the other - is_null_constant already accepts two spellings condition_is_literal_zero refuses - so widening one does not widen the other, and CONSTANT-DO-WHILE-ZERO-SPELLINGS's discharge (a preprocessed census of do-while CONDITIONS) does not answer this question. Pinned by the_other_zero_spellings_reach_neither_arm: 0x0, 0u, 0L, 00, a null character constant and 1 - 1 bind no known null, reach neither deciding arm and keep every edge. DISCHARGE: a census of INITIALIZER right-hand sides over the 185 units classifying every single-token integer constant expression, followed either by a widening of is_null_constant with its own measured re-pin or by a recorded statement that the set is empty. Note the direction: widening is_null_constant would create new exit-edge deletions on this route, which is now harmless because card SCALAR-ROUTE-EXIT-EDGE refuses them whatever the binding says."
+  },
+  {
+   "id": "JOINED-PROVENANCE-BOUND-DESCENT-PREMISE",
+   "title": "The proved round bound's descent hypothesis is stated of, not proved of, the Rust transfer",
+   "why": "QCore.JoinedProvenanceRoundBound.rounds_are_bounded_by_the_graph_budget bounds the sweep by nodes * (1 + sites + sites * names) on the hypothesis that every non-fixed sweep strictly decreases the module's measure. Card JOINED-PROVENANCE-ROUND-BOUND (wave 37) replaced FIXED_POINT_ROUNDS = 64 with that bound, so the hypothesis is now load-bearing for termination of the shipped loop rather than decorative. It is an abstract rule theorem, not extraction (GATEWAY-LEAN-ABSTRACT-NOT-EXTRACTION): Facts::step's four arms, outgoing's conditional-name retain and the null-edge exclusion are premises, none proved monotone. The premise is not idle - the card records that the NAIVE measure (counting only stored names) makes a site's arrival INCREASE the count, so the obvious reading of the hypothesis is false and the correct one reads absence as the top of that site's own lattice. DISCHARGE: a per-arm monotonicity proof of the four transfer arms plus the null-edge exclusion, or an extraction. Until then the bound is sufficient-if-the-premise-holds, and the fail-closed declining arm is retained precisely for the case it does not.",
+   "source": "docs/reports/joined-provenance-round-bound/README.md",
+   "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
+  },
+  {
+   "id": "JOINED-PROVENANCE-DECLINE-ARM-UNREACHABLE",
+   "title": "fixed_point's declining arm is unreachable from derive unless the round-bound theorem is false, so no test drives it end to end",
+   "why": "Card JOINED-PROVENANCE-ROUND-BOUND (wave 37) made the iteration cap this graph's own proved bound, so reaching it would falsify rounds_are_bounded_by_the_graph_budget rather than exhaust a guess. The arm is therefore structurally unreachable through derive: the card's mutation harness (measure/joined-provenance-round-bound/mutations.py) catches six of seven mutations and the survivor is exactly this one - a decline that publishes a forged binding turns no test red, because no graph reaches the arm. The arm IS driven directly at iterate, where two tests pass a deliberately short cap. Recorded rather than engineered away because a suite that cannot reach an arm is evidence about the paths it took, not about the arm (CLAUDE.md's STABILITY-REEVAL method 1). DISCHARGE: a graph that provably exceeds its own bound (which would falsify the theorem), or a recorded decision that the arm stays untestable through derive by construction and is retained purely as the fail-closed answer.",
+   "source": "docs/reports/joined-provenance-round-bound/README.md",
+   "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
+  },
+  {
+   "id": "JOINED-PROVENANCE-BOUND-COST-UNMEASURED",
+   "title": "The proved round bound buys sufficiency, not speed, and the cost of a graph that actually approached its bound is unmeasured",
+   "why": "Card JOINED-PROVENANCE-ROUND-BOUND (wave 37) measured corpus-wide sweep cost rising from 803,004 to 1,074,540 round-edge steps (+33.8%) when the cap became the per-graph proved bound - immeasurably small against a ~7-minute audit, and no graph comes near its own bound (the closest approach in the pinned corpus is set_events_from_ctr at 13 of 28, 46%). What is NOT measured is the cost if one did: rd_kafka_mock_handle_ConsumerGroupHeartbeat would cost 9,318,240 round-edge steps at its bound of 10,785 against the 127,872 it actually costs, and the bound grows without a ceiling on a larger body. A wall-clock comparison was NOT taken cleanly - the BEFORE run carried the census probe and the runs were made under different machine load - so the 368.9s/442.3s pair attributes nothing. DISCHARGE: a measured worst case on a deliberately adversarial CFG, or a stated secondary ceiling with its own ground (which reintroduces a constant and needs invariant 1 read first, since a ceiling below the bound can only lose derivations).",
+   "source": "docs/reports/joined-provenance-round-bound/README.md",
+   "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
+  },
+  {
+   "id": "JOINED-PROVENANCE-BOUND-NOT-TIGHT",
+   "title": "The proved round bound exceeds the observed maximum by one to two orders of magnitude and no tighter bound is proved",
+   "why": "Over the 159 sweeping visits of the pinned corpus the proved bound nodes * (1 + sites + sites * names) runs min 28 / median 378 / max 17,091, against an observed maximum of 148 rounds (card JOINED-PROVENANCE-ROUND-BOUND, wave 37). For 11 of those 159 visits the proved bound is at or below the old constant of 64, so the old cap was already provably sufficient there and nobody knew. The classical tighter results for this shape - loop connectedness for a round-robin sweep in reverse postorder - do not carry to this Jacobi schedule unchanged, and none is proved here. Looseness costs nothing today because nothing approaches the loose bound; it is recorded so that a later cost question (JOINED-PROVENANCE-BOUND-COST-UNMEASURED) is not answered by tightening something nobody proved. DISCHARGE: a tighter proved bound, or a recorded decision that tightness buys nothing while nothing approaches the loose one.",
+   "source": "docs/reports/joined-provenance-round-bound/README.md",
+   "recorded_by": "JOINED-PROVENANCE-ROUND-BOUND"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

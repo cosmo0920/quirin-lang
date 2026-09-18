@@ -176,5 +176,6 @@ import QCore.ConstantDoWhile
 import QCore.ScalarRouteExitEdge
 import QCore.JoinedProvenanceCycles
 import QCore.JoinedProvenanceCallFrames
+import QCore.JoinedProvenanceRoundBound
 
 /-! The executable formal core of QCore-C revision 0.1. -/

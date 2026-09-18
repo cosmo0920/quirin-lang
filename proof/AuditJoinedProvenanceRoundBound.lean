@@ -1,0 +1,16 @@
+import QCore.JoinedProvenanceRoundBound
+#print axioms QCore.JoinedProvenanceRoundBound.countB_le
+#print axioms QCore.JoinedProvenanceRoundBound.countB_mono
+#print axioms QCore.JoinedProvenanceRoundBound.countB_lt
+#print axioms QCore.JoinedProvenanceRoundBound.measure_le
+#print axioms QCore.JoinedProvenanceRoundBound.decode_index
+#print axioms QCore.JoinedProvenanceRoundBound.liveAt_mono
+#print axioms QCore.JoinedProvenanceRoundBound.descent_decreases_measure
+#print axioms QCore.JoinedProvenanceRoundBound.total_le_graphBudget
+#print axioms QCore.JoinedProvenanceRoundBound.sweep_decreases_total
+#print axioms QCore.JoinedProvenanceRoundBound.kleene_reaches_a_fixed_point
+#print axioms QCore.JoinedProvenanceRoundBound.iter_stable
+#print axioms QCore.JoinedProvenanceRoundBound.a_cap_at_the_measure_settles
+#print axioms QCore.JoinedProvenanceRoundBound.rounds_are_bounded_by_the_graph_budget
+#print axioms QCore.JoinedProvenanceRoundBound.a_settled_state_is_a_fixed_point
+#print axioms QCore.JoinedProvenanceRoundBound.stopping_early_is_declining

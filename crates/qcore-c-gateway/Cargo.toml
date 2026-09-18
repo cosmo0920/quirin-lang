@@ -11,6 +11,12 @@ description = "Fail-closed existing-C analysis, validated custody inference and 
 # `legacy_c` are compiled out entirely. It adds no rule and moves no verdict;
 # the card publishes the byte-identity measurement that says so.
 indirect-census = []
+# Card JOINED-PROVENANCE-ROUND-BOUND. Off by default and never enabled by any
+# workspace member: with it off, `provenance_rounds` and its one call site in
+# `legacy_joined_provenance::fixed_point` are compiled out entirely. It adds no
+# rule and moves no verdict; the card publishes the byte-identity measurement
+# that says so.
+provenance-rounds-census = []
 
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
