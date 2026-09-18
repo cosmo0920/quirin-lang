@@ -490,6 +490,26 @@ make. This card makes it, for its own page only: `wave-40.md` stays a record
 page, and the appendix is indexed from it, from the checkpoint page's own header
 and from `docs/development/increments/README.md`'s wave table.
 
+### 8.1 Nothing named was lost — measured, not asserted
+
+Every `SCREAMING-KEBAB` name in the three files was extracted before and after
+(`scripts/check_names.py`). **Eighteen** stopped appearing:
+[`artifacts/names-no-longer-in-the-three-files.txt`](artifacts/names-no-longer-in-the-three-files.txt).
+For each, the check asks whether it still lives in the three files under any
+case, in a `docs/reports/` directory, in `named_followups`, or in the verbatim
+checkpoint page —
+[`artifacts/names-still-live-where.txt`](artifacts/names-still-live-where.txt).
+
+**Lost in all four: none.** All eighteen are in the checkpoint page; fifteen are
+also in a report directory or still in the files (`W29-CORPUS-CONTRACTS`,
+`W31-CORPUS-CONTRACTS-2` and `W4-RECURSIVE-SUMMARIES` only changed case, the
+arbiter chain naming them by report directory now). The three thinnest —
+`OR-AND-LOWERING`, `T03-GUARD-JOIN`, `WAVE-34-CLOSE` — were each verified by
+hand to live in the increment history as well (`wave-19.md`, `wave-05.md` and
+`wave-32.md`, `wave-35.md` respectively, plus `docs/reports/wave34-close/`).
+**Not one of the eighteen is a residual with an open discharge condition**; all
+are card names cited as precedent inside the compacted narratives.
+
 ---
 
 ## 9. For the integrator

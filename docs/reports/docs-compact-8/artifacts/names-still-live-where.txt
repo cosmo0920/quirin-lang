@@ -1,0 +1,21 @@
+name                               in files  report dir  tracker  checkpoint
+BASE-TYPE-READER-CENSUS            False     True        False    True      
+CT-LANE-5                          False     True        False    True      
+CT-PROOF-LEG-2                     False     True        False    True      
+CT-WIRE-LANE                       True      True        False    True      
+CT-WIRE-LANE-3                     False     True        False    True      
+CT-WIRE-LANE-4                     False     True        False    True      
+CT01-PROOF-LEG                     False     True        False    True      
+CT22-WIRE                          False     True        False    True      
+DOCS-COMPACT-3                     True      True        False    True      
+OR-AND-LOWERING                    False     False       False    True      
+PROOF-LEG-BATCH                    False     True        False    True      
+STD-BUFFER                         True      False       False    True      
+T03-GUARD-JOIN                     False     False       False    True      
+T08-EPOCH-SRC                      True      False       False    True      
+W29-CORPUS-CONTRACTS               True      True        False    True      
+W31-CORPUS-CONTRACTS-2             True      True        False    True      
+W4-RECURSIVE-SUMMARIES             True      True        False    True      
+WAVE-34-CLOSE                      False     False       False    True      
+
+LOST (in none of the four): none
