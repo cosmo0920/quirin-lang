@@ -50,10 +50,10 @@ guessed. Capabilities are opt-in per file through the `std` module family:
 
 | Import | Gives the file |
 |---|---|
-| `std.concurrency` | scoped tasks, checked mutexes, epoch bounds, disjoint footprints |
+| `std.concurrency` | scoped tasks, checked mutexes, epoch bounds, disjoint footprints, and one declared way for a mutex-protected payload to cross a task boundary (`thread scope N share P under M { … }`), which lowers to real threads over the existing mutex emission |
 | `std.fmt` / `std.io` / `std.logger` | rendered `print`, `log`, `flush` lines and declared log levels |
 | `std.extern` (plus `std.extern.unsafe`) | bounded declared extern calls; adding the second import is explicit unchecked linkage, scalars only, every pointer refused |
-| `std.buffer` | the owned, extent-carrying byte buffer; plain-value **record** types over it (`type Name { field: i32, … }`, construction and field read); and the range **write lend** — `lend(b, lo, hi)` hands write authority over a byte range to a loan, two loans admitted exactly when their ranges are disjoint, and, with `std.concurrency`, a lease of such a range crosses the spawn boundary to one worker for exactly spawn..join (held and enforced there; no worker operation exercises it yet) |
+| `std.buffer` | the owned, extent-carrying byte buffer; plain-value **record** types over it (`type Name { field: i32, … }`, construction and field read); and the range **write lend** — `lend(b, lo, hi)` hands write authority over a byte range to a loan, two loans admitted exactly when their ranges are disjoint, and, with `std.concurrency`, a lease of such a range crosses the spawn boundary to one worker for exactly spawn..join and is **exercised** there — a worker writes and reads single bytes at indices relative to its own lease's base, with two threads writing distinct bytes of one payload under the sanitizers and stdout byte-identical to the reference run |
 | `std.string` | immutable UTF-8 `{ptr, len}` string views, and text the compiler **composes**: `concat(…)` of check-time-known pieces into static storage, `dec`/`hex` of a bound integer, `borrow_utf8` bridging an owned buffer — whole-extent or a declared byte range |
 | `std.event` | the checked event/reactor surface over descriptor custody |
 | `std.socket` | checked TCP and UDP over loopback, both ends in one program — including **declared** IPv4/IPv6 addresses with ports, resolved at check time against this program's own binds |
@@ -82,9 +82,12 @@ and run under the sanitizers, and its output is compared with the checked
 reference execution by a workspace test. What that buys is bounded. The HTTP
 route is **an executed HTTP/1.1 subset with the boundary named** — not HTTP/1.1
 conformance; the socket route models loopback with both ends in one program and
-reaches no external peer. Broader structural syntax and separately checked
-semantic models do **not** imply complete source-language support, and general
-task/mutex composition remains open.
+reaches no external peer. The mutex crossing witnesses a real thread boundary
+and says **nothing** about contention, a data race or the C memory model; no
+ThreadSanitizer row exists anywhere in this repository. Broader structural
+syntax and separately checked semantic models do **not** imply complete
+source-language support, and general task/mutex composition remains open — the
+task route's own buffer still has no mutex.
 
 ## Status at a glance
 
@@ -100,17 +103,21 @@ recorded evidence, not general guarantees.
 | Verifier plugins (Cycle 20) | Active: versioned protocol, fail-closed registry, bounded process providers. |
 
 The latest raw Cycle 19 measurement over 185 translation units is
-**2 Safe / 42 provisional Unsafe / 137 Unknown**, plus four data-only units.
+**2 Safe / 42 provisional Unsafe / 137 Unknown**, plus four data-only units —
+archived under `docs/reports/w37-corpus-contracts-4/artifacts/`, the newest link
+in a chain in which every measurement reproduces its predecessor's
+verdict-bearing artifacts byte for byte, so that each change's effect is
+attributable to it alone.
 **Raw units remain unpromoted**: a translation unit is not promoted to `Safe`
 until per-path identity imports and real observation evidence satisfy the
 cycle's fail-closed gates. A provisional `Unsafe` is never presented as an
 upstream defect. Coverage is not safety coverage, and unknowns stay in the
 denominator.
 
-The conformance-case corpus stands at **45 of 50 mapped**, with 5 unmapped.
+The conformance-case corpus stands at **46 of 50 mapped**, with 4 unmapped.
 That denominator grows by **mapping, not conformance**: a newly mapped case
-means the harness now runs it, not that anything new was proved. Of the 45
-mapped, 9 carry a sanitized native run and 3 carry a proof stage — CT01, CT37
+means the harness now runs it, not that anything new was proved. Of the 46
+mapped, 10 carry a sanitized native run and 3 carry a proof stage — CT01, CT37
 and CT03, each a scenario property proved in Lean of the checked artifact's
 reference run and its admitted renderings, with native execution still
 covered by observation only.
@@ -171,6 +178,12 @@ The standing per-change gate — the full command list every change must pass,
 including formatting, Clippy and both reevaluation probes — is in
 [`AGENTS.md`](AGENTS.md). Windows setup, Clang discovery order and CI job
 layout are in [DEVELOPMENT.md](DEVELOPMENT.md#build-and-test).
+
+The repository ships versioned hooks in `.githooks/` that refuse an unauthorised
+update to `refs/heads/main`. They are **inert in a fresh clone** until someone
+runs `python3 scripts/install_main_guard.py` once in that checkout, and they are
+bypassable by intent (`--no-verify`, a `core.hooksPath` override): they guard
+against a mistake, not against an attacker.
 
 ## Documentation map
 

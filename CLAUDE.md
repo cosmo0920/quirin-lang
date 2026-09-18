@@ -42,10 +42,11 @@ the operational guidance that is in neither of those.
 - **Compact these three files every 2–3 waves.** `AGENTS.md`, `CLAUDE.md` and
   `README.md` accrete: constraints restate their card reports, sections drift
   apart, README falls behind the ledger. A recurring compaction card
-  (DOCS-COMPACT 2026-09-10, DOCS-COMPACT-2 2026-09-11, DOCS-COMPACT-3
-  2026-09-12 after wave 26, DOCS-COMPACT-4 2026-09-13 after wave 29,
-  DOCS-COMPACT-5 2026-09-13 after wave 31, DOCS-COMPACT-6 2026-09-17 in
-  wave 34; next due around wave 36) re-reads every headline
+  (seven firings to date, `DOCS-COMPACT` through `DOCS-COMPACT-7`, each with
+  its own report — `docs/reports/wave16-docs-compact/` for the first,
+  `docs/reports/docs-compact-{2,3,4,5,6,7}/` for the rest; the dated roster is
+  a checkpoint in the wave-37 record. Latest `DOCS-COMPACT-7`, wave 37; next
+  due around wave 39) re-reads every headline
   number **from its source and never from the file being compacted**,
   inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
@@ -63,9 +64,11 @@ the operational guidance that is in neither of those.
   *narrative*; it does not licence trading accuracy for bytes.
 - **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after
   wave 31). Green tests are an *observation*, and an observation is not a
-  proof: a recurring **`STABILITY-REEVAL`** card (#1 ran in wave 34,
-  `docs/reports/stability-reeval-1/README.md`; next due after wave 35)
-  asks, of the claims this project currently rests on, **under what conditions
+  proof: a recurring **`STABILITY-REEVAL`** card (#1 in wave 34, #2 in wave 36,
+  reports under `docs/reports/stability-reeval-{1,2}/README.md`; **#3 is due
+  now**, after wave 37, and #2's own §6 names the corpus artifacts — pinned by
+  no test — and the remaining Lean docstrings as the highest-value unexamined
+  ground) asks, of the claims this project currently rests on, **under what conditions
   each is unstable or unproven** — and it reports that as a finding rather
   than as reassurance. The method, in the order that has caught the most:
   1. **Hunt vacuous greenness.** For every fail-closed arm added or changed in
@@ -226,6 +229,13 @@ the operational guidance that is in neither of those.
   (`refused-push-unauthorised`, twice) before the token was carried on the push
   command too. That is the guard working; it is written here because the
   activation message does not say it.
+  **One false positive is measured and open**: `git pack-refs` — which git's
+  automatic `gc` runs — re-writes `refs/heads/main` with old = the null OID and
+  new = the ref's *existing* value, and the guard refuses that transaction even
+  though it advances nothing. The commit itself succeeds; the background `gc`
+  fails behind it, printing the guard's banner for an operation that was never a
+  main update (`MAIN-GUARD-REFUSES-PACK-REFS`, reproduced at both `477b733d` and
+  `2caf7369`). Expect it, and do not read it as your commit having been refused.
 - **Never `pkill`/`pgrep` on a pattern that names a tool invocation** —
   `cargo`, `lake`, `python3` — because every parallel card runs the same
   commands. **The process table is shared across worktrees exactly as the stash
