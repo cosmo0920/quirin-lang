@@ -537,7 +537,22 @@ pointer is the card that established it; read it before deviating.
     for one abstract resource per *site* rather than per dynamic object, so a
     per-site identity fact would not be a statement about one of them — and
     which declines the function outright if it has not settled within its
-    iteration bound. The two routes agree wherever both apply: the fixed-point
+    iteration bound. That bound is **this graph's own proved bound**,
+    `nodes * (1 + sites + sites * names)`
+    (`QCore.JoinedProvenanceRoundBound.rounds_are_bounded_by_the_graph_budget`,
+    card `JOINED-PROVENANCE-ROUND-BOUND`, wave 37) and **not a constant**: that
+    card measured the flat `FIXED_POINT_ROUNDS = 64` losing facts at 9 of the
+    corpus's 159 sweeping visits, across 4 functions, and replaced it. Reaching
+    the cap would now falsify that theorem rather than exhaust a guess, so the
+    declining arm is unreachable from `derive`
+    (`JOINED-PROVENANCE-DECLINE-ARM-UNREACHABLE`) and is retained **only** as
+    the fail-closed answer. **Do not restore a constant cap**, and do not weaken
+    the declining arm: it is what makes the bound safe to raise. The theorem's
+    descent hypothesis is stated of, not proved of, the Rust transfer
+    (`JOINED-PROVENANCE-BOUND-DESCENT-PREMISE`), and the naive form of it is
+    false — a site's *arrival* increases a count that reads only stored names,
+    so absence must read as the top of that site's own lattice. The two routes
+    agree wherever both apply: the fixed-point
     equation has exactly one solution on an acyclic graph
     (`QCore.JoinedProvenanceCycles.acyclic_solution_is_unique`), so no acyclic
     body's verdict can move, and soundness on a cycle is
@@ -553,7 +568,8 @@ pointer is the card that established it; read it before deviating.
     operations, and **cycles were never that residual's blocker** — card
     `JOINED-PROVENANCE-CYCLES` measured that function's CFG acyclic, so the
     wave-31 pass already served it. `c-gateway-wave`,
-    `joined-provenance-cycles`, `joined-provenance-call-frames`.
+    `joined-provenance-cycles`, `joined-provenance-call-frames`,
+    `joined-provenance-round-bound`.
 
 **Compile-task identity and source transport**
 
