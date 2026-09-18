@@ -165,11 +165,14 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**233** entries after `CT07-TWO-THREAD-PROOF-LEG` (228 after the wave-38 close,
-229 after `STABILITY-REEVAL-3`, 215 at the wave-37 close; the wave-38 close
-registered two and retired three, each named in
-`docs/reports/wave38-close/README.md`; the proof-leg card retired two and
-registered one, each named in `docs/reports/ct07-two-thread-proof-leg/README.md`). Which card registered or retired which name,
+**234** entries after the wave-39 close (233 at its base `b6d1f101`; the
+wave's chain, each step named in its card's report and merge message: 228
+after the wave-38 close → 227 after `CT07-TWO-THREAD-PROOF-LEG` (−2 +1) →
+232 after `AGGREGATE-OWNED-FIELD` (−1 +6) → 234 after `TSAN-ROWS-2` (−4 +6,
+one of the four the integrator's own retirement recorded at `0150c904`) →
+231 after `CT42-CELL-ROUTE` (−5 +2) → 233 after `LOOPS-ON-COMPOSED-ROUTES`
+(−1 +3); the close retired two and registered three, each named in
+`docs/reports/wave39-close/README.md`). Which card registered or retired which name,
 and each wave's chain, is the increment records' business — read the wave
 paragraphs; the retirement discipline itself is a standing rule in `CLAUDE.md`,
 and each close's own record carries that close's arithmetic. The operative rule
@@ -910,7 +913,28 @@ pointer is the card that established it; read it before deviating.
       only front-end file that moved is `source_tasks.rs`, in
       `WRITE-LEND-TASKS-EXERCISE`'s own two commits — the one card the entry
       places in the `+0` family — and `lexer.rs` and `parser.rs` did not move
-      (`docs/reports/wave37-close/README.md` §6).
+      (`docs/reports/wave37-close/README.md` §6). **Wave 39's two of five** —
+      `CT07-TWO-THREAD-PROOF-LEG` ("+0 keywords", merge `0d9e922f`; "census:
+      +0, nothing to census", its wave-39 record paragraph) and `TSAN-ROWS-2`
+      ("+0 words", merge `0150c904`; "constraint 14 not engaged (no word, no
+      token)", its record paragraph) — neither reserves a word nor moves the
+      lexer; the wave's other three cards stand in the families above
+      (`AGGREGATE-OWNED-FIELD` +0, `LOOPS-ON-COMPOSED-ROUTES` +0,
+      `CT42-CELL-ROUTE` +1). The wave-39 close **measured** the seam the way
+      the wave-37 close did: `git diff --name-only e878b362 b6d1f101 --
+      crates/qcore-frontend/src/` names six files, and `git log --name-only`
+      over the range attributes every one to those three cards —
+      `frontend.rs` (the one reserved word) and `source_socket.rs` to
+      `CT42-CELL-ROUTE` (`2d1f8fa9`); `source_record.rs`, `whole_program.rs`
+      and `source_std_buffer.rs` to `AGGREGATE-OWNED-FIELD` (`e60ad0c1`,
+      `2f27c652`, `c960a263`); `source_std_buffer.rs` and
+      `source_std_string.rs` to `LOOPS-ON-COMPOSED-ROUTES` (`39cc9848`,
+      `6adaf1ef`) — `lexer.rs` and `parser.rs` did not move, and no commit of
+      the proof-leg or TSan card touched the front end
+      (`docs/reports/wave39-close/README.md` §6). **Wave 39 closed at one
+      reserved word** (`disjoint`), the first since `LOOP-V1`'s `for` at
+      wave 26, ending the wave-28-to-37 run as the `CT42-CELL-ROUTE` bullet
+      states.
       **This bullet said "every card of waves
       32, 33 and 34" over a list that named neither `PROOF-LEG-BATCH` nor
       `DOCS-COMPACT-5` nor `MUTEX-SHARE-CROSS`, and the universal was
@@ -2009,9 +2033,9 @@ existing band**, on the `SOCKET-EVENT-COMPOSE` /
 `NATIVE-LIBRARY-HEADER-DECORATION` precedent — the same condition reached by a
 new route — with the widening stated in §L21 and in the card's report rather
 than taken silently. Constraint 1 is unchanged: a code is still allocated to a
-condition, still stable, still not reusable by a second pass. **Waves 26–36 ran
-the consequence fifteen times, on ten bands, without strain** (wave 37 ran it
-none) — wave 26:
+condition, still stable, still not reusable by a second pass. **Waves 26–39 ran
+the consequence eighteen times, on ten bands, without strain** (wave 37 ran it
+none; wave 39 three times, the sixteenth to eighteenth below) — wave 26:
 `LOOP-UNROLL-BUDGET` (`Q097`/`Q098`), `HTTP-V1-COMPUTED-LENGTH`
 (`Q090`/`Q093`/`Q094`), `SOCKET-INET-ADDRESSES` (widening `Q084` inside
 `Q080`–`Q089`); wave 27: `CT23-CREDIT-ERROR-PATH` (`Q630`/`Q635`/`Q636`/`Q641`),
@@ -2041,10 +2065,21 @@ access lands entirely as condition extensions — the at-most-one-lease paramete
 rule and the byte spellings' kind refusals on `Q020`, and the footprint fit,
 the constant-index tier and the three authority rules on `Q600` — with the
 **arity** selecting the form on the `borrow_utf8` precedent, so it reserves no
-word and takes no code. Wave 39's `LOOPS-ON-COMPOSED-ROUTES` is the
-**seventeenth** (merged after `AGGREGATE-OWNED-FIELD`, the sixteenth, below),
-and the first whose movements are **all narrowings** stated as
-such: `Q051`, `Q068` and `Q077` each lose the blanket `for` refusal (§L21
+word and takes no code. Wave 39's `CT42-CELL-ROUTE` is the **seventeenth**,
+on two bands already counted (`Q080`–`Q089` and `Q090`–`Q096`): `Q080`,
+`Q081` and `Q085` widened to the disjointness question's shapes and the cell
+derivation's two refusals, `Q095` widened to the HTTP composition's cell
+check, the answer itself reaching the unedited `Q664` — each stated in §L21
+and in the card's own rows below, and its report §4.5 and merge message
+(`45a33285`) saying "five conditions widened, zero codes allocated" — and
+**missed by this paragraph until the wave-39 close**, which counted it from
+those rows (`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`'s live instance: nothing
+derives this tally, and a card that states its widenings everywhere but here
+still went uncounted for one merge). Wave 39's `LOOPS-ON-COMPOSED-ROUTES` is
+therefore the **eighteenth** (merged last; its own report and the `b6d1f101`
+merge message say "seventeenth", counted before this correction — read them
+as that checkpoint), and the first whose movements are **all narrowings**
+stated as such: `Q051`, `Q068` and `Q077` each lose the blanket `for` refusal (§L21
 amendments), `Q078` is reached from a body statement with its condition
 unwidened, the three shapes it refuses by name land on `Q051`/`Q077` as
 condition extensions, and the composed route reaches the loop pass's own
@@ -2060,7 +2095,7 @@ there and put the total at thirteen until wave 37**, a universal its own
 `CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE`, in the same wave, in the neighbouring
 constraint. The totals above are re-derived from this paragraph's own
 enumeration plus those two rows, and nothing derives them mechanically
-(`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`). The icebox has now held for twelve
+(`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`). The icebox has now held for thirteen
 waves without a card needing a range. **Re-affirmed on 2026-09-18 for wave 39
 — an integrator-recorded decision, carried as still open (re-affirmed, not
 resolved) in the wave-38 close's deferred decisions:** condition extensions

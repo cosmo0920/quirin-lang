@@ -45,8 +45,9 @@ the operational guidance that is in neither of those.
   (seven firings to date, `DOCS-COMPACT` through `DOCS-COMPACT-7`, each with
   its own report — `docs/reports/wave16-docs-compact/` for the first,
   `docs/reports/docs-compact-{2,3,4,5,6,7}/` for the rest; the dated roster is
-  a checkpoint in the wave-37 record. Latest `DOCS-COMPACT-7`, wave 37; next
-  due around wave 39) re-reads every headline
+  a checkpoint in the wave-37 record. Latest `DOCS-COMPACT-7`, wave 37;
+  `DOCS-COMPACT-8` is due around wave 40 — recorded as due by the wave-39
+  close, not run) re-reads every headline
   number **from its source and never from the file being compacted**,
   inventories the standing constraints before and
   after, and merges redundancy. Compaction is **not** deletion: no constraint,
@@ -65,10 +66,12 @@ the operational guidance that is in neither of those.
 - **Re-evaluate stability every 2 waves** (user direction, 2026-09-13, after
   wave 31). Green tests are an *observation*, and an observation is not a
   proof: a recurring **`STABILITY-REEVAL`** card (#1 in wave 34, #2 in wave 36,
-  reports under `docs/reports/stability-reeval-{1,2}/README.md`; **#3 is due
-  now**, after wave 37, and #2's own §6 names the corpus artifacts — pinned by
-  no test — and the remaining Lean docstrings as the highest-value unexamined
-  ground) asks, of the claims this project currently rests on, **under what conditions
+  #3 in wave 38, reports under `docs/reports/stability-reeval-{1,2,3}/README.md`;
+  **#4 is due now**, after wave 39 — recorded as due by the wave-39 close, not
+  run — and #3's own §6 item 11 names the Windows arm (`F02-WINDOWS-PIN-RUN`,
+  the one live red row) and the tracker-only residuals as the highest-value
+  unexamined ground, where #2's §6 had named the corpus artifacts — pinned by
+  no test — and the remaining Lean docstrings) asks, of the claims this project currently rests on, **under what conditions
   each is unstable or unproven** — and it reports that as a finding rather
   than as reassurance. The method, in the order that has caught the most:
   1. **Hunt vacuous greenness.** For every fail-closed arm added or changed in
@@ -198,8 +201,19 @@ the operational guidance that is in neither of those.
   the original bytes back, and assert the round-trip.
   The rule is landed here; the **second reader** card `MUTEX-SHARE-CROSS-ARMS`
   asked for — an audit of `docs/reports/c-gateway-return-call-w4/scripts/mutations.py`,
-  the other harness in the tree, which that card did not examine — is **not**
-  done and is carried by `MUTATION-HARNESS-MTIME-RESTORE` itself.
+  the other harness in the tree, which that card did not examine — was done
+  by the wave-39 close (it restores by `path.write_text(text)`, a rewrite),
+  which retired `MUTATION-HARNESS-MTIME-RESTORE` on both halves of its
+  discharge. **`mv` of a `cp` backup and `cp -p` preserve the mtime the same
+  way**: wave 39's `LOOPS-ON-COMPOSED-ROUTES` measured it — its first full
+  gate ran against the rlib of its last mutation, three red rows of its own
+  file (`gate/run1/`) — so a harness that must move a file `touch`es it after
+  every restore and runs a green baseline after the last one. The wave-39
+  close surveyed all seventeen shipped harnesses in `docs/reports/`
+  (`MUTATION-HARNESS-STALE-ARTIFACTS`, which carries the mechanical check
+  still owed): twelve restore by rewriting, four by `cp` from a backup
+  (three of them also `touch`), one by `mv` plus `touch` (the loops card's
+  own, repaired); none is mtime-preserving today.
 - Delegated cards work in isolated worktrees, merge one at a time under the
   failure-gated chain discipline, and close with a per-card report under
   `docs/reports/<card>/README.md`. **A mutation count is cited in a report
@@ -208,7 +222,17 @@ the operational guidance that is in neither of those.
   *measured once, harness not shipped*, and a later close publishes that
   restatement beside the report rather than editing it
   (`W36-W37-MUTATION-HARNESSES-UNSHIPPED`, restated for four wave-36/37
-  cards by the wave-38 close).
+  cards by the wave-38 close). **An integrator who cannot regenerate the
+  matrix with any card's `gate.json`** — two sibling cards having added Lean
+  audits, so no card's figure agrees with the merged tree — measures the tip,
+  writes `docs/reports/<card>/integration-gate.json` beside the card's report
+  and says so in the merge message (wave 39, three merges: `e80b58d6`,
+  `0150c904`, `b6d1f101`); the close **sweeps every such file into its own
+  record** and re-measures the merged-gate row regardless. The generator is
+  deliberately not taught a second layout — its `--gate` path already accepts
+  the file — and what its check cannot yet see is a Clang recording borrowed
+  from the card's own gate directory (`INTEGRATION-GATE-CLANG-CLAIM-BORROWED`,
+  registered by the wave-39 close).
 - **A delegated card never advances `main`, and since wave 36 a mechanism says
   so.** The instruction alone failed once: a wave-33 measurement card ran
   `git -C <main checkout> merge` and put its own commit on `main` as a bare
@@ -317,7 +341,12 @@ requirements that are part of the gate.
     and `WRITE-LEND-TASKS-WINDOWS-RUN` were the two members of this family that
     `STD-MODULES-O`'s roll-up did not mention and that reached no tracker at
     all; both are **registered in `named_followups`** as of `DOCS-COMPACT-6`
-    (wave 34).
+    (wave 34). `OWNED-FIELD-WINDOWS-RUN` (wave 39, `AGGREGATE-OWNED-FIELD` §7)
+    joins on the same footing by the wave-39 close's decision:
+    `examples/records/owned_field.qcore` ran under ASan/UBSan/LSan on the
+    Linux arm only, no Windows or Apple run was performed and none is claimed;
+    named here and not registered, like `SLICE-PERMISSIONS-WINDOWS-RUN`
+    above, until `PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED` is decided.
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is

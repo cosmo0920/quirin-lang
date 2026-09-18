@@ -1,0 +1,9 @@
+{
+ "wave": 39,
+ "cards": ["ct07-two-thread-proof-leg", "aggregate-owned-field", "tsan-rows-2", "ct42-cell-route", "loops-on-composed-routes"],
+ "verify_applied": true,
+ "note": "STUB - replaced by scripts/build_reconciliation.py",
+ "verdicts": {},
+ "no_section": {},
+ "gate": "docs/reports/wave39-close/gate.json"
+}
