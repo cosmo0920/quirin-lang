@@ -9,5 +9,9 @@ import QCore.SocketFootprint
 #print axioms QCore.SocketFootprint.an_accepted_pair_shares_one_cell
 #print axioms QCore.SocketFootprint.an_accept_keeps_every_other_assignment
 #print axioms QCore.SocketFootprint.a_create_keeps_every_other_assignment
+#print axioms QCore.SocketFootprint.an_unresolved_connect_is_refused
+#print axioms QCore.SocketFootprint.an_unqueued_accept_is_refused
+#print axioms QCore.SocketFootprint.an_orphaned_connector_is_refused
+#print axioms QCore.SocketFootprint.an_admitted_accept_takes_an_existing_cell
 #print axioms QCore.SocketFootprint.a_derived_pair_is_refused_as_a_shared_cell
 #print axioms QCore.SocketFootprint.a_distinct_derived_cell_decides_disjoint
