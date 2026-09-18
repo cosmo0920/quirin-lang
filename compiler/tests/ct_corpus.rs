@@ -3670,17 +3670,19 @@ fn ct_manifest_and_fixture_set_agree_and_mapped_cases_execute() {
 /// a real compiled and sanitizer-run control (card `CT34-SANITIZED`), CT49
 /// sixteen sanitized runs of its own emitted C (card `CT-WIRE-LANE`), and CT07
 /// and CT09 one sanitized run each of their own emitted C (card
-/// `CT-WIRE-LANE-2`), so harness-gated sanitized-native evidence is 7 of 43 —
-/// CT03, CT07, CT09, CT17, CT26, CT34 and CT49 — and proof is 3 of 43 (CT01,
-/// CT03 and CT37, cards `CT01-PROOF-LEG`, `CT03-PROOF-ALPHABET` and
-/// `CT-PROOF-LEG-2`; this sentence read "0 of 42" until card `CT-WIRE-LANE-3`,
-/// the staleness the `CT07-WRITE-REMAP` report §6 observed in passing, and
-/// "2 of 43" until card `W32-RECONCILE-SWEEP`, because `CT03-PROOF-ALPHABET`
-/// merged after the lane that had just refreshed it — the same staleness a
-/// second time, which is why it is now recorded rather than only fixed. The
-/// authority is `PROOF_GATED_CASES` above and the manifest, both of which read
-/// three; this sentence is prose and no test asserts it, which is exactly how
-/// it drifted twice).
+/// `CT-WIRE-LANE-2`). The sanitized-native and proof numerators are NOT
+/// written here: the authority is `PROOF_GATED_CASES` above, the runner
+/// registry and the manifest (read through `scripts/ct_stage_summary.py
+/// --check`), and the ledger row in `AGENTS.md` carries the current figures.
+/// This sentence used to carry them as prose no test asserts, and drifted
+/// three times — it read "0 of 42" until card `CT-WIRE-LANE-3` (the staleness
+/// the `CT07-WRITE-REMAP` report §6 observed in passing), "2 of 43" until card
+/// `W32-RECONCILE-SWEEP` (because `CT03-PROOF-ALPHABET` merged after the lane
+/// that had just refreshed it), and then "7 of 43" / "3 of 43" from wave 32
+/// until the wave-39 close found it against a ledger at 10 of 47 / 4 of 47
+/// (card `CT07-TWO-THREAD-PROOF-LEG` §11 item 6 asked for the decision). The
+/// figures were removed by the wave-39 close rather than refreshed a fourth
+/// time, which is the repair the drift itself argued for.
 /// CT06, CT08, CT11 and CT21 add none: their fixtures are refusals that emit
 /// nothing, and CT23's is too. CT22 (card `CT22-WIRE`, wave 29) adds none
 /// either, deliberately: its admitted module emits the task route's own C,

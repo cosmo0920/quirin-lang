@@ -1,0 +1,20 @@
+## CT46-NOTES-PREDATE-TSAN-ROW - REGISTERED
+{
+ "id": "CT46-NOTES-PREDATE-TSAN-ROW",
+ "title": "CT46's fixture notes and manifest profile still say ThreadSanitizer is run nowhere in the repository",
+ "why": "Found by card TSAN-ROWS-2 (wave 39) while giving CT07's row its TSan citation. compiler/tests/fixtures/ct/CT46/expected.json's notes and the manifest's CT46 semantic_profile both read 'TSan is not run anywhere in this repository and no TSan-shaped claim is made (MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION)'. That was true at wave 36; since wave 37 the crossing has a TSan row on a CT46-shaped twin (crates/qcore-core/tests/unit/mutex_c_emit.rs) and since this card on CT46's OWN fixture lowering (ct46s_own_case_runs_clean_bound_and_the_forcing_header_finds_no_seam: dies unbound at the one fault, runs clean bound, stdout byte-identical to interpret_mutex_program's observation, and the forcing header attaches to nothing on this backend - no worker released, no schedule line). The row is serial by construction and claims no contention. Not edited by this card, which owns CT07's citation only. DISCHARGE: a citation appended to both CT46 texts on the CT07 precedent (docs/reports/tsan-rows-2/scripts/cite_ct07.py), naming the row and the recorded decision that this route's native evidence stays serial by construction.",
+ "source": "docs/reports/tsan-rows-2/README.md",
+ "recorded_by": "TSAN-ROWS-2"
+}
+## MUTATION-HARNESS-MTIME-RESTORE - REGISTERED
+{
+ "id": "MUTATION-HARNESS-MTIME-RESTORE",
+ "title": "A mutation harness that restores with shutil.copy2 leaves the mutant linked into every later build",
+ "why": "Measured in wave 35 by card MUTEX-SHARE-CROSS-ARMS, in its own harness. shutil.copy2 PRESERVES the backup's mtime, so a restored source file is OLDER than the fingerprint cargo recorded while building the mutant: cargo considers the crate up to date, skips the rebuild, and every later cargo invocation in that worktree silently links the MUTATED crate. This is not theoretical - the first full workspace run after that card's harness reported two failures, ct03_proof_leg's ct03_artifact_is_the_lean_proved_shared_reads_shape (Q500, 'the derived transferability judgment and the capture enumeration disagree about this capture') and ct_corpus's stage-agreement row, which were the arm-d-second-sharing-kind mutation still linked into qcore-core and NOT a defect in the tree. The working tree was pristine against HEAD throughout, which is what makes the mode dangerous: git status cannot see it, and the same mistake in the DISCHARGING direction produces a false GREEN rather than a false red. That card's harness now restores by rewriting the file and asserts the round-trip, and both tests were re-run green before its gate. WHAT IS NOT DONE: the hazard is generic to every mutation harness in the tree - docs/reports/c-gateway-return-call-w4/scripts/mutations.py is the other one and was NOT audited for this pattern - and the rule is not yet in CLAUDE.md. Discharge: read the other harness, and land the proposed CLAUDE.md measurement-hygiene bullet quoted in docs/reports/mutex-share-cross-arms/README.md section 11.",
+ "source": "docs/reports/mutex-share-cross-arms/README.md",
+ "recorded_by": "MUTEX-SHARE-CROSS-ARMS"
+}
+## amend target PYTHON-EVIDENCE-SUITE-INTERMITTENT-ROW - REGISTERED
+## new MUTATION-HARNESS-STALE-ARTIFACTS - absent, will register
+## new INTEGRATION-GATE-CLANG-CLAIM-BORROWED - absent, will register
+## new GATE-SUMMARY-PARSER-OK-ONLY - absent, will register

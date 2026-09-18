@@ -6,6 +6,89 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WAVE-39-CLOSE` (2026-09-18).** Wave 39 closed at base `b6d1f101`, the
+`LOOPS-ON-COMPOSED-ROUTES` merge — the compiler-side wave of **five** cards,
+each merged one at a time under the failure-gated chain and each through its own
+full gate at the integration tip. Their integrator-addressed sections gave the
+close **49** items and every one was verdicted **against the tree**: **applied
+31** (most at their merges in the cards' words, verified by reading the named
+location; six by the close), **superseded 5**, **declined 2**, **noted 11** —
+nothing unapplied at its merge, and one thing **uncounted** at its merge. A
+further **57** items belong to five frozen reports inside the inclusive range
+(the wave-38 close's and `TSAN-ROWS-2`'s appended notes made the sweep re-read
+them) and are carried `noted` citing the wave-36/37 records that verdicted them.
+`--check` on the close's own record exited **0** on the second run — 106
+verdicts, **57 content claims verified at their named locations across 10
+files**, 31 of 31 `applied` verdicts carrying checkable text — after a first run
+red with **one** complaint, the close's own quotation broken across two `///`
+lines. **The uncounted instance**: `AGENTS.md`'s Q-space note is hand-kept
+(`Q-SPACE-EXTENSION-TALLY-HAND-KEPT`) and had missed `CT42-CELL-ROUTE`
+altogether — a card whose own rows in the table below the note say "widening
+three conditions" and "widens `Q095`'s condition", and whose report and merge
+message say "five conditions widened, zero codes allocated". It is counted as
+the **seventeenth** instance, `LOOPS-ON-COMPOSED-ROUTES` renumbered the
+**eighteenth** (its report and merge read "seventeenth", named as that
+checkpoint), the total re-derived as **eighteen on ten bands**, and the icebox
+recorded as having held **thirteen** waves; the brief to the close carried the
+note's own figure, so the correction runs against that too. The **integrator's
+own record** is in the close unsmoothed and produced three registrations:
+merge `0d9e922f`'s measured line reads "4620 passed / **0 failed** / 9 ignored"
+while naming three constraint-16 rows that failed under four sibling builds,
+because the summary parser behind it summed only `ok.` result lines
+(`GATE-SUMMARY-PARSER-OK-ONLY`; the true totals are 4,641 / 3 / 9, whose sum is
+the card's own 4,644, and no ledger figure carried the error); three merges
+could not regenerate the matrix with **any** card's `gate.json` — two siblings
+had added Lean audits — so the integrator measured each tip into a
+`docs/reports/<card>/integration-gate.json`, a convention the close **accepts**
+and writes into `CLAUDE.md`, declining to teach the generator a second layout
+and registering what its check cannot see (`INTEGRATION-GATE-CLANG-CLAIM-BORROWED`:
+each file's Clang claim is the *card's* recording, so the wave-38 check was met
+vacuously three times); and the mutation-harness `mv`-restore hazard
+`LOOPS-ON-COMPOSED-ROUTES` proposed is registered as
+`MUTATION-HARNESS-STALE-ARTIFACTS` after **measuring all seventeen shipped
+harnesses** (twelve restore by rewriting, four by `cp`, one by `mv` plus
+`touch`; none mtime-preserving today), which also completed the second half of
+`MUTATION-HARNESS-MTIME-RESTORE`'s discharge — the other harness read, restoring
+by rewrite — so that entry retires. `CT46-NOTES-PREDATE-TSAN-ROW` retires too,
+its two-text TSan citation appended to the manifest's CT46 `semantic_profile`
+and the fixture's `notes` on the CT07 precedent, naming the row and the recorded
+decision in merge `0150c904`'s own words. Two decisions the cards left were
+**declined** with grounds (a standing constraint for forced-harness invisibility
+— one header, one seam, and the tracker entry already carries the rule with a
+mutation that reddens by *missing* the race; a second home for
+`SLICE-PERMISSIONS-LOOP-WINDOW`'s lifting — the constraint text is the
+authority), and the `ct_corpus.rs` doc comment's hand-kept "7 of 43" / "3 of 43"
+was **removed rather than refreshed a fourth time**, pointing at
+`PROOF_GATED_CASES` and the manifest instead. Two wave-38 deferred decisions
+end here, both citing merge `0150c904`, which records each as accepted:
+`CT07-TWO-THREAD-REPLAY-ORDER` (retired by `TSAN-ROWS-2` by statement, the
+boundary restated as `TSAN-FORCED-BODY-OVERLAP-NOT-FORCED`) and
+`MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION` (retired on its own second arm —
+"a DECISION, recorded as such, that this route's native evidence stays serial
+by construction"); the other thirteen are re-listed with grounds and their
+measurements. `named_followups` **233 → 234** (+3 −2, one amendment), with
+`AGENTS.md`'s count line rewritten as the wave's whole chain (228 → 227 → 232 →
+234 → 231 → 233 → 234) so each step is attributable, and constraint 14's ledger
+given its wave line, **measured** rather than read: six front-end files moved,
+every one attributed by `git log` to `AGGREGATE-OWNED-FIELD`, `CT42-CELL-ROUTE`
+or `LOOPS-ON-COMPOSED-ROUTES`, `lexer.rs` and `parser.rs` unmoved, so **wave 39
+closed at one reserved word** (`disjoint`), the first since `LOOP-V1`. The CT
+row was verified against the manifest through `ct_stage_summary.py --check`
+(exit 0) and the derived stage histogram — 47/50 mapped, sanitized-native
+**10**, proof **4** — and no stale figure survives outside checkpoint-labelled
+history. Gate: **two** detached runs (`setsid -f`, no `trap '' TERM`, every exit
+to its own file, each polled by a bounded foreground loop), **4,727 / 0 / 10**
+over 240 summaries in both, fmt/clippy/probes clean, **141** Lean audits, Python
+**303** OK with the detached step exiting **0** for the first time in four
+closes (the regeneration preceded it and no figure moved), Clang present and
+checked — and the base run **reproduces the wave's last merge figure exactly**,
+so three measurements agree. Nothing is promoted: contract corpus 88, corpus row
+unmoved, raw units unpromoted, full language conformance **false**.
+`STABILITY-REEVAL` #4 (due after this wave) and `DOCS-COMPACT-8` (around wave
+40) are **recorded as due, not run**, with `CLAUDE.md`'s two stale cadence lines
+corrected. Evidence: `docs/reports/wave39-close/README.md`,
+`reconciliation.json`, `gate.json`.
+
 **`LOOPS-ON-COMPOSED-ROUTES` (2026-09-18).** A `for` beside a borrow or a lend
 is admitted on both routes that hold a loan, with the loan's **window computed
 over iterations**: on the buffer route `std_buffer::last_uses` takes the last

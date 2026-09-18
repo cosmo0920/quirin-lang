@@ -1,0 +1,2 @@
+reconciliation record incomplete (1):
+  ct07-two-thread-proof-leg#for-the-integrator#6 verify[1]: compiler/tests/ct_corpus.rs does NOT carry the asserted text 'removed by the wave-39 close rather than refreshed a fourth time' - the verdict says 'applied' and the named location disagrees
