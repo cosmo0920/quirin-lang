@@ -6,6 +6,80 @@
 > instructions describe their recorded dates. Current agent rules and headline
 > status live in [AGENTS.md](../../../AGENTS.md); each card's report owns its evidence.
 
+**`WAVE-37-CLOSE` (2026-09-18).** Seven cards, **three arbiters** (two zero-movement
+code arbiters, one declarative), base `c33c7640`. All **77** integrator-addressed
+items given a verdict **measured against the tree** — 33 `applied`, 38 `noted`, 4
+`superseded`, 2 `deferred`, 0 `declined` — and, for the first time since the
+method began at wave 35, **nothing was found unapplied at its merge**: every
+amendment a card proposed (5c, 7, 8, 10b, the CT-row and corpus-row sentences,
+the `MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION` restatement, every registration
+and retirement) is in the tree in the card's words, 62 `--check` claims (50
+present, 12 absent) verifying it across six files with zero `unverifiable`
+grounds. What the close found is the layer beneath: **constraint 5c carried two
+false line numbers** (`legacy_c.rs:3312`/`:5161`, re-measured by the wave-36
+close and already moved to 3325/5177 by this wave's own first arbiter —
+repaired to identifiers pinned to `c33c7640`); **constraint 8's merge-time rewrap
+split the backticked marker** `abi-unreadable-declaration` across lines while
+protecting the uppercase name beside it, so the close's own claim failed on the
+merged text until the whitespace was repaired; **two tracker entries whose
+discharge conditions were met** — `BASE-TYPE-READER-UNMEASURED` (discharged word
+for word by `BASE-TYPE-READER-CENSUS`; the merge dedup'd the card's registration
+against the wave-36 close's and left the entry open) and
+`CONSTRAINT-14-WAVE-32-CENSUS-INCOMPLETE` (both arms taken by the wave-35 close) —
+retired, named and checked, `named_followups` **216 → 215** with one registration
+(`REPORT-REGISTERED-CLAIM-UNCHECKED`: `W37-CORPUS-CONTRACTS-4` §10 calls
+`W37-MPACK-FAMILY-FIRST` "registered" and no tracker carries it; classified a
+corpus-layout convention, and the unchecked-claim shape registered instead);
+and **constraint 14's enumeration**, which stopped at wave 35 plus a wave-36
+entry, brought current through wave 37 by **measurement** rather than reading —
+`git diff --name-only 0f6eb0a6 c33c7640 -- crates/qcore-frontend/src/` is empty,
+and the wave-36 range's only front-end file is `source_tasks.rs` in
+`WRITE-LEND-TASKS-EXERCISE`'s own commits, the one card that entry places in the
+`+0` family; waves 28 through 37 have closed at zero reserved words. Two landed
+texts differ from their cards' quotations and **both differences are the cards'
+own** (present at each card's tip): 5c carries one extra boundary clause, 10b
+integrates its quotation into the existing sentence. The 34 residual-shaped names
+`--residuals` returned were classified one by one (13 card names, 13 discharged
+with the discharging card named — five by this wave's cards — 2 rules, 2 deferred
+decisions, 2 verdict labels, 1 named premise of a superseded arm, 1 the
+convention above), zero registered from the list; re-run after the retirements
+the listing is 43, every addition accounted (six historical card names entering
+because the generator's `remaining-d02` directory joined the swept set, a future
+card name, two of this close's own deferred decisions, the retired name still
+written where it was discharged) and **two names quiet for the wrong reason** —
+cited inside another entry's `why`, not registered — the mechanism the wave-36
+close first recorded. The 21 uncarded seam commits are all cards' own; **zero
+integrator commits outside merges**, every integrator edit of the wave living
+inside a merge commit, which is `SYNC-RULE-TOOLING-COMMIT-SCOPE`'s question in a
+place `--uncarded` cannot see. `wave-37.md`'s three deviant record heads
+normalised to the wave-36 shape, head lines only (`git diff`: three lines and one
+blank). **The merged-gate row is replaced by this close's own measurement at its
+own base** — 4,637 / 0 / 8 over 233 summaries and 231 targets, **137** Lean,
+**295** Python, both probes 0, fmt/clippy clean, every exit to its own file — and
+`GATE-ROW-FIGURE-ATTRIBUTION-DRIFT`'s cheapest discharge is landed one step
+further than asked: the close's `gate.json` carries `lean_audits`, and because the
+generator's `--gate` refused any key outside its nine, `build_matrix.py` now takes
+`lean_audits` as an optional **checked** key — accepted when it equals the
+`proof/Audit*.lean` count, refused otherwise, never carried — with two tests, the
+refusal shown red by mutation. The detached run's Python step went red on
+`D02-DIMENSIONS-FOLLOWUP-COUNT`'s tripwire (`216 != 215`, the hand edit before
+the regeneration) exactly as the wave-36 close's did, and the recorded figure is
+the re-run after regenerating with this close's gate. The standing gate's command
+block gains the Python suite it had always omitted. Ten deferred decisions
+re-listed with grounds: `TASK-ROUTE-TSAN-SEGV-PRIORITY` **resolved by the tree**
+(`TASK-ROUTE-TSAN`, `3fb52b8c`), `INDIRECT-CENSUS-FEATURE-UNBUILT` restated with a
+sibling feature and a second payer, and two **new** for the user —
+`CT07-TWO-THREAD-REPLAY-ORDER` (closable by statement; `CT-LANE-5` §11 item 7) and
+`SWEEP-RESIDUALS-PROSE-ONLY-ITEMS` (`TASK-ROUTE-TSAN` §9 item 6; not widened here
+because no definition a test could make red by mutation was designed). The
+integrator's own record — the round-bound × scalar compile fix at `797661f3`, the
+two rewrap incidents at `2caf7369`, the self-committed placeholder merge collapsed
+into `c33c7640`, the replaced `checkout --ours` step, the mid-wave rebase — is in
+the report unsmoothed as `STABILITY-REEVAL` #3 step-3 material; **#3 is due now**
+and is not run here. Nothing promoted: corpus, CT, contract and leak counts
+unmoved, full language conformance **false**.
+`docs/reports/wave37-close/README.md`.
+
 **`DOCS-COMPACT-7` (2026-09-18).** The seventh firing of the three-file
 compaction cadence, over `AGENTS.md`, `CLAUDE.md` and `README.md`, documentation
 only, merged last by integrator instruction and **re-derived rather than
@@ -107,7 +181,7 @@ workspace green, and the unnamed seventh
 on a machine carrying its own build, which is **not** the quiet-host isolated
 number `HOST-ROW-STARVATION-DESCRIPTION` asks for and is not offered as one.
 
-**Wave 37 · `W37-CORPUS-CONTRACTS-4` (2026-09-18).** Wave 37's second arbiter, declarative:
+**`W37-CORPUS-CONTRACTS-4` (2026-09-18).** Wave 37's second arbiter, declarative:
 six `.qcore` modules carrying **ten** declarations, six manifest rows, no crate
 source at all, so one audit binary served both stages and the only difference
 between them is which modules the manifest selects. BEFORE reproduces
@@ -290,7 +364,7 @@ first gate run was **killed rather than reported** because it predated the
 tokens, +0 `Q` codes, and no C gateway source change.
 
 
-**Wave 37 · `JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
+**`JOINED-PROVENANCE-ROUND-BOUND` (2026-09-18).** The
 conditional-provenance fixed point's `FIXED_POINT_ROUNDS = 64` is replaced by
 this graph's own **proved** bound, `nodes * (1 + sites + sites * names)`
 (`QCore.JoinedProvenanceRoundBound`, 14 theorems; `a_cap_at_the_measure_settles`
@@ -333,8 +407,7 @@ visit (`rd_kafka_jwt_b64_decode_payload`, site 1, `payload`) blocked by the
 nullable premise alone. Evidence:
 `docs/reports/joined-provenance-round-bound/README.md`.
 
-## SCALAR-ROUTE-EXIT-EDGE (2026-09-18, wave 37's first arbiter)
-
+**`SCALAR-ROUTE-EXIT-EDGE` (2026-09-18, wave 37's first arbiter).**
 `STABILITY-REEVAL-2` asked whether the pre-existing value route in
 `refine_pointer_null` — original Cycle-19 code carried by no card, recorded as
 `CONSTANT-DO-WHILE-SCALAR-ROUTE-UNOWNED` — could delete a loop header's **exit**

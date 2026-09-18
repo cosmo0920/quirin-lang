@@ -150,6 +150,18 @@ GATE_KEYS = [
     "standing_gate",
 ]
 
+# Gate keys a close MAY supply and this script CAN measure, so a supplied value
+# is CHECKED against the derived one and never carried. Card DOCS-COMPACT-7
+# (wave 37) found the merged-gate row's Lean figure wrong the same way in two
+# consecutive waves - the current file count wearing an older close's label -
+# because a close's gate.json had no key to hold the number it measured
+# (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT). A close now records `lean_audits` beside
+# its other measurements, and a regeneration with `--gate` refuses when that
+# recorded figure disagrees with proof/Audit*.lean on disk: the drift becomes a
+# refusal at the point it would be written, instead of a number a later card
+# has to notice. The published `validation.lean_audits` stays DERIVED.
+CHECKED_GATE_KEYS = ["lean_audits"]
+
 
 def read_json(rel):
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
@@ -177,13 +189,19 @@ def carried(key):
 gate_path = option("--gate")
 if gate_path:
     supplied = json.loads(pathlib.Path(gate_path).read_text(encoding="utf-8"))
-    unknown = sorted(set(supplied) - set(GATE_KEYS))
+    unknown = sorted(set(supplied) - set(GATE_KEYS) - set(CHECKED_GATE_KEYS))
     if unknown:
-        sys.exit(f"--gate {gate_path} carries unknown key(s) {unknown}; expected {GATE_KEYS}")
+        sys.exit(
+            f"--gate {gate_path} carries unknown key(s) {unknown}; expected {GATE_KEYS} "
+            f"plus, optionally, the checked key(s) {CHECKED_GATE_KEYS}"
+        )
     missing = sorted(set(GATE_KEYS) - set(supplied))
     if missing:
         sys.exit(f"--gate {gate_path} is missing {missing}; a partial gate is never merged")
-    GATE = dict(supplied)
+    GATE = {key: supplied[key] for key in GATE_KEYS}
+    # A checked key is read here and compared below, once the derived figure
+    # exists; it is never copied into the published block.
+    GATE_CHECKED = {key: supplied[key] for key in CHECKED_GATE_KEYS if key in supplied}
     GATE_PROVENANCE = f"integrator_supplied ({gate_path})"
 else:
     previous_validation = previous["validation"]
@@ -191,6 +209,7 @@ else:
     if missing:
         sys.exit(f"{PREVIOUS} validation block is missing {missing} and no --gate was given")
     GATE = {key: previous_validation[key] for key in GATE_KEYS}
+    GATE_CHECKED = {}
     GATE_PROVENANCE = (
         "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; "
         "pass --gate PATH with the standing-gate results of this checkpoint to replace them"
@@ -214,6 +233,13 @@ b00 = read_json("docs/reports/remaining-b00/ledger.json")
 # ---------------------------------------------------------------- derived counts
 contract_modules = len(list((ROOT / "contract/qcore").glob("*/*.qcore")))
 lean_audit_files = sorted(p.name for p in (ROOT / "proof").glob("Audit*.lean"))
+if "lean_audits" in GATE_CHECKED and GATE_CHECKED["lean_audits"] != len(lean_audit_files):
+    sys.exit(
+        f"--gate {gate_path} records lean_audits = {GATE_CHECKED['lean_audits']!r} but "
+        f"proof/Audit*.lean on disk counts {len(lean_audit_files)}; a gate figure that "
+        "disagrees with the tree it claims to measure is refused rather than published "
+        "(GATE-ROW-FIGURE-ATTRIBUTION-DRIFT)"
+    )
 
 workspace_toml = (ROOT / "Cargo.toml").read_text(encoding="utf-8")
 members = re.findall(r'"([^"]+)"', workspace_toml.split("members = [", 1)[1].split("]", 1)[0])

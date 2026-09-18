@@ -251,6 +251,56 @@ class BuildMatrixSections(unittest.TestCase):
         self.assertNotEqual(finished.returncode, 0)
         self.assertIn("invented_gate", finished.stderr + finished.stdout)
 
+    # A close's gate.json MAY record the Lean audit count it measured, so the
+    # figure has a machine-readable source in the record that publishes it
+    # (GATE-ROW-FIGURE-ATTRIBUTION-DRIFT, card DOCS-COMPACT-7). The generator
+    # does not carry that number: it CHECKS it against proof/Audit*.lean and
+    # refuses a disagreement, so a drifted figure is refused where it would
+    # have been written. The published field stays derived either way.
+
+    @staticmethod
+    def _gate_with_lean_count(count):
+        return {
+            "note": "measured for this test",
+            "workspace_tests": 1234,
+            "provider_tests": 67,
+            "python_evidence_validator_tests": 108,
+            "reevaluation_probe_exit": 0,
+            "reevaluation_followup_exit": 0,
+            "cargo_fmt": "clean",
+            "cargo_clippy": "clean",
+            "standing_gate": "passed",
+            "lean_audits": count,
+        }
+
+    def test_a_recorded_lean_count_that_matches_the_files_on_disk_is_accepted(self):
+        on_disk = len(list((ROOT / "proof").glob("Audit*.lean")))
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = scratch / "gate.json"
+            gate.write_text(json.dumps(self._gate_with_lean_count(on_disk)), encoding="utf-8")
+            supplied = generate_ok(self, scratch / "out.json", extra=["--gate", str(gate)])
+        self.assertEqual(supplied["validation"]["lean_audits"], on_disk)
+        self.assertEqual(supplied["validation"]["workspace_tests"], 1234)
+        self.assertTrue(
+            supplied["validation"]["measurement_provenance"].startswith("integrator_supplied")
+        )
+
+    def test_a_recorded_lean_count_that_disagrees_with_the_files_on_disk_is_refused(self):
+        on_disk = len(list((ROOT / "proof").glob("Audit*.lean")))
+        with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
+            scratch = pathlib.Path(scratch)
+            gate = scratch / "gate.json"
+            gate.write_text(
+                json.dumps(self._gate_with_lean_count(on_disk + 2)), encoding="utf-8"
+            )
+            finished = generate(scratch / "out.json", extra=["--gate", str(gate)])
+            written = (scratch / "out.json").exists()
+        self.assertNotEqual(finished.returncode, 0)
+        self.assertIn("lean_audits", finished.stderr + finished.stdout)
+        self.assertIn(str(on_disk), finished.stderr + finished.stdout)
+        self.assertFalse(written, "a refused gate must not write a matrix")
+
     def test_a_missing_previous_matrix_refuses_rather_than_writing_a_stripped_file(self):
         with tempfile.TemporaryDirectory(prefix="qcore-matrix-") as scratch:
             scratch = pathlib.Path(scratch)
