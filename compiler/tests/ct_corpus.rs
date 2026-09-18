@@ -3799,7 +3799,7 @@ fn ct_stage_summary(manifest: &Manifest) -> serde_json::Value {
 /// `ct_evidence.derived_from` is asserted against this array below, and the
 /// Python generator asserts the same field against its own list, so neither
 /// derivation can quietly read a different file set (card CT-LABELS).
-const EVIDENCE_FILES: [&str; 22] = [
+const EVIDENCE_FILES: [&str; 23] = [
     "docs/reports/remaining-t00/coverage.json",
     "docs/reports/remaining-t03-ct-integration/ct_stage_evidence.json",
     "docs/reports/remaining-wave3-ct-integration/ct_stage_evidence.json",
@@ -3830,6 +3830,12 @@ const EVIDENCE_FILES: [&str; 22] = [
     // non-nested fork/join trace. A superseding record per constraint 21 — the
     // ct-ctwin-lane record keeps its bytes.
     "docs/reports/mutex-share-cross-emission/ct_stage_evidence.json",
+    // Card `CT-LANE-5` (wave 37): CT07 re-mapped from the sequential write lend
+    // onto the two-thread range write lease — the scenario's own word
+    // "independently" resting on two threads for the first time. A superseding
+    // record per constraint 21; the ct07-write-remap record keeps its bytes.
+    // It maps no new case, so the mapped count does not move.
+    "docs/reports/ct-lane-5/ct_stage_evidence.json",
 ];
 
 /// The `label_source` of a case no CT lane measured: card T00's frozen archive.
