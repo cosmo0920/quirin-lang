@@ -1,0 +1,41 @@
+// CT07's BOUNDS control, layer one: the LOAN's own range. The identical program
+// with the worker's byte index moved from 0 to 2 — outside the [0, 2) lease the
+// first worker holds, even though byte 2 is a perfectly good byte of the
+// payload and is in fact leased to the *other* worker. Refused because an
+// access through a lease must state a footprint that fits the lease it goes
+// through, rebased onto the lease's own base; the refusal names the range.
+// This is a check-time refusal, not a run-time trap.
+import std.concurrency;
+concurrency checked;
+fn writer(half: lend<Buffer>) -> i32 {
+  let done = qcore_buffer_write(half, 2, 9);
+  return 1;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, spawn, join, may_block } {
+  let buffer = qcore_buffer_new(0)?;
+  thread scope s {
+    match spawn s writer(lend buffer 0..2) {
+      Result::Ok { value: first } => {
+        match spawn s writer(lend buffer 2..4) {
+          Result::Ok { value: second } => {
+            let a = join move first?;
+            let b = join move second?;
+            let byte0 = qcore_buffer_read(buffer, 0);
+            let byte2 = qcore_buffer_read(buffer, 2);
+            drop buffer;
+            return byte2;
+          }
+          Result::Err { error: refused } => {
+            let a = join move first?;
+            drop buffer;
+            return a;
+          }
+        }
+      }
+      Result::Err { error: failure } => {
+        drop buffer;
+        return 0;
+      }
+    }
+  }
+}

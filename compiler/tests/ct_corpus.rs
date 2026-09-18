@@ -197,16 +197,19 @@ const SOURCE_REJECT_CASES: &[&str] = &["CT04", "CT05", "CT18", "CT44", "CT47"];
 const SEQUENTIAL_REJECT_CASES: &[&str] = &["CT06", "CT08", "CT11", "CT21"];
 /// `sequential`-route **accept** cases whose evidence is a sanitized native run
 /// of the case's own emitted C compared per stream with the route's checked
-/// observation (card `CT-WIRE-LANE-2`, wave 28). CT07 is card
-/// `SLICE-PERMISSIONS-WRITE-LEND`'s disjoint-write-halves program — two write
-/// lends of two disjoint ranges live at once, each party mutating its own
-/// range — remapped onto that stronger scenario from the read-loan program by
-/// card `CT07-WRITE-REMAP` (wave 30), which keeps the read-loan program as the
-/// case's accept control. CT09
+/// observation (card `CT-WIRE-LANE-2`, wave 28). CT09
 /// is card `AGGREGATES-V1`'s three-field record program, whose sanitized byte
 /// comparison is the executed layout *observation* (`AGGREGATE-CT09-LAYOUT`:
 /// an observation, never the layout proof the case's `proof` stage would need).
-const SEQUENTIAL_SANITIZED_CASES: &[&str] = &["CT07", "CT09"];
+///
+/// **CT07 left this list at card `CT07-TWO-THREAD-REMAP` (wave 37)** for
+/// `HEAP_SCENARIO_CASES`, because its scenario's word "independently" now has a
+/// two-thread artifact to rest on. Its sequential program did not leave the
+/// corpus with it: it is retained as that case's `sequential_write_halves`
+/// accept control, and its three sequential reject twins as that case's
+/// sequential rejection controls, so the remap is a strict superset of the
+/// evidence wave 30 published rather than a swap.
+const SEQUENTIAL_SANITIZED_CASES: &[&str] = &["CT09"];
 /// Card `CT01-PROOF-LEG`: the cases whose `proof` stage is executed, each
 /// bound to the named workspace test that checks the case's own artifact
 /// against the Lean-proved decision procedure. The gate is pinned per case and
@@ -294,7 +297,14 @@ const EPOCH_FIGURE_CASES: &[&str] = &["CT35", "CT36"];
 /// witness: every Buffer allocation and release is recorded by address, so
 /// "counted once" and "reclaims nothing" are checked by identity rather than by
 /// the emitted trace alone.
-const HEAP_SCENARIO_CASES: &[&str] = &["CT03", "CT17"];
+///
+/// **CT07 joins at card `CT07-TWO-THREAD-REMAP` (wave 37)**, as CT03's write
+/// twin: where CT03 is two readers over one allocation, CT07 is two *writers*
+/// over disjoint byte ranges of one allocation, each exercising a range write
+/// lease in its own worker body (card `WRITE-LEND-TASKS-EXERCISE`, wave 36).
+/// The heap witness carries the same weight in both — a second allocation would
+/// make "two parties, one object" false without changing a single trace line.
+const HEAP_SCENARIO_CASES: &[&str] = &["CT03", "CT07", "CT17"];
 const TOTAL_CASES: usize = 50;
 
 /// Manifest schema 2 (card T00-CT-SCHEMA, tasks T00.1-T00.9). Schema 1's `cfg`
@@ -752,7 +762,28 @@ struct NativeHeapScenarios {
     sanitizer_flags: Vec<String>,
     ubsan_options: String,
     rejection_controls: Vec<TaskRejectionControl>,
+    /// Programs that must still **check**, carried beside the refusals (card
+    /// `CT07-TWO-THREAD-REMAP`, wave 37). A mapping lane that moves a case onto
+    /// a stronger artifact must be able to keep admitting the configuration the
+    /// case used to rest on; without this, a remap would silently drop an
+    /// accept control and read as an upgrade while being a narrowing. Defaulted,
+    /// so CT03's and CT17's fixtures are untouched by its addition.
+    #[serde(default)]
+    accept_controls: Vec<HeapAcceptControl>,
     scenarios: Vec<HeapScenario>,
+}
+
+/// A control program that must compile and check. It carries no execution: the
+/// claim is admission, and the case's own scenarios carry the running.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct HeapAcceptControl {
+    source: String,
+    /// The `SourceExecutionProfile` the control must be published under, so a
+    /// control cannot silently change route and still read as the same
+    /// admission.
+    execution_profile: String,
+    note: String,
 }
 
 #[derive(Deserialize)]
@@ -1219,6 +1250,13 @@ struct NativeTaskScenarios {
 struct TaskRejectionControl {
     source: String,
     diagnostic: ExpectedDiagnostic,
+    /// The complete ordered code vector, where the control has one (card
+    /// `CT07-TWO-THREAD-REMAP`, wave 37). Wave 30 pinned CT07's sequential
+    /// controls this way — one of them refuses in *two* layers, `[Q054, Q053]`,
+    /// and asserting only the head would have let either layer fall silent.
+    /// Defaulted and empty for every control that pins a head diagnostic only.
+    #[serde(default)]
+    diagnostic_sequence: Vec<String>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -2421,6 +2459,18 @@ fn run_mapped_case(case: &ManifestCase) {
         }
         for control in &native.rejection_controls {
             assert!(required_files.insert(control.source.clone()));
+        }
+        // Card `CT07-TWO-THREAD-REMAP`: an accept control is an executed input
+        // exactly as a rejection control is, so it enters the inventory the same
+        // way and an unreferenced accept fixture is still a failure.
+        for control in &native.accept_controls {
+            assert!(required_files.insert(control.source.clone()));
+            assert!(
+                !control.note.is_empty(),
+                "{}: accept control {} must say what it is controlling for",
+                case.id,
+                control.source
+            );
         }
     }
     if let Some(reordering) = &expected.reordering_partial_order {
@@ -6673,6 +6723,44 @@ fn run_native_heap_scenarios(
                 .any(|error| error.code == control.diagnostic.code
                     && error.message.contains(&control.diagnostic.message_contains)),
             "{}: control {} must be refused with its pinned diagnostic; actual:\n{errors:?}",
+            expected.id,
+            control.source
+        );
+        // Card `CT07-TWO-THREAD-REMAP`: where a control states its whole ordered
+        // code vector, the whole vector is checked, so a refusal that loses one
+        // of its layers is a failure rather than a still-passing head match.
+        if !control.diagnostic_sequence.is_empty() {
+            let observed = errors
+                .iter()
+                .map(|error| error.code.clone())
+                .collect::<Vec<_>>();
+            assert_eq!(
+                observed, control.diagnostic_sequence,
+                "{}: control {} must refuse with its whole pinned code vector",
+                expected.id, control.source
+            );
+        }
+    }
+    // Card `CT07-TWO-THREAD-REMAP`: the programs this case must keep admitting.
+    for control in &native.accept_controls {
+        let path = directory.join(&control.source);
+        let module = compile_files(
+            &[SourceFile::new(
+                path.to_string_lossy(),
+                fs::read_to_string(&path).unwrap(),
+            )],
+            &CompileOptions::default(),
+        )
+        .unwrap_or_else(|errors| {
+            panic!(
+                "{}: accept control {} must still check ({}); actual:\n{errors:?}",
+                expected.id, control.source, control.note
+            )
+        });
+        assert_eq!(
+            module.execution_profile,
+            execution_profile(&control.execution_profile),
+            "{}: accept control {} must stay on the route it names",
             expected.id,
             control.source
         );
