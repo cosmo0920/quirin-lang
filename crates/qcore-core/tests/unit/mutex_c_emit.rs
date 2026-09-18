@@ -1163,3 +1163,69 @@ fn every_way_out_of_the_fork_join_shape_is_refused_at_its_own_event() {
         );
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card `TASK-ROUTE-TSAN`: CT46's emitted crossing under ThreadSanitizer.
+
+#[cfg(target_os = "linux")]
+#[path = "../../../../tests/support/thread_sanitizer.rs"]
+mod thread_sanitizer;
+
+/// **The first thread-race evidence this backend has ever had.**
+/// `MUTEX-SHARE-CROSS-EMISSION` recorded that no TSan row existed anywhere in
+/// this repository; card `TASK-ROUTE-TSAN` found why — ThreadSanitizer ships
+/// no `thrd_create` interceptor, so a thread this backend spawns is never
+/// registered with it — and supplied the pthread binding that gets past it
+/// without touching one emitted byte.
+///
+/// **What TSan adds here.** The emitted crossing really does run a second OS
+/// thread that locks the mutex, opens the invariant, writes the protected
+/// allocation, closes and unlocks, while the creator waits; and a race
+/// detector watching both threads reports nothing. Before this row, the
+/// child's write and the creator's post-join read were known to agree with the
+/// reference execution and to be clean under ASan/UBSan/LSan, neither of which
+/// says anything about synchronization.
+///
+/// **What it still cannot say**, and this is the sentence
+/// `MUTEX-SHARE-CROSS-EMISSION-NO-CONTENTION` already owns: the checked trace
+/// *serialises* the child, so the creator's own critical section begins after
+/// the join and the two never contend for the mutex. A clean TSan run over a
+/// schedule with no contention is evidence about that schedule. It is
+/// therefore **not** a claim that the emitted locking would keep two
+/// contending threads race-free, and no such claim is made here. What it does
+/// establish is that the crossing's real happens-before edges — spawn, the
+/// child's lock/unlock pair, join — are edges TSan can see and is satisfied
+/// by, which is exactly the part a byte comparison cannot reach.
+#[cfg(target_os = "linux")]
+#[test]
+fn the_fork_join_crossing_runs_clean_under_thread_sanitizer() {
+    use crate::mutex_c_emit::emit_mutex_c11;
+
+    let program = fork_join_trace();
+    let certificate = check_mutex_invariant_program(&program).unwrap();
+    let emission = emit_mutex_c11(&program, &certificate).unwrap();
+    // The crossing really is a second thread in the emitted C.
+    assert!(emission.source.contains("thrd_create(&qcore_thread_1"));
+
+    // Unbound, this backend's emission dies exactly as the task route's does:
+    // the same missing-interceptor fault, so the diagnosis covers both
+    // emitters rather than one.
+    let unbound = thread_sanitizer::run("ct46-unbound", &emission.source, false).unwrap();
+    assert!(
+        !unbound.clean && unbound.is_unregistered_thread_fault(),
+        "expected the TASK-ROUTE-TSAN-SEGV fault unbound:\n{}",
+        unbound.stderr
+    );
+
+    let bound = thread_sanitizer::run("ct46-bound", &emission.source, true).unwrap();
+    assert_eq!(
+        bound.races, 0,
+        "ThreadSanitizer reported a race in the emitted crossing:\n{}",
+        bound.stderr
+    );
+    assert!(
+        bound.clean,
+        "the emitted crossing did not run clean (signal {:?}):\n{}",
+        bound.signal, bound.stderr
+    );
+}

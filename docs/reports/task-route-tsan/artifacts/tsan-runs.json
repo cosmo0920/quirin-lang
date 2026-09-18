@@ -1,0 +1,78 @@
+{
+  "card": "TASK-ROUTE-TSAN",
+  "toolchain": "Ubuntu clang 21.1.8 (6ubuntu1); Ubuntu GLIBC 2.43-2ubuntu2.4; x86_64",
+  "bare": "no binding: the published thread primitive, which TSan does not intercept",
+  "shim": "tests/support/thread_sanitizer.rs::PTHREAD_BINDING through -include",
+  "subjects": {
+    "core_context": {
+      "bare": {
+        "build_exit": 0,
+        "run_exit": 66,
+        "data_races": 0,
+        "fault_address": "0x000000000018",
+        "fault_pc": "0x56b4f08d2243"
+      },
+      "shim": {
+        "build_exit": 0,
+        "run_exit": 0,
+        "data_races": 0
+      }
+    },
+    "owned_buffer": {
+      "bare": {
+        "build_exit": 0,
+        "run_exit": 66,
+        "data_races": 0,
+        "fault_address": "0x000000000018",
+        "fault_pc": "0x555555630243"
+      },
+      "shim": {
+        "build_exit": 0,
+        "run_exit": 0,
+        "data_races": 0
+      }
+    },
+    "shared_readers": {
+      "bare": {
+        "build_exit": 0,
+        "run_exit": 66,
+        "data_races": 0,
+        "fault_address": "0x000000000018",
+        "fault_pc": "0x555555630243"
+      },
+      "shim": {
+        "build_exit": 0,
+        "run_exit": 0,
+        "data_races": 0
+      }
+    },
+    "two_workers": {
+      "bare": {
+        "build_exit": 0,
+        "run_exit": 66,
+        "data_races": 0,
+        "fault_address": "0x000000000018",
+        "fault_pc": "0x555555630243"
+      },
+      "shim": {
+        "build_exit": 0,
+        "run_exit": 0,
+        "data_races": 0
+      }
+    },
+    "disjoint": {
+      "bare": {
+        "build_exit": 0,
+        "run_exit": 66,
+        "data_races": 0,
+        "fault_address": "0x000000000018",
+        "fault_pc": "0x555555630243"
+      },
+      "shim": {
+        "build_exit": 0,
+        "run_exit": 0,
+        "data_races": 0
+      }
+    }
+  }
+}

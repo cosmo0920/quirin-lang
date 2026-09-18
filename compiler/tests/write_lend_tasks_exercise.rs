@@ -717,6 +717,19 @@ fn two_threads_write_disjoint_bytes_of_one_object_sanitized() {
 /// programs, dies the same way — so nothing here is attributable to the
 /// exercise. Registered as `TASK-ROUTE-TSAN-SEGV`; the exercised program's
 /// sanitizer evidence is the ASan/UBSan/LSan run above.
+///
+/// **Superseded in its conclusion, kept in its assertions (card
+/// `TASK-ROUTE-TSAN`, wave 37).** Everything this row *measures* is still
+/// true and still checked here. What it inferred is not: the fault is not "in
+/// what this route emits" but ThreadSanitizer's missing `thrd_create`
+/// interceptor, and the minimal-program control that pointed the other way was
+/// a false negative, because a thread body with no memory access is not
+/// instrumented at all. The route **does** have TSan evidence now —
+/// `compiler/tests/task_route_tsan.rs`, which binds the two thread primitives
+/// to pthread through `-include` and changes no emitted byte, and which
+/// reports what this row wanted: no race between the two disjoint byte
+/// writers, and a reported race the moment they are forced onto one byte.
+/// `TASK-ROUTE-TSAN-SEGV` is retired there.
 #[cfg(target_os = "linux")]
 #[test]
 fn thread_sanitizer_cannot_run_this_routes_programs_lease_or_not() {

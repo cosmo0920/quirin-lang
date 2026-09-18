@@ -158,7 +158,7 @@ Where the detail lives, and the only places to look for it: per-increment
 history in `DEVELOPMENT.md` → "Increment records" → the wave index (every wave
 and card paragraph keeping its own checkpoint and boundaries); open
 follow-ons in `docs/reviews/r0_3/acceptance_matrix.json` (`named_followups`,
-**200** entries at the wave-36 close (171 → 189 → 190 → **187**: the **18**
+**203** entries at the wave-36 close (171 → 189 → 190 → **187**: the **18**
 residual-shaped names its sweep found reaching no tracker — all nine of
 `W36-CORPUS-CONTRACTS-3`'s §9 and all nine of `C-GATEWAY-INDIRECT-CENSUS-2`'s,
 both cards having left them to the close deliberately — plus the close's own
