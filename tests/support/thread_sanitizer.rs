@@ -125,20 +125,6 @@ impl Sanitized {
     }
 }
 
-/// Whether ThreadSanitizer binds `thrd_create`. The whole reason this module
-/// exists is that it does not; a toolchain where it does needs no binding, and
-/// a caller can pin that with this.
-#[cfg(target_os = "linux")]
-pub fn interceptor_for_thrd_create(executable: &std::path::Path) -> bool {
-    let symbols = std::process::Command::new("nm")
-        .arg(executable)
-        .output()
-        .expect("nm is available");
-    String::from_utf8_lossy(&symbols.stdout)
-        .lines()
-        .any(|line| line.contains("__interceptor_thrd_create"))
-}
-
 /// Compile `c_source` under ThreadSanitizer and run it. `bind_threads` selects
 /// whether [`PTHREAD_BINDING`] is prepended; `false` reproduces the unbound
 /// failure, which is what keeps the diagnosis pinned rather than remembered.

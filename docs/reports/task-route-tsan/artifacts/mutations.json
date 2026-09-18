@@ -1,0 +1,15 @@
+{
+  "card": "TASK-ROUTE-TSAN",
+  "method": "one mutation per arm that should make it fail; file restored with mtime advanced",
+  "script": "docs/reports/task-route-tsan/artifacts/mutate.sh",
+  "verdicts": {
+    "bound_clean": "RED-AS-REQUIRED",
+    "ct46": "RED-AS-REQUIRED",
+    "empty_body": "RED-AS-REQUIRED",
+    "neutral_pthread": "RED-AS-REQUIRED",
+    "neutral_unbound": "RED-AS-REQUIRED",
+    "no_byte_change": "RED-AS-REQUIRED",
+    "overlap": "RED-AS-REQUIRED",
+    "unbound_symmetry": "RED-AS-REQUIRED"
+  }
+}
