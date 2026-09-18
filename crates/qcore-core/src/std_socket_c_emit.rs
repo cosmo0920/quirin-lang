@@ -798,6 +798,11 @@ pub fn entry_parts(
             // registry to create, add to, delete from or free — which is also
             // why none of these four derives an effect.
             SocketStatement::ReactorOpen | SocketStatement::ReactorClose => {}
+            // A `disjoint NAME NAME;` question **erases**: it was answered at
+            // check time from the connection structure the checker decided, so
+            // an admitted program with the question emits byte-identically to
+            // the same program without it (card `CT42-CELL-ROUTE`, measured).
+            SocketStatement::Disjoint { .. } => {}
             SocketStatement::Watch {
                 registration,
                 socket,

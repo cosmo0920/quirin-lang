@@ -1041,14 +1041,17 @@ fn the_socket_spelling_is_not_this_cards_word() {
 
 #[test]
 fn every_reserved_head_is_load_bearing() {
-    // Each of the ten words is a clause word in a statement: without reservation
+    // Each of the words is a clause word in a statement: without reservation
     // name resolution collects it as a referenced name. This asserts the route's
-    // own list has not drifted from the words the grammar reads.
+    // own list has not drifted from the words the grammar reads. Card
+    // `CT42-CELL-ROUTE` (wave 39) advanced this pin deliberately from eight
+    // heads to nine: `disjoint`, the disjointness question, census-clean at
+    // zero QCore source occurrences.
     let heads = qcore_frontend::source_socket::statement_heads();
     assert_eq!(
         heads,
         [
-            "bind", "listen", "connect", "send", "recv", "sendto", "recvfrom", "accept"
+            "bind", "listen", "connect", "send", "recv", "sendto", "recvfrom", "accept", "disjoint"
         ]
     );
 }

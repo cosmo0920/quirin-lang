@@ -42,16 +42,22 @@
 //! ([`FootprintAssumption::AllocationExtentDeclared`]), a layout contract is the
 //! target ABI's real layout ([`FootprintAssumption::DeclaredRecordLayout`]), and
 //! a declared protocol cell is really the shared logical state
-//! ([`FootprintAssumption::DeclaredProtocolCellIdentity`]).
+//! ([`FootprintAssumption::DeclaredProtocolCellIdentity`]) — stamped for a
+//! [`FootprintEvent::DeclareDescriptorAlias`] and **not** for a
+//! [`FootprintEvent::DeriveDescriptorAlias`], whose cell a deciding model
+//! derived (card `CT42-CELL-ROUTE`).
 //! [`FootprintAssumption::DeclaredDisjointness`] is the premise this profile
 //! discharges: the checker never emits it and
 //! [`recheck_disjoint_footprint_certificate`] refuses any certificate carrying
 //! it.
 //!
-//! This is a model-level module. No source lowering, no production audit route
-//! and no other checker calls it; composing it with `CheckedMutexInvariantV1`
-//! is the follow-on unit recorded in
-//! `docs/design/DISJOINT_FOOTPRINT_PROFILE.md`.
+//! This is a model-level module. No production audit route calls it and no
+//! other checker composes with it; the one source route that reaches it is
+//! `source.socket.v1`'s `disjoint NAME NAME;` question, through
+//! [`crate::socket_footprint`] (card `CT42-CELL-ROUTE`), which hands this
+//! checker a derived-alias projection and reports its `SharedProtocolCell`
+//! (`Q664`) unedited. Composing it with `CheckedMutexInvariantV1` is the
+//! follow-on unit recorded in `docs/design/DISJOINT_FOOTPRINT_PROFILE.md`.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -176,7 +182,38 @@ pub enum FootprintEvent {
         field: FieldId,
     },
     /// Declare that `descriptor` advances the shared logical state `cell`.
+    ///
+    /// The cell is the caller's **say-so**, so the checker stamps the
+    /// certificate with [`FootprintAssumption::DeclaredProtocolCellIdentity`].
     DeclareDescriptorAlias {
+        handle: HandleId,
+        descriptor: DescriptorId,
+        cell: ProtocolCellId,
+    },
+    /// Record that `descriptor` advances the shared logical state `cell`, where
+    /// the cell was **derived** by a model that decided the program's
+    /// connection structure rather than declared by anyone (card
+    /// `CT42-CELL-ROUTE`, wave 39; the one producer in this tree is
+    /// [`crate::socket_footprint::footprint_program`], which runs only over a
+    /// program [`crate::std_socket::check_socket_program`] admitted).
+    ///
+    /// Handled exactly as [`Self::DeclareDescriptorAlias`] is — the same
+    /// handle, the same footprint, the same `protocol_cells` row, the same
+    /// [`AssertDisjoint`](Self::AssertDisjoint) decision — with one difference
+    /// that is the whole point of the variant: the checker stamps **no**
+    /// `DeclaredProtocolCellIdentity` for it. That premise reads "a declared
+    /// protocol cell really is the shared logical state, and no undeclared
+    /// descriptor also advances it", and for a derived cell both halves have a
+    /// ground outside anyone's declaration: the pairing is read off the
+    /// transport model's own decided connection structure, and that model
+    /// admits no external peer (`source.socket.v1`'s `Q085`,
+    /// `SOCKET-EXTERNAL-PEER`) and enumerates every socket of the program. The
+    /// T09 edit this variant is (`CT42-CELL-DERIVED-PREMISE`) therefore
+    /// **narrows** the certificate's assumption set for derived cells instead
+    /// of relabelling the premise; what remains is the deriving model's own
+    /// admission, which is the route's evidence and not this checker's
+    /// premise.
+    DeriveDescriptorAlias {
         handle: HandleId,
         descriptor: DescriptorId,
         cell: ProtocolCellId,
@@ -1116,11 +1153,21 @@ pub fn check_disjoint_footprint_program(
                 assumptions.insert(FootprintAssumption::DeclaredRecordLayout);
             }
 
+            // One arm for both alias forms, so a derived alias cannot drift
+            // from a declared one in anything but the premise it stamps: the
+            // `declared` flag is the only thing the two variants decide
+            // differently (card `CT42-CELL-ROUTE`).
             FootprintEvent::DeclareDescriptorAlias {
                 handle,
                 descriptor,
                 cell,
+            }
+            | FootprintEvent::DeriveDescriptorAlias {
+                handle,
+                descriptor,
+                cell,
             } => {
+                let declared = matches!(event, FootprintEvent::DeclareDescriptorAlias { .. });
                 if !minted_handles.insert(*handle) {
                     diagnostics.push(FootprintDiagnostic::IdentityNotFresh {
                         event: index,
@@ -1142,7 +1189,12 @@ pub fn check_disjoint_footprint_program(
                 );
                 derived.insert(*handle, footprint);
                 protocol_cells.insert(*descriptor, *cell);
-                assumptions.insert(FootprintAssumption::DeclaredProtocolCellIdentity);
+                // A declared cell is the caller's premise and is named on the
+                // certificate; a derived cell's ground is the deriving model's
+                // admission and stamps nothing here (`CT42-CELL-DERIVED-PREMISE`).
+                if declared {
+                    assumptions.insert(FootprintAssumption::DeclaredProtocolCellIdentity);
+                }
             }
 
             FootprintEvent::AssertDisjoint { left, right } => {

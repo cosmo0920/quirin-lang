@@ -436,6 +436,26 @@ pub enum SocketStatement {
     /// announces is done by this entry's own `accept`/`recv`/`recvfrom`, which
     /// the transport half already checks.
     Dispatch { ready: Option<String> },
+    /// `disjoint NAME NAME;` — the program asserts that two sockets of this
+    /// entry are **disjoint custodians**: that no protocol state one of them
+    /// advances is advanced by the other (card `CT42-CELL-ROUTE`, wave 39).
+    ///
+    /// This is the one statement of the route that asks a question rather than
+    /// performing an operation. The transport half of this checker decides only
+    /// that both names are live sockets of this entry (`Q081` for a name that
+    /// is none, `Q082` for one already closed) and reads both through the
+    /// inherited ownership checker, so a use after close is `Q083`; it derives
+    /// no effect, moves no transport state and emits **nothing**. The question
+    /// itself is answered outside this checker, by
+    /// [`crate::socket_footprint::check_socket_cells`]: the cells are derived
+    /// from the admitted program's own connection structure and the
+    /// **unedited** `DisjointFootprintsV1` checker refuses the two ends of one
+    /// accepted connection as `SharedProtocolCell` (`Q664`), which is CT42's
+    /// *preserve shared protocol-cell identity*. Two sockets of distinct cells
+    /// — a listener and either end, the ends of two different connections, or
+    /// a datagram pair (`CT42-CELL-UDP-QUEUE`, re-affirmed) — are admitted and
+    /// the judgement is published on the cell certificate.
+    Disjoint { left: String, right: String },
     /// The entry's return. Exactly one, last.
     Return,
 }
@@ -868,10 +888,16 @@ pub fn derived_effects(program: &SocketProgram) -> EffectRow {
             // reactor a composed program runs *is* the declared registration
             // set, materialised as the `poll` set at each dispatch. There is no
             // run-time registry to allocate, and so no `Alloc` to derive.
+            //
+            // A `disjoint` question derives nothing either, for the same
+            // reason: it is answered at check time from the connection
+            // structure the checker already decided, and the emitted program
+            // performs no call for it (card `CT42-CELL-ROUTE`).
             SocketStatement::ReactorOpen
             | SocketStatement::ReactorClose
             | SocketStatement::Watch { .. }
             | SocketStatement::Unwatch { .. }
+            | SocketStatement::Disjoint { .. }
             | SocketStatement::Let { .. }
             | SocketStatement::Line(StdIoEvent::Return)
             | SocketStatement::Return => {}
@@ -1042,6 +1068,18 @@ fn statement_custody(
         }
         SocketStatement::Close { name } if names(name) => {
             operations.push(OwnershipOp::Drop(name.clone()));
+        }
+        // A disjointness question **reads** both custodians it names: it
+        // observes their identities and changes neither, so a question asked
+        // of a closed socket is the inherited checker's own use-after-close
+        // (`Q083`), and a question is admitted on a registered (loaned)
+        // socket exactly as a `send` is (card `CT42-CELL-ROUTE`).
+        SocketStatement::Disjoint { left, right } => {
+            for name in [left, right] {
+                if names(name) {
+                    operations.push(OwnershipOp::Read(name.clone()));
+                }
+            }
         }
         SocketStatement::Bind { .. }
         | SocketStatement::Listen { .. }
@@ -2662,6 +2700,16 @@ pub fn check_socket_program(
                             reactor_operations.push(operation);
                             reactor_origins.push(index);
                         }
+                    }
+                }
+            }
+            // The transport half decides only that both custodians are live
+            // sockets of this entry; the question itself is
+            // `socket_footprint::check_socket_cells`'s (card `CT42-CELL-ROUTE`).
+            SocketStatement::Disjoint { left, right } => {
+                for name in [left, right] {
+                    if let Err(error) = evaluation.open(index, name) {
+                        errors.push(error);
                     }
                 }
             }

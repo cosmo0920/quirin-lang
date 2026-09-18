@@ -31,6 +31,7 @@
 //!             | "print" RENDERING OPERAND ";"             -- std.io + std.fmt
 //!             | "log" LEVEL RENDERING OPERAND ";"         -- std.logger + std.fmt
 //!             | "flush" ";"                               -- std.logger
+//!             | "disjoint" NAME NAME ";"                  -- the question: disjoint custodians?
 //!             | "return" ";"
 //! PAYLOAD   ::= "[" OPERAND {"," OPERAND} "]"
 //! OPERAND   ::= ["-"] INTEGER | NAME
@@ -122,6 +123,28 @@
 //! hostname refuses at `Q080` by name, because there is no name resolution here
 //! and a resolved name is a value the checker cannot compute (`SOCKET-DNS`).
 //!
+//! # The disjointness question adds **one** reserved word, and the census found it free
+//!
+//! Card `CT42-CELL-ROUTE` (wave 39) lets an entry ask whether two of its
+//! sockets are disjoint custodians — `disjoint NAME NAME;` — which is the one
+//! construct that routes `qcore_core::socket_footprint`'s derived protocol
+//! cells from source and makes the unedited `DisjointFootprintsV1` refusal
+//! `SharedProtocolCell` (`Q664`) reachable from a `.qcore` program (CT42's
+//! *preserve shared protocol-cell identity*). `disjoint` is a clause word at a
+//! statement head and never a reference, load-bearing in the measured sense
+//! the ten words above are: without reservation name resolution collects it as
+//! a referenced name and the statement refuses at `Q013`. The constraint-14
+//! census ran over every `.qcore`/`.qc` file in the tree (525 files) and every
+//! Rust string literal: `disjoint` occurs in **zero** QCore source positions —
+//! its eleven fixture occurrences are all inside `//` comments — and in
+//! thirteen Rust literals, every one a test name, an `expect` message or
+//! prose. The spelling reuses the footprint checker's own vocabulary
+//! (`AssertDisjoint`, `DisjointnessJudgement`) so the source word and the
+//! model word are one word. `assert` and `footprint`, both already reserved,
+//! were considered and not taken: `assert footprint A B;` would spell a
+//! judgement about two names with a word that names neither the question nor
+//! its answer.
+//!
 //! # What this lowering does not establish
 //!
 //! It decides no custody, no transport state and no determinism question: it
@@ -159,6 +182,9 @@ pub const SENDTO_KEYWORD: &str = "sendto";
 pub const RECVFROM_KEYWORD: &str = "recvfrom";
 /// The release keyword. Deliberately the **existing** reserved `close`.
 pub const CLOSE_KEYWORD: &str = "close";
+/// The disjointness-question keyword (card `CT42-CELL-ROUTE`): `disjoint NAME
+/// NAME;` asks whether two sockets of this entry are disjoint custodians.
+pub const DISJOINT_KEYWORD: &str = "disjoint";
 
 /// The reactor context keyword (card `SOCKET-EVENT-COMPOSE`). Every word of the
 /// composition — `event`, `open`, `close`, `watch`, `unwatch`, `dispatch`,
@@ -188,7 +214,7 @@ const REACTOR_HEADS: [&str; 4] = [
 /// `close` is deliberately **absent**: it is an established statement head of
 /// two other profiles, and a module containing only `close` is not a socket
 /// module. The same reasoning `STD-BUFFER` applied to `drop`.
-const STATEMENT_HEADS: [&str; 8] = [
+const STATEMENT_HEADS: [&str; 9] = [
     BIND_KEYWORD,
     LISTEN_KEYWORD,
     CONNECT_KEYWORD,
@@ -197,6 +223,10 @@ const STATEMENT_HEADS: [&str; 8] = [
     SENDTO_KEYWORD,
     RECVFROM_KEYWORD,
     ACCEPT_KEYWORD,
+    // Card `CT42-CELL-ROUTE`: the question is asked only of sockets, so a
+    // module spelling it is a socket module and refuses at `Q081` when the
+    // names it gives are none.
+    DISJOINT_KEYWORD,
 ];
 
 /// A complete lowering of one entry. The core checker still has to validate the
@@ -474,6 +504,11 @@ pub enum SocketUse {
     /// `std.string`'s value and not `std.socket`'s, exactly as a rendered text
     /// line needs both `std.string` and an output module (`STRING-SLICE-IO`).
     TextPayload,
+    /// `disjoint NAME NAME;` — the disjointness question (card
+    /// `CT42-CELL-ROUTE`). A socket use like the others: it selects the route,
+    /// it needs `std.socket`, and in a helper it is refused as a construct
+    /// outside the entry.
+    Question,
 }
 
 /// Classify one statement's token window as a socket construct.
@@ -498,6 +533,7 @@ fn socket_use(window: &[&Token]) -> Option<SocketUse> {
             Some(SocketUse::Transfer)
         }
         Some(ACCEPT_KEYWORD) => Some(SocketUse::Accept),
+        Some(DISJOINT_KEYWORD) => Some(SocketUse::Question),
         _ => None,
     }
 }
@@ -1290,6 +1326,27 @@ pub fn socket_statement(parsed: &SourceProgram, window: &[&Token], span: Span) -
                 }
             }
         }
+        // The disjointness question (card `CT42-CELL-ROUTE`): two names and
+        // nothing else. Whether they *are* sockets, live, and of one cell is
+        // decided by the transport checker and the footprint checker, never
+        // here.
+        DISJOINT_KEYWORD => match (word(window, 1), word(window, 2)) {
+            (Some(left), Some(right)) if ends_with_semicolon(window, 3) => {
+                Some(SocketStatement::Disjoint {
+                    left: left.to_owned(),
+                    right: right.to_owned(),
+                })
+            }
+            _ => {
+                refuse(
+                    &mut refusals,
+                    "Q080",
+                    "`disjoint NAME NAME;` names exactly two sockets of this entry and asks \
+                     whether they are disjoint custodians",
+                );
+                None
+            }
+        },
         "return" => {
             if ends_with_semicolon(window, 1) {
                 Some(SocketStatement::Return)
@@ -1443,6 +1500,6 @@ pub fn lower_source_socket(
 /// Every statement head this route reserves, for the constraint-14 record and
 /// for tests that assert the census stays true.
 #[must_use]
-pub fn statement_heads() -> [&'static str; 8] {
+pub fn statement_heads() -> [&'static str; 9] {
     STATEMENT_HEADS
 }

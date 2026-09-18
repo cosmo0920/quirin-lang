@@ -307,6 +307,11 @@ pub struct CheckedStringModule {
 pub struct CheckedSocketModule {
     pub lowered: qcore_frontend::source_socket::LoweredSocketModule,
     pub certificate: std_socket::SocketCertificate,
+    /// The derived protocol cells and every `disjoint NAME NAME;` judgement,
+    /// decided by the **unedited** `DisjointFootprintsV1` checker over the
+    /// derived-alias projection (card `CT42-CELL-ROUTE`). Published for every
+    /// admitted module, question or none.
+    pub cells: qcore_core::socket_footprint::SocketCellCertificate,
 }
 
 /// A checked `source.http.v1` module (card `HTTP-QUIRIN-V1`).
@@ -5450,6 +5455,47 @@ fn compile_socket_source(
         )]
     })?;
 
+    // The protocol cells (card `CT42-CELL-ROUTE`). Derived for every admitted
+    // program from its own decided connection structure, and every
+    // `disjoint NAME NAME;` question answered by the **unedited**
+    // `DisjointFootprintsV1` checker: the two ends of one accepted connection
+    // are refused there as `SharedProtocolCell`, reported under that
+    // checker's own `Q664` — the `Concurrency` pass's band, reached from this
+    // route by condition extension and allocating nothing. The derivation's
+    // own two refusals (an unpaired connect or accept, unreachable after the
+    // transport checker admitted the program) land on this route's `Q085`,
+    // whose condition they already are.
+    let cells = qcore_core::socket_footprint::check_socket_cells(&lowered.program).map_err(
+        |errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let span = lowered
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    let pass = if error.is_footprint_refusal() {
+                        SemanticPass::Concurrency
+                    } else {
+                        SemanticPass::StandardSocket
+                    };
+                    map_raw_diagnostic(error.code(), pass, span, error.to_string(), ranges)
+                })
+                .collect::<Vec<_>>()
+        },
+    )?;
+    qcore_core::socket_footprint::recheck_socket_cell_certificate(&lowered.program, &cells)
+        .map_err(|failure| {
+            vec![map_raw_diagnostic(
+                "Q088",
+                SemanticPass::StandardSocket,
+                lowered.scope_span,
+                format!("the protocol-cell certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        })?;
+
     // The check-only arm (card `SOCKET-EVENT-COMPOSE`, inheriting
     // `source.event.v1`'s own). Both are absent together or present together: a
     // module that emits C without a reference observation, or the reverse, would
@@ -5490,6 +5536,7 @@ fn compile_socket_source(
         checked: CheckedSourceModule::StandardSocket(Box::new(CheckedSocketModule {
             lowered,
             certificate,
+            cells,
         })),
         execution_profile: SourceExecutionProfile::StandardSocketV1,
         declaration_count: typed.declarations.len(),

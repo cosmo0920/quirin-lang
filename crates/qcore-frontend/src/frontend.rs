@@ -3182,6 +3182,18 @@ fn is_reserved_source_word(word: &str) -> bool {
             | "recv"
             | "sendto"
             | "recvfrom"
+            // Card `CT42-CELL-ROUTE`: the disjointness question `disjoint NAME
+            // NAME;` of `source.socket.v1`. Reserved for the same reason as the
+            // ten above: a clause word at a statement head, never a reference,
+            // and without this the statement collects `disjoint` as a
+            // referenced name and refuses at `Q013`. The constraint-14 census
+            // ran over 525 `.qcore`/`.qc` files and every Rust string literal:
+            // zero occurrences in any QCore source position (eleven inside
+            // `//` comments), thirteen Rust literals that are test names,
+            // `expect` messages or prose. The already-reserved `assert` and
+            // `footprint` were considered and not taken (see
+            // `source_socket.rs`).
+            | "disjoint"
             // Card `HTTP-QUIRIN-V1`: the `std.http` statement keywords
             // (`source.http.v1`). Reserved for the same reason as every profile
             // keyword above: they are clause words at a statement head or in a
