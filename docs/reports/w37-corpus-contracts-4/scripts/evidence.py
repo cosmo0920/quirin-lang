@@ -76,12 +76,14 @@ def main():
 
     for name in ("byte-identity-before.txt", "byte-identity-after.txt", "census.txt",
                  "attribution.txt", "cover-baseline.txt", "greedy-baseline.txt",
-                 "gate-exits.txt", "before-run.txt", "after-run.txt"):
+                 "gate-exits.txt", "gate-exits-run1.txt", "reverify.txt",
+                 "before-run.txt", "after-run.txt"):
         src = M / "logs" / name
         if src.exists():
             shutil.copy(src, R / "logs" / name)
     for name in ("run_audit.py", "stage.sh", "byte_identity.py", "cover.py", "greedy.py",
-                 "census.py", "attribution.py", "evidence.py", "gate.sh"):
+                 "census.py", "attribution.py", "evidence.py", "gate.sh", "reverify.sh",
+                 "register.py"):
         src = M / name
         if src.exists():
             shutil.copy(src, R / "scripts" / name)

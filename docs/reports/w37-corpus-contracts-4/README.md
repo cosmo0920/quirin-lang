@@ -50,12 +50,32 @@ verdict-bearing artifact. Only `contracts` and `source-effects` differ between
 the two archives, which is the checkout-root class every re-pin in this chain
 has recorded.
 
-`origin/main` was fetched before the BEFORE run, again before the AFTER run and
-again before this report was finalised. It stood at **`477b733d`** every time:
-**`SCALAR-ROUTE-EXIT-EDGE` has not merged**, so the corpus baseline did not
-move and no re-run was required. That was checked, not assumed. **If
-`SCALAR-ROUTE-EXIT-EDGE` merges before this card does, the integrator must have
-this card's BEFORE re-run against the new baseline** — §10 item 3.
+`origin/main` was fetched before the BEFORE run, before the AFTER run, and
+again after the gate. At the first two it stood at this card's base
+`477b733d`. **At the third it had advanced to `0f6eb0a6`** — but not to
+`SCALAR-ROUTE-EXIT-EDGE`: the new commits are the **wave-36 close**
+(`WAVE-36-CLOSE`, merged into wave 37).
+
+**The corpus baseline did not move, and that was checked rather than assumed.**
+A path-scoped diff of `477b733d..origin/main` shows the close touched exactly
+two files this card cares about, and **neither is the baseline**:
+
+* `docs/reports/joined-provenance-call-frames/` — **untouched**. This card's
+  BEFORE still reproduces it byte for byte (re-verified after the gate: the
+  archiving tool refuses to write otherwise, and it wrote). **No re-run is
+  required.**
+* `contract/`, `compiler/tests/qcore_contract_corpus.rs`,
+  `compiler/tests/contract_loader.rs`,
+  `crates/qcore-c-gateway/tests/{prod_contracts,neighbours}.rs`,
+  `docs/development/increments/wave-37.md` — all **untouched** by the close, so
+  none of this card's pin edits or its increment paragraph contends with it.
+* `AGENTS.md` and `docs/reviews/r0_3/acceptance_matrix.json` — **both edited by
+  the close and by this card.** See §10 item 4 for the exact merge outcome,
+  which was measured with a read-only `git merge-tree` rather than predicted.
+
+**If `SCALAR-ROUTE-EXIT-EDGE` merges before this card does**, the corpus
+baseline *will* move and the integrator must then have this card's BEFORE
+re-run against it (§10 item 3). That has not happened as of `0f6eb0a6`.
 
 ### 1.1 BEFORE reproduces the baseline byte for byte
 
@@ -583,8 +603,78 @@ ten premises alone.
 ## 8. Gate
 
 Disk was checked first: **120 GB free**, above the 60 GB floor, so the full gate
-ran. Every exit code was captured to a file, never read through a pipe
-(`logs/gate-exits.txt`). Measured rows are in §8.1.
+ran. Every exit code was captured to a file, never read through a pipe. The gate
+was run **twice** and both runs are published, because the first found two
+things and only one of them was noise.
+
+```
+run 1 (logs/gate-exits-run1.txt)   test=101  fmt=1  clippy=0  probe=0  followup=0  lean=0  pytests=0
+run 2 (logs/gate-exits.txt)        test=0    fmt=0  clippy=0  probe=0  followup=0  lean=0  pytests=0
+```
+
+**Run 2 is green in every step.** Measured at it:
+
+* **4,611 workspace tests passed, 0 failed, 8 ignored**, over 231 test-result
+  summaries (`cargo test --workspace --no-fail-fast`).
+* `cargo fmt --all -- --check` clean; `cargo clippy --all-targets -- -D warnings`
+  clean.
+* Both reevaluation examples **exit 0**, reported as the brief requires whether
+  or not that is the convenient answer.
+* **135 Lean audits** passed, `AuditAll` axiom closure clean.
+* **274 Python tests** pass (`python3 -m unittest discover -s scripts/tests`).
+
+### 8.1 `fmt=1` in run 1 was mine, and it was a real finding
+
+`cargo fmt` wanted the multi-line tuple form for the three
+`EXPECTED_CONTRACTS` rows whose module path plus symbol name exceed the line
+width (`cmt_metric_get_timestamp`, `cmt_mpack_consume_uint_tag`,
+`rd_kafka_topic_partition_list_sort`). Fixed at `cf5c41d9`; the pinned **values**
+are unchanged and both pin tests stay green. Recorded rather than quietly
+amended, because it is the second time this card's pinned-table edits were
+caught by a check rather than by review — the first being the table's
+module-path ordering (§7).
+
+### 8.2 `test=101` in run 1 was constraint 16's FIRST named row, in its exact documented shape
+
+One test failed in run 1, and only one:
+
+```
+---- a_declared_process_limit_stops_the_fixture_from_forking stdout ----
+thread '…' panicked at crates/qcore-verifier-host/tests/enforced_process_limits.rs:389:5:
+assertion `left == right` failed: Broken pipe (os error 32)
+  left: Io
+ right: Terminated
+```
+
+Constraint 16 describes this row as installing `RLIMIT_NPROC=1`, "which counts
+every process of the real UID, so under load the host observes `Io(Broken pipe)`
+instead of `Terminated`". The observed failure is that sentence verbatim — same
+row, same mechanism, same two values. It is **P02-FLAKE's first listed row**, not
+a new one, so no amendment to constraint 16 is proposed.
+
+**The repetitions.** Re-run **alone**, 12 times (`scripts/reverify.sh`,
+`logs/reverify.txt`), recording the load average before each repetition:
+
+```
+ISOLATED RESULT: 12 passed, 0 failed, of 12
+one-minute loads at the repetitions: 12.99 12.99 12.67 12.67 12.67 13.50
+                                     13.50 13.50 13.50 13.06 13.06 13.06
+fifteen-minute load across the window: 21.2 - 21.4   (16 cores)
+```
+
+**12 of 12 pass alone**, and the row then passed **again inside the full run-2
+gate** at a falling load (1-minute load 4.04 at completion). Both facts are
+recorded, which is what constraint 16 asks of a load-sensitive row: it failed
+once at the busy tail of a 16-core machine whose fifteen-minute load was above
+21, and passed 13 subsequent times.
+
+**It cannot be this card.** This card changes **no crate source at all** — six
+`.qcore` files, one manifest, four test-pin files and documentation.
+`qcore-verifier-host` depends only on `qcore-frontend` and `qcore-schemas`,
+never on the contract crate, and does not read
+`contract/cycle19-resource-contracts.json`. No claim is made here that the row
+is fixed or unfixable; the measurement says it passed 13 of 14 and failed once
+under load, and nothing more.
 
 ---
 
@@ -637,9 +727,24 @@ finding is that the numbers get applied and the prose does not.
    was `477b733d` at all three checks. The AFTER is unaffected in kind, but the
    *attribution* is only sound against a BEFORE that reproduces whatever
    baseline is then current.
-4. **Residuals ARE registered** (§9), `named_followups` **171 → 181**. This is
-   the change from W36's practice that the brief asked for; please confirm the
-   merge carries all ten and that none collides with an existing id.
+4. **Residuals ARE registered** (§9) — the change from W36's practice the brief
+   asked for — and **the one merge conflict this card creates is here, with a
+   mechanical resolution.** Measured, not predicted, with a read-only
+   `git merge-tree origin/main HEAD` at `0f6eb0a6`:
+
+   * **`AGENTS.md` auto-merges cleanly.** No conflict. All five anchors this
+     card edits survive verbatim in the post-close file, and the close's
+     additions are elsewhere in it.
+   * **`docs/reviews/r0_3/acceptance_matrix.json` conflicts**, and it is the
+     only conflicting file. Both sides **append** to `named_followups`: this
+     card took it 171 → **181** against its base, and `WAVE-36-CLOSE` took the
+     same base to **187** (registering W36's own nine, the pass W36 skipped).
+     **The resolution is to keep both sides' appended entries** — I verified
+     **zero id collisions** between this card's ten and the 187 now on `main` —
+     **and to set the `named_followups` count field to 197.** The two derived
+     count fields this card also moved (`contract_modules` 82 → **88**,
+     `named_followups` 171 → 181) are otherwise independent of the close's
+     edits; `contract_modules` should land at **88**.
 5. **No action — recorded so it is not re-investigated.** This card's
    `PREDICTION.md` forecast `double_release` `1 → 1`; the true value is **0** in
    both stages. The **ledger is already correct** at 0 (wave 35 withdrew the
@@ -710,7 +815,13 @@ finding is that the numbers get applied and the prose does not.
     That is the already-recorded `D02-B00-LEDGER-SNAPSHOT` (constraint 25), it
     widens here, and it must be repaired by publishing provenance beside them
     and **never** by editing the archive (constraint 21).
-12. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
+12. **Two "Merged gate" ledger numbers have drifted** and are the **close's** to
+    move, not this card's. `AGENTS.md` reads **4,580 passed / 0 / 8** and
+    **247 Python**, measured by the *wave-35* close at `4cf9bdf9`; this card
+    measured **4,611 passed / 0 failed / 8 ignored** over 231 result summaries
+    and **274 Python** at its own tip. **135 Lean audits** agrees exactly and
+    needs no change. Deliberately not edited here (§8).
+13. **Nothing here is a claim about upstream.** Every `Safe` is `Safe` relative
     to ten declared premises; the substituted leaves are `Unknown`-class
     evidence and not defect claims (invariant 2).
 
